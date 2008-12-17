@@ -179,9 +179,9 @@ namespace Gecode {
     template <class I>
     explicit IntSet(I& i);
 #ifdef __INTEL_COMPILER
-    /// Initialize with range iterator \a i
+    /// Initialize with integer set \a s
     IntSet(const IntSet& s);
-    /// Initialize with range iterator \a i
+    /// Initialize with integer set \a s
     IntSet(IntSet& s);
 #endif
     //@}
@@ -286,7 +286,7 @@ namespace Gecode {
 
 }
 
-#include <gecode/int/int-set.hpp>
+#include <gecode/int/int-set-1.hpp>
 
 #include <gecode/int/var-imp.hpp>
 
@@ -692,6 +692,8 @@ namespace Gecode {
   };
 
 }
+
+#include <gecode/int/int-set-2.hpp>
 
 #include <gecode/int/array.hpp>
 

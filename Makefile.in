@@ -305,7 +305,7 @@ INTHDR0 = \
 	rel/eq.hpp rel/lex.hpp rel/lq-le.hpp rel/nq.hpp \
 	sorted/matching.hpp sorted/narrowing.hpp \
 	sorted/order.hpp sorted/propagate.hpp sorted/sortsup.hpp \
-	int-set.hpp var-imp/delta.hpp var/print.hpp var/bool.hpp \
+	int-set-1.hpp int-set-2.hpp var-imp/delta.hpp var/print.hpp var/bool.hpp \
 	var-imp/int.hpp var-imp/bool.hpp var/int.hpp \
 	view/bool.hpp view/constint.hpp view/zero.hpp view/int.hpp \
 	view/minus.hpp view/print.hpp view/neg-bool.hpp view/bool-test.hpp \

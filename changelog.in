@@ -74,8 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Integer sets can now be initialized from integer argument arrays.
+
+[ENTRY]
 Module: other
-What:   change
+What:   bug
 Rank:   minor
 Thanks: Chris Mears
 [DESCRIPTION]
