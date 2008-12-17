@@ -300,29 +300,28 @@ namespace Gecode {
     //@}
   };
 
-}
+  /**
+   * \brief Print task \a t
+   * \relates Gecode::Task
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const Task& t);
+  /**
+   * \brief Print resource \a r
+   * \relates Gecode::Resource
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const Resource& r);
+  /**
+   * \brief Print schedule \a s
+   * \relates Gecode::Resource
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>& 
+  operator <<(std::basic_ostream<Char,Traits>& os, const Schedule& s);
 
-/**
- * \brief Print task \a t
- * \relates Gecode::Task
- */
-GECODE_SCHEDULING_EXPORT std::ostream&
-operator <<(std::ostream&, const Gecode::Task& t);
-/**
- * \brief Print resource \a r
- * \relates Gecode::Resource
- */
-GECODE_SCHEDULING_EXPORT std::ostream&
-operator <<(std::ostream&, const Gecode::Resource& r);
-/**
- * \brief Print schedule \a s
- * \relates Gecode::Resource
- */
-GECODE_SCHEDULING_EXPORT std::ostream&
-operator <<(std::ostream&, const Gecode::Schedule& s);
-
-
-namespace Gecode {
 
   /**
    * \defgroup TaskModelScheduleConstraints Scheduling constraints
