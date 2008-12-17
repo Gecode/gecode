@@ -456,8 +456,8 @@ namespace Gecode {
     }
     assert(c_a->prev() == p_a);
 
-    // Reset links for shared objects
-    for (SharedHandle::Object* s = c->pc.c.shared; s != NULL; s = s->next)
+    // Reset links for copied objects
+    for (CopiedHandle::Object* s = c->pc.c.shared; s != NULL; s = s->next)
       s->fwd = NULL;
 
     // Initialize propagator queue

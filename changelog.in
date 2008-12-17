@@ -74,6 +74,17 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Introduced CopiedHandle as a new base class for SharedHandle. A copied handle 
+provides access to an object that is used by entities in a space, and that is 
+copied when then space is copied. This abstraction can be used e.g. to pass 
+information between different entities in a space, such as between propagators 
+and branchings.
+
+[ENTRY]
 Module: support
 What:   bug
 Rank:   minor
