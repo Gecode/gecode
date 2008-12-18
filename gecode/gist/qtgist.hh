@@ -46,7 +46,7 @@ namespace Gecode {  namespace Gist {
     Q_OBJECT
   private:
     /// The canvas implementation
-    TreeCanvasImpl* canvas;
+    TreeCanvas* canvas;
     /// The time slider
     QSlider* timeBar;
     /// Context menu

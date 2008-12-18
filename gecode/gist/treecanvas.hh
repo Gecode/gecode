@@ -54,17 +54,17 @@ namespace Gecode {  namespace Gist {
     static const int maxAutoZoomScale = defScale;    
   };
   
-  class TreeCanvasImpl;
+  class TreeCanvas;
   
   class SearcherThread : public QThread {
     Q_OBJECT
   private:
     VisualNode* node;
     bool a;
-    TreeCanvasImpl* t;
+    TreeCanvas* t;
     void updateCanvas(void);
   public:
-    void search(VisualNode* n, bool all, TreeCanvasImpl* ti);
+    void search(VisualNode* n, bool all, TreeCanvas* ti);
     
   Q_SIGNALS:
     void update(int w, int h, int scale0);
@@ -76,7 +76,7 @@ namespace Gecode {  namespace Gist {
   };
 
   /// \brief Implementation of the TreeCanvas
-  class GECODE_GIST_EXPORT TreeCanvasImpl : public QWidget {
+  class GECODE_GIST_EXPORT TreeCanvas : public QWidget {
     Q_OBJECT
 
     friend class SearcherThread;
@@ -84,9 +84,9 @@ namespace Gecode {  namespace Gist {
 
   public:
     /// Constructor
-    TreeCanvasImpl(Space* rootSpace, bool bab, QWidget* parent = NULL);
+    TreeCanvas(Space* rootSpace, bool bab, QWidget* parent = NULL);
     /// Destructor
-    ~TreeCanvasImpl(void);
+    ~TreeCanvas(void);
 
     /// Set Inspector to \a i0
     void setInspector(Inspector* i);

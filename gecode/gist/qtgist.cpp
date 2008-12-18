@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     QPalette myPalette(scrollArea->palette());
     myPalette.setColor(QPalette::Window, Qt::white);
     scrollArea->setPalette(myPalette);
-    canvas = new TreeCanvasImpl(root, bab, this);
+    canvas = new TreeCanvas(root, bab, this);
     canvas->setPalette(myPalette);
     canvas->setObjectName("canvas");
 
