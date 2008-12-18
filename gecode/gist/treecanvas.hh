@@ -45,6 +45,14 @@
 #include <gecode/gist/visualnode.hh>
 
 namespace Gecode {  namespace Gist {
+
+  class LayoutConfig {
+  public:
+    static const int minScale = 10;
+    static const int maxScale = 400;
+    static const int defScale = 100;
+    static const int maxAutoZoomScale = defScale;    
+  };
   
   class TreeCanvasImpl;
   
@@ -274,86 +282,7 @@ namespace Gecode {  namespace Gist {
     /// Export PDF of the subtree of \a n
     void exportNodePDF(VisualNode* n);
   };
-  
-  /// Tree canvas widget
-  class TreeCanvas : public QWidget {
-    Q_OBJECT
-  private:
-    /// The canvas implementation
-    TreeCanvasImpl* canvas;
-    /// The time slider
-    QSlider* timeBar;
-    /// Context menu
-    QMenu* contextMenu;
-
-  public:
-    QAction* inspectCN;
-    QAction* stopCN;
-    QAction* reset;
-    QAction* navUp;
-    QAction* navDown;
-    QAction* navLeft;
-    QAction* navRight;
-    QAction* navRoot;
-    QAction* navNextSol;
-    QAction* navPrevSol;
-
-    QAction* searchNext;
-    QAction* searchAll;
-    QAction* toggleHidden;
-    QAction* hideFailed;
-    QAction* unhideAll;
-    QAction* zoomToFit;
-    QAction* centerCN;
-    QAction* exportPDF;
-    QAction* exportWholeTreePDF;
-    QAction* print;
-
-    QAction* setPath;
-    QAction* inspectPath;
-    QAction* addVisualisation;
-
-  public:
-    /// Constructor
-    TreeCanvas(Space* root, bool bab = false, QWidget* parent = NULL);
-    /// Destructor
-    ~TreeCanvas(void);
-
-    /// Set Inspector to \a i0
-    void setInspector(Inspector* i0);
-
-    /// Set preference whether to automatically hide failed subtrees
-    void setAutoHideFailed(bool b);
-    /// Set preference whether to automatically zoom to fit
-    void setAutoZoom(bool b);
-    /// Return preference whether to automatically hide failed subtrees
-    bool getAutoHideFailed(void);
-    /// Return preference whether to automatically zoom to fit
-    bool getAutoZoom(void);
-    /// Set refresh rate
-    void setRefresh(int i);
-    /// Return preference wheter to use smooth scrolling and zooming
-    bool getSmoothScrollAndZoom(void);
-    /// Set preference wheter to use smooth scrolling and zooming
-    void setSmoothScrollAndZoom(bool b);
-
-    /// Stop search and wait until finished
-    void finish(void);
-
-    /// Handle resize event
-    void resizeEvent(QResizeEvent*);
-
-  Q_SIGNALS:
-    void statusChanged(const Statistics&, bool);
-
-  private Q_SLOTS:
-    void on_canvas_contextMenu(QContextMenuEvent*);
-    void on_canvas_statusChanged(VisualNode*, const Statistics&, bool);
-  protected:
-    /// Close the widget
-    void closeEvent(QCloseEvent* event);
-  };
-  
+    
 }}
 
 #endif

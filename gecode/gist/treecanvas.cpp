@@ -47,16 +47,15 @@
 #include <gecode/gist/drawingcursor.hh>
 #include <gecode/gist/addchild.hh>
 #include <gecode/gist/addvisualisationdialog.hh>
-#include <gecode/gist/zoomToFitIcon.hpp>
 
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Gist {
 
-  const int minScale = 10;
-  const int maxScale = 400;
-  const int defScale = 100;
-  const int maxAutoZoomScale = defScale;
+  const int LayoutConfig::minScale;
+  const int LayoutConfig::maxScale;
+  const int LayoutConfig::defScale;
+  const int LayoutConfig::maxAutoZoomScale;
 
   Inspector::~Inspector(void) {}
     
@@ -68,7 +67,8 @@ namespace Gecode { namespace Gist {
     , inspector(NULL)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false), nextPit(0)
-    , targetZoom(defScale), metaZoomCurrent(static_cast<double>(defScale))
+    , targetZoom(LayoutConfig::defScale)
+    , metaZoomCurrent(static_cast<double>(LayoutConfig::defScale))
     , zoomTimerId(0)
     , targetScrollX(0), targetScrollY(0)
     , metaScrollXCurrent(0.0), metaScrollYCurrent(0.0)
@@ -81,7 +81,7 @@ namespace Gecode { namespace Gist {
       root->setMarked(true);
       currentNode = root;
       pathHead = root;
-      scale = defScale / 100.0;
+      scale = LayoutConfig::defScale / 100.0;
 
       setAutoFillBackground(true);
 
@@ -103,7 +103,8 @@ namespace Gecode { namespace Gist {
   TreeCanvasImpl::scaleTree(int scale0) {
     QMutexLocker locker(&layoutMutex);
     BoundingBox bb;
-    scale0 = std::min(std::max(scale0, minScale), maxScale);
+    scale0 = std::min(std::max(scale0, LayoutConfig::minScale),
+                      LayoutConfig::maxScale);
     scale = (static_cast<double>(scale0)) / 100.0;
     bb = root->getBoundingBox();
     int w = 
@@ -142,8 +143,8 @@ namespace Gecode { namespace Gist {
     } else {
       metaZoomCurrent = static_cast<int>(scale*100);
       targetZoom = scale0;
-      targetZoom = std::min(std::max(targetZoom, minScale), 
-                            maxAutoZoomScale);
+      targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale), 
+                            LayoutConfig::maxAutoZoomScale);
       zoomTimerId = startTimer(15);
     }
     resize(w,h);
@@ -194,10 +195,10 @@ namespace Gecode { namespace Gist {
           (t->root->depth() * Layout::dist_y + 2*Layout::extent);
 
         scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
-        if (scale0<minScale)
-          scale0 = minScale;
-        if (scale0>maxAutoZoomScale)
-          scale0 = maxAutoZoomScale;
+        if (scale0<LayoutConfig::minScale)
+          scale0 = LayoutConfig::minScale;
+        if (scale0>LayoutConfig::maxAutoZoomScale)
+          scale0 = LayoutConfig::maxAutoZoomScale;
         double scale = (static_cast<double>(scale0)) / 100.0;
 
         w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
@@ -337,18 +338,18 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->height()) / (root->depth() * Layout::dist_y +
                                               2*Layout::extent);
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
-        if (scale0<minScale)
-          scale0 = minScale;
-        if (scale0>maxAutoZoomScale)
-          scale0 = maxAutoZoomScale;
+        if (scale0<LayoutConfig::minScale)
+          scale0 = LayoutConfig::minScale;
+        if (scale0>LayoutConfig::maxAutoZoomScale)
+          scale0 = LayoutConfig::maxAutoZoomScale;
 
         if (!smoothScrollAndZoom) {
           scaleTree(scale0);
         } else {
           metaZoomCurrent = static_cast<int>(scale*100);
           targetZoom = scale0;
-          targetZoom = std::min(std::max(targetZoom, minScale), 
-                                maxAutoZoomScale);
+          targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale), 
+                                LayoutConfig::maxAutoZoomScale);
           zoomTimerId = startTimer(15);
         }
       }
@@ -983,358 +984,6 @@ namespace Gecode { namespace Gist {
 
       addVisualisation(itemList, visualisation, name);
     }
-  }
-
-  TreeCanvas::TreeCanvas(Space* root, bool bab,
-                         QWidget* parent) : QWidget(parent) {
-    QGridLayout* layout = new QGridLayout(this);    
-
-    QScrollArea* scrollArea = new QScrollArea(this);
-    
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setAlignment(Qt::AlignHCenter);
-    scrollArea->setAutoFillBackground(true);
-    QPalette myPalette(scrollArea->palette());
-    myPalette.setColor(QPalette::Window, Qt::white);
-    scrollArea->setPalette(myPalette);
-    canvas = new TreeCanvasImpl(root, bab, this);
-    canvas->setPalette(myPalette);
-    canvas->setObjectName("canvas");
-
-    scrollArea->setWidget(canvas);
-
-    QPixmap myPic;
-    myPic.loadFromData(zoomToFitIcon, sizeof(zoomToFitIcon));
-
-    QToolButton* autoZoomButton = new QToolButton();
-    autoZoomButton->setCheckable(true);
-    autoZoomButton->setIcon(myPic);
-
-    QSlider* scaleBar = new QSlider(Qt::Vertical, this);
-    canvas->scaleBar = scaleBar;
-    scaleBar->setObjectName("scaleBar");
-    scaleBar->setMinimum(minScale);
-    scaleBar->setMaximum(maxScale);
-    scaleBar->setValue(defScale);
-    
-    inspectCN = new QAction("Inspect", this);
-    inspectCN->setShortcut(QKeySequence("Return"));
-    connect(inspectCN, SIGNAL(triggered()), canvas, 
-                       SLOT(inspectCurrentNode()));
-
-    stopCN = new QAction("Stop search", this);
-    stopCN->setShortcut(QKeySequence("Esc"));
-    connect(stopCN, SIGNAL(triggered()), canvas, 
-                    SLOT(stopSearch()));
-
-    reset = new QAction("Reset", this);
-    reset->setShortcut(QKeySequence("Ctrl+R"));
-    connect(reset, SIGNAL(triggered()), canvas, 
-            SLOT(reset()));
-
-    navUp = new QAction("Up", this);
-    navUp->setShortcut(QKeySequence("Up"));
-    connect(navUp, SIGNAL(triggered()), canvas, 
-                   SLOT(navUp()));
-
-    navDown = new QAction("Down", this);
-    navDown->setShortcut(QKeySequence("Down"));
-    connect(navDown, SIGNAL(triggered()), canvas, 
-                     SLOT(navDown()));
-
-    navLeft = new QAction("Left", this);
-    navLeft->setShortcut(QKeySequence("Left"));
-    connect(navLeft, SIGNAL(triggered()), canvas, 
-                     SLOT(navLeft()));
-
-    navRight = new QAction("Right", this);
-    navRight->setShortcut(QKeySequence("Right"));
-    connect(navRight, SIGNAL(triggered()), canvas, 
-                      SLOT(navRight()));
-
-    navRoot = new QAction("Root", this);
-    navRoot->setShortcut(QKeySequence("R"));
-    connect(navRoot, SIGNAL(triggered()), canvas, 
-                      SLOT(navRoot()));
-
-    navNextSol = new QAction("To next solution", this);
-    navNextSol->setShortcut(QKeySequence("Shift+Right"));
-    connect(navNextSol, SIGNAL(triggered()), canvas, 
-                      SLOT(navNextSol()));
-
-    navPrevSol = new QAction("To previous solution", this);
-    navPrevSol->setShortcut(QKeySequence("Shift+Left"));
-    connect(navPrevSol, SIGNAL(triggered()), canvas, 
-                      SLOT(navPrevSol()));
-
-    searchNext = new QAction("Next solution", this);
-    searchNext->setShortcut(QKeySequence("N"));
-    connect(searchNext, SIGNAL(triggered()), canvas, SLOT(searchOne()));
-
-    searchAll = new QAction("All solutions", this);
-    searchAll->setShortcut(QKeySequence("A"));
-    connect(searchAll, SIGNAL(triggered()), canvas, SLOT(searchAll()));
-
-    toggleHidden = new QAction("Hide/unhide", this);
-    toggleHidden->setShortcut(QKeySequence("H"));
-    connect(toggleHidden, SIGNAL(triggered()), canvas, SLOT(toggleHidden()));
-
-    hideFailed = new QAction("Hide failed subtrees", this);
-    hideFailed->setShortcut(QKeySequence("F"));
-    connect(hideFailed, SIGNAL(triggered()), canvas, SLOT(hideFailed()));
-
-    unhideAll = new QAction("Unhide all", this);
-    unhideAll->setShortcut(QKeySequence("U"));
-    connect(unhideAll, SIGNAL(triggered()), canvas, SLOT(unhideAll()));
-
-    zoomToFit = new QAction("Zoom to fit", this);
-    zoomToFit->setShortcut(QKeySequence("Z"));
-    connect(zoomToFit, SIGNAL(triggered()), canvas, SLOT(zoomToFit()));
-
-    centerCN = new QAction("Center current node", this);
-    centerCN->setShortcut(QKeySequence("C"));
-    connect(centerCN, SIGNAL(triggered()), canvas, SLOT(centerCurrentNode()));
-
-    exportPDF = new QAction("Export subtree PDF...", this);
-    exportPDF->setShortcut(QKeySequence("P"));
-    connect(exportPDF, SIGNAL(triggered()), canvas, 
-            SLOT(exportPDF()));
-
-    exportWholeTreePDF = new QAction("Export PDF...", this);
-    exportWholeTreePDF->setShortcut(QKeySequence("Ctrl+Shift+P"));
-    connect(exportWholeTreePDF, SIGNAL(triggered()), canvas, 
-            SLOT(exportWholeTreePDF()));
-
-    print = new QAction("Print...", this);
-    print->setShortcut(QKeySequence("Ctrl+P"));
-    connect(print, SIGNAL(triggered()), canvas, 
-            SLOT(print()));
-
-    setPath = new QAction("Set path", this);
-    setPath->setShortcut(QKeySequence("Shift+P"));
-    connect(setPath, SIGNAL(triggered()), canvas, SLOT(setPath()));
-
-    inspectPath = new QAction("Inspect path", this);
-    inspectPath->setShortcut(QKeySequence("Shift+I"));
-    connect(inspectPath, SIGNAL(triggered()), canvas, SLOT(inspectPath()));
-
-    addVisualisation = new QAction("Add visualisation", this);
-    addVisualisation->setShortcut(QKeySequence("Shift+V"));
-    connect(addVisualisation, SIGNAL(triggered()), canvas, SLOT(addVisualisation()));
-
-    addAction(inspectCN);
-    addAction(stopCN);
-    addAction(reset);
-    addAction(navUp);
-    addAction(navDown);
-    addAction(navLeft);
-    addAction(navRight);
-    addAction(navRoot);
-    addAction(navNextSol);
-    addAction(navPrevSol);
-
-    addAction(searchNext);
-    addAction(searchAll);
-    addAction(toggleHidden);
-    addAction(hideFailed);
-    addAction(unhideAll);
-    addAction(zoomToFit);
-    addAction(centerCN);
-    addAction(exportPDF);
-    addAction(exportWholeTreePDF);
-    addAction(print);
-
-    addAction(addVisualisation);
-    
-    addAction(setPath);
-    addAction(inspectPath);
-
-    contextMenu = new QMenu(this);
-    contextMenu->addAction(inspectCN);
-    contextMenu->addAction(centerCN);
-
-    contextMenu->addSeparator();
-
-    contextMenu->addAction(searchNext);
-    contextMenu->addAction(searchAll);      
-
-    contextMenu->addSeparator();
-
-    contextMenu->addAction(toggleHidden);
-    contextMenu->addAction(hideFailed);
-    contextMenu->addAction(unhideAll);
-
-    contextMenu->addSeparator();
-
-    contextMenu->addAction(setPath);
-    contextMenu->addAction(inspectPath);
-
-    contextMenu->addSeparator();
-
-    connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
-
-    connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
-
-    connect(autoZoomButton, SIGNAL(toggled(bool)), canvas,
-            SLOT(setAutoZoom(bool)));
-
-    connect(canvas, SIGNAL(autoZoomChanged(bool)),
-            autoZoomButton, SLOT(setChecked(bool)));
-
-    connect(&canvas->searcher, SIGNAL(scaleChanged(int)),
-            scaleBar, SLOT(setValue(int)));
-    
-    layout->addWidget(scrollArea, 0,0,-1,1);
-    layout->addWidget(scaleBar, 1,1, Qt::AlignHCenter);
-    layout->addWidget(autoZoomButton, 0,1, Qt::AlignHCenter);
-    
-    setLayout(layout);
-
-    canvas->show();
-
-    resize(500, 400);
-
-    // enables on_<sender>_<signal>() mechanism
-    QMetaObject::connectSlotsByName(this);
-  }
-
-  void
-  TreeCanvas::resizeEvent(QResizeEvent*) {
-    canvas->resizeToOuter();
-  }
-
-  void
-  TreeCanvas::setInspector(Inspector* i0) { canvas->setInspector(i0); }
-  
-  TreeCanvas::~TreeCanvas(void) { delete canvas; }
-  
-  void
-  TreeCanvas::on_canvas_contextMenu(QContextMenuEvent* event) {
-    contextMenu->popup(event->globalPos());    
-  }
-
-  void
-  TreeCanvas::on_canvas_statusChanged(VisualNode* n, const Statistics& stats,
-                                      bool finished) {
-    if (!finished) {
-      inspectCN->setEnabled(false);
-      stopCN->setEnabled(true);
-      reset->setEnabled(false);
-      navUp->setEnabled(false);
-      navDown->setEnabled(false);
-      navLeft->setEnabled(false);
-      navRight->setEnabled(false);
-      navRoot->setEnabled(false);
-      navNextSol->setEnabled(false);
-      navPrevSol->setEnabled(false);
-
-      searchNext->setEnabled(false);
-      searchAll->setEnabled(false);
-      toggleHidden->setEnabled(false);
-      hideFailed->setEnabled(false);
-      unhideAll->setEnabled(false);
-      zoomToFit->setEnabled(false);
-      centerCN->setEnabled(false);
-      exportPDF->setEnabled(false);
-      exportWholeTreePDF->setEnabled(false);
-      print->setEnabled(false);
-
-      setPath->setEnabled(false);
-      inspectPath->setEnabled(false);
-      addVisualisation->setEnabled(false);
-    } else {
-      inspectCN->setEnabled(true);
-      stopCN->setEnabled(false);
-      reset->setEnabled(true);
-
-      if (n->isOpen() || n->hasOpenChildren()) {
-        searchNext->setEnabled(true);
-        searchAll->setEnabled(true);
-      } else {
-        searchNext->setEnabled(false);
-        searchAll->setEnabled(false);      
-      }
-      if (n->getNumberOfChildren() > 0) {
-        navDown->setEnabled(true);
-        toggleHidden->setEnabled(true);
-        hideFailed->setEnabled(true);
-        unhideAll->setEnabled(true);            
-      } else {
-        navDown->setEnabled(false);
-        toggleHidden->setEnabled(false);
-        hideFailed->setEnabled(false);
-        unhideAll->setEnabled(false);      
-      }
-
-      VisualNode* p = n->getParent();
-      if (p == NULL) {
-        navRoot->setEnabled(false);
-        navUp->setEnabled(false);
-        navRight->setEnabled(false);
-        navLeft->setEnabled(false);
-      } else {
-        navRoot->setEnabled(true);
-        navUp->setEnabled(true);
-        unsigned int alt = n->getAlternative();
-        navRight->setEnabled(alt + 1 < p->getNumberOfChildren());
-        navLeft->setEnabled(alt > 0);
-      }
-
-      VisualNode* root = n;
-      while (!root->isRoot())
-        root = root->getParent();
-      NextSolCursor nsc(n, false);
-      PreorderNodeVisitor<NextSolCursor> nsv(nsc);
-      while (nsv.next()) {}
-      navNextSol->setEnabled(nsv.getCursor().node() != root);
-
-      NextSolCursor psc(n, true);
-      PreorderNodeVisitor<NextSolCursor> psv(psc);
-      while (psv.next()) {}
-      navPrevSol->setEnabled(psv.getCursor().node() != root);
-
-      zoomToFit->setEnabled(true);
-      centerCN->setEnabled(true);
-      exportPDF->setEnabled(true);
-      exportWholeTreePDF->setEnabled(true);
-      print->setEnabled(true);
-
-      setPath->setEnabled(true);
-      inspectPath->setEnabled(true);
-      addVisualisation->setEnabled(true);
-    }
-    emit statusChanged(stats,finished);
-  }
-  
-  void
-  TreeCanvas::finish(void) {
-    canvas->finish();
-  }
-
-  void
-  TreeCanvas::closeEvent(QCloseEvent* event) {
-    canvas->finish();
-    event->accept();
-  }
-
-  void
-  TreeCanvas::setAutoHideFailed(bool b) { canvas->setAutoHideFailed(b); }
-  void
-  TreeCanvas::setAutoZoom(bool b) { canvas->setAutoZoom(b); }
-  bool
-  TreeCanvas::getAutoHideFailed(void) { return canvas->getAutoHideFailed(); }
-  bool
-  TreeCanvas::getAutoZoom(void) { return canvas->getAutoZoom(); }
-  void
-  TreeCanvas::setRefresh(int i) { canvas->setRefresh(i); }
-  bool
-  TreeCanvas::getSmoothScrollAndZoom(void) {
-    return canvas->getSmoothScrollAndZoom();
-  }
-  void
-  TreeCanvas::setSmoothScrollAndZoom(bool b) {
-    canvas->setSmoothScrollAndZoom(b);
   }
 
 }}
