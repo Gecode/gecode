@@ -191,6 +191,14 @@
  */
 
 /**
+ * \defgroup TaskGist Gist
+ *
+ * Gist is the Gecode Interactive Search Tool. It is based on the
+ * <a href="http://trolltech.com/products/qt">Qt GUI toolkit</a>.
+ *
+ */
+
+/**
  * \defgroup Func Common functionality
  */
 
@@ -459,6 +467,7 @@
  *  - \ref TaskVar
  *  - \ref TaskTest
  *  - \ref TaskReflSer
+ *  - \ref TaskGist
  *
  * \section SecByFunc Available functionality
  *

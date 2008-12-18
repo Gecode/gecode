@@ -49,6 +49,7 @@
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
+  /// \brief Visualisation view for variable arrays
   class VarArrayView : public QWidget {
 
     Q_OBJECT

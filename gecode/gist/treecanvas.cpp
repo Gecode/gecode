@@ -45,7 +45,6 @@
 #include <gecode/gist/layoutcursor.hh>
 #include <gecode/gist/visualnode.hh>
 #include <gecode/gist/drawingcursor.hh>
-#include <gecode/gist/addchild.hh>
 #include <gecode/gist/addvisualisationdialog.hh>
 
 #include <gecode/search.hh>
@@ -406,17 +405,6 @@ namespace Gecode { namespace Gist {
       scrollTimerId = startTimer(15);
     }
   }
-
-  class SizeCursor : public NodeCursor<VisualNode> {
-  public:
-    size_t s;
-    SizeCursor(VisualNode* theNode) : NodeCursor<VisualNode>(theNode), s(0) {}
-    void processCurrentNode(void) {
-      size_t ns = node()->size();
-      // std::cout << "p " << ns << " children " << node()->getNumberOfChildren() << std::endl;
-      s += ns;
-    }
-  };
 
   void
   TreeCanvas::inspectCurrentNode(void) {

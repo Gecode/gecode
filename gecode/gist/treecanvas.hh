@@ -46,16 +46,22 @@
 
 namespace Gecode {  namespace Gist {
 
+  /// \brief Parameters for the tree layout
   class LayoutConfig {
   public:
+    /// Minimum scale factor
     static const int minScale = 10;
+    /// Maximum scale factor
     static const int maxScale = 400;
+    /// Default scale factor
     static const int defScale = 100;
+    /// Maximum scale factor for automatic zoom
     static const int maxAutoZoomScale = defScale;    
   };
   
   class TreeCanvas;
-  
+
+  /// \brief A thread that concurrently explores the tree
   class SearcherThread : public QThread {
     Q_OBJECT
   private:
@@ -75,7 +81,7 @@ namespace Gecode {  namespace Gist {
     void run(void);
   };
 
-  /// \brief Implementation of the TreeCanvas
+  /// \brief A canvas that displays the search tree
   class GECODE_GIST_EXPORT TreeCanvas : public QWidget {
     Q_OBJECT
 
@@ -164,9 +170,9 @@ namespace Gecode {  namespace Gist {
     bool getShowCopies(void);
     /// Set refresh rate
     void setRefresh(int i);
-    /// Return preference wheter to use smooth scrolling and zooming
+    /// Return preference whether to use smooth scrolling and zooming
     bool getSmoothScrollAndZoom(void);
-    /// Set preference wheter to use smooth scrolling and zooming
+    /// Set preference whether to use smooth scrolling and zooming
     void setSmoothScrollAndZoom(bool b);
     /// Resize to the outer widget size if auto zoom is enabled
     void resizeToOuter(void);

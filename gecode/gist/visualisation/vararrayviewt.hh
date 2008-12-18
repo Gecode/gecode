@@ -41,6 +41,7 @@
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
+  /// \brief Termplatized version of VarArrayView
   template<class VarItem>
   class VarArrayViewT : public VarArrayView {
 

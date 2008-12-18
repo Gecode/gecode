@@ -74,14 +74,14 @@ namespace Gecode { namespace Gist {
     scaleBar->setMaximum(LayoutConfig::maxScale);
     scaleBar->setValue(LayoutConfig::defScale);
     
-    inspectCN = new QAction("Inspect", this);
-    inspectCN->setShortcut(QKeySequence("Return"));
-    connect(inspectCN, SIGNAL(triggered()), canvas, 
+    inspect = new QAction("Inspect", this);
+    inspect->setShortcut(QKeySequence("Return"));
+    connect(inspect, SIGNAL(triggered()), canvas, 
                        SLOT(inspectCurrentNode()));
 
-    stopCN = new QAction("Stop search", this);
-    stopCN->setShortcut(QKeySequence("Esc"));
-    connect(stopCN, SIGNAL(triggered()), canvas, 
+    stop = new QAction("Stop search", this);
+    stop->setShortcut(QKeySequence("Esc"));
+    connect(stop, SIGNAL(triggered()), canvas, 
                     SLOT(stopSearch()));
 
     reset = new QAction("Reset", this);
@@ -148,9 +148,9 @@ namespace Gecode { namespace Gist {
     zoomToFit->setShortcut(QKeySequence("Z"));
     connect(zoomToFit, SIGNAL(triggered()), canvas, SLOT(zoomToFit()));
 
-    centerCN = new QAction("Center current node", this);
-    centerCN->setShortcut(QKeySequence("C"));
-    connect(centerCN, SIGNAL(triggered()), canvas, SLOT(centerCurrentNode()));
+    center = new QAction("Center current node", this);
+    center->setShortcut(QKeySequence("C"));
+    connect(center, SIGNAL(triggered()), canvas, SLOT(centerCurrentNode()));
 
     exportPDF = new QAction("Export subtree PDF...", this);
     exportPDF->setShortcut(QKeySequence("P"));
@@ -179,8 +179,8 @@ namespace Gecode { namespace Gist {
     addVisualisation->setShortcut(QKeySequence("Shift+V"));
     connect(addVisualisation, SIGNAL(triggered()), canvas, SLOT(addVisualisation()));
 
-    addAction(inspectCN);
-    addAction(stopCN);
+    addAction(inspect);
+    addAction(stop);
     addAction(reset);
     addAction(navUp);
     addAction(navDown);
@@ -196,7 +196,7 @@ namespace Gecode { namespace Gist {
     addAction(hideFailed);
     addAction(unhideAll);
     addAction(zoomToFit);
-    addAction(centerCN);
+    addAction(center);
     addAction(exportPDF);
     addAction(exportWholeTreePDF);
     addAction(print);
@@ -217,8 +217,8 @@ namespace Gecode { namespace Gist {
     inspectorMenu->addActions(inspectorGroup->actions());
 
     contextMenu = new QMenu(this);
-    contextMenu->addAction(inspectCN);
-    contextMenu->addAction(centerCN);
+    contextMenu->addAction(inspect);
+    contextMenu->addAction(center);
 
     contextMenu->addSeparator();
 
@@ -297,8 +297,8 @@ namespace Gecode { namespace Gist {
   Gist::on_canvas_statusChanged(VisualNode* n, const Statistics& stats,
                                 bool finished) {
     if (!finished) {
-      inspectCN->setEnabled(false);
-      stopCN->setEnabled(true);
+      inspect->setEnabled(false);
+      stop->setEnabled(true);
       reset->setEnabled(false);
       navUp->setEnabled(false);
       navDown->setEnabled(false);
@@ -314,7 +314,7 @@ namespace Gecode { namespace Gist {
       hideFailed->setEnabled(false);
       unhideAll->setEnabled(false);
       zoomToFit->setEnabled(false);
-      centerCN->setEnabled(false);
+      center->setEnabled(false);
       exportPDF->setEnabled(false);
       exportWholeTreePDF->setEnabled(false);
       print->setEnabled(false);
@@ -323,8 +323,8 @@ namespace Gecode { namespace Gist {
       inspectPath->setEnabled(false);
       addVisualisation->setEnabled(false);
     } else {
-      inspectCN->setEnabled(true);
-      stopCN->setEnabled(false);
+      inspect->setEnabled(true);
+      stop->setEnabled(false);
       reset->setEnabled(true);
 
       if (n->isOpen() || n->hasOpenChildren()) {
@@ -374,7 +374,7 @@ namespace Gecode { namespace Gist {
       navPrevSol->setEnabled(psv.getCursor().node() != root);
 
       zoomToFit->setEnabled(true);
-      centerCN->setEnabled(true);
+      center->setEnabled(true);
       exportPDF->setEnabled(true);
       exportWholeTreePDF->setEnabled(true);
       print->setEnabled(true);

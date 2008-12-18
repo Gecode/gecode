@@ -80,10 +80,8 @@ namespace Gecode { namespace Gist {
       : alternative(a), ownBest(best), branchKind(bk) {
         desc.step = d;
       }
- };
+  };
 
- Statistics Statistics::dummy;
-  
   StepDesc::StepDesc(int steps) : noOfSteps(steps), debug(false) { }
   
   void

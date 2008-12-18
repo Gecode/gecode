@@ -672,8 +672,8 @@ GISTHDR0 = \
 	textoutput.hh treecanvas.hh zoomToFitIcon.hpp \
 	visualnode.hh visualnode.hpp \
 	mainwindow.hh preferences.hh \
-	addchild.hh addvisualisationdialog.hh \
-	ui_addchild.hh ui_addvisualisationdialog.hh\
+	addvisualisationdialog.hh \
+	ui_addvisualisationdialog.hh\
 	config.hh \
 	visualisation/vararrayview.hh visualisation/vararrayviewt.hh \
 	visualisation/vararrayitem.hh visualisation/varitem.hh \
@@ -685,7 +685,7 @@ GISTSRC0 = \
 	layoutcursor.cpp spacenode.cpp \
 	textoutput.cpp treecanvas.cpp qtgist.cpp visualnode.cpp \
 	mainwindow.cpp preferences.cpp \
-	addchild.cpp addvisualisationdialog.cpp \
+	addvisualisationdialog.cpp \
 	config.cpp \
 	visualisation/vararrayview.cpp \
 	visualisation/varitem.cpp \
@@ -694,7 +694,7 @@ GISTSRC0 = \
 
 GISTMOCSRC0 = \
 	moc_treecanvas.cpp moc_qtgist.cpp moc_mainwindow.cpp moc_preferences.cpp \
-	moc_addchild.cpp moc_addvisualisationdialog.cpp \
+	moc_addvisualisationdialog.cpp \
 	visualisation/moc_vararrayview.cpp
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)

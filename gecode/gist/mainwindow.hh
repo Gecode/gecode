@@ -42,12 +42,18 @@
 
 namespace Gecode { namespace Gist {
   
+  /// Display information about %Gist
   class AboutGist : public QDialog {
   public:
+    /// Constructor
     AboutGist(QWidget* parent = 0);
   };
   
-  /// \brief Main window for stand-alone %Gist
+  /**
+   * \brief Main window for stand-alone %Gist
+   *
+   * \ingroup TaskGist
+   */
   class GistMainWindow : public QMainWindow {
     Q_OBJECT
   private:

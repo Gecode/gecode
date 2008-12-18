@@ -43,6 +43,7 @@
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
+/// \brief Visualisation item for set variables
 class SetVarItem : public VarItem {
   
 public:

@@ -61,6 +61,7 @@
 
 namespace Gecode { namespace Gist {
 
+  /// \brief User interface for visualisation dialog
   class Ui_AddVisualisationDialogClass
   {
   public:

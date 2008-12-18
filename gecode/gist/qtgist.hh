@@ -41,7 +41,14 @@
 
 namespace Gecode {  namespace Gist {
 
-  /// Tree canvas widget
+  /**
+   * \brief %Gecode Interactive %Search Tool
+   *
+   * %Gist comes a a Qt widget that implements an interactive search tree
+   * viewer and explorer.
+   *
+   * \ingroup TaskGist
+   */
   class Gist : public QWidget {
     Q_OBJECT
   private:
@@ -56,32 +63,55 @@ namespace Gecode {  namespace Gist {
     /// Menu of inspectors
     QMenu* inspectorMenu;
   public:
-    QAction* inspectCN;
-    QAction* stopCN;
+    /// Inspect current node
+    QAction* inspect;
+    /// Stop search
+    QAction* stop;
+    /// Reset %Gist
     QAction* reset;
+    /// Navigate to parent node
     QAction* navUp;
+    /// Navigate to leftmost child node
     QAction* navDown;
+    /// Navigate to left sibling
     QAction* navLeft;
+    /// Navigate to right sibling
     QAction* navRight;
+    /// Navigate to root node
     QAction* navRoot;
+    /// Navigate to next solution (to the left)
     QAction* navNextSol;
+    /// Navigate to previous solution (to the right)
     QAction* navPrevSol;
-
+    /// Search next solution in current subtree
     QAction* searchNext;
+    /// Search all solutions in current subtree
     QAction* searchAll;
+    /// Toggle whether current node is hidden
     QAction* toggleHidden;
+    /// Hide failed subtrees under current node
     QAction* hideFailed;
+    /// Unhide all hidden subtrees under current node    
     QAction* unhideAll;
+    /// Zoom tree to fit window
     QAction* zoomToFit;
-    QAction* centerCN;
+    /// Center on current node
+    QAction* center;
+    /// Export PDF of current subtree
     QAction* exportPDF;
+    /// Export PDF of whole tree
     QAction* exportWholeTreePDF;
+    /// Print tree
     QAction* print;
 
+    /// Set path from current node to the root
     QAction* setPath;
+    /// Inspect all nodes on selected path
     QAction* inspectPath;
+    /// Add a visualisation
     QAction* addVisualisation;
 
+    /// Group of all actions for inspectors
     QActionGroup* inspectorGroup;
   public:
     /// Constructor
@@ -107,9 +137,9 @@ namespace Gecode {  namespace Gist {
     
     /// Set refresh rate
     void setRefresh(int i);
-    /// Return preference wheter to use smooth scrolling and zooming
+    /// Return preference whether to use smooth scrolling and zooming
     bool getSmoothScrollAndZoom(void);
-    /// Set preference wheter to use smooth scrolling and zooming
+    /// Set preference whether to use smooth scrolling and zooming
     void setSmoothScrollAndZoom(bool b);
 
     /// Set recomputation parameters \a c_d and \a a_d
@@ -126,11 +156,15 @@ namespace Gecode {  namespace Gist {
     void resizeEvent(QResizeEvent*);
 
   Q_SIGNALS:
+    /// Signals that the tree has changed
     void statusChanged(const Statistics&, bool);
 
   private Q_SLOTS:
+    /// Displays the context menu for a node
     void on_canvas_contextMenu(QContextMenuEvent*);
+    /// Reacts on status changes
     void on_canvas_statusChanged(VisualNode*, const Statistics&, bool);
+    /// Reacts on inspector selection
     void selectInspector(QAction*);
   protected:
     /// Close the widget

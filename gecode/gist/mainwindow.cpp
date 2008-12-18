@@ -42,6 +42,7 @@
 
 namespace Gecode { namespace Gist {
   
+  /// \brief Small node drawings for the status bar
   class StatusBarNode : public QWidget {
   public:
     StatusBarNode(NodeStatus s) : status(s) {
@@ -158,7 +159,7 @@ namespace Gecode { namespace Gist {
     connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
     
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
-    nodeMenu->addAction(c.inspectCN);
+    nodeMenu->addAction(c.inspect);
     nodeMenu->addAction(c.setPath);
     nodeMenu->addAction(c.inspectPath);
     nodeMenu->addSeparator();
@@ -175,7 +176,7 @@ namespace Gecode { namespace Gist {
     nodeMenu->addAction(c.unhideAll);
     nodeMenu->addSeparator();
     nodeMenu->addAction(c.zoomToFit);
-    nodeMenu->addAction(c.centerCN);
+    nodeMenu->addAction(c.center);
 #if QT_VERSION >= 0x040400
     nodeMenu->addAction(c.exportPDF);
 #endif
@@ -184,7 +185,7 @@ namespace Gecode { namespace Gist {
     searchMenu->addAction(c.searchNext);
     searchMenu->addAction(c.searchAll);
     searchMenu->addSeparator();
-    searchMenu->addAction(c.stopCN);
+    searchMenu->addAction(c.stop);
     searchMenu->addSeparator();
     searchMenu->addAction(c.reset);
 

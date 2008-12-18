@@ -58,7 +58,7 @@ namespace Gecode { namespace Gist {
   static const unsigned int FIRSTBIT = 5; //< First free bit in status word
   static const unsigned int STATUSMASK = (1<<(FIRSTBIT-1))-1; //< Mask for accessing status
 
-  // TODO nikopp: doxygen comments
+  /// \brief Description for step nodes
   class StepDesc {
   public:
     int noOfSteps;
@@ -67,7 +67,7 @@ namespace Gecode { namespace Gist {
     void toggleDebug(void);
   };
   
-  // TODO nikopp: doxygen comments
+  /// \brief Description for special nodes
   class SpecialDesc {
   public:
     const std::string vn;
@@ -79,18 +79,23 @@ namespace Gecode { namespace Gist {
   /// Statistics about the search tree
   class Statistics {
   public:
+    /// Number of solutions
     int solutions;
+    /// Number of failures
     int failures;
+    /// Number of choice nodes
     int choices;
+    /// Number of open, undetermined nodes
     int undetermined;
+    /// Maximum depth of the tree
     int maxDepth;
+    /// Whether any weakly monotonic propagators were executed
     bool hadWMPropagators;
     
+    /// Constructor
     Statistics(void)
     : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0),
       hadWMPropagators(false) {}
-    
-    static Statistics dummy;
   };
 
   class SpaceNode;

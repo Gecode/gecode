@@ -47,6 +47,7 @@
 
 namespace Gecode { namespace Gist {
 
+/// \brief Choose a visualisation for the currently explored Problem
 class AddVisualisationDialog : public QDialog
 {
   Q_OBJECT

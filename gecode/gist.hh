@@ -91,6 +91,8 @@ namespace Gecode {
     * An inspector provides a virtual method that is called
     * when a node in the search tree is inspected (e.g. by
     * double-clicking)
+    *
+    * \ingroup TaskGist
     */
   class GECODE_GIST_EXPORT Inspector {
   public:
@@ -142,11 +144,19 @@ namespace Gecode {
   
   }	
 
-  /// Create a new stand-alone Gist for \a root using \a gi
+  /**
+   * \brief Create a new stand-alone Gist for \a root using \a gi
+   *
+   * \ingroup TaskGist
+   */
   GECODE_GIST_EXPORT
   int explore(Space* root, Gist::Inspector* gi = 0);
 
-  /// Create a new stand-alone Gist for branch-and-bound search of \a root, using \a gi
+  /**
+   * \brief Create a new stand-alone Gist for branch-and-bound search of \a root, using \a gi
+   *
+   * \ingroup TaskGist
+   */
   GECODE_GIST_EXPORT
   int exploreBest(Space* root, Gist::Inspector* gi = 0);
 

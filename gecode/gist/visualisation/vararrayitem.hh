@@ -45,6 +45,7 @@
 
 namespace Gecode { namespace Gist { namespace Visualisation {
 
+  /// \brief Visualisation item for variable arrays
   template<class VarItem>
   class VarArrayItem : public QGraphicsRectItem {
 
