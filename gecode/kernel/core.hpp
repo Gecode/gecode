@@ -98,13 +98,13 @@ namespace Gecode {
       /// Delete object
       virtual ~Object(void);
       /// Allocate memory from space
-      static void* operator new(size_t s, Space& s);
+      static void* operator new(size_t, Space&);
       /// Free memory
       static void operator delete(void*, size_t);
       /// No-op (for exceptions)
       static void operator delete(void*, Space&);
     private:
-      static void* operator new(size_t s);
+      static void* operator new(size_t);
     };
   private:
     /// The shared object
