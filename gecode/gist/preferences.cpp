@@ -42,9 +42,13 @@ namespace Gecode { namespace Gist {
     QSettings settings("gecode.org", "Gist");
     hideFailed = settings.value("search/hideFailed", true).toBool();
     zoom = settings.value("search/zoom", false).toBool();
+    copies = settings.value("search/copies", false).toBool();
     refresh = settings.value("search/refresh", 500).toInt();
     smoothScrollAndZoom =
       settings.value("smoothScrollAndZoom", true).toBool();
+    
+    c_d = settings.value("search/cd", 8).toInt();
+    a_d = settings.value("search/ad", 2).toInt();
     
     hideCheck =
       new QCheckBox(tr("Hide failed subtrees automatically"));
@@ -83,8 +87,44 @@ namespace Gecode { namespace Gist {
     layout->addWidget(zoomCheck);
     layout->addWidget(smoothCheck);
     layout->addLayout(refreshLayout);
-    layout->addLayout(buttonLayout);
-    setLayout(layout);
+    
+    QTabWidget* tabs = new QTabWidget;
+    QWidget* page1 = new QWidget;
+    page1->setLayout(layout);
+    tabs->addTab(page1, "Drawing");
+
+    QLabel* cdlabel = new QLabel(tr("Copying distance:"));
+    cdBox  = new QSpinBox();
+    cdBox->setRange(0, 10000);
+    cdBox->setValue(c_d);
+    cdBox->setSingleStep(1);
+    QHBoxLayout* cdLayout = new QHBoxLayout();
+    cdLayout->addWidget(cdlabel);
+    cdLayout->addWidget(cdBox);
+    QLabel* adlabel = new QLabel(tr("Adaptive distance:"));
+    adBox  = new QSpinBox();
+    adBox->setRange(0, 10000);
+    adBox->setValue(a_d);
+    adBox->setSingleStep(1);
+    QHBoxLayout* adLayout = new QHBoxLayout();
+    adLayout->addWidget(adlabel);
+    adLayout->addWidget(adBox);
+    copiesCheck =
+      new QCheckBox(tr("Show copies in the tree"));
+    copiesCheck->setChecked(copies);
+    layout = new QVBoxLayout();
+    layout->addLayout(cdLayout);
+    layout->addLayout(adLayout);
+    layout->addWidget(copiesCheck);
+    QWidget* page2 = new QWidget;
+    page2->setLayout(layout);
+    tabs->addTab(page2, "Search");
+
+    QVBoxLayout* mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(tabs);
+    mainLayout->addLayout(buttonLayout);
+    setLayout(mainLayout);
+    
     setWindowTitle(tr("Preferences"));
   }
 
@@ -94,11 +134,15 @@ namespace Gecode { namespace Gist {
     zoom = zoomCheck->isChecked();
     refresh = refreshBox->value();
     smoothScrollAndZoom = smoothCheck->isChecked();
+    copies = copiesCheck->isChecked();
     QSettings settings("gecode.org", "Gist");
     settings.setValue("search/hideFailed", hideFailed);
     settings.setValue("search/zoom", zoom);
+    settings.setValue("search/copies", copies);
     settings.setValue("search/refresh", refresh);
     settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
+    settings.setValue("search/cd", c_d);
+    settings.setValue("search/ad", a_d);
     
     accept();
   }
@@ -109,10 +153,14 @@ namespace Gecode { namespace Gist {
     zoom = false;
     refresh = 500;
     smoothScrollAndZoom = true;
+    copies = false;
+    c_d = 8;
+    a_d = 2;
     hideCheck->setChecked(hideFailed);
     zoomCheck->setChecked(zoom);
     refreshBox->setValue(refresh);
     smoothCheck->setChecked(smoothScrollAndZoom);
+    copiesCheck->setChecked(copies);
   }
   
 }}

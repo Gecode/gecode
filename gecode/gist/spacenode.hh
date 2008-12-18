@@ -147,9 +147,9 @@ namespace Gecode { namespace Gist {
     void setStatus(NodeStatus s);
     
     /// Recompute workingSpace from a copy higher up, return distance to copy
-    int recompute(BestNode* curBest);
+    int recompute(BestNode* curBest, int c_d, int a_d);
     /// Acquire working space, either from parent or by recomputation
-    void acquireSpace(BestNode* curBest);
+    void acquireSpace(BestNode* curBest, int c_d, int a_d);
 
     /// Book-keeping of open children
     void closeChild(bool hadFailures, bool hadSolutions);
@@ -162,7 +162,7 @@ namespace Gecode { namespace Gist {
     ~SpaceNode(void);
 
     /// Return working space.  Receiver must delete the space.
-    Space* getSpace(BestNode* curBest);
+    Space* getSpace(BestNode* curBest, int c_d, int a_d);
 
     /// Return whether this node is the currently best solution
     bool isCurrentBest(BestNode* curBest);
@@ -179,7 +179,8 @@ namespace Gecode { namespace Gist {
       */
     int getNumberOfChildNodes(NodeAllocator& na,
                               BestNode* curBest,
-                              Statistics& stats = Statistics::dummy);
+                              Statistics& stats,
+                              int c_d, int a_d);
     
     /// Return current status of the node
     NodeStatus getStatus(void) const;

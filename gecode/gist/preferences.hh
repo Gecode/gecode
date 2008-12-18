@@ -51,7 +51,10 @@ namespace Gecode { namespace Gist {
     QCheckBox* hideCheck;
     QCheckBox* zoomCheck;
     QCheckBox* smoothCheck;
+    QCheckBox* copiesCheck;
     QSpinBox*  refreshBox;
+    QSpinBox*  cdBox;
+    QSpinBox*  adBox;
   protected Q_SLOTS:
     /// Write settings
     void writeBack(void);
@@ -65,10 +68,17 @@ namespace Gecode { namespace Gist {
     bool hideFailed;
     /// Whether to automatically zoom during search
     bool zoom;
+    /// Whether to show where copies are in the tree
+    bool copies;
     /// How often to refresh the display during search
     int refresh;
     /// Whether to use smooth scrolling and zooming
     bool smoothScrollAndZoom;
+
+    /// The copying distance
+    int c_d;
+    /// The adaptive recomputation distance
+    int a_d;
     
   };
   

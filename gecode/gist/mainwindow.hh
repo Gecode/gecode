@@ -37,6 +37,7 @@
 #ifndef GECODE_GIST_MAINWINDOW_HH
 #define GECODE_GIST_MAINWINDOW_HH
 
+#include <gecode/gist.hh>
 #include <gecode/gist/qtgist.hh>
 
 namespace Gecode { namespace Gist {
@@ -51,7 +52,7 @@ namespace Gecode { namespace Gist {
     Q_OBJECT
   protected:
     /// The contained tree canvas
-    TreeCanvas c;
+    Gist c;
     /// A menu bar
     QMenuBar* menuBar;
     /// About dialog
@@ -75,7 +76,7 @@ namespace Gecode { namespace Gist {
     void preferences(bool setup=false);
   public:
     /// Constructor
-    GistMainWindow(Space* root, bool bab, Gist::Inspector* gi);
+    GistMainWindow(Space* root, bool bab, Inspector* gi);
   protected:
     void closeEvent(QCloseEvent* event);
   };

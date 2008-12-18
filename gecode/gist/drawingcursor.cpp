@@ -66,10 +66,10 @@ namespace Gecode { namespace Gist {
   
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
                                QPainter& painter0,
-                               const QRect& clippingRect0)
+                               const QRect& clippingRect0, bool showCopies)
     : NodeCursor<VisualNode>(root), painter(painter0), 
       clippingRect(clippingRect0), curBest(curBest0),
-      x(0), y(0) {
+      x(0), y(0), copies(showCopies) {
     QPen pen = painter.pen();
       pen.setWidth(1);
       painter.setPen(pen);
@@ -263,16 +263,16 @@ namespace Gecode { namespace Gist {
       }
     	
     }
-    // // Debug info: show working spaces and copies
-    // if (n->hasCopy()) {
-    //  painter.setBrush(Qt::darkRed);
-    //  painter.drawEllipse(myx, myy, 10, 10);
-    // }
-    // 
-    // if (n->hasWorkingSpace()) {
-    //  painter.setBrush(Qt::darkYellow);
-    //  painter.drawEllipse(myx, myy + 10, 10, 10);
-    // }
+
+    if (copies && n->hasCopy()) {
+     painter.setBrush(Qt::darkRed);
+     painter.drawEllipse(myx, myy, 10, 10);
+    }
+    
+    if (copies && n->hasWorkingSpace()) {
+     painter.setBrush(Qt::darkYellow);
+     painter.drawEllipse(myx, myy + 10, 10, 10);
+    }
 
   }
   

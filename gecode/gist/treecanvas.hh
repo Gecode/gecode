@@ -80,7 +80,7 @@ namespace Gecode {  namespace Gist {
     Q_OBJECT
 
     friend class SearcherThread;
-    friend class TreeCanvas;
+    friend class Gist;
 
   public:
     /// Constructor
@@ -146,6 +146,8 @@ namespace Gecode {  namespace Gist {
     /// Call the inspector for all nodes on the path from root to head of the path
     void inspectPath(void);
 
+    /// Set recomputation distances
+    void setRecompDistances(int c_d, int a_d);
     /// Set preference whether to automatically hide failed subtrees
     void setAutoHideFailed(bool b);
     /// Set preference whether to automatically zoom to fit
@@ -154,6 +156,10 @@ namespace Gecode {  namespace Gist {
     bool getAutoHideFailed(void);
     /// Return preference whether to automatically zoom to fit
     bool getAutoZoom(void);
+    /// Set preference whether to show copies in the tree
+    void setShowCopies(bool b);
+    /// Return preference whether to show copies in the tree
+    bool getShowCopies(void);
     /// Set refresh rate
     void setRefresh(int i);
     /// Return preference wheter to use smooth scrolling and zooming
@@ -225,10 +231,17 @@ namespace Gecode {  namespace Gist {
     bool autoHideFailed;
     /// Whether to zoom automatically
     bool autoZoom;
+    /// Whether to show copies in the tree
+    bool showCopies;
     /// Refresh rate
     int refresh;
     /// Whether to use smooth scrolling and zooming
     bool smoothScrollAndZoom;
+
+    /// The recomputation distance
+    int c_d;
+    /// The adaptive recomputation distance
+    int a_d;
 
     /// The next point in time
     int nextPit;

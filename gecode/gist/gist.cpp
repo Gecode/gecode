@@ -37,7 +37,6 @@
 #include <QtGui>
 
 #include <gecode/gist.hh>
-#include <gecode/gist/treecanvas.hh>
 #include <gecode/gist/textoutput.hh>
 #include <gecode/gist/mainwindow.hh>
 
@@ -88,12 +87,12 @@ namespace Gecode {
 
     QWidget*
     exploreWidget(QWidget* parent, Space* root, bool bab,
-                  Gist::Inspector* gi) {
+                  Inspector* gi) {
       if (root->status() == SS_FAILED)
         root = NULL;
       else
         root = root->clone();
-      Gist::TreeCanvas *c = new Gist::TreeCanvas(root, bab, parent);
+      Gist::Gist *c = new Gist::Gist(root, bab, parent);
       if (gi)
         c->setInspector(gi);
       c->show();
@@ -101,14 +100,14 @@ namespace Gecode {
     }
 
     int
-    explore(Space* root, bool bab, Gist::Inspector* gi) {
+    explore(Space* root, bool bab, Inspector* gi) {
       char* argv = ""; int argc=0;
       QApplication app(argc, &argv);
       if (root->status() == SS_FAILED)
         root = NULL;
       else
         root = root->clone();
-      Gist::GistMainWindow mw(root, bab, gi);
+      GistMainWindow mw(root, bab, gi);
       return app.exec();
     }
     

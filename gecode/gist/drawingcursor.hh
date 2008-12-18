@@ -44,7 +44,7 @@
 namespace Gecode { namespace Gist {
 
   /// \brief A cursor that draws a tree on a QWidget
-  class DrawingCursor : public Gist::NodeCursor<VisualNode> {
+  class DrawingCursor : public NodeCursor<VisualNode> {
   private:
     /// The painter where the tree is drawn
     QPainter& painter;
@@ -54,6 +54,8 @@ namespace Gecode { namespace Gist {
     BestNode* curBest;
     /// The current coordinates
     int x, y;
+
+    bool copies;
     
     /// Test if current node is clipped
     bool isClipped(void);
@@ -75,9 +77,9 @@ namespace Gecode { namespace Gist {
     static const QColor lightBlue;
     
     /// Constructor
-    DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
+    DrawingCursor(VisualNode* root, BestNode* curBest0,
                   QPainter& painter0,
-                  const QRect& clippingRect0);
+                  const QRect& clippingRect0, bool showCopies);
 
     ///\name Cursor interface
     //@{

@@ -42,8 +42,7 @@
 
 namespace Gecode { namespace Gist {
 
-  TreeCanvas::TreeCanvas(Space* root, bool bab,
-                         QWidget* parent) : QWidget(parent) {
+  Gist::Gist(Space* root, bool bab, QWidget* parent) : QWidget(parent) {
     QGridLayout* layout = new QGridLayout(this);    
 
     QScrollArea* scrollArea = new QScrollArea(this);
@@ -257,23 +256,23 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::resizeEvent(QResizeEvent*) {
+  Gist::resizeEvent(QResizeEvent*) {
     canvas->resizeToOuter();
   }
 
   void
-  TreeCanvas::setInspector(Inspector* i0) { canvas->setInspector(i0); }
+  Gist::setInspector(Inspector* i0) { canvas->setInspector(i0); }
   
-  TreeCanvas::~TreeCanvas(void) { delete canvas; }
+  Gist::~Gist(void) { delete canvas; }
   
   void
-  TreeCanvas::on_canvas_contextMenu(QContextMenuEvent* event) {
+  Gist::on_canvas_contextMenu(QContextMenuEvent* event) {
     contextMenu->popup(event->globalPos());    
   }
 
   void
-  TreeCanvas::on_canvas_statusChanged(VisualNode* n, const Statistics& stats,
-                                      bool finished) {
+  Gist::on_canvas_statusChanged(VisualNode* n, const Statistics& stats,
+                                bool finished) {
     if (!finished) {
       inspectCN->setEnabled(false);
       stopCN->setEnabled(true);
@@ -365,33 +364,55 @@ namespace Gecode { namespace Gist {
   }
   
   void
-  TreeCanvas::finish(void) {
+  Gist::finish(void) {
     canvas->finish();
   }
 
   void
-  TreeCanvas::closeEvent(QCloseEvent* event) {
+  Gist::closeEvent(QCloseEvent* event) {
     canvas->finish();
     event->accept();
   }
 
   void
-  TreeCanvas::setAutoHideFailed(bool b) { canvas->setAutoHideFailed(b); }
+  Gist::setAutoHideFailed(bool b) { canvas->setAutoHideFailed(b); }
   void
-  TreeCanvas::setAutoZoom(bool b) { canvas->setAutoZoom(b); }
+  Gist::setAutoZoom(bool b) { canvas->setAutoZoom(b); }
   bool
-  TreeCanvas::getAutoHideFailed(void) { return canvas->getAutoHideFailed(); }
+  Gist::getAutoHideFailed(void) { return canvas->getAutoHideFailed(); }
   bool
-  TreeCanvas::getAutoZoom(void) { return canvas->getAutoZoom(); }
+  Gist::getAutoZoom(void) { return canvas->getAutoZoom(); }
   void
-  TreeCanvas::setRefresh(int i) { canvas->setRefresh(i); }
+  Gist::setRefresh(int i) { canvas->setRefresh(i); }
   bool
-  TreeCanvas::getSmoothScrollAndZoom(void) {
+  Gist::getSmoothScrollAndZoom(void) {
     return canvas->getSmoothScrollAndZoom();
   }
   void
-  TreeCanvas::setSmoothScrollAndZoom(bool b) {
+  Gist::setSmoothScrollAndZoom(bool b) {
     canvas->setSmoothScrollAndZoom(b);
+  }
+  void
+  Gist::setRecompDistances(int c_d, int a_d) {
+    canvas->setRecompDistances(c_d, a_d);
+  }
+
+  int
+  Gist::getCd(void) {
+    return canvas->c_d;
+  }
+  int
+  Gist::getAd(void) {
+    return canvas->a_d;
+  }
+
+  void
+  Gist::setShowCopies(bool b) {
+    canvas->setShowCopies(b);
+  }
+  bool
+  Gist::getShowCopies(void) {
+    return canvas->getShowCopies();
   }
 
 }}

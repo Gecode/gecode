@@ -83,15 +83,6 @@ namespace Gecode { namespace Gist {
  };
 
  Statistics Statistics::dummy;
-
-  /// \brief Initial configuration settings for search
-  class Config {
-  public:
-    /// Distance for adaptive recomputation
-    static const int a_d = 2;
-    /// Distance for fixed recomputation
-    static const int mrd = 8;
-  };
   
   StepDesc::StepDesc(int steps) : noOfSteps(steps), debug(false) { }
   
@@ -106,7 +97,7 @@ namespace Gecode { namespace Gist {
   BestNode::BestNode(SpaceNode* s0) : s(s0) {}
   
   int
-  SpaceNode::recompute(BestNode* curBest) {
+  SpaceNode::recompute(BestNode* curBest, int c_d, int a_d) {
     int rdist = 0;
     
     if (workingSpace == NULL) {
@@ -157,8 +148,8 @@ namespace Gecode { namespace Gist {
       int curDist = 0;
 
       while (!stck.empty()) {
-        if (Config::a_d >= 0 &&
-            curDist > Config::a_d &&
+        if (a_d >= 0 &&
+            curDist > a_d &&
             middleNode->getStatus() != SPECIAL &&
             middleNode->getStatus() != STEP &&
             curDist == rdist / 2) {
@@ -195,7 +186,7 @@ namespace Gecode { namespace Gist {
         }
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
-          b.ownBest->acquireSpace(curBest);
+          b.ownBest->acquireSpace(curBest, c_d, a_d);
           if (b.ownBest->workingSpace->status() != SS_SOLVED) {
             // in the presence of weakly monotonic propagators, we may have to
             // use search to find the solution here
@@ -216,7 +207,7 @@ namespace Gecode { namespace Gist {
   }
   
   void
-  SpaceNode::acquireSpace(BestNode* curBest) {
+  SpaceNode::acquireSpace(BestNode* curBest, int c_d, int a_d) {
     SpaceNode* p = getParent();
 
     if (getStatus() == UNDETERMINED && curBest != NULL && ownBest == NULL &&
@@ -233,7 +224,7 @@ namespace Gecode { namespace Gist {
           workingSpace->commit(*p->desc.branch, getAlternative());
       
         if (ownBest != NULL) {
-          ownBest->acquireSpace(curBest);
+          ownBest->acquireSpace(curBest, c_d, a_d);
           if (ownBest->workingSpace->status() != SS_SOLVED) {
             // in the presence of weakly monotonic propagators, we may have to
             // use search to find the solution here
@@ -247,7 +238,7 @@ namespace Gecode { namespace Gist {
     }
 
     if (workingSpace == NULL) {
-      if (recompute(curBest) > Config::mrd && Config::mrd >= 0 &&
+      if (recompute(curBest, c_d, a_d) > c_d && c_d >= 0 &&
           getStatus() != SPECIAL && getStatus() != STEP &&
           workingSpace->status() == SS_BRANCH) {
             copy = workingSpace->clone();
@@ -268,7 +259,7 @@ namespace Gecode { namespace Gist {
           copy->commit(*p->desc.branch, getAlternative());
 
         if (ownBest != NULL) {
-          ownBest->acquireSpace(curBest);
+          ownBest->acquireSpace(curBest, c_d, a_d);
           if (ownBest->workingSpace->status() != SS_SOLVED) {
             // in the presence of weakly monotonic propagators, we may have to
             // use search to find the solution here
@@ -368,11 +359,12 @@ namespace Gecode { namespace Gist {
 
   int
   SpaceNode::getNumberOfChildNodes(NodeAllocator& na,
-                                   BestNode* curBest, Statistics& stats) {
+                                   BestNode* curBest, Statistics& stats,
+                                   int c_d, int a_d) {
     int kids;
     if (isUndetermined()) {
       stats.undetermined--;
-      acquireSpace(curBest);
+      acquireSpace(curBest, c_d, a_d);
       long unsigned int noOfProps;
       bool wmp;
       switch (workingSpace->status(noOfProps,wmp)) {

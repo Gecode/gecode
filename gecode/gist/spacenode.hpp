@@ -86,8 +86,8 @@ namespace Gecode { namespace Gist {
   }
     
   forceinline Space*
-  SpaceNode::getSpace(BestNode* curBest) {
-    acquireSpace(curBest);
+  SpaceNode::getSpace(BestNode* curBest, int c_d, int a_d) {
+    acquireSpace(curBest,c_d,a_d);
     Space* ret = workingSpace;
     workingSpace = NULL;
     return ret;

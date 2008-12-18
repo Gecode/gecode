@@ -42,7 +42,7 @@
 namespace Gecode {  namespace Gist {
 
   /// Tree canvas widget
-  class TreeCanvas : public QWidget {
+  class Gist : public QWidget {
     Q_OBJECT
   private:
     /// The canvas implementation
@@ -81,9 +81,9 @@ namespace Gecode {  namespace Gist {
 
   public:
     /// Constructor
-    TreeCanvas(Space* root, bool bab = false, QWidget* parent = NULL);
+    Gist(Space* root, bool bab = false, QWidget* parent = NULL);
     /// Destructor
-    ~TreeCanvas(void);
+    ~Gist(void);
 
     /// Set Inspector to \a i0
     void setInspector(Inspector* i0);
@@ -96,12 +96,24 @@ namespace Gecode {  namespace Gist {
     bool getAutoHideFailed(void);
     /// Return preference whether to automatically zoom to fit
     bool getAutoZoom(void);
+    /// Set preference whether to show copies in the tree
+    void setShowCopies(bool b);
+    /// Return preference whether to show copies in the tree
+    bool getShowCopies(void);
+    
     /// Set refresh rate
     void setRefresh(int i);
     /// Return preference wheter to use smooth scrolling and zooming
     bool getSmoothScrollAndZoom(void);
     /// Set preference wheter to use smooth scrolling and zooming
     void setSmoothScrollAndZoom(bool b);
+
+    /// Set recomputation parameters \a c_d and \a a_d
+    void setRecompDistances(int c_d, int a_d);
+    /// Return recomputation distance
+    int getCd(void);
+    /// Return adaptive recomputation distance
+    int getAd(void);
 
     /// Stop search and wait until finished
     void finish(void);

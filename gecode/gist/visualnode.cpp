@@ -64,8 +64,9 @@ namespace Gecode { namespace Gist {
   ShapeAllocator shapeAllocator;
 
   VisualNode::VisualNode(void)
-  : offset(0)
-  , shape(NULL), box(0,0)
+  : shape(NULL)
+  , offset(0)
+  , box(0,0)
   {
     setDirty(true);
     setChildrenLayoutDone(false);
@@ -75,8 +76,10 @@ namespace Gecode { namespace Gist {
   }
 
   VisualNode::VisualNode(Space* root)
-  : SpaceNode(root), offset(0)
-  , shape(NULL), box(0,0)
+  : SpaceNode(root)
+  , shape(NULL)
+  , offset(0)
+  , box(0,0)
   {
     setDirty(true);
     setChildrenLayoutDone(false);
@@ -212,10 +215,10 @@ namespace Gecode { namespace Gist {
   }
 
   std::string
-  VisualNode::toolTip(BestNode* curBest) {
+  VisualNode::toolTip(BestNode* curBest, int c_d, int a_d) {
     if (getStatus() != BRANCH && getStatus() != DECOMPOSE)
       return "";
-    Space* ws = getSpace(curBest);
+    Space* ws = getSpace(curBest,c_d,a_d);
     (void) ws->status();
     assert(ws->status() == SS_BRANCH);
     // const BranchingDesc* d = ws->description();
