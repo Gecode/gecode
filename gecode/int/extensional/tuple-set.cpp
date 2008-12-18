@@ -60,7 +60,7 @@ namespace {
           return true;
         else if (a[i] > b[i])
           return false;
-      return false;
+      return a < b;
     }
   };
 
