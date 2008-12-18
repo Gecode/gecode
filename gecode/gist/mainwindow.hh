@@ -50,14 +50,7 @@ namespace Gecode { namespace Gist {
   /// \brief Main window for stand-alone %Gist
   class GistMainWindow : public QMainWindow {
     Q_OBJECT
-  protected:
-    /// The contained tree canvas
-    Gist c;
-    /// A menu bar
-    QMenuBar* menuBar;
-    /// About dialog
-    AboutGist aboutGist;
-    
+  private:
     /// Whether search is currently running
     bool isSearching;
     /// Status bar label for weakly monotonic propagator indicator
@@ -70,6 +63,14 @@ namespace Gecode { namespace Gist {
     QLabel* choicesLabel;
     /// Status bar label for number of open nodes
     QLabel* openLabel;
+  protected:
+    /// The contained %Gist object
+    Gist c;
+    /// A menu bar
+    QMenuBar* menuBar;
+    /// About dialog
+    AboutGist aboutGist;
+    
   protected Q_SLOTS:
     void statusChanged(const Statistics& stats, bool finished);
     void about(void);

@@ -136,26 +136,15 @@ namespace Gecode {
   GECODE_GIST_EXPORT
   int explore(Space* root, bool bab, Inspector* gi);
   
-  /// Create a new Gist widget with parent \a parent for \a root using \a b and \a gi
-  GECODE_GIST_EXPORT
-  QWidget* exploreWidget(QWidget* parent, 
-                         Space* root, bool bab, Inspector* gi);
   }	
 
   /// Create a new stand-alone Gist for \a root using \a gi
   GECODE_GIST_EXPORT
   int explore(Space* root, Gist::Inspector* gi = 0);
-  /// Create a new Gist widget with parent \a parent for \a root and \a gi
-  GECODE_GIST_EXPORT
-  void exploreWidget(QWidget* parent, Space* root, Gist::Inspector* gi = 0);
 
   /// Create a new stand-alone Gist for branch-and-bound search of \a root, using \a gi
   GECODE_GIST_EXPORT
   int exploreBest(Space* root, Gist::Inspector* gi = 0);
-
-  /// Create a new Gist widget with parent \a parent for branch-and-bound search of \a root, using \a gi
-  GECODE_GIST_EXPORT
-  void exploreBestWidget(QWidget* parent, Space* root, Gist::Inspector* gi = 0);
 
 }
 

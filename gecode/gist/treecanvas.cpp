@@ -60,7 +60,7 @@ namespace Gecode { namespace Gist {
   Inspector::~Inspector(void) {}
     
   TreeCanvas::TreeCanvas(Space* rootSpace, bool bab,
-                                 QWidget* parent)
+                         QWidget* parent)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
@@ -75,6 +75,11 @@ namespace Gecode { namespace Gist {
     , scrollTimerId(0) {
       QMutexLocker locker(&mutex);
       curBest = (bab ? new BestNode(NULL) : NULL);
+      if (rootSpace->status() == SS_FAILED) {
+        rootSpace = NULL;
+      } else {
+        rootSpace = rootSpace->clone();
+      }
       na = new Node::NodeAllocator();
       root = new (*na) VisualNode(rootSpace);
       root->layout();
@@ -440,7 +445,9 @@ namespace Gecode { namespace Gist {
         // std::cout << "Nodes: " << nodes << std::endl;
         // std::cout << "Size / node: " << (pnv.getCursor().s)/nodes
         //           << std::endl;
-    
+
+        if (currentNode->isRoot() && currentNode->getStatus() == FAILED)
+          break;
         Space* curSpace = currentNode->getSpace(curBest,c_d,a_d);
         if (currentNode->getStatus() == SOLVED &&
             curSpace->status() != SS_SOLVED) {
@@ -475,7 +482,8 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::reset(void) {
     QMutexLocker locker(&mutex);
-    Space* rootSpace = root->getSpace(curBest,c_d,a_d);
+    Space* rootSpace = 
+      root->getStatus() == FAILED ? NULL : root->getSpace(curBest,c_d,a_d);
     if (curBest != NULL) {
       delete curBest;
       curBest = new BestNode(NULL);
@@ -959,7 +967,7 @@ namespace Gecode { namespace Gist {
     
     pt2createView cv = conf.visualisationMap.value(visType);
     
-    if(cv != NULL) {
+    if(cv != NULL && root->getStatus() != FAILED) {
       Reflection::VarMap vm;
       Space* rootSpace = root->getSpace(curBest,c_d,a_d);
       rootSpace->getVars(vm, false);
