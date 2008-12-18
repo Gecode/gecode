@@ -1951,10 +1951,8 @@ namespace Gecode {
       }
     }
     if (p & AP_WEAKLY) {
-      if (n_wmp == 2)
-        n_wmp = 0;
-      else
-        n_wmp--;
+      assert(n_wmp > 1);
+      n_wmp--;
     }
   }
   
