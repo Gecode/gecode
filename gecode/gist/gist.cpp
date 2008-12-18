@@ -44,6 +44,9 @@ namespace Gecode {
 
   namespace Gist {
 
+    std::string
+    Inspector::name(void) { return "Inspector"; }
+
     /// Implementation of the TextInspector
     class TextInspector::TextInspectorImpl {
     public:
@@ -66,6 +69,9 @@ namespace Gecode {
     TextInspector::~TextInspector(void) {
       delete t;
     }
+
+    std::string
+    TextInspector::name(void) { return n; }
 
     void
     TextInspector::init(void) {

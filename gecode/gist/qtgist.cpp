@@ -206,6 +206,16 @@ namespace Gecode { namespace Gist {
     addAction(setPath);
     addAction(inspectPath);
 
+    nullInspector = new QAction("<none>",this);
+    inspectorGroup = new QActionGroup(this);
+    inspectorGroup->setExclusive(true);
+    inspectorGroup->addAction(nullInspector);
+    connect(inspectorGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(selectInspector(QAction*)));
+
+    inspectorMenu = new QMenu("Inspectors");
+    inspectorMenu->addActions(inspectorGroup->actions());
+
     contextMenu = new QMenu(this);
     contextMenu->addAction(inspectCN);
     contextMenu->addAction(centerCN);
@@ -227,6 +237,8 @@ namespace Gecode { namespace Gist {
     contextMenu->addAction(inspectPath);
 
     contextMenu->addSeparator();
+    
+    contextMenu->addMenu(inspectorMenu);
 
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
@@ -261,7 +273,18 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  Gist::setInspector(Inspector* i0) { canvas->setInspector(i0); }
+  Gist::addInspector(Inspector* i0) {
+    canvas->addInspector(i0);
+    QAction* na = new QAction(i0->name().c_str(), this);
+    na->setCheckable(true);
+    inspectorGroup->addAction(na);
+    inspectorMenu->clear();
+    if (nullInspector->actionGroup() == inspectorGroup) {
+      inspectorGroup->removeAction(nullInspector);
+      na->setChecked(true);
+    }
+    inspectorMenu->addActions(inspectorGroup->actions());
+  }
   
   Gist::~Gist(void) { delete canvas; }
   
@@ -372,6 +395,12 @@ namespace Gecode { namespace Gist {
   Gist::closeEvent(QCloseEvent* event) {
     canvas->finish();
     event->accept();
+  }
+
+  void
+  Gist::selectInspector(QAction* a) {
+    if (a != nullInspector)
+      canvas->setActiveInspector(inspectorGroup->actions().indexOf(a));
   }
 
   void

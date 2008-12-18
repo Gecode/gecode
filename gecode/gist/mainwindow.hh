@@ -63,6 +63,8 @@ namespace Gecode { namespace Gist {
     QLabel* choicesLabel;
     /// Status bar label for number of open nodes
     QLabel* openLabel;
+    /// Menu for inspectors
+    QMenu* inspectorsMenu;
   protected:
     /// The contained %Gist object
     Gist c;
@@ -75,6 +77,7 @@ namespace Gecode { namespace Gist {
     void statusChanged(const Statistics& stats, bool finished);
     void about(void);
     void preferences(bool setup=false);
+    void populateInspectors(void);
   public:
     /// Constructor
     GistMainWindow(Space* root, bool bab, Inspector* gi);

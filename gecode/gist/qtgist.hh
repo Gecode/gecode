@@ -51,7 +51,10 @@ namespace Gecode {  namespace Gist {
     QSlider* timeBar;
     /// Context menu
     QMenu* contextMenu;
-
+    /// Action used when no inspector is registered
+    QAction* nullInspector;
+    /// Menu of inspectors
+    QMenu* inspectorMenu;
   public:
     QAction* inspectCN;
     QAction* stopCN;
@@ -79,14 +82,15 @@ namespace Gecode {  namespace Gist {
     QAction* inspectPath;
     QAction* addVisualisation;
 
+    QActionGroup* inspectorGroup;
   public:
     /// Constructor
     Gist(Space* root, bool bab = false, QWidget* parent = NULL);
     /// Destructor
     ~Gist(void);
 
-    /// Set Inspector to \a i0
-    void setInspector(Inspector* i0);
+    /// Add inspector \a i0
+    void addInspector(Inspector* i0);
 
     /// Set preference whether to automatically hide failed subtrees
     void setAutoHideFailed(bool b);
@@ -127,6 +131,7 @@ namespace Gecode {  namespace Gist {
   private Q_SLOTS:
     void on_canvas_contextMenu(QContextMenuEvent*);
     void on_canvas_statusChanged(VisualNode*, const Statistics&, bool);
+    void selectInspector(QAction*);
   protected:
     /// Close the widget
     void closeEvent(QCloseEvent* event);

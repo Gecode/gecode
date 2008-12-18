@@ -64,7 +64,7 @@ namespace Gecode { namespace Gist {
     : QWidget(parent)
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
-    , inspector(NULL)
+    , activeInspector(-1)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false), nextPit(0)
     , targetZoom(LayoutConfig::defScale)
@@ -102,7 +102,16 @@ namespace Gecode { namespace Gist {
   TreeCanvas::~TreeCanvas(void) { delete root; delete na; }
 
   void
-  TreeCanvas::setInspector(Inspector* i) { inspector = i; }
+  TreeCanvas::addInspector(Inspector* i) {
+    inspectors.append(i);
+    if (activeInspector == -1)
+      activeInspector = 0;
+  }
+
+  void
+  TreeCanvas::setActiveInspector(int i) {
+    activeInspector = i;
+  }
 
   void
   TreeCanvas::scaleTree(int scale0) {
@@ -461,8 +470,8 @@ namespace Gecode { namespace Gist {
         curSpace->getVars(vm, false);
         emit inspect(vm, nextPit);
         saveCurrentNode();
-        if (inspector != NULL) {
-          inspector->inspect(*curSpace);
+        if (activeInspector != -1) {
+          inspectors[activeInspector]->inspect(*curSpace);
         }
         delete curSpace;
       }

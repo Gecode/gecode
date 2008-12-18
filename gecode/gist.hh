@@ -96,6 +96,8 @@ namespace Gecode {
   public:
     /// Call-back function
     virtual void inspect(Space& node) = 0;
+    /// Name of the inspector
+    virtual std::string name(void);
     /// Destructor
     virtual ~Inspector(void);
   };
@@ -120,6 +122,8 @@ namespace Gecode {
     TextInspector(const std::string& name);
     /// Destructor
     virtual ~TextInspector(void);
+    /// Name of the inspector
+    virtual std::string name(void);
   };
   
   /// \brief An inspector for printing simple text output

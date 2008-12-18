@@ -129,8 +129,9 @@ namespace Gecode { namespace Gist {
   GistMainWindow::GistMainWindow(Space* root, bool bab,
                                  Inspector* gi)
   : c(root,bab,this), aboutGist(this) {
-    if (gi != NULL)
-      c.setInspector(gi);
+    if (gi != NULL) {
+      c.addInspector(gi);
+    }
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));
 
@@ -189,6 +190,10 @@ namespace Gecode { namespace Gist {
 
     QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
     toolsMenu->addAction(c.addVisualisation);
+    inspectorsMenu = new QMenu("Inspectors");
+    connect(inspectorsMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectors()));
+    toolsMenu->addMenu(inspectorsMenu);
     
     QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
     QAction* aboutAction = helpMenu->addAction(tr("About"));
@@ -275,6 +280,12 @@ namespace Gecode { namespace Gist {
       c.setRecompDistances(pd.c_d,pd.a_d);
       c.setShowCopies(pd.copies);
     }
+  }
+
+  void
+  GistMainWindow::populateInspectors(void) {
+    inspectorsMenu->clear();
+    inspectorsMenu->addActions(c.inspectorGroup->actions());
   }
 
 }}

@@ -88,8 +88,10 @@ namespace Gecode {  namespace Gist {
     /// Destructor
     ~TreeCanvas(void);
 
-    /// Set Inspector to \a i0
-    void setInspector(Inspector* i);
+    /// Add inspector \a i
+    void addInspector(Inspector* i);
+    /// Set active inspector
+    void setActiveInspector(int i);
 
   public Q_SLOTS:
     /// Set scale factor to \a scale0
@@ -213,8 +215,10 @@ namespace Gecode {  namespace Gist {
     VisualNode* pathHead;
     /// The history of inspected nodes
     QVector<VisualNode*> nodeMap;
+    /// The registered inspectors
+    QVector<Inspector*> inspectors;
     /// The active inspector
-    Inspector* inspector;
+    int activeInspector;
     
     /// The scale bar
     QSlider* scaleBar;
