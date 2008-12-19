@@ -44,8 +44,9 @@ namespace Gecode {  namespace Gist {
   /**
    * \brief %Gecode Interactive %Search Tool
    *
-   * %Gist comes a a Qt widget that implements an interactive search tree
-   * viewer and explorer.
+   * This class provides an interactive search tree viewer and explorer as
+   * a Qt widget. You can embedd or inherit from this widget to use %Gist
+   * in your own project.
    *
    * \ingroup TaskGist
    */
