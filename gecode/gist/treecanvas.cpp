@@ -95,7 +95,8 @@ namespace Gecode { namespace Gist {
               SLOT(statusChanged(bool)));
       
       connect(&searcher, SIGNAL(solution(const Space*)),
-              this, SIGNAL(solution(const Space*)));
+              this, SIGNAL(solution(const Space*)),
+              Qt::BlockingQueuedConnection);
       
       qRegisterMetaType<Statistics>("Statistics");
       update();
