@@ -60,6 +60,9 @@ namespace Gecode { namespace Gist {
 
     scrollArea->setWidget(canvas);
 
+    connect(canvas, SIGNAL(solution(const Space*)),
+            this, SIGNAL(solution(const Space*)));
+
     QPixmap myPic;
     myPic.loadFromData(zoomToFitIcon, sizeof(zoomToFitIcon));
 

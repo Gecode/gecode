@@ -76,6 +76,7 @@ namespace Gecode {  namespace Gist {
     void update(int w, int h, int scale0);
     void statusChanged(bool);
     void scaleChanged(int);
+    void solution(const Space*);
     
   protected:
     void run(void);
@@ -200,6 +201,8 @@ namespace Gecode {  namespace Gist {
     void inspect(Gecode::Reflection::VarMap& vm, int pit);
     /// The point in time changed to \a pit
     void pointInTimeChanged(int pit);
+    /// A new solution \a s has been found
+    void solution(const Space* s);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;

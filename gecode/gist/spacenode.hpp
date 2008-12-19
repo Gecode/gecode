@@ -75,6 +75,11 @@ namespace Gecode { namespace Gist {
     nstatus &= ~( STATUSMASK );
     nstatus |= s;
   }
+
+  forceinline NodeStatus
+  SpaceNode::getStatus(void) const {
+    return static_cast<NodeStatus>(nstatus & STATUSMASK);
+  }
   
   forceinline
   SpaceNode::SpaceNode(void)
@@ -93,16 +98,30 @@ namespace Gecode { namespace Gist {
     return ret;
   }
 
+  forceinline const Space*
+  SpaceNode::getWorkingSpace(void) const {
+    return workingSpace;
+  }
+
+  forceinline void
+  SpaceNode::purge(void) {
+    if (getStatus() != SOLVED || ownBest == NULL) {
+      // only delete working spaces from solutions if we are not in BAB
+      delete workingSpace;
+      workingSpace = NULL;
+    }
+    if (!isRoot()) {
+      delete copy;
+      copy = NULL;
+    }    
+  }
+
+
   forceinline bool
   SpaceNode::isCurrentBest(BestNode* curBest) {
     return curBest != NULL && curBest->s == this;
   }
-  
-  forceinline NodeStatus
-  SpaceNode::getStatus(void) const {
-    return static_cast<NodeStatus>(nstatus & STATUSMASK);
-  }
-    
+      
   forceinline void
   SpaceNode::setSpecialDesc(const SpecialDesc* d) {
     desc.special = d;

@@ -368,13 +368,7 @@ namespace Gecode { namespace Gist {
       switch (workingSpace->status(noOfProps,wmp)) {
       case SS_FAILED:
         {
-          delete workingSpace;
-          workingSpace = NULL;
-          // we may have got a copy from LAO!
-          if (getParent() != NULL) {
-            delete copy;
-            copy = NULL;
-          }
+          purge();
           kids = 0;
           setHasOpenChildren(false);
           setHasSolvedChildren(false);
@@ -391,16 +385,6 @@ namespace Gecode { namespace Gist {
         {
           kids = 0;
           setStatus(SOLVED);
-          // we may have got a copy from LAO
-          if (getParent() != NULL) {
-            delete copy;
-            copy = NULL;
-          }
-          if (ownBest == NULL) {
-            // do not store working spaces in solutions, except if we do BAB
-            delete workingSpace;
-            workingSpace = NULL;
-          }
           setHasOpenChildren(false);
           setHasSolvedChildren(true);
           setHasFailedChildren(false);

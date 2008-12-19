@@ -159,6 +159,9 @@ namespace Gecode {  namespace Gist {
     /// Signals that the tree has changed
     void statusChanged(const Statistics&, bool);
 
+    /// Signals that a solution has been found
+    void solution(const Space*);
+
   private Q_SLOTS:
     /// Displays the context menu for a node
     void on_canvas_contextMenu(QContextMenuEvent*);

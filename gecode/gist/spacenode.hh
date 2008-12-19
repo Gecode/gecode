@@ -169,6 +169,12 @@ namespace Gecode { namespace Gist {
     /// Return working space.  Receiver must delete the space.
     Space* getSpace(BestNode* curBest, int c_d, int a_d);
 
+    /// Return working space (if present).
+    const Space* getWorkingSpace(void) const;
+
+    /// Clear working space and copy (if present and this is not the root).
+    void purge(void);
+
     /// Return whether this node is the currently best solution
     bool isCurrentBest(BestNode* curBest);
 

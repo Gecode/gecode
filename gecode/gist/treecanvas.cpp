@@ -94,6 +94,9 @@ namespace Gecode { namespace Gist {
       connect(&searcher, SIGNAL(statusChanged(bool)), this, 
               SLOT(statusChanged(bool)));
       
+      connect(&searcher, SIGNAL(solution(const Space*)),
+              this, SIGNAL(solution(const Space*)));
+      
       qRegisterMetaType<Statistics>("Statistics");
       update();
   }
@@ -245,9 +248,14 @@ namespace Gecode { namespace Gist {
         if (n->isOpen()) {
           int kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                               t->c_d, t->a_d);
-          if (!a && n->getStatus() == SOLVED) {
-            sol = n;
-            break;
+          if (n->getStatus() == SOLVED) {
+            assert(n->hasWorkingSpace());
+            emit solution(n->getWorkingSpace());
+            n->purge();
+            if (!a) {
+              sol = n;
+              break;
+            }
           }
           for (int i=kids; i--;) {
             stck.push(n->getChild(i));
@@ -420,6 +428,11 @@ namespace Gecode { namespace Gist {
         {
           (void) currentNode->getNumberOfChildNodes(*na,curBest,stats,
                                                     c_d,a_d);
+          if (currentNode->getStatus() == SOLVED) {
+            assert(currentNode->hasWorkingSpace());
+            emit solution(currentNode->getWorkingSpace());
+            currentNode->purge();
+          }
           emit statusChanged(currentNode,stats,true);
         }
         break;
@@ -592,8 +605,8 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     VisualNode* p = currentNode->getParent();
     if (p != NULL) {
-      int alt = currentNode->getAlternative();
-      if (alt + 1 < p->getNumberOfChildNodes(*na, curBest, stats, c_d, a_d)) {
+      unsigned int alt = currentNode->getAlternative();
+      if (alt + 1 < p->getNumberOfChildren()) {
         VisualNode* n = p->getChild(alt+1);
         setCurrentNode(n);
         centerCurrentNode();
