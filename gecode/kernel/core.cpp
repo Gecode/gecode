@@ -415,7 +415,7 @@ namespace Gecode {
   }
 
   Space*
-  Space::clone(bool share) {
+  Space::_clone(bool share) {
     if (failed())
       throw SpaceFailed("Space::clone");
     if (!stable())

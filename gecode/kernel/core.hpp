@@ -1240,6 +1240,23 @@ namespace Gecode {
      *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      */
     GECODE_KERNEL_EXPORT SpaceStatus _status(unsigned long int& pn=unused_uli);
+
+    /**
+     * \brief Clone space
+     *
+     * Assumes that the space is stable and not failed. If the space is
+     * failed, an exception of type SpaceFailed is thrown. If the space
+     * is not stable, an exception of SpaceNotStable is thrown.
+     *
+     * Otherwise, a clone of the space is returned. If \a share is true,
+     * sharable datastructures are shared among the clone and the original
+     * space. If \a share is false, independent copies of the shared
+     * datastructures must be created. This means that a clone with no
+     * sharing can be used in a different thread without any interaction
+     * with the original space.
+     */
+    GECODE_KERNEL_EXPORT Space* _clone(bool share=true);
+
   public:
     /**
      * \brief Default constructor
@@ -1352,7 +1369,7 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT Space* clone(bool share=true);
+    Space* clone(bool share=true) const;
 
     /**
      * \brief Commit branching description \a d and for alternative \a a
@@ -1954,6 +1971,14 @@ namespace Gecode {
       assert(n_wmp > 1);
       n_wmp--;
     }
+  }
+  
+  forceinline Space*
+  Space::clone(bool share) const {
+    // Clone is only const for search engines. During cloning, several data
+    // structures are updated (e.g. forwarding pointers), so we have to
+    // cast away the constness.
+    return const_cast<Space*>(this)->_clone(share);
   }
   
   forceinline size_t

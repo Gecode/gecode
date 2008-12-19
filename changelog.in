@@ -74,6 +74,13 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The clone operation on spaces is now const.
+
+[ENTRY]
 Module:	int
 What:	change
 Rank:	minor
