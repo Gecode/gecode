@@ -42,20 +42,20 @@ int main() {
     
     p.QIntVar(0,1,N-1);
     p.QIntVar(1,0,N);
-    post(p.space(),p.var(0) == p.var(1));
+    post(*(p.space()),p.var(0) == p.var(1));
     IntVarArgs b(2); b[0] = p.var(0) ; b[1] = p.var(1);
-    branch(p.space(),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(p.space()),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     p.nextScope();
     
     for (int i=1;i<N+2;i++) {
         p.QIntVar(2*i , 1, N-1);
         p.QIntVar(2*i + 1, 0, N);
-        post(p.space(), p.var(2*i) <= 2*p.var(2*(i-1)));
-        post(p.space(), p.var(2*i + 1) == p.var(2*i) + p.var(2*i - 1));
+        post(*(p.space()), p.var(2*i) <= 2*p.var(2*(i-1)));
+        post(*(p.space()), p.var(2*i + 1) == p.var(2*i) + p.var(2*i - 1));
         IntVarArgs bb(2*i + 2);
         for (int plop = 0;plop < (2*i + 2);plop++)
             bb[plop] = p.var(plop);
-        branch(p.space(),bb,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+        branch(*(p.space()),bb,INT_VAR_SIZE_MIN,INT_VAL_MIN);
         p.nextScope();
     }
     

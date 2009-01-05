@@ -95,7 +95,7 @@ int main (int argc, char * const argv[]) {
         IntVarArgs b(i+1);
         for (int plop=0;plop<(i+1);plop++) 
             b[plop] = p.var(plop);
-        branch(p.space(),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+        branch(*(p.space()),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
         p.nextScope();
     }
 	
@@ -106,20 +106,20 @@ int main (int argc, char * const argv[]) {
     IntVarArgs b(nbDecisionVar+2);
     for (int plop=0;plop<(nbDecisionVar+2);plop++) 
         b[plop] = p.var(plop);
-    branch(p.space(),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(p.space()),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     
     p.nextScope();
     // Body
     
-    post(p.space(), p.var(nbDecisionVar) == 1);
+    post(*(p.space()), p.var(nbDecisionVar) == 1);
     
     IntVarArgs X(nbDecisionVar);
     for (int i=0; i<nbDecisionVar; i++)
         X[i]=p.var(i);
     
-    linear(p.space(), access, X, IRT_EQ, p.var(nbDecisionVar+1));
+    linear(*(p.space()), access, X, IRT_EQ, p.var(nbDecisionVar+1));
     //  MiniModel::LinRel R(E, IRT_EQ, MiniModel::LinExpr(p.var(nbDecisionVar+1)));
-    element(p.space(), board, p.var(nbDecisionVar+1), p.var(nbDecisionVar));
+    element(*(p.space()), board, p.var(nbDecisionVar+1), p.var(nbDecisionVar));
     
     // When every variables and constraints have been declared, the makeStructure method
     // must be called in order to lead the problem ready for solving.

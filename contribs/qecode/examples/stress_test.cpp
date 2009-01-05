@@ -39,16 +39,15 @@ int main() {
     test1.QIntVar(0,1,3);
     IntVarArgs b1(1);
     b1[0] = test1.var(0);
-    branch(test1.space(),b1,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test1.space()),b1,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     test1.nextScope();
-    post(test1.space(),test1.var(0) == 1);
+    post(*(test1.space()),test1.var(0) == 1);
     test1.makeStructure();
     QSolver s1(&test1);
     nodes=0;
     Strategy ret1=s1.solve(nodes);
     cout<<"Problem 1 : result = "<<(ret1.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
     cout<<nodes<<" nodes."<<endl;
-    
     
     //Ex in 1..3 [] st x=1
     int sc2[] = {1};
@@ -58,10 +57,10 @@ int main() {
     
     IntVarArgs b2(1);
     b2[0] = test2.var(0);
-    branch(test2.space(),b2,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test2.space()),b2,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     
     test2.nextScope();
-    post(test2.space(),test2.var(0) == 1);
+    post(*(test2.space()),test2.var(0) == 1);
     test2.makeStructure();
     QSolver s2(&test2);
     nodes=0;
@@ -76,14 +75,14 @@ int main() {
     bool q3[] = {QECODE_UNIVERSAL};
     Implicative test3(1,q3,sc3);
     test3.QIntVar(0,1,3);
-    post(test3.space(),test3.var(0) == 1);
+    post(*(test3.space()),test3.var(0) == 1);
 
     IntVarArgs b3(1);
     b3[0] = test3.var(0);
-    branch(test3.space(),b3,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test3.space()),b3,INT_VAR_SIZE_MIN,INT_VAL_MIN);
 
     test3.nextScope();
-    post(test3.space(),test3.var(0) == 2);
+    post(*(test3.space()),test3.var(0) == 2);
     test3.makeStructure();;
     QSolver s3(&test3);
     nodes=0;
@@ -98,14 +97,14 @@ int main() {
     bool q4[] = {QECODE_EXISTENTIAL};
     Implicative test4(1,q4,sc4);
     test4.QIntVar(0,1,3);
-    post(test4.space(),test4.var(0) == 1);
+    post(*(test4.space()),test4.var(0) == 1);
 
     IntVarArgs b4(1);
     b4[0] = test4.var(0);
-    branch(test4.space(),b4,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test4.space()),b4,INT_VAR_SIZE_MIN,INT_VAL_MIN);
 
     test4.nextScope();
-    post(test4.space(),test4.var(0) == 2);
+    post(*(test4.space()),test4.var(0) == 2);
     test4.makeStructure();
     QSolver s4(&test4);
     nodes=0;
@@ -120,22 +119,22 @@ int main() {
     Implicative test5(2,q5,sc5);
     test5.QIntVar(0,1,3);
     test5.QIntVar(1,1,3);
-    post(test5.space(),test5.var(0) == 1);
+    post(*(test5.space()),test5.var(0) == 1);
 
     IntVarArgs b5(1);
     b5[0] = test5.var(0);
-    branch(test5.space(),b5,INT_VAR_SIZE_MIN,INT_VAL_MIN);        
+    branch(*(test5.space()),b5,INT_VAR_SIZE_MIN,INT_VAL_MIN);        
 
     test5.nextScope();
-    post(test5.space(),test5.var(0) == 2);
+    post(*(test5.space()),test5.var(0) == 2);
 
     IntVarArgs b52(2);
     b52[0] = test5.var(0);
     b52[1] = test5.var(1);
-    branch(test5.space(),b52,INT_VAR_SIZE_MIN,INT_VAL_MIN);        
+    branch(*(test5.space()),b52,INT_VAR_SIZE_MIN,INT_VAL_MIN);        
 
     test5.nextScope();
-    post(test5.space(),test5.var(1) == 1);
+    post(*(test5.space()),test5.var(1) == 1);
     test5.makeStructure();
     QSolver s5(&test5);
     nodes=0;
@@ -151,22 +150,22 @@ int main() {
     Implicative test6(2,q6,sc6);
     test6.QIntVar(0,1,3);
     test6.QIntVar(1,1,3);
-    post(test6.space(),test6.var(0) == 1);
+    post(*(test6.space()),test6.var(0) == 1);
 
     IntVarArgs b6(1);
     b6[0] = test6.var(0);
-    branch(test6.space(),b6,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test6.space()),b6,INT_VAR_SIZE_MIN,INT_VAL_MIN);
 
     test6.nextScope();
-    post(test6.space(),test6.var(0) == 1);
+    post(*(test6.space()),test6.var(0) == 1);
 
     IntVarArgs b62(2);
     b62[0] = test6.var(0);
     b62[1] = test6.var(1);
-    branch(test6.space(),b62,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test6.space()),b62,INT_VAR_SIZE_MIN,INT_VAL_MIN);
 
     test6.nextScope();
-    post(test6.space(),test6.var(0) == 2);
+    post(*(test6.space()),test6.var(0) == 2);
     test6.makeStructure();
     QSolver s6(&test6);
     nodes=0;
@@ -185,18 +184,18 @@ int main() {
     
     IntVarArgs b7(1);
     b7[0] = test7.var(0);
-    branch(test7.space(),b7,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test7.space()),b7,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     
     test7.nextScope();
-    post(test7.space(),test7.var(1) <= 2);
+    post(*(test7.space()),test7.var(1) <= 2);
     
     IntVarArgs b72(2);
     b72[0] = test7.var(0);
     b72[1] = test7.var(1);
-    branch(test7.space(),b72,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test7.space()),b72,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     
     test7.nextScope();
-    post(test7.space(),test7.var(1) == 0);
+    post(*(test7.space()),test7.var(1) == 0);
     test7.makeStructure();
     QSolver s7(&test7);
     nodes=0;
@@ -215,18 +214,18 @@ int main() {
     
     IntVarArgs b8(1);
     b8[0] = test8.var(0);
-    branch(test8.space(),b8,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test8.space()),b8,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     
     test8.nextScope();
-    post(test8.space(),test8.var(1) == 0);
+    post(*(test8.space()),test8.var(1) == 0);
     
     IntVarArgs b82(2);
     b82[0] = test8.var(0);
     b82[1] = test8.var(1);
-    branch(test8.space(),b82,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(test8.space()),b82,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     
     test8.nextScope();
-    post(test8.space(),test8.var(1) == 0);
+    post(*(test8.space()),test8.var(1) == 0);
     test8.makeStructure();
     QSolver s8(&test8);
     nodes=0;
