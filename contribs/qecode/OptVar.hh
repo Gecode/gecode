@@ -44,7 +44,7 @@ class QECODE_VTABLE_EXPORT AggregatorSum : public Aggregator{
 public:
     QECODE_EXPORT virtual int eval(vector<int> values) {
         int cpt=0;
-        for (int i=0;i<values.size();i++) 
+        for (unsigned int i=0;i<values.size();i++) 
             cpt += values[i];
         return cpt;
     }

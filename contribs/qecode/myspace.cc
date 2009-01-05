@@ -34,8 +34,8 @@ MySpace::MySpace(unsigned int nv) {
 
 
 MySpace::~MySpace() {
-    for (int i=0;i<n;i++)
-        delete v[i];
+    for (unsigned int i=0;i<n;i++)
+      delete v[i]; // TODO : Ract real type on this before deleting
     
     delete[] v;
     delete[] type_of_v;
@@ -45,16 +45,16 @@ MySpace::MySpace(bool share,MySpace& ms) : Space(share,ms) {
   n=ms.n;
     v=new void*[n];
     type_of_v=new VarType[n];
-    for (int i=0;i<n;i++) {
+    for (unsigned int i=0;i<n;i++) {
         type_of_v[i] = ms.type_of_v[i];
         switch (type_of_v[i]) {
             case VTYPE_INT :
                 v[i] = new IntVar(*(static_cast<IntVar*>(ms.v[i])));
-                (static_cast<IntVar*>(v[i]))->update(this,true,*(static_cast<IntVar*>(ms.v[i])));
+                (static_cast<IntVar*>(v[i]))->update(*this,true,*(static_cast<IntVar*>(ms.v[i])));
                 break;
             case VTYPE_BOOL :
                 v[i] = new BoolVar(*(static_cast<BoolVar*>(ms.v[i])));
-                (static_cast<BoolVar*>(v[i]))->update(this,true,*(static_cast<BoolVar*>(ms.v[i])));
+                (static_cast<BoolVar*>(v[i]))->update(*this,true,*(static_cast<BoolVar*>(ms.v[i])));
                 break;
             default:
                 cout<<"Unsupported variable type"<<endl;
@@ -65,5 +65,3 @@ MySpace::MySpace(bool share,MySpace& ms) : Space(share,ms) {
 
 
 MySpace* MySpace::copy(bool share) {return new MySpace(share,*this);}
-
-

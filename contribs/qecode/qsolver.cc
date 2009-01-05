@@ -49,10 +49,10 @@ Strategy QSolver::rSolve(Implicative* qs,int scope, vector<int> assignments, uns
         for (int i=0;i<g->nbVars();i++) {
             switch (g->type_of_v[i]) {
                 case VTYPE_INT : 
-                    post(g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
+                    post(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
-                    post(g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
+                    post(*g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
                     break;
                 default :
                     cout<<"1Unknown variable type"<<endl;
@@ -77,14 +77,14 @@ Strategy QSolver::rSolve(Implicative* qs,int scope, vector<int> assignments, uns
         MySpace* espace = qs->getSpace(scope);
         if (espace == NULL) cout<<"I caught a NULL for scope "<<scope<<". I will crash..."<<endl;
 //        cout<<"size of assignments "<<assignments.size()<<endl;
-        for (int i=0;i<assignments.size();i++) {
+        for (unsigned int i=0;i<assignments.size();i++) {
 //            cout<<"I assign variable "<<i<<" with value "<<assignments[i]<<endl; cout.flush();
             switch (espace->type_of_v[i]) {
                 case VTYPE_INT : 
-                    post(espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
+                    post(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
-                    post(espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
+                    post(*espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
                     break;
                 default :
                     cout<<"2Unknown variable type"<<endl;

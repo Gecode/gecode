@@ -81,10 +81,10 @@ void Implicative::QIntVar(int var,int min,int max) {
     }
     
     for (int i=whichSpaceOwns[var];i<nbSpaces;i++) {
-        rules[i]->v[var] = new IntVar(rules[i],min,max);
+      rules[i]->v[var] = new IntVar(*(rules[i]),min,max);
         rules[i]->type_of_v[var] = VTYPE_INT;
     }
-    goal->v[var] = new IntVar(goal,min,max);
+    goal->v[var] = new IntVar(*goal,min,max);
     goal->type_of_v[var] = VTYPE_INT;
     varInitialised[var]=true;
     type_of_v[var]=VTYPE_INT;
@@ -98,10 +98,10 @@ void Implicative::QIntVar(int var,IntSet dom) {
     }
     
     for (int i=whichSpaceOwns[var];i<nbSpaces;i++) {
-        rules[i]->v[var] = new IntVar(rules[i],dom);
+      rules[i]->v[var] = new IntVar(*(rules[i]),dom);
         rules[i]->type_of_v[var] = VTYPE_INT;
     }
-    goal->v[var] = new IntVar(goal,dom);
+    goal->v[var] = new IntVar(*goal,dom);
     goal->type_of_v[var] = VTYPE_INT;
     varInitialised[var]=true;
     type_of_v[var]=VTYPE_INT;
@@ -115,10 +115,10 @@ void Implicative::QBoolVar(int var) {
     }
     
     for (int i=whichSpaceOwns[var];i<nbSpaces;i++) {
-        rules[i]->v[var] = new BoolVar(rules[i],0,1);
+      rules[i]->v[var] = new BoolVar(*(rules[i]),0,1);
         rules[i]->type_of_v[var]=VTYPE_BOOL;
     }
-    goal->v[var] = new BoolVar(goal,0,1);
+    goal->v[var] = new BoolVar(*goal,0,1);
     goal->type_of_v[var]=VTYPE_BOOL;
     varInitialised[var]=true;
     type_of_v[var]=VTYPE_BOOL;
