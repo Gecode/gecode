@@ -74,6 +74,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks:	Roland Yap Hock Chuan
+[DESCRIPTION]
+Fixed off-by-one bug in extensional for DFAs.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

@@ -293,8 +293,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       } while (j<s);
       assert(k > 0);
       // Update modification information
-      if (o_mod) o_ch.add(i-1);
-      if (i_mod) i_ch.add(i+1);
+      if (o_mod && (i > 0))
+        o_ch.add(i-1);
+      if (i_mod && (i+1 < x.size()))
+        i_ch.add(i+1);
     }
     i_ch.reset();
 
@@ -331,7 +333,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       } while (j<s);
       assert(k > 0);
       // Update modification information
-      if (o_mod) o_ch.add(i-1);
+      if (o_mod && (i > 0)) 
+        o_ch.add(i-1);
     }
     o_ch.reset();
 
@@ -349,12 +352,15 @@ namespace Gecode { namespace Int { namespace Extensional {
     int i = a.i;
     bool i_mod = false;
     bool o_mod = false;
+    bool is_fix = true;
     Layer& l = layers[i];
+
     if (!constructed())
       goto nofix;
 
     if (l.size == x[i].size())
       goto fix;
+
     if (View::modevent(d) == ME_INT_VAL) {
       int n = x[i].val();
       unsigned int j=0;
@@ -423,20 +429,24 @@ namespace Gecode { namespace Int { namespace Extensional {
       l.size =k;
       assert(k > 0);        
     }
-    if (!i_mod && !o_mod)
-      goto fix;
-    if (o_mod) o_ch.add(i-1);
-    if (i_mod) i_ch.add(i+1);
-    goto nofix;
-  nofix:
-    return (View::modevent(d) == ME_INT_VAL) 
-      ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
-  fix:
-    if (View::modevent(d) == ME_INT_VAL) {
-      a.dispose(home,c);
-      return c.empty() ? ES_NOFIX : ES_FIX;
+    if (o_mod && (i > 0)) {
+      o_ch.add(i-1); is_fix = false;
+     }
+    if (i_mod && (i+1 < x.size())) {
+      i_ch.add(i+1); is_fix = false;
     }
-    return ES_FIX;
+    if (is_fix) {
+    fix:
+      if (View::modevent(d) == ME_INT_VAL) {
+        a.dispose(home,c);
+        return c.empty() ? ES_NOFIX : ES_FIX;
+      }
+      return ES_FIX;
+    } else {
+    nofix:
+      return (View::modevent(d) == ME_INT_VAL) 
+        ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
+    }
   }
 
   template <class View, class Degree, class StateIdx>

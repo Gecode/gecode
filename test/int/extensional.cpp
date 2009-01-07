@@ -178,6 +178,28 @@ namespace Test { namespace Int {
        }
      };
      
+     /// Test with simple regular expression from Roland Yap
+     class RegRoland : public Test {
+     public:
+       /// Create and register test
+       RegRoland(int n) 
+         : Test("Extensional::Reg::Roland::"+str(n),n,0,1) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size();
+         return 
+           ((n > 1) && (x[n-2] == 0)) ||
+           ((n > 0) && (x[n-1] == 0));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         REG r0(0), r1(1);
+         REG r01 = r0 | r1;
+         extensional(home, x, *r01 + r0 + r01(0,1));
+       }
+     };
+     
      /// Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedA : public Test {
      public:
@@ -456,6 +478,11 @@ namespace Test { namespace Int {
      RegSimpleC rc;
    
      RegDistinct rd;
+
+     RegRoland rr1(1);
+     RegRoland rr2(2);
+     RegRoland rr3(3);
+     RegRoland rr4(4);
    
      RegSharedA rsa;
      RegSharedB rsb;
