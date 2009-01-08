@@ -103,8 +103,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB>
   class Eq : public BoolBinary<BVA,BVB> {
-    GECODE_PROPAGATOR2(Eq,BVA,BVB,"Gecode::Int::Bool::Eq")
-    GECODE_REFLECTION2(BVA,x0,BVB,x1)
+    GECODE_REFLECT_PROPAGATOR_2(Eq,BVA,BVB,"Gecode::Int::Bool::Eq")
+    GECODE_REFLECT_ARGS_2(BVA,x0,BVB,x1)
   protected:
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
@@ -133,8 +133,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class NaryEq : public NaryPropagator<BV,PC_BOOL_VAL> {
-    GECODE_PROPAGATOR1(NaryEq,BV,"Gecode::Int::Bool::NaryEq")
-    GECODE_REFLECTION1(ViewArray<BV>,x)
+    GECODE_REFLECT_PROPAGATOR_1(NaryEq,BV,"Gecode::Int::Bool::NaryEq")
+    GECODE_REFLECT_ARGS_1(ViewArray<BV>,x)
   protected:
     using NaryPropagator<BV,PC_BOOL_VAL>::x;
     /// Constructor for posting
@@ -161,8 +161,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class Lq : public BoolBinary<BV,BV> {
-    GECODE_PROPAGATOR1(Lq,BV,"Gecode::Int::Bool::Lq")
-    GECODE_REFLECTION2(BV,x0,BV,x1)
+    GECODE_REFLECT_PROPAGATOR_1(Lq,BV,"Gecode::Int::Bool::Lq")
+    GECODE_REFLECT_ARGS_2(BV,x0,BV,x1)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
@@ -202,8 +202,9 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB>
   class BinOrTrue : public BoolBinary<BVA,BVB> {
-    GECODE_PROPAGATOR2(BinOrTrue,BVA,BVB,"Gecode::Int::Bool::BinOrTrue")
-    GECODE_REFLECTION2(BVA,x0,BVB,x1)
+    GECODE_REFLECT_PROPAGATOR_2(BinOrTrue,BVA,BVB,
+                                "Gecode::Int::Bool::BinOrTrue")
+    GECODE_REFLECT_ARGS_2(BVA,x0,BVB,x1)
   protected:
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
@@ -231,8 +232,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class TerOrTrue : public BoolBinary<BV,BV> {
-    GECODE_PROPAGATOR1(TerOrTrue,BV,"Gecode::Int::Bool::TerOrTrue")
-    GECODE_REFLECTION3(BV,x0,BV,x1,BV,x2)
+    GECODE_REFLECT_PROPAGATOR_1(TerOrTrue,BV,"Gecode::Int::Bool::TerOrTrue")
+    GECODE_REFLECT_ARGS_3(BV,x0,BV,x1,BV,x2)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
@@ -264,8 +265,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class QuadOrTrue : public BoolBinary<BV,BV> {
-    GECODE_PROPAGATOR1(QuadOrTrue,BV,"Gecode::Int::Bool::QuadOrTrue")
-    GECODE_REFLECTION4(BV,x0,BV,x1,BV,x2,BV,x3)
+    GECODE_REFLECT_PROPAGATOR_1(QuadOrTrue,BV,"Gecode::Int::Bool::QuadOrTrue")
+    GECODE_REFLECT_ARGS_4(BV,x0,BV,x1,BV,x2,BV,x3)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
@@ -299,8 +300,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB, class BVC>
   class Or : public BoolTernary<BVA,BVB,BVC> {
-    GECODE_PROPAGATOR3(Or,BVA,BVB,BVC,"Gecode::Int::Bool::Or")
-    GECODE_REFLECTION3(BVA,x0,BVB,x1,BVC,x2)
+    GECODE_REFLECT_PROPAGATOR_3(Or,BVA,BVB,BVC,"Gecode::Int::Bool::Or")
+    GECODE_REFLECT_ARGS_3(BVA,x0,BVB,x1,BVC,x2)
   protected:
     using BoolTernary<BVA,BVB,BVC>::x0;
     using BoolTernary<BVA,BVB,BVC>::x1;
@@ -329,8 +330,8 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX,class VY>
   class NaryOr 
     : public MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL> {
-    GECODE_PROPAGATOR2(NaryOr,VX,VY,"Gecode::Int::Bool::NaryOr")
-    GECODE_REFLECTION2(ViewArray<VX>,x,VY,y)
+    GECODE_REFLECT_PROPAGATOR_2(NaryOr,VX,VY,"Gecode::Int::Bool::NaryOr")
+    GECODE_REFLECT_ARGS_2(ViewArray<VX>,x,VY,y)
   protected:
     using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::x;
     using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::y;
@@ -366,8 +367,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class NaryOrTrue : public BinaryPropagator<BV,PC_BOOL_VAL> {
-    GECODE_PROPAGATOR1(NaryOrTrue,BV,"Gecode::Int::Bool::NaryOrTrue")
-    GECODE_REFLECTION3(BV,x0,BV,x1,ViewArray<BV>,x)
+    GECODE_REFLECT_PROPAGATOR_1(NaryOrTrue,BV,"Gecode::Int::Bool::NaryOrTrue")
+    GECODE_REFLECT_ARGS_3(BV,x0,BV,x1,ViewArray<BV>,x)
   protected:
     using BinaryPropagator<BV,PC_BOOL_VAL>::x0;
     using BinaryPropagator<BV,PC_BOOL_VAL>::x1;
@@ -403,8 +404,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB, class BVC>
   class Eqv : public BoolTernary<BVA,BVB,BVC> {
-    GECODE_PROPAGATOR3(Eqv,BVA,BVB,BVC,"Gecode::Int::Bool::Eqv")
-    GECODE_REFLECTION3(BVA,x0,BVB,x1,BVC,x2)
+    GECODE_REFLECT_PROPAGATOR_3(Eqv,BVA,BVB,BVC,"Gecode::Int::Bool::Eqv")
+    GECODE_REFLECT_ARGS_3(BVA,x0,BVB,x1,BVC,x2)
   protected:
     using BoolTernary<BVA,BVB,BVC>::x0;
     using BoolTernary<BVA,BVB,BVC>::x1;
@@ -431,8 +432,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class VX, class VY>
   class Clause : public Propagator {
-    GECODE_PROPAGATOR2(Clause,VX,VY,"Gecode::Int::Bool::Clause")
-    GECODE_REFLECTION3(ViewArray<VX>,x,ViewArray<VY>,y,VX,z)
+    GECODE_REFLECT_PROPAGATOR_2(Clause,VX,VY,"Gecode::Int::Bool::Clause")
+    GECODE_REFLECT_ARGS_3(ViewArray<VX>,x,ViewArray<VY>,y,VX,z)
   protected:
     /// Positive views
     ViewArray<VX> x;
@@ -486,8 +487,9 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   class ClauseTrue 
     : public MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL> {
-    GECODE_PROPAGATOR2(ClauseTrue,VX,VY,"Gecode::Int::Bool::ClauseTrue")
-    GECODE_REFLECTION4(VX,x0,VY,x1,ViewArray<VX>,x,ViewArray<VY>,y)
+    GECODE_REFLECT_PROPAGATOR_2(ClauseTrue,VX,VY,
+                                "Gecode::Int::Bool::ClauseTrue")
+    GECODE_REFLECT_ARGS_4(VX,x0,VY,x1,ViewArray<VX>,x,ViewArray<VY>,y)
   protected:
     using MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::x0;
     using MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::x1;

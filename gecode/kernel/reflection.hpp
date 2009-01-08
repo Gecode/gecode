@@ -1251,105 +1251,105 @@ namespace Reflection {
   forceinline
   void operator<<(SpecHelper& s, const int& i) { s.s << i; }
 
-#define GECODE_PROPAGATOR0(P,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_0(P,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Support::Symbol(ATI); \
   }
-#define GECODE_PROPAGATOR1(P,A0,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_1(P,A0,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0>(ATI); \
   }
-#define GECODE_PROPAGATOR1i(P,A0,i,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_1i(P,A0,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0>(ATI,i); \
   }
-#define GECODE_PROPAGATOR2(P,A0,A1,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_2(P,A0,A1,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1>(ATI); \
   }
-#define GECODE_PROPAGATOR2i(P,A0,A1,i,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_2i(P,A0,A1,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1>(ATI,i); \
   }
-#define GECODE_PROPAGATOR3(P,A0,A1,A2,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_3(P,A0,A1,A2,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2>(ATI); \
   }
-#define GECODE_PROPAGATOR3i(P,A0,A1,A2,i,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_3i(P,A0,A1,A2,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2>(ATI,i); \
   }
-#define GECODE_PROPAGATOR4(P,A0,A1,A2,A3,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_4(P,A0,A1,A2,A3,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3>(ATI); \
   }
-#define GECODE_PROPAGATOR4i(P,A0,A1,A2,A3,i,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_4i(P,A0,A1,A2,A3,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3>(ATI,i); \
   }
-#define GECODE_PROPAGATOR5(P,A0,A1,A2,A3,A4,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_5(P,A0,A1,A2,A3,A4,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4>(ATI); \
   }
-#define GECODE_PROPAGATOR5i(P,A0,A1,A2,A3,A4,i,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_5i(P,A0,A1,A2,A3,A4,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4>(ATI,i); \
   }
-#define GECODE_PROPAGATOR6(P,A0,A1,A2,A3,A4,A5,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_6(P,A0,A1,A2,A3,A4,A5,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI); \
   }
-#define GECODE_PROPAGATOR6i(P,A0,A1,A2,A3,A4,A5,i,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_6i(P,A0,A1,A2,A3,A4,A5,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI,i); \
   }
-#define GECODE_PROPAGATOR7(P,A0,A1,A2,A3,A4,A5,A6,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_7(P,A0,A1,A2,A3,A4,A5,A6,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI); \
   }
-#define GECODE_PROPAGATOR7i(P,A0,A1,A2,A3,A4,A5,A6,i,ATI) \
+#define GECODE_REFLECT_PROPAGATOR_7i(P,A0,A1,A2,A3,A4,A5,A6,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
   public: \
@@ -1357,7 +1357,7 @@ namespace Reflection {
     return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI,i); \
   }
 
-#define GECODE_REFLECTION1(T0,V0) \
+#define GECODE_REFLECT_ARGS_1(T0,V0) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
     Reflection::SpecHelper s(home, m, ati()); \
@@ -1370,7 +1370,7 @@ namespace Reflection {
     T0 __t0; p >> __t0; \
     (void) new (home) __PROPCLASS(home, __t0); \
   }
-#define GECODE_REFLECTION2(T0,V0,T1,V1) \
+#define GECODE_REFLECT_ARGS_2(T0,V0,T1,V1) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
     Reflection::SpecHelper s(home, m, ati()); \
@@ -1383,7 +1383,7 @@ namespace Reflection {
     T0 __t0; p >> __t0; T1 __t1; p >> __t1; \
     (void) new (home) __PROPCLASS(home, __t0, __t1); \
   }
-#define GECODE_REFLECTION3(T0,V0,T1,V1,T2,V2) \
+#define GECODE_REFLECT_ARGS_3(T0,V0,T1,V1,T2,V2) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
     Reflection::SpecHelper s(home, m, ati()); \
@@ -1396,7 +1396,7 @@ namespace Reflection {
     T0 __t0; p >> __t0; T1 __t1; p >> __t1; T2 __t2; p >> __t2; \
     (void) new (home) __PROPCLASS(home, __t0, __t1, __t2); \
   }
-#define GECODE_REFLECTION4(T0,V0,T1,V1,T2,V2,T3,V3) \
+#define GECODE_REFLECT_ARGS_4(T0,V0,T1,V1,T2,V2,T3,V3) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
     Reflection::SpecHelper s(home, m, ati()); \
@@ -1409,7 +1409,7 @@ namespace Reflection {
     T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3;\
     (void) new (home) __PROPCLASS(home, t0, t1, t2, t3); \
   }
-#define GECODE_REFLECTION5(T0,V0,T1,V1,T2,V2,T3,V3,T4,V4) \
+#define GECODE_REFLECT_ARGS_5(T0,V0,T1,V1,T2,V2,T3,V3,T4,V4) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
     Reflection::SpecHelper s(home, m, ati()); \

@@ -118,8 +118,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   class EqInt : public BaseInt<VX,VY> {
-    GECODE_PROPAGATOR2(EqInt,VX,VY,"Gecode::Int::Count::EqInt")
-    GECODE_REFLECTION4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
+    GECODE_REFLECT_PROPAGATOR_2(EqInt,VX,VY,"Gecode::Int::Count::EqInt")
+    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -149,8 +149,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   class GqInt : public BaseInt<VX,VY> {
-    GECODE_PROPAGATOR2(GqInt,VX,VY,"Gecode::Int::Count::GqInt")
-    GECODE_REFLECTION4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
+    GECODE_REFLECT_PROPAGATOR_2(GqInt,VX,VY,"Gecode::Int::Count::GqInt")
+    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -180,8 +180,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   class LqInt : public BaseInt<VX,VY> {
-    GECODE_PROPAGATOR2(LqInt,VX,VY,"Gecode::Int::Count::LqInt")
-    GECODE_REFLECTION4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
+    GECODE_REFLECT_PROPAGATOR_2(LqInt,VX,VY,"Gecode::Int::Count::LqInt")
+    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -211,8 +211,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template<class VX, class VY>
   class NqInt : public BinaryPropagator<VX,PC_INT_DOM> {
-    GECODE_PROPAGATOR2(NqInt,VX,VY,"Gecode::Int::Count::NqInt")
-    GECODE_REFLECTION5(VX,x0,VX,x1,ViewArray<VX>,x,VY,y,int,c)
+    GECODE_REFLECT_PROPAGATOR_2(NqInt,VX,VY,"Gecode::Int::Count::NqInt")
+    GECODE_REFLECT_ARGS_5(VX,x0,VX,x1,ViewArray<VX>,x,VY,y,int,c)
   protected:
     using BinaryPropagator<VX,PC_INT_DOM>::x0;
     using BinaryPropagator<VX,PC_INT_DOM>::x1;
@@ -296,8 +296,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class EqView : public BaseView<VX,VY,VZ,shr> {
-    GECODE_PROPAGATOR3i(EqView,VX,VY,VZ,shr,"Gecode::Int::Count::EqView")
-    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
+    GECODE_REFLECT_PROPAGATOR_3i(EqView,VX,VY,VZ,shr,"Gecode::Int::Count::EqView")
+    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
@@ -331,8 +331,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class NqView : public BaseView<VX,VY,VZ,shr> {
-    GECODE_PROPAGATOR3i(NqView,VX,VY,VZ,shr,"Gecode::Int::Count::NqView")
-    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
+    GECODE_REFLECT_PROPAGATOR_3i(NqView,VX,VY,VZ,shr,"Gecode::Int::Count::NqView")
+    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
@@ -366,8 +366,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class LqView : public BaseView<VX,VY,VZ,shr> {
-    GECODE_PROPAGATOR3i(LqView,VX,VY,VZ,shr,"Gecode::Int::Count::LqView")
-    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
+    GECODE_REFLECT_PROPAGATOR_3i(LqView,VX,VY,VZ,shr,"Gecode::Int::Count::LqView")
+    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
@@ -401,8 +401,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class GqView : public BaseView<VX,VY,VZ,shr> {
-    GECODE_PROPAGATOR3i(GqView,VX,VY,VZ,shr,"Gecode::Int::Count::GqView")
-    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
+    GECODE_REFLECT_PROPAGATOR_3i(GqView,VX,VY,VZ,shr,"Gecode::Int::Count::GqView")
+    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
