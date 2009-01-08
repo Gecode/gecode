@@ -1225,8 +1225,10 @@ namespace Reflection {
   };
 
   template <class C>
+  forceinline
   void operator>>(PostHelper& p, C& c) { c = C(p.home, p.vars, p.spec[p.arg++]); }
   template<>
+  forceinline
   void operator>>(PostHelper& p, int& i) { i = p.spec[p.arg++]->toInt(); }
   
   class SpecHelper {
@@ -1240,10 +1242,13 @@ namespace Reflection {
   };
   
   template <class C>
+  forceinline
   void operator<<(SpecHelper& s, C& c) { s.s << c.spec(s.home, s.m); }
   template <>
+  forceinline
   void operator<<(SpecHelper& s, int& i) { s.s << i; }
   template <>
+  forceinline
   void operator<<(SpecHelper& s, const int& i) { s.s << i; }
 
 #define GECODE_PROPAGATOR0(P,ATI) \
