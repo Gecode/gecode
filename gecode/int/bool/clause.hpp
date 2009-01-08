@@ -53,6 +53,13 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
+  forceinline
+  ClauseTrue<VX,VY>::ClauseTrue(Space& home, VX x00, VY x10,
+                                ViewArray<VX>& x0, ViewArray<VY>& y0)
+    : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>
+    (home,x00,x10), x(x0), y(y0) {}
+
+  template<class VX, class VY>
   PropCost
   ClauseTrue<VX,VY>::cost(const Space&, const ModEventDelta&) const {
     return PC_BINARY_LO;
@@ -173,41 +180,6 @@ namespace Gecode { namespace Int { namespace Bool {
     GECODE_ES_CHECK(resubscribe(home,*this,x0,x,x1,y));
     GECODE_ES_CHECK(resubscribe(home,*this,x1,y,x0,x));
     return ES_FIX;
-  }
-
-  template <class VX, class VY>
-  Support::Symbol
-  ClauseTrue<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Gecode::Int::Bool::ClauseTrue");
-  }
-
-  template<class VX, class VY>
-  Reflection::ActorSpec
-  ClauseTrue<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>
-      ::spec(home, m, ati())
-        << x.spec(home, m)
-        << y.spec(home, m);
-  }
-
-  template<class VX, class VY>
-  void
-  ClauseTrue<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    VX x0(home, vars, spec[0]);
-    VY x1(home, vars, spec[1]);
-    ViewArray<VX> x(home, vars, spec[2]);
-    ViewArray<VX> xx(home, x.size()+1);
-    for (int i=x.size(); i--;)
-      xx[i] = x[i];
-    xx[x.size()] = x0;
-    ViewArray<VY> y(home, vars, spec[3]);
-    ViewArray<VY> yy(home, y.size()+1);
-    for (int i=y.size(); i--;)
-      yy[i] = y[i];
-    yy[y.size()] = x1;
-    (void) new (home) ClauseTrue<VX,VY>(home,xx,yy);
   }
 
   template<class VX, class VY>
@@ -379,32 +351,6 @@ namespace Gecode { namespace Int { namespace Bool {
     cancel(home);
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class VX, class VY>
-  Support::Symbol
-  Clause<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Gecode::Int::Bool::Clause");
-  }
-
-  template<class VX, class VY>
-  Reflection::ActorSpec
-  Clause<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home,m)
-             << y.spec(home,m)
-             << z.spec(home,m);
-  }
-
-  template<class VX, class VY>
-  void
-  Clause<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<VX> x(home, vars, spec[0]);
-    ViewArray<VY> y(home, vars, spec[1]);
-    VX z(home, vars, spec[2]);
-    (void) post(home,x,y,z);
   }
 
 }}}

@@ -106,28 +106,6 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
-  template<class BV>
-  inline Support::Symbol
-  Lq<BV>::ati(void) {
-    return Reflection::mangle<BV>("Gecode::Int::Bool::Lq");
-  }
-
-  template<class BV>
-  Reflection::ActorSpec
-  Lq<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolBinary<BV,BV>::spec(home, m, ati());
-  }
-
-  template<class BV>
-  void
-  Lq<BV>::post(Space& home, Reflection::VarMap& vars,
-               const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    BV b0(home, vars, spec[0]);
-    BV b1(home, vars, spec[1]);
-    (void) new (home) Lq<BV>(home,b0,b1);
-  }
-
   /*
    * Less posting
    *

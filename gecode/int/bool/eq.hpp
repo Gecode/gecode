@@ -114,28 +114,6 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
-  template<class BVA, class BVB>
-  inline Support::Symbol
-  Eq<BVA,BVB>::ati(void) {
-    return Reflection::mangle<BVA,BVB>("Gecode::Int::Bool::Eq");
-  }
-
-  template<class BVA, class BVB>
-  Reflection::ActorSpec
-  Eq<BVA,BVB>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolBinary<BVA,BVB>::spec(home, m, ati());
-  }
-
-  template<class BVA, class BVB>
-  void
-  Eq<BVA,BVB>::post(Space& home, Reflection::VarMap& vars,
-                    const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    BVA b0(home, vars, spec[0]);
-    BVB b1(home, vars, spec[1]);
-    (void) new (home) Eq<BVA,BVB>(home,b0,b1);
-  }
-  
   template<class BV>
   forceinline
   NaryEq<BV>::NaryEq(Space& home, ViewArray<BV>& x)
@@ -181,15 +159,6 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  void
-  NaryEq<BV>::post(Space& home, Reflection::VarMap& vars,
-                   const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<BV> x(home, vars, spec[0]);
-    (void) new (home) NaryEq<BV>(home, x);
-  }
-
-  template<class BV>
   PropCost
   NaryEq<BV>::cost(const Space&, const ModEventDelta&) const {
     return PC_UNARY_LO;
@@ -219,18 +188,6 @@ namespace Gecode { namespace Int { namespace Bool {
     }
     GECODE_NEVER;
     return ES_FIX;
-  }
-
-  template<class BV>
-  Support::Symbol
-  NaryEq<BV>::ati(void) {
-    return Reflection::mangle<BV>("Gecode::Int::Bool::NaryEq");
-  }
-  
-  template<class BV>
-  Reflection::ActorSpec
-  NaryEq<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, ati());
   }
 
 }}}

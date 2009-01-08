@@ -152,28 +152,6 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
-  template <class BVA, class BVB, class BVC>
-  inline Support::Symbol
-  Eqv<BVA,BVB,BVC>::ati(void) {
-    return Reflection::mangle<BVA,BVB,BVC>("Gecode::Int::Bool::Eqv");
-  }
-  template <class BVA, class BVB, class BVC>
-  Reflection::ActorSpec
-  Eqv<BVA,BVB,BVC>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolTernary<BVA,BVB,BVC>::spec(home, m, ati());
-  }
-
-  template <class BVA, class BVB, class BVC>
-  void
-  Eqv<BVA,BVB,BVC>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    BVA b0(home, vars, spec[0]);
-    BVB b1(home, vars, spec[1]);
-    BVC b2(home, vars, spec[2]);
-    (void) new (home) Eqv<BVA,BVB,BVC>(home,b0,b1,b2);
-  }
-
 }}}
 
 // STATISTICS: int-prop

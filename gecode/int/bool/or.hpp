@@ -40,6 +40,8 @@ namespace Gecode { namespace Int { namespace Bool {
   /// Binary Boolean disjunction propagator (subsumed)
   template<class BV>
   class OrTrueSubsumed : public BoolBinary<BV,BV> {
+    GECODE_PROPAGATOR1(OrTrueSubsumed,BV,"Gecode::Int::Bool::OrTrueSubsumed")
+    GECODE_REFLECTION2(BV,x0,BV,x1)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
@@ -55,14 +57,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Actor type identifier of this propagator
-    static Support::Symbol ati(void);    
   };
 
   template <class BV>
@@ -93,28 +87,6 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   OrTrueSubsumed<BV>::propagate(Space& home, const ModEventDelta&) {
     return ES_SUBSUMED(*this,home);
-  }
-
-  template <class BV>
-  inline Support::Symbol
-  OrTrueSubsumed<BV>::ati(void) {
-    return Reflection::mangle<BV>("Gecode::Int::Bool::OrTrueSubsumed");
-  }
-
-  template <class BV>
-  Reflection::ActorSpec
-  OrTrueSubsumed<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolBinary<BV,BV>::spec(home, m, ati());
-  }
-
-  template<class BV>
-  void
-  OrTrueSubsumed<BV>::post(Space& home, Reflection::VarMap& vars,
-                           const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    BV b0(home, vars, spec[0]);
-    BV b1(home, vars, spec[1]);
-    (void) new (home) OrTrueSubsumed<BV>(home,b0,b1);
   }
 
 
@@ -197,28 +169,6 @@ namespace Gecode { namespace Int { namespace Bool {
     }
     return ES_SUBSUMED(*this,sizeof(*this));
 #undef GECODE_INT_STATUS
-  }
-
-  template <class BVA, class BVB>
-  Support::Symbol
-  BinOrTrue<BVA,BVB>::ati(void) {
-    return Reflection::mangle<BVA,BVB>("Gecode::Int::Bool::BinOrTrue");
-  }
-
-  template <class BVA, class BVB>
-  Reflection::ActorSpec
-  BinOrTrue<BVA,BVB>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolBinary<BVA,BVB>::spec(home, m, ati());
-  }
-
-  template<class BVA, class BVB>
-  void
-  BinOrTrue<BVA,BVB>::post(Space& home, Reflection::VarMap& vars,
-                           const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    BVA b0(home, vars, spec[0]);
-    BVB b1(home, vars, spec[1]);
-    (void) new (home) BinOrTrue<BVA,BVB>(home,b0,b1);
   }
 
   /*
@@ -325,30 +275,6 @@ namespace Gecode { namespace Int { namespace Bool {
     }
     return ES_SUBSUMED(*this,sizeof(*this));
 #undef GECODE_INT_STATUS
-  }
-
-  template <class BV>
-  Support::Symbol
-  TerOrTrue<BV>::ati(void) {
-    return Reflection::mangle<BV>("Gecode::Int::Bool::TerOrTrue");
-  }
-
-  template <class BV>
-  Reflection::ActorSpec
-  TerOrTrue<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolBinary<BV,BV>::spec(home, m, ati())
-           << x2.spec(home, m);
-  }
-
-  template<class BV>
-  void
-  TerOrTrue<BV>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    BV b0(home, vars, spec[0]);
-    BV b1(home, vars, spec[1]);
-    BV b2(home, vars, spec[2]);
-    (void) new (home) TerOrTrue<BV>(home,b0,b1,b2);
   }
 
   /*
@@ -530,32 +456,6 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
-  template <class BV>
-  Support::Symbol
-  QuadOrTrue<BV>::ati(void) {
-    return Reflection::mangle<BV>("Gecode::Int::Bool::QuadOrTrue");
-  }
-
-  template <class BV>
-  Reflection::ActorSpec
-  QuadOrTrue<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolBinary<BV,BV>::spec(home, m, ati())
-      << x2.spec(home, m)
-      << x3.spec(home, m);
-  }
-
-  template<class BV>
-  void
-  QuadOrTrue<BV>::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    BV b0(home, vars, spec[0]);
-    BV b1(home, vars, spec[1]);
-    BV b2(home, vars, spec[2]);
-    BV b3(home, vars, spec[3]);
-    (void) new (home) QuadOrTrue<BV>(home,b0,b1,b2,b3);
-  }
-
   /*
    * Boolean disjunction propagator
    *
@@ -711,29 +611,6 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
-  template <class BVA, class BVB, class BVC>
-  Support::Symbol
-  Or<BVA,BVB,BVC>::ati(void) {
-    return Reflection::mangle<BVA,BVB,BVC>("Gecode::Int::Bool::Or");
-  }
-
-  template <class BVA, class BVB, class BVC>
-  Reflection::ActorSpec
-  Or<BVA,BVB,BVC>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BoolTernary<BVA,BVB,BVC>::spec(home, m, ati());      
-  }
-
-  template<class BVA, class BVB, class BVC>
-  void
-  Or<BVA,BVB,BVC>::post(Space& home, Reflection::VarMap& vars,
-                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    BVA b0(home, vars, spec[0]);
-    BVB b1(home, vars, spec[1]);
-    BVC b2(home, vars, spec[2]);
-    (void) new (home) Or<BVA,BVB,BVC>(home,b0,b1,b2);
-  }
-
   /*
    * N-ary Boolean disjunction propagator (true)
    *
@@ -748,6 +625,11 @@ namespace Gecode { namespace Int { namespace Bool {
     assert(x.size() > 2);
     x.size(x.size()-2);
   }
+
+  template<class BV>
+  forceinline
+  NaryOrTrue<BV>::NaryOrTrue(Space& home, BV x0, BV x1, ViewArray<BV>& b)
+    : BinaryPropagator<BV,PC_BOOL_VAL>(home, x0, x1), x(b) {}
 
   template<class BV>
   PropCost
@@ -858,35 +740,6 @@ namespace Gecode { namespace Int { namespace Bool {
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
     GECODE_ES_CHECK(resubscribe(home,x1,x0));
     return ES_FIX;
-  }
-
-  template <class BV>
-  Support::Symbol
-  NaryOrTrue<BV>::ati(void) {
-    return Reflection::mangle<BV>("Gecode::Int::Bool::NaryOrTrue");
-  }
-
-  template<class BV>
-  Reflection::ActorSpec
-  NaryOrTrue<BV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, ati())
-      << x.spec(home, m);
-  }
-
-  template<class BV>
-  void
-  NaryOrTrue<BV>::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    BV b0(home, vars, spec[0]);
-    BV b1(home, vars, spec[1]);
-    ViewArray<BV> b(home, vars, spec[2]);
-    ViewArray<BV> bb(home, b.size()+2);
-    for (int i=b.size(); i--;)
-      bb[i] = b[i];
-    bb[b.size()]   = b0;
-    bb[b.size()+1] = b1;
-    (void) post(home,bb);
   }
 
   template<class BV>
@@ -1011,31 +864,7 @@ namespace Gecode { namespace Int { namespace Bool {
     (void) MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>
       ::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class VX, class VY>
-  Support::Symbol
-  NaryOr<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Gecode::Int::Bool::NaryOr");
-  }
-
-  template<class VX, class VY>
-  Reflection::ActorSpec
-  NaryOr<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::
-      spec(home, m, ati());      
-  }
-
-  template<class VX, class VY>
-  void
-  NaryOr<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                   const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<VX> b(home, vars, spec[0]);
-    VY b0(home, vars, spec[1]);
-    (void) post(home,b,b0);
-  }
-  
+  }  
 
 }}}
 

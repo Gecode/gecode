@@ -67,9 +67,6 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for rewriting \a p during cloning
     BoolBinary(Space& home, bool share, Propagator& p,
                BVA b0, BVB b1);
-    /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m, 
-                                const Support::Symbol& name) const;
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -88,9 +85,6 @@ namespace Gecode { namespace Int { namespace Bool {
     BoolTernary(Space& home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning
     BoolTernary(Space& home, bool share, BoolTernary& p);
-    /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   public:
     /// Constructor for rewriting \a p during cloning
     BoolTernary(Space& home, bool share, Propagator& p,
@@ -109,6 +103,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB>
   class Eq : public BoolBinary<BVA,BVB> {
+    GECODE_PROPAGATOR2(Eq,BVA,BVB,"Gecode::Int::Bool::Eq")
+    GECODE_REFLECTION2(BVA,x0,BVB,x1)
   protected:
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
@@ -126,14 +122,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x_0 = x_1\f$
     static  ExecStatus post(Space& home, BVA x0, BVB x1);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 
@@ -145,6 +133,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class NaryEq : public NaryPropagator<BV,PC_BOOL_VAL> {
+    GECODE_PROPAGATOR1(NaryEq,BV,"Gecode::Int::Bool::NaryEq")
+    GECODE_REFLECTION1(ViewArray<BV>,x)
   protected:
     using NaryPropagator<BV,PC_BOOL_VAL>::x;
     /// Constructor for posting
@@ -160,14 +150,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
     static  ExecStatus post(Space& home, ViewArray<BV>& x);
-    /// Post propagator for specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 
@@ -179,6 +161,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class Lq : public BoolBinary<BV,BV> {
+    GECODE_PROPAGATOR1(Lq,BV,"Gecode::Int::Bool::Lq")
+    GECODE_REFLECTION2(BV,x0,BV,x1)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
@@ -193,14 +177,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \leq b_1\f$
     static  ExecStatus post(Space& home, BV b0, BV b1);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 
@@ -226,6 +202,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB>
   class BinOrTrue : public BoolBinary<BVA,BVB> {
+    GECODE_PROPAGATOR2(BinOrTrue,BVA,BVB,"Gecode::Int::Bool::BinOrTrue")
+    GECODE_REFLECTION2(BVA,x0,BVB,x1)
   protected:
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
@@ -243,14 +221,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
     static  ExecStatus post(Space& home, BVA b0, BVB b1);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -261,6 +231,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class TerOrTrue : public BoolBinary<BV,BV> {
+    GECODE_PROPAGATOR1(TerOrTrue,BV,"Gecode::Int::Bool::TerOrTrue")
+    GECODE_REFLECTION3(BV,x0,BV,x1,BV,x2)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
@@ -282,14 +254,6 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space& home, BV b0, BV b1, BV b2);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -300,6 +264,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class QuadOrTrue : public BoolBinary<BV,BV> {
+    GECODE_PROPAGATOR1(QuadOrTrue,BV,"Gecode::Int::Bool::QuadOrTrue")
+    GECODE_REFLECTION4(BV,x0,BV,x1,BV,x2,BV,x3)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
@@ -321,14 +287,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 \lor b_3 = 1 \f$
     static  ExecStatus post(Space& home, BV b0, BV b1, BV b2, BV b3);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -341,6 +299,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB, class BVC>
   class Or : public BoolTernary<BVA,BVB,BVC> {
+    GECODE_PROPAGATOR3(Or,BVA,BVB,BVC,"Gecode::Int::Bool::Or")
+    GECODE_REFLECTION3(BVA,x0,BVB,x1,BVC,x2)
   protected:
     using BoolTernary<BVA,BVB,BVC>::x0;
     using BoolTernary<BVA,BVB,BVC>::x1;
@@ -358,14 +318,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 = b_2 \f$
     static  ExecStatus post(Space& home, BVA b0, BVB b1, BVC b2);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -377,6 +329,8 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX,class VY>
   class NaryOr 
     : public MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL> {
+    GECODE_PROPAGATOR2(NaryOr,VX,VY,"Gecode::Int::Bool::NaryOr")
+    GECODE_REFLECTION2(ViewArray<VX>,x,VY,y)
   protected:
     using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::x;
     using MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>::y;
@@ -399,14 +353,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i = y\f$
     static  ExecStatus post(Space& home, ViewArray<VX>& x, VY y);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -420,6 +366,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BV>
   class NaryOrTrue : public BinaryPropagator<BV,PC_BOOL_VAL> {
+    GECODE_PROPAGATOR1(NaryOrTrue,BV,"Gecode::Int::Bool::NaryOrTrue")
+    GECODE_REFLECTION3(BV,x0,BV,x1,ViewArray<BV>,x)
   protected:
     using BinaryPropagator<BV,PC_BOOL_VAL>::x0;
     using BinaryPropagator<BV,PC_BOOL_VAL>::x1;
@@ -429,6 +377,8 @@ namespace Gecode { namespace Int { namespace Bool {
     ExecStatus resubscribe(Space& home, BV& x0, BV x1);
     /// Constructor for posting
     NaryOrTrue(Space& home, ViewArray<BV>& x);
+    /// Constructor for posting
+    NaryOrTrue(Space& home, BV x0, BV x1, ViewArray<BV>& x);
     /// Constructor for cloning \a p
     NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p);
   public:
@@ -440,14 +390,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
     static  ExecStatus post(Space& home, ViewArray<BV>& b);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -461,6 +403,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB, class BVC>
   class Eqv : public BoolTernary<BVA,BVB,BVC> {
+    GECODE_PROPAGATOR3(Eqv,BVA,BVB,BVC,"Gecode::Int::Bool::Eqv")
+    GECODE_REFLECTION3(BVA,x0,BVB,x1,BVC,x2)
   protected:
     using BoolTernary<BVA,BVB,BVC>::x0;
     using BoolTernary<BVA,BVB,BVC>::x1;
@@ -476,14 +420,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
     static  ExecStatus post(Space& home, BVA b0, BVB b1, BVC b2);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 
@@ -495,6 +431,8 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class VX, class VY>
   class Clause : public Propagator {
+    GECODE_PROPAGATOR2(Clause,VX,VY,"Gecode::Int::Bool::Clause")
+    GECODE_REFLECTION3(ViewArray<VX>,x,ViewArray<VY>,y,VX,z)
   protected:
     /// Positive views
     ViewArray<VX> x;
@@ -534,14 +472,6 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|x|-1} y_i = z\f$
     static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y, 
                             VX z);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -556,6 +486,8 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   class ClauseTrue 
     : public MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL> {
+    GECODE_PROPAGATOR2(ClauseTrue,VX,VY,"Gecode::Int::Bool::ClauseTrue")
+    GECODE_REFLECTION4(VX,x0,VY,x1,ViewArray<VX>,x,ViewArray<VY>,y)
   protected:
     using MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::x0;
     using MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::x1;
@@ -565,6 +497,8 @@ namespace Gecode { namespace Int { namespace Bool {
     ViewArray<VY> y;
     /// Update subscription
     //    ExecStatus resubscribe(Space& home, & x0, BV x1);
+    /// Constructor for posting
+    ClauseTrue(Space& home, VX x0, VY x1, ViewArray<VX>& x, ViewArray<VY>& y);
     /// Constructor for posting
     ClauseTrue(Space& home, ViewArray<VX>& x, ViewArray<VY>& y);
     /// Constructor for cloning \a p
@@ -578,14 +512,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|y|-1} y_i = 1\f$
     static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
