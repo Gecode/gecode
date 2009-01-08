@@ -168,33 +168,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
-  forceinline void
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
-  ::post(Space& home, Reflection::VarMap& vars,
-         const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     VA x0(home, vars, spec[0]);
-     VB x1(home, vars, spec[1]);
-     VC x2(home, vars, spec[2]);
-     (void) new (home) DivPlusBnd<Val,VA,VB,VC,towardsMinInf>(home,x0,x1,x2);
-  }
-
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
-  Support::Symbol
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>::ati(void) {
-    return Reflection::mangle<VA,VB,VC,Val>
-      ("Gecode::Int::Arithmetic::DivPlusBnd",towardsMinInf);
-  }
-
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
-  Reflection::ActorSpec
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
-  ::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
-      ::spec(home, m, ati());
-  }
-
 
   /*
    * Bounds consistent multiplication
@@ -367,28 +340,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return DivPlusBnd<double,MinusView,IntView,MinusView,false>::post(home,x0,x1,x2);
   }
 
-  template <class View>
-  forceinline void
-  DivBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                   const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     View x2(home, vars, spec[2]);
-     (void) new (home) DivBnd<View>(home,x0,x1,x2);
-  }
-
-  template <class View>
-  Support::Symbol
-  DivBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::DivBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  DivBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
-  }
 
   /*
    * Propagator for x0 != 0 /\ (x1 != 0 => x0*x1>0) /\ abs(x1)<abs(x0)
@@ -406,16 +357,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x0.nq(home,0));
     (void) new (home) DivMod<View>(home,x0,x1);
     return ES_OK;
-  }
-
-  template <class View>
-  forceinline void
-  DivMod<View>::post(Space& home, Reflection::VarMap& vars,
-                        const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) DivMod<View>(home,x0,x1);
   }
 
   template <class View>
@@ -477,18 +418,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     }
     return ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  DivMod<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::DivMod");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  DivMod<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
 }}}

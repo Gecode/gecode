@@ -87,16 +87,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class VA, class VB>
-  forceinline void
-  SqrPlusBnd<VA,VB>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     VA x0(home, vars, spec[0]);
-     VB x1(home, vars, spec[1]);
-     (void) new (home) SqrPlusBnd<VA,VB>(home,x0,x1);
-  }
-
-  template <class VA, class VB>
   forceinline
   SqrPlusBnd<VA,VB>::SqrPlusBnd(Space& home, bool share, SqrPlusBnd<VA,VB>& p)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,share,p) {}
@@ -112,19 +102,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SqrPlusBnd<VA,VB>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
-  }
-
-  template <class VA, class VB>
-  Support::Symbol
-  SqrPlusBnd<VA,VB>::ati(void) {
-    return Reflection::mangle<VA,VB>("Gecode::Int::Arithmetic::SqrPlusBnd");
-  }
-
-  template <class VA, class VB>
-  Reflection::ActorSpec
-  SqrPlusBnd<VA,VB>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>
-      ::spec(home, m, ati());
   }
 
 
@@ -162,16 +139,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  forceinline void
-  SqrBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) SqrBnd<View>(home,x0,x1);
-  }
-
-  template <class View>
   forceinline
   SqrBnd<View>::SqrBnd(Space& home, bool share, SqrBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
@@ -205,19 +172,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     return ES_NOFIX;
   }
-
-  template <class View>
-  Support::Symbol
-  SqrBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::SqrBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  SqrBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
-  }
-
 
   /*
    * Value mappings for squaring and square root
@@ -258,16 +212,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     (void) new (home) SqrPlusDom<VA,VB>(home,x0,x1);
     return ES_OK;
-  }
-
-  template <class VA, class VB>
-  forceinline void
-  SqrPlusDom<VA,VB>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     VA x0(home, vars, spec[0]);
-     VB x1(home, vars, spec[1]);
-     (void) new (home) SqrPlusDom<VA,VB>(home,x0,x1);
   }
 
   template <class VA, class VB>
@@ -316,20 +260,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
-  template <class VA, class VB>
-  Support::Symbol
-  SqrPlusDom<VA,VB>::ati(void) {
-    return Reflection::mangle<VA,VB>("Gecode::Int::Arithmetic::SqrPlusDom");
-  }
-
-  template <class VA, class VB>
-  Reflection::ActorSpec
-  SqrPlusDom<VA,VB>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>
-      ::spec(home, m, ati());
-  }
-
-
 
   /*
    * Domain consistent squaring
@@ -361,16 +291,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       (void) new (home) SqrDom<View>(home,x0,x1);
     }
     return ES_OK;
-  }
-
-  template <class View>
-  forceinline void
-  SqrDom<View>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) SqrDom<View>(home,x0,x1);
   }
 
   template <class View>
@@ -444,18 +364,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  SqrDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::SqrDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  SqrDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
 }}}

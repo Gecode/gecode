@@ -95,17 +95,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  forceinline void
-  MaxBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     View x2(home, vars, spec[2]);
-     (void) new (home) MaxBnd<View>(home,x0,x1,x2);
-  }
-
-  template <class View>
   forceinline
   MaxBnd<View>::MaxBnd(Space& home, bool share, MaxBnd<View>& p)
     : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
@@ -132,18 +121,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x0,x2)));
     return x0.assigned() && x1.assigned() && x2.assigned() ?
       ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  MaxBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::MaxBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  MaxBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
   /*
@@ -181,16 +158,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       (void) new (home) NaryMaxBnd<View>(home,x,y);
     }
     return ES_OK;
-  }
-
-  template <class View>
-  forceinline void
-  NaryMaxBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<View> x(home, vars, spec[0]);
-    View y(home, vars, spec[1]);
-    (void) new (home) NaryMaxBnd<View>(home,x,y);
   }
 
   template <class View>
@@ -259,18 +226,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return prop_nary_max_bnd(home,*this,x,y,PC_INT_BND);
   }
 
-  template <class View>
-  Support::Symbol
-  NaryMaxBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::NaryMaxBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  NaryMaxBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryOnePropagator<View,PC_INT_BND>::spec(home, m, ati());
-  }
-
 
   /*
    * Ternary domain consistent maximum
@@ -296,17 +251,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::Lq<View>::post(home,x0,x2);
     (void) new (home) MaxDom<View>(home,x0,x1,x2);
     return ES_OK;
-  }
-
-  template <class View>
-  forceinline void
-  MaxDom<View>::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     View x2(home, vars, spec[2]);
-     (void) new (home) MaxDom<View>(home,x0,x1,x2);
   }
 
   template <class View>
@@ -353,19 +297,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_FIX;
   }
 
-  template <class View>
-  Support::Symbol
-  MaxDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::MaxDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  MaxDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,
-      View,PC_INT_BND>::spec(home, m, ati());
-  }
-
   /*
    * Nary domain consistent maximum
    *
@@ -401,16 +332,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       (void) new (home) NaryMaxDom<View>(home,x,y);
     }
     return ES_OK;
-  }
-
-  template <class View>
-  forceinline void
-  NaryMaxDom<View>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<View> x(home, vars, spec[0]);
-    View y(home, vars, spec[1]);
-    (void) new (home) NaryMaxDom<View>(home,x,y);
   }
 
   template <class View>
@@ -454,19 +375,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     Iter::Ranges::NaryUnion<ViewRanges<View> > u(i_x,x.size());
     GECODE_ME_CHECK(y.inter_r(home,u,false));
     return ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  NaryMaxDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::NaryMaxDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  NaryMaxDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>
-      ::spec(home, m, ati());
   }
 
 }}}

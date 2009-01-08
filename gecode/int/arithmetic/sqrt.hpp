@@ -97,16 +97,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  forceinline void
-  SqrtBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) SqrtBnd<View>(home,x0,x1);
-  }
-
-  template <class View>
   forceinline
   SqrtBnd<View>::SqrtBnd(Space& home, bool share, SqrtBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
@@ -122,18 +112,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SqrtBnd<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
     return x1.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  SqrtBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::SqrtBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  SqrtBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
 
@@ -187,16 +165,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  forceinline void
-  SqrtDom<View>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) SqrtDom<View>(home,x0,x1);
-  }
-
-  template <class View>
   forceinline
   SqrtDom<View>::SqrtDom(Space& home, bool share, SqrtDom<View>& p)
     : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
@@ -239,18 +207,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     return x1.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  SqrtDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::SqrtDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  SqrtDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
 

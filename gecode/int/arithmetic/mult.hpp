@@ -188,16 +188,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View, PropCond pc>
-  forceinline void
-  MultZeroOne<View,pc>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) MultZeroOne<View,pc>(home,x0,x1);
-  }
-
-  template <class View, PropCond pc>
   forceinline
   MultZeroOne<View,pc>::MultZeroOne(Space& home, bool share, 
                                     MultZeroOne<View,pc>& p)
@@ -233,19 +223,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     default: GECODE_NEVER;
     }
     return ES_SUBSUMED(*this,home);
-  }
-
-  template <class View, PropCond pc>
-  Support::Symbol
-  MultZeroOne<View,pc>::ati(void) {
-    return Reflection::mangle<View>
-      ("Gecode::Int::Arithmetic::MultZeroOne", pc);
-  }
-
-  template <class View, PropCond pc>
-  Reflection::ActorSpec
-  MultZeroOne<View,pc>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,pc>::spec(home, m, ati());
   }
 
 
@@ -335,32 +312,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       (void) new (home) MultPlusBnd<int,VA,VB,VC>(home,x0,x1,x2);
     }
     return ES_OK;
-  }
-
-  template <class Val, class VA, class VB, class VC>
-  forceinline void
-  MultPlusBnd<Val,VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
-                                  const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     VA x0(home, vars, spec[0]);
-     VB x1(home, vars, spec[1]);
-     VC x2(home, vars, spec[2]);
-     (void) new (home) MultPlusBnd<Val,VA,VB,VC>(home,x0,x1,x2);
-  }
-
-  template <class Val, class VA, class VB, class VC>
-  Support::Symbol
-  MultPlusBnd<Val,VA,VB,VC>::ati(void) {
-    return Reflection::mangle<VA,VB,VC,Val>
-      ("Gecode::Int::Arithmetic::MultPlusBnd");
-  }
-
-  template <class Val, class VA, class VB, class VC>
-  Reflection::ActorSpec
-  MultPlusBnd<Val,VA,VB,VC>::spec(const Space& home,
-                               Reflection::VarMap& m) const {
-    return MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
-      ::spec(home, m, ati());
   }
 
 
@@ -528,30 +479,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return MultPlusBnd<double,MinusView,IntView,MinusView>::post(home,x0,x1,x2);
   }
 
-  template <class View>
-  forceinline void
-  MultBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                   const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     View x2(home, vars, spec[2]);
-     (void) new (home) MultBnd<View>(home,x0,x1,x2);
-  }
-
-  template <class View>
-  Support::Symbol
-  MultBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::MultBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  MultBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
-  }
-
-
 
   /*
    * Positive domain consistent multiplication
@@ -628,32 +555,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       (void) new (home) MultPlusDom<int,VA,VB,VC>(home,x0,x1,x2);
     }
     return ES_OK;
-  }
-
-  template <class Val, class VA, class VB, class VC>
-  forceinline void
-  MultPlusDom<Val,VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
-                                  const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     VA x0(home, vars, spec[0]);
-     VB x1(home, vars, spec[1]);
-     VC x2(home, vars, spec[2]);
-     (void) new (home) MultPlusDom<Val,VA,VB,VC>(home,x0,x1,x2);
-  }
-
-  template <class Val, class VA, class VB, class VC>
-  Support::Symbol
-  MultPlusDom<Val,VA,VB,VC>::ati(void) {
-    return Reflection::mangle<VA,VB,VC,Val>
-      ("Gecode::Int::Arithmetic::MultPlusDom");
-  }
-
-  template <class Val, class VA, class VB, class VC>
-  Reflection::ActorSpec
-  MultPlusDom<Val,VA,VB,VC>::spec(const Space& home,
-                               Reflection::VarMap& m) const {
-    return MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
-      ::spec(home, m, ati());
   }
 
 
@@ -828,29 +729,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     std::swap(x0,x1);
   post_npn:
     return MultPlusDom<double,MinusView,IntView,MinusView>::post(home,x0,x1,x2);
-  }
-
-  template <class View>
-  forceinline void
-  MultDom<View>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-     spec.checkArity(3);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     View x2(home, vars, spec[2]);
-     (void) new (home) MultDom<View>(home,x0,x1,x2);
-  }
-
-  template <class View>
-  Support::Symbol
-  MultDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::MultDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  MultDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return TernaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
 }}}

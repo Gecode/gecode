@@ -107,16 +107,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  forceinline void
-  AbsBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) AbsBnd<View>(home,x0,x1);
-  }
-
-  template <class View>
   forceinline
   AbsBnd<View>::AbsBnd(Space& home, bool share, AbsBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
@@ -139,18 +129,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   AbsBnd<View>::propagate(Space& home, const ModEventDelta&) {
     return prop_abs_bnd<View,Rel::EqBnd>(home, *this, x0, x1);
-  }
-
-  template <class View>
-  Support::Symbol
-  AbsBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::AbsBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  AbsBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
   }
 
   template <class View>
@@ -178,16 +156,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     }
     return ES_OK;
-  }
-
-  template <class View>
-  forceinline void
-  AbsDom<View>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-     spec.checkArity(2);
-     View x0(home, vars, spec[0]);
-     View x1(home, vars, spec[1]);
-     (void) new (home) AbsDom<View>(home,x0,x1);
   }
 
   template <class View>
@@ -258,18 +226,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     return ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  AbsDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Arithmetic::AbsDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  AbsDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
 }}}
