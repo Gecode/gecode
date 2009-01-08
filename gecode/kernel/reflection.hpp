@@ -1212,6 +1212,213 @@ namespace Reflection {
   }
   //@}
 
+  class PostHelper {
+  public:
+    Space& home;
+    VarMap& vars;
+    const ActorSpec& spec;
+    int arg;
+    PostHelper(Space& home0, VarMap& vars0, const ActorSpec& spec0, int arity)
+      : home(home0), vars(vars0), spec(spec0), arg(0) {
+      spec.checkArity(arity);
+    }
+  };
+
+  template <class C>
+  void operator>>(PostHelper& p, C& c) { c = C(p.home, p.vars, p.spec[p.arg++]); }
+  template<>
+  void operator>>(PostHelper& p, int& i) { i = p.spec[p.arg++]->toInt(); }
+  
+  class SpecHelper {
+  public:
+    const Space& home;
+    Reflection::VarMap& m;
+    Reflection::ActorSpec s;
+    SpecHelper(const Space& home0, Reflection::VarMap& m0,
+               const Support::Symbol& ati)
+      : home(home0), m(m0), s(ati) {}
+  };
+  
+  template <class C>
+  void operator<<(SpecHelper& s, C& c) { s.s << c.spec(s.home, s.m); }
+  template <>
+  void operator<<(SpecHelper& s, int& i) { s.s << i; }
+  template <>
+  void operator<<(SpecHelper& s, const int& i) { s.s << i; }
+
+#define GECODE_PROPAGATOR0(P,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Support::Symbol(ATI); \
+  }
+#define GECODE_PROPAGATOR1(P,A0,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0>(ATI); \
+  }
+#define GECODE_PROPAGATOR1i(P,A0,i,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0>(ATI,i); \
+  }
+#define GECODE_PROPAGATOR2(P,A0,A1,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1>(ATI); \
+  }
+#define GECODE_PROPAGATOR2i(P,A0,A1,i,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1>(ATI,i); \
+  }
+#define GECODE_PROPAGATOR3(P,A0,A1,A2,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2>(ATI); \
+  }
+#define GECODE_PROPAGATOR3i(P,A0,A1,A2,i,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2>(ATI,i); \
+  }
+#define GECODE_PROPAGATOR4(P,A0,A1,A2,A3,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3>(ATI); \
+  }
+#define GECODE_PROPAGATOR4i(P,A0,A1,A2,A3,i,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3>(ATI,i); \
+  }
+#define GECODE_PROPAGATOR5(P,A0,A1,A2,A3,A4,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3,A4>(ATI); \
+  }
+#define GECODE_PROPAGATOR5i(P,A0,A1,A2,A3,A4,i,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3,A4>(ATI,i); \
+  }
+#define GECODE_PROPAGATOR6(P,A0,A1,A2,A3,A4,A5,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI); \
+  }
+#define GECODE_PROPAGATOR6i(P,A0,A1,A2,A3,A4,A5,i,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI,i); \
+  }
+#define GECODE_PROPAGATOR7(P,A0,A1,A2,A3,A4,A5,A6,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI); \
+  }
+#define GECODE_PROPAGATOR7i(P,A0,A1,A2,A3,A4,A5,A6,i,ATI) \
+  private: \
+  typedef P __PROPCLASS; \
+  public: \
+  static Support::Symbol ati(void) { \
+    return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI,i); \
+  }
+
+#define GECODE_REFLECTION1(T0,V0) \
+  public: \
+  Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
+    Reflection::SpecHelper s(home, m, ati()); \
+    s << V0; \
+    return s.s; \
+  } \
+  static void post(Space& home, Reflection::VarMap& vars, \
+            const Reflection::ActorSpec& spec) { \
+    Reflection::PostHelper p(home,vars,spec,1); \
+    T0 __t0; p >> __t0; \
+    (void) new (home) __PROPCLASS(home, __t0); \
+  }
+#define GECODE_REFLECTION2(T0,V0,T1,V1) \
+  public: \
+  Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
+    Reflection::SpecHelper s(home, m, ati()); \
+    s << V0; s << V1; \
+    return s.s; \
+  } \
+  static void post(Space& home, Reflection::VarMap& vars, \
+            const Reflection::ActorSpec& spec) { \
+    Reflection::PostHelper p(home,vars,spec,1); \
+    T0 __t0; p >> __t0; T1 __t1; p >> __t1; \
+    (void) new (home) __PROPCLASS(home, __t0, __t1); \
+  }
+#define GECODE_REFLECTION3(T0,V0,T1,V1,T2,V2) \
+  public: \
+  Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
+    Reflection::SpecHelper s(home, m, ati()); \
+    s << V0; s << V1; s << V2; \
+    return s.s; \
+  } \
+  static void post(Space& home, Reflection::VarMap& vars, \
+            const Reflection::ActorSpec& spec) { \
+    Reflection::PostHelper p(home,vars,spec,1); \
+    T0 __t0; p >> __t0; T1 __t1; p >> __t1; T2 __t2; p >> __t2; \
+    (void) new (home) __PROPCLASS(home, __t0, __t1, __t2); \
+  }
+#define GECODE_REFLECTION4(T0,V0,T1,V1,T2,V2,T3,V3) \
+  public: \
+  Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
+    Reflection::SpecHelper s(home, m, ati()); \
+    s << V0; s << V1; s << V2; s << V3; \
+    return s.s; \
+  } \
+  static void post(Space& home, Reflection::VarMap& vars, \
+            const Reflection::ActorSpec& spec) { \
+    Reflection::PostHelper p(home,vars,spec,1); \
+    T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3;\
+    (void) new (home) __PROPCLASS(home, t0, t1, t2, t3); \
+  }
+#define GECODE_REFLECTION5(T0,V0,T1,V1,T2,V2,T3,V3,T4,V4) \
+  public: \
+  Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
+    Reflection::SpecHelper s(home, m, ati()); \
+    s << V0; s << V1; s << V2; s << V3; s << V4; \
+    return s.s; \
+  } \
+  static void post(Space& home, Reflection::VarMap& vars, \
+            const Reflection::ActorSpec& spec) { \
+    Reflection::PostHelper p(home,vars,spec,1); \
+    T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3; T4 t4; p >> t4; \
+    (void) new (home) __PROPCLASS(home, t0, t1, t2, t3, t4); \
+  }
+
+  
 }}
 
 

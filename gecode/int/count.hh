@@ -100,9 +100,6 @@ namespace Gecode { namespace Int { namespace Count {
     BaseInt(Space& home, bool share, BaseInt& p);
     /// Constructor for creation
     BaseInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
-    /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -121,6 +118,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   class EqInt : public BaseInt<VX,VY> {
+    GECODE_PROPAGATOR2(EqInt,VX,VY,"Gecode::Int::Count::EqInt")
+    GECODE_REFLECTION4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -137,14 +136,6 @@ namespace Gecode { namespace Int { namespace Count {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -158,6 +149,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   class GqInt : public BaseInt<VX,VY> {
+    GECODE_PROPAGATOR2(GqInt,VX,VY,"Gecode::Int::Count::GqInt")
+    GECODE_REFLECTION4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -172,14 +165,6 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
   };
@@ -195,6 +180,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY>
   class LqInt : public BaseInt<VX,VY> {
+    GECODE_PROPAGATOR2(LqInt,VX,VY,"Gecode::Int::Count::LqInt")
+    GECODE_REFLECTION4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -209,15 +196,7 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
   };
 
@@ -232,6 +211,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template<class VX, class VY>
   class NqInt : public BinaryPropagator<VX,PC_INT_DOM> {
+    GECODE_PROPAGATOR2(NqInt,VX,VY,"Gecode::Int::Count::NqInt")
+    GECODE_REFLECTION5(VX,x0,VX,x1,ViewArray<VX>,x,VY,y,int,c)
   protected:
     using BinaryPropagator<VX,PC_INT_DOM>::x0;
     using BinaryPropagator<VX,PC_INT_DOM>::x1;
@@ -245,6 +226,8 @@ namespace Gecode { namespace Int { namespace Count {
     bool resubscribe(Space& home, VX& z);
     /// Constructor for posting
     NqInt(Space& home,  ViewArray<VX>& x, VY y, int c);
+    /// Constructor for posting
+    NqInt(Space& home,  VX x0, VX x1, ViewArray<VX>& x, VY y, int c);
     /// Constructor for cloning \a p
     NqInt(Space& home, bool share, NqInt& p);
   public:
@@ -254,14 +237,6 @@ namespace Gecode { namespace Int { namespace Count {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq c\f$
     static  ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
     /// Delete propagator and return its size
@@ -294,9 +269,6 @@ namespace Gecode { namespace Int { namespace Count {
     BaseView(Space& home, bool shr, BaseView& p);
     /// Constructor for creation
     BaseView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
-    /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -324,6 +296,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class EqView : public BaseView<VX,VY,VZ,shr> {
+    GECODE_PROPAGATOR3i(EqView,VX,VY,VZ,shr,"Gecode::Int::Count::EqView")
+    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
@@ -342,14 +316,6 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
@@ -365,6 +331,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class NqView : public BaseView<VX,VY,VZ,shr> {
+    GECODE_PROPAGATOR3i(NqView,VX,VY,VZ,shr,"Gecode::Int::Count::NqView")
+    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
@@ -383,14 +351,6 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq z+c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
@@ -406,6 +366,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class LqView : public BaseView<VX,VY,VZ,shr> {
+    GECODE_PROPAGATOR3i(LqView,VX,VY,VZ,shr,"Gecode::Int::Count::LqView")
+    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
@@ -424,14 +386,6 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space& home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z+c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
@@ -447,6 +401,8 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template <class VX, class VY, class VZ, bool shr>
   class GqView : public BaseView<VX,VY,VZ,shr> {
+    GECODE_PROPAGATOR3i(GqView,VX,VY,VZ,shr,"Gecode::Int::Count::GqView")
+    GECODE_REFLECTION4(ViewArray<VX>,x,VY,y,VZ,z,int,c)
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
     using BaseView<VX,VY,VZ,shr>::z;
@@ -465,14 +421,6 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z+c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
   };

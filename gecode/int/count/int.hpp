@@ -76,17 +76,6 @@ namespace Gecode { namespace Int { namespace Count {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
-  template <class VX, class VY>
-  Reflection::ActorSpec
-  BaseInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m,
-                       const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x.spec(home, m)
-             << n_s
-             << y.spec(home, m)
-             << c;
-  }
-
   /*
    * Equal propagator (integer rhs)
    *
@@ -138,30 +127,6 @@ namespace Gecode { namespace Int { namespace Count {
   Actor*
   EqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) EqInt<VX,VY>(home,share,*this);
-  }
-
-  template <class VX, class VY>
-  Support::Symbol
-  EqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Gecode::Int::Count::EqInt");
-  }
-
-  template <class VX, class VY>
-  Reflection::ActorSpec
-  EqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BaseInt<VX,VY>::spec(home, m, ati());
-  }
-
-  template <class VX, class VY>
-  void
-  EqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    ViewArray<VX> x(home, vars, spec[0]);
-    int n_s = spec[1]->toInt();
-    VY y(home, vars, spec[2]);
-    int c = spec[3]->toInt();
-    (void) new (home) EqInt(home, x, n_s, y, c);
   }
 
   template <class VX, class VY>
@@ -263,30 +228,6 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  Support::Symbol
-  GqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Gecode::Int::Count::GqInt");
-  }
-
-  template <class VX, class VY>
-  Reflection::ActorSpec
-  GqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BaseInt<VX,VY>::spec(home, m, ati());
-  }
-
-  template <class VX, class VY>
-  void
-  GqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    ViewArray<VX> x(home, vars, spec[0]);
-    int n_s = spec[1]->toInt();
-    VY y(home, vars, spec[2]);
-    int c = spec[3]->toInt();
-    (void) new (home) GqInt(home, x, n_s, y, c);
-  }
-
-  template <class VX, class VY>
   ExecStatus
   GqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
@@ -382,30 +323,6 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  Support::Symbol
-  LqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Gecode::Int::Count::LqInt");
-  }
-
-  template <class VX, class VY>
-  Reflection::ActorSpec
-  LqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BaseInt<VX,VY>::spec(home, m, ati());
-  }
-
-  template <class VX, class VY>
-  void
-  LqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    ViewArray<VX> x(home, vars, spec[0]);
-    int n_s = spec[1]->toInt();
-    VY y(home, vars, spec[2]);
-    int c = spec[3]->toInt();
-    (void) new (home) LqInt(home, x, n_s, y, c);
-  }
-
-  template <class VX, class VY>
   ExecStatus
   LqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
@@ -468,6 +385,13 @@ namespace Gecode { namespace Int { namespace Count {
     y.subscribe(home,*this,PC_INT_DOM);
   }
 
+  template<class VX, class VY>
+  forceinline
+  NqInt<VX,VY>::NqInt(Space& home, VX x00, VX x10, ViewArray<VX>& x0, VY y0, int c0)
+    : BinaryPropagator<VX,PC_INT_DOM>(home, x00, x10), x(x0), y(y0), c(c0) {
+    y.subscribe(home,*this,PC_INT_DOM);
+  }
+
   template <class VX, class VY>
   forceinline size_t
   NqInt<VX,VY>::dispose(Space& home) {
@@ -520,40 +444,6 @@ namespace Gecode { namespace Int { namespace Count {
   PropCost
   NqInt<VX,VY>::cost(const Space&, const ModEventDelta&) const {
     return PC_LINEAR_LO;
-  }
-
-  template <class VX, class VY>
-  Support::Symbol
-  NqInt<VX,VY>::ati(void) {
-    return Reflection::mangle<VX,VY>("Gecode::Int::Count::NqInt");
-  }
-
-  template <class VX, class VY>
-  Reflection::ActorSpec
-  NqInt<VX,VY>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-      BinaryPropagator<VX, PC_INT_DOM>::spec(home, m, ati());
-    return s << x.spec(home, m)
-             << y.spec(home, m)
-             << c;
-  }
-
-  template <class VX, class VY>
-  void
-  NqInt<VX,VY>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-    spec.checkArity(5);
-    VX x0(home, vars, spec[0]);
-    VX x1(home, vars, spec[1]);
-    ViewArray<VX> xx(home, vars, spec[2]);
-    ViewArray<VX> x(home, xx.size()+2);
-    for (int i=xx.size(); i--; )
-      x[i] = xx[i];
-    x[xx.size()]   = x0;
-    x[xx.size()+1] = x1;
-    VY y(home, vars, spec[3]);
-    int c = spec[4]->toInt();
-    (void) new (home) NqInt(home, x, y, c);
   }
 
   template<class VX, class VY>
