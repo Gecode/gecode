@@ -118,28 +118,28 @@ namespace Gecode { namespace Support {
   template <class T, class A>
   forceinline T
   StaticStack<T,A>::pop(void) {
-    assert((tos > 0) && (tos <= n));
+    assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
     return stack[--tos];
   }
 
   template <class T, class A>
   forceinline T&
   StaticStack<T,A>::top(void) const {
-    assert((tos > 0) && (tos <= n));
+    assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
     return stack[tos-1];
   }
 
   template <class T, class A>
   forceinline T&
   StaticStack<T,A>::last(void) const {
-    assert((tos >= 0) && (tos < n));
+    assert((tos >= 0) && (tos < static_cast<unsigned int>(n)));
     return stack[tos];
   }
 
   template <class T, class A>
   forceinline void
   StaticStack<T,A>::push(const T& x) {
-    assert(tos < n);
+    assert(tos < static_cast<unsigned int>(n));
     stack[tos++] = x;
   }
 
