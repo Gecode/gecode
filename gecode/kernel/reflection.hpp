@@ -1251,6 +1251,14 @@ namespace Reflection {
   forceinline
   void operator<<(SpecHelper& s, const int& i) { s.s << i; }
 
+/**
+ * \brief Provide reflection information for a non-template propagator.
+ *
+ * Takes the class of the propagator \a P, and its actor type identifier,
+ * a string constant \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_0(P,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1258,6 +1266,14 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Support::Symbol(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with one template argument.
+ *
+ * Takes the class of the propagator \a P, the template argument \a A0,
+ * and its actor type identifier \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_1(P,A0,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1265,6 +1281,15 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0>(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with one template
+ * class argument and one template integer argument.
+ *
+ * Takes the class of the propagator \a P, the template class argument \a A0,
+ * the template integer argument \a i, and its actor type identifier \a ATI.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_1i(P,A0,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1272,6 +1297,14 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0>(ATI,i); \
   }
+/**
+ * \brief Provide reflection information for a propagator with two template arguments.
+ *
+ * Takes the class of the propagator \a P, the template arguments,
+ * and its actor type identifier \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_2(P,A0,A1,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1279,6 +1312,15 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1>(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with two template
+ * class arguments and one template integer argument.
+ *
+ * Takes the class of the propagator \a P, the template class arguments,
+ * the template integer argument \a i, and its actor type identifier \a ATI.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_2i(P,A0,A1,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1286,6 +1328,14 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1>(ATI,i); \
   }
+/**
+ * \brief Provide reflection information for a propagator with three template arguments.
+ *
+ * Takes the class of the propagator \a P, the template arguments,
+ * and its actor type identifier \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_3(P,A0,A1,A2,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1293,6 +1343,15 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2>(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with three template
+ * class arguments and one template integer argument.
+ *
+ * Takes the class of the propagator \a P, the template class arguments,
+ * the template integer argument \a i, and its actor type identifier \a ATI.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_3i(P,A0,A1,A2,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1300,6 +1359,14 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2>(ATI,i); \
   }
+/**
+ * \brief Provide reflection information for a propagator with four template arguments.
+ *
+ * Takes the class of the propagator \a P, the template arguments,
+ * and its actor type identifier \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_4(P,A0,A1,A2,A3,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1307,6 +1374,15 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3>(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with four template
+ * class arguments and one template integer argument.
+ *
+ * Takes the class of the propagator \a P, the template class arguments,
+ * the template integer argument \a i, and its actor type identifier \a ATI.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_4i(P,A0,A1,A2,A3,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1314,6 +1390,14 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3>(ATI,i); \
   }
+/**
+ * \brief Provide reflection information for a propagator with five template arguments.
+ *
+ * Takes the class of the propagator \a P, the template arguments,
+ * and its actor type identifier \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_5(P,A0,A1,A2,A3,A4,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1321,6 +1405,15 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4>(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with five template
+ * class arguments and one template integer argument.
+ *
+ * Takes the class of the propagator \a P, the template class arguments,
+ * the template integer argument \a i, and its actor type identifier \a ATI.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_5i(P,A0,A1,A2,A3,A4,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1328,6 +1421,14 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4>(ATI,i); \
   }
+/**
+ * \brief Provide reflection information for a propagator with six template arguments.
+ *
+ * Takes the class of the propagator \a P, the template arguments,
+ * and its actor type identifier \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_6(P,A0,A1,A2,A3,A4,A5,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1335,6 +1436,15 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with six template
+ * class arguments and one template integer argument.
+ *
+ * Takes the class of the propagator \a P, the template class arguments,
+ * the template integer argument \a i, and its actor type identifier \a ATI.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_6i(P,A0,A1,A2,A3,A4,A5,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1342,6 +1452,14 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI,i); \
   }
+/**
+ * \brief Provide reflection information for a propagator with seven template arguments.
+ *
+ * Takes the class of the propagator \a P, the template arguments,
+ * and its actor type identifier \a ATI, as arguments.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_7(P,A0,A1,A2,A3,A4,A5,A6,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1349,6 +1467,15 @@ namespace Reflection {
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI); \
   }
+/**
+ * \brief Provide reflection information for a propagator with seven template
+ * class arguments and one template integer argument.
+ *
+ * Takes the class of the propagator \a P, the template class arguments,
+ * the template integer argument \a i, and its actor type identifier \a ATI.
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_PROPAGATOR_7i(P,A0,A1,A2,A3,A4,A5,A6,i,ATI) \
   private: \
   typedef P __PROPCLASS; \
@@ -1357,6 +1484,17 @@ namespace Reflection {
     return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI,i); \
   }
 
+/**
+ * \brief Mark propagator arguments for reflection.
+ *
+ * The member variable \a V0 (with type \a T0) of the propagator will be
+ * returned by reflection, and unreflection will recreate the propagator from
+ * a specification for \a V0. Note that the propagator must provide a post
+ * method with the signature
+ * <code>post(Space& home, T0 V0)</code>
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_ARGS_1(T0,V0) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
@@ -1370,6 +1508,18 @@ namespace Reflection {
     T0 __t0; p >> __t0; \
     GECODE_ES_FAIL(home, __PROPCLASS::post(home, __t0)); \
   }
+/**
+ * \brief Mark propagator arguments for reflection.
+ *
+ * The member variables \a V0 and \a V1 (with types \a T0 and \a T1)
+ * of the propagator will be
+ * returned by reflection, and unreflection will recreate the propagator from
+ * a specification for \a V0 and \a V1. Note that the propagator must provide 
+ * a post method with the signature
+ * <code>post(Space& home, T0 V0, T1 V1)</code>
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_ARGS_2(T0,V0,T1,V1) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
@@ -1383,6 +1533,13 @@ namespace Reflection {
     T0 __t0; p >> __t0; T1 __t1; p >> __t1; \
     GECODE_ES_FAIL(home, __PROPCLASS::post(home, __t0, __t1)); \
   }
+/**
+ * \brief Mark propagator arguments for reflection.
+ *
+ * \see GECODE_REFLECT_ARGS_2
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_ARGS_3(T0,V0,T1,V1,T2,V2) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
@@ -1396,6 +1553,13 @@ namespace Reflection {
     T0 __t0; p >> __t0; T1 __t1; p >> __t1; T2 __t2; p >> __t2; \
     GECODE_ES_FAIL(home, __PROPCLASS::post(home, __t0, __t1, __t2)); \
   }
+/**
+ * \brief Mark propagator arguments for reflection.
+ *
+ * \see GECODE_REFLECT_ARGS_2
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_ARGS_4(T0,V0,T1,V1,T2,V2,T3,V3) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
@@ -1409,6 +1573,13 @@ namespace Reflection {
     T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3;\
     GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0, t1, t2, t3)); \
   }
+/**
+ * \brief Mark propagator arguments for reflection.
+ *
+ * \see GECODE_REFLECT_ARGS_2
+ *
+ * \ingroup TaskReflection
+ */
 #define GECODE_REFLECT_ARGS_5(T0,V0,T1,V1,T2,V2,T3,V3,T4,V4) \
   public: \
   Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
