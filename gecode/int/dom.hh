@@ -58,6 +58,8 @@ namespace Gecode { namespace Int { namespace Dom {
    */
   template <class View>
   class ReRange : public ReUnaryPropagator<View,PC_INT_BND,BoolView> {
+    GECODE_REFLECT_PROPAGATOR_1(ReRange,View,"Gecode::Int::Dom::ReRange")
+    GECODE_REFLECT_ARGS_4(View,x0,int,min,int,max,BoolView,b)
   protected:
     using ReUnaryPropagator<View,PC_INT_BND,BoolView>::x0;
     using ReUnaryPropagator<View,PC_INT_BND,BoolView>::b;
@@ -74,14 +76,6 @@ namespace Gecode { namespace Int { namespace Dom {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Mangled name
-    static Support::Symbol ati(void);
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
     static ExecStatus post(Space& home, View x, int min, int max, BoolView b);
   };
@@ -94,6 +88,8 @@ namespace Gecode { namespace Int { namespace Dom {
    */
   template <class View>
   class ReIntSet : public ReUnaryPropagator<View,PC_INT_DOM,BoolView> {
+    GECODE_REFLECT_PROPAGATOR_1(ReIntSet,View,"Gecode::Int::Dom::ReIntSet")
+    GECODE_REFLECT_ARGS_3(View,x0,IntSet,is,BoolView,b)
   protected:
     using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::x0;
     using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::b;
@@ -109,14 +105,6 @@ namespace Gecode { namespace Int { namespace Dom {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Mangled name
-    static Support::Symbol ati(void);
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
     static ExecStatus post(Space& home, View x, const IntSet& s, BoolView b);
     /// Delete propagator and return its size

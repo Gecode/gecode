@@ -64,27 +64,6 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
-  Support::Symbol
-  Val<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Circuit::Val");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Val<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Base<View>::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  Val<View>::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) Val<View>(home, x);
-  }
-
-  template <class View>
   ExecStatus
   Val<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));

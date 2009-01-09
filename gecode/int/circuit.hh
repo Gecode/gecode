@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Circuit {
    */
   template <class View>
   class Base : public NaryPropagator<View,PC_INT_DOM> {
- protected:
+  protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
     /// Array for performing value propagation for distinct
     ViewArray<View> y;
@@ -69,9 +69,6 @@ namespace Gecode { namespace Int { namespace Circuit {
     ExecStatus connected(Space& home);
     /// Ensure path property: prune edges that could give to small cycles
     ExecStatus path(Space& home);
-    /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -89,7 +86,9 @@ namespace Gecode { namespace Int { namespace Circuit {
    */
   template <class View>
   class Val : public Base<View> {
- protected:
+    GECODE_REFLECT_PROPAGATOR_1(Val,View,"Gecode::Int::Circuit::Val")
+    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
+  protected:
     using Base<View>::x;
     using Base<View>::y;
     using Base<View>::connected;
@@ -107,14 +106,6 @@ namespace Gecode { namespace Int { namespace Circuit {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space& home, ViewArray<View>& x);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -129,7 +120,9 @@ namespace Gecode { namespace Int { namespace Circuit {
    */
   template <class View>
   class Dom : public Base<View> {
- protected:
+    GECODE_REFLECT_PROPAGATOR_1(Dom,View,"Gecode::Int::Circuit::Dom")
+    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
+  protected:
     using Base<View>::x;
     using Base<View>::y;
     using Base<View>::connected;
@@ -152,14 +145,6 @@ namespace Gecode { namespace Int { namespace Circuit {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space& home, ViewArray<View>& x);
   };

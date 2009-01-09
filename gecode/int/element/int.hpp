@@ -180,36 +180,6 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class V0, class V1, class Idx, class Val>
-  inline Support::Symbol
-  Int<V0,V1,Idx,Val>::ati(void) {
-    return Reflection::mangle<V0,V1,Idx,Val>("Gecode::Int::Element::Int");
-  }
-
-  template <class V0, class V1, class Idx, class Val>
-  Reflection::ActorSpec
-  Int<V0,V1,Idx,Val>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << Reflection::Arg::newIntArray(c);
-  }
-
-  template <class V0, class V1, class Idx, class Val>
-  void
-  Int<V0,V1,Idx,Val>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    V0 x0(home, vars, spec[0]);
-    V1 x1(home, vars, spec[1]);
-    Reflection::IntArrayArg* a = spec[2]->toIntArray();
-    IntSharedArray is(a->size());
-    for (int i=a->size(); i--; ) {
-      is[i] = (*a)[i];
-    }
-    (void) new (home) Int<V0,V1,Idx,Val>(home, is, x0, x1);
-  }
-
-  template <class V0, class V1, class Idx, class Val>
   ExecStatus
   Int<V0,V1,Idx,Val>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = x0.assigned() && x1.assigned();
@@ -352,6 +322,25 @@ namespace Gecode { namespace Int { namespace Element {
 
 }}}
 
+namespace Gecode { namespace Reflection {
+  template<>
+  forceinline
+  void operator>>(PostHelper& p, Gecode::Int::Element::IntSharedArray& isa) {
+    Reflection::IntArrayArg* a = p.spec[p.arg++]->toIntArray();
+    Gecode::Int::Element::IntSharedArray is(a->size());
+    for (int i=a->size(); i--; ) {
+      is[i] = (*a)[i];
+    }
+    isa = is;
+  }
+
+  template <>
+  forceinline
+  void operator<<(SpecHelper& s,
+                  const Gecode::Int::Element::IntSharedArray& isa) {
+    s.s << Arg::newIntArray(isa);
+  }  
+}}
 
 // STATISTICS: int-prop
 

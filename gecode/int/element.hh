@@ -65,6 +65,8 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class V0, class V1, class Idx, class Val>
   class Int : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_4(Int,V0,V1,Idx,Val,"Gecode::Int::Element::Int")
+    GECODE_REFLECT_ARGS_3(IntSharedArray,c,V0,x0,V1,x1)
   protected:
     /**
      * \brief Linked index-value pairs
@@ -155,14 +157,6 @@ namespace Gecode { namespace Int { namespace Element {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Mangled name of this propagator
-    static Support::Symbol ati(void);
     /// Post propagator for \f$i_{x_0}=x_1\f$
     static  ExecStatus post(Space& home, IntSharedArray& i, V0 x0, V1 x1);
     /// Delete propagator and return its size

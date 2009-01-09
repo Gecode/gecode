@@ -76,32 +76,6 @@ namespace Gecode { namespace Int { namespace Dom {
   }
 
   template <class View>
-  inline Support::Symbol
-  ReRange<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Dom::ReRange");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  ReRange<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-      ReUnaryPropagator<View,PC_INT_BND,BoolView>::spec(home, m, ati());
-    return s << min << max;
-  }
-
-  template <class View>
-  void
-  ReRange<View>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    View x0(home, vars, spec[0]);
-    BoolView b(home, vars, spec[1]);
-    int min = spec[2]->toInt();
-    int max = spec[3]->toInt();
-    (void) new (home) ReRange<View>(home, x0, min, max, b);
-  }
-
-  template <class View>
   ExecStatus
   ReRange<View>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {

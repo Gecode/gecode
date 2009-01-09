@@ -79,19 +79,6 @@ namespace Gecode { namespace Int { namespace Distinct {
       : cost_hi(x.size(),PC_LINEAR_HI);
   }
 
-  template <class View>
-  Support::Symbol
-  Bnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Distinct::Bnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Bnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m);
-  }
-
 
   /// Rank information
   class Rank {
@@ -364,15 +351,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (x.size() > 2)
       (void) new (home) Bnd<View>(home,x);
     return ES_OK;
-  }
-
-  template <class View>
-  void
-  Bnd<View>::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) Bnd<View>(home, x);
   }
 
 }}}

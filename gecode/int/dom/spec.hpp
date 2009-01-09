@@ -82,40 +82,6 @@ namespace Gecode { namespace Int { namespace Dom {
   }
 
   template <class View>
-  inline Support::Symbol
-  ReIntSet<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Dom::ReIntSet");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  ReIntSet<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-      ReUnaryPropagator<View,PC_INT_DOM,BoolView>::spec(home, m, ati());
-    int count=0;
-    for (IntSetRanges isr(is); isr(); ++isr)
-      count++;
-    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
-    count = 0;
-    for (IntSetRanges isr(is); isr(); ++isr) {
-      (*a)[count++] = isr.min();
-      (*a)[count++] = isr.max();
-    }
-    return s << a;
-  }
-
-  template <class View>
-  void
-  ReIntSet<View>::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    BoolView b(home, vars, spec[1]);
-    Reflection::IntArrayArgRanges r(spec[2]->toIntArray());
-    (void) new (home) ReIntSet<View>(home, x0, IntSet(r), b);
-  }
-
-  template <class View>
   ExecStatus
   ReIntSet<View>::propagate(Space& home, const ModEventDelta&) {
     IntSetRanges i_is(is);

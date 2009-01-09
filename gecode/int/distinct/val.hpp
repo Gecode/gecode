@@ -163,18 +163,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  Support::Symbol
-  Val<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Distinct::Val");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Val<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryPropagator<View,PC_INT_VAL>::spec(home, m, ati());
-  }
-
-  template <class View>
   ExecStatus
   Val<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK((prop_val<View,true>(home,x)));
@@ -189,15 +177,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (x.size() > 2)
       (void) new (home) Val<View>(home,x);
     return ES_OK;
-  }
-
-  template <class View>
-  void
-  Val<View>::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) Val<View>(home, x);
   }
 
 }}}

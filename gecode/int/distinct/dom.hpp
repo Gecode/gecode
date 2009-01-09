@@ -677,15 +677,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  void
-  Dom<View>::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) Dom<View>(home, x);
-  }
-
-  template <class View>
   forceinline
   Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
@@ -696,18 +687,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     return cost_lo(x.size(),
                    (View::me(med) == ME_INT_VAL)
                    ? PC_LINEAR_LO : PC_CUBIC_LO);
-  }
-
-  template <class View>
-  Support::Symbol
-  Dom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Distinct::Dom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Dom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
   template <class View>

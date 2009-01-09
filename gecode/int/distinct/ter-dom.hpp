@@ -56,17 +56,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  void
-  TerDom<View>::post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    View x2(home, vars, spec[1]);
-    (void) new (home) TerDom<View>(home, x0, x1, x2);
-  }
-
-  template <class View>
   forceinline
   TerDom<View>::TerDom(Space& home, bool share, TerDom<View>& p)
     : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
@@ -75,18 +64,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   Actor*
   TerDom<View>::copy(Space& home, bool share) {
     return new (home) TerDom<View>(home,share,*this);
-  }
-
-  template <class View>
-  Support::Symbol
-  TerDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Distinct::TerDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  TerDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return TernaryPropagator<View,PC_INT_DOM>::spec(home, m, ati());
   }
 
   /// Check whether x0 forms a Hall set of cardinality one

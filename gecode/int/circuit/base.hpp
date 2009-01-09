@@ -259,13 +259,6 @@ namespace Gecode { namespace Int { namespace Circuit {
     return sizeof(*this);
   }
 
-  template <class View>
-  Reflection::ActorSpec
-  Base<View>::spec(const Space& home, Reflection::VarMap& m,
-                   const Support::Symbol& name) const {
-    return NaryPropagator<View,PC_INT_DOM>::spec(home, m, name);
-  }
-
 }}}
 
 // STATISTICS: int-prop
