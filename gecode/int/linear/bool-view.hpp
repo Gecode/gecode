@@ -73,16 +73,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
-  template <class XV, class YV>
-  Reflection::ActorSpec
-  LinBoolView<XV,YV>::spec(const Space& home, Reflection::VarMap& m,
-                           const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x.spec(home, m)
-             << y.spec(home, m)
-             << c;
-  }
-
 
   /*
    * Equality propagator
@@ -137,29 +127,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) EqBoolView<XV,YV>(home,share,*this);
   }
 
-  template <class XV, class YV>
-  inline Support::Symbol
-  EqBoolView<XV,YV>::ati(void) {
-    return Reflection::mangle<XV,YV>("Gecode::Int::Linear::EqBoolView");
-  }
-
-  template <class XV, class YV>
-  Reflection::ActorSpec
-  EqBoolView<XV,YV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinBoolView<XV,YV>::spec(home, m, ati());
-  }
-
-  template <class XV, class YV>
-  void
-  EqBoolView<XV,YV>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<XV> x(home, vars, spec[0]);
-    YV y(home, vars, spec[1]);
-    int c = spec[2]->toInt();
-    (void) new (home) EqBoolView<XV,YV>(home, x, y, c);
-  }
-    
   template <class XV, class YV>
   ExecStatus
   EqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
@@ -247,29 +214,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  inline Support::Symbol
-  NqBoolView<XV,YV>::ati(void) {
-    return Reflection::mangle<XV,YV>("Gecode::Int::Linear::NqBoolView");
-  }
-
-  template <class XV, class YV>
-  Reflection::ActorSpec
-  NqBoolView<XV,YV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinBoolView<XV,YV>::spec(home, m, ati());
-  }
-
-  template <class XV, class YV>
-  void
-  NqBoolView<XV,YV>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<XV> x(home, vars, spec[0]);
-    YV y(home, vars, spec[1]);
-    int c = spec[2]->toInt();
-    (void) new (home) NqBoolView<XV,YV>(home, x, y, c);
-  }
-
-  template <class XV, class YV>
   ExecStatus
   NqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();
@@ -344,29 +288,6 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   GqBoolView<XV,YV>::copy(Space& home, bool share) {
     return new (home) GqBoolView<XV,YV>(home,share,*this);
-  }
-
-  template <class XV, class YV>
-  inline Support::Symbol
-  GqBoolView<XV,YV>::ati(void) {
-    return Reflection::mangle<XV,YV>("Gecode::Int::Linear::GqBoolView");
-  }
-
-  template <class XV, class YV>
-  Reflection::ActorSpec
-  GqBoolView<XV,YV>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinBoolView<XV,YV>::spec(home, m, ati());
-  }
-
-  template <class XV, class YV>
-  void
-  GqBoolView<XV,YV>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<XV> x(home, vars, spec[0]);
-    YV y(home, vars, spec[1]);
-    int c = spec[2]->toInt();
-    (void) new (home) GqBoolView<XV,YV>(home, x, y, c);
   }
 
   template <class XV, class YV>

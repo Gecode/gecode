@@ -92,16 +92,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
-  template <class Val, class P, class N, PropCond pc>
-  Reflection::ActorSpec
-  Lin<Val,P,N,pc>::spec(const Space& home, Reflection::VarMap& m,
-                        const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x.spec(home, m)
-             << y.spec(home, m)
-             << c;
-  }
-
   /*
    * Reified linear propagators
    *
@@ -129,17 +119,6 @@ namespace Gecode { namespace Int { namespace Linear {
     b.cancel(home,*this,PC_BOOL_VAL);
     (void) Lin<Val,P,N,pc>::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class Val, class P, class N, PropCond pc, class Ctrl>
-  Reflection::ActorSpec
-  ReLin<Val,P,N,pc,Ctrl>::spec(const Space& home, Reflection::VarMap& m,
-                               const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << Lin<Val,P,N,pc>::x.spec(home, m)
-             << Lin<Val,P,N,pc>::y.spec(home, m)
-             << Lin<Val,P,N,pc>::c
-             << b.spec(home, m);
   }
 
   /*
@@ -401,30 +380,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) Eq<Val,P,N>(home,share,*this);
   }
 
-
-  template <class Val, class P, class N>
-  inline Support::Symbol
-  Eq<Val,P,N>::ati(void) {
-    return Reflection::mangle<Val,P,N>("Gecode::Int::Linear::Eq");
-  }
-
-  template <class Val, class P, class N>
-  Reflection::ActorSpec
-  Eq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Lin<Val,P,N,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class Val, class P, class N>
-  void
-  Eq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
-                    const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<P> x(home, vars, spec[0]);
-    ViewArray<N> y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) Eq<Val,P,N>(home, x, y, c);
-  }  
-
   template <class Val, class P, class N>
   ExecStatus
   Eq<Val,P,N>::propagate(Space& home, const ModEventDelta& med) {
@@ -468,30 +423,6 @@ namespace Gecode { namespace Int { namespace Linear {
   ReEq<Val,P,N,Ctrl>::copy(Space& home, bool share) {
     return new (home) ReEq<Val,P,N,Ctrl>(home,share,*this);
   }
-
-  template <class Val, class P, class N, class Ctrl>
-  inline Support::Symbol
-  ReEq<Val,P,N,Ctrl>::ati(void) {
-    return Reflection::mangle<Val,P,N,Ctrl>("Gecode::Int::Linear::ReEq");
-  }
-
-  template <class Val, class P, class N, class Ctrl>
-  Reflection::ActorSpec
-  ReEq<Val,P,N,Ctrl>::spec(const Space& home, Reflection::VarMap& m) const {
-    return ReLin<Val,P,N,PC_INT_BND,Ctrl>::spec(home, m, ati());
-  }
-
-  template <class Val, class P, class N, class Ctrl>
-  void
-  ReEq<Val,P,N,Ctrl>::post(Space& home, Reflection::VarMap& vars,
-                           const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    ViewArray<P> x(home, vars, spec[0]);
-    ViewArray<N> y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    Ctrl b(home, vars, spec[3]);
-    (void) new (home) ReEq<Val,P,N,Ctrl>(home, x, y, c, b);
-  }  
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
@@ -644,29 +575,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Support::Symbol
-  Nq<Val,P,N>::ati(void) {
-    return Reflection::mangle<Val,P,N>("Gecode::Int::Linear::Nq");
-  }
-
-  template <class Val, class P, class N>
-  Reflection::ActorSpec
-  Nq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Lin<Val,P,N,PC_INT_VAL>::spec(home, m, ati());
-  }
-
-  template <class Val, class P, class N>
-  void
-  Nq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
-                    const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<P> x(home, vars, spec[0]);
-    ViewArray<N> y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) Nq<Val,P,N>(home, x, y, c);
-  }  
-
-  template <class Val, class P, class N>
   ExecStatus
   Nq<Val,P,N>::propagate(Space& home, const ModEventDelta&) {
     for (int i = x.size(); i--; )
@@ -816,29 +724,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  inline Support::Symbol
-  Lq<Val,P,N>::ati(void) {
-    return Reflection::mangle<Val,P,N>("Gecode::Int::Linear::Lq");
-  }
-
-  template <class Val, class P, class N>
-  Reflection::ActorSpec
-  Lq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Lin<Val,P,N,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class Val, class P, class N>
-  void
-  Lq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
-                    const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<P> x(home, vars, spec[0]);
-    ViewArray<N> y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) Lq<Val,P,N>(home, x, y, c);
-  }  
-
-  template <class Val, class P, class N>
   ExecStatus
   Lq<Val,P,N>::propagate(Space& home, const ModEventDelta& med) {
     // Eliminate singletons
@@ -947,29 +832,6 @@ namespace Gecode { namespace Int { namespace Linear {
   ReLq<Val,P,N>::copy(Space& home, bool share) {
     return new (home) ReLq<Val,P,N>(home,share,*this);
   }
-
-  template <class Val, class P, class N>
-  inline Support::Symbol
-  ReLq<Val,P,N>::ati(void) {
-    return Reflection::mangle<Val,P,N>("Gecode::Int::Linear::ReLq");
-  }
-
-  template <class Val, class P, class N>
-  Reflection::ActorSpec
-  ReLq<Val,P,N>::spec(const Space& home, Reflection::VarMap& m) const {
-    return ReLin<Val,P,N,PC_INT_BND,BoolView>::spec(home, m, ati());
-  }
-
-  template <class Val, class P, class N>
-  void
-  ReLq<Val,P,N>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-    ViewArray<P> x(home, vars, spec[0]);
-    ViewArray<N> y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    BoolView b(home, vars, spec[3]);
-    (void) new (home) ReLq<Val,P,N>(home, x, y, c, b);
-  }  
 
   template <class Val, class P, class N>
   ExecStatus

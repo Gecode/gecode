@@ -402,29 +402,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class View>
-  inline Support::Symbol
-  DomEq<Val,View>::ati(void) {
-    return Reflection::mangle<Val,View>("Gecode::Int::Linear::DomEq");
-  }
-
-  template <class Val, class View>
-  Reflection::ActorSpec
-  DomEq<Val,View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Lin<Val,View,View,PC_INT_DOM>::spec(home, m, ati());
-  }
-  
-  template <class Val, class View>
-  void
-  DomEq<Val,View>::post(Space& home, Reflection::VarMap& vars,
-                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<View> x(home, vars, spec[0]);
-    ViewArray<View> y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) DomEq<Val,View>(home, x, y, c);
-  }  
-
-  template <class Val, class View>
   ExecStatus
   DomEq<Val,View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {

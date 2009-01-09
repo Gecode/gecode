@@ -94,14 +94,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
-  template <class VX>
-  Reflection::ActorSpec
-  MemoryLinBoolInt<VX>::spec(const Space& home, Reflection::VarMap& m,
-                             const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x.spec(home, m) << c;
-  }
-
   /*
    * Baseclass for integer Boolean sum using advisors
    *
@@ -193,30 +185,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  inline Support::Symbol
-  GqBoolInt<VX>::Memory::ati(void) {
-    return Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Memory");
-  }
-
-  template <class VX>
-  Reflection::ActorSpec
-  GqBoolInt<VX>::Memory::spec(const Space& home,
-                              Reflection::VarMap& m) const {
-    return MemoryLinBoolInt<VX>::spec(home, m, ati());
-  }
-
-  template <class VX>
-  void
-  GqBoolInt<VX>::Memory::post(Space& home, Reflection::VarMap& vars,
-  const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<VX> x(home, vars, spec[0]);
-    int c   = spec[1]->toInt();
-    (void) new (home) Memory(home, x, c);
-  }
-
-
-  template <class VX>
   ExecStatus
   GqBoolInt<VX>::Memory::propagate(Space& home, const ModEventDelta&) {
     // Eliminate assigned views from subscribed views
@@ -279,12 +247,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  inline Support::Symbol
-  GqBoolInt<VX>::Speed::ati(void) {
-    return Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Speed");
-  }
-
-  template <class VX>
   Reflection::ActorSpec
   GqBoolInt<VX>::Speed::spec(const Space& home, Reflection::VarMap& m) const {
     return SpeedLinBoolInt<VX>::spec(home, m, ati());
@@ -297,7 +259,7 @@ namespace Gecode { namespace Int { namespace Linear {
     spec.checkArity(2);
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
-    (void) new (home) Speed(home, x, c);
+    GqBoolInt<VX>::post(home,x,c);
   }
 
   template <class VX>
@@ -386,6 +348,12 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_OK;
   }
 
+  template <class VX>
+  ExecStatus
+  GqBoolInt<VX>::Memory::post(Space& home, ViewArray<VX>& x, int c) {
+    return GqBoolInt<VX>::post(home,x,c);
+  }
+
 
   /*
    * Equal propagator (integer rhs)
@@ -407,29 +375,6 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   EqBoolInt<VX>::Memory::copy(Space& home, bool share) {
     return new (home) Memory(home,share,*this);
-  }
-
-  template <class VX>
-  inline Support::Symbol
-  EqBoolInt<VX>::Memory::ati(void) {
-    return Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Memory");
-  }
-
-  template <class VX>
-  Reflection::ActorSpec
-  EqBoolInt<VX>::Memory::spec(const Space& home,
-                              Reflection::VarMap& m) const {
-    return MemoryLinBoolInt<VX>::spec(home, m, ati());
-  }
-
-  template <class VX>
-  void
-  EqBoolInt<VX>::Memory::post(Space& home, Reflection::VarMap& vars,
-  const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<VX> x(home, vars, spec[0]);
-    int c = spec[1]->toInt();
-    (void) new (home) Memory(home, x, c);
   }
 
   template <class VX>
@@ -503,12 +448,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  inline Support::Symbol
-  EqBoolInt<VX>::Speed::ati(void) {
-    return Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Speed");
-  }
-
-  template <class VX>
   Reflection::ActorSpec
   EqBoolInt<VX>::Speed::spec(const Space& home, Reflection::VarMap& m) const {
     return SpeedLinBoolInt<VX>::spec(home, m, ati());
@@ -517,11 +456,11 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   void
   EqBoolInt<VX>::Speed::post(Space& home, Reflection::VarMap& vars,
-  const Reflection::ActorSpec& spec) {
+                             const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
     ViewArray<VX> x(home, vars, spec[0]);
     int c = spec[1]->toInt();
-    (void) new (home) Speed(home, x, c);
+    EqBoolInt<VX>::post(home,x,c);
   }
 
   template <class VX>
@@ -611,6 +550,12 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_OK;
   }
 
+  template <class VX>
+  ExecStatus
+  EqBoolInt<VX>::Memory::post(Space& home, ViewArray<VX>& x, int c) {
+    return EqBoolInt<VX>::post(home,x,c);
+  }
+
 
   /*
    * Integer disequal to Boolean sum
@@ -674,6 +619,16 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
+  forceinline ExecStatus
+  NqBoolInt<VX>::post(Space& home, VX x0, VX x1, ViewArray<VX>& x, int c) {
+    ViewArray<VX> xx(home, x.size()+2);
+    for (int i=x.size(); i--;)
+      xx[i] = x[i];
+    xx[x.size()] = x0; xx[x.size()+1] = x1;
+    return post(home, x, c);
+  }
+
+  template<class VX>
   Actor*
   NqBoolInt<VX>::copy(Space& home, bool share) {
     return new (home) NqBoolInt<VX>(home,share,*this);
@@ -683,44 +638,6 @@ namespace Gecode { namespace Int { namespace Linear {
   PropCost
   NqBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
     return PC_LINEAR_LO;
-  }
-
-  template<class VX>
-  inline Support::Symbol
-  NqBoolInt<VX>::ati(void) {
-    return Reflection::mangle<VX>("Gecode::Int::Linear::NqBoolInt");
-  }
-
-  template<class VX>
-  Reflection::ActorSpec
-  NqBoolInt<VX>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-      BinaryPropagator<VX, PC_INT_VAL>::spec(home, m, ati());
-    return s << x.spec(home, m) << c;
-  }
-
-  template <class VX>
-  void
-  NqBoolInt<VX>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    VX x0(home, vars, spec[0]);
-    VX x1(home, vars, spec[1]);
-    int c = spec[3]->toInt();
-
-    if (spec[2] == NULL) {
-      ViewArray<VX> x(home, 2);
-      x[0] = x0; x[1] = x1;
-      (void) new (home) NqBoolInt<VX>(home, x, c);
-    } else {
-      Reflection::ArrayArg* a = spec[2]->toArray();
-      ViewArray<VX> x(home, a->size()+2);
-      for (int i=a->size(); i--; )
-        x[i] = VX(home, vars, (*a)[i]);
-      x[a->size()]   = x0;
-      x[a->size()+1] = x1;
-      (void) new (home) NqBoolInt<VX>(home, x, c);
-    }
   }
 
   template<class VX>

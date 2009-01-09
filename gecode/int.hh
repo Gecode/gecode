@@ -1624,9 +1624,11 @@ namespace Gecode {
     int symbol_max(void) const;
 
     /// Initialize DFA from reflection specification
-    GECODE_INT_EXPORT DFA(Reflection::VarMap& vm, Reflection::Arg* arg);
+    GECODE_INT_EXPORT
+    DFA(Space& home, Reflection::VarMap& vm, Reflection::Arg* arg);
     /// Create reflection specification for the DFA
-    GECODE_INT_EXPORT Reflection::Arg* spec(Reflection::VarMap& vm) const;
+    GECODE_INT_EXPORT
+    Reflection::Arg* spec(const Space& home,Reflection::VarMap& vm) const;
   };
 
 

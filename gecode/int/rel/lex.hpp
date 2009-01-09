@@ -61,30 +61,6 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::Symbol
-  Lex<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Rel::Lex");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Lex<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home,m) << y.spec(home,m) << strict;
-  }
-
-  template <class View>
-  void
-  Lex<View>::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<View> x(home, vars, spec[0]);
-    ViewArray<View> y(home, vars, spec[1]);
-    bool s = spec[2]->toInt();
-    (void) new (home) Lex<View>(home,x,y,s);
-  }
-
-  template <class View>
   PropCost
   Lex<View>::cost(const Space&, const ModEventDelta&) const {
     return cost_lo(x.size(), PC_LINEAR_LO);

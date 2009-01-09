@@ -83,29 +83,6 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View0, class View1>
-  inline Support::Symbol
-  EqBnd<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Int::Rel::EqBnd");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  EqBnd<View0,View1>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>
-      ::spec(home, m, ati());
-  }
-
-  template <class View0, class View1>
-  void
-  EqBnd<View0,View1>::post(Space& home, Reflection::VarMap& vars,
-                           const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    (void) new (home) EqBnd<View0,View1>(home, x0, x1);
-  } 
-
-  template <class View0, class View1>
   ExecStatus
   EqBnd<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
@@ -173,29 +150,6 @@ namespace Gecode { namespace Int { namespace Rel {
   EqDom<View0,View1>::copy(Space& home, bool share) {
     return new (home) EqDom<View0,View1>(home,share,*this);
   }
-
-  template <class View0, class View1>
-  inline Support::Symbol
-  EqDom<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Int::Rel::EqDom");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  EqDom<View0,View1>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>
-      ::spec(home, m, ati());
-  }
-
-  template <class View0, class View1>
-  void
-  EqDom<View0,View1>::post(Space& home, Reflection::VarMap& vars,
-                           const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    (void) new (home) EqDom<View0,View1>(home, x0, x1);
-  } 
 
   template <class View0, class View1>
   PropCost
@@ -285,28 +239,6 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   NaryEqDom<View>::copy(Space& home, bool share) {
     return new (home) NaryEqDom<View>(home,share,*this);
-  }
-
-  template <class View>
-  inline Support::Symbol
-  NaryEqDom<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Rel::NaryEqDom");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  NaryEqDom<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryPropagator<View,PC_INT_DOM>
-      ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  NaryEqDom<View>::post(Space& home, Reflection::VarMap& vars,
-                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) NaryEqDom<View>(home, x);
   }
 
   template <class View>
@@ -451,28 +383,6 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::Symbol
-  NaryEqBnd<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Rel::NaryEqBnd");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  NaryEqBnd<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryPropagator<View,PC_INT_BND>
-      ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  NaryEqBnd<View>::post(Space& home, Reflection::VarMap& vars,
-                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<View> x(home, vars, spec[0]);
-    (void) new (home) NaryEqBnd<View>(home, x);
-  }
-
-  template <class View>
   ExecStatus
   NaryEqBnd<View>::propagate(Space& home, const ModEventDelta& med) {
     assert(x.size() > 2);
@@ -551,31 +461,6 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  inline Support::Symbol
-  ReEqDom<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqDom");
-  }
-
-  template <class View, class CtrlView>
-  Reflection::ActorSpec
-  ReEqDom<View,CtrlView>::spec(const Space& home,
-                               Reflection::VarMap& m) const {
-    return ReBinaryPropagator<View,PC_INT_DOM,CtrlView>
-      ::spec(home, m, ati());
-  }
-
-  template <class View, class CtrlView>
-  void
-  ReEqDom<View,CtrlView>::post(Space& home, Reflection::VarMap& vars,
-                               const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    CtrlView b(home, vars, spec[2]);
-    (void) new (home) ReEqDom<View,CtrlView>(home, x0, x1, b);
-  }
-
-  template <class View, class CtrlView>
   ExecStatus
   ReEqDom<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
@@ -631,31 +516,6 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReEqBnd<View,CtrlView>::copy(Space& home, bool share) {
     return new (home) ReEqBnd<View,CtrlView>(home,share,*this);
-  }
-
-  template <class View, class CtrlView>
-  inline Support::Symbol
-  ReEqBnd<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqBnd");
-  }
-
-  template <class View, class CtrlView>
-  Reflection::ActorSpec
-  ReEqBnd<View,CtrlView>::spec(const Space& home,
-                               Reflection::VarMap& m) const {
-    return ReBinaryPropagator<View,PC_INT_BND,CtrlView>
-      ::spec(home, m, ati());
-  }
-
-  template <class View, class CtrlView>
-  void
-  ReEqBnd<View,CtrlView>::post(Space& home, Reflection::VarMap& vars,
-                               const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    CtrlView b(home, vars, spec[2]);
-    (void) new (home) ReEqBnd<View,CtrlView>(home, x0, x1, b);
   }
 
   template <class View, class CtrlView>
@@ -721,31 +581,6 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReEqDomInt<View,CtrlView>::copy(Space& home, bool share) {
     return new (home) ReEqDomInt<View,CtrlView>(home,share,*this);
-  }
-
-  template <class View, class CtrlView>
-  inline Support::Symbol
-  ReEqDomInt<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqDomInt");
-  }
-
-  template <class View, class CtrlView>
-  Reflection::ActorSpec
-  ReEqDomInt<View,CtrlView>::spec(const Space& home,
-                                  Reflection::VarMap& m) const {
-    return ReUnaryPropagator<View,PC_INT_DOM,CtrlView>
-      ::spec(home, m, ati()) << c;
-  }
-
-  template <class View, class CtrlView>
-  void
-  ReEqDomInt<View,CtrlView>::post(Space& home, Reflection::VarMap& vars,
-                                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    CtrlView b(home, vars, spec[1]);
-    int c = spec[2]->toInt();
-    (void) new (home) ReEqDomInt<View,CtrlView>(home, x0, c, b);
   }
 
   template <class View, class CtrlView>
@@ -823,31 +658,6 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReEqBndInt<View,CtrlView>::copy(Space& home, bool share) {
     return new (home) ReEqBndInt<View,CtrlView>(home,share,*this);
-  }
-
-  template <class View, class CtrlView>
-  inline Support::Symbol
-  ReEqBndInt<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReEqBndInt");
-  }
-
-  template <class View, class CtrlView>
-  Reflection::ActorSpec
-  ReEqBndInt<View,CtrlView>::spec(const Space& home,
-                                  Reflection::VarMap& m) const {
-    return ReUnaryPropagator<View,PC_INT_BND,CtrlView>
-      ::spec(home, m, ati()) << c;
-  }
-
-  template <class View, class CtrlView>
-  void
-  ReEqBndInt<View,CtrlView>::post(Space& home, Reflection::VarMap& vars,
-                                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    CtrlView b(home, vars, spec[1]);
-    int c = spec[2]->toInt();
-    (void) new (home) ReEqBndInt<View,CtrlView>(home, x0, c, b);
   }
 
   template <class View, class CtrlView>

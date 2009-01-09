@@ -79,28 +79,6 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::Symbol
-  Nq<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Rel::Nq");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Nq<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_VAL>::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  Nq<View>::post(Space& home, Reflection::VarMap& vars,
-  const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    (void) new (home) Nq<View>(home, x0, x1);
-  }
-
-  template <class View>
   ExecStatus
   Nq<View>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {

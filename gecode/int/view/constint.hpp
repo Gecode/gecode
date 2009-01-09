@@ -388,6 +388,14 @@ namespace Gecode {
     return x.min() == y.min();
   }
   forceinline bool
+  same(const Int::IntView&, const Int::ConstIntView&) {
+    return false;
+  }
+  forceinline bool
+  same(const Int::BoolView&, const Int::ConstIntView&) {
+    return false;
+  }
+  forceinline bool
   before(const Int::ConstIntView& x, const Int::ConstIntView& y) {
     return x.min() < y.min();
   }

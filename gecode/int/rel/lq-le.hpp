@@ -71,28 +71,6 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::Symbol
-  Lq<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Rel::Lq");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Lq<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  Lq<View>::post(Space& home, Reflection::VarMap& vars,
-                 const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    (void) new (home) Lq<View>(home, x0, x1);
-  }
-
-  template <class View>
   ExecStatus
   Lq<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
@@ -133,29 +111,6 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   Le<View>::copy(Space& home, bool share) {
     return new (home) Le<View>(home,share,*this);
-  }
-
-  template <class View>
-  inline Support::Symbol
-  Le<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Rel::Le");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Le<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<View,PC_INT_BND>
-      ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  Le<View>::post(Space& home, Reflection::VarMap& vars,
-                 const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    (void) new (home) Le<View>(home, x0, x1);
   }
 
   template <class View>
@@ -210,30 +165,6 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReLq<View,CtrlView>::copy(Space& home, bool share) {
     return new (home) ReLq<View,CtrlView>(home,share,*this);
-  }
-
-  template <class View, class CtrlView>
-  inline Support::Symbol
-  ReLq<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReLq");
-  }
-
-  template <class View, class CtrlView>
-  Reflection::ActorSpec
-  ReLq<View,CtrlView>::spec(const Space& home, Reflection::VarMap& m) const {
-    return
-      ReBinaryPropagator<View,PC_INT_BND,CtrlView>::spec(home, m, ati());
-  }
-
-  template <class View, class CtrlView>
-  void
-  ReLq<View,CtrlView>::post(Space& home, Reflection::VarMap& vars,
-                            const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    CtrlView b(home, vars, spec[2]);
-    (void) new (home) ReLq<View,CtrlView>(home, x0, x1, b);
   }
 
   template <class View, class CtrlView>
@@ -296,31 +227,6 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReLqInt<View,CtrlView>::copy(Space& home, bool share) {
     return new (home) ReLqInt<View,CtrlView>(home,share,*this);
-  }
-
-  template <class View, class CtrlView>
-  inline Support::Symbol
-  ReLqInt<View,CtrlView>::ati(void) {
-    return Reflection::mangle<View,CtrlView>("Gecode::Int::Rel::ReLqInt");
-  }
-  
-  template <class View, class CtrlView>
-  Reflection::ActorSpec
-  ReLqInt<View,CtrlView>::spec(const Space& home,
-                               Reflection::VarMap& m) const {
-    return ReUnaryPropagator<View,PC_INT_BND,CtrlView>
-      ::spec(home, m, ati()) << c;
-  }
-
-  template <class View, class CtrlView>
-  void
-  ReLqInt<View,CtrlView>::post(Space& home, Reflection::VarMap& vars,
-                               const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    CtrlView b(home, vars, spec[1]);
-    int c = spec[2]->toInt();
-    (void) new (home) ReLqInt<View,CtrlView>(home, x0, c, b);
   }
 
   template <class View, class CtrlView>

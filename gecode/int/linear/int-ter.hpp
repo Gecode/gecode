@@ -87,17 +87,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
-  template <class Val, class A, class B, class C, PropCond pc>
-  Reflection::ActorSpec
-  LinTer<Val,A,B,C,pc>::spec(const Space& home, Reflection::VarMap& m,
-                             const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << x2.spec(home, m)
-             << c;
-  }
-
   /*
    * Equality propagator
    *
@@ -131,30 +120,6 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   EqTer<Val,A,B,C>::copy(Space& home, bool share) {
     return new (home) EqTer<Val,A,B,C>(home,share,*this);
-  }
-
-  template <class Val, class A, class B, class C>
-  inline Support::Symbol
-  EqTer<Val,A,B,C>::ati(void) {
-    return Reflection::mangle<Val,A,B,C>("Gecode::Int::Linear::EqTer");
-  }
-
-  template <class Val, class A, class B, class C>
-  Reflection::ActorSpec
-  EqTer<Val,A,B,C>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B, class C>
-  void
-  EqTer<Val,A,B,C>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    A x0(home, vars, spec[0]);
-    B x1(home, vars, spec[1]);
-    C x2(home, vars, spec[2]);
-    Val c = spec[3]->toInt();
-    (void) new (home) EqTer<Val,A,B,C>(home, x0, x1, x2, c);
   }
 
   /// Describe which view has been modified how
@@ -231,30 +196,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  inline Support::Symbol
-  NqTer<Val,A,B,C>::ati(void) {
-    return Reflection::mangle<Val,A,B,C>("Gecode::Int::Linear::NqTer");
-  }
-
-  template <class Val, class A, class B, class C>
-  Reflection::ActorSpec
-  NqTer<Val,A,B,C>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinTer<Val,A,B,C,PC_INT_VAL>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B, class C>
-  void
-  NqTer<Val,A,B,C>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    A x0(home, vars, spec[0]);
-    B x1(home, vars, spec[1]);
-    C x2(home, vars, spec[2]);
-    Val c = spec[3]->toInt();
-    (void) new (home) NqTer<Val,A,B,C>(home, x0, x1, x2, c);
-  }
-
-  template <class Val, class A, class B, class C>
   forceinline
   NqTer<Val,A,B,C>::NqTer(Space& home, bool share, Propagator& p,
                           A x0, B x1, C x2, Val c)
@@ -310,30 +251,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) LqTer<Val,A,B,C>(home,share,*this);
   }
 
-
-  template <class Val, class A, class B, class C>
-  inline Support::Symbol
-  LqTer<Val,A,B,C>::ati(void) {
-    return Reflection::mangle<Val,A,B,C>("Gecode::Int::Linear::LqTer");
-  }
-
-  template <class Val, class A, class B, class C>
-  Reflection::ActorSpec
-  LqTer<Val,A,B,C>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B, class C>
-  void
-  LqTer<Val,A,B,C>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    A x0(home, vars, spec[0]);
-    B x1(home, vars, spec[1]);
-    C x2(home, vars, spec[2]);
-    Val c = spec[3]->toInt();
-    (void) new (home) LqTer<Val,A,B,C>(home, x0, x1, x2, c);
-  }
 
   template <class Val, class A, class B, class C>
   forceinline

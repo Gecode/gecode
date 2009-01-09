@@ -1230,6 +1230,12 @@ namespace Reflection {
   template<>
   forceinline
   void operator>>(PostHelper& p, int& i) { i = p.spec[p.arg++]->toInt(); }
+  template<>
+  forceinline
+  void operator>>(PostHelper& p, bool& i) { i = p.spec[p.arg++]->toInt(); }
+  template<>
+  forceinline
+  void operator>>(PostHelper& p, double& i) { i = p.spec[p.arg++]->toInt(); }
   
   class SpecHelper {
   public:
@@ -1246,10 +1252,15 @@ namespace Reflection {
   void operator<<(SpecHelper& s, C& c) { s.s << c.spec(s.home, s.m); }
   template <>
   forceinline
-  void operator<<(SpecHelper& s, int& i) { s.s << i; }
+  void operator<<(SpecHelper& s, const int& i) { s.s << i; }
   template <>
   forceinline
-  void operator<<(SpecHelper& s, const int& i) { s.s << i; }
+  void operator<<(SpecHelper& s, const bool& i) { s.s << i; }
+  template <>
+  forceinline
+  void operator<<(SpecHelper& s, const double& i) {
+    s.s << static_cast<int>(i);
+  }
 
 /**
  * \brief Provide reflection information for a non-template propagator.

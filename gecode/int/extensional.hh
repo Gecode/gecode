@@ -67,6 +67,9 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template <class View, class Degree, class StateIdx>
   class LayeredGraph : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_3(LayeredGraph,View,Degree,StateIdx,
+      "Gecode::Int::Extensional::LayeredGraph")
+    GECODE_REFLECT_ARGS_2(ViewArray<View>,x,DFA,dfa)
   protected:
     /// States are described by number of incoming and outgoing edges
     class State {
@@ -187,14 +190,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Mangled name of this propagator
-    static Gecode::Support::Symbol ati(void);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Post propagator on views \a x and DFA \a d

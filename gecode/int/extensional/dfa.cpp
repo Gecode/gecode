@@ -471,7 +471,7 @@ namespace Gecode {
     heap.free<Transition>(trans,n_trans);
   }
 
-  DFA::DFA(Reflection::VarMap& vm, Reflection::Arg* arg) {
+  DFA::DFA(Space&, Reflection::VarMap& vm, Reflection::Arg* arg) {
     if (arg->isSharedReference()) {
       DFAI* d = 
         static_cast<DFAI*>(vm.getSharedObject(arg->toSharedReference()));
@@ -502,7 +502,7 @@ namespace Gecode {
   }
 
   Reflection::Arg*
-  DFA::spec(Reflection::VarMap& vm) const {
+  DFA::spec(const Space&, Reflection::VarMap& vm) const {
     int sharedIndex = vm.getSharedIndex(object());
     if (sharedIndex >= 0)
       return Reflection::Arg::newSharedReference(sharedIndex);

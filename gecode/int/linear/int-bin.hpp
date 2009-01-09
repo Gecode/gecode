@@ -73,17 +73,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, PropCond pc>
-  Reflection::ActorSpec
-  LinBin<Val,A,B,pc>::spec(const Space& home, Reflection::VarMap& m,
-                           const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << c;
-  }
-
-
-  template <class Val, class A, class B, PropCond pc>
   forceinline size_t
   LinBin<Val,A,B,pc>::dispose(Space& home) {
     assert(!home.failed());
@@ -134,17 +123,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
-  template <class Val, class A, class B, PropCond pc, class Ctrl>
-  Reflection::ActorSpec
-  ReLinBin<Val,A,B,pc,Ctrl>::spec(const Space& home, Reflection::VarMap& m,
-                                  const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << c
-             << b.spec(home, m);
-  }
-
   /*
    * Binary bounds consistent linear equality
    *
@@ -178,29 +156,6 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   EqBin<Val,A,B>::copy(Space& home, bool share) {
     return new (home) EqBin<Val,A,B>(home,share,*this);
-  }
-
-  template <class Val, class A, class B>
-  inline Support::Symbol
-  EqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::EqBin");
-  }
-
-  template <class Val, class A, class B>
-  Reflection::ActorSpec
-  EqBin<Val,A,B>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B>
-  void
-  EqBin<Val,A,B>::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    A x(home, vars, spec[0]);
-    B y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) EqBin<Val,A,B>(home, x, y, c);
   }
 
   /// Describe which view has been modified how
@@ -269,31 +224,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class Ctrl>
-  inline Support::Symbol
-  ReEqBin<Val,A,B,Ctrl>::ati(void) {
-    return Reflection::mangle<Val,A,B,Ctrl>("Gecode::Int::Linear::ReEqBin");
-  }
-
-  template <class Val, class A, class B, class Ctrl>
-  Reflection::ActorSpec
-  ReEqBin<Val,A,B,Ctrl>::spec(const Space& home,
-                              Reflection::VarMap& m) const {
-    return ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B, class Ctrl>
-  void
-  ReEqBin<Val,A,B,Ctrl>::post(Space& home, Reflection::VarMap& vars,
-                              const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    A x(home, vars, spec[0]);
-    B y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    Ctrl b(home, vars, spec[3]);
-    (void) new (home) ReEqBin<Val,A,B,Ctrl>(home, x, y, c, b);
-  }
-
-  template <class Val, class A, class B, class Ctrl>
   ExecStatus
   ReEqBin<Val,A,B,Ctrl>::propagate(Space& home, const ModEventDelta&) {
     if (b.zero())
@@ -356,29 +286,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  inline Support::Symbol
-  NqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::NqBin");
-  }
-
-  template <class Val, class A, class B>
-  Reflection::ActorSpec
-  NqBin<Val,A,B>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinBin<Val,A,B,PC_INT_VAL>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B>
-  void
-  NqBin<Val,A,B>::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    A x(home, vars, spec[0]);
-    B y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) NqBin<Val,A,B>(home, x, y, c);
-  }
-
-  template <class Val, class A, class B>
   ExecStatus
   NqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
@@ -427,29 +334,6 @@ namespace Gecode { namespace Int { namespace Linear {
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
-  inline Support::Symbol
-  LqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::LqBin");
-  }
-
-  template <class Val, class A, class B>
-  Reflection::ActorSpec
-  LqBin<Val,A,B>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B>
-  void
-  LqBin<Val,A,B>::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    A x(home, vars, spec[0]);
-    B y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) LqBin<Val,A,B>(home, x, y, c);
-  }
-
-  template <class Val, class A, class B>
   ExecStatus
   LqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,c-x1.min()));
@@ -496,29 +380,6 @@ namespace Gecode { namespace Int { namespace Linear {
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
-  inline Support::Symbol
-  GqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::GqBin");
-  }
-
-  template <class Val, class A, class B>
-  Reflection::ActorSpec
-  GqBin<Val,A,B>::spec(const Space& home, Reflection::VarMap& m) const {
-    return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B>
-  void
-  GqBin<Val,A,B>::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    A x(home, vars, spec[0]);
-    B y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    (void) new (home) GqBin<Val,A,B>(home, x, y, c);
-  }
-
-  template <class Val, class A, class B>
   ExecStatus
   GqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.gq(home,c-x1.max()));
@@ -557,31 +418,6 @@ namespace Gecode { namespace Int { namespace Linear {
   ReLqBin<Val,A,B>::copy(Space& home, bool share) {
     return new (home) ReLqBin<Val,A,B>(home,share,*this);
   }
-
-  template <class Val, class A, class B>
-  Support::Symbol
-  ReLqBin<Val,A,B>::ati(void) {
-    return Reflection::mangle<Val,A,B>("Gecode::Int::Linear::ReLqBin");
-  }
-
-  template <class Val, class A, class B>
-  Reflection::ActorSpec
-  ReLqBin<Val,A,B>::spec(const Space& home, Reflection::VarMap& m) const {
-    return ReLinBin<Val,A,B,PC_INT_BND,BoolView>::spec(home, m, ati());
-  }
-
-  template <class Val, class A, class B>
-  void
-  ReLqBin<Val,A,B>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    A x(home, vars, spec[0]);
-    B y(home, vars, spec[1]);
-    Val c = spec[2]->toInt();
-    BoolView b(home, vars, spec[3]);
-    (void) new (home) ReLqBin<Val,A,B>(home, x, y, c, b);
-  }
-
 
   template <class Val, class A, class B>
   ExecStatus

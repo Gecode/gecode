@@ -524,33 +524,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View, class Degree, class StateIdx>
-  Gecode::Support::Symbol
-  LayeredGraph<View,Degree,StateIdx>::ati(void) {
-    return Reflection::mangle<View,Degree,StateIdx>
-      ("Gecode::Int::Extensional::LayeredGraph");
-  }
-
-  template <class View, class Degree, class StateIdx>
-  Reflection::ActorSpec
-  LayeredGraph<View,Degree,StateIdx>::spec(const Space& home, 
-                                           Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m)
-             << dfa.spec(m);
-  }
-
-  template <class View, class Degree, class StateIdx>
-  void
-  LayeredGraph<View,Degree,StateIdx>::post(Space& home, 
-                                           Reflection::VarMap& vars,
-                                           const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<View> x(home, vars, spec[0]);
-    DFA dfa(vars, spec[1]);
-    (void) new (home) LayeredGraph<View,Degree,StateIdx>(home,x,dfa);    
-  }
-
-  template <class View, class Degree, class StateIdx>
   Actor*
   LayeredGraph<View,Degree,StateIdx>::copy(Space& home, bool share) {
     return new (home) LayeredGraph<View,Degree,StateIdx>(home,share,*this);
