@@ -378,10 +378,10 @@ namespace Gecode { namespace Int { namespace Bool {
     ExecStatus resubscribe(Space& home, BV& x0, BV x1);
     /// Constructor for posting
     NaryOrTrue(Space& home, ViewArray<BV>& x);
-    /// Constructor for posting
-    NaryOrTrue(Space& home, BV x0, BV x1, ViewArray<BV>& x);
     /// Constructor for cloning \a p
     NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p);
+    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
+    static  ExecStatus post(Space& home, BV x0, BV x1, ViewArray<BV>& b);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -500,9 +500,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Update subscription
     //    ExecStatus resubscribe(Space& home, & x0, BV x1);
     /// Constructor for posting
-    ClauseTrue(Space& home, VX x0, VY x1, ViewArray<VX>& x, ViewArray<VY>& y);
-    /// Constructor for posting
     ClauseTrue(Space& home, ViewArray<VX>& x, ViewArray<VY>& y);
+    /// Post propagator for reflection
+    static ExecStatus post(Space& home, VX x0, VY x1,
+                           ViewArray<VX>& x, ViewArray<VY>& y);
     /// Constructor for cloning \a p
     ClauseTrue(Space& home, bool share, ClauseTrue<VX,VY>& p);
   public:

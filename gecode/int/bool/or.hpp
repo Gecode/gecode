@@ -47,6 +47,8 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BV,BV>::x1;
     /// Constructor for cloning \a p
     OrTrueSubsumed(Space& home, bool share, OrTrueSubsumed& p);
+    /// Post propagator
+    static ExecStatus post(Space& home, BV b0, BV b1);
   public:
     /// Constructor
     OrTrueSubsumed(Space& home, BV b0, BV b1);
@@ -64,6 +66,13 @@ namespace Gecode { namespace Int { namespace Bool {
   OrTrueSubsumed<BV>::OrTrueSubsumed
   (Space& home, BV b0, BV b1)
     : BoolBinary<BV,BV>(home,b0,b1) {}
+
+  template <class BV>
+  forceinline ExecStatus
+  OrTrueSubsumed<BV>::post(Space& home, BV b0, BV b1) {
+    (void) new (home) OrTrueSubsumed(home,b0,b1);
+    return ES_OK;
+  }
 
   template <class BV>
   forceinline
@@ -627,11 +636,6 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  forceinline
-  NaryOrTrue<BV>::NaryOrTrue(Space& home, BV x0, BV x1, ViewArray<BV>& b)
-    : BinaryPropagator<BV,PC_BOOL_VAL>(home, x0, x1), x(b) {}
-
-  template<class BV>
   PropCost
   NaryOrTrue<BV>::cost(const Space&, const ModEventDelta&) const {
     return PC_BINARY_LO;
@@ -695,6 +699,16 @@ namespace Gecode { namespace Int { namespace Bool {
       (void) new (home) NaryOrTrue(home,b);
     }
     return ES_OK;
+  }
+
+  template<class BV>
+  inline ExecStatus
+  NaryOrTrue<BV>::post(Space& home, BV x0, BV x1, ViewArray<BV>& b) {
+    ViewArray<BV> x(home, b.size()+2);
+    for (int i=b.size(); i--;)
+      x[i] = b[i];
+    x[b.size()] = x0; x[b.size()+1] = x1;
+    return post(home, x);
   }
 
   template<class BV>

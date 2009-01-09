@@ -1368,7 +1368,7 @@ namespace Reflection {
             const Reflection::ActorSpec& spec) { \
     Reflection::PostHelper p(home,vars,spec,1); \
     T0 __t0; p >> __t0; \
-    (void) new (home) __PROPCLASS(home, __t0); \
+    GECODE_ES_FAIL(home, __PROPCLASS::post(home, __t0)); \
   }
 #define GECODE_REFLECT_ARGS_2(T0,V0,T1,V1) \
   public: \
@@ -1381,7 +1381,7 @@ namespace Reflection {
             const Reflection::ActorSpec& spec) { \
     Reflection::PostHelper p(home,vars,spec,1); \
     T0 __t0; p >> __t0; T1 __t1; p >> __t1; \
-    (void) new (home) __PROPCLASS(home, __t0, __t1); \
+    GECODE_ES_FAIL(home, __PROPCLASS::post(home, __t0, __t1)); \
   }
 #define GECODE_REFLECT_ARGS_3(T0,V0,T1,V1,T2,V2) \
   public: \
@@ -1394,7 +1394,7 @@ namespace Reflection {
             const Reflection::ActorSpec& spec) { \
     Reflection::PostHelper p(home,vars,spec,1); \
     T0 __t0; p >> __t0; T1 __t1; p >> __t1; T2 __t2; p >> __t2; \
-    (void) new (home) __PROPCLASS(home, __t0, __t1, __t2); \
+    GECODE_ES_FAIL(home, __PROPCLASS::post(home, __t0, __t1, __t2)); \
   }
 #define GECODE_REFLECT_ARGS_4(T0,V0,T1,V1,T2,V2,T3,V3) \
   public: \
@@ -1407,7 +1407,7 @@ namespace Reflection {
             const Reflection::ActorSpec& spec) { \
     Reflection::PostHelper p(home,vars,spec,1); \
     T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3;\
-    (void) new (home) __PROPCLASS(home, t0, t1, t2, t3); \
+    GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0, t1, t2, t3)); \
   }
 #define GECODE_REFLECT_ARGS_5(T0,V0,T1,V1,T2,V2,T3,V3,T4,V4) \
   public: \
@@ -1420,7 +1420,7 @@ namespace Reflection {
             const Reflection::ActorSpec& spec) { \
     Reflection::PostHelper p(home,vars,spec,1); \
     T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3; T4 t4; p >> t4; \
-    (void) new (home) __PROPCLASS(home, t0, t1, t2, t3, t4); \
+    GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0,t1,t2,t3,t4)); \
   }
 
   

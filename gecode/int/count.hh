@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   class EqInt : public BaseInt<VX,VY> {
     GECODE_REFLECT_PROPAGATOR_2(EqInt,VX,VY,"Gecode::Int::Count::EqInt")
-    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
+    GECODE_REFLECT_ARGS_3(ViewArray<VX>,x,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   class GqInt : public BaseInt<VX,VY> {
     GECODE_REFLECT_PROPAGATOR_2(GqInt,VX,VY,"Gecode::Int::Count::GqInt")
-    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
+    GECODE_REFLECT_ARGS_3(ViewArray<VX>,x,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   class LqInt : public BaseInt<VX,VY> {
     GECODE_REFLECT_PROPAGATOR_2(LqInt,VX,VY,"Gecode::Int::Count::LqInt")
-    GECODE_REFLECT_ARGS_4(ViewArray<VX>,x,int,n_s,VY,y,int,c)
+    GECODE_REFLECT_ARGS_3(ViewArray<VX>,x,VY,y,int,c)
   protected:
     using BaseInt<VX,VY>::x;
     using BaseInt<VX,VY>::n_s;
@@ -226,10 +226,11 @@ namespace Gecode { namespace Int { namespace Count {
     bool resubscribe(Space& home, VX& z);
     /// Constructor for posting
     NqInt(Space& home,  ViewArray<VX>& x, VY y, int c);
-    /// Constructor for posting
-    NqInt(Space& home,  VX x0, VX x1, ViewArray<VX>& x, VY y, int c);
     /// Constructor for cloning \a p
     NqInt(Space& home, bool share, NqInt& p);
+    /// Post propagator for reflection
+    static ExecStatus post(Space& home, VX x0, VX x1, 
+                           ViewArray<VX>& x, VY y, int c);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);

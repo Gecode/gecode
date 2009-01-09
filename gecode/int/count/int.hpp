@@ -385,13 +385,6 @@ namespace Gecode { namespace Int { namespace Count {
     y.subscribe(home,*this,PC_INT_DOM);
   }
 
-  template<class VX, class VY>
-  forceinline
-  NqInt<VX,VY>::NqInt(Space& home, VX x00, VX x10, ViewArray<VX>& x0, VY y0, int c0)
-    : BinaryPropagator<VX,PC_INT_DOM>(home, x00, x10), x(x0), y(y0), c(c0) {
-    y.subscribe(home,*this,PC_INT_DOM);
-  }
-
   template <class VX, class VY>
   forceinline size_t
   NqInt<VX,VY>::dispose(Space& home) {
@@ -434,6 +427,17 @@ namespace Gecode { namespace Int { namespace Count {
     return ES_OK;
   }
 
+  template<class VX, class VY>
+  forceinline ExecStatus
+  NqInt<VX,VY>::post(Space& home, VX x0, VX x1,
+                     ViewArray<VX>& x, VY y, int c) {
+    ViewArray<VX> xx(home, x.size()+2);
+    for (int i=x.size(); i--;)
+      xx[i] = x[i];
+    xx[x.size()] = x0; xx[x.size()+1] = x1;
+    return post(home, xx, y, c);
+  }
+  
   template<class VX, class VY>
   Actor*
   NqInt<VX,VY>::copy(Space& home, bool share) {

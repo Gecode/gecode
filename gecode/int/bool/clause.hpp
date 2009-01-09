@@ -53,13 +53,6 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
-  forceinline
-  ClauseTrue<VX,VY>::ClauseTrue(Space& home, VX x00, VY x10,
-                                ViewArray<VX>& x0, ViewArray<VY>& y0)
-    : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>
-    (home,x00,x10), x(x0), y(y0) {}
-
-  template<class VX, class VY>
   PropCost
   ClauseTrue<VX,VY>::cost(const Space&, const ModEventDelta&) const {
     return PC_BINARY_LO;
@@ -135,6 +128,21 @@ namespace Gecode { namespace Int { namespace Bool {
       (void) new (home) ClauseTrue(home,x,y);
     }
     return ES_OK;
+  }
+
+  template<class VX, class VY>
+  inline ExecStatus
+  ClauseTrue<VX,VY>::post(Space& home, VX x0, VY x1,
+                          ViewArray<VX>& x, ViewArray<VY>& y) {
+    ViewArray<VX> xx(home, x.size()+1);
+    for (int i=x.size(); i--;)
+      xx[i] = x[i];
+    xx[x.size()] = x0;
+    ViewArray<VY> yy(home, y.size()+1);
+    for (int i=y.size(); i--;)
+      yy[i] = y[i];
+    yy[y.size()] = x1;
+    return post(home, xx, yy);
   }
 
   template<class VX, class VY>
