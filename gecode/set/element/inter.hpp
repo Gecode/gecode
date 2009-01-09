@@ -43,7 +43,7 @@ namespace Gecode { namespace Set { namespace Element {
   forceinline
   ElementIntersection<SView,RView>::
   ElementIntersection(Space& home, SView y0,
-                     IdxViewArray<SView>& iv0,
+                     IdxViewArray& iv0,
                      RView y1,
                      const IntSet& theUniverse)
     : Propagator(home), universe(theUniverse), x0(y0), iv(iv0), x1(y1) {
@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace Element {
     Reflection::IntArrayArgRanges ur(spec[0]->toIntArray());
     IntSet universe(ur);
     SView x0(home, vars, spec[1]);
-    IdxViewArray<SView> iv(home, vars, spec[2]);
+    IdxViewArray iv(home, vars, spec[2]);
     RView x1(home, vars, spec[3]);
     (void) new (home) ElementIntersection(home, x0, iv, x1, universe);
   }
@@ -128,7 +128,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   ExecStatus
   ElementIntersection<SView,RView>::
-  post(Space& home, SView x0, IdxViewArray<SView>& xs,
+  post(Space& home, SView x0, IdxViewArray& xs,
        RView x1, const IntSet& universe) {
     int n = xs.size();
 
@@ -182,14 +182,14 @@ namespace Gecode { namespace Set { namespace Element {
 
         // Remove vars at indices not in the upper bound
         if (iv[i].idx < vx1ub.val()) {
-          iv[i].var.cancel(home,*this, PC_SET_ANY);
+          iv[i].view.cancel(home,*this, PC_SET_ANY);
           ++i;
           continue;
         }
         assert(iv[i].idx == vx1ub.val());
         iv[j] = iv[i];
 
-        SView candidate = iv[j].var;
+        SView candidate = iv[j].view;
         int candidateInd = iv[j].idx;
 
         // inter = glb(x0) & complement(lub(candidate))
@@ -209,7 +209,7 @@ namespace Gecode { namespace Set { namespace Element {
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
 
-          iv[j].var.cancel(home,*this, PC_SET_ANY);
+          iv[j].view.cancel(home,*this, PC_SET_ANY);
           ++i;
           ++vx1ub;
           continue;
@@ -242,7 +242,7 @@ namespace Gecode { namespace Set { namespace Element {
       // cancel the variables with index greater than
       // max of lub(x1)
       for (int k=i; k<n; k++) {
-        iv[k].var.cancel(home,*this, PC_SET_ANY);
+        iv[k].view.cancel(home,*this, PC_SET_ANY);
       }
       n = j;
       iv.size(n);
@@ -292,12 +292,12 @@ namespace Gecode { namespace Set { namespace Element {
           GECODE_ME_CHECK(me);
 
           // candidate != extra
-          me = iv[i].var.excludeI(home,diff);
+          me = iv[i].view.excludeI(home,diff);
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
         }
 
-        GlbRanges<SView> ivilb(iv[i].var);
+        GlbRanges<SView> ivilb(iv[i].view);
         sofarAfter.intersectI(home,ivilb);
         before[i].dispose(home);
       }
@@ -312,18 +312,18 @@ namespace Gecode { namespace Set { namespace Element {
         assert(ubsize==n);
         ViewArray<SView> is(home,ubsize);
         for (int i=n; i--;)
-          is[i]=iv[i].var;
+          is[i]=iv[i].view;
         GECODE_REWRITE(*this,(RelOp::IntersectionN<SView, SView>
                         ::post(home,is,x0)));
       } else if (ubsize == 2) {
         assert(n==2);
-        SView a = iv[0].var;
-        SView b = iv[1].var;
+        SView a = iv[0].view;
+        SView b = iv[1].view;
         GECODE_REWRITE(*this,(RelOp::Intersection<SView, SView, SView>
                        ::post(home,a,b,x0)));
       } else if (ubsize == 1) {
         assert(n==1);
-        GECODE_REWRITE(*this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
+        GECODE_REWRITE(*this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].view)));
       } else {
         GECODE_ME_CHECK(x0.cardMax(home, 0));
         return ES_SUBSUMED(*this,home);
@@ -332,7 +332,7 @@ namespace Gecode { namespace Set { namespace Element {
 
     bool allAssigned = true;
     for (int i=iv.size(); i--;) {
-      if (!iv[i].var.assigned()) {
+      if (!iv[i].view.assigned()) {
         allAssigned = false;
         break;
       }

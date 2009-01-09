@@ -42,9 +42,18 @@
 
 #include <gecode/set.hh>
 
-#include <gecode/set/element/idxarray.hh>
+#include <gecode/int/element.hh>
 #include <gecode/set/rel.hh>
 #include <gecode/set/rel-op.hh>
+
+namespace Gecode { namespace Int { namespace Element {
+  /// VarArg type for Set views
+  template<>
+  class ViewToVarArg<Gecode::Set::SetView> {
+  public:
+    typedef Gecode::SetVarArgs argtype;
+  };
+}}}
 
 namespace Gecode { namespace Set { namespace Element {
 
@@ -62,16 +71,18 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   class ElementIntersection :
     public Propagator {
+  public:
+    typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
     IntSet universe;
     SView x0;
-    IdxViewArray<SView> iv;
+    IdxViewArray iv;
     RView x1;
 
     /// Constructor for cloning \a p
     ElementIntersection(Space& home, bool share,ElementIntersection& p);
     /// Constructor for posting
-    ElementIntersection(Space& home,SView,IdxViewArray<SView>&,RView,
+    ElementIntersection(Space& home,SView,IdxViewArray&,RView,
                        const IntSet& universe);
   public:
     /// Copy propagator during cloning
@@ -94,7 +105,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be the given universe
      * \a u (as an empty intersection is the universe).
      */
-    static  ExecStatus  post(Space& home,SView z,IdxViewArray<SView>& x,
+    static  ExecStatus  post(Space& home,SView z,IdxViewArray& x,
                              RView y, const IntSet& u);
   };
 
@@ -107,15 +118,17 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   class ElementUnion :
     public Propagator {
+  public:
+    typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
     SView x0;
-    IdxViewArray<SView> iv;
+    IdxViewArray iv;
     RView x1;
 
     /// Constructor for cloning \a p
     ElementUnion(Space& home, bool share,ElementUnion& p);
     /// Constructor for posting
-    ElementUnion(Space& home,SView,IdxViewArray<SView>&,RView);
+    ElementUnion(Space& home,SView,IdxViewArray&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
@@ -137,7 +150,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus  post(Space& home,SView z,IdxViewArray<SView>& x,
+    static  ExecStatus  post(Space& home,SView z,IdxViewArray& x,
                              RView y);
   };
 
@@ -192,14 +205,16 @@ namespace Gecode { namespace Set { namespace Element {
    */
   class ElementDisjoint :
     public Propagator {
+  public:
+    typedef Gecode::Int::Element::IdxViewArray<SetView> IdxViewArray;
   protected:
-    IdxViewArray<SetView> iv;
+    IdxViewArray iv;
     SetView x1;
 
     /// Constructor for cloning \a p
     ElementDisjoint(Space& home, bool share,ElementDisjoint& p);
     /// Constructor for posting
-    ElementDisjoint(Space& home,IdxViewArray<SetView>&,SetView);
+    ElementDisjoint(Space& home,IdxViewArray&,SetView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
@@ -217,7 +232,7 @@ namespace Gecode { namespace Set { namespace Element {
     /// Name of this propagator
     static Support::Symbol ati(void);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
-    static  ExecStatus  post(Space& home,IdxViewArray<SetView>& x,SetView y);
+    static  ExecStatus  post(Space& home,IdxViewArray& x,SetView y);
   };
 
 }}}

@@ -174,6 +174,61 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class ViewB> class IdxView;
 
+  /// Class to get VarArg type for view
+  template<class View>
+  class ViewToVarArg {};
+
+  /**
+   * \brief An array of IndexView pairs
+   *
+   */
+  template <class View>
+  class IdxViewArray {
+  private:
+    /// The actual array
+    IdxView<View>* xs;
+    /// The size of the array
+    int n;
+  public:
+    /// Default constructor
+    IdxViewArray(void);
+    /// Copy constructor
+    IdxViewArray(const IdxViewArray<View>&);
+    /// Initialize from specification \a spec with variables \a vars
+    IdxViewArray(Space& home, const Reflection::VarMap& vars,
+                 Reflection::Arg* spec);
+
+    /// Construct an IdxViewArray from \a x
+    IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
+
+    /// Return the current size
+    int size(void) const;
+    /// Set the size to \a n
+    void size(int n);
+
+    /// Access element \a n
+    IdxView<View>& operator [](int n);
+    /// Access element \a n
+    const IdxView<View>& operator [](int) const;
+
+    /**
+     * Subscribe propagator \a p with propagation condition \a pc
+     * to all elements of the array.
+     */
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+    /**
+     * Cancel subscription of propagator \a p with propagation condition \a pc
+     * for all elements of the array.
+     */
+    void cancel(Space& home, Propagator& p, PropCond pc);
+
+    /// Cloning
+    void update(Space& home, bool share, IdxViewArray<View>& x);
+    
+    // Specification
+    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
+  };
+
   /**
    * \brief Base-class for element propagator for array of views
    *
@@ -182,9 +237,7 @@ namespace Gecode { namespace Int { namespace Element {
   class View : public Propagator {
   protected:
     /// Current index-view map
-    IdxView<VA>* iv;
-    /// Number of elements in index-view map
-    int n;
+    IdxViewArray<VA> iv;
     /// View for index
     VB x0;
     /// View for result
@@ -192,10 +245,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for cloning \a p
     View(Space& home, bool share, View& p);
     /// Constructor for creation
-    View(Space& home, IdxView<VA>* iv, int n, VB x0, VC x1);
-    /// Specification for this propagator
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
+    View(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -212,32 +262,25 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class VA, class VB, class VC>
   class ViewBnd : public View<VA,VB,VC,PC_INT_BND> {
+    GECODE_REFLECT_PROPAGATOR_3(ViewBnd,VA,VB,VC,
+                                "Gecode::Int::Element::ViewBnd")
+    GECODE_REFLECT_ARGS_3(IdxViewArray<VA>,iv,VB,x0,VC,x1)
   protected:
     using View<VA,VB,VC,PC_INT_BND>::iv;
-    using View<VA,VB,VC,PC_INT_BND>::n;
     using View<VA,VB,VC,PC_INT_BND>::x0;
     using View<VA,VB,VC,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
     ViewBnd(Space& home, bool share, ViewBnd& p);
     /// Constructor for creation
-    ViewBnd(Space& home, IdxView<VA>* iv, int n, VB x0, VC x1);
+    ViewBnd(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space& home, IdxView<VA>* iv, int n,
-                            VB x0, VC x1);
+    static  ExecStatus post(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
   };
 
   /**
@@ -252,16 +295,18 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class VA, class VB, class VC>
   class ViewDom : public View<VA,VB,VC,PC_INT_DOM> {
+    GECODE_REFLECT_PROPAGATOR_3(ViewDom,VA,VB,VC,
+                                "Gecode::Int::Element::ViewDom")
+    GECODE_REFLECT_ARGS_3(IdxViewArray<VA>,iv,VB,x0,VC,x1)
   protected:
     using View<VA,VB,VC,PC_INT_DOM>::iv;
-    using View<VA,VB,VC,PC_INT_DOM>::n;
     using View<VA,VB,VC,PC_INT_DOM>::x0;
     using View<VA,VB,VC,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
     ViewDom(Space& home, bool share, ViewDom& p);
     /// Constructor for creation
-    ViewDom(Space& home, IdxView<VA>* iv, int n, VB x0, VC x1);
+    ViewDom(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -275,16 +320,8 @@ namespace Gecode { namespace Int { namespace Element {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space& home, IdxView<VA>* iv, int n,
+    static  ExecStatus post(Space& home, IdxViewArray<VA>& iv,
                             VB x0, VC x1);
   };
 

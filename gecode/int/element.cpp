@@ -84,14 +84,13 @@ namespace Gecode {
   element(Space& home, const IntVarArgs& c, IntVar x0, IntVar x1,
           IntConLevel icl) {
     if (home.failed()) return;
-    Element::IdxView<IntView>* iv = 
-      Element::IdxView<IntView>::init(home,c);
+    Element::IdxViewArray<IntView> iv(home,c);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
       GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,IntView>
-                           ::post(home,iv,c.size(),x0,x1)));
+                           ::post(home,iv,x0,x1)));
     } else {
       GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,IntView>
-                           ::post(home,iv,c.size(),x0,x1)));
+                           ::post(home,iv,x0,x1)));
     }
   }
 
@@ -100,15 +99,14 @@ namespace Gecode {
           IntConLevel icl) {
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
-    Element::IdxView<IntView>* iv = 
-      Element::IdxView<IntView>::init(home,c);
+    Element::IdxViewArray<IntView> iv(home,c);
     ConstIntView v1(x1);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
       GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,ConstIntView>
-                           ::post(home,iv,c.size(),x0,v1)));
+                           ::post(home,iv,x0,v1)));
     } else {
       GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,ConstIntView>
-                           ::post(home,iv,c.size(),x0,v1)));
+                           ::post(home,iv,x0,v1)));
     }
   }
 
@@ -116,10 +114,9 @@ namespace Gecode {
   element(Space& home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
           IntConLevel) {
     if (home.failed()) return;
-    Element::IdxView<BoolView>* iv = 
-      Element::IdxView<BoolView>::init(home,c);
+    Element::IdxViewArray<BoolView> iv(home,c);
     GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,BoolView>
-                         ::post(home,iv,c.size(),x0,x1)));
+                         ::post(home,iv,x0,x1)));
   }
 
   void
@@ -127,11 +124,10 @@ namespace Gecode {
           IntConLevel) {
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
-    Element::IdxView<BoolView>* iv = 
-      Element::IdxView<BoolView>::init(home,c);
+    Element::IdxViewArray<BoolView> iv(home,c);
     ConstIntView v1(x1);
     GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,ConstIntView>
-                         ::post(home,iv,c.size(),x0,v1)));
+                         ::post(home,iv,x0,v1)));
   }
 
   namespace {

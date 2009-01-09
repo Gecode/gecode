@@ -43,10 +43,6 @@
 
 namespace Gecode { namespace Int { namespace Element {
 
-  /// Class to get VarArg type for view
-  template<class View>
-  class ViewToVarArg {};
-
   /// VarArg type for integer views
   template<>
   class ViewToVarArg<IntView> {
@@ -70,9 +66,7 @@ namespace Gecode { namespace Int { namespace Element {
     int idx; View view;
 
     static IdxView* allocate(Space&, int);
-    static IdxView* init(Space&, const typename ViewToVarArg<View>::argtype&);
   };
-
 
   template <class View>
   forceinline IdxView<View>*
@@ -81,16 +75,105 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class View>
-  forceinline IdxView<View>*
-  IdxView<View>::init(Space& home, 
-                      const typename ViewToVarArg<View>::argtype& x) {
-    IdxView<View>* iv = allocate(home,x.size());
-    for (int i = x.size(); i--; ) {
-      iv[i].idx = i; iv[i].view = x[i];
-    }
-    return iv;
+  IdxViewArray<View>::IdxViewArray(void) : xs(NULL), n(0) {}
+
+  template <class View>
+  IdxViewArray<View>::IdxViewArray(const IdxViewArray<View>& a) {
+    n = a.n; xs = a.xs;
   }
 
+  template <class View>
+  IdxViewArray<View>::IdxViewArray(Space& home,
+    const typename ViewToVarArg<View>::argtype& xa) : xs(NULL) {
+    n = xa.size();
+    if (n>0) {
+      xs = IdxView<View>::allocate(home, n);
+      for (int i = n; i--; ) {
+        xs[i].idx = i; xs[i].view = xa[i];
+      }
+    }
+  }
+
+  template <class View>
+  forceinline int
+  IdxViewArray<View>::size(void) const {
+    return n;
+  }
+
+  template <class View>
+  forceinline void
+  IdxViewArray<View>::size(int n0) {
+    n = n0;
+  }
+
+  template <class View>
+  forceinline IdxView<View>&
+  IdxViewArray<View>::operator [](int i) {
+    assert((i >= 0) && (i < size()));
+    return xs[i];
+  }
+
+  template <class View>
+  forceinline const IdxView<View>&
+  IdxViewArray<View>::operator [](int i) const {
+    assert((i >= 0) && (i < size()));
+    return xs[i];
+  }
+
+  template <class View>
+  void
+  IdxViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
+                                bool process) {
+    for (int i = n; i--; )
+      xs[i].view.subscribe(home,p,pc,process);
+  }
+
+  template <class View>
+  void
+  IdxViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
+    for (int i = n; i--; )
+      xs[i].view.cancel(home,p,pc);
+  }
+
+  template <class View>
+  void
+  IdxViewArray<View>::update(Space& home, bool share, IdxViewArray<View>& a) {
+    n = a.size();
+    if (n>0) {
+      xs = IdxView<View>::allocate(home,n);
+      for (int i=n; i--; ) {
+        xs[i].idx = a[i].idx;
+        xs[i].view.update(home,share,a[i].view);
+      }
+    }
+  }
+  
+  template <class View>
+  Reflection::Arg*
+  IdxViewArray<View>::spec(const Space& home, Reflection::VarMap& m) const {
+    Reflection::IntArrayArg* is = Reflection::Arg::newIntArray(n);
+    for (int i = 0; i<n; i++)
+      (*is)[i] = xs[i].idx;
+    Reflection::ArrayArg* s = Reflection::Arg::newArray(n);
+    for (int i = 0; i<n; i++)
+      (*s)[i] = xs[i].view.spec(home, m);
+    return Reflection::Arg::newPair(is,s);
+  }
+
+  template <class View>
+  IdxViewArray<View>::IdxViewArray(Space& home,
+                                   const Reflection::VarMap& vars,
+                                   Reflection::Arg* spec) : xs(NULL) {
+    Reflection::IntArrayArg* is = spec->first()->toIntArray();
+    Reflection::ArrayArg* s = spec->second()->toArray();
+    n = is->size();
+    if (n>0) {
+      xs = IdxView<View>::allocate(home, n);
+      for (int i = n; i--; ) {
+        xs[i].idx = (*is)[i]; xs[i].view = View(home, vars, (*s)[i]);
+      }
+    }                                     
+  }
 
 
   /**
@@ -163,26 +246,21 @@ namespace Gecode { namespace Int { namespace Element {
    */
 
   template <class VA, class VB, class VC, PropCond pc_ac>
-  View<VA,VB,VC,pc_ac>::View(Space& home, IdxView<VA>* iv0, int n0,
+  View<VA,VB,VC,pc_ac>::View(Space& home, IdxViewArray<VA>& iv0,
                              VB y0, VC y1)
-    : Propagator(home), iv(iv0), n(n0), x0(y0), x1(y1) {
+    : Propagator(home), iv(iv0), x0(y0), x1(y1) {
     x0.subscribe(home,*this,PC_INT_DOM);
     x1.subscribe(home,*this,pc_ac);
-    for (int i=n; i--; )
-      iv[i].view.subscribe(home,*this,pc_ac);
+    iv.subscribe(home,*this,pc_ac);
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
   forceinline
   View<VA,VB,VC,pc_ac>::View(Space& home, bool share, View& p)
-    : Propagator(home,share,p), n(p.n) {
+    : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
-    iv = IdxView<VA>::allocate(home,n);
-    for (int i=n; i--; ) {
-      iv[i].idx = p.iv[i].idx;
-      iv[i].view.update(home,share,p.iv[i].view);
-    }
+    iv.update(home,share,p.iv);
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
@@ -195,29 +273,11 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
-  Reflection::ActorSpec
-  View<VA,VB,VC,pc_ac>::spec(const Space& home, Reflection::VarMap& m,
-                             const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    Reflection::IntArrayArg* ai = Reflection::Arg::newIntArray(n);
-    for (int i=n; i--;)
-      (*ai)[i] = iv[i].idx;
-    Reflection::ArrayArg* a = Reflection::Arg::newArray(n);
-    for (int i=n; i--;)
-      (*a)[i] = iv[i].view.spec(home, m);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << ai
-             << a;
-  }
-
-  template <class VA, class VB, class VC, PropCond pc_ac>
   forceinline size_t
   View<VA,VB,VC,pc_ac>::dispose(Space& home) {
     x0.cancel(home,*this,PC_INT_DOM);
     x1.cancel(home,*this,pc_ac);
-    for (int i=n; i--;)
-      iv[i].view.cancel(home,*this,pc_ac);
+    iv.cancel(home,*this,pc_ac);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -283,9 +343,9 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac, class RelTest>
   ExecStatus
-  scan(Space& home, IdxView<VA>* iv, int& n,
+  scan(Space& home, IdxViewArray<VA>& iv,
        VB x0, VC x1, Propagator& p, RelTest rt) {
-    assert(n > 1);
+    assert(iv.size() > 1);
     /*
      * Prunes pairs of index, variable
      *  - checks for idx value removed
@@ -295,7 +355,7 @@ namespace Gecode { namespace Int { namespace Element {
     ViewValues<VB> vx0(x0);
     int i = 0;
     int j = 0;
-    while (vx0() && (i < n)) {
+    while (vx0() && (i < iv.size())) {
       if (iv[i].idx < vx0.val()) {
         iv[i].view.cancel(home,p,pc_ac);
         ++i;
@@ -316,20 +376,20 @@ namespace Gecode { namespace Int { namespace Element {
         ++vx0; ++i;
       }
     }
-    while (i < n)
+    while (i < iv.size())
       iv[i++].view.cancel(home,p,pc_ac);
-    bool adjust = (j<n);
-    n = j;
+    bool adjust = (j<iv.size());
+    iv.size(j);
 
-    if (n == 0)
+    if (iv.size() == 0)
       return ES_FAILED;
 
-    if (n == 1) {
+    if (iv.size() == 1) {
       GECODE_ME_CHECK(x0.eq(home,iv[0].idx));
     } else if (adjust) {
-      IterIdxView<VA> v(&iv[0],&iv[n]);
+      IterIdxView<VA> v(&iv[0],&iv[iv.size()]);
       GECODE_ME_CHECK(x0.narrow_v(home,v,false));
-      assert(x0.size() == static_cast<unsigned int>(n));
+      assert(x0.size() == static_cast<unsigned int>(iv.size()));
     }
     return ES_OK;
   }
@@ -345,21 +405,21 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC>
   forceinline
   ViewBnd<VA,VB,VC>::ViewBnd(Space& home,
-                             IdxView<VA>* iv, int n, VB x0, VC x1)
-    : View<VA,VB,VC,PC_INT_BND>(home,iv,n,x0,x1) {}
+                             IdxViewArray<VA>& iv, VB x0, VC x1)
+    : View<VA,VB,VC,PC_INT_BND>(home,iv,x0,x1) {}
 
   template <class VA, class VB, class VC>
   ExecStatus
   ViewBnd<VA,VB,VC>::post(Space& home,
-                          IdxView<VA>* iv, int n, VB x0, VC x1) {
+                          IdxViewArray<VA>& iv, VB x0, VC x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x0.le(home,n));
+    GECODE_ME_CHECK(x0.le(home,iv.size()));
     if (x0.assigned()) {
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[x0.val()].view,x1);
       return ES_OK;
     } else {
-      assert(n>1);
-      (void) new (home) ViewBnd<VA,VB,VC>(home,iv,n,x0,x1);
+      assert(iv.size()>1);
+      (void) new (home) ViewBnd<VA,VB,VC>(home,iv,x0,x1);
     }
     return ES_OK;
   }
@@ -377,56 +437,22 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  inline Support::Symbol
-  ViewBnd<VA,VB,VC>::ati(void) {
-    return Reflection::mangle<VA,VB,VC>("Gecode::Int::Element::ViewBnd");
-  }
-
-  template <class VA, class VB, class VC>
-  Reflection::ActorSpec
-  ViewBnd<VA,VB,VC>::spec(const Space& home, Reflection::VarMap& m) const {
-    return View<VA,VB,VC,PC_INT_BND>::spec(home, m, ati());
-  }
-
-  template <class VA, class VB, class VC>
-  void
-  ViewBnd<VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec)
-  {
-    spec.checkArity(4);
-    VB x0(home, vars, spec[0]);
-    VC x1(home, vars, spec[1]);
-    Reflection::IntArrayArg* ia = spec[2]->toIntArray();
-    Region r(home);
-    int* idx = r.alloc<int>(ia->size());
-    for (int i=ia->size(); i--; )
-      idx[i] = (*ia)[i];
-    ViewArray<VA> y(home, vars, spec[3]);
-    IdxView<VA>* iv = IdxView<VA>::allocate(home, ia->size());
-    for (int i=ia->size(); i--; ) {
-      iv[i].view = y[i];
-      iv[i].idx  = idx[i];
-    }
-    (void) new (home) ViewBnd<VA,VB,VC>(home, iv, ia->size(), x0, x1);
-  }
-
-  template <class VA, class VB, class VC>
   ExecStatus
   ViewBnd<VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
-    assert(n > 1);
+    assert(iv.size() > 1);
     RelTestBnd<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
-                     (home,iv,n,x0,x1,*this,rt)));
-    if (n == 1) {
+                     (home,iv,x0,x1,*this,rt)));
+    if (iv.size() == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
       return ES_SUBSUMED(*this,s);
     }
-    assert(n > 1);
+    assert(iv.size() > 1);
     // Compute new result
-    int min = iv[n-1].view.min();
-    int max = iv[n-1].view.max();
-    for (int i=n-1; i--; ) {
+    int min = iv[iv.size()-1].view.min();
+    int max = iv[iv.size()-1].view.max();
+    for (int i=iv.size()-1; i--; ) {
       min = std::min(iv[i].view.min(),min);
       max = std::max(iv[i].view.max(),max);
     }
@@ -461,21 +487,21 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC>
   forceinline
   ViewDom<VA,VB,VC>::ViewDom(Space& home,
-                             IdxView<VA>* iv, int n, VB x0, VC x1)
-    : View<VA,VB,VC,PC_INT_DOM>(home,iv,n,x0,x1) {}
+                             IdxViewArray<VA>& iv, VB x0, VC x1)
+    : View<VA,VB,VC,PC_INT_DOM>(home,iv,x0,x1) {}
 
   template <class VA, class VB, class VC>
   ExecStatus
   ViewDom<VA,VB,VC>::post(Space& home,
-                          IdxView<VA>* iv, int n, VB x0, VC x1){
+                          IdxViewArray<VA>& iv, VB x0, VC x1){
     GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x0.le(home,n));
+    GECODE_ME_CHECK(x0.le(home,iv.size()));
     if (x0.assigned()) {
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[x0.val()].view,x1);
       return ES_OK;
     } else {
-      assert(n>1);
-      (void) new (home) ViewDom<VA,VB,VC>(home,iv,n,x0,x1);
+      assert(iv.size()>1);
+      (void) new (home) ViewDom<VA,VB,VC>(home,iv,x0,x1);
     }
     return ES_OK;
   }
@@ -503,56 +529,22 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  inline Support::Symbol
-  ViewDom<VA,VB,VC>::ati(void) {
-    return Reflection::mangle<VA,VB,VC>("Gecode::Int::Element::ViewDom");
-  }
-
-  template <class VA, class VB, class VC>
-  Reflection::ActorSpec
-  ViewDom<VA,VB,VC>::spec(const Space& home, Reflection::VarMap& m) const {
-    return View<VA,VB,VC,PC_INT_DOM>::spec(home, m, ati());
-  }
-
-  template <class VA, class VB, class VC>
-  void
-  ViewDom<VA,VB,VC>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec)
-  {
-    spec.checkArity(4);
-    VB x0(home, vars, spec[0]);
-    VC x1(home, vars, spec[1]);
-    Reflection::IntArrayArg* ia = spec[2]->toIntArray();
-    Region r(home);
-    int* idx = r.alloc<int>(ia->size());
-    for (int i=ia->size(); i--; )
-      idx[i] = (*ia)[i];
-    ViewArray<VA> y(home, vars, spec[3]);
-    IdxView<VA>* iv = IdxView<VA>::allocate(home, ia->size());
-    for (int i=ia->size(); i--; ) {
-      iv[i].view = y[i];
-      iv[i].idx  = idx[i];
-    }
-    (void) new (home) ViewDom<VA,VB,VC>(home, iv, ia->size(), x0, x1);
-  }
-
-  template <class VA, class VB, class VC>
   ExecStatus
   ViewDom<VA,VB,VC>::propagate(Space& home, const ModEventDelta& med) {
-    assert(n > 1);
+    assert(iv.size() > 1);
     if (VA::me(med) != ME_INT_DOM) {
       RelTestBnd<VA,VC> rt;
       GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
-                       (home,iv,n,x0,x1,*this,rt)));
-      if (n == 1) {
+                       (home,iv,x0,x1,*this,rt)));
+      if (iv.size() == 1) {
         size_t s = this->dispose(home);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
         return ES_SUBSUMED(*this,s);
       }
       // Compute new result
-      int min = iv[n-1].view.min();
-      int max = iv[n-1].view.max();
-      for (int i=n-1; i--; ) {
+      int min = iv[iv.size()-1].view.min();
+      int max = iv[iv.size()-1].view.max();
+      for (int i=iv.size()-1; i--; ) {
         min = std::min(iv[i].view.min(),min);
         max = std::max(iv[i].view.max(),max);
       }
@@ -564,20 +556,20 @@ namespace Gecode { namespace Int { namespace Element {
     }
     RelTestDom<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
-                     (home,iv,n,x0,x1,*this,rt)));
-    if (n == 1) {
+                     (home,iv,x0,x1,*this,rt)));
+    if (iv.size() == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
       return ES_SUBSUMED(*this,s);
     }
-    assert(n > 1);
+    assert(iv.size() > 1);
     Region r(home);
-    ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(n);
-    for (int i = n; i--; )
+    ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
+    for (int i = iv.size(); i--; )
       i_view[i].init(iv[i].view);
-    Iter::Ranges::NaryUnion<ViewRanges<VA> > i_val(i_view, n);
+    Iter::Ranges::NaryUnion<ViewRanges<VA> > i_val(i_view, iv.size());
     ModEvent me = x1.inter_r(home,i_val);
-    r.free<ViewRanges<VA> >(i_view,n);
+    r.free<ViewRanges<VA> >(i_view,iv.size());
     GECODE_ME_CHECK(me);
     return (shared(x0,x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
   }

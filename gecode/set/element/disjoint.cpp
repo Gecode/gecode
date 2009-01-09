@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Element {
   ElementDisjoint::post(Space& home, Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
     spec.checkArity(2);
-    IdxViewArray<SetView> iv(home, vars, spec[0]);
+    IdxViewArray iv(home, vars, spec[0]);
     SetView x1(home, vars, spec[1]);
     (void) new (home) ElementDisjoint(home, iv, x1);
   }
@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Element {
       GLBndSet unionOfSelected(home);
       for(int i=0; vx1lb(); ++vx1lb) {
         while (iv[i].idx < vx1lb.val()) i++;
-        GlbRanges<SetView> clb(iv[i].var);
+        GlbRanges<SetView> clb(iv[i].view);
         unionOfSelected.includeI(home,clb);
       }
 
@@ -107,7 +107,7 @@ namespace Gecode { namespace Set { namespace Element {
         // Cancel all elements that are no longer in the upper bound
         while (vx1ub()) {
           if (iv[i].idx < vx1ub.val()) {
-            iv[i].var.cancel(home,*this, PC_SET_ANY);
+            iv[i].view.cancel(home,*this, PC_SET_ANY);
             i++;
             continue;
           }
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Element {
         // cancel the variables with index greater than
         // max of lub(x1)
         for (int k=i; k<n; k++) {
-          iv[k].var.cancel(home,*this, PC_SET_ANY);
+          iv[k].view.cancel(home,*this, PC_SET_ANY);
         }
         n = j;
         iv.size(n);
@@ -139,7 +139,7 @@ namespace Gecode { namespace Set { namespace Element {
         }
         assert(iv[i].idx == vx1u.val());
 
-        SetView candidate = iv[i].var;
+        SetView candidate = iv[i].view;
         int candidateInd = iv[i].idx;
 
         GlbRanges<SetView> clb(candidate);
@@ -192,8 +192,8 @@ namespace Gecode { namespace Set { namespace Element {
             while (iv[j].idx < vx1lb2.val()) j++;
             assert(iv[j].idx==vx1lb2.val());
             if (iv[i].idx!=iv[j].idx) {
-              GlbRanges<SetView> xilb(iv[i].var);
-              ModEvent me = iv[j].var.excludeI(home,xilb);
+              GlbRanges<SetView> xilb(iv[i].view);
+              ModEvent me = iv[j].view.excludeI(home,xilb);
               fix_flag |= me_modified(me);
               GECODE_ME_CHECK(me);
             }
@@ -223,8 +223,8 @@ namespace Gecode { namespace Set { namespace Element {
             while (iv[j].idx < vx1u2.val()) j++;
             assert(iv[j].idx == vx1u2.val());
             if (iv[i].idx!=iv[j].idx) {
-              GlbRanges<SetView> xjlb(iv[j].var);
-              GlbRanges<SetView> xilb(iv[i].var);
+              GlbRanges<SetView> xjlb(iv[j].view);
+              GlbRanges<SetView> xilb(iv[i].view);
               Iter::Ranges::Inter<GlbRanges<SetView>, GlbRanges<SetView> >
                 inter(xjlb, xilb);
               if (!inter()) {
@@ -270,8 +270,8 @@ namespace Gecode { namespace Set { namespace Element {
               while (iv[k].idx < vx1u3.val()) k++;
               assert (iv[k].idx == vx1u3.val());
               if (iv[j].idx!=iv[k].idx && iv[i].idx!=iv[k].idx) {
-                GlbRanges<SetView> xjlb(iv[j].var);
-                GlbRanges<SetView> xilb(iv[k].var);
+                GlbRanges<SetView> xjlb(iv[j].view);
+                GlbRanges<SetView> xilb(iv[k].view);
                 Iter::Ranges::Inter<GlbRanges<SetView>, GlbRanges<SetView> >
                   inter(xjlb, xilb);
                 if (!inter()) {
@@ -293,7 +293,7 @@ namespace Gecode { namespace Set { namespace Element {
 
     bool allAssigned = true;
     for (int i=iv.size(); i--;)
-      if (!iv[i].var.assigned()) {
+      if (!iv[i].view.assigned()) {
         allAssigned = false;
         break;
       }
