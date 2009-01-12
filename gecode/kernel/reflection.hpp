@@ -1834,7 +1834,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
   } \
   static void post(Space& home, Reflection::VarMap& vars, \
             const Reflection::ActorSpec& spec) { \
-    Reflection::PostHelper p(home,vars,spec,5); \
+    Reflection::PostHelper p(home,vars,spec,7); \
     T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3; \
     T4 t4; p >> t4; T5 t5; p >> t5; T6 t6; p >> t6;\
     GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0,t1,t2,t3,t4,t5,t6)); \
