@@ -1480,7 +1480,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_1(P,A0,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0 > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0>(ATI); \
@@ -1496,7 +1496,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_1i(P,A0,i,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,i > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0>(ATI,i); \
@@ -1511,7 +1511,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_2(P,A0,A1,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1 > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1>(ATI); \
@@ -1527,7 +1527,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_2i(P,A0,A1,i,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,i > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1>(ATI,i); \
@@ -1542,7 +1542,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_3(P,A0,A1,A2,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2 > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2>(ATI); \
@@ -1558,7 +1558,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_3i(P,A0,A1,A2,i,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,i > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2>(ATI,i); \
@@ -1573,7 +1573,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_4(P,A0,A1,A2,A3,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3 > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3>(ATI); \
@@ -1589,7 +1589,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_4i(P,A0,A1,A2,A3,i,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3,i > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3>(ATI,i); \
@@ -1604,7 +1604,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_5(P,A0,A1,A2,A3,A4,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3,A4 > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4>(ATI); \
@@ -1620,7 +1620,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_5i(P,A0,A1,A2,A3,A4,i,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3,A4,i > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4>(ATI,i); \
@@ -1635,7 +1635,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_6(P,A0,A1,A2,A3,A4,A5,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3,A4,A5 > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI); \
@@ -1651,7 +1651,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_6i(P,A0,A1,A2,A3,A4,A5,i,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3,A4,A5,i > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5>(ATI,i); \
@@ -1666,7 +1666,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_7(P,A0,A1,A2,A3,A4,A5,A6,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3,A4,A5,A6 > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI); \
@@ -1682,7 +1682,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  */
 #define GECODE_REFLECT_PROPAGATOR_7i(P,A0,A1,A2,A3,A4,A5,A6,i,ATI) \
   private: \
-  typedef P __PROPCLASS; \
+  typedef P< A0,A1,A2,A3,A4,A5,A6,i > __PROPCLASS; \
   public: \
   static Support::Symbol ati(void) { \
     return Reflection::mangle<A0,A1,A2,A3,A4,A5,A6>(ATI,i); \

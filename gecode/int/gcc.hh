@@ -125,6 +125,9 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View, class Card, bool isView, bool shared>
   class BndImp : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2i(Bnd,View,Card,isView,
+      "Gecode::Int::GCC::Bnd")
+    GECODE_REFLECT_ARGS_2(ViewArray<View>,x,ViewArray<Card>,k)
     friend class Bnd<View, Card, isView>;
   protected:
     /// Views on which to perform bounds-propagation
@@ -164,14 +167,6 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual size_t allocated(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -205,6 +200,9 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View, class Card, bool isView>
   class Dom : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2i(Dom,View,Card,isView,
+      "Gecode::Int::GCC::Dom")
+    GECODE_REFLECT_ARGS_2(ViewArray<View>,y,ViewArray<Card>,k)
   protected:
     /// Views on which to perform domain-propagation
     ViewArray<View> x;
@@ -251,14 +249,6 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /**
      * \brief Post propagator for views \a x and cardinalities \a k
      *
@@ -277,6 +267,9 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View, class Card, bool isView>
   class Val : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2i(Val,View,Card,isView,
+      "Gecode::Int::GCC::Val")
+    GECODE_REFLECT_ARGS_2(ViewArray<View>,x,ViewArray<Card>,k)
   protected:
     /// Views on which to perform value-propagation
     ViewArray<View> x;
@@ -296,14 +289,6 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /**
      * \brief Post propagator for views \a x and cardinalities \a k
      *

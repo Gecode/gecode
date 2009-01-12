@@ -139,31 +139,6 @@ namespace Gecode { namespace Int { namespace GCC {
     return cost_lo(x.size(), pc);
 
   }
-
-  template <class View, class Card, bool isView>
-  Support::Symbol
-  Dom<View,Card,isView>::ati(void) {
-    return Reflection::mangle<View,Card>("Gecode::Int::GCC::Dom",isView);
-  }
-
-  template <class View, class Card, bool isView>
-  Reflection::ActorSpec
-  Dom<View,Card,isView>::spec(const Space& home,
-                              Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << y.spec(home, m) << k.spec(home, m) << card_fixed;
-  }
-
-  template <class View, class Card, bool isView>
-  void
-  Dom<View,Card,isView>::post(Space& home, Reflection::VarMap& vars,
-                              const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<View> x(home, vars, spec[0]);
-    ViewArray<Card> k(home, vars, spec[1]);
-    bool card_fixed = spec[2]->toInt();
-    (void) new (home) Dom(home, x, k, card_fixed);
-  }
   
   /// \brief Perform domain propagation.
   template <class View, class Card, bool isView>

@@ -92,30 +92,6 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  Support::Symbol
-  Val<View, Card, isView>::ati(void) {
-    return Reflection::mangle<View,Card>("Gecode::Int::GCC::Val",isView);
-  }
-
-  template <class View, class Card, bool isView>
-  Reflection::ActorSpec
-  Val<View,Card,isView>::spec(const Space& home,
-                              Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m) << k.spec(home, m);
-  }
-
-  template <class View, class Card, bool isView>
-  void
-  Val<View,Card,isView>::post(Space& home, Reflection::VarMap& vars,
-                              const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<View> x(home, vars, spec[0]);
-    ViewArray<Card> k(home, vars, spec[1]);
-    (void) new (home) Val(home, x, k);
-  }
-
-  template <class View, class Card, bool isView>
   ExecStatus
   Val<View, Card, isView>::propagate(Space& home, const ModEventDelta&) {
     assert(x.size() > 0);

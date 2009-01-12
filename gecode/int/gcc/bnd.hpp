@@ -111,42 +111,6 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  Support::Symbol
-  BndImp<View, Card, isView, shared>::ati(void) {
-    Support::Symbol mangled("Gecode::Int::GCC::Bnd");
-    mangled += "<";
-    mangled += View::type();
-    mangled += ",";
-    mangled += Card::type();
-    mangled += ",";
-    mangled += (isView ? "true" : "false");
-    mangled += ",";
-    mangled += (shared ? "true" : "false");
-    mangled += ">";
-    return mangled;
-  }
-
-  template <class View, class Card, bool isView, bool shared>
-  Reflection::ActorSpec
-  BndImp<View,Card,isView,shared>::spec(const Space& home,
-                                        Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m) << k.spec(home, m) << card_fixed << skip_lbc;
-  }
-
-  template <class View, class Card, bool isView, bool shared>
-  void
-  BndImp<View,Card,isView,shared>::post(Space& home, Reflection::VarMap& vars,
-                                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    ViewArray<View> x(home, vars, spec[0]);
-    ViewArray<Card> k(home, vars, spec[1]);
-    bool card_fixed = spec[2]->toInt();
-    bool skip_lbc   = spec[3]->toInt();
-    (void) new (home) BndImp(home, x, k, card_fixed, skip_lbc);
-  }
-
-  template <class View, class Card, bool isView, bool shared>
   ExecStatus
   BndImp<View, Card, isView, shared>::propagate(Space& home, const ModEventDelta&) {
     bool all_assigned = true;

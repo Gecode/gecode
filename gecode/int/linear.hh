@@ -870,8 +870,13 @@ namespace Gecode { namespace Int { namespace Linear {
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
     class Memory : public MemoryLinBoolInt<VX> {
-      GECODE_REFLECT_PROPAGATOR_1(Memory,VX,
-        "Gecode::Int::Linear::EqBoolInt::Memory")
+    private:
+      typedef Memory __PROPCLASS;
+    public:
+      static Support::Symbol ati(void) {
+        return
+          Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Memory");
+      }
       GECODE_REFLECT_ARGS_2(ViewArray<VX>,x,int,c)
     protected:
       using MemoryLinBoolInt<VX>::x;
@@ -891,8 +896,13 @@ namespace Gecode { namespace Int { namespace Linear {
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
-      GECODE_REFLECT_PROPAGATOR_1(Speed,VX,
-        "Gecode::Int::Linear::EqBoolInt::Speed")
+    private:
+      typedef Speed __PROPCLASS;
+    public:
+      static Support::Symbol ati(void) {
+        return
+          Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Speed");
+      }
     protected:
       using SpeedLinBoolInt<VX>::x;
       using SpeedLinBoolInt<VX>::n_s;
@@ -932,8 +942,13 @@ namespace Gecode { namespace Int { namespace Linear {
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
     class Memory : public MemoryLinBoolInt<VX> {
-      GECODE_REFLECT_PROPAGATOR_1(Memory,VX,
-        "Gecode::Int::Linear::GqBoolInt::Memory")
+    private:
+      typedef Memory __PROPCLASS;
+    public:
+      static Support::Symbol ati(void) {
+        return
+          Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Memory");
+      }
       GECODE_REFLECT_ARGS_2(ViewArray<VX>,x,int,c)
     protected:
       using MemoryLinBoolInt<VX>::x;
@@ -953,8 +968,13 @@ namespace Gecode { namespace Int { namespace Linear {
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
-      GECODE_REFLECT_PROPAGATOR_1(Speed,VX,
-        "Gecode::Int::Linear::GqBoolInt::Speed")
+    private:
+      typedef Speed __PROPCLASS;
+    public:
+      static Support::Symbol ati(void) {
+        return
+          Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Speed");
+      }
     protected:
       using SpeedLinBoolInt<VX>::x;
       using SpeedLinBoolInt<VX>::n_s;
