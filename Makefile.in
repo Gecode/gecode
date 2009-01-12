@@ -372,8 +372,8 @@ SETHDR0 =								     \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
 	int/card.hpp     						     \
 	int/match.hpp int/channel-int.hpp int/minmax.hpp int/weights.hpp     \
-	int/channel-bool.hpp element/idxarray.hh			     \
-	element/idxarray.hpp element/inter.hpp element/union.hpp             \
+	int/channel-bool.hpp                                                 \
+	element/inter.hpp element/union.hpp             \
 	element/unionConst.hpp                                               \
 	element/disjoint.hpp array.hpp					     \
 	var-imp/set.hpp var-imp/integerset.hpp	     			     \

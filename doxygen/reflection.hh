@@ -236,7 +236,34 @@ When the ActorSpecIter iterates over the actors of a space, each actor has to de
 
 We now go through the steps that are needed for reflection of actors and variables.
 
-\subsection SecReflAddSupportProp Propagators
+\subsection SecReflAddSupportPropMacros Macros for reflecting propagators
+
+The kernel provides two macros that make it easy to add reflection to a propagator. The following example provides reflection for a propagator with a View \c x, a ViewArray \c y, and an integer constant \c c:
+
+\code
+template <class View0, class View1>
+class MyPropagator : public Gecode::Propagator {
+  GECODE_REFLECT_PROPAGATOR_2(MyPropagator, View0, View1, 
+                              "Gecode::MyPropagator")
+  GECODE_REFLECT_ARGS_3(View0,x,
+                        ViewArray<View1>,y,
+                        int,c)
+protected:
+  View0            x;
+  ViewArray<View1> y;
+  int              c;
+public:
+  static ExecStatus post(Space& home, View0 x, ViewArray<View1> y, int c);
+};
+\endcode
+
+The first macro states that the propagator is implemented by the class <code>MyPropagator</code>, has two template parameters <code>View0</code> and <code>View1</code>, and that its ati is <code>"Gecode::MyPropagator"</code>. The second macro adds reflection support for the three member variables <code>x</code>, <code>y</code>, and <code>c</code>. For this to work, the propagator must provide a function <code>post</code> that has exactly the signature described by the macro parameters, as shown in the example.
+
+For the basic C types as well as for views, view arrays, and several other %Gecode classes, reflection is already defined and the GECODE_REFLECT_ARGS macros works out of the box.  If a certain type <code>T</code> is not supported, you can add it by providing <code>operator<<(Reflection::SpecHelper&, const T& x)</code> and <code>operator>>(Reflection::PostHelper&, const T& x)</code>, as shown in the file gecode/kernel/reflection.hh.
+
+In order to make unreflection work, all instances of the propagator must be registered. The next section shows how to implement the methods created by the macros manually, and how to perform the registration.
+
+\subsection SecReflAddSupportProp Reflection for propagators
 
 Propagators implement the virtual function Gecode::Reflection::Actor::spec. It creates an ActorSpec with a proper actor type identifier and arguments. The following example provides reflection for a propagator with an IntView \c x, a ViewArray of IntViews \c y, and an integer constant \c c:
 
