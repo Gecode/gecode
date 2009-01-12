@@ -56,6 +56,8 @@ namespace Gecode { namespace Reflection {
     Support::SymbolMap<varPrinter> varPrinters;
     /// The registry of variable reflection functions
     Support::SymbolMap<varSpec> varSpecs;
+    /// The registry of variable print functions
+    Support::SymbolMap<branchingSpecPrinter> branchingSpecPrinters;
   };
   
   Registry::Registry(void) : ro(new RegistryObject()) {}
@@ -105,6 +107,18 @@ namespace Gecode { namespace Reflection {
     return vp(os, v);
   }
 
+  std::ostream&
+  Registry::printBranchingSpec(std::ostream& os,
+                               Space& home, VarMap& vm,
+                               const BranchingSpec& bs,
+                               unsigned int alt) const {
+    branchingSpecPrinter bsp = NULL;
+    if (!ro->branchingSpecPrinters.get(bs.ati(), bsp)) {
+      return os << "No printer found\n";
+    }
+    return bsp(os, home, vm, bs, alt);
+  }
+
   Arg*
   Registry::spec(const Space& home, VarMap& vm,
                  VarImpBase* v, const Support::Symbol& vti) const {
@@ -152,6 +166,11 @@ namespace Gecode { namespace Reflection {
   void
   Registry::add(const Support::Symbol& id, poster p) {
     ro->posters.put(id, p);
+  }
+
+  void
+  Registry::add(const Support::Symbol& id, branchingSpecPrinter p) {
+    ro->branchingSpecPrinters.put(id, p);
   }
 
   void

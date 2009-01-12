@@ -723,6 +723,11 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     typedef std::ostream& (*varPrinter) (std::ostream&, VarImpBase*);
     /// The type of variable reflection functions
     typedef Arg* (*varSpec) (const Space& home, VarMap& m, VarImpBase*);
+    /// The type of BranchingSpec printing function
+    typedef std::ostream& (*branchingSpecPrinter) (std::ostream&,
+                                                   Space&, VarMap&,
+                                                   const BranchingSpec&,
+                                                   unsigned int alt);
 
     /// Constructor
     GECODE_KERNEL_EXPORT Registry(void);
@@ -747,6 +752,13 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     printVariable(std::ostream& os, VarImpBase* v,
                   const Support::Symbol& vti) const;
 
+    /// Print alternative \a alt of BranchingSpec \a bs to \a os
+    GECODE_KERNEL_EXPORT std::ostream&
+    printBranchingSpec(std::ostream& os,
+                       Space&, VarMap&,
+                       const BranchingSpec& bs,
+                       unsigned int alt) const;
+
     /// Reflection for variable \a v with type identifier \a vti
     GECODE_KERNEL_EXPORT Arg*
     spec(const Space& home, VarMap& vm,
@@ -768,6 +780,8 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     GECODE_KERNEL_EXPORT void add(Support::Symbol vti, varSpec vp);
     /// Register constraint posting function for actor type identifier \a ati
     GECODE_KERNEL_EXPORT void add(const Support::Symbol& ati, poster p);
+    /// Register BranchingSpec printing function for actor type identifier \a ati
+    GECODE_KERNEL_EXPORT void add(const Support::Symbol& ati, branchingSpecPrinter p);
     /// Print list of all registered posters to \a out
     GECODE_KERNEL_EXPORT void print(std::ostream& out);
   private:
@@ -1075,6 +1089,36 @@ namespace Reflection {
     static Support::Symbol t(void) { return Support::Symbol("IntSet"); }    
   };
 
+  /// Mangle ati with type information
+  forceinline
+  Support::Symbol
+  mangle(const Support::Symbol& ati, bool b) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += Support::Symbol(b);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  forceinline
+  Support::Symbol
+  mangle(const Support::Symbol& ati, int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
+  /// Mangle ati with type information
+  forceinline
+  Support::Symbol
+  mangle(const Support::Symbol& ati, unsigned int i) {
+    Support::Symbol mangled = ati.copy();
+    mangled += "<";
+    mangled += Support::Symbol(i);
+    mangled += ">";
+    return mangled;
+  }
   /// Mangle ati with type information
   template <class View0>
   Support::Symbol

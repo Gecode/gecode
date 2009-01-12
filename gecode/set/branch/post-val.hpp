@@ -78,6 +78,22 @@ namespace Gecode { namespace Set { namespace Branch {
     }
   }
 
+  template <class SelView, class SelVal>
+  void
+  registerOne(void) {
+    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(), 
+                               &ValSelToString<SelVal>::toString);
+  }
+  
+  template <class SelView>
+  void
+  registerAll(void) {
+    registerOne<SelView,ValMin<false> >();
+    registerOne<SelView,ValMin<true> >();
+    registerOne<SelView,ValMax<false> >();
+    registerOne<SelView,ValMax<true> >();
+  }
+
 }}}
 
 // STATISTICS: set-branch

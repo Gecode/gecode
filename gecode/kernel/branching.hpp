@@ -409,10 +409,9 @@ namespace Gecode {
     (void) home; (void) m;
     const PosValDesc<ViewSel,ValSel>& pvd 
       = static_cast<const PosValDesc<ViewSel,ValSel>&>(d);
-    Reflection::BranchingSpec bs(ati(), 3);
+    Reflection::BranchingSpec bs(ati(), 2);
     bs[0] = view(pvd.pos()).spec(home, m);
-    bs[1] = Reflection::Arg::newString(valsel.type());
-    bs[2] = Reflection::Arg::newInt(pvd.val());
+    bs[1] = Reflection::Arg::newInt(pvd.val());
     return bs;
   }
 
@@ -423,6 +422,9 @@ namespace Gecode {
     (void) ViewBranching<ViewSel>::dispose(home);
     return sizeof(ViewValBranching<ViewSel,ValSel>);
   }
+
+  template <class View>
+  class ValSelToString {};
 
 }
 

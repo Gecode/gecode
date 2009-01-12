@@ -288,7 +288,6 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignValZeroOne(Space& home, const ValBranchOptions& vbo);
   };
 
-
   /*
    * Variable selection classes
    *
@@ -572,7 +571,12 @@ namespace Gecode { namespace Int { namespace Branch {
     static Support::Symbol type(void);
   };
 
-}}}
+}}
+
+  template <class View>
+  class ViewValuesBranchingToString {};
+
+}
 
 #include <gecode/int/branch/select-val.hpp>
 #include <gecode/int/branch/select-values.hpp>

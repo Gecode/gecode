@@ -97,7 +97,32 @@ namespace Gecode { namespace Int { namespace Branch {
       throw UnknownBranching("Int::branch");
     }
   }
-      
+
+  template <class SelView, class SelVal>
+  void
+  registerOne(void) {
+    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(), 
+                               &ValSelToString<SelVal>::toString);
+  }
+  
+  template <class SelView>
+  void
+  registerAll(void) {
+    registerOne<SelView,ValMin<IntView> >();
+    registerOne<SelView,ValMed<IntView> >();
+    registerOne<SelView,ValMin<MinusView> >();
+    registerOne<SelView,ValRnd<IntView> >();
+    registerOne<SelView,ValSplitMin<IntView> >();
+    registerOne<SelView,ValSplitMin<MinusView> >();
+    registerOne<SelView,ValZeroOne<BoolView> >();
+    registerOne<SelView,ValZeroOne<NegBoolView> >();
+    registerOne<SelView,ValRnd<BoolView> >();
+    Reflection::registry().add(ViewValuesBranching<SelView,IntView>::ati(),
+      &ViewValuesBranchingToString<IntView>::toString);
+    Reflection::registry().add(ViewValuesBranching<SelView,MinusView>::ati(),
+      &ViewValuesBranchingToString<MinusView>::toString);
+  }
+  
 }}}
 
 // STATISTICS: int-branch

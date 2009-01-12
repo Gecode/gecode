@@ -261,6 +261,43 @@ namespace Gecode {
     }
   }
 
+  namespace {
+    class BranchingRegistrar {
+    public:
+      BranchingRegistrar(void) {
+        using namespace Gecode;
+        using namespace Gecode::Set;
+        using namespace Gecode::Set::Branch;
+        registerAll< ViewSelNone<SetView> >();
+        registerAll< ViewSelRnd<SetView> >();
+        registerAll< ViewSelDegreeMin<SetView> >();
+        registerAll< ViewSelDegreeMin<SetView> >();
+        registerAll< ByMinMin >();
+        registerAll< ByMinMin >();
+        registerAll< ByMaxMin >();
+        registerAll< ByMaxMax >();
+        registerAll< BySizeMin >();
+        registerAll< BySizeMax >();
+        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
+                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
+                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAll<ViewSelTieBreakStatic<ByMinMin,
+                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAll<ViewSelTieBreakStatic<ByMinMin,
+                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAll<ViewSelTieBreakStatic<ByMaxMin,
+                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAll<ViewSelTieBreakStatic<ByMaxMax,
+                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAll<ViewSelTieBreakStatic<BySizeMin,
+                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAll<ViewSelTieBreakStatic<BySizeMax,
+                    ViewSelTieBreakDynamic<SetView> > >();
+      }
+    };
+    BranchingRegistrar r;
+  }
 }
 
 

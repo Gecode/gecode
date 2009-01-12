@@ -227,35 +227,17 @@ namespace Gecode { namespace Gist {
     std::ostringstream tt;
     try {
       Reflection::BranchingSpec bs = ws->branchingSpec(vm,*d);
-      delete d;
       tt << "Alternatives of branching " << bs.ati().toString() << ":\n";
       for (int i=0; i<d->alternatives(); i++) {
         tt << i << ": ";
-        // Reflection::ArrayArg& aa = *bs[i]->toArray();
-        // for (int j=0; j<aa.size(); j++) {
-        //   if (aa[j]->isString()) {
-        //     tt += aa[j]->toString();
-        //   } else if (aa[j]->isVar()) {
-        //     int v = aa[j]->toVar();
-        //     if (vm.hasName(v))
-        //       tt += vm.name(v).toString();
-        //     else {
-        //       std::ostringstream vs; vs << v;
-        //       tt += "_v"+vs.str();
-        //     }
-        //   } else if (aa[j]->isInt()) {
-        //     std::ostringstream vs; vs << aa[j]->toInt();
-        //     tt += vs.str();
-        //   } else {
-        //     tt += "error in BranchingSpec";
-        //   }
-        // }
+        Reflection::registry().printBranchingSpec(tt,*ws,vm,bs,i);
         if (i < d->alternatives()-1)
           tt << "\n";
       }
     } catch (Reflection::ReflectionException&) {
       tt << "No information available";
     }
+    delete d;
     return tt.str();
   }
 

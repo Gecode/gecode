@@ -363,8 +363,62 @@ namespace Gecode {
     }
   }
 
+  namespace {
+    class BranchingRegistrar {
+    public:
+      BranchingRegistrar(void) {
+        using namespace Gecode;
+        using namespace Gecode::Int;
+        using namespace Gecode::Int::Branch;
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelRnd<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelDegreeMin<BoolView> >();
+        registerAll< ViewSelDegreeMax<BoolView> >();
+        registerAll< ViewSelDegreeMax<BoolView> >();
+        registerAll< ViewSelDegreeMin<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll< ViewSelNone<BoolView> >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                    ViewSelTieBreakDynamic<BoolView> > >();
+      }
+    };
+    BranchingRegistrar r;
+  }
 }
 
 
 // STATISTICS: int-branch
-

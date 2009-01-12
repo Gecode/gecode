@@ -205,6 +205,29 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
 
-}}}
+}}
+
+  template <>
+  class ViewValuesBranchingToString<Int::IntView> {
+  public:
+    static std::ostream& toString(std::ostream& os,
+                                  Space&, Reflection::VarMap&,
+                                  const Reflection::BranchingSpec&,
+                                  unsigned int alt) {
+      return os << "ViewValuesBranching<IntView>" << alt << std::endl;
+    }    
+  };
+  template <>
+  class ViewValuesBranchingToString<Int::MinusView> {
+  public:
+    static std::ostream& toString(std::ostream& os,
+                                  Space&, Reflection::VarMap&,
+                                  const Reflection::BranchingSpec&,
+                                  unsigned int alt) {
+      return os << "ViewValuesBranching<MinusView>" << alt << std::endl;
+    }    
+  };
+
+}
 
 // STATISTICS: int-branch

@@ -95,22 +95,22 @@ while ($l = <FILE>) {
     while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       if ($l =~ /^View:\s*(\w+)/io) {
-	$view = $1;
+        $view = $1;
       } elsif ($l =~ /^VarArgs:\s*(\w+)/io) {
-	$varargs = $1;
+        $varargs = $1;
       } elsif ($l =~ /^VarBranch:\s*(\w+)/io) {
-	$varbranch = $1;
+        $varbranch = $1;
       } elsif ($l =~ /^ValBranch:\s*(\w+)/io) {
-	$valbranch = $1;
+        $valbranch = $1;
       } elsif ($l =~ /^GNS:\s*(.+)/io) {
-	$gns = $1;
+        $gns = $1;
       } elsif ($l =~ /^LNS:\s*(.+)/io) {
-	$lns = $1;
+        $lns = $1;
       } elsif ($l =~ /^Exception:\s*(.+)/io) {
-	$exception = $1;
+        $exception = $1;
       } elsif ($l =~ /^Include:\s*(.+)/io) {
-	$hasinclude = 1;
-	$include = $1;
+        $hasinclude = 1;
+        $include = $1;
       }
     }
     goto LINE;
@@ -118,24 +118,24 @@ while ($l = <FILE>) {
     while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       if ($l =~ /^Value:\s*(\w+)\s*=\s*NONE/io) {
-	# Found a special variable branching
-	$lhs = $1;
-	$vb[$n] = $lhs;
-	$number{$lhs} = $n;
-	$none = $n;
+        # Found a special variable branching
+        $lhs = $1;
+        $vb[$n] = $lhs;
+        $number{$lhs} = $n;
+        $none = $n;
       } elsif ($l =~ /^Value:\s*(\w+)\s*=\s*COMPLETE/io) {
-	# Found a special variable branching
-	$lhs = $1;
-	$vb[$n] = $lhs;
-	$number{$lhs} = $n;
-	$complete[$n] = 1;
+        # Found a special variable branching
+        $lhs = $1;
+        $vb[$n] = $lhs;
+        $number{$lhs} = $n;
+        $complete[$n] = 1;
       } elsif ($l =~ /^Value:\s*(\w+)/io) {
-	# Found a normal variable branching
-	$vb[$n] = $1;
-	$number{$1} = $n;
+        # Found a normal variable branching
+        $vb[$n] = $1;
+        $number{$1} = $n;
       } elsif ($l =~ /^Type:\s*(.+)/io) {
-	# Found a normal variable branching
-	$type[$n] = $1;
+        # Found a normal variable branching
+        $type[$n] = $1;
       }
     }
     $n++;
@@ -277,6 +277,37 @@ print "    default:\n";
 print "      throw $exception;\n";
 print "    }\n";
 print "  }\n\n";
+
+print "  namespace {\n";
+print "    class BranchingRegistrar {\n";
+print "    public:\n";
+print "      BranchingRegistrar(void) {\n";
+$ans = "";
+foreach $ns (split('::',$lns)) {
+  if ($ans eq "") {
+    $ans = $ns;
+  } else {
+    $ans = "${ans}\:\:$ns";
+  }
+  print "        using namespace $ans;\n";
+}
+
+for ($i=0; $i<$n; $i++) {
+  $l =  "        registerAll< $type[$i] >();\n";
+  $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
+  print $l;
+}
+
+for ($i=0; $i<$n; $i++) {
+  next unless ($i != $none) && !$complete[$i];
+  print "        registerAll<ViewSelTieBreakStatic<$type[$i],\n";
+  print "                    ViewSelTieBreakDynamic<$view> > >();\n";
+}
+print "      }\n";
+print "    };\n";
+print "    BranchingRegistrar r;\n";
+print "  }\n";
+
 foreach $ns (split('::',$gns)) {
   print "}";
 }
