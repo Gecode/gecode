@@ -634,11 +634,6 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     * It is similar to a BranchingDesc, but not opaque: you can query the
     * information.
     *
-    * The specification for an alternative is an ArrayArg that may contain 
-    * strings and references to variables. The concatenation of the strings 
-    * and variables is a human-readable description of what constraints are 
-    * posted for the given alternative.
-    *
     * \ingroup TaskReflection
     */  
   class GECODE_KERNEL_EXPORT BranchingSpec {
@@ -649,9 +644,9 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
   public:
     /// Default constructor
     BranchingSpec(void);
-    /** \brief Construct spec with \a n fields
+    /** \brief Construct spec with ati \a ati and \a n fields
      */
-    BranchingSpec(unsigned int n);
+    BranchingSpec(const Support::Symbol& ati, unsigned int n);
     /// Copy constructor
     BranchingSpec(const BranchingSpec& s);
     /// Assignment operator 
@@ -661,6 +656,8 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     
     ///\name Branching information
     //@{
+    /// Return actor type identifier
+    Support::Symbol ati(void) const;
     /// Return number of fields
     unsigned int size(void) const;
     /// Return specification of alternative \a i

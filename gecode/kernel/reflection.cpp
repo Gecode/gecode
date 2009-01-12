@@ -778,6 +778,8 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   /// Implementation of a BranchingSpec
   class BranchingSpec::Arguments {
   public:
+    /// The actor type identifier of this actor
+    Support::Symbol _ati;
     /// The number of alternatives of this branch
     unsigned int   n;
     /// The arguments of this branch
@@ -785,14 +787,15 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     /// Reference counter
     int r;
     /// Construct arguments for \a id with \a a alternatives
-    Arguments(unsigned int n);
+    Arguments(const Support::Symbol& ati, unsigned int n);
     /// Destructor
     ~Arguments(void);
   };
 
   inline
-  BranchingSpec::Arguments::Arguments(unsigned int n0)
-   : n(n0), r(1) {
+  BranchingSpec::Arguments::Arguments(const Support::Symbol& ati0,
+                                      unsigned int n0)
+   : _ati(ati0), n(n0), r(1) {
      a = heap.alloc<Arg*>(n);
      for (unsigned int i=n; i--;)
        a[i] = NULL;
@@ -807,11 +810,11 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   
   BranchingSpec::BranchingSpec(void) : _args(NULL) {}
   
-  BranchingSpec::BranchingSpec(unsigned int n) {
-    _args = new Arguments(n);
-  }
+  BranchingSpec::BranchingSpec(const Support::Symbol& ati, unsigned int n)
+    : _args(new Arguments(ati,n)) {}
 
-  BranchingSpec::BranchingSpec(const BranchingSpec& s) : _args(s._args) {
+  BranchingSpec::BranchingSpec(const BranchingSpec& s)
+    : _args(s._args) {
     if (_args)
       _args->r++;
   }
@@ -826,6 +829,11 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
         _args->r++;
     }
     return *this;
+  }
+
+  Support::Symbol
+  BranchingSpec::ati(void) const {
+    return _args->_ati;
   }
 
   Arg*

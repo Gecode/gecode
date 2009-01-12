@@ -221,43 +221,42 @@ namespace Gecode { namespace Gist {
     Space* ws = getSpace(curBest,c_d,a_d);
     (void) ws->status();
     assert(ws->status() == SS_BRANCH);
-    // const BranchingDesc* d = ws->description();
+    const BranchingDesc* d = ws->description();
     Reflection::VarMap vm;
     ws->getVars(vm, false);
-    std::string tt;
-    // try {
-    //   Reflection::BranchingSpec bs = ws->branchingSpec(vm,d);
-    //   delete d;
-    //   tt = "Alternatives:\n";
-    //   for (unsigned int i=0; i<bs.alternatives(); i++) {
-    //     std::ostringstream is; is << i;
-    //     tt += is.str()+": ";
-    //     Reflection::ArrayArg& aa = *bs[i]->toArray();
-    //     for (int j=0; j<aa.size(); j++) {
-    //       if (aa[j]->isString()) {
-    //         tt += aa[j]->toString();
-    //       } else if (aa[j]->isVar()) {
-    //         int v = aa[j]->toVar();
-    //         if (vm.hasName(v))
-    //           tt += vm.name(v).toString();
-    //         else {
-    //           std::ostringstream vs; vs << v;
-    //           tt += "_v"+vs.str();
-    //         }
-    //       } else if (aa[j]->isInt()) {
-    //         std::ostringstream vs; vs << aa[j]->toInt();
-    //         tt += vs.str();
-    //       } else {
-    //         tt += "error in BranchingSpec";
-    //       }
-    //     }
-    //     if (i < bs.alternatives()-1)
-    //       tt += "\n";
-    //   }
-    // } catch (Reflection::ReflectionException&) {
-      tt = "No information available";
-    // }
-    return tt;
+    std::ostringstream tt;
+    try {
+      Reflection::BranchingSpec bs = ws->branchingSpec(vm,*d);
+      delete d;
+      tt << "Alternatives of branching " << bs.ati().toString() << ":\n";
+      for (int i=0; i<d->alternatives(); i++) {
+        tt << i << ": ";
+        // Reflection::ArrayArg& aa = *bs[i]->toArray();
+        // for (int j=0; j<aa.size(); j++) {
+        //   if (aa[j]->isString()) {
+        //     tt += aa[j]->toString();
+        //   } else if (aa[j]->isVar()) {
+        //     int v = aa[j]->toVar();
+        //     if (vm.hasName(v))
+        //       tt += vm.name(v).toString();
+        //     else {
+        //       std::ostringstream vs; vs << v;
+        //       tt += "_v"+vs.str();
+        //     }
+        //   } else if (aa[j]->isInt()) {
+        //     std::ostringstream vs; vs << aa[j]->toInt();
+        //     tt += vs.str();
+        //   } else {
+        //     tt += "error in BranchingSpec";
+        //   }
+        // }
+        if (i < d->alternatives()-1)
+          tt << "\n";
+      }
+    } catch (Reflection::ReflectionException&) {
+      tt << "No information available";
+    }
+    return tt.str();
   }
 
   /// \brief Helper functions for the layout algorithm

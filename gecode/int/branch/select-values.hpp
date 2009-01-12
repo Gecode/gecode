@@ -194,10 +194,13 @@ namespace Gecode { namespace Int { namespace Branch {
     const PosValuesDesc<ViewSel,View>& pvd 
       = static_cast<const PosValuesDesc<ViewSel,View>&>(d);
     (void) pvd;
-    Reflection::BranchingSpec bs(1);
-    //    bs[0] = view(pvd->pos()).spec(home, m);
-    //    bs[1] = Reflection::Arg::newString(ValSel::type());
-    //    bs[2] = Reflection::Arg::newInt(pvd->val());
+    Reflection::BranchingSpec bs(ati(), 2);
+    bs[0] = view(pvd.pos()).spec(home, m);
+    Reflection::IntArrayArg* ia = 
+      Reflection::Arg::newIntArray(static_cast<int>(pvd.alternatives()));
+    bs[1] = ia;
+    for (int i=pvd.alternatives(); i--;)
+      (*ia)[i] = pvd.val(i);
     return bs;
   }
 
