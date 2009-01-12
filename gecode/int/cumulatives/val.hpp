@@ -56,14 +56,12 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                                    const ViewArray<ViewD>& _duration,
                                    const ViewArray<View>& _end,
                                    const ViewArray<ViewH>& _height,
-                                   const IntArgs& _limit,
+                                   const SharedArray<int>& _limit,
                                    bool _at_most) :
     Propagator(home),
     machine(_machine), start(_start), duration(_duration),
-    end(_end), height(_height), limit(_limit.size()), at_most(_at_most) {
+    end(_end), height(_height), limit(_limit), at_most(_at_most) {
     home.notice(*this,AP_DISPOSE);    
-    for(int i = _limit.size(); i--; )
-      limit[i] = _limit[i];
 
     machine.subscribe(home,*this,PC_INT_DOM);
     start.subscribe(home,*this,PC_INT_BND);
@@ -78,7 +76,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   ::post(Space& home, const ViewArray<ViewM>& machine,
          const ViewArray<View>& start, const ViewArray<ViewD>& duration,
          const ViewArray<View>& end, const ViewArray<ViewH>& height,
-         const IntArgs& limit, bool at_most) {
+         const SharedArray<int>& limit, bool at_most) {
     (void) new (home) Val(home, machine, start, duration,
                           end, height, limit, at_most);
 
@@ -118,47 +116,6 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   PropCost
   Val<ViewM,ViewD,ViewH,View>::cost(const Space&, const ModEventDelta&) const {
     return cost_hi(start.size(), PC_QUADRATIC_LO);
-  }
-
-  template <class ViewM, class ViewD, class ViewH, class View>
-  Support::Symbol
-  Val<ViewM,ViewD,ViewH,View>::ati(void) {
-    return 
-      Reflection::mangle<ViewM,ViewD,ViewH,View>("Gecode::Int::Cumulatives::Val");
-  }
-
-  template <class ViewM, class ViewD, class ViewH, class View>
-  Reflection::ActorSpec
-  Val<ViewM,ViewD,ViewH,View>::spec(const Space& home,
-                                    Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-
-    return s << machine.spec(home, m)
-             << start.spec(home, m)
-             << duration.spec(home, m)
-             << end.spec(home, m)
-             << height.spec(home, m)
-             << Reflection::Arg::newIntArray(limit)
-             << at_most;
-  }
-
-  template <class ViewM, class ViewD, class ViewH, class View>
-  void
-  Val<ViewM,ViewD,ViewH,View>::post(Space& home, Reflection::VarMap& vars,
-                                    const Reflection::ActorSpec& spec) {
-    spec.checkArity(7);
-    ViewArray<ViewM> machine(home, vars, spec[0]);
-    ViewArray<View>  start(home, vars, spec[1]);
-    ViewArray<ViewD> duration(home, vars, spec[2]);
-    ViewArray<View>  end(home, vars, spec[3]);
-    ViewArray<ViewH> height(home, vars, spec[4]);
-    Reflection::IntArrayArg* limitA = spec[5]->toIntArray();
-    IntArgs limit(limitA->size());
-    for (int i=limitA->size(); i--; )
-      limit[i] = (*limitA)[i];
-    bool at_most = spec[6]->toInt();
-    (void) new (home) Val(home,machine,start,duration,
-                          end,height,limit,at_most);
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>

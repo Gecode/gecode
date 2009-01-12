@@ -91,6 +91,16 @@ namespace Gecode { namespace Int { namespace Cumulatives {
    */
   template <class ViewM, class ViewD, class ViewH, class View>
   class Val : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_4(Val,ViewM,ViewD,ViewH,View,
+      "Gecode::Int::Cumulatives::Val")
+    GECODE_REFLECT_ARGS_7(ViewArray<ViewM>,machine,
+                          ViewArray<View>,start,
+                          ViewArray<ViewD>,duration,
+                          ViewArray<View>,end,
+                          ViewArray<ViewH>,height,
+                          SharedArray<int>,limit,
+                          bool,at_most)
+
     ViewArray<ViewM>  machine;
     ViewArray<View>   start;
     ViewArray<ViewD>  duration;
@@ -102,7 +112,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     Val(Space& home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
     Val(Space& home, const ViewArray<ViewM>&, const ViewArray<View>&,
         const ViewArray<ViewD>&, const ViewArray<View>&,
-        const ViewArray<ViewH>&, const IntArgs&, bool);
+        const ViewArray<ViewH>&, const SharedArray<int>&, bool);
 
     ExecStatus prune(Space& home, int low, int up, int r,
                      int ntask, int sheight,
@@ -113,18 +123,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     virtual Actor*     copy(Space& home, bool share);
     virtual PropCost   cost(const Space& home, const ModEventDelta& med) const;
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     static  ExecStatus post(Space& home, const ViewArray<ViewM>&,
                             const ViewArray<View>&, const ViewArray<ViewD>&,
                             const ViewArray<View>&, const ViewArray<ViewH>&,
-                            const IntArgs&, bool);
+                            const SharedArray<int>&, bool);
   };
 
 

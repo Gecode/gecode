@@ -1797,6 +1797,48 @@ GECODE_KERNEL_SPECHELPERARGS(double)
     T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3; T4 t4; p >> t4; \
     GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0,t1,t2,t3,t4)); \
   }
+/**
+ * \brief Mark propagator arguments for reflection.
+ *
+ * \see GECODE_REFLECT_ARGS_2
+ *
+ * \ingroup TaskReflection
+ */
+#define GECODE_REFLECT_ARGS_6(T0,V0,T1,V1,T2,V2,T3,V3,T4,V4,T5,V5) \
+  public: \
+  Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
+    Reflection::SpecHelper s(home, m, ati()); \
+    s << V0; s << V1; s << V2; s << V3; s << V4; s << V5; \
+    return s.s; \
+  } \
+  static void post(Space& home, Reflection::VarMap& vars, \
+            const Reflection::ActorSpec& spec) { \
+    Reflection::PostHelper p(home,vars,spec,6); \
+    T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3; \
+    T4 t4; p >> t4; T5 t5; p >> t5; \
+    GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0,t1,t2,t3,t4,t5)); \
+  }
+/**
+ * \brief Mark propagator arguments for reflection.
+ *
+ * \see GECODE_REFLECT_ARGS_2
+ *
+ * \ingroup TaskReflection
+ */
+#define GECODE_REFLECT_ARGS_7(T0,V0,T1,V1,T2,V2,T3,V3,T4,V4,T5,V5,T6,V6) \
+  public: \
+  Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m) const { \
+    Reflection::SpecHelper s(home, m, ati()); \
+    s << V0; s << V1; s << V2; s << V3; s << V4; s << V5; s << V6; \
+    return s.s; \
+  } \
+  static void post(Space& home, Reflection::VarMap& vars, \
+            const Reflection::ActorSpec& spec) { \
+    Reflection::PostHelper p(home,vars,spec,5); \
+    T0 t0; p >> t0; T1 t1; p >> t1; T2 t2; p >> t2; T3 t3; p >> t3; \
+    T4 t4; p >> t4; T5 t5; p >> t5; T6 t6; p >> t6;\
+    GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0,t1,t2,t3,t4,t5,t6)); \
+  }
 
   
 }}

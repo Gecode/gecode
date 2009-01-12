@@ -283,6 +283,26 @@ namespace Gecode {
     return os << s.str();
   }
 
+  namespace Reflection {
+    template<>
+    forceinline
+    void operator>>(PostHelper& p, SharedArray<int>& isa) {
+      Reflection::IntArrayArg* a = p.spec[p.arg++]->toIntArray();
+      SharedArray<int> is(a->size());
+      for (int i=a->size(); i--; ) {
+        is[i] = (*a)[i];
+      }
+      isa = is;
+    }
+
+    template <>
+    forceinline
+    void operator<<(SpecHelper& s,
+                    const SharedArray<int>& isa) {
+      s.s << Arg::newIntArray(isa);
+    }  
+  }
+
 }
 
 // STATISTICS: kernel-other

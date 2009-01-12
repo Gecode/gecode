@@ -322,25 +322,5 @@ namespace Gecode { namespace Int { namespace Element {
 
 }}}
 
-namespace Gecode { namespace Reflection {
-  template<>
-  forceinline
-  void operator>>(PostHelper& p, Gecode::Int::Element::IntSharedArray& isa) {
-    Reflection::IntArrayArg* a = p.spec[p.arg++]->toIntArray();
-    Gecode::Int::Element::IntSharedArray is(a->size());
-    for (int i=a->size(); i--; ) {
-      is[i] = (*a)[i];
-    }
-    isa = is;
-  }
-
-  template <>
-  forceinline
-  void operator<<(SpecHelper& s,
-                  const Gecode::Int::Element::IntSharedArray& isa) {
-    s.s << Arg::newIntArray(isa);
-  }  
-}}
-
 // STATISTICS: int-prop
 
