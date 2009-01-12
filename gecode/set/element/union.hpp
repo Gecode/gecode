@@ -70,34 +70,6 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template <class SView, class RView>
-  Support::Symbol
-  ElementUnion<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Gecode::Set::Element::Union");
-  }
-
-  template <class SView, class RView>
-  Reflection::ActorSpec
-  ElementUnion<SView,RView>::spec(const Space& home,
-                                 Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x0.spec(home, m)
-             << iv.spec(home, m)
-             << x1.spec(home, m);
-  }
-
-  template <class SView, class RView>
-  void
-  ElementUnion<SView,RView>::post(Space& home,
-                                 Reflection::VarMap& vars,
-                                 const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    SView x0(home, vars, spec[0]);
-    IdxViewArray iv(home, vars, spec[1]);
-    RView x1(home, vars, spec[2]);
-    (void) new (home) ElementUnion(home, x0, iv, x1);
-  }
-
-  template <class SView, class RView>
   size_t
   ElementUnion<SView,RView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

@@ -71,6 +71,9 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   class ElementIntersection :
     public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2(ElementIntersection,SView,RView,
+      "Gecode::Set::Element::Intersection")
+    GECODE_REFLECT_ARGS_4(SView,x0,IdxViewArray,iv,RView,x1,IntSet,universe)
   public:
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
@@ -92,14 +95,6 @@ namespace Gecode { namespace Set { namespace Element {
     virtual size_t dispose(Space& home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
      *
      * If \a y is empty, \a z will be constrained to be the given universe
@@ -118,6 +113,9 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   class ElementUnion :
     public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2(ElementUnion,SView,RView,
+      "Gecode::Set::Element::Union")
+    GECODE_REFLECT_ARGS_3(SView,x0,IdxViewArray,iv,RView,x1)
   public:
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
@@ -137,14 +135,6 @@ namespace Gecode { namespace Set { namespace Element {
     virtual size_t dispose(Space& home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
      *
      * If \a y is empty, \a z will be constrained to be empty
@@ -163,6 +153,9 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   class ElementUnionConst :
     public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2(ElementUnionConst,SView,RView,
+      "Gecode::Set::Element::UnionConst")
+    GECODE_REFLECT_ARGS_3(SView,x0,SharedArray<IntSet>,iv,RView,x1)
   protected:
     SView x0;
     SharedArray<IntSet> iv;
@@ -180,14 +173,6 @@ namespace Gecode { namespace Set { namespace Element {
     virtual size_t dispose(Space& home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /** Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
      *
      * If \a y is empty, \a z will be constrained to be empty
@@ -205,6 +190,9 @@ namespace Gecode { namespace Set { namespace Element {
    */
   class ElementDisjoint :
     public Propagator {
+    GECODE_REFLECT_PROPAGATOR_0(ElementDisjoint,
+      "Gecode::Set::Element::Disjoint")
+    GECODE_REFLECT_ARGS_2(IdxViewArray,iv,SetView,x1)
   public:
     typedef Gecode::Int::Element::IdxViewArray<SetView> IdxViewArray;
   protected:
@@ -223,14 +211,6 @@ namespace Gecode { namespace Set { namespace Element {
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
     static  ExecStatus  post(Space& home,IdxViewArray& x,SetView y);
   };

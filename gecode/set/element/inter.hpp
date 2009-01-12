@@ -72,46 +72,6 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template <class SView, class RView>
-  Support::Symbol
-  ElementIntersection<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Gecode::Set::Element::Intersection");
-  }
-
-  template <class SView, class RView>
-  Reflection::ActorSpec
-  ElementIntersection<SView,RView>::spec(const Space& home,
-                                        Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    int count = 0;
-    for (IntSetRanges ur(universe); ur(); ++ur)
-      count++;
-    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
-    count = 0;
-    for (IntSetRanges ur(universe); ur(); ++ur) {
-      (*a)[count++] = ur.min();
-      (*a)[count++] = ur.max();
-    }
-    return s << a
-             << x0.spec(home, m)
-             << iv.spec(home, m)
-             << x1.spec(home, m);
-  }
-
-  template <class SView, class RView>
-  void
-  ElementIntersection<SView,RView>::post(Space& home,
-                                        Reflection::VarMap& vars,
-                                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    Reflection::IntArrayArgRanges ur(spec[0]->toIntArray());
-    IntSet universe(ur);
-    SView x0(home, vars, spec[1]);
-    IdxViewArray iv(home, vars, spec[2]);
-    RView x1(home, vars, spec[3]);
-    (void) new (home) ElementIntersection(home, x0, iv, x1, universe);
-  }
-
-  template <class SView, class RView>
   size_t
   ElementIntersection<SView,RView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

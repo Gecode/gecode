@@ -69,53 +69,6 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template <class SView, class RView>
-  Support::Symbol
-  ElementUnionConst<SView,RView>::ati(void) {
-    return Reflection::mangle<SView,RView>("Gecode::Set::Element::UnionConst");
-  }
-
-  template <class SView, class RView>
-  Reflection::ActorSpec
-  ElementUnionConst<SView,RView>::spec(const Space& home,
-                                      Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    Reflection::ArrayArg* a = Reflection::Arg::newArray(iv.size());
-    for (int i=0; i<iv.size(); i++) {
-      int count = 0;
-      for (IntSetRanges isr(iv[i]); isr(); ++isr)
-        count++;
-      Reflection::IntArrayArg* aa = Reflection::Arg::newIntArray(count*2);
-      count = 0;
-      for (IntSetRanges isr(iv[i]); isr(); ++isr) {
-        (*aa)[count++] = isr.min();
-        (*aa)[count++] = isr.max();
-      }
-      (*a)[i] = aa;
-    }
-
-    return s << x0.spec(home, m)
-             << a
-             << x1.spec(home, m);
-  }
-
-  template <class SView, class RView>
-  void
-  ElementUnionConst<SView,RView>::post(Space& home,
-                                      Reflection::VarMap& vars,
-                                      const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    SView x0(home, vars, spec[0]);
-    Reflection::ArrayArg* sets = spec[1]->toArray();
-    SharedArray<IntSet> iv(sets->size());
-    for (int i=sets->size(); i--; ) {
-      Reflection::IntArrayArgRanges r((*sets)[i]->toIntArray());
-      new (&iv[i]) IntSet(r);
-    }
-    RView x1(home, vars, spec[2]);
-    (void) new (home) ElementUnionConst(home, x0, iv, x1);
-  }
-
-  template <class SView, class RView>
   size_t
   ElementUnionConst<SView,RView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

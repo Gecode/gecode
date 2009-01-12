@@ -48,26 +48,6 @@ namespace Gecode { namespace Set { namespace Element {
     return PC_QUADRATIC_LO;
   }
 
-  Support::Symbol
-  ElementDisjoint::ati(void) {
-    return Support::Symbol("Gecode::Set::Element::Disjoint");
-  }
-
-  Reflection::ActorSpec
-  ElementDisjoint::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << iv.spec(home, m) << x1.spec(home, m);
-  }
-
-  void
-  ElementDisjoint::post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    IdxViewArray iv(home, vars, spec[0]);
-    SetView x1(home, vars, spec[1]);
-    (void) new (home) ElementDisjoint(home, iv, x1);
-  }
-
   size_t
   ElementDisjoint::dispose(Space& home) {
     assert(!home.failed());
