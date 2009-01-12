@@ -85,7 +85,19 @@ namespace Gecode { namespace Reflection {
   protected:
     /// The different types of arguments
     enum argtype {
+      BOOL_ARG,          ///< Boolean argument
+      CHAR_ARG,          ///< Character argument
+      SCHAR_ARG,         ///< Signed char argument
+      UCHAR_ARG,         ///< Unsigned char argument
       INT_ARG,           ///< Integer argument
+      UINT_ARG,          ///< Unsigned integer argument
+      SHORT_ARG,         ///< Short integer argument
+      USHORT_ARG,        ///< Unsigned short integer argument
+      LONG_ARG,          ///< Long integer argument
+      ULONG_ARG,         ///< Unsigned long integer argument
+      FLOAT_ARG,         ///< Float argument
+      DOUBLE_ARG,        ///< Double argument
+      
       VAR_ARG,           ///< Variable argument
       ARRAY_ARG,         ///< Array argument
       INT_ARRAY_ARG,     ///< Integer array argument
@@ -100,7 +112,11 @@ namespace Gecode { namespace Reflection {
     
     union {
       /// The integer of an INT_ARG, the index of a VAR_ARG or SHARED_REF_ARG, or the size of an ARRAY_ARG or INT_ARRAY_ARG
-      int i;
+      long int i;
+      /// Unsigned long integer, used for all unsigned arguments
+      unsigned long int u_i;
+      /// Double, used for both float and double arguments
+      double d;
       /// The string of a STRING_ARG
       char* s;
       /// The first argument of a PAIR_ARG, or the object of a SHARED_OBJECT_ARG
@@ -119,6 +135,43 @@ namespace Gecode { namespace Reflection {
     Arg(argtype t);
     
   public:
+    
+    /// %Test if this represents a Boolean
+    bool         isBool(void) const;
+    /// Return the Boolean that this argument represents
+    bool         toBool(void) const;
+    /// Create new Boolean argument
+    static Arg*  newBool(bool i);
+    /// Initialize this as a Boolean argument
+    void         initBool(bool i);
+
+    /// %Test if this represents a char
+    bool         isChar(void) const;
+    /// Return the char that this argument represents
+    char         toChar(void) const;
+    /// Create new char argument
+    static Arg*  newChar(char i);
+    /// Initialize this as a char argument
+    void         initChar(char i);
+
+    /// %Test if this represents a signed char
+    bool         isSignedChar(void) const;
+    /// Return the signed char that this argument represents
+    signed char  toSignedChar(void) const;
+    /// Create new signed char argument
+    static Arg*  newSignedChar(signed char i);
+    /// Initialize this as a signed char argument
+    void         initSignedChar(signed char i);
+
+    /// %Test if this represents a unsigned char
+    bool          isUnsignedChar(void) const;
+    /// Return the unsigned char that this argument represents
+    unsigned char toUnsignedChar(void) const;
+    /// Create new unsigned char argument
+    static Arg*   newUnsignedChar(unsigned char i);
+    /// Initialize this as a unsigned char argument
+    void          initUnsignedChar(unsigned char i);
+
     /// %Test if this represents an integer
     bool         isInt(void) const;
     /// Return the integer that this argument represents
@@ -127,6 +180,70 @@ namespace Gecode { namespace Reflection {
     static Arg*  newInt(int i);
     /// Initialize this as an int argument
     void         initInt(int i);
+
+    /// %Test if this represents an unsigned int
+    bool         isUnsignedInt(void) const;
+    /// Return the unsigned int that this argument represents
+    unsigned int toUnsignedInt(void) const;
+    /// Create new unsigned int argument
+    static Arg*  newUnsignedInt(unsigned int i);
+    /// Initialize this as an unsigned int argument
+    void         initUnsignedInt(unsigned int i);
+
+    /// %Test if this represents an short
+    bool         isShort(void) const;
+    /// Return the short that this argument represents
+    short        toShort(void) const;
+    /// Create new short argument
+    static Arg*  newShort(short i);
+    /// Initialize this as an short argument
+    void         initShort(short i);
+
+    /// %Test if this represents an unsigned short
+    bool           isUnsignedShort(void) const;
+    /// Return the unsigned short that this argument represents
+    unsigned short toUnsignedShort(void) const;
+    /// Create new unsigned short argument
+    static Arg*    newUnsignedShort(unsigned short i);
+    /// Initialize this as an unsigned short argument
+    void           initUnsignedShort(unsigned short i);
+
+    /// %Test if this represents an long
+    bool         isLong(void) const;
+    /// Return the long that this argument represents
+    long         toLong(void) const;
+    /// Create new long argument
+    static Arg*  newLong(long i);
+    /// Initialize this as an long argument
+    void         initLong(long i);
+
+    /// %Test if this represents an unsigned long
+    bool          isUnsignedLong(void) const;
+    /// Return the unsigned long that this argument represents
+    unsigned long toUnsignedLong(void) const;
+    /// Create new unsigned long argument
+    static Arg*   newUnsignedLong(unsigned long i);
+    /// Initialize this as an unsigned long argument
+    void          initUnsignedLong(unsigned long i);
+
+    /// %Test if this represents a float
+    bool         isFloat(void) const;
+    /// Return the float that this argument represents
+    float        toFloat(void) const;
+    /// Create new float argument
+    static Arg*  newFloat(float i);
+    /// Initialize this as a float argument
+    void         initFloat(float i);
+
+    /// %Test if this represents a double
+    bool        isDouble(void) const;
+    /// Return the double that this argument represents
+    double      toDouble(void) const;
+    /// Create new double argument
+    static Arg* newDouble(double i);
+    /// Initialize this as a double argument
+    void        initDouble(double i);
+
     
     /// %Test if this represents a variable
     bool         isVar(void) const;
@@ -408,6 +525,42 @@ namespace Gecode { namespace Reflection {
   ActorSpec
   operator <<(ActorSpec s, Arg* arg);
 
+  /** \brief Add \a b to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, bool b);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, char i);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, signed char i);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, unsigned char i);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, short i);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, unsigned short i);
+
   /** \brief Add \a i to specification
    *  \relates Gecode::Reflection::ActorSpec
    */
@@ -419,8 +572,26 @@ namespace Gecode { namespace Reflection {
    */
   ActorSpec
   operator <<(ActorSpec s, unsigned int i);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, long i);
+
+  /** \brief Add \a i to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, unsigned long i);
   
-  /** \brief Add \a d to specification, where \a d is cast into an integer
+  /** \brief Add \a d to specification
+   *  \relates Gecode::Reflection::ActorSpec
+   */
+  ActorSpec
+  operator <<(ActorSpec s, float d);
+
+  /** \brief Add \a d to specification
    *  \relates Gecode::Reflection::ActorSpec
    */
   ActorSpec
@@ -434,19 +605,27 @@ namespace Gecode { namespace Reflection {
     s.add(arg);
     return s;
   }
-  forceinline ActorSpec
-  operator <<(ActorSpec s, int i) {
-    return s << Arg::newInt(i);
-  }
-  forceinline ActorSpec
-  operator <<(ActorSpec s, unsigned int i) {
-    return s << Arg::newInt(static_cast<int>(i));
-  }
-  forceinline ActorSpec
-  operator <<(ActorSpec s, double i) {
-    return s << Arg::newInt(static_cast<int>(i));
+
+#define GECODE_REFLECT_ARGTOSPEC(T,N) \
+  forceinline ActorSpec \
+  operator <<(ActorSpec s, T i) { \
+    return s << Arg::new##N(i); \
   }
 
+GECODE_REFLECT_ARGTOSPEC(bool,Bool)
+GECODE_REFLECT_ARGTOSPEC(char,Char)
+GECODE_REFLECT_ARGTOSPEC(signed char, SignedChar)
+GECODE_REFLECT_ARGTOSPEC(unsigned char, UnsignedChar)
+GECODE_REFLECT_ARGTOSPEC(short, Short)
+GECODE_REFLECT_ARGTOSPEC(unsigned short, UnsignedShort)
+GECODE_REFLECT_ARGTOSPEC(int,Int)
+GECODE_REFLECT_ARGTOSPEC(unsigned int, UnsignedInt)
+GECODE_REFLECT_ARGTOSPEC(long, Long)
+GECODE_REFLECT_ARGTOSPEC(unsigned long, UnsignedLong)
+GECODE_REFLECT_ARGTOSPEC(float, Float)
+GECODE_REFLECT_ARGTOSPEC(double, Double)
+
+#undef GECODE_REFLECT_ARGTOSPEC
 
   /**
     * \brief %Branching specification
@@ -841,43 +1020,43 @@ namespace Gecode { namespace Reflection {
     static Support::Symbol t(void) { return View::type(); }
   };
 
-#define GECODE_KERNEL_TYPEOF(type,name)                                 \
+#define GECODE_KERNEL_TYPEOF(type)                                      \
   template <>                                                           \
   class TypeOf<type> {                                                  \
   public:                                                               \
     /** Return string representation */                                 \
-    static Support::Symbol t(void) { return Support::Symbol(name); }    \
+    static Support::Symbol t(void) { return Support::Symbol(#type); }   \
   };
 
   /// String representation for bool, used for name mangling
-  GECODE_KERNEL_TYPEOF(bool,"bool")
+  GECODE_KERNEL_TYPEOF(bool)
 
   /// String representation for char, used for name mangling
-  GECODE_KERNEL_TYPEOF(char,"char")
+  GECODE_KERNEL_TYPEOF(char)
   /// String representation for signed char, used for name mangling
-  GECODE_KERNEL_TYPEOF(signed char,"signed char")
+  GECODE_KERNEL_TYPEOF(signed char)
   /// String representation for unsigned char, used for name mangling
-  GECODE_KERNEL_TYPEOF(unsigned char,"unsigned char")
+  GECODE_KERNEL_TYPEOF(unsigned char)
 
   /// String representation for int, used for name mangling
-  GECODE_KERNEL_TYPEOF(int,"int")
+  GECODE_KERNEL_TYPEOF(int)
   /// String representation for unsigned int, used for name mangling
-  GECODE_KERNEL_TYPEOF(unsigned int,"unsigned int")
+  GECODE_KERNEL_TYPEOF(unsigned int)
 
   /// String representation for short int, used for name mangling
-  GECODE_KERNEL_TYPEOF(short int,"short int")
+  GECODE_KERNEL_TYPEOF(short int)
   /// String representation for unsigned short int, used for name mangling
-  GECODE_KERNEL_TYPEOF(unsigned short int,"unsigned short int")
+  GECODE_KERNEL_TYPEOF(unsigned short int)
 
   /// String representation for long int, used for name mangling
-  GECODE_KERNEL_TYPEOF(long int,"long int")
+  GECODE_KERNEL_TYPEOF(long int)
   /// String representation for unsigned long int, used for name mangling
-  GECODE_KERNEL_TYPEOF(unsigned long int,"unsigned long int")
+  GECODE_KERNEL_TYPEOF(unsigned long int)
 
   /// String representation for float, used for name mangling
-  GECODE_KERNEL_TYPEOF(float,"float")
+  GECODE_KERNEL_TYPEOF(float)
   /// String representation for signed char, used for name mangling
-  GECODE_KERNEL_TYPEOF(double,"double")
+  GECODE_KERNEL_TYPEOF(double)
 
 #undef GECODE_KERNEL_TYPEOF
   //@}
@@ -1227,15 +1406,23 @@ namespace Reflection {
   template <class C>
   forceinline
   void operator>>(PostHelper& p, C& c) { c = C(p.home, p.vars, p.spec[p.arg++]); }
-  template<>
-  forceinline
-  void operator>>(PostHelper& p, int& i) { i = p.spec[p.arg++]->toInt(); }
-  template<>
-  forceinline
-  void operator>>(PostHelper& p, bool& i) { i = p.spec[p.arg++]->toInt(); }
-  template<>
-  forceinline
-  void operator>>(PostHelper& p, double& i) { i = p.spec[p.arg++]->toInt(); }
+#define GECODE_KERNEL_POSTHELPERARGS(T,N) \
+  template<> forceinline \
+  void operator>>(PostHelper& p, T& i) { i = p.spec[p.arg++]->to##N(); }
+
+GECODE_KERNEL_POSTHELPERARGS(bool,Bool)
+GECODE_KERNEL_POSTHELPERARGS(char,Char)
+GECODE_KERNEL_POSTHELPERARGS(signed char,SignedChar)
+GECODE_KERNEL_POSTHELPERARGS(unsigned char,UnsignedChar)
+GECODE_KERNEL_POSTHELPERARGS(short,Short)
+GECODE_KERNEL_POSTHELPERARGS(unsigned short,UnsignedShort)
+GECODE_KERNEL_POSTHELPERARGS(int,Int)
+GECODE_KERNEL_POSTHELPERARGS(unsigned int,UnsignedInt)
+GECODE_KERNEL_POSTHELPERARGS(long,Long)
+GECODE_KERNEL_POSTHELPERARGS(unsigned long,UnsignedLong)
+GECODE_KERNEL_POSTHELPERARGS(float,Float)
+GECODE_KERNEL_POSTHELPERARGS(double,Double)
+#undef GECODE_KERNEL_POSTHELPERARGS
   
   class SpecHelper {
   public:
@@ -1250,17 +1437,23 @@ namespace Reflection {
   template <class C>
   forceinline
   void operator<<(SpecHelper& s, C& c) { s.s << c.spec(s.home, s.m); }
-  template <>
-  forceinline
-  void operator<<(SpecHelper& s, const int& i) { s.s << i; }
-  template <>
-  forceinline
-  void operator<<(SpecHelper& s, const bool& i) { s.s << i; }
-  template <>
-  forceinline
-  void operator<<(SpecHelper& s, const double& i) {
-    s.s << static_cast<int>(i);
-  }
+#define GECODE_KERNEL_SPECHELPERARGS(T) \
+  template <> forceinline \
+  void operator<<(SpecHelper& s, const T& i) { s.s << i; }
+
+GECODE_KERNEL_SPECHELPERARGS(bool)
+GECODE_KERNEL_SPECHELPERARGS(char)
+GECODE_KERNEL_SPECHELPERARGS(signed char)
+GECODE_KERNEL_SPECHELPERARGS(unsigned char)
+GECODE_KERNEL_SPECHELPERARGS(short)
+GECODE_KERNEL_SPECHELPERARGS(unsigned short)
+GECODE_KERNEL_SPECHELPERARGS(int)
+GECODE_KERNEL_SPECHELPERARGS(unsigned int)
+GECODE_KERNEL_SPECHELPERARGS(long)
+GECODE_KERNEL_SPECHELPERARGS(unsigned long)
+GECODE_KERNEL_SPECHELPERARGS(float)
+GECODE_KERNEL_SPECHELPERARGS(double)
+#undef GECODE_KERNEL_SPECHELPERARGS
 
 /**
  * \brief Provide reflection information for a non-template propagator.

@@ -164,28 +164,42 @@ namespace Gecode { namespace Reflection {
    */
 
   Arg::Arg(argtype t0) : t(t0) {}
-  
-  bool
-  Arg::isInt(void) const {
-    return t == INT_ARG;
+
+#define ARGACCESSORS(N,T,F,A) \
+  bool \
+  Arg::is##N(void) const { \
+    return t == A; \
+  } \
+  T \
+  Arg::to##N(void) const { \
+    if (!is##N()) \
+      throw ReflectionException("not an A arg"); \
+    return static_cast<T>(arg1.F); \
+  } \
+  Arg* \
+  Arg::new##N(T i) { \
+    Arg* ret = new Arg(A); \
+    ret->arg1.F = i; \
+    return ret; \
+  } \
+  void \
+  Arg::init##N(T i) { \
+    t = A; \
+    arg1.F = i; \
   }
-  int
-  Arg::toInt(void) const {
-    if (!isInt())
-      throw ReflectionException("not an IntArg");
-    return arg1.i;
-  }
-  Arg*
-  Arg::newInt(int i) {
-    Arg* ret = new Arg(INT_ARG);
-    ret->arg1.i = i;
-    return ret;
-  }
-  void
-  Arg::initInt(int i) {
-    t = INT_ARG;
-    arg1.i = i;
-  }
+
+ARGACCESSORS(Bool,bool,i,BOOL_ARG)
+ARGACCESSORS(Char,char,i,CHAR_ARG)
+ARGACCESSORS(SignedChar,signed char,i,SCHAR_ARG)
+ARGACCESSORS(UnsignedChar,unsigned char,u_i,UCHAR_ARG)
+ARGACCESSORS(Int,int,i,INT_ARG)
+ARGACCESSORS(UnsignedInt,unsigned int,u_i,UINT_ARG)
+ARGACCESSORS(Short,short,i,SHORT_ARG)
+ARGACCESSORS(UnsignedShort,unsigned short,u_i,USHORT_ARG)
+ARGACCESSORS(Long,long,i,LONG_ARG)
+ARGACCESSORS(UnsignedLong,unsigned long,u_i,LONG_ARG)
+ARGACCESSORS(Float,float,d,FLOAT_ARG)
+ARGACCESSORS(Double,double,d,DOUBLE_ARG)
 
   bool
   Arg::isVar(void) const {
