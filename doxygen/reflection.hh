@@ -259,7 +259,7 @@ public:
 
 The first macro states that the propagator is implemented by the class <code>MyPropagator</code>, has two template parameters <code>View0</code> and <code>View1</code>, and that its ati is <code>"Gecode::MyPropagator"</code>. The second macro adds reflection support for the three member variables <code>x</code>, <code>y</code>, and <code>c</code>. For this to work, the propagator must provide a function <code>post</code> that has exactly the signature described by the macro parameters, as shown in the example.
 
-For the basic C types as well as for views, view arrays, and several other %Gecode classes, reflection is already defined and the GECODE_REFLECT_ARGS macros works out of the box.  If a certain type <code>T</code> is not supported, you can add it by providing <code>operator<<(Reflection::SpecHelper&, const T& x)</code> and <code>operator>>(Reflection::PostHelper&, const T& x)</code>, as shown in the file gecode/kernel/reflection.hh.
+For the basic C types as well as for views, view arrays, and several other %Gecode classes, reflection is already defined and the GECODE_REFLECT_ARGS macros work out of the box.  If a certain type <code>T</code> is not supported, you can add it by providing <code>operator<<(Reflection::SpecHelper&, const T& x)</code> and <code>operator>>(Reflection::PostHelper&, const T& x)</code>, as shown in the file gecode/kernel/reflection.hh.
 
 In order to make unreflection work, all instances of the propagator must be registered. The next section shows how to implement the methods created by the macros manually, and how to perform the registration.
 
