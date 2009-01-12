@@ -55,37 +55,15 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) SeqU(home,share,*this);
   }
 
-  Support::Symbol
-  SeqU::ati(void) {
-    return Support::Symbol("Gecode::Set::Sequence::Union");
+  ExecStatus
+  SeqU::post(Space& home, ViewArray<SetView> x, SetView y,
+             const IntSet& uod) {
+    SeqU* sequprop = new (home) SeqU(home, x, y);
+    IntSetRanges uodr(uod);
+    sequprop->unionOfDets.includeI(home, uodr);
+    return ES_OK;
   }
 
-  Reflection::ActorSpec
-  SeqU::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-     NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
-    int count = 0;
-    for (BndSetRanges uod(unionOfDets); uod(); ++uod)
-      count++;
-    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
-    count = 0;
-    for (BndSetRanges uod(unionOfDets); uod(); ++uod) {
-      (*a)[count++] = uod.min();
-      (*a)[count++] = uod.max();
-    }
-    return s << a;
-  }
-
-  void
-  SeqU::post(Space& home, Reflection::VarMap& vars,
-             const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<SetView> x0(home, vars, spec[0]);
-    SetView x1(home, vars, spec[1]);
-    Reflection::IntArrayArgRanges r(spec[2]->toIntArray());
-    SeqU* sequprop = new (home) SeqU(home, x0, x1);
-    sequprop->unionOfDets.includeI(home, r);
-  }
 
   ExecStatus
   SeqU::propagateSeqUnion(Space& home,

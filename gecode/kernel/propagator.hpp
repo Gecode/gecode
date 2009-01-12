@@ -88,9 +88,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -119,9 +116,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -150,9 +144,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -181,9 +172,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -215,9 +203,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -247,9 +232,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -281,9 +263,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -315,9 +294,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
   //@}
 
@@ -388,14 +364,6 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-  template <class View, PropCond pc>
-  Reflection::ActorSpec
-  UnaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
-                                 const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    return s << x0.spec(home, m);
-  }
-  
 
   /*
    * Binary propagators
@@ -444,15 +412,6 @@ namespace Gecode {
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class View, PropCond pc>
-  Reflection::ActorSpec
-  BinaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
-                                  const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m);
   }
 
   /*
@@ -509,16 +468,6 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-  template <class View, PropCond pc>
-  Reflection::ActorSpec
-  TernaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
-                                   const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << x2.spec(home, m);
-  }
-
   /*
    * Nary propagators
    *
@@ -561,14 +510,6 @@ namespace Gecode {
       x.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class View, PropCond pc>
-  Reflection::ActorSpec
-  NaryPropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x.spec(home, m);
   }
 
   /*
@@ -621,15 +562,6 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-  template <class View, PropCond pc>
-  Reflection::ActorSpec
-  NaryOnePropagator<View,pc>::spec(const Space& home, Reflection::VarMap& m,
-                                   const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x.spec(home, m)
-             << y.spec(home, m);
-  }
-
   /*
    * Mixed binary propagators
    *
@@ -678,16 +610,6 @@ namespace Gecode {
       x1.cancel(home,*this,pc1);
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  Reflection::ActorSpec
-  MixBinaryPropagator<View0,pc0,View1,pc1>
-  ::spec(const Space& home, Reflection::VarMap& m,
-         const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m);
   }
 
   /*
@@ -753,18 +675,6 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
-            class View2, PropCond pc2>
-  Reflection::ActorSpec
-  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>
-  ::spec(const Space& home, Reflection::VarMap& m,
-         const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << x2.spec(home, m);
-  }
-
   /*
    * MixNaryOne (one additional variable) propagators
    *
@@ -813,16 +723,6 @@ namespace Gecode {
       y.cancel(home,*this,pc1);
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  Reflection::ActorSpec
-  MixNaryOnePropagator<View0,pc0,View1,pc1>
-  ::spec(const Space& home, Reflection::VarMap& m,
-         const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x.spec(home, m)
-             << y.spec(home, m);
   }
 
 }

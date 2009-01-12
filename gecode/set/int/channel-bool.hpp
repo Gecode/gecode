@@ -276,28 +276,6 @@ namespace Gecode { namespace Set { namespace Int {
       return ES_NOFIX;
   }
 
-  template <class View>
-  Support::Symbol
-  ChannelBool<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Set::Int::ChannelBool");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  ChannelBool<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Super::spec(home, m, ati());
-  }
-  
-  template <class View>
-  void
-  ChannelBool<View>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<Gecode::Int::BoolView> x0(home, vars, spec[0]);
-    View x1(home, vars, spec[1]);
-    (void) new (home) ChannelBool<View>(home,x0,x1);
-  }
-
 }}}
 
 // STATISTICS: set-prop

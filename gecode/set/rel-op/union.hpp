@@ -75,32 +75,6 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1, class View2>
-  Support::Symbol
-  Union<View0,View1,View2>::ati(void) {
-    return Reflection::mangle<View0,View1,View2>("Gecode::Set::RelOp::Union");
-  }
-
-  template <class View0, class View1, class View2>
-  Reflection::ActorSpec
-  Union<View0,View1,View2>::spec(const Space& home,
-                                 Reflection::VarMap& m) const {
-    return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-      View2,PC_SET_ANY>::spec(home, m, ati());
-  }
-
-  template <class View0, class View1, class View2>
-  void
-  Union<View0,View1,View2>::post(Space& home,
-                                 Reflection::VarMap& vars,
-                                 const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    View2 x2(home, vars, spec[2]);
-    (void) new (home) Union(home,x0,x1,x2);
-  }
-
-  template <class View0, class View1, class View2>
   ExecStatus
   Union<View0,View1,View2>::propagate(Space& home, const ModEventDelta& med) {
     // This propagator implements the constraint
@@ -289,44 +263,6 @@ namespace Gecode { namespace Set { namespace RelOp {
   PropCost
   UnionN<View0,View1>::cost(const Space&, const ModEventDelta&) const {
     return PC_QUADRATIC_LO;
-  }
-
-  template <class View0, class View1>
-  Support::Symbol
-  UnionN<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Set::RelOp::UnionN");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  UnionN<View0,View1>::spec(const Space& home,
-                            Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-      MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
-        ::spec(home, m, ati());
-    int count = 0;
-    for (BndSetRanges uod(unionOfDets); uod(); ++uod)
-      count++;
-    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
-    count = 0;
-    for (BndSetRanges uod(unionOfDets); uod(); ++uod) {
-      (*a)[count++] = uod.min();
-      (*a)[count++] = uod.max();
-    }
-    return s << a;
-  }
-
-  template <class View0, class View1>
-  void
-  UnionN<View0,View1>::post(Space& home,
-                            Reflection::VarMap& vars,
-                            const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<View0> x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    Reflection::IntArrayArgRanges zr(spec[2]->toIntArray());
-    IntSet z(zr);
-    (void) new (home) UnionN(home,x0,z,x1);
   }
 
   template <class View0, class View1>

@@ -48,16 +48,6 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) Convex(home,share,*this);
   }
 
-  Support::Symbol
-  Convex::ati(void) {
-    return Support::Symbol("Gecode::Set::Convex::Convex");
-  }
-
-  Reflection::ActorSpec
-  Convex::spec(const Space& home, Reflection::VarMap& m) const {
-    return UnaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
-  }
-
   ExecStatus
   Convex::propagate(Space& home, const ModEventDelta&) {
     //I, drop ranges from UB that are shorter than cardMin
@@ -97,14 +87,6 @@ namespace Gecode { namespace Set { namespace Convex {
     }
     if (x0.assigned()) {return ES_SUBSUMED(*this,home);}
     return ES_FIX;
-  }
-
-  void
-  Convex::post(Space& home, Reflection::VarMap& vars,
-               const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    SetView s(home, vars, spec[0]);
-    (void) new (home) Convex(home,s);
   }
 
 }}

@@ -54,26 +54,6 @@ namespace Gecode { namespace Int { namespace Channel {
     return PC_UNARY_LO;
   }
 
-  Support::Symbol
-  LinkSingle::ati(void) {
-    return Support::Symbol("Gecode::Int::Channel::LinkSingle");
-  }
-
-  Reflection::ActorSpec
-  LinkSingle::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
-      ::spec(home, m, ati());
-  }
-
-  void
-  LinkSingle::post(Space& home, Reflection::VarMap& vars,
-                   const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    BoolView b(home, vars, spec[0]);
-    IntView x(home, vars, spec[1]);
-    (void) new (home) LinkSingle(home, b, x);
-  }
-
   ExecStatus
   LinkSingle::propagate(Space& home, const ModEventDelta&) {
     if (x0.zero()) {

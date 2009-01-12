@@ -80,44 +80,6 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  Support::Symbol
-  PartitionN<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Set::RelOp::PartitionN");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  PartitionN<View0,View1>::spec(const Space& home,
-                                Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-      MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
-        ::spec(home, m, ati());
-    int count = 0;
-    for (BndSetRanges uod(unionOfDets); uod(); ++uod)
-      count++;
-    Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
-    count = 0;
-    for (BndSetRanges uod(unionOfDets); uod(); ++uod) {
-      (*a)[count++] = uod.min();
-      (*a)[count++] = uod.max();
-    }
-    return s << a;
-  }
-
-  template <class View0, class View1>
-  void
-  PartitionN<View0,View1>::post(Space& home,
-                                Reflection::VarMap& vars,
-                                const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    ViewArray<View0> x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    Reflection::IntArrayArgRanges zr(spec[2]->toIntArray());
-    IntSet z(zr);
-    (void) new (home) PartitionN(home,x0,z,x1);
-  }
-
-  template <class View0, class View1>
   ExecStatus PartitionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
                                            View1 y) {
     switch (x.size()) {

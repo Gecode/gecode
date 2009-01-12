@@ -68,32 +68,6 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  Support::Symbol
-  ReEq<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Set::Rel::ReEq");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  ReEq<View0,View1>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << b.spec(home, m);
-  }
-
-  template <class View0, class View1>
-  void
-  ReEq<View0,View1>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    Gecode::Int::BoolView b(home, vars, spec[2]);
-    (void) new (home) ReEq(home,x0,x1,b);
-  }
-
-  template <class View0, class View1>
   size_t
   ReEq<View0,View1>::dispose(Space& home) {
     assert(!home.failed());

@@ -45,54 +45,31 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   forceinline
-  SubSet<View0,View1>::SubSet(Space& home, View0 y0, View1 y1)
+  Subset<View0,View1>::Subset(Space& home, View0 y0, View1 y1)
     : MixBinaryPropagator<View0,PC_SET_CGLB,
                             View1,PC_SET_CLUB>(home,y0,y1) {}
 
   template <class View0, class View1>
   forceinline
-  SubSet<View0,View1>::SubSet(Space& home, bool share, SubSet& p)
+  Subset<View0,View1>::Subset(Space& home, bool share, Subset& p)
     : MixBinaryPropagator<View0,PC_SET_CGLB,
                             View1,PC_SET_CLUB>(home,share,p) {}
 
   template <class View0, class View1>
-  ExecStatus SubSet<View0,View1>::post(Space& home, View0 x, View1 y) {
-    (void) new (home) SubSet(home,x,y);
+  ExecStatus Subset<View0,View1>::post(Space& home, View0 x, View1 y) {
+    (void) new (home) Subset(home,x,y);
     return ES_OK;
   }
 
   template <class View0, class View1>
   Actor*
-  SubSet<View0,View1>::copy(Space& home, bool share) {
-    return new (home) SubSet(home,share,*this);
-  }
-
-  template <class View0, class View1>
-  Support::Symbol
-  SubSet<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Set::Rel::SubSet");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  SubSet<View0,View1>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>
-      ::spec(home, m, ati());
-  }
-
-  template <class View0, class View1>
-  void
-  SubSet<View0,View1>::post(Space& home, Reflection::VarMap& vars,
-                            const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    (void) new (home) SubSet(home,x0,x1);
+  Subset<View0,View1>::copy(Space& home, bool share) {
+    return new (home) Subset(home,share,*this);
   }
 
   template <class View0, class View1>
   ExecStatus
-  SubSet<View0,View1>::propagate(Space& home, const ModEventDelta&) {
+  Subset<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     bool oneassigned = x0.assigned() || x1.assigned();
     unsigned int x0glbsize;
     do {

@@ -404,34 +404,6 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
-  Support::Symbol
-  Sorted<View,Perm>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Sorted",Perm);    
-  }
-
-  template <class View, bool Perm>
-  Reflection::ActorSpec
-  Sorted<View,Perm>::spec(const Space& home,
-                          Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m) << y.spec(home, m)
-             << z.spec(home, m) << w.spec(home, m) << reachable;
-  }
-
-  template <class View, bool Perm>
-  void
-  Sorted<View,Perm>::post(Space& home, Reflection::VarMap& vars,
-                          const Reflection::ActorSpec& spec) {
-    spec.checkArity(5);
-    ViewArray<View> x(home, vars, spec[0]);
-    ViewArray<View> y(home, vars, spec[1]);
-    ViewArray<View> z(home, vars, spec[2]);
-    ViewArray<View> w(home, vars, spec[3]);
-    int reachable = spec[4]->toInt();
-    (void) new (home) Sorted<View,Perm>(home, x, y, z, w, reachable);
-  }
-
-  template<class View, bool Perm>
   ExecStatus
   Sorted<View,Perm>::propagate(Space& home, const ModEventDelta&) {
     int  n           = x.size();
@@ -693,6 +665,16 @@ namespace Gecode { namespace Int { namespace Sorted {
       }
       new (home) Sorted<View,Perm>(home,x0,y0,z0);
     }
+    return ES_OK;
+  }
+
+  template<class View, bool Perm>
+  ExecStatus
+  Sorted<View,Perm>::
+  post(Space& home, 
+       ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z,
+       ViewArray<View>& w, int reachable) {
+    new (home) Sorted<View,Perm>(home,x,y,z,w,reachable);
     return ES_OK;
   }
 

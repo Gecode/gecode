@@ -48,59 +48,35 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   forceinline
-  NoSubSet<View0,View1>::NoSubSet(Space& home, View0 y0, View1 y1)
+  NoSubset<View0,View1>::NoSubset(Space& home, View0 y0, View1 y1)
     : MixBinaryPropagator<View0,PC_SET_CLUB,
                             View1,PC_SET_CGLB>(home,y0,y1) {}
 
   template <class View0, class View1>
   forceinline
-  NoSubSet<View0,View1>::NoSubSet(Space& home, bool share, 
-                                  NoSubSet<View0,View1>& p)
+  NoSubset<View0,View1>::NoSubset(Space& home, bool share, 
+                                  NoSubset<View0,View1>& p)
     : MixBinaryPropagator<View0,PC_SET_CLUB,
                             View1,PC_SET_CGLB>(home,share,p) {}
 
   template <class View0, class View1>
   ExecStatus
-  NoSubSet<View0,View1>::post(Space& home, View0 x, View1 y) {
+  NoSubset<View0,View1>::post(Space& home, View0 x, View1 y) {
     if (me_failed(x.cardMin(home,1)))
       return ES_FAILED;
-    (void) new (home) NoSubSet<View0,View1>(home,x,y);
+    (void) new (home) NoSubset<View0,View1>(home,x,y);
     return ES_OK;
   }
 
   template <class View0, class View1>
   Actor*
-  NoSubSet<View0,View1>::copy(Space& home, bool share) {
-    return new (home) NoSubSet<View0,View1>(home,share,*this);
-  }
-
-  template <class View0, class View1>
-  Support::Symbol
-  NoSubSet<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Set::Rel::NoSubSet");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  NoSubSet<View0,View1>::spec(const Space& home,
-                              Reflection::VarMap& m) const {
-    return MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>
-      ::spec(home, m, ati());
-  }
-
-  template <class View0, class View1>
-  void
-  NoSubSet<View0,View1>::post(Space& home, Reflection::VarMap& vars,
-                              const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    (void) new (home) NoSubSet(home,x0,x1);
+  NoSubset<View0,View1>::copy(Space& home, bool share) {
+    return new (home) NoSubset<View0,View1>(home,share,*this);
   }
 
   template <class View0, class View1>
   ExecStatus
-  NoSubSet<View0,View1>::propagate(Space& home, const ModEventDelta&) {
+  NoSubset<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     GlbRanges<View0> x0lb(x0);
     LubRanges<View1> x1ub(x1);
     if (!Iter::Ranges::subset(x0lb, x1ub))

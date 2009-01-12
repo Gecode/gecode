@@ -72,32 +72,6 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1, class View2>
-  Support::Symbol
-  SuperOfInter<View0,View1,View2>::ati(void) {
-    return Reflection::mangle<View0,View1,View2>("Gecode::Set::RelOp::SuperOfInter");
-  }
-
-  template <class View0, class View1, class View2>
-  Reflection::ActorSpec
-  SuperOfInter<View0,View1,View2>::spec(const Space& home,
-                                        Reflection::VarMap& m) const {
-    return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-      View2,PC_SET_CLUB>::spec(home, m, ati());
-  }
-
-  template <class View0, class View1, class View2>
-  void
-  SuperOfInter<View0,View1,View2>::post(Space& home,
-                                        Reflection::VarMap& vars,
-                                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    View2 x2(home, vars, spec[2]);
-    (void) new (home) SuperOfInter(home,x0,x1,x2);
-  }
-
-  template <class View0, class View1, class View2>
   ExecStatus
   SuperOfInter<View0,View1,View2>::propagate(Space& home, const ModEventDelta& med) {
 

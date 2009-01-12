@@ -61,6 +61,8 @@ namespace Gecode { namespace Set { namespace Convex {
    */
 
   class Convex : public UnaryPropagator<SetView,PC_SET_ANY> {
+    GECODE_REFLECT_PROPAGATOR_0(Convex,"Gecode::Set::Convex::Convex")
+    GECODE_REFLECT_ARGS_1(SetView,x0)
   protected:
     /// Constructor for cloning \a p
     Convex(Space& home, bool share, Convex& p);
@@ -73,15 +75,6 @@ namespace Gecode { namespace Set { namespace Convex {
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that propagates that \a x is convex 
     static  ExecStatus  post(Space& home,SetView x);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -92,6 +85,8 @@ namespace Gecode { namespace Set { namespace Convex {
    */
 
   class ConvexHull : public BinaryPropagator<SetView,PC_SET_ANY> {
+    GECODE_REFLECT_PROPAGATOR_0(ConvexHull,"Gecode::Set::Convex::ConvexHull")
+    GECODE_REFLECT_ARGS_2(SetView,x0,SetView,x1)
   protected:
     /// Constructor for cloning \a p
     ConvexHull(Space& home, bool share, ConvexHull&);
@@ -104,15 +99,6 @@ namespace Gecode { namespace Set { namespace Convex {
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that propagates that \a y is the convex hull of \a x
     static  ExecStatus  post(Space& home,SetView x,SetView y);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 

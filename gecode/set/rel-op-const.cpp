@@ -107,7 +107,7 @@ namespace Gecode {
         {
           SetVar tmp(home);
           GECODE_ES_FAIL(home,
-                         (SubSet<SetView,SetView>::post(home,z,tmp)));
+                         (Subset<SetView,SetView>::post(home,z,tmp)));
           
           GlbRanges<ConstantView> yr(yv);
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);

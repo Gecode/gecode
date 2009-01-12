@@ -58,6 +58,9 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   class MinElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
+    GECODE_REFLECT_PROPAGATOR_1(MinElement,View,
+      "Gecode::Set::Int::MinElement")
+    GECODE_REFLECT_ARGS_2(View,x0,Gecode::Int::IntView,x1)
   protected:
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
@@ -72,15 +75,6 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is the minimal element of \a s 
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -92,6 +86,9 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   class NotMinElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    GECODE_REFLECT_PROPAGATOR_1(NotMinElement,View,
+      "Gecode::Set::Int::NotMinElement")
+    GECODE_REFLECT_ARGS_2(View,x0,Gecode::Int::IntView,x1)
   protected:
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
@@ -107,15 +104,6 @@ namespace Gecode { namespace Set { namespace Int {
                                                    const ModEventDelta& med);
     /// Post propagator for \a x is not the minimal element of \a s 
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -127,6 +115,10 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   class ReMinElement :
     public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    GECODE_REFLECT_PROPAGATOR_1(ReMinElement,View,
+      "Gecode::Set::Int::ReMinElement")
+    GECODE_REFLECT_ARGS_3(View,x0,Gecode::Int::IntView,x1,
+                          Gecode::Int::BoolView,b)
   protected:
     using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
     using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
@@ -145,15 +137,6 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post reified propagator for \a b iff \a x is the minimal element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
                            Gecode::Int::BoolView b);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -165,6 +148,9 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   class MaxElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
+    GECODE_REFLECT_PROPAGATOR_1(MaxElement,View,
+      "Gecode::Set::Int::MaxElement")
+    GECODE_REFLECT_ARGS_2(View,x0,Gecode::Int::IntView,x1)
   protected:
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
@@ -180,15 +166,6 @@ namespace Gecode { namespace Set { namespace Int {
                                                    const ModEventDelta& med);
     /// Post propagator for \a x is the largest element of \a s 
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -200,6 +177,9 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   class NotMaxElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    GECODE_REFLECT_PROPAGATOR_1(NotMaxElement,View,
+      "Gecode::Set::Int::NotMaxElement")
+    GECODE_REFLECT_ARGS_2(View,x0,Gecode::Int::IntView,x1)
   protected:
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
     using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
@@ -215,15 +195,6 @@ namespace Gecode { namespace Set { namespace Int {
                                                    const ModEventDelta& med);
     /// Post propagator for \a x is not the largest element of \a s 
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -235,6 +206,10 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   class ReMaxElement :
     public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    GECODE_REFLECT_PROPAGATOR_1(ReMaxElement,View,
+      "Gecode::Set::Int::ReMaxElement")
+    GECODE_REFLECT_ARGS_3(View,x0,Gecode::Int::IntView,x1,
+                          Gecode::Int::BoolView,b)
   protected:
     using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
     using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
@@ -252,15 +227,6 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post reified propagator for \a b iff \a x is the largest element of \a s 
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
                            Gecode::Int::BoolView b);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -272,6 +238,9 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   class Card :
     public IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND> {
+    GECODE_REFLECT_PROPAGATOR_1(Card,View,
+      "Gecode::Set::Int::Card")
+    GECODE_REFLECT_ARGS_2(View,x0,Gecode::Int::IntView,x1)
   protected:
     using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x0;
     using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x1;
@@ -286,15 +255,6 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ |s|=x \f$ 
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 
@@ -306,6 +266,9 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template <class View>
   class Match : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_1(Match,View,
+      "Gecode::Set::Int::Match")
+    GECODE_REFLECT_ARGS_2(View,x0,ViewArray<Gecode::Int::IntView>,xs)
   protected:
     /// SetView for the match
     View x0;
@@ -328,15 +291,6 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
     static ExecStatus post(Space& home, View s,
                            ViewArray<Gecode::Int::IntView>& x);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -358,6 +312,10 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template <class View>
   class ChannelInt : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_1(ChannelInt,View,
+      "Gecode::Set::Int::ChannelInt")
+    GECODE_REFLECT_ARGS_2(ViewArray<Gecode::Int::IntView>,xs,
+                          ViewArray<View>,ys)
   protected:
     /// IntViews, \f$x_i\f$ reflects which set contains element \f$i\f$
     ViewArray<Gecode::Int::IntView> xs;
@@ -381,15 +339,6 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space& home,ViewArray<Gecode::Int::IntView>& x,
                            ViewArray<View>& y);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -408,6 +357,10 @@ namespace Gecode { namespace Set { namespace Int {
   : public MixNaryOnePropagator<Gecode::Int::BoolView,
                                 Gecode::Int::PC_BOOL_VAL,
                                 View,PC_GEN_NONE> {
+    GECODE_REFLECT_PROPAGATOR_1(ChannelBool,View,
+      "Gecode::Set::Int::ChannelBool")
+    GECODE_REFLECT_ARGS_2(ViewArray<Gecode::Int::BoolView>,x,
+                          View,y)
   protected:
     typedef MixNaryOnePropagator<Gecode::Int::BoolView,
                                   Gecode::Int::PC_BOOL_VAL,
@@ -464,15 +417,6 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space& home,ViewArray<Gecode::Int::BoolView>& x,
                            View y);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -483,6 +427,9 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template <class View>
   class Weights : public Propagator {
+    GECODE_REFLECT_PROPAGATOR_1(Weights,View,"Gecode::Set::Int::Weights")
+    GECODE_REFLECT_ARGS_4(SharedArray<int>,elements,SharedArray<int>,weights,
+                          View,x,Gecode::Int::IntView,y)
   protected:
     /// List of elements in the upper bound
     SharedArray<int> elements;
@@ -497,7 +444,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     Weights(Space& home, bool share,Weights& p);
     /// Constructor for posting
-    Weights(Space& home, const IntArgs&, const IntArgs&,
+    Weights(Space& home, const SharedArray<int>&, const SharedArray<int>&,
             View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
@@ -510,17 +457,9 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
     static ExecStatus post(Space& home,
-                           const IntArgs& elements, const IntArgs& weights,
+                           const SharedArray<int>& elements,
+                           const SharedArray<int>& weights,
                            View x, Gecode::Int::IntView y);
-    /// Specification for this propagator
-    GECODE_SET_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 }}}

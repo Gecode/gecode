@@ -67,29 +67,6 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  Support::Symbol
-  Eq<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Set::Rel::Eq");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  Eq<View0,View1>::spec(const Space& home, Reflection::VarMap& m) const {
-    return MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
-      ::spec(home, m, ati());
-  }
-  
-  template <class View0, class View1>
-  void
-  Eq<View0,View1>::post(Space& home, Reflection::VarMap& vars,
-                        const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    (void) new (home) Eq(home,x0,x1);
-  }
-
-  template <class View0, class View1>
   ExecStatus
   Eq<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
 

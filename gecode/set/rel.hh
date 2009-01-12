@@ -61,15 +61,17 @@ namespace Gecode { namespace Set { namespace Rel {
    */
 
   template <class View0, class View1>
-  class SubSet :
+  class Subset :
     public MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB> {
+    GECODE_REFLECT_PROPAGATOR_2(Subset,View0,View1,"Gecode::Set::Rel::Subset")
+    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x0;
     using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x1;
     /// Constructor for cloning \a p
-    SubSet(Space& home, bool share,SubSet& p);
+    Subset(Space& home, bool share,Subset& p);
     /// Constructor for posting
-    SubSet(Space& home,View0, View1);
+    Subset(Space& home,View0, View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
@@ -77,14 +79,6 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\subseteq y\f$
     static  ExecStatus post(Space& home,View0 x,View1 y);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -95,15 +89,18 @@ namespace Gecode { namespace Set { namespace Rel {
    */
 
   template <class View0, class View1>
-  class NoSubSet :
+  class NoSubset :
     public MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB> {
+    GECODE_REFLECT_PROPAGATOR_2(NoSubset,View0,View1,
+                                "Gecode::Set::Rel::NoSubset")
+    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x0;
     using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x1;
     /// Constructor for cloning \a p
-    NoSubSet(Space& home, bool share,NoSubSet& p);
+    NoSubset(Space& home, bool share,NoSubset& p);
     /// Constructor for posting
-    NoSubSet(Space& home,View0,View1);
+    NoSubset(Space& home,View0,View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
@@ -111,14 +108,6 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\subseteq y\f$
     static  ExecStatus post(Space& home,View0 x,View1 y);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -130,6 +119,9 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   class ReSubset :
     public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2(ReSubset,View0,View1,
+                                "Gecode::Set::Rel::ReSubset")
+    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,Gecode::Int::BoolView,b)
   protected:
     View0 x0;
     View1 x1;
@@ -151,14 +143,6 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$ 
     static ExecStatus post(Space& home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -171,6 +155,8 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   class Eq : 
     public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
+    GECODE_REFLECT_PROPAGATOR_2(Eq,View0,View1,"Gecode::Set::Rel::Eq")
+    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
     using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x1;
@@ -185,14 +171,6 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x=y \f$ 
     static  ExecStatus  post(Space& home,View0,View1);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -204,6 +182,8 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   class ReEq :
     public Propagator {
+    GECODE_REFLECT_PROPAGATOR_2(ReEq,View0,View1,"Gecode::Set::Rel::ReEq")
+    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,Gecode::Int::BoolView,b)
   protected:
     View0 x0;
     View1 x1;
@@ -225,14 +205,6 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$ 
     static ExecStatus post(Space& home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -245,6 +217,9 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   class Distinct :
     public MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL> {
+    GECODE_REFLECT_PROPAGATOR_2(Distinct,View0,View1,
+                                "Gecode::Set::Rel::Distinct")
+    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x0;
     using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x1;
@@ -259,14 +234,6 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y \f$ 
     static  ExecStatus  post(Space& home,View0,View1);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -281,6 +248,9 @@ namespace Gecode { namespace Set { namespace Rel {
    */
   template <class View0>
   class DistinctDoit : public UnaryPropagator<View0,PC_SET_ANY> {
+    GECODE_REFLECT_PROPAGATOR_1(DistinctDoit,View0,
+                                "Gecode::Set::Rel::DistinctDoit")
+    GECODE_REFLECT_ARGS_2(View0,x0,ConstantView,y)
   protected:
     using UnaryPropagator<View0,PC_SET_ANY>::x0;
     /// The view that is already assigned
@@ -296,14 +266,6 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y \f$ 
     static ExecStatus post(Space& home, View0, ConstantView);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post using specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
 }}}

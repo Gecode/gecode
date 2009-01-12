@@ -80,30 +80,6 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  Support::Symbol
-  Distinct<View0,View1>::ati(void) {
-    return Reflection::mangle<View0,View1>("Gecode::Set::Rel::Distinct");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  Distinct<View0,View1>::spec(const Space& home,
-                              Reflection::VarMap& m) const {
-    return MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>
-      ::spec(home, m, ati());
-  }
-
-  template <class View0, class View1>
-  void
-  Distinct<View0,View1>::post(Space& home, Reflection::VarMap& vars,
-                              const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View0 x0(home, vars, spec[0]);
-    View1 x1(home, vars, spec[1]);
-    (void) new (home) Distinct(home,x0,x1);
-  }
-
-  template <class View0, class View1>
   ExecStatus
   Distinct<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     assert(x0.assigned()||x1.assigned());
@@ -131,30 +107,6 @@ namespace Gecode { namespace Set { namespace Rel {
   Actor*
   DistinctDoit<View0>::copy(Space& home, bool share) {
     return new (home) DistinctDoit<View0>(home,share,*this);
-  }
-
-  template <class View0>
-  Support::Symbol
-  DistinctDoit<View0>::ati(void) {
-    return Reflection::mangle<View0>("Gecode::Set::Rel::DistinctDoit");
-  }
-
-  template <class View0>
-  Reflection::ActorSpec
-  DistinctDoit<View0>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s =
-      UnaryPropagator<View0,PC_SET_ANY>::spec(home, m, ati());
-    return s << y.spec(home, m);
-  }
-
-  template <class View0>
-  void
-  DistinctDoit<View0>::post(Space& home, Reflection::VarMap& vars,
-                            const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View0 x0(home, vars, spec[0]);
-    ConstantView x1(home, vars, spec[1]);
-    (void) new (home) DistinctDoit(home,x0,x1);
   }
 
   template <class View0>

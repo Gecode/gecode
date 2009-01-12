@@ -50,16 +50,6 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) ConvexHull(home,share,*this);
   }
 
-  Support::Symbol
-  ConvexHull::ati(void) {
-    return Support::Symbol("Gecode::Set::Convex::ConvexHull");
-  }
-
-  Reflection::ActorSpec
-  ConvexHull::spec(const Space& home, Reflection::VarMap& m) const {
-    return BinaryPropagator<SetView,PC_SET_ANY>::spec(home, m, ati());
-  }
-
   ExecStatus
   ConvexHull::propagate(Space& home, const ModEventDelta&) {
     //x1 is the convex hull of x0
@@ -118,15 +108,6 @@ namespace Gecode { namespace Set { namespace Convex {
     }
 
     return ES_NOFIX;
-  }
-
-  void
-  ConvexHull::post(Space& home, Reflection::VarMap& vars,
-               const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    SetView s0(home, vars, spec[0]);
-    SetView s1(home, vars, spec[1]);
-    (void) new (home) ConvexHull(home,s0,s1);
   }
 
 }}

@@ -72,19 +72,6 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Support::Symbol
-  Card<View>::ati(void) {
-   return Reflection::mangle<View>("Gecode::Set::Int::Card");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Card<View>::spec(const Space& home, Reflection::VarMap& m) const {
-   return IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>
-     ::spec(home, m, ati());
-  }
-
-  template <class View>
   ExecStatus
   Card<View>::propagate(Space& home, const ModEventDelta&) {
    int x1min, x1max;
@@ -99,16 +86,6 @@ namespace Gecode { namespace Set { namespace Int {
    if (x1.assigned())
      return ES_SUBSUMED(*this,home);
    return ES_FIX;
-  }
-
-  template <class View>
-  void
-  Card<View>::post(Space& home, Reflection::VarMap& vars,
-                   const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    Gecode::Int::IntView x1(home, vars, spec[1]);
-    (void) new (home) Card<View>(home,x0,x1);
   }
 
 }}}

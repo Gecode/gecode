@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       {
         SetVar tmp(home);
         GECODE_ES_FAIL(home,
-                       (Rel::SubSet<SetView,View2>::post(home,tmp,x2)));
+                       (Rel::Subset<SetView,View2>::post(home,tmp,x2)));
 
         GECODE_ES_FAIL(home,
                        (Union<View0,View1,SetView>
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       {        
         SetVar tmp(home);
         GECODE_ES_FAIL(home,
-                       (Rel::SubSet<View2,SetView>::post(home,x2,tmp)));
+                       (Rel::Subset<View2,SetView>::post(home,x2,tmp)));
 
         GECODE_ES_FAIL(home,(Intersection<View0,View1,SetView>
                              ::post(home, x0,x1,tmp)));
@@ -153,7 +153,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       {
         SetVar tmp(home);
         GECODE_ES_FAIL(home,
-                       (Rel::SubSet<View2,SetView>::post(home,x2,tmp)));
+                       (Rel::Subset<View2,SetView>::post(home,x2,tmp)));
 
         ComplementView<View1> cx1(x1);
         GECODE_ES_FAIL(home,

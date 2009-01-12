@@ -55,24 +55,6 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) Seq(home,share,*this);
   }
 
-  Support::Symbol
-  Seq::ati(void) {
-    return Support::Symbol("Gecode::Set::Sequence::Sequence");
-  }
-
-  Reflection::ActorSpec
-  Seq::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, ati());
-  }
-
-  void
-  Seq::post(Space& home, Reflection::VarMap& vars,
-             const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<SetView> x0(home, vars, spec[0]);
-    (void) new (home) Seq(home, x0);
-  }
-
   ExecStatus
   Seq::propagate(Space& home, const ModEventDelta&) {
     bool modified = false;

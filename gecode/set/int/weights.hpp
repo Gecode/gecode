@@ -148,16 +148,13 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   forceinline
   Weights<View>::Weights(Space& home,
-                   const IntArgs& elements0, const IntArgs& weights0,
+                   const SharedArray<int>& elements0,
+                   const SharedArray<int>& weights0,
                    View x0, Gecode::Int::IntView y0)
-    : Propagator(home), elements(elements0.size()), weights(weights0.size()),
+    : Propagator(home), elements(elements0), weights(weights0),
       x(x0), y(y0) {
     x.subscribe(home,*this, PC_SET_ANY);
     y.subscribe(home,*this, Gecode::Int::PC_INT_BND);
-    for (int i=elements0.size(); i--;) {
-      elements[i] = elements0[i];
-      weights[i] = weights0[i];
-    }
   }
 
   template <class View>
@@ -172,8 +169,9 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   inline ExecStatus
-  Weights<View>::post(Space& home, const IntArgs& elements, const IntArgs& weights,
-                View x, Gecode::Int::IntView y) {
+  Weights<View>::post(Space& home, const SharedArray<int>& elements,
+                      const SharedArray<int>& weights,
+                      View x, Gecode::Int::IntView y) {
     if (elements.size() != weights.size())
       throw ArgumentSizeMismatch("Weights");
     Region r(home);
@@ -332,40 +330,6 @@ namespace Gecode { namespace Set { namespace Int {
     }
 
     return me_modified(me) ? ES_NOFIX : ES_FIX;
-  }
-
-  template <class View>
-  Support::Symbol
-  Weights<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Set::Int::Weights");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Weights<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << Reflection::Arg::newIntArray(elements)
-             << Reflection::Arg::newIntArray(weights)
-             << x.spec(home, m)
-             << y.spec(home, m);
-  }
-
-  template <class View>
-  void
-  Weights<View>::post(Space& home, Reflection::VarMap& vars,
-                      const Reflection::ActorSpec& spec) {
-    spec.checkArity(4);
-    Reflection::IntArrayArg* elementsArg = spec[0]->toIntArray();
-    Reflection::IntArrayArg* weightsArg = spec[1]->toIntArray();
-    IntArgs elements(elementsArg->size());
-    IntArgs weights(weightsArg->size());
-    for (int i=elementsArg->size(); i--;)
-      elements[i] = (*elementsArg)[i];
-    for (int i=weightsArg->size(); i--;)
-      weights[i] = (*weightsArg)[i];
-    View x0(home, vars, spec[2]);
-    Gecode::Int::IntView x1(home, vars, spec[3]);
-    (void) new (home) Weights<View>(home,elements,weights,x0,x1);
   }
 
 }}}

@@ -67,13 +67,13 @@ namespace Gecode {
     case SRT_SUB:
       {
         GECODE_ES_FAIL(home,
-                       (SubSet<View0,View1>::post(home, x0,x1)));
+                       (Subset<View0,View1>::post(home, x0,x1)));
       }
       break;
     case SRT_SUP:
       {
         GECODE_ES_FAIL(home,
-                       (SubSet<View1,View0>::post(home, x1,x0)));
+                       (Subset<View1,View0>::post(home, x1,x0)));
       }
       break;
     case SRT_DISJ:
@@ -221,28 +221,28 @@ namespace Gecode {
     GECODE_REGISTER2(Rel::ReEq<SetView, ConstantView>);
     GECODE_REGISTER2(Rel::ReEq<SetView, SingletonView>);
     GECODE_REGISTER2(Rel::ReEq<SetView, SetView>);
-    GECODE_REGISTER2(Rel::SubSet<ConstantView, SetView>);
-    GECODE_REGISTER2(Rel::SubSet<SingletonView, SetView>);
-    GECODE_REGISTER2(Rel::SubSet<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::SubSet<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::SubSet<ComplementView<SetView>, SetView>);
-    GECODE_REGISTER2(Rel::SubSet<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::SubSet<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::SubSet<SetView, SetView>);
+    GECODE_REGISTER2(Rel::Subset<ConstantView, SetView>);
+    GECODE_REGISTER2(Rel::Subset<SingletonView, SetView>);
+    GECODE_REGISTER2(Rel::Subset<ComplementView<SetView>, ConstantView>);
+    GECODE_REGISTER2(Rel::Subset<ComplementView<SetView>, SingletonView>);
+    GECODE_REGISTER2(Rel::Subset<ComplementView<SetView>, SetView>);
+    GECODE_REGISTER2(Rel::Subset<SetView, ConstantView>);
+    GECODE_REGISTER2(Rel::Subset<SetView, SingletonView>);
+    GECODE_REGISTER2(Rel::Subset<SetView, SetView>);
     GECODE_REGISTER2(Rel::Distinct<ComplementView<SetView>, ConstantView>);
     GECODE_REGISTER2(Rel::Distinct<ComplementView<SetView>, SingletonView>);
     GECODE_REGISTER2(Rel::Distinct<ComplementView<SetView>, SetView>);
     GECODE_REGISTER2(Rel::Distinct<SetView, ConstantView>);
     GECODE_REGISTER2(Rel::Distinct<SetView, SingletonView>);
     GECODE_REGISTER2(Rel::Distinct<SetView, SetView>);
-    GECODE_REGISTER2(Rel::NoSubSet<ConstantView, SetView>);
-    GECODE_REGISTER2(Rel::NoSubSet<SingletonView, SetView>);
-    GECODE_REGISTER2(Rel::NoSubSet<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::NoSubSet<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::NoSubSet<ComplementView<SetView>, SetView>);
-    GECODE_REGISTER2(Rel::NoSubSet<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::NoSubSet<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::NoSubSet<SetView, SetView>);
+    GECODE_REGISTER2(Rel::NoSubset<ConstantView, SetView>);
+    GECODE_REGISTER2(Rel::NoSubset<SingletonView, SetView>);
+    GECODE_REGISTER2(Rel::NoSubset<ComplementView<SetView>, ConstantView>);
+    GECODE_REGISTER2(Rel::NoSubset<ComplementView<SetView>, SingletonView>);
+    GECODE_REGISTER2(Rel::NoSubset<ComplementView<SetView>, SetView>);
+    GECODE_REGISTER2(Rel::NoSubset<SetView, ConstantView>);
+    GECODE_REGISTER2(Rel::NoSubset<SetView, SingletonView>);
+    GECODE_REGISTER2(Rel::NoSubset<SetView, SetView>);
     GECODE_REGISTER2(Rel::ReSubset<ConstantView, SetView>);
     GECODE_REGISTER2(Rel::ReSubset<SingletonView, SetView>);
     GECODE_REGISTER2(Rel::ReSubset<ConstantView, ComplementView<SetView> >);

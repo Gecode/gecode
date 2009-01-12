@@ -68,9 +68,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   };
 
   /**
@@ -95,9 +92,6 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Return specification given a variable map \a m and a \a name
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                               const Support::Symbol& name) const;
   };
 
   //@}
@@ -137,16 +131,6 @@ namespace Gecode {
   }
 
   template <class View, PropCond pcs, PropCond pci>
-  Reflection::ActorSpec
-  IntSetPropagator<View,pcs,pci>::spec(const Space& home,
-                                       Reflection::VarMap& m,
-                                       const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m);
-  }
-
-  template <class View, PropCond pcs, PropCond pci>
   IntSetRePropagator<View,pcs,pci>::IntSetRePropagator
   (Space& home, View y0, Gecode::Int::IntView y1, Gecode::Int::BoolView b2)
     : Propagator(home), x0(y0), x1(y1), b(b2) {
@@ -182,17 +166,6 @@ namespace Gecode {
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template <class View, PropCond pcs, PropCond pci>
-  Reflection::ActorSpec
-  IntSetRePropagator<View,pcs,pci>::spec(const Space& home,
-                                         Reflection::VarMap& m,
-                                         const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    return s << x0.spec(home, m)
-             << x1.spec(home, m)
-             << b.spec(home, m);
   }
 
 }

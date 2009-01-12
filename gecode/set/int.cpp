@@ -67,7 +67,7 @@ namespace Gecode {
         Gecode::Int::IntView xv(x);
         Set::SingletonView xsingle(xv);
         GECODE_ES_FAIL(home,
-                       (Set::Rel::NoSubSet<Set::SingletonView,Set::SetView>
+                       (Set::Rel::NoSubset<Set::SingletonView,Set::SetView>
                         ::post(home,xsingle,sv)));
 
       }
@@ -174,9 +174,15 @@ namespace Gecode {
                          ::post(home,xv,y)));
   }
 
-  void weights(Space& home, const IntArgs& elements, const IntArgs& weights,
+  void weights(Space& home, const IntArgs& elements0, const IntArgs& weights0,
                SetVar x, IntVar y) {
     if (home.failed()) return;
+    SharedArray<int> elements(elements0.size());
+    for (int i=elements0.size(); i--;)
+      elements[i] = elements0[i];
+    SharedArray<int> weights(weights0.size());
+    for (int i=weights0.size(); i--;)
+      weights[i] = weights0[i];
     GECODE_ES_FAIL(home,Set::Int::Weights<Set::SetView>::post(home,elements,
                                                               weights,x,y));
   }

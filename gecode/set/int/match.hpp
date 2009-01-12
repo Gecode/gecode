@@ -195,30 +195,6 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_SUBSUMED(*this,home);
   }
 
-  template <class View>
-  Support::Symbol
-  Match<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Set::Int::Match");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Match<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x0.spec(home, m)
-             << xs.spec(home, m);
-  }
-
-  template <class View>
-  void
-  Match<View>::post(Space& home, Reflection::VarMap& vars,
-                    const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    ViewArray<Gecode::Int::IntView> x1(home, vars, spec[1]);
-    (void) new (home) Match<View>(home,x0,x1);
-  }
-
 }}}
 
 // STATISTICS: set-prop

@@ -74,29 +74,6 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Support::Symbol
-  MinElement<View>::ati(void) {
-   return Reflection::mangle<View>("Gecode::Set::Int::MinElement");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  MinElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
-   return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
-     ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  MinElement<View>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    Gecode::Int::IntView x1(home, vars, spec[1]);
-    (void) post(home,x0,x1);
-  }
-
-  template <class View>
   ExecStatus
   MinElement<View>::propagate(Space& home, const ModEventDelta&) {
     //x1 is an element of x0.ub
@@ -181,29 +158,6 @@ namespace Gecode { namespace Set { namespace Int {
   Actor*
   NotMinElement<View>::copy(Space& home, bool share) {
     return new (home) NotMinElement(home,share,*this);
-  }
-
-  template <class View>
-  Support::Symbol
-  NotMinElement<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Set::Int::NotMinElement");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  NotMinElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>
-           ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  NotMinElement<View>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    Gecode::Int::IntView x1(home, vars, spec[1]);
-    (void) post(home,x0,x1);
   }
 
   template <class View>
@@ -332,30 +286,6 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Support::Symbol
-  ReMinElement<View>::ati(void) {
-   return Reflection::mangle<View>("Gecode::Set::Int::ReMinElement");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  ReMinElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
-   return IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>
-     ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  ReMinElement<View>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    Gecode::Int::IntView x1(home, vars, spec[1]);
-    Gecode::Int::BoolView b2(home, vars, spec[2]);
-    (void) post(home,x0,x1,b2);
-  }
-
-  template <class View>
   ExecStatus
   ReMinElement<View>::propagate(Space& home, const ModEventDelta&) {
     // check if b is determined
@@ -479,29 +409,6 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Support::Symbol
-  MaxElement<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Set::Int::MaxElement");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  MaxElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>
-      ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  MaxElement<View>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    Gecode::Int::IntView x1(home, vars, spec[1]);
-    (void) new (home) MaxElement<View>(home,x0,x1);
-  }
-
-  template <class View>
   ExecStatus
   MaxElement<View>::propagate(Space& home, const ModEventDelta&) {
     LubRanges<View> ub(x0);
@@ -547,29 +454,6 @@ namespace Gecode { namespace Set { namespace Int {
   Actor*
   NotMaxElement<View>::copy(Space& home, bool share) {
     return new (home) NotMaxElement(home,share,*this);
-  }
-
-  template <class View>
-  Support::Symbol
-  NotMaxElement<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Set::Int::NotMaxElement");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  NotMaxElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>
-      ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  NotMaxElement<View>::post(Space& home, Reflection::VarMap& vars,
-                            const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    View x0(home, vars, spec[0]);
-    Gecode::Int::IntView x1(home, vars, spec[1]);
-    (void) new (home) NotMaxElement<View>(home,x0,x1);
   }
 
   template <class View>
@@ -677,30 +561,6 @@ namespace Gecode { namespace Set { namespace Int {
   Actor*
   ReMaxElement<View>::copy(Space& home, bool share) {
     return new (home) ReMaxElement(home,share,*this);
-  }
-
-  template <class View>
-  Support::Symbol
-  ReMaxElement<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Set::Int::ReMaxElement");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  ReMaxElement<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    return IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>
-      ::spec(home, m, ati());
-  }
-
-  template <class View>
-  void
-  ReMaxElement<View>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    spec.checkArity(3);
-    View x0(home, vars, spec[0]);
-    Gecode::Int::IntView x1(home, vars, spec[1]);
-    Gecode::Int::BoolView b2(home, vars, spec[2]);
-    (void) new (home) ReMaxElement<View>(home,x0,x1,b2);
   }
 
   template <class View>

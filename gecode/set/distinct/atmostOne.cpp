@@ -58,17 +58,6 @@ namespace Gecode { namespace Set { namespace Distinct {
     return new (home) AtmostOne(home,share,*this);
   }
 
-  Support::Symbol
-  AtmostOne::ati(void) {
-    return Support::Symbol("Gecode::Set::Distinct::AtmostOne");
-  }
-
-  Reflection::ActorSpec
-  AtmostOne::spec(const Space& home, Reflection::VarMap& m) const {
-    return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, ati())
-      << c;
-  }
-
   ExecStatus
   AtmostOne::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
@@ -170,15 +159,6 @@ namespace Gecode { namespace Set { namespace Distinct {
     }
 
     return ES_NOFIX;
-  }
-
-  void
-  AtmostOne::post(Space& home, Reflection::VarMap& vars,
-                  const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<SetView> s(home, vars, spec[0]);
-    int c = spec[1]->toInt();
-    (void) new (home) AtmostOne(home,s,c);
   }
 
 }}
