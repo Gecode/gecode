@@ -625,7 +625,7 @@ namespace Gecode { namespace Int { namespace Linear {
     for (int i=x.size(); i--;)
       xx[i] = x[i];
     xx[x.size()] = x0; xx[x.size()+1] = x1;
-    return post(home, x, c);
+    return post(home, xx, c);
   }
 
   template<class VX>
