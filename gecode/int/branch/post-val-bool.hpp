@@ -73,6 +73,23 @@ namespace Gecode { namespace Int { namespace Branch {
       throw UnknownBranching("Int::branch");
     }
   }
+
+  template <class SelView, class SelVal>
+  void
+  registerOneBoolView(void) {
+    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(), 
+                               &ValSelToString<SelVal>::toString);
+  }
+  
+  template <class SelView>
+  void
+  registerAllBoolView(void) {
+    registerOneBoolView<SelView,ValZeroOne<BoolView> >();
+    registerOneBoolView<SelView,ValZeroOne<NegBoolView> >();
+    registerOneBoolView<SelView,ValRnd<BoolView> >();
+  }
+
+
       
 }}}
 

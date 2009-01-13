@@ -268,32 +268,32 @@ namespace Gecode {
         using namespace Gecode;
         using namespace Gecode::CpltSet;
         using namespace Gecode::CpltSet::Branch;
-        registerAll< ViewSelNone<CpltSetView> >();
-        registerAll< ViewSelRnd<CpltSetView> >();
-        registerAll< ViewSelDegreeMin<CpltSetView> >();
-        registerAll< ViewSelDegreeMax<CpltSetView> >();
-        registerAll< ByMinMin >();
-        registerAll< ByMinMax >();
-        registerAll< ByMaxMin >();
-        registerAll< ByMaxMax >();
-        registerAll< BySizeMin >();
-        registerAll< BySizeMax >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<CpltSetView>,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMax<CpltSetView>,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMinMin,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMinMax,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMaxMin,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMaxMax,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAll<ViewSelTieBreakStatic<BySizeMin,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAll<ViewSelTieBreakStatic<BySizeMax,
-                    ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView< ViewSelNone<CpltSetView> >();
+        registerAllCpltSetView< ViewSelRnd<CpltSetView> >();
+        registerAllCpltSetView< ViewSelDegreeMin<CpltSetView> >();
+        registerAllCpltSetView< ViewSelDegreeMax<CpltSetView> >();
+        registerAllCpltSetView< ByMinMin >();
+        registerAllCpltSetView< ByMinMax >();
+        registerAllCpltSetView< ByMaxMin >();
+        registerAllCpltSetView< ByMaxMax >();
+        registerAllCpltSetView< BySizeMin >();
+        registerAllCpltSetView< BySizeMax >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<ViewSelDegreeMin<CpltSetView>,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<ViewSelDegreeMax<CpltSetView>,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<ByMinMin,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<ByMinMax,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<ByMaxMin,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<ByMaxMax,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<BySizeMin,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
+        registerAllCpltSetView<ViewSelTieBreakStatic<BySizeMax,
+                           ViewSelTieBreakDynamic<CpltSetView> > >();
       }
     };
     BranchingRegistrar r;

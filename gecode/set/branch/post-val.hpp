@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Branch {
   
   template <class SelView>
   void
-  registerAll(void) {
+  registerAllSetView(void) {
     registerOne<SelView,ValMin<false> >();
     registerOne<SelView,ValMin<true> >();
     registerOne<SelView,ValMax<false> >();

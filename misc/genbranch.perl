@@ -293,15 +293,15 @@ foreach $ns (split('::',$lns)) {
 }
 
 for ($i=0; $i<$n; $i++) {
-  $l =  "        registerAll< $type[$i] >();\n";
+  $l =  "        registerAll$view< $type[$i] >();\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
 }
 
 for ($i=0; $i<$n; $i++) {
   next unless ($i != $none) && !$complete[$i];
-  print "        registerAll<ViewSelTieBreakStatic<$type[$i],\n";
-  print "                    ViewSelTieBreakDynamic<$view> > >();\n";
+  print "        registerAll$view<ViewSelTieBreakStatic<$type[$i],\n";
+  print "                           ViewSelTieBreakDynamic<$view> > >();\n";
 }
 print "      }\n";
 print "    };\n";

@@ -268,32 +268,32 @@ namespace Gecode {
         using namespace Gecode;
         using namespace Gecode::Set;
         using namespace Gecode::Set::Branch;
-        registerAll< ViewSelNone<SetView> >();
-        registerAll< ViewSelRnd<SetView> >();
-        registerAll< ViewSelDegreeMin<SetView> >();
-        registerAll< ViewSelDegreeMin<SetView> >();
-        registerAll< ByMinMin >();
-        registerAll< ByMinMin >();
-        registerAll< ByMaxMin >();
-        registerAll< ByMaxMax >();
-        registerAll< BySizeMin >();
-        registerAll< BySizeMax >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
-                    ViewSelTieBreakDynamic<SetView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
-                    ViewSelTieBreakDynamic<SetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMinMin,
-                    ViewSelTieBreakDynamic<SetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMinMin,
-                    ViewSelTieBreakDynamic<SetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMaxMin,
-                    ViewSelTieBreakDynamic<SetView> > >();
-        registerAll<ViewSelTieBreakStatic<ByMaxMax,
-                    ViewSelTieBreakDynamic<SetView> > >();
-        registerAll<ViewSelTieBreakStatic<BySizeMin,
-                    ViewSelTieBreakDynamic<SetView> > >();
-        registerAll<ViewSelTieBreakStatic<BySizeMax,
-                    ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView< ViewSelNone<SetView> >();
+        registerAllSetView< ViewSelRnd<SetView> >();
+        registerAllSetView< ViewSelDegreeMin<SetView> >();
+        registerAllSetView< ViewSelDegreeMin<SetView> >();
+        registerAllSetView< ByMinMin >();
+        registerAllSetView< ByMinMin >();
+        registerAllSetView< ByMaxMin >();
+        registerAllSetView< ByMaxMax >();
+        registerAllSetView< BySizeMin >();
+        registerAllSetView< BySizeMax >();
+        registerAllSetView<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
+                           ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
+                           ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView<ViewSelTieBreakStatic<ByMinMin,
+                           ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView<ViewSelTieBreakStatic<ByMinMin,
+                           ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView<ViewSelTieBreakStatic<ByMaxMin,
+                           ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView<ViewSelTieBreakStatic<ByMaxMax,
+                           ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView<ViewSelTieBreakStatic<BySizeMin,
+                           ViewSelTieBreakDynamic<SetView> > >();
+        registerAllSetView<ViewSelTieBreakStatic<BySizeMax,
+                           ViewSelTieBreakDynamic<SetView> > >();
       }
     };
     BranchingRegistrar r;

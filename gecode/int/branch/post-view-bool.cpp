@@ -370,50 +370,50 @@ namespace Gecode {
         using namespace Gecode;
         using namespace Gecode::Int;
         using namespace Gecode::Int::Branch;
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelRnd<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelDegreeMin<BoolView> >();
-        registerAll< ViewSelDegreeMax<BoolView> >();
-        registerAll< ViewSelDegreeMax<BoolView> >();
-        registerAll< ViewSelDegreeMin<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll< ViewSelNone<BoolView> >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
-        registerAll<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                    ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelRnd<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelDegreeMin<BoolView> >();
+        registerAllBoolView< ViewSelDegreeMax<BoolView> >();
+        registerAllBoolView< ViewSelDegreeMax<BoolView> >();
+        registerAllBoolView< ViewSelDegreeMin<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView< ViewSelNone<BoolView> >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
       }
     };
     BranchingRegistrar r;
@@ -422,3 +422,4 @@ namespace Gecode {
 
 
 // STATISTICS: int-branch
+
