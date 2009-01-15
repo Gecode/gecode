@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   PropCost
   Val<View, Card, isView>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,x.size());
+    return PropCost::linear(PropCost::MED,x.size());
   }
 
   template <class View, class Card, bool isView>

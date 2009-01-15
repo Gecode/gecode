@@ -520,7 +520,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   PropCost
   LayeredGraph<View,Degree,StateIdx>::cost(const Space&, 
                                            const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,x.size());
+    return PropCost::linear(PropCost::MED,x.size());
   }
 
   template <class View, class Degree, class StateIdx>

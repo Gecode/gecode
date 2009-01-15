@@ -76,9 +76,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   PropCost
   Basic<View,shared>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PropCost::quadratic(PropCost::HI,x.size());
+      return PropCost::quadratic(PropCost::MED,x.size());
     else
-      return PropCost::cubic(PropCost::HI,x.size());
+      return PropCost::cubic(PropCost::MED,x.size());
   }
 
   template <class View, bool shared>

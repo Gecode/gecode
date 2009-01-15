@@ -64,7 +64,7 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   PropCost
   ReEq<View0,View1>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::ternary(PropCost::LO);
+    return PropCost::ternary(PropCost::LOW);
   }
 
   template <class View0, class View1>

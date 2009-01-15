@@ -64,7 +64,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   forceinline PropCost
   CardProjection::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,x.size());
+    return PropCost::linear(PropCost::MED,x.size());
   }
 
   inline Support::Symbol

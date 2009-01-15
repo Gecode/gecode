@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class Info, PropCond pc>
   PropCost
   Base<Info,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::LO, 2*n);
+    return PropCost::quadratic(PropCost::LOW, 2*n);
   }
 
   template <class Info, PropCond pc>

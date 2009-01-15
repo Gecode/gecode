@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, bool subscribe>
   PropCost
   Base<View,subscribe>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI,x.size());
+    return PropCost::quadratic(PropCost::MED,x.size());
   }
 
 #define GECODE_LAST_TUPLE(l) (*(l))

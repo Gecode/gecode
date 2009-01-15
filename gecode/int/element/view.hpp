@@ -269,7 +269,7 @@ namespace Gecode { namespace Int { namespace Element {
     // This is required for subscribing to variables in the
     // above constructor, but this is then the only time this
     // virtual function is ever used!
-    return PropCost::linear(PropCost::LO,iv.size()+2);
+    return PropCost::linear(PropCost::LOW,iv.size()+2);
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
@@ -523,7 +523,7 @@ namespace Gecode { namespace Int { namespace Element {
   PropCost
   ViewDom<VA,VB,VC>::cost(const Space&, const ModEventDelta& med) const {
     return PropCost::linear((VA::me(med) != ME_INT_DOM) ? 
-                            PropCost::LO : PropCost::HI, iv.size()+2);
+                            PropCost::LOW : PropCost::MED, iv.size()+2);
   }
 
   template <class VA, class VB, class VC>

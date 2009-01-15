@@ -120,13 +120,13 @@ namespace Gecode { namespace Int { namespace GCC {
         d = x[i].size();
       
     if (d < 6)
-      return PropCost::linear(PropCost::LO,x.size());
+      return PropCost::linear(PropCost::LOW,x.size());
     else if ((6 <= d) && (d < n/2))
-      return PropCost::linear(PropCost::HI,x.size());
+      return PropCost::linear(PropCost::MED,x.size());
     else if ((n/2 <= d) && (d < n*n))
-      return PropCost::quadratic(PropCost::LO,x.size());
+      return PropCost::quadratic(PropCost::LOW,x.size());
     else
-      return PropCost::cubic(PropCost::LO,x.size());
+      return PropCost::cubic(PropCost::LOW,x.size());
   }
   
   /// \brief Perform domain propagation.

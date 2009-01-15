@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *   n = number of variables
      *   t = time needed to sort the domain bounds of the variables
      */
-    return PropCost::linear(PropCost::HI,x.size());
+    return PropCost::linear(PropCost::MED,x.size());
   }
 
   template <class View, class Card, bool isView, bool shared>

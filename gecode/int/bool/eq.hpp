@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   PropCost
   NaryEq<BV>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LO);
+    return PropCost::unary(PropCost::LOW);
   }
 
   template<class BV>

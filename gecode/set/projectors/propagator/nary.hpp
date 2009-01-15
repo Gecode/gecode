@@ -68,7 +68,7 @@ namespace Gecode { namespace Set { namespace Projection {
   template <bool negated>
   PropCost
   NaryProjection<negated>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,x.size());
+    return PropCost::linear(PropCost::MED,x.size());
   }
 
   template <bool negated>
