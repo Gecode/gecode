@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual size_t allocated(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost funtion returning dynamic PC_LINEAR_HI.
+    /// Cost funtion returning dynamic low linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
@@ -237,14 +237,14 @@ namespace Gecode { namespace Int { namespace GCC {
     /**
      * \brief Cost function
      *
-     * As the propagation stronlgy depends on the domain size of the
+     * As the propagation strongly depends on the domain size of the
      * views on which propagation is performed, the propagation costs
      * are computed as follows, where \c d denotes the size of the
      * largest domain of a view in \c x:
-     * - dynamic PC_LINEAR_LO ( \f$ d < 6\f$ )
-     * - dynamic PC_LINEAR_HI ( \f$ 6 \leq d < \frac{n}{2} \f$ )
-     * - dynamic PC_QUADRATIC_LO ( \f$ \frac{n}{2} \leq d < n^2 \f$)
-     * - dynamic PC_CUBIC_LO  ( \f$ n^2 \leq d \f$)
+     * - low linear ( \f$ d < 6\f$ )
+     * - high linear ( \f$ 6 \leq d < \frac{n}{2} \f$ )
+     * - low quadratic ( \f$ \frac{n}{2} \leq d < n^2 \f$)
+     * - high cubic  ( \f$ n^2 \leq d \f$)
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost funtion returning dynamic PC_LINEAR_HI.
+    /// Cost funtion returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);

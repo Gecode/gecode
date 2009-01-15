@@ -72,9 +72,8 @@ namespace Gecode { namespace Int { namespace Channel {
     Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                 const Support::Symbol& name) const;
   public:
-    /// Propagation cost
+    /// Propagation cost (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Specification for this propagator
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -152,7 +151,12 @@ namespace Gecode { namespace Int { namespace Channel {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Propagation cost
+    /**
+     * \brief Cost function
+     *
+     * If in stage for naive value propagation, the cost is
+     * low quadratic. Otherwise it is high quadratic.
+     */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -190,7 +194,7 @@ namespace Gecode { namespace Int { namespace Channel {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -221,7 +225,7 @@ namespace Gecode { namespace Int { namespace Channel {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (PC_UNARY_LO if \a y is assigned, PC_LINEAR_LO otherwise)
+    /// Cost function (low unary if \a y is assigned, low linear otherwise)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

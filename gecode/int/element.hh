@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Const function (return PC_BINARY_HI)
+    /// Const function (defined as high binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for creation
     View(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
-    // Cost function (defined as dynamic PC_LINEAR_LO)
+    // Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -313,8 +313,8 @@ namespace Gecode { namespace Int { namespace Element {
     /**
      * \brief Cost function
      *
-     * If in stage for bounds-propagation defined as dynamic PC_LINEAR_LO,
-     * otherwise as dynamic PC_LINEAR_HI.
+     * If in stage for bounds-propagation defined as low linear,
+     * otherwise as high linear.
      *
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;

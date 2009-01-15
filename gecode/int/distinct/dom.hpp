@@ -684,9 +684,10 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   PropCost
   Dom<View>::cost(const Space&, const ModEventDelta& med) const {
-    return cost_lo(x.size(),
-                   (View::me(med) == ME_INT_VAL)
-                   ? PC_LINEAR_LO : PC_CUBIC_LO);
+    if (View::me(med) == ME_INT_VAL)
+      return PropCost::linear(PropCost::LO, x.size());
+    else
+      return PropCost::quadratic(PropCost::HI, x.size());
   }
 
   template <class View>

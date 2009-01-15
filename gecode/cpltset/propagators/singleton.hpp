@@ -57,7 +57,7 @@ namespace Gecode { namespace CpltSet {
   template <class View1, class View2>
   forceinline PropCost
   Singleton<View1, View2>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View1, class View2>

@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   PropCost
   ElementUnionConst<SView,RView>::cost(const Space&, const ModEventDelta&) const {
-    return PC_LINEAR_HI;
+    return PropCost::linear(PropCost::HI, iv.size()+2);
   }
 
   template <class SView, class RView>

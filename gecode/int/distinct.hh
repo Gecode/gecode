@@ -147,8 +147,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     /**
      * \brief Cost function
      *
-     * If in stage for naive value propagation, the cost is dynamic
-     * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
+     * If in stage for naive value propagation, the cost is
+     * low linear. Otherwise it is low quadratic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
@@ -268,8 +268,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     /**
      * \brief Cost function
      *
-     * If in stage for naive value propagation, the cost is dynamic
-     * PC_LINEAR_LO. Otherwise it is dynamic PC_CUBIC_LO.
+     * If in stage for naive value propagation, the cost is
+     * low linear. Otherwise it is high quadratic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning

@@ -66,7 +66,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   PropCost
   ElementUnion<SView,RView>::cost(const Space&, const ModEventDelta&) const {
-    return PC_LINEAR_HI;
+    return PropCost::linear(PropCost::HI, iv.size()+2);
   }
 
   template <class SView, class RView>
@@ -74,8 +74,8 @@ namespace Gecode { namespace Set { namespace Element {
   ElementUnion<SView,RView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
-      x0.cancel(home,*this, PC_SET_ANY);
-      x1.cancel(home,*this, PC_SET_ANY);
+      x0.cancel(home,*this,PC_SET_ANY);
+      x1.cancel(home,*this,PC_SET_ANY);
       iv.cancel(home,*this,PC_SET_ANY);
     }
     (void) Propagator::dispose(home);

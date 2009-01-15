@@ -77,8 +77,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
-     * Otherwise it is PC_BINARY_LO.
+     * If a view has been assigned, the cost is low unary.
+     * Otherwise it is low binary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -111,9 +111,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If a view has been assigned, the cost is low binary.
      * If in stage for bounds propagation, the cost is
-     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     * low binary. Otherwise it is high binary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      * \brief Cost function
      *
      * If in stage for bounds propagation, the cost is
-     * PC_TERNARY_LO. Otherwise it is PC_TERNARY_HI.
+     * low ternary. Otherwise it is high ternary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -244,8 +244,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If in stage for bounds propagation, the cost is dynamic
-     * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
+     * If in stage for bounds propagation, the cost is
+     * low linear. Otherwise it is high linear.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -335,9 +335,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If a view has been assigned, the cost is low unary.
      * If in stage for bounds propagation, the cost is
-     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     * low binary. Otherwise it is high binary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -370,9 +370,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If a view has been assigned, the cost is low unary.
      * If in stage for bounds propagation, the cost is
-     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     * low binary. Otherwise it is high binary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
@@ -434,9 +434,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If a view has been assigned, the cost is low unary.
      * If in stage for bounds propagation, the cost is
-     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     * low binary. Otherwise it is high binary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
@@ -565,7 +565,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      * \brief Cost function
      *
      * If in stage for bounds propagation, the cost is
-     * PC_TERNARY_LO. Otherwise it is PC_TERNARY_HI.
+     * low ternary. Otherwise it is high ternary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -602,7 +602,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      * \brief Cost function
      *
      * If in stage for bounds propagation, the cost is
-     * PC_TERNARY_LO. Otherwise it is PC_TERNARY_HI.
+     * low ternary. Otherwise it is high ternary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation

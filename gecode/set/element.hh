@@ -89,19 +89,19 @@ namespace Gecode { namespace Set { namespace Element {
                        const IntSet& universe);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
+    virtual Actor* copy(Space& home,bool);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
      *
      * If \a y is empty, \a z will be constrained to be the given universe
      * \a u (as an empty intersection is the universe).
      */
-    static  ExecStatus  post(Space& home,SView z,IdxViewArray& x,
-                             RView y, const IntSet& u);
+    static ExecStatus post(Space& home,SView z,IdxViewArray& x,
+                           RView y, const IntSet& u);
   };
 
   /**
@@ -129,19 +129,19 @@ namespace Gecode { namespace Set { namespace Element {
     ElementUnion(Space& home,SView,IdxViewArray&,RView);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
+    virtual Actor* copy(Space& home,bool);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
      *
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus  post(Space& home,SView z,IdxViewArray& x,
-                             RView y);
+    static  ExecStatus post(Space& home,SView z,IdxViewArray& x,
+                            RView y);
   };
 
   /**
@@ -167,8 +167,8 @@ namespace Gecode { namespace Set { namespace Element {
     ElementUnionConst(Space& home,SView,SharedArray<IntSet>&,RView);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
-    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
+    virtual Actor* copy(Space& home,bool);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -206,7 +206,7 @@ namespace Gecode { namespace Set { namespace Element {
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
-    GECODE_SET_EXPORT virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
+    GECODE_SET_EXPORT virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation

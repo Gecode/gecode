@@ -88,9 +88,9 @@ namespace Gecode { namespace Int { namespace Rel {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
+     * If a view has been assigned, the cost is low unary.
      * If in stage for bounds propagation, the cost is
-     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     * low binary. Otherwise it is high binary.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -155,9 +155,9 @@ namespace Gecode { namespace Int { namespace Rel {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
-     * If in stage for bounds propagation, the cost is dynamic
-     * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
+     * If a view has been assigned, the cost is low unary.
+     * If in stage for bounds propagation, the cost is
+     * low linear. Otherwise it is high linear.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -189,8 +189,8 @@ namespace Gecode { namespace Int { namespace Rel {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO.
-     * Otherwise it is dynamic PC_LINEAR_HI.
+     * If a view has been assigned, the cost is low unary.
+     * Otherwise it is low linear.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int { namespace Rel {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -525,7 +525,7 @@ namespace Gecode { namespace Int { namespace Rel {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

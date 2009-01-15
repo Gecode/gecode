@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C, PropCond pc>
   PropCost
   LinTer<Val,A,B,C,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PC_TERNARY_LO;
+    return PropCost::ternary(PropCost::LO);
   }
 
   template <class Val, class A, class B, class C, PropCond pc>

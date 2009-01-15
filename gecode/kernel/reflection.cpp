@@ -909,7 +909,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   ActorSpecIter::ActorSpecIter(const Space& s0, VarMap& m0)
   : m(&m0), s(s0),
     active(s0.pc.p.active == NULL ?
-           &s.pc.p.queue[PC_MAX] : s0.pc.p.active),
+           &s.pc.p.queue[PropCost::AC_MAX] : s0.pc.p.active),
     cur(active),
     isBranching(false) {
     if (s.stable() && !s.failed())

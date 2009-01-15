@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   PropCost
   Lex<View>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(x.size(), PC_LINEAR_LO);
+    return PropCost::linear(PropCost::LO, x.size());
   }
 
   template <class View>

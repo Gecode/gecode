@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for creation
     BaseInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -234,7 +234,7 @@ namespace Gecode { namespace Int { namespace Count {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace Count {
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
   protected:
     /// Count how many views are equal now

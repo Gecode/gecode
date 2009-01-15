@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
 
   /**
-   * \brief %Propagator for the cumulatives constraint.
+   * \brief %Propagator for the cumulatives constraint
    *
    * This class implements Beldiceanu's and Carlsson's sweep-line
    * propagation algorithm for the cumulatives constraint.
@@ -119,14 +119,19 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                      int* contribution,
                      int* prune_tasks, int& prune_tasks_size);
   public:
-    virtual size_t dispose(Space& home);
-    virtual Actor*     copy(Space& home, bool share);
-    virtual PropCost   cost(const Space& home, const ModEventDelta& med) const;
+    /// Create copy during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function (defined as low quadratic)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    static  ExecStatus post(Space& home, const ViewArray<ViewM>&,
-                            const ViewArray<View>&, const ViewArray<ViewD>&,
-                            const ViewArray<View>&, const ViewArray<ViewH>&,
-                            const SharedArray<int>&, bool);
+    /// Post propagator
+    static ExecStatus post(Space& home, const ViewArray<ViewM>&,
+                           const ViewArray<View>&, const ViewArray<ViewD>&,
+                           const ViewArray<View>&, const ViewArray<ViewH>&,
+                           const SharedArray<int>&, bool);
+    /// Dispose propagator
+    virtual size_t dispose(Space& home);
   };
 
 

@@ -69,7 +69,7 @@ namespace Gecode {
     /// Constructor for creation
     ReUnaryPropagator(Space& home, View x0, CtrlView b);
   public:
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -100,7 +100,7 @@ namespace Gecode {
     /// Constructor for creation
     ReBinaryPropagator(Space& home, View x0, View x1, CtrlView b);
   public:
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -143,7 +143,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   PropCost
   ReUnaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
-    return PC_UNARY_LO;
+    return PropCost::unary(PropCost::LO);
   }
 
   template <class View, PropCond pc, class CtrlView>
@@ -194,7 +194,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   PropCost
   ReBinaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View, PropCond pc, class CtrlView>

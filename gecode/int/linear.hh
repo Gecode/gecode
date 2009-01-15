@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LinBin(Space& home, A x0, B x1, Val c);
   public:
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     ReLinBin(Space& home, A x0, B x1, Val c, Ctrl b);
   public:
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator for \f$x_0+x_1 \neq c\f$
     static ExecStatus post(Space& home, A x0, B x1, Val c);
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for rewriting \a p during cloning
     LinTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
   public:
-    /// Cost function (defined as PC_TERNARY_LO)
+    /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -526,7 +526,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     Lin(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -637,7 +637,12 @@ namespace Gecode { namespace Int { namespace Linear {
     DomEq(Space& home, ViewArray<View>& x, ViewArray<View>& y, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Propagation cost
+    /**
+     * \brief Cost function
+     *
+     * If in stage for bounds propagation, the cost is
+     * low linear. Otherwise it is high crazy.
+     */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -822,7 +827,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     MemoryLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
   public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -851,7 +856,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
                                const Support::Symbol& ati) const;
     public:
-    /// Cost function (defined as dynamic PC_UNARY_HI)
+    /// Cost function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -1032,7 +1037,7 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -1064,7 +1069,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LinBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
   public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -1363,7 +1368,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a pr
     LinBoolScale(Space& home, bool share, Propagator& pr, 
                  SBAP& p, SBAN& n, VX x, int c);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);

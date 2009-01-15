@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   PropCost
   ClauseTrue<VX,VY>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+    return PropCost::binary(PropCost::LO);
   }
 
   template<class VX, class VY>
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   PropCost
   Clause<VX,VY>::cost(const Space&, const ModEventDelta&) const {
-    return PC_UNARY_HI;
+    return PropCost::unary(PropCost::LO);
   }
 
   template<class VX, class VY>

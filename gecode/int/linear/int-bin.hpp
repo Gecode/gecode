@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, PropCond pc>
   PropCost
   LinBin<Val,A,B,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class Val, class A, class B, PropCond pc>
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, PropCond pc, class Ctrl>
   PropCost
   ReLinBin<Val,A,B,pc,Ctrl>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class Val, class A, class B, PropCond pc, class Ctrl>
@@ -282,7 +282,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   PropCost
   NqBin<Val,A,B>::cost(const Space&, const ModEventDelta&) const {
-    return PC_UNARY_LO;
+    return PropCost::unary(PropCost::LO);
   }
 
   template <class Val, class A, class B>

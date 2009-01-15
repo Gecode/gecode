@@ -68,7 +68,7 @@ namespace Gecode { namespace Int { namespace Bool {
     BoolBinary(Space& home, bool share, Propagator& p,
                BVA b0, BVB b1);
   public:
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for rewriting \a p during cloning
     BoolTernary(Space& home, bool share, Propagator& p,
                 BVA b0, BVB b1, BVC b2);
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -348,7 +348,7 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Actor* copy(Space& home, bool share);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -385,7 +385,7 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -466,7 +466,7 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Actor* copy(Space& home, bool share);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-    /// Cost function (defined as PC_UNARY_LO)
+    /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -509,7 +509,7 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

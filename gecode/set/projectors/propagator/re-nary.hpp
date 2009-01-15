@@ -58,12 +58,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   forceinline PropCost
   ReNaryProjection::cost(const Space&, const ModEventDelta&) const {
-    switch (x.size()) {
-    case 1: return PC_UNARY_HI;
-    case 2: return PC_BINARY_HI;
-    case 3: return PC_TERNARY_HI;
-    default: return PC_LINEAR_HI;
-    }
+    return PropCost::linear(PropCost::HI,x.size());
   }
 
 }}}

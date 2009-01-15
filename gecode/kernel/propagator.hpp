@@ -40,22 +40,6 @@
 namespace Gecode {
 
   /**
-   * \brief Dynamic low-propagation cost computation
-   *
-   * If \a n is less than 4, use constant low-costs, otherwise use \a pc.
-   * \ingroup TaskActor
-   */
-  PropCost cost_lo(int n, PropCost pc);
-  /**
-   * \brief Dynamic high-propagation cost computation
-   *
-   * If \a n is less than 4, use constant hight-costs, otherwise use \a pc.
-   * \ingroup TaskActor
-   */
-  PropCost cost_hi(int n, PropCost pc);
-
-
-  /**
    * \defgroup TaskPropPat Propagator patterns
    *
    * \ingroup TaskActor
@@ -112,7 +96,7 @@ namespace Gecode {
     BinaryPropagator(Space& home, bool share, Propagator& p,
                      View x0, View x1);
   public:
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -140,7 +124,7 @@ namespace Gecode {
     TernaryPropagator(Space& home, bool share, Propagator& p,
                       View x0, View x1, View x2);
   public:
-    /// Cost function (defined as PC_TERNARY_LO)
+    /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -168,7 +152,7 @@ namespace Gecode {
     /// Constructor for creation
     NaryPropagator(Space& home, ViewArray<View>& x);
   public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -199,7 +183,7 @@ namespace Gecode {
     /// Constructor for creation
     NaryOnePropagator(Space& home, ViewArray<View>& x, View y);
   public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -228,7 +212,7 @@ namespace Gecode {
     MixBinaryPropagator(Space& home, bool share, Propagator& p,
                         View0 x0, View1 x1);
   public:
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -259,7 +243,7 @@ namespace Gecode {
     MixTernaryPropagator(Space& home, bool share, Propagator& p,
                          View0 x0, View1 x1, View2 x2);
   public:
-    /// Cost function (defined as PC_TERNARY_LO)
+    /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -290,36 +274,13 @@ namespace Gecode {
     MixNaryOnePropagator(Space& home, bool share, Propagator& p,
                          ViewArray<View0>& x, View1 y);
   public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
   //@}
 
-
-
-
-
-
-  /*
-   * Dynamic cost computation
-   *
-   */
-
-  forceinline PropCost
-  cost_lo(int n, PropCost c) {
-    if (n > 3) return c;
-    if (n < 2) return PC_UNARY_LO;
-    return (n > 2) ? PC_TERNARY_LO : PC_BINARY_LO;
-  }
-
-  forceinline PropCost
-  cost_hi(int n, PropCost c) {
-    if (n > 3) return c;
-    if (n < 2) return PC_UNARY_HI;
-    return (n > 2) ? PC_TERNARY_HI : PC_BINARY_HI;
-  }
 
   /*
    * Unary propagators
@@ -352,7 +313,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   UnaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PC_UNARY_LO;
+    return PropCost::unary(PropCost::LO);
   }
 
   template <class View, PropCond pc>
@@ -400,7 +361,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   BinaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View, PropCond pc>
@@ -453,7 +414,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   TernaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PC_TERNARY_LO;
+    return PropCost::ternary(PropCost::LO);;
   }
 
   template <class View, PropCond pc>
@@ -500,7 +461,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   NaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(x.size(), PC_LINEAR_LO);
+    return PropCost::linear(PropCost::LO,x.size());
   }
 
   template <class View, PropCond pc>
@@ -548,7 +509,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   NaryOnePropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(x.size()+1, PC_LINEAR_LO);
+    return PropCost::linear(PropCost::LO,x.size()+1);
   }
 
   template <class View, PropCond pc>
@@ -597,8 +558,9 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
-  MixBinaryPropagator<View0,pc0,View1,pc1>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+  MixBinaryPropagator<View0,pc0,View1,pc1>::cost(const Space&, 
+                                                 const ModEventDelta&) const {
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
@@ -657,8 +619,9 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   PropCost
-  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
+  cost(const Space&, const ModEventDelta&) const {
+    return PropCost::ternary(PropCost::LO);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
@@ -710,8 +673,9 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
-  MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(x.size()+1, PC_LINEAR_LO);
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(const Space&, 
+                                                  const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x.size()+1);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>

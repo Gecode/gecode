@@ -211,8 +211,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   PropCost
-  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(p.size() + n.size(), PC_LINEAR_LO);
+  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(const Space&, 
+                                       const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO, p.size() + n.size());
   }
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>

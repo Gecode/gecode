@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   PropCost
   BaseInt<VX,VY>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(x.size(),PC_LINEAR_LO);
+    return PropCost::linear(PropCost::LO,x.size());
   }
 
   /*
@@ -447,7 +447,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY>
   PropCost
   NqInt<VX,VY>::cost(const Space&, const ModEventDelta&) const {
-    return PC_LINEAR_LO;
+    return PropCost::linear(PropCost::LO,x.size());
   }
 
   template<class VX, class VY>

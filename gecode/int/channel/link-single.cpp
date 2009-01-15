@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   PropCost
   LinkSingle::cost(const Space&, const ModEventDelta&) const {
-    return PC_UNARY_LO;
+    return PropCost::unary(PropCost::LO);
   }
 
   ExecStatus

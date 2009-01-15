@@ -275,7 +275,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   PropCost
   MaxDom<View>::cost(const Space&, const ModEventDelta& med) const {
-    return (View::me(med) == ME_INT_DOM) ? PC_TERNARY_HI : PC_TERNARY_LO;
+    return PropCost::ternary((View::me(med) == ME_INT_DOM) ? 
+                             PropCost::HI : PropCost::LO);
   }
 
   template <class View>
@@ -352,9 +353,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   PropCost
   NaryMaxDom<View>::cost(const Space&, const ModEventDelta& med) const {
-    return (View::me(med) == ME_INT_DOM)
-      ? cost_lo(y.size(),PC_LINEAR_HI)
-      : cost_hi(x.size(),PC_LINEAR_LO);
+    if (View::me(med) == ME_INT_DOM)
+      return PropCost::linear(PropCost::HI, y.size());
+    else
+      return PropCost::linear(PropCost::LO, x.size());
   }
 
   template <class View>

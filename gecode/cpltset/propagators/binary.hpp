@@ -60,12 +60,16 @@ namespace Gecode { namespace CpltSet {
   
   template <class View0, class View1>
   forceinline PropCost
-  BinaryCpltSetPropagator<View0,View1>::cost(const Space&, const ModEventDelta&) const {
+  BinaryCpltSetPropagator<View0,View1>::cost(const Space&, 
+                                             const ModEventDelta&) const {
+    return PropCost::binary(PropCost::HI);
+    /*
     if (manager.ctrue(x.dom()) || manager.ctrue(d)) {
-      return PC_LINEAR_LO;
+      return PropCost::linear(PropCost::HI, x.size());
     } else {
-      return PC_QUADRATIC_HI;
+      return PropCost::quadratic(PropCost::HI, x.size());
     }
+    */
   }
 
   template <class View0, class View1>

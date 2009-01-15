@@ -187,7 +187,10 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, bool shared>
   PropCost
   Dom<View,shared>::cost(const Space&, const ModEventDelta& med) const {
-    return (View::me(med) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
+    if (View::me(med) == ME_INT_VAL)
+      return PropCost::quadratic(PropCost::LO, 2*n);
+    else
+      return PropCost::quadratic(PropCost::HI, 2*n);
   }
 
   template <class View, bool shared>

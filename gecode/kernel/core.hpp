@@ -577,26 +577,135 @@ namespace Gecode {
   };
 
   /**
-   * \brief Classification of propagation cost
+   * \brief Propagation cost
    * \ingroup TaskActor
    */
-  enum PropCost {
-    PC_CRAZY_LO     = 0, ///< Exponential complexity, cheap
-    PC_CRAZY_HI     = 0, ///< Exponential complexity, expensive
-    PC_CUBIC_LO     = 1, ///< Cubic complexity, cheap
-    PC_CUBIC_HI     = 1, ///< Cubic complexity, expensive
-    PC_QUADRATIC_LO = 2, ///< Quadratic complexity, cheap
-    PC_QUADRATIC_HI = 2, ///< Quadratic complexity, expensive
-    PC_LINEAR_HI    = 3, ///< Linear complexity, expensive
-    PC_LINEAR_LO    = 4, ///< Linear complexity, cheap
-    PC_TERNARY_HI   = 5, ///< Three variables, expensive
-    PC_BINARY_HI    = 6, ///< Two variables, expensive
-    PC_TERNARY_LO   = 6, ///< Three variables, cheap
-    PC_BINARY_LO    = 7, ///< Two variables, cheap
-    PC_UNARY_LO     = 7, ///< Only single variable, cheap
-    PC_UNARY_HI     = 7, ///< Only single variable, expensive
-    PC_MAX          = 7  ///< Maximal cost value
+  class PropCost {
+    friend class Space;
+    friend class Reflection::ActorSpecIter;
+  private:
+    /// The actual cost values that are used
+    enum ActualCost {
+      AC_CRAZY_LO     = 0, ///< Exponential complexity, cheap
+      AC_CRAZY_HI     = 0, ///< Exponential complexity, expensive
+      AC_CUBIC_LO     = 1, ///< Cubic complexity, cheap
+      AC_CUBIC_HI     = 1, ///< Cubic complexity, expensive
+      AC_QUADRATIC_LO = 2, ///< Quadratic complexity, cheap
+      AC_QUADRATIC_HI = 2, ///< Quadratic complexity, expensive
+      AC_LINEAR_HI    = 3, ///< Linear complexity, expensive
+      AC_LINEAR_LO    = 4, ///< Linear complexity, cheap
+      AC_TERNARY_HI   = 5, ///< Three variables, expensive
+      AC_BINARY_HI    = 6, ///< Two variables, expensive
+      AC_TERNARY_LO   = 6, ///< Three variables, cheap
+      AC_BINARY_LO    = 7, ///< Two variables, cheap
+      AC_UNARY_LO     = 7, ///< Only single variable, cheap
+      AC_UNARY_HI     = 7, ///< Only single variable, expensive
+      AC_MAX          = 7  ///< Maximal cost value
+    };
+    /// Actual cost
+    ActualCost ac;
+  public:
+    /// Propagation cost modifier
+    enum Mod {
+      LO, ///< Cheap
+      HI  ///< Expensive
+    };
+  private:
+    /// Compute dynamic cost for cost \a lo, expensive cost \a hi, and size measure \a n
+    static PropCost cost(Mod m, ActualCost lo, ActualCost hi, unsigned int n);
+    /// Constructor for automatic coercion of \a ac
+    PropCost(ActualCost ac);
+  public:
+    /// Exponential complexity for modifier \a m and size measure \a n
+    static PropCost crazy(PropCost::Mod m, unsigned int n);
+    /// Exponential complexity for modifier \a m and size measure \a n
+    static PropCost crazy(PropCost::Mod m, int n);
+    /// Cubic complexity for modifier \a m and size measure \a n
+    static PropCost cubic(PropCost::Mod m, unsigned int n);
+    /// Cubic complexity for modifier \a m and size measure \a n
+    static PropCost cubic(PropCost::Mod m, int n);
+    /// Quadratic complexity for modifier \a m and size measure \a n
+    static PropCost quadratic(PropCost::Mod m, unsigned int n);
+    /// Quadratic complexity for modifier \a m and size measure \a n
+    static PropCost quadratic(PropCost::Mod m, int n);
+    /// Linear complexity for modifier \a pcm and size measure \a n
+    static PropCost linear(PropCost::Mod m, unsigned int n);
+    /// Linear complexity for modifier \a pcm and size measure \a n
+    static PropCost linear(PropCost::Mod m, int n);
+    /// Three variables for modifier \a pcm
+    static PropCost ternary(PropCost::Mod m);
+    /// Two variables for modifier \a pcm
+    static PropCost binary(PropCost::Mod m);
+    /// Single variable for modifier \a pcm
+    static PropCost unary(PropCost::Mod m);
   };
+
+  forceinline
+  PropCost::PropCost(PropCost::ActualCost ac0) : ac(ac0) {}
+
+  forceinline PropCost 
+  PropCost::cost(PropCost::Mod m, 
+                 PropCost::ActualCost lo, PropCost::ActualCost hi,
+                 unsigned int n) {
+    if (n < 2)
+      return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
+    else if (n == 2)
+      return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
+    else if (n == 3)
+      return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
+    else
+      return (m == LO) ? lo : hi;
+  }
+    
+  forceinline PropCost 
+  PropCost::crazy(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_CRAZY_LO,AC_CRAZY_HI,n);
+  }
+  forceinline PropCost 
+  PropCost::crazy(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return crazy(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost 
+  PropCost::cubic(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_CUBIC_LO,AC_CUBIC_HI,n);
+  }
+  forceinline PropCost 
+  PropCost::cubic(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return cubic(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost 
+  PropCost::quadratic(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_QUADRATIC_LO,AC_QUADRATIC_HI,n);
+  }
+  forceinline PropCost 
+  PropCost::quadratic(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return quadratic(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost 
+  PropCost::linear(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_LINEAR_LO,AC_LINEAR_HI,n);
+  }
+  forceinline PropCost 
+  PropCost::linear(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return linear(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost
+  PropCost::ternary(PropCost::Mod m) {
+    return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
+  }
+  forceinline PropCost
+  PropCost::binary(PropCost::Mod m) {
+    return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
+  }
+  forceinline PropCost
+  PropCost::unary(PropCost::Mod m) {
+    return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
+  }
+
 
   /**
    * \brief Actor properties
@@ -1169,7 +1278,7 @@ namespace Gecode {
          */
         ActorLink* active;
         /// Scheduled propagators according to cost
-        ActorLink queue[PC_MAX+1];
+        ActorLink queue[PropCost::AC_MAX+1];
         /// Id of next branching to be created
         unsigned int branch_id;
         /// Number of subscriptions
@@ -2310,7 +2419,7 @@ namespace Gecode {
   forceinline void
   Space::enqueue(Propagator* p) {
     ActorLink::cast(p)->unlink();
-    ActorLink* c = &pc.p.queue[p->cost(*this,p->u.med)];
+    ActorLink* c = &pc.p.queue[p->cost(*this,p->u.med).ac];
     c->tail(ActorLink::cast(p));
     if (c > pc.p.active)
       pc.p.active = c;

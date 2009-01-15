@@ -109,7 +109,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline PropCost
   NaryCpltSetPropagator<View>::cost(const Space&, const ModEventDelta&) const {
-    return PC_CRAZY_HI;
+    return PropCost::crazy(PropCost::HI, x.size());
   }
 
   template <class View>

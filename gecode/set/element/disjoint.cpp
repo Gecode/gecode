@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   PropCost
   ElementDisjoint::cost(const Space&, const ModEventDelta&) const {
-    return PC_QUADRATIC_LO;
+    return PropCost::quadratic(PropCost::LO, iv.size()+2);
   }
 
   size_t

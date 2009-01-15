@@ -638,7 +638,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   PropCost
   NaryOrTrue<BV>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+    return PropCost::binary(PropCost::LO);
   }
 
   template<class BV>
@@ -835,7 +835,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   PropCost
   NaryOr<VX,VY>::cost(const Space&, const ModEventDelta&) const {
-    return PC_UNARY_HI;
+    return PropCost::unary(PropCost::LO);
   }
 
   template<class VX, class VY>

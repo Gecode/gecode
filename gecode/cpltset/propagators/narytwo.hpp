@@ -168,8 +168,9 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   PropCost
-  NaryTwoCpltSetPropagator<View0,View1>::cost(const Space&, const ModEventDelta&) const {
-    return cost_lo(x.size()+2, PC_LINEAR_LO);
+  NaryTwoCpltSetPropagator<View0,View1>::cost(const Space&, 
+                                              const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO, x.size()+2);
   }
 
   template <class View0, class View1>

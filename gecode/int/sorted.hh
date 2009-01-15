@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function returning PC_LINEAR_HI
+    /// Cost function returning low linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

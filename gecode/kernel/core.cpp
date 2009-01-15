@@ -119,7 +119,7 @@ namespace Gecode {
     d_fst = d_cur = d_lst = NULL;
     // Initialize propagator queues
     pc.p.active = &pc.p.queue[0]-1;
-    for (int i=0; i<=PC_MAX; i++)
+    for (int i=0; i<=PropCost::AC_MAX; i++)
       pc.p.queue[i].init();
     pc.p.branch_id = 0;
     pc.p.n_sub = 0;
@@ -462,7 +462,7 @@ namespace Gecode {
 
     // Initialize propagator queue
     c->pc.p.active = &c->pc.p.queue[0]-1;
-    for (int i=0; i<=PC_MAX; i++)
+    for (int i=0; i<=PropCost::AC_MAX; i++)
       c->pc.p.queue[i].init();
     // Copy propagation only data
     c->pc.p.n_sub = pc.p.n_sub;

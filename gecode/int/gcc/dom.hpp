@@ -114,30 +114,19 @@ namespace Gecode { namespace Int { namespace GCC {
   Dom<View, Card, isView>::cost(const Space&, const ModEventDelta&) const {
 
     unsigned int n = x.size();
-    unsigned int d = x[n - 1].size();
-    for (int i = n; i--; ) {
-      if (x[i].size() > d) {
+    unsigned int d = x[n-1].size();
+    for (int i = n; i--; )
+      if (x[i].size() > d)
         d = x[i].size();
-      }
-    }
-
-    PropCost pc;
-    if (d < 6) {
-      pc = PC_LINEAR_LO;
-    } else {
-      if (6 <= d && d < n/2) {
-        pc = PC_LINEAR_HI;
-      }
-      else {
-        if (n/2 <= d && d < n*n) {
-          pc = PC_QUADRATIC_LO;
-        } else {
-          pc = PC_CUBIC_LO;
-        }
-      }
-    }
-    return cost_lo(x.size(), pc);
-
+      
+    if (d < 6)
+      return PropCost::linear(PropCost::LO,x.size());
+    else if ((6 <= d) && (d < n/2))
+      return PropCost::linear(PropCost::HI,x.size());
+    else if ((n/2 <= d) && (d < n*n))
+      return PropCost::quadratic(PropCost::LO,x.size());
+    else
+      return PropCost::cubic(PropCost::LO,x.size());
   }
   
   /// \brief Perform domain propagation.

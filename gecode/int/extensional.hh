@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     LayeredGraph(Space& home, ViewArray<View>& x, DFA& d);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as dynamic PC_LINEAR_HI)
+    /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Find support for view at position \a i and value \a n
     Tuple find_support(Domain dom, int i, int n);
   public:
-    /// Cost function (defined as PC_QUADRATIC_HI)
+    /// Cost function (defined as high quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      * \brief Cost function
      *
      * If in stage for naive value propagation, the cost is
-     * PC_QUADRATIC_HI. Otherwise it is dynamic PC_CUBIC_HI.
+     * high quadratic. Otherwise it is high cubic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
@@ -455,7 +455,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      * \brief Cost function
      *
      * If in stage for naive value propagation, the cost is
-     * PC_QUADRATIC_HI. Otherwise it is dynamic PC_CUBIC_HI.
+     * high quadratic. Otherwise it is high cubic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning

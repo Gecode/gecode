@@ -269,7 +269,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   PropCost
   IntersectionN<View0,View1>::cost(const Space&, const ModEventDelta&) const {
-    return PC_QUADRATIC_LO;
+    return PropCost::quadratic(PropCost::HI, x.size()+1);
   }
 
   template <class View0, class View1>

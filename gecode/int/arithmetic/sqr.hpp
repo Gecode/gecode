@@ -229,10 +229,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   PropCost
   SqrPlusDom<VA,VB>::cost(const Space&, const ModEventDelta& med) const {
     if (VA::me(med) == ME_INT_VAL)
-      return PC_UNARY_LO;
-    if (VA::me(med) == ME_INT_DOM)
-      return PC_BINARY_HI;
-    return PC_BINARY_LO;
+      return PropCost::unary(PropCost::LO);
+    else if (VA::me(med) == ME_INT_DOM)
+      return PropCost::binary(PropCost::HI);
+    else
+      return PropCost::binary(PropCost::LO);
   }
 
   template <class VA, class VB>
@@ -308,10 +309,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   PropCost
   SqrDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PC_UNARY_LO;
-    if (View::me(med) == ME_INT_DOM)
-      return PC_BINARY_HI;
-    return PC_BINARY_LO;
+      return PropCost::unary(PropCost::LO);
+    else if (View::me(med) == ME_INT_DOM)
+      return PropCost::binary(PropCost::HI);
+    else
+      return PropCost::binary(PropCost::LO);
   }
 
   template <class View>

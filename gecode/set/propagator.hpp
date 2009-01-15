@@ -64,7 +64,7 @@ namespace Gecode {
     /// Constructor for creation
     IntSetPropagator(Space& home,View,Gecode::Int::IntView);
   public:
-    /// Cost function (defined as PC_BINARY_LO)
+    /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -88,7 +88,7 @@ namespace Gecode {
     IntSetRePropagator(Space& home,View,Gecode::Int::IntView,
                        Gecode::Int::BoolView);
   public:
-    /// Cost function (defined as PC_TERNARY_LO)
+    /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -115,8 +115,9 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   PropCost
-  IntSetPropagator<View,pcs,pci>::cost(const Space&, const ModEventDelta&) const {
-    return PC_BINARY_LO;
+  IntSetPropagator<View,pcs,pci>::cost(const Space&, 
+                                       const ModEventDelta&) const {
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View, PropCond pcs, PropCond pci>
@@ -153,7 +154,7 @@ namespace Gecode {
   PropCost
   IntSetRePropagator<View,pcs,pci>
   ::cost(const Space&, const ModEventDelta&) const {
-    return PC_TERNARY_LO;
+    return PropCost::ternary(PropCost::LO);
   }
 
   template <class View, PropCond pcs, PropCond pci>

@@ -245,7 +245,7 @@ namespace Gecode { namespace CpltSet {
                                         Reflection::VarMap& m) const;
     /// Name of this propagator
     static Support::Symbol ati(void);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator
     virtual size_t dispose(Space& home);
