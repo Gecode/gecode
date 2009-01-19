@@ -151,7 +151,7 @@ namespace Gecode { namespace Search {
     check_discrepancy:
       if (d == 0) {
         Space* s = cur;
-        while (s->status(propagate) == SS_BRANCH) {
+        while (s->status(*this) == SS_BRANCH) {
           const BranchingDesc* desc = s->description();
           if (desc->alternatives() > 1)
             exhausted = false;
@@ -167,7 +167,7 @@ namespace Gecode { namespace Search {
         return s;
       }
       node++;
-      switch (cur->status(propagate)) {
+      switch (cur->status(*this)) {
       case SS_FAILED:
         fail++;
       case SS_SOLVED:        
@@ -210,7 +210,7 @@ namespace Gecode { namespace Search {
 
   LDS::LDS(Space* s, unsigned int d, Stop* st, size_t sz)
     : root(NULL), d_cur(0), d_max(d), e(st,sz) {
-    if (s->status(e.propagate) == SS_FAILED) {
+    if (s->status(e) == SS_FAILED) {
       e.init(NULL,0);
       e.fail += 1;
       e.current(s);

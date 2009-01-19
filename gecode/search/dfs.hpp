@@ -85,7 +85,7 @@ namespace Gecode {
           if (stop(stacksize()))
             return NULL;
           node++;
-          switch (cur->status(propagate)) {
+          switch (cur->status(*this)) {
           case SS_FAILED:
             fail++;
             delete cur;

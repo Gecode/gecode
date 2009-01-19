@@ -101,6 +101,9 @@ namespace Gecode {
    */
   unsigned long int Space::unused_uli;
   bool Space::unused_b;
+  StatusStatistics Space::unused_status;
+  CloneStatistics Space::unused_clone;
+  CommitStatistics Space::unused_commit;
 
 #ifdef GECODE_HAS_VAR_DISPOSE
   VarDisposerBase* Space::vd[AllVarConf::idx_d];
@@ -220,7 +223,7 @@ namespace Gecode {
    */
 
   SpaceStatus
-  Space::status(unsigned long int& pn, bool& wmp) {
+  Space::status(StatusStatistics& stat) {
     SpaceStatus s = SS_FAILED;
     if (failed()) {
       s = SS_FAILED; goto exit;
@@ -231,7 +234,7 @@ namespace Gecode {
       ModEventDelta med_o;
       goto unstable;
     execute:
-      pn++;
+      stat.propagate++;
       // Keep old modification event delta
       med_o = p->u.med;
       // Clear med but leave propagator in queue
@@ -318,14 +321,15 @@ namespace Gecode {
     // No branching with alternatives left, space is solved
     s = SS_SOLVED;
   exit:
-    wmp = (n_wmp > 0);
+    stat.wmp = (n_wmp > 0);
     if (n_wmp == 1) n_wmp = 0;
     return s;
   }
 
 
   void
-  Space::commit(const BranchingDesc& d, unsigned int a) {
+  Space::commit(const BranchingDesc& d, unsigned int a,
+                CommitStatistics&) {
     if (failed())
       return;
     /*

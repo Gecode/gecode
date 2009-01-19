@@ -1220,6 +1220,46 @@ namespace Gecode {
   };
 
   /**
+   * \brief %Statistics for execution of status
+   *
+   */
+  class StatusStatistics {
+  public:
+    /// Number of propagator executions
+    unsigned long int propagate;
+    /// Whether a weakly monotonic propagator might have been executed
+    bool wmp;
+    /// Initialize
+    StatusStatistics(void);
+    /// Reset information
+    void reset(void);
+  };
+
+  /**
+   * \brief %Statistics for execution of clone
+   *
+   */
+  class CloneStatistics {
+  public:
+    /// Initialize
+    CloneStatistics(void);
+    /// Reset information
+    void reset(void);
+  };
+
+  /**
+   * \brief %Statistics for execution of commit
+   *
+   */
+  class CommitStatistics {
+  public:
+    /// Initialize
+    CommitStatistics(void);
+    /// Reset information
+    void reset(void);
+  };
+
+  /**
    * \brief Computation spaces
    */
   class GECODE_VTABLE_EXPORT Space {
@@ -1333,7 +1373,13 @@ namespace Gecode {
      */
     unsigned int n_wmp;
 
-    /// Used for default arguments
+    /// Used for default argument
+    GECODE_KERNEL_EXPORT static StatusStatistics unused_status;
+    /// Used for default argument
+    GECODE_KERNEL_EXPORT static CloneStatistics unused_clone;
+    /// Used for default argument
+    GECODE_KERNEL_EXPORT static CommitStatistics unused_commit;
+    /// Used for default argument
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static bool unused_b;
@@ -1416,9 +1462,7 @@ namespace Gecode {
      * \brief Query space status
      *
      * Propagates the space until fixpoint or failure;
-     * increments \a pn by the number of propagator executions;
-     * sets \a wmp to true, if the space has weakly monotonic propagators or
-     * a weakly monotonic propagator might have been used in propagation; and:
+     * updates the statistics information \a stat; and:
      *  - if the space is failed, SpaceStatus::SS_FAILED is returned.
      *  - if the space is not failed but the space has no branching left,
      *    SpaceStatus::SS_SOLVED is returned.
@@ -1426,7 +1470,7 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT 
-    SpaceStatus status(unsigned long int& pn=unused_uli, bool& wmp=unused_b);
+    SpaceStatus status(StatusStatistics& stat=unused_status);
 
     /**
      * \brief Create new branching description for current branching
@@ -1458,7 +1502,8 @@ namespace Gecode {
      * failed, an exception of type SpaceFailed is thrown. If the space
      * is not stable, an exception of SpaceNotStable is thrown.
      *
-     * Otherwise, a clone of the space is returned. If \a share is true,
+     * Otherwise, a clone of the space is returned and the statistics
+     * information \a stat is updated. If \a share is true,
      * sharable datastructures are shared among the clone and the original
      * space. If \a share is false, independent copies of the shared
      * datastructures must be created. This means that a clone with no
@@ -1467,14 +1512,15 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    Space* clone(bool share=true) const;
+    Space* clone(bool share=true, CloneStatistics& stat=unused_clone) const;
 
     /**
      * \brief Commit branching description \a d and for alternative \a a
      *
      * The current branching in the space performs a commit from
      * the information provided by the branching description \a d
-     * and the alternative \a a.
+     * and the alternative \a a. The statistics information \a stat is
+     * updated.
      *
      * Note that no propagation is perfomed (to support batch
      * recomputation), in order to perform propagation the member
@@ -1498,7 +1544,9 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT void commit(const BranchingDesc& d, unsigned int a);
+    GECODE_KERNEL_EXPORT 
+    void commit(const BranchingDesc& d, unsigned int a, 
+                CommitStatistics& stat=unused_commit);
 
     /**
      * \brief Notice actor property
@@ -2072,7 +2120,7 @@ namespace Gecode {
   }
   
   forceinline Space*
-  Space::clone(bool share) const {
+  Space::clone(bool share, CloneStatistics&) const {
     // Clone is only const for search engines. During cloning, several data
     // structures are updated (e.g. forwarding pointers), so we have to
     // cast away the constness.
@@ -2873,6 +2921,37 @@ namespace Gecode {
     do {
       x->dispose(home); x = static_cast<VarType*>(x->next_d());
     } while (x != NULL);
+  }
+
+  /*
+   * Statistics
+   */
+
+  forceinline void
+  StatusStatistics::reset(void) {
+    propagate = 0;
+    wmp = false;
+  }
+
+  forceinline
+  StatusStatistics::StatusStatistics(void) {
+    reset();
+  }
+
+  forceinline void
+  CloneStatistics::reset(void) {}
+
+  forceinline
+  CloneStatistics::CloneStatistics(void) {
+    reset();
+  }
+
+  forceinline void
+  CommitStatistics::reset(void) {}
+
+  forceinline
+  CommitStatistics::CommitStatistics(void) {
+    reset();
   }
 
 }

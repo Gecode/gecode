@@ -45,7 +45,7 @@ namespace Gecode {
   template <class T>
   Restart<T>::Restart(T* s, const Search::Options& o) :
     Gecode::DFS<T>(s,o),
-    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {
+    root(s->status(this->e) == SS_FAILED ? NULL : s->clone()), best(NULL) {
     // Failure and propagation must not be counted, has happened already
     // in the DFS constructor
   }
@@ -63,7 +63,7 @@ namespace Gecode {
     if (best != NULL) {
       root->constrain(*best);
       this->e.clone++;
-      if (root->status(this->e.propagate) == SS_FAILED) {
+      if (root->status(this->e) == SS_FAILED) {
         this->e.reset();
       } else {
         this->e.reset(root->clone());

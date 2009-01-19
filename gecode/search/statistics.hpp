@@ -37,9 +37,15 @@
 
 namespace Gecode { namespace Search {
 
+  forceinline void
+  Statistics::reset(void) {
+    StatusStatistics::reset();
+    fail=0; clone=0; commit=0; node=0; depth=0; memory=0;
+  }
+
   forceinline
   Statistics::Statistics(void)
-    : propagate(0), fail(0), clone(0), commit(0), node(0), depth(0), memory(0) {}
+    : fail(0), clone(0), commit(0), node(0), depth(0), memory(0) {}
 
 }}
 

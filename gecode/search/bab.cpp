@@ -58,7 +58,7 @@ namespace Gecode { namespace Search {
         if (stop(stacksize()))
           return NULL;
         node++;
-        switch (cur->status(propagate)) {
+        switch (cur->status(*this)) {
         case SS_FAILED:
           fail++;
           delete cur;
@@ -111,10 +111,8 @@ namespace Gecode { namespace Search {
 
   BAB::BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz)
     : e(c_d,a_d,st,sz) {
-    unsigned long int p = 0;
-    Space* c = (s->status(p) == SS_FAILED) ? NULL : s->clone(true);
+    Space* c = (s->status(e) == SS_FAILED) ? NULL : s->clone(true);
     e.init(c);
-    e.propagate += p;
     e.current(s);
     e.current(NULL);
     e.current(c);

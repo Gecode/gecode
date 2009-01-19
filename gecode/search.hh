@@ -95,10 +95,8 @@ namespace Gecode {
      * \brief %Search engine statistics
      * \ingroup TaskModelSearch
      */
-    class Statistics {
+    class Statistics : public StatusStatistics {
     public:
-      /// Number of propagation steps
-      unsigned long int propagate;
       /// Number of failed nodes in search tree
       unsigned long int fail;
       /// Number of clones created
@@ -111,8 +109,10 @@ namespace Gecode {
       unsigned long int depth;
       /// Peak memory allocated
       size_t memory;
-      /// Initialize with all numbers zero
+      /// Initialize
       Statistics(void);
+      /// Reset
+      void reset(void);
     };
 
 

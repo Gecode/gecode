@@ -224,7 +224,7 @@ namespace Gecode { namespace Search {
       s->constrain(*best);
       // The space on the stack could be failed now as an additional
       // constraint might have been added.
-      if (s->status(stat.propagate) == SS_FAILED) {
+      if (s->status(stat) == SS_FAILED) {
         // s does not need deletion as it is on the stack (unwind does this)
         stat.fail++;
         unwind(l);
@@ -257,7 +257,7 @@ namespace Gecode { namespace Search {
       // Is there any point to make a copy?
       if (i<n-1) {
         // Propagate to fixpoint
-        SpaceStatus ss = s->status(stat.propagate);
+        SpaceStatus ss = s->status(stat);
         /*
          * Again, the space might already propagate to failure
          *
