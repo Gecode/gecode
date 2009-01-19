@@ -244,7 +244,7 @@ namespace Gecode {
   }
 
 
-  template<class Char, class Traits, class T>
+  template<class Char, class Traits>
   std::basic_ostream<Char,Traits>& 
   operator <<(std::basic_ostream<Char,Traits>& os, const DFA& d) {
     std::basic_ostringstream<Char,Traits> st;
