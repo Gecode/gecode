@@ -218,10 +218,13 @@ namespace Gecode {
    * Space: propagation
    *
    */
+
   SpaceStatus
-  Space::_status(unsigned long int& pn) {
-    if (failed())
-      return SS_FAILED;
+  Space::status(unsigned long int& pn, bool& wmp) {
+    SpaceStatus s = SS_FAILED;
+    if (failed()) {
+      s = SS_FAILED; goto exit;
+    }
     if (!stable()) {
       assert(pc.p.active >= &pc.p.queue[0]);
       Propagator* p;
@@ -235,8 +238,7 @@ namespace Gecode {
       p->u.med = 0;
       switch (p->propagate(*this,med_o)) {
       case ES_FAILED:
-        fail(); 
-        return SS_FAILED;
+        fail(); s = SS_FAILED; goto exit;
       case ES_NOFIX:
         // Find next, if possible
         if (p->u.med != 0) {
@@ -308,12 +310,17 @@ namespace Gecode {
      *
      */
     while (b_status != Branching::cast(&a_actors)) {
-      if (b_status->status(*this))
-        return SS_BRANCH;
+      if (b_status->status(*this)) {
+        s = SS_BRANCH; goto exit;
+      }
       b_status = Branching::cast(b_status->next());
     }
     // No branching with alternatives left, space is solved
-    return SS_SOLVED;
+    s = SS_SOLVED;
+  exit:
+    wmp = (n_wmp > 0);
+    if (n_wmp == 1) n_wmp = 0;
+    return s;
   }
 
 
