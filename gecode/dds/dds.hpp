@@ -91,12 +91,11 @@ namespace Gecode {
                 c = NULL;
                 d++;
               }
-              const BranchingDesc* desc = rcs.push(cur,c);
+              const BranchingDesc* desc = rcs.push(*this,cur,c);
               EngineCtrl::push(c,desc);
               commit++;
-              if (const Decomposition::SingletonDesc<int,2>* sd=
-                  dynamic_cast<const Decomposition::SingletonDesc<int,2>*>(
-                    desc)) 
+              if (const Decomposition::SingletonDescBase* sd=
+                  dynamic_cast<const Decomposition::SingletonDescBase*>(desc))
               {
                 sol = cur;
                 rcs.closeBranch<Decomposition::SingletonDescBase, 
@@ -105,16 +104,15 @@ namespace Gecode {
                 EngineCtrl::current(NULL);
                 significantVars.resize(2);
                 significantVars[0] = sd->domainSize();
-                significantVars[1] = sd->idx();
                 return EXS_SINGLETON_BRANCH;
               } else if (const Decomposition::DecompDesc* dd=
                   dynamic_cast<const Decomposition::DecompDesc*>(desc)) {
-                cur->commit(desc,0);
+                cur->commit(*desc,0);
                 significantVars = dd->significantVars(0);
                 // decomp++;
                 return EXS_START_DECOMP;
               }
-              cur->commit(desc,0);
+              cur->commit(*desc,0);
             }
             break;
           default: GECODE_NEVER;

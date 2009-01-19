@@ -42,6 +42,7 @@
 
 #include <gecode/search.hh>
 #include <gecode/int.hh>
+#include <gecode/int/branch.hh>
 
 #include <vector>
 
@@ -205,11 +206,16 @@ namespace Gecode {
   /// Branch over \a x with variable selection \a vars and value selection \a vals, applying decomposition during search if possible
   GECODE_DDS_EXPORT void
   decomposingBranch(Space& home, const IntVarArgs& x, 
-                    IntVarBranch vars, IntValBranch vals);
+                    IntVarBranch vars, IntValBranch vals,
+                    const VarBranchOptions& o_vars = VarBranchOptions::def,
+                    const ValBranchOptions& o_vals = ValBranchOptions::def);
+
   /// Branch over \a x with variable selection \a vars and value selection \a vals, applying decomposition during search if possible
   GECODE_DDS_EXPORT void
   decomposingBranch(Space& home, const BoolVarArgs& x, 
-                    IntVarBranch vars, IntValBranch vals);
+                    IntVarBranch vars, IntValBranch vals,
+                    const VarBranchOptions& o_vars = VarBranchOptions::def,
+                    const ValBranchOptions& o_vals = ValBranchOptions::def);
 
 }
 

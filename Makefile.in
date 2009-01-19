@@ -632,7 +632,7 @@ ITERHDR = gecode/iter.hh \
 # DDS
 #
 
-DDSSRC0 = decomposing-branching dds
+DDSSRC0 = decomposing-branching dds post-view-int post-view-bool
 DDSHDR0 = decomposing-branching dds
 
 DDSSRC 		= $(DDSSRC0:%=gecode/dds/%.cpp) 
@@ -1047,6 +1047,15 @@ $(top_srcdir)/gecode/cpltset/branch.cpp: \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 
+$(top_srcdir)/gecode/dds/post-view-int.cpp: \
+	$(top_srcdir)/gecode/dds/post-view-int.bs \
+	$(top_srcdir)/misc/genbranch.perl
+	perl $(top_srcdir)/misc/genbranch.perl $< > $@
+$(top_srcdir)/gecode/dds/post-view-bool.cpp: \
+	$(top_srcdir)/gecode/dds/post-view-bool.bs \
+	$(top_srcdir)/misc/genbranch.perl
+	perl $(top_srcdir)/misc/genbranch.perl $< > $@
+
 #
 # Registry of post functions
 #
@@ -1264,7 +1273,7 @@ $(SCHEDDLL): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(DDSDLL): $(DDSOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(DDSOBJ) $(DDSSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSEARCH) \
 		@LINKOUTPUT@$(DDSDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))

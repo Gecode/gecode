@@ -94,7 +94,10 @@ while ($l = <FILE>) {
   if ($l =~ /^\[General\]/io) {
     while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
-      if ($l =~ /^View:\s*(\w+)/io) {
+      if ($l =~ /^BranchName:\s*(\w+)/io) {
+        $hasbranchname = 1;
+        $branchname = $1;
+      } elsif ($l =~ /^View:\s*(\w+)/io) {
         $view = $1;
       } elsif ($l =~ /^VarArgs:\s*(\w+)/io) {
         $varargs = $1;
@@ -106,6 +109,9 @@ while ($l = <FILE>) {
         $gns = $1;
       } elsif ($l =~ /^LNS:\s*(.+)/io) {
         $lns = $1;
+      } elsif ($l =~ /^UNS:\s*(.+)/io) {
+        $hasuns = 1;
+        $uns = $1;
       } elsif ($l =~ /^Exception:\s*(.+)/io) {
         $exception = $1;
       } elsif ($l =~ /^Include:\s*(.+)/io) {
@@ -156,9 +162,24 @@ while ($l = <FILE>) {
 }
 close FILE;
 
+if (!$hasbranchname) {
+  $branchname = "branch";
+}
+
 if ($hasinclude) {
 print "#include $include\n";
 }
+
+if ($hasuns) {
+  print "\n";
+  $nss = "";
+  foreach $ns (split('::',$uns)) {
+    $nss .= "::".$ns;
+    print "using namespace $nss;\n";
+  }
+  $pns = $lns."::";
+}
+
 print $hdr;
 foreach $ns (split('::',$lns)) {
   print "namespace $ns { ";
@@ -191,7 +212,7 @@ foreach $ns (split('::',$gns)) {
 }
 print "\n\n";
 print "  void\n";
-print "  branch(Gecode::Space& home, const $varargs\& x,\n";
+print "  $branchname(Gecode::Space& home, const $varargs\& x,\n";
 print "         $varbranch vars, $valbranch vals,\n";
 print "         const Gecode::VarBranchOptions& o_vars,\n";
 print "         const Gecode::ValBranchOptions& o_vals) {\n";
@@ -214,7 +235,7 @@ for ($i=0; $i<$n; $i++) {
   $l =  "        $type[$i] v(home,o_vars);\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
-  print "        post(home,xv,v,vals,o_vals);\n";
+  print "        ".$pns."post(home,xv,v,vals,o_vals);\n";
   print "      }\n";
   print "      break;\n";
 }
@@ -223,7 +244,7 @@ print "      throw $exception;\n";
 print "    }\n";
 print "  }\n\n";
 print "  void\n";
-print "  branch(Gecode::Space& home, const $varargs\& x,\n";
+print "  $branchname(Gecode::Space& home, const $varargs\& x,\n";
 print "         const Gecode::TieBreakVarBranch<$varbranch>\& vars,\n";
 print "         $valbranch vals,\n";
 print "         const Gecode::TieBreakVarBranchOptions& o_vars,\n";
@@ -247,7 +268,7 @@ for ($i=0; $i<$n; $i++) {
 }
 print "    if ((vars.a == $vb[$none])$c ||\n";
 print "        ((vars.b == $vb[$none]) && (vars.c == $vb[$none]) && (vars.d == $vb[$none]))) {\n";
-print "      branch(home,x,vars.a,vals,o_vars.a,o_vals);\n";
+print "      $branchname(home,x,vars.a,vals,o_vars.a,o_vals);\n";
 print "      return;\n";
 print "    }\n";
 print "    ViewArray<$view> xv(home,x);\n";
@@ -269,7 +290,7 @@ for ($i=0; $i<$n; $i++) {
   print "        $type[$i] va(home,o_vars.a);\n";
   print "        ViewSelTieBreakStatic<$type[$i],\n";
   print "          ViewSelTieBreakDynamic<$view> > v(home,va,vbcd);\n";
-  print "        post(home,xv,v,vals,o_vals);\n";
+  print "        ".$pns."post(home,xv,v,vals,o_vals);\n";
   print "      }\n";
   print "      break;\n";
 }
@@ -293,14 +314,14 @@ foreach $ns (split('::',$lns)) {
 }
 
 for ($i=0; $i<$n; $i++) {
-  $l =  "        registerAll$view< $type[$i] >();\n";
+  $l =  "        ".$pns."registerAll$view< $type[$i] >();\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
 }
 
 for ($i=0; $i<$n; $i++) {
   next unless ($i != $none) && !$complete[$i];
-  print "        registerAll$view<ViewSelTieBreakStatic<$type[$i],\n";
+  print "        ".$pns."registerAll$view<ViewSelTieBreakStatic<$type[$i],\n";
   print "                           ViewSelTieBreakDynamic<$view> > >();\n";
 }
 print "      }\n";
