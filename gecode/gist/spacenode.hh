@@ -153,11 +153,12 @@ namespace Gecode { namespace Gist {
     
     /// Recompute workingSpace from a copy higher up, return distance to copy
     int recompute(BestNode* curBest, int c_d, int a_d);
-    /// Acquire working space, either from parent or by recomputation
-    void acquireSpace(BestNode* curBest, int c_d, int a_d);
 
     /// Book-keeping of open children
     void closeChild(bool hadFailures, bool hadSolutions);
+  protected:
+    /// Acquire working space, either from parent or by recomputation
+    void acquireSpace(BestNode* curBest, int c_d, int a_d);
   public:
     /// Construct node
     SpaceNode(void);

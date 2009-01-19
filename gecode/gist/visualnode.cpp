@@ -218,26 +218,24 @@ namespace Gecode { namespace Gist {
   VisualNode::toolTip(BestNode* curBest, int c_d, int a_d) {
     if (getStatus() != BRANCH && getStatus() != DECOMPOSE)
       return "";
-    Space* ws = getSpace(curBest,c_d,a_d);
-    (void) ws->status();
-    assert(ws->status() == SS_BRANCH);
-    const BranchingDesc* d = ws->description();
+    acquireSpace(curBest,c_d,a_d);
+    assert(workingSpace->status() == SS_BRANCH);
+    const BranchingDesc* d = desc.branch;
     Reflection::VarMap vm;
-    ws->getVars(vm, false);
+    workingSpace->getVars(vm, false);
     std::ostringstream tt;
     try {
-      Reflection::BranchingSpec bs = ws->branchingSpec(vm,*d);
+      Reflection::BranchingSpec bs = workingSpace->branchingSpec(vm,*d);
       tt << "Alternatives of branching " << bs.ati().toString() << ":\n";
       for (int i=0; i<d->alternatives(); i++) {
         tt << i << ": ";
-        Reflection::registry().printBranchingSpec(tt,*ws,vm,bs,i);
+        Reflection::registry().printBranchingSpec(tt,*workingSpace,vm,bs,i);
         if (i < d->alternatives()-1)
           tt << "\n";
       }
     } catch (Reflection::ReflectionException&) {
       tt << "No information available";
     }
-    delete d;
     return tt.str();
   }
 
