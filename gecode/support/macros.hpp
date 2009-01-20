@@ -84,7 +84,7 @@
  * \def GECODE_ASSUME
  * \brief Assert certain property
  *
- * This might be used for optimization as well (for example, 
+ * This might be used for optimization as well (for example,
  * Microsoft Visual C++), otherwise it behaves like any
  * assert.
  *

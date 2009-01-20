@@ -135,7 +135,7 @@ namespace Gecode { namespace Set {
      * \brief Free memory for all elements between this and \a l (inclusive)
      */
     void dispose(Space& home, RangeList* l);
-    
+
     /// Allocate memory from space
     static void* operator new(size_t s, Space& home);
     /// Placement-new operator (noop)
@@ -223,7 +223,7 @@ namespace Gecode { namespace Set {
     /// Make this set equal to \a s
     void become(Space& home, const BndSet& s);
     //@}
-    
+
     /// \name Range list access for iteration
     //@{
     /// Return range list for iteration
@@ -394,7 +394,7 @@ namespace Gecode { namespace Set {
   /**
    * \brief Range iterator for the least upper bound
    *
-   * This class provides (by specialization) a range iterator 
+   * This class provides (by specialization) a range iterator
    * for the least upper bounds of all set views.
    *
    * Note that this template class serves only as a specification
@@ -432,11 +432,11 @@ namespace Gecode { namespace Set {
     unsigned int width(void) const;
     //@}
   };
-  
+
   /**
    * \brief Range iterator for the greatest lower bound
    *
-   * This class provides (by specialization) a range iterator 
+   * This class provides (by specialization) a range iterator
    * for the greatest lower bounds of all set views.
    *
    * Note that this template class serves only as a specification
@@ -478,7 +478,7 @@ namespace Gecode { namespace Set {
   /**
    * \brief Range iterator for the unknown set
    *
-   * This class provides a range iterator 
+   * This class provides a range iterator
    * for the unknown set of all set views. The unknown set is the
    * difference between least upper and greatest lower bound, i.e.
    * those elements which still may be in the set, but are not yet
@@ -502,7 +502,7 @@ namespace Gecode { namespace Set {
     void init(const T& x);
     //@}
   };
-  
+
 }}
 
 #include <gecode/set/var-imp/integerset.hpp>
@@ -514,7 +514,7 @@ namespace Gecode { namespace Set {
    * \brief Finite integer set variable implementation
    *
    * \ingroup Other
-   */  
+   */
   class SetVarImp : public SetVarImpBase {
     friend class LubRanges<SetVarImp*>;
     friend class GlbRanges<SetVarImp*>;

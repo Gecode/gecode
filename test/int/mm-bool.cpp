@@ -63,7 +63,7 @@ namespace Test { namespace Int {
      };
 
      /// Executes Boolean instruction for evaluation (checking)
-     int 
+     int
      eval(const BoolInstr* pc, int reg[]) {
        while (true) {
          switch (pc->o) {
@@ -82,7 +82,7 @@ namespace Test { namespace Int {
      }
 
      /// Executes Boolean instruction for constructing Boolean expressions
-     Gecode::BoolExpr 
+     Gecode::BoolExpr
      eval(const BoolInstr* pc, Gecode::BoolExpr reg[]) {
        using namespace Gecode;
        while (true) {
@@ -115,8 +115,8 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Create and register test
-       BoolExprInt(const BoolInstr* bis0, const std::string& s, int c0) 
-         : Test("MiniModel::BoolExpr::Int::"+s+"::"+str(c0),4,0,1), 
+       BoolExprInt(const BoolInstr* bis0, const std::string& s, int c0)
+         : Test("MiniModel::BoolExpr::Int::"+s+"::"+str(c0),4,0,1),
            bis(bis0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -137,14 +137,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test posting Boolean expressions 
+     /// Test posting Boolean expressions
      class BoolExprVar : public Test {
      protected:
        /// Boolean instruction sequence
        const BoolInstr* bis;
      public:
        /// Create and register test
-       BoolExprVar(const BoolInstr* bis0, const std::string& s) 
+       BoolExprVar(const BoolInstr* bis0, const std::string& s)
          : Test("MiniModel::BoolExpr::Var::"+s,5,0,1), bis(bis0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -4332,7 +4332,7 @@ namespace Test { namespace Int {
         }
       }
     };
-       
+
     Create c;
     //@}
    }

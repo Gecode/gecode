@@ -73,7 +73,7 @@ namespace Gecode { namespace Decomposition {
     std::vector<int> out;
     Node(void) : component(-1) {}
   };
-  
+
   void
   findVars(Node* g, int p, Reflection::VarMap& vars, Reflection::Arg* s) {
     if (s->isVar()) {
@@ -88,14 +88,14 @@ namespace Gecode { namespace Decomposition {
     } else if (s->isPair()) {
       findVars(g, p, vars, s->first());
       findVars(g, p, vars, s->second());
-    }    
+    }
   }
 
   void connectedComponents(const Space& home, Reflection::VarMap& vars,
                            Partition& p) {
     int noOfVars = vars.size();
     std::vector<Reflection::ActorSpec> as;
-    for (Reflection::ActorSpecIter si(home,vars); si(); ++si) {      
+    for (Reflection::ActorSpecIter si(home,vars); si(); ++si) {
       Reflection::ActorSpec asi = si.actor();
       if (!asi.isBranching())
         as.push_back(asi);
@@ -144,7 +144,7 @@ namespace Gecode { namespace Decomposition {
     }
     if (separators.size() == 1)
       separators.push_back(label.size());
-    
+
     p.init(label.size(), separators.size());
     for (int i=label.size(); i--;)
       p[i] = label[i];

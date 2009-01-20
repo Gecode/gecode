@@ -43,25 +43,25 @@ namespace Gecode { namespace Int {
     unsigned int p = i / bpui;
     bits[p] |= 1 << (i-p*bpui);
   }
-  
+
   template<class View, class A>
   forceinline bool
   SupportValues<View,A>::bit(unsigned int i) const {
     unsigned int p = i / bpui;
     return (bits[p] & (1 << (i-p*bpui))) != 0;
   }
-  
+
   template<class View, class A>
   forceinline void
   SupportValues<View,A>::reset(void) {
     rp = rp_fst; v = rp->min;
     max = rp->min + static_cast<int>((rp+1)->pos - rp->pos) - 1;
   }
-  
+
   template<class View, class A>
   inline
-  SupportValues<View,A>::SupportValues(A& a0, View x0) 
-    : a(a0), x(x0), sz((x.size() / bpui) + 1), 
+  SupportValues<View,A>::SupportValues(A& a0, View x0)
+    : a(a0), x(x0), sz((x.size() / bpui) + 1),
       bits(a.template alloc<unsigned int>(sz)) {
     for (unsigned int i = (x.size() / bpui) + 1; i--; )
       bits[i] = 0;
@@ -80,14 +80,14 @@ namespace Gecode { namespace Int {
     rp_fst[i].pos=p;
     reset();
   }
-  
+
   template<class View, class A>
   inline
   SupportValues<View,A>::~SupportValues(void) {
     a.free(bits,sz);
     a.free(rp_fst,rp_lst-rp_fst+1);
   }
-  
+
   template<class View, class A>
   forceinline void
   SupportValues<View,A>::operator ++(void) {
@@ -97,25 +97,25 @@ namespace Gecode { namespace Int {
         max = rp->min + static_cast<int>((rp+1)->pos - rp->pos) - 1;
       }
   }
-  
+
   template<class View, class A>
   forceinline bool
   SupportValues<View,A>::operator ()(void) const {
     return rp < rp_lst;
   }
-  
+
   template<class View, class A>
   forceinline int
   SupportValues<View,A>::val(void) const {
     return v;
   }
-  
+
   template<class View, class A>
   forceinline void
   SupportValues<View,A>::support(void) {
     set(rp->pos + static_cast<unsigned int>(v-rp->min));
   }
-  
+
   template<class View, class A>
   forceinline bool
   SupportValues<View,A>::_support(int n) {
@@ -130,7 +130,7 @@ namespace Gecode { namespace Int {
         return true;
       }
       if (l == r) return false;
-      if (n < m->min) 
+      if (n < m->min)
         r=m-1;
       else
         l=m+1;
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int {
     GECODE_NEVER;
     return false;
   }
-  
+
   template<class View, class A>
   forceinline bool
   SupportValues<View,A>::support(int n) {
@@ -146,7 +146,7 @@ namespace Gecode { namespace Int {
       return false;
     return _support(n);
   }
-  
+
   template<class View, class A>
   forceinline bool
   SupportValues<View,A>::support(double n) {
@@ -154,7 +154,7 @@ namespace Gecode { namespace Int {
       return false;
     return _support(static_cast<int>(n));
   }
-  
+
   template<class View, class A>
   forceinline void
   SupportValues<View,A>::Unsupported::find(void) {
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int {
 
   template<class View, class A>
   forceinline
-  SupportValues<View,A>::Unsupported::Unsupported(SupportValues& sv0) 
+  SupportValues<View,A>::Unsupported::Unsupported(SupportValues& sv0)
     : rp(sv0.rp_fst), p(0), sv(sv0) {
     find();
   }
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int {
   SupportValues<View,A>::Unsupported::val(void) const {
     return rp->min+(p-rp->pos);
   }
-    
+
   template<class View, class A>
   inline ModEvent
   SupportValues<View,A>::tell(Space& home) {

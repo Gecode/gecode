@@ -177,7 +177,7 @@ namespace Gecode { namespace Support {
   template <class T, class A>
   forceinline size_t
   DynamicStack<T,A>::size(void) const {
-    return (static_cast<size_t>(limit) * sizeof(T)) + 
+    return (static_cast<size_t>(limit) * sizeof(T)) +
       sizeof(DynamicStack<T,A>);
   }
 

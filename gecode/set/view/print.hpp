@@ -61,7 +61,7 @@ namespace Gecode { namespace Set {
     }
     s << '}';
   }
-    
+
   /// Print set view
   template<class Char, class Traits, class IL, class IU>
   void
@@ -92,13 +92,13 @@ namespace Gecode { namespace Set {
     print(s, x.assigned(), lb, ub, x.cardMin(), x.cardMax()) ;
     return os << s.str();
   }
-  
+
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const EmptyView&) {
     return os << "{}#0";
   }
-  
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const UniverseView&) {
@@ -109,7 +109,7 @@ namespace Gecode { namespace Set {
       << Gecode::Set::Limits::card << ")";
     return os << s.str();
   }
-  
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ConstantView& x) {
@@ -120,7 +120,7 @@ namespace Gecode { namespace Set {
     s << "#(" << x.cardMin() << ")";
     return os << s.str();
   }
-  
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const SingletonView& x) {

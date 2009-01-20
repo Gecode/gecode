@@ -39,10 +39,10 @@
 
 namespace Gecode { namespace CpltSet {
 
-  CpltSetVarImp::CpltSetVarImp(Space& home, 
+  CpltSetVarImp::CpltSetVarImp(Space& home,
                                int glbMin, int glbMax, int lubMin, int lubMax,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
+                               unsigned int cardMin, unsigned int cardMax)
+    : CpltSetVarImpBase(home), domain(bdd_true()),
       min(lubMin), max(lubMax), _assigned(false) {
 
     IntSet glb(glbMin, glbMax);
@@ -53,20 +53,20 @@ namespace Gecode { namespace CpltSet {
 
     for (int i = glbMax; i >= glbMin; i--) {
       domain &= element(i - min);
-    } 
+    }
 
     unsigned int range = tableWidth();
     domain &= cardcheck(home, range, _offset,
-                        static_cast<int> (cardMin), 
-                        static_cast<int> (cardMax));   
+                        static_cast<int> (cardMin),
+                        static_cast<int> (cardMax));
 
     assert(!manager.cfalse(domain));
   }
 
   CpltSetVarImp::CpltSetVarImp(Space& home,
                                int glbMin, int glbMax, const IntSet& lubD,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
+                               unsigned int cardMin, unsigned int cardMax)
+    : CpltSetVarImpBase(home), domain(bdd_true()),
       min(lubD.min()), max(lubD.max()),
       _assigned(false) {
 
@@ -79,7 +79,7 @@ namespace Gecode { namespace CpltSet {
 
     _offset = manager.allocate(tableWidth());
     vc.last();
-    
+
     int c = glbMax;
     for (int i = max; i >= min; i--) {
       if (i != vc.val()) {
@@ -98,16 +98,16 @@ namespace Gecode { namespace CpltSet {
 
     unsigned int range = tableWidth();
     domain &= cardcheck(home, range, _offset,
-                        static_cast<int> (cardMin), 
-                        static_cast<int> (cardMax));   
+                        static_cast<int> (cardMin),
+                        static_cast<int> (cardMax));
 
     assert(!manager.cfalse(domain));
   }
 
   CpltSetVarImp::CpltSetVarImp(Space& home,
                                const IntSet& glbD, int lubMin, int lubMax,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
+                               unsigned int cardMin, unsigned int cardMax)
+    : CpltSetVarImpBase(home), domain(bdd_true()),
       min(lubMin), max(lubMax), _assigned(false) {
 
     IntSet lub(lubMin, lubMax);
@@ -116,17 +116,17 @@ namespace Gecode { namespace CpltSet {
     IntSetRanges glb(glbD);
     Iter::Ranges::ToValues<IntSetRanges> gval(glb);
     Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(gval);
-    
+
     vc.last();
     _offset = manager.allocate(tableWidth());
 
     for (vc.last(); vc(); --vc) {
       domain &= element(vc.val() - min);
-    } 
+    }
 
     unsigned int range = tableWidth();
     domain &= cardcheck(home, range, _offset,
-                        static_cast<int> (cardMin), 
+                        static_cast<int> (cardMin),
                         static_cast<int> (cardMax));
 
     assert(!manager.cfalse(domain));
@@ -134,8 +134,8 @@ namespace Gecode { namespace CpltSet {
 
   CpltSetVarImp::CpltSetVarImp(Space& home,
                                const IntSet& glbD,const IntSet& lubD,
-                               unsigned int cardMin, unsigned int cardMax) 
-    : CpltSetVarImpBase(home), domain(bdd_true()), 
+                               unsigned int cardMin, unsigned int cardMax)
+    : CpltSetVarImpBase(home), domain(bdd_true()),
       min(lubD.min()), max(lubD.max()),
       _assigned(false) {
 
@@ -143,18 +143,18 @@ namespace Gecode { namespace CpltSet {
 
     IntSetRanges glb(glbD);
     Iter::Ranges::ToValues<IntSetRanges> gval(glb);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > 
+    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> >
       vcglb(gval);
     IntSetRanges lub(lubD);
     Iter::Ranges::ToValues<IntSetRanges> lval(lub);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > 
+    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> >
       vclub(lval);
-  
+
     _offset = manager.allocate(tableWidth());
 
     vcglb.last();
     vclub.last();
-  
+
     for (int i = max; i >= min; i--) {
       if (i != vclub.val()) {
         if (vcglb() && vcglb.val() == i) {
@@ -171,24 +171,24 @@ namespace Gecode { namespace CpltSet {
 
     unsigned int range = tableWidth();
     domain &= cardcheck(home,range, _offset,
-                        static_cast<int> (cardMin), 
-                        static_cast<int> (cardMax));   
+                        static_cast<int> (cardMin),
+                        static_cast<int> (cardMax));
 
     assert(!manager.cfalse(domain));
   }
 
   // copy bddvar
   CpltSetVarImp::CpltSetVarImp(Space& home, bool share, CpltSetVarImp& x)
-    : CpltSetVarImpBase(home,share,x), 
+    : CpltSetVarImpBase(home,share,x),
       domain(x.domain), min(x.min), max(x.max),
       _offset(x._offset), _assigned(false) {
   }
 
-  inline void 
+  inline void
   CpltSetVarImp::dispose(Space&) {
     manager.dispose(domain);
     // only variables with nodes in the table need to be disposed
-    if (!(_offset == 0 && 
+    if (!(_offset == 0 &&
           min == Set::Limits::min &&
           max == Set::Limits::max)
         ) {
@@ -215,24 +215,24 @@ namespace Gecode { namespace CpltSet {
     if (!_assigned) {
       // (C1) there is only one solution (i.e. only one path)
       bool cond1 = (unsigned int) manager.bddpath(domain) == 1;
-      // (C2) the solution talks about all elements 
+      // (C2) the solution talks about all elements
       //      (i.e. the number of nodes used for the bdd uses the bdd nodes
       //      of all elements for the CpltSetVar)
       bool cond2 = (unsigned int) manager.bddsize(domain) == tableWidth();
       _assigned = cond1 && cond2;
-    } 
+    }
     return _assigned;
   }
 
-  ModEvent 
+  ModEvent
   CpltSetVarImp::intersect(Space& home, bdd& d) {
     bool assigned_before = assigned();
     bdd olddom = domain;
     domain &= d;
 
     bool assigned_new = assigned();
-    if (manager.cfalse(domain)) 
-      return ME_CPLTSET_FAILED; 
+    if (manager.cfalse(domain))
+      return ME_CPLTSET_FAILED;
 
     ModEvent me = ME_CPLTSET_NONE;
     if (assigned_new) {
@@ -254,10 +254,10 @@ namespace Gecode { namespace CpltSet {
     return me;
   }
 
-  ModEvent 
+  ModEvent
   CpltSetVarImp::exclude(Space& home, int a, int b) {
     // values are already excluded
-    if (a > max  || b < min) 
+    if (a > max  || b < min)
       return ME_CPLTSET_NONE;
 
     int mi = std::max(min, a);
@@ -265,15 +265,15 @@ namespace Gecode { namespace CpltSet {
 
     bdd notinlub  = bdd_true();
     // get the negated bdds for value i in [a..b]
-    for (int i = ma; i >= mi; i--)         
+    for (int i = ma; i >= mi; i--)
       notinlub &= elementNeg(i - min);
 
     return intersect(home, notinlub);
   }
 
-  ModEvent 
+  ModEvent
   CpltSetVarImp::include(Space& home, int a, int b) {
-    if (a < min || b > max) 
+    if (a < min || b > max)
       return ME_CPLTSET_FAILED;
 
     bdd in_glb  = bdd_true();
@@ -285,17 +285,17 @@ namespace Gecode { namespace CpltSet {
 
   ModEvent
   CpltSetVarImp::nq(Space& home, int a, int b) {
-    if (b < min || a > max) 
+    if (b < min || a > max)
       return ME_CPLTSET_NONE;
 
     Iter::Ranges::Singleton m(a, b);
-    bdd ass = !(iterToBdd(m));    
+    bdd ass = !(iterToBdd(m));
     return intersect(home, ass);
   }
 
   ModEvent
   CpltSetVarImp::eq(Space& home, int a, int b) {
-    if (b < min || a > max) 
+    if (b < min || a > max)
       return ME_CPLTSET_FAILED;
 
     Iter::Ranges::Singleton m(a, b);
@@ -303,25 +303,25 @@ namespace Gecode { namespace CpltSet {
     return intersect(home, ass);
   }
 
-  ModEvent 
+  ModEvent
   CpltSetVarImp::intersect(Space& home, int a, int b) {
     ModEvent me_left = exclude(home, Set::Limits::min, a - 1);
 
-    if (me_failed(me_left) || me_left == ME_CPLTSET_VAL) 
+    if (me_failed(me_left) || me_left == ME_CPLTSET_VAL)
       return me_left;
 
     ModEvent me_right = exclude(home, b + 1, Set::Limits::max);
 
-    if (me_failed(me_right) || me_right == ME_CPLTSET_VAL) 
+    if (me_failed(me_right) || me_right == ME_CPLTSET_VAL)
       return me_right;
 
-    if (me_left > 0 || me_right > 0) 
+    if (me_left > 0 || me_right > 0)
       return ME_CPLTSET_DOM;
 
-    return ME_CPLTSET_NONE;    
+    return ME_CPLTSET_NONE;
   }
 
-  ModEvent 
+  ModEvent
   CpltSetVarImp::cardinality(Space& home, int l, int u) {
     unsigned int maxcard = tableWidth();
     // compute the cardinality formula
@@ -331,7 +331,7 @@ namespace Gecode { namespace CpltSet {
 
   bool
   CpltSetVarImp::knownIn(int v) const {
-    if (manager.ctrue(domain)) 
+    if (manager.ctrue(domain))
       return false;
     if (v<min || v>max)
       return false;
@@ -341,7 +341,7 @@ namespace Gecode { namespace CpltSet {
 
   bool
   CpltSetVarImp::knownOut(int v) const {
-    if (manager.ctrue(domain)) 
+    if (manager.ctrue(domain))
       return false;
     if (v<min || v>max)
       return false;
@@ -351,9 +351,9 @@ namespace Gecode { namespace CpltSet {
 
   unsigned int
   CpltSetVarImp::lubSize(void) const {
-    if (manager.ctrue(domain)) 
+    if (manager.ctrue(domain))
       return tableWidth();
-    
+
     BddIterator iter(domain);
     int out = 0;
     while (iter()) {
@@ -364,9 +364,9 @@ namespace Gecode { namespace CpltSet {
     return tableWidth() - out;
   }
 
-  int 
+  int
   CpltSetVarImp::glbMin(void) const {
-    if (manager.ctrue(domain)) 
+    if (manager.ctrue(domain))
       return initialLubMin();
 
     BddIterator iter(domain);
@@ -374,24 +374,24 @@ namespace Gecode { namespace CpltSet {
       if (iter.status() == FIX_GLB) {
         int idx = iter.label() - offset();
         return initialLubMin() + idx;
-      } 
+      }
       ++iter;
     }
     return MIN_OF_EMPTY;
   }
 
-  int 
+  int
   CpltSetVarImp::glbMax(void) const {
-    if (manager.ctrue(domain)) 
+    if (manager.ctrue(domain))
       return initialLubMax();
-  
+
     BddIterator iter(domain);
     int lastglb = -1;
     while (iter()) {
       if (iter.status() == FIX_GLB) {
         int idx = iter.label() - offset();
         lastglb = initialLubMin() + idx;
-      } 
+      }
       ++iter;
     }
     return (lastglb == -1) ? MAX_OF_EMPTY : lastglb;
@@ -409,24 +409,24 @@ namespace Gecode { namespace CpltSet {
     return size;
   }
 
-  int 
+  int
   CpltSetVarImp::unknownMin(void) const {
-    if (manager.ctrue(domain)) { return initialLubMin(); } 
+    if (manager.ctrue(domain)) { return initialLubMin(); }
     BddIterator iter(domain);
     while (iter()) {
       NodeStatus status = iter.status();
       if (status == FIX_UNKNOWN || status == UNDET) {
         int idx = iter.label() - offset();
         return initialLubMin() + idx;
-      } 
+      }
       ++iter;
     }
     return MIN_OF_EMPTY;
   }
 
-  int 
+  int
   CpltSetVarImp::unknownMax(void) const {
-    if (manager.ctrue(domain)) 
+    if (manager.ctrue(domain))
       return initialLubMax();
 
     BddIterator iter(domain);
@@ -436,7 +436,7 @@ namespace Gecode { namespace CpltSet {
       if (status == FIX_UNKNOWN || status == UNDET) {
         int idx = iter.label() - offset();
         lastunknown = initialLubMin() + idx;
-      } 
+      }
       ++iter;
     }
     return (lastunknown == -1) ?  MAX_OF_EMPTY : lastunknown;
@@ -455,16 +455,16 @@ namespace Gecode { namespace CpltSet {
       ++iter;
     }
     return size;
-  }    
+  }
 
-  int 
+  int
   CpltSetVarImp::lubMin(void) const {
     if (manager.ctrue(domain)) { return initialLubMin(); }
     Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
     return !lub() ? MIN_OF_EMPTY : lub.min();
   }
 
-  int 
+  int
   CpltSetVarImp::lubMax(void) const {
     if (manager.ctrue(domain)) { return initialLubMax(); }
     Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
@@ -477,15 +477,15 @@ namespace Gecode { namespace CpltSet {
     return maxlub;
   }
 
-  int 
+  int
   CpltSetVarImp::lubMinN(int n) const {
-    if (manager.ctrue(domain)) 
-      return initialLubMin() + n; 
+    if (manager.ctrue(domain))
+      return initialLubMin() + n;
 
     Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
 
-    if (!lub()) 
-      return MIN_OF_EMPTY; 
+    if (!lub())
+      return MIN_OF_EMPTY;
 
     while (lub()) {
       if (n < (int) lub.width()) {
@@ -516,13 +516,13 @@ namespace Gecode { namespace CpltSet {
     if (!manager.leaf(c)) {
       SharedArray<bdd> dummy(n);
       nodes = dummy;
-    
+
       assert(!manager.leaf(c));
       // insert bdd root into dqueue
       nodes[l] = c;
       manager.mark(nodes[l]);
       markref++;
-      l++;      
+      l++;
     }
     if (operator ()()) {
       operator ++();
@@ -560,7 +560,7 @@ namespace Gecode { namespace CpltSet {
         if (manager.marked(nodes[i])) {
           manager.unmark(nodes[i]);
           markref--;
-        } 
+        }
       }
     }
     if (r < n - 1) {
@@ -568,13 +568,13 @@ namespace Gecode { namespace CpltSet {
         if (manager.marked(nodes[i])) {
           manager.unmark(nodes[i]);
           markref--;
-        } 
+        }
       }
     }
   }
 
   // iterate to the next level of nodes
-  void 
+  void
   BddIterator::operator ++(void) {
     if (empty()) { // no more nodes on the stack to be iterated
       singleton = false;
@@ -603,15 +603,15 @@ namespace Gecode { namespace CpltSet {
     while (l > 0) {
       stackleft = true;
 
-      /* 
-       * if left side contains at least two nodes 
+      /*
+       * if left side contains at least two nodes
        * L: n_1 n_2 ______
        * if level(n_1) < level(n_2) move n_2 to the right end of the dqueue
-       * maintain the invariant: 
+       * maintain the invariant:
        * for all nodes n_i, n_j in L: level(n_i) = level(n_j)
        * difference detected set UNDET
        */
-      while ((l > 1) && 
+      while ((l > 1) &&
              manager.bddidx(nodes[l - 1]) < manager.bddidx(nodes[l - 2])) {
         int shift = l - 2;
         int norm  = l - 1;
@@ -620,7 +620,7 @@ namespace Gecode { namespace CpltSet {
         if (r == n - 1) {
           nodes[r] = nodes[shift];
           manager.mark(nodes[r]); markref++;
-        } else {    
+        } else {
           for (int i = r; i < n - 1; i++) {
             nodes[i] = nodes[i + 1];
           }
@@ -633,7 +633,7 @@ namespace Gecode { namespace CpltSet {
         l--;
       }
       // symmetric case
-      while ((l > 1) && 
+      while ((l > 1) &&
              manager.bddidx(nodes[l - 1]) > manager.bddidx(nodes[l - 2])) {
         int shift = l - 1;
         manager.unmark(nodes[shift]); markref--;
@@ -641,7 +641,7 @@ namespace Gecode { namespace CpltSet {
         if (r == n - 1) {
           nodes[r] = nodes[shift];
           manager.mark(nodes[r]); markref++;
-        } else {    
+        } else {
           for (int i = r; i < n - 1; i++) {
             nodes[i] = nodes[i + 1];
           }
@@ -655,12 +655,12 @@ namespace Gecode { namespace CpltSet {
 
       l--;
       manager.unmark(nodes[l]);
-      markref--; 
+      markref--;
       cur = nodes[l];
       assert(!manager.marked(cur));
       nodes[l] = bdd();
 
-      // cur is an internal node, 
+      // cur is an internal node,
       // that is nor true nor else branch are leaves
       if (!manager.leaf(cur)) {
         bdd t   = manager.iftrue(cur);
@@ -671,7 +671,7 @@ namespace Gecode { namespace CpltSet {
 
         bool leaf_t = manager.leaf(t);
         bool leaf_f = manager.leaf(f);
-      
+
         if (flag != UNDET) {
           // REMOVED FROM LUB
           if (fixed_not_lub) {
@@ -701,7 +701,7 @@ namespace Gecode { namespace CpltSet {
             }
           }
         }
-      
+
         if (!leaf_t) {
           if (!manager.marked(t)) {
             // if we encounter different indices in the child nodes
@@ -711,10 +711,10 @@ namespace Gecode { namespace CpltSet {
             markref++;
             r--;
           }
-          // else child leads directly to true 
+          // else child leads directly to true
           if (manager.ctrue(f)) {
             bypassed = true;
-          } 
+          }
         } else {
           // larger levels cannot be fixed as they do not lie
           // on all paths leading towards a true leaf
@@ -726,7 +726,7 @@ namespace Gecode { namespace CpltSet {
           if (!manager.marked(f)) {
             nodes[r] = f;
             manager.mark(nodes[r]);
-            markref++; 
+            markref++;
             r--;
           }
           if (manager.ctrue(t)) {
@@ -735,7 +735,7 @@ namespace Gecode { namespace CpltSet {
             // std::cout << "bypass " << "["<<_level<<"]= UNDET\n";
             // flag = UNDET;
             // break;
-          } 
+          }
         }
       }
       if (empty()) {
@@ -745,21 +745,21 @@ namespace Gecode { namespace CpltSet {
       }
     }
 
-    // ensure that iterations processes alternately 
+    // ensure that iterations processes alternately
     // left and right altnerately
     if (stackleft) {
       cache_unmark();
       assert(markref == 0);
       return;
     }
-  
+
     if (r < n - 1) {
       _level++;
     }
 
     // process right stack half
     while (r < n - 1) {
-        while ((r < n - 2) && manager.bddidx(nodes[r + 1]) < 
+        while ((r < n - 2) && manager.bddidx(nodes[r + 1]) <
                               manager.bddidx(nodes[r + 2])) {
           int shift = r + 2;
           int norm  = r + 1;
@@ -768,7 +768,7 @@ namespace Gecode { namespace CpltSet {
           if (l == 0) {
             nodes[l] = nodes[shift];
             manager.mark(nodes[l]); markref++;
-          } else {    
+          } else {
             for (int i = l; i > 0; i--) {
               nodes[i] = nodes[i - 1];
             }
@@ -780,7 +780,7 @@ namespace Gecode { namespace CpltSet {
           nodes[norm] = bdd();
           r++;
         }
-      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) > 
+      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) >
                             manager.bddidx(nodes[r + 2])) {
         int shift = r + 1;
         manager.unmark(nodes[shift]); markref--;
@@ -802,7 +802,7 @@ namespace Gecode { namespace CpltSet {
       // check whether right-hand side nodes has fixed vars
       r++;
       manager.unmark(nodes[r]);
-      markref--; 
+      markref--;
       cur = nodes[r];
       assert(!manager.marked(cur));
 
@@ -868,7 +868,7 @@ namespace Gecode { namespace CpltSet {
             manager.mark(nodes[l]);
             markref++;
             l++;
-          } 
+          }
           // bypassed f right
           if (manager.ctrue(t)) {
             bypassed = true;

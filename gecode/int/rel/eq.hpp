@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Rel {
     if (View::me(med) == ME_INT_VAL)
       return PropCost::unary(PropCost::LOW);
     else
-      return PropCost::linear((View::me(med) == ME_INT_DOM) ? 
+      return PropCost::linear((View::me(med) == ME_INT_DOM) ?
                               PropCost::LOW : PropCost::MED, x.size());
   }
 
@@ -568,7 +568,7 @@ namespace Gecode { namespace Int { namespace Rel {
         GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
-      (void) new (home) ReEqDomInt(home,x,c,b);        
+      (void) new (home) ReEqDomInt(home,x,c,b);
     }
     return ES_OK;
   }
@@ -589,22 +589,22 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqDomInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
-      GECODE_ME_CHECK(x0.eq(home,c)); 
+      GECODE_ME_CHECK(x0.eq(home,c));
       assert(x0.assigned());
       goto subsumed;
     }
     if (b.zero()) {
-      GECODE_ME_CHECK(x0.nq(home,c)); 
+      GECODE_ME_CHECK(x0.nq(home,c));
       x0.cancel(home,*this,PC_INT_DOM);
       goto subsumed;
     }
     switch (rtest_eq_dom(x0,c)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home)); 
+      GECODE_ME_CHECK(b.one_none(home));
       assert(x0.assigned());
       goto subsumed;
     case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); 
+      GECODE_ME_CHECK(b.zero_none(home));
       x0.cancel(home,*this,PC_INT_DOM);
       goto subsumed;
     case RT_MAYBE:
@@ -613,7 +613,7 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     return ES_FIX;
   subsumed:
-    return ES_SUBSUMED(*this,sizeof(*this));    
+    return ES_SUBSUMED(*this,sizeof(*this));
   }
 
 
@@ -645,7 +645,7 @@ namespace Gecode { namespace Int { namespace Rel {
         GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
-      (void) new (home) ReEqBndInt(home,x,c,b);        
+      (void) new (home) ReEqBndInt(home,x,c,b);
     }
     return ES_OK;
   }
@@ -666,22 +666,22 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqBndInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
-      GECODE_ME_CHECK(x0.eq(home,c)); 
+      GECODE_ME_CHECK(x0.eq(home,c));
       assert(x0.assigned());
       goto subsumed;
     }
     if (b.zero()) {
-      GECODE_ME_CHECK(x0.nq(home,c)); 
+      GECODE_ME_CHECK(x0.nq(home,c));
       x0.cancel(home,*this,PC_INT_BND);
       goto subsumed;
     }
     switch (rtest_eq_bnd(x0,c)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home)); 
+      GECODE_ME_CHECK(b.one_none(home));
       assert(x0.assigned());
       goto subsumed;
     case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); 
+      GECODE_ME_CHECK(b.zero_none(home));
       x0.cancel(home,*this,PC_INT_BND);
       goto subsumed;
     case RT_MAYBE:

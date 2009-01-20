@@ -37,7 +37,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include "examples/support.hh"
 #include <gecode/minimodel.hh>
@@ -59,7 +59,7 @@ protected:
   /// Number of teams
   const int teams;
   /// Play information
-  Play* plays; 
+  Play* plays;
   /// Return number of weeks
   int weeks(void) const {
     return teams-1;
@@ -107,7 +107,7 @@ public:
     for (int p=0; p<periods(); p++)
       for (int w=0; w<weeks(); w++)
         play(p,w).h = play(p,w).a = play(p,w).g = 0;
-    
+
     // Determine the first game (week 0 period 0)
     play(0,0).h = 1;
     play(0,0).a = 2;
@@ -227,7 +227,7 @@ public:
       distinct(*this, n, opt.icl());
 
       r.hag(w,rh,ra,rg);
-        
+
       for (int p=0; p<periods(); p++) {
         element(*this, rh, n[p], h(p,w));
         element(*this, ra, n[p], a(p,w));
@@ -307,7 +307,7 @@ public:
       os.width(2);
       os << w+1 << "]: ";
       for (int p=0; p<periods(); p++) {
-        os.width(2); 
+        os.width(2);
         os << h(p,w).val() << '-';
         os.width(2);
         os << a(p,w).val() << " ";
@@ -321,7 +321,7 @@ public:
 /** \brief Main-function
  *  \relates SportsLeague
  */
-int 
+int
 main(int argc, char* argv[]) {
   SizeOptions opt("Sports League Scheduling");
   opt.icl(ICL_DOM);

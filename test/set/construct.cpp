@@ -83,7 +83,7 @@ namespace Test { namespace Set {
             return;
           }
         }
-        home.fail();                       
+        home.fail();
       }
       void con(Space& home, int glbMin, int glbMax, const IntSet& lub,
                      unsigned int minCard = 0,
@@ -98,7 +98,7 @@ namespace Test { namespace Set {
             return;
           }
         }
-        home.fail();                       
+        home.fail();
       }
       void con(Space& home, const IntSet& glb, const IntSet& lub,
                      unsigned int minCard = 0,
@@ -113,7 +113,7 @@ namespace Test { namespace Set {
             return;
           }
         }
-        home.fail();                       
+        home.fail();
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray&, IntVarArray&) {
@@ -128,7 +128,7 @@ namespace Test { namespace Set {
         con(home, IntSet(1,0), 1,1, 2,3);
         con(home, 1,0, IntSet(1,1), 2,3);
         con(home, IntSet(1,0), IntSet(1,1), 2,3);
-        
+
         // Check max cardinality
         con(home, 1,3, 1,4, 0,2);
         con(home, IntSet(1,3), 1,4, 0,2);

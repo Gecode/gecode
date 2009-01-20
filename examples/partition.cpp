@@ -78,7 +78,7 @@ public:
 
     for (int i = n; i--; ) {
       sx[i] = sxy[i] =   sqr(*this, x[i]);
-      sy[i] = sxy[n+i] = sqr(*this, y[i]); 
+      sy[i] = sxy[n+i] = sqr(*this, y[i]);
     }
     linear(*this, c, sxy, IRT_EQ, 0);
 

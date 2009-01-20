@@ -39,7 +39,7 @@
 
 namespace Gecode {
 
-  /** 
+  /**
    * \brief Advisor storing a single view
    *
    */
@@ -48,7 +48,7 @@ namespace Gecode {
   protected:
     /// The single view
     View x;
-  public: 
+  public:
     /// Constructor for creation
     template <class A>
     ViewAdvisor(Space& home, Propagator& p, Council<A>& c, View x0);
@@ -67,15 +67,15 @@ namespace Gecode {
   template <class View>
   template <class A>
   forceinline
-  ViewAdvisor<View>::ViewAdvisor(Space& home, Propagator& p, 
+  ViewAdvisor<View>::ViewAdvisor(Space& home, Propagator& p,
                                  Council<A>& c, View x0)
     : Advisor(home,p,c), x(x0) {
     x.subscribe(home,*this);
   }
   template <class View>
   forceinline
-  ViewAdvisor<View>::ViewAdvisor(Space& home, bool share, 
-                                 ViewAdvisor<View>& a) 
+  ViewAdvisor<View>::ViewAdvisor(Space& home, bool share,
+                                 ViewAdvisor<View>& a)
     : Advisor(home,share,a) {
     x.update(home,share,a.x);
   }

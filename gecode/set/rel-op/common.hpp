@@ -44,11 +44,11 @@
 #ifndef __GECODE_SET_RELOP_COMM_ICC__
 #define __GECODE_SET_RELOP_COMM_ICC__
 
-namespace Gecode { 
+namespace Gecode {
 
   template <class View0, class View1>
   forceinline bool
-  viewarrayshared(const Space& home, 
+  viewarrayshared(const Space& home,
                   const ViewArray<View0>& va, const View1& y) {
     return va.shared(home,y);
   }
@@ -101,15 +101,15 @@ namespace Set { namespace RelOp {
       {
         LubRanges<View0> x0ub(x0);
         LubRanges<View1> x1ub(x1);
-        Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> > 
+        Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> >
           u1(x0ub,x1ub);
         unsigned int s1 = Iter::Ranges::size(u1);
-        
+
         if (x0.cardMin() + x1.cardMin() > s1) {
-          GECODE_ME_CHECK_MODIFIED(modified, 
+          GECODE_ME_CHECK_MODIFIED(modified,
             x2.cardMin(home, x0.cardMin()+x1.cardMin()-s1));
         }
-        
+
         // unsigned int res = std::max(x0.cardMin()+
         //                             (x1.cardMin()<s1 ?
         //                              0 : x1.cardMin()-s1),
@@ -121,10 +121,10 @@ namespace Set { namespace RelOp {
       {
         GlbRanges<View0> x0lb(x0);
         GlbRanges<View1> x1lb(x1);
-        Iter::Ranges::Union<GlbRanges<View0>, GlbRanges<View1> > 
+        Iter::Ranges::Union<GlbRanges<View0>, GlbRanges<View1> >
           u1(x0lb,x1lb);
         unsigned int s1 = Iter::Ranges::size(u1);
-        GECODE_ME_CHECK_MODIFIED(modified, 
+        GECODE_ME_CHECK_MODIFIED(modified,
                           x2.cardMax(home,
                                      x0.cardMax()+x1.cardMax()-s1));
       }
@@ -172,7 +172,7 @@ namespace Set { namespace RelOp {
         LubRanges<View1> x1ub(x1);
         Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> > u1(x0ub,x1ub);
         unsigned int s1 = Iter::Ranges::size(u1);
-        GECODE_ME_CHECK_MODIFIED(modified, 
+        GECODE_ME_CHECK_MODIFIED(modified,
                           x2.cardMax(home,
                                      std::min(x0.cardMax()+x1.cardMax(),s1)));
       }

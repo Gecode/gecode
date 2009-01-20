@@ -44,7 +44,7 @@
 
 namespace Gecode { namespace Support {
 
-  forceinline void* 
+  forceinline void*
   Symbol::SO::operator new(size_t s) {
     return heap.ralloc(s);
   }
@@ -72,7 +72,7 @@ namespace Gecode { namespace Support {
     return d;
   }
 
-  forceinline 
+  forceinline
   Symbol::SO::SO(const char* s0, bool copy)
     : s(copy ? strdup(s0) : const_cast<char*>(s0)), own(copy), use_cnt(0) {}
 
@@ -116,7 +116,7 @@ namespace Gecode { namespace Support {
   Symbol::SO::eq(const char* other) const {
     return (!strcmp(s, other));
   }
-  
+
 
   Symbol::Symbol(const char* s0, bool copy)
     : so(new SO(s0, copy)) {
@@ -157,12 +157,12 @@ namespace Gecode { namespace Support {
     }
     return *this;
   }
-  
+
   bool
   Symbol::empty(void) const {
     return so==NULL;
   }
-  
+
   Symbol
   Symbol::copy(void) const {
     Symbol ret;
@@ -186,7 +186,7 @@ namespace Gecode { namespace Support {
     }
     return *this;
   }
-  
+
   int
   Symbol::hash(int m) const {
     if (so == NULL)
@@ -207,13 +207,13 @@ namespace Gecode { namespace Support {
       return s0[0] == 0;
     return so->eq(s0);
   }
-  
+
   std::string
   Symbol::toString(void) const {
     if (so) return so->s;
     return "";
   }
-  
+
   Symbol::~Symbol(void) {
     if ((so != NULL) && so->cancel()) {
       if (so->own)

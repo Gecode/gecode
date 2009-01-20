@@ -50,12 +50,12 @@ namespace Gecode { namespace Support {
   marked(void* p) {
     return (reinterpret_cast<ptrdiff_t>(p) & 1) != 0;
   }
-  forceinline void* 
+  forceinline void*
   mark(void* p) {
     assert(!marked(p));
     return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)+1);
   }
-  forceinline void* 
+  forceinline void*
   unmark(void* p) {
     assert(marked(p));
     return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)-1);

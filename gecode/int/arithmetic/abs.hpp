@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (View::me(med) == ME_INT_VAL)
       return PropCost::unary(PropCost::LOW);
     else
-      return PropCost::binary((View::me(med) == ME_INT_DOM) ? 
+      return PropCost::binary((View::me(med) == ME_INT_DOM) ?
                               PropCost::MED : PropCost::LOW);
   }
 
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
       Union<Positive<ViewRanges<View> >,
         Minus<Negative<ViewRanges<View> > > > u(p,m);
-      
+
       GECODE_ME_CHECK(x1.inter_r(home,u,false));
 
     }
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       Minus<ViewRanges<View> > m(j);
 
       Union<ViewRanges<View>,Minus<ViewRanges<View> > > u(i,m);
-      
+
       GECODE_ME_CHECK(x0.inter_r(home,u,false));
     }
 

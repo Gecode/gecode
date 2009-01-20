@@ -61,15 +61,15 @@ namespace {
   public:
     /// Test whether search must be stopped
     virtual bool stop(const Search::Statistics& s) {
-      return 
-        ((ns != NULL) && ns->stop(s)) || 
-        ((fs != NULL) && fs->stop(s)) || 
+      return
+        ((ns != NULL) && ns->stop(s)) ||
+        ((fs != NULL) && fs->stop(s)) ||
         ((ts != NULL) && ts->stop(s));
     }
     /// Create appropriate stop-object
-    static Search::Stop* 
+    static Search::Stop*
     create(unsigned int node, unsigned int fail, unsigned int time) {
-      if ((node == 0) && (fail == 0) && (time == 0)) 
+      if ((node == 0) && (fail == 0) && (time == 0))
         return NULL;
       else
         return new Cutoff(node,fail,time);
@@ -124,7 +124,7 @@ namespace {
          << std::setprecision(6) << t << " ms)";
     }
   };
-  
+
 }
 
 
@@ -226,9 +226,9 @@ ExampleBase<Space>::run(const Options& o) {
              << endl
              << "Summary" << endl
              << "\truntime:      ";
-        t.stop(cout); 
+        t.stop(cout);
         cout << endl
-             << "\tsolutions:    " 
+             << "\tsolutions:    "
              << abs(static_cast<int>(o.solutions()) - i) << endl
              << "\tpropagations: " << stat.propagate << endl
              << "\tnodes:        " << stat.node << endl
@@ -261,7 +261,7 @@ ExampleBase<Space>::run(const Options& o) {
         cout << endl
              << "\tpropagators:  " << n_p << endl
              << "\tbranchings:   " << n_b << endl
-             << "\tsolutions:    " 
+             << "\tsolutions:    "
              << abs(static_cast<int>(o.solutions()) - i) << endl
              << "\tpropagations: " << stat.propagate << endl
              << "\tnodes:        " << stat.node << endl

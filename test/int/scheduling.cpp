@@ -49,7 +49,7 @@ namespace Test { namespace Int {
 
    /// Tests for scheduling constraints
    namespace Scheduling {
-   
+
      /**
       * \defgroup TaskTestIntScheduling Scheduling constraints
       * \ingroup TaskTestInt
@@ -89,7 +89,7 @@ namespace Test { namespace Int {
          return new Ass(share,*this);
        }
      };
-   
+
      /// Class for generating reasonable assignments
      class CumulativeAssignment : public Assignment {
        /// Current assignment
@@ -105,7 +105,7 @@ namespace Test { namespace Int {
          e = new Gecode::DFS<Ass>(a);
          delete a;
          nxt = cur = e->next();
-         if (cur != NULL) 
+         if (cur != NULL)
            nxt = e->next();
        }
        /// Test whether all assignments have been iterated
@@ -128,7 +128,7 @@ namespace Test { namespace Int {
          delete cur; delete nxt; delete e;
        }
      };
-   
+
      /// Event to be scheduled
      class Event {
      public:
@@ -136,12 +136,12 @@ namespace Test { namespace Int {
        bool start; ///< Whether event has just started
        /// Initialize event
        Event(int pos, int height, bool s) : p(pos), h(height), start(s) {}
-       /// Test whether this event is before event \a e 
-       bool operator<(const Event& e) const { 
-         return p<e.p; 
+       /// Test whether this event is before event \a e
+       bool operator<(const Event& e) const {
+         return p<e.p;
        }
      };
-   
+
      /// Describe that event is below a certain limit
      class Below {
      public:
@@ -149,8 +149,8 @@ namespace Test { namespace Int {
        /// Initialize
        Below(int l) : limit(l) {}
        /// Test whether \a val is below limit
-       bool operator()(int val) { 
-         return val <= limit; 
+       bool operator()(int val) {
+         return val <= limit;
        }
      };
      /// Describe that event is above a certain limit
@@ -160,11 +160,11 @@ namespace Test { namespace Int {
        /// Initialize
        Above(int l) : limit(l) {}
        /// Test whether \a val is above limit
-       bool operator()(int val) { 
-         return val >= limit; 
+       bool operator()(int val) {
+         return val >= limit;
        }
      };
-   
+
      /// Check whether event \a e is valid
      template <class C>
      bool valid(std::vector<Event> e, C comp) {
@@ -185,7 +185,7 @@ namespace Test { namespace Int {
        }
        return true;
      }
-   
+
      /// Test for cumulatives constraint
      class Cumulatives : public Test {
      protected:
@@ -243,7 +243,7 @@ namespace Test { namespace Int {
          cumulatives(home, m, s, d, e, h, l, at_most);
        }
      };
-     
+
      Cumulatives c1t1("1t1", 1,  true, 1);
      Cumulatives c1f1("1f1", 1, false, 1);
      Cumulatives c1t2("1t2", 1,  true, 2);
@@ -269,7 +269,7 @@ namespace Test { namespace Int {
      Cumulatives c3t_3("3t-3", 3,  true, -3);
      Cumulatives c3f_3("3f-3", 3, false, -3);
      //@}
-   
+
    }
 }}
 

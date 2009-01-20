@@ -1,5 +1,5 @@
-/****   , [ qsolver.hh ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ qsolver.hh ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 using namespace Gecode;
 class QECODE_VTABLE_EXPORT QSolver {
-    
+
 private:
     int n;
     Implicative* sp;

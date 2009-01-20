@@ -53,9 +53,9 @@ namespace Test { namespace Set {
     static IntSet ds_33(-3,3);
     static IntSet ds_22(-2,2);
     static IntSet ds_12(-1,2);
-    
+
     static IntSet iss[] = {IntSet(-1,1), IntSet(-4,-4), IntSet(0,2)};
-    
+
     /// Test for set relation constraint with constants
     class RelSIS : public SetTest {
     private:
@@ -104,25 +104,25 @@ namespace Test { namespace Set {
         switch (sot) {
         case SOT_UNION:
           {
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
               u(isr, xr0);
             return sol(u,xr1);
           }
           break;
         case SOT_DUNION:
           {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
               inter(isr, xr0);
             if (inter())
               return false;
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
               u(isr,xr0);
             return sol(u,xr1);
           }
           break;
         case SOT_INTER:
           {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
               u(isr,xr0);
             return sol(u,xr1);
           }
@@ -130,14 +130,14 @@ namespace Test { namespace Set {
         case SOT_MINUS:
           {
             if (!inverse) {
-              Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> 
+              Iter::Ranges::Diff<IntSetRanges, CountableSetRanges>
                 u(isr,xr0);
               return sol(u,xr1);
             } else {
-              Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> 
+              Iter::Ranges::Diff<CountableSetRanges, IntSetRanges>
                 u(xr0,isr);
               return sol(u,xr1);
-              
+
             }
           }
           break;
@@ -201,32 +201,32 @@ namespace Test { namespace Set {
         switch (sot) {
         case SOT_UNION:
           {
-            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
               u(xr0, xr1);
             return sol(u,isr);
           }
           break;
         case SOT_DUNION:
           {
-            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
               inter(xr0, xr1);
             if (inter())
               return false;
-            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
               u(xr0, xr1);
             return sol(u,isr);
           }
           break;
         case SOT_INTER:
           {
-            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
               u(xr0,xr1);
             return sol(u,isr);
           }
           break;
         case SOT_MINUS:
           {
-            Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges>
               u(xr0,xr1);
             return sol(u,isr);
           }
@@ -292,25 +292,25 @@ namespace Test { namespace Set {
         switch (sot) {
         case SOT_UNION:
           {
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
               u(isr0, xr0);
             return sol(u,isr1);
           }
           break;
         case SOT_DUNION:
           {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
               inter(isr0, xr0);
             if (inter())
               return false;
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
               u(isr0, xr0);
             return sol(u,isr1);
           }
           break;
         case SOT_INTER:
           {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
               u(isr0,xr0);
             return sol(u,isr1);
           }
@@ -318,13 +318,13 @@ namespace Test { namespace Set {
         case SOT_MINUS:
           {
             if (!inverse) {
-              Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> 
+              Iter::Ranges::Diff<IntSetRanges, CountableSetRanges>
                 u(isr0,xr0);
               return sol(u,isr1);
             } else {
-              Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> 
+              Iter::Ranges::Diff<CountableSetRanges, IntSetRanges>
                 u(xr0,isr0);
-              return sol(u,isr1);              
+              return sol(u,isr1);
             }
           }
           break;
@@ -361,10 +361,10 @@ namespace Test { namespace Set {
               (void) new RelISI(sots.sot(),srts.srt(),i,2,true);
             }
           }
-        }      
+        }
       }
     };
-   
+
     Create c;
 
     //@}

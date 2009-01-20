@@ -41,7 +41,7 @@
 #include <gecode/gist/gecodelogo.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   /// \brief Small node drawings for the status bar
   class StatusBarNode : public QWidget {
   public:
@@ -65,7 +65,7 @@ namespace Gecode { namespace Gist {
                                 QPoint(myx-8,myy+8)
                                };
             painter.setBrush(QBrush(DrawingCursor::green));
-            painter.drawConvexPolygon(points, 4);            
+            painter.drawConvexPolygon(points, 4);
           }
           break;
         case FAILED:
@@ -77,22 +77,22 @@ namespace Gecode { namespace Gist {
         case BRANCH:
           {
             painter.setBrush(QBrush(DrawingCursor::blue));
-            painter.drawEllipse(myx-8, myy, 16, 16);            
+            painter.drawEllipse(myx-8, myy, 16, 16);
           }
           break;
         case UNDETERMINED:
           {
             painter.setBrush(QBrush(Qt::white));
-            painter.drawEllipse(myx-8, myy, 16, 16);            
+            painter.drawEllipse(myx-8, myy, 16, 16);
           }
           break;
         default:
           break;
       }
-      
+
     }
   };
-  
+
   AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
 
     Logos logos;
@@ -126,7 +126,7 @@ namespace Gecode { namespace Gist {
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_DeleteOnClose, false);
   }
-  
+
   GistMainWindow::GistMainWindow(Space* root, bool bab,
                                  Inspector* gi)
   : c(root,bab,this), aboutGist(this) {
@@ -157,7 +157,7 @@ namespace Gecode { namespace Gist {
             this, SLOT(close()));
     QAction* prefAction = fileMenu->addAction(tr("Preferences"));
     connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
-    
+
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
     nodeMenu->addAction(c.inspect);
     nodeMenu->addAction(c.setPath);
@@ -180,7 +180,7 @@ namespace Gecode { namespace Gist {
 #if QT_VERSION >= 0x040400
     nodeMenu->addAction(c.exportPDF);
 #endif
-    
+
     QMenu* searchMenu = menuBar->addMenu(tr("&Search"));
     searchMenu->addAction(c.searchNext);
     searchMenu->addAction(c.searchAll);
@@ -195,7 +195,7 @@ namespace Gecode { namespace Gist {
     connect(inspectorsMenu, SIGNAL(aboutToShow()),
             this, SLOT(populateInspectors()));
     toolsMenu->addMenu(inspectorsMenu);
-    
+
     QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
     QAction* aboutAction = helpMenu->addAction(tr("About"));
     connect(aboutAction, SIGNAL(triggered()),
@@ -226,13 +226,13 @@ namespace Gecode { namespace Gist {
     hbl->addWidget(openLabel);
     stw->setLayout(hbl);
     statusBar()->addPermanentWidget(stw);
-    
+
     isSearching = false;
     statusBar()->showMessage("Ready");
-    
+
     connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
-    
+
     preferences(true);
     show();
     c.reset->trigger();
@@ -272,7 +272,7 @@ namespace Gecode { namespace Gist {
   GistMainWindow::preferences(bool setup) {
     PreferencesDialog pd(this);
     if (setup) {
-      c.setAutoZoom(pd.zoom);      
+      c.setAutoZoom(pd.zoom);
     }
     if (setup || pd.exec() == QDialog::Accepted) {
       c.setAutoHideFailed(pd.hideFailed);

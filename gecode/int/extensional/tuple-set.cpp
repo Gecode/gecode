@@ -55,7 +55,7 @@ namespace {
     /// Strict comparison of tuples \a a and \a b
     forceinline bool
     operator ()(const Tuple& a, const Tuple& b) {
-      for (int i = 0; i < arity; i++) 
+      for (int i = 0; i < arity; i++)
         if (a[i] < b[i])
           return true;
         else if (a[i] > b[i])
@@ -81,7 +81,7 @@ namespace {
     /// Perform strict comparison of tuples \a a and \a b
     forceinline bool
     operator ()(const Tuple& a, const Tuple& b) {
-      if (a[pos] == b[pos]) 
+      if (a[pos] == b[pos])
         return a < b;
       else
         return a[pos] < b[pos];
@@ -99,7 +99,7 @@ namespace Gecode {
 
     // Add final largest tuple
     IntArgs ia(arity);
-    for (int i = arity; i--; ) 
+    for (int i = arity; i--; )
       ia[i] = Int::Limits::max+1;
     int real_min = min, real_max = max;
     add(ia);
@@ -136,7 +136,7 @@ namespace Gecode {
     for (int i = arity; i--; )
       for (int t = size; t--; )
         tuples[i][t] = data + (t * arity);
-    for (int i = arity; i-->1; ) {      
+    for (int i = arity; i-->1; ) {
       TuplePosCompare tpc(i);
       Support::quicksort(tuples[i], size, tpc);
     }
@@ -157,7 +157,7 @@ namespace Gecode {
         }
       }
     }
-    
+
     assert(finalized());
   }
 
@@ -214,17 +214,17 @@ namespace Gecode {
     heap.rfree(tuple_data);
     heap.rfree(data);
     heap.rfree(last);
-  }  
+  }
 
 
   TupleSet::TupleSet(Reflection::VarMap& vm, Reflection::Arg* arg) {
     if (arg->isSharedReference()) {
-      TupleSetI* d = 
+      TupleSetI* d =
         static_cast<TupleSetI*>(vm.getSharedObject(arg->toSharedReference()));
       object(d);
       return;
     }
-    
+
     Reflection::IntArrayArg* a = arg->toSharedObject()->toIntArray();
 
     // All done... Construct the table
@@ -250,7 +250,7 @@ namespace Gecode {
     int sharedIndex = vm.getSharedIndex(object());
     if (sharedIndex >= 0)
       return Reflection::Arg::newSharedReference(sharedIndex);
-    Reflection::IntArrayArg* a = 
+    Reflection::IntArrayArg* a =
       Reflection::Arg::newIntArray(static_cast<int>(1+arity()*tuples()));
 
     (*a)[0] = arity();
@@ -263,7 +263,7 @@ namespace Gecode {
     }
 
     vm.putMasterObject(object());
-    return Reflection::Arg::newSharedObject(a);    
+    return Reflection::Arg::newSharedObject(a);
   }
 
 }

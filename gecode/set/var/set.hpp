@@ -50,15 +50,15 @@ namespace Gecode {
   SetVar::SetVar(void) {}
 
   forceinline
-  SetVar::SetVar(const SetVar& x) 
+  SetVar::SetVar(const SetVar& x)
     : VarBase<Set::SetVarImp>(x.varimp) {}
 
   forceinline
-  SetVar::SetVar(const Set::SetView& x) 
+  SetVar::SetVar(const Set::SetView& x)
     : VarBase<Set::SetVarImp>(x.var()) {}
 
   forceinline
-  SetVar::SetVar(const Reflection::Var& x) 
+  SetVar::SetVar(const Reflection::Var& x)
     : VarBase<Set::SetVarImp>(x.var<Set::SetVarImp>()) {}
 
   forceinline void
@@ -76,14 +76,14 @@ namespace Gecode {
   forceinline void
   SetVar::init(Space& home, const IntSet& glb,int ubMin,int ubMax,
                unsigned int cardMin, unsigned int cardMax) {
-    varimp = new (home) Set::SetVarImp(home, glb, ubMin, ubMax, 
+    varimp = new (home) Set::SetVarImp(home, glb, ubMin, ubMax,
                                        cardMin, cardMax);
   }
 
   forceinline void
   SetVar::init(Space& home, int lbMin,int lbMax,const IntSet& lub,
                unsigned int cardMin, unsigned int cardMax) {
-    varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, lub, 
+    varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, lub,
                                        cardMin, cardMax);
   }
 
@@ -177,7 +177,7 @@ namespace Gecode {
 
   forceinline
   unsigned int
-  SetVarGlbRanges::width(void) const { return iter.width(); }  
+  SetVarGlbRanges::width(void) const { return iter.width(); }
 
   forceinline
   SetVarLubRanges::SetVarLubRanges(void) {}
@@ -204,7 +204,7 @@ namespace Gecode {
 
   forceinline
   unsigned int
-  SetVarLubRanges::width(void) const { return iter.width(); }  
+  SetVarLubRanges::width(void) const { return iter.width(); }
 
   forceinline
   SetVarUnknownRanges::SetVarUnknownRanges(void) {}
@@ -232,7 +232,7 @@ namespace Gecode {
 
   forceinline
   unsigned int
-  SetVarUnknownRanges::width(void) const { return iter.width(); }  
+  SetVarUnknownRanges::width(void) const { return iter.width(); }
 
   forceinline
   SetVarGlbValues::SetVarGlbValues(const SetVar& x) {

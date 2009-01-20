@@ -50,11 +50,11 @@ namespace Gecode {
    * \defgroup FuncSupportShared Support for copied and shared objects and handles
    *
    * Copied handles provide access to objects that are updated when a space
-   * is copied, used by entities inside spaces. 
+   * is copied, used by entities inside spaces.
    * An update creates a single copy per space during updating.
    *
    * Shared handles provide access to reference-counted objects. In
-   * particular, they support updates with and without sharing. 
+   * particular, they support updates with and without sharing.
    * An update with sharing just updates the handle, while a non-shared
    * update creates a single copy per space.
    *
@@ -78,7 +78,7 @@ namespace Gecode {
     /**
      * \brief The copied object
      *
-     * Copied objects must inherit from this base class. 
+     * Copied objects must inherit from this base class.
      *
      * \ingroup FuncSupportShared
      */
@@ -128,12 +128,12 @@ namespace Gecode {
     /// Modify shared object
     void object(Object* n);
   };
-  
+
   /**
    * \brief The shared handle
    *
-   * A shared handle provides access to an object that lives outside a space, 
-   * and is shared between entities that possibly reside inside different 
+   * A shared handle provides access to an object that lives outside a space,
+   * and is shared between entities that possibly reside inside different
    * spaces. The handle has an update mechanism that supports updates with and
    * without sharing. An update without sharing makes sure that a
    * single copy of the object is created when the space is copied.
@@ -147,7 +147,7 @@ namespace Gecode {
     /**
      * \brief The shared object
      *
-     * Shared objects must inherit from this base class. 
+     * Shared objects must inherit from this base class.
      *
      * \ingroup FuncSupportShared
      */
@@ -333,7 +333,7 @@ namespace Gecode {
     template <class VIC> friend class VarImp;
   private:
     /// Modification event
-    ModEvent me; 
+    ModEvent me;
   public:
     /// Return modification event
     ModEvent modevent(void) const;
@@ -451,7 +451,7 @@ namespace Gecode {
      * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      *
-     * In case the variable is assigned (that is, \a assigned is 
+     * In case the variable is assigned (that is, \a assigned is
      * true), the subscribing propagator is scheduled for execution.
      * Otherwise, the propagator subscribes and is scheduled for execution
      * with modification event \a me provided that \a pc is different
@@ -538,13 +538,13 @@ namespace Gecode {
     /// Needed for exceptions
     static void  operator delete(void*);
     //@}
-    
+
     /// \name Reflection
     //@{
     /// Variable type identifier
     static const Support::Symbol vti;
     //@}
-    
+
   };
 
   template <class VIC>
@@ -644,8 +644,8 @@ namespace Gecode {
   forceinline
   PropCost::PropCost(PropCost::ActualCost ac0) : ac(ac0) {}
 
-  forceinline PropCost 
-  PropCost::cost(PropCost::Mod m, 
+  forceinline PropCost
+  PropCost::cost(PropCost::Mod m,
                  PropCost::ActualCost lo, PropCost::ActualCost hi,
                  unsigned int n) {
     if (n < 2)
@@ -657,39 +657,39 @@ namespace Gecode {
     else
       return (m == LOW) ? lo : hi;
   }
-    
-  forceinline PropCost 
+
+  forceinline PropCost
   PropCost::crazy(PropCost::Mod m, unsigned int n) {
     return cost(m,AC_CRAZY_LO,AC_CRAZY_HI,n);
   }
-  forceinline PropCost 
+  forceinline PropCost
   PropCost::crazy(PropCost::Mod m, int n) {
     assert(n >= 0);
     return crazy(m,static_cast<unsigned int>(n));
   }
-  forceinline PropCost 
+  forceinline PropCost
   PropCost::cubic(PropCost::Mod m, unsigned int n) {
     return cost(m,AC_CUBIC_LO,AC_CUBIC_HI,n);
   }
-  forceinline PropCost 
+  forceinline PropCost
   PropCost::cubic(PropCost::Mod m, int n) {
     assert(n >= 0);
     return cubic(m,static_cast<unsigned int>(n));
   }
-  forceinline PropCost 
+  forceinline PropCost
   PropCost::quadratic(PropCost::Mod m, unsigned int n) {
     return cost(m,AC_QUADRATIC_LO,AC_QUADRATIC_HI,n);
   }
-  forceinline PropCost 
+  forceinline PropCost
   PropCost::quadratic(PropCost::Mod m, int n) {
     assert(n >= 0);
     return quadratic(m,static_cast<unsigned int>(n));
   }
-  forceinline PropCost 
+  forceinline PropCost
   PropCost::linear(PropCost::Mod m, unsigned int n) {
     return cost(m,AC_LINEAR_LO,AC_LINEAR_HI,n);
   }
-  forceinline PropCost 
+  forceinline PropCost
   PropCost::linear(PropCost::Mod m, int n) {
     assert(n >= 0);
     return linear(m,static_cast<unsigned int>(n));
@@ -720,7 +720,7 @@ namespace Gecode {
      * is deleted. However, if an actor uses external resources,
      * this property can be used to make sure that the actor
      * will always be disposed.
-     */ 
+     */
     AP_DISPOSE = (1 << 0),
     /**
      * Propagator is only weakly monotonic, that is, the propagator
@@ -795,7 +795,7 @@ namespace Gecode {
     /// \name Memory management
     //@{
     /// Report size occupied by additionally datastructures
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual size_t allocated(void) const;
     /// Delete actor and return its size
     GECODE_KERNEL_EXPORT
@@ -832,12 +832,12 @@ namespace Gecode {
    * The size of the propagator is \a s.
    *
    * Note that the propagator must be subsumed and also disposed. So
-   * in general, there should be code such as 
+   * in general, there should be code such as
    * \code return ES_SUBSUMED(*this,dispose(home)) \endcode.
-   * 
+   *
    * However, in case the propagator has nothing to dispose (all its
    * views are assigned and no external resources) it is sufficient
-   * to do 
+   * to do
    * \code return ES_SUBSUMED(*this,sizeof(*this)) \endcode.
    *
    * \warning Has a side-effect on the propagator. Overwrites
@@ -863,7 +863,7 @@ namespace Gecode {
    * %Set modification event delta to \a med and schedule propagator
    * accordingly.
    *
-   * \warning Has a side-effect on the propagator. 
+   * \warning Has a side-effect on the propagator.
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
@@ -928,7 +928,7 @@ namespace Gecode {
      *    again will do nothing.
      *
      * Apart from the above values, a propagator can return
-     * the result from calling one of the functions 
+     * the result from calling one of the functions
      *  - ES_SUBSUMED: the propagator is subsumed and has been already
      *    deleted.
      *  - ES_NOFIX_PARTIAL: the propagator has consumed some of its
@@ -951,7 +951,7 @@ namespace Gecode {
      * uses advisors. The advise function must return an execution
      * status as follows:
      *  - ES_FAILED: the advisor has detected failure
-     *  - ES_FIX: the advisor's propagator (that is, this propagator) 
+     *  - ES_FIX: the advisor's propagator (that is, this propagator)
      *    does not need to be run
      *  - ES_NOFIX: the advisor's propagator (that is, this propagator)
      *    must be run
@@ -966,8 +966,8 @@ namespace Gecode {
      *
      * The delta \a d describes how the variable has been changed
      * by an operation on the advisor's variable. Typically,
-     * the delta information can only be utilized by either 
-     * static or member functions of views as the actual delta 
+     * the delta information can only be utilized by either
+     * static or member functions of views as the actual delta
      * information is both domain and view dependent.
      *
      */
@@ -977,9 +977,9 @@ namespace Gecode {
   };
 
 
-  /** 
+  /**
    * \brief Council of advisors
-   * 
+   *
    * If a propagator uses advisors, it must maintain its advisors
    * through a council.
    * \ingroup TaskActor
@@ -1029,7 +1029,7 @@ namespace Gecode {
   /**
    * \brief %Advisor \a a is subsumed
    *
-   * Disposes the advisor and: 
+   * Disposes the advisor and:
    *  - returns subsumption.
    *  - returns that the propagator of \a a need not be run.
    *
@@ -1042,7 +1042,7 @@ namespace Gecode {
   /**
    * \brief %Advisor \a a is subsumed
    *
-   * Disposes the advisor and: 
+   * Disposes the advisor and:
    *  - returns subsumption.
    *  - returns that the propagator of \a a must be run.
    *
@@ -1076,7 +1076,7 @@ namespace Gecode {
     static const Advisor* cast(const ActorLink* al);
   protected:
     /// Return the advisor's propagator
-    Propagator& propagator(void) const; 
+    Propagator& propagator(void) const;
   public:
     /// Constructor for creation
     template <class A>
@@ -1156,7 +1156,7 @@ namespace Gecode {
     friend class Reflection::ActorSpecIter;
   private:
     /// Unique identity (to match to branching descriptions)
-    unsigned int id; 
+    unsigned int id;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Branching* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -1197,7 +1197,7 @@ namespace Gecode {
     virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a) = 0;
     //@}
-    
+
     /// \name Reflection
     //@{
     /// Specification for BranchingDesc \a d
@@ -1209,7 +1209,7 @@ namespace Gecode {
 
 
 
-  /** 
+  /**
    * \brief %Space status
    * \ingroup TaskSearch
    */
@@ -1274,7 +1274,7 @@ namespace Gecode {
     friend class Region;
   private:
     /// Performs memory management for space
-    MemoryManager mm; 
+    MemoryManager mm;
     /// Shared region area
     SharedRegionArea* sra;
     /**
@@ -1428,7 +1428,7 @@ namespace Gecode {
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
      *    of alternatives supported by the branching description \a d.
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     void _commit(const BranchingDesc& d, unsigned int a);
 
   public:
@@ -1500,7 +1500,7 @@ namespace Gecode {
      *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     SpaceStatus status(StatusStatistics& stat=unused_status);
 
     /**
@@ -1575,7 +1575,7 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    void commit(const BranchingDesc& d, unsigned int a, 
+    void commit(const BranchingDesc& d, unsigned int a,
                 CommitStatistics& stat=unused_commit);
 
     /**
@@ -1650,7 +1650,7 @@ namespace Gecode {
      * \ingroup FuncMem
      */
     //@{
-    /** 
+    /**
      * \brief Allocate block of \a n objects of type \a T from space heap
      *
      * Note that this function implements C++ semantics: the default
@@ -1658,7 +1658,7 @@ namespace Gecode {
      */
     template <class T>
     T* alloc(unsigned int n);
-    /** 
+    /**
      * \brief Delete \a n objects allocated from space heap starting at \a b
      *
      * Note that this function implements C++ semantics: the destructor
@@ -1674,7 +1674,7 @@ namespace Gecode {
      *
      * Note that this function implements C++ semantics: the copy constructor
      * of \a T is run for all \f$\min(n,m)\f$ objects, the default
-     * constructor of \a T is run for all remaining 
+     * constructor of \a T is run for all remaining
      * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
      * run for all \a n objects in \a b.
      *
@@ -1724,7 +1724,7 @@ namespace Gecode {
    */
 
   // Heap allocated
-  forceinline void* 
+  forceinline void*
   SharedHandle::Object::operator new(size_t s) {
     return heap.ralloc(s);
   }
@@ -1919,32 +1919,32 @@ namespace Gecode {
    *
    */
   forceinline
-  CopiedHandle::Object::Object(void) 
+  CopiedHandle::Object::Object(void)
     : fwd(NULL) {}
   forceinline
   CopiedHandle::Object::~Object(void) {}
 
-  forceinline 
+  forceinline
   CopiedHandle::CopiedHandle(void) : o(NULL) {}
-  forceinline 
+  forceinline
   CopiedHandle::CopiedHandle(CopiedHandle::Object* so) : o(so) {}
-  forceinline 
+  forceinline
   CopiedHandle::CopiedHandle(const CopiedHandle& sh) : o(sh.o) {}
-  forceinline CopiedHandle& 
+  forceinline CopiedHandle&
   CopiedHandle::operator =(const CopiedHandle& sh) {
     o = sh.o;
     return *this;
   }
-  forceinline void 
+  forceinline void
   CopiedHandle::update(Space& home, bool, CopiedHandle& sh) {
     if (sh.o == NULL) {
       o = NULL;
     } else if (sh.o->fwd != NULL) {
       o = sh.o->fwd;
     } else {
-      o = sh.o->copy(); 
+      o = sh.o->copy();
       sh.o->fwd = o;
-      sh.o->next = home.pc.c.copied; 
+      sh.o->next = home.pc.c.copied;
       home.pc.c.copied = sh.o;
     }
   }
@@ -1952,11 +1952,11 @@ namespace Gecode {
   CopiedHandle::dispose(Space&) {
     (*o).~Object();
   }
-  forceinline CopiedHandle::Object* 
+  forceinline CopiedHandle::Object*
   CopiedHandle::object(void) const {
     return o;
   }
-  forceinline void 
+  forceinline void
   CopiedHandle::object(CopiedHandle::Object* n) {
     o=n;
   }
@@ -1966,51 +1966,51 @@ namespace Gecode {
    *
    */
   forceinline
-  SharedHandle::Object::Object(void) 
+  SharedHandle::Object::Object(void)
     : use_cnt(0) {}
   forceinline
   SharedHandle::Object::~Object(void) {
     assert(use_cnt == 0);
   }
 
-  forceinline SharedHandle::Object* 
+  forceinline SharedHandle::Object*
   SharedHandle::object(void) const {
     return static_cast<SharedHandle::Object*>(CopiedHandle::object());
   }
-  forceinline void 
+  forceinline void
   SharedHandle::subscribe(void) {
     if (object() != NULL) object()->use_cnt++;
   }
-  forceinline void 
+  forceinline void
   SharedHandle::cancel(void) {
     if ((object() != NULL) && (--object()->use_cnt == 0))
       delete object();
     CopiedHandle::object(NULL);
   }
-  forceinline void 
+  forceinline void
   SharedHandle::object(SharedHandle::Object* n) {
     if (n != object()) {
       cancel(); CopiedHandle::object(n); subscribe();
     }
   }
-  forceinline 
+  forceinline
   SharedHandle::SharedHandle(void) {}
-  forceinline 
+  forceinline
   SharedHandle::SharedHandle(SharedHandle::Object* so) : CopiedHandle(so) {
     subscribe();
   }
-  forceinline 
+  forceinline
   SharedHandle::SharedHandle(const SharedHandle& sh) : CopiedHandle(sh) {
     subscribe();
   }
-  forceinline SharedHandle& 
+  forceinline SharedHandle&
   SharedHandle::operator =(const SharedHandle& sh) {
     if (&sh != this) {
       cancel(); CopiedHandle::object(sh.object()); subscribe();
     }
     return *this;
   }
-  forceinline void 
+  forceinline void
   SharedHandle::update(Space& home, bool share, SharedHandle& sh) {
     if (sh.object() == NULL) {
       CopiedHandle::object(NULL);
@@ -2021,7 +2021,7 @@ namespace Gecode {
       subscribe();
     }
   }
-  forceinline 
+  forceinline
   SharedHandle::~SharedHandle(void) {
     cancel();
   }
@@ -2034,27 +2034,27 @@ namespace Gecode {
    */
   forceinline ActorLink*
   ActorLink::prev(void) const {
-    return _prev; 
+    return _prev;
   }
 
   forceinline ActorLink*
-  ActorLink::next(void) const { 
-    return _next; 
+  ActorLink::next(void) const {
+    return _next;
   }
 
   forceinline ActorLink**
-  ActorLink::next_ref(void) { 
-    return &_next; 
+  ActorLink::next_ref(void) {
+    return &_next;
   }
 
   forceinline void
-  ActorLink::prev(ActorLink* al) { 
-    _prev = al; 
+  ActorLink::prev(ActorLink* al) {
+    _prev = al;
   }
 
   forceinline void
-  ActorLink::next(ActorLink* al) { 
-    _next = al; 
+  ActorLink::next(ActorLink* al) {
+    _next = al;
   }
 
   forceinline void
@@ -2085,7 +2085,7 @@ namespace Gecode {
   }
 
   template <class T>
-  forceinline ActorLink* 
+  forceinline ActorLink*
   ActorLink::cast(T* a) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(a);
@@ -2094,7 +2094,7 @@ namespace Gecode {
   }
 
   template <class T>
-  forceinline const ActorLink* 
+  forceinline const ActorLink*
   ActorLink::cast(const T* a) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(a);
@@ -2107,7 +2107,7 @@ namespace Gecode {
    * Actor
    *
    */
-  forceinline Actor* 
+  forceinline Actor*
   Actor::cast(ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
@@ -2115,7 +2115,7 @@ namespace Gecode {
     return static_cast<Actor*>(&t);
   }
 
-  forceinline const Actor* 
+  forceinline const Actor*
   Actor::cast(const ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
@@ -2155,7 +2155,7 @@ namespace Gecode {
       n_wmp--;
     }
   }
-  
+
   forceinline Space*
   Space::clone(bool share, CloneStatistics&) const {
     // Clone is only const for search engines. During cloning, several data
@@ -2163,13 +2163,13 @@ namespace Gecode {
     // cast away the constness.
     return const_cast<Space*>(this)->_clone(share);
   }
-  
+
   forceinline void
-  Space::commit(const BranchingDesc& d, unsigned int a, 
+  Space::commit(const BranchingDesc& d, unsigned int a,
                 CommitStatistics&) {
     _commit(d,a);
   }
-  
+
   forceinline size_t
   Actor::dispose(Space&) {
     return sizeof(*this);
@@ -2180,7 +2180,7 @@ namespace Gecode {
    * Propagator
    *
    */
-  forceinline Propagator* 
+  forceinline Propagator*
   Propagator::cast(ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
@@ -2188,7 +2188,7 @@ namespace Gecode {
     return static_cast<Propagator*>(&t);
   }
 
-  forceinline const Propagator* 
+  forceinline const Propagator*
   Propagator::cast(const ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
@@ -2213,26 +2213,26 @@ namespace Gecode {
 
   forceinline ExecStatus
   ES_SUBSUMED(Propagator& p, size_t s) {
-    p.u.size = s; 
+    p.u.size = s;
     return __ES_SUBSUMED;
   }
 
   forceinline ExecStatus
   ES_SUBSUMED(Propagator& p, Space& home) {
-    p.u.size = p.dispose(home); 
+    p.u.size = p.dispose(home);
     return __ES_SUBSUMED;
   }
 
   forceinline ExecStatus
   ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
-    p.u.med = med; 
+    p.u.med = med;
     assert(p.u.med != 0);
     return __ES_PARTIAL;
   }
 
   forceinline ExecStatus
   ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
-    p.u.med = AllVarConf::med_combine(p.u.med,med); 
+    p.u.med = AllVarConf::med_combine(p.u.med,med);
     assert(p.u.med != 0);
     return __ES_PARTIAL;
   }
@@ -2243,7 +2243,7 @@ namespace Gecode {
    * Branching
    *
    */
-  forceinline Branching* 
+  forceinline Branching*
   Branching::cast(ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
@@ -2251,7 +2251,7 @@ namespace Gecode {
     return static_cast<Branching*>(&t);
   }
 
-  forceinline const Branching* 
+  forceinline const Branching*
   Branching::cast(const ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
@@ -2320,7 +2320,7 @@ namespace Gecode {
    *
    */
   template <class A>
-  forceinline 
+  forceinline
   Advisor::Advisor(Space&, Propagator& p, Council<A>& c) {
     // Store propagator and forwarding in prev()
     ActorLink::prev(&p);
@@ -2328,35 +2328,35 @@ namespace Gecode {
     ActorLink::next(c.advisors); c.advisors = static_cast<A*>(this);
   }
 
-  forceinline 
+  forceinline
   Advisor::Advisor(Space&, bool, Advisor&) {}
 
   forceinline bool
-  Advisor::disposed(void) const { 
+  Advisor::disposed(void) const {
     return prev() == NULL;
   }
 
-  forceinline Advisor* 
+  forceinline Advisor*
   Advisor::cast(ActorLink* al) {
     return static_cast<Advisor*>(al);
   }
 
-  forceinline const Advisor* 
+  forceinline const Advisor*
   Advisor::cast(const ActorLink* al) {
     return static_cast<const Advisor*>(al);
   }
 
   forceinline Propagator&
-  Advisor::propagator(void) const { 
+  Advisor::propagator(void) const {
     assert(!disposed());
-    return *Propagator::cast(ActorLink::prev()); 
+    return *Propagator::cast(ActorLink::prev());
   }
 
   template <class A>
   forceinline void
   Advisor::dispose(Space&,Council<A>&) {
     assert(!disposed());
-    ActorLink::prev(NULL); 
+    ActorLink::prev(NULL);
     // Shorten chains of disposed advisors by one, if possible
     Advisor* n = Advisor::cast(next());
     if ((n != NULL) && n->disposed())
@@ -2389,7 +2389,7 @@ namespace Gecode {
 
   template <class A>
   forceinline
-  Council<A>::Council(Space&) 
+  Council<A>::Council(Space&)
     : advisors(NULL) {}
 
   template <class A>
@@ -2444,19 +2444,19 @@ namespace Gecode {
       p_f->u.advisors = c.advisors;
     }
   }
-  
+
   template <class A>
   forceinline void
   Council<A>::dispose(Space& home) {
     ActorLink* a = advisors;
     while (a != NULL) {
       if (!static_cast<A*>(a)->disposed())
-        static_cast<A*>(a)->dispose(home,*this); 
+        static_cast<A*>(a)->dispose(home,*this);
       a = a->next();
     }
   }
 
-  
+
 
   /*
    * Advisor iterator
@@ -2711,7 +2711,7 @@ namespace Gecode {
     idx(pc+1)++;
     *actor(pc) = ActorLink::cast(p);
 
-#ifdef GECODE_AUDIT    
+#ifdef GECODE_AUDIT
     ActorLink** f = actor(pc);
     while (f < (pc == pc_max+1 ? base+entries : actorNonZero(pc+1)))
       if (*f == p)
@@ -2752,7 +2752,7 @@ namespace Gecode {
       // reserved for subscriptions. If yes, just resize mildly otherwise
       // more agressively
       ActorLink** s = static_cast<ActorLink**>(home.mm.subscriptions());
-      unsigned int m = 
+      unsigned int m =
         ((s <= base) && (base < s+home.pc.p.n_sub)) ?
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = home.alloc<ActorLink*>(m);

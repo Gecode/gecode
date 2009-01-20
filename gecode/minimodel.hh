@@ -119,7 +119,7 @@ namespace Gecode {
       /// Default constructor
       Node(void);
       /// Generate linear terms from expression
-      int fill(Int::Linear::Term<View> t[], int i, int m, 
+      int fill(Int::Linear::Term<View> t[], int i, int m,
                int c_i, int& c_o) const;
       /// Decrement reference count and possibly free memory
       bool decrement(void);
@@ -128,7 +128,7 @@ namespace Gecode {
       /// Memory management
       static void  operator delete(void* p,size_t size);
     };
-    Node* n;       
+    Node* n;
   public:
     /// Default constructor
     LinExpr(void);
@@ -142,7 +142,7 @@ namespace Gecode {
     LinExpr(const LinExpr& e0, NodeType t, int c);
     /// Create expression for multiplication
     LinExpr(int a, const LinExpr& e);
-    /// Assignment operator 
+    /// Assignment operator
     const LinExpr& operator =(const LinExpr& e);
     /// Post propagator
     void post(Space& home, IntRelType irt, IntConLevel icl) const;
@@ -154,7 +154,7 @@ namespace Gecode {
     /// Destructor
     ~LinExpr(void);
   };
-  
+
   /// Linear relations
   template<class Var>
   class LinRel {
@@ -179,16 +179,16 @@ namespace Gecode {
     /// Post reified propagator for relation (if \a t is false for negated relation)
     void post(Space& home, const BoolVar& b, bool t, IntConLevel icl) const;
   };
-  
+
   /**
    * \defgroup TaskModelMiniModelLin Linear expressions and relations
    *
    * Linear expressions can be freely composed of sums and differences of
-   * integer variables (Gecode::IntVar) or Boolean variables 
-   * (Gecode::BoolVar) possibly with integer coefficients and integer 
+   * integer variables (Gecode::IntVar) or Boolean variables
+   * (Gecode::BoolVar) possibly with integer coefficients and integer
    * constants.
    *
-   * Note that both integer and Boolean variables are automatically 
+   * Note that both integer and Boolean variables are automatically
    * available as linear expressions.
    *
    * Linear relations are obtained from linear expressions with the normal
@@ -196,7 +196,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelMiniModel
    */
-  
+
   //@{
   /// Construct linear expression as sum of variable and integer
   LinExpr<IntVar>
@@ -222,7 +222,7 @@ namespace Gecode {
   /// Construct linear expression as sum of linear expressions
   LinExpr<IntVar>
   operator +(const LinExpr<IntVar>&, const LinExpr<IntVar>&);
-  
+
   /// Construct linear expression as sum of variable and integer
   LinExpr<IntVar>
   operator -(int, const IntVar&);
@@ -253,7 +253,7 @@ namespace Gecode {
   /// Construct linear expression as negative of linear expression
   LinExpr<IntVar>
   operator -(const LinExpr<IntVar>&);
-  
+
   /// Construct linear expression as product of integer coefficient and integer variable
   LinExpr<IntVar>
   operator *(int, const IntVar&);
@@ -266,8 +266,8 @@ namespace Gecode {
   /// Construct linear expression as product of integer coefficient and linear expression
   LinExpr<IntVar>
   operator *(int, const LinExpr<IntVar>&);
-  
-  
+
+
   /// Construct linear expression as sum of variable and integer
   LinExpr<BoolVar>
   operator +(int, const BoolVar&);
@@ -292,7 +292,7 @@ namespace Gecode {
   /// Construct linear expression as sum of linear expressions
   LinExpr<BoolVar>
   operator +(const LinExpr<BoolVar>&, const LinExpr<BoolVar>&);
-  
+
   /// Construct linear expression as sum of variable and integer
   LinExpr<BoolVar>
   operator -(int, const BoolVar&);
@@ -323,7 +323,7 @@ namespace Gecode {
   /// Construct linear expression as negative of linear expression
   LinExpr<BoolVar>
   operator -(const LinExpr<BoolVar>&);
-  
+
   /// Construct linear expression as product of integer coefficient and integer variable
   LinExpr<BoolVar>
   operator *(int, const BoolVar&);
@@ -336,8 +336,8 @@ namespace Gecode {
   /// Construct linear expression as product of integer coefficient and linear expression
   LinExpr<BoolVar>
   operator *(int, const LinExpr<BoolVar>&);
-  
-    
+
+
   /// Construct linear equality relation
   LinRel<IntVar>
   operator ==(int l, const IntVar& r);
@@ -362,7 +362,7 @@ namespace Gecode {
   /// Construct linear equality relation
   LinRel<IntVar>
   operator ==(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-  
+
   /// Construct linear disequality relation
   LinRel<IntVar>
   operator !=(int l, const IntVar& r);
@@ -387,7 +387,7 @@ namespace Gecode {
   /// Construct linear disequality relation
   LinRel<IntVar>
   operator !=(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-  
+
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator <(int l, const IntVar& r);
@@ -412,7 +412,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator <(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-  
+
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator <=(int l, const IntVar& r);
@@ -437,7 +437,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator <=(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-  
+
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator >(int l, const IntVar& r);
@@ -462,7 +462,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator >(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-  
+
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator >=(int l, const IntVar& r);
@@ -487,7 +487,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<IntVar>
   operator >=(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-  
+
 
   /// Construct linear equality relation
   LinRel<BoolVar>
@@ -513,7 +513,7 @@ namespace Gecode {
   /// Construct linear equality relation
   LinRel<BoolVar>
   operator ==(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
-  
+
   /// Construct linear disequality relation
   LinRel<BoolVar>
   operator !=(int l, const BoolVar& r);
@@ -538,7 +538,7 @@ namespace Gecode {
   /// Construct linear disequality relation
   LinRel<BoolVar>
   operator !=(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
-  
+
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator <(int l, const BoolVar& r);
@@ -563,7 +563,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator <(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
-    
+
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator <=(int l, const BoolVar& r);
@@ -588,7 +588,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator <=(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
-    
+
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator >(int l, const BoolVar& r);
@@ -613,7 +613,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator >(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
-    
+
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator >=(int l, const BoolVar& r);
@@ -638,7 +638,7 @@ namespace Gecode {
   /// Construct linear inequality relation
   LinRel<BoolVar>
   operator >=(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
-    
+
   //@}
 
 
@@ -676,7 +676,7 @@ namespace Gecode {
       /// Default constructor
       Node(void);
       /// Decrement reference count and possibly free memory
-      GECODE_MINIMODEL_EXPORT 
+      GECODE_MINIMODEL_EXPORT
       bool decrement(void);
       /// Memory management
       static void* operator new(size_t size);
@@ -697,7 +697,7 @@ namespace Gecode {
         /// For binary nodes (and, or, eqv)
 struct {
   /// Left subtree
-NNF* l; 
+NNF* l;
   /// Right subtree
 NNF* r;
 } b;
@@ -715,8 +715,8 @@ Node* x;
       GECODE_MINIMODEL_EXPORT
       static NNF* nnf(Region& r, Node* n, bool neg);
       /// Post propagators for nested conjunctive and disjunctive expression
-      GECODE_MINIMODEL_EXPORT         
-      void post(Space& home, NodeType t, 
+      GECODE_MINIMODEL_EXPORT
+      void post(Space& home, NodeType t,
                 BoolVarArgs& bp, BoolVarArgs& bn,
                 int& ip, int& in,
                 IntConLevel icl) const;
@@ -740,30 +740,30 @@ Node* x;
     /// Copy constructor
     BoolExpr(const BoolExpr& e);
     /// Construct expression for type and subexpresssions
-    GECODE_MINIMODEL_EXPORT 
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r);
     /// Construct expression for variable
-    GECODE_MINIMODEL_EXPORT 
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolVar& x);
     /// Construct expression for negation
-    GECODE_MINIMODEL_EXPORT 
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& e, NodeType t);
     /// Construct expression for reified linear relation
-    GECODE_MINIMODEL_EXPORT 
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const LinRel<IntVar>& rl);
     /// Construct expression for reified linear relation
-    GECODE_MINIMODEL_EXPORT 
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const LinRel<BoolVar>& rl);
     /// Post propagators for expression
     BoolVar post(Space& home, IntConLevel icl) const;
     /// Post propagators for relation
     void post(Space& home, bool t, IntConLevel icl) const;
 
-    /// Assignment operator 
-    GECODE_MINIMODEL_EXPORT 
+    /// Assignment operator
+    GECODE_MINIMODEL_EXPORT
     const BoolExpr& operator =(const BoolExpr& e);
     /// Destructor
-    GECODE_MINIMODEL_EXPORT 
+    GECODE_MINIMODEL_EXPORT
     ~BoolExpr(void);
   };
 
@@ -793,7 +793,7 @@ Node* x;
    *
    * \ingroup TaskModelMiniModel
    */
-    
+
   //@{
   /// Negated Boolean expression
   BoolExpr
@@ -811,7 +811,7 @@ Node* x;
   template <class Var>
   BoolExpr
   operator ~(const LinRel<Var>&);
-    
+
   /// Equivalence of Boolean expressions
   BoolExpr
   eqv(const BoolExpr&, const BoolExpr&);
@@ -950,7 +950,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  abs(Space& home, IntVar x, 
+  abs(Space& home, IntVar x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x,y)\f$
    *
@@ -958,7 +958,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  min(Space& home, IntVar x, IntVar y, 
+  min(Space& home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x)\f$
    *
@@ -966,7 +966,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  min(Space& home, const IntVarArgs& x, 
+  min(Space& home, const IntVarArgs& x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\max(x,y)\f$
    *
@@ -974,7 +974,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  max(Space& home, IntVar x, IntVar y, 
+  max(Space& home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\max(x)\f$
    *
@@ -982,7 +982,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  max(Space& home, const IntVarArgs& x, 
+  max(Space& home, const IntVarArgs& x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\cdot y\f$
    *
@@ -990,21 +990,21 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  mult(Space& home, IntVar x, IntVar y, 
+  mult(Space& home, IntVar x, IntVar y,
        IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\ \mathrm{div}\ y\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
   IntVar
-  div(Space& home, IntVar x, IntVar y, 
+  div(Space& home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\ \mathrm{mod}\ y\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
   IntVar
-  mod(Space& home, IntVar x, IntVar y, 
+  mod(Space& home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x^2\f$
    *
@@ -1012,7 +1012,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  sqr(Space& home, IntVar x, 
+  sqr(Space& home, IntVar x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
    *
@@ -1020,7 +1020,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  sqrt(Space& home, IntVar x, 
+  sqrt(Space& home, IntVar x,
        IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x+y\f$
    *
@@ -1028,7 +1028,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  plus(Space& home, IntVar x, IntVar y, 
+  plus(Space& home, IntVar x, IntVar y,
        IntConLevel icl=ICL_DEF);
   /** Return variable constrained to \f$x-y\f$
    *
@@ -1036,7 +1036,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  minus(Space& home, IntVar x, IntVar y, 
+  minus(Space& home, IntVar x, IntVar y,
         IntConLevel icl=ICL_DEF);
   //@}
 }
@@ -1053,7 +1053,7 @@ namespace Gecode {
   //@{
   /// Return Boolean variable equal to \f$x\f$
   inline BoolVar
-  channel(Space& home, IntVar x, 
+  channel(Space& home, IntVar x,
           IntConLevel icl=ICL_DEF) {
     (void) icl;
     BoolVar b(home,0,1); channel(home,b,x);
@@ -1061,7 +1061,7 @@ namespace Gecode {
   }
   /// Return integer variable equal to \f$b\f$
   inline IntVar
-  channel(Space& home, BoolVar b, 
+  channel(Space& home, BoolVar b,
           IntConLevel icl=ICL_DEF) {
     (void) icl;
     IntVar x(home,0,1); channel(home,b,x);

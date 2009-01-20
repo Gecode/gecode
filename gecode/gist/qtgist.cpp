@@ -43,10 +43,10 @@
 namespace Gecode { namespace Gist {
 
   Gist::Gist(Space* root, bool bab, QWidget* parent) : QWidget(parent) {
-    QGridLayout* layout = new QGridLayout(this);    
+    QGridLayout* layout = new QGridLayout(this);
 
     QScrollArea* scrollArea = new QScrollArea(this);
-    
+
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setAlignment(Qt::AlignHCenter);
@@ -76,55 +76,55 @@ namespace Gecode { namespace Gist {
     scaleBar->setMinimum(LayoutConfig::minScale);
     scaleBar->setMaximum(LayoutConfig::maxScale);
     scaleBar->setValue(LayoutConfig::defScale);
-    
+
     inspect = new QAction("Inspect", this);
     inspect->setShortcut(QKeySequence("Return"));
-    connect(inspect, SIGNAL(triggered()), canvas, 
+    connect(inspect, SIGNAL(triggered()), canvas,
                        SLOT(inspectCurrentNode()));
 
     stop = new QAction("Stop search", this);
     stop->setShortcut(QKeySequence("Esc"));
-    connect(stop, SIGNAL(triggered()), canvas, 
+    connect(stop, SIGNAL(triggered()), canvas,
                     SLOT(stopSearch()));
 
     reset = new QAction("Reset", this);
     reset->setShortcut(QKeySequence("Ctrl+R"));
-    connect(reset, SIGNAL(triggered()), canvas, 
+    connect(reset, SIGNAL(triggered()), canvas,
             SLOT(reset()));
 
     navUp = new QAction("Up", this);
     navUp->setShortcut(QKeySequence("Up"));
-    connect(navUp, SIGNAL(triggered()), canvas, 
+    connect(navUp, SIGNAL(triggered()), canvas,
                    SLOT(navUp()));
 
     navDown = new QAction("Down", this);
     navDown->setShortcut(QKeySequence("Down"));
-    connect(navDown, SIGNAL(triggered()), canvas, 
+    connect(navDown, SIGNAL(triggered()), canvas,
                      SLOT(navDown()));
 
     navLeft = new QAction("Left", this);
     navLeft->setShortcut(QKeySequence("Left"));
-    connect(navLeft, SIGNAL(triggered()), canvas, 
+    connect(navLeft, SIGNAL(triggered()), canvas,
                      SLOT(navLeft()));
 
     navRight = new QAction("Right", this);
     navRight->setShortcut(QKeySequence("Right"));
-    connect(navRight, SIGNAL(triggered()), canvas, 
+    connect(navRight, SIGNAL(triggered()), canvas,
                       SLOT(navRight()));
 
     navRoot = new QAction("Root", this);
     navRoot->setShortcut(QKeySequence("R"));
-    connect(navRoot, SIGNAL(triggered()), canvas, 
+    connect(navRoot, SIGNAL(triggered()), canvas,
                       SLOT(navRoot()));
 
     navNextSol = new QAction("To next solution", this);
     navNextSol->setShortcut(QKeySequence("Shift+Right"));
-    connect(navNextSol, SIGNAL(triggered()), canvas, 
+    connect(navNextSol, SIGNAL(triggered()), canvas,
                       SLOT(navNextSol()));
 
     navPrevSol = new QAction("To previous solution", this);
     navPrevSol->setShortcut(QKeySequence("Shift+Left"));
-    connect(navPrevSol, SIGNAL(triggered()), canvas, 
+    connect(navPrevSol, SIGNAL(triggered()), canvas,
                       SLOT(navPrevSol()));
 
     searchNext = new QAction("Next solution", this);
@@ -157,17 +157,17 @@ namespace Gecode { namespace Gist {
 
     exportPDF = new QAction("Export subtree PDF...", this);
     exportPDF->setShortcut(QKeySequence("P"));
-    connect(exportPDF, SIGNAL(triggered()), canvas, 
+    connect(exportPDF, SIGNAL(triggered()), canvas,
             SLOT(exportPDF()));
 
     exportWholeTreePDF = new QAction("Export PDF...", this);
     exportWholeTreePDF->setShortcut(QKeySequence("Ctrl+Shift+P"));
-    connect(exportWholeTreePDF, SIGNAL(triggered()), canvas, 
+    connect(exportWholeTreePDF, SIGNAL(triggered()), canvas,
             SLOT(exportWholeTreePDF()));
 
     print = new QAction("Print...", this);
     print->setShortcut(QKeySequence("Ctrl+P"));
-    connect(print, SIGNAL(triggered()), canvas, 
+    connect(print, SIGNAL(triggered()), canvas,
             SLOT(print()));
 
     setPath = new QAction("Set path", this);
@@ -205,7 +205,7 @@ namespace Gecode { namespace Gist {
     addAction(print);
 
     addAction(addVisualisation);
-    
+
     addAction(setPath);
     addAction(inspectPath);
 
@@ -226,7 +226,7 @@ namespace Gecode { namespace Gist {
     contextMenu->addSeparator();
 
     contextMenu->addAction(searchNext);
-    contextMenu->addAction(searchAll);      
+    contextMenu->addAction(searchAll);
 
     contextMenu->addSeparator();
 
@@ -240,7 +240,7 @@ namespace Gecode { namespace Gist {
     contextMenu->addAction(inspectPath);
 
     contextMenu->addSeparator();
-    
+
     contextMenu->addMenu(inspectorMenu);
 
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
@@ -255,11 +255,11 @@ namespace Gecode { namespace Gist {
 
     connect(&canvas->searcher, SIGNAL(scaleChanged(int)),
             scaleBar, SLOT(setValue(int)));
-    
+
     layout->addWidget(scrollArea, 0,0,-1,1);
     layout->addWidget(scaleBar, 1,1, Qt::AlignHCenter);
     layout->addWidget(autoZoomButton, 0,1, Qt::AlignHCenter);
-    
+
     setLayout(layout);
 
     canvas->show();
@@ -288,12 +288,12 @@ namespace Gecode { namespace Gist {
     }
     inspectorMenu->addActions(inspectorGroup->actions());
   }
-  
+
   Gist::~Gist(void) { delete canvas; }
-  
+
   void
   Gist::on_canvas_contextMenu(QContextMenuEvent* event) {
-    contextMenu->popup(event->globalPos());    
+    contextMenu->popup(event->globalPos());
   }
 
   void
@@ -335,18 +335,18 @@ namespace Gecode { namespace Gist {
         searchAll->setEnabled(true);
       } else {
         searchNext->setEnabled(false);
-        searchAll->setEnabled(false);      
+        searchAll->setEnabled(false);
       }
       if (n->getNumberOfChildren() > 0) {
         navDown->setEnabled(true);
         toggleHidden->setEnabled(true);
         hideFailed->setEnabled(true);
-        unhideAll->setEnabled(true);            
+        unhideAll->setEnabled(true);
       } else {
         navDown->setEnabled(false);
         toggleHidden->setEnabled(false);
         hideFailed->setEnabled(false);
-        unhideAll->setEnabled(false);      
+        unhideAll->setEnabled(false);
       }
 
       VisualNode* p = n->getParent();
@@ -388,7 +388,7 @@ namespace Gecode { namespace Gist {
     }
     emit statusChanged(stats,finished);
   }
-  
+
   void
   Gist::finish(void) {
     canvas->finish();

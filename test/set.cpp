@@ -70,7 +70,7 @@ namespace Test { namespace Set {
   }
 
   SetAssignment::SetAssignment(int n0, const Gecode::IntSet& d0, int _withInt)
-    : n(n0), dsv(new CountableSet[n]), ir(_withInt, d0), done(false), lub(d0), 
+    : n(n0), dsv(new CountableSet[n]), ir(_withInt, d0), done(false), lub(d0),
       withInt(_withInt) {
     for (int i=n; i--; )
       dsv[i].init(lub);
@@ -147,11 +147,11 @@ namespace Test { namespace Set {
       * \a i integer variables with domain \a d0, and stores whether
       * the test is for a reified propagator (\a r), and the test itself
       * (\a t).
-      * 
+      *
       */
     SetTestSpace(int n, Gecode::IntSet& d0, int i, bool r, SetTest* t,
                  bool log=true)
-      : d(d0), x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d), 
+      : d(d0), x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d),
         withInt(i), b(*this, 0, 1), reified(r), test(t) {
       if (opt.log && log) {
         olog << ind(2) << "Initial: x[]=" << x;
@@ -161,7 +161,7 @@ namespace Test { namespace Set {
         olog << std::endl;
       }
     }
-    
+
     /// Constructor for cloning \a s
     SetTestSpace(bool share, SetTestSpace& s)
     : Gecode::Space(share,s), d(s.d), withInt(s.withInt),
@@ -198,7 +198,7 @@ namespace Test { namespace Set {
             } catch (Gecode::Reflection::ReflectionException e) {
               delete c;
               return NULL;
-            }            
+            }
           }
           try {
             d.post(s);
@@ -245,7 +245,7 @@ namespace Test { namespace Set {
         olog << ind(3) << "Fixpoint: x[]=" << x
              << " y[]=" << y << std::endl;
         bool f=(status() == Gecode::SS_FAILED);
-        olog << ind(3) << "     -->  x[]=" << x 
+        olog << ind(3) << "     -->  x[]=" << x
              << " y[]=" << y << std::endl;
         return f;
       } else {
@@ -297,7 +297,7 @@ namespace Test { namespace Set {
     void rel(bool sol) {
       int n = sol ? 1 : 0;
       assert(reified);
-      if (opt.log) 
+      if (opt.log)
         olog << ind(4) << "b = " << n << std::endl;
       Gecode::rel(*this, b, Gecode::IRT_EQ, n);
     }
@@ -333,7 +333,7 @@ namespace Test { namespace Set {
       using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
       CountableSetRanges air(a.lub, a[i]);
-      Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges,
         CountableSetRanges> diff(ur, air);
       Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff
         <Gecode::SetVarUnknownRanges, CountableSetRanges> > diffV(diff);
@@ -345,7 +345,7 @@ namespace Test { namespace Set {
       using namespace Gecode;
       SetVarUnknownRanges ur(x[i]);
       CountableSetRanges air(a.lub, a[i]);
-      Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges,
         CountableSetRanges> inter(ur, air);
       Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter
         <Gecode::SetVarUnknownRanges, CountableSetRanges> > interV(inter);
@@ -466,11 +466,11 @@ namespace Test { namespace Set {
       }
       Gecode::SetVarUnknownRanges ur1(x[i]);
       CountableSetRanges air1(a.lub, a[i]);
-      Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges,
         CountableSetRanges> diff(ur1, air1);
       Gecode::SetVarUnknownRanges ur2(x[i]);
       CountableSetRanges air2(a.lub, a[i]);
-      Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges,
         CountableSetRanges> inter(ur2, air2);
 
       CountableSetRanges aisizer(a.lub, a[i]);
@@ -515,7 +515,7 @@ namespace Test { namespace Set {
         } else {
           int v = Base::rand(Gecode::Iter::Ranges::size(diff));
           removeFromLub(v, i, a);
-        }      
+        }
       }
       return (!Base::fixpoint() || fixprob());
     }
@@ -549,7 +549,7 @@ if (!(T)) {                                                     \
     while (a()) {
       bool is_sol = solution(a);
       if (opt.log)
-        olog << ind(1) << "Assignment: " << a 
+        olog << ind(1) << "Assignment: " << a
              << (is_sol ? " (solution)" : " (no solution)")
              << std::endl;
 
@@ -583,7 +583,7 @@ if (!(T)) {                                                     \
               sc = s; s = NULL;
             }
             break;
-          default: assert(false);          
+          default: assert(false);
         }
         sc->assign(a);
         if (is_sol) {
@@ -737,11 +737,11 @@ if (!(T)) {                                                     \
      return false;
   }
 
-  const Gecode::SetRelType SetRelTypes::srts[] = 
+  const Gecode::SetRelType SetRelTypes::srts[] =
     {Gecode::SRT_EQ,Gecode::SRT_NQ,Gecode::SRT_SUB,
      Gecode::SRT_SUP,Gecode::SRT_DISJ,Gecode::SRT_CMPL};
 
-  const Gecode::SetOpType SetOpTypes::sots[] = 
+  const Gecode::SetOpType SetOpTypes::sots[] =
     {Gecode::SOT_UNION, Gecode::SOT_DUNION,
      Gecode::SOT_INTER, Gecode::SOT_MINUS};
 

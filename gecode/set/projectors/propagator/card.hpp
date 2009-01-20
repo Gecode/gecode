@@ -110,7 +110,7 @@ namespace Gecode { namespace Set { namespace Projection {
     for (int j=x.size(); j--;)
       if (pc[j] != PC_SET_ANY + 1)
         done = done && x[j].assigned();
-    
+   
     {
       GECODE_ME_CHECK(i.gq(home, static_cast<int>(proj.glbSize(x))));
       GECODE_ME_CHECK(i.lq(home, static_cast<int>(proj.lubSize(x))));

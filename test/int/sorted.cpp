@@ -37,7 +37,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include "test/int.hh"
 
@@ -45,13 +45,13 @@ namespace Test { namespace Int {
 
    /// Tests for sorted constraints
    namespace Sorted {
-   
+
      /**
       * \defgroup TaskTestIntSorted Sorted constraints
       * \ingroup TaskTestInt
       */
      //@{
-   
+
      /// Relation for sorting integers in increasing order
      class SortIntMin {
      public:
@@ -60,7 +60,7 @@ namespace Test { namespace Int {
          return x<y;
        }
      };
-   
+
      /// Test sorted without permutation variables
      class NoVar : public Test {
      protected:
@@ -75,14 +75,14 @@ namespace Test { namespace Int {
          for (int i=0;i<3; i++) {
            x[i]=xy[i]; y[i]=xy[n+i];
          }
-           
+
          for (int i=0; i<n-1; i++)
            if (y[i]>y[i+1])
              return false;
-   
+
          SortIntMin sim;
          Gecode::Support::quicksort<int,SortIntMin>(x,n,sim);
-   
+
          for (int i=0; i<n; i++)
            if (x[i] != y[i])
              return false;
@@ -97,14 +97,14 @@ namespace Test { namespace Int {
          Gecode::sorted(home,x,y);
        }
      };
-   
-   
+
+
      /// Test sorted with permutation variables
      class PermVar : public Test {
      protected:
        /// Number of variables to be sorted
        static const int n = 3;
-     public:    
+     public:
        /// Create and register test
        PermVar(void) : Test("Sorted::PermVar",3*n,0,2) {}
        /// Test whether \a xyz is solution
@@ -118,29 +118,29 @@ namespace Test { namespace Int {
            for (int j=i+1; j<n; j++)
              if (z[i]==z[j])
                return false;
-   
+
          // y must to be sorted
          for (int i=0; i<n-1; i++)
            if (y[i]>y[i+1])
              return false;
-   
+
          // check whether permutation is in range
          for (int i=0; i<n; i++)
            if ((z[i] < 0) || (z[i] >= n))
              return false;
-   
+
          // check whether permutation info is correct
          for (int i=0; i<n; i++)
            if (x[i] != y[z[i]])
              return false;
-   
+
          // check for sorting
          SortIntMin sim;
          Gecode::Support::quicksort<int,SortIntMin>(x,n,sim);
          for (int i=0; i<n; i++)
            if (x[i] != y[i])
              return false;
-   
+
          return true;
        }
        /// Post constraint on \a xyz
@@ -152,12 +152,12 @@ namespace Test { namespace Int {
          Gecode::sorted(home,x,y,z);
        }
      };
-     
-   
+
+
      NoVar novar;
      PermVar permvar;
      //@}
-   
+
    }
 }}
 

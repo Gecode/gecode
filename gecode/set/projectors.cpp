@@ -48,14 +48,14 @@ namespace Gecode {
     x[0] = xa; x[1] = ya;
     if (negated) {
       GECODE_ES_FAIL(home,
-                     (Projection::NaryProjection<true>::post(home, 
+                     (Projection::NaryProjection<true>::post(home,
                                                              x, ps)));
     } else {
       GECODE_ES_FAIL(home,
-                     (Projection::NaryProjection<false>::post(home, 
+                     (Projection::NaryProjection<false>::post(home,
                                                               x, ps)));
     }
-    
+
   }
 
   void projector(Space& home, const SetVarArgs& xa,
@@ -66,14 +66,14 @@ namespace Gecode {
       x[i] = xa[i];
     if (negated) {
       GECODE_ES_FAIL(home,
-                     (Projection::NaryProjection<true>::post(home, 
+                     (Projection::NaryProjection<true>::post(home,
                                                              x, ps)));
     } else {
       GECODE_ES_FAIL(home,
-                     (Projection::NaryProjection<false>::post(home, 
+                     (Projection::NaryProjection<false>::post(home,
                                                               x, ps)));
     }
-    
+
   }
 
   void projector(Space& home, const SetVar& xa, const SetVar& ya,
@@ -83,7 +83,7 @@ namespace Gecode {
     x[0] = xa; x[1] = ya;
     Gecode::Int::BoolView b(bv);
     GECODE_ES_FAIL(home,
-                   (Projection::ReNaryProjection::post(home, 
+                   (Projection::ReNaryProjection::post(home,
                                                        x, b, ps)));
   }
 
@@ -95,14 +95,14 @@ namespace Gecode {
     x[0] = xa; x[1] = ya; x[2] = za;
     if (negated) {
       GECODE_ES_FAIL(home,
-                     (Projection::NaryProjection<true>::post(home, 
+                     (Projection::NaryProjection<true>::post(home,
                                                              x, ps)));
     } else {
       GECODE_ES_FAIL(home,
-                     (Projection::NaryProjection<false>::post(home, 
+                     (Projection::NaryProjection<false>::post(home,
                                                               x, ps)));
     }
-    
+
   }
 
   void projector(Space& home,
@@ -113,7 +113,7 @@ namespace Gecode {
     x[0] = xa; x[1] = ya; x[2] = za;
     Gecode::Int::BoolView b(bv);
     GECODE_ES_FAIL(home,
-                   (Projection::ReNaryProjection::post(home, 
+                   (Projection::ReNaryProjection::post(home,
                                                           x, b, ps)));
   }
 
@@ -136,7 +136,7 @@ namespace Gecode {
     GECODE_ES_FAIL(home,
                    (Projection::CardProjection::post(home,x,i,p)));
   }
-  
+
 
 }
 

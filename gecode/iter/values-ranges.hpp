@@ -50,7 +50,7 @@ namespace Gecode { namespace Iter { namespace Values {
   class ToRanges : public Ranges::MinMax {
   private:
     /// Check that \a I is a value iterator;
-    IsValueIter<I> _checkI;    
+    IsValueIter<I> _checkI;
   protected:
     /// Value iterator used
     I i;

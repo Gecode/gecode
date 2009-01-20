@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   inline
   BndImp<View, Card, isView, shared>::
-  BndImp(Space& home, ViewArray<View>& x0, ViewArray<Card>& k0, 
+  BndImp(Space& home, ViewArray<View>& x0, ViewArray<Card>& k0,
          bool cf,  bool nolbc) :
     Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
     card_fixed(cf), skip_lbc(nolbc) {
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace GCC {
       int m = k.size();
       bool locut = k[0].max() == 0;
       bool hicut = k[m - 1].max() == 0;
-      
+
       if (locut) {
         int low = k[0].card();
         for (int i = 0; i < x.size(); i++) {
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace GCC {
               ModEvent me = k[i].eq(home, ci);
               GECODE_ME_CHECK(me);
               mod |= k[i].assigned();
-            }        
+            }
             all_assigned &= k[i].assigned();
           }
         }

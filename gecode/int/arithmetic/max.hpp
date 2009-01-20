@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   PropCost
   MaxDom<View>::cost(const Space&, const ModEventDelta& med) const {
-    return PropCost::ternary((View::me(med) == ME_INT_DOM) ? 
+    return PropCost::ternary((View::me(med) == ME_INT_DOM) ?
                              PropCost::MED : PropCost::LOW);
   }
 
@@ -289,7 +289,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (x1.max() <= x0.min() || x1.max() < x2.min())
         GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
       return x0.assigned() && x1.assigned() && x2.assigned() ?
-        ES_SUBSUMED(*this,sizeof(*this)) : 
+        ES_SUBSUMED(*this,sizeof(*this)) :
         ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
     ViewRanges<View> r0(x0), r1(x1);
@@ -365,7 +365,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (View::me(med) != ME_INT_DOM) {
       ExecStatus es = prop_nary_max_bnd(home,*this,x,y,PC_INT_DOM);
       GECODE_ES_CHECK(es);
-      return (es == ES_FIX) ? 
+      return (es == ES_FIX) ?
         ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM)) :
         ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }

@@ -57,10 +57,10 @@ namespace Gecode { namespace CpltSet {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
   }
-  
+
   template <class View0, class View1>
   forceinline PropCost
-  BinaryCpltSetPropagator<View0,View1>::cost(const Space&, 
+  BinaryCpltSetPropagator<View0,View1>::cost(const Space&,
                                              const ModEventDelta&) const {
     return PropCost::binary(PropCost::MED);
     /*
@@ -75,7 +75,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   Support::Symbol
   BinaryCpltSetPropagator<View0,View1>::ati(void) {
-    return 
+    return
       Reflection::mangle<View0,View1>("Gecode::CpltSet::BinaryCpltSetPropagator");
   }
 
@@ -84,8 +84,8 @@ namespace Gecode { namespace CpltSet {
   BinaryCpltSetPropagator<View0,View1>::spec(const Space&,
                                              Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
-  } 
-  
+  }
+
   template <class View0, class View1>
   size_t
   BinaryCpltSetPropagator<View0,View1>::dispose(Space& home) {
@@ -114,7 +114,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   BinaryCpltSetPropagator<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = true;
     {
@@ -147,7 +147,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline
-  BinRelDisj<View0,View1>::BinRelDisj(Space& home, View0& x0, View1& y0, 
+  BinRelDisj<View0,View1>::BinRelDisj(Space& home, View0& x0, View1& y0,
                                       bdd& d0)
     : BinaryCpltSetPropagator<View0,View1>(home, x0, y0, d0) { }
 
@@ -155,7 +155,7 @@ namespace Gecode { namespace CpltSet {
   forceinline
   BinRelDisj<View0,View1>::BinRelDisj(Space& home, bool share, BinRelDisj& p)
     : BinaryCpltSetPropagator<View0,View1>(home,share,p) { }
-  
+
 
   template <class View0, class View1>
   size_t
@@ -166,7 +166,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline ExecStatus
-  BinRelDisj<View0,View1>::post(Space& home, View0& x0, View1& y0, 
+  BinRelDisj<View0,View1>::post(Space& home, View0& x0, View1& y0,
                                 bdd& d0) {
     (void) new (home) BinRelDisj(home, x0, y0, d0);
     return ES_OK;
@@ -179,7 +179,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   BinRelDisj<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = true;
 
@@ -187,7 +187,7 @@ namespace Gecode { namespace CpltSet {
       Set::GlbRanges<View0> glbx(x);
       if (y.assigned()) {
         Set::GlbRanges<View1> glby(y);
-        Iter::Ranges::Inter<Set::GlbRanges<View0>, Set::GlbRanges<View1> > 
+        Iter::Ranges::Inter<Set::GlbRanges<View0>, Set::GlbRanges<View1> >
           inter(glbx, glby);
         if (inter())
           return ES_FAILED;
@@ -206,15 +206,15 @@ namespace Gecode { namespace CpltSet {
 
     Set::LubRanges<View0> lubx(x);
     Set::LubRanges<View1> luby(y);
-    Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> > 
+    Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
       inter(lubx, luby);
     Iter::Ranges::ToValues<
-      Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> > 
+      Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
       > ival(inter);
 
     Iter::Ranges::ValCache<
       Iter::Ranges::ToValues<
-         Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> > 
+         Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
       >
       > cache(ival);
 

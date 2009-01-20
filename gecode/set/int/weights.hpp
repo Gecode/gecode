@@ -233,7 +233,7 @@ namespace Gecode { namespace Set { namespace Int {
     bool operator ()(int x, int y);
   };
 
-  forceinline bool 
+  forceinline bool
   IntLess::operator ()(int x, int y) {
     return x < y;
   }
@@ -310,7 +310,7 @@ namespace Gecode { namespace Set { namespace Int {
       // Elements are too heavy if their weight alone already
       // exceeds the remaining capacity
       int remainingCapacity = y.max()-lowWeight;
-      
+
       UnknownRanges<View> ur2(x);
       Iter::Ranges::ToValues<UnknownRanges<View> > urv2(ur2);
       OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View> > >
@@ -323,10 +323,10 @@ namespace Gecode { namespace Set { namespace Int {
     if (x.assigned()) {
       // If x is assigned, just compute its weight and assign y.
       GlbRanges<View> glb(x);
-      int w = 
+      int w =
         weightI<GlbRanges<View> >(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
-      return ES_SUBSUMED(*this,home);      
+      return ES_SUBSUMED(*this,home);
     }
 
     return me_modified(me) ? ES_NOFIX : ES_FIX;

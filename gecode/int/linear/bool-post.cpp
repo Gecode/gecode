@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Linear {
 
   void
-  post_pos_unit(Space& home, 
+  post_pos_unit(Space& home,
                 Term<BoolView>* t_p, int n_p,
                 IntRelType r, IntView y, int c) {
     switch (r) {
@@ -84,9 +84,9 @@ namespace Gecode { namespace Int { namespace Linear {
     default: GECODE_NEVER;
     }
   }
-  
+
   void
-  post_pos_unit(Space& home, 
+  post_pos_unit(Space& home,
                 Term<BoolView>* t_p, int n_p,
                 IntRelType r, ZeroIntView, int c) {
     switch (r) {
@@ -125,9 +125,9 @@ namespace Gecode { namespace Int { namespace Linear {
     default: GECODE_NEVER;
     }
   }
-  
+
   void
-  post_neg_unit(Space& home, 
+  post_neg_unit(Space& home,
                 Term<BoolView>* t_n, int n_n,
                 IntRelType r, IntView y, int c) {
     switch (r) {
@@ -173,9 +173,9 @@ namespace Gecode { namespace Int { namespace Linear {
     default: GECODE_NEVER;
     }
   }
-  
+
   void
-  post_neg_unit(Space& home, 
+  post_neg_unit(Space& home,
                 Term<BoolView>* t_n, int n_n,
                 IntRelType r, ZeroIntView, int c) {
     switch (r) {
@@ -263,10 +263,10 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_NEVER;
     }
   }
-  
+
 
   void
-  post_mixed(Space& home, 
+  post_mixed(Space& home,
              Term<BoolView>* t_p, int n_p,
              Term<BoolView>* t_n, int n_n,
              IntRelType r, ZeroIntView y, int c) {
@@ -309,10 +309,10 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_NEVER;
     }
   }
-  
+
   template <class View>
   forceinline void
-  post_all(Space& home, 
+  post_all(Space& home,
            Term<BoolView>* t, int n,
            IntRelType r, View x, int c) {
 
@@ -342,10 +342,10 @@ namespace Gecode { namespace Int { namespace Linear {
         }
 
       Limits::check(d,"Int::linear");
-      
+
       c = static_cast<int>(d);
     }
-    
+
     Term<BoolView> *t_p, *t_n;
     int n_p, n_n;
     bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n);
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
       return;
     }
-    
+
     // Check for overflow
     {
       double sl = x.max()+c;
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace Linear {
       Limits::check(sl,"Int::linear");
       Limits::check(su,"Int::linear");
     }
-    
+
     if (unit && (n_n == 0)) {
       /// All coefficients are 1
       post_pos_unit(home,t_p,n_p,r,x,c);
@@ -384,36 +384,36 @@ namespace Gecode { namespace Int { namespace Linear {
       post_mixed(home,t_p,n_p,t_n,n_n,r,x,c);
     }
   }
-  
+
 
   void
-  post(Space& home, 
-       Term<BoolView>* t, int n, IntRelType r, IntView x, int c, 
+  post(Space& home,
+       Term<BoolView>* t, int n, IntRelType r, IntView x, int c,
        IntConLevel) {
     post_all(home,t,n,r,x,c);
   }
-  
+
   void
-  post(Space& home, 
-       Term<BoolView>* t, int n, IntRelType r, int c, 
+  post(Space& home,
+       Term<BoolView>* t, int n, IntRelType r, int c,
        IntConLevel) {
     ZeroIntView x;
     post_all(home,t,n,r,x,c);
   }
 
   void
-  post(Space& home, 
+  post(Space& home,
        Term<BoolView>* t, int n, IntRelType r, IntView x, BoolView b,
        IntConLevel icl) {
     int l, u;
     estimate(t,n,0,l,u);
     IntVar z(home,l,u); IntView zv(z);
     post_all(home,t,n,IRT_EQ,zv,0);
-    rel(home,z,r,x,b,icl);    
+    rel(home,z,r,x,b,icl);
   }
-  
+
   void
-  post(Space& home, 
+  post(Space& home,
        Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel icl) {
     int l, u;

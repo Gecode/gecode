@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val>
   forceinline void
-  SupportIter<Val>::init(Region& r, 
+  SupportIter<Val>::init(Region& r,
                          int a0, const IntView& x0, Val l0, Val u0) {
     a=a0; x=x0; l=l0; u=u0;
     s.init(r,x.size());

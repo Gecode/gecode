@@ -253,7 +253,7 @@ namespace Gecode { namespace Set {
 
   forceinline void
   ConstantView::subscribe(Space& home, Propagator& p, PropCond,bool) {
-    schedule(home,p,ME_SET_VAL);    
+    schedule(home,p,ME_SET_VAL);
   }
   forceinline void
   ConstantView::cancel(Space&,Propagator&,PropCond) {}
@@ -313,7 +313,7 @@ namespace Gecode { namespace Set {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
-  
+
   forceinline int
   ConstantView::glbMin(const Delta&) const {
     GECODE_NEVER;
@@ -459,7 +459,7 @@ namespace Gecode { namespace Set {
 
   forceinline void
   EmptyView::subscribe(Space& home, Propagator& p, PropCond,bool) {
-    schedule(home,p,ME_SET_VAL);    
+    schedule(home,p,ME_SET_VAL);
   }
   forceinline void
   EmptyView::cancel(Space&,Propagator&,PropCond) {}
@@ -492,7 +492,7 @@ namespace Gecode { namespace Set {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
-  
+
   forceinline int
   EmptyView::glbMin(const Delta&) const {
     GECODE_NEVER;
@@ -644,7 +644,7 @@ namespace Gecode { namespace Set {
   }
   forceinline void
   UniverseView::subscribe(Space& home, Propagator& p, PropCond,bool) {
-    schedule(home,p,ME_SET_VAL);    
+    schedule(home,p,ME_SET_VAL);
   }
   forceinline void
   UniverseView::cancel(Space&,Propagator&,PropCond) {}
@@ -678,7 +678,7 @@ namespace Gecode { namespace Set {
     GECODE_NEVER;
     return ME_GEN_NONE;
   }
-  
+
   forceinline int
   UniverseView::glbMin(const Delta&) const {
     GECODE_NEVER;

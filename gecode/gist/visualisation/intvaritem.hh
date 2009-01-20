@@ -45,7 +45,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
 /// \brief Visualisation item for integer variables
 class IntVarItem : public VarItem {
-  
+
 public:
   typedef int ItemData;
   static ItemData initData(QVector<Reflection::VarSpec*> specs);
@@ -57,7 +57,7 @@ public:
   void displayOld(int pit); ///< Use to show the variable at point in time \a pit
 
 protected:
-  virtual void initGraphic(void); 
+  virtual void initGraphic(void);
   virtual void updateGraphic(void);
   virtual void store(Reflection::VarSpec* spec); ///< store the information of the variable on the stack
 

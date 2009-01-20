@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ValRnd<View>::ValRnd(void) {}
   template<class View>
   forceinline
-  ValRnd<View>::ValRnd(Space&, const ValBranchOptions& vbo) 
+  ValRnd<View>::ValRnd(Space&, const ValBranchOptions& vbo)
     : r(vbo.seed) {}
   template<class View>
   forceinline int
@@ -113,13 +113,13 @@ namespace Gecode { namespace Int { namespace Branch {
     return r;
   }
   template<class View>
-  forceinline void 
-  ValRnd<View>::commit(Space&, const Support::RandomGenerator& d, 
+  forceinline void
+  ValRnd<View>::commit(Space&, const Support::RandomGenerator& d,
                        unsigned int) {
     r = d;
   }
   template<class View>
-  forceinline void 
+  forceinline void
   ValRnd<View>::update(Space&, bool, ValRnd<View>& vr) {
     r = vr.r;
   }
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignValZeroOne<View>::AssignValZeroOne(void) {}
   template<class View>
   forceinline
-  AssignValZeroOne<View>::AssignValZeroOne(Space& home, 
+  AssignValZeroOne<View>::AssignValZeroOne(Space& home,
                                            const ValBranchOptions& vbo)
     : ValZeroOne<View>(home,vbo) {}
 

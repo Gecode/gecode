@@ -57,8 +57,8 @@ namespace {
 
 /**
  * \brief %Example: Solitaire Domino
- * 
- * The task is to place domino pieces on a board. Each piece covers two 
+ *
+ * The task is to place domino pieces on a board. Each piece covers two
  * fields and has two numbers. There are 28 pieces, from 0-0 to 6-6.
  * The board is set up with a number in each field that must match the
  * number of the domino piece placed on that field.
@@ -74,7 +74,7 @@ private:
   int width;
   /// Height of the board
   int height;
-  
+
   /// The board representing the number of the piece at each position
   IntVarArray x;
 
@@ -87,17 +87,17 @@ public:
 
   /// Actual model
   Domino(const SizeOptions& opt)
-    : spec(specs[opt.size()]), 
+    : spec(specs[opt.size()]),
       width(spec[0]), height(spec[1]),
       x(*this, (width+1)*height, 0, 28) {
     spec+=2; // skip board size information
-    
+
     // Copy spec information to the board
     IntArgs board((width+1)*height);
     for (int i=0; i<width; i++)
       for (int j=0; j<height; j++)
-        board[j*(width+1)+i] = spec[j*width+i];    
-    
+        board[j*(width+1)+i] = spec[j*width+i];
+
     // Initialize the separator column in the board
     for (int i=0; i<height; i++) {
       board[i*(width+1)+8] = -1;
@@ -108,17 +108,17 @@ public:
     // and second half of a domino piece
     IntVarArray p1(*this, 28, 0, (width+1)*height-1);
     IntVarArray p2(*this, 28, 0, (width+1)*height-1);
-    
+
 
     if (opt.propagation() == PROP_ELEMENT) {
       int dominoCount = 0;
-      
+
       int possibleDiffsA[] = {1, width+1};
       IntSet possibleDiffs(possibleDiffsA, 2);
-      
+
       for (int i=0; i<=6; i++)
         for (int j=i; j<=6; j++) {
-          
+
           // The two coordinates must be adjacent.
           // I.e., they may differ by 1 or by the width.
           // The separator column makes sure that a field
@@ -131,11 +131,11 @@ public:
           // If the piece is symmetrical, order the locations
           if (i == j)
             rel(*this, p1[dominoCount], IRT_LE, p2[dominoCount]);
-          
+
           // Link the current piece to the board
           element(*this, board, p1[dominoCount], i);
           element(*this, board, p2[dominoCount], j);
-          
+
           // Link the current piece to the array where its
           // number is stored.
           element(*this, x, p1[dominoCount], dominoCount);
@@ -144,7 +144,7 @@ public:
         }
     } else {
       int dominoCount = 0;
-      
+
       for (int i=0; i<=6; i++)
         for (int j=i; j<=6; j++) {
           // Find valid placements for piece i-j
@@ -166,7 +166,7 @@ public:
                 valids |= REG(pos+width+1) + REG(pos);
             }
           }
-          IntVarArgs piece(2); 
+          IntVarArgs piece(2);
           piece[0] = p1[dominoCount];
           piece[1] = p2[dominoCount];
           extensional(*this, piece, valids);
@@ -226,9 +226,9 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("Domino");
   opt.size(0);
-  opt.propagation(Domino::PROP_ELEMENT);  
-  opt.propagation(Domino::PROP_ELEMENT, "element");  
-  opt.propagation(Domino::PROP_EXTENSIONAL, "extensional");  
+  opt.propagation(Domino::PROP_ELEMENT);
+  opt.propagation(Domino::PROP_ELEMENT, "element");
+  opt.propagation(Domino::PROP_EXTENSIONAL, "extensional");
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
@@ -247,7 +247,7 @@ namespace {
    * \relates Domino
    */
   //@{
-  
+
   /// %Example 0
   const int domino0[] =
     { // width*height of the board
@@ -261,7 +261,7 @@ namespace {
       4,6,2,1,3,6,6,1,
       4,2,0,6,5,3,3,6
     };
-  
+
   /// %Example 1
   const int domino1[] =
     { // width*height of the board
@@ -275,7 +275,7 @@ namespace {
       3,6,6,2,4,0,5,4,
       1,3,6,1,2,3,5,2
     };
-  
+
   /// %Example 2
   const int domino2[] =
     { // width*height of the board
@@ -289,7 +289,7 @@ namespace {
       2,1,3,3,5,6,6,1,
       5,1,6,0,0,0,4,0
     };
-  
+
   /// %Example 3
   const int domino3[] =
     { // width*height of the board
@@ -303,7 +303,7 @@ namespace {
       1,3,2,5,6,0,0,1,
       0,5,4,6,2,1,6,1
     };
-  
+
   /// %Example 4
   const int domino4[] =
     { // width*height of the board
@@ -317,7 +317,7 @@ namespace {
       3,0,1,0,0,5,4,3,
       3,2,4,5,4,2,6,0
     };
-  
+
   /// %Example 5
   const int domino5[] =
     { // width*height of the board
@@ -331,7 +331,7 @@ namespace {
       2,5,0,6,6,3,3,5,
       4,1,0,0,4,1,4,5
     };
-  
+
   /// List of specifications
   const int *specs[] =
     {domino0,domino1,domino2,domino3,domino4,domino5};

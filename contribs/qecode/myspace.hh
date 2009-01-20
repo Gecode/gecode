@@ -37,20 +37,20 @@ using namespace Gecode::Int;
 */
 
 class QECODE_VTABLE_EXPORT MySpace : public Space {
-    
+
 protected :
     unsigned int n;
-    
+
 public:
     /** \brief This array contains all the variables this space contains.
     */
     void** v;
-    
-    
+
+
     /** \brief This array indicates the type of each variable
     */
     VarType* type_of_v;
-    
+
     /** \brief Constructor of a space with a fixed number of variables
         *
         * Builds a space which will contain  nv variables (the variables themselves are however not declared).

@@ -56,7 +56,7 @@ namespace Gecode {
       os << " ";
     return os;
   }
-  
+
   bool
   ProjectorCompiler::nary(void) {
     return spec._arity <= 0 || spec._arity >= 4;
@@ -75,7 +75,7 @@ namespace Gecode {
   void
   ProjectorCompiler::header(std::ostream& os) {
     os
-      << "// This file was generated from projector specifications." 
+      << "// This file was generated from projector specifications."
       << std::endl << std::endl;
 
     if (spec._namespace != "") {
@@ -162,7 +162,7 @@ namespace Gecode {
     hhos << indent
          << "class " << spec._name << " : public Propagator { " << endl
          << indent << "protected:" << endl;
-      
+
     if (nary())
       hhos << indent
            << "  ViewArray<View> _x; ///< The view array" << endl;
@@ -203,14 +203,14 @@ namespace Gecode {
       hhos << indent << "  ExecStatus check(Space& home);" << endl;
       hhos << indent << "  /// Propagate negated version" << endl;
       hhos << indent << "  ExecStatus propagateNegative(Space& home);"
-           << endl << endl;        
+           << endl << endl;
     }
-     
+
     hhos << indent
          << "public:" << endl;
 
     hhos << indent
-         << "  /// Cost function (defined as " << propcost() << ")" 
+         << "  /// Cost function (defined as " << propcost() << ")"
          << endl << indent
          << "  virtual PropCost cost(const Space& home, const ModEventDelta& med) const;" << endl;
 
@@ -246,7 +246,7 @@ namespace Gecode {
       case Gecode::Set::PC_SET_CLUB :
       case Gecode::Set::PC_SET_ANY : return "Gecode::Set::PC_SET_ANY";
       default: GECODE_NEVER;
-      }        
+      }
     }
 
     switch (pc) {
@@ -281,7 +281,7 @@ namespace Gecode {
          << ": Propagator(home), ";
     initarglist(iccos);
     iccos << " {" << endl;
-      
+
     int projArity = spec._ps.arity();
     Support::DynamicArray<int,Heap> scope(heap);
     spec._ps.scope(scope, projArity);
@@ -295,7 +295,7 @@ namespace Gecode {
       iccos << ".subscribe(home, *this, " << propcond(scope[i])
            << ");" << endl;
     }
-      
+
     if (spec._reified)
       iccos << indent << "_b.subscribe(home, *this, Gecode::Int::PC_INT_VAL);"
             << endl;
@@ -327,7 +327,7 @@ namespace Gecode {
         iccos << indent
              << "_x" << i << ".update(home, share, p._x" << i << ");" << endl;
     }
-      
+
     if (spec._reified)
       iccos << indent << "_b.update(home, share, p._b);" << endl;
 
@@ -356,7 +356,7 @@ namespace Gecode {
       iccos << ".cancel(home, *this, " << propcond(scope[i])
            << ");" << endl;
     }
-      
+
     if (spec._reified)
       iccos << indent << "_b.cancel(home, *this, Gecode::Int::PC_INT_VAL);"
             << endl;
@@ -365,7 +365,7 @@ namespace Gecode {
     iccos << indent << "}" << endl;
 
     iccos << indent << "(void) Propagator::dispose(home);" << endl
-         << indent << "return sizeof(*this);" << endl;      
+         << indent << "return sizeof(*this);" << endl;
 
     --indent;
     iccos << indent << "}" << endl << endl;
@@ -457,7 +457,7 @@ namespace Gecode {
           int a2 = argstack.back(); argstack.pop_back();
           int a1 = argstack.back(); argstack.pop_back();
           iccos << indent
-                << "Iter::Ranges::Inter<" << t1 << ", " << t2 << " > i" 
+                << "Iter::Ranges::Inter<" << t1 << ", " << t2 << " > i"
                 << (++arg)
                 << "(i" << a1 << ", i" << a2 << ");" << endl;
           typestack.push_back("Iter::Ranges::Inter<"+t1+", "+t2+" >");
@@ -471,7 +471,7 @@ namespace Gecode {
           int a2 = argstack.back(); argstack.pop_back();
           int a1 = argstack.back(); argstack.pop_back();
           iccos << indent
-                << "Iter::Ranges::Union<" << t1 << ", " << t2 << " > i" 
+                << "Iter::Ranges::Union<" << t1 << ", " << t2 << " > i"
                 << (++arg)
                 << "(i" << a1 << ", i" << a2 << ");" << endl;
           typestack.push_back("Iter::Ranges::Union<"+t1+", "+t2+" >");
@@ -491,7 +491,7 @@ namespace Gecode {
             if (instrs[i] == SetExprCode::GLB)
               bound = "Glb";
             else
-              bound = "Lub";        
+              bound = "Lub";
           }
 
           int a = argstack.back(); argstack.pop_back();
@@ -718,7 +718,7 @@ namespace Gecode {
           iccos << indent
                 << "if (!Iter::Ranges::subset(i" << arg
                 << ",j)) es = ES_FIX;"
-                << endl;          
+                << endl;
           --indent;
           iccos << indent << "}" << endl;
         }
@@ -739,7 +739,7 @@ namespace Gecode {
           iccos << indent
                 << "if (!Iter::Ranges::subset(j,i" << arg
                 << ")) es = ES_FIX;"
-                << endl;          
+                << endl;
           --indent;
           iccos << indent << "}" << endl;
         }
@@ -747,7 +747,7 @@ namespace Gecode {
       iccos << indent << "return es;" << endl;
       --indent;
       iccos << indent << "}" << endl << endl;
-        
+
       templatehead(iccos);
       iccos << indent << "ExecStatus" << endl << indent << spec._name;
       templateparams();
@@ -772,7 +772,7 @@ namespace Gecode {
       iccos << indent << "return propagateNegative(home);" << endl;
       --indent;
       iccos << indent << "}" << endl;
-      return;        
+      return;
     }
 
     if (spec._reified) {
@@ -792,7 +792,7 @@ namespace Gecode {
         iccos << indent << "  return ES_FIX;" << endl;
         iccos << indent << "}" << endl;
         --indent;
-        iccos << indent << "}" << endl;        
+        iccos << indent << "}" << endl;
       } else {
               iccos << indent << "if (_b.one()) return propagatePositive(home);"
               << endl;
@@ -811,13 +811,13 @@ namespace Gecode {
         --indent;
         iccos << indent << "}" << endl;
       }
-      return;        
+      return;
     }
 
     iccos << indent << "return propagatePositive(home);" << endl;
     --indent;
     iccos << indent << "}" << endl;
-    return;        
+    return;
 
   }
 
@@ -830,7 +830,7 @@ namespace Gecode {
       views(SINGLE_VIEW)
   {}
 
-  void 
+  void
   ProjectorCompiler::compile(void) {
     using namespace std;
     if (spec._arity < spec._ps.arity()) {

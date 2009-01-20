@@ -52,7 +52,7 @@ namespace Test { namespace Set {
 
     static IntSet ds_22(-2,2);
     static IntSet ds_12(-1,2);
-    
+
     /// Test for ternary relation constraint
     class Rel : public SetTest {
     private:
@@ -107,32 +107,32 @@ namespace Test { namespace Set {
         switch (sot) {
         case SOT_UNION:
           {
-            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
               u(xr0,xr1);
             return sol(u,xr2);
           }
           break;
         case SOT_DUNION:
           {
-            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
               inter(xr0,xr1);
             if (inter())
               return false;
-            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
               u(xr0,xr1);
             return sol(u,xr2);
           }
           break;
         case SOT_INTER:
           {
-            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
               u(xr0,xr1);
             return sol(u,xr2);
           }
           break;
         case SOT_MINUS:
           {
-            Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> 
+            Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges>
               u(xr0,xr1);
             return sol(u,xr2);
           }
@@ -167,10 +167,10 @@ namespace Test { namespace Set {
               (void) new Rel(sots.sot(),srts.srt(),i);
             }
           }
-        }      
+        }
       }
     };
-   
+
     Create c;
 
     /// Test for n-ary partition constraint
@@ -194,7 +194,7 @@ namespace Test { namespace Set {
         int realN = shared == 0 ? n : 3;
 
         CountableSetRanges* isrs = new CountableSetRanges[realN];
-        
+
         switch (shared) {
         case 0:
           for (int i=realN; i--; )
@@ -218,7 +218,7 @@ namespace Test { namespace Set {
         default:
           GECODE_NEVER;
         }
-                
+
         int result = shared == 0 ? x.size() - 1 : (shared <= 2 ? 2 : 0);
         CountableSetRanges xnr(x.lub, x[result]);
 
@@ -371,7 +371,7 @@ namespace Test { namespace Set {
         int* isrs = new int[n];
         for (int i=0; i<n; i++)
           isrs[i] = x.ints()[i];
-        
+
         IntSet iss(isrs,n);
         CountableSetRanges xnr(x.lub, x[0]);
 
@@ -402,7 +402,7 @@ namespace Test { namespace Set {
               IntSetRanges isr(is);
               Iter::Ranges::Union<IntSetRanges,IntSetRanges > uu(isr, issr);
               delete[] isrs;
-              return Iter::Ranges::equal(uu, xnr);              
+              return Iter::Ranges::equal(uu, xnr);
             } else {
               IntSetRanges issr(iss);
               delete[] isrs;

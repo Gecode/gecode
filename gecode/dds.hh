@@ -82,7 +82,7 @@ namespace Gecode {
      * Decomposition during search
      *
      */
-  
+
     /// Engine for decomposition during search
     class DDSEngine : public Search::EngineCtrl {
     private:
@@ -114,7 +114,7 @@ namespace Gecode {
       /// Reset engine to restart at space \a s
       void reset(Space* s);
       /// Search for next solution or decomposition
-      ExploreStatus explore(Space*& s, int& closedDecomps, 
+      ExploreStatus explore(Space*& s, int& closedDecomps,
                             std::vector<int>& significantVars);
       /// Close current decomposition component
       void closeComponent(void);
@@ -154,7 +154,7 @@ namespace Gecode {
       Search::Statistics statistics(void) const;
       /// Check whether engine has been stopped
       bool stopped(void) const;
-    };  
+    };
   }
 
   /**
@@ -205,14 +205,14 @@ namespace Gecode {
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals, applying decomposition during search if possible
   GECODE_DDS_EXPORT void
-  decomposingBranch(Space& home, const IntVarArgs& x, 
+  decomposingBranch(Space& home, const IntVarArgs& x,
                     IntVarBranch vars, IntValBranch vals,
                     const VarBranchOptions& o_vars = VarBranchOptions::def,
                     const ValBranchOptions& o_vals = ValBranchOptions::def);
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals, applying decomposition during search if possible
   GECODE_DDS_EXPORT void
-  decomposingBranch(Space& home, const BoolVarArgs& x, 
+  decomposingBranch(Space& home, const BoolVarArgs& x,
                     IntVarBranch vars, IntValBranch vals,
                     const VarBranchOptions& o_vars = VarBranchOptions::def,
                     const ValBranchOptions& o_vals = ValBranchOptions::def);

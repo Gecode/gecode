@@ -93,7 +93,7 @@ namespace Gecode {
   forceinline
   ValSelBase<View,Val>::ValSelBase(void) {}
   template<class View, class Val>
-  forceinline 
+  forceinline
   ValSelBase<View,Val>::ValSelBase(Space&, const ValBranchOptions&) {}
   template<class View, class Val>
   forceinline EmptyValSelDesc
@@ -104,7 +104,7 @@ namespace Gecode {
   forceinline void
   ValSelBase<View,Val>::commit(Space&, const EmptyValSelDesc&, unsigned int) {}
   template<class View, class Val>
-  forceinline void 
+  forceinline void
   ValSelBase<View,Val>::update(Space&, bool, ValSelBase<View,Val>&) {}
   template<class View, class Val>
   forceinline void

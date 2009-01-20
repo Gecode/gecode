@@ -44,11 +44,11 @@
  */
 
 namespace Gecode { namespace Reflection {
-  
+
   /** \addtogroup TaskReflection
     * @{
     */
-  
+
   /// Exception for errors during reflection
   class GECODE_VTABLE_EXPORT ReflectionException : public Exception {
   public:
@@ -65,10 +65,10 @@ namespace Gecode { namespace Reflection {
   };
 
   //@}
-  
+
   class ArrayArg;
   class IntArrayArg;
-  
+
   /**
     * \brief Arguments for actor and variable specifications
     *
@@ -97,7 +97,7 @@ namespace Gecode { namespace Reflection {
       ULONG_ARG,         ///< Unsigned long integer argument
       FLOAT_ARG,         ///< Float argument
       DOUBLE_ARG,        ///< Double argument
-      
+
       VAR_ARG,           ///< Variable argument
       ARRAY_ARG,         ///< Array argument
       INT_ARRAY_ARG,     ///< Integer array argument
@@ -109,7 +109,7 @@ namespace Gecode { namespace Reflection {
 
     /// Argument type of this Arg
     argtype t;
-    
+
     union {
       /// The integer of an INT_ARG, the index of a VAR_ARG or SHARED_REF_ARG, or the size of an ARRAY_ARG or INT_ARRAY_ARG
       long int i;
@@ -133,9 +133,9 @@ namespace Gecode { namespace Reflection {
     } arg2;
     /// Constructor
     Arg(argtype t);
-    
+
   public:
-    
+
     /// %Test if this represents a Boolean
     bool         isBool(void) const;
     /// Return the Boolean that this argument represents
@@ -244,7 +244,7 @@ namespace Gecode { namespace Reflection {
     /// Initialize this as a double argument
     void        initDouble(double i);
 
-    
+
     /// %Test if this represents a variable
     bool         isVar(void) const;
     /// Return the variable index that this argument represents
@@ -253,7 +253,7 @@ namespace Gecode { namespace Reflection {
     static Arg*  newVar(int i);
     /// Initialize this as a variable argument
     void         initVar(int i);
-    
+
     /// %Test if this represents an array
     bool             isArray(void) const;
     /// Return the array that this argument represents
@@ -264,7 +264,7 @@ namespace Gecode { namespace Reflection {
     static ArrayArg* newArray(int n);
     /// Initialize this as an array argument with size \a n
     void         initArray(int n);
-    
+
     /// %Test if this represents an array
     bool                isIntArray(void) const;
     /// Return the array that this argument represents
@@ -289,7 +289,7 @@ namespace Gecode { namespace Reflection {
     static Arg*  newString(const Support::Symbol& s);
     /// Initialize this as a string argument
     void         initString(const char* s);
-    
+
     /// %Test if this represents a pair
     bool         isPair(void) const;
     /// Return the first component of the pair that this argument represents
@@ -304,7 +304,7 @@ namespace Gecode { namespace Reflection {
     static Arg*  newPair(Arg* a, Arg* b);
     /// Initialize this as a pair argument from \a a and \a b
     void         initPair(Arg* a, Arg* b);
-    
+
     /// %Test if this represents a shared object
     bool         isSharedObject(void) const;
     /// Return the shared object that this argument represents
@@ -315,7 +315,7 @@ namespace Gecode { namespace Reflection {
     static Arg*  newSharedObject(Arg* a);
     /// Initialize this as a shared object
     void         initSharedObject(Arg* a);
-    
+
     /// %Test if this represents a shared object reference
     bool         isSharedReference(void) const;
     /// Return the shared object that this argument represents
@@ -324,11 +324,11 @@ namespace Gecode { namespace Reflection {
     static Arg*  newSharedReference(int ref);
     /// Initialize this as a reference to a shared object
     void         initSharedReference(int ref);
-    
+
     /// Destructor
     GECODE_MSC_VIRTUAL ~Arg(void);
   };
-  
+
 
   /**
     * \brief Array arguments
@@ -398,19 +398,19 @@ namespace Gecode { namespace Reflection {
     /// Width of current range
     unsigned int width(void) const;
   };
-  
+
   /**
     * \brief %Variable specification
     *
-    * A VarSpec contains an abstract specification of a variable 
+    * A VarSpec contains an abstract specification of a variable
     * implementation. These specifications are typically stored in a VarMap.
     *
-    * The type of the variable is represented as a Symbol and called vti 
-    * (variable type identifier). In order to find out what type of variable a 
-    * VarSpec corresponds to, you can compare the vti with VarImp::vti of a 
+    * The type of the variable is represented as a Symbol and called vti
+    * (variable type identifier). In order to find out what type of variable a
+    * VarSpec corresponds to, you can compare the vti with VarImp::vti of a
     * concrete variable type (e.g. IntVarImp::vti).
     *
-    * The domain of a variable is represented as an Arg. The concrete encoding 
+    * The domain of a variable is represented as an Arg. The concrete encoding
     * depends on the variable type.
     *
     * \ingroup TaskReflection
@@ -427,7 +427,7 @@ namespace Gecode { namespace Reflection {
     VarSpec(Support::Symbol vti, Arg* domain, bool assigned=false);
     /// Copy constructor
     VarSpec(const VarSpec& s);
-    /// Assignment operator 
+    /// Assignment operator
     const VarSpec& operator =(const VarSpec& s);
     /// Destructor
     GECODE_MSC_VIRTUAL ~VarSpec(void);
@@ -444,24 +444,24 @@ namespace Gecode { namespace Reflection {
     // Get the variable type identifier for this variable
     Support::Symbol vti(void) const;
   };
-  
+
   /**
     * \brief %Actor specification
     *
-    * An ActorSpec contains all the information that characterizes an Actor. 
-    * The specifications for all the actors in a Space object can be accessed 
+    * An ActorSpec contains all the information that characterizes an Actor.
+    * The specifications for all the actors in a Space object can be accessed
     * using an ActorSpecIter.
     *
-    * Each ActorSpec describes either a Branching or a Propagator 
+    * Each ActorSpec describes either a Branching or a Propagator
     * (reflected by ActorSpec::isBranching). As a user of the Reflection API,
-    * you can access the information describing an Actor as an array of 
+    * you can access the information describing an Actor as an array of
     * arguments, represented as objects of the Arg class.
     *
     * Every propagator and branching must be able to return a specification
-    * through the virtual function Actor::spec. If you use one of the 
-    * convenience classes like BinaryPropagator, have a look at the 
-    * implementation of AbsBnd::spec. If you subclass Propagator directly, or 
-    * you have additional arguments that have to be put into the ActorSpec, 
+    * through the virtual function Actor::spec. If you use one of the
+    * convenience classes like BinaryPropagator, have a look at the
+    * implementation of AbsBnd::spec. If you subclass Propagator directly, or
+    * you have additional arguments that have to be put into the ActorSpec,
     * please look at BinaryPropagator::spec.
     *
     * \ingroup TaskReflection
@@ -488,11 +488,11 @@ namespace Gecode { namespace Reflection {
     ActorSpec(const Support::Symbol& name);
     /// Copy constructor
     ActorSpec(const ActorSpec& s);
-    /// Assignment operator 
+    /// Assignment operator
     const ActorSpec& operator =(const ActorSpec& s);
     /// Destructor
     GECODE_MSC_VIRTUAL ~ActorSpec(void);
-    
+
     /// \name Actor information
     //@{
     /// Return actor type identifier
@@ -511,7 +511,7 @@ namespace Gecode { namespace Reflection {
      */
     int queue(void) const;
     //@}
-    
+
     /// \name Populating the specification
     //@{
     /// Add \a arg to the specification (as last argument)
@@ -584,7 +584,7 @@ namespace Gecode { namespace Reflection {
    */
   ActorSpec
   operator <<(ActorSpec s, unsigned long i);
-  
+
   /** \brief Add \a d to specification
    *  \relates Gecode::Reflection::ActorSpec
    */
@@ -635,7 +635,7 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     * information.
     *
     * \ingroup TaskReflection
-    */  
+    */
   class GECODE_KERNEL_EXPORT BranchingSpec {
   private:
     class Arguments;
@@ -649,11 +649,11 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     BranchingSpec(const Support::Symbol& ati, unsigned int n);
     /// Copy constructor
     BranchingSpec(const BranchingSpec& s);
-    /// Assignment operator 
+    /// Assignment operator
     const BranchingSpec& operator =(const BranchingSpec& s);
     /// Destructor
     GECODE_MSC_VIRTUAL ~BranchingSpec(void);
-    
+
     ///\name Branching information
     //@{
     /// Return actor type identifier
@@ -662,18 +662,18 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     unsigned int size(void) const;
     /// Return specification of alternative \a i
     Arg* operator [](int i) const;
-    
+
     /// Return specification of alternative \a i
     Arg*& operator [](int i);
     //@}
   };
-  
+
   class VarMap;
 
   /**
     * \brief Iterating actor specifications
     *
-    * Use this iterator to access specifications of all actors (propagators 
+    * Use this iterator to access specifications of all actors (propagators
     * and branchings) of a space. The iterator also provides access to the
     * corresponding variable map.
     *
@@ -790,7 +790,7 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     /// Do not allow assignment
     Registry& operator =(const Registry&);
   };
-  
+
   /// The registry object \ingroup TaskReflection
   GECODE_KERNEL_EXPORT Registry& registry(void);
 
@@ -887,7 +887,7 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
    *
    */
   class Var {
-    friend GECODE_KERNEL_EXPORT std::ostream& 
+    friend GECODE_KERNEL_EXPORT std::ostream&
     operator <<(std::ostream& os, const Var& v);
   private:
     /// The actual variable
@@ -923,7 +923,7 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
    * \brief Unreflection from VarSpec and ActorSpec
    * \ingroup TaskReflection
    *
-   * An Unreflector allows you to install variables and propagators in a 
+   * An Unreflector allows you to install variables and propagators in a
    * Space using variable and actor specifications.
    *
    */
@@ -933,17 +933,17 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
     Space& home;
     /// The VarMap that indicates which variables to reuse
     Reflection::VarMap& m;
-    
+
   public:
     /// Constructor
     Unreflector(Space& home0, Reflection::VarMap& m0);
 
     /// Destructor
     GECODE_MSC_VIRTUAL ~Unreflector(void);
-    
+
     /// Return the VarMap
     Reflection::VarMap& varMap(void) const;
-    
+
     /// Create a new variable from \a spec
     void var(Reflection::VarSpec& spec);
 
@@ -953,7 +953,7 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
 
   forceinline
   Var::Var(void) {}
-    
+
   template <class VarImp>
   forceinline
   Var::Var(const VarBase<VarImp>& v) {
@@ -963,14 +963,14 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
 
   forceinline
   Var::Var(const Var& v) : _var(v._var), _vti(v._vti) {}
-  
+
   forceinline
   Var::Var(VarImpBase* var, const Support::Symbol& vti)
     : _var(var), _vti(vti) {}
 
   forceinline VarImpBase*
   Var::varImpBase(void) const {
-    return static_cast<VarImpBase*>(_var);    
+    return static_cast<VarImpBase*>(_var);
   }
 
   template <class VarImp>
@@ -1018,10 +1018,10 @@ GECODE_REFLECT_ARGTOSPEC(double, Double)
       (*ret)[i] = a[i];
     return ret;
   }
-  
+
   /** \addtogroup TaskReflection
    *  @{
-   */  
+   */
 
   /// String representation for View types, used for name mangling
   template <class View>
@@ -1086,7 +1086,7 @@ namespace Reflection {
   class TypeOf<const IntSet> {
   public:
     /// Return string representation
-    static Support::Symbol t(void) { return Support::Symbol("IntSet"); }    
+    static Support::Symbol t(void) { return Support::Symbol("IntSet"); }
   };
 
   /// Mangle ati with type information
@@ -1351,7 +1351,7 @@ namespace Reflection {
     mangled += ">";
     return mangled;
   }
-  
+
   /// Mangle ati with type information
   template <class View0, class View1, class View2, class View3, class View4>
   Support::Symbol
@@ -1464,7 +1464,7 @@ GECODE_KERNEL_POSTHELPERARGS(unsigned long,UnsignedLong)
 GECODE_KERNEL_POSTHELPERARGS(float,Float)
 GECODE_KERNEL_POSTHELPERARGS(double,Double)
 #undef GECODE_KERNEL_POSTHELPERARGS
-  
+
   class SpecHelper {
   public:
     const Space& home;
@@ -1474,7 +1474,7 @@ GECODE_KERNEL_POSTHELPERARGS(double,Double)
                const Support::Symbol& ati)
       : home(home0), m(m0), s(ati) {}
   };
-  
+
   template <class C>
   forceinline
   void operator<<(SpecHelper& s, C& c) { s.s << c.spec(s.home, s.m); }
@@ -1759,7 +1759,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
  * The member variables \a V0 and \a V1 (with types \a T0 and \a T1)
  * of the propagator will be
  * returned by reflection, and unreflection will recreate the propagator from
- * a specification for \a V0 and \a V1. Note that the propagator must provide 
+ * a specification for \a V0 and \a V1. Note that the propagator must provide
  * a post method with the signature
  * <code>post(Space& home, T0 V0, T1 V1)</code>
  *
@@ -1881,7 +1881,7 @@ GECODE_KERNEL_SPECHELPERARGS(double)
     GECODE_ES_FAIL(home, __PROPCLASS::post(home, t0,t1,t2,t3,t4,t5,t6)); \
   }
 
-  
+
 }}
 
 

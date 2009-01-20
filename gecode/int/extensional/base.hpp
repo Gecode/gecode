@@ -46,12 +46,12 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool subscribe>
   forceinline
-  Base<View,subscribe>::Base(Space& home, ViewArray<View>& x0, 
+  Base<View,subscribe>::Base(Space& home, ViewArray<View>& x0,
                              const TupleSet& t)
     : Propagator(home), x(x0), tupleSet(t), last_data(NULL) {
     if (subscribe)
       x.subscribe(home, *this, PC_INT_DOM);
-    
+
     if (!ts()->finalized()) ts()->finalize();
     init_last(home, ts()->last);
 
@@ -151,10 +151,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (subscribe)
         x.cancel(home,*this,PC_INT_DOM);
       // take care of last_data
-      int literals = ts()->domsize*x.size();    
+      int literals = ts()->domsize*x.size();
       home.rfree(last_data, sizeof(Tuple*)*literals);
     }
-    (void) tupleSet.~TupleSet();    
+    (void) tupleSet.~TupleSet();
     return sizeof(*this);
   }
 }}}

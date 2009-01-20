@@ -35,7 +35,7 @@
  */
 
 namespace Gecode { namespace Gist {
-  
+
   forceinline bool
   LayoutCursor::mayMoveDownwards(void) {
     return NodeCursor<VisualNode>::mayMoveDownwards() &&

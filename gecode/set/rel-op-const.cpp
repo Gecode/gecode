@@ -53,7 +53,7 @@ namespace Gecode {
     Set::Limits::check(x, "Set::rel");
     ConstantView xv(home, x);
     rel_op_post<ConstantView,SetView,SetView>(home, xv, op, y, r, z);
-  }  
+  }
 
   void
   rel(Space& home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
@@ -108,7 +108,7 @@ namespace Gecode {
           SetVar tmp(home);
           GECODE_ES_FAIL(home,
                          (Subset<SetView,SetView>::post(home,z,tmp)));
-          
+
           GlbRanges<ConstantView> yr(yv);
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);
           IntSet yc(yrc);
@@ -152,7 +152,7 @@ namespace Gecode {
     } else {
       rel_op_post<ConstantView,SetView,SetView>(home, yv, op, x, r, z);
     }
-  }  
+  }
 
   void
   rel(Space& home, SetVar x, SetOpType op, SetVar y, SetRelType r,
@@ -168,7 +168,7 @@ namespace Gecode {
       ConstantView zv(home, z);
       rel_op_post_nocompl<SetView,SetView,ConstantView>(home, x, op, y, r, zv);
     }
-  }  
+  }
 
   void
   rel(Space& home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
@@ -186,7 +186,7 @@ namespace Gecode {
       ConstantView zv(home, z);
       rel_op_post_nocompl<ConstantView,SetView,ConstantView>(home, xv, op, y, r, zv);
     }
-  }  
+  }
 
   void
   rel(Space& home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
@@ -248,7 +248,7 @@ namespace Gecode {
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);
           IntSet yc(yrc);
           ConstantView cy(home, yc);
-          
+
           GECODE_ES_FAIL(home,
                          (Intersection<ConstantView,
                           SetView,SetView>
@@ -261,7 +261,7 @@ namespace Gecode {
           SetView tmpv(tmp);
           IntSetRanges zi(z);
           GECODE_ME_FAIL(home, tmpv.excludeI(home, zi));
-          
+
           GlbRanges<ConstantView> yr(yv);
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);
           IntSet yc(yrc);
@@ -294,7 +294,7 @@ namespace Gecode {
         rel_op_post_nocompl<ConstantView,SetView,ConstantView>(home, yv, op, x, r, zv);
       }
     }
-  }  
+  }
 
   namespace {
 

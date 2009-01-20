@@ -561,7 +561,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \relates Lin
    */
   template <class Val, class View>
-  void bounds_p(ModEventDelta med, ViewArray<View>& x, 
+  void bounds_p(ModEventDelta med, ViewArray<View>& x,
                 Val& c, Val& sl, Val& su);
 
   /**
@@ -997,7 +997,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Perform propagation
       virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
       /// Specification for this propagator
-      virtual Reflection::ActorSpec spec(const Space& home, 
+      virtual Reflection::ActorSpec spec(const Space& home,
                                           Reflection::VarMap& m) const;
       /// Post propagator according to specification
       static void post(Space& home, Reflection::VarMap& vars,
@@ -1366,7 +1366,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LinBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    LinBoolScale(Space& home, bool share, Propagator& pr, 
+    LinBoolScale(Space& home, bool share, Propagator& pr,
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -1394,7 +1394,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     EqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    EqBoolScale(Space& home, bool share, Propagator& pr, 
+    EqBoolScale(Space& home, bool share, Propagator& pr,
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -1424,7 +1424,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    LqBoolScale(Space& home, bool share, Propagator& pr, 
+    LqBoolScale(Space& home, bool share, Propagator& pr,
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -1454,7 +1454,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     NqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    NqBoolScale(Space& home, bool share, Propagator& pr, 
+    NqBoolScale(Space& home, bool share, Propagator& pr,
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -1485,7 +1485,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /** \brief Estimate lower and upper bounds
    *
-   * Estimates the boundaries for a linear expression 
+   * Estimates the boundaries for a linear expression
    * \f$\sum_{i=0}^{n-1}t_i + c\f$. If the boundaries exceed
    * the limits as defined in Limits::Int, these boundaries
    * are returned.
@@ -1502,7 +1502,7 @@ namespace Gecode { namespace Int { namespace Linear {
                 int& l, int& u);
 
   /** \brief Normalize linear integer constraints
-   * 
+   *
    * \param t array of linear terms
    * \param n size of array
    * \param t_p array of linear terms over integers with positive coefficients
@@ -1524,7 +1524,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class View>
   bool normalize(Term<View>* t, int &n,
-                 Term<View>* &t_p, int &n_p, 
+                 Term<View>* &t_p, int &n_p,
                  Term<View>* &t_n, int &n_n);
 
 
@@ -1555,7 +1555,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c, 
+  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1617,7 +1617,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<BoolView>* t, int n, IntRelType r, int c, 
+  post(Space& home, Term<BoolView>* t, int n, IntRelType r, int c,
        IntConLevel=ICL_DEF);
 
   /**

@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         {
           GlbRanges<View0> x0lb(x0);
           GlbRanges<View1> x1lb(x1);
-          Iter::Ranges::Inter<GlbRanges<View0>, GlbRanges<View1> > 
+          Iter::Ranges::Inter<GlbRanges<View0>, GlbRanges<View1> >
             i2(x0lb,x1lb);
           GECODE_ME_CHECK_MODIFIED(modified, x2.includeI(home,i2) );
         }

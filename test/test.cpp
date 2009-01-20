@@ -94,12 +94,12 @@ namespace Test {
   }
 
   Base::~Base(void) {}
-  
-  Gecode::Support::RandomGenerator Base::rand 
+
+  Gecode::Support::RandomGenerator Base::rand
   = Gecode::Support::RandomGenerator();
 
   Options opt;
-  
+
   void report_error(std::string name) {
     std::cout << "Options: -seed " << opt.seed;
     if (opt.fixprob != opt.deffixprob)
@@ -112,20 +112,20 @@ namespace Test {
   std::vector<std::pair<bool, const char*> > testpat;
   const char* startFrom = NULL;
   bool list = false;
-  
+
   void
   Options::parse(int argc, char* argv[]) {
     int i = 1;
     while (i < argc) {
       if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
         std::cerr << "Options for testing:" << std::endl
-                  << "\t-seed (unsigned int or \"time\") default: " 
+                  << "\t-seed (unsigned int or \"time\") default: "
                   << seed << std::endl
                   << "\t\tseed for random number generator (unsigned int),"
                   << std::endl
                   << "\t\tor \"time\" for a random seed based on "
                   << "current time" << std::endl
-                  << "\t-fixprob (unsigned int) default: " 
+                  << "\t-fixprob (unsigned int) default: "
                   << fixprob << std::endl
                   << "\t\t1/fixprob is the probability of computing a fixpoint"
                   << std::endl
@@ -216,7 +216,7 @@ main(int argc, char* argv[]) {
 #endif
 
   opt.parse(argc, argv);
-  
+
   Base::sort();
 
   if (list) {
@@ -225,7 +225,7 @@ main(int argc, char* argv[]) {
     }
     exit(EXIT_SUCCESS);
   }
-  
+
   Base::rand.seed(opt.seed);
 
   bool started = startFrom == NULL ? true : false;
@@ -263,7 +263,7 @@ main(int argc, char* argv[]) {
         } else {
           std::cout << "-" << std::endl;
           report_error(t->name());
-          if (opt.stop) 
+          if (opt.stop)
             return 1;
         }
       }
@@ -273,7 +273,7 @@ main(int argc, char* argv[]) {
                 << "." << std::endl
                 << "Stopping..." << std::endl;
       report_error(t->name());
-      if (opt.stop) 
+      if (opt.stop)
         return 1;
     }
   next:;

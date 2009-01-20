@@ -35,7 +35,7 @@
  */
 
 namespace Gecode { namespace Gist {
-    
+
   forceinline SpaceNode*
   SpaceNode::getParent() {
     return static_cast<SpaceNode*>(Node::getParent());
@@ -45,13 +45,13 @@ namespace Gecode { namespace Gist {
   SpaceNode::getChild(int i) {
     return static_cast<SpaceNode*>(Node::getChild(i));
   }
-  
+
   forceinline void
   SpaceNode::setHasOpenChildren(bool b) {
     if (b)
       nstatus |= 1<<(HASOPENCHILDREN-1);
     else
-      nstatus &= ~(1<<(HASOPENCHILDREN-1));      
+      nstatus &= ~(1<<(HASOPENCHILDREN-1));
   }
 
   forceinline void
@@ -67,7 +67,7 @@ namespace Gecode { namespace Gist {
     if (b)
       nstatus |= 1<<(HASSOLVEDCHILDREN-1);
     else
-      nstatus &= ~(1<<(HASSOLVEDCHILDREN-1));          
+      nstatus &= ~(1<<(HASSOLVEDCHILDREN-1));
   }
 
   forceinline void
@@ -80,7 +80,7 @@ namespace Gecode { namespace Gist {
   SpaceNode::getStatus(void) const {
     return static_cast<NodeStatus>(nstatus & STATUSMASK);
   }
-  
+
   forceinline
   SpaceNode::SpaceNode(void)
   : copy(NULL), workingSpace(NULL), ownBest(NULL) {
@@ -89,7 +89,7 @@ namespace Gecode { namespace Gist {
     setHasSolvedChildren(false);
     setHasFailedChildren(false);
   }
-    
+
   forceinline Space*
   SpaceNode::getSpace(BestNode* curBest, int c_d, int a_d) {
     acquireSpace(curBest,c_d,a_d);
@@ -113,7 +113,7 @@ namespace Gecode { namespace Gist {
     if (!isRoot()) {
       delete copy;
       copy = NULL;
-    }    
+    }
   }
 
 
@@ -121,17 +121,17 @@ namespace Gecode { namespace Gist {
   SpaceNode::isCurrentBest(BestNode* curBest) {
     return curBest != NULL && curBest->s == this;
   }
-      
+
   forceinline void
   SpaceNode::setSpecialDesc(const SpecialDesc* d) {
     desc.special = d;
   }
-    
+
   forceinline void
   SpaceNode::setStepDesc(StepDesc* d) {
     desc.step = d;
   }
-    
+
   forceinline bool
   SpaceNode::isStepNode(void) {
     return getStatus() == STEP;
@@ -141,18 +141,18 @@ namespace Gecode { namespace Gist {
   SpaceNode::getStepDesc(void) {
     return (isStepNode() ? desc.step : NULL);
   }
-    
+
   forceinline bool
   SpaceNode::isOpen(void) {
     return getStatus() == UNDETERMINED
            || (nstatus & (1<<(HASOPENCHILDREN-1)));
   }
-  
+
   forceinline bool
   SpaceNode::hasFailedChildren(void) {
     return nstatus & (1<<(HASFAILEDCHILDREN-1));
   }
-  
+
   forceinline bool
   SpaceNode::hasSolvedChildren(void) {
     return nstatus & (1<<(HASSOLVEDCHILDREN-1));
@@ -162,7 +162,7 @@ namespace Gecode { namespace Gist {
   SpaceNode::hasOpenChildren(void) {
     return nstatus & (1<<(HASOPENCHILDREN-1));
   }
-        
+
   forceinline bool
   SpaceNode::hasCopy(void) {
     return copy != NULL;
@@ -183,7 +183,7 @@ namespace Gecode { namespace Gist {
     }
     return -1;
   }
-  
+
 }}
 
 // STATISTICS: gist-any

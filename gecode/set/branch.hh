@@ -62,7 +62,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief Class for selecting minimum value
    *
-   * All value selection classes require 
+   * All value selection classes require
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelVal
    */
@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Branch {
   /**
    * \brief Class for selecting maximum value
    *
-   * All value selection classes require 
+   * All value selection classes require
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelVal
    */

@@ -37,7 +37,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include "test/int.hh"
 
@@ -45,7 +45,7 @@ namespace Test { namespace Int {
 
    /// Tests for counting constraints (global cardinality)
    namespace GCC {
-   
+
      /**
       * \defgroup TaskTestIntGCC Counting constraints (global cardinality)
       * \ingroup TaskTestInt
@@ -117,7 +117,7 @@ namespace Test { namespace Int {
          count(home, x, cards, icl);
        }
      };
-     
+
      /// Test for integer cardinality with max cardinality for all variables
      class IntAllMax : public Test {
      public:
@@ -141,8 +141,8 @@ namespace Test { namespace Int {
          Gecode::count(home, x, Gecode::IntSet(2,2), values, icl);
        }
      };
-     
-     
+
+
      /// Test for integer cardinality for some variables
      template <bool hole>
      class IntSome : public Test {
@@ -178,7 +178,7 @@ namespace Test { namespace Int {
          count(home, x, cards, values, icl);
        }
      };
-     
+
      /// Test for variable cardinality for all cardinality values
      class VarAll : public Test {
      protected:
@@ -218,7 +218,7 @@ namespace Test { namespace Int {
          using namespace Gecode;
          // Number of cardinality variables
          int m = xy.size()-n;
-   
+
          IntVarArgs x(n), y(m);
          for (int i=0; i<n; i++)
            x[i]=xy[i];
@@ -227,7 +227,7 @@ namespace Test { namespace Int {
          count(home, x, y, icl);
        }
      };
-   
+
      /// Test for variable cardinality for some cardinality values
      class VarSome : public Test {
      protected:
@@ -276,7 +276,7 @@ namespace Test { namespace Int {
          count(home,x,y,values,icl);
        }
      };
-   
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -293,10 +293,10 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      Create c;
      //@}
-   
+
    }
 }}
 

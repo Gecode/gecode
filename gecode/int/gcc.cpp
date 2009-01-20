@@ -35,7 +35,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include <gecode/int/gcc.hh>
 #include <gecode/int/distinct.hh>
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (k.size() == n) {
         for (int i=k.size(); i--;)
           if (k[i].min() != 1 || k[i].max() != 1)
-            return false;      
+            return false;
         return true;
       }
       return false;
@@ -194,11 +194,11 @@ namespace Gecode { namespace Int { namespace GCC {
   // variable cardinality
 
   void count(Space& home, const  IntVarArgs& x,
-             const  IntVarArgs& c, const  IntArgs& v, 
+             const  IntVarArgs& c, const  IntArgs& v,
              IntConLevel icl) {
 
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
-    
+
     // |cards| = |values|
     unsigned int vsize = v.size();
     unsigned int csize = c.size();
@@ -206,17 +206,17 @@ namespace Gecode { namespace Int { namespace GCC {
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
       throw ArgumentSame("Int::count");
-    
+
     if (home.failed())
       return;
 
     ViewArray<IntView> xv(home, x);
-    
+
     // valid values for the variables in vars
     IntSet valid(&v[0], vsize);
 
     // \forall v \not\in values:  \#(v) = 0
-    // remove all values from the domains of the variables in vars that are not mentionned in the array \a values   
+    // remove all values from the domains of the variables in vars that are not mentionned in the array \a values
     for (int i = xv.size(); i--; ) {
       IntSetRanges ir(valid);
       GECODE_ME_FAIL(home, xv[i].inter_r(home, ir));
@@ -261,22 +261,22 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (home.failed())
       return;
-       
+
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
-    
+
     // |cards| = |values|
     ViewArray<IntView> xv(home, x);
-    
+
     // valid values for the variables in vars
     IntSet valid(&v[0], vsize);
 
     // \forall v \not\in values:  \#(v) = 0
-    // remove all values from the domains of the variables in vars that are not mentionned in the array \a values   
+    // remove all values from the domains of the variables in vars that are not mentionned in the array \a values
     for (int i = xv.size(); i--; ) {
       IntSetRanges ir(valid);
       GECODE_ME_FAIL(home, xv[i].inter_r(home, ir));
     }
-    
+
     bool hole_found = false;
     for (int i = vsize; i--; )
       if (c[i].ranges() > 1) {
@@ -348,9 +348,9 @@ namespace Gecode { namespace Int { namespace GCC {
   void count(Space& home, const IntVarArgs& x, const IntSetArgs& c,
              IntConLevel icl) {
     IntArgs values(c.size());
-    for (int i = c.size(); i--; ) 
+    for (int i = c.size(); i--; )
       values[i] = i;
-    count(home, x, c, values, icl);   
+    count(home, x, c, values, icl);
   }
 
   void count(Space& home, const IntVarArgs& x,
@@ -359,7 +359,7 @@ namespace Gecode { namespace Int { namespace GCC {
     IntSetArgs cards(v.size());
     for (int i = v.size(); i--; )
       cards[i] = c;
-    count(home, x, cards, v, icl);    
+    count(home, x, cards, v, icl);
   }
 
   GECODE_REGISTER3(Int::GCC::Dom<Gecode::Int::IntView, Gecode::Int::GCC::OccurBndsView, false>);

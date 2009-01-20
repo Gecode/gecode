@@ -242,9 +242,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
     c = 0;
     n = j;
-    
+
     r.init(n);
-    for (int j = n; j--; ) 
+    for (int j = n; j--; )
       r[j] = d[j];
     c = 0;
   }

@@ -52,17 +52,17 @@ namespace Gecode { namespace Int { namespace Linear {
       _fst = _lst = NULL;
     }
   }
-  forceinline void 
+  forceinline void
   ScaleBoolArray::subscribe(Space& home, Propagator& p) {
     for (ScaleBool* f = _fst; f < _lst; f++)
       f->x.subscribe(home,p,PC_BOOL_VAL);
   }
-  forceinline void 
+  forceinline void
   ScaleBoolArray::cancel(Space& home, Propagator& p) {
     for (ScaleBool* f = _fst; f < _lst; f++)
       f->x.cancel(home,p,PC_BOOL_VAL);
   }
-  forceinline void 
+  forceinline void
   ScaleBoolArray::update(Space& home, bool share, ScaleBoolArray& sba) {
     int n = sba._lst - sba._fst;
     if (n > 0) {
@@ -76,37 +76,37 @@ namespace Gecode { namespace Int { namespace Linear {
       _fst = _lst = NULL;
     }
   }
-  forceinline ScaleBool* 
+  forceinline ScaleBool*
   ScaleBoolArray::fst(void) const {
     return _fst;
   }
-  forceinline ScaleBool* 
+  forceinline ScaleBool*
   ScaleBoolArray::lst(void) const {
     return _lst;
   }
-  forceinline void 
+  forceinline void
   ScaleBoolArray::fst(ScaleBool* f) {
     _fst = f;
   }
-  forceinline void 
+  forceinline void
   ScaleBoolArray::lst(ScaleBool* l) {
     _lst = l;
   }
-  forceinline bool 
+  forceinline bool
   ScaleBoolArray::empty(void) const {
     return _fst == _lst;
   }
-  forceinline int 
+  forceinline int
   ScaleBoolArray::size(void) const {
     return static_cast<int>(_lst - _fst);
   }
   forceinline bool
-  ScaleBoolArray::ScaleDec::operator ()(const ScaleBool& x, 
+  ScaleBoolArray::ScaleDec::operator ()(const ScaleBool& x,
                                        const ScaleBool& y) {
     return x.a > y.a;
   }
 
-  inline void 
+  inline void
   ScaleBoolArray::sort(void) {
     ScaleDec scale_dec;
     Support::quicksort<ScaleBool,ScaleDec>(fst(), size(), scale_dec);
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return NULL;
     Reflection::IntArrayArg* c = Reflection::Arg::newIntArray(size());
     Reflection::ArrayArg* b = Reflection::Arg::newArray(size());
-      
+
     int count = 0;
     for (ScaleBool* f = fst(); f != lst(); f++) {
       (*c)[count] = f->a;
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Linear {
     for (int i=n; i--; ) {
       _fst[i].x=BoolView(home, vars, (*b)[i]); _fst[i].a=(*c)[i];
     }
-    
+
   }
 
 
@@ -163,25 +163,25 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   EmptyScaleBoolArray::EmptyScaleBoolArray(Space&, const Reflection::VarMap&,
                                            Reflection::Arg*) {}
-  forceinline void 
+  forceinline void
   EmptyScaleBoolArray::subscribe(Space&, Propagator&) {}
-  forceinline void 
+  forceinline void
   EmptyScaleBoolArray::cancel(Space&, Propagator&) {}
-  forceinline void 
+  forceinline void
   EmptyScaleBoolArray::update(Space&, bool, EmptyScaleBoolArray&) {}
-  forceinline ScaleBool* 
+  forceinline ScaleBool*
   EmptyScaleBoolArray::fst(void) const { return NULL; }
-  forceinline ScaleBool* 
+  forceinline ScaleBool*
   EmptyScaleBoolArray::lst(void) const { return NULL; }
-  forceinline void 
+  forceinline void
   EmptyScaleBoolArray::fst(ScaleBool*) {}
-  forceinline void 
+  forceinline void
   EmptyScaleBoolArray::lst(ScaleBool*) {}
-  forceinline bool 
+  forceinline bool
   EmptyScaleBoolArray::empty(void) const { return true; }
-  forceinline int 
+  forceinline int
   EmptyScaleBoolArray::size(void) const { return 0; }
-  forceinline void 
+  forceinline void
   EmptyScaleBoolArray::sort(void) {}
   inline Support::Symbol
   EmptyScaleBoolArray::type(void) {
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   forceinline
-  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space& home, 
+  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space& home,
                                                SBAP& p0, SBAN& n0,
                                                VX x0, int c0)
     : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   PropCost
-  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(const Space&, 
+  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(const Space&,
                                        const ModEventDelta&) const {
     return PropCost::linear(PropCost::LOW, p.size() + n.size());
   }
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   forceinline
-  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space& home, bool share, 
+  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space& home, bool share,
                                                Propagator& pr,
                                                SBAP& p0, SBAN& n0,
                                                VX x0, int c0)
@@ -245,14 +245,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space& home, 
+  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space& home,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
     : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space& home, bool share, 
+  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space& home, bool share,
                                          Propagator& pr,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return new (home) EqBoolScale<SBAP,SBAN,VX>(home,share,*this,p,n,x,c);
     }
   }
-  
+
   template<class SBAP, class SBAN, class VX>
   ExecStatus
   EqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, const ModEventDelta& med) {
@@ -338,9 +338,9 @@ namespace Gecode { namespace Int { namespace Linear {
       for (ScaleBool* f=n.fst(); f<n.lst(); f++)
         sl_p += f->a;
     }
-    
+
     if (p.empty() && n.empty()) {
-      GECODE_ME_CHECK(x.eq(home,-c)); 
+      GECODE_ME_CHECK(x.eq(home,-c));
       return ES_SUBSUMED(*this,sizeof(*this));
     }
 
@@ -426,7 +426,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
       }
     } while (mod != 0);
-    
+
     return (sl_p == -su_n) ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
@@ -460,14 +460,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space& home, 
+  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space& home,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
     : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space& home, bool share, 
+  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space& home, bool share,
                                          Propagator& pr,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
@@ -549,7 +549,7 @@ namespace Gecode { namespace Int { namespace Linear {
       for (ScaleBool* f=n.fst(); f<n.lst(); f++)
         sl += f->a;
     }
-    
+
     sl += x.max() + c;
 
     // Propagate upper bound for positive Boolean views
@@ -563,7 +563,7 @@ namespace Gecode { namespace Int { namespace Linear {
     {
       ScaleBool* f=n.fst();
       for (ScaleBool* l=n.lst(); (f < l) && (f->a > sl); f++) {
-        c += f->a; 
+        c += f->a;
         GECODE_ME_CHECK(f->x.one_none(home));
       }
       n.fst(f);
@@ -614,14 +614,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space& home, 
+  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space& home,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
     : LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>(home,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space& home, bool share, 
+  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space& home, bool share,
                                          Propagator& pr,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
@@ -669,7 +669,7 @@ namespace Gecode { namespace Int { namespace Linear {
             c -= f->a; *f = *(t++);
           } else if (f->x.zero()) {
             *f = *(t++);
-          } 
+          }
           f++;
         }
         p.fst(t);
@@ -684,15 +684,15 @@ namespace Gecode { namespace Int { namespace Linear {
             c += f->a; *f = *(t++);
           } else if (f->x.zero()) {
             *f = *(t++);
-          } 
+          }
           f++;
         }
         n.fst(t);
       }
     }
-    
+
     if (p.empty() && n.empty()) {
-      GECODE_ME_CHECK(x.nq(home,-c)); 
+      GECODE_ME_CHECK(x.nq(home,-c));
       return ES_SUBSUMED(*this,home);
     }
 

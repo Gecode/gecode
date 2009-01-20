@@ -527,7 +527,7 @@ namespace Test { namespace Set {
     ChannelBool _channelbool1("Int::Channel::Bool::1", d2, 3);
     ChannelBool _channelbool2("Int::Channel::Bool::2", d3, 3);
     ChannelBool _channelbool3("Int::Channel::Bool::3", d4, 5);
-  
+
 }}}
 
 // STATISTICS: test-set

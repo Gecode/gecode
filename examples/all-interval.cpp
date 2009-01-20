@@ -33,7 +33,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include "examples/support.hh"
 #include <gecode/minimodel.hh>
@@ -114,7 +114,7 @@ public:
 /** \brief Main-function
  *  \relates AllInterval
  */
-int 
+int
 main(int argc, char* argv[]){
   SizeOptions opt("AllInterval");
   opt.size(1000);

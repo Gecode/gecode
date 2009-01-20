@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     class ViewValGraph {
     public:
       /// Array of view nodes
-      ViewNode<View>** view; 
+      ViewNode<View>** view;
       /// Number of view nodes
       int n_view;
       /// Array of value nodes

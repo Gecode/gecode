@@ -95,16 +95,16 @@ public:
           rel(*this, y, SRT_SUP, y1);
           rel(*this, y, SRT_SUP, y2);
           rel(*this, y, SRT_SUP, y3);
-                    
+
         } else  if (opt.model() == MODEL_MATCHING) {
           /* Smart alternative:
            * Using matching constraints
            */
-        
+
           IntVarArgs xargs(3);
           xargs[0] = x1; xargs[1] = x2; xargs[2] = x3;
           match(*this, x,xargs);
-        
+
           IntVarArgs yargs(3);
           yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
           match(*this, y,yargs);
@@ -126,19 +126,19 @@ public:
           SetVarArgs yargs(3);
           yargs[0] = tmp23; yargs[1] = tmp24; yargs[2] = tmp25;
           sequentialUnion(*this,xargs,x);
-          sequentialUnion(*this,yargs,y);          
+          sequentialUnion(*this,yargs,y);
         }
-        
+
         /* Breaking symmetries */
-        
+
         rel(*this, x1,IRT_LE,x2);
         rel(*this, x2,IRT_LE,x3);
         rel(*this, x1,IRT_LE,x3);
-        
+
         rel(*this, y1,IRT_LE,y2);
         rel(*this, y2,IRT_LE,y3);
         rel(*this, y1,IRT_LE,y3);
-        
+
         IntArgs ia(6,(n+1)*(n+1),n+1,1,-(n+1)*(n+1),-(n+1),-1);
         IntVarArgs iva(6);
         iva[0]=x1; iva[1]=x2; iva[2]=x3;

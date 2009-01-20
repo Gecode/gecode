@@ -38,7 +38,7 @@
 #include <ctime>
 
 namespace Gecode {
-  
+
   /// Variable branch options
   class VarBranchOptions {
   public:
@@ -102,13 +102,13 @@ namespace Gecode {
     /// Default options
     GECODE_KERNEL_EXPORT static const TieBreakVarBranchOptions def;
     /// Initialize with variable selection criteria
-    TieBreakVarBranchOptions(const VarBranchOptions& a0 
+    TieBreakVarBranchOptions(const VarBranchOptions& a0
                              = VarBranchOptions::def,
-                             const VarBranchOptions& b0 
+                             const VarBranchOptions& b0
                              = VarBranchOptions::def,
-                             const VarBranchOptions& c0 
+                             const VarBranchOptions& c0
                              = VarBranchOptions::def,
-                             const VarBranchOptions& d0 
+                             const VarBranchOptions& d0
                              = VarBranchOptions::def);
   };
 
@@ -120,7 +120,7 @@ namespace Gecode {
   tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c);
   /// Combine variable branch options \a a, \a b, \a c, and \a d for tie-breaking
   TieBreakVarBranchOptions
-  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c, 
+  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c,
            VarBranchOptions d);
 
 
@@ -130,7 +130,7 @@ namespace Gecode {
   VarBranchOptions::VarBranchOptions(void) : seed(0) {}
   forceinline VarBranchOptions
   VarBranchOptions::time(void) {
-    VarBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL)); 
+    VarBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL));
     return o;
   }
 
@@ -139,7 +139,7 @@ namespace Gecode {
   ValBranchOptions::ValBranchOptions(void) : seed(0) {}
   forceinline ValBranchOptions
   ValBranchOptions::time(void) {
-    ValBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL)); 
+    ValBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL));
     return o;
   }
 
@@ -199,12 +199,12 @@ namespace Gecode {
   }
 
   forceinline TieBreakVarBranchOptions
-  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c, 
+  tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c,
            VarBranchOptions d) {
     TieBreakVarBranchOptions abcd(a,b,c,d);
     return abcd;
   }
-  
+
 }
 
 // STATISTICS: kernel-branch

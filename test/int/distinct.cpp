@@ -43,7 +43,7 @@ namespace Test { namespace Int {
 
    /// Tests for distinct constraints
    namespace Distinct {
-   
+
      /**
       * \defgroup TaskTestIntDistinct Distinct constraints
       * \ingroup TaskTestInt
@@ -85,7 +85,7 @@ namespace Test { namespace Int {
          }
        }
      };
-     
+
      /// Simple test for distinct constraint with offsets
      class Offset : public Test {
      public:
@@ -111,7 +111,7 @@ namespace Test { namespace Int {
          Gecode::distinct(home, c, x, icl);
        }
      };
-   
+
      /// Randomized test for distinct constraint
      class Random : public Test {
      public:
@@ -137,7 +137,7 @@ namespace Test { namespace Int {
          Gecode::distinct(home, x, icl);
        }
      };
-     
+
      /// Testing pathological cases
      class Pathological : public Base {
      protected:
@@ -151,7 +151,7 @@ namespace Test { namespace Int {
          /// Constructor
          TestSpace(void) {}
          /// Constructor for cloning \a s
-         TestSpace(bool share, TestSpace& s) 
+         TestSpace(bool share, TestSpace& s)
            : Gecode::Space(share,s) {}
          /// Copy space during cloning
          virtual Gecode::Space* copy(bool share) {
@@ -207,7 +207,7 @@ namespace Test { namespace Int {
 
      const int v[7] = {-1001,-1000,-10,0,10,1000,1001};
      Gecode::IntSet d(v,7);
-   
+
      Distinct<false> dom_d(-3,3,Gecode::ICL_DOM);
      Distinct<false> bnd_d(-3,3,Gecode::ICL_BND);
      Distinct<false> val_d(-3,3,Gecode::ICL_VAL);
@@ -221,14 +221,14 @@ namespace Test { namespace Int {
      Distinct<true> count_dom_s(d,Gecode::ICL_DOM);
      Distinct<true> count_bnd_s(d,Gecode::ICL_BND);
      Distinct<true> count_val_s(d,Gecode::ICL_VAL);
-   
+
      Offset dom_od(-3,3,Gecode::ICL_DOM);
      Offset bnd_od(-3,3,Gecode::ICL_BND);
      Offset val_od(-3,3,Gecode::ICL_VAL);
      Offset dom_os(d,Gecode::ICL_DOM);
      Offset bnd_os(d,Gecode::ICL_BND);
      Offset val_os(d,Gecode::ICL_VAL);
-   
+
      Random dom_r(20,-50,50,Gecode::ICL_DOM);
      Random bnd_r(50,-500,500,Gecode::ICL_BND);
      Random val_r(50,-500,500,Gecode::ICL_VAL);
@@ -241,7 +241,7 @@ namespace Test { namespace Int {
      Pathological p_32_b(32,Gecode::ICL_BND);
      Pathological p_32_d(32,Gecode::ICL_DOM);
      //@}
-   
+
    }
 }}
 

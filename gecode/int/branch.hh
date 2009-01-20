@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace Branch {
                                        Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
-    branchingSpec(const Space& home, 
+    branchingSpec(const Space& home,
                   Reflection::VarMap& m,
                   const BranchingDesc& d) const;
     /// Actor type identifier of this branching
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByMinMin(void);
     /// Constructor for initialization
-    ByMinMin(Space& home, const VarBranchOptions& vbo);    
+    ByMinMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -330,7 +330,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByMinMax(void);
     /// Constructor for initialization
-    ByMinMax(Space& home, const VarBranchOptions& vbo);    
+    ByMinMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByMaxMin(void);
     /// Constructor for initialization
-    ByMaxMin(Space& home, const VarBranchOptions& vbo);    
+    ByMaxMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByMaxMax(void);
     /// Constructor for initialization
-    ByMaxMax(Space& home, const VarBranchOptions& vbo);    
+    ByMaxMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -399,7 +399,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     BySizeMin(void);
     /// Constructor for initialization
-    BySizeMin(Space& home, const VarBranchOptions& vbo);    
+    BySizeMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -422,7 +422,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     BySizeMax(void);
     /// Constructor for initialization
-    BySizeMax(Space& home, const VarBranchOptions& vbo);    
+    BySizeMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     BySizeDegreeMin(void);
     /// Constructor for initialization
-    BySizeDegreeMin(Space& home, const VarBranchOptions& vbo);    
+    BySizeDegreeMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -470,7 +470,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     BySizeDegreeMax(void);
     /// Constructor for initialization
-    BySizeDegreeMax(Space& home, const VarBranchOptions& vbo);    
+    BySizeDegreeMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -493,7 +493,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByRegretMinMin(void);
     /// Constructor for initialization
-    ByRegretMinMin(Space& home, const VarBranchOptions& vbo);    
+    ByRegretMinMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -516,7 +516,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByRegretMinMax(void);
     /// Constructor for initialization
-    ByRegretMinMax(Space& home, const VarBranchOptions& vbo);    
+    ByRegretMinMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -539,7 +539,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByRegretMaxMin(void);
     /// Constructor for initialization
-    ByRegretMaxMin(Space& home, const VarBranchOptions& vbo);    
+    ByRegretMaxMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x
@@ -562,7 +562,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ByRegretMaxMax(void);
     /// Constructor for initialization
-    ByRegretMaxMax(Space& home, const VarBranchOptions& vbo);    
+    ByRegretMaxMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, IntView x);
     /// Possibly select better view \a x

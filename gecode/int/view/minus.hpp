@@ -181,37 +181,37 @@ namespace Gecode {
     template <class I>
     forceinline ModEvent
     MinusView::narrow_r(Space& home, I& i, bool) {
-      Iter::Ranges::Minus<I> mi(i); 
+      Iter::Ranges::Minus<I> mi(i);
       return view.narrow_r(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
     MinusView::inter_r(Space& home, I& i, bool) {
-      Iter::Ranges::Minus<I> mi(i); 
+      Iter::Ranges::Minus<I> mi(i);
       return view.inter_r(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
     MinusView::minus_r(Space& home, I& i, bool) {
-      Iter::Ranges::Minus<I> mi(i); 
+      Iter::Ranges::Minus<I> mi(i);
       return view.minus_r(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
     MinusView::narrow_v(Space& home, I& i, bool) {
-      Iter::Values::Minus<I> mi(i); 
+      Iter::Values::Minus<I> mi(i);
       return view.narrow_v(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
     MinusView::inter_v(Space& home, I& i, bool) {
-      Iter::Values::Minus<I> mi(i); 
+      Iter::Values::Minus<I> mi(i);
       return view.inter_v(home,mi,false);
     }
     template <class I>
     forceinline ModEvent
     MinusView::minus_v(Space& home, I& i, bool) {
-      Iter::Values::Minus<I> mi(i); 
+      Iter::Values::Minus<I> mi(i);
       return view.minus_v(home,mi,false);
     }
 
@@ -239,7 +239,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    MinusView::subscribe(Space& home, Propagator& p, PropCond pc, 
+    MinusView::subscribe(Space& home, Propagator& p, PropCond pc,
                          bool process) {
       view.subscribe(home,p,pc,process);
     }

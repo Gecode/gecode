@@ -98,13 +98,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::Index::Index(Space& home, Propagator& p,
-                                                   Council<Index>& c, 
+                                                   Council<Index>& c,
                                                    StateIdx i0)
     : Advisor(home,p,c), i(i0) {}
 
   template <class View, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::Index::Index(Space& home, bool share, 
+  LayeredGraph<View,Degree,StateIdx>::Index::Index(Space& home, bool share,
                                                    Index& a)
     : Advisor(home,share,a), i(a.i) {}
 
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template <class View, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::IndexRange::IndexRange(void) 
+  LayeredGraph<View,Degree,StateIdx>::IndexRange::IndexRange(void)
     : _fst(INT_MAX), _lst(INT_MIN) {}
   template <class View, class Degree, class StateIdx>
   forceinline void
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
 
-  
+
   /*
    * The layered graph
    *
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Degree,StateIdx>::construct(Space& home) {
     int n = x.size();
     layers = home.alloc<Layer>(n+2)+1;
-    
+
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
           if (states[i*n_states + t.i_state()].i_deg != 0) {
             int i_s = i*n_states + t.i_state();
-            states[i_s].o_deg++; 
+            states[i_s].o_deg++;
             int o_s = (i+1)*n_states +  t.o_state();
             states[o_s].i_deg++;
             e = new (home) Edge(i_s, o_s, e);
@@ -333,7 +333,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       } while (j<s);
       assert(k > 0);
       // Update modification information
-      if (o_mod && (i > 0)) 
+      if (o_mod && (i > 0))
         o_ch.add(i-1);
     }
     o_ch.reset();
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, class Degree, class StateIdx>
   ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::advise(Space& home, 
+  LayeredGraph<View,Degree,StateIdx>::advise(Space& home,
                                              Advisor& _a, const Delta& d) {
     Index& a = static_cast<Index&>(_a);
     int i = a.i;
@@ -427,7 +427,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       while (j<s)
         l.support[k++]=l.support[j++];
       l.size =k;
-      assert(k > 0);        
+      assert(k > 0);
     }
     if (o_mod && (i > 0)) {
       o_ch.add(i-1); is_fix = false;
@@ -444,14 +444,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       return ES_FIX;
     } else {
     nofix:
-      return (View::modevent(d) == ME_INT_VAL) 
+      return (View::modevent(d) == ME_INT_VAL)
         ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
     }
   }
 
   template <class View, class Degree, class StateIdx>
   ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::propagate(Space& home, 
+  LayeredGraph<View,Degree,StateIdx>::propagate(Space& home,
                                                 const ModEventDelta&) {
     ExecStatus es = constructed() ? prune(home) : construct(home);
     return es;
@@ -459,7 +459,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home, 
+  LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
                                                    ViewArray<View>& x0, DFA& d)
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, class Degree, class StateIdx>
   forceinline ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::post(Space& home, ViewArray<View>& x, 
+  LayeredGraph<View,Degree,StateIdx>::post(Space& home, ViewArray<View>& x,
                                            DFA& d) {
     if (x.size() == 0) {
       // Check whether the start state 0 is also a final state
@@ -505,7 +505,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>
-  ::LayeredGraph(Space& home, bool share, 
+  ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p)
     : Propagator(home,share,p), layers(NULL) {
     assert(p.x.size() > 0);
@@ -518,7 +518,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, class Degree, class StateIdx>
   PropCost
-  LayeredGraph<View,Degree,StateIdx>::cost(const Space&, 
+  LayeredGraph<View,Degree,StateIdx>::cost(const Space&,
                                            const ModEventDelta&) const {
     return PropCost::linear(PropCost::MED,x.size());
   }
@@ -533,12 +533,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   forceinline ExecStatus
   post_lgp(Space& home, ViewArray<View>& x, DFA dfa) {
-    Gecode::Support::IntType t_state_idx = 
+    Gecode::Support::IntType t_state_idx =
       Gecode::Support::s_type(x.size()*dfa.n_states());
     Gecode::Support::IntType t_degree =
       Gecode::Support::u_type(dfa.max_degree());
     switch (t_state_idx) {
-    case Gecode::Support::IT_CHAR: 
+    case Gecode::Support::IT_CHAR:
     case Gecode::Support::IT_SHRT:
       switch (t_degree) {
       case Gecode::Support::IT_CHAR:

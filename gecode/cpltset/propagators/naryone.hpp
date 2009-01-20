@@ -42,7 +42,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   NaryOneCpltSetPropagator<View0, View1>
-  ::NaryOneCpltSetPropagator(Space& home, ViewArray<View0>& x, 
+  ::NaryOneCpltSetPropagator(Space& home, ViewArray<View0>& x,
                              View1& y, bdd& d0) : Super(home, x, y), d(d0) {
     home.notice(*this,AP_DISPOSE);
   }
@@ -50,14 +50,14 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   NaryOneCpltSetPropagator<View0, View1>
-  ::NaryOneCpltSetPropagator(Space& home, bool share, 
+  ::NaryOneCpltSetPropagator(Space& home, bool share,
                              NaryOneCpltSetPropagator& p)
     : Super(home, share, p), d(p.d) {}
 
   template <class View0, class View1>
   forceinline ExecStatus
   NaryOneCpltSetPropagator<View0, View1>::post(Space& home,
-                                               ViewArray<View0>& x, View1& y, 
+                                               ViewArray<View0>& x, View1& y,
                                                bdd& d0) {
     (void) new (home) NaryOneCpltSetPropagator(home, x, y, d0);
     return ES_OK;
@@ -66,7 +66,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   Support::Symbol
   NaryOneCpltSetPropagator<View0, View1>::ati(void) {
-    return 
+    return
       Reflection::mangle<View0,View1>("Gecode::CpltSet::NaryOneCpltSetPropagator");
   }
 
@@ -75,7 +75,7 @@ namespace Gecode { namespace CpltSet {
   NaryOneCpltSetPropagator<View0,View1>::spec(const Space& home,
                                               Reflection::VarMap& m) const {
     throw Reflection::ReflectionException("Not implemented");
-  } 
+  }
 
   template <class View0, class View1>
   forceinline Actor*
@@ -109,7 +109,7 @@ namespace Gecode { namespace CpltSet {
         quantify(left, x[i]);
       }
     }
- 
+
     ExecStatus es = ES_OK;
     GECODE_ES_CHECK(es = divide_conquer(home, left, l, h, ypos));
 
@@ -125,9 +125,9 @@ namespace Gecode { namespace CpltSet {
     GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r, ypos));
     return es;
   }
-  
+
   template <class View0, class View1>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   NaryOneCpltSetPropagator<View0, View1>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = true;
     int n = x.size();

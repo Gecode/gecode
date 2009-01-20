@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   template <class View>
   inline bool
   revglover(ViewArray<View>& x, ViewArray<View>& y,
-            int tau[], int phiprime[], OfflineMinItem sequence[], 
+            int tau[], int phiprime[], OfflineMinItem sequence[],
             int vertices[]) {
 
     int xs = x.size();

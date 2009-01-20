@@ -325,17 +325,17 @@ namespace Gecode { namespace Int {
   IntVarImp::modevent(const Delta& d) {
     return d.modevent();
   }
-  forceinline int 
+  forceinline int
   IntVarImp::min(const Delta& d) {
     return static_cast<const IntDelta&>(d).min();
   }
-  forceinline int 
+  forceinline int
   IntVarImp::max(const Delta& d) {
     return static_cast<const IntDelta&>(d).max();
   }
-  forceinline bool 
+  forceinline bool
   IntVarImp::any(const Delta& d) {
-    return static_cast<const IntDelta&>(d).any(); 
+    return static_cast<const IntDelta&>(d).any();
   }
 
 
@@ -349,8 +349,8 @@ namespace Gecode { namespace Int {
     if (n <= dom.min()) return ME_INT_NONE;
     if (n > dom.max())  return ME_INT_FAILED;
     ModEvent me = gq_full(home,n);
-    GECODE_ASSUME((me == ME_INT_FAILED) | 
-                  (me == ME_INT_VAL) | 
+    GECODE_ASSUME((me == ME_INT_FAILED) |
+                  (me == ME_INT_VAL) |
                   (me == ME_INT_BND));
     return me;
   }
@@ -359,8 +359,8 @@ namespace Gecode { namespace Int {
     if (n <= dom.min()) return ME_INT_NONE;
     if (n > dom.max())  return ME_INT_FAILED;
     ModEvent me = gq_full(home,static_cast<int>(n));
-    GECODE_ASSUME((me == ME_INT_FAILED) | 
-                  (me == ME_INT_VAL) | 
+    GECODE_ASSUME((me == ME_INT_FAILED) |
+                  (me == ME_INT_VAL) |
                   (me == ME_INT_BND));
     return me;
   }
@@ -371,8 +371,8 @@ namespace Gecode { namespace Int {
     if (n >= dom.max()) return ME_INT_NONE;
     if (n < dom.min())  return ME_INT_FAILED;
     ModEvent me = lq_full(home,n);
-    GECODE_ASSUME((me == ME_INT_FAILED) | 
-                  (me == ME_INT_VAL) | 
+    GECODE_ASSUME((me == ME_INT_FAILED) |
+                  (me == ME_INT_VAL) |
                   (me == ME_INT_BND));
     return me;
   }
@@ -381,8 +381,8 @@ namespace Gecode { namespace Int {
     if (n >= dom.max()) return ME_INT_NONE;
     if (n < dom.min())  return ME_INT_FAILED;
     ModEvent me = lq_full(home,static_cast<int>(n));
-    GECODE_ASSUME((me == ME_INT_FAILED) | 
-                  (me == ME_INT_VAL) | 
+    GECODE_ASSUME((me == ME_INT_FAILED) |
+                  (me == ME_INT_VAL) |
                   (me == ME_INT_BND));
     return me;
   }
@@ -395,7 +395,7 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     ModEvent me = eq_full(home,n);
-    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL)); 
+    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL));
     return me;
   }
   forceinline ModEvent
@@ -406,20 +406,20 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     ModEvent me = eq_full(home,n);
-    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL)); 
+    GECODE_ASSUME((me == ME_INT_FAILED) | (me == ME_INT_VAL));
     return me;
   }
 
 
   forceinline ModEvent
   IntVarImp::nq(Space& home, int n) {
-    if ((n < dom.min()) || (n > dom.max())) 
+    if ((n < dom.min()) || (n > dom.max()))
       return ME_INT_NONE;
     return nq_full(home,n);
   }
   forceinline ModEvent
   IntVarImp::nq(Space& home, double d) {
-    if ((d < dom.min()) || (d > dom.max())) 
+    if ((d < dom.min()) || (d > dom.max()))
       return ME_INT_NONE;
     return nq_full(home,static_cast<int>(d));
   }
@@ -550,15 +550,15 @@ namespace Gecode { namespace Int {
       if (fst() != NULL)
         fst()->dispose(home,NULL,lst());
       fst(f); lst(l);
-      
+
       // Check for modification
       if (size() == s)
         return ME_INT_NONE;
-      
+
       const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
       const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
       holes = width() - s;
-      
+
       me = ((min0 == min1) && (max0 == max1)) ? ME_INT_DOM : ME_INT_BND;
       goto notify;
     } else {
@@ -603,7 +603,7 @@ namespace Gecode { namespace Int {
           r->min(min0); r->max(max0);
           assert(h > r->width());
           h -= r->width();
-          { 
+          {
             RangeList* n=r->next(p); p=r; r=n;
           }
           while (true) {
@@ -693,7 +693,7 @@ namespace Gecode { namespace Int {
     }
 
     // Skip all ranges that are too small
-    while (i() && (i.max() < dom.min())) 
+    while (i() && (i.max() < dom.min()))
       ++i;
 
     // Is there no range left or all are too large?
@@ -702,7 +702,7 @@ namespace Gecode { namespace Int {
 
     if ((i.min() <= dom.min()) && (i.max() >= dom.max()))
       return ME_INT_FAILED;
-        
+
     // Set up two sentinel elements
     RangeList f, l;
     // Put all ranges between sentinels
@@ -785,7 +785,7 @@ namespace Gecode { namespace Int {
 
     ModEvent me;
     unsigned int b;
-    
+
     // Only a single range left?
     if (fn == ln) {
       assert(h > 0);
@@ -849,9 +849,9 @@ namespace Gecode { namespace Int {
       Iter::Values::ToRanges<I> r(i);
       return minus_r(home, r, true);
     }
-      
+
     // Skip all values that are too small
-    while (i() && (i.val() < dom.min())) 
+    while (i() && (i.val() < dom.min()))
       ++i;
 
     // Is there no value left or all are too large?
@@ -915,7 +915,7 @@ namespace Gecode { namespace Int {
         } else if (v > r->min()) {
           // Create new range before the current one
           assert(v < r->max());
-          h++; 
+          h++;
           RangeList* n = new (home) RangeList(r->min(),v-1,p,r);
           r->min(v+1);
           p->next(r,n); r->prev(p,n);

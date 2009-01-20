@@ -271,7 +271,7 @@ namespace Gecode {
 
   REG&
   REG::operator +=(const REG& r2) {
-    if (r2.e == NULL) 
+    if (r2.e == NULL)
       return *this;
     if (e == NULL) {
       e=r2.e; e->inc();

@@ -68,7 +68,7 @@ namespace Gecode {
    * \brief Generic branching by view selection
    *
    * Implements a baseclass for view-based branching for an array of views
-   * (of type \a ViewSel::View). The behaviour is 
+   * (of type \a ViewSel::View). The behaviour is
    * defined by the class \a ViewSel (which view is selected for branching).
    *
    */
@@ -76,9 +76,9 @@ namespace Gecode {
   class ViewBranching : public Branching {
   protected:
     /// Views to branch on
-    ViewArray<typename ViewSel::View> x; 
+    ViewArray<typename ViewSel::View> x;
     /// Unassigned views start at x[start]
-    mutable int start;  
+    mutable int start;
     /// View selection object
     ViewSel viewsel;
     /// Return position information
@@ -102,7 +102,7 @@ namespace Gecode {
    * \brief Generic branching by view and value selection
    *
    * Implements view-based branching for an array of views (of type
-   * \a ViewSel::View) and value (of type \a ValSel::Val). The behaviour is 
+   * \a ViewSel::View) and value (of type \a ValSel::Val). The behaviour is
    * defined by the class \a ViewSel (which view is selected for branching)
    * and the class \a ValSel (which value is selected for branching).
    *
@@ -130,7 +130,7 @@ namespace Gecode {
                                        Reflection::VarMap& m) const;
     /// Return specification for a branch
     virtual Reflection::BranchingSpec
-    branchingSpec(const Space& home, 
+    branchingSpec(const Space& home,
                   Reflection::VarMap& m,
                   const BranchingDesc& d) const;
     /// Actor type identifier of this branching
@@ -235,7 +235,7 @@ namespace Gecode {
                                          const typename ViewSel::Desc& viewd,
                                          const typename ValSel::Desc& vald,
                                          const typename ValSel::Val& n)
-    : PosDesc<ViewSel>(b,ValSel::alternatives,p,viewd), 
+    : PosDesc<ViewSel>(b,ValSel::alternatives,p,viewd),
       _valdesc(vald), _val(n) {}
 
   template <class ViewSel, class ValSel>
@@ -272,7 +272,7 @@ namespace Gecode {
 
   template <class ViewSel>
   forceinline
-  ViewBranching<ViewSel>::ViewBranching(Space& home, bool share, 
+  ViewBranching<ViewSel>::ViewBranching(Space& home, bool share,
                                         ViewBranching& b)
     : Branching(home,share,b), start(b.start) {
     x.update(home,share,b.x);
@@ -345,7 +345,7 @@ namespace Gecode {
     : ViewBranching<ViewSel>(home,share,b) {
     valsel.update(home,share,b.valsel);
   }
-  
+
   template <class ViewSel, class ValSel>
   Actor*
   ViewValBranching<ViewSel,ValSel>::copy(Space& home, bool share) {
@@ -368,9 +368,9 @@ namespace Gecode {
   ExecStatus
   ViewValBranching<ViewSel,ValSel>
   ::commit(Space& home, const BranchingDesc& d, unsigned int a) {
-    const PosValDesc<ViewSel,ValSel>& pvd 
+    const PosValDesc<ViewSel,ValSel>& pvd
       = static_cast<const PosValDesc<ViewSel,ValSel>&>(d);
-    typename ValSel::View 
+    typename ValSel::View
       v(ViewBranching<ViewSel>::view(pvd.pos()).var());
     viewsel.commit(home, pvd.viewdesc(), a);
     valsel.commit(home, pvd.valdesc(), a);
@@ -404,10 +404,10 @@ namespace Gecode {
   template <class ViewSel, class ValSel>
   Reflection::BranchingSpec
   ViewValBranching<ViewSel,ValSel>
-  ::branchingSpec(const Space& home, 
+  ::branchingSpec(const Space& home,
                   Reflection::VarMap& m, const BranchingDesc& d) const {
     (void) home; (void) m;
-    const PosValDesc<ViewSel,ValSel>& pvd 
+    const PosValDesc<ViewSel,ValSel>& pvd
       = static_cast<const PosValDesc<ViewSel,ValSel>&>(d);
     Reflection::BranchingSpec bs(ati(), 2);
     bs[0] = view(pvd.pos()).spec(home, m);

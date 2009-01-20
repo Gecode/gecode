@@ -44,7 +44,7 @@
 
 #include <gecode/int.hh>
 
-namespace Test { 
+namespace Test {
 
   /// Testing finite domain integers
   namespace Int {
@@ -78,7 +78,7 @@ namespace Test {
       /// Destructor
       virtual ~Assignment(void);
     };
-    
+
     /// Generate all assignments
     class CpltAssignment : public Assignment {
     protected:
@@ -95,7 +95,7 @@ namespace Test {
       /// Destructor
       virtual ~CpltAssignment(void);
     };
-    
+
     /// Generate random selection of assignments
     class RandomAssignment : public Assignment {
     protected:
@@ -115,7 +115,7 @@ namespace Test {
       /// Destructor
       virtual ~RandomAssignment(void);
     };
-      
+
     /// Level of consistency to test for
     enum ConTestLevel {
       CTL_NONE,     ///< No consistency-test
@@ -142,23 +142,23 @@ namespace Test {
       ConTestLevel contest;
       /// Whether to perform search test
       bool testsearch;
-    
+
     public:
       /**
        * \brief Constructor
        *
        * Constructs a test with name \a s and arity \a a and variable
-       * domain \a d. Also tests for a reified constraint, 
+       * domain \a d. Also tests for a reified constraint,
        * if \a r is true. The consistency level is
        * maintained for convenience.
        */
-      Test(const std::string& s, int a, const Gecode::IntSet& d, bool r=false, 
+      Test(const std::string& s, int a, const Gecode::IntSet& d, bool r=false,
            Gecode::IntConLevel i=Gecode::ICL_DEF);
       /**
        * \brief Constructor
        *
        * Constructs a test with name \a s and arity \a a and variable
-       * domain \a min ... \a max. Also tests for a reified constraint, 
+       * domain \a min ... \a max. Also tests for a reified constraint,
        * if \a r is true. The consistency level is
        * maintained for convenience.
        */
@@ -173,7 +173,7 @@ namespace Test {
       /// Post constraint
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
       /// Post reified constraint
-      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                         Gecode::BoolVar b);
       /// Perform test
       virtual bool run(void);
@@ -197,14 +197,14 @@ namespace Test {
       //@}
     };
     //@}
-    
+
     /// Iterator for integer consistency levels
     class IntConLevels {
     private:
       /// Array of consistency levels
       static const Gecode::IntConLevel icls[3];
       /// Current position in level array
-      int i; 
+      int i;
     public:
       /// Initialize iterator
       IntConLevels(void);
@@ -215,14 +215,14 @@ namespace Test {
       /// Return current level
       Gecode::IntConLevel icl(void) const;
     };
-    
+
     /// Iterator for integer relation types
     class IntRelTypes {
     private:
       /// Array of relation types
       static const Gecode::IntRelType irts[6];
       /// Current position in relation type array
-      int i; 
+      int i;
     public:
       /// Initialize iterator
       IntRelTypes(void);
@@ -235,14 +235,14 @@ namespace Test {
       /// Return current relation type
       Gecode::IntRelType irt(void) const;
     };
-    
+
     /// Iterator for Boolean operation types
     class BoolOpTypes {
     private:
       /// Array of operation types
       static const Gecode::BoolOpType bots[5];
       /// Current position in operation type array
-      int i; 
+      int i;
     public:
       /// Initialize iterator
       BoolOpTypes(void);
@@ -253,7 +253,7 @@ namespace Test {
       /// Return current operation type
       Gecode::BoolOpType bot(void) const;
     };
-    
+
   }
 }
 

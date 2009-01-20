@@ -50,26 +50,26 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     for (int i=0; i<specs.size(); i++) {
       if (! (specs[i]->vti() == Set::SetVarImpConf::vti))
         return ItemData(0);
-      Reflection::IntArrayArg* dom = 
+      Reflection::IntArrayArg* dom =
         specs[i]->dom()->second()->first()->toIntArray();
       data = std::min(data, (*dom)[0]);
     }
     return data;
   }
 
-  SetVarItem::SetVarItem(Reflection::VarSpec* spec, const ItemData& data, 
+  SetVarItem::SetVarItem(Reflection::VarSpec* spec, const ItemData& data,
                          QGraphicsItem *parent)
   : VarItem(spec, parent)
-{ 
+{
   // this item is supposed to display a SetVar
   if(spec->vti() == Set::SetVarImpConf::vti) {
-    
+
     int lb_card = spec->dom()->first()->second()->toInt();
     int ub_card = spec->dom()->second()->second()->toInt();
 
     Reflection::IntArrayArg* lower_bound_dom = spec->dom()->first()->first()->toIntArray();
     Reflection::IntArrayArg* upper_bound_dom = spec->dom()->second()->first()->toIntArray();
-    
+
     int lb_domSize = lower_bound_dom->size();
     int ub_domSize = upper_bound_dom->size();
 
@@ -143,12 +143,12 @@ namespace Gecode { namespace Gist { namespace Visualisation {
         item->moveBy(childrenBoundingRect().width(),0);
       domainItems[j] = item;
     }
-    
+
     int maxCard = bound_updates[1];
     int minCard = bound_updates[0];
     QGraphicsRectItem* cardItem = new QGraphicsRectItem(this);
     cardText = new QGraphicsTextItem("# " + QString::number(maxCard) + "-" + QString::number(maxCard), cardItem);
-    
+
     cardItem->setRect(cardItem->childrenBoundingRect());
     cardItem->moveBy(childrenBoundingRect().width(),0);
     cardText->setPlainText("# " + QString::number(minCard) + "-" + QString::number(maxCard));
@@ -224,7 +224,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       else
         domainItems[i]->setBrush(Qt::white);
     }
-    
+
     cardText->setPlainText("# " + QString::number(lb_card) + "-" + QString::number(ub_card));
   }
 

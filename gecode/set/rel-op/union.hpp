@@ -235,7 +235,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  ExecStatus 
+  ExecStatus
   UnionN<View0,View1>::post(Space& home, ViewArray<View0>& x, View1 y) {
     switch (x.size()) {
     case 0:
@@ -252,7 +252,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  ExecStatus 
+  ExecStatus
   UnionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
                             const IntSet& z, View1 y) {
     (void) new (home) UnionN<View0,View1>(home,x,z,y);

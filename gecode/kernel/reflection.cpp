@@ -59,7 +59,7 @@ namespace Gecode { namespace Reflection {
     /// The registry of variable print functions
     Support::SymbolMap<branchingSpecPrinter> branchingSpecPrinters;
   };
-  
+
   Registry::Registry(void) : ro(new RegistryObject()) {}
 
   Registry::~Registry(void) { delete ro; }
@@ -68,7 +68,7 @@ namespace Gecode { namespace Reflection {
     static Registry r;
     return r;
   }
-  
+
   VarImpBase*
   Registry::createVar(Space& home, VarSpec& spec) const {
     varCreator vc = NULL;
@@ -124,7 +124,7 @@ namespace Gecode { namespace Reflection {
                  VarImpBase* v, const Support::Symbol& vti) const {
     varSpec vs = NULL;
     if (!ro->varSpecs.get(vti,vs)) {
-      throw Reflection::ReflectionException("VTI not found");      
+      throw Reflection::ReflectionException("VTI not found");
     }
     return vs(home, vm, v);
   }
@@ -327,13 +327,13 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   Arg::newString(const char* s) {
     Arg* ret = new Arg(STRING_ARG);
     ret->arg1.s = strdup(s);
-    return ret;    
+    return ret;
   }
   Arg*
   Arg::newString(const Support::Symbol& s) {
     Arg* ret = new Arg(STRING_ARG);
     ret->arg1.s = strdup(s.toString().c_str());
-    return ret;    
+    return ret;
   }
   void
   Arg::initString(const char* s) {
@@ -414,7 +414,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     t = SHARED_OBJECT_ARG;
     arg1.first = a;
   }
-  
+
   bool
   Arg::isSharedReference(void) const {
     return (t == SHARED_REF_ARG);
@@ -498,7 +498,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     return arg1.i;
   }
 
-  IntArrayArgRanges::IntArrayArgRanges(Reflection::IntArrayArg* a0) 
+  IntArrayArgRanges::IntArrayArgRanges(Reflection::IntArrayArg* a0)
     : a(a0), n(0) {}
 
   bool
@@ -514,8 +514,8 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   IntArrayArgRanges::max(void) const { return (*a)[n+1]; }
 
   unsigned int
-  IntArrayArgRanges::width(void) const { 
-    return static_cast<unsigned int>(max() - min()) + 1; 
+  IntArrayArgRanges::width(void) const {
+    return static_cast<unsigned int>(max() - min()) + 1;
   }
 
   //
@@ -568,7 +568,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     if (Support::marked(_dom))
       return static_cast<Arg*>(Support::unmark(_dom));
     else
-      return _dom;    
+      return _dom;
   }
 
   inline bool
@@ -577,15 +577,15 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   }
 
   VarSpec::VarSpec(void) : _dom(NULL) {}
-  
-  VarSpec::VarSpec(Support::Symbol vti, Arg* dom, bool assigned) 
+
+  VarSpec::VarSpec(Support::Symbol vti, Arg* dom, bool assigned)
   : _dom(new Domain(vti,dom,assigned)) {}
 
   VarSpec::VarSpec(const VarSpec& s) : _dom(s._dom) {
     if (_dom)
       _dom->r++;
   }
-  
+
   const VarSpec&
   VarSpec::operator =(const VarSpec& s) {
     if (this != &s) {
@@ -597,7 +597,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     }
     return *this;
   }
-  
+
   VarSpec::~VarSpec(void) {
     if (_dom && --_dom->r == 0)
       delete _dom;
@@ -609,7 +609,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
       throw ReflectionException("Empty VarSpec");
     _dom->_n = n;
   }
-  
+
   Support::Symbol
   VarSpec::name(void) const {
     if (_dom == NULL)
@@ -642,7 +642,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   VarSpec::assigned(void) const {
     if (_dom == NULL)
       throw ReflectionException("Empty VarSpec");
-    return _dom->assigned();    
+    return _dom->assigned();
   }
 
   //
@@ -706,7 +706,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     if (_args != NULL)
       _args->r++;
   }
-  
+
   const ActorSpec&
   ActorSpec::operator =(const ActorSpec& s) {
     if (this != &s) {
@@ -793,7 +793,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
    * Branch specification
    *
    */
-   
+
   /// Implementation of a BranchingSpec
   class BranchingSpec::Arguments {
   public:
@@ -826,9 +826,9 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
       delete a[i];
     heap.free<Arg*>(a,n);
   }
-  
+
   BranchingSpec::BranchingSpec(void) : _args(NULL) {}
-  
+
   BranchingSpec::BranchingSpec(const Support::Symbol& ati, unsigned int n)
     : _args(new Arguments(ati,n)) {}
 
@@ -837,7 +837,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     if (_args)
       _args->r++;
   }
-  
+
   const BranchingSpec&
   BranchingSpec::operator =(const BranchingSpec& s) {
     if (this != &s) {
@@ -873,18 +873,18 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     if (_args && --_args->r == 0)
       delete _args;
   }
-  
+
   unsigned int
   BranchingSpec::size(void) const {
     return _args == NULL ? 0 : _args->n;
   }
-  
+
 
   /*
    * Specification iterator
    *
    */
-   
+
   bool
   ActorSpecIter::operator ()(void) const {
     return cur != &s.a_actors;
@@ -931,7 +931,7 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
     : home(home0), m(m0) {}
 
   Unreflector::~Unreflector(void) {}
-    
+
   Reflection::VarMap&
   Unreflector::varMap(void) const {
     return m;
@@ -957,13 +957,13 @@ ARGACCESSORS(Double,double,d,DOUBLE_ARG)
   }
 
   /* Generic variable */
-  
+
   void
   Var::update(Space& home, bool share, Var& v) {
     new (&_vti) Support::Symbol(v._vti);
     _var = registry().updateVariable(home, share, v._var, v._vti);
   }
-  
+
   Arg*
   Var::spec(const Space& home, VarMap& vm) const {
     return registry().spec(home, vm, _var, _vti);

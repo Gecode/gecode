@@ -64,7 +64,7 @@ namespace Gecode { namespace Set {
   GLBndSet::include_full(Space& home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     assert(fst() != NULL);
-    
+
     RangeList* p = NULL;
     RangeList* c = fst();
 
@@ -94,7 +94,7 @@ namespace Gecode { namespace Set {
         }
         assert(c->min()<=mi);
         assert(c->max()+1>=mi);
-        if (c->max() >= ma) { 
+        if (c->max() >= ma) {
           d._glbMax = c->min()-1;
           return result;
         }
@@ -114,7 +114,7 @@ namespace Gecode { namespace Set {
           _size += ma-q->max();
           d._glbMax = ma;
         } else {
-          d._glbMax = q->min()-1;          
+          d._glbMax = q->min()-1;
         }
         c->max(std::max(ma,q->max()));
         if (c!=q) {
@@ -179,9 +179,9 @@ namespace Gecode { namespace Set {
 
     while (c != NULL && c->max() <= ma) {
       RangeList *nc = c->next();
-      p=c; c=nc;      
+      p=c; c=nc;
     }
-    
+
     if (c == NULL)
       return changed;
 
@@ -333,7 +333,7 @@ namespace Gecode { namespace Set {
 
       min = c->min();
       max = c->max();
-      
+
       nc=c->next();
       p=c; c=nc;
     }

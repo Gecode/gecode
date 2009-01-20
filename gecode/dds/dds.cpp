@@ -38,7 +38,7 @@ namespace Gecode { namespace Decomposition {
            size_t sz)
     : e(c_d,a_d,st,sz) {
     unsigned long int p = 0;
-    Space* c = (s->status(p) == SS_FAILED) ? NULL : 
+    Space* c = (s->status(p) == SS_FAILED) ? NULL :
                 s->clone(true);
     e.init(c);
     e.propagate += p;
@@ -77,7 +77,7 @@ namespace Gecode { namespace Decomposition {
   //                   IntVarBranch vars, IntValBranch vals) {
   //   Int::Branch::createBranch<DecomposingViewValBranching>(home,x,vars,vals);
   // }
-  // 
+  //
   // void
   // decomposingBranch(Space& home, const BoolVarArgs& x,
   //                   IntVarBranch vars, IntValBranch vals) {

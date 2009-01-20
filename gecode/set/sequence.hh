@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace Sequence {
    * \brief %Propagator for the sequence constraint
    *
    * Requires \code #include <gecode/set/sequence.hh> \endcode
-   * \ingroup FuncSetProp   
+   * \ingroup FuncSetProp
    */
 
   class Seq :
@@ -82,7 +82,7 @@ namespace Gecode { namespace Set { namespace Sequence {
    * \brief %Propagator for the sequenced union constraint
    *
    * Requires \code #include <gecode/set/sequence.hh> \endcode
-   * \ingroup FuncSetProp   
+   * \ingroup FuncSetProp
    */
 
   class SeqU : public NaryOnePropagator<SetView,PC_SET_ANY> {
@@ -105,7 +105,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     GECODE_SET_EXPORT virtual Actor*     copy(Space& home, bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
+    /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
     static ExecStatus post(Space& home,ViewArray<SetView>, SetView);
   };
 

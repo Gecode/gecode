@@ -50,10 +50,10 @@ namespace {
 /**
  * \brief %Example: Nonogram
  *
- * This example solves nonograms. A nonogram is composed of a matrix of 
+ * This example solves nonograms. A nonogram is composed of a matrix of
  * markers. For each row/column there is a specification on how many groups
- * of markers (separated by one or more unmarked spots) and their length. 
- * The objective is to find a valid assignment, which incidentally may also 
+ * of markers (separated by one or more unmarked spots) and their length.
+ * The objective is to find a valid assignment, which incidentally may also
  * produce a pretty picture.
  *
  * See problem 12 at http://www.csplib.org/.

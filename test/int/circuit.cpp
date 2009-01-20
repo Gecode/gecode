@@ -41,7 +41,7 @@ namespace Test { namespace Int {
 
    /// Tests for circuit constraints
    namespace Circuit {
-   
+
      /**
       * \defgroup TaskTestIntCircuit Circuit constraints
       * \ingroup TaskTestInt
@@ -78,7 +78,7 @@ namespace Test { namespace Int {
          circuit(home, x, icl);
        }
      };
-   
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -90,10 +90,10 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      Create c;
      //@}
-   
+
    }
 }}
 

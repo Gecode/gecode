@@ -40,7 +40,7 @@
 #include <gecode/gist/visualnode.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   /// \brief A cursor that can be run over a tree
   template <class Node>
   class NodeCursor {
@@ -65,7 +65,7 @@ namespace Gecode { namespace Gist {
     unsigned int alternative(void);
     /// Set current alternative
     void alternative(unsigned int a);
-    
+
     /// \name Cursor interface
     //@{
     /// Test if the cursor may move to the parent node
@@ -79,7 +79,7 @@ namespace Gecode { namespace Gist {
     /// Test if cursor may move to the first sibling
     bool mayMoveSidewards(void);
     /// Move cursor to the first sibling
-    void moveSidewards(void);    
+    void moveSidewards(void);
     //@}
   };
 
@@ -96,7 +96,7 @@ namespace Gecode { namespace Gist {
     void processCurrentNode(void);
     //@}
   };
-  
+
   /// \brief A cursor that marks all nodes in the tree as not hidden
   class UnhideAllCursor : public NodeCursor<VisualNode> {
   public:
@@ -108,7 +108,7 @@ namespace Gecode { namespace Gist {
     void processCurrentNode(void);
     //@}
   };
-  
+
   /// \brief A cursor that finds the next solution
   class NextSolCursor : public NodeCursor<VisualNode> {
   private:
@@ -134,10 +134,10 @@ namespace Gecode { namespace Gist {
     /// Test if cursor may move to the first sibling
     bool mayMoveSidewards(void);
     /// Move cursor to the first sibling
-    void moveSidewards(void);    
+    void moveSidewards(void);
     //@}
   };
-  
+
 }}
 
 #include <gecode/gist/nodecursor.hpp>

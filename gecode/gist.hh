@@ -74,17 +74,17 @@ class QWidget;
 #include <string>
 #include <sstream>
 
-namespace Gecode { 
-  
-  /** 
+namespace Gecode {
+
+  /**
    * \namespace Gecode::Gist
    * \brief The Gecode Interactive Search Tool
-   * 
+   *
    * The Gecode::Gist namespace contains the %Gecode Interactive Search Tool,
    * a Qt-based graphical search engine.
    *
    */
-  
+
   namespace Gist {
   /** \brief Abstract base class for Inspectors
     *
@@ -103,7 +103,7 @@ namespace Gecode {
     /// Destructor
     virtual ~Inspector(void);
   };
-  
+
   /// \brief An inspector base class for simple text output
   class GECODE_GIST_EXPORT TextInspector : public Inspector {
   private:
@@ -127,7 +127,7 @@ namespace Gecode {
     /// Name of the inspector
     virtual std::string name(void);
   };
-  
+
   /// \brief An inspector for printing simple text output
   template <class S>
   class PrintingInspector : public TextInspector {
@@ -137,11 +137,11 @@ namespace Gecode {
     /// Use the print method of the template class S to print a space
     virtual void inspect(Space& node);
   };
-  
+
   /// Create a new stand-alone Gist for \a root using \a b and \a gi
   GECODE_GIST_EXPORT
   int explore(Space* root, bool bab, Inspector* gi);
-  
+
   }	
 
   /**

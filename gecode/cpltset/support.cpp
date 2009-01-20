@@ -55,8 +55,8 @@ namespace Gecode { namespace CpltSet {
     }
     return;
   }
-  
-  bdd 
+
+  bdd
   bdd_vars(bdd& robdd) {
     bdd allvars = bdd_true();
     BddIterator bi(robdd);
@@ -73,7 +73,7 @@ namespace Gecode { namespace CpltSet {
     return allvars;
   }
 
-  bdd 
+  bdd
   cardeq(Space& home, int offset, int c, int n, int r) {
     Region re(home);
     bdd* layer = re.alloc<bdd>(n);
@@ -97,7 +97,7 @@ namespace Gecode { namespace CpltSet {
         if (i == 0) {
           t = bdd_false();
         } else {
-          t = layer[i-1]; 
+          t = layer[i-1];
         }
         layer[i] = manager.ite(manager.bddpos(offset + col), t,layer[i]);
         col--;
@@ -107,7 +107,7 @@ namespace Gecode { namespace CpltSet {
     return layer[n - 1];
   }
 
-  bdd 
+  bdd
   cardlqgq(Space& home, int offset, int cl, int cr, int n, int r) {
     Region re(home);
     bdd* layer = re.alloc<bdd>(n);
@@ -116,16 +116,16 @@ namespace Gecode { namespace CpltSet {
     layer[n - cl - 1] = bdd_true();
     int k = r;
     for (int i = n - cl ; i < n; i++) {
-        layer[i] = manager.ite(manager.bddpos(offset + k), layer[i - 1], 
+        layer[i] = manager.ite(manager.bddpos(offset + k), layer[i - 1],
                                bdd_false());
       k--;
     }
 
     for (k = r; k--; ) {
       int col = k;
-      // cl < cr <= tab  ==> n - cl > 0 
-      for (int i = n - cl; i < n; i++) { 
-        bdd t = layer[i-1]; 
+      // cl < cr <= tab  ==> n - cl > 0
+      for (int i = n - cl; i < n; i++) {
+        bdd t = layer[i-1];
         layer[i] = manager.ite(manager.bddpos(offset + col), t, layer[i]);
         col--;
         if (col < r + 1 - cr) { k = 0; break;}
@@ -160,7 +160,7 @@ namespace Gecode { namespace CpltSet {
 
       return layer[n- 1];
     }
-  
+
     // connect lower and upper parts of the bdd
     // one single layer in between
     int col = r;
@@ -183,7 +183,7 @@ namespace Gecode { namespace CpltSet {
       }
     }
 
-    // the remaining layers 
+    // the remaining layers
     for (k = r; --k; ) {
       int col = k;
       for (int i = 0; i < n; i++) {
@@ -191,7 +191,7 @@ namespace Gecode { namespace CpltSet {
         if (i == 0) {
           t = bdd_false();
         } else {
-          t = layer[i-1]; 
+          t = layer[i-1];
         }
         layer[i] = manager.ite(manager.bddpos(offset + col), t, layer[i]);
         col--;
@@ -201,9 +201,9 @@ namespace Gecode { namespace CpltSet {
     return layer[n - 1];
   }
 
-  bdd 
+  bdd
   cardcheck(Space& home, int xtab, int offset, int cl, int cr) {
-    if (cr > xtab) { 
+    if (cr > xtab) {
       cr = xtab;
     }
     int r = xtab - 1; // rightmost bit in bitvector
@@ -219,7 +219,7 @@ namespace Gecode { namespace CpltSet {
       }
       return empty;
     }
-  
+
     if (cl == cr) {
       if (cr == xtab) {
         // build the full set
@@ -242,55 +242,55 @@ namespace Gecode { namespace CpltSet {
     return cardlqgq(home, offset, cl, cr, n, r);
   }
 
-  bdd 
+  bdd
   lexlt(unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
     if (n < 0) { return bdd_false(); }
 
     bdd cur = bdd_true();
     cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
-    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & 
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) &
              lexlt(xoff, yoff, range, n - 1));
     return cur;
   }
 
-  bdd 
+  bdd
   lexlq(unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
     if (n < 0) { return bdd_true(); }
 
     bdd cur = bdd_true();
     cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
-    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & 
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) &
              lexlq(xoff, yoff, range, n - 1));
     return cur;
   }
 
 
-  bdd 
+  bdd
   lexltrev(unsigned int& xoff, unsigned int& yoff,
            unsigned int& range, int n) {
     if (n > (int) range - 1) { return bdd_false(); }
     bdd cur = bdd_true();
     cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
-    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & 
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) &
              lexltrev(xoff, yoff, range, n + 1));
     return cur;
   }
 
-  bdd 
+  bdd
   lexlqrev(unsigned int& xoff, unsigned int& yoff,
            unsigned int& range, int n) {
     if (n > static_cast<int> (range) - 1) { return bdd_true(); }
 
     bdd cur = bdd_true();
     cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
-    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & 
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) &
              lexlqrev(xoff, yoff, range, n + 1));
     return cur;
   }
 
   // mark all nodes in the dqueue
   void
-  extcache_mark(Support::DynamicArray<bdd,Heap>& nodes, 
+  extcache_mark(Support::DynamicArray<bdd,Heap>& nodes,
                 int n, int& l, int& r, int& markref) {
     // the left side
     if (l > 0) {
@@ -314,14 +314,14 @@ namespace Gecode { namespace CpltSet {
 
   // unmark all nodes in the dqueue
   void
-  extcache_unmark(Support::DynamicArray<bdd,Heap>& nodes, 
+  extcache_unmark(Support::DynamicArray<bdd,Heap>& nodes,
                   int n, int& l, int& r, int& markref) {
     if (l > 0) {
       for (int i = 0; i < l; i++) {
         if (manager.marked(nodes[i])) {
           manager.unmark(nodes[i]);
           markref--;
-        } 
+        }
       }
     }
     if (r < n - 1) {
@@ -329,20 +329,20 @@ namespace Gecode { namespace CpltSet {
         if (manager.marked(nodes[i])) {
           manager.unmark(nodes[i]);
           markref--;
-        } 
+        }
       }
     }
   }
 
 
   // iterate to the next level of nodes
-  void 
+  void
   extcardbounds(int& markref, bdd&, int& n, int& l, int& r,
-                bool& singleton, int& _level, 
-                Support::DynamicArray<bdd,Heap>& nodes, 
+                bool& singleton, int& _level,
+                Support::DynamicArray<bdd,Heap>& nodes,
                 int& curmin, int& curmax) {
     bdd cur = bdd_true();
-  
+
     if (((l == 0) && (r == n - 1))) {
       // no more nodes on the stack to be iterated
       singleton = false;
@@ -350,26 +350,26 @@ namespace Gecode { namespace CpltSet {
       assert(markref == 0);
       return;
     }
-  
+
     // mark nodes under exploration
     extcache_mark(nodes, n, l, r,markref);
     if (l > 0) {
       _level++;
     }
-  
+
     // NEW
     bool stackleft = false;
     while (l > 0) {
       stackleft = true;
-      /* 
-       * if left side contains at least two nodes 
+      /*
+       * if left side contains at least two nodes
        * L: n_1 n_2 ______
        * if level(n_1) < level(n_2) move n_2 to the right end of the dqueue
-       * maintain the invariant: 
+       * maintain the invariant:
        * for all nodes n_i, n_j in L: level(n_i) = level(n_j)
        * difference detected set Gecode::CpltSet::UNDET
        */
-      while ((l > 1) && 
+      while ((l > 1) &&
              manager.bddidx(nodes[l - 1]) < manager.bddidx(nodes[l - 2])) {
         int shift = l - 2;
         int norm  = l - 1;
@@ -377,7 +377,7 @@ namespace Gecode { namespace CpltSet {
         if (r == n - 1) {
           nodes[r] = nodes[shift];
           manager.mark(nodes[r]); markref++;
-        } else {    
+        } else {
           for (int i = r; i < n - 1; i++) {
             nodes[i] = nodes[i + 1];
           }
@@ -390,14 +390,14 @@ namespace Gecode { namespace CpltSet {
         l--;
       }
       // symmetric case
-      while ((l > 1) && 
+      while ((l > 1) &&
              manager.bddidx(nodes[l - 1]) > manager.bddidx(nodes[l - 2])) {
         int shift = l - 1;
         manager.unmark(nodes[shift]); markref--;
         if (r == n - 1) {
           nodes[r] = nodes[shift];
           manager.mark(nodes[r]); markref++;
-        } else {    
+        } else {
           for (int i = r; i < n - 1; i++) {
             nodes[i] = nodes[i + 1];
           }
@@ -408,23 +408,23 @@ namespace Gecode { namespace CpltSet {
         nodes[shift] = bdd();
         l--;
       }
-  
+
       l--;
       manager.unmark(nodes[l]);
-      markref--; 
+      markref--;
       cur = nodes[l];
       assert(!manager.marked(cur));
       nodes[l] = bdd();
-  
-      // cur is an internal node 
+
+      // cur is an internal node
       if (!manager.leaf(cur)) {
         bdd t   = manager.iftrue(cur);
         bdd f   = manager.iffalse(cur);
         // unsigned int cur_idx = manager.bddidx(cur);
-  
+
         bool leaf_t = manager.leaf(t);
         bool leaf_f = manager.leaf(f);
-  
+
         if (!leaf_t) {
           if (!manager.marked(t)) {
             // if we encounter different indices in the child nodes
@@ -432,7 +432,7 @@ namespace Gecode { namespace CpltSet {
             nodes[r] = t;
             manager.lbCard(t, manager.lbCard(cur) + 1);
             manager.ubCard(t, manager.ubCard(cur) + 1);
-  
+
             manager.mark(nodes[r]);
             markref++;
             r--;
@@ -449,17 +449,17 @@ namespace Gecode { namespace CpltSet {
             int maxval = manager.ubCard(cur) + 1;
             curmin = std::min(curmin, minval);
             curmax = std::max(curmax, maxval);
-            
+
           }
         }
-  
+
         if (!leaf_f) {
           if (!manager.marked(f)) {
             nodes[r] = f;
             manager.lbCard(f, manager.lbCard(cur));
             manager.ubCard(f, manager.ubCard(cur));
             manager.mark(nodes[r]);
-            markref++; 
+            markref++;
             r--;
           } else {
             int lc = std::min(manager.lbCard(cur), manager.lbCard(f));
@@ -485,22 +485,22 @@ namespace Gecode { namespace CpltSet {
         singleton = true;
       }
     }
-  
-    // ensure that iterations processes alternately 
+
+    // ensure that iterations processes alternately
     // left and right altnerately
     if (stackleft) {
       extcache_unmark(nodes, n, l, r, markref);
       assert(markref == 0);
       return;
     }
-   
+
     if (r < n - 1) {
       _level++;
     }
-  
+
     // process right stack half
     while (r < n - 1) {
-      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) < 
+      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) <
                             manager.bddidx(nodes[r + 2])) {
         int shift = r + 2;
         int norm  = r + 1;
@@ -508,7 +508,7 @@ namespace Gecode { namespace CpltSet {
         if (l == 0) {
           nodes[l] = nodes[shift];
           manager.mark(nodes[l]); markref++;
-        } else {    
+        } else {
           for (int i = l; i > 0; i--) {
             nodes[i] = nodes[i - 1];
           }
@@ -520,8 +520,8 @@ namespace Gecode { namespace CpltSet {
         nodes[norm] = bdd();
         r++;
       }
-  
-      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) > 
+
+      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) >
                             manager.bddidx(nodes[r + 2])) {
         int shift = r + 1;
         manager.unmark(nodes[shift]); markref--;
@@ -539,25 +539,25 @@ namespace Gecode { namespace CpltSet {
         nodes[shift] = bdd();
         r++;
       }
-  
-  
+
+
       // check whether right-hand side nodes has fixed vars
       r++;
       manager.unmark(nodes[r]);
-      markref--; 
+      markref--;
       cur = nodes[r];
       assert(!manager.marked(cur));
-  
+
       nodes[r] = bdd();
       // cur is internal node, that is cur is neither
       // bdd_false() nor bdd_true()
       if (!manager.leaf(cur)) {
         bdd t   = manager.iftrue(cur);
         bdd f   = manager.iffalse(cur);
-  
+
         bool leaf_t = manager.leaf(t);
         bool leaf_f = manager.leaf(f);
-  
+
         if (!leaf_t) {
           if (!manager.marked(t)) {
             nodes[l] = t;
@@ -572,7 +572,7 @@ namespace Gecode { namespace CpltSet {
             manager.lbCard(t, lc);
             manager.ubCard(t, uc);
           }
-  
+
         } else {
           // leaf_t true
           if (manager.ctrue(t)) {
@@ -580,9 +580,9 @@ namespace Gecode { namespace CpltSet {
             int maxval = manager.ubCard(cur) + 1;
             curmin = std::min(curmin, minval);
             curmax = std::max(curmax, maxval);
-          } 
+          }
         }
-  
+
         if (!leaf_f) {
           if (!manager.marked(f)) {
             nodes[l] = f;
@@ -604,8 +604,8 @@ namespace Gecode { namespace CpltSet {
             int maxval = manager.ubCard(cur);
             curmin = std::min(curmin, minval);
             curmax = std::max(curmax, maxval);
-  
-          } 
+
+          }
         }
       }
       if (((l == 0) && (r == n - 1))) {
@@ -613,9 +613,9 @@ namespace Gecode { namespace CpltSet {
         // as the root node is always inserted at the left end
         singleton = true;
       }
-  
+
     } // end processing right stack
-  
+
     extcache_unmark(nodes, n, l, r, markref);
     assert(markref == 0);
   } // end increment op
@@ -629,7 +629,7 @@ namespace Gecode { namespace CpltSet {
     bool singleton = (csize == 1);
     int _level = -1;
     Support::DynamicArray<bdd,Heap> nodes(heap,csize);
-    
+
     // the given ROBDD c has internal nodes
     if (!manager.leaf(c)) {
       nodes[l] = c;
@@ -637,7 +637,7 @@ namespace Gecode { namespace CpltSet {
       manager.ubCard(nodes[l], 0);
       manager.mark(nodes[l]);
       markref++;
-      l++;      
+      l++;
     } else {
       // \todo FIXME implement cardoutput for leaf!
       std::cerr << "NOT IMPLEMENTED CARDOUTPUT FOR LEAF !\n";
@@ -647,8 +647,8 @@ namespace Gecode { namespace CpltSet {
     if (! ((l == 0) && (r == csize - 1)) // ! empty
         || singleton) {
       while (! ((l == 0) && (r == csize - 1)) || singleton) {
-        extcardbounds(markref, c, csize, l, r, 
-                      singleton, _level, nodes, 
+        extcardbounds(markref, c, csize, l, r,
+                      singleton, _level, nodes,
                       curmin, curmax// , out
                       );
       }

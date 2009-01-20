@@ -186,7 +186,7 @@ public:
       : Branching(home, share, b), pos(b.pos) {}
 
   public:
-    /// Check status of branching, return true if alternatives left. 
+    /// Check status of branching, return true if alternatives left.
     virtual bool status(const Space& home) const {
       const QueenArmies& q = static_cast<const QueenArmies&>(home);
       int maxsize = -1;
@@ -214,7 +214,7 @@ public:
     /** \brief Perform commit for branching description \a d and
      * alternative \a a.
      */
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
+    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a) {
       QueenArmies& q = static_cast<QueenArmies&>(home);
       const Description& pvd = static_cast<const Description&>(d);

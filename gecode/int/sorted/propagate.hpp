@@ -33,7 +33,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include <gecode/int/rel.hh>
 #include <gecode/int/distinct.hh>
@@ -251,25 +251,25 @@ namespace Gecode { namespace Int { namespace Sorted {
     for (int i = n; i--; )
       if (!y[i].assigned()) {
         // phiprime is not needed to narrow the domains of the x-variables
-        if (!match_fixed && 
+        if (!match_fixed &&
             !revglover(x,y,tau,phiprime,sequence,vertices))
           return ES_FAILED;
-        
+
         if (!narrow_domy(home,x,y,phi,phiprime,nofix))
           return ES_FAILED;
-        
+
         if (nofix && !match_fixed) {
           // data structures (matching) destroyed by domains with holes
-          
+
           for (int j = y.size(); j--; )
             phi[j]=phiprime[j]=0;
 
           if (!glover(x,y,tau,phi,sequence,vertices))
             return ES_FAILED;
-          
+
           if (!revglover(x,y,tau,phiprime,sequence,vertices))
             return ES_FAILED;
-          
+
           if (!narrow_domy(home,x,y,phi,phiprime,nofix))
             return ES_FAILED;
         }
@@ -303,11 +303,11 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (Perm) {
-      if (!noperm_bc && 
+      if (!noperm_bc &&
           !perm_bc<View>
           (home, tau, sinfo, scclist, x,z, repairpass, nofix))
           return ES_FAILED;
-      
+
       // channeling also needed after normal propagation steps
       // in order to ensure consistency after possible modification in perm_bc
       if (!channel(home,x,y,z,nofix))
@@ -330,11 +330,11 @@ namespace Gecode { namespace Int { namespace Sorted {
           // if bounds are strictly smaller
           if (x[tau[i]].max() < x[tau[i+1]].max()) {
             ModEvent me = y[z[tau[i]].min()].lq(home, x[tau[i]].max());
-            if (me_failed(me)) 
+            if (me_failed(me))
               return ES_FAILED;
             nofix |= (me_modified(me) &&
                       y[z[tau[i]].min()].max() != x[tau[i]].max());
-        
+
             me = y[z[tau[i+1]].max()].lq(home, x[tau[i+1]].max());
             if (me_failed(me))
               return ES_FAILED;
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   Sorted<View,Perm>::
-  Sorted(Space& home, 
+  Sorted(Space& home,
          ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0) :
     Propagator(home), x(x0), y(y0), z(z0), w(home,y0), reachable(-1) {
     x.subscribe(home, *this, PC_INT_BND);
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   Sorted<View,Perm>::
-  Sorted(Space& home, 
+  Sorted(Space& home,
          ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0,
          ViewArray<View>& w0, int reachable0) :
     Propagator(home), x(x0), y(y0), z(z0), w(w0), reachable(reachable0) {
@@ -643,7 +643,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   template<class View, bool Perm>
   ExecStatus
   Sorted<View,Perm>::
-  post(Space& home, 
+  post(Space& home,
        ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0) {
     int n = x0.size();
     if (n < 2) {
@@ -671,7 +671,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   template<class View, bool Perm>
   ExecStatus
   Sorted<View,Perm>::
-  post(Space& home, 
+  post(Space& home,
        ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z,
        ViewArray<View>& w, int reachable) {
     new (home) Sorted<View,Perm>(home,x,y,z,w,reachable);

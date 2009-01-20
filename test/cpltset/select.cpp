@@ -77,7 +77,7 @@ namespace Test { namespace CpltSet {
         // count the number of selected sets
         CountableSetValues count_sel(x.lub, x[selector_pos]);
         for ( ; count_sel(); ++count_sel, selected++);
-  
+
         CountableSetValues xunion(x.lub, x[union_pos]);
         if (selected==0) {
           bool valid = !xunion();
@@ -123,7 +123,7 @@ namespace Test { namespace CpltSet {
       : CpltSetTest(t, 4, ds_1012,false, 0, 8000, 15000), xsize(4) {
         /// using 1012 leads to 5min testtime for ONE iteration !
         union_pos = xsize - 1;
-        selector_pos = xsize - 2;   
+        selector_pos = xsize - 2;
       }
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -131,11 +131,11 @@ namespace Test { namespace CpltSet {
         // count the number of selected sets
         CountableSetValues count_sel(x.lub, x[selector_pos]);
         for ( ; count_sel(); ++count_sel, selected++);
- 
+
         CountableSetRanges xunion(x.lub, x[union_pos]);
         if (selected==0) {
           CountableSetRanges* sel = new CountableSetRanges[selector_pos];
-    
+
           bool valid = true;
           for (int i = selector_pos; i--; ) {
             sel[i].init(x.lub, x[i]);
@@ -154,13 +154,13 @@ namespace Test { namespace CpltSet {
           delete[] sel;
           return valid;
         }
-  
+
         if (!xunion()) {
           return false;
         }
         // some sets have been selected
         CountableSetRanges* sel = new CountableSetRanges[selected];
-  
+
         CountableSetValues selector(x.lub, x[selector_pos]);
         for (int i=selected; i--;++selector) {
           if (selector.val()>=selector_pos || selector.val()<0) {
@@ -212,7 +212,7 @@ namespace Test { namespace CpltSet {
 
     // Disabled due to time restrictions
     // We need randomized tests to test large set domains
-    // CpltSetSelectNonEmptySub 
+    // CpltSetSelectNonEmptySub
     //   _cpltsetselectNonEmptySub("Select::SelectNonEmptySub");
 
     //@}

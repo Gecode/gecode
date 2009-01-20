@@ -41,7 +41,7 @@
 
 #include <iostream>
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Set {
 
@@ -158,14 +158,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, SetView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -183,7 +183,7 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-      
+
     };
 
     /**
@@ -228,7 +228,7 @@ namespace Gecode {
   bool before(const Set::ConstantView&, const Set::ConstantView&);
 
   namespace Set {
-    
+
     /**
      * \brief Constant view
      *
@@ -239,9 +239,9 @@ namespace Gecode {
     class ConstantView : public ConstViewBase {
       friend class LubRanges<ConstantView>;
       friend class GlbRanges<ConstantView>;
-      friend bool Gecode::same(const Gecode::Set::ConstantView&, 
+      friend bool Gecode::same(const Gecode::Set::ConstantView&,
                                const Gecode::Set::ConstantView&);
-      friend bool Gecode::before(const Gecode::Set::ConstantView&, 
+      friend bool Gecode::before(const Gecode::Set::ConstantView&,
                                  const Gecode::Set::ConstantView&);
     private:
       int *ranges;
@@ -370,14 +370,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ConstantView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -395,7 +395,7 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-      
+
     };
 
     /**
@@ -561,14 +561,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, EmptyView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -586,7 +586,7 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-      
+
     };
 
     /**
@@ -754,14 +754,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, UniverseView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -779,7 +779,7 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-      
+
     };
 
     /**
@@ -962,14 +962,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, SingletonView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -987,7 +987,7 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-      
+
     };
 
     /**
@@ -1036,7 +1036,7 @@ namespace Gecode {
      */
 
     template <class View>
-    class ComplementView 
+    class ComplementView
       : public DerivedViewBase<View> {
     protected:
       using DerivedViewBase<View>::view;
@@ -1169,14 +1169,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ComplementView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -1194,7 +1194,7 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-      
+
     };
 
     /**
@@ -1203,7 +1203,7 @@ namespace Gecode {
      */
     template<class Char, class Traits, class View>
     std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, 
+    operator <<(std::basic_ostream<Char,Traits>& os,
                 const ComplementView<View>& x);
   }
 
@@ -1213,11 +1213,11 @@ namespace Gecode {
   //@{
   /// Test whether views \a x and \a y are the same
   template <class View>
-  bool same(const Set::ComplementView<View>& x, 
+  bool same(const Set::ComplementView<View>& x,
             const Set::ComplementView<View>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template <class View>
-  bool before(const Set::ComplementView<View>& x, 
+  bool before(const Set::ComplementView<View>& x,
               const Set::ComplementView<View>& y);
   //@}
 
@@ -1377,14 +1377,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, OffsetSetView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -1410,7 +1410,7 @@ namespace Gecode {
      */
     template<class Char, class Traits, class View>
     std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, 
+    operator <<(std::basic_ostream<Char,Traits>& os,
                 const OffsetSetView<View>& x);
 
   }
@@ -1421,11 +1421,11 @@ namespace Gecode {
   //@{
   /// Test whether views \a x and \a y are the same
   template <class View>
-  bool same(const Set::OffsetSetView<View>& x, 
+  bool same(const Set::OffsetSetView<View>& x,
             const Set::OffsetSetView<View>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template <class View>
-  bool before(const Set::OffsetSetView<View>& x, 
+  bool before(const Set::OffsetSetView<View>& x,
               const Set::OffsetSetView<View>& y);
   //@}
 

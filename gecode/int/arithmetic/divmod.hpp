@@ -131,7 +131,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
-  ::DivPlusBnd(Space& home, bool share, 
+  ::DivPlusBnd(Space& home, bool share,
                DivPlusBnd<Val,VA,VB,VC,towardsMinInf>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,share,p) {}
@@ -157,11 +157,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
     if (towardsMinInf) {
-      GECODE_ME_CHECK(x2.gq(home,floor(static_cast<double>(x0.min()) / 
+      GECODE_ME_CHECK(x2.gq(home,floor(static_cast<double>(x0.min()) /
                                        static_cast<double>(x1.max()))));
     } else {
-      GECODE_ME_CHECK(x2.gq(home,ceil(static_cast<double>(x0.min()) / 
-                                      static_cast<double>(x1.max()))));      
+      GECODE_ME_CHECK(x2.gq(home,ceil(static_cast<double>(x0.min()) /
+                                      static_cast<double>(x1.max()))));
     }
     (void)
       new (home) DivPlusBnd<double,VA,VB,VC,towardsMinInf>(home,x0,x1,x2);
@@ -361,7 +361,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View>
   forceinline
-  DivMod<View>::DivMod(Space& home, bool share, 
+  DivMod<View>::DivMod(Space& home, bool share,
                              DivMod<View>& p)
   : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       } else {
         signIsSame = false;
       }
-      
+
       // abs(x1) is less than abs(x0)
       int x0max = std::max(x0.max(),std::max(-x0.max(),
                            std::max(x0.min(),-x0.min())));
@@ -399,7 +399,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (x0.min() > 0) {
         int min = std::min(x1.min() < 0 ? -x1.min():x1.min(),
                            x1.max() < 0 ? -x1.max():x1.max());
-        GECODE_ME_CHECK(x0.gr(home,min));  
+        GECODE_ME_CHECK(x0.gr(home,min));
       } else if (x0.max() < 0) {
         int min = std::min(x1.min() < 0 ? -x1.min():x1.min(),
                            x1.max() < 0 ? -x1.max():x1.max());

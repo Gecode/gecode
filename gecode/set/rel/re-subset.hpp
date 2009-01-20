@@ -127,7 +127,7 @@ namespace Gecode { namespace Set { namespace Rel {
         return ES_SUBSUMED(*this,home);
       }
     }
-    
+
     if (x0.cardMin() > 0) {
       LubRanges<View0> x0ub(x0);
       LubRanges<View1> x1ub(x1);
@@ -138,7 +138,7 @@ namespace Gecode { namespace Set { namespace Rel {
         return ES_SUBSUMED(*this,home);
       }
     }
-    
+
     return ES_FIX;
   }
 

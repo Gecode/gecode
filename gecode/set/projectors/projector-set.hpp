@@ -49,7 +49,7 @@ namespace Gecode {
     _count = p._count;
     _arity = p._arity;
   }
-  
+
   forceinline int
   ProjectorSet::arity(void) const { return _arity; }
 
@@ -81,7 +81,7 @@ namespace Gecode {
   ProjectorSet::operator [](int i) const { return _ps[i]; }
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ProjectorSet& ps) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

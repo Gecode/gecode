@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace Branch {
   BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
-  BySizeMin::init(Space&, SetView x) { 
+  BySizeMin::init(Space&, SetView x) {
     size = x.unknownSize();
     return (size == 1) ? VSS_BEST : VSS_BETTER;
   }
@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Branch {
   BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
   forceinline ViewSelStatus
-  BySizeMax::init(Space&, SetView x) { 
+  BySizeMax::init(Space&, SetView x) {
     size = x.unknownSize();
     return VSS_BETTER;
   }

@@ -84,7 +84,7 @@ private:
 public:
   /// Initialize options for example with name \a n
   SteelMillOptions(const char* n)
-    : Options(n), _size(csplib_norders), 
+    : Options(n), _size(csplib_norders),
       _capacities(csplib_capacities), _ncapacities(csplib_ncapacities),
       _maxcapacity(csplib_maxcapacity),
       _loss(csplib_loss), _orders(&(csplib_orders[0])), _ncolors(csplib_ncolors),
@@ -137,7 +137,7 @@ public:
  * Hard instances are available from <a href=
  * "http://becool.info.ucl.ac.be/steelmillslab">
  * http://becool.info.ucl.ac.be/steelmillslab</a>.
- * 
+ *
  * \ingroup ExProblem
  *
  */
@@ -173,7 +173,7 @@ public:
   };
 
   /// Actual model
-  SteelMill(const SteelMillOptions& opt) 
+  SteelMill(const SteelMillOptions& opt)
     : // Initialize instance data
       capacities(opt.capacities()), ncapacities(opt.ncapacities()),
       maxcapacity(opt.maxcapacity()), loss(opt.loss()),
@@ -194,7 +194,7 @@ public:
       }
       channel(*this, tmp, slab[i]);
     }
-    
+
     // Packing constraints
     for (unsigned int s = 0; s < nslabs; ++s) {
       IntArgs c(norders);
@@ -241,7 +241,7 @@ public:
       element(*this, l, slabload[s], slabcost[s]);
     }
     linear(*this, slabcost, IRT_EQ, total_cost);
-    
+
     // Add branching
     if (opt.branching() == BRANCHING_SYMMETRY) {
       // Install custom branching
@@ -277,8 +277,8 @@ public:
   }
 
   /// Constructor for cloning \a s
-  SteelMill(bool share, SteelMill& s) 
-    : MinimizeExample(share,s), 
+  SteelMill(bool share, SteelMill& s)
+    : MinimizeExample(share,s),
       capacities(s.capacities), ncapacities(s.ncapacities),
       maxcapacity(s.maxcapacity), loss(s.loss),
       ncolors(s.ncolors), orders(s.orders),
@@ -327,17 +327,17 @@ public:
         return sizeof(Description);
       }
     };
-    
+
     /// Construct branching
-    SteelMillBranch(Space& home) 
+    SteelMillBranch(Space& home)
       : Branching(home), start(0) {}
     /// Copy constructor
-    SteelMillBranch(Space& home, bool share, SteelMillBranch& b) 
+    SteelMillBranch(Space& home, bool share, SteelMillBranch& b)
       : Branching(home, share, b), start(b.start) {
     }
-    
+
   public:
-    /// Check status of branching, return true if alternatives left. 
+    /// Check status of branching, return true if alternatives left.
     virtual bool status(const Space& home) const {
       const SteelMill& sm = static_cast<const SteelMill&>(home);
       for (unsigned int i = start; i < sm.norders; ++i)
@@ -373,21 +373,21 @@ public:
       unsigned int firstzero = 0;
       while (firstzero < sm.nslabs && sm.slabload[firstzero].min() > 0)
         ++firstzero;
-      assert(pos >= 0 && pos < sm.nslabs && 
+      assert(pos >= 0 && pos < sm.nslabs &&
              val >= 0 && val < sm.norders);
       return new Description(*this, val<firstzero ? 2 : 1, pos, val);
     }
-    /// Perform commit for branching description \a d and alternative \a a. 
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
+    /// Perform commit for branching description \a d and alternative \a a.
+    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a) {
       SteelMill& sm = static_cast<SteelMill&>(home);
-      const Description& desc = 
+      const Description& desc =
         static_cast<const Description&>(d);
       if (a)
-        return me_failed(Int::IntView(sm.slab[desc.pos]).nq(home, desc.val)) 
+        return me_failed(Int::IntView(sm.slab[desc.pos]).nq(home, desc.val))
           ? ES_FAILED : ES_OK;
-      else 
-        return me_failed(Int::IntView(sm.slab[desc.pos]).eq(home, desc.val)) 
+      else
+        return me_failed(Int::IntView(sm.slab[desc.pos]).eq(home, desc.val))
           ? ES_FAILED : ES_OK;
     }
     /// Copy branching
@@ -427,10 +427,10 @@ SteelMillOptions::help(void) {
   Options::help();
   std::cerr << "\t(string), optional" << std::endl
             << "\t\tBenchmark to load." << std::endl
-            << "\t\tIf none is given, the standard CSPLib instance is used." 
+            << "\t\tIf none is given, the standard CSPLib instance is used."
             << std::endl;
   std::cerr << "\t(unsigned int), optional" << std::endl
-            << "\t\tNumber of orders to use, in the interval [0..norders]." 
+            << "\t\tNumber of orders to use, in the interval [0..norders]."
             << std::endl
             << "\t\tIf none is given, all orders are used." << std::endl;
 }
@@ -458,8 +458,8 @@ SteelMillOptions::parse(int& argc, char* argv[]) {
     } else {
       std::ifstream instance(argv[argc-1]);
       if (instance.fail()) {
-        std::cerr << "Argument \"" << argv[argc-1] 
-                  << "\" is neither an integer nor a readable file" 
+        std::cerr << "Argument \"" << argv[argc-1]
+                  << "\" is neither an integer nor a readable file"
                   << std::endl;
         return false;
       }
@@ -507,10 +507,10 @@ const int order_weight = 0;
 const int order_color = 1;
 
 // CSPLib instance
-int csplib_capacities[] = 
-  {12, 14, 17, 18, 19, 
-   20, 23, 24, 25, 26, 
-   27, 28, 29, 30, 32, 
+int csplib_capacities[] =
+  {12, 14, 17, 18, 19,
+   20, 23, 24, 25, 26,
+   27, 28, 29, 30, 32,
    35, 39, 42, 43, 44};
 unsigned int csplib_ncapacities = 20;
 unsigned int csplib_maxcapacity = 44;

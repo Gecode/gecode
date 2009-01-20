@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   forceinline
-  BaseInt<VX,VY>::BaseInt(Space& home, 
+  BaseInt<VX,VY>::BaseInt(Space& home,
                           ViewArray<VX>& x0, int n_s0, VY y0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
     for (int i=n_s; i--; )
@@ -98,7 +98,7 @@ namespace Gecode { namespace Int { namespace Count {
         x[i] = x[--n_x]; c--; break;
       case RT_MAYBE:
         break;
-      default: 
+      default:
         GECODE_NEVER;
       }
     x.size(n_x);
@@ -138,15 +138,15 @@ namespace Gecode { namespace Int { namespace Count {
       switch (holds(x[i],y)) {
       case RT_FALSE:
         x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+        x[i]=x[--n_s]; x[n_s]=x[--n_x];
         break;
       case RT_TRUE:
         x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
         break;
       case RT_MAYBE:
         break;
-      default: 
+      default:
         GECODE_NEVER;
       }
     x.size(n_x);
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Count {
         x[i] = x[--n_x]; c--; break;
       case RT_MAYBE:
         break;
-      default: 
+      default:
         GECODE_NEVER;
       }
     x.size(n_x);
@@ -236,15 +236,15 @@ namespace Gecode { namespace Int { namespace Count {
       switch (holds(x[i],y)) {
       case RT_FALSE:
         x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+        x[i]=x[--n_s]; x[n_s]=x[--n_x];
         break;
       case RT_TRUE:
         x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
         break;
       case RT_MAYBE:
         break;
-      default: 
+      default:
         GECODE_NEVER;
       }
     x.size(n_x);
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Count {
         x[i] = x[--n_x]; c--; break;
       case RT_MAYBE:
         break;
-      default: 
+      default:
         GECODE_NEVER;
       }
     x.size(n_x);
@@ -331,15 +331,15 @@ namespace Gecode { namespace Int { namespace Count {
       switch (holds(x[i],y)) {
       case RT_FALSE:
         x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+        x[i]=x[--n_s]; x[n_s]=x[--n_x];
         break;
       case RT_TRUE:
         x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
         break;
       case RT_MAYBE:
         break;
-      default: 
+      default:
         GECODE_NEVER;
       }
     x.size(n_x);
@@ -420,7 +420,7 @@ namespace Gecode { namespace Int { namespace Count {
     if (n == 1) {
       if (c == 1)
         return post_false(home,x[0],y) ? ES_FAILED : ES_OK;
-      else 
+      else
         return post_true(home,x[0],y) ? ES_FAILED : ES_OK;
     }
     (void) new (home) NqInt(home,x,y,c);
@@ -437,7 +437,7 @@ namespace Gecode { namespace Int { namespace Count {
     xx[x.size()] = x0; xx[x.size()+1] = x1;
     return post(home, xx, y, c);
   }
-  
+
   template<class VX, class VY>
   Actor*
   NqInt<VX,VY>::copy(Space& home, bool share) {
@@ -462,20 +462,20 @@ namespace Gecode { namespace Int { namespace Count {
     int n = x.size();
     for (int i=n; i--; )
       switch (holds(x[i],y)) {
-      case RT_FALSE: 
-        x[i]=x[--n]; 
+      case RT_FALSE:
+        x[i]=x[--n];
         break;
-      case RT_TRUE:  
-        x[i]=x[--n]; c--; 
+      case RT_TRUE:
+        x[i]=x[--n]; c--;
         break;
-      case RT_MAYBE: 
+      case RT_MAYBE:
         // New undecided view found
         z.cancel(home,*this,PC_INT_DOM);
-        z=x[i]; x[i]=x[--n]; 
+        z=x[i]; x[i]=x[--n];
         x.size(n);
         z.subscribe(home,*this,PC_INT_DOM,false);
         return true;
-      default:       
+      default:
         GECODE_NEVER;
       }
     // All views have been decided
@@ -497,7 +497,7 @@ namespace Gecode { namespace Int { namespace Count {
       if (s0)
         if (c == 1)
           return post_false(home,x0,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
-        else 
+        else
           return post_true(home,x0,y) ? ES_FAILED : ES_SUBSUMED(*this,home);
       else
         if (c == 1)

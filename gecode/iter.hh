@@ -56,7 +56,7 @@ namespace Gecode {
         /// Constructor
         IsRangeIter() { void(*p)(I*) = constraints; (void)p; }
       };
-       
+
       /// Range iterators with virtual member functions
       namespace Virt {}
     }
@@ -72,7 +72,7 @@ namespace Gecode {
         }
         /// Constructor
         IsValueIter() { void(*p)(I*) = constraints; (void)p; }
-      };      
+      };
     }
   }
 }

@@ -41,7 +41,7 @@ namespace Test { namespace Int {
 
    /// Tests for count constraints
    namespace Count {
-   
+
      /**
       * \defgroup TaskTestIntCount Count constraints
       * \ingroup TaskTestInt
@@ -69,7 +69,7 @@ namespace Test { namespace Int {
          Gecode::count(home, x,0,irt,2);
        }
      };
-   
+
      /// Test number of equal integers equal to integer with duplicate variables
      class IntIntDup : public Test {
      protected:
@@ -95,7 +95,7 @@ namespace Test { namespace Int {
          Gecode::count(home, y, 0, irt, 4);
        }
      };
-   
+
      /// Test number of equal integers equal to integer variable
      class IntVar : public Test {
      protected:
@@ -121,9 +121,9 @@ namespace Test { namespace Int {
          Gecode::count(home, y, 0, irt, x[4]);
        }
      };
-   
+
      Gecode::IntArgs ints(4, 1,0,3,2);
-   
+
      /// Test number of several equal integers equal to integer
      class IntArrayInt : public Test {
      protected:
@@ -149,7 +149,7 @@ namespace Test { namespace Int {
          Gecode::count(home, y, ints, irt, 2);
        }
      };
-   
+
      /// Test number of several equal integers equal to integer variable
      class IntArrayVar : public Test {
      protected:
@@ -175,7 +175,7 @@ namespace Test { namespace Int {
          Gecode::count(home, y, ints, irt, x[4]);
        }
      };
-   
+
      /// Test number of equal integers equal to integer variable with sharing
      class IntVarShared : public Test {
      protected:
@@ -198,7 +198,7 @@ namespace Test { namespace Int {
          Gecode::count(home, x, 0, irt, x[2]);
        }
      };
-   
+
      /// Test number of equal variables equal to integer variable
      class VarVar : public Test {
      protected:
@@ -224,7 +224,7 @@ namespace Test { namespace Int {
          Gecode::count(home, y, x[3], irt, x[4]);
        }
      };
-   
+
      /// Test number of equal variables equal to integer
      class VarInt : public Test {
      protected:
@@ -250,7 +250,7 @@ namespace Test { namespace Int {
          Gecode::count(home, y, x[3], irt, 2);
        }
      };
-   
+
      /// Test number of equal variables equal to integer variable with sharing
      class VarVarSharedA : public Test {
      protected:
@@ -276,7 +276,7 @@ namespace Test { namespace Int {
          Gecode::count(home, y, x[1], irt, x[4]);
        }
      };
-   
+
      /// Test number of equal variables equal to integer variable with sharing
      class VarVarSharedB : public Test {
      protected:
@@ -302,7 +302,7 @@ namespace Test { namespace Int {
          Gecode::count(home, y, x[4], irt, x[3]);
        }
      };
-   
+
      /// Test number of equal variables equal to integer variable with sharing
      class VarVarSharedC : public Test {
      protected:
@@ -325,7 +325,7 @@ namespace Test { namespace Int {
          Gecode::count(home, x, x[1], irt, x[3]);
        }
      };
-   
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -346,10 +346,10 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      Create c;
      //@}
-   
+
    }
 }}
 

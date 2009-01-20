@@ -41,26 +41,26 @@
 
 #include <sstream>
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Set {
 
     template <class View>
     forceinline
     ComplementView<View>::ComplementView(void) {}
-    
+
     template <class View>
     forceinline
     ComplementView<View>::ComplementView(View& s0)
       : DerivedViewBase<View>(s0) {}
-    
+
     template <class View>
     forceinline
     ComplementView<View>::ComplementView(Space& home,
                                          const Reflection::VarMap& vars,
                                          Reflection::Arg* arg)
       : DerivedViewBase<View>(View(home, vars, arg)) {}
-    
+
     template <class View>
     forceinline ModEvent
     ComplementView<View>::me_negateset(ModEvent me) {
@@ -72,7 +72,7 @@ namespace Gecode {
       default: return me;
       }
     }
-    
+
     template <class View>
     forceinline PropCond
     ComplementView<View>::pc_negateset(PropCond pc) {
@@ -82,7 +82,7 @@ namespace Gecode {
       default: return pc;
       }
     }
-    
+
     template <class View>
     forceinline bool
     ComplementView<View>::assigned(void) const { return view.assigned(); }
@@ -294,7 +294,7 @@ namespace Gecode {
 
     template <class View>
     forceinline void
-    ComplementView<View>::update(Space& home, bool share, 
+    ComplementView<View>::update(Space& home, bool share,
                                  ComplementView& y) {
       view.update(home,share,y.view);
     }
@@ -324,7 +324,7 @@ namespace Gecode {
     ComplementView<View>::modevent(const Delta& d) {
       return me_negateset(View::modevent(d));
     }
-  
+
     template <class View>
     forceinline int
     ComplementView<View>::glbMin(const Delta& d) const {
@@ -435,11 +435,11 @@ namespace Gecode {
     /**
      * \brief Range iterator for the least upper bound of double-complement-views
      *
-     * This class provides (by specialization) a range iterator 
+     * This class provides (by specialization) a range iterator
      * for the least upper bounds of complements of complement set views.
      *
      * \ingroup TaskActorSet
-     */  
+     */
     template <class View>
     class LubRanges<ComplementView<ComplementView<View> > > :
       public LubRanges<View> {
@@ -537,15 +537,15 @@ namespace Gecode {
     template <class View>
     forceinline unsigned int
     GlbRanges<ComplementView<View> >::width(void) const { return ubc.width(); }
-  
+
     /**
      * \brief Range iterator for the greatest lower bound of double-complement-views
      *
-     * This class provides (by specialization) a range iterator 
+     * This class provides (by specialization) a range iterator
      * for the greatest lower bounds of complements of complement set views.
      *
      * \ingroup TaskActorSet
-     */  
+     */
     template <class View>
     class GlbRanges<ComplementView<ComplementView<View> > > :
       public GlbRanges<View> {
@@ -576,7 +576,7 @@ namespace Gecode {
 
     template<class Char, class Traits, class View>
     std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, 
+    operator <<(std::basic_ostream<Char,Traits>& os,
                 const ComplementView<View>& x) {
       std::basic_ostringstream<Char,Traits> s;
       s.copyfmt(os); s.width(0);
@@ -593,25 +593,25 @@ namespace Gecode {
    */
   template <class View>
   forceinline bool
-  same(const Set::ComplementView<View>& x, 
+  same(const Set::ComplementView<View>& x,
        const Set::ComplementView<View>& y) {
     return same(x.base(),y.base());
   }
   template <class View>
   forceinline bool
-  before(const Set::ComplementView<View>& x, 
+  before(const Set::ComplementView<View>& x,
          const Set::ComplementView<View>& y) {
     return before(x.base(),y.base());
   }
   template <class View>
   forceinline bool
-  same(const Set::ComplementView<Set::ComplementView<View> >& x, 
+  same(const Set::ComplementView<Set::ComplementView<View> >& x,
        const Set::ComplementView<Set::ComplementView<View> >& y) {
     return same(x,y);
   }
   template <class View>
   forceinline bool
-  before(const Set::ComplementView<Set::ComplementView<View> >& x, 
+  before(const Set::ComplementView<Set::ComplementView<View> >& x,
          const Set::ComplementView<Set::ComplementView<View> >& y) {
     return before(x,y);
   }

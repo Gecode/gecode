@@ -63,42 +63,42 @@ namespace Gecode {
       bdd d0 = bdd_true();
 
       switch(r) {
-      case SRT_LE: 
+      case SRT_LE:
         {
           d0 = lexlt(xoff, yoff, tab, tab - 1);
         }
         break;
-      case SRT_GR: 
+      case SRT_GR:
         {
           d0 = lexlt(yoff, xoff, tab, tab - 1);
         }
         break;
-      case SRT_LQ: 
+      case SRT_LQ:
         {
           d0 = lexlq(xoff, yoff, tab, tab - 1);
         }
         break;
-      case SRT_GQ: 
+      case SRT_GQ:
         {
           d0 = lexlt(yoff, xoff, tab, tab - 1);
         }
         break;
-      case SRT_LE_REV: 
+      case SRT_LE_REV:
         {
           d0 = lexltrev(xoff, yoff, tab, 0);
         }
         break;
-      case SRT_GR_REV: 
+      case SRT_GR_REV:
         {
           d0 = lexltrev(yoff, xoff, tab, 0);
         }
         break;
-      case SRT_LQ_REV: 
+      case SRT_LQ_REV:
         {
           d0 = lexlqrev(xoff, yoff, tab, 0);
         }
         break;
-      case SRT_GQ_REV: 
+      case SRT_GQ_REV:
         {
           d0 = lexltrev(yoff, xoff, tab, 0);
         }
@@ -127,14 +127,14 @@ namespace Gecode {
       bdd d0 = bdd_true();
 
       switch(r) {
-      case SRT_SUB: 
+      case SRT_SUB:
         {
           for (int i = 0; i < (int) tab; i++) {
             d0 &= (x.element(i)) >>= (y.element(i));
           }
         }
         break;
-      case SRT_SUP: 
+      case SRT_SUP:
         {
           for (int i = 0; i < (int) tab; i++) {
             d0 &= (y.element(i)) >>= (x.element(i));
@@ -142,23 +142,23 @@ namespace Gecode {
         }
         break;
         // try whether changing the bit order is faster for conjunction
-      case SRT_DISJ: 
+      case SRT_DISJ:
         {
           Set::LubRanges<View> lubx(x);
           Set::LubRanges<View> luby(y);
-          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
             Set::LubRanges<View> > inter(lubx, luby);
           Gecode::Iter::Ranges::ToValues<
-            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
               Set::LubRanges<View> > > ival(inter);
 
           Gecode::Iter::Ranges::ValCache<
             Gecode::Iter::Ranges::ToValues<
-              Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+              Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
                 Set::LubRanges<View> > > > cache(ival);
 
           if (!cache()) {
-            return; 
+            return;
           } else {
             cache.last();
             for (; cache(); --cache) {
@@ -172,7 +172,7 @@ namespace Gecode {
           return;
         }
         break;
-      case SRT_EQ: 
+      case SRT_EQ:
         {
           int xshift = 0;
           for (int i = 0; i < (int) tab; i++) {
@@ -186,17 +186,17 @@ namespace Gecode {
           }
         }
         break;
-      case SRT_NQ: 
+      case SRT_NQ:
         {
           Set::LubRanges<View> lubx(x);
           Set::LubRanges<View> luby(y);
-          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
             Set::LubRanges<View> > inter(lubx, luby);
           Gecode::Iter::Ranges::ToValues<
-            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
               Set::LubRanges<View> > > ival(inter);
           if (!ival()) {
-            return; 
+            return;
           } else {
             for (; ival(); ++ival) {
               int v = ival.val();
@@ -237,22 +237,22 @@ namespace Gecode {
         // introducing lexicographic ordering constraint
         // over the bitvectors of the corresponding sets
         // x[0] <_lex x[1], i.e. {2} <_lex {1} because 010 <_lex 100
-      case SRT_LE: 
+      case SRT_LE:
         {
           d0 = lexlt(xoff, yoff, tab, tab - 1);
         }
         break;
-      case SRT_GR: 
+      case SRT_GR:
         {
           d0 = lexlt(yoff, xoff, tab, tab - 1);
         }
         break;
-      case SRT_LQ: 
+      case SRT_LQ:
         {
           d0 = lexlq(xoff, yoff, tab, tab - 1);
         }
         break;
-      case SRT_GQ: 
+      case SRT_GQ:
         {
           d0 = lexlt(yoff, xoff, tab, tab - 1);
         }
@@ -281,7 +281,7 @@ namespace Gecode {
       bdd d0 = bdd_true();
 
       switch(r) {
-      case SRT_SUB: 
+      case SRT_SUB:
         {
           // x < s
           int xshift = x.initialLubMin() - s.initialLubMin();
@@ -303,21 +303,21 @@ namespace Gecode {
           d0 &= s.dom();
         }
         break;
-      case SRT_SUP: 
+      case SRT_SUP:
         {
           for (int i = 0; i < (int) tab; i++) {
             d0 &= (s.element(i)) >>= (x.element(i));
           }
         }
         break;
-      case SRT_DISJ: 
+      case SRT_DISJ:
         {
           for (int i = 0; i < (int) tab; i++) {
             d0 &= !(s.element(i) & x.element(i));
           }
         }
         break;
-      case SRT_EQ: 
+      case SRT_EQ:
         {
           int xshift = 0;
           for (int i = 0; i < (int) tab; i++) {
@@ -331,7 +331,7 @@ namespace Gecode {
           }
         }
         break;
-      case SRT_NQ: 
+      case SRT_NQ:
         {
           for (int i = 0; i < (int) tab; i++) {
             d0 &= ((x.element(i)) % (s.element(i)));
@@ -351,16 +351,16 @@ namespace Gecode {
     }
 
     // BddOp and BddRel
-    // 
+    //
     template <class View>
-    void rel_post(Space&, ViewArray<View>&, CpltSetOpType,   
+    void rel_post(Space&, ViewArray<View>&, CpltSetOpType,
                   CpltSetRelType) {
       throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
     }
 
     // BddOp and SetRel
     template <class View>
-    void rel_post(Space& home, ViewArray<View>& x, CpltSetOpType o, 
+    void rel_post(Space& home, ViewArray<View>& x, CpltSetOpType o,
                   SetRelType r) {
       if (home.failed()) return;
       // important:
@@ -376,7 +376,7 @@ namespace Gecode {
         switch(o) {
         case SOT_SYMDIFF:
           {
-            op = ((x[0].element(i) & (!x[1].element(i))) | 
+            op = ((x[0].element(i) & (!x[1].element(i))) |
                   (!x[0].element(i) & (x[1].element(i)))) ;
             break;
           }
@@ -404,7 +404,7 @@ namespace Gecode {
     }
 
     // SetOp and BddRel
-    // 
+    //
     template <class View>
     void rel_post(Space&, ViewArray<View>&, SetOpType,
                   CpltSetRelType) {
@@ -429,7 +429,7 @@ namespace Gecode {
         bdd op = bdd_true();
         switch(o) {
         case SOT_UNION:
-          {     
+          {
             op = (x[0].element(i) | x[1].element(i));
             break;
           }
@@ -440,13 +440,13 @@ namespace Gecode {
             break;
           }
         case SOT_INTER:
-          { 
+          {
             op = x[0].element(i) & x[1].element(i);
-            break; 
+            break;
           }
         case SOT_MINUS:
           {
-            op = x[0].element(i) & (!x[1].element(i)); 
+            op = x[0].element(i) & (!x[1].element(i));
             break;
           }
         default:
@@ -480,7 +480,7 @@ namespace Gecode {
       CpltSetView xv(x);
       CpltSetView yv(y);
       rel_post(home, xv, r, yv);
-    }  
+    }
 
     template <class Rel, class Op>
     forceinline void
@@ -491,38 +491,38 @@ namespace Gecode {
       bv[1] = y;
       bv[2] = z;
       rel_post(home, bv, o, r);
-    }    
-    
+    }
+
   }} // end namespace CpltSet::Rel
-  
+
   using namespace CpltSet::Rel;
 
   void rel(Space& home, CpltSetVar x, CpltSetRelType r, CpltSetVar y) {
     rel_con(home, x, r, y);
   }
 
-  void rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
+  void rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y,
            CpltSetRelType r, CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
-  void rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
+  void rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y,
            SetRelType r, CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
-  void rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y, 
+  void rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y,
            CpltSetRelType r, CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
-  void rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y, SetRelType r, 
+  void rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y, SetRelType r,
            CpltSetVar z) {
     rel_con_bdd(home, x, o, y, r, z);
   }
 
   void rel(Space& home, CpltSetVar x, SetRelType r, CpltSetVar y) {
-    rel_con(home, x, r, y);      
+    rel_con(home, x, r, y);
   }
 
 }

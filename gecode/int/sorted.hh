@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   /**
    * \brief Bounds consistent sortedness propagator
    *
-   * The algorithm is taken from: Sven Thiel, Efficient Algorithms 
+   * The algorithm is taken from: Sven Thiel, Efficient Algorithms
    * for Constraint Propagation and for Processing Tree Descriptions,
    * PhD thesis, Universität des Saarlandes, Germany, 2004, pages 39-59.
    *
@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// Constructor for cloning
     Sorted(Space& home, bool share, Sorted<View,Perm>& p);
     /// Post propagator for reflection
-    static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y, 
+    static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y,
                             ViewArray<View>& z, ViewArray<View>& w,
                             int reachable);
 
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for views \a x, \a y, and \a z
-    static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y, 
+    static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y,
                             ViewArray<View>& z);
   };
 

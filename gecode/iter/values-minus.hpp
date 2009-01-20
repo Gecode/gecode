@@ -53,7 +53,7 @@ namespace Gecode { namespace Iter { namespace Values {
   class Minus {
   private:
     /// Check that \a I is a value iterator;
-    IsValueIter<I> _checkI;    
+    IsValueIter<I> _checkI;
   private:
     /// %Values stored
     SharedArray<int> v;

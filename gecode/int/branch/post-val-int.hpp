@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /// Post branching according to \a v and \a vals
   template <class SelView>
   void
-  post(Space& home, ViewArray<IntView>& x, SelView& v, 
+  post(Space& home, ViewArray<IntView>& x, SelView& v,
        IntValBranch vals, const ValBranchOptions& o_vals) {
     switch (vals) {
     case INT_VAL_MIN:
@@ -101,10 +101,10 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class SelView, class SelVal>
   void
   registerOneIntView(void) {
-    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(), 
+    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(),
                                &ValSelToString<SelVal>::toString);
   }
-  
+
   template <class SelView>
   void
   registerAllIntView(void) {
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Branch {
     Reflection::registry().add(ViewValuesBranching<SelView,MinusView>::ati(),
       &ViewValuesBranchingToString<MinusView>::toString);
   }
-  
+
 }}}
 
 // STATISTICS: int-branch

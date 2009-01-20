@@ -45,7 +45,7 @@ using namespace ::Gecode;
 using namespace ::Gecode::Int;
 using namespace ::Gecode::Int::Branch;
 
-namespace Gecode { namespace Decomposition { 
+namespace Gecode { namespace Decomposition {
 
   /// Create virtual view selector for tie-breaking
   void
@@ -105,7 +105,7 @@ namespace Gecode { namespace Decomposition {
 
 }}
 
-namespace Gecode { 
+namespace Gecode {
 
   void
   decomposingBranch(Gecode::Space& home, const IntVarArgs& x,

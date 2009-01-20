@@ -55,7 +55,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief Class for selecting minimum value of unknown ranges
    *
-   * All value selection classes require 
+   * All value selection classes require
    * \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelVal
    */
@@ -81,7 +81,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /**
    * \brief Class for selecting maximum value of unknown ranges
    *
-   * All value selection classes require 
+   * All value selection classes require
    * \code #include <gecode/cpltset/branch.hh> \endcode
    * \ingroup FuncCpltSetSelVal
    */

@@ -349,7 +349,7 @@ namespace Gecode {
     forceinline Reflection::Arg*
     ScaleView<Val,UnsVal>::spec(const Space& home,
                                 Reflection::VarMap& m) const {
-      return Reflection::Arg::newPair(Reflection::Arg::newInt(a), 
+      return Reflection::Arg::newPair(Reflection::Arg::newInt(a),
                                       view.spec(home, m));
     }
     template <class Val, class UnsVal>

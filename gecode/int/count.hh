@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for cloning \a p
     NqInt(Space& home, bool share, NqInt& p);
     /// Post propagator for reflection
-    static ExecStatus post(Space& home, VX x0, VX x1, 
+    static ExecStatus post(Space& home, VX x0, VX x1,
                            ViewArray<VX>& x, VY y, int c);
   public:
     /// Copy propagator during cloning

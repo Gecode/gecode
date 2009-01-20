@@ -51,7 +51,7 @@ namespace Gecode { namespace Int {
     : VarViewBase<IntVarImp>(x) {}
   forceinline
   IntView::IntView(Space&, const Reflection::VarMap& vars,
-                   Reflection::Arg* arg) 
+                   Reflection::Arg* arg)
     : VarViewBase<IntVarImp>(IntVar(vars.var(arg->toVar())).var()) {}
 
   /*

@@ -57,7 +57,7 @@ namespace Gecode { namespace Gist {
   const int LayoutConfig::maxAutoZoomScale;
 
   Inspector::~Inspector(void) {}
-    
+
   TreeCanvas::TreeCanvas(Space* rootSpace, bool bab,
                          QWidget* parent)
     : QWidget(parent)
@@ -89,19 +89,19 @@ namespace Gecode { namespace Gist {
 
       setAutoFillBackground(true);
 
-      connect(&searcher, SIGNAL(update(int,int,int)), this, 
+      connect(&searcher, SIGNAL(update(int,int,int)), this,
                          SLOT(layoutDone(int,int,int)));
-      connect(&searcher, SIGNAL(statusChanged(bool)), this, 
+      connect(&searcher, SIGNAL(statusChanged(bool)), this,
               SLOT(statusChanged(bool)));
-      
+
       connect(&searcher, SIGNAL(solution(const Space*)),
               this, SIGNAL(solution(const Space*)),
               Qt::BlockingQueuedConnection);
-      
+
       qRegisterMetaType<Statistics>("Statistics");
       update();
   }
-  
+
   TreeCanvas::~TreeCanvas(void) { delete root; delete na; }
 
   void
@@ -124,9 +124,9 @@ namespace Gecode { namespace Gist {
                       LayoutConfig::maxScale);
     scale = (static_cast<double>(scale0)) / 100.0;
     bb = root->getBoundingBox();
-    int w = 
+    int w =
       static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-    int h = 
+    int h =
       static_cast<int>(2*Layout::extent+root->depth()*Layout::dist_y*scale);
     resize(w,h);
     emit scaleChanged(scale0);
@@ -142,7 +142,7 @@ namespace Gecode { namespace Gist {
       BoundingBox bb = root->getBoundingBox();
 
       int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-      int h = 
+      int h =
         static_cast<int>(2*Layout::extent+root->depth()*Layout::dist_y*scale);
       xtrans = -bb.left+(Layout::extent / 2);
       resize(w,h);
@@ -160,7 +160,7 @@ namespace Gecode { namespace Gist {
     } else {
       metaZoomCurrent = static_cast<int>(scale*100);
       targetZoom = scale0;
-      targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale), 
+      targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
                             LayoutConfig::maxAutoZoomScale);
       zoomTimerId = startTimer(15);
     }
@@ -182,7 +182,7 @@ namespace Gecode { namespace Gist {
     t = ti;
     start();
   }
-  
+
   void
   SearcherThread::updateCanvas(void) {
     t->layoutMutex.lock();
@@ -205,7 +205,7 @@ namespace Gecode { namespace Gist {
       QWidget* p = t->parentWidget();
       if (p) {
         double newXScale =
-          static_cast<double>(p->width()) / (bb.right - bb.left + 
+          static_cast<double>(p->width()) / (bb.right - bb.left +
                                              Layout::extent);
         double newYScale =
           static_cast<double>(p->height()) /
@@ -226,7 +226,7 @@ namespace Gecode { namespace Gist {
     t->layoutMutex.unlock();
     emit update(w,h,scale0);
   }
-  
+
   void
   SearcherThread::run() {
     {
@@ -295,7 +295,7 @@ namespace Gecode { namespace Gist {
     update();
     centerCurrentNode();
   }
-  
+
   void
   TreeCanvas::hideFailed(void) {
     QMutexLocker locker(&mutex);
@@ -303,7 +303,7 @@ namespace Gecode { namespace Gist {
     update();
     centerCurrentNode();
   }
-  
+
   void
   TreeCanvas::unhideAll(void) {
     QMutexLocker locker(&mutex);
@@ -324,7 +324,7 @@ namespace Gecode { namespace Gist {
         zoomTimerId = 0;
       }
     } else if (e->timerId() == scrollTimerId) {
-      QScrollArea* sa = 
+      QScrollArea* sa =
         static_cast<QScrollArea*>(parentWidget()->parentWidget());
 
       double xoffset =
@@ -342,10 +342,10 @@ namespace Gecode { namespace Gist {
           static_cast<int>(metaScrollYCurrent+.5) == targetScrollY) {
         killTimer(scrollTimerId);
         scrollTimerId = 0;
-      }      
+      }
     }
   }
-  
+
   void
   TreeCanvas::zoomToFit(void) {
     QMutexLocker locker(&layoutMutex);
@@ -355,7 +355,7 @@ namespace Gecode { namespace Gist {
       QWidget* p = parentWidget();
       if (p) {
         double newXScale =
-          static_cast<double>(p->width()) / (bb.right - bb.left + 
+          static_cast<double>(p->width()) / (bb.right - bb.left +
                                              Layout::extent);
         double newYScale =
           static_cast<double>(p->height()) / (root->depth() * Layout::dist_y +
@@ -371,7 +371,7 @@ namespace Gecode { namespace Gist {
         } else {
           metaZoomCurrent = static_cast<int>(scale*100);
           targetZoom = scale0;
-          targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale), 
+          targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
                                 LayoutConfig::maxAutoZoomScale);
           zoomTimerId = startTimer(15);
         }
@@ -391,10 +391,10 @@ namespace Gecode { namespace Gist {
       y += Layout::dist_y;
       c = c->getParent();
     }
-    
+
     x = static_cast<int>((xtrans+x)*scale); y = static_cast<int>(y*scale);
 
-    QScrollArea* sa = 
+    QScrollArea* sa =
       static_cast<QScrollArea*>(parentWidget()->parentWidget());
 
     if (!smoothScrollAndZoom) {
@@ -406,10 +406,10 @@ namespace Gecode { namespace Gist {
       metaScrollXCurrent = sa->horizontalScrollBar()->value();
       metaScrollYCurrent = sa->verticalScrollBar()->value();
       targetScrollX = std::max(sa->horizontalScrollBar()->minimum(), x);
-      targetScrollX = std::min(sa->horizontalScrollBar()->maximum(), 
+      targetScrollX = std::min(sa->horizontalScrollBar()->maximum(),
                                targetScrollX);
       targetScrollY = std::max(sa->verticalScrollBar()->minimum(), y);
-      targetScrollY = std::min(sa->verticalScrollBar()->maximum(), 
+      targetScrollY = std::min(sa->verticalScrollBar()->maximum(),
                                targetScrollY);
       scrollTimerId = startTimer(15);
     }
@@ -418,12 +418,12 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::inspectCurrentNode(void) {
     QMutexLocker locker(&mutex);
-    
+
     if (currentNode->isHidden()) {
       toggleHidden();
       return;
     }
-    
+
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
         {
@@ -479,7 +479,7 @@ namespace Gecode { namespace Gist {
       }
       break;
     }
-    
+
     currentNode->dirtyUp();
     update();
     centerCurrentNode();
@@ -493,7 +493,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::reset(void) {
     QMutexLocker locker(&mutex);
-    Space* rootSpace = 
+    Space* rootSpace =
       root->getStatus() == FAILED ? NULL : root->getSpace(curBest,c_d,a_d);
     if (curBest != NULL) {
       delete curBest;
@@ -511,7 +511,7 @@ namespace Gecode { namespace Gist {
     scale = 1.0;
     stats = Statistics();
     root->layout();
-    
+
     emit statusChanged(currentNode, stats, true);
     update();
   }
@@ -549,9 +549,9 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::navUp(void) {
     QMutexLocker locker(&mutex);
-    
+
     VisualNode* p = currentNode->getParent();
-    
+
     setCurrentNode(p);
 
     if (p != NULL) {
@@ -570,7 +570,7 @@ namespace Gecode { namespace Gist {
           break;
       case COMPONENT_IGNORED:
       case DECOMPOSE:
-      case BRANCH: 
+      case BRANCH:
           {
             int alt = std::max(0, currentNode->getPathAlternative());
             VisualNode* n = currentNode->getChild(alt);
@@ -614,7 +614,7 @@ namespace Gecode { namespace Gist {
       }
     }
   }
-  
+
   void
   TreeCanvas::navRoot(void) {
     QMutexLocker locker(&mutex);
@@ -638,7 +638,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::navPrevSol(void) {
     navNextSol(true);
   }
-  
+
   void
   TreeCanvas::markCurrentNode(int pit) {
     QMutexLocker locker(&mutex);
@@ -668,7 +668,7 @@ namespace Gecode { namespace Gist {
       BoundingBox bb = n->getBoundingBox();
       printer.setFullPage(true);
       printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
-                                  n->depth() * Layout::dist_y + 
+                                  n->depth() * Layout::dist_y +
                                   Layout::extent), QPrinter::Point);
       printer.setOutputFileName(filename);
       QPainter painter(&printer);
@@ -677,11 +677,11 @@ namespace Gecode { namespace Gist {
 
       QRect pageRect = printer.pageRect();
       double newXScale =
-        static_cast<double>(pageRect.width()) / (bb.right - bb.left + 
+        static_cast<double>(pageRect.width()) / (bb.right - bb.left +
                                                  Layout::extent);
       double newYScale =
         static_cast<double>(pageRect.height()) /
-                            (n->depth() * Layout::dist_y + 
+                            (n->depth() * Layout::dist_y +
                              Layout::extent);
       double printScale = std::min(newXScale, newYScale);
       painter.scale(printScale,printScale);
@@ -722,11 +722,11 @@ namespace Gecode { namespace Gist {
       BoundingBox bb = root->getBoundingBox();
       QRect pageRect = printer.pageRect();
       double newXScale =
-        static_cast<double>(pageRect.width()) / (bb.right - bb.left + 
+        static_cast<double>(pageRect.width()) / (bb.right - bb.left +
                                                  Layout::extent);
       double newYScale =
         static_cast<double>(pageRect.height()) /
-                            (root->depth() * Layout::dist_y + 
+                            (root->depth() * Layout::dist_y +
                              2*Layout::extent);
       double printScale = std::min(newXScale, newYScale)*100;
       if (printScale<1.0)
@@ -781,9 +781,9 @@ namespace Gecode { namespace Gist {
     VisualNode* n;
     n = root->findNode(static_cast<int>(x/scale-xtrans),
                        static_cast<int>((y-30)/scale));
-    return n;  
+    return n;
   }
-  
+
   bool
   TreeCanvas::event(QEvent* event) {
     if (mutex.tryLock()) {
@@ -792,7 +792,7 @@ namespace Gecode { namespace Gist {
         if (n != NULL && !n->isHidden() &&
             (n->getStatus() == BRANCH || n->getStatus() == DECOMPOSE)) {
           QHelpEvent* he = static_cast<QHelpEvent*>(event);
-          QToolTip::showText(he->globalPos(), 
+          QToolTip::showText(he->globalPos(),
                              QString(n->toolTip(curBest,c_d,a_d).c_str()));
         } else {
           QToolTip::hideText();
@@ -802,13 +802,13 @@ namespace Gecode { namespace Gist {
     }
     return QWidget::event(event);
   }
-  
+
   void
   TreeCanvas::resizeToOuter(void) {
     if (autoZoom)
       zoomToFit();
   }
-  
+
   void
   TreeCanvas::paintEvent(QPaintEvent* event) {
     QMutexLocker locker(&layoutMutex);
@@ -820,9 +820,9 @@ namespace Gecode { namespace Gist {
     painter.translate(0, 30);
     painter.scale(scale,scale);
     painter.translate(xtrans, 0);
-    QRect clip(static_cast<int>(origClip.x()/scale-xtrans), 
+    QRect clip(static_cast<int>(origClip.x()/scale-xtrans),
                static_cast<int>(origClip.y()/scale),
-               static_cast<int>(origClip.width()/scale), 
+               static_cast<int>(origClip.width()/scale),
                static_cast<int>(origClip.height()/scale));
     DrawingCursor dc(root, curBest, painter, clip, showCopies);
     PreorderNodeVisitor<DrawingCursor> v(dc);
@@ -833,7 +833,7 @@ namespace Gecode { namespace Gist {
     // clock_t t0 = clock();
     // while (v.next()) { nodesLayouted++; }
     // double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
-    // double nps = static_cast<double>(nodesLayouted) / 
+    // double nps = static_cast<double>(nodesLayouted) /
     //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
     // std::cout << "Drawing done. " << nodesLayouted << " nodes in "
     //   << t << " ms. " << nps << " nodes/s." << std::endl;
@@ -845,7 +845,7 @@ namespace Gecode { namespace Gist {
     if (mutex.tryLock()) {
       if(event->button() == Qt::LeftButton) {
         VisualNode* n = eventNode(event);
-        if(n == currentNode) {      
+        if(n == currentNode) {
           inspectCurrentNode();
           event->accept();
           mutex.unlock();
@@ -856,7 +856,7 @@ namespace Gecode { namespace Gist {
     }
     event->ignore();
   }
-  
+
   void
   TreeCanvas::contextMenuEvent(QContextMenuEvent* event) {
     if (mutex.tryLock()) {
@@ -876,9 +876,9 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::finish(void) {
     stopSearchFlag = true;
-    searcher.wait();    
+    searcher.wait();
   }
-  
+
   void
   TreeCanvas::setCurrentNode(VisualNode* n) {
     QMutexLocker locker(&mutex);
@@ -890,7 +890,7 @@ namespace Gecode { namespace Gist {
       QWidget::update();
     }
   }
-  
+
   void
   TreeCanvas::mousePressEvent(QMouseEvent* event) {
     if (mutex.tryLock()) {
@@ -907,7 +907,7 @@ namespace Gecode { namespace Gist {
     }
     event->ignore();
   }
-  
+
   void
   TreeCanvas::setRecompDistances(int c_d0, int a_d0) {
     c_d = c_d0; a_d = a_d0;
@@ -917,7 +917,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::setAutoHideFailed(bool b) {
     autoHideFailed = b;
   }
-  
+
   void
   TreeCanvas::setAutoZoom(bool b) {
     autoZoom = b;
@@ -941,7 +941,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::getAutoHideFailed(void) {
     return autoHideFailed;
   }
-  
+
   bool
   TreeCanvas::getAutoZoom(void) {
     return autoZoom;
@@ -961,7 +961,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::setSmoothScrollAndZoom(bool b) {
     smoothScrollAndZoom = b;
   }
-  
+
   void
   TreeCanvas::getRootVars(Gecode::Reflection::VarMap& vm) {
     QMutexLocker locker(&mutex);
@@ -975,9 +975,9 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::addVisualisation(QStringList vars, QString visType, QString windowName) {
     Config conf;
-    
+
     pt2createView cv = conf.visualisationMap.value(visType);
-    
+
     if(cv != NULL && root->getStatus() != FAILED) {
       Reflection::VarMap vm;
       Space* rootSpace = root->getSpace(curBest,c_d,a_d);
@@ -1000,12 +1000,12 @@ namespace Gecode { namespace Gist {
               this, SLOT(markCurrentNode(int)));
     }
   }
-  
+
   void
   TreeCanvas::addVisualisation(void) {
 
     Config conf;
-    
+
     Reflection::VarMap rootVm;
     getRootVars(rootVm);
 

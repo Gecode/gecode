@@ -40,13 +40,13 @@
 #include <QtGui>
 
 namespace Gecode { namespace Gist {
-  
+
   /**
    * \brief Preferences dialog for %Gist
    */
   class PreferencesDialog : public QDialog {
     Q_OBJECT
-    
+
   protected:
     QCheckBox* hideCheck;
     QCheckBox* zoomCheck;
@@ -63,7 +63,7 @@ namespace Gecode { namespace Gist {
   public:
     /// Constructor
     PreferencesDialog(QWidget* parent = 0);
-    
+
     /// Whether to automatically hide failed subtrees during search
     bool hideFailed;
     /// Whether to automatically zoom during search
@@ -79,9 +79,9 @@ namespace Gecode { namespace Gist {
     int c_d;
     /// The adaptive recomputation distance
     int a_d;
-    
+
   };
-  
+
 }}
 
 #endif

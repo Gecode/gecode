@@ -473,12 +473,12 @@ namespace Gecode {
 
   DFA::DFA(Space&, Reflection::VarMap& vm, Reflection::Arg* arg) {
     if (arg->isSharedReference()) {
-      DFAI* d = 
+      DFAI* d =
         static_cast<DFAI*>(vm.getSharedObject(arg->toSharedReference()));
       object(d);
       return;
     }
-    
+
     Reflection::IntArrayArg* a = arg->toSharedObject()->toIntArray();
 
     // All done... Construct the automaton
@@ -497,7 +497,7 @@ namespace Gecode {
       d->trans[i].o_state = (*a)[5+3*i+2];
     }
     d->fill();
-    object(d);    
+    object(d);
     vm.putMasterObject(object());
   }
 
@@ -506,7 +506,7 @@ namespace Gecode {
     int sharedIndex = vm.getSharedIndex(object());
     if (sharedIndex >= 0)
       return Reflection::Arg::newSharedReference(sharedIndex);
-    Reflection::IntArrayArg* a = 
+    Reflection::IntArrayArg* a =
       Reflection::Arg::newIntArray(static_cast<int>(5+3*n_transitions()));
     (*a)[0] = n_states();
     (*a)[1] = n_symbols();
@@ -520,7 +520,7 @@ namespace Gecode {
       (*a)[5+3*i+2] = o->trans[i].o_state;
     }
     vm.putMasterObject(object());
-    return Reflection::Arg::newSharedObject(a);    
+    return Reflection::Arg::newSharedObject(a);
   }
 
   SharedHandle::Object*

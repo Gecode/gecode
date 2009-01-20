@@ -37,7 +37,7 @@
 #include <gecode/gist/preferences.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   PreferencesDialog::PreferencesDialog(QWidget *parent) : QDialog(parent) {
     QSettings settings("gecode.org", "Gist");
     hideFailed = settings.value("search/hideFailed", true).toBool();
@@ -46,10 +46,10 @@ namespace Gecode { namespace Gist {
     refresh = settings.value("search/refresh", 500).toInt();
     smoothScrollAndZoom =
       settings.value("smoothScrollAndZoom", true).toBool();
-    
+
     c_d = settings.value("search/cd", 8).toInt();
     a_d = settings.value("search/ad", 2).toInt();
-    
+
     hideCheck =
       new QCheckBox(tr("Hide failed subtrees automatically"));
     hideCheck->setChecked(hideFailed);
@@ -59,7 +59,7 @@ namespace Gecode { namespace Gist {
     smoothCheck =
       new QCheckBox(tr("Smooth scrolling and zooming"));
     smoothCheck->setChecked(smoothScrollAndZoom);
-    
+
     QPushButton* defButton = new QPushButton(tr("Defaults"));
     QPushButton* cancelButton = new QPushButton(tr("Cancel"));
     QPushButton* okButton = new QPushButton(tr("Ok"));
@@ -68,11 +68,11 @@ namespace Gecode { namespace Gist {
     buttonLayout->addWidget(defButton);
     buttonLayout->addWidget(cancelButton);
     buttonLayout->addWidget(okButton);
-    
+
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     connect(defButton, SIGNAL(clicked()), this, SLOT(defaults()));
     connect(okButton, SIGNAL(clicked()), this, SLOT(writeBack()));
-    
+
     QLabel* refreshLabel = new QLabel(tr("Display refresh rate:"));
     refreshBox  = new QSpinBox();
     refreshBox->setRange(0, 1000000);
@@ -81,13 +81,13 @@ namespace Gecode { namespace Gist {
     QHBoxLayout* refreshLayout = new QHBoxLayout();
     refreshLayout->addWidget(refreshLabel);
     refreshLayout->addWidget(refreshBox);
-    
+
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(hideCheck);
     layout->addWidget(zoomCheck);
     layout->addWidget(smoothCheck);
     layout->addLayout(refreshLayout);
-    
+
     QTabWidget* tabs = new QTabWidget;
     QWidget* page1 = new QWidget;
     page1->setLayout(layout);
@@ -124,7 +124,7 @@ namespace Gecode { namespace Gist {
     mainLayout->addWidget(tabs);
     mainLayout->addLayout(buttonLayout);
     setLayout(mainLayout);
-    
+
     setWindowTitle(tr("Preferences"));
   }
 
@@ -143,7 +143,7 @@ namespace Gecode { namespace Gist {
     settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
     settings.setValue("search/cd", c_d);
     settings.setValue("search/ad", a_d);
-    
+
     accept();
   }
 
@@ -162,7 +162,7 @@ namespace Gecode { namespace Gist {
     smoothCheck->setChecked(smoothScrollAndZoom);
     copiesCheck->setChecked(copies);
   }
-  
+
 }}
 
 // STATISTICS: gist-any

@@ -41,7 +41,7 @@ namespace Gecode { namespace Gist {
     return static_cast<unsigned int>
       (reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & 3);
   }
-  
+
   forceinline void
   Node::setTag(unsigned int tag) {
     assert(tag <= 3);
@@ -80,20 +80,20 @@ namespace Gecode { namespace Gist {
     assert(n < c.noOfChildren);
     return static_cast<Node**>(getPtr())[n];
   }
-    
+
   forceinline bool
   Node::isRoot(void) const { return parent == NULL; }
-  
+
   forceinline unsigned int
   Node::getNumberOfChildren(void) const {
     switch (getTag()) {
     case UNDET: return 0;
     case LEAF:  return 0;
     case TWO_CHILDREN: return 1+Support::marked(c.secondChild);
-    default: return c.noOfChildren;  
+    default: return c.noOfChildren;
     }
   }
-  
+
 }}
 
 // STATISTICS: gist-any

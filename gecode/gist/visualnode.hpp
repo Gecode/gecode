@@ -48,17 +48,17 @@ namespace Gecode { namespace Gist {
     l = 0 - halfWidth;
     r = 0 + halfWidth;
   }
-  
+
   inline void
   Extent::extend(int deltaL, int deltaR) {
     l += deltaL; r += deltaR;
   }
-  
+
   inline void
   Extent::move(int delta) {
     l += delta; r += delta;
   }
-  
+
   forceinline const Extent&
   Shape::operator [](int i) const {
     assert(i < _depth);
@@ -74,7 +74,7 @@ namespace Gecode { namespace Gist {
   inline Shape*
   Shape::allocate(int d) {
     Shape* ret =
-      static_cast<Shape*>(heap.ralloc(sizeof(Shape) + 
+      static_cast<Shape*>(heap.ralloc(sizeof(Shape) +
                                          (d-1)*sizeof(Extent)));
     ret->_depth = d;
     return ret;
@@ -92,10 +92,10 @@ namespace Gecode { namespace Gist {
     if (shape != hidden && shape != leaf)
       heap.rfree(shape);
   }
-  
+
   forceinline int
   Shape::depth(void) const { return _depth; }
-  
+
   forceinline
   BoundingBox::BoundingBox(int l, int r)
    : left(l), right(r) {}
@@ -129,7 +129,7 @@ namespace Gecode { namespace Gist {
     if (d)
       nstatus |= 1<<(DIRTY-1);
     else
-      nstatus &= ~(1<<(DIRTY-1));    
+      nstatus &= ~(1<<(DIRTY-1));
   }
 
   forceinline bool
@@ -173,7 +173,7 @@ namespace Gecode { namespace Gist {
 
   forceinline Shape*
   VisualNode::getShape(void) { return shape; }
-    
+
   forceinline void
   VisualNode::setBoundingBox(BoundingBox b) { box = b; }
 
@@ -182,7 +182,7 @@ namespace Gecode { namespace Gist {
 
   forceinline int
   VisualNode::depth(void) { return shape->depth(); }
-  
+
   forceinline VisualNode*
   VisualNode::getParent() {
     return static_cast<VisualNode*>(SpaceNode::getParent());
@@ -192,7 +192,7 @@ namespace Gecode { namespace Gist {
   VisualNode::getChild(int i) {
     return static_cast<VisualNode*>(SpaceNode::getChild(i));
   }
-    
+
 }}
 
 // STATISTICS: gist-any

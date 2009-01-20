@@ -298,7 +298,7 @@ namespace Gecode { namespace Int {
 
     /**
      * \name Domain update by iterator
-     * 
+     *
      * Variable domains can be both updated by range and value iterators.
      * Value iterators do not need to be strict in that the same value
      * is allowed to occur more than once in the iterated sequence.
@@ -313,22 +313,22 @@ namespace Gecode { namespace Int {
      */
     //@{
     /// Replace domain by ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
@@ -483,16 +483,16 @@ namespace Gecode { namespace Int {
 #include <gecode/int/var-imp/int.hpp>
 
 namespace Gecode {
-  
+
   class IntVar;
-  
+
   /** \brief Traits class for variable implementations and variables */
   template <>
   class VarImpVarTraits<Int::IntVarImp> {
   public:
     typedef IntVar Var;
   };
-  
+
   class BoolVar;
 }
 
@@ -509,9 +509,9 @@ namespace Gecode { namespace Int {
   class BoolVarImp : public BoolVarImpBase {
     friend class ::Gecode::BoolVar;
   private:
-    /** 
+    /**
      * \brief Domain information
-     * 
+     *
      * - The bit at position 0 corresponds to the minimum
      * - The bit at position 1 corresponds to the maximum
      * - Interpreted as an unsigned, that is: 0 represents
@@ -614,7 +614,7 @@ namespace Gecode { namespace Int {
 
     /**
      * \name Domain update by iterator
-     * 
+     *
      * Variable domains can be both updated by range and value iterators.
      * Value iterators do not need to be strict in that the same value
      * is allowed to occur more than once in the iterated sequence.
@@ -629,22 +629,22 @@ namespace Gecode { namespace Int {
      */
     //@{
     /// Replace domain by ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
@@ -676,7 +676,7 @@ namespace Gecode { namespace Int {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
     /**
      * \brief Cancel subscription of propagator \a p with propagation condition \a pc
-     * 
+     *
      * The propagation condition \a pc can be a propagation condition
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
@@ -722,7 +722,7 @@ namespace Gecode { namespace Int {
     /// Return copy of this variable
     BoolVarImp* copy(Space& home, bool share);
     //@}
-    
+
     /// \name Reflection
     //@{
     /// Return specification
@@ -735,7 +735,7 @@ namespace Gecode { namespace Int {
     static GECODE_INT_EXPORT void
     constrain(Space& home, VarImpBase* v, Reflection::VarSpec& spec);
     //@}
-    
+
   };
 
 }}

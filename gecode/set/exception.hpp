@@ -65,7 +65,7 @@ namespace Gecode { namespace Set {
     /// Initialize with location \a l
     ArgumentEmpty(const char* l);
   };
-  
+
   /// %Exception: Arguments are of different size
   class GECODE_VTABLE_EXPORT ArgumentSizeMismatch : public Exception  {
   public:

@@ -92,7 +92,7 @@ namespace Gecode {  namespace Gist {
     QAction* toggleHidden;
     /// Hide failed subtrees under current node
     QAction* hideFailed;
-    /// Unhide all hidden subtrees under current node    
+    /// Unhide all hidden subtrees under current node
     QAction* unhideAll;
     /// Zoom tree to fit window
     QAction* zoomToFit;
@@ -135,7 +135,7 @@ namespace Gecode {  namespace Gist {
     void setShowCopies(bool b);
     /// Return preference whether to show copies in the tree
     bool getShowCopies(void);
-    
+
     /// Set refresh rate
     void setRefresh(int i);
     /// Return preference whether to use smooth scrolling and zooming

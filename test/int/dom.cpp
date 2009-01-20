@@ -41,7 +41,7 @@ namespace Test { namespace Int {
 
    /// Tests for domain constraints
    namespace Dom {
-   
+
      /**
       * \defgroup TaskTestIntDom Domain constraints
       * \ingroup TaskTestInt
@@ -67,14 +67,14 @@ namespace Test { namespace Int {
            Gecode::dom(home, x, -2);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          assert(x.size() == 1);
          Gecode::dom(home, x[0], -2, b);
        }
      };
-   
-   
+
+
      /// Test for domain constraint (range)
      class DomRange : public Test {
      public:
@@ -95,19 +95,19 @@ namespace Test { namespace Int {
            Gecode::dom(home, x, -2, 2);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          assert(x.size() == 1);
          Gecode::dom(home, x[0], -2, 2, b);
        }
      };
-   
-   
+
+
      const int r[4][2] = {
        {-4,-3},{-1,-1},{1,1},{3,5}
      };
      Gecode::IntSet d(r,4);
-   
+
      /// Test for domain constraint (full integer set)
      class DomDom : public Test {
      public:
@@ -137,7 +137,7 @@ namespace Test { namespace Int {
          Gecode::dom(home, x[0], d, b);
        }
      };
-   
+
      DomInt di1(1);
      DomInt di3(3);
      DomRange dr1(1);
@@ -145,7 +145,7 @@ namespace Test { namespace Int {
      DomDom dd1(1);
      DomDom dd3(3);
      //@}
-   
+
    }
 }}
 

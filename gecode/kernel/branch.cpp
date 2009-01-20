@@ -38,7 +38,7 @@
 #include <gecode/kernel.hh>
 
 namespace Gecode {
-  
+
   const VarBranchOptions VarBranchOptions::def;
 
   const ValBranchOptions ValBranchOptions::def;

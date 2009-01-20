@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class View>
   inline bool
   normalize(Term<View>* t, int &n,
-            Term<View>* &t_p, int &n_p, 
+            Term<View>* &t_p, int &n_p,
             Term<View>* &t_n, int &n_n) {
     /*
      * Join coefficients for aliased variables:
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Linear {
       t_n = t+n_p; n_n = n-n_p;
     } else {
       t_p = t; n_p = 0;
-      t_n = t; n_n = 0;      
+      t_n = t; n_n = 0;
     }
 
     /*

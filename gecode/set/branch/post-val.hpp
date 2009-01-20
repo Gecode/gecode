@@ -49,13 +49,13 @@ namespace Gecode { namespace Set { namespace Branch {
   post(Space& home, ViewArray<SetView>& x, SelView& v,
        SetValBranch vals, const ValBranchOptions& o_vals) {
     switch (vals) {
-    case SET_VAL_MIN_INC: 
+    case SET_VAL_MIN_INC:
       {
         ValMin<true> a(home,o_vals);
         (void) new (home) ViewValBranching<SelView,ValMin<true> >(home,x,v,a);
       }
       break;
-    case SET_VAL_MIN_EXC: 
+    case SET_VAL_MIN_EXC:
       {
         ValMin<false> a(home,o_vals);
         (void) new (home) ViewValBranching<SelView,ValMin<false> >(home,x,v,a);
@@ -81,10 +81,10 @@ namespace Gecode { namespace Set { namespace Branch {
   template <class SelView, class SelVal>
   void
   registerOne(void) {
-    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(), 
+    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(),
                                &ValSelToString<SelVal>::toString);
   }
-  
+
   template <class SelView>
   void
   registerAllSetView(void) {

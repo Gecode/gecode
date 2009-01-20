@@ -140,7 +140,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual size_t dispose(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$ 
+    /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$
     static ExecStatus post(Space& home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
   };
@@ -153,7 +153,7 @@ namespace Gecode { namespace Set { namespace Rel {
    */
 
   template <class View0, class View1>
-  class Eq : 
+  class Eq :
     public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
     GECODE_REFLECT_PROPAGATOR_2(Eq,View0,View1,"Gecode::Set::Rel::Eq")
     GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
@@ -169,7 +169,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x=y \f$ 
+    /// Post propagator \f$ x=y \f$
     static  ExecStatus  post(Space& home,View0,View1);
   };
 
@@ -202,7 +202,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual size_t dispose(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$ 
+    /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$
     static ExecStatus post(Space& home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
   };
@@ -211,7 +211,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * \brief %Propagator for negated equality
    *
    * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp   
+   * \ingroup FuncSetProp
    */
 
   template <class View0, class View1>
@@ -232,7 +232,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x\neq y \f$ 
+    /// Post propagator \f$ x\neq y \f$
     static  ExecStatus  post(Space& home,View0,View1);
   };
 
@@ -244,7 +244,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * assigned.
    *
    * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp   
+   * \ingroup FuncSetProp
    */
   template <class View0>
   class DistinctDoit : public UnaryPropagator<View0,PC_SET_ANY> {
@@ -264,7 +264,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x\neq y \f$ 
+    /// Post propagator \f$ x\neq y \f$
     static ExecStatus post(Space& home, View0, ConstantView);
   };
 

@@ -93,7 +93,7 @@ namespace Gecode {
       {
         Set::ConstantView cv(home, is);
         GECODE_ES_FAIL(home,
-                       (Set::Rel::DistinctDoit<Set::SetView>::post(home, s, 
+                       (Set::Rel::DistinctDoit<Set::SetView>::post(home, s,
                                                                    cv)));
       }
       break;
@@ -213,12 +213,12 @@ namespace Gecode {
     case SRT_CMPL:
       {
         Set::SetView sv(s);
-        
+
         IntSetRanges dr1(is);
         Set::RangesCompl<IntSetRanges> dc1(dr1);
         IntSet dcompl(dc1);
         Set::ConstantView cvcompl(home, dcompl);
-        
+
         GECODE_ES_FAIL(home,
                        (Set::Rel::ReEq<Set::SetView,Set::ConstantView>
                         ::post(home, sv, cvcompl, b)));

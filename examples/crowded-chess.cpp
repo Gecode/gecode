@@ -89,7 +89,7 @@ namespace {
       // Forced bishop placement from crowded chess model
       rel(*this, kb(n-1,   0), IRT_EQ, 1);
       rel(*this, kb(n-1, n-1), IRT_EQ, 1);
-      branch(*this, k, 
+      branch(*this, k,
              tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), INT_VAL_MAX);
     }
     Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
@@ -217,7 +217,7 @@ protected:
       for (int y = n; y--; )
         for (int i = 4; i--; )
           if (valid_pos(x+kmoves[i][0], y+kmoves[i][1]))
-            rel(*this, 
+            rel(*this,
                 kb(x, y),
                 BOT_AND,
                 kb(x+kmoves[i][0], y+kmoves[i][1]),
@@ -233,10 +233,10 @@ public:
 
   /// The model of the problem
   CrowdedChess(const SizeOptions& opt)
-    : n(opt.size()), 
-      s(*this, n*n, 0, PMAX-1), 
+    : n(opt.size()),
+      s(*this, n*n, 0, PMAX-1),
       queens(*this, n, 0, n-1),
-      rooks(*this, n, 0, n-1), 
+      rooks(*this, n, 0, n-1),
       knights(*this, n*n, 0, 1) {
     const int nkval = sizeof(kval)/sizeof(int);
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
@@ -381,9 +381,9 @@ public:
         os << sep;
         for (int c = 0; c < n; ++c) {
           if (m(r, c).assigned()) {
-            if (m(r, c).val() == p) 
+            if (m(r, c).val() == p)
               os << names[p];
-            else                   
+            else
               os << names[E];
           } else {
             os << " ";
@@ -404,10 +404,10 @@ main(int argc, char* argv[]) {
   SizeOptions opt("CrowdedChess");
   opt.propagation(CrowdedChess::PROP_TUPLE_SET);
   opt.propagation(CrowdedChess::PROP_TUPLE_SET,
-                  "extensional", 
+                  "extensional",
                   "Use extensional propagation for bishops-placement");
   opt.propagation(CrowdedChess::PROP_DECOMPOSE,
-                  "decompose", 
+                  "decompose",
                   "Use decomposed propagation for bishops-placement");
   opt.icl(ICL_DOM);
   opt.size(8);

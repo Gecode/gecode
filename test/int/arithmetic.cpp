@@ -44,7 +44,7 @@ namespace Test { namespace Int {
 
    /// Tests for arithmetic constraints
    namespace Arithmetic {
-   
+
      /**
       * \defgroup TaskTestIntArithmetic Arithmetic constraints
       * \ingroup TaskTestInt
@@ -69,7 +69,7 @@ namespace Test { namespace Int {
          Gecode::mult(home, x[0], x[1], x[2], icl);
        }
      };
-   
+
      /// Test for multiplication constraint with shared variables
      class MultXXY : public Test {
      public:
@@ -89,7 +89,7 @@ namespace Test { namespace Int {
          Gecode::mult(home, x[0], x[0], x[1], icl);
        }
      };
-   
+
      /// Test for multiplication constraint with shared variables
      class MultXYX : public Test {
      public:
@@ -109,7 +109,7 @@ namespace Test { namespace Int {
          Gecode::mult(home, x[0], x[1], x[0], icl);
        }
      };
-   
+
      /// Test for multiplication constraint with shared variables
      class MultXYY : public Test {
      public:
@@ -129,7 +129,7 @@ namespace Test { namespace Int {
          Gecode::mult(home, x[0], x[1], x[1], icl);
        }
      };
-   
+
      /// Test for multiplication constraint with shared variables
      class MultXXX : public Test {
      public:
@@ -149,12 +149,12 @@ namespace Test { namespace Int {
          Gecode::mult(home, x[0], x[0], x[0], icl);
        }
      };
-   
+
      /// Test for squaring constraint
      class SqrXY : public Test {
      public:
        /// Create and register test
-       SqrXY(const std::string& s, const Gecode::IntSet& d, 
+       SqrXY(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntConLevel icl)
          : Test("Arithmetic::Sqr::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
        /// Test whether \a x is solution
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
          Gecode::sqr(home, x[0], x[1], icl);
        }
      };
-   
+
      /// Test for squaring constraint with shared variables
      class SqrXX : public Test {
      public:
@@ -186,7 +186,7 @@ namespace Test { namespace Int {
          Gecode::sqr(home, x[0], x[0], icl);
        }
      };
-   
+
      /// Test for square root constraint
      class SqrtXY : public Test {
      public:
@@ -205,7 +205,7 @@ namespace Test { namespace Int {
          Gecode::sqrt(home, x[0], x[1], icl);
        }
      };
-   
+
      /// Test for square root constraint with shared variables
      class SqrtXX : public Test {
      public:
@@ -223,7 +223,7 @@ namespace Test { namespace Int {
          Gecode::sqrt(home, x[0], x[0], icl);
        }
      };
-   
+
      /// Test for division/modulo constraint
      class DivMod : public Test {
      private:
@@ -255,7 +255,7 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
            return false;
-         int divresult = 
+         int divresult =
            static_cast<int>(floor(static_cast<double>(x[0])/
                                   static_cast<double>(x[1])));
          return x[2] == divresult;
@@ -276,7 +276,7 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
            return false;
-         int divresult = 
+         int divresult =
            static_cast<int>(floor(static_cast<double>(x[0])/
                                   static_cast<double>(x[1])));
          return x[0] == x[1]*divresult+x[2];
@@ -286,12 +286,12 @@ namespace Test { namespace Int {
          Gecode::mod(home, x[0], x[1], x[2], icl);
        }
      };
-   
+
      /// Test for absolute value constraint
      class AbsXY : public Test {
      public:
        /// Create and register test
-       AbsXY(const std::string& s, const Gecode::IntSet& d, 
+       AbsXY(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntConLevel icl)
          : Test("Arithmetic::Abs::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
        /// Test whether \a x is solution
@@ -305,12 +305,12 @@ namespace Test { namespace Int {
          Gecode::abs(home, x[0], x[1], icl);
        }
      };
-   
+
      /// Test for absolute value constraint with shared variables
      class AbsXX : public Test {
      public:
        /// Create and register test
-       AbsXX(const std::string& s, const Gecode::IntSet& d, 
+       AbsXX(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntConLevel icl)
          : Test("Arithmetic::Abs::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
        /// Test whether \a x is solution
@@ -324,8 +324,8 @@ namespace Test { namespace Int {
          Gecode::abs(home, x[0], x[0], icl);
        }
      };
-   
-     /// Test for binary minimum constraint  
+
+     /// Test for binary minimum constraint
      class MinXYZ : public Test {
      public:
        /// Create and register test
@@ -341,7 +341,7 @@ namespace Test { namespace Int {
          Gecode::min(home, x[0], x[1], x[2], icl);
        }
      };
-   
+
      /// Test for binary minimum constraint with shared variables
      class MinXXY : public Test {
      public:
@@ -358,7 +358,7 @@ namespace Test { namespace Int {
          Gecode::min(home, x[0], x[0], x[1], icl);
        }
      };
-   
+
      /// Test for binary minimum constraint with shared variables
      class MinXYX : public Test {
      public:
@@ -375,7 +375,7 @@ namespace Test { namespace Int {
          Gecode::min(home, x[0], x[1], x[0], icl);
        }
      };
-   
+
      /// Test for binary minimum constraint with shared variables
      class MinXYY : public Test {
      public:
@@ -392,7 +392,7 @@ namespace Test { namespace Int {
          Gecode::min(home, x[0], x[1], x[1], icl);
        }
      };
-   
+
      /// Test for binary minimum constraint with shared variables
      class MinXXX : public Test {
      public:
@@ -409,8 +409,8 @@ namespace Test { namespace Int {
          Gecode::min(home, x[0], x[0], x[0], icl);
        }
      };
-   
-     /// Test for binary maximum constraint  
+
+     /// Test for binary maximum constraint
      class MaxXYZ : public Test {
      public:
        /// Create and register test
@@ -428,7 +428,7 @@ namespace Test { namespace Int {
          Gecode::max(home, x[0], x[1], x[2], icl);
        }
      };
-   
+
      /// Test for binary maximum constraint with shared variables
      class MaxXXY : public Test {
      public:
@@ -445,7 +445,7 @@ namespace Test { namespace Int {
          Gecode::max(home, x[0], x[0], x[1], icl);
        }
      };
-   
+
      /// Test for binary maximum constraint with shared variables
      class MaxXYX : public Test {
      public:
@@ -462,7 +462,7 @@ namespace Test { namespace Int {
          Gecode::max(home, x[0], x[1], x[0], icl);
        }
      };
-   
+
      /// Test for binary maximum constraint with shared variables
      class MaxXYY : public Test {
      public:
@@ -479,7 +479,7 @@ namespace Test { namespace Int {
          Gecode::max(home, x[0], x[1], x[1], icl);
        }
      };
-   
+
      /// Test for binary maximum constraint with shared variables
      class MaxXXX : public Test {
      public:
@@ -496,12 +496,12 @@ namespace Test { namespace Int {
          Gecode::max(home, x[0], x[0], x[0], icl);
        }
      };
-   
-     /// Test for n-ary minimmum constraint  
+
+     /// Test for n-ary minimmum constraint
      class MinNary : public Test {
      public:
        /// Create and register test
-       MinNary(Gecode::IntConLevel icl) 
+       MinNary(Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Nary::"+str(icl),4,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -514,12 +514,12 @@ namespace Test { namespace Int {
          Gecode::min(home, m, x[3], icl);
        }
      };
-   
-     /// Test for n-ary minimmum constraint with shared variables  
+
+     /// Test for n-ary minimmum constraint with shared variables
      class MinNaryShared : public Test {
      public:
        /// Create and register test
-       MinNaryShared(Gecode::IntConLevel icl) 
+       MinNaryShared(Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -532,12 +532,12 @@ namespace Test { namespace Int {
          Gecode::min(home, m, x[1], icl);
        }
      };
-   
-     /// Test for n-ary maximum constraint  
+
+     /// Test for n-ary maximum constraint
      class MaxNary : public Test {
      public:
        /// Create and register test
-       MaxNary(Gecode::IntConLevel icl) 
+       MaxNary(Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Nary::"+str(icl),4,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -550,12 +550,12 @@ namespace Test { namespace Int {
          Gecode::max(home, m, x[3], icl);
        }
      };
-   
+
      /// Test for n-ary maximum constraint with shared variables
      class MaxNaryShared : public Test {
      public:
        /// Create and register test
-       MaxNaryShared(Gecode::IntConLevel icl) 
+       MaxNaryShared(Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -568,9 +568,9 @@ namespace Test { namespace Int {
          Gecode::max(home, m, x[1], icl);
        }
      };
-   
-   
-   
+
+
+
      const int va[7] = {
        Gecode::Int::Limits::min, Gecode::Int::Limits::min+1,
        -1,0,1,
@@ -583,79 +583,79 @@ namespace Test { namespace Int {
        static_cast<int>(sqrt(static_cast<double>
                              (Gecode::Int::Limits::max)))
      };
-     
+
      Gecode::IntSet a(va,7);
      Gecode::IntSet b(vb,9);
      Gecode::IntSet c(-8,8);
-   
+
      MultXYZ mult_xyz_b_a("A",a,Gecode::ICL_BND);
      MultXYZ mult_xyz_b_b("B",b,Gecode::ICL_BND);
      MultXYZ mult_xyz_b_c("C",c,Gecode::ICL_BND);
-   
+
      MultXXY mult_xxy_b_a("A",a,Gecode::ICL_BND);
      MultXXY mult_xxy_b_b("B",b,Gecode::ICL_BND);
      MultXXY mult_xxy_b_c("C",c,Gecode::ICL_BND);
-   
+
      MultXYX mult_xyx_b_a("A",a,Gecode::ICL_BND);
      MultXYX mult_xyx_b_b("B",b,Gecode::ICL_BND);
      MultXYX mult_xyx_b_c("C",c,Gecode::ICL_BND);
-   
+
      MultXYY mult_xyy_b_a("A",a,Gecode::ICL_BND);
      MultXYY mult_xyy_b_b("B",b,Gecode::ICL_BND);
      MultXYY mult_xyy_b_c("C",c,Gecode::ICL_BND);
-   
+
      MultXXX mult_xxx_b_a("A",a,Gecode::ICL_BND);
      MultXXX mult_xxx_b_b("B",b,Gecode::ICL_BND);
      MultXXX mult_xxx_b_c("C",c,Gecode::ICL_BND);
-   
+
      MultXYZ mult_xyz_d_a("A",a,Gecode::ICL_DOM);
      MultXYZ mult_xyz_d_b("B",b,Gecode::ICL_DOM);
      MultXYZ mult_xyz_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MultXXY mult_xxy_d_a("A",a,Gecode::ICL_DOM);
      MultXXY mult_xxy_d_b("B",b,Gecode::ICL_DOM);
      MultXXY mult_xxy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MultXYX mult_xyx_d_a("A",a,Gecode::ICL_DOM);
      MultXYX mult_xyx_d_b("B",b,Gecode::ICL_DOM);
      MultXYX mult_xyx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MultXYY mult_xyy_d_a("A",a,Gecode::ICL_DOM);
      MultXYY mult_xyy_d_b("B",b,Gecode::ICL_DOM);
      MultXYY mult_xyy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MultXXX mult_xxx_d_a("A",a,Gecode::ICL_DOM);
      MultXXX mult_xxx_d_b("B",b,Gecode::ICL_DOM);
      MultXXX mult_xxx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      SqrXY sqr_xy_b_a("A",a,Gecode::ICL_BND);
      SqrXY sqr_xy_b_b("B",b,Gecode::ICL_BND);
      SqrXY sqr_xy_b_c("C",c,Gecode::ICL_BND);
      SqrXY sqr_xy_d_a("A",a,Gecode::ICL_DOM);
      SqrXY sqr_xy_d_b("B",b,Gecode::ICL_DOM);
      SqrXY sqr_xy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      SqrXX sqr_xx_b_a("A",a,Gecode::ICL_BND);
      SqrXX sqr_xx_b_b("B",b,Gecode::ICL_BND);
      SqrXX sqr_xx_b_c("C",c,Gecode::ICL_BND);
      SqrXX sqr_xx_d_a("A",a,Gecode::ICL_DOM);
      SqrXX sqr_xx_d_b("B",b,Gecode::ICL_DOM);
      SqrXX sqr_xx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      SqrtXY sqrt_xy_b_a("A",a,Gecode::ICL_BND);
      SqrtXY sqrt_xy_b_b("B",b,Gecode::ICL_BND);
      SqrtXY sqrt_xy_b_c("C",c,Gecode::ICL_BND);
      SqrtXY sqrt_xy_d_a("A",a,Gecode::ICL_DOM);
      SqrtXY sqrt_xy_d_b("B",b,Gecode::ICL_DOM);
      SqrtXY sqrt_xy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      SqrtXX sqrt_xx_b_a("A",a,Gecode::ICL_BND);
      SqrtXX sqrt_xx_b_b("B",b,Gecode::ICL_BND);
      SqrtXX sqrt_xx_b_c("C",c,Gecode::ICL_BND);
      SqrtXX sqrt_xx_d_a("A",a,Gecode::ICL_DOM);
      SqrtXX sqrt_xx_d_b("B",b,Gecode::ICL_DOM);
      SqrtXX sqrt_xx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      DivMod divmod_a_bnd("A",a);
      DivMod divmod_b_bnd("B",b);
      DivMod divmod_c_bnd("C",c);
@@ -663,11 +663,11 @@ namespace Test { namespace Int {
      Div div_a_bnd("A",a);
      Div div_b_bnd("B",b);
      Div div_c_bnd("C",c);
-                        
+
      Mod mod_a_bnd("A",a);
      Mod mod_b_bnd("B",b);
      Mod mod_c_bnd("C",c);
-   
+
      AbsXY abs_xy_b_a("A",a,Gecode::ICL_BND);
      AbsXY abs_xy_b_b("B",b,Gecode::ICL_BND);
      AbsXY abs_xy_b_c("C",c,Gecode::ICL_BND);
@@ -681,77 +681,77 @@ namespace Test { namespace Int {
      AbsXX abs_xx_d_a("A",a,Gecode::ICL_DOM);
      AbsXX abs_xx_d_b("B",b,Gecode::ICL_DOM);
      AbsXX abs_xx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MinXYZ min_xyz_b_a("A",a,Gecode::ICL_BND);
      MinXYZ min_xyz_b_b("B",b,Gecode::ICL_BND);
      MinXYZ min_xyz_b_c("C",c,Gecode::ICL_BND);
      MinXYZ min_xyz_d_a("A",a,Gecode::ICL_DOM);
      MinXYZ min_xyz_d_b("B",b,Gecode::ICL_DOM);
      MinXYZ min_xyz_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MinXXY min_xxy_b_a("A",a,Gecode::ICL_BND);
      MinXXY min_xxy_b_b("B",b,Gecode::ICL_BND);
      MinXXY min_xxy_b_c("C",c,Gecode::ICL_BND);
      MinXXY min_xxy_d_a("A",a,Gecode::ICL_DOM);
      MinXXY min_xxy_d_b("B",b,Gecode::ICL_DOM);
      MinXXY min_xxy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MinXYX min_xyx_b_a("A",a,Gecode::ICL_BND);
      MinXYX min_xyx_b_b("B",b,Gecode::ICL_BND);
      MinXYX min_xyx_b_c("C",c,Gecode::ICL_BND);
      MinXYX min_xyx_d_a("A",a,Gecode::ICL_DOM);
      MinXYX min_xyx_d_b("B",b,Gecode::ICL_DOM);
      MinXYX min_xyx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MinXYY min_xyy_b_a("A",a,Gecode::ICL_BND);
      MinXYY min_xyy_b_b("B",b,Gecode::ICL_BND);
      MinXYY min_xyy_b_c("C",c,Gecode::ICL_BND);
      MinXYY min_xyy_d_a("A",a,Gecode::ICL_DOM);
      MinXYY min_xyy_d_b("B",b,Gecode::ICL_DOM);
      MinXYY min_xyy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MinXXX min_xxx_b_a("A",a,Gecode::ICL_BND);
      MinXXX min_xxx_b_b("B",b,Gecode::ICL_BND);
      MinXXX min_xxx_b_c("C",c,Gecode::ICL_BND);
      MinXXX min_xxx_d_a("A",a,Gecode::ICL_DOM);
      MinXXX min_xxx_d_b("B",b,Gecode::ICL_DOM);
      MinXXX min_xxx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MaxXYZ max_xyz_b_a("A",a,Gecode::ICL_BND);
      MaxXYZ max_xyz_b_b("B",b,Gecode::ICL_BND);
      MaxXYZ max_xyz_b_c("C",c,Gecode::ICL_BND);
      MaxXYZ max_xyz_d_a("A",a,Gecode::ICL_DOM);
      MaxXYZ max_xyz_d_b("B",b,Gecode::ICL_DOM);
      MaxXYZ max_xyz_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MaxXXY max_xxy_b_a("A",a,Gecode::ICL_BND);
      MaxXXY max_xxy_b_b("B",b,Gecode::ICL_BND);
      MaxXXY max_xxy_b_c("C",c,Gecode::ICL_BND);
      MaxXXY max_xxy_d_a("A",a,Gecode::ICL_DOM);
      MaxXXY max_xxy_d_b("B",b,Gecode::ICL_DOM);
      MaxXXY max_xxy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MaxXYX max_xyx_b_a("A",a,Gecode::ICL_BND);
      MaxXYX max_xyx_b_b("B",b,Gecode::ICL_BND);
      MaxXYX max_xyx_b_c("C",c,Gecode::ICL_BND);
      MaxXYX max_xyx_d_a("A",a,Gecode::ICL_DOM);
      MaxXYX max_xyx_d_b("B",b,Gecode::ICL_DOM);
      MaxXYX max_xyx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MaxXYY max_xyy_b_a("A",a,Gecode::ICL_BND);
      MaxXYY max_xyy_b_b("B",b,Gecode::ICL_BND);
      MaxXYY max_xyy_b_c("C",c,Gecode::ICL_BND);
      MaxXYY max_xyy_d_a("A",a,Gecode::ICL_DOM);
      MaxXYY max_xyy_d_b("B",b,Gecode::ICL_DOM);
      MaxXYY max_xyy_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MaxXXX max_xxx_b_a("A",a,Gecode::ICL_BND);
      MaxXXX max_xxx_b_b("B",b,Gecode::ICL_BND);
      MaxXXX max_xxx_b_c("C",c,Gecode::ICL_BND);
      MaxXXX max_xxx_d_a("A",a,Gecode::ICL_DOM);
      MaxXXX max_xxx_d_b("B",b,Gecode::ICL_DOM);
      MaxXXX max_xxx_d_c("C",c,Gecode::ICL_DOM);
-   
+
      MinNary       min_nary_b(Gecode::ICL_BND);
      MinNary       min_nary_d(Gecode::ICL_DOM);
      MinNaryShared min_s_nary_b(Gecode::ICL_BND);
@@ -761,7 +761,7 @@ namespace Test { namespace Int {
      MaxNaryShared max_s_nary_b(Gecode::ICL_BND);
      MaxNaryShared max_s_nary_d(Gecode::ICL_DOM);
      //@}
-   
+
    }
 }}
 

@@ -182,14 +182,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if ((IntView::me(med) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
-        GECODE_ME_CHECK(x[0].eq(home,c)); 
+        GECODE_ME_CHECK(x[0].eq(home,c));
         return ES_SUBSUMED(p,sizeof(p));
       }
       if (y.size() == 1) {
-        GECODE_ME_CHECK(y[0].eq(home,-c)); 
+        GECODE_ME_CHECK(y[0].eq(home,-c));
         return ES_SUBSUMED(p,sizeof(p));
       }
-      return (c == static_cast<Val>(0)) ? 
+      return (c == static_cast<Val>(0)) ?
         ES_SUBSUMED(p,sizeof(p)) : ES_FAILED;
     }
 
@@ -439,11 +439,11 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(med, y, c, sl, su);
 
     if ((-sl == c) && (-su == c)) {
-      GECODE_ME_CHECK(b.one_none(home)); 
+      GECODE_ME_CHECK(b.one_none(home));
       return ES_SUBSUMED(*this,sizeof(*this));
     }
     if ((-sl > c) || (-su < c)) {
-      GECODE_ME_CHECK(b.zero_none(home)); 
+      GECODE_ME_CHECK(b.zero_none(home));
       return ES_SUBSUMED(*this,home);
     }
     return ES_FIX;
@@ -592,7 +592,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (y.size() == 1) {
         GECODE_ME_CHECK(y[0].nq(home,-c)); return ES_SUBSUMED(*this,home);
       }
-      return (c == static_cast<Val>(0)) ? 
+      return (c == static_cast<Val>(0)) ?
         ES_FAILED : ES_SUBSUMED(*this,sizeof(*this));
     }
     return ES_FIX;
@@ -755,7 +755,7 @@ namespace Gecode { namespace Int { namespace Linear {
           GECODE_ME_CHECK(y[0].gq(home,-c));
           return ES_SUBSUMED(*this,home);
         }
-        return (c >= static_cast<Val>(0)) ? 
+        return (c >= static_cast<Val>(0)) ?
           ES_SUBSUMED(*this,sizeof(*this)) : ES_FAILED;
       }
     } else {
@@ -849,11 +849,11 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(med,y,c,sl,su);
 
     if (-sl > c) {
-      GECODE_ME_CHECK(b.zero_none(home)); 
+      GECODE_ME_CHECK(b.zero_none(home));
       return ES_SUBSUMED(*this,home);
     }
     if (-su <= c) {
-      GECODE_ME_CHECK(b.one_none(home)); 
+      GECODE_ME_CHECK(b.one_none(home));
       return ES_SUBSUMED(*this,home);
     }
 

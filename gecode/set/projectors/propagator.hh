@@ -156,13 +156,13 @@ namespace Gecode { namespace Set { namespace Projection {
     static  ExecStatus post(Space& home, ViewArray<SetView>& x,
                             Gecode::Int::IntView i, Projector& p);
   };
-  
+
 }}}
 
 #include <gecode/set/projectors/propagator/nary.hpp>
 #include <gecode/set/projectors/propagator/re-nary.hpp>
 #include <gecode/set/projectors/propagator/card.hpp>
-  
+
 #endif
 
 // STATISTICS: set-prop

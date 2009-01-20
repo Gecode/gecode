@@ -40,7 +40,7 @@
 namespace Gecode {
 
   namespace CpltSet {
-    void 
+    void
     setVariableOrderFromArray(Space& home, const CpltSetVarArray& x) {
       int n = x.size();
       ViewArray<CpltSetView> view(home, n);
@@ -55,7 +55,7 @@ namespace Gecode {
                                    int lbMin,int lbMax,int ubMin,int ubMax,
                                    unsigned int minCard,
                                    unsigned int maxCard)
-    : VarArray<CpltSetVar>(home,n) {    
+    : VarArray<CpltSetVar>(home,n) {
     Set::Limits::check(lbMin,"CpltSetVarArray::CpltSetVarArray");
     Set::Limits::check(lbMax,"CpltSetVarArray::CpltSetVarArray");
     Set::Limits::check(ubMin,"CpltSetVarArray::CpltSetVarArray");
@@ -65,12 +65,12 @@ namespace Gecode {
       throw Set::VariableEmptyDomain("CpltSetVarArray::CpltSetVarArray");
 
     IntSet glb(lbMin, lbMax);
-    IntSet lub(ubMin, ubMax);      
+    IntSet lub(ubMin, ubMax);
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)
-      x[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);    
-    
+      x[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);
+
     CpltSet::setVariableOrderFromArray(home, *this);
   }
 
@@ -98,7 +98,7 @@ namespace Gecode {
                                    int lbMin,int lbMax,const IntSet& lub,
                                    unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
-    IntSet glb(lbMin, lbMax);      
+    IntSet glb(lbMin, lbMax);
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)

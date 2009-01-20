@@ -98,17 +98,17 @@ namespace Gecode { namespace Int { namespace Circuit {
     TellInfo<View>* nq = r.alloc<TellInfo<View> >(n_edges);
     int n_nq = 0;
 
-    /* 
+    /*
      * Check whether there is a single strongly connected component.
      * This is a downstripped version of Tarjan's algorithm as
      * the computation of sccs proper is not needed. In addition, it
      * checks a mandatory condition for a graph to be Hamiltonian
      * (due to Mats Carlsson).
      *
-     * To quote Mats: Suppose you do a depth-first search of the graph. 
-     * In that search, the root node will have a number of child subtrees 
-     * T1, ..., Tn. By construction, if i<j then there is no edge from 
-     * Ti to Tj. The necessary condition for Hamiltonianicity is that 
+     * To quote Mats: Suppose you do a depth-first search of the graph.
+     * In that search, the root node will have a number of child subtrees
+     * T1, ..., Tn. By construction, if i<j then there is no edge from
+     * Ti to Tj. The necessary condition for Hamiltonianicity is that
      * there be an edge from Ti+1 to Ti, for 0 < i < n.
      *
      * In addition, we do the following: if there is only a single edge
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       return ES_FAILED;
     }
     if (!next.empty()) {
-      i=next.pop(); 
+      i=next.pop();
       if (i == start) {
         // No back edge
         if (back == 0)
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Circuit {
         return ES_FAILED;
       if (me_modified(me))
         es = ES_NOFIX;
-    }      
+    }
     // Remove all edges that would require a non-simple cycle
     while (n_nq-- > 0) {
       ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Circuit {
         return ES_FAILED;
       if (me_modified(me))
         es = ES_NOFIX;
-    }      
+    }
     return es;
   }
 

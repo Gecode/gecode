@@ -117,9 +117,9 @@ namespace Serialization {
    * \namespace Gecode::Serialization
    * \brief Serialization and deserialization support
    */
-  
+
   /// Initialize the registry of post functions
-  GECODE_SERIALIZATION_EXPORT 
+  GECODE_SERIALIZATION_EXPORT
   void initRegistry(void);
 }
 }
@@ -130,7 +130,7 @@ namespace Gecode {
   /**
    * \brief Serialize \a actors to \a os
    * \ingroup TaskSerialization
-   */ 
+   */
   GECODE_SERIALIZATION_EXPORT
   void boostTextSerialization(std::ostream& os,
     const std::vector<Reflection::VarSpec>& vars,

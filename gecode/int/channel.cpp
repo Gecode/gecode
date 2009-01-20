@@ -135,7 +135,7 @@ namespace Gecode {
   }
 
   void
-  channel(Space& home, const BoolVarArgs& x, IntVar y, int o, 
+  channel(Space& home, const BoolVarArgs& x, IntVar y, int o,
           IntConLevel) {
     using namespace Int;
     if (x.same(home))

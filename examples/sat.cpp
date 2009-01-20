@@ -35,7 +35,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include "examples/support.hh"
 
@@ -53,7 +53,7 @@ public:
   /// Name of the DIMACS file to parse
   std::string filename;
   /// Initialize options with file name \a s
-  SatOptions(const char* s) 
+  SatOptions(const char* s)
     : Options(s) {}
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int& argc, char* argv[]) {
@@ -90,7 +90,7 @@ public:
  *
  * A dimacs file starts with comments (each line
  * starts with c). The number of variables and the
- * number of clauses is defined by the line 
+ * number of clauses is defined by the line
  *
  *    p cnf <variables> <clauses>
  *
@@ -105,7 +105,7 @@ public:
  * 3 -1 0
  * 1 2 -1 0
  *
- * Benchmarks on satlib.org, for instance, 
+ * Benchmarks on satlib.org, for instance,
  * are in the dimacs CNF format.
  *
  * \ingroup ExProblem
@@ -117,7 +117,7 @@ private:
 public:
   /// The actual problem
   Sat(const SatOptions& opt) {
-    parseDIMACS(opt.filename.c_str()); 
+    parseDIMACS(opt.filename.c_str());
     branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
@@ -177,7 +177,7 @@ public:
         x = BoolVarArray(*this, variables, 0, 1);
       }
       // Parse regular clause
-      else if (variables > 0 && 
+      else if (variables > 0 &&
       ((line[0] >= '0' && line[0] <= '9') || line[0] == '-' || line[0] == ' ')) {
         c++;
         std::vector<int> pos;
@@ -199,14 +199,14 @@ public:
             i++;
           }
           if (value != 0) {
-            if (positive) 
+            if (positive)
               pos.push_back(value-1);
             else
               neg.push_back(value-1);
             i++;
           }
         }
-        
+
         // Create positive BoolVarArgs
         BoolVarArgs positives(pos.size());
         for (int i=pos.size(); i--;)
@@ -215,10 +215,10 @@ public:
         BoolVarArgs negatives(neg.size());
         for (int i=neg.size(); i--;)
           negatives[i] = x[neg[i]];
-        
+
         // Post propagators
         clause(*this, BOT_OR, positives, negatives, 1);
-      } 
+      }
       else {
         std::cerr << "format error in dimacs file" << std::endl;
         std::cerr << "context: '" << line << "'" << std::endl;
@@ -242,14 +242,14 @@ int main(int argc, char* argv[]) {
 
   SatOptions opt("SAT");
   opt.parse(argc,argv);
-  
+
   // Check whether all arguments are successfully parsed
   if (argc > 1) {
     std::cerr << "Could not parse all arguments." << std::endl;
     opt.help();
     std::exit(EXIT_FAILURE);
   }
-  
+
   // Run SAT solver
   Example::run<Sat,DFS,SatOptions>(opt);
   return 0;

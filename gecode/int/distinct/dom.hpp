@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   class ValNode : public Node<View> {
   protected:
     /// The value of the node
-    const int      _val; 
+    const int      _val;
     /// The matching edge
     Edge<View>*    _matching;
     /// The next value node
@@ -155,9 +155,9 @@ namespace Gecode { namespace Int { namespace Distinct {
   class ViewNode : public Node<View> {
   protected:
     /// The node's view
-    View        _view;    
+    View        _view;
     /// The first value edge
-    Edge<View>* _val_edges; 
+    Edge<View>* _val_edges;
   public:
     /// Initialize new node for view \a x
     ViewNode(View x);
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     // No, find matching edge by augmenting path method
     Edge<View>* e = x->val_edges();
     do {
-      if (e->val(x)->matching()->view(e->val(x))->min < count) { 
+      if (e->val(x)->matching()->view(e->val(x))->min < count) {
         e->val(x)->matching()->view(e->val(x))->min = count;
         m.push(x); x->iter = e;
         x = e->val(x)->matching()->view(e->val(x));
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   ExecStatus
   DomCtrl<View>::ViewValGraph::init(Space& home, int n, View* x) {
-    n_view = n; 
+    n_view = n;
     view = home.alloc<ViewNode<View>*>(n_view);
 
     // Find value information for construction of view value graph
@@ -382,12 +382,12 @@ namespace Gecode { namespace Int { namespace Distinct {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free (unmatched node) by depth-first-search
       Support::StaticStack<ValNode<View>*,Region> visit(r,n_val);
-      
+
       // Insert all free nodes: they can be only value nodes as we
       // have a maximum matching covering all view nodes
       count++;
       {
-        ValNode<View>** v = &val; 
+        ValNode<View>** v = &val;
         while (*v != NULL)
           if (!(*v)->matching()) {
             if ((*v)->empty()) {
@@ -402,7 +402,7 @@ namespace Gecode { namespace Int { namespace Distinct {
             v = (*v)->next_val_ref();
           }
       }
-      
+
       // Invariant: only value nodes are on the stack!
       while (!visit.empty()) {
         ValNode<View>* n = visit.pop();
@@ -507,19 +507,19 @@ namespace Gecode { namespace Int { namespace Distinct {
       e = e->next_edge();
   }
   template <class View>
-  forceinline bool 
+  forceinline bool
   PruneVal<View>::operator ()(void) const {
     return e != NULL;
   }
   template <class View>
-  forceinline void 
+  forceinline void
   PruneVal<View>::operator ++(void) {
     do {
       e = e->next_edge();
     } while ((e != NULL) && e->used(x));
   }
   template <class View>
-  forceinline int 
+  forceinline int
   PruneVal<View>::val(void) const {
     assert(!e->used(x));
     return e->val(x)->val();

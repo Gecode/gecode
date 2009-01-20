@@ -41,13 +41,13 @@ namespace Test { namespace Int {
 
    /// Tests for basic setup
    namespace Basic {
-   
+
      /**
       * \defgroup TaskTestIntBasic Basic setup
       * \ingroup TaskTestInt
       */
      //@{
-   
+
      /// Test whether testing infrastructure for integer variables works
      class Basic : public Test {
      public:
@@ -62,15 +62,15 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space&, Gecode::IntVarArray&) {
        }
        /// Post reified constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray&, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray&,
                          Gecode::BoolVar b) {
          Gecode::rel(home, b, Gecode::IRT_EQ, 1);
        }
      };
-   
+
      Basic b;
      //@}
-   
+
    }
 }}
 

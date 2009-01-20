@@ -62,7 +62,7 @@ namespace Gecode {
         delete to;
       }
     };
-    
+
     TextInspector::TextInspector(const std::string& name)
     : t(NULL), n(name) {}
 
@@ -98,14 +98,14 @@ namespace Gecode {
       GistMainWindow mw(root, bab, gi);
       return app.exec();
     }
-    
+
   }
-  
+
   int
   explore(Space* root, Gist::Inspector* gi) {
     return Gist::explore(root, false, gi);
   }
-  
+
   int
   exploreBest(Space* root, Gist::Inspector* gi) {
     return Gist::explore(root, true, gi);

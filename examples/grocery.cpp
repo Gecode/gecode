@@ -68,11 +68,11 @@ public:
     post(*this, x[0]+x[1]+x[2]+x[3] == s, opt.icl());
 
     // The product of all variables is s (corrected by scale factor)
-    rel(*this, 
-        mult(*this, 
-             mult(*this, x[0], x[1], opt.icl()), 
+    rel(*this,
+        mult(*this,
+             mult(*this, x[0], x[1], opt.icl()),
              mult(*this, x[2], x[3], opt.icl()),
-             opt.icl()), 
+             opt.icl()),
         IRT_EQ, s*100*100*100);
 
     // Break symmetries: order the variables

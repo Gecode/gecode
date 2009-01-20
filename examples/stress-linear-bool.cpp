@@ -51,7 +51,7 @@ public:
   /// Constructor for the model
   StressLinearBool(const SizeOptions& opt)
     : x(*this,4*opt.size()+1,0,1) {
-    
+
     linear(*this, x, IRT_GQ, 2*opt.size());
 
     for (unsigned int i=0; i<opt.size(); i++) {

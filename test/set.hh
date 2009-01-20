@@ -45,7 +45,7 @@
 #include "test/int.hh"
 
 namespace Test {
-  
+
   /// Testing finite sets
   namespace Set {
 
@@ -132,7 +132,7 @@ namespace Test {
       CountableSet(const Gecode::IntSet& s);
       /// Default constructor
       CountableSet(void) {}
-      /// Initialize with set \a s      
+      /// Initialize with set \a s
       void init(const Gecode::IntSet& s);
       /// Check if still subsets left
       bool operator()(void) const { return cur<lubmax; }
@@ -205,7 +205,7 @@ namespace Test {
        * \brief Constructor
        *
        * Constructs a test with name \a t and arity \a a and variable
-       * domain \a d. Also tests for a reified constraint, 
+       * domain \a d. Also tests for a reified constraint,
        * if \a r is true. In addition, \a w integer variables are provided.
        */
       SetTest(const std::string& s,
@@ -214,7 +214,7 @@ namespace Test {
       /// Check for solution
       virtual bool solution(const SetAssignment&) const = 0;
       /// Post propagator
-      virtual void post(Gecode::Space& home, Gecode::SetVarArray& x, 
+      virtual void post(Gecode::Space& home, Gecode::SetVarArray& x,
                         Gecode::IntVarArray& y) = 0;
       /// Post reified propagator
       virtual void post(Gecode::Space&, Gecode::SetVarArray&,
@@ -240,7 +240,7 @@ namespace Test {
       /// Array of relation types
       static const Gecode::SetRelType srts[6];
       /// Current position in relation type array
-      int i; 
+      int i;
     public:
       /// Initialize iterator
       SetRelTypes(void);
@@ -251,14 +251,14 @@ namespace Test {
       /// Return current relation type
       Gecode::SetRelType srt(void) const;
     };
-    
+
     /// Iterator for Boolean operation types
     class SetOpTypes {
     private:
       /// Array of operation types
       static const Gecode::SetOpType sots[4];
       /// Current position in operation type array
-      int i; 
+      int i;
     public:
       /// Initialize iterator
       SetOpTypes(void);

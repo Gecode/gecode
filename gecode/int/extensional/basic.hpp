@@ -48,14 +48,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View, bool shared>
   forceinline
-  Basic<View,shared>::Basic(Space& home, ViewArray<View>& x, 
+  Basic<View,shared>::Basic(Space& home, ViewArray<View>& x,
                             const TupleSet& t)
     : Base<View>(home,x,t) {
   }
 
   template <class View, bool shared>
   forceinline ExecStatus
-  Basic<View,shared>::post(Space& home, ViewArray<View>& x, 
+  Basic<View,shared>::post(Space& home, ViewArray<View>& x,
                            const TupleSet& t) {
     // All variables in the correct domain
     for (int i = x.size(); i--; ) {
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
     TupleSet tupleSet(vars, spec[1]);
-    (void) new (home) Basic<View,shared>(home,x,tupleSet);    
+    (void) new (home) Basic<View,shared>(home,x,tupleSet);
   }
 
 
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   Basic<View,shared>::propagate(Space& home, const ModEventDelta&) {
     // Set up datastructures
-  
+
     // Bit-sets for amortized O(1) access to domains
     Region r(home);
     BitSet* dom = r.alloc<BitSet>(x.size());
@@ -124,13 +124,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Bit-sets for processed values.
     BitSet* has_support = r.alloc<BitSet>(x.size());
-    for (int i = x.size(); i--; ) 
+    for (int i = x.size(); i--; )
       has_support[i].init(home, ts()->domsize);
-    
+
 
     // Values to prune
     Support::StaticStack<int,Region> nq(r,ts()->domsize);
-    
+
     // Run algorithm
 
     // Check consistency for each view-value pair
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             // No possible supports left
             nq.push(vv.val());
           } else {
-            // Mark values as supported 
+            // Mark values as supported
             // Only forward direction marking is needed since all
             // previous values have been checked
             for (int j = i; j--; ) {

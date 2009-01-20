@@ -52,7 +52,7 @@ namespace Test { namespace Assign {
     IntTestSpace(int n, Gecode::IntSet& d)
       : x(*this, n, d) {}
     /// Constructor for cloning \a s
-    IntTestSpace(bool share, IntTestSpace& s) 
+    IntTestSpace(bool share, IntTestSpace& s)
       : Gecode::Space(share,s) {
       x.update(*this, share, s.x);
     }
@@ -71,7 +71,7 @@ namespace Test { namespace Assign {
     BoolTestSpace(int n)
       : x(*this, n, 0, 1) {}
     /// Constructor for cloning \a s
-    BoolTestSpace(bool share, BoolTestSpace& s) 
+    BoolTestSpace(bool share, BoolTestSpace& s)
       : Gecode::Space(share,s) {
       x.update(*this, share, s.x);
     }
@@ -99,7 +99,7 @@ namespace Test { namespace Assign {
   /// Names for integer assignments
   const char* int_assign_name[] = {
     "INT_ASSIGN_MIN",
-    "INT_ASSIGN_MED",       
+    "INT_ASSIGN_MED",
     "INT_ASSIGN_MAX"
   };
   //@}
@@ -122,7 +122,7 @@ namespace Test { namespace Assign {
       assign(*clone, clone->x, int_assign[val]);
       Gecode::DFS<IntTestSpace> e_s(clone, o);
       delete clone;
-        
+
       // Find number of solutions
       int solutions = 0;
       while (Space* s = e_s.next()) {
@@ -158,7 +158,7 @@ namespace Test { namespace Assign {
       assign(*clone, clone->x, int_assign[val]);
       Gecode::DFS<BoolTestSpace> e_s(clone, o);
       delete clone;
-        
+
       // Find number of solutions
       int solutions = 0;
       while (Space* s = e_s.next()) {

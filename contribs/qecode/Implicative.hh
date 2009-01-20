@@ -1,5 +1,5 @@
-/****   , [ Implicative.hh ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ Implicative.hh ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +37,12 @@ private:
         vector<OptVar*> vars; // Several Optvars in universal scopes, one in existential ones
         int opt_type;        // Used in existential scopes : 0 for ANY, 1 for MIN, 2 for MAX.
     };
-    
+
     int n;
     int nbSpaces;
     void** v;
     VarType* type_of_v;
-    
+
     bool* Quantifiers;
     MySpace** rules;
     MySpace* goal;
@@ -50,30 +50,30 @@ private:
     int* nbVarBySpace;
     int* whichSpaceOwns;
     bool* varInitialised;
-    
+
     int currentDeclareSpace;
-    
+
 public:
     QECODE_EXPORT int nv() {return n;}
-    
+
     /** \brief  Default constructor for a restricted-quantified space
         *
         *  This is the first step for building a QCSP+/QCOP+ problem. The prefix is defined here.
         *  @param ns The number of scopes in the prefix.
         *  @param quant Array of booleans which contains the quantifier of every scope (true for universal, false for existential).
         *  @param nv Array of integer which contains the number of variables by scope.
-        */    
+        */
     QECODE_EXPORT Implicative(int ns, bool* quant,int* nv);
     QECODE_EXPORT ~Implicative();
-    
+
     /** \brief Defines an integer variable in the quantified space
         *
         *  Defines an integer variable in the quantifies space using a fully declared domain.
         *  @param var Number of the variable to be  defined.
         *  @param dom The initial domain of the variable.
-        */    
+        */
     QECODE_EXPORT void QIntVar(int var,int min,int max);
-    
+
     /** \brief Defines an integer variable in the quantified space
         *
         *  Defines an integer variable in the quantifies space using a fully declared domain.
@@ -81,20 +81,20 @@ public:
         *  @param dom The initial domain of the variable.
         */
     QECODE_EXPORT void QIntVar(int var,IntSet dom);
-    
+
     /** \brief Defines a boolean variable in the quantified space
         *
         *  Defines a boolean variable with a full initial domain in the quantified space.
         *  @param var Number of the variable to be defined.
         */
     QECODE_EXPORT void QBoolVar(int var);
-    
+
     /** \brief Returns the current declarating space
         *
         *  Return the space we are currently declarating constraints in. nextScope() is used to set the nextspace as the current one.
-        */    
+        */
     QECODE_EXPORT MySpace* space();
-    
+
     /** \brief Returns an integer variable from the space we are currently declaring
         *
         *  Returns an integer variable from the cpace we are currently declaring. Will abort if the variable is not integer.
@@ -135,22 +135,22 @@ public:
 
     /** returns an existential optimization variable
         *
-        * Creates an optimization variable that will have the value of an existential variable defined in the problem. 
+        * Creates an optimization variable that will have the value of an existential variable defined in the problem.
         * @param var the number of the existential variable that must be considered
         */
     QECODE_EXPORT OptVar* getExistential(int var);
-    
+
     /** set an optimization condition on an existential scope
         *
         * set an optimization condition on a given existential scope of the problem. An optimizaiton condition is composed of an optimization variable (aggregate or existential variable), and of an
-        * optimization type. 
+        * optimization type.
         * @param scope the scope on which the optimization condition is posted. Must be existential.
         * @param optType the optimization type of the condision we post. 0 is for ANY, 1 is for MIN, 2 is for MAX.
         * @param var the optimization variable to be minimized/maximized
         */
     QECODE_EXPORT void optimize(int scope, int optType, OptVar* var);
 //    QECODE_EXPORT void print();
-    
+
     QECODE_EXPORT bool qt_of_var(int v); ///< returns uantifier of variable 'v'
     QECODE_EXPORT bool quantification(int scope) {return Quantifiers[scope];} ///< returns quantifier of scope 'scope'
     QECODE_EXPORT int spaces(); ///< returns the number of scopes of the problem
@@ -160,5 +160,5 @@ public:
     QECODE_EXPORT int getOptType(int scope); ///< returns theoptimization type of the 'scope'-th scope of the problem
     QECODE_EXPORT OptVar* getOptVar(int scope);///< returns the optimization variable of the 'scope'-th scope of the problem
 };
-    
+
 #endif

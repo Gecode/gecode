@@ -55,7 +55,7 @@ public:
   }
   /// Initialize options for example with name \a s
   BIBDOptions(const char* s,
-              int v0, int k0, int lambda0) 
+              int v0, int k0, int lambda0)
     : Options(s), v(v0), k(k0), lambda(lambda0) {
     derive();
   }

@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace CpltSet {
 
@@ -43,7 +43,7 @@ namespace Gecode {
      * \defgroup TaskActorCpltSetView CpltSet views
      *
      * CpltSet propagators and branchings compute with CpltSet views.
-     * CpltSet views provide views on CpltSet variable implementations and 
+     * CpltSet views provide views on CpltSet variable implementations and
      * integer variable implementations.
      * \ingroup TaskActorCpltSet
      */
@@ -100,22 +100,22 @@ namespace Gecode {
       bool notContains(int i) const;
       //@}
 
-      /// \name Bdd information 
+      /// \name Bdd information
       //@{
       /// Return the initial minimum of the least upper bound
       int initialLubMin(void) const;
       /// Return the initial maximum of the least upper bound
       int initialLubMax(void) const;
-      /** \brief Return the number of bdd variables allocated for this 
+      /** \brief Return the number of bdd variables allocated for this
         * variable (initialLubMax-initialLubMin) */
       unsigned int tableWidth(void) const;
-      /** \brief Return the offset in the global bdd table where the 
+      /** \brief Return the offset in the global bdd table where the
         * variable's domain starts */
       unsigned int offset(void) const;
-      /** \brief Return bdd for the \a i -th element of this variable 
+      /** \brief Return bdd for the \a i -th element of this variable
         * (counting from initialLubMin) */
       bdd element(int i) const;
-      /** \brief Return negated bdd for the \a i -th element of this variable 
+      /** \brief Return negated bdd for the \a i -th element of this variable
         * (counting from initialLubMin) */
       bdd elementNeg(int i) const;
       /// Return the bdd representing the current domain
@@ -125,7 +125,7 @@ namespace Gecode {
 
       /// \name Domain update by value
       //@{
-      /** 
+      /**
        * \brief Restrict cardinality to be greater than or equal to \a l
        *        and to be less than or equal to \a u.
        */
@@ -138,11 +138,11 @@ namespace Gecode {
       /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
       ModEvent include(Space& home, int i,int j);
       /// Include elements \a i in greatest lower bound
-      ModEvent include(Space& home, int i); 
+      ModEvent include(Space& home, int i);
 
-      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound
       ModEvent exclude(Space& home, int i,int j);
-      /// Exclude element \a i from least upper bound 
+      /// Exclude element \a i from least upper bound
       ModEvent exclude(Space& home, int i);
 
       /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
@@ -154,14 +154,14 @@ namespace Gecode {
       ModEvent eq(Space& home, int v);
       /// Restrict domain to be equal to the set \f$ [a,b] \f$
       ModEvent eq(Space& home, int a, int b);
-       
+
       /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
       ModEvent intersect(Space& home,int i,int j);
       /// Restrict least upper bound to contain at most the element \a i
       ModEvent intersect(Space& home,int i);
 
       /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
-      ModEvent intersect(Space& home, bdd& d);   
+      ModEvent intersect(Space& home, bdd& d);
       //@}
 
       /// \name Domain update by range iterator
@@ -170,7 +170,7 @@ namespace Gecode {
       /// Remove range sequence described by \a i from least upper bound
       template <class I> ModEvent excludeI(Space& home, I& i);
       /// Include set described by range list \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);  
+      template <class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
       template <class I> ModEvent intersectI(Space& home, I& iter);
       /// Restrict domain to be equal to the set described by the range sequence \a i

@@ -165,19 +165,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultZeroOne<View,pc>::post(Space& home, View x0, View x1) {
     switch (equal(x0,0)) {
     case RT_FALSE:
-      GECODE_ME_CHECK(x1.eq(home,1)); 
+      GECODE_ME_CHECK(x1.eq(home,1));
       break;
     case RT_TRUE:
       break;
     case RT_MAYBE:
       switch (equal(x1,1)) {
       case RT_FALSE:
-        GECODE_ME_CHECK(x0.eq(home,0)); 
+        GECODE_ME_CHECK(x0.eq(home,0));
         break;
       case RT_TRUE:
         break;
       case RT_MAYBE:
-        (void) new (home) MultZeroOne<View,pc>(home,x0,x1); 
+        (void) new (home) MultZeroOne<View,pc>(home,x0,x1);
         break;
       default: GECODE_NEVER;
       }
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class View, PropCond pc>
   forceinline
-  MultZeroOne<View,pc>::MultZeroOne(Space& home, bool share, 
+  MultZeroOne<View,pc>::MultZeroOne(Space& home, bool share,
                                     MultZeroOne<View,pc>& p)
     : BinaryPropagator<View,pc>(home,share,p) {}
 
@@ -204,14 +204,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultZeroOne<View,pc>::propagate(Space& home, const ModEventDelta&) {
     switch (equal(x0,0)) {
     case RT_FALSE:
-      GECODE_ME_CHECK(x1.eq(home,1)); 
+      GECODE_ME_CHECK(x1.eq(home,1));
       break;
     case RT_TRUE:
       break;
     case RT_MAYBE:
       switch (equal(x1,1)) {
       case RT_FALSE:
-        GECODE_ME_CHECK(x0.eq(home,0)); 
+        GECODE_ME_CHECK(x0.eq(home,0));
         break;
       case RT_TRUE:
         break;
@@ -280,7 +280,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Space& home, bool share, 
+  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Space& home, bool share,
                                    MultPlusBnd<Val,VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,share,p) {}
@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlusBnd<Val,VA,VB,VC>::post(Space& home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
-    GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) * 
+    GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) *
                                 static_cast<double>(x1.min()))));
     double u = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
     if (u > INT_MAX) {
@@ -512,7 +512,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space& home, bool share, 
+  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space& home, bool share,
                                          MultPlusDom<Val,VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
       (home,share,p) {}
@@ -525,7 +525,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template <class Val, class VA, class VB, class VC>
   PropCost
-  MultPlusDom<Val,VA,VB,VC>::cost(const Space&, 
+  MultPlusDom<Val,VA,VB,VC>::cost(const Space&,
                                   const ModEventDelta& med) const {
     if (VA::me(med) == ME_INT_DOM)
       return PropCost::ternary(PropCost::MED);
@@ -549,7 +549,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlusDom<Val,VA,VB,VC>::post(Space& home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
-    GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) * 
+    GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) *
                                 static_cast<double>(x1.min()))));
     double u = static_cast<double>(x0.max()) * static_cast<double>(x1.max());
     if (u > INT_MAX) {
@@ -633,49 +633,49 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
 
       return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
-      
+
     prop_xpx:
       std::swap(x0,x1);
     prop_pxx:
       assert(pos(x0) && any(x1) && any(x2));
-      
+
       GECODE_ME_CHECK(x2.lq(home,m<double>(x0.max(),x1.max())));
       GECODE_ME_CHECK(x2.gq(home,m<double>(x0.max(),x1.min())));
-      
+
       if (pos(x2)) goto rewrite_ppp;
       if (neg(x2)) goto rewrite_pnn;
-      
+
       GECODE_ME_CHECK(x1.lq(home,f_d(x2.max(),x0.min())));
       GECODE_ME_CHECK(x1.gq(home,c_d(x2.min(),x0.min())));
-      
+
       if (x0.assigned() && x1.assigned()) {
         GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
         return ES_SUBSUMED(*this,sizeof(*this));
       }
-      
+
       return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
-      
+
     prop_xnx:
       std::swap(x0,x1);
     prop_nxx:
       assert(neg(x0) && any(x1) && any(x2));
-      
+
       GECODE_ME_CHECK(x2.lq(home,m<double>(x0.min(),x1.min())));
       GECODE_ME_CHECK(x2.gq(home,m<double>(x0.min(),x1.max())));
-      
+
       if (pos(x2)) goto rewrite_nnp;
       if (neg(x2)) goto rewrite_npn;
-      
+
       GECODE_ME_CHECK(x1.lq(home,f_d(x2.min(),x0.max())));
       GECODE_ME_CHECK(x1.gq(home,c_d(x2.max(),x0.max())));
-      
+
       if (x0.assigned() && x1.assigned()) {
         GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
         return ES_SUBSUMED(*this,sizeof(*this));
       }
-      
+
       return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
-      
+
     rewrite_ppp:
       GECODE_REWRITE(*this,(MultPlusDom<double,IntView,IntView,IntView>
                            ::post(home,x0,x1,x2)));

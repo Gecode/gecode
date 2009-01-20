@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  MemoryLinBoolInt<VX>::MemoryLinBoolInt(Space& home, bool share, 
+  MemoryLinBoolInt<VX>::MemoryLinBoolInt(Space& home, bool share,
                                          MemoryLinBoolInt<VX>& p)
     : Propagator(home,share,p), x(home,p.x.size()), n_s(p.n_s) {
     // Update views not assigned and subscribed to
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  SpeedLinBoolInt<VX>::SpeedLinBoolInt(Space& home, bool share, 
+  SpeedLinBoolInt<VX>::SpeedLinBoolInt(Space& home, bool share,
                                        SpeedLinBoolInt<VX>& p)
     : Propagator(home,share,p), x(home,p.x.size()), n_s(p.n_s) {
     // Eliminate assigned views in original and update remaining ones
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Linear {
     p.x.size(n_x); x.size(n_x);
     co.update(home,share,p.co);
   }
-  
+
   template <class VX>
   PropCost
   SpeedLinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Linear {
   SpeedLinBoolInt<VX>::spec(const Space& home, Reflection::VarMap& m,
                             const Support::Symbol& ati) const {
     Reflection::ActorSpec s(ati);
-    Reflection::ArrayArg* a = 
+    Reflection::ArrayArg* a =
       Reflection::Arg::newArray(x.size()+n_s);
     int i = 0;
     for (; i<x.size(); i++)
@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  GqBoolInt<VX>::Memory::Memory(Space& home, bool share, 
+  GqBoolInt<VX>::Memory::Memory(Space& home, bool share,
                                 typename GqBoolInt<VX>::Memory& p)
     : MemoryLinBoolInt<VX>(home,share,p) {}
 
@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (c <= 0)
       return ES_SUBSUMED(*this,home);
     // Find unassigned variables to subscribe to
-    while ((n_s < n_x) && (n_s <= c)) 
+    while ((n_s < n_x) && (n_s <= c))
       if (x[n_s].zero()) {
         x[n_s]=x[--n_x];
       } else if (x[n_s].one()) {
@@ -236,10 +236,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  GqBoolInt<VX>::Speed::Speed(Space& home, bool share, 
+  GqBoolInt<VX>::Speed::Speed(Space& home, bool share,
                               typename GqBoolInt<VX>::Speed& p)
     : SpeedLinBoolInt<VX>(home,share,p) {}
-  
+
   template <class VX>
   Actor*
   GqBoolInt<VX>::Speed::copy(Space& home, bool share) {
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (a.view().one()) {
       c--; goto subsume;
     }
-    if (c+1 < n_s) 
+    if (c+1 < n_s)
       goto subsume;
     // Find a new subscription
     for (int i = x.size(); i--; )
@@ -367,7 +367,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  EqBoolInt<VX>::Memory::Memory(Space& home, bool share, 
+  EqBoolInt<VX>::Memory::Memory(Space& home, bool share,
                                 typename EqBoolInt<VX>::Memory& p)
     : MemoryLinBoolInt<VX>(home,share,p) {}
 
@@ -392,7 +392,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((c < 0) || (c > n_x))
       return ES_FAILED;
     // Find unassigned variables to subscribe to
-    while ((n_s < n_x) && ((n_s <= c) || (n_s <= n_x-c))) 
+    while ((n_s < n_x) && ((n_s <= c) || (n_s <= n_x-c)))
       if (x[n_s].zero()) {
         x[n_s]=x[--n_x];
       } else if (x[n_s].one()) {
@@ -437,10 +437,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  EqBoolInt<VX>::Speed::Speed(Space& home, bool share, 
+  EqBoolInt<VX>::Speed::Speed(Space& home, bool share,
                               typename EqBoolInt<VX>::Speed& p)
     : SpeedLinBoolInt<VX>(home,share,p) {}
-  
+
   template <class VX>
   Actor*
   EqBoolInt<VX>::Speed::copy(Space& home, bool share) {
@@ -655,7 +655,7 @@ namespace Gecode { namespace Int { namespace Linear {
         // New unassigned view found
         assert(!x[i].zero() && !x[i].one());
         // Move to y and subscribe
-        y=x[i]; x[i]=x[--n]; 
+        y=x[i]; x[i]=x[--n];
         x.size(n);
         y.subscribe(home,*this,PC_INT_VAL,false);
         return true;
@@ -668,7 +668,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class VX>
   ExecStatus
   NqBoolInt<VX>::propagate(Space& home, const ModEventDelta&) {
-    bool s0 = true; 
+    bool s0 = true;
     if (x0.zero() || x0.one())
       s0 = resubscribe(home,x0);
     bool s1 = true;

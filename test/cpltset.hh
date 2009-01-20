@@ -46,7 +46,7 @@
 #include "test/int.hh"
 
 namespace Test {
-  
+
   /// Testing finite sets with complete domain representation
   namespace CpltSet {
 
@@ -79,8 +79,8 @@ namespace Test {
       void addToGlb(int, Gecode::CpltSetVar&, int, const Gecode::IntSet&);
     public:
       CpltSetTest(const std::string& s, int a, const Gecode::IntSet& d,
-                  bool r=false, int w=0, int mn=10000, int mc=1000) 
-        : Base("CpltSet::"+s), arity(a), lub(d), reified(r), withInt(w), 
+                  bool r=false, int w=0, int mn=10000, int mc=1000)
+        : Base("CpltSet::"+s), arity(a), lub(d), reified(r), withInt(w),
           ivs(mn), ics(mc)  {
         Gecode::CpltSet::manager.dispose();
         Gecode::CpltSet::manager.init(mn, mc);
@@ -104,7 +104,7 @@ namespace Test {
           return 0;
         }
         int v = 0;
-        // compute the bit representation of the assignment 
+        // compute the bit representation of the assignment
         // and convert it to the corresponding integer
         while(r()) {
           v  |= (1 << r.val()); // due to reversed lex ordering
@@ -112,7 +112,7 @@ namespace Test {
         }
         return v;
       }
-  
+
       /// Provide manager access
       int varsize(void) { return ivs; }
       int cachesize(void) { return ics; }

@@ -229,14 +229,14 @@ public:
     for (int w=0; w<weeks; w++) {
       os << "Week " << w << ": " << std::endl << "    ";
       for (int g=0; g<groups; g++) {
-        if (group(w,g).assigned()) {          
+        if (group(w,g).assigned()) {
           bool first = true;
           os << "(";
           for (SetVarGlbValues glb(group(w,g)); glb(); ++glb) {
             if (first) first = false; else os << " ";
             os << glb.val();
           }
-          os << ")";          
+          os << ")";
         } else {
           os << "(" << group(w,g) << ")";
         }

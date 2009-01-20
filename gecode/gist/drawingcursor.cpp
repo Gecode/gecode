@@ -37,7 +37,7 @@
 #include <gecode/gist/drawingcursor.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   /// Red color for failed nodes
   const QColor DrawingCursor::red(218, 37, 29);
   /// Green color for solved nodes
@@ -53,7 +53,7 @@ namespace Gecode { namespace Gist {
   const QColor DrawingCursor::lightGreen(11, 118, 70, 120);
   /// Blue color for expanded choice nodes
   const QColor DrawingCursor::lightBlue(0, 92, 161, 120);
-  
+
   const int nodeWidth = 20;
   const int halfNodeWidth = nodeWidth / 2;
   const int quarterNodeWidth = halfNodeWidth / 2;
@@ -63,11 +63,11 @@ namespace Gecode { namespace Gist {
   const int dSolvedOffset = nodeWidth / 6;
   const int dSolvedHalfWidth = (nodeWidth-2*dSolvedOffset) / 2;
   const int hiddenDepth = Layout::dist_y + failedWidth;
-  
+
   DrawingCursor::DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
                                QPainter& painter0,
                                const QRect& clippingRect0, bool showCopies)
-    : NodeCursor<VisualNode>(root), painter(painter0), 
+    : NodeCursor<VisualNode>(root), painter(painter0),
       clippingRect(clippingRect0), curBest(curBest0),
       x(0), y(0), copies(showCopies) {
     QPen pen = painter.pen();
@@ -82,11 +82,11 @@ namespace Gecode { namespace Gist {
       return false;
     BoundingBox b = node()->getBoundingBox();
     return (x + b.left > clippingRect.x() + clippingRect.width() ||
-            x + b.right < clippingRect.x() || 
+            x + b.right < clippingRect.x() ||
             y > clippingRect.y() + clippingRect.height() ||
             y + (node()->depth()+1) * Layout::dist_y < clippingRect.y());
   }
-  
+
   void
   DrawingCursor::processCurrentNode(void) {
     Gist::VisualNode* n = node();
@@ -119,13 +119,13 @@ namespace Gecode { namespace Gist {
                                    myy+hiddenDepth+shadowOffset),
                            };
         painter.drawConvexPolygon(points, 3);
-        
+
       } else {
         switch (n->getStatus()) {
         case Gist::STEP:
         case Gist::SPECIAL:
-                painter.drawEllipse(myx-quarterNodeWidth+shadowOffset, 
-                                    myy+shadowOffset, halfNodeWidth, 
+                painter.drawEllipse(myx-quarterNodeWidth+shadowOffset,
+                                    myy+shadowOffset, halfNodeWidth,
                                     nodeWidth);
                 break;
         case Gist::SINGLETON:
@@ -158,16 +158,16 @@ namespace Gecode { namespace Gist {
           break;
         case Gist::BRANCH:
         case Gist::DECOMPOSE:
-          painter.drawEllipse(myx-halfNodeWidth+shadowOffset, 
+          painter.drawEllipse(myx-halfNodeWidth+shadowOffset,
                               myy+shadowOffset, nodeWidth, nodeWidth);
           break;
         case Gist::COMPONENT_IGNORED:
         case Gist::UNDETERMINED:
-          painter.drawEllipse(myx-halfNodeWidth+shadowOffset, 
+          painter.drawEllipse(myx-halfNodeWidth+shadowOffset,
                               myy+shadowOffset, nodeWidth, nodeWidth);
           break;
         }
-      }        
+      }
     }
 
     painter.setPen(Qt::SolidLine);
@@ -268,14 +268,14 @@ namespace Gecode { namespace Gist {
      painter.setBrush(Qt::darkRed);
      painter.drawEllipse(myx, myy, 10, 10);
     }
-    
+
     if (copies && n->hasWorkingSpace()) {
      painter.setBrush(Qt::darkYellow);
      painter.drawEllipse(myx, myy + 10, 10, 10);
     }
 
   }
-  
+
 }}
 
 // STATISTICS: gist-any

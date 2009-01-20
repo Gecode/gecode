@@ -73,7 +73,7 @@ namespace Gecode { namespace Reflection {
     int r;
   };
 
-  VarMap::VarMapObj::VarMapObj(void) 
+  VarMap::VarMapObj::VarMapObj(void)
     : vars(heap), specs(heap), sharedObjects(heap),
       n(0), so(0), r(1) {}
 
@@ -87,7 +87,7 @@ namespace Gecode { namespace Reflection {
       if (--vo->r == 0) {
         for (int i=vo->n; i--;)
           delete vo->specs[i];
-        delete vo;        
+        delete vo;
       }
       vo = v.vo;
       vo->r++;
@@ -107,7 +107,7 @@ namespace Gecode { namespace Reflection {
   VarMap::size(void) const {
     return vo->n;
   }
-  
+
   int
   VarMap::index(const VarImpBase* cx) const {
     int i;
@@ -117,7 +117,7 @@ namespace Gecode { namespace Reflection {
 
   int
   VarMap::index(const Support::Symbol& n) const {
-    VarImpBase* v;      
+    VarImpBase* v;
     return vo->nameToVar.get(n, v) ? index(v) : -1;
   }
 
@@ -214,7 +214,7 @@ namespace Gecode { namespace Reflection {
     }
     return newIndex;
   }
-  
+
   void
   VarMap::putMasterObject(void* obj) {
     vo->sharedObjectMap.put(obj, vo->so);
@@ -228,7 +228,7 @@ namespace Gecode { namespace Reflection {
       return idx;
     return -1;
   }
-  
+
   void*
   VarMap::getSharedObject(int i) const {
     assert(i < vo->so);
@@ -259,7 +259,7 @@ namespace Gecode { namespace Reflection {
   VarMapIter::varImpBase(void) const { return m->vo->vars[i]; }
 
   void
-  VarMapIter::operator ++(void) { i++; }  
+  VarMapIter::operator ++(void) { i++; }
 
   Var
   VarMapIter::var(void) const {

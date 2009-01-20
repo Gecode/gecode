@@ -57,7 +57,7 @@ namespace Gecode { namespace Int {
   bool_test(const NegBoolView& b0, const NegBoolView& b1) {
     return same(b0,b1) ? BT_SAME : BT_NONE;
   }
-  
+
 }}
 
 // STATISTICS: int-var

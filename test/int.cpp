@@ -103,7 +103,7 @@ namespace Test { namespace Int {
      *
      * Creates \a n variables with domain \a d0 and stores whether
      * the test is for a reified propagator (\a r), and the test itself
-     * (\a t). 
+     * (\a t).
      *
      */
     TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log=true)
@@ -116,7 +116,7 @@ namespace Test { namespace Int {
       }
     }
     /// Constructor for cloning \a s
-    TestSpace(bool share, TestSpace& s) 
+    TestSpace(bool share, TestSpace& s)
       : Gecode::Space(share,s), d(s.d), reified(s.reified), test(s.test) {
       x.update(*this, share, s.x);
       b.update(*this, share, s.b);
@@ -227,7 +227,7 @@ namespace Test { namespace Int {
     void rel(bool sol) {
       int n = sol ? 1 : 0;
       assert(reified);
-      if (opt.log) 
+      if (opt.log)
         olog << ind(4) << "b = " << n << std::endl;
       Gecode::rel(*this, b, Gecode::IRT_EQ, n);
     }
@@ -235,7 +235,7 @@ namespace Test { namespace Int {
     void assign(const Assignment& a, bool skip=false) {
       using namespace Gecode;
       int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
-      for (int j=a.size(); j--; ) 
+      for (int j=a.size(); j--; )
         if (i != j) {
           rel(j, IRT_EQ, a[j]);
           if (Base::fixpoint() && failed())
@@ -368,7 +368,7 @@ namespace Test { namespace Int {
         if (opt.log)
           olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
         delete c;
-      }                                                
+      }
       return true;
     }
 
@@ -377,11 +377,11 @@ namespace Test { namespace Int {
   const Gecode::IntConLevel IntConLevels::icls[] =
     {Gecode::ICL_DOM,Gecode::ICL_BND,Gecode::ICL_VAL};
 
-  const Gecode::IntRelType IntRelTypes::irts[] = 
+  const Gecode::IntRelType IntRelTypes::irts[] =
     {Gecode::IRT_EQ,Gecode::IRT_NQ,Gecode::IRT_LQ,
      Gecode::IRT_LE,Gecode::IRT_GQ,Gecode::IRT_GR};
 
-  const Gecode::BoolOpType BoolOpTypes::bots[] = 
+  const Gecode::BoolOpType BoolOpTypes::bots[] =
     {Gecode::BOT_AND,Gecode::BOT_OR,Gecode::BOT_IMP,
      Gecode::BOT_EQV,Gecode::BOT_XOR};
 
@@ -412,8 +412,8 @@ if (!(T)) {                                                     \
     return false;
   }
 
-  void 
-  Test::post(Gecode::Space&, Gecode::IntVarArray&, 
+  void
+  Test::post(Gecode::Space&, Gecode::IntVarArray&,
              Gecode::BoolVar) {}
 
   bool
@@ -436,11 +436,11 @@ if (!(T)) {                                                     \
     while (a()) {
       bool sol = solution(a);
       if (opt.log) {
-        olog << ind(1) << "Assignment: " << a 
+        olog << ind(1) << "Assignment: " << a
              << (sol ? " (solution)" : " (no solution)")
              << std::endl;
       }
-      
+
       START_TEST("Assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,false,this);
@@ -520,9 +520,9 @@ if (!(T)) {                                                     \
         delete s;
       }
       START_TEST("Assignment (before posting)");
-      {      
+      {
         TestSpace* s = new TestSpace(arity,dom,false,this);
-        s->assign(a); 
+        s->assign(a);
         s->post();
         if (sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
@@ -533,9 +533,9 @@ if (!(T)) {                                                     \
         delete s;
       }
       START_TEST("Partial assignment (before posting)");
-      {      
+      {
         TestSpace* s = new TestSpace(arity,dom,false,this);
-        s->assign(a,true); 
+        s->assign(a,true);
         s->post();
         (void) s->failed();
         s->assign(a);
@@ -548,7 +548,7 @@ if (!(T)) {                                                     \
         delete s;
       }
       START_TEST("Prune");
-      {      
+      {
         TestSpace* s = new TestSpace(arity,dom,false,this);
         s->post();
         while (!s->failed() && !s->assigned())
@@ -569,7 +569,7 @@ if (!(T)) {                                                     \
 
       if (reified && !ignore(a)) {
         START_TEST("Assignment reified (rewrite after post)");
-        {      
+        {
           TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
           s->rel(sol);
@@ -579,7 +579,7 @@ if (!(T)) {                                                     \
           delete s;
         }
         START_TEST("Assignment reified (immediate rewrite)");
-        {        
+        {
           TestSpace* s = new TestSpace(arity,dom,true,this);
           s->rel(sol);
           s->post();
@@ -589,9 +589,9 @@ if (!(T)) {                                                     \
           delete s;
         }
         START_TEST("Assignment reified (before posting)");
-        {        
+        {
           TestSpace* s = new TestSpace(arity,dom,true,this);
-          s->assign(a); 
+          s->assign(a);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumption");
@@ -604,7 +604,7 @@ if (!(T)) {                                                     \
           delete s;
         }
         START_TEST("Assignment reified (after posting)");
-        {        
+        {
           TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
           s->assign(a);
@@ -643,7 +643,7 @@ if (!(T)) {                                                     \
           }
         }
         START_TEST("Prune reified");
-        {        
+        {
           TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
           while (!s->failed() && (!s->assigned() || !s->b.assigned()))
@@ -716,7 +716,7 @@ if (!(T)) {                                                     \
         CHECK_TEST(!s->failed(), "Failed");
         CHECK_TEST(s->propagators()==0, "No subsumption");
       }
-      delete s;      
+      delete s;
       // Fall-through -- bounds(d) implies bounds(z)
     }
     case CTL_BOUNDS_Z: {
@@ -731,7 +731,7 @@ if (!(T)) {                                                     \
         CHECK_TEST(!s->failed(), "Failed");
         CHECK_TEST(s->propagators()==0, "No subsumption");
       }
-      delete s;   
+      delete s;
       break;
     }
     }

@@ -43,7 +43,7 @@
 #include <gecode/set/rel-op.hh>
 
 namespace Gecode { namespace Set { namespace RelOp {
-  
+
   template <class View0, class View1, class Res>
   forceinline void
   rel_eq(Space& home, View0 x0, SetOpType op, View1 x1, Res x2) {
@@ -118,7 +118,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       }
       break;
     }
-    
+
   }
 
   template <class View0, class View1, class View2>
@@ -140,7 +140,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       }
       break;
     case SOT_INTER:
-      {        
+      {
         SetVar tmp(home);
         GECODE_ES_FAIL(home,
                        (Rel::Subset<View2,SetView>::post(home,x2,tmp)));
@@ -163,9 +163,9 @@ namespace Gecode { namespace Set { namespace RelOp {
       }
       break;
     }
-    
+
   }
-  
+
   template <class View0, class View1, class View2>
   forceinline void
   rel_op_post_nocompl(Space& home, View0 x, SetOpType op, View1 y,
@@ -212,7 +212,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     if (home.failed()) return;
     if (r == SRT_CMPL) {
       ComplementView<View2> cz(z);
-      rel_eq<View0,View1,ComplementView<View2> >(home, x, op, y, cz);      
+      rel_eq<View0,View1,ComplementView<View2> >(home, x, op, y, cz);
     } else {
       rel_op_post_nocompl<View0,View1,View2>(home, x, op, y, r, z);
     }

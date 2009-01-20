@@ -73,7 +73,7 @@
  * \namespace Gecode::Scheduling
  * \brief Scheduling support
  *
- * The Gecode::Scheduling namespace contains abstractions, propagators and 
+ * The Gecode::Scheduling namespace contains abstractions, propagators and
  * branchings for modelling and solving scheduling problems.
  *
  */
@@ -119,7 +119,7 @@ namespace Gecode {
     //@{
     /// Update this schedule to be a clone of schedule \a s
     void update(Space& home, bool share, Schedule& s);
-    //@}    
+    //@}
   };
 
   /**
@@ -157,7 +157,7 @@ namespace Gecode {
     //@{
     /// Update this resource to be a clone of resource \a r
     void update(Space& home, bool share, Resource& t);
-    //@}    
+    //@}
   };
 
   /**
@@ -180,7 +180,7 @@ namespace Gecode {
     /**
      * \brief Initialize task on resource
      *
-     * Initialize task on resource \a with start time between \a est 
+     * Initialize task on resource \a with start time between \a est
      * and \a lst, duration \a dur and resource usage \a use.
      */
     Task(Space& home, Resource& r, int est, int lst, int dur, int use=1);
@@ -194,7 +194,7 @@ namespace Gecode {
     /**
      * \brief Initialize task on resource
      *
-     * Initialize task on resource \a with start time between \a est 
+     * Initialize task on resource \a with start time between \a est
      * and \a lst, duration \a dur and resource usage \a use.
      */
     void init(Space& home, Resource& r, int est, int lst, int dur, int use=1);
@@ -231,7 +231,7 @@ namespace Gecode {
     //@{
     /// Update this task to be a clone of task \a t
     void update(Space& home, bool share, Task& t);
-    //@}    
+    //@}
   };
 
   /**
@@ -305,21 +305,21 @@ namespace Gecode {
    * \relates Gecode::Task
    */
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Task& t);
   /**
    * \brief Print resource \a r
    * \relates Gecode::Resource
    */
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Resource& r);
   /**
    * \brief Print schedule \a s
    * \relates Gecode::Resource
    */
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Schedule& s);
 
 

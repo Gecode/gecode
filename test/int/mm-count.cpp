@@ -91,7 +91,7 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      /// Test number of equal integers equal to integer variable
      class IntVar : public Test {
      protected:
@@ -125,7 +125,7 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      /// Test number of equal variables equal to integer variable
      class VarVar : public Test {
      protected:
@@ -159,7 +159,7 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      /// Test number of equal variables equal to integer
      class VarInt : public Test {
      protected:
@@ -195,7 +195,7 @@ namespace Test { namespace Int {
      };
 
      Gecode::IntArgs ints(4, 1,0,3,2);
-   
+
      /// Test number of several equal integers equal to integer
      class IntArrayInt : public Test {
      protected:
@@ -204,7 +204,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntArrayInt(Gecode::IntRelType irt0)
-         : Test("MiniModel::"+expand(irt0)+"::IntArray::Int",5,-2,2), 
+         : Test("MiniModel::"+expand(irt0)+"::IntArray::Int",5,-2,2),
            irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -230,7 +230,7 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      /// Test number of several equal integers equal to integer variable
      class IntArrayVar : public Test {
      protected:
@@ -239,7 +239,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntArrayVar(Gecode::IntRelType irt0)
-         : Test("MiniModel::"+expand(irt0)+"::IntArray::Var",5,-2,2), 
+         : Test("MiniModel::"+expand(irt0)+"::IntArray::Var",5,-2,2),
            irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -265,13 +265,13 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      /// Help class to create and register tests
      class Create {
      public:
        /// Perform creation and registration
        Create(void) {
-         for (IntRelTypes irts; irts(); ++irts) 
+         for (IntRelTypes irts; irts(); ++irts)
            if ((irts.irt() == Gecode::IRT_EQ) ||
                (irts.irt() == Gecode::IRT_LQ) ||
                (irts.irt() == Gecode::IRT_GQ)) {
@@ -284,10 +284,10 @@ namespace Test { namespace Int {
            }
        }
      };
-     
+
      Create c;
      //@}
-   
+
    }
 
 }}

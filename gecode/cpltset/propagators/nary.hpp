@@ -38,7 +38,7 @@
 namespace Gecode { namespace CpltSet {
 
   template <class View>
-  forceinline bdd 
+  forceinline bdd
   NaryCpltSetPropagator<View>::bnd_phi(int j) {
     /// \f$ B(c)\f$
     if (j == -1) {
@@ -52,7 +52,7 @@ namespace Gecode { namespace CpltSet {
     /// \f$ \exists_{V(D_j)} D_j \wedge phi_{j - 1}\f$
 
     // strange
-    if (!manager.ctrue(cur)) {    
+    if (!manager.ctrue(cur)) {
       bdd outvars = bdd_vars(cur);
       manager.existquant(cur, phires, outvars);
     } else {
@@ -63,7 +63,7 @@ namespace Gecode { namespace CpltSet {
 
   // used in eeq propagation with n*n and-abstractions
   template <class View>
-  forceinline bdd 
+  forceinline bdd
   NaryCpltSetPropagator<View>::phi(int i, int j) {
     // \f$ B(c)\f$
     if (j == -1) {
@@ -87,7 +87,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space& home, 
+  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space& home,
                                                      ViewArray<View>& x0,
                                                      bdd& d0)
     : Propagator(home), x(x0), d(d0) {
@@ -99,13 +99,13 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space& home, bool share, 
+  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space& home, bool share,
                                                      NaryCpltSetPropagator& p)
     : Propagator(home,share,p) {
     d = p.d;
     x.update(home,share,p.x);
   }
-  
+
   template <class View>
   forceinline PropCost
   NaryCpltSetPropagator<View>::cost(const Space&, const ModEventDelta&) const {
@@ -122,8 +122,8 @@ namespace Gecode { namespace CpltSet {
   Reflection::ActorSpec
   NaryCpltSetPropagator<View>::spec(const Space&, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
-  } 
- 
+  }
+
   template <class View>
   size_t
   NaryCpltSetPropagator<View>::dispose(Space& home) {
@@ -167,7 +167,7 @@ namespace Gecode { namespace CpltSet {
     for (int i = r; i >= h + 1; i--) {
       quantify(left, x[i]);
     }
-   
+
     ExecStatus es = ES_OK;
     GECODE_ES_CHECK(es = divide_conquer(home, left, l, h));
 
@@ -181,11 +181,11 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   NaryCpltSetPropagator<View>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = true;
     int n = x.size();
-    
+
     ExecStatus es = ES_OK;
     if (n == 1) {
       GECODE_ME_CHECK(x[0].intersect(home, d));

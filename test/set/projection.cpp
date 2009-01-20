@@ -134,7 +134,7 @@ namespace Test { namespace Set {
         Gecode::projector(home, x[0], x[1], ps);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&,  
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&,
                         BoolVar b) {
         Gecode::Projector p(0, Gecode::SetExpr(), Gecode::SetExpr(1));
         Gecode::Projector q(1, Gecode::SetExpr(0), -Gecode::SetExpr());
@@ -221,7 +221,7 @@ namespace Test { namespace Set {
         CountableSetRanges xr0(x.lub, x[0]);
         CountableSetRanges xr1(x.lub, x[1]);
         CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
           u(xr0,xr1);
         return Iter::Ranges::equal(xr2, u);
       }
@@ -310,7 +310,7 @@ namespace Test { namespace Set {
         CountableSetRanges xr0(x.lub, x[0]);
         CountableSetRanges xr1(x.lub, x[1]);
         CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
           u(xr0,xr1);
         return Iter::Ranges::equal(xr2, u);
       }
@@ -334,7 +334,7 @@ namespace Test { namespace Set {
         CountableSetRanges xr0(x.lub, x[0]);
         CountableSetRanges xr1(x.lub, x[1]);
         CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+        Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
           u(xr0,xr1);
         return Iter::Ranges::equal(xr2, u);
       }
@@ -405,7 +405,7 @@ namespace Test { namespace Set {
         CountableSetRanges xr0(x.lub, x[0]);
         CountableSetRanges xr1(x.lub, x[1]);
         CountableSetRanges xr2(x.lub, x[2]);
-        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> 
+        Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
           u(xr0,xr1);
         return !Iter::Ranges::equal(xr2, u);
       }

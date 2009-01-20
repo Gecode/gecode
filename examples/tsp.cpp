@@ -179,7 +179,7 @@ namespace {
   };
 
   inline
-  Problem::Problem(const int n, const int* d) 
+  Problem::Problem(const int n, const int* d)
     : _n(n), _d(d) {}
   inline int
   Problem::size(void) const {
@@ -226,7 +226,7 @@ protected:
   IntVar      total;
 public:
   /// Actual model
-  TSP(const SizeOptions& opt) 
+  TSP(const SizeOptions& opt)
     : p(ps[opt.size()]),
       succ(*this, p.size(), 0, p.size()-1),
       total(*this, 0, p.max()) {

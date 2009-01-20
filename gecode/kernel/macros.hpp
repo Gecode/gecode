@@ -76,7 +76,7 @@
 
 
 /**
- * \brief Check whether execution status \a es is failed or subsumed, and 
+ * \brief Check whether execution status \a es is failed or subsumed, and
  * forward failure or subsumption.
  *
  * \ingroup TaskActor
@@ -88,7 +88,7 @@
   } while (0)
 
 /**
- * \brief Check whether execution status \a es is failed, and fail 
+ * \brief Check whether execution status \a es is failed, and fail
  * space \a home.
  *
  * \ingroup TaskActor

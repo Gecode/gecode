@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace Distinct {
    * \brief %Propagator for the AtMostOneIntersection constraint
    *
    * Requires \code #include <gecode/set/distinct.hh> \endcode
-   * \ingroup FuncSetProp   
+   * \ingroup FuncSetProp
    */
 
   class AtmostOne :

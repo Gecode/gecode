@@ -87,8 +87,8 @@ namespace Test { namespace CpltSet {
       * Creates \a n set variables with domain \a d,
       * \a i integer variables with domain \a d, and stores whether
       * the test is for a reified propagator (\a r), the test itself
-      * (\a t) and the options (\a o). 
-      * 
+      * (\a t) and the options (\a o).
+      *
       */
     CpltSetTestSpace(int n, Gecode::IntSet& d, int i, bool r, CpltSetTest* t,
                      const Options& o, bool log=true)
@@ -104,14 +104,14 @@ namespace Test { namespace CpltSet {
     }
 
     /// Constructor for cloning \a s
-    CpltSetTestSpace(bool share, CpltSetTestSpace& s) 
-      : Space(share,s), withInt(s.withInt), reified(s.reified), test(s.test), 
+    CpltSetTestSpace(bool share, CpltSetTestSpace& s)
+      : Space(share,s), withInt(s.withInt), reified(s.reified), test(s.test),
         opt(s.opt) {
       x.update(*this, share, s.x);
       y.update(*this, share, s.y);
       b.update(*this, share, s.b);
     }
-  
+
     /// Copy space during cloning
     virtual Space* copy(bool share) {
       return new CpltSetTestSpace(share,*this);
@@ -135,7 +135,7 @@ namespace Test { namespace CpltSet {
         olog << ind(3) << "Fixpoint: x[]=" << x
              << " y[]=" << y << std::endl;
         bool f=(status() == Gecode::SS_FAILED);
-        olog << ind(3) << "     -->  x[]=" << x 
+        olog << ind(3) << "     -->  x[]=" << x
              << " y[]=" << y << std::endl;
         return f;
       } else {
@@ -187,7 +187,7 @@ namespace Test { namespace CpltSet {
     void rel(bool sol) {
       int n = sol ? 1 : 0;
       assert(reified);
-      if (opt.log) 
+      if (opt.log)
         olog << ind(4) << "b = " << n << std::endl;
       Gecode::rel(*this, b, Gecode::IRT_EQ, n);
     }
@@ -222,10 +222,10 @@ namespace Test { namespace CpltSet {
     void removeFromLub(int v, int i, const Test::Set::SetAssignment& a) {
       Gecode::CpltSetVarUnknownRanges ur(x[i]);
       Test::Set::CountableSetRanges air(a.lub, a[i]);
-      Gecode::Iter::Ranges::Diff<Gecode::CpltSetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Diff<Gecode::CpltSetVarUnknownRanges,
         Test::Set::CountableSetRanges> diff(ur, air);
       Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff
-        <Gecode::CpltSetVarUnknownRanges, Test::Set::CountableSetRanges> > 
+        <Gecode::CpltSetVarUnknownRanges, Test::Set::CountableSetRanges> >
           diffV(diff);
       for (int j=0; j<v; j++, ++diffV);
       rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
@@ -234,10 +234,10 @@ namespace Test { namespace CpltSet {
     void addToGlb(int v, int i, const Test::Set::SetAssignment& a) {
       Gecode::CpltSetVarUnknownRanges ur(x[i]);
       Test::Set::CountableSetRanges air(a.lub, a[i]);
-      Gecode::Iter::Ranges::Inter<Gecode::CpltSetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Inter<Gecode::CpltSetVarUnknownRanges,
         Test::Set::CountableSetRanges> inter(ur, air);
       Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter
-        <Gecode::CpltSetVarUnknownRanges, Test::Set::CountableSetRanges> > 
+        <Gecode::CpltSetVarUnknownRanges, Test::Set::CountableSetRanges> >
           interV(inter);
       for (int j=0; j<v; j++, ++interV);
       rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
@@ -255,7 +255,7 @@ namespace Test { namespace CpltSet {
       }
 
       for (int i=x.size(); i--; )
-        if (Gecode::CpltSet::CpltSetView(x[i]).dom() != 
+        if (Gecode::CpltSet::CpltSetView(x[i]).dom() !=
             Gecode::CpltSet::CpltSetView(c->x[i]).dom()) {
           delete c;
           return false;
@@ -353,11 +353,11 @@ namespace Test { namespace CpltSet {
       }
       Gecode::CpltSetVarUnknownRanges ur1(x[i]);
       Test::Set::CountableSetRanges air1(a.lub, a[i]);
-      Gecode::Iter::Ranges::Diff<Gecode::CpltSetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Diff<Gecode::CpltSetVarUnknownRanges,
         Test::Set::CountableSetRanges> diff(ur1, air1);
       Gecode::CpltSetVarUnknownRanges ur2(x[i]);
       Test::Set::CountableSetRanges air2(a.lub, a[i]);
-      Gecode::Iter::Ranges::Inter<Gecode::CpltSetVarUnknownRanges, 
+      Gecode::Iter::Ranges::Inter<Gecode::CpltSetVarUnknownRanges,
         Test::Set::CountableSetRanges> inter(ur2, air2);
 
       Test::Set::CountableSetRanges aisizer(a.lub, a[i]);
@@ -402,13 +402,13 @@ namespace Test { namespace CpltSet {
         } else {
           int v = Base::rand(Gecode::Iter::Ranges::size(diff));
           removeFromLub(v, i, a);
-        }      
+        }
       }
       return (!Base::fixpoint() || fixprob());
     }
   };
 
-  bool 
+  bool
   CpltSetTest::run(void) {
     const char* test    = "NONE";
     const char* problem = "NONE";
@@ -418,14 +418,14 @@ namespace Test { namespace CpltSet {
     Test::Set::SetAssignment& a = *ap;
 
     int an = 0;
-  
+
     while (a()) {
       bool is_sol = solution(a);
       if (opt.log)
-        olog << ind(1) << "Assignment: " << a 
+        olog << ind(1) << "Assignment: " << a
              << (is_sol ? " (solution)" : " (no solution)")
              << std::endl;
-    
+
       START_TEST("Assignment (after posting)");
       {
         Gecode::CpltSet::manager.dispose();
@@ -442,7 +442,7 @@ namespace Test { namespace CpltSet {
         }
         delete s;
       }
-    
+
       START_TEST("Assignment (before posting)");
       {
         Gecode::CpltSet::manager.dispose();
@@ -459,7 +459,7 @@ namespace Test { namespace CpltSet {
         }
         delete s;
       }
-    
+
       if (reified) {
         START_TEST("Assignment reified (before posting)");
         Gecode::CpltSet::manager.dispose();
@@ -478,7 +478,7 @@ namespace Test { namespace CpltSet {
         }
         delete s;
       }
-    
+
       if (reified) {
         START_TEST("Assignment reified (after posting)");
         Gecode::CpltSet::manager.dispose();
@@ -497,7 +497,7 @@ namespace Test { namespace CpltSet {
         }
         delete s;
       }
-    
+
       START_TEST("Prune");
       {
         Gecode::CpltSet::manager.dispose();
@@ -520,7 +520,7 @@ namespace Test { namespace CpltSet {
         }
         delete s;
       }
-    
+
       if (reified) {
         START_TEST("Prune reified");
         Gecode::CpltSet::manager.dispose();

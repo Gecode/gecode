@@ -110,7 +110,7 @@ namespace Gecode {
       SingletonView sv(iv);
       xa[i] = sv;
     }
-      
+
     switch(op) {
     case SOT_UNION:
       GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>
@@ -141,7 +141,7 @@ namespace Gecode {
       SingletonView sv(iv);
       xa[i] = sv;
     }
-      
+
     switch(op) {
     case SOT_UNION:
       GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>

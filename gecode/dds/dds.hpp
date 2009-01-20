@@ -28,7 +28,7 @@
 
 namespace Gecode {
   namespace Decomposition {
-  
+
     /*
      * DDS engine
      *
@@ -98,7 +98,7 @@ namespace Gecode {
                   dynamic_cast<const Decomposition::SingletonDescBase*>(desc))
               {
                 sol = cur;
-                rcs.closeBranch<Decomposition::SingletonDescBase, 
+                rcs.closeBranch<Decomposition::SingletonDescBase,
                                 true>(*this);
                 cur = NULL;
                 EngineCtrl::current(NULL);
@@ -152,7 +152,7 @@ namespace Gecode {
       delete cur;
       rcs.reset();
     }
-  
+
   }
 
   /*
@@ -212,7 +212,7 @@ namespace Gecode {
 
   template <class Int, class T>
   Int
-  countDDS(T* s, unsigned int c_d, unsigned int a_d, Search::Statistics* stat, 
+  countDDS(T* s, unsigned int c_d, unsigned int a_d, Search::Statistics* stat,
            Search::Stop* st) {
     DDS<T> d(s,c_d,a_d,st);
     std::stack<Int> countStack;

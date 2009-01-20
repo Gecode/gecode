@@ -39,7 +39,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Set {
 
@@ -54,7 +54,7 @@ namespace Gecode {
     SingletonView::SingletonView(Space& home,
                                  const Reflection::VarMap& vars,
                                  Reflection::Arg* arg)
-  : DerivedViewBase<Gecode::Int::IntView>(Gecode::Int::IntView(home, vars, 
+  : DerivedViewBase<Gecode::Int::IntView>(Gecode::Int::IntView(home, vars,
                                                                arg)) {}
 
     forceinline PropCond
@@ -72,13 +72,13 @@ namespace Gecode {
     forceinline ModEvent
     SingletonView::me_inttoset(ModEvent me) {
       switch(me) {
-      case Gecode::Int::ME_INT_FAILED: 
+      case Gecode::Int::ME_INT_FAILED:
         return ME_SET_FAILED;
-      case Gecode::Int::ME_INT_NONE: 
+      case Gecode::Int::ME_INT_NONE:
         return ME_SET_NONE;
-      case Gecode::Int::ME_INT_VAL: 
+      case Gecode::Int::ME_INT_VAL:
         return ME_SET_VAL;
-      case Gecode::Int::ME_INT_DOM: 
+      case Gecode::Int::ME_INT_DOM:
         return ME_SET_LUB;
       default:
         return ME_SET_LUB;
@@ -151,17 +151,17 @@ namespace Gecode {
     }
 
     forceinline ModEvent
-    SingletonView::include(Space& home,int c) { 
-      return me_inttoset(view.eq(home,c)); 
+    SingletonView::include(Space& home,int c) {
+      return me_inttoset(view.eq(home,c));
     }
 
     forceinline ModEvent
-    SingletonView::intersect(Space& home,int c) { 
-      return me_inttoset(view.eq(home,c)); 
+    SingletonView::intersect(Space& home,int c) {
+      return me_inttoset(view.eq(home,c));
     }
 
     forceinline ModEvent
-    SingletonView::intersect(Space& home,int i, int j) { 
+    SingletonView::intersect(Space& home,int i, int j) {
       ModEvent me1 = me_inttoset(view.gq(home,i));
       ModEvent me2 = me_inttoset(view.lq(home,j));
       if (me_failed(me1) || me_failed(me2))
@@ -179,8 +179,8 @@ namespace Gecode {
     }
 
     forceinline ModEvent
-    SingletonView::exclude(Space& home,int c) { 
-      return me_inttoset(view.nq(home,c)); 
+    SingletonView::exclude(Space& home,int c) {
+      return me_inttoset(view.nq(home,c));
     }
 
     forceinline ModEvent

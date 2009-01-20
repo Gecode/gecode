@@ -107,9 +107,9 @@ namespace Gecode { namespace Set { namespace Sequence {
                                                         Limits::min,
                                                         max));
       }
-    }    
+    }
     after.dispose(home);
-    
+
     return ES_FIX;
   }
 

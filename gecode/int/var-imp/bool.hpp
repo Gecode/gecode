@@ -77,7 +77,7 @@ namespace Gecode { namespace Int {
 
   forceinline int
   BoolVarImp::val(void) const {
-    assert(status() != NONE);    
+    assert(status() != NONE);
     return min();
   }
 
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int {
     return status() == NONE;
   }
 
-  
+
   /*
    * Support for delta information
    *
@@ -153,15 +153,15 @@ namespace Gecode { namespace Int {
   BoolVarImp::modevent(const Delta&) {
     return ME_BOOL_VAL;
   }
-  forceinline int 
+  forceinline int
   BoolVarImp::min(const Delta& d) {
     return static_cast<const IntDelta&>(d).min();
   }
-  forceinline int 
+  forceinline int
   BoolVarImp::max(const Delta& d) {
     return static_cast<const IntDelta&>(d).min();
   }
-  forceinline bool 
+  forceinline bool
   BoolVarImp::any(const Delta&) {
     return false;
   }
@@ -281,8 +281,8 @@ namespace Gecode { namespace Int {
     // Is new domain empty?
     if (!i())
       return ME_INT_FAILED;
-    assert((i.min() == 0) || (i.min() == 1)); 
-    assert((i.max() == 0) || (i.max() == 1)); 
+    assert((i.min() == 0) || (i.min() == 1));
+    assert((i.max() == 0) || (i.max() == 1));
     if (i.max() == 0) {
       assert(!one());
       // Assign domain to be zero (domain cannot be one)
@@ -357,7 +357,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   BoolVarImp::inter_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();
-    while (i() && (i.val() < 0)) 
+    while (i() && (i.val() < 0))
       ++i;
     if (!i() || (i.val() > 1))
       return ME_INT_FAILED;
@@ -377,7 +377,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   BoolVarImp::minus_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();
-    while (i() && (i.val() < 0)) 
+    while (i() && (i.val() < 0))
       ++i;
     if (!i() || (i.val() > 1))
       return ME_INT_NONE;
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  BoolVarImp::subscribe(Space& home, Propagator& p, PropCond, 
+  BoolVarImp::subscribe(Space& home, Propagator& p, PropCond,
                         bool process) {
     // Subscription can be used with integer propagation conditions,
     // which must be remapped to the single Boolean propagation condition.

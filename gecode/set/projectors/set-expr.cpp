@@ -61,12 +61,12 @@ namespace Gecode {
     Node(const var_idx x);
     /// Construct node from nodes \a n0 and \a n1 with signs \a s0 and \a s1
     Node(Node* n0, int s0, RelType r, Node* n1, int s1);
-    
+
     /// Increment reference count
     void increment(void);
     /// Decrement reference count and possibly free memory
     GECODE_SET_EXPORT bool decrement(void);
-    
+
     /// Adds code representation of the node to \a ret
     void encode(SetExprCode::Stream& ret, bool monotone) const;
     /// Returns the arity of the node
@@ -74,7 +74,7 @@ namespace Gecode {
 
     /// Returns an iterator for this node
     Iter::Ranges::Virt::Iterator* iter(void);
-    
+
     /// Memory management
     static void* operator new(size_t size);
     /// Memory management
@@ -98,8 +98,8 @@ namespace Gecode {
 
 
   forceinline void
-  SetExpr::Node::increment(void) { 
-    ++use; 
+  SetExpr::Node::increment(void) {
+    ++use;
   }
 
   forceinline
@@ -175,7 +175,7 @@ namespace Gecode {
    * Operations for expressions
    *
    */
-  
+
   SetExpr::SetExpr(var_idx v) : ax(new Node(v)), sign(1) {}
 
   SetExpr::SetExpr(const SetExpr& s, int ssign,
@@ -271,7 +271,7 @@ namespace Gecode {
           s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));
         } else {
           LubRanges<SetView> r(x[tmp]);
-          s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));                
+          s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));
         }
         break;
       case SetExprCode::LUB:
@@ -280,7 +280,7 @@ namespace Gecode {
           s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));
         } else {
           GlbRanges<SetView> r(x[tmp]);
-          s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));                
+          s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));
         }
         break;
       case SetExprCode::EMPTY:

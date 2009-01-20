@@ -33,21 +33,21 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include <gecode/int/sorted.hh>
 
 namespace Gecode {
 
-  void 
-  sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y, 
+  void
+  sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y,
          const IntVarArgs& z, IntConLevel) {
     using namespace Int;
     if ((x.size() != y.size()) || (x.size() != z.size()))
       throw ArgumentSizeMismatch("Int::Sorted");
     if (x.same(home,y) || x.same(home,z) || y.same(home,z))
       throw ArgumentSame("Int::Sorted");
-    
+
     if (home.failed()) return;
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,z);
@@ -56,7 +56,7 @@ namespace Gecode {
                    (Sorted::Sorted<IntView,true>::post(home,x0,y0,z0)));
   }
 
-  void 
+  void
   sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y,
          IntConLevel) {
     using namespace Int;
@@ -64,7 +64,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::Sorted");
     if (x.same(home,y))
       throw ArgumentSame("Int::Sorted");
-      
+
     if (home.failed()) return;
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,0);

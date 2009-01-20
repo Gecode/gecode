@@ -101,7 +101,7 @@ namespace Test {
     /// Parse commandline arguments
     void parse(int argc, char* argv[]);
   };
-  
+
   /// The options
   extern Options opt;
 
@@ -144,7 +144,7 @@ namespace Test {
 }
 
 /**
- * \brief Main function 
+ * \brief Main function
  * \relates Test::Base
  */
 int main(int argc, char* argv[]);

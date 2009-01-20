@@ -33,7 +33,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 namespace Gecode { namespace Int { namespace Sorted {
 
@@ -490,7 +490,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View>
   forceinline bool
-  channel(Space& home, ViewArray<View>& x, ViewArray<View>& y, 
+  channel(Space& home, ViewArray<View>& x, ViewArray<View>& y,
           ViewArray<View>& z, bool& nofix) {
     int n = x.size();
     for (int i = n; i--; ) {

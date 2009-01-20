@@ -49,7 +49,7 @@ namespace Gecode { namespace Gist {
   class Node : public Support::BlockClient<VisualNode,NodeBlockSize> {
   private:
     /// The parent of this node, or NULL for the root
-    Node* parent;    
+    Node* parent;
 
     /// Tags that are used to encode the number of children
     enum {
@@ -61,7 +61,7 @@ namespace Gecode { namespace Gist {
 
     /// The children, or in case there are at most two, the first child
     void* childrenOrFirstChild;
-    
+
     union {
       /// The second child or NULL, in case of at most two children
       Node* secondChild;
@@ -82,17 +82,17 @@ namespace Gecode { namespace Gist {
 
   public:
     typedef Support::BlockAllocator<VisualNode,NodeBlockSize> NodeAllocator;
-    
+
     /// Default constructor
     Node(void);
     /// Destructor
     ~Node(void);
-    
+
     /// Return the parent
     Node* getParent(void);
     /// Return child no \a n
     Node* getChild(unsigned int n);
-    
+
     /// Check if this node is the root of a tree
     bool isRoot(void) const;
 

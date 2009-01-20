@@ -48,27 +48,27 @@ namespace Gecode { namespace Set {
     : _glbMin(glbMin), _glbMax(glbMax),
       _lubMin(lubMin), _lubMax(lubMax) {}
 
-  forceinline int 
+  forceinline int
   SetDelta::glbMin(void) const {
     return _glbMin;
   }
-  forceinline int 
+  forceinline int
   SetDelta::glbMax(void) const {
     return _glbMax;
   }
-  forceinline int 
+  forceinline int
   SetDelta::lubMin(void) const {
     return _lubMin;
   }
-  forceinline int 
+  forceinline int
   SetDelta::lubMax(void) const {
     return _lubMax;
   }
-  forceinline bool 
+  forceinline bool
   SetDelta::glbAny(void) const {
     return _glbMin > _glbMax;
   }
-  forceinline bool 
+  forceinline bool
   SetDelta::lubAny(void) const {
     return _lubMin > _lubMax;
   }

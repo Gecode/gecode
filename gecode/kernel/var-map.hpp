@@ -38,25 +38,25 @@
 #include <sstream>
 
 namespace Gecode { namespace Reflection {
-  
+
   class VarMapIter;
 
   /**
     * \brief Mapping %Gecode variable implementations to variable specifications
     *
     * The reflection API always references variables by indices into a VarMap.
-    * The VarMap is filled with information when you access the specification 
-    * of a propagator. If, for instance, a propagator references some 
-    * IntVarImp, and that particular variable implementation is already 
-    * contained in the VarMap, the ActorSpec for the propagator will contain a 
-    * reference to the index of the variable implementation. If it is not 
-    * already in the VarMap, its VarSpec is extracted, and the variable 
-    * implementation is put in the map. The ActorSpec then of course 
+    * The VarMap is filled with information when you access the specification
+    * of a propagator. If, for instance, a propagator references some
+    * IntVarImp, and that particular variable implementation is already
+    * contained in the VarMap, the ActorSpec for the propagator will contain a
+    * reference to the index of the variable implementation. If it is not
+    * already in the VarMap, its VarSpec is extracted, and the variable
+    * implementation is put in the map. The ActorSpec then of course
     * references the newly created index.
     *
-    * A VarMap also maps variable implementations to names. The names can be 
-    * assigned in the script, using the virtual function Space::getVars (see 
-    * Queens as an example). That way, the variables mentioned in an ActorSpec 
+    * A VarMap also maps variable implementations to names. The names can be
+    * assigned in the script, using the virtual function Space::getVars (see
+    * Queens as an example). That way, the variables mentioned in an ActorSpec
     * can be identified with variables from the model.
     *
     * \ingroup TaskReflection
@@ -66,20 +66,20 @@ namespace Gecode { namespace Reflection {
   private:
     class VarMapObj;
     VarMapObj* vo;
-    
+
   public:
     /// Default constructor
     VarMap(void);
     /// Copy constructor
     VarMap(const VarMap&);
-    /// Assignment operator 
+    /// Assignment operator
     VarMap& operator =(const VarMap&);
     /// Destructor
     GECODE_MSC_VIRTUAL ~VarMap(void);
-    
+
     /// Return number of entries
     int size(void) const;
-    
+
     /// Return index for variable implementation \a x
     int index(const VarImpBase* x) const;
     /// Return index for variable implementation with name \a n
@@ -146,7 +146,7 @@ namespace Gecode { namespace Reflection {
     //@}
 
   };
-  
+
   /**
     * \brief Iterating a variable map
     *

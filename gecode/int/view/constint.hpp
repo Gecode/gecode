@@ -192,7 +192,7 @@ namespace Gecode {
     forceinline ModEvent
     ConstIntView::inter_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
-      while (i() && (i.max() < x)) 
+      while (i() && (i.max() < x))
         ++i;
       return (i() && (i.min() <= x)) ? ME_INT_NONE : ME_INT_FAILED;
     }
@@ -200,7 +200,7 @@ namespace Gecode {
     forceinline ModEvent
     ConstIntView::minus_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
-      while (i() && (i.max() < x)) 
+      while (i() && (i.max() < x))
         ++i;
       return (i() && (i.min() <= x)) ? ME_INT_FAILED : ME_INT_NONE;
     }
@@ -214,7 +214,7 @@ namespace Gecode {
     forceinline ModEvent
     ConstIntView::inter_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
-      while (i() && (i.val() < x)) 
+      while (i() && (i.val() < x))
         ++i;
       return (i() && (i.val() == x)) ? ME_INT_NONE : ME_INT_FAILED;
     }
@@ -222,7 +222,7 @@ namespace Gecode {
     forceinline ModEvent
     ConstIntView::minus_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
-      while (i() && (i.val() < x)) 
+      while (i() && (i.val() < x))
         ++i;
       return (i() && (i.val() == x)) ? ME_INT_FAILED : ME_INT_NONE;
     }

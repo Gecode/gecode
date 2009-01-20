@@ -532,7 +532,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Allocate memory for the graph
     void* operator new(size_t t);
     /// Free the memory for the graph
-    void operator delete(void* p);        
+    void operator delete(void* p);
 
     /**
      * \brief Remove all those edges from the graph
@@ -1294,7 +1294,7 @@ namespace Gecode { namespace Int { namespace GCC {
       for (; xiter(); ++xiter){
         int v = xiter.val();
         // get the correct index for the value
-        while(vals[j]->val < v){         
+        while(vals[j]->val < v){
           j++;
         }
         ValNode* vln = vals[j];
@@ -1307,7 +1307,7 @@ namespace Gecode { namespace Int { namespace GCC {
         vrn->last(*xadjacent);
         Edge** newprev = vrn->last()->prev_ref();
         *newprev       = oldprev;
-        
+
         if (vln->first() == NULL) {
           vln->first(*xadjacent);
           vln->last(*xadjacent);
@@ -1323,7 +1323,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
         edges++;
         xadjacent = (*xadjacent)->next_ref();
-      }         
+      }
       *xadjacent = NULL;
     }
   }
@@ -1387,7 +1387,7 @@ namespace Gecode { namespace Int { namespace GCC {
             node_size--;
             vln->noe--;
           }
-        
+
 
           int vidx = vln->kindex();
           if (isView) {
@@ -1399,7 +1399,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
 
           k[vidx].counter(k[vidx].min());
-        
+
           vln->template set_cap<UBC>(0);
           vln->template set_cap<LBC>(0);
           vln->set_maxlow(0);
@@ -1488,7 +1488,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
         if (inc_lbc < k[i].min() && v->noe > 0) {
-        
+
           v->template set_cap<LBC>(k[i].min() - inc_lbc);
           re[n_re] = v;
           n_re++;
@@ -1541,11 +1541,11 @@ namespace Gecode { namespace Int { namespace GCC {
               bool cond = nom < vln->kmin();
               if (cond) {
                 re[n_re] = vln;
-                n_re++;                
+                n_re++;
               }
             }
           }
-        
+
           for (Edge* e = vrn->first(); e != NULL; e = e->next()){
             ValNode* vln = e->getVal();
             if (vln->val != v) {
@@ -1559,7 +1559,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
           }
         } else {
-        
+
           // delete the edge
           ViewValues<View> xiter(x[i]);
           Edge*  mub = vrn->template get_match<UBC>();
@@ -1592,7 +1592,7 @@ namespace Gecode { namespace Int { namespace GCC {
             e->getVar()->noe--;
             e->getVal()->noe--;
             e->del_edge();
-            e->unlink();         
+            e->unlink();
             e = e->next();
           }
 
@@ -1671,7 +1671,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (vrn->noe == 1) {
         Edge* e = vrn->first();
         ValNode* v = e->getVal();
-        e->template free<direction>();        
+        e->template free<direction>();
         ModEvent me = x[i].eq(home, v->val);
         if (me_failed(me)) {
           failed(true);
@@ -1690,7 +1690,7 @@ namespace Gecode { namespace Int { namespace GCC {
             failed(true);
             return false;
           }
-      
+
       if (v->noe > 0) {
 
         if (isView)
@@ -1698,10 +1698,10 @@ namespace Gecode { namespace Int { namespace GCC {
             failed(true);
             return false;
           }
-        
+
         // If the maximum number of occurences of a value is reached
         // it cannot be consumed by another view
-        
+
         if (v->kcount() == v->kmax()) {
           int vidx = v->kindex();
 
@@ -1723,7 +1723,7 @@ namespace Gecode { namespace Int { namespace GCC {
             delall = true;
 
           }
-        
+
           for (Edge* e = v->last(); e != NULL; e = e->vprev()) {
             VarNode* vrn = e->getVar();
             if (vrn->noe == 1) {
@@ -1804,7 +1804,7 @@ namespace Gecode { namespace Int { namespace GCC {
             if (me_modified(me))
               modified = true;
           } else {
-            e->template free<direction>();        
+            e->template free<direction>();
           }
         }
     return modified;
@@ -1871,7 +1871,7 @@ namespace Gecode { namespace Int { namespace GCC {
             free[f++] = vrn;
           }
         }
-        
+
         for (int i = 0; i < f; i++) {
           if (!free[i]->template matched<direction>()) {
             if (augmenting_path<direction>(home,free[i])) {
@@ -1924,12 +1924,12 @@ namespace Gecode { namespace Int { namespace GCC {
       Edge* e = NULL;
       if (v->get_type() == sp) {
         // follow next free edge
-        e = start[v->get_info()];        
+        e = start[v->get_info()];
         while (e != NULL && e->template matched<direction>()) {
           e = e->next(v->get_type());
         }
       } else {
-        e = start[v->get_info()];        
+        e = start[v->get_info()];
         while (e != NULL && !e->template matched<direction>()) {
           e = e->next(v->get_type());
         }
@@ -2068,7 +2068,7 @@ namespace Gecode { namespace Int { namespace GCC {
         VarNode* vrn = static_cast<VarNode*>(node);
         switch (direction) {
           // after LBC-matching we can follow every unmatched edge
-        case LBC: {        
+        case LBC: {
           for (Edge* cur = vrn->first(); cur != NULL; cur = cur->next()){
             ValNode* mate = cur->getVal();
             if (!cur->template matched<LBC>()) {

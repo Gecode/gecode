@@ -85,14 +85,14 @@ namespace Gecode {
   };
 
   forceinline bool
-  TupleSet::TupleSetI::finalized(void) const { 
+  TupleSet::TupleSetI::finalized(void) const {
     assert(((excess == -1) && (domsize > 0)) ||
-           ((excess != -1) && (domsize == 0))); 
-    return excess == -1; 
+           ((excess != -1) && (domsize == 0)));
+    return excess == -1;
   }
 
   forceinline
-  TupleSet::TupleSetI::TupleSetI(void) 
+  TupleSet::TupleSetI::TupleSetI(void)
     : arity(-1),
       size(0),
       tuples(NULL),
@@ -129,7 +129,7 @@ namespace Gecode {
   }
 
   forceinline
-  TupleSet::TupleSet(const TupleSet& ts) 
+  TupleSet::TupleSet(const TupleSet& ts)
     : SharedHandle(ts) {}
 
   forceinline TupleSet::TupleSetI*
@@ -206,7 +206,7 @@ namespace Gecode {
 
 
   template<class Char, class Traits, class T>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

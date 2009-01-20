@@ -63,7 +63,7 @@ namespace Gecode { namespace CpltSet {
   /// Print complete set variable domain represented by \a r to \a os
   template<class Char, class Traits>
   bool
-  printDom(std::basic_ostream<Char,Traits>& s, 
+  printDom(std::basic_ostream<Char,Traits>& s,
            int off, int min, int width, bool first, char* profile, bdd& r) {
     if (r == bdd_true()) {
       if (!first)
@@ -140,14 +140,14 @@ namespace Gecode { namespace CpltSet {
       char* profile = heap.alloc<char>(x.tableWidth());
       for (int i=x.tableWidth(); i--; )
         profile[i] = -1;
-      printDom(s, x.offset(), x.initialLubMin(), x.tableWidth(), true, 
+      printDom(s, x.offset(), x.initialLubMin(), x.tableWidth(), true,
                profile, dom);
       heap.rfree(profile);
       s << "}";
     }
     return os << s.str();
   }
-  
+
 }}
 
 // STATISTICS: cpltset-var

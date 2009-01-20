@@ -42,17 +42,17 @@
 #include <gecode/int.hh>
 
 namespace Gecode { namespace Set { namespace Int {
-      
+
   template <class View>
   forceinline
-  ChannelInt<View>::ChannelInt(Space& home, 
+  ChannelInt<View>::ChannelInt(Space& home,
                              ViewArray<Gecode::Int::IntView>& xs0,
                              ViewArray<View>& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
     xs.subscribe(home,*this, Gecode::Int::PC_INT_DOM);
     ys.subscribe(home,*this, PC_SET_ANY);
   }
-      
+
   template <class View>
   forceinline
   ChannelInt<View>::ChannelInt(Space& home, bool share, ChannelInt& p)
@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   PropCost
-  ChannelInt<View>::cost(const Space&, const ModEventDelta&) const { 
+  ChannelInt<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LOW, xs.size()+ys.size());
   }
 

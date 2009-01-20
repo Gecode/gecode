@@ -328,7 +328,7 @@ namespace Gecode { namespace Int { namespace Bool {
    * \ingroup FuncIntProp
    */
   template<class VX,class VY>
-  class NaryOr 
+  class NaryOr
     : public MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL> {
     GECODE_REFLECT_PROPAGATOR_2(NaryOr,VX,VY,"Gecode::Int::Bool::NaryOr")
     GECODE_REFLECT_ARGS_2(ViewArray<VX>,x,VY,y)
@@ -471,7 +471,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|x|-1} y_i = z\f$
-    static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y, 
+    static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y,
                             VX z);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace Bool {
    * \ingroup FuncIntProp
    */
   template<class VX, class VY>
-  class ClauseTrue 
+  class ClauseTrue
     : public MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL> {
     GECODE_REFLECT_PROPAGATOR_2(ClauseTrue,VX,VY,
                                 "Gecode::Int::Bool::ClauseTrue")

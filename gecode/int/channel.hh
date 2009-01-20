@@ -130,8 +130,8 @@ namespace Gecode { namespace Int { namespace Channel {
   /**
    * \brief Domain consistent channel propagator
    *
-   * If \a shared is true, the same views can be contained in both 
-   * \a x and \a y.   
+   * If \a shared is true, the same views can be contained in both
+   * \a x and \a y.
    *
    * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
@@ -231,7 +231,7 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
     GECODE_INT_EXPORT
-    static  ExecStatus post(Space& home, 
+    static  ExecStatus post(Space& home,
                             ViewArray<BoolView>& x, IntView y, int o);
   };
 

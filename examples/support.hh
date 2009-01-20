@@ -267,7 +267,7 @@ public:
   /// Set default mode
   void mode(ExampleMode em);
   /// Return mode
-  ExampleMode mode(void) const;  
+  ExampleMode mode(void) const;
 
   /// Set default number of iterations
   void iterations(unsigned int i);

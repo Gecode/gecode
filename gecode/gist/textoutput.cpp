@@ -41,7 +41,7 @@
 #include <gecode/gist/gecodelogo.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   /// \brief An outputstream that prints on a QTextEdit
   class GistOutputStream
   : public std::basic_ostream<char, std::char_traits<char> > {
@@ -63,7 +63,7 @@ namespace Gecode { namespace Gist {
     public:
       Buf(QTextEdit* e) : editor(e) {}
     };
-    
+
     Buf _buf;
   public:
     GistOutputStream(QTextEdit* editor)
@@ -72,7 +72,7 @@ namespace Gecode { namespace Gist {
       clear();
     }
   };
-  
+
   TextOutput::TextOutput(const std::string& name, QWidget *parent)
   : QMainWindow(parent) {
     Logos logos;
@@ -98,18 +98,18 @@ namespace Gecode { namespace Gist {
     QAction* clearText = new QAction("Clear", this);
     clearText->setShortcut(QKeySequence("Ctrl+K"));
     this->addAction(clearText);
-    connect(clearText, SIGNAL(triggered()), editor, 
+    connect(clearText, SIGNAL(triggered()), editor,
                        SLOT(clear()));
 
     QAction* closeWindow = new QAction("Close window", this);
     closeWindow->setShortcut(QKeySequence("Ctrl+W"));
     this->addAction(closeWindow);
-    connect(closeWindow, SIGNAL(triggered()), this, 
+    connect(closeWindow, SIGNAL(triggered()), this,
                          SLOT(close()));
 
     setCentralWidget(editor);
     setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
-    
+
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_DeleteOnClose, false);
     resize(600,300);

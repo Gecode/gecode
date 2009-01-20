@@ -40,7 +40,7 @@
 
 #include "test/test.hh"
 
-namespace Test { 
+namespace Test {
 
   /// Tests for search engines
   namespace Search {
@@ -60,7 +60,7 @@ namespace Test {
     enum HowToConstrain {
       HTC_NONE,   ///< Do not constrain
       HTC_LEX_LE, ///< Constrain for lexically smallest
-      HTC_LEX_GR, ///< Constrain for lexically biggest 
+      HTC_LEX_GR, ///< Constrain for lexically biggest
       HTC_BAL_LE, ///< Constrain for smallest balance
       HTC_BAL_GR  ///< Constrain for largest balance
     };
@@ -91,8 +91,8 @@ namespace Test {
       /// Variables used
       IntVarArray x;
       /// Constructor for space creation
-      FailImmediate(HowToBranch, HowToBranch, HowToBranch, 
-                    HowToConstrain=HTC_NONE) 
+      FailImmediate(HowToBranch, HowToBranch, HowToBranch,
+                    HowToConstrain=HTC_NONE)
         : x(*this,1,0,0) {
         rel(*this, x[0], IRT_EQ, 1);
       }
@@ -148,7 +148,7 @@ namespace Test {
       }
       /// Constructor for space creation
       HasSolutions(HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
-                   HowToConstrain _htc=HTC_NONE) 
+                   HowToConstrain _htc=HTC_NONE)
         : x(*this,6,0,5), htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {
         distinct(*this, x);
         rel(*this, x[2], IRT_LQ, 3); rel(*this, x[3], IRT_LQ, 3);
@@ -158,8 +158,8 @@ namespace Test {
         IntVarArgs x3(2); x3[0]=x[4]; x3[1]=x[5]; branch(x3, htb3);
       }
       /// Constructor for cloning \a s
-      HasSolutions(bool share, HasSolutions& s) 
-        : TestSpace(share,s), 
+      HasSolutions(bool share, HasSolutions& s)
+        : TestSpace(share,s),
           htb1(s.htb1), htb2(s.htb2), htb3(s.htb3), htc(s.htc) {
         x.update(*this, share, s.x);
       }
@@ -192,8 +192,8 @@ namespace Test {
             IntVar ys(*this, -18, 18);
             post(*this, x[0]+x[1]+x[2]-x[3]-x[4]-x[5] == xs);
             post(*this, y[0]+y[1]+y[2]-y[3]-y[4]-y[5] == ys);
-            rel(*this, 
-                abs(*this,xs), 
+            rel(*this,
+                abs(*this,xs),
                 (htc == HTC_BAL_LE) ? IRT_LE : IRT_GR,
                 abs(*this,ys));
             break;
@@ -218,11 +218,11 @@ namespace Test {
             (htb1 == HTB_UNARY) || (htb2 == HTB_UNARY) || (htb3 == HTB_UNARY))
           return true;
         switch (htc) {
-        case HTC_NONE: 
+        case HTC_NONE:
           return true;
         case HTC_LEX_LE:
           return ((x[0].val()==4) && (x[1].val()==5) &&
-                  (x[2].val()==2) && (x[3].val()==3) && 
+                  (x[2].val()==2) && (x[3].val()==3) &&
                   (x[4].val()==0) && (x[5].val()==1));
         case HTC_LEX_GR:
           return ((x[0].val()==5) && (x[1].val()==4) &&
@@ -230,7 +230,7 @@ namespace Test {
                   (x[4].val()==1) && (x[5].val()==0));
         case HTC_BAL_LE:
           return ((x[0].val()==4) && (x[1].val()==5) &&
-                  (x[2].val()==2) && (x[3].val()==3) && 
+                  (x[2].val()==2) && (x[3].val()==3) &&
                   (x[4].val()==0) && (x[5].val()==1));
         case HTC_BAL_GR:
           return ((x[0].val()==4) && (x[1].val()==5) &&
@@ -287,8 +287,8 @@ namespace Test {
       /// Initialize test
       Test(const std::string& s,
            HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
-           HowToConstrain _htc=HTC_NONE) 
-        : Base("Search::"+s), 
+           HowToConstrain _htc=HTC_NONE)
+        : Base("Search::"+s),
           htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {}
     };
 
@@ -303,7 +303,7 @@ namespace Test {
     public:
       /// Initialize test
       DFS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
-          unsigned int c_d0, unsigned int a_d0) 
+          unsigned int c_d0, unsigned int a_d0)
         : Test("DFS::"+Model::name()+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0),
@@ -375,7 +375,7 @@ namespace Test {
       /// Initialize test
       Best(const std::string& b, HowToConstrain htc,
            HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
-           unsigned int c_d0, unsigned int a_d0) 
+           unsigned int c_d0, unsigned int a_d0)
         : Test(b+"::"+Model::name()+"::"+str(htc)+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0),
@@ -412,14 +412,14 @@ namespace Test {
       /// Array of branching types
       static const HowToBranch htbs[3];
       /// Current position in branching type array
-      int i; 
+      int i;
     public:
       /// Initialize iterator
       BranchTypes(void) : i(0) {}
       /// Test whether iterator is done
       bool operator()(void) const {
         return i<3;
-      } 
+      }
       /// Increment to next branching type
       void operator++(void) {
         i++;
@@ -431,21 +431,21 @@ namespace Test {
     };
 
     const HowToBranch BranchTypes::htbs[3] = {HTB_UNARY, HTB_BINARY, HTB_NARY};
-    
+
     /// Iterator for constrain types
     class ConstrainTypes {
     private:
       /// Array of constrain types
       static const HowToConstrain htcs[4];
       /// Current position in constrain type array
-      int i; 
+      int i;
     public:
       /// Initialize iterator
       ConstrainTypes(void) : i(0) {}
       /// Test whether iterator is done
       bool operator()(void) const {
         return i<4;
-      } 
+      }
       /// Increment to next constrain type
       void operator++(void) {
         i++;
@@ -456,9 +456,9 @@ namespace Test {
       }
     };
 
-    const HowToConstrain ConstrainTypes::htcs[4] = 
+    const HowToConstrain ConstrainTypes::htcs[4] =
       {HTC_LEX_LE, HTC_LEX_GR, HTC_BAL_LE, HTC_BAL_GR};
-    
+
 
     /// Help class to create and register tests
     class Create {

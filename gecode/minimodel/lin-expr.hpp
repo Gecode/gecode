@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   /*
    * Operations for nodes
@@ -45,7 +45,7 @@ namespace Gecode {
   forceinline
   LinExpr<Var>::Node::Node(void) : use(1) {
   }
-  
+
   template <class Var>
   forceinline void*
   LinExpr<Var>::Node::operator new(size_t size) {
@@ -70,10 +70,10 @@ namespace Gecode {
     }
     return false;
   }
-  
+
   template <class Var>
   int
-  LinExpr<Var>::Node::fill(Int::Linear::Term<View> t[], 
+  LinExpr<Var>::Node::fill(Int::Linear::Term<View> t[],
                            int i, int m, int c_i, int& c_o) const {
     switch (this->t) {
     case NT_VAR:
@@ -124,7 +124,7 @@ namespace Gecode {
     n->l = n->r = NULL;
     n->a = 0;
   }
-  
+
   template <class Var>
   inline
   LinExpr<Var>::LinExpr(const Var& x, int a) :
@@ -135,7 +135,7 @@ namespace Gecode {
     n->a = a;
     n->x = x;
   }
-  
+
   template <class Var>
   inline
   LinExpr<Var>::LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1) :
@@ -145,7 +145,7 @@ namespace Gecode {
     n->l = e0.n; n->l->use++;
     n->r = e1.n; n->r->use++;
   }
-  
+
   template <class Var>
   inline
   LinExpr<Var>::LinExpr(const LinExpr& e, NodeType t, int c) :
@@ -156,7 +156,7 @@ namespace Gecode {
     n->r = e.n; n->r->use++;
     n->c = c;
   }
-  
+
   template <class Var>
   inline
   LinExpr<Var>::LinExpr(int a, const LinExpr& e) :
@@ -167,10 +167,10 @@ namespace Gecode {
     n->r = NULL;
     n->a = a;
   }
-  
+
   template <class Var>
   inline
-  LinExpr<Var>::LinExpr(const LinExpr<Var>& e) 
+  LinExpr<Var>::LinExpr(const LinExpr<Var>& e)
     : n(e.n) {
     n->use++;
   }
@@ -197,7 +197,7 @@ namespace Gecode {
   inline void
   LinExpr<Var>::post(Space& home, IntRelType irt, IntConLevel icl) const {
     Region r(home);
-    Int::Linear::Term<typename VarViewTraits<Var>::View>* ts = 
+    Int::Linear::Term<typename VarViewTraits<Var>::View>* ts =
       r.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
@@ -209,7 +209,7 @@ namespace Gecode {
   LinExpr<Var>::post(Space& home, IntRelType irt, const BoolVar& b,
                      IntConLevel icl) const {
     Region r(home);
-    Int::Linear::Term<typename VarViewTraits<Var>::View>* ts = 
+    Int::Linear::Term<typename VarViewTraits<Var>::View>* ts =
       r.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
@@ -220,7 +220,7 @@ namespace Gecode {
   inline IntVar
   LinExpr<IntVar>::post(Space& home, IntConLevel icl) const {
     Region r(home);
-    Int::Linear::Term<Int::IntView>* ts = 
+    Int::Linear::Term<Int::IntView>* ts =
       r.alloc<Int::Linear::Term<Int::IntView> >(n->n+1);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);
@@ -236,7 +236,7 @@ namespace Gecode {
   inline IntVar
   LinExpr<BoolVar>::post(Space& home, IntConLevel icl) const {
     Region r(home);
-    Int::Linear::Term<Int::BoolView>* ts = 
+    Int::Linear::Term<Int::BoolView>* ts =
       r.alloc<Int::Linear::Term<Int::BoolView> >(n->n);
     int c_o = 0;
     int i = n->fill(ts,0,1,0,c_o);

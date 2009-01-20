@@ -39,7 +39,7 @@
 #include <gecode/cpltset.hh>
 
 namespace Gecode { namespace CpltSet {
-  
+
   unsigned int
   BddMgr::numberOfPaths(bdd& b){
     if (leaf(b)) { return 1; }
@@ -53,7 +53,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   BddMgr manager;
-  
+
 }}
 
 // STATISTICS: cpltset-var

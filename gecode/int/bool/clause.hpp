@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   forceinline
-  ClauseTrue<VX,VY>::ClauseTrue(Space& home, 
+  ClauseTrue<VX,VY>::ClauseTrue(Space& home,
                                 ViewArray<VX>& x0, ViewArray<VY>& y0)
     : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>
   (home,x0[x0.size()-1],y0[y0.size()-1]), x(x0), y(y0) {
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   forceinline ExecStatus
   resubscribe(Space& home, Propagator& p,
-              VX& x0, ViewArray<VX>& x, 
+              VX& x0, ViewArray<VX>& x,
               VY& x1, ViewArray<VY>& y) {
     if (x0.zero()) {
       int n = x.size();
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Bool {
             GECODE_REWRITE(p,(BinOrTrue<VX,VY>::post(home,z,x1)));
           }
           // Move to x0 and subscribe
-          x0=x[i]; x[i]=x[--n]; 
+          x0=x[i]; x[i]=x[--n];
           x.size(n);
           x0.subscribe(home,p,PC_BOOL_VAL,false);
           return ES_FIX;

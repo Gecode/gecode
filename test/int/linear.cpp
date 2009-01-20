@@ -51,7 +51,7 @@ namespace Test { namespace Int {
           return false;
       return true;
     }
-        
+
      /**
       * \defgroup TaskTestIntLinear Linear constraints
       * \ingroup TaskTestInt
@@ -67,11 +67,11 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntInt(const std::string& s, const Gecode::IntSet& d,
-              const Gecode::IntArgs& a0, Gecode::IntRelType irt0, 
+              const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
               Gecode::IntConLevel icl=Gecode::ICL_BND)
          : Test("Linear::Int::Int::"+
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
-                a0.size(),d,icl != Gecode::ICL_DOM,icl), 
+                a0.size(),d,icl != Gecode::ICL_DOM,icl),
          a(a0), irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -88,7 +88,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, x, irt, 0, icl);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          if (one(a))
            Gecode::linear(home, x, irt, 0, b, icl);
@@ -96,7 +96,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, x, irt, 0, b, icl);
        }
      };
-   
+
      /// Test linear relation over integer variables
      class IntVar : public Test {
      protected:
@@ -107,11 +107,11 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntVar(const std::string& s, const Gecode::IntSet& d,
-              const Gecode::IntArgs& a0, Gecode::IntRelType irt0, 
+              const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
               Gecode::IntConLevel icl=Gecode::ICL_BND)
          : Test("Linear::Int::Var::"+
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
-                a0.size()+1,d,icl != Gecode::ICL_DOM,icl), 
+                a0.size()+1,d,icl != Gecode::ICL_DOM,icl),
            a(a0), irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -132,7 +132,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, y, irt, x[n], icl);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          int n = a.size();
          Gecode::IntVarArgs y(n);
@@ -144,7 +144,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, y, irt, x[n], b, icl);
        }
      };
-   
+
      /// Test linear relation over Boolean variables equal to constant
      class BoolInt : public Test {
      protected:
@@ -156,11 +156,11 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Create and register test
-       BoolInt(const std::string& s, const Gecode::IntArgs& a0, 
+       BoolInt(const std::string& s, const Gecode::IntArgs& a0,
                Gecode::IntRelType irt0, int c0)
          : Test("Linear::Bool::Int::"+
                 str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0),
-                a0.size(),0,1,true,Gecode::ICL_DEF), 
+                a0.size(),0,1,true,Gecode::ICL_DEF),
            a(a0), irt(irt0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -180,7 +180,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, y, irt, c, Gecode::ICL_DEF);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          Gecode::BoolVarArgs y(x.size());
          for (int i=x.size(); i--; )
@@ -191,7 +191,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, y, irt, c, b, Gecode::ICL_DEF);
        }
      };
-   
+
      /// Test linear relation over Boolean variables equal to integer variable
      class BoolVar : public Test {
      protected:
@@ -201,11 +201,11 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       BoolVar(const std::string& s, 
-               int min, int max, const Gecode::IntArgs& a0, 
+       BoolVar(const std::string& s,
+               int min, int max, const Gecode::IntArgs& a0,
                Gecode::IntRelType irt0)
          : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,
-                min,max,true), 
+                min,max,true),
            a(a0), irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -237,7 +237,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, y, irt, x[n]);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          int n=x.size()-1;
          Gecode::BoolVarArgs y(n);
@@ -249,7 +249,7 @@ namespace Test { namespace Int {
            Gecode::linear(home, a, y, irt, x[n], b);
        }
      };
-   
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -260,9 +260,9 @@ namespace Test { namespace Int {
            IntSet d1(-2,2);
            const int dv2[] = {-4,-1,0,1,4};
            IntSet d2(dv2,5);
-           
+
            IntArgs a1(1, 0);
-           
+
            for (IntRelTypes irts; irts(); ++irts) {
              (void) new IntInt("11",d1,a1,irts.irt());
              (void) new IntVar("11",d1,a1,irts.irt());
@@ -273,12 +273,12 @@ namespace Test { namespace Int {
            (void) new IntVar("11",d1,a1,IRT_EQ,ICL_DOM);
            (void) new IntInt("21",d2,a1,IRT_EQ,ICL_DOM);
            (void) new IntVar("21",d2,a1,IRT_EQ,ICL_DOM);
-   
+
            const int av2[5] = {1,1,1,1,1};
            const int av3[5] = {1,-1,-1,1,-1};
            const int av4[5] = {2,3,5,7,11};
            const int av5[5] = {-2,3,-5,7,-11};
-   
+
            for (int i=1; i<=5; i++) {
              IntArgs a2(i, av2);
              IntArgs a3(i, av3);
@@ -323,7 +323,7 @@ namespace Test { namespace Int {
          {
            const int av1[10] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
            const int av2[10] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-           
+
            for (int i=1; i<=10; i += 3) {
              IntArgs a1(i, av1);
              IntArgs a2(i, av2);
@@ -333,11 +333,11 @@ namespace Test { namespace Int {
                  (void) new BoolInt("2",a2,irts.irt(),-c);
                }
            }
-           
+
            IntArgs a3(5, 1,2,3,4,5);
            IntArgs a4(5, -1,-2,-3,-4,-5);
            IntArgs a5(5, -1,-2,1,2,4);
-           
+
            for (int c=0; c<=16; c++)
              for (IntRelTypes irts; irts(); ++irts) {
                (void) new BoolInt("3",a3,irts.irt(),c);
@@ -345,8 +345,8 @@ namespace Test { namespace Int {
                (void) new BoolInt("5",a5,irts.irt(),c);
                (void) new BoolInt("6",a5,irts.irt(),-c);
              }
-           
-   
+
+
            for (int i=1; i<=5; i += 2) {
              IntArgs a1(i, av1);
              IntArgs a2(i, av2);
@@ -355,26 +355,26 @@ namespace Test { namespace Int {
                (void) new BoolVar("2::"+Test::str(i),-5,0,a2,irts.irt());
              }
            }
-           
+
            IntArgs a6(4, 1,2,3,4);
            IntArgs a7(4, -1,-2,-3,-4);
            IntArgs a8(4, -1,-2,1,2);
            IntArgs a9(6, -1,-2,1,2,-3,3);
-   
+
            for (IntRelTypes irts; irts(); ++irts) {
              (void) new BoolVar("6",0,10,a6,irts.irt());
              (void) new BoolVar("7",-10,0,a7,irts.irt());
              (void) new BoolVar("8",-3,3,a8,irts.irt());
              (void) new BoolVar("9",-3,3,a9,irts.irt());
            }
-           
+
          }
        }
      };
-   
+
      Create c;
      //@}
-   
+
    }
 }}
 

@@ -139,7 +139,7 @@ namespace Test { namespace CpltSet {
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr1(x.lub, x[0]);
         CountableSetRanges xr2(x.lub, x[1]);
-        Gecode::Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+        Gecode::Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
           inter(xr1, xr2);
         return !inter();
       }

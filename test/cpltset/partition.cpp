@@ -113,7 +113,7 @@ namespace Test { namespace CpltSet {
         CountableSetValues xv2(x.lub, x[1]);
         int a = iter2int(xv1, 3);
         int b = iter2int(xv2, 3);
-    
+
         return empty && same && (a < b);
       }
 
@@ -200,7 +200,7 @@ namespace Test { namespace CpltSet {
         dom(home, y, SRT_EQ, 3, 5);
       }
     };
-    CpltSetPartitionNaryOneBigger 
+    CpltSetPartitionNaryOneBigger
       _cpltsetpartitionnaryonebigger("Partition::NaryOne::Bigger");
 
     //@}

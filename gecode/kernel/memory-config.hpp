@@ -71,7 +71,7 @@ namespace Gecode {
      * for the clone is halfed.
      */
     const int hcsz_dec_ratio = 2;
-    
+
     /**
      * \brief Unit size for free lists
      *
@@ -136,13 +136,13 @@ namespace Gecode {
      * Alignment
      *
      */
-    forceinline void 
+    forceinline void
     align(size_t& s) {
-      s += ((GECODE_MEMORY_ALIGNMENT - 
-             (s & (GECODE_MEMORY_ALIGNMENT - 1))) & 
+      s += ((GECODE_MEMORY_ALIGNMENT -
+             (s & (GECODE_MEMORY_ALIGNMENT - 1))) &
             (GECODE_MEMORY_ALIGNMENT - 1));
     }
-    
+
   }
 }
 

@@ -45,7 +45,7 @@ namespace Gecode { namespace Gist {
 
   Shape* Shape::leaf;
   Shape* Shape::hidden;
-  
+
   /// Allocate shapes statically
   class ShapeAllocator {
   public:
@@ -85,7 +85,7 @@ namespace Gecode { namespace Gist {
     setChildrenLayoutDone(false);
     setHidden(false);
     setMarked(false);
-    setOnPath(false);    
+    setOnPath(false);
   }
 
   VisualNode::~VisualNode(void) {
@@ -102,7 +102,7 @@ namespace Gecode { namespace Gist {
       }
     }
   }
-  
+
   void
   VisualNode::layout(void) {
     LayoutCursor l(this);
@@ -112,12 +112,12 @@ namespace Gecode { namespace Gist {
     while (p.next()) {}
     // while (p.next()) { nodesLayouted++; }
     // double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
-    // double nps = static_cast<double>(nodesLayouted) / 
+    // double nps = static_cast<double>(nodesLayouted) /
     //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
     // std::cout << "Layout done. " << nodesLayouted << " nodes in "
     //   << t << " ms. " << nps << " nodes/s." << std::endl;
   }
-  
+
   void VisualNode::pathUp(void) {
     VisualNode* cur = this;
     while (cur) {
@@ -148,7 +148,7 @@ namespace Gecode { namespace Gist {
     setHidden(!isHidden());
     dirtyUp();
   }
-  
+
   void
   VisualNode::hideFailed(void) {
     HideFailedCursor c(this);
@@ -156,7 +156,7 @@ namespace Gecode { namespace Gist {
     while (v.next()) {}
     dirtyUp();
   }
-  
+
   void
   VisualNode::unhideAll(void) {
     UnhideAllCursor c(this);
@@ -164,11 +164,11 @@ namespace Gecode { namespace Gist {
     while (v.next()) {}
     dirtyUp();
   }
-  
+
 
   void
   VisualNode::changedStatus() { dirtyUp(); }
-  
+
   bool
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
     if (x < box.left ||
@@ -181,7 +181,7 @@ namespace Gecode { namespace Gist {
       return (theExtent.l <= x && x <= theExtent.r);
     } else {
       return false;
-    }    
+    }
   }
 
   VisualNode*
@@ -207,7 +207,7 @@ namespace Gecode { namespace Gist {
       depth--;
       y -= Layout::dist_y;
     }
-   
+
     if(cur == this && !cur->containsCoordinateAtDepth(x, 0)) {
       return NULL;
     }
@@ -264,7 +264,7 @@ namespace Gecode { namespace Gist {
     }
     return alpha;
   }
-  
+
   void
   Layouter::merge(Extent* result,
                   Extent* shape1, int depth1,
@@ -279,14 +279,14 @@ namespace Gecode { namespace Gist {
       // Extend the topmost right extent by alpha.  This, in effect,
       // moves the second shape to the right by alpha units.
       int topmostL = shape1[0].l;
-      int topmostR = shape2[0].r;      
+      int topmostR = shape2[0].r;
       int backoffTo1 =
         shape1[0].r - alpha - shape2[0].r;
       int backoffTo2 =
         shape2[0].l + alpha - shape1[0].l;
 
       result[0] = Extent(topmostL, topmostR+alpha);
-        
+
       // Now, since extents are given in relative units, in order to
       // compute the extents of the merged shape, we can just collect the
       // extents of shape1 and shape2, until one of the shapes ends.  If
@@ -297,25 +297,25 @@ namespace Gecode { namespace Gist {
         Extent currentExtent1 = shape1[i];
         Extent currentExtent2 = shape2[i];
         int newExtentL = currentExtent1.l;
-        int newExtentR = currentExtent2.r;        
+        int newExtentR = currentExtent2.r;
         result[i] = Extent(newExtentL, newExtentR);
         backoffTo1 += currentExtent1.r - currentExtent2.r;
         backoffTo2 += currentExtent2.l - currentExtent1.l;
       }
-        
+
       // If shape1 is deeper than shape2, back off to the axis of shape1,
       // and process the remaining extents of shape1.
       if (i<depth1) {
         Extent currentExtent1 = shape1[i];
         int newExtentL = currentExtent1.l;
-        int newExtentR = currentExtent1.r;        
+        int newExtentR = currentExtent1.r;
         result[i] = Extent(newExtentL, newExtentR+backoffTo1);
         ++i;
         for (; i<depth1; i++) {
           result[i] = shape1[i];
         }
       }
-        
+
       // Vice versa, if shape2 is deeper than shape1, back off to the
       // axis of shape2, and process the remaining extents of shape2.
       if (i<depth2) {
@@ -328,7 +328,7 @@ namespace Gecode { namespace Gist {
           result[i] = shape2[i];
         }
       }
-    } 
+    }
   }
 
   void
@@ -358,14 +358,14 @@ namespace Gecode { namespace Gist {
       Region r(*root->copy);
       std::pair<int,int>* alpha =
         r.alloc<std::pair<int,int> >(numberOfShapes);
-        
+
       // distance between the leftmost and the rightmost axis in the list
       int width = 0;
 
       int maxDepth = 0;
       for (int i = numberOfShapes; i--;)
         maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
-        
+
       Extent* currentShapeL = r.alloc<Extent>(maxDepth);
       int ldepth = getChild(0)->getShape()->depth();
       for (int i=ldepth; i--;)
@@ -398,7 +398,7 @@ namespace Gecode { namespace Gist {
         ldepth = std::max(ldepth,nextShapeL->depth());
         alpha[i].first = nextAlphaL - width;
         width = nextAlphaL;
-            
+
         // Merge right-to-left.  Here, a correction of nextAlphaR is
         // not required.
         Shape* nextShapeR = getChild(numberOfShapes-1-i)->getShape();
@@ -422,7 +422,7 @@ namespace Gecode { namespace Gist {
       bool left = getStatus() == STEP;
       int halfWidth = left ? 0 : width / 2;
       (*mergedShape)[1].move(- halfWidth);
-        
+
       // Finally, for the offset lists.  Now that the axis of the merged
       // shape is at the center of the two extreme axes, the first shape
       // needs to be offset by -halfWidth units with respect to the new
@@ -436,7 +436,7 @@ namespace Gecode { namespace Gist {
         getChild(i)->setOffset(offset);
       }
       setShape(mergedShape);
-    }    
+    }
   }
 
   size_t
@@ -458,7 +458,7 @@ namespace Gecode { namespace Gist {
       s += (desc.branch != NULL ? desc.branch->size() : 0);
     return s;
   }
-  
+
 }}
 
 // STATISTICS: gist-any

@@ -52,10 +52,10 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     return data;
   }
 
-  IntVarItem::IntVarItem(Reflection::VarSpec* spec, const ItemData& data, 
+  IntVarItem::IntVarItem(Reflection::VarSpec* spec, const ItemData& data,
                          QGraphicsItem *parent)
   : VarItem(spec, parent)
-  { 
+  {
     // this item is supposed to display an IntVar
     if(spec->vti() == Int::IntVarImpConf::vti) {
       Reflection::IntArrayArg* dom = spec->dom()->toIntArray();

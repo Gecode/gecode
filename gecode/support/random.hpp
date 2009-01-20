@@ -69,7 +69,7 @@ namespace Gecode { namespace Support {
   };
 
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
-  forceinline unsigned int 
+  forceinline unsigned int
   LinearCongruentialGenerator<m,a,q,r>::next(void) {
     s = a*(s%q) - r*(s/q);
     unsigned int res = s;
@@ -77,24 +77,24 @@ namespace Gecode { namespace Support {
     return res;
   }
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
-  forceinline void 
+  forceinline void
   LinearCongruentialGenerator<m,a,q,r>::seed(unsigned int _s) {
     s = _s % m;
     if (s == 0) s = 1;
   }
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
-  forceinline 
+  forceinline
   LinearCongruentialGenerator<m,a,q,r>::
   LinearCongruentialGenerator(unsigned int _s) {
     seed(_s);
   }
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
-  forceinline unsigned int 
+  forceinline unsigned int
   LinearCongruentialGenerator<m,a,q,r>::seed(void) const {
     return s;
   }
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
-  forceinline unsigned int 
+  forceinline unsigned int
   LinearCongruentialGenerator<m,a,q,r>::operator ()(unsigned int n) {
     unsigned int x1 = next() & ((1<<16)-1);
     unsigned int x2 = next() & ((1<<16)-1);

@@ -86,7 +86,7 @@ namespace {
 
 
 
-/** \brief Custom branching for black hole patience. 
+/** \brief Custom branching for black hole patience.
  *
  * This class implements a custom branching for BlackHole that
  * instantiates the variables in lexical order, and chooses the value
@@ -116,18 +116,18 @@ class BlackHoleBranch : Branching {
       return sizeof(Description);
     }
   };
- 
+
   /// Construct branching
-  BlackHoleBranch(Space& home, ViewArray<Int::IntView>& xv) 
+  BlackHoleBranch(Space& home, ViewArray<Int::IntView>& xv)
     : Branching(home), x(xv), pos(-1), val(-1) {}
   /// Copy constructor
-  BlackHoleBranch(Space& home, bool share, BlackHoleBranch& b) 
+  BlackHoleBranch(Space& home, bool share, BlackHoleBranch& b)
     : Branching(home, share, b), pos(b.pos), val(b.val) {
     x.update(home, share, b.x);
   }
-  
+
 public:
-  /// Check status of branching, return true if alternatives left. 
+  /// Check status of branching, return true if alternatives left.
   virtual bool status(const Space&) const {
     for (pos = 0; pos < x.size(); ++pos) {
       if (!x[pos].assigned()) {
@@ -149,17 +149,17 @@ public:
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
     return new Description(*this, 2, pos, val);
   }
-  /// Perform commit for branching description \a d and alternative \a a. 
-  virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
+  /// Perform commit for branching description \a d and alternative \a a.
+  virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                             unsigned int a) {
-    const Description& desc = 
+    const Description& desc =
       static_cast<const Description&>(d);
     pos = val = -1;
     if (a)
-      return me_failed(x[desc.pos].nq(home, desc.val)) 
+      return me_failed(x[desc.pos].nq(home, desc.val))
         ? ES_FAILED : ES_OK;
-    else 
-      return me_failed(x[desc.pos].eq(home, desc.val)) 
+    else
+      return me_failed(x[desc.pos].eq(home, desc.val))
         ? ES_FAILED : ES_OK;
   }
   /// Copy branching
@@ -181,12 +181,12 @@ public:
 /**
  * \brief %Example: Black Hole Patience
  *
- * This example solves instances of the black-hole patience game. 
- * 
+ * This example solves instances of the black-hole patience game.
+ *
  * The model of the problem is mostly taken from "Search in the
  * Patience Game 'Black Hole'", by Ian P. Gent, Chris Jefferson, Tom
  * Kelsey, Inês Lynce, Ian Miguel, Peter Nightingale, Barbara
- * M. Smith, and S. Armagan Tarim. 
+ * M. Smith, and S. Armagan Tarim.
  *
  * The conditional symmetry identified in the above paper can be
  * eliminated (enabled by default).
@@ -221,8 +221,8 @@ public:
     PROPAGATION_TUPLE_SET ///< Extensional propagation using tables
   };
   /// Actual model
-  BlackHole(const SizeOptions& opt) 
-    : x(*this, 52, 0,51), y(*this, 52, 0,51) 
+  BlackHole(const SizeOptions& opt)
+    : x(*this, 52, 0,51), y(*this, 52, 0,51)
   {
     // Black ace at bottom
     rel(*this, x[0], IRT_EQ, 0);
@@ -244,7 +244,7 @@ public:
         element(*this, modtable, x[i+1], x2);
         const int dr[2] = {1, 12};
         IntVar diff(*this, IntSet(dr, 2));
-        post(*this, abs(*this, minus(*this, x1, x2, ICL_DOM), ICL_DOM) 
+        post(*this, abs(*this, minus(*this, x1, x2, ICL_DOM), ICL_DOM)
              == diff, ICL_DOM);
       }
     } else if (opt.propagation() == PROPAGATION_DFA) {
@@ -313,7 +313,7 @@ public:
             if (pile[c1] == pile[c2]) continue;
             // Get the right order of the cards
             int o1 = c1, o2 = c2;
-            if (pile[c1] > pile[c2] && layer[c2] >= layer[c1]) 
+            if (pile[c1] > pile[c2] && layer[c2] >= layer[c1])
               std::swap(o1, o2);
             // cond is the condition for the symmetry
             BoolVarArgs ba(4);
@@ -331,7 +331,7 @@ public:
             // Cond holds when all the above holds
             BoolVar cond(*this, 0, 1);
             rel(*this, BOT_AND, ba, cond);
-            
+
             // If cond is fulfilled, then we can order the cards
             // cond -> (y[o1] < y[o2])
             post(*this, tt(!cond || ~(y[o1] < y[o2])));
@@ -339,9 +339,9 @@ public:
         }
       }
     }
-    
+
     // Install custom branching
-    BlackHoleBranch::post(*this, x);      
+    BlackHoleBranch::post(*this, x);
   }
 
   /// Print instance and solution
@@ -351,13 +351,13 @@ public:
     for (int i = 0; i < 17; i++) {
       for (int j = 0; j < 3; j++)
         os << card(layout[i][j]) << " ";
-      if ((i+1) % 3 == 0) 
+      if ((i+1) % 3 == 0)
         os << std::endl;
       else
         os << "  \t";
     }
     os << std::endl << std::endl;
-    
+
     os << "Solution:" << std::endl;
     for (int i = 0; i < 52; ++i) {
       if (x[i].assigned())

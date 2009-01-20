@@ -545,8 +545,8 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,NONE,NONE):
       GECODE_NEVER;
     case GECODE_INT_STATUS(NONE,NONE,ZERO):
-      GECODE_ME_CHECK(x0.zero_none(home)); 
-      GECODE_ME_CHECK(x1.zero_none(home)); 
+      GECODE_ME_CHECK(x0.zero_none(home));
+      GECODE_ME_CHECK(x1.zero_none(home));
       break;
     case GECODE_INT_STATUS(NONE,NONE,ONE):
       return ES_FIX;
@@ -563,11 +563,11 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ZERO,ONE):
       GECODE_ME_CHECK(x0.one_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE,NONE):
-      x0.cancel(home,*this,PC_BOOL_VAL); 
-      GECODE_ME_CHECK(x2.one_none(home)); 
+      x0.cancel(home,*this,PC_BOOL_VAL);
+      GECODE_ME_CHECK(x2.one_none(home));
       break;
     case GECODE_INT_STATUS(NONE,ONE,ZERO):
-      return ES_FAILED;      
+      return ES_FAILED;
     case GECODE_INT_STATUS(NONE,ONE,ONE):
       x0.cancel(home,*this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE):
@@ -595,7 +595,7 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ZERO,ONE,ONE):
       break;
     case GECODE_INT_STATUS(ONE,NONE,NONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); 
+      x1.cancel(home,*this,PC_BOOL_VAL);
       GECODE_ME_CHECK(x2.one_none(home)); break;
     case GECODE_INT_STATUS(ONE,NONE,ZERO):
       return ES_FAILED;
@@ -728,7 +728,7 @@ namespace Gecode { namespace Int { namespace Bool {
             GECODE_REWRITE(*this,(BinOrTrue<BV,BV>::post(home,x1,x[0])));
           }
           // Move to x0 and subscribe
-          x0=x[i]; x[i]=x[--n]; 
+          x0=x[i]; x[i]=x[--n];
           x.size(n);
           x0.subscribe(home,*this,PC_BOOL_VAL,false);
           return ES_FIX;
@@ -772,7 +772,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   forceinline
   NaryOr<VX,VY>::NaryOr(Space& home, ViewArray<VX>& x, VY y)
-    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>(home,x,y), 
+    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>(home,x,y),
       n_zero(0), c(home) {
     x.subscribe(home,*new (home) Advisor(home,*this,c));
   }
@@ -780,7 +780,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   forceinline
   NaryOr<VX,VY>::NaryOr(Space& home, bool share, NaryOr<VX,VY>& p)
-    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>(home,share,p), 
+    : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>(home,share,p),
       n_zero(p.n_zero) {
     c.update(home,share,p.c);
   }
@@ -878,7 +878,7 @@ namespace Gecode { namespace Int { namespace Bool {
     (void) MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>
       ::dispose(home);
     return sizeof(*this);
-  }  
+  }
 
 }}}
 

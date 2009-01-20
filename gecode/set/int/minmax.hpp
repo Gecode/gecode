@@ -427,7 +427,7 @@ namespace Gecode { namespace Set { namespace Int {
     }
 
     return ES_FIX;
-  }  
+  }
 
   template <class View>
   forceinline
@@ -533,7 +533,7 @@ namespace Gecode { namespace Set { namespace Int {
         return ES_SUBSUMED(*this, home);
     }
     return ES_FIX;
-  }  
+  }
 
   template <class View>
   forceinline
@@ -636,7 +636,7 @@ namespace Gecode { namespace Set { namespace Int {
       }
     }
     return ES_FIX;
-  }  
+  }
 
 }}}
 

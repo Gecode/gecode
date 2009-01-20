@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /// Decide the required precision and check for overflow
   inline bool
-  precision(Term<IntView>* t_p, int n_p, 
+  precision(Term<IntView>* t_p, int n_p,
             Term<IntView>* t_n, int n_n,
             double d) {
     double sl = 0.0;
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Limits::check(c,"Int::linear");
 
     double d = c;
-    
+
     eliminate(t,n,d);
 
     Term<IntView> *t_p, *t_n;
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Linear {
         default: GECODE_NEVER;
         }
       } else if (n == 3) {
-        switch (r) {                                                
+        switch (r) {
         case IRT_EQ: GECODE_INT_PL_TER(EqTer); break;
         case IRT_NQ: GECODE_INT_PL_TER(NqTer); break;
         case IRT_LQ: GECODE_INT_PL_TER(LqTer); break;
@@ -259,10 +259,10 @@ namespace Gecode { namespace Int { namespace Linear {
         }
       } else {
         ViewArray<IntView> x(home,n_p);
-        for (int i = n_p; i--; ) 
+        for (int i = n_p; i--; )
           x[i] = t_p[i].x;
         ViewArray<IntView> y(home,n_n);
-        for (int i = n_n; i--; ) 
+        for (int i = n_n; i--; )
           y[i] = t_n[i].x;
         post_nary<int,IntView>(home,x,y,r,c);
       }
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class View>
   forceinline void
   post_nary(Space& home,
-            ViewArray<View>& x, ViewArray<View>& y, 
+            ViewArray<View>& x, ViewArray<View>& y,
             IntRelType r, Val c, BoolView b) {
     switch (r) {
     case IRT_EQ:
@@ -335,7 +335,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Limits::check(c,"Int::linear");
 
     double d = c;
-    
+
     eliminate(t,n,d);
 
     Term<IntView> *t_p, *t_n;
@@ -459,7 +459,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
       } else {
         ViewArray<IntView> x(home,n_p);
-        for (int i = n_p; i--; ) 
+        for (int i = n_p; i--; )
           x[i] = t_p[i].x;
         ViewArray<IntView> y(home,n_n);
         for (int i = n_n; i--; )
@@ -468,7 +468,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     } else if (is_ip) {
       // Arbitrary coefficients with integer precision
-      c = static_cast<int>(d); 
+      c = static_cast<int>(d);
       ViewArray<IntScaleView> x(home,n_p);
       for (int i = n_p; i--; )
         x[i].init(t_p[i].a,t_p[i].x);

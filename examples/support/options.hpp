@@ -41,7 +41,7 @@
  *
  */
 inline
-BaseOption::BaseOption(const char* o, const char* e) 
+BaseOption::BaseOption(const char* o, const char* e)
   : opt(o), exp(e) {}
 inline
 BaseOption::~BaseOption(void) {
@@ -53,13 +53,13 @@ BaseOption::~BaseOption(void) {
  *
  */
 inline
-StringOption::StringOption(const char* o, const char* e, int v) 
+StringOption::StringOption(const char* o, const char* e, int v)
   : BaseOption(o,e), cur(v), fst(NULL), lst(NULL) {}
-inline void 
+inline void
 StringOption::value(int v) {
   cur = v;
 }
-inline int 
+inline int
 StringOption::value(void) const {
   return cur;
 }
@@ -69,14 +69,14 @@ StringOption::value(void) const {
  *
  */
 inline
-UnsignedIntOption::UnsignedIntOption(const char* o, const char* e, 
-                                     unsigned int v) 
+UnsignedIntOption::UnsignedIntOption(const char* o, const char* e,
+                                     unsigned int v)
   : BaseOption(o,e), cur(v) {}
-inline void 
+inline void
 UnsignedIntOption::value(unsigned int v) {
   cur = v;
 }
-inline unsigned int 
+inline unsigned int
 UnsignedIntOption::value(void) const {
   return cur;
 }

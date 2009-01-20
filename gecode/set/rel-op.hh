@@ -60,7 +60,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
-  
+
   template <class View0, class View1, class View2>
   class SuperOfInter :
   public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ z \supseteq x \cap y\f$ 
+    /// Post propagator \f$ z \supseteq x \cap y\f$
     static  ExecStatus  post(Space& home, View0 x, View1 y, View2 z);
   };
 
@@ -117,7 +117,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ z \subseteq x \cap y\f$ 
+    /// Post propagator \f$ z \subseteq x \cap y\f$
     static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
   };
 
@@ -151,7 +151,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ z=x\cap y\f$ 
+    /// Post propagator \f$ z=x\cap y\f$
     static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
   };
 
@@ -257,9 +257,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
-    /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
+    /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
     static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
-    /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
+    /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
     static  ExecStatus  post(Space& home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
   };
@@ -296,9 +296,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
-    /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$ 
+    /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
     static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
-    /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$ 
+    /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
     static  ExecStatus  post(Space& home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
   };

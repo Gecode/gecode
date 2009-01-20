@@ -53,7 +53,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     view = new QGraphicsView(this);
     view->setScene(scene);
     view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    
+
     timeBar = new QSlider(Qt::Horizontal, this);
     timeBar->setMinimum(pit);
     timeBar->setMaximum(pit);
@@ -61,16 +61,16 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
     muteButton = new QPushButton("Mute", this);
     muteButton->setObjectName("muteButton");
-    
+
     grid = new QGridLayout(this);
     grid->addWidget(view, 0, 0, 1, 2);
     grid->addWidget(timeBar, 1, 0);
     grid->addWidget(muteButton, 1, 1);
-    
+
     setLayout(grid);
-    
+
     connect(timeBar, SIGNAL(valueChanged(int)), this, SIGNAL(pointInTimeChanged(int)));
-    
+
     QMetaObject::connectSlotsByName(this);
   }
 
@@ -82,10 +82,10 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     while(!_vars.empty()) {
       specs.push_back(new Reflection::VarSpec(vm.spec(_vars.takeFirst().toStdString().c_str())));
     }
-    
+
    initT(specs);
   }
-  
+
   void
   VarArrayView::displayOld(int pit) {
     if(!muted) {
@@ -93,7 +93,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
       updateTimeBar(pit);
     }
   }
-  
+
   void
   VarArrayView::display(Gecode::Reflection::VarMap& _vm, int pit) {
     if(pitMap.size() <= pit) {
@@ -105,7 +105,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     }
     if(!muted) {
       pitMap[pit] = nextInternalPit ++;
-      
+
       QVector<Reflection::VarSpec*> specs;
       QStringList _vars = vars;
       while(!_vars.empty()) {

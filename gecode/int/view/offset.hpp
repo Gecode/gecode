@@ -184,37 +184,37 @@ namespace Gecode {
     template <class I>
     forceinline ModEvent
     OffsetView::narrow_r(Space& home, I& i, bool depend) {
-      Iter::Ranges::Offset<I> oi(i,-c); 
+      Iter::Ranges::Offset<I> oi(i,-c);
       return view.narrow_r(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
     OffsetView::inter_r(Space& home, I& i, bool depend) {
-      Iter::Ranges::Offset<I> oi(i,-c); 
+      Iter::Ranges::Offset<I> oi(i,-c);
       return view.inter_r(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
     OffsetView::minus_r(Space& home, I& i, bool depend) {
-      Iter::Ranges::Offset<I> oi(i,-c); 
+      Iter::Ranges::Offset<I> oi(i,-c);
       return view.minus_r(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
     OffsetView::narrow_v(Space& home, I& i, bool depend) {
-      Iter::Values::Offset<I> oi(i,-c); 
+      Iter::Values::Offset<I> oi(i,-c);
       return view.narrow_v(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
     OffsetView::inter_v(Space& home, I& i, bool depend) {
-      Iter::Values::Offset<I> oi(i,-c); 
+      Iter::Values::Offset<I> oi(i,-c);
       return view.inter_v(home,oi,depend);
     }
     template <class I>
     forceinline ModEvent
     OffsetView::minus_v(Space& home, I& i, bool depend) {
-      Iter::Values::Offset<I> oi(i,-c); 
+      Iter::Values::Offset<I> oi(i,-c);
       return view.minus_v(home,oi,depend);
     }
 
@@ -243,7 +243,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::subscribe(Space& home, Propagator& p, PropCond pc, 
+    OffsetView::subscribe(Space& home, Propagator& p, PropCond pc,
                           bool process) {
       view.subscribe(home,p,pc,process);
     }
@@ -299,7 +299,7 @@ namespace Gecode {
      */
     forceinline Reflection::Arg*
     OffsetView::spec(const Space& home, Reflection::VarMap& m) const {
-      return Reflection::Arg::newPair(Reflection::Arg::newInt(c), 
+      return Reflection::Arg::newPair(Reflection::Arg::newInt(c),
                                       view.spec(home, m));
     }
     inline Support::Symbol

@@ -81,11 +81,11 @@ namespace Gecode {
     /// Create a copy
     GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
   };
-  
+
   forceinline
   DFA::DFAI::DFAI(unsigned int nt)
     : trans(nt == 0 ? NULL : heap.alloc<Transition>(nt)) {}
-  
+
   forceinline
   DFA::DFAI::~DFAI(void) {
     if (n_trans > 0)
@@ -140,14 +140,14 @@ namespace Gecode {
   forceinline int
   DFA::symbol_min(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return ((d != NULL) && (d->n_trans > 0)) ? 
+    return ((d != NULL) && (d->n_trans > 0)) ?
       d->trans[0].symbol : Int::Limits::min;
   }
 
   forceinline int
   DFA::symbol_max(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return ((d != NULL) && (d->n_trans > 0)) ? 
+    return ((d != NULL) && (d->n_trans > 0)) ?
       d->trans[d->n_trans-1].symbol : Int::Limits::max;
   }
 
@@ -245,7 +245,7 @@ namespace Gecode {
 
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const DFA& d) {
     std::basic_ostringstream<Char,Traits> st;
     st.copyfmt(os); st.width(0);

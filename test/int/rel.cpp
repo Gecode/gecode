@@ -43,7 +43,7 @@ namespace Test { namespace Int {
 
    /// Tests for relation constraints
    namespace Rel {
-   
+
      /**
       * \defgroup TaskTestIntRel Relation constraints
       * \ingroup TaskTestInt
@@ -58,7 +58,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntVarXY(Gecode::IntRelType irt0, int n, Gecode::IntConLevel icl)
          : Test("Rel::Int::Var::XY::"+str(irt0)+"::"+str(icl)+"::"+str(n),
-                n+1,-3,3,n==1,icl), 
+                n+1,-3,3,n==1,icl),
            irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -80,13 +80,13 @@ namespace Test { namespace Int {
          }
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          assert(x.size() == 2);
          Gecode::rel(home, x[0], irt, x[1], b, icl);
        }
      };
-   
+
      /// Test for simple relation involving shared integer variables
      class IntVarXX : public Test {
      protected:
@@ -96,9 +96,9 @@ namespace Test { namespace Int {
        /// Create and register test
        IntVarXX(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
          : Test("Rel::Int::Var::XX::"+str(irt0)+"::"+str(icl),
-                1,-3,3,true,icl), 
+                1,-3,3,true,icl),
            irt(irt0) {
-         contest = ((irt != Gecode::IRT_LE) && 
+         contest = ((irt != Gecode::IRT_LE) &&
                     (irt != Gecode::IRT_GR) &&
                     (irt != Gecode::IRT_NQ))
            ? CTL_DOMAIN : CTL_NONE;
@@ -112,12 +112,12 @@ namespace Test { namespace Int {
          Gecode::rel(home, x[0], irt, x[0], icl);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          Gecode::rel(home, x[0], irt, x[0], b, icl);
        }
      };
-   
+
      /// Test for simple relation involving Boolean variables
      class BoolVarXY : public Test {
      protected:
@@ -125,9 +125,9 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       BoolVarXY(Gecode::IntRelType irt0, int n) 
+       BoolVarXY(Gecode::IntRelType irt0, int n)
          : Test("Rel::Bool::Var::XY::"+str(irt0)+"::"+str(n),n+1,0,1,
-                n==1), 
+                n==1),
            irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -149,16 +149,16 @@ namespace Test { namespace Int {
          }
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          assert(x.size() == 2);
          using namespace Gecode;
-         rel(home, 
-             channel(home,x[0]), irt, channel(home,x[1]), 
+         rel(home,
+             channel(home,x[0]), irt, channel(home,x[1]),
              b);
        }
      };
-   
+
      /// Test for simple relation involving shared Boolean variables
      class BoolVarXX : public Test {
      protected:
@@ -166,10 +166,10 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       BoolVarXX(Gecode::IntRelType irt0) 
-         : Test("Rel::Bool::Var::XX::"+str(irt0),1,0,1), 
+       BoolVarXX(Gecode::IntRelType irt0)
+         : Test("Rel::Bool::Var::XX::"+str(irt0),1,0,1),
            irt(irt0) {
-         contest = ((irt != Gecode::IRT_LE) && 
+         contest = ((irt != Gecode::IRT_LE) &&
                     (irt != Gecode::IRT_GR) &&
                     (irt != Gecode::IRT_NQ))
            ? CTL_DOMAIN : CTL_NONE;
@@ -184,7 +184,7 @@ namespace Test { namespace Int {
          Gecode::rel(home, b, irt, b);
        }
      };
-   
+
      /// Test for simple relation involving integer variable and integer constant
      class IntInt : public Test {
      protected:
@@ -194,9 +194,9 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Create and register test
-       IntInt(Gecode::IntRelType irt0, int n, int c0) 
+       IntInt(Gecode::IntRelType irt0, int n, int c0)
          : Test("Rel::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),
-                n,-3,3,n==1), 
+                n,-3,3,n==1),
            irt(irt0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -214,13 +214,13 @@ namespace Test { namespace Int {
            rel(home, x, irt, c);
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          assert(x.size() == 1);
          Gecode::rel(home, x[0], irt, c, b);
        }
      };
-   
+
      /// Test for simple relation involving Boolean variable and integer constant
      class BoolInt : public Test {
      protected:
@@ -230,9 +230,9 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Create and register test
-       BoolInt(Gecode::IntRelType irt0, int n, int c0) 
+       BoolInt(Gecode::IntRelType irt0, int n, int c0)
          : Test("Rel::Bool::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),n,0,1,
-                n==1), 
+                n==1),
            irt(irt0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -253,14 +253,14 @@ namespace Test { namespace Int {
          }
        }
        /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          assert(x.size() == 1);
          using namespace Gecode;
          rel(home, channel(home,x[0]), irt, c, b);
        }
      };
-   
+
      /// Test for pairwise relation between integer variables
      class IntPairwise : public Test {
      protected:
@@ -270,7 +270,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntPairwise(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
          : Test("Rel::Int::Pairwise::"+str(irt0)+"::"+str(icl),
-                   4,-3,3,false,icl), 
+                   4,-3,3,false,icl),
            irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -285,7 +285,7 @@ namespace Test { namespace Int {
          Gecode::rel(home, x, irt, icl);
        }
      };
-   
+
      /// Test for pairwise relation between Boolean variables
      class BoolPairwise : public Test {
      protected:
@@ -294,7 +294,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        BoolPairwise(Gecode::IntRelType irt0)
-         : Test("Rel::Bool::Pairwise::"+str(irt0),8,0,1), 
+         : Test("Rel::Bool::Pairwise::"+str(irt0),8,0,1),
            irt(irt0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -313,7 +313,7 @@ namespace Test { namespace Int {
          rel(home, b, irt);
        }
      };
-   
+
      /// Test for relation between arrays of integer variables
      class IntArray : public Test {
      protected:
@@ -329,7 +329,7 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++)
            if (x[i] != x[n+i])
              return cmp(x[i],irt,x[n+i]);
-         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) || 
+         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) ||
                  (irt == Gecode::IRT_EQ));
          GECODE_NEVER;
          return false;
@@ -345,7 +345,7 @@ namespace Test { namespace Int {
          rel(home, y, irt, z);
        }
      };
-   
+
      /// Test for relation between arrays of Boolean variables
      class BoolArray : public Test {
      protected:
@@ -361,7 +361,7 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++)
            if (x[i] != x[n+i])
              return cmp(x[i],irt,x[n+i]);
-         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) || 
+         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) ||
                  (irt == Gecode::IRT_EQ));
          GECODE_NEVER;
          return false;
@@ -377,7 +377,7 @@ namespace Test { namespace Int {
          rel(home, y, irt, z);
        }
      };
-   
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -405,13 +405,13 @@ namespace Test { namespace Int {
            }
            (void) new IntArray(irts.irt());
            (void) new BoolArray(irts.irt());
-         }      
+         }
        }
      };
-   
+
      Create c;
      //@}
-   
+
    }
 }}
 

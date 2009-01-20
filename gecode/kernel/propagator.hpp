@@ -195,7 +195,7 @@ namespace Gecode {
    * Stores two views of type \a View0 and \a View1 with propagation
    * conditions \a pc0 and \a pc1.
    *
-   * If the propagation conditions \a pc0 or \a pc1 have the values 
+   * If the propagation conditions \a pc0 or \a pc1 have the values
    * PC_GEN_NONE, no subscriptions are created.
    *
    */
@@ -224,7 +224,7 @@ namespace Gecode {
    * Stores three views of type \a View0, \a View1, and \a View2
    * with propagation conditions \a pc0, \a pc1, and \a pc2.
    *
-   * If the propagation conditions \a pc0, \a pc1, \a pc2 have the values 
+   * If the propagation conditions \a pc0, \a pc1, \a pc2 have the values
    * PC_GEN_NONE, no subscriptions are created.
    *
    */
@@ -255,7 +255,7 @@ namespace Gecode {
    * Stores array of views of type \a View0 with propagation condition \a pc0
    * and a single view of type \a View1 with propagation condition \a pc1.
    *
-   * If the propagation conditions \a pc0 or \a pc1 have the values 
+   * If the propagation conditions \a pc0 or \a pc1 have the values
    * PC_GEN_NONE, no subscriptions are created.
    *
    */
@@ -558,7 +558,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
-  MixBinaryPropagator<View0,pc0,View1,pc1>::cost(const Space&, 
+  MixBinaryPropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                  const ModEventDelta&) const {
     return PropCost::binary(PropCost::LOW);
   }
@@ -673,7 +673,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
-  MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(const Space&, 
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                   const ModEventDelta&) const {
     return PropCost::linear(PropCost::LOW,x.size()+1);
   }

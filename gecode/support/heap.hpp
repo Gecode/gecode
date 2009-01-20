@@ -69,7 +69,7 @@ namespace Gecode {
      */
     template <class T>
     T* alloc(unsigned int n);
-    /** 
+    /**
      * \brief Delete \a n objects starting at \a b
      *
      * Note that this function implements C++ semantics: the destructor
@@ -82,7 +82,7 @@ namespace Gecode {
      *
      * Note that this function implements C++ semantics: the copy constructor
      * of \a T is run for all \f$\min(n,m)\f$ objects, the default
-     * constructor of \a T is run for all remaining 
+     * constructor of \a T is run for all remaining
      * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
      * run for all \a n objects in \a b.
      *
@@ -99,7 +99,7 @@ namespace Gecode {
      */
     template <class T>
     T** realloc(T** b, unsigned int, unsigned int m);
-    /** 
+    /**
      * \brief Copy \a n objects starting at \a s to \a d
      *
      * Note that this function implements C++ semantics: the assignment
@@ -109,7 +109,7 @@ namespace Gecode {
      */
     template <class T>
     static T* copy(T* d, const T* s, unsigned int n);
-    /** 
+    /**
      * \brief Copy \a n pointers starting at \a s to \a d
      *
      * Returns \a d.

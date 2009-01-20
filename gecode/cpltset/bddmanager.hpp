@@ -37,7 +37,7 @@
 #include <gecode/support/buddy/bdd.h>
 
 namespace Gecode {
-  
+
   /// %Exception: Error in the Buddy ROBDD manager
   class GECODE_VTABLE_EXPORT BddMgrException : public Exception {
   public:
@@ -48,15 +48,15 @@ namespace Gecode {
   inline
   BddMgrException::BddMgrException(const char* l)
     : Exception(l,"Error in ROBDD Manager") {}
-  
+
   namespace CpltSet {
 
   /**
-   * \brief Manager for CpltSetVars. 
+   * \brief Manager for CpltSetVars.
    *
    * Used for initialization and destruction of the global lookup table for
-   * Bdd nodes and for keeping track between CpltSetVars and their 
-   * corresponding indices in the lookup table. 
+   * Bdd nodes and for keeping track between CpltSetVars and their
+   * corresponding indices in the lookup table.
    */
   class BddMgr {
   private:
@@ -72,7 +72,7 @@ namespace Gecode {
     BddMgr(void);
     /// Destructor
     GECODE_CPLTSET_EXPORT ~BddMgr(void);
-    
+
     /// Initialize manager with initial nodesize \a n and cachesize \a c.
     void init(int n, int c);
 
@@ -127,7 +127,7 @@ namespace Gecode {
     bdd iffalse(bdd& b);
     /// Returns the index of the variable labeling the bdd \a b
     unsigned int bddidx(const bdd& b);
-    
+
     /// Set the bdd \a dom to \f$ \exists_{V(var)} \left(dom \wedge d\right)\f$
     void existquant(bdd& dom, bdd& d, int* var, int s);
     /// Set the bdd \a dom to \f$ \exists_{V([x_a,\dots,x_b])} \left(dom \wedge d\right)\f$
@@ -149,7 +149,7 @@ namespace Gecode {
     void dispose(int offset, int range, int freenodes = 0);
     /// Free nodes for bdd \a d in the table
     void dispose(bdd& d);
-    /** 
+    /**
      * \brief Subscribe a variable to the lookup table
      *  Returns the offset where the first node starts.
      */
@@ -168,20 +168,20 @@ namespace Gecode {
     int offset(void) const;
     /// Memory Management
     void setmaxinc(int max);
-    /// Check whether the buddy library has already been initialized 
+    /// Check whether the buddy library has already been initialized
     bool available(void);
   };
 
   forceinline bool
   BddMgr::available(void) { return bdd_isrunning(); }
 
-  forceinline bool 
+  forceinline bool
   BddMgr::leaf(const bdd& b) const{ return b == bdd_true() || b == bdd_false(); }
 
-  forceinline bool 
+  forceinline bool
   BddMgr::cfalse(const bdd& b) const{ return b == bdd_false(); }
 
-  forceinline bool 
+  forceinline bool
   BddMgr::ctrue(const bdd& b) const{ return b == bdd_true(); }
 
   forceinline
@@ -190,23 +190,23 @@ namespace Gecode {
 
   forceinline void
   BddMgr::dispose(void) {
-    if (available()) { 
-      bdd_done(); 
+    if (available()) {
+      bdd_done();
     }
     _size = 0;
     _offset = 0;
-    dummy_offset = -1; 
+    dummy_offset = -1;
     dummy_range = -1;
   }
-   
+
   forceinline void
-  BddMgr::init(int n, int c) {  
+  BddMgr::init(int n, int c) {
     _size = 0;
     _offset = 0;
-    dummy_offset = -1; 
+    dummy_offset = -1;
     dummy_range = -1;
     bdd_init(n, c);
-    
+
     info.produced = -1;
     info.nodenum = -1;
     info.maxnodenum = -1;
@@ -225,7 +225,7 @@ namespace Gecode {
   forceinline bdd
   BddMgr::bddpos(int i) const{ return bdd_ithvarpp(i); }
 
-  forceinline int 
+  forceinline int
   BddMgr::allocate(int r) {
     assert(available());
     _size++;
@@ -265,7 +265,7 @@ namespace Gecode {
   forceinline bdd
   BddMgr::negbddpos(int i) const{ return bdd_nithvarpp(i); }
 
-  forceinline void 
+  forceinline void
   BddMgr::mark(const bdd& b) { bdd_mark_node(b); }
 
   forceinline void
@@ -288,7 +288,7 @@ namespace Gecode {
 
   forceinline void
   BddMgr::ubCard(const bdd& b, int r) {  bdd_set_card_hi(b, r); }
-  
+
   forceinline bdd
   BddMgr::ite(const bdd& v, const bdd& t, const bdd& f) {
     return bdd_ite(v, t, f);
@@ -317,10 +317,10 @@ namespace Gecode {
     return static_cast<unsigned int> (bdd_pathcount(b));
   }
 
-  forceinline bdd 
+  forceinline bdd
   BddMgr::iftrue(bdd& b) { return bdd_high(b); }
 
-  forceinline bdd 
+  forceinline bdd
   BddMgr::iffalse(bdd& b) { return bdd_low(b); }
 
   forceinline unsigned int
@@ -358,7 +358,7 @@ namespace Gecode {
     dom = newdom;
   }
 
-  forceinline void 
+  forceinline void
   BddMgr::existquant(bdd& dom, bdd& d, bdd& pr) {
     dom = bdd_appex(dom, d, bddop_and, pr);
   }
@@ -428,7 +428,7 @@ namespace Gecode {
     bdd_stats(&info);
     return info.varnum;
   }
-  
+
   forceinline int
   BddMgr::offset(void) const{
     assert(_offset <= bdd_varnum());

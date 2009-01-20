@@ -78,10 +78,10 @@
 #endif
 
 
-/** 
+/**
  * \namespace Gecode::Set
  * \brief Finite integer sets
- * 
+ *
  * The Gecode::Set namespace contains all functionality required
  * to program propagators and branchings for finite integer sets.
  * In addition, all propagators and branchings for finite integer
@@ -116,14 +116,14 @@ namespace Gecode { namespace Set {
 #include <gecode/set/var-imp.hpp>
 
 namespace Gecode {
-  
+
   namespace Set {
     class SetView;
   }
 
   /**
    * \brief %Set variables
-   * 
+   *
    * \ingroup TaskModelSetVars
    */
   class SetVar : public VarBase<Set::SetVarImp> {
@@ -208,7 +208,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVar(Space& home,int glbMin,int glbMax,int lubMin,int lubMax,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
@@ -230,7 +230,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVar(Space& home,const IntSet& glbD,int lubMin,int lubMax,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
@@ -252,7 +252,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVar(Space& home,int glbMin,int glbMax,const IntSet& lubD,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
@@ -274,7 +274,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVar(Space& home,const IntSet& glbD,const IntSet& lubD,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
@@ -419,7 +419,7 @@ namespace Gecode {
     unsigned int width(void) const;
     //@}
   };
-  
+
   /// Iterator for the values in the greatest lower bound of a set variable
   class SetVarGlbValues {
   private:
@@ -522,7 +522,7 @@ namespace Gecode {
 namespace Gecode {
   /**
    * \defgroup TaskModelSetArgs Argument arrays
-   * 
+   *
    * Argument arrays are just good enough for passing arguments
    * with automatic memory management.
    * \ingroup TaskModelSet
@@ -537,7 +537,7 @@ namespace Gecode {
 
   /**
    * \defgroup TaskModelSetVarArrays Variable arrays
-   * 
+   *
    * Variable arrays can store variables. They are typically used
    * for storing the variables being part of a solution. However,
    * they can also be used for temporary purposes (even though
@@ -562,7 +562,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVarArray(Space& home,int n,int glbMin,int glbMax,int lubMin,int lubMax,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
@@ -572,7 +572,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVarArray(Space& home,int n,const IntSet& glb, int lubMin, int lubMax,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
@@ -582,7 +582,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVarArray(Space& home,int n,int glbMin,int glbMax,const IntSet& lub,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
@@ -592,7 +592,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetVarArray(Space& home,int n,
                 const IntSet& glb,const IntSet& lub,
                 unsigned int minCard = 0,
@@ -773,7 +773,7 @@ namespace Gecode {
    */
   //@{
 
-  /// Post propagator that propagates that \a x is convex 
+  /// Post propagator that propagates that \a x is convex
   GECODE_SET_EXPORT void
   convex(Space& home, SetVar x);
 
@@ -794,7 +794,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   sequence(Space& home, const SetVarArgs& x);
 
-  /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
+  /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
   GECODE_SET_EXPORT void
   sequentialUnion(Space& home, const SetVarArgs& y, SetVar x);
 
@@ -836,7 +836,7 @@ namespace Gecode {
    *  minimal element of \a s */
   GECODE_SET_EXPORT void
   min(Space& home, SetVar s, IntVar x, BoolVar b);
-  
+
   /** \brief Post propagator that propagates that \a x is the
    *  maximal element of \a s, and that \a s is not empty */
   GECODE_SET_EXPORT void
@@ -851,11 +851,11 @@ namespace Gecode {
    *  maximal element of \a s */
   GECODE_SET_EXPORT void
   max(Space& home, SetVar s, IntVar x, BoolVar b);
-  
-  /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
+
+  /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
   GECODE_SET_EXPORT void
   match(Space& home, SetVar s, const IntVarArgs& x);
-  
+
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
   channel(Space& home, const IntVarArgs& x,const SetVarArgs& y);
@@ -863,8 +863,8 @@ namespace Gecode {
   /// Post propagator for \f$x_i=1 \Leftrightarrow i\in y\f$
   GECODE_SET_EXPORT void
   channel(Space& home, const BoolVarArgs& x, SetVar y);
-  
-  /// Post propagator for \f$ |s|=x \f$ 
+
+  /// Post propagator for \f$ |s|=x \f$
   GECODE_SET_EXPORT void
   cardinality(Space& home, SetVar s, IntVar x);
 
@@ -889,7 +889,7 @@ namespace Gecode {
    * \defgroup TaskModelSetElement Element constraints
    * \ingroup TaskModelSet
    *
-   * An element constraint selects zero, one or more elements out of a 
+   * An element constraint selects zero, one or more elements out of a
    * sequence. We write \f$ \langle x_0,\dots, x_{n-1} \rangle \f$ for the
    * sequence, and \f$ [y] \f$ for the index variable.
    *
@@ -919,7 +919,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   elementsUnion(Space& home, const IntSetArgs& s, SetVar y, SetVar z);
 
-  /** 
+  /**
    * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \f$ \mathcal{U} \f$ as universe
    *
    * If \a y is empty, \a z will be constrained to be the universe
@@ -929,7 +929,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z);
 
-  /** 
+  /**
    * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
    *
    * If \a y is empty, \a z will be constrained to be the given universe
@@ -940,12 +940,12 @@ namespace Gecode {
   elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z,
                const IntSet& u);
 
-  /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
+  /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
   GECODE_SET_EXPORT void
   elementsDisjoint(Space& home, const SetVarArgs& x, SetVar y);
 
   /**
-   * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
+   * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
    * The indices for \a s start at 0.
    */
@@ -953,7 +953,7 @@ namespace Gecode {
   element(Space& home, const SetVarArgs& x, IntVar y, SetVar z);
 
   /**
-   * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y] \f$ 
+   * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y] \f$
    *
    * The indices for \a s start at 0.
    */
@@ -981,7 +981,7 @@ namespace Gecode {
     SET_VAR_SIZE_MIN,   ///< With smallest unknown set
     SET_VAR_SIZE_MAX    ///< With largest unknown set
   };
-  
+
   /// Which values to select first for branching
   enum SetValBranch {
     SET_VAL_MIN_INC, ///< Include smallest element
@@ -998,7 +998,7 @@ namespace Gecode {
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_SET_EXPORT void
-  branch(Space& home, const SetVarArgs& x, 
+  branch(Space& home, const SetVarArgs& x,
          const TieBreakVarBranch<SetVarBranch>& vars, SetValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);

@@ -67,8 +67,8 @@ namespace Gecode { namespace Set {
    */
 
   forceinline bool
-  SetView::assigned(void)  const { 
-    return varimp->assigned(); 
+  SetView::assigned(void)  const {
+    return varimp->assigned();
   }
 
   forceinline unsigned int
@@ -148,7 +148,7 @@ namespace Gecode { namespace Set {
   }
 
   template <class I> ModEvent
-  SetView::includeI (Space& home, I& iter) {      
+  SetView::includeI (Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
     return (varimp->includeI(home, iter));
   }
@@ -198,7 +198,7 @@ namespace Gecode { namespace Set {
 
   forceinline ModEvent
   SetView::modevent(const Delta& d) { return SetVarImp::modevent(d); }
-  
+
   forceinline int
   SetView::glbMin(const Delta& d) const { return SetVarImp::glbMin(d); }
 

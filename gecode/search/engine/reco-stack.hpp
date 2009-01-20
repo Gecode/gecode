@@ -126,9 +126,9 @@ namespace Gecode { namespace Search {
       if (dynamic_cast<const DescType*>(ds.top().desc())) {
         if (inclusive && !ds.empty()) {
           stat.pop(ds.top().space(),ds.top().desc());
-          ds.pop().dispose();      
+          ds.pop().dispose();
         }
-        break;       
+        break;
       }
       stat.pop(ds.top().space(),ds.top().desc());
       ds.pop().dispose();
@@ -208,7 +208,7 @@ namespace Gecode { namespace Search {
     int l = lc();             // Position of last clone
     int n = ds.entries();     // Number of stack entries
     // New distance, if no adaptive recomputation
-    d = static_cast<unsigned int>(n - l); 
+    d = static_cast<unsigned int>(n - l);
 
     Space* s = ds[l].space()->clone(); // Last clone
 
@@ -276,7 +276,7 @@ namespace Gecode { namespace Search {
     int l = lc();             // Position of last clone
     int n = ds.entries();     // Number of stack entries
     // New distance, if no adaptive recomputation
-    d = static_cast<unsigned int>(n - l); 
+    d = static_cast<unsigned int>(n - l);
 
     Space* s = ds[l].space(); // Last clone
 

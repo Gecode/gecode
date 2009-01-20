@@ -139,10 +139,10 @@ namespace Gecode { namespace Set { namespace Element {
         static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*n));
 
       int i = 0;
-      
+
       unsigned int maxCard = 0;
       unsigned int minCard = Limits::card;
-      
+
       while ( vx1ub() ) {
 
         i = vx1ub.val();
@@ -251,7 +251,7 @@ namespace Gecode { namespace Set { namespace Element {
       // sofarAfter as the union of all lub(x_j) with j>i
       for (int i=n; i--;) {
         if (!stillSelected[i])
-          continue;                
+          continue;
         BndSetRanges b(before[i]);
         BndSetRanges s(sofarAfter);
         GlbRanges<SView> x0lb(x0);

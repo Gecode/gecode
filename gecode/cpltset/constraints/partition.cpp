@@ -63,7 +63,7 @@ namespace Gecode {
           SetLub luby(x[j]);
           IR::Inter<SetLub, SetLub> inter(lubx, luby);
           IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > 
+          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > >
             cache(values);
 
           for (cache.last(); cache(); --cache) {
@@ -75,7 +75,7 @@ namespace Gecode {
         }
       }
 
-      unsigned int xtab = x[0].tableWidth();  
+      unsigned int xtab = x[0].tableWidth();
       for (int i = n; i--;) {
         if (x[i].tableWidth() > xtab)
           xtab = x[i].tableWidth();
@@ -107,7 +107,7 @@ namespace Gecode {
           SetLub luby(x[j]);
           IR::Inter<SetLub, SetLub> inter(lubx, luby);
           IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > 
+          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > >
             cache(values);
 
           for (cache.last(); cache(); --cache) {
@@ -139,9 +139,9 @@ namespace Gecode {
     void build_lexorder(ViewArray<View>& x, bdd& d0, CpltSetRelType lex) {
 
       int n = x.size();
-      unsigned int xtab = x[0].tableWidth();  
+      unsigned int xtab = x[0].tableWidth();
 
-      for (int i = n; i--;) 
+      for (int i = n; i--;)
         if (x[i].tableWidth() > xtab)
           xtab = x[i].tableWidth();
 
@@ -151,42 +151,42 @@ namespace Gecode {
           unsigned int xai_off = x[i].offset();
           unsigned int xaj_off = x[j].offset();
           switch (lex) {
-          case SRT_LE: 
+          case SRT_LE:
             {
               d0 &= lexlt(xai_off, xaj_off, xtab, xtab - 1);
               break;
             }
-          case SRT_GR: 
+          case SRT_GR:
             {
               d0 &= lexlt(xaj_off, xai_off, xtab, xtab - 1);
               break;
             }
-          case SRT_LQ: 
+          case SRT_LQ:
             {
               d0 &= lexlq(xai_off, xaj_off, xtab, xtab - 1);
               break;
             }
-          case SRT_GQ: 
+          case SRT_GQ:
             {
               d0 &= lexlq(xaj_off, xai_off, xtab, xtab - 1);
               break;
             }
-          case SRT_LE_REV: 
+          case SRT_LE_REV:
             {
               d0 &= lexltrev(xai_off, xaj_off, xtab, 0);
               break;
             }
-          case SRT_GR_REV: 
+          case SRT_GR_REV:
             {
               d0 &= lexltrev(xaj_off, xai_off, xtab, 0);
               break;
             }
-          case SRT_LQ_REV: 
+          case SRT_LQ_REV:
             {
               d0 &= lexlqrev(xai_off, xaj_off, xtab, 0);
               break;
             }
-          case SRT_GQ_REV: 
+          case SRT_GQ_REV:
             {
               d0 &= lexlqrev(xaj_off, xai_off, xtab, 0);
               break;
@@ -203,18 +203,18 @@ namespace Gecode {
     }
 
     template <class View>
-    void partition_post(Space& home, ViewArray<View>& x, bool withlex, 
+    void partition_post(Space& home, ViewArray<View>& x, bool withlex,
                         CpltSetRelType lex, bool withcard, int d) {
 
       if (home.failed()) return;
 
       int n = x.size();
 
-      bdd d0 = bdd_true();     
+      bdd d0 = bdd_true();
       build_partition(x, d0);
 
       // forall i: x_{i - 1} \prec_{lex_{bit}} x_i
-      if (withlex) 
+      if (withlex)
         build_lexorder(x, d0, lex);
 
       if (withcard) {
@@ -229,18 +229,18 @@ namespace Gecode {
     }
 
     template <class View>
-    void partition_post(Space& home, ViewArray<View>& x, View& y, 
+    void partition_post(Space& home, ViewArray<View>& x, View& y,
                         bool, SetRelType, bool, int) {
       if (home.failed()) return;
 
       int n = x.size();
 
-      bdd d0 = bdd_true();     
+      bdd d0 = bdd_true();
       build_partition(x, y, d0);
 
       ViewArray<View> naryone(home, x.size() + 1);
-      for (int i = 0; i < n; i++) 
-        naryone[i] = x[i]; 
+      for (int i = 0; i < n; i++)
+        naryone[i] = x[i];
       naryone[n] = y;
 
       GECODE_ES_FAIL(home,
@@ -248,12 +248,12 @@ namespace Gecode {
     }
 
     template <class View0, class View1>
-    void partition_post(Space& home, ViewArray<View0>& x, View1& y, 
-                        bool withlex, SetRelType lex, 
+    void partition_post(Space& home, ViewArray<View0>& x, View1& y,
+                        bool withlex, SetRelType lex,
                         bool withcard, int d) {
       if (home.failed()) return;
 
-      bdd d0 = bdd_true();     
+      bdd d0 = bdd_true();
       build_partition(x, y, d0);
 
       GECODE_ES_FAIL(home,
@@ -268,8 +268,8 @@ namespace Gecode {
       int n = x.size();
 
       int minx = x[0].initialLubMin();
-      int maxx = x[0].initialLubMax(); 
-      unsigned int xtab = x[0].tableWidth();  
+      int maxx = x[0].initialLubMax();
+      unsigned int xtab = x[0].tableWidth();
       for (int i = n; i--;) {
         if (x[i].initialLubMin() < minx) {
           minx = x[i].initialLubMin();
@@ -283,20 +283,20 @@ namespace Gecode {
       }
 
       // build partition
-      bdd d0 = bdd_true();     
+      bdd d0 = bdd_true();
 
       for (int i = 0; i < n - 1; i++) {
         for (int j = i + 1; j < n; j++) {
           Set::LubRanges<View> lubx(x[i]);
           Set::LubRanges<View> luby(x[j]);
-          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
             Set::LubRanges<View> > inter(lubx, luby);
           Gecode::Iter::Ranges::ToValues<
-            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
               Set::LubRanges<View> > > values(inter);
           Gecode::Iter::Ranges::ValCache<
             Gecode::Iter::Ranges::ToValues<
-                Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+                Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
                   Set::LubRanges<View> > > > cache(values);
           cache.last();
           for (; cache(); --cache) {
@@ -334,8 +334,8 @@ namespace Gecode {
     }
 
     template <class Rel>
-    forceinline void 
-    partition_con(Space& home, const CpltSetVarArgs& x, bool withlex, Rel lex, 
+    forceinline void
+    partition_con(Space& home, const CpltSetVarArgs& x, bool withlex, Rel lex,
                   bool withcard, int d) {
       ViewArray<CpltSetView> bv(home, x);
       partition_post(home, bv, withlex, lex, withcard, d);
@@ -343,14 +343,14 @@ namespace Gecode {
 
     // For testing purposes only supported for bddviews
     template <class Rel>
-    forceinline void 
-    partition_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& y, 
+    forceinline void
+    partition_con(Space& home, const CpltSetVarArgs& x, const CpltSetVar& y,
                   bool withlex, Rel lex, bool withcard, int d) {
       ViewArray<CpltSetView> bv(home, x);
       CpltSetView yv(y);
       partition_post(home, bv, yv, withlex, lex, withcard, d);
     }
-    
+
   }} // end namespace CpltSet::Partition
 
   using namespace CpltSet::Partition;

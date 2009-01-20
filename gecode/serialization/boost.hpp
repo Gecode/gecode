@@ -100,7 +100,7 @@ namespace boost { namespace serialization {
         GECODE_NEVER;
       }
   }
-  
+
   template<class Archive>
   inline void load_construct_data(
       Archive & ar, Gecode::Reflection::Arg* t,
@@ -140,7 +140,7 @@ namespace boost { namespace serialization {
       }
   }
 
-  
+
   template<class Archive>
   inline void load(
     Archive& ar, Gecode::Reflection::Arg& arg,
@@ -161,7 +161,7 @@ namespace boost { namespace serialization {
         Arg* k;
         ar >> k;
         (*array)[i] = k;
-      }        
+      }
     } else if (arg.isIntArray()) {
       int m; ar >> m;
       arg.initArray(m);
@@ -170,7 +170,7 @@ namespace boost { namespace serialization {
         int k;
         ar >> k;
         (*array)[i] = k;
-      }        
+      }
     } else if (arg.isString()) {
       std::string s;
       ar >> s;
@@ -189,7 +189,7 @@ namespace boost { namespace serialization {
       GECODE_NEVER;
     }
   }
-  
+
 
   template<class Archive>
   void save(
@@ -211,7 +211,7 @@ namespace boost { namespace serialization {
       for (int i=0; i<s; i++) {
         const Arg* a = (*array)[i];
         ar << *a;
-      }        
+      }
     } else if (arg.isIntArray()) {
       const IntArrayArg* array = arg.toIntArray();
       int s = array->size();
@@ -219,7 +219,7 @@ namespace boost { namespace serialization {
       for (int i=0; i<s; i++) {
         int a = (*array)[i];
         ar << a;
-      }        
+      }
     } else if (arg.isString()) {
       std::stringstream oss;
       oss << arg.toString();
@@ -240,7 +240,7 @@ namespace boost { namespace serialization {
       GECODE_NEVER;
     }
   }
-  
+
   template<class Archive>
   void serialize(
     Archive& ar,
@@ -263,7 +263,7 @@ namespace boost { namespace serialization {
     std::string s = oss.str();
     ar << s;
   }
-  
+
   template<class Archive>
   inline void load_construct_data(
       Archive & ar, Gecode::Reflection::VarSpec* t,
@@ -300,7 +300,7 @@ namespace boost { namespace serialization {
     std::string s = oss.str();
     ar << s;
   }
-  
+
   template<class Archive>
   void serialize(
     Archive& ar,
@@ -309,8 +309,8 @@ namespace boost { namespace serialization {
   ) {
     split_free(ar, var, file_version);
   }
-   
-   
+
+
   /////////////////////////////////////////////////////////////////////////
   // Gecode::Reflection::ActorSpec
 
@@ -371,7 +371,7 @@ namespace boost { namespace serialization {
   ){
       split_free(ar, spec, file_version);
   }
-  
+
 }}
 
 BOOST_CLASS_EXPORT(Gecode::Reflection::Arg)

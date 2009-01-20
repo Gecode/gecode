@@ -69,7 +69,7 @@ FileNameOptions::file(void) const {
   return _file;
 }
 
-FileNameOptions::FileNameOptions(const char* n) 
+FileNameOptions::FileNameOptions(const char* n)
   : Options(n), _file(NULL) {}
 
 void
@@ -109,7 +109,7 @@ public:
     std::ifstream programFile(opt.file());
     std::string program;
     if (programFile.fail()) {
-      throw Exception("JavaScript", "error reading file");      
+      throw Exception("JavaScript", "error reading file");
     }
     while (!programFile.eof()) {
       std::string line;

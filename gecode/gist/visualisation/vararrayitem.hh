@@ -56,7 +56,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
     void displayOld(int pit); ///< Use to show the variable at point in time pit
 
   protected:
-    void initGraphic(QVector<Reflection::VarSpec*> specs); 
+    void initGraphic(QVector<Reflection::VarSpec*> specs);
 
     QVector<VarItem*> varItems;
     int numberOfVariables;
@@ -68,7 +68,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   VarArrayItem<VarItem>::VarArrayItem(QVector<Reflection::VarSpec*> specs, QGraphicsItem *parent)
   : QGraphicsRectItem(parent)
   , numberOfUpdates(0)
-  { 
+  {
     numberOfVariables = specs.size();
     initGraphic(specs);
   }

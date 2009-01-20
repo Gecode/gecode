@@ -2,7 +2,7 @@
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
- *  
+ *
  *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
@@ -49,28 +49,28 @@ namespace Gecode {
   forceinline
   SetExprCode::Stream::Stream(void) : is(heap), n(0) {}
 
-  forceinline void 
+  forceinline void
   SetExprCode::Stream::add(int i) {
     is[n++] = i;
   }
 
-  forceinline int 
+  forceinline int
   SetExprCode::Stream::size(void) const {
     return n;
   }
 
-  forceinline int 
+  forceinline int
   SetExprCode::Stream::operator [](int i) const {
     return is[i];
   }
 
- 
+
 
   forceinline
   SetExprCode::SetExprCode(void) {}
 
   forceinline
-  SetExprCode::SetExprCode(const SetExprCode::Stream& s) 
+  SetExprCode::SetExprCode(const SetExprCode::Stream& s)
     : c(s.size()) {
     for (int i=s.size(); i--; )
       c[i]=s[i];
@@ -83,7 +83,7 @@ namespace Gecode {
   SetExprCode::update(Space& home, bool share, SetExprCode& sc) {
     c.update(home, share, sc.c);
   }
-  
+
   forceinline int
   SetExprCode::size(void) const { return c.size(); }
 
@@ -101,17 +101,17 @@ namespace Gecode {
 
   inline SetExpr
   operator -(const SetExpr& s) { return SetExpr(s, -1); }
-  
+
   inline SetExpr
   operator ||(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_UNION, t, 1);
   }
-  
+
   inline SetExpr
   operator &&(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_INTER, t, 1);
   }
-  
+
   inline SetExpr
   operator -(const SetExpr& s, const SetExpr& t) {
     return SetExpr(s, 1, SetExpr::REL_INTER, t, -1);
@@ -131,7 +131,7 @@ namespace Gecode {
     const SetExprRanges& operator =(const SetExprRanges&);
   public:
     /// \name Constructors and destructor
-    //@{    
+    //@{
     /// Copy constructor
     SetExprRanges(const SetExprRanges&);
     /** Initialize with the views \a x, a set expression \a s,
@@ -194,7 +194,7 @@ namespace Gecode {
   forceinline
   SetExprRanges::Iter::Iter(Gecode::Iter::Ranges::Virt::Iterator* i0)
     : i(i0), num(1) {}
-  
+
   forceinline
   SetExprRanges::Iter::~Iter(void) { delete i; }
 
@@ -217,7 +217,7 @@ namespace Gecode {
 
   forceinline bool
   SetExprRanges::operator ()(void) { return (*(i->i))(); }
-  
+
   forceinline void
   SetExprRanges::operator ++(void) { ++(*(i->i)); }
 
@@ -231,7 +231,7 @@ namespace Gecode {
   SetExprRanges::width(void) const { return i->i->width(); }
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const SetExprCode& sec) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

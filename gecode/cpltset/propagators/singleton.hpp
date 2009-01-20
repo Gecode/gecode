@@ -53,7 +53,7 @@ namespace Gecode { namespace CpltSet {
     x.update(home, share, p.x);
     s.update(home, share, p.s);
   }
-  
+
   template <class View1, class View2>
   forceinline PropCost
   Singleton<View1, View2>::cost(const Space&, const ModEventDelta&) const {
@@ -70,8 +70,8 @@ namespace Gecode { namespace CpltSet {
   Reflection::ActorSpec
   Singleton<View1,View2>::spec(const Space&, Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
-  } 
-  
+  }
+
   template <class View1, class View2>
   size_t
   Singleton<View1, View2>::dispose(Space& home) {
@@ -98,7 +98,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View1, class View2>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   Singleton<View1, View2>::propagate(Space& home, const ModEventDelta&) {
     if (x.assigned()) {
       GECODE_ME_CHECK(s.eq(home, x.val()));
@@ -107,15 +107,15 @@ namespace Gecode { namespace CpltSet {
       // compute intersection
       Gecode::Int::ViewRanges<View1> dom(x);
       Set::LubRanges<View2>  lub(s);
-      Iter::Ranges::Inter<Gecode::Int::ViewRanges<View1>, 
+      Iter::Ranges::Inter<Gecode::Int::ViewRanges<View1>,
                           Set::LubRanges<View2> > common(dom, lub);
       if (!common()) {
         return ES_FAILED;
       }
       Iter::Ranges::Cache<
-        Iter::Ranges::Inter<Gecode::Int::ViewRanges<View1>, 
+        Iter::Ranges::Inter<Gecode::Int::ViewRanges<View1>,
                             Set::LubRanges<View2> > > cache_inter(common);
-        
+
       GECODE_ME_CHECK(x.inter_r(home, cache_inter));
       cache_inter.reset();
       GECODE_ME_CHECK(s.intersectI(home, cache_inter));

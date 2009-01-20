@@ -56,17 +56,17 @@ public:
   AddVisualisationDialog(Gecode::Gist::Config conf,
                          Gecode::Reflection::VarMap& vm,
                          QWidget *parent = 0);
-  
+
   QStringList vars(void);
   QString vis(void);
   QString name(void);
 
 private:
   Ui::AddVisualisationDialogClass ui;
-  
+
   void refresh(void);
   void updateName(void);
-  
+
 private Q_SLOTS:
   void on_variablesListWidget_itemSelectionChanged(void);
   void on_visualisationsListWidget_itemSelectionChanged(void);

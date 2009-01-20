@@ -113,13 +113,13 @@ namespace Gecode { namespace Set { namespace Int {
 
     do {
       loopFlag = false;
-      
+
       // Order int vars in xs
       GECODE_ME_CHECK(xs[0].gq(home,x0.lubMin()));
       for (int i=xs_size-1; i--; ) {
         GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i+1].gq(home,xs[i].min() + 1));
       }
-      
+
       GECODE_ME_CHECK_MODIFIED(loopFlag, xs[xs_size-1].lq(home,x0.lubMax()));
       for (int i=xs_size-2; i--; ) {
         GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].lq(home,xs[i+1].max() - 1));
@@ -172,7 +172,7 @@ namespace Gecode { namespace Set { namespace Int {
           GlbRanges<View> ubx0(x0);
           Iter::Ranges::Inter<LubRanges<View>,GlbRanges<View> >
             inter(lbx0, ubx0);
-          
+
           int to = x0.glbMax();
           int from = to;
           while (inter()) {
@@ -190,7 +190,7 @@ namespace Gecode { namespace Set { namespace Int {
     } while (loopFlag);
 
     for (int i=xs_size; i--; )
-      if (!xs[i].assigned())        
+      if (!xs[i].assigned())
         return ES_FIX;
     return ES_SUBSUMED(*this,home);
   }

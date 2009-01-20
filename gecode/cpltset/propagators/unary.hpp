@@ -52,14 +52,14 @@ namespace Gecode { namespace CpltSet {
     d = p.d;
     x.update(home, share, p.x);
   }
-  
+
   template <class View>
   forceinline PropCost
-  UnaryCpltSetPropagator<View>::cost(const Space&, 
+  UnaryCpltSetPropagator<View>::cost(const Space&,
                                      const ModEventDelta&) const {
     return PropCost::unary(PropCost::MED);
     /*
-    // we have only linear costs (in terms of the size of a bdd) 
+    // we have only linear costs (in terms of the size of a bdd)
     // if one of the bdds is constant
     if (manager.ctrue(x.dom()) || manager.ctrue(d)) {
       return PC_LINEAR_LO;
@@ -80,8 +80,8 @@ namespace Gecode { namespace CpltSet {
   UnaryCpltSetPropagator<View>::spec(const Space&,
                                      Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
-  } 
-  
+  }
+
   template <class View>
   size_t
   UnaryCpltSetPropagator<View>::dispose(Space& home) {
@@ -109,12 +109,12 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   UnaryCpltSetPropagator<View>::propagate(Space& home, const ModEventDelta&) {
     // std::cerr << "propagate unary: \n";
     // std::cerr << x << " " << x.glbSize() << " " << x.unknownSize() << "\n";
 //     UnknownRanges<CpltSetView> delta(x);
-//     for (; delta(); ++delta) { 
+//     for (; delta(); ++delta) {
 //       std::cerr << delta.min() << ".." << delta.max() <<",";
 //     }
 //     std::cerr << "\n";

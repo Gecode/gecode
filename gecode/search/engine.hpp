@@ -80,7 +80,7 @@ namespace Gecode { namespace Search {
     /// Reset statistics for failed space
     void reset(void);
   };
-  
+
   /**
    * \brief %Search tree node for recomputation
    *
@@ -98,27 +98,27 @@ namespace Gecode { namespace Search {
     ReCoNode(void);
     /// Node for space \a s with clone \a c (possibly NULL)
     ReCoNode(Space* s, Space* c);
-    
+
     /// Return space for node
     Space* space(void) const;
     /// Set space to \a s
     void space(Space* s);
-    
+
     /// Return branching description
     const BranchingDesc* desc(void) const;
-    
+
     /// Return number for alternatives
     unsigned int alt(void) const;
     /// Test whether current alternative is rightmost
     bool rightmost(void) const;
     /// Move to next alternative
     void next(void);
-    
+
     /// Free memory for node
     void dispose(void);
   };
-  
-  
+
+
   /**
    * \brief Stack of nodes supporting recomputation
    *
@@ -161,7 +161,7 @@ namespace Gecode { namespace Search {
     /// Recompute space according to path with copying distance \a d
     Space* recompute(unsigned int& d, EngineCtrl& s);
     /// Recompute space according to path with copying distance \a d
-    Space* recompute(unsigned int& d, EngineCtrl& s, 
+    Space* recompute(unsigned int& d, EngineCtrl& s,
                      const Space* best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
@@ -261,7 +261,7 @@ namespace Gecode { namespace Search {
     /// Test whether probing is done
     bool done(void) const;
   };
-  
+
   /**
    * \brief Implementation of depth-first branch-and-bound search engines
    */

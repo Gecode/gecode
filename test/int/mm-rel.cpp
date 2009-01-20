@@ -43,7 +43,7 @@ namespace Test { namespace Int {
 
    /// Tests for minimal modelling constraints (simple relations)
    namespace MiniModel {
-   
+
      /**
       * \defgroup TaskTestIntMiniModelRel Minimal modelling constraints (relation)
       * \ingroup TaskTestInt
@@ -64,7 +64,7 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++)
            if (x[i] != x[n+i])
              return cmp(x[i],irt,x[n+i]);
-         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) || 
+         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) ||
                  (irt == Gecode::IRT_EQ));
          GECODE_NEVER;
          return false;
@@ -80,7 +80,7 @@ namespace Test { namespace Int {
          lex(home, y, irt, z);
        }
      };
-   
+
      /// Test for relation between arrays of Boolean variables
      class BoolLex : public Test {
      protected:
@@ -96,7 +96,7 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++)
            if (x[i] != x[n+i])
              return cmp(x[i],irt,x[n+i]);
-         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) || 
+         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) ||
                  (irt == Gecode::IRT_EQ));
          GECODE_NEVER;
          return false;
@@ -122,10 +122,10 @@ namespace Test { namespace Int {
          for (IntRelTypes irts; irts(); ++irts) {
            (void) new IntLex(irts.irt());
            (void) new BoolLex(irts.irt());
-         }      
+         }
        }
      };
-     
+
      Create c;
      //@}
 

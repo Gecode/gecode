@@ -79,7 +79,7 @@ public:
       break;
     case MODEL_CARRY:
       {
-        IntVar c0(*this,0,1), c1(*this,0,1), c2(*this,0,1), 
+        IntVar c0(*this,0,1), c1(*this,0,1), c2(*this,0,1),
           c3(*this,0,1), c4(*this,0,1);
         post(*this,    d+d == t+10*c0, opt.icl());
         post(*this, c0+l+l == r+10*c1, opt.icl());

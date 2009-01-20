@@ -43,7 +43,7 @@
 
 namespace Gecode { namespace Set { namespace Sequence {
 
-  inline ExecStatus 
+  inline ExecStatus
   propagateSeq(Space& home, bool& modified, bool& assigned,
                ViewArray<SetView>& x) {
     int lastElem = x.size()-1;

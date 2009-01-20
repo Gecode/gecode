@@ -40,7 +40,7 @@
 #include <cassert>
 
 namespace Gecode { namespace Gist {
-  
+
   Node::~Node(void) {
     switch (getTag()) {
     case UNDET:
@@ -57,7 +57,7 @@ namespace Gecode { namespace Gist {
       heap.free<Node*>(static_cast<Node**>(getPtr()),c.noOfChildren);
     }
   }
-    
+
   void
   Node::setNumberOfChildren(unsigned int n) {
     assert(getTag() == UNDET);
@@ -79,7 +79,7 @@ namespace Gecode { namespace Gist {
       Node** children = static_cast<Node**>(childrenOrFirstChild);
       setTag(MORE_CHILDREN);
       for (unsigned int i=n; i--;)
-        children[i] = NULL;      
+        children[i] = NULL;
     }
   }
 
@@ -103,7 +103,7 @@ namespace Gecode { namespace Gist {
   void
   Node::addChild(Node* child) {
     child->parent = this;
-    
+
     unsigned int noOfChildren;
     switch (getTag()) {
     case UNDET:

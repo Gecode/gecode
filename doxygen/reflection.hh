@@ -38,21 +38,21 @@
   \page PageReflection The Reflection API
 
 Reflection in %Gecode provides information about all the actors (propagators and branchings) and the variables in a Space. %Gecode also enables the reverse direction: creating a variable or actor in a space, given a specification. Some use cases for reflection are
-  - \b %Serialization, which creates an external, platform-independent 
-    representation of a space that can be used to recreate a copy of the 
-    original space. This facilitates the development of distributed search 
-    engines, makes it possible to store instances of constraint problems, and 
+  - \b %Serialization, which creates an external, platform-independent
+    representation of a space that can be used to recreate a copy of the
+    original space. This facilitates the development of distributed search
+    engines, makes it possible to store instances of constraint problems, and
     can be used to transfer a problem instance from one solver to another.
 
-  - \b Visualization of variable domains or the propagators in a space can 
-    help with debugging scripts or propagators. %Gecode's Gist uses reflection 
+  - \b Visualization of variable domains or the propagators in a space can
+    help with debugging scripts or propagators. %Gecode's Gist uses reflection
     for visualization.
 
-  - \b Interfacing to other programming languages becomes easy, because only 
-    the generic unreflection functions have to be made available. The Qt-based 
+  - \b Interfacing to other programming languages becomes easy, because only
+    the generic unreflection functions have to be made available. The Qt-based
     JavaScript interpreter in examples/javascript.cc builds on reflection.
 
-  - \b Heuristics can be based on properties of the constraint graph, which is 
+  - \b Heuristics can be based on properties of the constraint graph, which is
     effectively exposed by the reflection API.
 
 This tutorial is split in two parts:
@@ -114,7 +114,7 @@ public:
   virtual void
   getVars(Gecode::Reflection::VarMap& vm, bool registerOnly) {
     vm.putArray(this,q,"q", registerOnly);
-  }  
+  }
 };
 \endcode
 
@@ -213,19 +213,19 @@ The (un-)reflection API makes interfacing to %Gecode very easy. We provide a ful
 
 An interface can benefit from reflection in three ways:
 
-  - The generic Gecode::Reflection::Var class leaves the C++ part of the 
-    interface independent of the actual variable types that are supported. 
-    Every variable type supported by %Gecode is automatically supported by the 
+  - The generic Gecode::Reflection::Var class leaves the C++ part of the
+    interface independent of the actual variable types that are supported.
+    Every variable type supported by %Gecode is automatically supported by the
     interface.
 
-  - Instead of a post function for every propagator and branching and variable 
-    creation functions for all the variable types, only the 
+  - Instead of a post function for every propagator and branching and variable
+    creation functions for all the variable types, only the
     Gecode::Reflection::Unreflector has to be exported.
 
-  - All propagators and branchings that are supported by %Gecode are 
+  - All propagators and branchings that are supported by %Gecode are
     immediately available through the interface. When propagators are added to
-    %Gecode, no new interfacing code has to be written. If the propagators are 
-    added as additional libraries, the interface does not even have to be 
+    %Gecode, no new interfacing code has to be written. If the propagators are
+    added as additional libraries, the interface does not even have to be
     recompiled.
 
 Please refer to \ref PageReflectionRegistry for more information on the propagators that are available through unreflection.
@@ -243,7 +243,7 @@ The kernel provides two macros that make it easy to add reflection to a propagat
 \code
 template <class View0, class View1>
 class MyPropagator : public Gecode::Propagator {
-  GECODE_REFLECT_PROPAGATOR_2(MyPropagator, View0, View1, 
+  GECODE_REFLECT_PROPAGATOR_2(MyPropagator, View0, View1,
                               "Gecode::MyPropagator")
   GECODE_REFLECT_ARGS_3(View0,x,
                         ViewArray<View1>,y,
@@ -409,7 +409,7 @@ public:
 
 There are two kinds of post functions in the registry:
   - One function per actor instance. These functions correspond directly to individual propagators and branchings. For instance, the registry contains a function for the ati \c Int::Distinct::Dom<Int::OffsetView>. Each propagator registers one post function per instance. The registry is populated with these post functions as soon as the library in which the propagator is defined is loaded.
-  
+
   - One function per constraint post function (the functions found in gecode/int.hh or gecode/set.hh, for example). The functions are useful for interfacing to Gecode, as they provide a higher-level interface to the propagators. For example, the registry contains a post function for the ati \c Gecode::rel. Depending on the arguments given in the ActorSpec, this function can post any of the \c rel constraints found in gecode/int.hh and gecode/set.hh. All high-level post functions are registered when the serialization library is loaded, which can be triggered by callling Gecode::Serialization::initRegistry.
 
 \section SecRegistryArgMapping Mapping arguments to ActorSpecs

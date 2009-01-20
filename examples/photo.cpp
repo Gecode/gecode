@@ -115,7 +115,7 @@ public:
     if (opt.branching() == BRANCH_NONE) {
       branch(*this, pos, INT_VAR_NONE, INT_VAL_MIN);
     } else {
-      branch(*this, pos, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), 
+      branch(*this, pos, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN),
              INT_VAL_MIN);
     }
   }

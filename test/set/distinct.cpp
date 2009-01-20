@@ -64,7 +64,7 @@ namespace Test { namespace Set {
         {
           CountableSetRanges xr0(x.lub, x[0]);
           CountableSetRanges xr1(x.lub, x[1]);
-          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> 
+          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges>
             i(xr0,xr1);
           if (Iter::Ranges::size(i)>1)
             return false;
@@ -72,7 +72,7 @@ namespace Test { namespace Set {
         {
           CountableSetRanges xr0(x.lub, x[0]);
           CountableSetRanges xr2(x.lub, x[2]);
-          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> 
+          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges>
             i(xr0,xr2);
           if (Iter::Ranges::size(i)>1)
             return false;
@@ -80,7 +80,7 @@ namespace Test { namespace Set {
         {
           CountableSetRanges xr1(x.lub, x[1]);
           CountableSetRanges xr2(x.lub, x[2]);
-          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> 
+          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges>
             i(xr1,xr2);
           if (Iter::Ranges::size(i)>1)
             return false;

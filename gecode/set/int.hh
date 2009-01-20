@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \a x is the minimal element of \a s 
+    /// Post propagator for \a x is the minimal element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
 
@@ -100,9 +100,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, 
+    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
                                                    const ModEventDelta& med);
-    /// Post propagator for \a x is not the minimal element of \a s 
+    /// Post propagator for \a x is not the minimal element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
 
@@ -164,7 +164,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
                                                    const ModEventDelta& med);
-    /// Post propagator for \a x is the largest element of \a s 
+    /// Post propagator for \a x is the largest element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
 
@@ -193,7 +193,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
                                                    const ModEventDelta& med);
-    /// Post propagator for \a x is not the largest element of \a s 
+    /// Post propagator for \a x is not the largest element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
 
@@ -224,7 +224,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
                                                    const ModEventDelta& med);
-    /// Post reified propagator for \a b iff \a x is the largest element of \a s 
+    /// Post reified propagator for \a b iff \a x is the largest element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
                            Gecode::Int::BoolView b);
   };
@@ -253,7 +253,7 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ |s|=x \f$ 
+    /// Post propagator for \f$ |s|=x \f$
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
 
@@ -288,7 +288,7 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
+    /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
     static ExecStatus post(Space& home, View s,
                            ViewArray<Gecode::Int::IntView>& x);
   };
@@ -325,7 +325,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     ChannelInt(Space& home, bool share,ChannelInt& p);
     /// Constructor for posting
-    ChannelInt(Space& home,ViewArray<Gecode::Int::IntView>&, 
+    ChannelInt(Space& home,ViewArray<Gecode::Int::IntView>&,
                ViewArray<View>&);
   public:
     /// Copy propagator during cloning
@@ -371,7 +371,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     ChannelBool(Space& home, bool share,ChannelBool& p);
     /// Constructor for posting
-    ChannelBool(Space& home,ViewArray<Gecode::Int::BoolView>&, 
+    ChannelBool(Space& home,ViewArray<Gecode::Int::BoolView>&,
                 View);
 
     /// Advisor storing a single index
@@ -379,7 +379,7 @@ namespace Gecode { namespace Set { namespace Int {
     protected:
       /// The single index
       int idx;
-    public: 
+    public:
       /// Constructor for creation
       template <class A>
       IndexAdvisor(Space& home, ChannelBool<View>& p, Council<A>& c,

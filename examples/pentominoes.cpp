@@ -133,8 +133,8 @@ namespace {
  * placed looks like
  * \code
  *   XXX
- *   X  
- * XXX  
+ *   X
+ * XXX
  * \endcode
  * in one of its rotations.
  *
@@ -149,7 +149,7 @@ namespace {
  * are placed on, where each of the variables for the squares takes
  * the value of the number of the piece which is placed overonto it.
  *
- * 
+ *
  * \section ExamplePentominoesOnePiece Placing one piece
  *
  * The constraint for each piece placement uses regular expressions
@@ -196,7 +196,7 @@ namespace {
  * regular expression for  the placement of the piece is modified to
  * include the extra column, \f$0^*1100001000010^*\f$.
  *
- * 
+ *
  * \section ExamplePentominoesRotatingPiece Rotating pieces
  *
  * To handle rotations of the piece, we can use disjunctions of
@@ -233,10 +233,10 @@ namespace {
  * much more complex. This problem can be solved by instead
  * projecting out each component, which gives a new board of
  * 0/1-variables for each piece to place.
- * 
+ *
  *
  * \section ExamplePentominoesHeuristic The Branching
- * 
+ *
  * This model does not use any advanced heuristic for the
  * branching. The variables selection is simply in order, and the
  * value selection is minimum value first.
@@ -253,7 +253,7 @@ namespace {
  * solutions-space. This is done using the same symmetry functions as
  * for the piece symmetries and lexicographical order constraints.
  *
- * 
+ *
  * \ingroup ExProblem
  *
  */
@@ -295,7 +295,7 @@ private:
 
   /// Returns the regular expression for placing a specific tile \a
   /// tile in a specific rotation.
-  REG tile_reg(int twidth, int theight, const char* tile, 
+  REG tile_reg(int twidth, int theight, const char* tile,
                REG mark, REG other, REG eol) {
     REG oe = other | eol;
     REG res = *oe;
@@ -311,7 +311,7 @@ private:
     }
     res += *oe + oe;
     return res;
-  } 
+  }
 
   /// Returns the regular expression for placing tile number \a t in
   /// any rotation.
@@ -335,15 +335,15 @@ private:
 public:
   /// Construction of the model.
   Pentominoes(const SizeOptions& opt)
-    : spec(examples[opt.size()]), 
+    : spec(examples[opt.size()]),
       width(spec[0].width+1), // Add one for extra row at end.
       height(spec[0].height),
       filled(spec[0].amount),
-      nspecs(examples_size[opt.size()]-1), 
-      ntiles(compute_number_of_tiles(spec+1, nspecs)), 
+      nspecs(examples_size[opt.size()]-1),
+      ntiles(compute_number_of_tiles(spec+1, nspecs)),
       board(*this, width*height, filled,ntiles+1) {
     spec += 1; // No need for the specification-part any longer
-    
+
     // Set end-of-line markers
     for (int h = 0; h < height; ++h) {
       for (int w = 0; w < width-1; ++w)
@@ -361,7 +361,7 @@ public:
           // Expression for color col
           REG mark(col);
           // Build expression for complement to color col
-          REG other; 
+          REG other;
           bool first = true;
           for (int j = filled; j <= ntiles; ++j) {
             if (j == col) continue;
@@ -384,15 +384,15 @@ public:
       BoolVarArgs p(ncolors * board.size());
       for (int i=p.size(); i--; )
         p[i].init(*this,0,1);
-      
+
       // Post channel constraints
       for (int i=board.size(); i--; ) {
         BoolVarArgs c(ncolors);
-        for (int j=ncolors; j--; ) 
+        for (int j=ncolors; j--; )
           c[j]=p[i*ncolors+j];
         channel(*this, c, board[i]);
       }
-      
+
       // For placing tile i, we construct the expression over
       // 0/1-variables and apply it to the projection of
       // the board on the color for the tile.
@@ -403,17 +403,17 @@ public:
           int col = tile+1;
           // Projection for color col
           BoolVarArgs c(board.size());
-          
+
           for (int k = board.size(); k--; ) {
             c[k] = p[k*ncolors+col];
           }
-        
+
           extensional(*this, c, get_constraint(i, mark, other, other));
           ++tile;
         }
       }
     }
-    
+
     if (opt.model() == MODEL_SYMMETRY) {
       // Remove symmetrical boards
       IntVarArgs orig(board.size()-height), symm(board.size()-height);
@@ -422,7 +422,7 @@ public:
         if ((i+1)%width==0) continue;
         orig[pos++] = board[i];
       }
-      
+
       int w2, h2;
       bsymmfunc syms[] = {flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
       int symscnt = sizeof(syms)/sizeof(bsymmfunc);
@@ -432,24 +432,24 @@ public:
           rel(*this, orig, IRT_LQ, symm);
       }
     }
-      
+
     // Install branching
     branch(*this, board, INT_VAR_NONE, INT_VAL_MIN);
   }
-  
+
   /// Constructor for cloning \a s
   Pentominoes(bool share, Pentominoes& s) :
     Example(share,s), spec(s.spec), width(s.width), height(s.height),
     filled(s.filled), nspecs(s.nspecs) {
     board.update(*this, share, s.board);
   }
-  
+
   /// Copy space during cloning
   virtual Space*
   copy(bool share) {
     return new Pentominoes(share,*this);
   }
-  
+
   /// Print solution
   virtual void
   print(std::ostream& os) {
@@ -481,10 +481,10 @@ main(int argc, char* argv[]) {
             "sym", "remove symmetric solutions");
 
   opt.propagation(Pentominoes::PROPAGATION_BOOLEAN);
-  opt.propagation(Pentominoes::PROPAGATION_INT, 
+  opt.propagation(Pentominoes::PROPAGATION_INT,
                   "int", "use integer propagators");
-  opt.propagation(Pentominoes::PROPAGATION_BOOLEAN, 
-                  "bool", "use Boolean propagators");  
+  opt.propagation(Pentominoes::PROPAGATION_BOOLEAN,
+                  "bool", "use Boolean propagators");
 
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
@@ -503,11 +503,11 @@ main(int argc, char* argv[]) {
  */
 //@{
 /// Small specification
-static const TileSpec puzzle0[] = 
+static const TileSpec puzzle0[] =
   {
     // Width and height of board
     {4, 4, true, ""},
-    {2, 3, 1, 
+    {2, 3, 1,
      "XX"
      "X "
      "X "},
@@ -883,7 +883,7 @@ namespace {
   int pos(int h, int w, int h1, int w1) {
     if (!(0 <= h && h < h1) ||
         !(0 <= w && w < w1)) {
-      std::cerr << "Cannot place (" << h << "," << w 
+      std::cerr << "Cannot place (" << h << "," << w
                 << ") on board of size " << h1 << "x" << w1 << std::endl;
     }
     return h * w1 + w;

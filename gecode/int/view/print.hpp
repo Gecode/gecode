@@ -63,12 +63,12 @@ namespace Gecode { namespace Int {
       }
       s << '}';
     }
-    return os << s.str();    
+    return os << s.str();
   }
 
   template<class Char, class Traits, class Val, class UnsVal>
   std::basic_ostream<Char,Traits>&
-  print_scale(std::basic_ostream<Char,Traits>& os, 
+  print_scale(std::basic_ostream<Char,Traits>& os,
               const ScaleView<Val,UnsVal>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

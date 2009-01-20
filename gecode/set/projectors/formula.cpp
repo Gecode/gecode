@@ -66,7 +66,7 @@ namespace Gecode {
     Node(const int x);
     /// Construct node from nodes \a n0 and \a n1 with signs \a s0 and \a s1
     Node(Node* n0, int s0, Operator r, Node* n1, int s1);
-    
+
     /// Increment reference count
     void increment(void);
     /// Decrement reference count and possibly free memory
@@ -76,7 +76,7 @@ namespace Gecode {
     std::set<int> fv(void);
     /// Transform formula into bdd
     bdd toBdd(void);
-    
+
     /// Memory management
     static void* operator new(size_t size);
     /// Memory management
@@ -100,8 +100,8 @@ namespace Gecode {
 
 
   forceinline void
-  Formula::Node::increment(void) { 
-    ++use; 
+  Formula::Node::increment(void) {
+    ++use;
   }
 
   forceinline
@@ -140,7 +140,7 @@ namespace Gecode {
       right->fv(s);
     }
   }
-  
+
   inline
   std::set<int>
   Formula::Node::fv(void) {
@@ -159,7 +159,7 @@ namespace Gecode {
 	bl = !bl;
       if (signRight == -1)
 	br = !br;
-      
+
       switch (r) {
       case OR:
         return bl | br;
@@ -180,7 +180,7 @@ namespace Gecode {
    * Operations for formulas
    *
    */
-  
+
   Formula::Formula(int v) : ax(new Node(v)), sign(1) {}
 
   Formula::Formula(const Formula& f, int sf,
@@ -249,7 +249,7 @@ namespace Gecode {
         return selfLeft;
       if (bdd_low(b) == bdd_false())
         return selfRight;
-    
+
       return selfLeft || selfRight;
     }
 

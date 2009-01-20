@@ -45,24 +45,24 @@ namespace Test {
   Options::Options(void)
     : seed(0), iter(defiter), fixprob(deffixprob), reflection(true), stop(true), log(false)
   {}
-    
+
   /*
    * Base class for tests
    *
    */
-  inline const std::string& 
+  inline const std::string&
   Base::name(void) const {
     return _name;
   }
-  inline Base* 
+  inline Base*
   Base::tests(void) {
     return _tests;
   }
-  inline Base* 
+  inline Base*
   Base::next(void) const {
     return _next;
   }
-  inline void 
+  inline void
   Base::next(Base* n) {
     _next=n;
   }

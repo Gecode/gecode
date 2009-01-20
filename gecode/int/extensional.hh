@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     IndexRange i_ch;
     /// Index range with out-degree modifications
     IndexRange o_ch;
-    
+
     /// Test whether layered graph has already been constructed
     bool constructed(void) const;
     /// Eliminate assigned prefix, return how many layers removed
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     ExecStatus prune(Space& home);
 
     /// Constructor for cloning \a p
-    LayeredGraph(Space& home, bool share, 
+    LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p);
   public:
     /// Constructor for posting
@@ -342,7 +342,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
       /// Supporting Tuple
       Tuple t;
-      
+
       /// \name Linkage access
       //@{
       /// Return next support entry
@@ -358,14 +358,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Initialize with Tuple \a t and next entry \a n
       SupportEntry(Tuple t, SupportEntry* n);
       //@}
-      
+
       /// \name Memory management
       //@{
       /// Free memory for all elements between this and \a l (inclusive)
       void dispose(Space& home, SupportEntry* l);
       /// Free memory for this element
       void dispose(Space& home);
-      
+
       /// Allocate memory from space
       static void* operator new(size_t s, Space& home);
       /// No-op (for exceptions)
@@ -381,7 +381,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       int i;
       /// Value
       int n;
-      
+
       /// \name Constructor
       //@{
       /// Initialize with position \a i, value \a n, and next entry \a ne
@@ -395,12 +395,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Set next work entry
       void next(WorkEntry* n);
       //@}
-      
+
       /// \name Memory management
       //@{
       /// Free memory for this element
       void dispose(Space& home);
-      
+
       /// Allocate memory from space
       static void* operator new(size_t s, Space& home);
       /// No-op (for exceptions)
@@ -492,7 +492,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
   };
-  
+
 }}}
 
 #include <gecode/int/extensional/incremental.hpp>

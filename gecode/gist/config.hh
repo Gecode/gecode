@@ -47,8 +47,8 @@
 typedef QWidget* (*pt2createView)(Gecode::Reflection::VarMap&, int, QStringList, QWidget*);
 
 namespace Gecode { namespace Gist {
-  
-  /// \brief Internal %Gist configuration 
+
+  /// \brief Internal %Gist configuration
   class GECODE_GIST_EXPORT Config {
   public:
     /// Constructor
@@ -56,7 +56,7 @@ namespace Gecode { namespace Gist {
     /// Map names to visualisation creators
     QMap<QString, pt2createView> visualisationMap;
   };
-  
+
 }}
 
 #endif

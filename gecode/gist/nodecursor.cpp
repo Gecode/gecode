@@ -37,10 +37,10 @@
 #include <gecode/gist/nodecursor.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   HideFailedCursor::HideFailedCursor(VisualNode* root)
    : NodeCursor<VisualNode>(root) {}
-    
+
   void
   HideFailedCursor::processCurrentNode(void) {
     VisualNode* n = node();
@@ -56,7 +56,7 @@ namespace Gecode { namespace Gist {
 
   UnhideAllCursor::UnhideAllCursor(VisualNode* root)
    : NodeCursor<VisualNode>(root) {}
-  
+
   void
   UnhideAllCursor::processCurrentNode(void) {
     VisualNode* n = node();
@@ -114,10 +114,10 @@ namespace Gecode { namespace Gist {
       alternative(alternative()-1);
       node(node()->getParent()->getChild(alternative()));
     } else {
-      NodeCursor<VisualNode>::moveSidewards();      
+      NodeCursor<VisualNode>::moveSidewards();
     }
   }
-  
+
 }}
 
 // STATISTICS: gist-any

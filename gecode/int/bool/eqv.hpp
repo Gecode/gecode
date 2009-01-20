@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Bool {
       }
       (void) new (home) Eqv(home,b0,b1,b2);
       break;
-    default: 
+    default:
       GECODE_NEVER;
     }
     return ES_OK;

@@ -67,7 +67,7 @@ namespace Gecode {
         lbMin < ubMin || lbMax > ubMax)
       throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
     for (int i = size(); i--; )
-      x[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);    
+      x[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);
   }
 
   SetVarArray::SetVarArray(Space& home,int n,

@@ -96,7 +96,7 @@ namespace Gecode {
       while (g()) ++g;
       if (g.size() > x[i].cardMax()) {
         return ES_FAILED;
-      }        
+      }
     }
     {
       // Check if lub violates current lower bound of x[i]

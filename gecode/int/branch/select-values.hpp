@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   PosValuesDesc<ViewSel,View>::
   PosValuesDesc(const Branching& b, const Pos& p,
-                const typename ViewSel::Desc& viewd, View x) 
+                const typename ViewSel::Desc& viewd, View x)
     : PosDesc<ViewSel>(b,x.size(),p,viewd), n(0) {
     for (ViewRanges<View> r(x); r(); ++r)
       n++;
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     pm[i].pos = w;
   }
-  
+
   template<class ViewSel, class View>
   forceinline int
   PosValuesDesc<ViewSel,View>::val(unsigned int a) const {
@@ -107,18 +107,18 @@ namespace Gecode { namespace Int { namespace Branch {
     GECODE_NEVER;
     return 0;
   }
-  
+
   template<class ViewSel, class View>
   size_t
   PosValuesDesc<ViewSel,View>::size(void) const {
     return sizeof(PosValuesDesc<ViewSel,View>)+(n+1)*sizeof(PosMin);
   }
-  
+
   template<class ViewSel, class View>
   PosValuesDesc<ViewSel,View>::~PosValuesDesc(void) {
     heap.free<PosMin>(pm,n+1);
   }
-  
+
 
   template <class ViewSel, class View>
   forceinline
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ExecStatus
   ViewValuesBranching<ViewSel,View>
   ::commit(Space& home, const BranchingDesc& d, unsigned int a) {
-    const PosValuesDesc<ViewSel,View>& pvd 
+    const PosValuesDesc<ViewSel,View>& pvd
       = static_cast<const PosValuesDesc<ViewSel,View>&>(d);
     View v(ViewBranching<ViewSel>::view(pvd.pos()).var());
     viewsel.commit(home, pvd.viewdesc(), a);
@@ -188,15 +188,15 @@ namespace Gecode { namespace Int { namespace Branch {
   template <class ViewSel, class View>
   Reflection::BranchingSpec
   ViewValuesBranching<ViewSel,View>
-  ::branchingSpec(const Space& home, 
+  ::branchingSpec(const Space& home,
                   Reflection::VarMap& m, const BranchingDesc& d) const {
     (void) home; (void) m;
-    const PosValuesDesc<ViewSel,View>& pvd 
+    const PosValuesDesc<ViewSel,View>& pvd
       = static_cast<const PosValuesDesc<ViewSel,View>&>(d);
     (void) pvd;
     Reflection::BranchingSpec bs(ati(), 2);
     bs[0] = view(pvd.pos()).spec(home, m);
-    Reflection::IntArrayArg* ia = 
+    Reflection::IntArrayArg* ia =
       Reflection::Arg::newIntArray(static_cast<int>(pvd.alternatives()));
     bs[1] = ia;
     for (int i=pvd.alternatives(); i--;)
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Branch {
                                   const Reflection::BranchingSpec&,
                                   unsigned int alt) {
       return os << "ViewValuesBranching<IntView>" << alt << std::endl;
-    }    
+    }
   };
   template <>
   class ViewValuesBranchingToString<Int::MinusView> {
@@ -225,7 +225,7 @@ namespace Gecode { namespace Int { namespace Branch {
                                   const Reflection::BranchingSpec&,
                                   unsigned int alt) {
       return os << "ViewValuesBranching<MinusView>" << alt << std::endl;
-    }    
+    }
   };
 
 }

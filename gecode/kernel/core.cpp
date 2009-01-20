@@ -75,7 +75,7 @@ namespace Gecode {
    * Propagator
    *
    */
-  ExecStatus 
+  ExecStatus
   Propagator::advise(Space&, Advisor&, const Delta&) {
     assert(false);
     return ES_FAILED;
@@ -109,7 +109,7 @@ namespace Gecode {
   VarDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void) 
+  Space::Space(void)
     : sra(new SharedRegionArea), n_wmp(0) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
@@ -144,14 +144,14 @@ namespace Gecode {
       d_lst = d_fst+2*n;
     }
   }
-  
+
   unsigned int
   Space::propagators(void) const {
     unsigned int n = 0;
     for (ActorLink* q = pc.p.active; q >= &pc.p.queue[0]; q--)
       for (ActorLink* a = q->next(); a != q; a = a->next())
         n++;
-    for (ActorLink* a = a_actors.next(); 
+    for (ActorLink* a = a_actors.next();
          Branching::cast(a) != b_commit; a = a->next())
       n++;
     return n;
@@ -160,7 +160,7 @@ namespace Gecode {
   unsigned int
   Space::branchings(void) const {
     unsigned int n = 0;
-    for (ActorLink* a = Branching::cast(b_status); 
+    for (ActorLink* a = Branching::cast(b_status);
          a != &a_actors; a = a->next())
       n++;
     return n;
@@ -285,8 +285,8 @@ namespace Gecode {
      * alternatives left can not be deleted. They can not be deleted
      * as there might be branching descriptions to be used in commit
      * that refer to one of these branchings. This e.g. happens when
-     * we combine branch-and-bound search with adaptive recomputation: during 
-     * recomputation, a copy is constrained to be better than the currently 
+     * we combine branch-and-bound search with adaptive recomputation: during
+     * recomputation, a copy is constrained to be better than the currently
      * best solution, then the first half of the BranchingDescs is posted,
      * and a fixpoint computed (for storing in the middle of the path). Then
      * the remaining BranchingDescs are posted, and because of the additional
@@ -328,13 +328,13 @@ namespace Gecode {
      * as all of its descriptions must have been used already.
      *
      */
-    while ((b_commit != Branching::cast(&a_actors)) && 
+    while ((b_commit != Branching::cast(&a_actors)) &&
            (d._id != b_commit->id)) {
       Branching* b = b_commit;
       b_commit = Branching::cast(b_commit->next());
       if (b == b_status)
         b_status = b_commit;
-      b->unlink(); 
+      b->unlink();
       rfree(b,b->dispose(*this));
     }
     if (b_commit == Branching::cast(&a_actors))
@@ -358,7 +358,7 @@ namespace Gecode {
    *    variables is updated and their forwarding information is reset.
    *
    */
-  Space::Space(bool share, Space& s) 
+  Space::Space(bool share, Space& s)
     : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       sra(s.sra->copy(share)), n_wmp(s.n_wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE
@@ -424,7 +424,7 @@ namespace Gecode {
     Space* c = copy(share);
 
     // Update variables without indexing structure
-    VarImp<NoIdxVarImpConf>* x = 
+    VarImp<NoIdxVarImpConf>* x =
       static_cast<VarImp<NoIdxVarImpConf>*>(c->pc.c.vars_noidx);
     while (x != NULL) {
       VarImp<NoIdxVarImpConf>* n = x->next();
@@ -469,7 +469,7 @@ namespace Gecode {
     return c;
   }
 
-  void 
+  void
   Space::constrain(const Space&) {
     throw SpaceConstrainUndefined();
   }

@@ -164,7 +164,7 @@ namespace Gecode { namespace Search {
       switch (cur->status(*this)) {
       case SS_FAILED:
         fail++;
-      case SS_SOLVED:        
+      case SS_SOLVED:
         delete cur;
         cur = NULL;
         EngineCtrl::current(NULL);

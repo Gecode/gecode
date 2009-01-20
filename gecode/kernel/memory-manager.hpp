@@ -401,7 +401,7 @@ namespace Gecode {
    *
    */
 
-  forceinline void* 
+  forceinline void*
   SharedRegionArea::operator new(size_t s) {
     return heap.ralloc(s);
   }

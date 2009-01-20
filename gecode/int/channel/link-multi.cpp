@@ -62,14 +62,14 @@ namespace Gecode { namespace Int { namespace Channel {
   forceinline
   BoolIter::BoolIter(const ViewArray<BoolView>& x0, int o0) :
     x(x0), o(o0), i(0) {
-    while ((i<x.size()) && !x[i].zero()) 
+    while ((i<x.size()) && !x[i].zero())
       i++;
   }
   forceinline bool
   BoolIter::operator ()(void) const {
     return i<x.size();
   }
-  forceinline int 
+  forceinline int
   BoolIter::val(void) const {
     assert(x[i].zero());
     return i+o;
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Channel {
     // Propagate from y to Boolean views
     if ((IntView::me(med) == ME_INT_BND) || (IntView::me(med) == ME_INT_DOM)) {
       ViewValues<IntView> v(y);
-      int i=0; 
+      int i=0;
       do {
         int j = v.val()-o;
         if (i < j) {

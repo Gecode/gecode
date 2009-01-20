@@ -203,13 +203,13 @@ namespace Gecode { namespace Int { namespace Branch {
     : ViewSelBase<IntView>(home,vbo) {}
   forceinline ViewSelStatus
   BySizeDegreeMin::init(Space&, View x) {
-    sizedegree = 
+    sizedegree =
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
   BySizeDegreeMin::select(Space&, View x) {
-    double sd = 
+    double sd =
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     if (sd < sizedegree) {
       sizedegree = sd; return VSS_BETTER;
@@ -232,13 +232,13 @@ namespace Gecode { namespace Int { namespace Branch {
     : ViewSelBase<IntView>(home,vbo) {}
   forceinline ViewSelStatus
   BySizeDegreeMax::init(Space&, View x) {
-    sizedegree = 
+    sizedegree =
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
   BySizeDegreeMax::select(Space&, View x) {
-    double sd = 
+    double sd =
       static_cast<double>(x.size())/static_cast<double>(x.degree());
     if (sd > sizedegree) {
       sizedegree = sd; return VSS_BETTER;

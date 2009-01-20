@@ -74,13 +74,13 @@
 
 #include <gecode/cpltset/exception.hpp>
 
-/** 
+/**
  * \namespace Gecode::CpltSet
  * \brief Complete representation of finite integer sets using ROBDD's
- * 
+ *
  * The Gecode::CpltSet namespace contains all functionality required
  * to program propagators and branchings for finite integer set variables,
- * where the variables' domains are represented completely (without 
+ * where the variables' domains are represented completely (without
  * approximation) using reduced ordered binary decision diagrams (ROBDDs).
  *
  * In addition, all propagators and branchings for these variables
@@ -93,16 +93,16 @@
 #include <gecode/cpltset/support.hpp>
 #include <gecode/cpltset/var-imp.hpp>
 
-namespace Gecode { 
+namespace Gecode {
   /**
    * \brief Finite set variable with complete domain representation
    *
    * \ingroup TaskModelCpltSetVars
    *
-   */  
+   */
   class CpltSetVar : public VarBase<CpltSet::CpltSetVarImp> {
   private:
-    using VarBase<CpltSet::CpltSetVarImp>::varimp;  
+    using VarBase<CpltSet::CpltSetVarImp>::varimp;
   public:
     /// Default constructor
     CpltSetVar(void);
@@ -127,7 +127,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVar(Space& home,
                int glbMin,int glbMax,int lubMin,int lubMax,
                unsigned int cardMin = 0,
@@ -171,7 +171,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVar(Space& home,
                const IntSet& glbD,int lubMin,int lubMax,
                unsigned int cardMin = 0,
@@ -215,7 +215,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVar(Space& home,
                int glbMin,int glbMax,const IntSet& lubD,
                unsigned int cardMin = 0,
@@ -259,7 +259,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVar(Space& home,
                const IntSet& glbD,const IntSet& lubD,
                unsigned int cardMin = 0,
@@ -268,7 +268,7 @@ namespace Gecode {
      * \brief Initialize variable with given bounds and cardinality
      *
      * The variable is created with greatest lower bound \a glbD,
-     * least upper bound \a lubD, and cardinality minimum \a cardMin 
+     * least upper bound \a lubD, and cardinality minimum \a cardMin
      * and maximum \a cardMax.
      * The following exceptions might be thrown:
      *  - If the bounds are no legal set bounds (between Set::Limits::min
@@ -317,7 +317,7 @@ namespace Gecode {
     /// Test whether this variable is assigned
     bool assigned(void) const;
     //@}
-    
+
     /// \name Cloning
     //@{
     /// Update this variable to be a clone of variable \a x
@@ -419,7 +419,7 @@ namespace Gecode {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const CpltSetVar& x);
-  
+
 }
 
 #include <gecode/cpltset/view.hpp>
@@ -427,7 +427,7 @@ namespace Gecode {
 namespace Gecode {
   /**
    * \defgroup TaskModelCpltSetArgs Argument arrays
-   * 
+   *
    * Argument arrays are just good enough for passing arguments
    * with automatic memory management.
    * \ingroup TaskModelCpltSet
@@ -440,7 +440,7 @@ namespace Gecode {
 
   /**
    * \defgroup TaskModelCpltSetVarArrays Variable arrays
-   * 
+   *
    * Variable arrays can store variables. They are typically used
    * for storing the variables being part of a solution. However,
    * they can also be used for temporary purposes (even though
@@ -465,7 +465,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVarArray(Space& home,
                     int n,int glbMin,int glbMax,int lubMin,int lubMax,
                     unsigned int minCard = 0,
@@ -476,7 +476,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVarArray(Space& home,
                     int n,const IntSet& glb, int lubMin, int lubMax,
                     unsigned int minCard = 0,
@@ -487,7 +487,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVarArray(Space& home,
                     int n,int glbMin,int glbMax,const IntSet& lub,
                     unsigned int minCard = 0,
@@ -498,7 +498,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVarArray(Space& home, int n,
                     const IntSet& glb,const IntSet& lub,
                     unsigned int minCard = 0,
@@ -517,12 +517,12 @@ namespace Gecode {
    */
   enum CpltSetRelType {
     /// Lexicographically less than on bitstring(\f$\prec_{lex}\f$)
-    SRT_LE,    
+    SRT_LE,
     /// Lexicographically less than on bitstring(\f$\prec_{lex}\f$)
     SRT_GR,
     /// Lexicographically less than or equal  (\f$\preceq_{lex}\f$)
     SRT_LQ,
-    /// Lexicographically greater than or equal  (\f$\preceq_{lex}\f$)    
+    /// Lexicographically greater than or equal  (\f$\preceq_{lex}\f$)
     SRT_GQ,
     /// Lexicographically less than on reversed bitstring(\f$\prec_{lex}\f$)
     SRT_LE_REV,
@@ -561,14 +561,14 @@ namespace Gecode {
   GECODE_CPLTSET_EXPORT void
   dom(Space& home, CpltSetVar x, SetRelType r, const IntSet& s);
 
-  /// Post propagator for \f$ l \leq |x| \leq u \f$ 
+  /// Post propagator for \f$ l \leq |x| \leq u \f$
   GECODE_CPLTSET_EXPORT void
   cardinality(Space& home, CpltSetVar x, unsigned int l, unsigned int u);
 
-  /// Post propagator for \f$ l |x| = c \f$ 
+  /// Post propagator for \f$ l |x| = c \f$
   GECODE_CPLTSET_EXPORT void
   cardinality(Space& home, CpltSetVar x, unsigned int c);
-  
+
   //@}
 
   /**
@@ -578,7 +578,7 @@ namespace Gecode {
    */
 
   //@{
-  
+
   /// Post propagator for \f$ x \sim_r y\f$
   GECODE_CPLTSET_EXPORT void
   rel(Space& home, CpltSetVar x, CpltSetRelType r, CpltSetVar y);
@@ -599,22 +599,22 @@ namespace Gecode {
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
-  rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
+  rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y,
       CpltSetRelType r, CpltSetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
-  rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
+  rel(Space& home, CpltSetVar x, CpltSetOpType o, CpltSetVar y,
       SetRelType r, CpltSetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
-  rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y, 
+  rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y,
       CpltSetRelType r, CpltSetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
-  rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y, 
+  rel(Space& home, CpltSetVar x, SetOpType o, CpltSetVar y,
       SetRelType r, CpltSetVar z);
 
   //@}
@@ -626,11 +626,11 @@ namespace Gecode {
    */
 
   //@{
-    
+
   /// Post propagator for \f$ s = \{x\} \f$
   GECODE_CPLTSET_EXPORT void
   singleton(Space& home, IntVar x, CpltSetVar s);
-  
+
   //@}
 
   /**
@@ -640,83 +640,83 @@ namespace Gecode {
    */
 
   //@{
-  
-  /// Post propagator for \f$ |x \cap is| =  c \f$ 
+
+  /// Post propagator for \f$ |x \cap is| =  c \f$
   GECODE_CPLTSET_EXPORT void
   exactly(Space& home, CpltSetVar x, IntSet& is, unsigned int c);
 
-  /// Post propagator for \f$ 0 \leq |x \cap is| \leq c \f$ 
+  /// Post propagator for \f$ 0 \leq |x \cap is| \leq c \f$
   GECODE_CPLTSET_EXPORT void
   atmost(Space& home, CpltSetVar x, IntSet& is, unsigned int c);
 
-  /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \f$ 
+  /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \f$
   GECODE_CPLTSET_EXPORT void
   atmost(Space& home, CpltSetVar x, CpltSetVar y, unsigned int c);
 
-  /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge x \sim_{lex} y\f$ 
+  /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge x \sim_{lex} y\f$
   GECODE_CPLTSET_EXPORT void
-  atmostLex(Space& home, CpltSetVar x, CpltSetVar y, unsigned int c, 
+  atmostLex(Space& home, CpltSetVar x, CpltSetVar y, unsigned int c,
             CpltSetRelType lex);
 
   /**
-   * \brief  Post propagator for \f$ 0 \leq |x \cap y| \leq c 
-   *         \wedge x \sim_{lex} y \wedge |x| = |y| = d\f$ 
+   * \brief  Post propagator for \f$ 0 \leq |x \cap y| \leq c
+   *         \wedge x \sim_{lex} y \wedge |x| = |y| = d\f$
    */
   GECODE_CPLTSET_EXPORT void
-  atmostLexCard(Space& home, CpltSetVar x, CpltSetVar y, int c, 
+  atmostLexCard(Space& home, CpltSetVar x, CpltSetVar y, int c,
                 CpltSetRelType lex, int d);
 
-  /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge |x| = |y| = d\f$ 
+  /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge |x| = |y| = d\f$
   GECODE_CPLTSET_EXPORT void
   atmostCard(Space& home, CpltSetVar x, CpltSetVar y, int c, int d);
 
-  /// Post propagator for \f$ x \cap y = z \wedge 0 \leq |z| \leq c \f$ 
+  /// Post propagator for \f$ x \cap y = z \wedge 0 \leq |z| \leq c \f$
   GECODE_CPLTSET_EXPORT void
   atmost(Space& home, CpltSetVar x, CpltSetVar y, CpltSetVar z, int c);
 
-  /** \brief Post propagator for \f$ |x_i \cap x_j| \leq 1 \f$ for all \f$0\leq i\neq j<|x| 
+  /** \brief Post propagator for \f$ |x_i \cap x_j| \leq 1 \f$ for all \f$0\leq i\neq j<|x|
    *  \wedge \forall i \in \{0, \dots, |x|-1\}: |x_i| = c \f$
    *  \note The bdd for this constraint becomes exponential with increasing universe
    *        and increasing |x|
-   */ 
+   */
   GECODE_CPLTSET_EXPORT void
   atmostOne(Space& home, const CpltSetVarArgs& x, int c);
 
-  /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
+  /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$
   GECODE_CPLTSET_EXPORT void
   partition(Space& home, const CpltSetVarArgs& x);
 
-  /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
+  /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$
   GECODE_CPLTSET_EXPORT void
   partition(Space& home, const CpltSetVarArgs& x, const CpltSetVar& y);
 
   /**
-   * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
-   *                       \forall i,j\in \{0, \dots, n-1\}, i\neq j: 
-   *                       x_i \sim_{lex} x_j\f$ 
+   * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge
+   *                       \forall i,j\in \{0, \dots, n-1\}, i\neq j:
+   *                       x_i \sim_{lex} x_j\f$
    *
    */
   GECODE_CPLTSET_EXPORT void
   partitionLex(Space& home, const CpltSetVarArgs& x, CpltSetRelType lex);
   /**
-   * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
-   *                       \forall i,j\in \{0, \dots, n-1\}, i\neq j: 
-   *                       x_i \sim_{lex} x_j  \wedge 
-   *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$ 
+   * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge
+   *                       \forall i,j\in \{0, \dots, n-1\}, i\neq j:
+   *                       x_i \sim_{lex} x_j  \wedge
+   *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$
    */
   GECODE_CPLTSET_EXPORT void
-  partitionLexCard(Space& home, const CpltSetVarArgs& x, CpltSetRelType lex, 
+  partitionLexCard(Space& home, const CpltSetVarArgs& x, CpltSetRelType lex,
                    unsigned int c);
 
   /**
-   * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
-   *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$ 
+   * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge
+   *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$
    */
   GECODE_CPLTSET_EXPORT void
   partitionCard(Space& home, const CpltSetVarArgs& x, unsigned int c);
 
   //@}
-  
+
   /**
    * \defgroup TaskModelCpltSetSelect Selection constraints
    * \ingroup TaskModelCpltSet
@@ -724,7 +724,7 @@ namespace Gecode {
    */
 
   //@{
-  
+
   /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
   GECODE_CPLTSET_EXPORT void
   selectUnion(Space& home, const CpltSetVarArgs& x, CpltSetVar s,
@@ -741,19 +741,19 @@ namespace Gecode {
 
   /// Post propagator for \f$ s = \bigcup_{x_i \subseteq t} i \f$
   GECODE_CPLTSET_EXPORT void
-  roots(Space& home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
+  roots(Space& home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
         const CpltSetVarArgs& allvars);
 
-  /** \brief Post propagator for \f$ x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x| 
+  /** \brief Post propagator for \f$ x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x|
    *  \wedge t = \bigcup_{i\subseteq s}  x_i \f$
-   */ 
+   */
   GECODE_CPLTSET_EXPORT void
   alldifferent(Space& home, const CpltSetVarArgs& x, CpltSetVar s,
                CpltSetVar t, const CpltSetVarArgs& allvars);
 
-  /** \brief Post propagator for \f$ |\displaystyle\bigcup_{i = 0}^{|x| - 1} x_i| = n 
+  /** \brief Post propagator for \f$ |\displaystyle\bigcup_{i = 0}^{|x| - 1} x_i| = n
    *  \wedge t = \bigcup_{i\subseteq s}  x_i \f$
-   * 
+   *
    */
   GECODE_CPLTSET_EXPORT void
   nvalue(Space& home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
@@ -761,7 +761,7 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ t = \bigcup_{i\in s} x_i \wedge v = \bigcup_{i\in u} y_i
    *  \wedge v \subseteq t \f$
-   * 
+   *
    *  |x| and |y| may be different
    */
   GECODE_CPLTSET_EXPORT void
@@ -788,7 +788,7 @@ namespace Gecode {
     CPLTSET_VAR_SIZE_MIN,   ///< With smallest unknown set
     CPLTSET_VAR_SIZE_MAX    ///< With largest unknown set
   };
-  
+
   /// Which values to select first for branching
   enum CpltSetValBranch {
     CPLTSET_VAL_MIN_INC, ///< Include smallest element
@@ -805,8 +805,8 @@ namespace Gecode {
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_CPLTSET_EXPORT void
-  branch(Space& home, const CpltSetVarArgs& x, 
-         const TieBreakVarBranch<CpltSetVarBranch>& vars, 
+  branch(Space& home, const CpltSetVarArgs& x,
+         const TieBreakVarBranch<CpltSetVarBranch>& vars,
          CpltSetValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);

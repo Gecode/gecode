@@ -41,14 +41,14 @@
 #include <gecode/gist/qtgist.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   /// Display information about %Gist
   class AboutGist : public QDialog {
   public:
     /// Constructor
     AboutGist(QWidget* parent = 0);
   };
-  
+
   /**
    * \brief Main window for stand-alone %Gist
    *
@@ -78,7 +78,7 @@ namespace Gecode { namespace Gist {
     QMenuBar* menuBar;
     /// About dialog
     AboutGist aboutGist;
-    
+
   protected Q_SLOTS:
     void statusChanged(const Statistics& stats, bool finished);
     void about(void);
@@ -90,7 +90,7 @@ namespace Gecode { namespace Gist {
   protected:
     void closeEvent(QCloseEvent* event);
   };
-  
+
 }}
 
 #endif

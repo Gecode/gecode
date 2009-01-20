@@ -38,7 +38,7 @@
 #define __GECODE_GIST_GECODELOGO_HH_
 
 namespace Gecode { namespace Gist {
-  
+
   /// Class holding Gecode and Gist logo icons
   class Logos {
   public:
@@ -46,16 +46,16 @@ namespace Gecode { namespace Gist {
     const unsigned char* logo;
     /// Size of the Gecode logo
     const unsigned int logoSize;
-  
+
     /// A smaller logo used as a window icon
     const unsigned char* gistLogo;
     /// Size of the smaller logo
     const unsigned int gistLogoSize;
-    
+
     /// Constructor
     Logos(void);
   };
-  
+
 
 }}
 

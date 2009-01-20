@@ -44,12 +44,12 @@ namespace Gecode {
   forceinline
   BoolRel::BoolRel(const BoolExpr& e0, bool t0)
     : e(e0), t(t0) {}
-  
+
   forceinline void
   BoolRel::post(Space& home, IntConLevel icl) const {
     e.post(home,t,icl);
   }
-  
+
   /*
    * Construction of linear relations
    *

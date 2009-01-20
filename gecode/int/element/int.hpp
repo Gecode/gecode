@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Element {
   // Index iterator
   template <class V0, class V1, class Idx, class Val>
   forceinline
-  Int<V0,V1,Idx,Val>::IterIdx::IterIdx(IdxVal* iv0) 
+  Int<V0,V1,Idx,Val>::IterIdx::IterIdx(IdxVal* iv0)
     : iv(iv0) {
     Idx p=0;
     i = iv[p].idx_next;
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Element {
   // Sort function
   template <class V0, class V1, class Idx, class Val>
   forceinline
-  Int<V0,V1,Idx,Val>::ByVal::ByVal(const IdxVal* iv0) 
+  Int<V0,V1,Idx,Val>::ByVal::ByVal(const IdxVal* iv0)
     : iv(iv0) {}
   template <class V0, class V1, class Idx, class Val>
   forceinline bool
@@ -266,7 +266,7 @@ namespace Gecode { namespace Int { namespace Element {
         return assigned ? ES_SUBSUMED(*this,home) : ES_NOFIX;
       } else {
         GECODE_ME_CHECK(x1.narrow_v(home,v,false));
-        return (x0.assigned() || x1.assigned()) ? 
+        return (x0.assigned() || x1.assigned()) ?
           ES_SUBSUMED(*this,home) : ES_FIX;
       }
     }

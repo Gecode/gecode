@@ -47,12 +47,12 @@ namespace Gecode { namespace Search {
     : EngineCtrl(st,sz), rcs(a_d), cur(NULL),
       mark(0), best(NULL),
       c_d(c_d0), d(0) {}
-  
+
   forceinline void
   BabEngine::init(Space* s) {
     cur = s;
   }
-  
+
   forceinline Space*
   BabEngine::explore(void) {
     /*
@@ -120,7 +120,7 @@ namespace Gecode { namespace Search {
   BabEngine::stacksize(void) const {
     return rcs.stacksize();
   }
-  
+
   forceinline
   BabEngine::~BabEngine(void) {
     rcs.reset();

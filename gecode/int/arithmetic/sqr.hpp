@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x0.lq(home,s));
 
     if (x0.assigned() && x1.assigned())
-      return (x0.val()*x0.val() == x1.val()) ? 
+      return (x0.val()*x0.val() == x1.val()) ?
         ES_SUBSUMED(*this,sizeof(*this)) : ES_FAILED;
 
     return ES_NOFIX;
@@ -241,11 +241,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SqrPlusDom<VA,VB>::propagate(Space& home, const ModEventDelta& med) {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
-      return x0.assigned() ? 
-        ES_SUBSUMED(*this,sizeof(*this)) 
+      return x0.assigned() ?
+        ES_SUBSUMED(*this,sizeof(*this))
         : ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
-    
+
     {
       ViewValues<VA> v0(x0);
       Iter::Values::Map<ViewValues<VA>,ValuesMapSqr> s0(v0);
@@ -333,21 +333,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
       GECODE_ME_CHECK(x0.gq(home,-s));
       GECODE_ME_CHECK(x0.lq(home,s));
-      
+
       if (x0.assigned() && x1.assigned())
-        return (x0.val()*x0.val() == x1.val()) ? 
+        return (x0.val()*x0.val() == x1.val()) ?
           ES_SUBSUMED(*this,sizeof(*this)) : ES_FAILED;
       return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
 
     }
-    
+
     {
       ViewValues<View> i(x0), j(x0);
       using namespace Iter::Values;
       Positive<ViewValues<View> > p(i);
       Negative<ViewValues<View> > n(j);
       Minus<Negative<ViewValues<View> > > m(n);
-      
+
       Map<Positive<ViewValues<View> >,ValuesMapSqr,true> sp(p);
       Map<Minus<Negative<ViewValues<View> > >,ValuesMapSqr,true> sm(m);
       Union<Map<Positive<ViewValues<View> >,ValuesMapSqr,true>,

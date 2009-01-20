@@ -40,7 +40,7 @@
 
 #include <gecode/cpltset.hh>
 
-namespace Gecode { namespace CpltSet { 
+namespace Gecode { namespace CpltSet {
 
   /**
    * \brief Nary propagator for CpltSet variables
@@ -66,7 +66,7 @@ namespace Gecode { namespace CpltSet {
     /// (EEQ) Earliest Existential Quantification
     bdd phi(int i, int j);
     /// Apply existential quantification for all variables
-    ExecStatus 
+    ExecStatus
     divide_conquer(Space& home, bdd& p, int i, int j);
   public:
     /// Cost function
@@ -85,7 +85,7 @@ namespace Gecode { namespace CpltSet {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Use eeq to perform domain propagation with n^2 and-abstractions
     ExecStatus propagate_eeq(Space& home);
-    /// Use eeq to perform bounds propagation 
+    /// Use eeq to perform bounds propagation
     ExecStatus propagate_bnd_eeq(Space& home);
     /// Use ddc to perform domain propagation with nlog(n) and-abstractions
     ExecStatus propagate_ddc(Space& home);
@@ -177,7 +177,7 @@ namespace Gecode { namespace CpltSet {
    * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
-  class NaryOneCpltSetPropagator : 
+  class NaryOneCpltSetPropagator :
     public MixNaryOnePropagator<View0,PC_CPLTSET_DOM,View1,PC_CPLTSET_DOM> {
   protected:
     typedef MixNaryOnePropagator<View0, PC_CPLTSET_DOM,
@@ -187,12 +187,12 @@ namespace Gecode { namespace CpltSet {
     using Super::x;
     using Super::y;
     /// Constructor for cloning \a p
-    NaryOneCpltSetPropagator(Space& home, bool share, 
+    NaryOneCpltSetPropagator(Space& home, bool share,
                              NaryOneCpltSetPropagator& p);
     /// Constructor for posting
     NaryOneCpltSetPropagator(Space& home, ViewArray<View0>&, View1&, bdd&);
     /// Divide and conquer method including additional view \a y
-    ExecStatus divide_conquer(Space& home, bdd& p, 
+    ExecStatus divide_conquer(Space& home, bdd& p,
                               int l, int r, int ypos);
   public:
     /// Specification for this propagator
@@ -206,7 +206,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    static  ExecStatus post(Space& home, ViewArray<View0>& x, View1& y, 
+    static  ExecStatus post(Space& home, ViewArray<View0>& x, View1& y,
                             bdd& d);
   };
 
@@ -219,7 +219,7 @@ namespace Gecode { namespace CpltSet {
    * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
-  class NaryTwoCpltSetPropagator : 
+  class NaryTwoCpltSetPropagator :
     public Propagator {
   protected:
     /// Array of views of type View0
@@ -231,13 +231,13 @@ namespace Gecode { namespace CpltSet {
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    NaryTwoCpltSetPropagator(Space& home, bool share, 
+    NaryTwoCpltSetPropagator(Space& home, bool share,
                              NaryTwoCpltSetPropagator& p);
     /// Constructor for posting
     NaryTwoCpltSetPropagator(Space& home,
                              ViewArray<View0>&, View1&, View1&, bdd&);
     /// Divide and conquer method including additional \a y and \a z views
-    ExecStatus divide_conquer(Space& home, bdd& p, int l, int r, 
+    ExecStatus divide_conquer(Space& home, bdd& p, int l, int r,
                               int ypos, int zpos);
   public:
     /// Specification for this propagator
@@ -253,10 +253,10 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    static  ExecStatus post(Space& home, ViewArray<View0>& x, 
+    static  ExecStatus post(Space& home, ViewArray<View0>& x,
                             View1& y, View1& z, bdd& d);
   };
-  
+
   /**
    * \brief Binary Rel Disjoint Propagator
    *
@@ -319,7 +319,7 @@ namespace Gecode { namespace CpltSet {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     static  ExecStatus post(Space& home, View1& x, View2& s);
-  }; 
+  };
 
 }}
 
@@ -328,7 +328,7 @@ namespace Gecode { namespace CpltSet {
 #include <gecode/cpltset/propagators/narytwo.hpp>
 #include <gecode/cpltset/propagators/binary.hpp>
 #include <gecode/cpltset/propagators/unary.hpp>
-#include <gecode/cpltset/propagators/singleton.hpp> 
+#include <gecode/cpltset/propagators/singleton.hpp>
 
 #endif
 

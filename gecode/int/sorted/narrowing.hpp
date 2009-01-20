@@ -33,7 +33,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 namespace Gecode { namespace Int { namespace Sorted {
 
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       while (y[start].max() < xmin) {
         start = sinfo[start].right;
       }
-        
+
       if (Perm) {
         // start is the leftmost-position for x_i
         // that denotes the lower bound on p_i
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       }
       nofix |= (me_modified(me_lb) &&
                 y[start].min() != x[i].min());
-        
+
       int ptau = tau[xs - 1 - i];
       int xmax = x[ptau].max();
       /*

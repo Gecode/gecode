@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // check for subsumption
     if (all_assigned) {
-      
+
       for (int i = m; i--; ) {
         int ci = count[i] + k[i].counter();
         if (!(k[i].min() <= ci && ci <= k[i].max())) {
@@ -261,7 +261,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
             int occupied = t_noa - ci;
             int mub = x.size() + removed - occupied;
-        
+
             ModEvent me = k[i].lq(home, mub);
             GECODE_ME_CHECK(me);
             mod |= k[i].assigned();

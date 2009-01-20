@@ -56,11 +56,11 @@ namespace Gecode { namespace CpltSet {
         throw CpltSet::VariableFailedDomain(location);
 
       if (
-          (glbMin < Set::Limits::min) || 
+          (glbMin < Set::Limits::min) ||
           (glbMax > Set::Limits::max)
-          ) 
+          )
         throw CpltSet::VariableOutOfRangeDomain(location);
-      
+
       int  lubMin = lub.min();
       int  lubMax = lub.max();
       if (
@@ -74,7 +74,7 @@ namespace Gecode { namespace CpltSet {
       int  lubMin = lub.min();
       int  lubMax = lub.max();
       if (
-          (lubMin < Set::Limits::min) || 
+          (lubMin < Set::Limits::min) ||
           (lubMax > Set::Limits::max)
          )
         throw CpltSet::VariableOutOfRangeDomain(location);
@@ -83,13 +83,13 @@ namespace Gecode { namespace CpltSet {
       throw CpltSet::VariableFailedDomain(location);
     }
 
-    if (cardMax < 0)    
+    if (cardMax < 0)
       throw CpltSet::VariableFailedDomain(location);
 
     if ((unsigned int) cardMax > Set::Limits::card)
       throw CpltSet::VariableOutOfRangeCardinality(location);
 
-    if ( 
+    if (
         (cardMin > cardMax) ||
         (cardMin < 0)
         )
@@ -98,7 +98,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  void 
+  void
   variableorder(Space& home, ViewArray<View>& x) {
     unsigned int var_in_tab = manager.allocated();
 
@@ -117,7 +117,7 @@ namespace Gecode { namespace CpltSet {
     Region re(home);
     int* hls_order = re.alloc<int>(var_in_tab);
 
-    // we do not care about variables 
+    // we do not care about variables
     // that are not in the scope of the constraint
     int c = 0;
     for (unsigned int i = 0; i < min_offset; i++, c++) {
@@ -140,13 +140,13 @@ namespace Gecode { namespace CpltSet {
     // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
     for (unsigned int i = c; i < var_in_tab; i++, c++) {
       hls_order[i] = i;
-    }   
-    
+    }
+
     manager.setorder(&hls_order[0]);
   }
 
   template <class View, class View1>
-  void 
+  void
   variableorder(Space& home, ViewArray<View>& x, ViewArray<View1>& y) {
     unsigned int var_in_tab = manager.allocated();
 
@@ -165,7 +165,7 @@ namespace Gecode { namespace CpltSet {
     Region re(home);
     int* hls_order = re.alloc<int>(var_in_tab);
 
-    // we do not care about variables 
+    // we do not care about variables
     // that are not in the scope of the constraint
     int c = 0;
     for (unsigned int i = 0; i < min_offset; i++, c++) {
@@ -184,7 +184,7 @@ namespace Gecode { namespace CpltSet {
         }
       }
       // INVARIANT: Here we assume that variables of the same array
-      //            have the same initial values for min and max of the set 
+      //            have the same initial values for min and max of the set
       //            bounds
       // invariant new arrays have subranges of old arrays
       for (int i = 0; i < y.size(); i++) {
@@ -205,7 +205,7 @@ namespace Gecode { namespace CpltSet {
     // Order remaining variables
     for (unsigned int i = c; i < var_in_tab; i++, c++) {
       hls_order[i] = i;
-    }   
+    }
 
     manager.setorder(&hls_order[0]);
   }
@@ -218,23 +218,23 @@ namespace Gecode { namespace CpltSet {
 
 
   /// Build the ROBDD for \f$ |x|=c\f$
-  GECODE_CPLTSET_EXPORT bdd 
+  GECODE_CPLTSET_EXPORT bdd
   cardeq(Space& home, int offset, int c, int n, int r);
 
   /// Build the ROBDD for \f$ cl \leq |x| \leq cr\f$
-  GECODE_CPLTSET_EXPORT bdd 
+  GECODE_CPLTSET_EXPORT bdd
   cardlqgq(Space& home, int offset, int cl, int cr, int n, int r);
 
   /// Build the ROBDD for \f$ cl \leq |x| \leq cr\f$
-  GECODE_CPLTSET_EXPORT bdd 
+  GECODE_CPLTSET_EXPORT bdd
   cardcheck(Space& home, int xtab, int offset, int cl, int cr);
 
   // EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
 
   /// Build the ROBDD for \f$ |x|=c\f$
   template <class I, class View0, class View1>
-  bdd 
-  extcardeq(Space& home, Gecode::Iter::Ranges::ValCache<I>& inter, 
+  bdd
+  extcardeq(Space& home, Gecode::Iter::Ranges::ValCache<I>& inter,
             View0& x, View1& y, unsigned int c, int n, int) {
     int xmin = x.initialLubMin();
     int ymin = y.initialLubMin();
@@ -267,7 +267,7 @@ namespace Gecode { namespace CpltSet {
         if (i == 0) {
           t = bdd_false();
         } else {
-          t = layer[i-1]; 
+          t = layer[i-1];
         }
         bdd both = manager.ite(y.element(col - ymin), t,layer[i]);
         layer[i] = manager.ite(x.element(col - xmin), both ,layer[i]);
@@ -280,19 +280,19 @@ namespace Gecode { namespace CpltSet {
     return layer[n - 1];
   }
 
- 
+
   /// Build the ROBDD for \f$ cl \leq |x| \leq cr\f$
   template <class I, class View0, class View1>
-  bdd 
+  bdd
   extcardlqgq(Space& home,
-              Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y, 
+              Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y,
               unsigned int cl, unsigned int cr, int n, int r) {
     Region re(home);
     bdd* layer = re.alloc<bdd>(n);
 
     // creates TOP v(c) v(c-1) ... v(c - cl + 1)
     layer[n - cl - 1] = bdd_true();
-    
+
     inter.last();
 
     int k    = inter.min();
@@ -317,26 +317,26 @@ namespace Gecode { namespace CpltSet {
 
     for (; inter(); --inter) {
       unsigned int pos = inter.index(); // save position of k
-      // cl < cr <= tab  ==> n - cl > 0 
-      for (int i = n - cl; i < n; i++) { 
+      // cl < cr <= tab  ==> n - cl > 0
+      for (int i = n - cl; i < n; i++) {
         int col = inter.min();
-        bdd t = layer[i-1]; 
+        bdd t = layer[i-1];
         bdd both = manager.ite(y.element(col - ymin), t, layer[i]);
         layer[i] = manager.ite(x.element(col - xmin), both, layer[i]);
         --inter;
-        if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
+        if ((int) inter.index() + 1 < r + 1 - (int) cr) {
           inter.finish(); break;
         }
       }
       if (!inter()) break;
-      inter.index(pos);     
+      inter.index(pos);
     }
 
-    if ((int) cr == r + 1) { 
+    if ((int) cr == r + 1) {
       // max card equals table width, all elements allowed
       return layer[n - 1];
     }
-    
+
     if ((int) cr == r) {
       // only one single layer
       inter.last();
@@ -365,7 +365,7 @@ namespace Gecode { namespace CpltSet {
       }
       return layer[n- 1];
     }
-  
+
     inter.last();
     // connection layer between cl and cr
     {
@@ -400,29 +400,29 @@ namespace Gecode { namespace CpltSet {
         if (i == 0) {
           t = bdd_false();
         } else {
-          t = layer[i-1]; 
+          t = layer[i-1];
         }
         // i guess here we do a little too much
         bdd both = y.element(col - ymin) & x.element(col - xmin);
         layer[i] = manager.ite(both, t, layer[i]);
 
         --inter;
-        if (!inter()) { 
+        if (!inter()) {
           break;
         }
       }
-      if (!inter()) { 
+      if (!inter()) {
         break;
       }
       inter.index(pos);
     }
-    
+
     return layer[n - 1];
   }
-  
+
   /// Build the ROBDD for \f$ cl \leq |x \cap y| \leq cr\f$
   template <class View0, class View1>
-  bdd 
+  bdd
   extcardcheck(Space& home,
                View0& x, View1& y, unsigned int cl, unsigned int cr) {
     // Ad 2)
@@ -430,15 +430,15 @@ namespace Gecode { namespace CpltSet {
     // because we do not want to rewrite the code for the simple checks
     // everytime
 
-    // Ad 3) 
+    // Ad 3)
     // the same extensions for the respective proper cardinality functions
-  
+
     // Compute the intersection of x and y  and bring it into a data structure
     // where iteration may start with the greatest element of the intersection
     Set::LubRanges<View0> lubx(x);
     Set::LubRanges<View1> luby(y);
     // common values
-    Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> > 
+    Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
       common(lubx, luby);
     // get it cached
     Gecode::Iter::Ranges::ToValues<
@@ -447,13 +447,13 @@ namespace Gecode { namespace CpltSet {
 
     Gecode::Iter::Ranges::ValCache<
       Gecode::Iter::Ranges::ToValues<
-        Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, 
+        Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>,
           Set::LubRanges<View1> > > > inter(values);
 
     // compute the size of the intersection
     unsigned int isize = inter.size();
 
-    if (cr > isize) { 
+    if (cr > isize) {
       cr = isize;
     }
     int r = isize - 1; // rightmost bit in bitvector
@@ -476,7 +476,7 @@ namespace Gecode { namespace CpltSet {
       }
       return empty;
     }
-  
+
     if (cl == cr) {
       if (cr == isize) {
         // build the full set
@@ -508,14 +508,14 @@ namespace Gecode { namespace CpltSet {
 
   // extcard with const intset
   template <class I>
-  bdd 
+  bdd
   cardConst(Space& home, int, int xoff, int xmin, int cl, int cr, I& is) {
-    // Invariant: We require that the IntSet provided is a subset of the 
+    // Invariant: We require that the IntSet provided is a subset of the
     // variable range
     Gecode::Iter::Ranges::ToValues<I> ir(is);
     Gecode::Iter::Ranges::ValCache<Gecode::Iter::Ranges::ToValues<I> > inter(ir);
 
-    int r = inter.size() - 1;    
+    int r = inter.size() - 1;
     int n = cr + 1;
 
     Region re(home);
@@ -523,7 +523,7 @@ namespace Gecode { namespace CpltSet {
 
     // creates TOP v(c) v(c-1) ... v(c - cl + 1)
     layer[n - cl - 1] = bdd_true();
-    
+
     inter.last();
 
     int k    = inter.min();
@@ -531,7 +531,7 @@ namespace Gecode { namespace CpltSet {
     // build nodes for lowest layer
     for (int i = n - cl ; i < n; i++, --inter) {
       k    = inter.min();
-      layer[i] = manager.ite(manager.bddpos(xoff + k - xmin), layer[i - 1], 
+      layer[i] = manager.ite(manager.bddpos(xoff + k - xmin), layer[i - 1],
                              bdd_false());
     }
 
@@ -541,28 +541,28 @@ namespace Gecode { namespace CpltSet {
 
     for (; inter(); --inter) {
       // save position of k
-      unsigned int pos = inter.index(); 
+      unsigned int pos = inter.index();
 
-      // cl < cr <= tab  ==> n - cl > 0 
-      for (int i = n - cl; i < n; i++) { 
+      // cl < cr <= tab  ==> n - cl > 0
+      for (int i = n - cl; i < n; i++) {
         int col = inter.min();
-        bdd t = layer[i-1]; 
-        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t, 
+        bdd t = layer[i-1];
+        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t,
                                layer[i]);
         --inter;
-        if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
+        if ((int) inter.index() + 1 < r + 1 - (int) cr) {
           inter.finish(); break;
         }
       }
       if (!inter()) break;
-      inter.index(pos);     
+      inter.index(pos);
     }
 
-    if ((int) cr == r + 1) { 
+    if ((int) cr == r + 1) {
       // max card equals table width, all elements allowed
       return layer[n - 1];
     }
-    
+
     if ((int) cr == r) {
       // only one single layer
       inter.last();
@@ -590,7 +590,7 @@ namespace Gecode { namespace CpltSet {
       }
       return layer[n- 1];
     }
-  
+
     inter.last();
     // connection layer between cl and cr
     {
@@ -624,16 +624,16 @@ namespace Gecode { namespace CpltSet {
         if (i == 0) {
           t = bdd_false();
         } else {
-          t = layer[i-1]; 
+          t = layer[i-1];
         }
-        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t,  
+        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t,
                                layer[i]);
         --inter;
-        if (!inter()) { 
+        if (!inter()) {
           break;
         }
       }
-      if (!inter()) { 
+      if (!inter()) {
         break;
       }
       inter.index(pos);
@@ -644,40 +644,40 @@ namespace Gecode { namespace CpltSet {
 
   // mark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
-  extcache_mark(SharedArray<bdd>& nodes, 
+  extcache_mark(SharedArray<bdd>& nodes,
                 int n, int& l, int& r, int& markref);
 
   // unmark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
-  extcache_unmark(SharedArray<bdd>& nodes, 
+  extcache_unmark(SharedArray<bdd>& nodes,
                   int n, int& l, int& r, int& markref);
 
   // iterate to the next level of nodes
-  GECODE_CPLTSET_EXPORT void 
+  GECODE_CPLTSET_EXPORT void
   extcardbounds(int& markref, bdd& c, int& n, int& l, int& r,
-                bool& singleton, int& _level, 
-                SharedArray<bdd>& nodes, 
+                bool& singleton, int& _level,
+                SharedArray<bdd>& nodes,
                 int& curmin, int& curmax, Gecode::IntSet& out);
 
 
-  GECODE_CPLTSET_EXPORT void 
+  GECODE_CPLTSET_EXPORT void
   getcardbounds(bdd& c, int& curmin, int& curmax);
   // END EXTRACT CARDINALITY
 
-  GECODE_CPLTSET_EXPORT bdd 
-  lexlt(unsigned int& xoff, unsigned int& yoff, 
+  GECODE_CPLTSET_EXPORT bdd
+  lexlt(unsigned int& xoff, unsigned int& yoff,
         unsigned int& range, int n);
 
-  GECODE_CPLTSET_EXPORT bdd 
-  lexlq(unsigned int& xoff, unsigned int& yoff, 
+  GECODE_CPLTSET_EXPORT bdd
+  lexlq(unsigned int& xoff, unsigned int& yoff,
         unsigned int& range, int n);
 
-  GECODE_CPLTSET_EXPORT bdd 
-  lexltrev(unsigned int& xoff, unsigned int& yoff, 
+  GECODE_CPLTSET_EXPORT bdd
+  lexltrev(unsigned int& xoff, unsigned int& yoff,
            unsigned int& range, int n);
 
-  GECODE_CPLTSET_EXPORT bdd 
-  lexlqrev(unsigned int& xoff, unsigned int& yoff, 
+  GECODE_CPLTSET_EXPORT bdd
+  lexlqrev(unsigned int& xoff, unsigned int& yoff,
            unsigned int& range, int n);
 
   template <class View>

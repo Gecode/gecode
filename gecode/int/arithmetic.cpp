@@ -53,7 +53,7 @@ namespace Gecode {
 
 
   void
-  max(Space& home, IntVar x0, IntVar x1, IntVar x2, 
+  max(Space& home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl) {
     if (home.failed()) return;
     if (icl == ICL_DOM) {
@@ -79,7 +79,7 @@ namespace Gecode {
 
 
   void
-  min(Space& home, IntVar x0, IntVar x1, IntVar x2, 
+  min(Space& home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl) {
     if (home.failed()) return;
     MinusView m0(x0); MinusView m1(x1); MinusView m2(x2);
@@ -91,7 +91,7 @@ namespace Gecode {
   }
 
   void
-  min(Space& home, const IntVarArgs& x, IntVar y, 
+  min(Space& home, const IntVarArgs& x, IntVar y,
       IntConLevel icl) {
     if (x.size() == 0)
       throw TooFewArguments("Int::min");
@@ -109,7 +109,7 @@ namespace Gecode {
 
 
   void
-  mult(Space& home, IntVar x0, IntVar x1, IntVar x2, 
+  mult(Space& home, IntVar x0, IntVar x1, IntVar x2,
        IntConLevel icl) {
     if (home.failed()) return;
     if (icl == ICL_DOM) {
@@ -146,7 +146,7 @@ namespace Gecode {
     if (home.failed()) return;
 
     IntVar prod(home, Int::Limits::min, Int::Limits::max);
-    GECODE_ES_FAIL(home, 
+    GECODE_ES_FAIL(home,
                    Arithmetic::MultBnd<IntView>::post(home,x1,x2,prod));
     Linear::Term<IntView> t[3];
     t[0].a = 1; t[0].x = prod;
@@ -220,7 +220,7 @@ namespace Gecode {
     GECODE_REGISTER1(Arithmetic::SqrtBnd<IntView>);
     GECODE_REGISTER1(Arithmetic::SqrtDom<IntView>);
     GECODE_REGISTER1(Arithmetic::DivMod<IntView>);
-    
+
     GECODE_REGISTER4(Arithmetic::DivPlusBnd<int,IntView,IntView,IntView>);
     GECODE_REGISTER4(Arithmetic::DivPlusBnd<double,IntView,IntView,IntView>);
     GECODE_REGISTER4(Arithmetic::DivPlusBnd<double,MinusView,

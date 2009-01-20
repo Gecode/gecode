@@ -39,18 +39,18 @@
 #include <list>
 #include <algorithm>
 
-/* 
- * This is the propagation algorithm of the cumulatives constraint as 
- * presented in: 
- *   Nicolas Beldiceanu and Mats Carlsson, A New Multi-resource cumulatives 
+/*
+ * This is the propagation algorithm of the cumulatives constraint as
+ * presented in:
+ *   Nicolas Beldiceanu and Mats Carlsson, A New Multi-resource cumulatives
  *   Constraint with Negative Heights. CP 2002, pages 63-79, Springer-Verlag.
  */
 
 namespace Gecode { namespace Int { namespace Cumulatives {
-      
+
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space& home, 
+  Val<ViewM,ViewD,ViewH,View>::Val(Space& home,
                                    const ViewArray<ViewM>& _machine,
                                    const ViewArray<View>& _start,
                                    const ViewArray<ViewD>& _duration,
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     Propagator(home),
     machine(_machine), start(_start), duration(_duration),
     end(_end), height(_height), limit(_limit), at_most(_at_most) {
-    home.notice(*this,AP_DISPOSE);    
+    home.notice(*this,AP_DISPOSE);
 
     machine.subscribe(home,*this,PC_INT_DOM);
     start.subscribe(home,*this,PC_INT_BND);
@@ -259,7 +259,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
     return ES_OK;
   }
-      
+
   namespace {
     template <class C>
     class Less {
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       events_size = 0;
 #define GECODE_PUSH_EVENTS(E) assert(events_size < start.size()*8);     \
         events[events_size++] = E
-      
+
       // Find events for sweep-line
       for (int t = start.size(); t--; ) {
         if (machine[t].assigned() &&
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                                    : -height[t].max()));
           }
         }
-        
+
         if (machine[t].in(r)) {
           if (at_most
               ? height[t].min() < 0
@@ -352,10 +352,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       int ntask    = 0;
       int sheight  = 0;
       int ei = 0;
-      
+
       prune_tasks_size = 0;
       for (int i = start.size(); i--; ) contribution[i] = 0;
-      
+
       d = events[ei].date;
       while (ei < events_size) {
         if (events[ei].e != EVENT_PRUN) {
@@ -380,14 +380,14 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         }
         ei++;
       }
-      
+
       GECODE_ES_CHECK(prune(home, d, d, r,
                             ntask, sheight,
                             contribution, prune_tasks, prune_tasks_size));
     }
     return subsumed ? ES_SUBSUMED(*this,home): ES_NOFIX;
   }
-      
+
 }}}
 
 // STATISTICS: int-prop

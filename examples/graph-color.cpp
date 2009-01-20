@@ -351,7 +351,7 @@ public:
     if (opt.branching() == BRANCH_SIZE) {
       branch(*this, v, INT_VAR_SIZE_MIN, INT_VAL_MIN);
     } else if (opt.branching() == BRANCH_DEGREE) {
-      branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), 
+      branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN),
              INT_VAL_MIN);
     } else {
       branch(*this, v, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_MIN);

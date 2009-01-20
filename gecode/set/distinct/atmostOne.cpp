@@ -114,7 +114,7 @@ namespace Gecode { namespace Set { namespace Distinct {
           lubs2[i].init(x[i]);
         }
         Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT2(lubs2, x.size());
-        
+
         GlbRanges<SetView>* glbs = r.alloc<GlbRanges<SetView> >(cardSa);
         int count = 0;
         for (int i=x.size(); i--; ) {

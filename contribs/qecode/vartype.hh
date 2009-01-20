@@ -1,5 +1,5 @@
-/****   qecode2, [ vartype.hh ], 
-Copyright (c) 2007 Universite d'Orleans - Jeremie Vautard 
+/****   qecode2, [ vartype.hh ],
+Copyright (c) 2007 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

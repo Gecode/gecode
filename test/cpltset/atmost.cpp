@@ -109,7 +109,7 @@ namespace Test { namespace CpltSet {
         CountableSetValues xv2(x.lub, x[1]);
         int a = iter2int(xv1, 3);
         int b = iter2int(xv2, 3);
-    
+
         return (c <= 1) && a < b;
       }
 
@@ -136,7 +136,7 @@ namespace Test { namespace CpltSet {
           c += d.width();
           ++d;
         }
-    
+
         return (c <= 1);
       }
 

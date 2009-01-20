@@ -83,7 +83,7 @@ namespace Gecode { namespace Set {
     glb.card(std::max(cardMin, glb.size() ));
     lub.card(std::min(cardMax, lub.size() ));
   }
-  
+
   forceinline
   SetVarImp::SetVarImp(Space& home,
                        const IntSet& theGlb,const IntSet& theLub,
@@ -140,29 +140,29 @@ namespace Gecode { namespace Set {
   SetVarImp::modevent(const Delta& d) {
     return d.modevent();
   }
-  forceinline int 
+  forceinline int
   SetVarImp::glbMin(const Delta& d) {
     return static_cast<const SetDelta&>(d).glbMin();
   }
-  forceinline int 
+  forceinline int
   SetVarImp::glbMax(const Delta& d) {
     return static_cast<const SetDelta&>(d).glbMax();
   }
-  forceinline bool 
+  forceinline bool
   SetVarImp::glbAny(const Delta& d) {
-    return static_cast<const SetDelta&>(d).glbAny(); 
+    return static_cast<const SetDelta&>(d).glbAny();
   }
-  forceinline int 
+  forceinline int
   SetVarImp::lubMin(const Delta& d) {
     return static_cast<const SetDelta&>(d).lubMin();
   }
-  forceinline int 
+  forceinline int
   SetVarImp::lubMax(const Delta& d) {
     return static_cast<const SetDelta&>(d).lubMax();
   }
-  forceinline bool 
+  forceinline bool
   SetVarImp::lubAny(const Delta& d) {
-    return static_cast<const SetDelta&>(d).lubAny(); 
+    return static_cast<const SetDelta&>(d).lubAny();
   }
 
   forceinline ModEvent
@@ -203,7 +203,7 @@ namespace Gecode { namespace Set {
         d._lubMax = oldMax;
       } else if (j == oldMax) {
         d._lubMin = oldMin;
-        d._lubMax = lub.min()-1;        
+        d._lubMax = lub.min()-1;
       }
       return processLubChange(home, d);
     }
@@ -224,7 +224,7 @@ namespace Gecode { namespace Set {
       Iter::Ranges::Diff<BndSetRanges,I> probe(lbi,iterator);
       if (probe())
         return ME_SET_FAILED;
-      return ME_SET_NONE;      
+      return ME_SET_NONE;
     }
     if (!iterator()) {
       if (cardMin() > 0)
@@ -240,7 +240,7 @@ namespace Gecode { namespace Set {
     if (iterator())
       return intersectI_full(home, mi, ma, iterator);
     else
-      return intersect(home, mi, ma);    
+      return intersect(home, mi, ma);
   }
 
   template <class I>
@@ -286,7 +286,7 @@ namespace Gecode { namespace Set {
     }
     SetDelta d;
     if (glb.include(home, i, j, d))
-      return processGlbChange(home, d);      
+      return processGlbChange(home, d);
     return ME_SET_NONE;
   }
 
@@ -359,7 +359,7 @@ namespace Gecode { namespace Set {
       return ME_SET_FAILED;
     SetDelta d;
     if (lub.exclude(home, i, j, d))
-      return processLubChange(home, d);      
+      return processLubChange(home, d);
     return ME_SET_NONE;
   }
 
@@ -442,11 +442,11 @@ namespace Gecode { namespace Set {
   /**
    * \brief Range iterator for the least upper bound of a set variable implementation
    *
-   * This class provides (by specialization) a range iterator 
+   * This class provides (by specialization) a range iterator
    * for the least upper bounds of set variable implementations.
    *
    * \ingroup TaskActorSet
-   */  
+   */
   template <>
   class LubRanges<SetVarImp*> : public BndSetRanges {
   public:
@@ -476,11 +476,11 @@ namespace Gecode { namespace Set {
   /**
    * \brief Range iterator for the greatest lower bound of a set variable implementation
    *
-   * This class provides (by specialization) a range iterator 
+   * This class provides (by specialization) a range iterator
    * for the greatest lower bounds of set variable implementations.
    *
    * \ingroup TaskActorSet
-   */  
+   */
   template <>
   class GlbRanges<SetVarImp*> : public BndSetRanges {
   public:

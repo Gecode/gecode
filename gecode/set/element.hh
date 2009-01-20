@@ -211,7 +211,7 @@ namespace Gecode { namespace Set { namespace Element {
     GECODE_SET_EXPORT virtual size_t dispose(Space& home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
+    /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
     static  ExecStatus  post(Space& home,IdxViewArray& x,SetView y);
   };
 

@@ -69,18 +69,18 @@ namespace Gecode {
   operator ||(const BoolExpr& l, const BoolExpr& r) {
     return BoolExpr(l,BoolExpr::NT_OR,r);
   }
-  
+
   inline BoolExpr
   operator ^(const BoolExpr& l, const BoolExpr& r) {
     return BoolExpr(BoolExpr(l,BoolExpr::NT_EQV,r),BoolExpr::NT_NOT);
   }
-  
+
   template <class Var>
   inline BoolExpr
   operator ~(const LinRel<Var>& rl) {
     return BoolExpr(rl);
   }
-  
+
   inline BoolExpr
   operator !(const BoolExpr& e) {
     return BoolExpr(e,BoolExpr::NT_NOT);
@@ -97,7 +97,7 @@ namespace Gecode {
     return BoolExpr(BoolExpr(l,BoolExpr::NT_NOT),
                     BoolExpr::NT_OR,r);
   }
-  
+
 
   inline BoolVar
   post(Space& home, const BoolExpr& e, IntConLevel icl) {

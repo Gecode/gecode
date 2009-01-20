@@ -192,7 +192,7 @@ namespace Gecode {
   forceinline void
   ViewSelBase<View>::commit(Space&, const EmptyViewSelDesc&, unsigned int) {}
   template<class View>
-  forceinline void 
+  forceinline void
   ViewSelBase<View>::update(Space&, bool, ViewSelBase<View>&) {}
   template<class View>
   forceinline void
@@ -230,7 +230,7 @@ namespace Gecode {
   ViewSelDegreeMin<View>::ViewSelDegreeMin(void) {}
   template<class View>
   forceinline
-  ViewSelDegreeMin<View>::ViewSelDegreeMin(Space& home, 
+  ViewSelDegreeMin<View>::ViewSelDegreeMin(Space& home,
                                            const VarBranchOptions& vbo)
     : ViewSelBase<View>(home,vbo) {}
   template<class View>
@@ -263,7 +263,7 @@ namespace Gecode {
   ViewSelDegreeMax<View>::ViewSelDegreeMax(void) {}
   template<class View>
   forceinline
-  ViewSelDegreeMax<View>::ViewSelDegreeMax(Space& home, 
+  ViewSelDegreeMax<View>::ViewSelDegreeMax(Space& home,
                                            const VarBranchOptions& vbo)
     : ViewSelBase<View>(home,vbo) {}
   template<class View>
@@ -317,12 +317,12 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ViewSelRnd<View>::commit(Space&, const Support::RandomGenerator& d, 
+  ViewSelRnd<View>::commit(Space&, const Support::RandomGenerator& d,
                            unsigned int) {
     r = d;
   }
   template<class View>
-  forceinline void 
+  forceinline void
   ViewSelRnd<View>::update(Space&, bool, ViewSelRnd<View>& vs) {
     r = vs.r;
   }

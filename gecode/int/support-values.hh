@@ -78,7 +78,7 @@ namespace Gecode { namespace Int {
       /// Initialize with values from \a sv
       Unsupported(SupportValues& sv0);
       //@}
-      
+
       /// \name Iteration control
       //@{
       /// Test whether iterator is still at a value or done
@@ -86,14 +86,14 @@ namespace Gecode { namespace Int {
       /// Move iterator to next value (if possible)
       void operator ++(void);
       //@}
-      
+
       /// \name Value access
       //@{
       /// Return current value
       int val(void) const;
       //@}
     };
-    
+
     /// The view
     View x;
     /// Size of bitarray
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int {
     SupportValues(A& a, View x);
     /// Destructor
     ~SupportValues(void);
-    
+
     /// \name Iteration control
     //@{
     /// Reset iterator
@@ -132,13 +132,13 @@ namespace Gecode { namespace Int {
     /// Move iterator to next value (if possible)
     void operator ++(void);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return current value
     int val(void) const;
     //@}
-    
+
     /// \name Support control
     //@{
     /// Mark current (iterator) value as supported

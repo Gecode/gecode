@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n; i--; )
       if (x[i].size() > d)
         d = x[i].size();
-      
+
     if (d < 6)
       return PropCost::linear(PropCost::LOW,x.size());
     else if ((6 <= d) && (d < n/2))
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace GCC {
     else
       return PropCost::cubic(PropCost::LOW,x.size());
   }
-  
+
   /// \brief Perform domain propagation.
   template <class View, class Card, bool isView>
   ExecStatus
@@ -455,7 +455,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (me_failed(me))
           return ES_FAILED;
 
-        card_mod |= me_modified(me);        
+        card_mod |= me_modified(me);
         card_ass &= k[i].assigned();
       }
       if (card_ass) {

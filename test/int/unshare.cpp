@@ -43,7 +43,7 @@ namespace Test { namespace Int {
 
    /// Tests for unsharing variables in arrays
    namespace Unshare {
-   
+
      /**
       * \defgroup TaskTestIntUnshare Unsharing variables in arrays
       * \ingroup TaskTestInt
@@ -88,8 +88,8 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs y(6);
-         y[0]=channel(home,x[0]); 
-         y[1]=y[3]=channel(home,x[1]); 
+         y[0]=channel(home,x[0]);
+         y[1]=y[3]=channel(home,x[1]);
          y[2]=y[4]=y[5]=channel(home,x[2]);
          unshare(home, y);
          for (int i=0; i<6; i++)
@@ -102,7 +102,7 @@ namespace Test { namespace Int {
 
      Bool b;
      //@}
-   
+
    }
 }}
 

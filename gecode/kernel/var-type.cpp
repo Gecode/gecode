@@ -45,22 +45,22 @@
 #include <gecode/kernel.hh>
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   const Gecode::Support::Symbol IntVarImpConf::vti = "Int";
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   const Gecode::Support::Symbol BoolVarImpConf::vti = "Bool";
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   const Gecode::Support::Symbol SetVarImpConf::vti = "Set";
 }}
 #endif
 #ifdef GECODE_HAS_CPLTSET_VARS
-namespace Gecode { namespace CpltSet { 
+namespace Gecode { namespace CpltSet {
   const Gecode::Support::Symbol CpltSetVarImpConf::vti = "CpltSet";
 }}
 #endif

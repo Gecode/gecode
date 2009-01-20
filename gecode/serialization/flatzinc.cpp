@@ -44,7 +44,7 @@
 #endif
 
 namespace Gecode {
-  
+
   namespace {
 #ifdef GECODE_HAS_INT_VARS
     void emitIntVar(std::ostream& os, int varNo, Reflection::VarSpec& vs) {
@@ -69,7 +69,7 @@ namespace Gecode {
         os << ": " << vs.name() << ";" << endl;
       }
       else
-        os << ": _v" << varNo << ";" << endl;      
+        os << ": _v" << varNo << ";" << endl;
     }
     void emitBoolVar(std::ostream& os, int varNo, Reflection::VarSpec& vs) {
       using namespace std;
@@ -98,7 +98,7 @@ namespace Gecode {
       using namespace std;
       os << "var set of ";
       Reflection::Arg* dom = vs.dom();
-      if (! (dom->isPair() && 
+      if (! (dom->isPair() &&
              dom->first()->isPair() && dom->second()->isPair() &&
              dom->first()->first()->isIntArray() &&
              dom->second()->first()->isIntArray() &&
@@ -109,7 +109,7 @@ namespace Gecode {
 
       int lbCard = 0;
       int ubCard = 0;
-      
+
       // Output upper bound
       Reflection::IntArrayArg* a = dom->second()->first()->toIntArray();
       if (a->size() == 2) {
@@ -162,12 +162,12 @@ namespace Gecode {
         else
           os << "_v" << varNo;
         os << ", " << lbCard << ", " << ubCard << ");" << endl;
-        
+
       }
 
     }
 #endif
-    
+
     void emitVar(std::ostream& os, int v, Reflection::VarMap& vm) {
       using namespace std;
       Reflection::VarSpec& vs = vm.spec(v);
@@ -176,14 +176,14 @@ namespace Gecode {
       else
         os << vs.name();
     }
-    
-    void emitVarArray(std::ostream& os, Reflection::ArrayArg* a, 
+
+    void emitVarArray(std::ostream& os, Reflection::ArrayArg* a,
                       Reflection::VarMap& vm) {
       using namespace std;
       for (int i=0; i<a->size(); i++)
         emitVar(os, (*a)[i]->toVar(), vm);
     }
-    
+
     void emitArray(std::ostream& os, Reflection::ArrayArg* a,
                    Reflection::VarMap& vm) {
       using namespace std;
@@ -208,7 +208,7 @@ namespace Gecode {
         os << "]";
         return;
       }
-      
+
       if ((*a)[0]->isPair()) {
         Reflection::ArrayArg* aa = Reflection::Arg::newArray(a->size());
         Reflection::ArrayArg* ab = Reflection::Arg::newArray(a->size());
@@ -228,11 +228,11 @@ namespace Gecode {
         delete ab;
         return;
       }
-      
+
       throw Exception("Serialization", "Specification not understood");
     }
-    
-    void emitArg(std::ostream& os, Reflection::Arg* arg, 
+
+    void emitArg(std::ostream& os, Reflection::Arg* arg,
                  Reflection::VarMap& vm) {
       using namespace std;
       if (arg->isInt()) {
@@ -307,7 +307,7 @@ namespace Gecode {
         os << ";" << std::endl;
         return;
       }
-      return;    
+      return;
     }
 
     void emitVarMap(std::ostream& os, int& varCount,
@@ -324,12 +324,12 @@ namespace Gecode {
 #ifdef GECODE_HAS_SET_VARS
         else if (vs.vti() == Set::SetVarImp::vti)
           emitSetVar(os, varCount, vs);
-#endif        
+#endif
       }
     }
   }
-  
-  
+
+
   void emitFlatzinc(Space& home, std::ostream& os) {
     using namespace std;
     Reflection::VarMap vm;
@@ -366,7 +366,7 @@ namespace Gecode {
       soCount = soBase;
     }
   }
-  
+
 }
 
 // STATISTICS: serialization-any

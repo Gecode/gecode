@@ -50,13 +50,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Incremental<View>::SupportAdvisor::
   SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
-                 int i0) 
+                 int i0)
     : Advisor(home,p,c), i(i0) {}
 
   template <class View>
   forceinline
   Incremental<View>::SupportAdvisor::
-  SupportAdvisor(Space& home, bool share, SupportAdvisor& a) 
+  SupportAdvisor(Space& home, bool share, SupportAdvisor& a)
     : Advisor(home,share,a), i(a.i) {}
 
   template <class View>
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template <class View>
   forceinline
-  Incremental<View>::Work::Work(void) 
+  Incremental<View>::Work::Work(void)
     : we(NULL) {}
   template <class View>
   forceinline bool
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       int pos = (j*(ts()->domsize)) + ov;
 
       assert(support_data[pos] != NULL);
-      
+
       SupportEntry** a = &(support_data[pos]);
       while ((*a)->t != l) {
         assert((*a)->next() != NULL);
@@ -257,7 +257,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
       SupportEntry* old = *a;
       *a = (*a)->next();
-      
+
       old->dispose(home);
       if ((i != j) && (support_data[pos] == NULL))
         w_support.push(home, j, v);
@@ -273,9 +273,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline
-  Incremental<View>::Incremental(Space& home, ViewArray<View>& x, 
+  Incremental<View>::Incremental(Space& home, ViewArray<View>& x,
                                  const TupleSet& t)
-    : Base<View,false>(home,x,t), support_data(NULL), 
+    : Base<View,false>(home,x,t), support_data(NULL),
       unassigned(x.size()), ac(home) {
     init_support(home);
 
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   forceinline
   Incremental<View>::Incremental(Space& home, bool share, Incremental<View>& p)
-    : Base<View,false>(home,share,p), support_data(NULL), 
+    : Base<View,false>(home,share,p), support_data(NULL),
       unassigned(p.unassigned) {
     ac.update(home,share,p.ac);
 
@@ -373,7 +373,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     spec.checkArity(2);
     ViewArray<View> x(home, vars, spec[0]);
     TupleSet tupleSet(vars, spec[1]);
-    (void) new (home) Incremental<View>(home,x,tupleSet);    
+    (void) new (home) Incremental<View>(home,x,tupleSet);
   }
 
   template <class View>
@@ -408,7 +408,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     if (unassigned != 0)
       return ES_FIX;
-    
+
     return ES_SUBSUMED(*this, home);
   }
 
@@ -424,12 +424,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       ViewValues<View> vv(x[a.i]);
       for (int n = ts()->min; n <= ts()->max; n++) {
         if (vv() && (n == vv.val())) {
-          ++vv;  
+          ++vv;
           continue;
         }
         while (SupportEntry* s = support(a.i,n))
           remove_support(home, s->t, a.i, n);
-      } 
+      }
     } else {
       for (int n = x[a.i].min(d); n <= x[a.i].max(d); n++)
         while (SupportEntry* s = support(a.i,n))
@@ -440,7 +440,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       --unassigned;
       // nothing to do or already scheduled
       // propagator is not subsumed since unassigned!=0
-      if (((w_support.empty() && w_remove.empty()) || scheduled) && 
+      if (((w_support.empty() && w_remove.empty()) || scheduled) &&
           (unassigned != 0))
         return ES_SUBSUMED_FIX(a,home,ac);
       else
@@ -451,17 +451,17 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     return ES_NOFIX;
   }
-  
+
 
   template <class View>
   size_t
   Incremental<View>::dispose(Space& home) {
     if (!home.failed()) {
-      int literals = ts()->domsize*x.size();    
+      int literals = ts()->domsize*x.size();
       for (int i = literals; i--; )
         if (support_data[i]) {
           SupportEntry* lastse = support_data[i];
-          while (lastse->next() != NULL) 
+          while (lastse->next() != NULL)
             lastse = lastse->next();
           support_data[i]->dispose(home, lastse);
         }

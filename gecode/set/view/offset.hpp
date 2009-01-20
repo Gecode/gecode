@@ -41,7 +41,7 @@
 
 #include <sstream>
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Set {
 
@@ -59,7 +59,7 @@ namespace Gecode {
     OffsetSetView<View>::OffsetSetView(Space& home,
                                        const Reflection::VarMap& vars,
                                        Reflection::Arg* arg)
-      : DerivedViewBase<View>(View(home, vars, arg->second())), 
+      : DerivedViewBase<View>(View(home, vars, arg->second())),
         k(arg->first()->toInt()) {}
 
     template <class View>
@@ -267,7 +267,7 @@ namespace Gecode {
     template <class View>
     forceinline Reflection::Arg*
     OffsetSetView<View>::spec(const Space& home, Reflection::VarMap& m) const {
-      return Reflection::Arg::newPair(Reflection::Arg::newInt(k), 
+      return Reflection::Arg::newPair(Reflection::Arg::newInt(k),
                                       view.spec(home, m));
     }
 
@@ -290,7 +290,7 @@ namespace Gecode {
     OffsetSetView<View>::modevent(const Delta& d) {
       return View::modevent(d);
     }
-  
+
     template <class View>
     forceinline int
     OffsetSetView<View>::glbMin(const Delta& d) const {
@@ -470,7 +470,7 @@ namespace Gecode {
 
     template<class Char, class Traits, class View>
     std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, 
+    operator <<(std::basic_ostream<Char,Traits>& os,
                 const OffsetSetView<View>& x) {
       std::basic_ostringstream<Char,Traits> s;
       s.copyfmt(os); s.width(0);
@@ -487,13 +487,13 @@ namespace Gecode {
    */
   template <class View>
   forceinline bool
-  same(const Set::OffsetSetView<View>& x, 
+  same(const Set::OffsetSetView<View>& x,
        const Set::OffsetSetView<View>& y) {
     return same(x.base(),y.base());
   }
   template <class View>
   forceinline bool
-  before(const Set::OffsetSetView<View>& x, 
+  before(const Set::OffsetSetView<View>& x,
          const Set::OffsetSetView<View>& y) {
     return before(x.base(),y.base());
   }

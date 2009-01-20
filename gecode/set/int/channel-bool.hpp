@@ -38,12 +38,12 @@
 #include <gecode/int.hh>
 
 namespace Gecode { namespace Set { namespace Int {
-      
+
   template <class View>
   template <class A>
   forceinline
-  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, 
-                                                ChannelBool<View>& p, 
+  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home,
+                                                ChannelBool<View>& p,
                                                 Council<A>& c, int index)
     : Advisor(home,p,c), idx(index) {
     if (idx == -1)
@@ -55,8 +55,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, bool share, 
-                                                IndexAdvisor& a) 
+  ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, bool share,
+                                                IndexAdvisor& a)
     : Advisor(home,share,a), idx(a.idx) {}
 
   template <class View>
@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   forceinline
-  ChannelBool<View>::ChannelBool(Space& home, 
+  ChannelBool<View>::ChannelBool(Space& home,
                                  ViewArray<Gecode::Int::BoolView>& x0,
                                  View y0)
     : Super(home,x0,y0), co(home), running(false) {
@@ -93,7 +93,7 @@ namespace Gecode { namespace Set { namespace Int {
         } else if (x[i].one()) {
           assigned = true;
           SetDelta d;
-          ones.include(home, i, i, d);          
+          ones.include(home, i, i, d);
         } else {
           (void) new (home) IndexAdvisor(home,*this,co,i);
         }
@@ -103,12 +103,12 @@ namespace Gecode { namespace Set { namespace Int {
       View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
       (void) new (home) IndexAdvisor(home,*this,co,-1);
     }
-      
+
   template <class View>
   forceinline
   ChannelBool<View>::ChannelBool(Space& home, bool share, ChannelBool& p)
     : Super(home,share,p), running(false) {
-    co.update(home, share, p.co);  
+    co.update(home, share, p.co);
   }
 
   template <class View>
@@ -122,7 +122,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class View>
   PropCost
-  ChannelBool<View>::cost(const Space&, const ModEventDelta&) const { 
+  ChannelBool<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LOW, x.size()+1);
   }
 
@@ -156,8 +156,8 @@ namespace Gecode { namespace Set { namespace Int {
       ones.init(home);
     }
     running = false;
-    
-    if (delta.glbMin() != 1 || delta.glbMax() != 0) {    
+
+    if (delta.glbMin() != 1 || delta.glbMax() != 0) {
       if (!delta.glbAny()) {
         for (int i=delta.glbMin(); i<=delta.glbMax(); i++)
           GECODE_ME_CHECK(x[i].one(home));
@@ -165,13 +165,13 @@ namespace Gecode { namespace Set { namespace Int {
         GlbRanges<View> glb(y);
         for (Iter::Ranges::ToValues<GlbRanges<View> > gv(glb); gv(); ++gv) {
           GECODE_ME_CHECK(x[gv.val()].one(home));
-        }      
+        }
       }
     }
     if (delta.lubMin() != 1 || delta.lubMax() != 0) {
       if (!delta.lubAny()) {
         for (int i=delta.lubMin(); i<=delta.lubMax(); i++)
-          GECODE_ME_CHECK(x[i].zero(home));      
+          GECODE_ME_CHECK(x[i].zero(home));
       } else {
         int cur = 0;
         for (LubRanges<View> lub(y); lub(); ++lub) {
@@ -182,10 +182,10 @@ namespace Gecode { namespace Set { namespace Int {
         }
         for (; cur < x.size(); cur++) {
           GECODE_ME_CHECK(x[cur].zero(home));
-        }      
+        }
       }
     }
-    
+
     new (&delta) SetDelta();
 
     return y.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
@@ -229,7 +229,7 @@ namespace Gecode { namespace Set { namespace Int {
           if (delta.glbMin() != 2 || delta.glbMax() != 0) {
             if ((delta.glbMin() <= d.glbMin() && delta.glbMax() >= d.glbMin())
                 ||
-                (delta.glbMin() <= d.glbMax() && delta.glbMax() >= d.glbMax())    
+                (delta.glbMin() <= d.glbMax() && delta.glbMax() >= d.glbMax())
                ) {
                  new (&delta)
                    SetDelta(std::min(delta.glbMin(), d.glbMin()),
@@ -237,7 +237,7 @@ namespace Gecode { namespace Set { namespace Int {
                             delta.lubMin(), delta.lubMax());
             } else {
               new (&delta)
-                SetDelta(2, 0, delta.lubMin(), delta.lubMax());            
+                SetDelta(2, 0, delta.lubMin(), delta.lubMax());
             }
           }
         }
@@ -256,7 +256,7 @@ namespace Gecode { namespace Set { namespace Int {
           if (delta.lubMin() != 2 || delta.lubMax() != 0) {
             if ((delta.lubMin() <= d.lubMin() && delta.lubMax() >= d.lubMin())
                 ||
-                (delta.lubMin() <= d.lubMax() && delta.lubMax() >= d.lubMax())    
+                (delta.lubMin() <= d.lubMax() && delta.lubMax() >= d.lubMax())
                ) {
                  new (&delta)
                    SetDelta(delta.lubMin(), delta.lubMax(),
@@ -265,13 +265,13 @@ namespace Gecode { namespace Set { namespace Int {
                             );
             } else {
               new (&delta)
-                SetDelta(delta.glbMin(), delta.glbMax(), 2, 0);          
+                SetDelta(delta.glbMin(), delta.glbMax(), 2, 0);
             }
           }
         }
       }
     }
-    
+
     if (y.assigned())
       return ES_SUBSUMED_NOFIX(a, home, co);
     else

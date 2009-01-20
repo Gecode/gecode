@@ -45,7 +45,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
 /// \brief Base class for visualisation of variables
 class VarItem : public QGraphicsRectItem {
-  
+
 public:
   VarItem(Reflection::VarSpec* spec, QGraphicsItem *parent = 0);
 

@@ -36,7 +36,7 @@
  */
 
 namespace Gecode { namespace Support {
-  
+
   /** \brief Hash map
     *
     * This class is used as a symbol table. \a Key objects must
@@ -51,7 +51,7 @@ namespace Gecode { namespace Support {
       Key k; Value v;
       Pair(const Key& k0, const Value& v0) : k(k0), v(v0) {}
     };
-    
+
     /// The actual table
     Pair** a;
     /// The size of the table (approximately \f$2^n\f$)
@@ -72,7 +72,7 @@ namespace Gecode { namespace Support {
     /// Destructor
     GECODE_MSC_VIRTUAL ~Map(void);
   };
-  
+
   /// Hash table for strings
   template <class Value>
   class SymbolMap : public Map<Symbol,Value> {
@@ -90,25 +90,25 @@ namespace Gecode { namespace Support {
     /// Cast
     P* operator ()(void) { return p; }
     /// Comparison
-    bool operator ==(const Pointer<P>& p0) const { 
-      return p == p0.p; 
+    bool operator ==(const Pointer<P>& p0) const {
+      return p == p0.p;
     }
     /// Hash function
     int hash(int m) const {
       return static_cast<unsigned int>(reinterpret_cast<ptrdiff_t>(p)) % m;
     }
   };
-  
+
   /// Hash table for pointers
   template <class P, class Value>
   class PtrMap : public Map<Pointer<P>,Value> {
   };
-  
+
   /*
    * Implementation
    *
    */
-  
+
   template <class Key, class Value>
   forceinline int
   Map<Key,Value>::modulo(void) const {
@@ -118,14 +118,14 @@ namespace Gecode { namespace Support {
                            4194301, 8388593 };
     return primes[n];
   }
-  
+
   template <class Key, class Value>
   Map<Key,Value>::Map(void) : n(0), usage(0) {
     a = static_cast<Pair**>(heap.ralloc(sizeof(Pair*)*modulo()));
     for (int i=modulo(); i--; )
       a[i] = NULL;
   }
-  
+
   template <class Key, class Value>
   void
   Map<Key,Value>::rehash(void) {
@@ -156,14 +156,14 @@ namespace Gecode { namespace Support {
 #endif
     heap.rfree(olda);
   }
-  
+
   template <class Key, class Value>
   void
   Map<Key,Value>::put(const Key& k, Value v) {
     // If more than 75% are used, make some room
     if (usage * 3 >= modulo() * 2)
       rehash();
-      
+
     int i = k.hash(modulo());
     for (; i < modulo() && a[i] != NULL; i++) {}
     if (i >= modulo()) {
@@ -175,7 +175,7 @@ namespace Gecode { namespace Support {
     a[i] = new Pair(k,v);
     usage++;
   }
-  
+
   template <class Key, class Value>
   inline bool
   Map<Key,Value>::get(const Key& k, Value& v) const {
@@ -189,12 +189,12 @@ namespace Gecode { namespace Support {
       for (i=0; a[i] != NULL; i++) {
         if (a[i]->k == k) {
           v = a[i]->v; return true;
-        }        
+        }
       }
     }
     return false;
   }
-  
+
   template <class Key, class Value>
   Map<Key,Value>::~Map(void) {
     for (int i=modulo(); i--; )

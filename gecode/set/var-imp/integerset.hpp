@@ -57,7 +57,7 @@ namespace Gecode { namespace Set {
   RangeList::next() const {
     return static_cast<RangeList*>(FreeList::next());
   }
-  
+
   forceinline void
   RangeList::min(int n) {
     _min = n;
@@ -154,7 +154,7 @@ namespace Gecode { namespace Set {
     if (mn>mx) {
       fst(NULL); lst(NULL); _size = 0;
     } else {
-      RangeList* p = 
+      RangeList* p =
         new (home) RangeList(mn,mx,NULL);
       fst(p); lst(p);
       _size = mx-mn+1;
@@ -257,7 +257,7 @@ namespace Gecode { namespace Set {
     unsigned int s = ri.width();
 
     ++ri;
-    
+
     while (ri()){
       RangeList *n = new (home) RangeList(ri.min(),ri.max(),NULL);
       l->next(n);
@@ -298,7 +298,7 @@ namespace Gecode { namespace Set {
       if (c->min() <= i && c->max() >= i)
         return true;
       if (c->min() > i)
-        return false;      
+        return false;
     }
     return false;
   }
@@ -319,7 +319,7 @@ namespace Gecode { namespace Set {
 
   forceinline bool
   BndSetRanges::operator ()(void) const { return c != NULL; }
-  
+
   forceinline void
   BndSetRanges::operator ++(void) {
     c = c->next();
@@ -487,7 +487,7 @@ namespace Gecode { namespace Set {
   forceinline void
   LUBndSet::excludeAll(Space& home) {
     fst()->dispose(home,lst()); fst(NULL); lst(NULL);
-    _size=0;    
+    _size=0;
   }
 
   /*

@@ -72,13 +72,13 @@ namespace Test { namespace Set {
   }
 
   inline
-  SetRelTypes::SetRelTypes(void) 
+  SetRelTypes::SetRelTypes(void)
     : i(sizeof(srts)/sizeof(Gecode::SetRelType)-1) {}
-  inline bool 
+  inline bool
   SetRelTypes::operator()(void) const {
     return i>=0;
   }
-  inline void 
+  inline void
   SetRelTypes::operator++(void) {
     i--;
   }
@@ -88,13 +88,13 @@ namespace Test { namespace Set {
   }
 
   inline
-  SetOpTypes::SetOpTypes(void) 
+  SetOpTypes::SetOpTypes(void)
     : i(sizeof(sots)/sizeof(Gecode::SetOpType)-1) {}
-  inline bool 
+  inline bool
   SetOpTypes::operator()(void) const {
     return i>=0;
   }
-  inline void 
+  inline void
   SetOpTypes::operator++(void) {
     i--;
   }

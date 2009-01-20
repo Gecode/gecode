@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class MaxDom : public 
+  class MaxDom : public
   MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND> {
     GECODE_REFLECT_PROPAGATOR_1(MaxDom,View,"Gecode::Int::Arithmetic::MaxDom")
     GECODE_REFLECT_ARGS_3(View,x0,View,x1,View,x2)
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class NaryMaxDom 
+  class NaryMaxDom
     : public MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND> {
     GECODE_REFLECT_PROPAGATOR_1(NaryMaxDom,View,"Gecode::Int::Arithmetic::NaryMaxDom")
     GECODE_REFLECT_ARGS_2(ViewArray<View>,x,View,y)
@@ -483,7 +483,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides multiplication for positive views only.
    */
   template <class Val, class VA, class VB, class VC>
-  class MultPlusBnd : 
+  class MultPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
     GECODE_REFLECT_PROPAGATOR_4(MultPlusBnd,Val,VA,VB,VC,
                        "Gecode::Int::Arithmetic::MultPlusBnd")
@@ -543,7 +543,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides multiplication for positive views only.
    */
   template <class Val, class VA, class VB, class VC>
-  class MultPlusDom : 
+  class MultPlusDom :
     public MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM> {
     GECODE_REFLECT_PROPAGATOR_4(MultPlusDom,Val,VA,VB,VC,
                        "Gecode::Int::Arithmetic::MultPlusDom")
@@ -615,7 +615,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides division for positive views only.
    */
   template <class Val, class VA, class VB, class VC, bool towardsMinInf=true>
-  class DivPlusBnd : 
+  class DivPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
     GECODE_REFLECT_PROPAGATOR_4i(DivPlusBnd,Val,VA,VB,VC,towardsMinInf,
                        "Gecode::Int::Arithmetic::DivPlusBnd")
@@ -667,7 +667,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
-  
+
   /**
    * \brief Integer division/modulo propagator
    *
@@ -686,7 +686,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
-    
+
     /// Constructor for cloning \a p
     DivMod(Space& home, bool share, DivMod<View>& p);
   public:

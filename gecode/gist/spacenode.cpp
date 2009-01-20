@@ -44,7 +44,7 @@
 #endif
 
 namespace Gecode { namespace Gist {
-  
+
   // TODO nikopp: doxygen comments
   enum BranchKind {
     BK_NORMAL, BK_SPECIAL_IN, BK_SPECIAL_OUT, BK_STEP
@@ -66,7 +66,7 @@ namespace Gecode { namespace Gist {
       /// Step description
       const StepDesc* step;
     } desc;
-    
+
     /// Constructor
     Branch(int a, const BranchingDesc* d, SpaceNode* best = NULL, BranchKind bk = BK_NORMAL)
       : alternative(a), ownBest(best), branchKind(bk) {
@@ -83,21 +83,21 @@ namespace Gecode { namespace Gist {
   };
 
   StepDesc::StepDesc(int steps) : noOfSteps(steps), debug(false) { }
-  
+
   void
   StepDesc::toggleDebug(void) {
    debug = !debug;
   }
-  
+
   SpecialDesc::SpecialDesc(std::string varName, int rel0, int v0)
   : vn(varName), v(v0), rel(rel0) { }
 
   BestNode::BestNode(SpaceNode* s0) : s(s0) {}
-  
+
   int
   SpaceNode::recompute(BestNode* curBest, int c_d, int a_d) {
     int rdist = 0;
-    
+
     if (workingSpace == NULL) {
       SpaceNode* curNode = this;
       SpaceNode* lastFixpoint = NULL;
@@ -105,10 +105,10 @@ namespace Gecode { namespace Gist {
       if(curNode->getStatus() != SPECIAL && curNode->getStatus() != STEP) {
         lastFixpoint = curNode;
       }
-      
+
       std::stack<Branch> stck;
       bool specialNodeOnPath = false;
-      
+
       while (curNode->copy == NULL) {
         SpaceNode* parent = curNode->getParent();
         int alternative = curNode->getAlternative();
@@ -135,12 +135,12 @@ namespace Gecode { namespace Gist {
                    curBest == NULL ? NULL : curNode->ownBest);
           stck.push(b);
         }
-        
+
         curNode = parent;
         rdist++;
       }
       Space* curSpace = curNode->copy->clone();
-      
+
       SpaceNode* lastBest = NULL;
       SpaceNode* middleNode = curNode;
       int curDist = 0;
@@ -159,11 +159,11 @@ namespace Gecode { namespace Gist {
             }
         }
         Branch b = stck.top(); stck.pop();
-        
+
         if(middleNode == lastFixpoint) {
           curSpace->status();
         }
-        
+
         switch (b.branchKind) {
         case BK_NORMAL:
             {
@@ -199,11 +199,11 @@ namespace Gecode { namespace Gist {
         middleNode = middleNode->getChild(b.alternative);
       }
       workingSpace = curSpace;
-      
+
     }
     return rdist;
   }
-  
+
   void
   SpaceNode::acquireSpace(BestNode* curBest, int c_d, int a_d) {
     SpaceNode* p = getParent();
@@ -220,7 +220,7 @@ namespace Gecode { namespace Gist {
         p->workingSpace = NULL;
         if (p->desc.branch != NULL)
           workingSpace->commit(*p->desc.branch, getAlternative());
-      
+
         if (ownBest != NULL) {
           ownBest->acquireSpace(curBest, c_d, a_d);
           if (ownBest->workingSpace->status() != SS_SOLVED) {
@@ -252,7 +252,7 @@ namespace Gecode { namespace Gist {
         // last alternative optimization
         copy = p->copy;
         p->copy = NULL;
-    
+
         if(p->desc.branch != NULL)
           copy->commit(*p->desc.branch, getAlternative());
 
@@ -274,7 +274,7 @@ namespace Gecode { namespace Gist {
       }
     }
   }
-  
+
   void
   SpaceNode::closeChild(bool hadFailures, bool hadSolutions) {
     setHasFailedChildren(hasFailedChildren() || hadFailures);
@@ -446,7 +446,7 @@ namespace Gecode { namespace Gist {
       noOfOpenChildren += (static_cast<SpaceNode*>(getChild(i))->isOpen());
     return noOfOpenChildren;
   }
-  
+
 }}
 
 // STATISTICS: gist-any

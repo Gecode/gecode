@@ -51,10 +51,10 @@ namespace Gecode {
 
     template <class View>
     void distinct(Space& home, ViewArray<View>& x) {
-  
+
       int n = x.size();
       // build partition
-      bdd d0 = bdd_true();     
+      bdd d0 = bdd_true();
 
       unsigned int width = x[0].tableWidth();
 
@@ -66,10 +66,10 @@ namespace Gecode {
           }
           d0 &= nq;
         }
-      } 
+      }
 
       GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
-    }    
+    }
   }}
 
   void distinct(Space& home, const CpltSetVarArgs& x) {

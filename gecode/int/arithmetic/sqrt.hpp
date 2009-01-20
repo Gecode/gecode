@@ -51,13 +51,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     do {
       mod = false;
       {
-        ModEvent me = 
+        ModEvent me =
           x1.lq(home,floor(::sqrt(static_cast<double>(x0.max()))));
         if (me_failed(me)) return ES_FAILED;
         mod |= me_modified(me);
       }
       {
-        ModEvent me = 
+        ModEvent me =
           x1.gq(home,floor(::sqrt(static_cast<double>(x0.min()))));
         if (me_failed(me)) return ES_FAILED;
         mod |= me_modified(me);
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Perform mapping of maximum
     forceinline int max(int n) const {
       return static_cast<int>(floor(::sqrt(static_cast<double>(n))));
-    } 
+    }
  };
 
   template <class View>
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SqrtDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
-      return x1.assigned() ? ES_SUBSUMED(*this,home) 
+      return x1.assigned() ? ES_SUBSUMED(*this,home)
         : ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 

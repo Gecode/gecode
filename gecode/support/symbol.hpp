@@ -42,13 +42,13 @@
 #include <iostream>
 
 namespace Gecode { namespace Support {
-  
+
   /** \brief Immutable Symbols
     *
     */
   class GECODE_SUPPORT_EXPORT Symbol {
   private:
-    
+
     /** \brief Reference-counted Symbol objects
       *
       */
@@ -83,7 +83,7 @@ namespace Gecode { namespace Support {
       int hash(int m) const;
       /// Output to \a os
       template<class Char, class Traits>
-      std::basic_ostream<Char,Traits>& 
+      std::basic_ostream<Char,Traits>&
       print(std::basic_ostream<Char,Traits>& os) const;
       /// Allocate memory from heap
       static void* operator new(size_t s);
@@ -104,7 +104,7 @@ namespace Gecode { namespace Support {
     Symbol(unsigned int i);
     /// Copy constructor
     Symbol(const Symbol& s0);
-    /// Assignment operator 
+    /// Assignment operator
     const Symbol& operator =(const Symbol& s0);
     /// Test if this Symbol is equal to \a s0
     bool operator ==(const Symbol& s0) const;
@@ -120,8 +120,8 @@ namespace Gecode { namespace Support {
     int hash(int m) const;
     /// Print this Symbol to \a os
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
-    print(std::basic_ostream<Char,Traits>& os) const;    
+    std::basic_ostream<Char,Traits>&
+    print(std::basic_ostream<Char,Traits>& os) const;
     /// Return the Symbol as string
     std::string toString(void) const;
     /// Destructor
@@ -129,9 +129,9 @@ namespace Gecode { namespace Support {
   };
 
 
-  
+
   template<class Char, class Traits>
-  forceinline std::basic_ostream<Char,Traits>& 
+  forceinline std::basic_ostream<Char,Traits>&
   Symbol::SO::print(std::basic_ostream<Char,Traits>& os) const {
     return os << s;
   }
@@ -140,14 +140,14 @@ namespace Gecode { namespace Support {
   Symbol::Symbol(void) : so(NULL) {}
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   Symbol::print(std::basic_ostream<Char,Traits>& os) const {
     if (so) return so->print(os);
     return os;
   }
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Symbol& x) {
     return x.print(os);
   }

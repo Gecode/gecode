@@ -41,7 +41,7 @@
 #include <gecode/gist/visualnode.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   /// \brief Layout parameters
   class Layout {
   public:
@@ -50,7 +50,7 @@ namespace Gecode { namespace Gist {
     static const int minimalSeparation = 10;
   };
 
-  
+
   /// \brief A cursor that computes a tree layout for VisualNodes
   class LayoutCursor : public NodeCursor<VisualNode> {
   public:

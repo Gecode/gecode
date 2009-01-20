@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   ExecStatus
-  NaryTwoCpltSetPropagator<View0, View1>::divide_conquer(Space& home, bdd& p, 
+  NaryTwoCpltSetPropagator<View0, View1>::divide_conquer(Space& home, bdd& p,
                                       int l, int r, int ypos, int zpos) {
     if (l == r) {
       ModEvent me = ME_CPLTSET_NONE;
@@ -72,7 +72,7 @@ namespace Gecode { namespace CpltSet {
         }
       }
     }
-   
+
     ExecStatus es = ES_OK;
     GECODE_ES_CHECK(es = divide_conquer(home, left, l, h, ypos, zpos));
 
@@ -92,7 +92,7 @@ namespace Gecode { namespace CpltSet {
     GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r , ypos, zpos));
     return es;
   }
-  
+
   template <class View0, class View1>
   forceinline
   NaryTwoCpltSetPropagator<View0, View1>
@@ -108,7 +108,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   NaryTwoCpltSetPropagator<View0, View1>
-  ::NaryTwoCpltSetPropagator(Space& home, bool share, 
+  ::NaryTwoCpltSetPropagator(Space& home, bool share,
                              NaryTwoCpltSetPropagator& p)
     : Propagator(home, share, p), d(p.d) {
     x.update(home,share,p.x);
@@ -118,7 +118,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline ExecStatus
-  NaryTwoCpltSetPropagator<View0, View1>::post(Space& home, ViewArray<View0>& x, 
+  NaryTwoCpltSetPropagator<View0, View1>::post(Space& home, ViewArray<View0>& x,
                             View1& y, View1& z, bdd& d0) {
     (void) new (home) NaryTwoCpltSetPropagator(home, x, y, z, d0);
     return ES_OK;
@@ -127,7 +127,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   Support::Symbol
   NaryTwoCpltSetPropagator<View0, View1>::ati(void) {
-    return 
+    return
       Reflection::mangle<View0,View1>("Gecode::CpltSet::NaryTwoCpltSetPropagator");
   }
 
@@ -136,16 +136,16 @@ namespace Gecode { namespace CpltSet {
   NaryTwoCpltSetPropagator<View0,View1>::spec(const Space&,
                                               Reflection::VarMap&) const {
     throw Reflection::ReflectionException("Not implemented");
-  } 
+  }
 
   template <class View0, class View1>
   forceinline Actor*
   NaryTwoCpltSetPropagator<View0, View1>::copy(Space& home, bool share) {
     return new (home) NaryTwoCpltSetPropagator(home, share, *this);
   }
-  
+
   template <class View0, class View1>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   NaryTwoCpltSetPropagator<View0, View1>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = true;
     int n = x.size();
@@ -168,7 +168,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   PropCost
-  NaryTwoCpltSetPropagator<View0,View1>::cost(const Space&, 
+  NaryTwoCpltSetPropagator<View0,View1>::cost(const Space&,
                                               const ModEventDelta&) const {
     return PropCost::linear(PropCost::LOW, x.size()+2);
   }

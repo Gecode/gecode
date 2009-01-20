@@ -47,7 +47,7 @@ namespace Gecode {
 
   template<class Var>
   forceinline
-  LinRel<Var>::LinRel(const LinExpr<Var>& l, IntRelType irt0, 
+  LinRel<Var>::LinRel(const LinExpr<Var>& l, IntRelType irt0,
                       const LinExpr<Var>& r)
     : e(l-r), irt(irt0) {}
 

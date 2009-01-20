@@ -40,7 +40,7 @@
 namespace Gecode {
 
   CpltSetVar::CpltSetVar(Space& home, int glbMin,int glbMax,
-                         int lubMin,int lubMax, 
+                         int lubMin,int lubMax,
                          unsigned int cardMin, unsigned int cardMax) {
     Set::Limits::check(glbMin,"CpltSetVar::CpltSetVar");
     Set::Limits::check(glbMax,"CpltSetVar::CpltSetVar");
@@ -50,13 +50,13 @@ namespace Gecode {
     if (cardMin > cardMax)
       throw Set::VariableEmptyDomain("CpltSetVar::CpltSetVar");
 
-    varimp = new (home) CpltSet::CpltSetVarImp(home, glbMin, glbMax, 
+    varimp = new (home) CpltSet::CpltSetVarImp(home, glbMin, glbMax,
                                                lubMin, lubMax,
                                                cardMin, cardMax);
   }
 
   CpltSetVar::CpltSetVar(Space& home, const IntSet& glbD,
-                         int lubMin,int lubMax, 
+                         int lubMin,int lubMax,
                          unsigned int cardMin, unsigned int cardMax) {
     Set::Limits::check(glbD,"CpltSetVar::CpltSetVar");
     Set::Limits::check(lubMin,"CpltSetVar::CpltSetVar");
@@ -66,7 +66,7 @@ namespace Gecode {
       throw Set::VariableEmptyDomain("CpltSetVar::CpltSetVar");
 
     varimp = new (home) CpltSet::CpltSetVarImp(home,
-                                               glbD, lubMin, lubMax, 
+                                               glbD, lubMin, lubMax,
                                                cardMin, cardMax);
   }
 
@@ -79,7 +79,7 @@ namespace Gecode {
     Set::Limits::check(cardMax,"CpltSetVar::CpltSetVar");
     if (cardMin > cardMax)
       throw Set::VariableEmptyDomain("CpltSetVar::CpltSetVar");
-    varimp = new (home) CpltSet::CpltSetVarImp(home, glbMin, glbMax, 
+    varimp = new (home) CpltSet::CpltSetVarImp(home, glbMin, glbMax,
                                                lubD, cardMin, cardMax);
   }
 
@@ -91,7 +91,7 @@ namespace Gecode {
     Set::Limits::check(cardMax,"CpltSetVar::CpltSetVar");
     if (cardMin > cardMax)
       throw Set::VariableEmptyDomain("CpltSetVar::CpltSetVar");
-    varimp = new (home) CpltSet::CpltSetVarImp(home, 
+    varimp = new (home) CpltSet::CpltSetVarImp(home,
                                                glbD, lubD, cardMin, cardMax);
   }
 

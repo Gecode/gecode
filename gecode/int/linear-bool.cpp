@@ -77,7 +77,7 @@ namespace Gecode {
          IntConLevel icl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home.failed()) 
+    if (home.failed())
       return;
 
     int n=x.size();
@@ -96,7 +96,7 @@ namespace Gecode {
          IntConLevel icl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home.failed()) 
+    if (home.failed())
       return;
 
     int n=x.size();

@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace Convex {
         }
       }
     } while(x0.assigned()&&!x1.assigned());
-    
+
     //If x0 is assigned, x1 should be too.
     assert(x1.assigned() || !x0.assigned());
 

@@ -38,29 +38,29 @@ namespace Gecode { namespace Gist {
 
   template <class Cursor>
   NodeVisitor<Cursor>::NodeVisitor(Cursor& c0) : c(c0) {}
-  
+
   template <class Cursor>
   void
   NodeVisitor<Cursor>::setCursor(Cursor& c0) { c = c0; }
-  
+
   template <class Cursor>
   Cursor&
   NodeVisitor<Cursor>::getCursor(void) { return c; }
-  
+
   template <class Cursor>
   void
   PostorderNodeVisitor<Cursor>::moveToLeaf(void) {
     while (c.mayMoveDownwards()) {
         c.moveDownwards();
-    }  
+    }
   }
-  
+
   template <class Cursor>
   PostorderNodeVisitor<Cursor>::PostorderNodeVisitor(Cursor& c0)
     : NodeVisitor<Cursor>(c0) {
     moveToLeaf();
   }
-  
+
   template <class Cursor>
   bool
   PostorderNodeVisitor<Cursor>::next(void) {
@@ -73,9 +73,9 @@ namespace Gecode { namespace Gist {
     } else {
         return false;
     }
-    return true;    
+    return true;
   }
-  
+
   template <class Cursor>
   bool
   PreorderNodeVisitor<Cursor>::backtrack(void) {
@@ -89,11 +89,11 @@ namespace Gecode { namespace Gist {
     }
     return true;
   }
-  
+
   template <class Cursor>
   PreorderNodeVisitor<Cursor>::PreorderNodeVisitor(Cursor& c0)
     : NodeVisitor<Cursor>(c0) {}
-  
+
   template <class Cursor>
   bool
   PreorderNodeVisitor<Cursor>::next(void) {

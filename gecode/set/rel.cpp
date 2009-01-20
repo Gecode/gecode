@@ -46,7 +46,7 @@ namespace Gecode {
   using namespace Set;
   using namespace Set::Rel;
   using namespace Set::RelOp;
-  
+
   template <class View0, class View1>
   void
   rel_post(Space& home, View0 x0, SetRelType r, View1 x1) {
@@ -197,7 +197,7 @@ namespace Gecode {
     default:
       rel(home, s, r, x, b);
     }
-  }  
+  }
 
   namespace {
     GECODE_REGISTER1(Rel::DistinctDoit<ConstantView>);
@@ -250,7 +250,7 @@ namespace Gecode {
     GECODE_REGISTER2(Rel::ReSubset<SetView, ComplementView<SetView> >);
     GECODE_REGISTER2(Rel::ReSubset<SetView, ConstantView>);
     GECODE_REGISTER2(Rel::ReSubset<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::ReSubset<SetView, SetView>);  
+    GECODE_REGISTER2(Rel::ReSubset<SetView, SetView>);
   }
 
 }

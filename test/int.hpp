@@ -52,11 +52,11 @@ namespace Test { namespace Int {
   }
   inline
   Assignment::~Assignment(void) {}
-  
-  
+
+
   inline
   CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
-    : Assignment(n,d), 
+    : Assignment(n,d),
       dsv(new Gecode::IntSetValues[static_cast<unsigned int>(n)]) {
     for (int i=n; i--; )
       dsv[i].init(d);
@@ -70,12 +70,12 @@ namespace Test { namespace Int {
     assert((i>=0) && (i<n));
     return dsv[i].val();
   }
-  inline 
+  inline
   CpltAssignment::~CpltAssignment(void) {
     delete [] dsv;
   }
-  
-  
+
+
   forceinline int
   RandomAssignment::randval(void) {
     unsigned int skip = Base::rand(d.size());
@@ -94,7 +94,7 @@ namespace Test { namespace Int {
     for (int i=n; i--; )
       vals[i] = randval();
   }
-  
+
   inline bool
   RandomAssignment::operator()(void) const {
     return a>0;
@@ -116,17 +116,17 @@ namespace Test { namespace Int {
    *
    */
   inline
-  Test::Test(const std::string& s, int a, const Gecode::IntSet& d, 
+  Test::Test(const std::string& s, int a, const Gecode::IntSet& d,
              bool r, Gecode::IntConLevel i)
     : Base("Int::"+s), arity(a), dom(d), reified(r), icl(i),
-      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE), 
+      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true) {}
 
   inline
-  Test::Test(const std::string& s, int a, int min, int max, 
+  Test::Test(const std::string& s, int a, int min, int max,
              bool r, Gecode::IntConLevel i)
     : Base("Int::"+s), arity(a), dom(min,max), reified(r), icl(i),
-      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE), 
+      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true) {}
 
   inline
@@ -139,7 +139,7 @@ namespace Test { namespace Int {
     default: return "Def";
     }
   }
-  
+
   inline
   std::string
   Test::str(Gecode::IntConLevel icl) {
@@ -151,7 +151,7 @@ namespace Test { namespace Int {
     default: return "Def";
     }
   }
-  
+
   inline
   std::string
   Test::str(Gecode::IntRelType irt) {
@@ -168,8 +168,8 @@ namespace Test { namespace Int {
     GECODE_NEVER;
     return "NONE";
   }
-  
-  inline std::string 
+
+  inline std::string
   Test::str(Gecode::BoolOpType bot) {
     using namespace Gecode;
     switch (bot) {
@@ -191,7 +191,7 @@ namespace Test { namespace Int {
     s << i;
     return s.str();
   }
-  
+
   template<class T>
   inline bool
   Test::cmp(T x, Gecode::IntRelType r, T y) {
@@ -207,37 +207,37 @@ namespace Test { namespace Int {
     }
     return false;
   }
-  
-  
+
+
   inline
-  IntConLevels::IntConLevels(void) 
+  IntConLevels::IntConLevels(void)
     : i(sizeof(icls)/sizeof(Gecode::IntConLevel)-1) {}
-  inline bool 
+  inline bool
   IntConLevels::operator()(void) const {
     return i>=0;
   }
-  inline void 
+  inline void
   IntConLevels::operator++(void) {
     i--;
   }
-  inline Gecode::IntConLevel 
+  inline Gecode::IntConLevel
   IntConLevels::icl(void) const {
     return icls[i];
   }
 
 
   inline
-  IntRelTypes::IntRelTypes(void) 
+  IntRelTypes::IntRelTypes(void)
     : i(sizeof(irts)/sizeof(Gecode::IntRelType)-1) {}
   inline void
   IntRelTypes::reset(void) {
     i = sizeof(irts)/sizeof(Gecode::IntRelType)-1;
   }
-  inline bool 
+  inline bool
   IntRelTypes::operator()(void) const {
     return i>=0;
   }
-  inline void 
+  inline void
   IntRelTypes::operator++(void) {
     i--;
   }
@@ -247,13 +247,13 @@ namespace Test { namespace Int {
   }
 
   inline
-  BoolOpTypes::BoolOpTypes(void) 
+  BoolOpTypes::BoolOpTypes(void)
     : i(sizeof(bots)/sizeof(Gecode::BoolOpType)-1) {}
-  inline bool 
+  inline bool
   BoolOpTypes::operator()(void) const {
     return i>=0;
   }
-  inline void 
+  inline void
   BoolOpTypes::operator++(void) {
     i--;
   }

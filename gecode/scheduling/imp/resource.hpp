@@ -36,7 +36,7 @@
  */
 
 namespace Gecode { namespace Scheduling {
-  
+
   /// Implementation of a resource
   class ResourceImp {
   };

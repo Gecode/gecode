@@ -49,15 +49,15 @@ namespace Gecode {
   BoolExpr::Node::operator new(size_t size) {
     return heap.ralloc(size);
   }
-  
+
   forceinline void
   BoolExpr::Node::operator delete(void* p, size_t) {
     heap.rfree(p);
   }
-  
+
   forceinline
   BoolExpr::Node::Node(void) : use(1) {}
-  
+
   bool
   BoolExpr::Node::decrement(void) {
     if (--use == 0) {
@@ -69,7 +69,7 @@ namespace Gecode {
     }
     return false;
   }
-  
+
   BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
     n->same = 1;
     n->t    = NT_VAR;
@@ -217,11 +217,11 @@ namespace Gecode {
     }
     return b;
   }
-  
+
   void
-  BoolExpr::NNF::post(Space& home, NodeType t, 
+  BoolExpr::NNF::post(Space& home, NodeType t,
                       BoolVarArgs& bp, BoolVarArgs& bn,
-                      int& ip, int& in, 
+                      int& ip, int& in,
                       IntConLevel icl) const {
     if (this->t != t) {
       switch (this->t) {
@@ -247,7 +247,7 @@ namespace Gecode {
         }
         break;
       default:
-        bp[ip++] = post(home, icl); 
+        bp[ip++] = post(home, icl);
         break;
       }
     } else {
@@ -270,7 +270,7 @@ namespace Gecode {
         u.a.x->rl_bool.post(home, !u.a.neg, icl);
         break;
       case NT_AND:
-        u.b.l->post(home, true, icl); 
+        u.b.l->post(home, true, icl);
         u.b.r->post(home, true, icl);
         break;
       case NT_OR:
@@ -307,7 +307,7 @@ namespace Gecode {
         }
         break;
       case NT_OR:
-        u.b.l->post(home, false, icl); 
+        u.b.l->post(home, false, icl);
         u.b.r->post(home, false, icl);
         break;
       case NT_EQV:
@@ -347,7 +347,7 @@ namespace Gecode {
           p_l=x->u.b.l->p; n_l=x->u.b.l->n;
         } else {
           p_l=1; n_l=0;
-        } 
+        }
         unsigned int p_r, n_r;
         if ((x->u.b.r->t == t) || x->u.b.r->atomic()) {
           p_r=x->u.b.r->p; n_r=x->u.b.r->n;
@@ -373,7 +373,7 @@ namespace Gecode {
     GECODE_NEVER;
     return NULL;
   }
-  
+
 }
 
 // STATISTICS: minimodel-any

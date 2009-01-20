@@ -138,10 +138,10 @@ namespace Gecode { namespace Set { namespace Element {
 
       int j = 0;
       int i = 0;
-      
+
       unsigned int maxCard = 0;
       unsigned int minCard = Limits::card;
-      
+
       while ( vx1ub() ) {
 
         // Remove vars at indices not in the upper bound
@@ -274,7 +274,7 @@ namespace Gecode { namespace Set { namespace Element {
       for (int i=n; i--;) {
         // TODO: check for size of universe here?
         // if (sofarAfter.size() == 0) break;
-        
+
         // extra = inter(before[i], sofarAfter) - lub(x0)
         BndSetRanges b(before[i]);
         BndSetRanges s(sofarAfter);

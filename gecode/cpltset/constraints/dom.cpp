@@ -38,8 +38,8 @@
 #include <gecode/cpltset.hh>
 
 namespace Gecode {
-  
-  void 
+
+  void
   dom(Space& home, CpltSetVar x, SetRelType r, const IntSet& s) {
     Set::Limits::check(s, "CpltSet::dom");
     if (home.failed()) return;
@@ -109,11 +109,11 @@ namespace Gecode {
                                     Set::Limits::max) );
         } else {
           IntSetRanges rd1(s);
-          Iter::Ranges::Compl<Set::Limits::min, 
+          Iter::Ranges::Compl<Set::Limits::min,
             Set::Limits::max, IntSetRanges > rdC1(rd1);
           GECODE_ME_FAIL(home,bv.includeI(home, rdC1));
           IntSetRanges rd2(s);
-          Iter::Ranges::Compl<Set::Limits::min, 
+          Iter::Ranges::Compl<Set::Limits::min,
             Set::Limits::max, IntSetRanges > rdC2(rd2);
           GECODE_ME_FAIL(home,bv.intersectI(home, rdC2));
         }

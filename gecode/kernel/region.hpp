@@ -46,7 +46,7 @@ namespace Gecode {
    * only after the region is deleted and all other regions
    * created later also have been deleted.
    *
-   * In case a memory request cannot be fulfilled from a space's region, 
+   * In case a memory request cannot be fulfilled from a space's region,
    * heap memory is allocated and returned to the operating system
    * as soon as the region is deleted.
    *
@@ -87,7 +87,7 @@ namespace Gecode {
     Region(const Space& home);
     /// \name Typed allocation routines
     //@{
-    /** 
+    /**
      * \brief Allocate block of \a n objects of type \a T from region
      *
      * Note that this function implements C++ semantics: the default
@@ -95,7 +95,7 @@ namespace Gecode {
      */
     template <class T>
     T* alloc(unsigned int n);
-    /** 
+    /**
      * \brief Delete \a n objects allocated from the region starting at \a b
      *
      * Note that this function implements C++ semantics: the destructor
@@ -111,7 +111,7 @@ namespace Gecode {
      *
      * Note that this function implements C++ semantics: the copy constructor
      * of \a T is run for all \f$\min(n,m)\f$ objects, the default
-     * constructor of \a T is run for all remaining 
+     * constructor of \a T is run for all remaining
      * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
      * run for all \a n objects in \a b.
      *
@@ -152,7 +152,7 @@ namespace Gecode {
    *
    */
   forceinline
-  Region::Region(const Space& h) 
+  Region::Region(const Space& h)
     : home(const_cast<Space&>(h)), free_reset(home.sra->free), hi(0) {}
 
   forceinline void*
@@ -172,7 +172,7 @@ namespace Gecode {
     if (hi != NULL)
       heap_free();
   }
-  
+
 
   /*
    * Typed allocation routines

@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Convex {
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator that propagates that \a x is convex 
+    /// Post propagator that propagates that \a x is convex
     static  ExecStatus  post(Space& home,SetView x);
   };
 

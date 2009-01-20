@@ -43,7 +43,7 @@ namespace Test { namespace Int {
 
    /// Tests for channel constraints
    namespace Channel {
-   
+
      /**
       * \defgroup TaskTestIntChannel Channel constraints
       * \ingroup TaskTestInt
@@ -80,20 +80,20 @@ namespace Test { namespace Int {
              Gecode::post(home, x[i] == xo-xoff);
              xa[i] = xo;
            } else {
-             xa[i] = x[i];             
+             xa[i] = x[i];
            }
            if (yoff != 0) {
              IntVar yo(home, yoff, 3+yoff);
              Gecode::post(home, x[4+i] == yo-yoff);
              ya[i] = yo;
            } else {
-             ya[i] = x[4+i];             
+             ya[i] = x[4+i];
            }
          }
          channel(home, xa, xoff, ya, yoff, icl);
        }
      };
-     
+
      /// Simple test for channel (testing single set of variables)
      class ChannelHalf : public Test {
      public:
@@ -125,7 +125,7 @@ namespace Test { namespace Int {
          channel(home, x, y, icl);
        }
      };
-     
+
      /// Test channel with shared variables
      class ChannelShared : public Test {
      public:
@@ -147,7 +147,7 @@ namespace Test { namespace Int {
          channel(home, x, x, icl);
        }
      };
-     
+
      /// Test channel between integer and Boolean variable
      class ChannelLinkSingle : public Test {
      public:
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
          channel(home, x[1], b);
        }
      };
-     
+
      /// Test channel between integer variable and array of Boolean variables
      class ChannelLinkMulti : public Test {
      private:
@@ -206,9 +206,9 @@ namespace Test { namespace Int {
          channel(home, b, x[n], o);
        }
      };
-     
-   
-   
+
+
+
      ChannelFull cfd(Gecode::ICL_DOM);
      ChannelFull cfv(Gecode::ICL_VAL);
 
@@ -217,20 +217,20 @@ namespace Test { namespace Int {
 
      ChannelFull cfd35(Gecode::ICL_DOM,3,5);
      ChannelFull cfv35(Gecode::ICL_VAL,3,5);
-   
+
      ChannelHalf chd(Gecode::ICL_DOM);
      ChannelHalf chv(Gecode::ICL_VAL);
-   
+
      ChannelShared csd(Gecode::ICL_DOM);
      ChannelShared csv(Gecode::ICL_VAL);
-   
+
      ChannelLinkSingle cls;
-   
+
      ChannelLinkMulti clma("A", 0, 5, 0);
      ChannelLinkMulti clmb("B", 1, 6, 1);
      ChannelLinkMulti clmc("C",-1, 4,-1);
      //@}
-   
+
    }
 }}
 

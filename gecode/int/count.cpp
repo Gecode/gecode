@@ -280,15 +280,15 @@ namespace Gecode {
     using namespace Int;
     template <template<class,class> class P>
     class I {
-      GECODE_REGISTER2(P<IntView,ConstIntView>);      
-      GECODE_REGISTER2(P<IntView,IntView>);      
+      GECODE_REGISTER2(P<IntView,ConstIntView>);
+      GECODE_REGISTER2(P<IntView,IntView>);
       GECODE_REGISTER2(P<OffsetView,ZeroIntView>);
     };
     I<Count::EqInt> ieq;
     I<Count::LqInt> ilq;
     I<Count::GqInt> igq;
     I<Count::NqInt> inq;
-    
+
     template <template <class,class,class,bool> class P,bool b>
     class VB {
       GECODE_REGISTER4(P<OffsetView,ZeroIntView,IntView,b>);

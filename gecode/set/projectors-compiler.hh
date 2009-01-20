@@ -90,7 +90,7 @@ namespace Gecode {
     std::ostream& iccos;
 
     /// The projector specification that gets compiled
-    const ProjectorPropagatorSpec& spec;    
+    const ProjectorPropagatorSpec& spec;
 
     ///\name Internal helper functions
     //@{
@@ -145,7 +145,7 @@ namespace Gecode {
     /// What fixpoint to compute, default=ITER_FIX
     FixpointType fixpoint;
     /// How generic the propagator is, default=SINGLE_VIEW
-    ViewsType views; 
+    ViewsType views;
     //@}
 
     /// Construct compiler

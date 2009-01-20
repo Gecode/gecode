@@ -71,7 +71,7 @@ public:
 };
 
 namespace {
-  
+
   extern const Curriculum curriculum[];
   extern const unsigned int n_examples;
 
@@ -89,14 +89,14 @@ class BACP : public MinimizeExample {
 protected:
   /// The curriculum to be scheduled
   const Curriculum curr;
-  
+
   /// Academic load for each period
   IntVarArray l;
   /// Maximum academic load
   IntVar u;
   /// Number of courses assigned to a period
   IntVarArray q;
-  
+
   /// Period to which a course is assigned
   IntVarArray x;
 public:
@@ -107,7 +107,7 @@ public:
     int b = curr.b;
     int c = curr.c;
     int d = curr.d;
-    
+
     std::map<std::string, int> courseMap; // Map names to course numbers
     int maxCredit = 0;
     int numberOfCourses = 0;
@@ -115,12 +115,12 @@ public:
       courseMap[c->name] = numberOfCourses++;
       maxCredit += c->credit;
     }
-    
+
     l = IntVarArray(*this, p, a, b);
     u = IntVar(*this, 0, maxCredit);
     q = IntVarArray(*this, p, c, d);
     x = IntVarArray(*this, numberOfCourses, 0, p-1);
-        
+
     for (int j=0; j<p; j++) {
       BoolVarArray xij(*this, numberOfCourses, 0, 1);
       IntArgs t(numberOfCourses);
@@ -133,7 +133,7 @@ public:
       // sum over all (xi==j) is number of courses in period i
       linear(*this, xij, IRT_EQ, q[j]);
     }
-    
+
     // Precedence
     for (const char** prereq = curr.prereqs; *prereq != 0; prereq+=2) {
       post(*this, x[courseMap[*prereq]] < x[courseMap[*(prereq+1)]]);
@@ -170,7 +170,7 @@ public:
     std::vector<std::list<int> > period(curr.p);
     for (int i=x.size(); i--;)
       period[x[i].val()].push_back(i);
-    
+
     os << "Solution with load " << u.val() << ":" << std::endl;
     for (int i=0; i<curr.p; i++) {
       os << "\tPeriod "<<i+1<<": ";
@@ -210,22 +210,22 @@ namespace {
     */
 
   /// Courses for first example
-  const Course courses8[] = 
+  const Course courses8[] =
     {
       {"dew100", 1},
       {"fis100", 3},
       {"hcw310", 1},{"iwg101", 2},{"mat190", 4},{"mat192", 4},{"dew101", 1},
-      {"fis101", 5},{"iwi131", 3},{"mat191", 4},{"mat193", 4},{"fis102", 5},{"hxwxx1", 1}, 
-      {"iei134", 3},{"iei141", 3},{"mat194", 4}, 
-      {"dewxx0", 1},{"hcw311", 1},{"iei132", 3},{"iei133", 3},{"iei142", 3},{"iei162", 3}, 
-      {"iwn170", 3},{"mat195", 3},{"hxwxx2", 1},{"iei231", 4},{"iei241", 4},{"iei271", 3},{"iei281", 3},{"iwn261", 3}, 
-      {"hfw120", 2},{"iei233", 4},{"iei238", 3},{"iei261", 3},{"iei272", 3},{"iei273", 3},{"iei161", 3},{"iei232", 3}, 
+      {"fis101", 5},{"iwi131", 3},{"mat191", 4},{"mat193", 4},{"fis102", 5},{"hxwxx1", 1},
+      {"iei134", 3},{"iei141", 3},{"mat194", 4},
+      {"dewxx0", 1},{"hcw311", 1},{"iei132", 3},{"iei133", 3},{"iei142", 3},{"iei162", 3},
+      {"iwn170", 3},{"mat195", 3},{"hxwxx2", 1},{"iei231", 4},{"iei241", 4},{"iei271", 3},{"iei281", 3},{"iwn261", 3},
+      {"hfw120", 2},{"iei233", 4},{"iei238", 3},{"iei261", 3},{"iei272", 3},{"iei273", 3},{"iei161", 3},{"iei232", 3},
       {"iei262", 3},{"iei274", 3},{"iwi365", 3},{"iwn270", 3},{"hrw130", 2},{"iei218", 3},{"iei219", 3},{"iei248", 3},
       {0,0}
     };
 
   /// Prerequisites for first example
-  const char* prereqs8[] = 
+  const char* prereqs8[] =
     {
     "dew101","dew100",
     "fis101","fis100",
@@ -507,7 +507,7 @@ namespace {
         courses12, prereqs12
       }
     };
-    
+
   /// The number of examples
   const unsigned int n_examples = sizeof(curriculum) / sizeof(Curriculum);
 

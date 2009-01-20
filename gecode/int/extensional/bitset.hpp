@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Set value at bit \a i to \a value
     void set(unsigned int i, bool value=true);
   };
-  
+
   forceinline void
   BitSet::init(Space& home, int s, bool value) {
     size = static_cast<int>(std::ceil(static_cast<double>(s)
@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   BitSet::BitSet(void) : data(NULL), size(0) {}
 
   forceinline
-  BitSet::BitSet(Space& home, int s, bool value) 
+  BitSet::BitSet(Space& home, int s, bool value)
     : data(NULL), size(0) {
     init(home, s, value);
   }

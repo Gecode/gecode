@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     SPECIAL,      ///< Node representing user controlled exploration
     STEP          ///< Node representing one propagation step
   };
-  
+
   static const unsigned int FIRSTBIT = 5; //< First free bit in status word
   static const unsigned int STATUSMASK = (1<<(FIRSTBIT-1))-1; //< Mask for accessing status
 
@@ -66,7 +66,7 @@ namespace Gecode { namespace Gist {
     StepDesc(int steps);
     void toggleDebug(void);
   };
-  
+
   /// \brief Description for special nodes
   class SpecialDesc {
   public:
@@ -75,7 +75,7 @@ namespace Gecode { namespace Gist {
     const int rel;
     SpecialDesc(std::string varName, int rel0, int v0);
   };
-  
+
   /// Statistics about the search tree
   class Statistics {
   public:
@@ -91,7 +91,7 @@ namespace Gecode { namespace Gist {
     int maxDepth;
     /// Whether any weakly monotonic propagators were executed
     bool hadWMPropagators;
-    
+
     /// Constructor
     Statistics(void)
     : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0),
@@ -131,7 +131,7 @@ namespace Gecode { namespace Gist {
 
     /// Status of the node
     unsigned int nstatus;
-    
+
     /// Flags for SpaceNodes
     enum SpaceNodeFlags {
       HASOPENCHILDREN = FIRSTBIT,
@@ -150,7 +150,7 @@ namespace Gecode { namespace Gist {
     void setHasSolvedChildren(bool b);
     /// Set status to \a s
     void setStatus(NodeStatus s);
-    
+
     /// Recompute workingSpace from a copy higher up, return distance to copy
     int recompute(BestNode* curBest, int c_d, int a_d);
 
@@ -193,7 +193,7 @@ namespace Gecode { namespace Gist {
                               BestNode* curBest,
                               Statistics& stats,
                               int c_d, int a_d);
-    
+
     /// Return current status of the node
     NodeStatus getStatus(void) const;
     /// Return whether this node represents a propagation step
@@ -204,7 +204,7 @@ namespace Gecode { namespace Gist {
     void setStepDesc(StepDesc* d);
     /// Return the StepDesc
     StepDesc* getStepDesc(void);
-    
+
     /// Return whether this node still has open children
     bool isOpen(void);
     /// Return whether the subtree of this node has any failed children
@@ -221,7 +221,7 @@ namespace Gecode { namespace Gist {
     bool hasCopy(void);
     /// Return whether the node has a working space
     bool hasWorkingSpace(void);
-       
+
     /// Return the parent
     SpaceNode* getParent(void);
     /// Return child \a i

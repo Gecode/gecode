@@ -47,10 +47,10 @@
  * second the size of the master square, and the remaining the
  * sizes of the squares to be packed.
  *
- * The data is taken from: C. J. Bouwkamp and A. J. W. 
- * Duijvestijn, Catalogue of Simple Perfect Squared Squares of Orders 
- * 21 Through 25, Eindhoven Univ. Technology, Dept. of Math., 
- * Report 92-WSK-03, Nov. 1992. 
+ * The data is taken from: C. J. Bouwkamp and A. J. W.
+ * Duijvestijn, Catalogue of Simple Perfect Squared Squares of Orders
+ * 21 Through 25, Eindhoven Univ. Technology, Dept. of Math.,
+ * Report 92-WSK-03, Nov. 1992.
  *
  * \relates PerfectSquare
  */
@@ -164,7 +164,7 @@ const int s26[] = {
   793,619,473,320,287,207,188,181,179,170,167,153,151,149,142,140,132,127,121,117,116,106,105,103,97,93,92,91,90,87,84,83,82,76,74,73,72,71,70,69,67,66,65,64,63,61,54,53,49,45,39,38,35,34,33,32,30,29,28,27,26,24,21,20,19,18,15,14,13,11,10,9,6,5,3
 };
 
-  
+
 const int* specs[] = {
   &s00[0],&s01[0],&s02[0],&s03[0],&s04[0],
   &s05[0],&s06[0],&s07[0],&s08[0],&s09[0],
@@ -197,7 +197,7 @@ public:
   };
   /// Actual model
   PerfectSquare(const SizeOptions& opt)
-    : x(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1), 
+    : x(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1),
       y(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1) {
 
     const int* s = specs[opt.size()];

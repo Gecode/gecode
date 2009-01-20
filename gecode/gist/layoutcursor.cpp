@@ -47,16 +47,16 @@ namespace Gecode { namespace Gist {
     }
     return shape;
   }
-  
+
   Shape*
   Shape::allocate(const Shape* subShape) {
     Shape* shape = Shape::allocate(subShape->depth());
     for (int i=subShape->depth(); i--;) {
       (*shape)[i] = (*subShape)[i];
-    }    
+    }
     return shape;
   }
-    
+
   bool
   Shape::getExtentAtDepth(int depth, Extent& extent) {
     if (depth > _depth)
@@ -69,7 +69,7 @@ namespace Gecode { namespace Gist {
     }
     return true;
   }
-  
+
   BoundingBox
   Shape::getBoundingBox(void) {
     int lastLeft = 0;
@@ -87,10 +87,10 @@ namespace Gecode { namespace Gist {
     }
     return BoundingBox(left, right);
   }
-  
+
   LayoutCursor::LayoutCursor(VisualNode* theNode)
    : NodeCursor<VisualNode>(theNode) {}
-      
+
   void
   LayoutCursor::processCurrentNode() {
     VisualNode* currentNode = node();
@@ -109,7 +109,7 @@ namespace Gecode { namespace Gist {
     if (currentNode->getNumberOfChildren() >= 1)
       currentNode->setChildrenLayoutDone(true);
   }
-    
+
 }}
 
 // STATISTICS: gist-any

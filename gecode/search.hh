@@ -244,7 +244,7 @@ namespace Gecode {
      *    future recomputation. Note that small values of \a a_d can increase
      *    the memory consumption considerably.
      *
-     * Full copying corresponds to a maximal recomputation distance 
+     * Full copying corresponds to a maximal recomputation distance
      * \a c_d of 1.
      *
      * All recomputation performed is based on batch recomputation: batch
@@ -410,7 +410,7 @@ namespace Gecode {
   /**
    * \brief Depth-first branch-and-bound search engine
    *
-   * Additionally, \a s must implement a member function 
+   * Additionally, \a s must implement a member function
    * \code virtual void constrain(const T& t) \endcode
    * Whenever exploration requires to add a constraint
    * to the space \a c currently being explored, the engine
@@ -430,7 +430,7 @@ namespace Gecode {
   /**
    * \brief Perform depth-first branch-and-bound search for subclass \a T of space \a s and options \a o
    *
-   * Additionally, \a s must implement a member function 
+   * Additionally, \a s must implement a member function
    * \code void constrain(T* t) \endcode
    * Whenever exploration requires to add a constraint
    * to the space \a c currently being explored, the engine
@@ -447,7 +447,7 @@ namespace Gecode {
   /**
    * \brief Depth-first restart best solution search engine
    *
-   * Additionally, \a s must implement a member function 
+   * Additionally, \a s must implement a member function
    * \code void constrain(T* t) \endcode
    * Whenever exploration requires to add a constraint
    * to the space \a c currently being explored, the engine
@@ -473,8 +473,8 @@ namespace Gecode {
 
   /**
    * \brief Perform depth-first restart best solution search for subclass \a T of space \a s and options \a o
-   * 
-   * Additionally, \a s must implement a member function 
+   *
+   * Additionally, \a s must implement a member function
    * \code void constrain(T* t) \endcode
    * Whenever exploration requires to add a constraint
    * to the space \a c currently being explored, the engine

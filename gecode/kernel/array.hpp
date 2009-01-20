@@ -55,8 +55,8 @@ namespace Gecode {
    * Never use them for temporary purposes, use argument arrays
    * instead.
    *
-   * %Variable arrays can be enlarged dynamically. For memory efficiency, the 
-   * initial array is allocated in the space. When adding variables, it is 
+   * %Variable arrays can be enlarged dynamically. For memory efficiency, the
+   * initial array is allocated in the space. When adding variables, it is
    * automatically resized and allocated on the heap.
    *
    * \ingroup TaskVar
@@ -91,8 +91,8 @@ namespace Gecode {
     //@{
     /// Return size of array (number of elements)
     int size(void) const;
-    /** 
-      * \brief Insert or remove (uninitialized!) elements at the end such 
+    /**
+      * \brief Insert or remove (uninitialized!) elements at the end such
       * that size becomes \a m
       */
     void resize(Space& home, int m);
@@ -257,7 +257,7 @@ namespace Gecode {
     void move_fst(int i, Space& home, Advisor& a);
     /** \brief Move view from position \c size()-1 to position \a i (truncate array by one)
      *
-     * Before moving, cancel subscription of advisor \a a to view 
+     * Before moving, cancel subscription of advisor \a a to view
      * at position \a i.
      */
     void move_lst(int i, Space& home, Advisor& a);
@@ -284,7 +284,7 @@ namespace Gecode {
     void drop_lst(int i, Space& home, Propagator& p, PropCond pc);
     /** \brief Drop views from positions 0 to \a i-1 from array
      *
-     * Before moving, cancel subscription of advisor \a a to views at 
+     * Before moving, cancel subscription of advisor \a a to views at
      * positions 0 to \a i-1.
      */
     void drop_fst(int i, Space& home, Advisor& a);
@@ -300,7 +300,7 @@ namespace Gecode {
     //@{
     /**
      * \brief Test whether array has multiple occurence of the same view
-     * 
+     *
      * Note that assigned views are ignored.
      */
     bool same(const Space& home) const;
@@ -318,7 +318,7 @@ namespace Gecode {
     //@{
     /**
      * \brief Test whether array contains shared views
-     * 
+     *
      * Note that assigned views are ignored.
      */
     bool shared(const Space& home) const;
@@ -476,7 +476,7 @@ namespace Gecode {
     //@{
     /**
      * \brief Test whether array contains same variable multiply
-     * 
+     *
      * Note that assigned variables are ignored.
      */
     bool same(const Space& home) const;
@@ -488,7 +488,7 @@ namespace Gecode {
     bool same(const Space& home, const Var& y) const;
     /**
      * \brief Test whether all elements from array and \a y contains same variable multiply
-     * 
+     *
      * Note that assigned variables are ignored.
      */
     bool same(const Space& home, const VarArgArray<Var>& y) const;
@@ -500,8 +500,8 @@ namespace Gecode {
    * \relates VarArray
    */
   template<class Char, class Traits, class Var>
-  std::basic_ostream<Char,Traits>& 
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
              const VarArray<Var>& x);
 
   /**
@@ -509,7 +509,7 @@ namespace Gecode {
    * \relates ViewArray
    */
   template<class Char, class Traits, class View>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ViewArray<View>& x);
 
   /**
@@ -517,7 +517,7 @@ namespace Gecode {
    * \relates ArgArrayBase
    */
   template<class Char, class Traits, class T>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ArgArrayBase<T>& x);
 
 
@@ -547,7 +547,7 @@ namespace Gecode {
    *
    * These arrays are usually allocated in the space, but if they are resized,
    * the new array is allocated on the heap. The size (n) and capacity show
-   * where the array is allocated: it is in the space if and only if 
+   * where the array is allocated: it is in the space if and only if
    * n==capacity.
    *
    */
@@ -868,7 +868,7 @@ namespace Gecode {
 
   template <class View>
   void
-  ViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc, 
+  ViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                              bool process) {
     for (int i = n; i--; )
       x[i].subscribe(home,p,pc,process);
@@ -1265,8 +1265,8 @@ namespace Gecode {
    *
    */
   template<class Char, class Traits, class Var>
-  std::basic_ostream<Char,Traits>& 
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
              const VarArray<Var>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
@@ -1279,10 +1279,10 @@ namespace Gecode {
     s << '}';
     return os << s.str();
   }
-  
+
   template<class Char, class Traits, class View>
-  std::basic_ostream<Char,Traits>& 
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
              const ViewArray<View>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
@@ -1295,10 +1295,10 @@ namespace Gecode {
     s << '}';
     return os << s.str();
   }
-  
+
   template<class Char, class Traits, class T>
-  std::basic_ostream<Char,Traits>& 
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
              const ArgArrayBase<T>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

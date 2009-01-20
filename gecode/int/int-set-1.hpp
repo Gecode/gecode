@@ -69,29 +69,29 @@ namespace Gecode {
   template <>
 #endif
   forceinline
-  IntSet::IntSet(const IntSet& s) 
+  IntSet::IntSet(const IntSet& s)
     : SharedHandle(s) {}
 
 #ifndef __INTEL_COMPILER
   template <>
 #endif
   forceinline
-  IntSet::IntSet(IntSet& s) 
+  IntSet::IntSet(IntSet& s)
     : SharedHandle(s) {}
 
   forceinline
-  IntSet::IntSet(const int r[][2], int n) { 
-    init(r,n); 
-  }
-
-  forceinline
-  IntSet::IntSet(const int r[], int n) { 
+  IntSet::IntSet(const int r[][2], int n) {
     init(r,n);
   }
 
   forceinline
-  IntSet::IntSet(int n, int m) { 
-    init(n,m); 
+  IntSet::IntSet(const int r[], int n) {
+    init(r,n);
+  }
+
+  forceinline
+  IntSet::IntSet(int n, int m) {
+    init(n,m);
   }
 
   forceinline int
@@ -158,12 +158,12 @@ namespace Gecode {
       i = &static_cast<IntSet::IntSetObject*>(s.object())->r[0]; e = i+n;
     } else {
       i = e = NULL;
-    }    
+    }
   }
   forceinline
   IntSetRanges::IntSetRanges(const IntSet& s) { init(s); }
 
-  
+
   forceinline void
   IntSetRanges::operator ++(void) {
     i++;

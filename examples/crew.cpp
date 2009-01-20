@@ -160,7 +160,7 @@ public:
       os << "\t" << requiredCrew[i].staff << "\t" << requiredCrew[i].stewards
          << "\t" << requiredCrew[i].hostesses << "\t"
          << requiredCrew[i].spanish
-         << "\t" << requiredCrew[i].french << "\t" << requiredCrew[i].german 
+         << "\t" << requiredCrew[i].french << "\t" << requiredCrew[i].german
          << std::endl;
 
       os << "\t\tSchedule:" << std::endl << "\t\t";
@@ -208,7 +208,7 @@ main(int argc, char* argv[]) {
 }
 
 namespace {
-  
+
   /// Return name of employee \a e as a string
   const char*
   employeeToName(Employee e) {
@@ -277,7 +277,7 @@ namespace {
       {6,1,1,1,1,1},
       {6,2,2,1,1,1},
       {7,3,3,1,1,1} };
-  
+
   /// The number of flights to schedule
   const int noOfFlights = sizeof(requiredCrew) / sizeof(Flight);
 }

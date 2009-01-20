@@ -43,7 +43,7 @@ namespace Gecode {
 
   void
   linear(Space& home,
-         const IntVarArgs& x, IntRelType r, int c, 
+         const IntVarArgs& x, IntRelType r, int c,
          IntConLevel icl) {
     if (home.failed()) return;
     Region re(home);
@@ -56,7 +56,7 @@ namespace Gecode {
 
   void
   linear(Space& home,
-         const IntVarArgs& x, IntRelType r, int c, BoolVar b, 
+         const IntVarArgs& x, IntRelType r, int c, BoolVar b,
          IntConLevel) {
     if (home.failed()) return;
     Region re(home);
@@ -99,7 +99,7 @@ namespace Gecode {
 
   void
   linear(Space& home,
-         const IntVarArgs& x, IntRelType r, IntVar y, 
+         const IntVarArgs& x, IntRelType r, IntVar y,
          IntConLevel icl) {
     if (home.failed()) return;
     Region re(home);

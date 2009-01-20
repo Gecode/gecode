@@ -43,7 +43,7 @@
  * \brief Unsharing shared variables
  */
 
-namespace Gecode { 
+namespace Gecode {
 
  namespace Int { namespace Unshare {
 
@@ -51,13 +51,13 @@ namespace Gecode {
     template<class Var>
     class VarPtrLess {
     public:
-      forceinline bool 
+      forceinline bool
       operator ()(const Var* a, const Var* b) {
         return before(*a,*b);
       }
     };
-    
-    
+
+
     /// Return a fresh yet equal integer variable
     forceinline ExecStatus
     link(Space& home, IntVar** x, int n, IntConLevel icl) {
@@ -85,7 +85,7 @@ namespace Gecode {
       }
       return ES_OK;
     }
-    
+
     /// Return a fresh yet equal Boolean variable
     forceinline ExecStatus
     link(Space& home, BoolVar** x, int n, IntConLevel) {
@@ -102,10 +102,10 @@ namespace Gecode {
       }
       return ES_OK;
     }
-    
+
     /// Replace unassigned shared variables by fresh, yet equal variables
     template <class Var>
-    forceinline ExecStatus 
+    forceinline ExecStatus
     unshare(Space& home, VarArgArray<Var>& x, IntConLevel icl) {
       int n=x.size();
       if (n < 2)
@@ -129,16 +129,16 @@ namespace Gecode {
       }
       return ES_OK;
     }
-    
+
   }}
 
-  void 
+  void
   unshare(Space& home, IntVarArgs& x, IntConLevel icl) {
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Int::Unshare::unshare<IntVar>(home,x,icl));
   }
 
-  void 
+  void
   unshare(Space& home, BoolVarArgs& x, IntConLevel) {
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Int::Unshare::unshare<BoolVar>(home,x,ICL_DEF));

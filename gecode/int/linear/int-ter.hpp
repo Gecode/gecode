@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_INT_PV(TM_X2_MAX, x2.lq(home,c-x0.min()-x1.min()),
                     TM_X0_MIN | TM_X1_MIN);
     } while (bm);
-    return (x0.assigned() && x1.assigned()) ? 
+    return (x0.assigned() && x1.assigned()) ?
       ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
@@ -264,7 +264,7 @@ namespace Gecode { namespace Int { namespace Linear {
     GECODE_ME_CHECK(x0.lq(home,c-x1.min()-x2.min()));
     GECODE_ME_CHECK(x1.lq(home,c-x0.min()-x2.min()));
     GECODE_ME_CHECK(x2.lq(home,c-x0.min()-x1.min()));
-    return (x0.max()+x1.max()+x2.max() <= c) ? 
+    return (x0.max()+x1.max()+x2.max() <= c) ?
       ES_SUBSUMED(*this,home) : ES_FIX;
   }
 

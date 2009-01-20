@@ -38,7 +38,7 @@
 
 namespace Gecode { namespace Gist {
 
-  AddVisualisationDialog::AddVisualisationDialog(Gecode::Gist::Config conf, 
+  AddVisualisationDialog::AddVisualisationDialog(Gecode::Gist::Config conf,
                                                  Gecode::Reflection::VarMap& vm,
                                                  QWidget *parent)
   : QDialog(parent)

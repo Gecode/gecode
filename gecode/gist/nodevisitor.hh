@@ -38,7 +38,7 @@
 #define GECODE_GIST_NODEVISITOR_HH
 
 namespace Gecode { namespace Gist {
-  
+
   /// \brief Base class for a visitor that runs a cursor over a tree
   template <class Cursor>
   class NodeVisitor {
@@ -51,9 +51,9 @@ namespace Gecode { namespace Gist {
     /// Reset the cursor object to \a c0
     void setCursor(Cursor& c0);
     /// Return the cursor
-    Cursor& getCursor(void);    
+    Cursor& getCursor(void);
   };
-  
+
   /// \brief Run a cursor over a tree, processing nodes in post-order
   template <class Cursor>
   class PostorderNodeVisitor : public NodeVisitor<Cursor> {
@@ -81,7 +81,7 @@ namespace Gecode { namespace Gist {
     /// Move cursor to the next node, return true if succeeded
     bool next(void);
   };
-  
+
 }}
 
 #include <gecode/gist/nodevisitor.hpp>

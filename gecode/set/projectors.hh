@@ -94,7 +94,7 @@ namespace Gecode {
       /// Return instruction at position \a i
       int operator [](int i) const;
     };
- 
+
     ///\name Construction and initialization
     //@{
     /// Default constructor
@@ -107,7 +107,7 @@ namespace Gecode {
 
     /// Copying
     void update(Space& home, bool share, SetExprCode& sc);
-    
+
     /// Return number of instructions
     int size(void) const;
 
@@ -115,7 +115,7 @@ namespace Gecode {
     int operator [](int i) const;
 
   };
-  
+
   /**
    * \brief Set-valued expressions for finite set projectors
    */
@@ -129,7 +129,7 @@ namespace Gecode {
       REL_INTER, ///< Intersection relation
       REL_UNION  ///< Union relation
     };
-    
+
   private:
     /// Nodes for set expressions
     class Node;
@@ -150,7 +150,7 @@ namespace Gecode {
     GECODE_SET_EXPORT SetExpr(const SetExpr& s, int ssign,
                               RelType r,
                               const SetExpr& t, int tsign);
-    /// Assignment operator 
+    /// Assignment operator
     GECODE_SET_EXPORT const SetExpr& operator =(const SetExpr& e);
     /// Returns the arity of the set expression
     GECODE_SET_EXPORT int arity(void) const;
@@ -193,7 +193,7 @@ namespace Gecode {
 
     /// Returns the arity of the projector
     GECODE_SET_EXPORT int arity(void) const;
-              
+
     /// Propagate the projector
     template <bool negated>
     ExecStatus propagate(Space& home, ViewArray<Set::SetView>& x);
@@ -204,7 +204,7 @@ namespace Gecode {
 
     /// Compute size of greatest lower bound
     unsigned int glbSize(ViewArray<Set::SetView>& x);
-    
+
     /// Compute size of least upper bound
     unsigned int lubSize(ViewArray<Set::SetView>& x);
 
@@ -218,7 +218,7 @@ namespace Gecode {
     SetExpr::var_idx getIdx(void) const;
 
   };
-  
+
   /**
    * \brief Group of finite set projector specifications
    */
@@ -227,12 +227,12 @@ namespace Gecode {
     SharedArray<Projector> _ps; ///< The projectors
     int _count; ///< The number of projectors in the set
     int _arity; ///< The maximum arity of the projectors in the set
-    
+
   public:
-    
+
     /// Construct empty projector set
     ProjectorSet(void);
-    
+
     /// Construct projector set for \a n projectors
     ProjectorSet(int n);
 
@@ -248,7 +248,7 @@ namespace Gecode {
     /// Returns the scope of the projector set
     GECODE_SET_EXPORT void scope(Support::DynamicArray<int,Heap>& scope,
                                  unsigned int size) const;
-    
+
     /// Propagate the set
     template <bool negated>
     ExecStatus propagate(Space& home, ViewArray<Set::SetView>& x);
@@ -280,7 +280,7 @@ namespace Gecode {
   public:
     /// Copy constructor
     GECODE_SET_EXPORT Formula(const Formula& f);
-    /// Assignment operator 
+    /// Assignment operator
     GECODE_SET_EXPORT const Formula& operator =(const Formula& f);
     /// Destructor
     GECODE_SET_EXPORT ~Formula(void);
@@ -296,7 +296,7 @@ namespace Gecode {
                               const Formula& g, int gs);
     /// Extract projectors from formula
     GECODE_SET_EXPORT ProjectorSet projectors(void);
-    
+
   };
 
   ///\name Operations on formulas for specifying set constraints
@@ -314,7 +314,7 @@ namespace Gecode {
   //@}
 
 
-  
+
   ///\name Posting projection propagators
   //@{
 
@@ -374,7 +374,7 @@ namespace Gecode {
             const SetVar& xa, const SetVar& ya, const SetVar& za,
             const BoolVar& bv,
             ProjectorSet& ps);
-  
+
   /**
    * \brief Post projection propagator for cardinality constraint
    *
@@ -401,15 +401,15 @@ namespace Gecode {
   //@}
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const SetExprCode& sec);
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Projector& p);
-  
+
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ProjectorSet& ps);
 
 }

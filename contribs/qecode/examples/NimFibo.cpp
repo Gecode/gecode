@@ -1,5 +1,5 @@
-/****   , [ NimFibo.cpp ], 
-Copyright (c) 2007 Universite d'Orleans - Jeremie Vautard 
+/****   , [ NimFibo.cpp ],
+Copyright (c) 2007 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,14 +39,14 @@ int main() {
         scopeSize[i] = 2;
     }
     Implicative p(N+2,qtScope,scopeSize);
-    
+
     p.QIntVar(0,1,N-1);
     p.QIntVar(1,0,N);
     post(*(p.space()),p.var(0) == p.var(1));
     IntVarArgs b(2); b[0] = p.var(0) ; b[1] = p.var(1);
     branch(*(p.space()),b,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     p.nextScope();
-    
+
     for (int i=1;i<N+2;i++) {
         p.QIntVar(2*i , 1, N-1);
         p.QIntVar(2*i + 1, 0, N);
@@ -58,12 +58,12 @@ int main() {
         branch(*(p.space()),bb,INT_VAR_SIZE_MIN,INT_VAL_MIN);
         p.nextScope();
     }
-    
+
     p.makeStructure();
     QSolver s(&p);
-    
+
     unsigned long int nodes=0;
-    
+
     Strategy outcome  = s.solve(nodes);
     cout << "For " << N << " matches : "<<endl;
     cout << "  outcome: " << ( outcome.isFalse() ? "FALSE" : "TRUE") << endl;

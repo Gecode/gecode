@@ -126,9 +126,9 @@ namespace Gecode {
     GECODE_REGISTER2(Element::ElementUnionConst<Gecode::Set::SetView, Gecode::Set::SingletonView>);
     GECODE_REGISTER2(Element::ElementUnionConst<Gecode::Set::SetView, Gecode::Set::SetView>);
     GECODE_REGISTER2(Element::ElementIntersection<Gecode::Set::SetView, Gecode::Set::SetView>);
-    
+
   }
-  
+
 }
 
 // STATISTICS: set-post

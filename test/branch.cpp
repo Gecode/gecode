@@ -61,7 +61,7 @@ namespace Test { namespace Branch {
     IntTestSpace(int n, Gecode::IntSet& d)
       : x(*this, n, d) {}
     /// Constructor for cloning \a s
-    IntTestSpace(bool share, IntTestSpace& s) 
+    IntTestSpace(bool share, IntTestSpace& s)
       : Gecode::Space(share,s) {
       x.update(*this, share, s.x);
     }
@@ -80,7 +80,7 @@ namespace Test { namespace Branch {
     BoolTestSpace(int n)
       : x(*this, n, 0, 1) {}
     /// Constructor for cloning \a s
-    BoolTestSpace(bool share, BoolTestSpace& s) 
+    BoolTestSpace(bool share, BoolTestSpace& s)
       : Gecode::Space(share,s) {
       x.update(*this, share, s.x);
     }
@@ -100,7 +100,7 @@ namespace Test { namespace Branch {
     SetTestSpace(int n, Gecode::IntSet& d)
       : x(*this, n, Gecode::IntSet::empty, d) {}
     /// Constructor for cloning \a s
-    SetTestSpace(bool share, SetTestSpace& s) 
+    SetTestSpace(bool share, SetTestSpace& s)
       : Gecode::Space(share,s) {
       x.update(*this, share, s.x);
     }
@@ -121,7 +121,7 @@ namespace Test { namespace Branch {
     CpltSetTestSpace(int n, Gecode::IntSet& d)
       : x(*this, n, Gecode::IntSet::empty, d) {}
     /// Constructor for cloning \a s
-    CpltSetTestSpace(bool share, CpltSetTestSpace& s) 
+    CpltSetTestSpace(bool share, CpltSetTestSpace& s)
       : Gecode::Space(share,s) {
       x.update(*this, share, s.x);
     }
@@ -157,7 +157,7 @@ namespace Test { namespace Branch {
     Gecode::INT_VAR_REGRET_MAX_MAX
   };
   /// Number of integer variable selections
-  const int n_int_var_branch = 
+  const int n_int_var_branch =
     sizeof(int_var_branch)/sizeof(Gecode::IntVarBranch);
   /// Names for integer variable selections
   const char* int_var_branch_name[] = {
@@ -225,7 +225,7 @@ namespace Test { namespace Branch {
     Gecode::SET_VAR_SIZE_MAX
   };
   /// Number of set variable selections
-  const int n_set_var_branch = 
+  const int n_set_var_branch =
     sizeof(set_var_branch)/sizeof(Gecode::SetVarBranch);
   /// Names for set variable selections
   const char* set_var_branch_name[] = {
@@ -280,7 +280,7 @@ namespace Test { namespace Branch {
     Gecode::CPLTSET_VAR_SIZE_MAX
   };
   /// Number of CpltSet variable selections
-  const int n_cpltset_var_branch = 
+  const int n_cpltset_var_branch =
     sizeof(cpltset_var_branch)/sizeof(Gecode::CpltSetVarBranch);
   /// Names for CpltSet variable selections
   const char* cpltset_var_branch_name[] = {
@@ -320,7 +320,7 @@ namespace Test { namespace Branch {
   public:
     std::string var, val;
     unsigned int a_d, c_d;
-    RunInfo(const std::string& vara, const std::string& varb, 
+    RunInfo(const std::string& vara, const std::string& varb,
             const std::string& valname,
             const Gecode::Search::Options& o)
       : var(vara + "::" + varb), val(valname), a_d(o.a_d), c_d(o.c_d) {}
@@ -347,7 +347,7 @@ namespace Test { namespace Branch {
     o.c_d = Base::rand(10);
     Gecode::DFS<TestSpace> e_s(c, o);
     delete c;
-        
+
     // Find number of solutions
     int s = 0;
     do {
@@ -370,7 +370,7 @@ namespace Test { namespace Branch {
     using std::string;
     using std::ostream;
     using namespace Gecode;
-    
+
     // Results of tests run
     map<int, vector<RunInfo> > results;
     // Set up root space
@@ -382,19 +382,19 @@ namespace Test { namespace Branch {
       for (int varb = n_int_var_branch; varb--; ) {
         for (int val = n_int_val_branch; val--; ) {
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
-          branch(*c, c->x, 
+          branch(*c, c->x,
                  tiebreak(int_var_branch[vara],int_var_branch[varb]),
                  int_val_branch[val]);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(int_var_branch_name[vara],
-                     int_var_branch_name[varb], 
+                     int_var_branch_name[varb],
                      int_val_branch_name[val],
                      o));
         }
       }
     }
-    if (results.size() > 1) 
+    if (results.size() > 1)
       goto failed;
     delete root;
     return true;
@@ -407,7 +407,7 @@ namespace Test { namespace Branch {
         std::cout << it->second[i] << " ";
       std::cout << std::endl;
     }
-    
+
     delete root;
     return results.size() == 1;
   }
@@ -423,7 +423,7 @@ namespace Test { namespace Branch {
     using std::string;
     using std::ostream;
     using namespace Gecode;
-    
+
     // Results of tests run
     map<int, vector<RunInfo> > results;
     // Set up root space
@@ -435,19 +435,19 @@ namespace Test { namespace Branch {
       for (int varb = n_int_var_branch; varb--; ) {
         for (int val = n_int_val_branch; val--; ) {
           BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
-          branch(*c, c->x, 
-                 tiebreak(int_var_branch[vara], int_var_branch[varb]), 
+          branch(*c, c->x,
+                 tiebreak(int_var_branch[vara], int_var_branch[varb]),
                  int_val_branch[val]);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
-            (RunInfo(int_var_branch_name[vara], 
+            (RunInfo(int_var_branch_name[vara],
                      int_var_branch_name[varb],
                      int_val_branch_name[val],
                      o));
         }
       }
     }
-    if (results.size() > 1) 
+    if (results.size() > 1)
       goto failed;
     delete root;
     return true;
@@ -460,7 +460,7 @@ namespace Test { namespace Branch {
         std::cout << it->second[i] << " ";
       std::cout << std::endl;
     }
-    
+
     delete root;
     return results.size() == 1;
   }
@@ -477,7 +477,7 @@ namespace Test { namespace Branch {
     using std::string;
     using std::ostream;
     using namespace Gecode;
-    
+
     // Results of tests run
     map<int, vector<RunInfo> > results;
     // Set up root space
@@ -490,19 +490,19 @@ namespace Test { namespace Branch {
       for (int varb = n_set_var_branch; varb--; ) {
         for (int val = n_set_val_branch; val--; ) {
           SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
-          branch(*c, c->x, 
-                 tiebreak(set_var_branch[vara], set_var_branch[varb]), 
+          branch(*c, c->x,
+                 tiebreak(set_var_branch[vara], set_var_branch[varb]),
                  set_val_branch[val]);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
-            (RunInfo(set_var_branch_name[vara], 
-                     set_var_branch_name[varb], 
+            (RunInfo(set_var_branch_name[vara],
+                     set_var_branch_name[varb],
                      set_val_branch_name[val],
                      o));
         }
       }
     }
-    if (results.size() > 1) 
+    if (results.size() > 1)
       goto failed;
     delete root;
     return true;
@@ -515,7 +515,7 @@ namespace Test { namespace Branch {
         std::cout << it->second[i] << " ";
       std::cout << std::endl;
     }
-    
+
     delete root;
     return results.size() == 1;
   }
@@ -534,7 +534,7 @@ namespace Test { namespace Branch {
     using std::string;
     using std::ostream;
     using namespace Gecode;
-    
+
     // Results of tests run
     map<int, vector<RunInfo> > results;
     // Set up root space
@@ -546,21 +546,21 @@ namespace Test { namespace Branch {
     for (int vara = n_cpltset_var_branch; vara--; ) {
       for (int varb = n_cpltset_var_branch; varb--; ) {
         for (int val = n_cpltset_val_branch; val--; ) {
-          CpltSetTestSpace* c = 
+          CpltSetTestSpace* c =
             static_cast<CpltSetTestSpace*>(root->clone(false));
-          branch(*c, c->x, 
-                 tiebreak(cpltset_var_branch[vara], cpltset_var_branch[varb]), 
+          branch(*c, c->x,
+                 tiebreak(cpltset_var_branch[vara], cpltset_var_branch[varb]),
                  cpltset_val_branch[val]);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
-            (RunInfo(cpltset_var_branch_name[vara], 
-                     cpltset_var_branch_name[varb], 
+            (RunInfo(cpltset_var_branch_name[vara],
+                     cpltset_var_branch_name[varb],
                      cpltset_val_branch_name[val],
                      o));
         }
       }
     }
-    if (results.size() > 1) 
+    if (results.size() > 1)
       goto failed;
     delete root;
     return true;
@@ -573,7 +573,7 @@ namespace Test { namespace Branch {
         std::cout << it->second[i] << " ";
       std::cout << std::endl;
     }
-    
+
     delete root;
     return results.size() == 1;
   }

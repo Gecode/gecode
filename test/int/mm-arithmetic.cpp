@@ -43,7 +43,7 @@ namespace Test { namespace Int {
 
   /// Tests for minimal modelling constraints (arithmetic)
   namespace MiniModelArithmetic {
-   
+
      /**
       * \defgroup TaskTestIntMiniModelArithmetic Minimal modelling constraints (arithmetic)
       * \ingroup TaskTestInt
@@ -68,7 +68,7 @@ namespace Test { namespace Int {
          rel(home, mult(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
        }
      };
-   
+
      /// Test for addition constraint
      class Plus : public Test {
      public:
@@ -81,7 +81,7 @@ namespace Test { namespace Int {
          double d1 = static_cast<double>(x[1]);
          double d2 = static_cast<double>(x[2]);
          return ((d0+d1 >= Gecode::Int::Limits::min) &&
-                 (d0+d1 <= Gecode::Int::Limits::max) && 
+                 (d0+d1 <= Gecode::Int::Limits::max) &&
                  (d0+d1 == d2));
        }
        /// Post constraint on \a x
@@ -90,7 +90,7 @@ namespace Test { namespace Int {
          rel(home, plus(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
        }
      };
-   
+
      /// Test for subtraction constraint
      class Minus : public Test {
      public:
@@ -103,7 +103,7 @@ namespace Test { namespace Int {
          double d1 = static_cast<double>(x[1]);
          double d2 = static_cast<double>(x[2]);
          return ((d0-d1 >= Gecode::Int::Limits::min) &&
-                 (d0-d1 <= Gecode::Int::Limits::max) && 
+                 (d0-d1 <= Gecode::Int::Limits::max) &&
                  (d0-d1 == d2));
        }
        /// Post constraint on \a x
@@ -112,7 +112,7 @@ namespace Test { namespace Int {
          rel(home, minus(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
        }
      };
-   
+
      /// Test for sqr constraint
      class Sqr : public Test {
      public:
@@ -131,7 +131,7 @@ namespace Test { namespace Int {
          rel(home, sqr(home, x[0]), IRT_EQ, x[1], ICL_DOM);
        }
      };
-   
+
      /// Test for sqrt constraint
      class Sqrt : public Test {
      public:
@@ -150,7 +150,7 @@ namespace Test { namespace Int {
          rel(home, sqrt(home,x[0]), IRT_EQ, x[1], ICL_DOM);
        }
      };
-   
+
      /// Test for absolute value constraint
      class Abs : public Test {
      public:
@@ -170,8 +170,8 @@ namespace Test { namespace Int {
          rel(home, abs(home, x[0], icl), IRT_EQ, x[1], ICL_DOM);
        }
      };
-   
-     /// Test for binary minimum constraint  
+
+     /// Test for binary minimum constraint
      class Min : public Test {
      public:
        /// Create and register test
@@ -187,12 +187,12 @@ namespace Test { namespace Int {
          rel(home, min(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
        }
      };
-   
-     /// Test for binary maximum constraint  
+
+     /// Test for binary maximum constraint
      class Max : public Test {
      public:
        /// Create and register test
-       Max(const std::string& s, const Gecode::IntSet& d) 
+       Max(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Max::Bin::"+s,3,d) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -204,8 +204,8 @@ namespace Test { namespace Int {
          rel(home, max(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
        }
      };
-   
-     /// Test for n-ary minimmum constraint  
+
+     /// Test for n-ary minimmum constraint
      class MinNary : public Test {
      public:
        /// Create and register test
@@ -222,8 +222,8 @@ namespace Test { namespace Int {
          rel(home, min(home, m), IRT_EQ, x[3], ICL_DOM);
        }
      };
-   
-     /// Test for n-ary maximum constraint  
+
+     /// Test for n-ary maximum constraint
      class MaxNary : public Test {
      public:
        /// Create and register test
@@ -240,7 +240,7 @@ namespace Test { namespace Int {
          rel(home, max(home, m), IRT_EQ, x[3], ICL_DOM);
        }
      };
-   
+
      const int v1[7] = {
        Gecode::Int::Limits::min, Gecode::Int::Limits::min+1,
        -1,0,1,
@@ -251,49 +251,49 @@ namespace Test { namespace Int {
        -4,-2,-1,0,1,2,4,
        static_cast<int>(sqrt(static_cast<double>(Gecode::Int::Limits::max)))
      };
-     
+
      Gecode::IntSet d1(v1,7);
      Gecode::IntSet d2(v2,9);
      Gecode::IntSet d3(-8,8);
-   
+
      Mult mult_max("A",d1);
      Mult mult_med("B",d2);
      Mult mult_min("C",d3);
-   
+
      Plus plus_max("A",d1);
      Plus plus_med("B",d2);
      Plus plus_min("C",d3);
-   
+
      Minus minus_max("A",d1);
      Minus minus_med("B",d2);
      Minus minus_min("C",d3);
-   
+
      Sqr sqr_max("A",d1);
      Sqr sqr_med("B",d2);
      Sqr sqr_min("C",d3);
-   
+
      Sqrt sqrt_max("A",d1);
      Sqrt sqrt_med("B",d2);
      Sqrt sqrt_min("C",d3);
-   
+
      Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
      Abs abs_bnd_med("B",d2,Gecode::ICL_BND);
      Abs abs_bnd_min("C",d3,Gecode::ICL_BND);
      Abs abs_dom_max("A",d1,Gecode::ICL_DOM);
      Abs abs_dom_med("B",d2,Gecode::ICL_DOM);
      Abs abs_dom_min("C",d3,Gecode::ICL_DOM);
-   
+
      Min min_max("A",d1);
      Min min_med("B",d2);
      Min min_min("C",d3);
-   
+
      Max max_max("A",d1);
      Max max_med("B",d2);
      Max max_min("C",d3);
-   
+
      MinNary min_nary;
      MaxNary max_nary;
-   
+
      //@}
    }
 

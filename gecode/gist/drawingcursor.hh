@@ -56,7 +56,7 @@ namespace Gecode { namespace Gist {
     int x, y;
 
     bool copies;
-    
+
     /// Test if current node is clipped
     bool isClipped(void);
   public:
@@ -75,7 +75,7 @@ namespace Gecode { namespace Gist {
     static const QColor lightGreen;
     /// The color for expanded choice nodes
     static const QColor lightBlue;
-    
+
     /// Constructor
     DrawingCursor(VisualNode* root, BestNode* curBest0,
                   QPainter& painter0,

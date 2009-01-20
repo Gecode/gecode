@@ -78,10 +78,10 @@ public:
 #endif
   };
 #endif
-  
+
   /// Constructor
   Sudoku(const SizeOptions& opt) : n(example_size(examples[opt.size()])) {}
-  
+
   /// Constructor for cloning \a s
   Sudoku(bool share, Sudoku& s) : Example(share,s), n(s.n) {}
 
@@ -169,9 +169,9 @@ public:
     }
 #endif
 
-    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);    
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
-  
+
   /// Constructor for cloning \a s
   SudokuInt(bool share, SudokuInt& s) : Sudoku(share, s) {
     x.update(*this, share, s.x);
@@ -192,7 +192,7 @@ public:
         if (x[i].val()<10)
           os << x[i] << " ";
         else
-          os << (char)(x[i].val()+'A'-10) << " ";        
+          os << (char)(x[i].val()+'A'-10) << " ";
       }
       else
         os << ". ";
@@ -263,7 +263,7 @@ public:
     int* dsb_arr = r.alloc<int>(nn);
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        
+
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {
             dsb_arr[ii*n+jj] = j*nn*n+i*n+jj*nn+ii+1;
@@ -319,7 +319,7 @@ public:
           if (j+1<10)
             os << j+1 << " ";
           else
-            os << (char)(j+1+'A'-10) << " ";        
+            os << (char)(j+1+'A'-10) << " ";
           break;
         }
       }
@@ -383,7 +383,7 @@ public:
     int* dsb_arr = r.alloc<int>(nn);
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
-        
+
         for (int ii=0; ii<n; ii++) {
           for (int jj=0; jj<n; jj++) {
             dsb_arr[ii*n+jj] = j*nn*n+i*n+jj*nn+ii+1;
@@ -393,7 +393,7 @@ public:
       }
     }
 
-    // All x must be pairwise disjoint and partition the field indices   
+    // All x must be pairwise disjoint and partition the field indices
     if (nn == 9) {
       partition(*this, y);
     } else {
@@ -438,7 +438,7 @@ public:
           if (j+1<10)
             os << j+1 << " ";
           else
-            os << (char)(j+1+'A'-10) << " ";        
+            os << (char)(j+1+'A'-10) << " ";
           break;
         }
       }
@@ -452,7 +452,7 @@ public:
 #endif
 
 /**
- * \brief %Example: Solving %Sudoku puzzles using both set and integer 
+ * \brief %Example: Solving %Sudoku puzzles using both set and integer
  * constraints
  *
  * \ingroup ExProblem
@@ -483,7 +483,7 @@ public:
       values[i] = i+1;
     count(*this, x, IntSet(nn,nn), values, ICL_DOM);
   }
-  
+
   /// Constructor for cloning \a s
   SudokuMixed(bool share, SudokuMixed& s)
   : Sudoku(share, s), SudokuInt(share, s), SudokuSet(share, s) {}
@@ -493,10 +493,10 @@ public:
   copy(bool share) {
     return new SudokuMixed(share,*this);
   }
-  
+
   /// Print solution
   virtual void print(std::ostream& os) { SudokuInt::print(os); }
-  
+
 };
 
 #endif
@@ -514,11 +514,11 @@ main(int argc, char* argv[]) {
   opt.model(Sudoku::MODEL_INT);
   opt.model(Sudoku::MODEL_INT, "int", "use integer constraints");
   opt.model(Sudoku::MODEL_SET, "set", "use set constraints");
-  opt.model(Sudoku::MODEL_MIXED, "mixed", 
+  opt.model(Sudoku::MODEL_MIXED, "mixed",
             "use both integer and set constraints");
 #ifdef GECODE_HAS_CPLTSET_VARS
   CpltSet::manager.init(5000000, 2000000);
-  opt.model(Sudoku::MODEL_CPLT, "cpltset", 
+  opt.model(Sudoku::MODEL_CPLT, "cpltset",
             "use CpltSet constraints");
 #endif
   opt.propagation(SudokuInt::PROP_NONE);
@@ -565,7 +565,7 @@ namespace {
    * \relates Sudoku
    */
   //@{
-  
+
   /// The specifications
   const char* examples[] = {
     // 0
@@ -1208,7 +1208,7 @@ namespace {
     // 55 16x16 instances (mostly harmless) from janko.at
 
     // http://janko.at/Raetsel/Sudoku/301.a.htm
-    // 34    
+    // 34
     "D92.....G...43.."
     "4CF.....9D.2.6EB"
     ".E.1....F.8BC..A"

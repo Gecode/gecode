@@ -128,11 +128,11 @@ namespace Gecode { namespace CpltSet {
   };
 
   /**
-   * \brief Finite integer set variable implementation using a complete domain 
+   * \brief Finite integer set variable implementation using a complete domain
    * representation
    *
    * \ingroup Other
-   */  
+   */
   class CpltSetVarImp : public CpltSetVarImpBase {
     friend class BddIterator;
     friend class DomBddIterator;
@@ -155,7 +155,7 @@ namespace Gecode { namespace CpltSet {
     int min;
     /// Initial maximum of the domain, needed for bdd operations
     int max;
-    /** \brief Starting index of the bdd variable vector for this CpltSet 
+    /** \brief Starting index of the bdd variable vector for this CpltSet
       * variable in the bdd table
       */
     unsigned int _offset;
@@ -172,11 +172,11 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Construct variable with given domain
     GECODE_CPLTSET_EXPORT
-    CpltSetVarImp(Space& home, int glbMin, int glbMax, int lubMin, int lubMax, 
+    CpltSetVarImp(Space& home, int glbMin, int glbMax, int lubMin, int lubMax,
                   unsigned int cardMin, unsigned int cardMax);
     /// Construct variable with given domain
     GECODE_CPLTSET_EXPORT
-    CpltSetVarImp(Space& home, const IntSet& glbD, int lubMin, int lubMax, 
+    CpltSetVarImp(Space& home, const IntSet& glbD, int lubMin, int lubMax,
                   unsigned int cardMin, unsigned int cardMax);
     /// Construct variable with given domain
     GECODE_CPLTSET_EXPORT
@@ -213,12 +213,12 @@ namespace Gecode { namespace CpltSet {
     /// Intersect domain with range sequence described by \a i
     template <class I> ModEvent intersectI(Space& home, I& i);
     /// Exclude set described by range sequence \a i from lub
-    template <class I> ModEvent excludeI(Space& home, I& i);  
+    template <class I> ModEvent excludeI(Space& home, I& i);
     /// Include set described by range list \a i in glb
-    template <class I> ModEvent includeI(Space& home, I& i);  
+    template <class I> ModEvent includeI(Space& home, I& i);
     //@}
 
-    /// \name Set cardinality update 
+    /// \name Set cardinality update
     //@{
     /// Restrict cardinality to be at least l and at most u
     GECODE_CPLTSET_EXPORT ModEvent cardinality(Space& home, int l, int u);
@@ -254,7 +254,7 @@ namespace Gecode { namespace CpltSet {
     /// Intersect domain with the domain represented by \a d
     GECODE_CPLTSET_EXPORT ModEvent intersect(Space& home, bdd& d);
     //@}
-    
+
     /// \name Value access
     //@{
 
@@ -288,22 +288,22 @@ namespace Gecode { namespace CpltSet {
     //@}
 
 
-    /// \name Bdd information 
+    /// \name Bdd information
     //@{
     /// Return the initial minimum of the least upper bound
     int initialLubMin(void) const;
     /// Return the initial maximum of the least upper bound
     int initialLubMax(void) const;
-    /** \brief Return the number of bdd variables allocated for this variable 
+    /** \brief Return the number of bdd variables allocated for this variable
       * (initialLubMax-initialLubMin) */
     unsigned int tableWidth(void) const;
-    /** \brief Return the offset in the global bdd table where the variable's 
+    /** \brief Return the offset in the global bdd table where the variable's
       * domain starts */
     unsigned int offset(void) const;
-    /** \brief Return bdd for the \a i -th element of this variable (counting 
+    /** \brief Return bdd for the \a i -th element of this variable (counting
       * from initialLubMin) */
     bdd element(int i) const;
-    /** \brief Return negated bdd for the \a i -th element of this variable 
+    /** \brief Return negated bdd for the \a i -th element of this variable
       * (counting from initialLubMin) */
     bdd elementNeg(int i) const;
     /// Return the bdd representing the current domain
@@ -318,10 +318,10 @@ namespace Gecode { namespace CpltSet {
     GECODE_CPLTSET_EXPORT bool knownIn(int i) const;
     /// Test whether \a i is not contained in the least upper bound
     GECODE_CPLTSET_EXPORT bool knownOut(int i) const;
-    /// Test whether domain is a range 
+    /// Test whether domain is a range
     bool range(void) const;
     //@}
-    
+
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p with propagation condition \a pc to variable
@@ -332,7 +332,7 @@ namespace Gecode { namespace CpltSet {
 
   private:
     /// Return copy of not-yet copied variable
-    GECODE_CPLTSET_EXPORT 
+    GECODE_CPLTSET_EXPORT
     CpltSetVarImp* perform_copy(Space& home, bool share);
 
   public:
@@ -340,7 +340,7 @@ namespace Gecode { namespace CpltSet {
     //@{
     /// Return copy of this variable
     CpltSetVarImp* copy(Space& home, bool share);
-    //@}  
+    //@}
 
     /// \name Reflection
     //@{
@@ -393,10 +393,10 @@ namespace Gecode { namespace CpltSet {
     bool onlyleaves;
     // The number of the current level in the bdd
     int _level;
-    
-    // marks all nodes in the cache 
+
+    // marks all nodes in the cache
     GECODE_CPLTSET_EXPORT void cache_mark(void);
-    // unmarks all nodes in the cache 
+    // unmarks all nodes in the cache
     GECODE_CPLTSET_EXPORT void cache_unmark(void);
   public:
     /// \name Constructors and initialization

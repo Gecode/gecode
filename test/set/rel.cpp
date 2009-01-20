@@ -40,7 +40,7 @@
 using namespace Gecode;
 
 namespace Test { namespace Set {
-  
+
   /// Tests for relation constraints
   namespace Rel {
 

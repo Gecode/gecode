@@ -420,7 +420,7 @@ namespace Gecode {
     //@{
     /// Update this variable to be a clone of variable \a x
     void update(Space& home, bool share, IntVar& x);
-    //@}    
+    //@}
   };
 
   /**
@@ -571,7 +571,7 @@ namespace Gecode {
     /// Update this variable to be a clone of variable \a x
     void update(Space& home, bool share, BoolVar& x);
     //@}
-    
+
   };
 
   /**
@@ -845,13 +845,13 @@ namespace Gecode {
   /** \brief Post propagator for pairwise relation on \a x.
    *
    * States that the elements of \a x are in the following relation:
-   *  - if \a r = IRT_EQ, then all elements of \a x must be equal. 
+   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
    *    Supports both bounds (\a icl = ICL_BND) and
    *    domain consistency (\a icl = ICL_DOM, default).
-   *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ, 
+   *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
    *    then the elements of \a x are ordered with respt to \a r.
    *    Supports domain consistency (\a icl = ICL_DOM, default).
-   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise 
+   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise
    *    distinct (corresponds to the distinct constraint).
    *    Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *    and domain consistency (\a icl = ICL_DOM).
@@ -937,10 +937,10 @@ namespace Gecode {
   /** \brief Post propagator for pairwise relation on \a x.
    *
    * States that the elements of \a x are in the following relation:
-   *  - if \a r = IRT_EQ, then all elements of \a x must be equal. 
-   *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ, 
+   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
+   *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
    *    then the elements of \a x are ordered with respt to \a r.
-   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise 
+   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise
    *    distinct (corresponds to the distinct constraint).
    *
    */
@@ -952,7 +952,7 @@ namespace Gecode {
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = x_2\f$
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2, 
+  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x0 and \a x1
    *
@@ -962,11 +962,11 @@ namespace Gecode {
    * 0 or 1.
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, int n, 
+  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
-   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
    * \diamond_{\mathit{o}} x_{|x|-1}= y\f$
    *
    * Throws an exception of type Int::TooFewArguments, if \f$|x|<2\f$
@@ -977,7 +977,7 @@ namespace Gecode {
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
-   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
    * \diamond_{\mathit{o}} x_{|x|-1}= n\f$
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
@@ -991,11 +991,11 @@ namespace Gecode {
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
-   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
-   * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0 
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
+   * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0
    * \diamond_{\mathit{o}} \cdots \diamond_{\mathit{o}} \neg y_{|y|-1}= z\f$
    *
-   * Throws an exception of type Int::IllegalBoolOp, if \a o is different 
+   * Throws an exception of type Int::IllegalBoolOp, if \a o is different
    * from BOT_AND or BOT_OR.
    */
   GECODE_INT_EXPORT void
@@ -1003,14 +1003,14 @@ namespace Gecode {
          BoolVar z, IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
-   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
-   * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0 
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
+   * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0
    * \diamond_{\mathit{o}} \cdots \diamond_{\mathit{o}} \neg y_{|y|-1}= n\f$
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
    *
-   * Throws an exception of type Int::IllegalBoolOp, if \a o is different 
+   * Throws an exception of type Int::IllegalBoolOp, if \a o is different
    * from BOT_AND or BOT_OR.
    */
   GECODE_INT_EXPORT void
@@ -1067,7 +1067,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
-  element(Space& home, const BoolVarArgs& x, IntVar y0, BoolVar y1, 
+  element(Space& home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
           IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
@@ -1184,11 +1184,11 @@ namespace Gecode {
    * other values for \a icl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x.
    *
-   * Throws an exception of type Int::ArgumentSame, if \a x 
+   * Throws an exception of type Int::ArgumentSame, if \a x
    * contains the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
-  circuit(Space& home, const IntVarArgs& x, 
+  circuit(Space& home, const IntVarArgs& x,
           IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1240,7 +1240,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
@@ -1250,7 +1250,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
@@ -1260,7 +1260,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
@@ -1270,7 +1270,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
@@ -1280,7 +1280,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
@@ -1290,7 +1290,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
@@ -1300,7 +1300,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
@@ -1310,7 +1310,7 @@ namespace Gecode {
   cumulatives(Space& home, const IntArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most, 
+              const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1337,7 +1337,7 @@ namespace Gecode {
 
   /**
    * \brief Post propagator that \a y is \a x sorted in increasing order
-   * 
+   *
    * The values in \a z describe the sorting permutation, that is
    * \f$\forall i\in\{0,\dots,|x|-1\}: x_i=y_{z_i} \f$.
    *
@@ -1422,7 +1422,7 @@ namespace Gecode {
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=j\}=c_j\f$ and
     * \f$ \bigcup_i \{x_i\} \subseteq \{0,\ldots,|c|-1\}\f$
     * (no other value occurs).
-    * 
+    *
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain consistency (\a icl = ICL_DOM).
     *
@@ -1439,7 +1439,7 @@ namespace Gecode {
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=j\}\in c_j\f$ and
     * \f$ \bigcup_i \{x_i\} \subseteq \{0,\ldots,|c|-1\}\f$
     * (no other value occurs).
-    * 
+    *
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain consistency (\a icl = ICL_DOM).
     *
@@ -1453,10 +1453,10 @@ namespace Gecode {
   /** \brief Posts a global count (cardinality) constraint
     *
     * Posts the constraint that
-    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}=c_j\f$ and 
+    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}=c_j\f$ and
     * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
     * (no other value occurs).
-    * 
+    *
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain consistency (\a icl = ICL_DOM).
     *
@@ -1468,7 +1468,7 @@ namespace Gecode {
     */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
-        const IntVarArgs& c, const IntArgs& v, 
+        const IntVarArgs& c, const IntArgs& v,
         IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
@@ -1477,7 +1477,7 @@ namespace Gecode {
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}\in c_j\f$ and
     * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
     * (no other value occurs).
-    * 
+    *
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain consistency (\a icl = ICL_DOM).
     *
@@ -1489,8 +1489,8 @@ namespace Gecode {
     */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
-        const IntSetArgs& c, const IntArgs& v, 
-        IntConLevel icl=ICL_DEF); 
+        const IntSetArgs& c, const IntArgs& v,
+        IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1498,7 +1498,7 @@ namespace Gecode {
     * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}\in c\f$ and
     * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
     * (no other value occurs).
-    * 
+    *
     * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
     * and domain consistency (\a icl = ICL_DOM).
     *
@@ -1719,7 +1719,7 @@ namespace Gecode {
     /// Create reflection specification for the TupleSet
     GECODE_INT_EXPORT Reflection::Arg* spec(Reflection::VarMap& vm) const;
   };
- 
+
   /** \brief Post propagator for \f$x\in T\f$.
    *
    * \li Supports implementations optimized for memory (\a epk = \a
@@ -1737,7 +1737,7 @@ namespace Gecode {
    * for the incremental algorithm (\a epk = \a EPK_SPEED).
    */
   GECODE_INT_EXPORT void
-  extensional(Space& home, const IntVarArgs& x, const TupleSet& t, 
+  extensional(Space& home, const IntVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x\in T\f$.
@@ -1749,7 +1749,7 @@ namespace Gecode {
    *     \a x and \a t are of different size.
    */
   GECODE_INT_EXPORT void
-  extensional(Space& home, const BoolVarArgs& x, const TupleSet& t, 
+  extensional(Space& home, const BoolVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
  //@}
 }
@@ -1905,12 +1905,12 @@ namespace Gecode {
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
-         IntRelType r, int c, BoolVar b, 
+         IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
-         IntRelType r, IntVar y, BoolVar b, 
+         IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
    *
@@ -1955,7 +1955,7 @@ namespace Gecode {
    * \defgroup TaskModelIntLinearBool Linear constraints over Boolean variables
    * \ingroup TaskModelInt
    *
-   * All variants for linear constraints over Boolean variables share 
+   * All variants for linear constraints over Boolean variables share
    * the following properties:
    *  - Bounds consistency (over the real numbers) is supported for
    *    all constraints (actually, for disequlities always domain consistency
@@ -2135,19 +2135,19 @@ namespace Gecode {
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, const IntVarArgs& x, 
+  branch(Space& home, const IntVarArgs& x,
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, const BoolVarArgs& x, 
+  branch(Space& home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const VarBranchOptions& o_vars = VarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, const BoolVarArgs& x, 
+  branch(Space& home, const BoolVarArgs& x,
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
@@ -2182,7 +2182,7 @@ namespace Gecode {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const DFA& d);
-  
+
   /** Print TupleSet \a ts
    * \relates Gecode::TupleSet
    */

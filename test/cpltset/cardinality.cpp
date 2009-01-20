@@ -91,7 +91,7 @@ namespace Test { namespace CpltSet {
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr1(x.lub, x[0]);
-    
+
         int c = 0;
         while (xr1()) {
           c += xr1.width();
@@ -115,7 +115,7 @@ namespace Test { namespace CpltSet {
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr1(x.lub, x[0]);
-    
+
         int c = 0;
         while (xr1()) {
           c += xr1.width();

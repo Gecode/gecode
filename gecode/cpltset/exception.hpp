@@ -89,7 +89,7 @@ namespace Gecode { namespace CpltSet {
     /// Initialize with location \a l
     ArgumentEmpty(const char* l);
   };
-  
+
   /// %Exception: Arguments are of different size
   class GECODE_VTABLE_EXPORT ArgumentSizeMismatch : public Exception  {
   public:
@@ -131,7 +131,7 @@ namespace Gecode { namespace CpltSet {
     : Exception(l,"Attempt to create variable with wrong values") {}
 
   inline
-  GlbLubSpecNoSubset::GlbLubSpecNoSubset(const char* l) 
+  GlbLubSpecNoSubset::GlbLubSpecNoSubset(const char* l)
     : Exception(l,"Attempt to create variable where glb is not a subset of lub") {}
 
   inline

@@ -53,7 +53,7 @@ namespace Gecode {
       : VarViewBase<BoolVarImp>(x) {}
     forceinline
     BoolView::BoolView(Space&, const Reflection::VarMap& vars,
-                       Reflection::Arg* arg) 
+                       Reflection::Arg* arg)
       : VarViewBase<BoolVarImp>(BoolVar(vars.var(arg->toVar())).var()) {}
 
     /*
@@ -80,7 +80,7 @@ namespace Gecode {
     BoolView::val(void) const {
       return varimp->val();
     }
-    
+
     forceinline unsigned int
     BoolView::size(void) const {
       return varimp->size();
@@ -97,8 +97,8 @@ namespace Gecode {
     BoolView::regret_max(void) const {
       return varimp->regret_max();
     }
-    
-    
+
+
     /*
      * Domain tests
      *
@@ -111,7 +111,7 @@ namespace Gecode {
     BoolView::assigned(void) const {
       return varimp->assigned();
     }
-    
+
     forceinline bool
     BoolView::in(int n) const {
       return varimp->in(n);
@@ -120,7 +120,7 @@ namespace Gecode {
     BoolView::in(double n) const {
       return varimp->in(n);
     }
-    
+
 
     /*
      * Domain update by value
@@ -134,7 +134,7 @@ namespace Gecode {
     BoolView::lq(Space& home, double n) {
       return varimp->lq(home,n);
     }
-    
+
     forceinline ModEvent
     BoolView::le(Space& home, int n) {
       return varimp->lq(home,n-1);
@@ -143,7 +143,7 @@ namespace Gecode {
     BoolView::le(Space& home, double n) {
       return lq(home,n-1.0);
     }
-    
+
     forceinline ModEvent
     BoolView::gq(Space& home, int n) {
     return varimp->gq(home,n);
@@ -152,7 +152,7 @@ namespace Gecode {
     BoolView::gq(Space& home, double n) {
       return varimp->gq(home,n);
     }
-    
+
     forceinline ModEvent
     BoolView::gr(Space& home, int n) {
       return varimp->gq(home,n+1);
@@ -161,7 +161,7 @@ namespace Gecode {
     BoolView::gr(Space& home, double n) {
       return gq(home,n+1.0);
     }
-    
+
     forceinline ModEvent
     BoolView::nq(Space& home, int n) {
       return varimp->nq(home,n);
@@ -170,7 +170,7 @@ namespace Gecode {
     BoolView::nq(Space& home, double n) {
       return varimp->nq(home,n);
     }
-    
+
     forceinline ModEvent
     BoolView::eq(Space& home, int n) {
       return varimp->eq(home,n);
@@ -179,8 +179,8 @@ namespace Gecode {
     BoolView::eq(Space& home, double n) {
       return varimp->eq(home,n);
     }
-    
-    
+
+
     /*
      * Iterator-based domain update
      *

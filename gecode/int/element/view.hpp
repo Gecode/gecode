@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Element {
       }
     }
   }
-  
+
   template <class View>
   Reflection::Arg*
   IdxViewArray<View>::spec(const Space& home, Reflection::VarMap& m) const {
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Element {
       for (int i = n; i--; ) {
         xs[i].idx = (*is)[i]; xs[i].view = View(home, vars, (*s)[i]);
       }
-    }                                     
+    }
   }
 
 
@@ -471,7 +471,7 @@ namespace Gecode { namespace Int { namespace Element {
      if (me_modified(me) && (x1.min() != min))
        es = ES_NOFIX;
     }
-    return (x1.assigned() && (min == max)) ? 
+    return (x1.assigned() && (min == max)) ?
       ES_SUBSUMED(*this,home) : es;
   }
 
@@ -522,7 +522,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC>
   PropCost
   ViewDom<VA,VB,VC>::cost(const Space&, const ModEventDelta& med) const {
-    return PropCost::linear((VA::me(med) != ME_INT_DOM) ? 
+    return PropCost::linear((VA::me(med) != ME_INT_DOM) ?
                             PropCost::LOW : PropCost::MED, iv.size()+2);
   }
 

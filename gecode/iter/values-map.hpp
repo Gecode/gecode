@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Values {
   class Map {
   private:
     /// Check that \a I is a value iterator;
-    IsValueIter<I> _checkI;    
+    IsValueIter<I> _checkI;
   private:
     /// Input iterator
     I i;

@@ -219,36 +219,36 @@ namespace Gecode {
 
       /**
        * \name Domain update by iterator
-       * 
+       *
        * Views can be both updated by range and value iterators.
        * Value iterators do not need to be strict in that the same value
        * is allowed to occur more than once in the iterated sequence.
        *
        * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation 
-       * is invoked. In this case, the view is only updated after the 
-       * iterator has been consumed. Otherwise, the domain might be updated 
+       * passed as argument depends on the view on which the operation
+       * is invoked. In this case, the view is only updated after the
+       * iterator has been consumed. Otherwise, the domain might be updated
        * concurrently while following the iterator.
        *
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -275,14 +275,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, IntView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
       static Support::Symbol type(void);
       //@}
-      
+
     };
 
     /**
@@ -290,7 +290,7 @@ namespace Gecode {
      * \relates Gecode::Int::IntView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const IntView& x);
 
   }
@@ -410,36 +410,36 @@ namespace Gecode {
 
       /**
        * \name Domain update by iterator
-       * 
+       *
        * Views can be both updated by range and value iterators.
        * Value iterators do not need to be strict in that the same value
        * is allowed to occur more than once in the iterated sequence.
        *
        * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation 
-       * is invoked. In this case, the view is only updated after the 
-       * iterator has been consumed. Otherwise, the domain might be updated 
+       * passed as argument depends on the view on which the operation
+       * is invoked. In this case, the view is only updated after the
+       * iterator has been consumed. Otherwise, the domain might be updated
        * concurrently while following the iterator.
        *
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -488,7 +488,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, MinusView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
@@ -502,7 +502,7 @@ namespace Gecode {
      * \relates Gecode::Int::MinusView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
 
   }
@@ -626,36 +626,36 @@ namespace Gecode {
 
       /**
        * \name Domain update by iterator
-       * 
+       *
        * Views can be both updated by range and value iterators.
        * Value iterators do not need to be strict in that the same value
        * is allowed to occur more than once in the iterated sequence.
        *
        * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation 
-       * is invoked. In this case, the view is only updated after the 
-       * iterator has been consumed. Otherwise, the domain might be updated 
+       * passed as argument depends on the view on which the operation
+       * is invoked. In this case, the view is only updated after the
+       * iterator has been consumed. Otherwise, the domain might be updated
        * concurrently while following the iterator.
        *
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -704,7 +704,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, OffsetView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
@@ -718,7 +718,7 @@ namespace Gecode {
      * \relates Gecode::Int::OffsetView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
 
   }
@@ -909,7 +909,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ScaleView<Val,UnsVal>& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
@@ -935,7 +935,7 @@ namespace Gecode {
      * \relates Gecode::Int::ScaleView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x);
 
     /**
@@ -943,7 +943,7 @@ namespace Gecode {
      * \relates Gecode::Int::ScaleView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x);
 
   }
@@ -1068,36 +1068,36 @@ namespace Gecode {
 
       /**
        * \name Domain update by iterator
-       * 
+       *
        * Views can be both updated by range and value iterators.
        * Value iterators do not need to be strict in that the same value
        * is allowed to occur more than once in the iterated sequence.
        *
        * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation 
-       * is invoked. In this case, the view is only updated after the 
-       * iterator has been consumed. Otherwise, the domain might be updated 
+       * passed as argument depends on the view on which the operation
+       * is invoked. In this case, the view is only updated after the
+       * iterator has been consumed. Otherwise, the domain might be updated
        * concurrently while following the iterator.
        *
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -1146,7 +1146,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ConstIntView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
@@ -1160,7 +1160,7 @@ namespace Gecode {
      * \relates Gecode::Int::ConstIntView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x);
 
   }
@@ -1275,36 +1275,36 @@ namespace Gecode {
 
       /**
        * \name Domain update by iterator
-       * 
+       *
        * Views can be both updated by range and value iterators.
        * Value iterators do not need to be strict in that the same value
        * is allowed to occur more than once in the iterated sequence.
        *
        * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation 
-       * is invoked. In this case, the view is only updated after the 
-       * iterator has been consumed. Otherwise, the domain might be updated 
+       * passed as argument depends on the view on which the operation
+       * is invoked. In this case, the view is only updated after the
+       * iterator has been consumed. Otherwise, the domain might be updated
        * concurrently while following the iterator.
        *
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -1353,7 +1353,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ZeroIntView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
@@ -1367,7 +1367,7 @@ namespace Gecode {
      * \relates Gecode::Int::ScaleView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x);
 
   }
@@ -1526,36 +1526,36 @@ namespace Gecode {
 
       /**
        * \name Domain update by iterator
-       * 
+       *
        * Views can be both updated by range and value iterators.
        * Value iterators do not need to be strict in that the same value
        * is allowed to occur more than once in the iterated sequence.
        *
        * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation 
-       * is invoked. In this case, the view is only updated after the 
-       * iterator has been consumed. Otherwise, the domain might be updated 
+       * passed as argument depends on the view on which the operation
+       * is invoked. In this case, the view is only updated after the
+       * iterator has been consumed. Otherwise, the domain might be updated
        * concurrently while following the iterator.
        *
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I> 
+      template <class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -1586,7 +1586,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, BoolView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
@@ -1600,7 +1600,7 @@ namespace Gecode {
      * \relates Gecode::Int::BoolView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const BoolView& x);
 
   }
@@ -1758,7 +1758,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, NegBoolView& x);
       //@}
-      
+
       /// \name Reflection
       //@{
       /// Return specification for this view, using variable map \a m
@@ -1772,7 +1772,7 @@ namespace Gecode {
      * \relates Gecode::Int::NegBoolView
      */
     template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>& 
+    std::basic_ostream<Char,Traits>&
     operator <<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
 
 

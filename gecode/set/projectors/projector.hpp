@@ -39,7 +39,7 @@ namespace Gecode {
 
   forceinline
   Projector::Projector(void) : i(0), glb(), lub() {}
-  
+
   forceinline
   Projector::Projector(SetExpr::var_idx x,
                        const SetExpr& sglb, const SetExpr& slub)
@@ -51,11 +51,11 @@ namespace Gecode {
   Projector::propagate(Space& home, ViewArray<Set::SetView>& x) {
     if (negated) {
       switch (ExecStatus es=check(home, x)) {
-      case ES_FAILED: 
+      case ES_FAILED:
         return __ES_SUBSUMED;
       case __ES_SUBSUMED:
         return ES_FAILED;
-      default: 
+      default:
         return es;
       }
     } else {
@@ -94,7 +94,7 @@ namespace Gecode {
   Projector::getIdx(void) const { return i; }
 
   template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>& 
+  std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Projector& p) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

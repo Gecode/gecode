@@ -43,7 +43,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  BySizeMin::init(Space&, CpltSetView x) { 
+  BySizeMin::init(Space&, CpltSetView x) {
     size = x.unknownSize();
     return (size == 1) ? VSS_BEST : VSS_BETTER;
   }
@@ -70,7 +70,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<CpltSetView>(home,vbo) {}
   forceinline ViewSelStatus
-  BySizeMax::init(Space&, CpltSetView x) { 
+  BySizeMax::init(Space&, CpltSetView x) {
     size = x.unknownSize();
     return VSS_BETTER;
   }

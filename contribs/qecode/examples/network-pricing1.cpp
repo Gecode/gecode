@@ -47,7 +47,7 @@ void printStr(Strategy s,int depth) {
 int main() {
     int NCustomer = 9;
     int NArc = 5;
-    int*c = new int[NCustomer*NArc]; // [NArc*i+j] : Initial cost for client i to reach way j 
+    int*c = new int[NCustomer*NArc]; // [NArc*i+j] : Initial cost for client i to reach way j
     int* d = new int[NCustomer]; // d[i] : amount of data client i wants to transmit
     int* u = new int[NCustomer]; // u[i] : maximum cost client i will accept
     int max = 19;
@@ -64,9 +64,9 @@ int main() {
 
     d[0]=7;    d[1]=16;    d[2]=16;    d[3]=19;    d[4]=18;    d[5]=13;    d[6]=8;    d[7]=11;    d[8]=18;
     u[0]=122;    u[1]=190;    u[2]=113;    u[3]=285;    u[4]=247;    u[5]=255;    u[6]=143;    u[7]=121;    u[8]=139;
-    IntArgs carg(NCustomer*NArc,c); // Copy c in an IntArgs for further constraint posting 
-    IntArgs darg(NCustomer,d); // Copy d in an IntArgs for further constraint posting 
-    IntArgs uarg(NCustomer,u); // Copy u in an IntArgs for further constraint posting 
+    IntArgs carg(NCustomer*NArc,c); // Copy c in an IntArgs for further constraint posting
+    IntArgs darg(NCustomer,d); // Copy d in an IntArgs for further constraint posting
+    IntArgs uarg(NCustomer,u); // Copy u in an IntArgs for further constraint posting
 
     bool q[] = {false,true,false};
     int* nv = new int[3];
@@ -124,7 +124,7 @@ int main() {
     post(*(problem.space()),cost <= aux6);
 
     IntVarArgs branch3(NArc+10);
-    for (int i=0;i<NArc+10;i++) 
+    for (int i=0;i<NArc+10;i++)
         branch3[i] = problem.var(i);
     branch(*(problem.space()),branch3,INT_VAR_SIZE_MIN,INT_VAL_MIN);
 

@@ -315,7 +315,7 @@ namespace Gecode { namespace Int {
 
   forceinline
   IntVarImp::IntVarImp(Space& home, bool share, IntVarImp& x)
-    : IntVarImpBase(home,share,x), dom(x.dom.min(),x.dom.max()) { 
+    : IntVarImpBase(home,share,x), dom(x.dom.min(),x.dom.max()) {
     holes = x.holes;
     if (holes) {
       int m = 1;
@@ -369,7 +369,7 @@ namespace Gecode { namespace Int {
     }
     Reflection::IntArrayArg* args = Reflection::Arg::newIntArray(count*2);
 
-    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, args, 
+    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, args,
                                                         assigned());
 
     count = 0;

@@ -56,9 +56,9 @@ namespace Gecode {  namespace Gist {
     /// Default scale factor
     static const int defScale = 100;
     /// Maximum scale factor for automatic zoom
-    static const int maxAutoZoomScale = defScale;    
+    static const int maxAutoZoomScale = defScale;
   };
-  
+
   class TreeCanvas;
 
   /// \brief A thread that concurrently explores the tree
@@ -71,13 +71,13 @@ namespace Gecode {  namespace Gist {
     void updateCanvas(void);
   public:
     void search(VisualNode* n, bool all, TreeCanvas* ti);
-    
+
   Q_SIGNALS:
     void update(int w, int h, int scale0);
     void statusChanged(bool);
     void scaleChanged(int);
     void solution(const Space*);
-    
+
   protected:
     void run(void);
   };
@@ -103,7 +103,7 @@ namespace Gecode {  namespace Gist {
   public Q_SLOTS:
     /// Set scale factor to \a scale0
     void scaleTree(int scale0);
-    
+
     /// Explore complete subtree of selected node
     void searchAll(void);
     /// Find next solution below selected node
@@ -126,13 +126,13 @@ namespace Gecode {  namespace Gist {
     void centerCurrentNode(void);
     /// Call the inspector for the currently selected node
     void inspectCurrentNode(void);
-        
+
     /// Stop current search
     void stopSearch(void);
-    
+
     /// Reset
     void reset(void);
-    
+
     /// Move selection to the parent of the selected node
     void navUp(void);
     /// Move selection to the first child of the selected node
@@ -149,7 +149,7 @@ namespace Gecode {  namespace Gist {
     void navPrevSol(void);
     /// Recall selection of point in time \a pit
     void markCurrentNode(int pit);
-    
+
     /// Set the current node to be the head of the path
     void setPath(void);
     /// Call the inspector for all nodes on the path from root to head of the path
@@ -187,7 +187,7 @@ namespace Gecode {  namespace Gist {
 
     /// Stop search and wait for it to finish
     void finish(void);
-    
+
   Q_SIGNALS:
     /// The scale factor has changed
     void scaleChanged(int);
@@ -228,13 +228,13 @@ namespace Gecode {  namespace Gist {
     QVector<Inspector*> inspectors;
     /// The active inspector
     int activeInspector;
-    
+
     /// The scale bar
     QSlider* scaleBar;
-    
+
     /// Statistics about the search tree
     Statistics stats;
-    
+
     /// Current scale factor
     double scale;
     /// Offset on the x axis so that the tree is centered
@@ -308,7 +308,7 @@ namespace Gecode {  namespace Gist {
     /// Export PDF of the subtree of \a n
     void exportNodePDF(VisualNode* n);
   };
-    
+
 }}
 
 #endif

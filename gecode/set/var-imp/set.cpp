@@ -147,7 +147,7 @@ namespace Gecode { namespace Set {
       BndSetRanges lrs(glb);
       while (lrs()) { glbsize++; ++lrs; }
     }
-    
+
     Reflection::IntArrayArg* glbdom = Reflection::Arg::newIntArray(glbsize*2);
     BndSetRanges lr(glb);
     for (int count=0; lr(); ++lr) {
@@ -160,7 +160,7 @@ namespace Gecode { namespace Set {
       BndSetRanges urs(lub);
       while (urs()) { lubsize++; ++urs; }
     }
-    
+
     BndSetRanges ur(lub);
     Reflection::IntArrayArg* lubdom = Reflection::Arg::newIntArray(lubsize*2);
     for (int count=0; ur(); ++ur) {
@@ -173,7 +173,7 @@ namespace Gecode { namespace Set {
         Reflection::Arg::newPair(glbdom, Reflection::Arg::newInt(cardMin())),
         Reflection::Arg::newPair(lubdom, Reflection::Arg::newInt(cardMax())));
 
-    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, pair, 
+    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, pair,
                                                         assigned());
     return (Reflection::Arg::newVar(m.put(this, spec)));
   }
@@ -182,9 +182,9 @@ namespace Gecode { namespace Set {
   SetVarImp::create(Space& home, Reflection::VarSpec& spec) {
     int cardMin = spec.dom()->first()->second()->toInt();
     int cardMax = spec.dom()->second()->second()->toInt();
-    Reflection::IntArrayArgRanges 
+    Reflection::IntArrayArgRanges
       glb(spec.dom()->first()->first()->toIntArray());
-    Reflection::IntArrayArgRanges 
+    Reflection::IntArrayArgRanges
       lub(spec.dom()->second()->first()->toIntArray());
     return new (home) SetVarImp(home, IntSet(glb), IntSet(lub),
                                 cardMin, cardMax);
@@ -195,9 +195,9 @@ namespace Gecode { namespace Set {
                        Reflection::VarSpec& spec) {
     int cardMin = spec.dom()->first()->second()->toInt();
     int cardMax = spec.dom()->second()->second()->toInt();
-    Reflection::IntArrayArgRanges 
+    Reflection::IntArrayArgRanges
       glb(spec.dom()->first()->first()->toIntArray());
-    Reflection::IntArrayArgRanges 
+    Reflection::IntArrayArgRanges
       lub(spec.dom()->second()->first()->toIntArray());
     SetVarImp* s = static_cast<SetVarImp*>(v);
     GECODE_ME_FAIL(home, s->cardMin(home, cardMin));

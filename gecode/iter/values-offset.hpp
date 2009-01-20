@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Values {
   class Offset {
   private:
     /// Check that \a I is a value iterator;
-    IsValueIter<I> _checkI;    
+    IsValueIter<I> _checkI;
   protected:
     /// Input iterator
     I i;

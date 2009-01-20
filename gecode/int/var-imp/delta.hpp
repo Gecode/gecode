@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int {
 
   forceinline
-  IntDelta::IntDelta(void) 
+  IntDelta::IntDelta(void)
     : _min(1), _max(0) {}
   forceinline
   IntDelta::IntDelta(int min, int max)
@@ -46,15 +46,15 @@ namespace Gecode { namespace Int {
   forceinline
   IntDelta::IntDelta(int min)
     : _min(min) {}
-  forceinline int 
+  forceinline int
   IntDelta::min(void) const {
     return _min;
   }
-  forceinline int 
+  forceinline int
   IntDelta::max(void) const {
     return _max;
   }
-  forceinline bool 
+  forceinline bool
   IntDelta::any(void) const {
     return _min > _max;
   }

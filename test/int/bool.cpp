@@ -70,7 +70,7 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       BinXYZ(Gecode::BoolOpType op0) 
+       BinXYZ(Gecode::BoolOpType op0)
          : Test("Bool::Bin::XYZ::"+str(op0),3,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -79,12 +79,12 @@ namespace Test { namespace Int {
        /// Post constraint
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, 
-             channel(home,x[0]), op, channel(home,x[1]), 
+         rel(home,
+             channel(home,x[0]), op, channel(home,x[1]),
              channel(home,x[2]));
        }
      };
-     
+
      /// Test for binary Boolean operation with shared variables
      class BinXXY : public Test {
      protected:
@@ -92,7 +92,7 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       BinXXY(Gecode::BoolOpType op0) 
+       BinXXY(Gecode::BoolOpType op0)
          : Test("Bool::Bin::XXY::"+str(op0),2,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -105,7 +105,7 @@ namespace Test { namespace Int {
          rel(home, b, op, b, channel(home,x[1]));
        }
      };
-     
+
      /// Test for binary Boolean operation with shared variables
      class BinXYX : public Test {
      protected:
@@ -113,7 +113,7 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       BinXYX(Gecode::BoolOpType op0) 
+       BinXYX(Gecode::BoolOpType op0)
          : Test("Bool::Bin::XYX::"+str(op0),2,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -126,7 +126,7 @@ namespace Test { namespace Int {
          rel(home, b, op, channel(home,x[1]), b);
        }
      };
-     
+
      /// Test for binary Boolean operation with shared variables
      class BinXYY : public Test {
      protected:
@@ -134,7 +134,7 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       BinXYY(Gecode::BoolOpType op0) 
+       BinXYY(Gecode::BoolOpType op0)
          : Test("Bool::Bin::XYY::"+str(op0),2,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -147,7 +147,7 @@ namespace Test { namespace Int {
          rel(home, channel(home,x[0]), op, b, b);
        }
      };
-     
+
      /// Test for binary Boolean operation with shared variables
      class BinXXX : public Test {
      protected:
@@ -155,7 +155,7 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       BinXXX(Gecode::BoolOpType op0) 
+       BinXXX(Gecode::BoolOpType op0)
          : Test("Bool::Bin::XXX::"+str(op0),1,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
          rel(home, b, op, b, b);
        }
      };
-     
+
      /// Test for binary Boolean operation with constant
      class BinConstXY : public Test {
      protected:
@@ -178,8 +178,8 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Construct and register test
-       BinConstXY(Gecode::BoolOpType op0, int c0) 
-         : Test("Bool::Bin::XY::"+str(op0)+"::"+str(c0),2,0,1), 
+       BinConstXY(Gecode::BoolOpType op0, int c0)
+         : Test("Bool::Bin::XY::"+str(op0)+"::"+str(c0),2,0,1),
            op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -191,7 +191,7 @@ namespace Test { namespace Int {
          rel(home, channel(home,x[0]), op, channel(home,x[1]), c);
        }
      };
-     
+
      /// Test for binary Boolean operation with shared variables and constant
      class BinConstXX : public Test {
      protected:
@@ -201,8 +201,8 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Construct and register test
-       BinConstXX(Gecode::BoolOpType op0, int c0) 
-         : Test("Bool::Bin::XX::"+str(op0)+"::"+str(c0),1,0,1), 
+       BinConstXX(Gecode::BoolOpType op0, int c0)
+         : Test("Bool::Bin::XX::"+str(op0)+"::"+str(c0),1,0,1),
            op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -215,7 +215,7 @@ namespace Test { namespace Int {
          rel(home, b, op, b, c);
        }
      };
-     
+
      /// Test for Nary Boolean operation
      class Nary : public Test {
      protected:
@@ -223,7 +223,7 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       Nary(Gecode::BoolOpType op0, int n) 
+       Nary(Gecode::BoolOpType op0, int n)
          : Test("Bool::Nary::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -241,7 +241,7 @@ namespace Test { namespace Int {
          rel(home, op, b, channel(home,x[x.size()-1]));
        }
      };
-     
+
      /// Test for Nary Boolean operation
      class NaryShared : public Test {
      protected:
@@ -249,8 +249,8 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       NaryShared(Gecode::BoolOpType op0, int n) 
-         : Test("Bool::Nary::Shared::"+str(op0)+"::"+str(n),n,0,1), 
+       NaryShared(Gecode::BoolOpType op0, int n)
+         : Test("Bool::Nary::Shared::"+str(op0)+"::"+str(n),n,0,1),
            op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -268,7 +268,7 @@ namespace Test { namespace Int {
          rel(home, op, b, b[x.size()-1]);
        }
      };
-     
+
      /// Test for Nary Boolean operation with constant
      class NaryConst : public Test {
      protected:
@@ -278,8 +278,8 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Construct and register test
-       NaryConst(Gecode::BoolOpType op0, int n, int c0) 
-         : Test("Bool::Nary::"+str(op0)+"::"+str(n)+"::"+str(c0),n,0,1), 
+       NaryConst(Gecode::BoolOpType op0, int n, int c0)
+         : Test("Bool::Nary::"+str(op0)+"::"+str(n)+"::"+str(c0),n,0,1),
            op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -298,7 +298,7 @@ namespace Test { namespace Int {
        }
      };
 
-     
+
      /// Test for Clause Boolean operation
      class ClauseXYZ : public Test {
      protected:
@@ -306,7 +306,7 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       ClauseXYZ(Gecode::BoolOpType op0, int n) 
+       ClauseXYZ(Gecode::BoolOpType op0, int n)
          : Test("Bool::Clause::XYZ::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -333,7 +333,7 @@ namespace Test { namespace Int {
          clause(home, op, a, b, channel(home,x[x.size()-1]));
        }
      };
-     
+
      /// Test for Clause Boolean operation
      class ClauseXXYYX : public Test {
      protected:
@@ -341,8 +341,8 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       ClauseXXYYX(Gecode::BoolOpType op0, int n) 
-         : Test("Bool::Clause::XXYYX::"+str(op0)+"::"+str(n),n,0,1), 
+       ClauseXXYYX(Gecode::BoolOpType op0, int n)
+         : Test("Bool::Clause::XXYYX::"+str(op0)+"::"+str(n),n,0,1),
            op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -369,7 +369,7 @@ namespace Test { namespace Int {
          clause(home, op, a, b, a[0]);
        }
      };
-     
+
      /// Test for Clause Boolean operation
      class ClauseXXY : public Test {
      protected:
@@ -377,8 +377,8 @@ namespace Test { namespace Int {
        Gecode::BoolOpType op;
      public:
        /// Construct and register test
-       ClauseXXY(Gecode::BoolOpType op0, int n) 
-         : Test("Bool::Clause::XXY::"+str(op0)+"::"+str(n),n,0,1), 
+       ClauseXXY(Gecode::BoolOpType op0, int n)
+         : Test("Bool::Clause::XXY::"+str(op0)+"::"+str(n),n,0,1),
            op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -396,7 +396,7 @@ namespace Test { namespace Int {
          clause(home, op, a, b, a[0]);
        }
      };
-     
+
      /// Test for Clause Boolean operation with constant
      class ClauseConst : public Test {
      protected:
@@ -406,8 +406,8 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Construct and register test
-       ClauseConst(Gecode::BoolOpType op0, int n, int c0) 
-         : Test("Bool::Clause::"+str(op0)+"::"+str(n)+"::"+str(c0),n,0,1), 
+       ClauseConst(Gecode::BoolOpType op0, int n, int c0)
+         : Test("Bool::Clause::"+str(op0)+"::"+str(n)+"::"+str(c0),n,0,1),
            op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -434,7 +434,7 @@ namespace Test { namespace Int {
          clause(home, op, a, b, c);
        }
      };
-     
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -483,10 +483,10 @@ namespace Test { namespace Int {
          }
        }
      };
-   
+
      Create c;
      //@}
-   
+
    }
 }}
 

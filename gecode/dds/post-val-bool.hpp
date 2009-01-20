@@ -40,7 +40,7 @@ namespace Gecode { namespace Decomposition {
   /// Post branching according to \a v and \a vals
   template <class SelView>
   void
-  post(Space& home, ViewArray<Gecode::Int::BoolView>& x, SelView& v, 
+  post(Space& home, ViewArray<Gecode::Int::BoolView>& x, SelView& v,
        IntValBranch vals, const ValBranchOptions& o_vals) {
     switch (vals) {
     case INT_VAL_MIN:
@@ -77,10 +77,10 @@ namespace Gecode { namespace Decomposition {
   template <class SelView, class SelVal>
   void
   registerOneBoolView(void) {
-    Reflection::registry().add(DecomposingViewValBranching<SelView,SelVal>::ati(), 
+    Reflection::registry().add(DecomposingViewValBranching<SelView,SelVal>::ati(),
                                &ValSelToString<SelVal>::toString);
   }
-  
+
   template <class SelView>
   void
   registerAllBoolView(void) {
@@ -90,7 +90,7 @@ namespace Gecode { namespace Decomposition {
   }
 
 
-      
+
 }}
 
 // STATISTICS: int-branch

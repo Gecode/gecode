@@ -48,7 +48,7 @@ namespace Gecode { namespace Gist {
   public:
     /// Left coordinate
     int left;
-    /// Right coordinate 
+    /// Right coordinate
     int right;
     /// Constructor
     BoundingBox(int l, int r);
@@ -69,7 +69,7 @@ namespace Gecode { namespace Gist {
     Extent(int l0, int r0);
     /// Construct with width \a width
     Extent(int width);
-    
+
     /// Extend extent by \a deltaL and \a deltaR
     void extend(int deltaL, int deltaR);
     /// Move extent by \a delta
@@ -85,7 +85,7 @@ namespace Gecode { namespace Gist {
     Extent shape[1];
     /// Copy construtor
     Shape(const Shape&);
-    /// Assignment operator 
+    /// Assignment operator
     Shape& operator =(const Shape&);
     /// Constructor
     Shape(void);
@@ -117,10 +117,10 @@ namespace Gecode { namespace Gist {
     /// Return bounding box
     BoundingBox getBoundingBox(void);
   };
-  
+
   /// \brief Node class that supports visual layout
   class VisualNode : public SpaceNode {
-  protected:    
+  protected:
     /// Flags for VisualNodes
     enum VisualNodeFlags {
       DIRTY = SpaceNode::LASTBIT+1,
@@ -145,7 +145,7 @@ namespace Gecode { namespace Gist {
     VisualNode(Space* root);
     /// Destructor
     ~VisualNode(void);
-    
+
     /// Return if node is hidden
     bool isHidden(void);
     /// Set hidden state to \a h
@@ -180,14 +180,14 @@ namespace Gecode { namespace Gist {
     int getPathAlternative(void);
     /// Set whether node is on the path
     void setOnPath(bool onPath0);
-        
+
     /// Toggle whether this node is hidden
     void toggleHidden(void);
     /// Hide all failed subtrees of this node
     void hideFailed(void);
     /// Unhide all nodes in the subtree of this node
     void unhideAll(void);
-    
+
     /// Return the shape of this node
     Shape* getShape(void);
     /// Set the shape of this node
@@ -207,11 +207,11 @@ namespace Gecode { namespace Gist {
     /// Return child \a i
     VisualNode* getChild(int i);
     /// Find a node in this subtree at coordinates \a x, \a y
-    VisualNode* findNode(int x, int y);    
-    
+    VisualNode* findNode(int x, int y);
+
     /// Return string that is used as a tool tip
     std::string toolTip(BestNode* curBest, int c_d, int a_d);
-    
+
     /// Return size information
     size_t size(void) const;
   };

@@ -61,7 +61,7 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   template<class VarItem>
   VarArrayViewT<VarItem>::VarArrayViewT(Gecode::Reflection::VarMap& vm0, int pit, QStringList vars0, QWidget *parent)
   : VarArrayView(vm0, pit, vars0, parent)
-  { 
+  {
     init();
   }
 
@@ -71,14 +71,14 @@ namespace Gecode { namespace Gist { namespace Visualisation {
   {
     return new VarArrayViewT<VarItem>(vm, pit, vars, parent);
   }
-  
+
   template<class VarItem>
   void
   VarArrayViewT<VarItem>::initT(QVector<Reflection::VarSpec*> specs) {
     varArrayItem = new VarArrayItem<VarItem>(specs);
     scene->addItem(varArrayItem);
   }
-  
+
   template<class VarItem>
   void
   VarArrayViewT<VarItem>::displayT(QVector<Reflection::VarSpec*> specs) {

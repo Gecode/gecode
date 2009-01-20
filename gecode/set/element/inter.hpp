@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template <class SView, class RView>
   PropCost
-  ElementIntersection<SView,RView>::cost(const Space&, 
+  ElementIntersection<SView,RView>::cost(const Space&,
                                          const ModEventDelta&) const {
     return PropCost::linear(PropCost::MED, iv.size()+2);
   }
@@ -239,7 +239,7 @@ namespace Gecode { namespace Set { namespace Element {
       // sofarAfter as the intersection of all glb(x_j) with j>i
       for (int i=n; i--;) {
         if (sofarAfter.size() == 0) break;
-        
+
         // extra = inter(before[i], sofarAfter) - lub(x0)
         BndSetRanges b(before[i]);
         BndSetRanges s(sofarAfter);

@@ -45,7 +45,7 @@ namespace Test { namespace Int {
 
    /// Tests for extensional (relation) constraints
    namespace Extensional {
-   
+
      /**
       * \defgroup TaskTestIntExtensional Extensional (relation) constraints
       * \ingroup TaskTestInt
@@ -73,7 +73,7 @@ namespace Test { namespace Int {
                      (REG(0) | REG(1)));
        }
      };
-     
+
      /// Test with simple regular expression
      class RegSimpleB : public Test {
      public:
@@ -130,7 +130,7 @@ namespace Test { namespace Int {
                      *REG(0) + REG(1)(2,2) + +REG(0) + REG(1)(1,1) + *REG(0));
        }
      };
-     
+
      /// Test with regular expression for distinct constraint
      class RegDistinct : public Test {
      public:
@@ -177,17 +177,17 @@ namespace Test { namespace Int {
                      (REG(3)+REG(2)+REG(1)+REG(0)));
        }
      };
-     
+
      /// Test with simple regular expression from Roland Yap
      class RegRoland : public Test {
      public:
        /// Create and register test
-       RegRoland(int n) 
+       RegRoland(int n)
          : Test("Extensional::Reg::Roland::"+str(n),n,0,1) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n = x.size();
-         return 
+         return
            ((n > 1) && (x[n-2] == 0)) ||
            ((n > 0) && (x[n-1] == 0));
        }
@@ -199,7 +199,7 @@ namespace Test { namespace Int {
          extensional(home, x, *r01 + r0 + r01(0,1));
        }
      };
-     
+
      /// Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedA : public Test {
      public:
@@ -226,7 +226,7 @@ namespace Test { namespace Int {
                       (REG(0) | REG(1)))(2,2));
        }
      };
-   
+
      /// Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedB : public Test {
      public:
@@ -253,7 +253,7 @@ namespace Test { namespace Int {
                       (REG(0) | REG(1)))(3,3));
        }
      };
-   
+
      /// Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedC : public Test {
      public:
@@ -274,7 +274,7 @@ namespace Test { namespace Int {
                      ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2,2));
        }
      };
-   
+
      /// Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedD : public Test {
      public:
@@ -295,7 +295,7 @@ namespace Test { namespace Int {
                      ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3,3));
        }
      };
-   
+
      /// Test for empty DFA
      class RegEmptyDFA : public Test {
      public:
@@ -314,7 +314,7 @@ namespace Test { namespace Int {
          Gecode::extensional(home, x, d);
        }
      };
-   
+
      /// Test for empty regular expression
      class RegEmptyREG : public Test {
      public:
@@ -333,7 +333,7 @@ namespace Test { namespace Int {
          Gecode::extensional(home, x, r);
        }
      };
-   
+
      /// Test with tuple set
      class TupleSetA : public Test {
      protected:
@@ -439,14 +439,14 @@ namespace Test { namespace Int {
          : Test("Extensional::TupleSet::Bool::"+str(epk0),
                 5,0,1,false,Gecode::ICL_DOM), epk(epk0) {
          using namespace Gecode;
-         
+
          CpltAssignment ass(5, IntSet(0, 1));
          while (ass()) {
            if (Base::rand(100) <= prob*100) {
              IntArgs tuple(5);
              for (int i = 5; i--; ) tuple[i] = ass[i];
              t.add(tuple);
-           }   
+           }
            ++ass;
          }
          t.finalize();
@@ -476,14 +476,14 @@ namespace Test { namespace Int {
      RegSimpleA ra;
      RegSimpleB rb;
      RegSimpleC rc;
-   
+
      RegDistinct rd;
 
      RegRoland rr1(1);
      RegRoland rr2(2);
      RegRoland rr3(3);
      RegRoland rr4(4);
-   
+
      RegSharedA rsa;
      RegSharedB rsb;
      RegSharedC rsc;

@@ -42,7 +42,7 @@
 namespace Gecode {
 
   void
-  extensional(Space& home, const IntVarArgs& x, DFA dfa, 
+  extensional(Space& home, const IntVarArgs& x, DFA dfa,
               IntConLevel) {
     using namespace Int;
     if (x.same(home))
@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   void
-  extensional(Space& home, const BoolVarArgs& x, DFA dfa, 
+  extensional(Space& home, const BoolVarArgs& x, DFA dfa,
               IntConLevel) {
     using namespace Int;
     if (x.same(home))
@@ -64,7 +64,7 @@ namespace Gecode {
   }
 
   void
-  extensional(Space& home, const IntVarArgs& x, const TupleSet& t, 
+  extensional(Space& home, const IntVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk, IntConLevel) {
     using namespace Int;
     if (!t.finalized())
@@ -93,7 +93,7 @@ namespace Gecode {
   }
 
   void
-  extensional(Space& home, const BoolVarArgs& x, const TupleSet& t, 
+  extensional(Space& home, const BoolVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk, IntConLevel) {
     using namespace Int;
     if (!t.finalized())

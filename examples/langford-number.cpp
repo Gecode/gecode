@@ -37,7 +37,7 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- */        
+ */
 
 #include "examples/support.hh"
 #include <gecode/minimodel.hh>
@@ -51,7 +51,7 @@ class LangfordNumberOptions : public Options {
 public:
   int k, n; /// Parameters to be given on the command line
   /// Initialize options for example with name \a s
-  LangfordNumberOptions(const char* s, int k0, int n0) 
+  LangfordNumberOptions(const char* s, int k0, int n0)
     : Options(s), k(k0), n(n0) {}
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int& argc, char* argv[]) {
@@ -101,12 +101,12 @@ public:
         IntVarArgs p(k*n);
         for (int i=k*n; i--; )
           p[i].init(*this,0,k*n-1);
-        
-        /* 
+
+        /*
          * The occurences of v in the Langford sequence are v numbers apart.
          *
-         * Let \#(i, v) denote the position of the i-th occurence of 
-         * value v in the Langford Sequence. Then 
+         * Let \#(i, v) denote the position of the i-th occurence of
+         * value v in the Langford Sequence. Then
          *
          * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:
          *     \forall v \in \{1, \dots, n\}: \#(i, v) + (v + 1) = \#(j, v)\f$
@@ -115,9 +115,9 @@ public:
         for (int i=n; i--; )
           for (int j=k-1; j--; )
             post(*this, p[i*k+j] + (i+2) == p[i*k+j+1]);
-        
+
         distinct(*this, p, opt.icl());
-        
+
         // Channel positions <-> values
         for (int i=n; i--; )
           for (int j=k; j--; )
@@ -144,15 +144,15 @@ public:
         BoolVarArgs b(k*n*n);
         for (int i=n*n*k; i--; )
           b[i].init(*this,0,1);
-        
+
         // Post channel constraints
         for (int i=n*k; i--; ) {
           BoolVarArgs c(n);
-          for (int j=n; j--; ) 
+          for (int j=n; j--; )
             c[j]=b[i*n+j];
           channel(*this, c, y[i], 1);
         }
-        
+
         // For placing two numbers three steps apart, we construct the
         // regular expression 0*100010*, and apply it to the projection of
         // the sequence on the value.
@@ -167,10 +167,10 @@ public:
       }
       break;
     }
-      
+
     // Symmetry breaking
     rel(*this, y[0], IRT_LE, y[n*k-1]);
-    
+
     // Branching
     branch(*this, y, INT_VAR_SIZE_MIN, INT_VAL_MAX);
   }
@@ -197,16 +197,16 @@ public:
 /** \brief Main-function
  *  \relates LangfordNumber
  */
-int 
+int
 main(int argc, char* argv[]) {
   LangfordNumberOptions opt("Langford Numbers",3,9);
   opt.icl(ICL_DOM);
   opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL);
-  opt.propagation(LangfordNumber::PROP_REIFIED, 
+  opt.propagation(LangfordNumber::PROP_REIFIED,
                   "reified");
-  opt.propagation(LangfordNumber::PROP_EXTENSIONAL, 
+  opt.propagation(LangfordNumber::PROP_EXTENSIONAL,
                   "extensional");
-  opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL, 
+  opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL,
                   "extensional-channel");
   opt.parse(argc, argv);
   if (opt.k < 1) {

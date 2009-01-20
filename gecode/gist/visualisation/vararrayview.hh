@@ -66,17 +66,17 @@ namespace Gecode { namespace Gist { namespace Visualisation {
 
   private Q_SLOTS:
     void on_muteButton_clicked(void);
-    
+
   protected:
     void init(void);
-    
+
     virtual void initT(QVector<Reflection::VarSpec*> specs) = 0;
     virtual void displayT(QVector<Reflection::VarSpec*> spec) = 0;
     virtual void displayOldT(int pit) = 0;
 
     void extendTimeBar(int pit);
     void updateTimeBar(int pit);
-    
+
     QGridLayout* grid;
     QGraphicsScene* scene;
     QGraphicsView* view;

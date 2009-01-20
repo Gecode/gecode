@@ -67,17 +67,17 @@ namespace Gecode {
       virtual SharedHandle::Object* copy(void) const;
       /// Delete object
       virtual ~SAO(void);
-      
+
       /// Access element at position \a i
       T& operator [](int i);
       /// Access element at position \a i
       const T& operator [](int i) const;
-      
+
       /// Return number of elements
       int size(void) const;
     };
   public:
-    /** 
+    /**
      * \brief Construct as not yet intialized
      *
      * The only member functions that can be used on a constructed but not
@@ -105,13 +105,13 @@ namespace Gecode {
 
     /// Return number of elements
     int size(void) const;
-    
+
     /// Return specification for reflection
     Reflection::Arg* spec(Reflection::VarMap& vm) const;
-    
+
     /// Recreate from specification
     SharedArray(Reflection::VarMap& vm, Reflection::Arg* arg);
-    
+
   };
 
   /**
@@ -119,8 +119,8 @@ namespace Gecode {
    * \relates SharedArray
    */
   template<class Char, class Traits, class T>
-  std::basic_ostream<Char,Traits>& 
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
              const SharedArray<T>& x);
 
 
@@ -183,12 +183,12 @@ namespace Gecode {
 
   template <class T>
   forceinline
-  SharedArray<T>::SharedArray(int n) 
+  SharedArray<T>::SharedArray(int n)
     : SharedHandle(new SAO(n)) {}
 
   template <class T>
   forceinline
-  SharedArray<T>::SharedArray(const SharedArray<T>& sa) 
+  SharedArray<T>::SharedArray(const SharedArray<T>& sa)
     : SharedHandle(sa) {}
 
   template <class T>
@@ -251,7 +251,7 @@ namespace Gecode {
     vm.putMasterObject(object());
     return Reflection::Arg::newSharedObject(a);
   }
-  
+
   template <class T>
   SharedArray<T>::SharedArray(Reflection::VarMap& vm,
                               Reflection::Arg* arg) {
@@ -268,8 +268,8 @@ namespace Gecode {
   }
 
   template<class Char, class Traits, class T>
-  std::basic_ostream<Char,Traits>& 
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
              const SharedArray<T>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
@@ -300,7 +300,7 @@ namespace Gecode {
     void operator<<(SpecHelper& s,
                     const SharedArray<int>& isa) {
       s.s << Arg::newIntArray(isa);
-    }  
+    }
   }
 
 }

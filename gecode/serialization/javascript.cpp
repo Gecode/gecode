@@ -44,10 +44,10 @@
 #endif
 
 namespace Gecode {
-  
+
   namespace {
-    
-    void emitArg(std::ostream& os, Reflection::Arg* arg, 
+
+    void emitArg(std::ostream& os, Reflection::Arg* arg,
                  Reflection::VarMap& vm) {
       using namespace std;
       if (arg->isInt()) {
@@ -113,9 +113,9 @@ namespace Gecode {
       emitArg(os, arg, vm);
       os << ";" << endl;
     }
-    
+
   }
-  
+
   void emitVarMap(std::ostream& os, int& varCount,
                   Reflection::VarMapIter& vmi,
                   Reflection::VarMap& vm) {
@@ -134,9 +134,9 @@ namespace Gecode {
       }
       emitArg(os, vs.dom(), vm);
       os << ");" << endl;
-    }    
+    }
   }
-  
+
   void emitJavaScript(Space& home, std::ostream& os) {
     using namespace std;
     Reflection::VarMap vm;
@@ -148,7 +148,7 @@ namespace Gecode {
     emitVarMap(os,varCount,vmi,vm);
     for (Reflection::ActorSpecIter si(home, vm); si(); ++si) {
       Reflection::ActorSpec s = si.actor();
-      
+
       emitVarMap(os,varCount,vmi,vm);
 
       int soBase = soCount;
@@ -174,7 +174,7 @@ namespace Gecode {
       soCount = soBase;
     }
 
-    os << "[";    
+    os << "[";
     bool first = true;
     for (int i=0; i<rootSize; i++) {
       if (first)
@@ -225,14 +225,14 @@ namespace Gecode {
             Gecode::Reflection::Arg* ai = scriptValToArg(vi.value());
             (*a)[count++] = ai;
           }
-          return a;      
+          return a;
         }
       } else if (v.isNumber()) {
         return Gecode::Reflection::Arg::newInt(static_cast<int>(v.toNumber()));
       } else if (v.isBoolean()) {
-        return Gecode::Reflection::Arg::newInt(v.toBoolean());    
+        return Gecode::Reflection::Arg::newInt(v.toBoolean());
       } else if (v.isObject() && v.prototype().strictlyEquals(varProto)) {
-        return Gecode::Reflection::Arg::newVar(static_cast<int>(v.property("no").toNumber()));    
+        return Gecode::Reflection::Arg::newVar(static_cast<int>(v.property("no").toNumber()));
       } else if (v.isObject() && v.prototype().strictlyEquals(pairProto)) {
         Gecode::Reflection::Arg* a = scriptValToArg(v.property("a"));
         Gecode::Reflection::Arg* b = scriptValToArg(v.property("b"));
@@ -272,7 +272,7 @@ namespace Gecode {
       QScriptValue object = engine()->newObject();
       object.setPrototype(varProto);
       object.setProperty("no", QScriptValue(engine(), newVar));
-      return object;  
+      return object;
     }
 
     void
@@ -296,16 +296,16 @@ namespace Gecode {
       object.setProperty("b", b);
       return object;
     }
-   
+
   }
-  
+
   void fromJavaScript(Space& space, const std::string& model) {
     QScriptEngine engine;
     Serialization::GJSSpace gjsspace(&engine, space);
     QScriptValue spaceValue = engine.newQObject(&gjsspace);
     engine.globalObject().setProperty("Space", spaceValue);
 
-    QString prelude = 
+    QString prelude =
     "function constraint() {"
     "  var name = arguments[0];"
     "  var args = new Array;"
@@ -314,7 +314,7 @@ namespace Gecode {
     "  }"
     "  Space.constraint(name, args);"
     "}"
-    "function variable() {" 
+    "function variable() {"
     "  var vti = arguments[0];"
     "  var args = new Array;"
     "  for (var i=1; i<arguments.length; i++) {"
@@ -334,7 +334,7 @@ namespace Gecode {
     }
   }
 
-#endif  
+#endif
 }
 
 // STATISTICS: serialization-any

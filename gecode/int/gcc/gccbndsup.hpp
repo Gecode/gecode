@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace GCC {
           return ES_FAILED;
         mod |= (me_modified(me) && (k[i].max() != reachable));
         mod |= shared && me_modified(me);
-        
+
         if (rv[i].eq > 0) {
           ModEvent me = k[i].gq(home, (int) rv[i].eq);
           if (me_failed(me))
@@ -689,7 +689,7 @@ namespace Gecode { namespace Int { namespace GCC {
         bool impossible  = ( (k[i].counter() == 0) &&
                              (k[i].card() < cmin ||
                               k[i].card() > cmax));
-        
+
         if (impossible) {
           zero[i] = true;
           zc++;

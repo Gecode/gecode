@@ -42,7 +42,7 @@
  */
 
 namespace Gecode {
-  
+
   /// Traits of SetVarArray
   template <>
   class ArrayTraits<SetVarArray> {

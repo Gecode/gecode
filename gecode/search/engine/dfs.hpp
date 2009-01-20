@@ -41,13 +41,13 @@ namespace Gecode { namespace Search {
   DfsEngine::DfsEngine(unsigned int c_d0, unsigned int a_d0,
                        Stop* st, size_t sz)
     : EngineCtrl(st,sz), rcs(a_d0), cur(NULL), c_d(c_d0), d(0) {}
-  
-  
+
+
   forceinline void
   DfsEngine::init(Space* s) {
     cur = s;
   }
-  
+
   forceinline void
   DfsEngine::reset(Space* s) {
     delete cur;
@@ -56,7 +56,7 @@ namespace Gecode { namespace Search {
     d   = 0;
     EngineCtrl::reset(s);
   }
-  
+
   forceinline void
   DfsEngine::reset(void) {
     delete cur;
@@ -103,7 +103,7 @@ namespace Gecode { namespace Search {
             cur->commit(*desc,0);
             break;
           }
-        default: 
+        default:
           GECODE_NEVER;
         }
       }
@@ -122,13 +122,13 @@ namespace Gecode { namespace Search {
   DfsEngine::stacksize(void) const {
     return rcs.stacksize();
   }
-  
+
   forceinline
   DfsEngine::~DfsEngine(void) {
     delete cur;
     rcs.reset();
   }
-  
+
 }}
 
 // STATISTICS: search-any

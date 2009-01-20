@@ -44,7 +44,7 @@
 #include <cstdlib>
 #include <cstring>
 
-void 
+void
 StringOption::add(int v, const char* o, const char* h) {
   Value* n = new Value;
   n->val  = v;
@@ -54,7 +54,7 @@ StringOption::add(int v, const char* o, const char* h) {
   if (fst == NULL) {
     fst = n;
   } else {
-    lst->next = n; 
+    lst->next = n;
   }
   lst = n;
 }
@@ -76,13 +76,13 @@ StringOption::parse(int& argc, char* argv[]) {
         argv[i] = argv[i+2];
       return true;
     }
-  std::cerr << "Wrong argument \"" << argv[2] 
-            << "\" for option \"" << opt << "\"" 
+  std::cerr << "Wrong argument \"" << argv[2]
+            << "\" for option \"" << opt << "\""
             << std::endl;
   exit(EXIT_FAILURE);
 }
 
-void 
+void
 StringOption::help(void) {
   if (fst == NULL)
     return;
@@ -94,7 +94,7 @@ StringOption::help(void) {
       d = v->opt;
   }
   std::cerr << ")";
-  if (d != NULL) 
+  if (d != NULL)
     std::cerr << " default: " << d;
   std::cerr << std::endl << "\t\t" << exp << std::endl;
   for (Value* v = fst; v != NULL; v = v->next)
@@ -128,7 +128,7 @@ UnsignedIntOption::parse(int& argc, char* argv[]) {
   return true;
 }
 
-void 
+void
 UnsignedIntOption::help(void) {
   using namespace std;
   cerr << '\t' << opt << " (unsigned int) default: " << cur << endl
@@ -146,7 +146,7 @@ Options::Options(const char* n)
     _propagation("-propagation","propagation variants"),
     _icl("-icl","integer consistency level",ICL_DEF),
     _branching("-branching","branching variants"),
-    
+
     _search("-search","search engine variants"),
     _solutions("-solutions","number of solutions (0 = all)",1),
     _c_d("-c-d","recomputation copy distance",Search::Config::c_d),
@@ -163,7 +163,7 @@ Options::Options(const char* n)
   _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
   _icl.add(ICL_BND, "bnd"); _icl.add(ICL_DOM, "dom");
 
-  _mode.add(EM_SOLUTION, "solution"); 
+  _mode.add(EM_SOLUTION, "solution");
   _mode.add(EM_TIME, "time");
   _mode.add(EM_STAT, "stat");
 #ifdef GECODE_HAS_GIST
@@ -171,7 +171,7 @@ Options::Options(const char* n)
 #endif
 
   add(_model); add(_propagation); add(_icl); add(_branching);
-  add(_search); add(_solutions); add(_c_d); add(_a_d); 
+  add(_search); add(_solutions); add(_c_d); add(_a_d);
   add(_node); add(_fail); add(_time);
   add(_mode); add(_iterations); add(_samples);
 }
@@ -202,7 +202,7 @@ Options::parse(int& argc, char* argv[]) {
 }
 
 
-SizeOptions::SizeOptions(const char* e) 
+SizeOptions::SizeOptions(const char* e)
   : Options(e), _size(0) {}
 
 void

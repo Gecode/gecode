@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace GCC {
     OccurBndsView(Space& home, const Reflection::VarMap& m,
                   Reflection::Arg* arg);
     static Support::Symbol type(void);
-    
+
   };
 
   forceinline
@@ -359,36 +359,36 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /**
      * \name Domain update by iterator
-     * 
+     *
      * Views can be both updated by range and value iterators.
      * Value iterators do not need to be strict in that the same value
      * is allowed to occur more than once in the iterated sequence.
      *
      * The argument \a depends must be true, if the iterator
-     * passed as argument depends on the view on which the operation 
-     * is invoked. In this case, the view is only updated after the 
-     * iterator has been consumed. Otherwise, the domain might be updated 
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
      * concurrently while following the iterator.
      *
      */
     //@{
     /// Replace domain by ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
-    template <class I> 
+    template <class I>
     ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
-    template <class I> 
+    template <class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
-    
+
     ///@}
 
     /// \name Cloning

@@ -115,7 +115,7 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   PropCost
-  IntSetPropagator<View,pcs,pci>::cost(const Space&, 
+  IntSetPropagator<View,pcs,pci>::cost(const Space&,
                                        const ModEventDelta&) const {
     return PropCost::binary(PropCost::LOW);
   }
