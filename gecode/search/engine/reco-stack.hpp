@@ -188,7 +188,69 @@ namespace Gecode { namespace Search {
       ds.pop().dispose();
   }
 
-  template <bool constrain>
+  forceinline Space*
+  ReCoStack::recompute(unsigned int& d, EngineCtrl& stat) {
+    assert(!ds.empty());
+    // Recompute space according to path
+    // Also say distance to copy (d == 0) requires immediate copying
+
+    // Check for LAO
+    if ((ds.top().space() != NULL) && ds.top().rightmost()) {
+      Space* s = ds.top().space();
+      s->commit(*ds.top().desc(),ds.top().alt());
+      assert(ds.entries()-1 == lc());
+      ds.top().space(NULL);
+      stat.lao(s);
+      d = 0;
+      return s;
+    }
+    // General case for recomputation
+    int l = lc();             // Position of last clone
+    int n = ds.entries();     // Number of stack entries
+    // New distance, if no adaptive recomputation
+    d = static_cast<unsigned int>(n - l); 
+
+    Space* s = ds[l].space()->clone(); // Last clone
+
+    if (d < a_d) {
+      // No adaptive recomputation
+      for (int i=l; i<n; i++)
+        commit(s,i);
+    } else {
+      int m = l + static_cast<int>(d >> 1); // Middle between copy and top
+      int i = l;            // To iterate over all entries
+      // Recompute up to middle
+      for (; i<m; i++ )
+        commit(s,i);
+      // Skip over all rightmost branches
+      for (; (i<n) && ds[i].rightmost(); i++)
+        commit(s,i);
+      // Is there any point to make a copy?
+      if (i<n-1) {
+        // Propagate to fixpoint
+        SpaceStatus ss = s->status(stat);
+        /*
+         * Again, the space might already propagate to failure (due to
+         * weakly monotonic propagators).
+         */
+        if (ss == SS_FAILED) {
+          // s must be deleted as it is not on the stack
+          delete s;
+          stat.fail++;
+          unwind(i);
+          return NULL;
+        }
+        ds[i].space(s->clone());
+        stat.adapt(ds[i].space());
+        d = static_cast<unsigned int>(n-i);
+      }
+      // Finally do the remaining commits
+      for (; i<n; i++)
+        commit(s,i);
+    }
+    return s;
+  }
+
   forceinline Space*
   ReCoStack::recompute(unsigned int& d, EngineCtrl& stat,
                        const Space* best, int& mark) {
@@ -201,7 +263,7 @@ namespace Gecode { namespace Search {
       Space* s = ds.top().space();
       s->commit(*ds.top().desc(),ds.top().alt());
       assert(ds.entries()-1 == lc());
-      if (constrain && (mark > ds.entries()-1)) {
+      if (mark > ds.entries()-1) {
         mark = ds.entries()-1;
         s->constrain(*best);
       }
@@ -218,7 +280,7 @@ namespace Gecode { namespace Search {
 
     Space* s = ds[l].space(); // Last clone
 
-    if (constrain && (l < mark)) {
+    if (l < mark) {
       mark = l;
       s->constrain(*best);
       // The space on the stack could be failed now as an additional

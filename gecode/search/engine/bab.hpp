@@ -108,7 +108,7 @@ namespace Gecode { namespace Search {
       do {
         if (!rcs.next(*this))
           return NULL;
-        cur = rcs.recompute<true>(d,*this,best,mark);
+        cur = rcs.recompute(d,*this,best,mark);
       } while (cur == NULL);
       EngineCtrl::current(cur);
     }

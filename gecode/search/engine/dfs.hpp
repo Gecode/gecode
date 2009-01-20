@@ -110,7 +110,7 @@ namespace Gecode { namespace Search {
       do {
         if (!rcs.next(*this))
           return NULL;
-        cur = rcs.recompute<false>(d,*this);
+        cur = rcs.recompute(d,*this);
       } while (cur == NULL);
       EngineCtrl::current(cur);
     }

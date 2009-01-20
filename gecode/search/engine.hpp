@@ -138,8 +138,6 @@ namespace Gecode { namespace Search {
     Support::DynamicStack<ReCoNode,Heap> ds;
     /// Adaptive recomputation distance
     const unsigned int a_d;
-    /// Unused default argument
-    GECODE_SEARCH_EXPORT static int unused;
   public:
     /// Initialize with adaptive recomputation distance \a a_d
     ReCoStack(unsigned int a_d);
@@ -160,15 +158,11 @@ namespace Gecode { namespace Search {
     void unwind(int l);
     /// Commit space \a s as described by stack entry at position \a i
     void commit(Space* s, int i) const;
-    /**
-     * \brief Recompute space according to path with copying distance \a d
-     *
-     * The template parameter \a constrain describ whether spaces
-     * on the stack might need to be constrained.
-     */
-    template <bool constrain>
-    Space* recompute(unsigned int& d, EngineCtrl& s,
-                     const Space* best=NULL, int& mark=unused);
+    /// Recompute space according to path with copying distance \a d
+    Space* recompute(unsigned int& d, EngineCtrl& s);
+    /// Recompute space according to path with copying distance \a d
+    Space* recompute(unsigned int& d, EngineCtrl& s, 
+                     const Space* best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
     /// Return stack size used
