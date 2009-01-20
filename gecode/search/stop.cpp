@@ -50,7 +50,17 @@ namespace Gecode { namespace Search {
 
 
   /*
-   * Stopping for memory limit
+   * Stopping for node limit
+   *
+   */
+  bool
+  NodeStop::stop(const Statistics& s) {
+    return s.node > l;
+  }
+
+
+  /*
+   * Stopping for failure limit
    *
    */
   bool
@@ -60,7 +70,7 @@ namespace Gecode { namespace Search {
 
 
   /*
-   * Stopping for memory limit
+   * Stopping for time limit
    *
    */
   bool

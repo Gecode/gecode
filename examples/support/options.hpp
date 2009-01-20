@@ -198,6 +198,15 @@ Options::a_d(void) const {
 }
 
 inline void
+Options::node(unsigned int n) {
+  _node.value(n);
+}
+inline unsigned int
+Options::node(void) const {
+  return _node.value();
+}
+
+inline void
 Options::fail(unsigned int n) {
   _fail.value(n);
 }

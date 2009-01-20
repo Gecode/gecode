@@ -157,6 +157,29 @@ namespace Gecode {
     };
 
     /**
+     * \brief %Stop-object based on number of nodes
+     *
+     * The number of nodes reported (by the statistics) is the
+     * number since the engine started exploration. It is not the
+     * number since the last stop!
+     * \ingroup TaskModelSearchStop
+     */
+    class GECODE_SEARCH_EXPORT NodeStop : public Stop {
+    protected:
+      /// Node limit
+      unsigned long int l;
+    public:
+      /// Stop if node limit \a l is exceeded
+      NodeStop(unsigned long int l);
+      /// Return current limit
+      unsigned long int limit(void) const;
+      /// Set current limit to \a l bodes
+      void limit(unsigned long int l);
+      /// Return true if node limit is exceeded
+      virtual bool stop(const Statistics& s);
+    };
+
+    /**
      * \brief %Stop-object based on number of failures
      *
      * The number of failures reported (by the statistics) is the

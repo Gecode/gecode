@@ -45,32 +45,38 @@
 namespace {
 
   /**
-   * \brief Stop object based on both time and failures
+   * \brief Stop object based on nodes, failures, and time
    *
    */
-  class FailTimeStop : public Search::Stop {
+  class Cutoff : public Search::Stop {
   private:
-    Search::TimeStop *ts; ///< Used time stop object
-    Search::FailStop *fs; ///< Used fail stop object
+    Search::NodeStop* ns; ///< Used node stop object
+    Search::FailStop* fs; ///< Used fail stop object
+    Search::TimeStop* ts; ///< Used time stop object
     /// Initialize stop object
-    FailTimeStop(int fails, int time) {
-      ts = new Search::TimeStop(time);
-      fs = new Search::FailStop(fails);
-    }
+    Cutoff(unsigned int node, unsigned int fail, unsigned int time)
+      : ns((node > 0) ? new Search::NodeStop(node) : NULL),
+        fs((fail > 0) ? new Search::FailStop(fail) : NULL),
+        ts((time > 0) ? new Search::TimeStop(time) : NULL) {}
   public:
     /// Test whether search must be stopped
     virtual bool stop(const Search::Statistics& s) {
-      return fs->stop(s) || ts->stop(s);
+      return 
+        ((ns != NULL) && ns->stop(s)) || 
+        ((fs != NULL) && fs->stop(s)) || 
+        ((ts != NULL) && ts->stop(s));
     }
     /// Create appropriate stop-object
-    static Search::Stop* create(unsigned int fail, unsigned int time) {
-      if ((fail == 0) && (time == 0)) 
+    static Search::Stop* 
+    create(unsigned int node, unsigned int fail, unsigned int time) {
+      if ((node == 0) && (fail == 0) && (time == 0)) 
         return NULL;
-      if (fail == 0) 
-        return new Search::TimeStop(time);
-      if (time  == 0) 
-        return new Search::FailStop(fail);
-      return new FailTimeStop(fail,time);
+      else
+        return new Cutoff(node,fail,time);
+    }
+    /// Destructor
+    ~Cutoff(void) {
+      delete ns; delete fs; delete ts;
     }
   };
 
@@ -202,7 +208,7 @@ ExampleBase<Space>::run(const Options& o) {
         Search::Options so;
         so.c_d  = o.c_d();
         so.a_d  = o.a_d();
-        so.stop = FailTimeStop::create(o.fail(), o.time());
+        so.stop = Cutoff::create(o.node(),o.fail(), o.time());
         Engine<Script> e(s,so);
         delete s;
         do {

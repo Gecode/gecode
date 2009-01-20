@@ -69,7 +69,26 @@ namespace Gecode { namespace Search {
 
 
   /*
-   * Stopping for memory limit
+   * Stopping for node limit
+   *
+   */
+
+  forceinline
+  NodeStop::NodeStop(unsigned long int l0) : l(l0) {}
+
+  forceinline unsigned long int
+  NodeStop::limit(void) const {
+    return l;
+  }
+
+  forceinline void
+  NodeStop::limit(unsigned long int l0) {
+    l=l0;
+  }
+
+
+  /*
+   * Stopping for failure limit
    *
    */
 
@@ -88,7 +107,7 @@ namespace Gecode { namespace Search {
 
 
   /*
-   * Stopping for memory limit
+   * Stopping for time limit
    *
    */
 

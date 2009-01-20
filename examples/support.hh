@@ -168,6 +168,7 @@ protected:
   UnsignedIntOption _solutions; ///< How many solutions
   UnsignedIntOption _c_d;       ///< Copy recomputation distance
   UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
+  UnsignedIntOption _node;      ///< Cutoff for number of nodes
   UnsignedIntOption _fail;      ///< Cutoff for number of failures
   UnsignedIntOption _time;      ///< Cutoff for time
   //@}
@@ -244,6 +245,11 @@ public:
   void a_d(unsigned int d);
   /// Return adaptive recomputation distance
   unsigned int a_d(void) const;
+
+  /// Set default node cutoff
+  void node(unsigned int n);
+  /// Return node cutoff
+  unsigned int node(void) const;
 
   /// Set default failure cutoff
   void fail(unsigned int n);
