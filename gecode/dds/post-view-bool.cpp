@@ -1,0 +1,426 @@
+/*
+ *  CAUTION:
+ *    This file has been automatically generated. Do not edit,
+ *    edit the specification file
+ *      gecode/dds/post-view-bool.bs
+ *    instead.
+ *
+ *  This file contains generated code fragments which are
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2008
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+#include <gecode/dds/branch.hh>
+
+using namespace ::Gecode;
+using namespace ::Gecode::Int;
+using namespace ::Gecode::Int::Branch;
+
+namespace Gecode { namespace Decomposition { 
+
+  /// Create virtual view selector for tie-breaking
+  void
+  virtualize(Gecode::Space& home, IntVarBranch vars,
+             const Gecode::VarBranchOptions& o_vars,
+             Gecode::ViewSelVirtualBase<BoolView>*& v) {
+    switch (vars) {
+     case INT_VAR_RND:
+       v = new (home) ViewSelVirtual<ViewSelRnd<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_MIN_MIN:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_MIN_MAX:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_MAX_MIN:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_MAX_MAX:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_SIZE_MIN:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_SIZE_MAX:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_DEGREE_MIN:
+       v = new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_DEGREE_MAX:
+       v = new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_SIZE_DEGREE_MIN:
+       v = new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_SIZE_DEGREE_MAX:
+       v = new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_REGRET_MIN_MIN:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_REGRET_MIN_MAX:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_REGRET_MAX_MIN:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+     case INT_VAR_REGRET_MAX_MAX:
+       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+       break;
+    default:
+      throw UnknownBranching("Decomposition::branch");
+    }
+  }
+
+}}
+
+namespace Gecode { 
+
+  void
+  decomposingBranch(Gecode::Space& home, const BoolVarArgs& x,
+         IntVarBranch vars, IntValBranch vals,
+         const Gecode::VarBranchOptions& o_vars,
+         const Gecode::ValBranchOptions& o_vals) {
+    using namespace Gecode;
+    using namespace Gecode::Decomposition;
+
+
+    if (home.failed()) return;
+    ViewArray<BoolView> xv(home,x);
+    switch (vars) {
+    case INT_VAR_NONE:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_RND:
+      {
+        ViewSelRnd<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_MIN_MIN:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_MIN_MAX:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_MAX_MIN:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_MAX_MAX:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_MIN:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_MAX:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_DEGREE_MIN:
+      {
+        ViewSelDegreeMin<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_DEGREE_MAX:
+      {
+        ViewSelDegreeMax<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_DEGREE_MIN:
+      {
+        ViewSelDegreeMax<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_DEGREE_MAX:
+      {
+        ViewSelDegreeMin<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MIN_MIN:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MIN_MAX:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MAX_MIN:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MAX_MAX:
+      {
+        ViewSelNone<BoolView> v(home,o_vars);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    default:
+      throw UnknownBranching("Decomposition::branch");
+    }
+  }
+
+  void
+  decomposingBranch(Gecode::Space& home, const BoolVarArgs& x,
+         const Gecode::TieBreakVarBranch<IntVarBranch>& vars,
+         IntValBranch vals,
+         const Gecode::TieBreakVarBranchOptions& o_vars,
+         const Gecode::ValBranchOptions& o_vals) {
+    using namespace Gecode;
+    using namespace Gecode::Decomposition;
+
+
+    if (home.failed()) return;
+    if ((vars.a == INT_VAR_NONE) || (vars.a == INT_VAR_RND) ||
+        ((vars.b == INT_VAR_NONE) && (vars.c == INT_VAR_NONE) && (vars.d == INT_VAR_NONE))) {
+      decomposingBranch(home,x,vars.a,vals,o_vars.a,o_vals);
+      return;
+    }
+    ViewArray<BoolView> xv(home,x);
+    Gecode::ViewSelVirtualBase<BoolView>* tb[3];
+    int n=0;
+    if (vars.b != INT_VAR_NONE)
+      virtualize(home,vars.b,o_vars.b,tb[n++]);
+    if (vars.c != INT_VAR_NONE)
+      virtualize(home,vars.c,o_vars.c,tb[n++]);
+    if (vars.d != INT_VAR_NONE)
+      virtualize(home,vars.d,o_vars.d,tb[n++]);
+    assert(n > 0);
+    ViewSelTieBreakDynamic<BoolView> vbcd(home,tb,n);
+    switch (vars.a) {
+    case INT_VAR_MIN_MIN:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_MIN_MAX:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_MAX_MIN:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_MAX_MAX:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_MIN:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_MAX:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_DEGREE_MIN:
+      {
+        ViewSelDegreeMin<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_DEGREE_MAX:
+      {
+        ViewSelDegreeMax<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_DEGREE_MIN:
+      {
+        ViewSelDegreeMax<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_DEGREE_MAX:
+      {
+        ViewSelDegreeMin<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MIN_MIN:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MIN_MAX:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MAX_MIN:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_REGRET_MAX_MAX:
+      {
+        ViewSelNone<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        Gecode::Decomposition::post(home,xv,v,vals,o_vals);
+      }
+      break;
+    default:
+      throw UnknownBranching("Decomposition::branch");
+    }
+  }
+
+  namespace {
+    class BranchingRegistrar {
+    public:
+      BranchingRegistrar(void) {
+        using namespace Gecode;
+        using namespace Gecode::Decomposition;
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelRnd<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMin<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMax<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMax<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMin<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
+                           ViewSelTieBreakDynamic<BoolView> > >();
+      }
+    };
+    BranchingRegistrar r;
+  }
+}
+
+
+// STATISTICS: dds-any
+
