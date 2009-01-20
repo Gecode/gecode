@@ -1711,7 +1711,6 @@ namespace Gecode {
      * Note that is includes both the memory allocated for the space heap
      * as well as additional memory allocated by actors.
      */
-    GECODE_KERNEL_EXPORT 
     size_t allocated(void) const;
     //@}
   };
@@ -1784,6 +1783,14 @@ namespace Gecode {
   forceinline void
   Space::fl_dispose(FreeList* f, FreeList* l) {
     mm.template fl_dispose<s>(f,l);
+  }
+
+  forceinline size_t
+  Space::allocated(void) const {
+    size_t s = mm.allocated();
+    for (Actor** a = d_fst; a < d_cur; a++)
+      s += (*a)->allocated();
+    return s;
   }
 
   /*

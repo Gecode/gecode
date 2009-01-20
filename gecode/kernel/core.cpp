@@ -128,17 +128,6 @@ namespace Gecode {
     pc.p.n_sub = 0;
   }
 
-  size_t
-  Space::allocated(void) const {
-    size_t s = mm.allocated();
-    Actor** a = d_fst;
-    Actor** e = d_cur;
-    while (a < e) {
-      s += (*a)->allocated(); a++;
-    }
-    return s;
-  }
-
   void
   Space::d_resize(void) {
     if (d_fst == NULL) {
