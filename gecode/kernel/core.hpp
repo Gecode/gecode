@@ -1400,6 +1400,37 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT Space* _clone(bool share=true);
 
+    /**
+     * \brief Commit branching description \a d and for alternative \a a
+     *
+     * The current branching in the space performs a commit from
+     * the information provided by the branching description \a d
+     * and the alternative \a a. The statistics information \a stat is
+     * updated.
+     *
+     * Note that no propagation is perfomed (to support batch
+     * recomputation), in order to perform propagation the member
+     * function status must be used.
+     *
+     * Committing with branching descriptions must be carried
+     * out in the same order as the branch descriptions have been
+     * obtained by the member function Space::description().
+     *
+     * It is perfectly okay to add constraints interleaved with
+     * branching descriptions (provided they are in the right order).
+     * However, if propagation is performed by calling the member
+     * function status and then new branching descriptions are
+     * computed, these branching descriptions are different.
+     *
+     * Committing throws the following exceptions:
+     *  - SpaceNoBranching, if the space has no current branching (it is
+     *    already solved).
+     *  - SpaceIllegalAlternative, if \a a is not smaller than the number
+     *    of alternatives supported by the branching description \a d.
+     */
+    GECODE_KERNEL_EXPORT 
+    void _commit(const BranchingDesc& d, unsigned int a);
+
   public:
     /**
      * \brief Default constructor
@@ -1544,7 +1575,6 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT 
     void commit(const BranchingDesc& d, unsigned int a, 
                 CommitStatistics& stat=unused_commit);
 
@@ -2125,6 +2155,12 @@ namespace Gecode {
     // structures are updated (e.g. forwarding pointers), so we have to
     // cast away the constness.
     return const_cast<Space*>(this)->_clone(share);
+  }
+  
+  forceinline void
+  Space::commit(const BranchingDesc& d, unsigned int a, 
+                CommitStatistics&) {
+    _commit(d,a);
   }
   
   forceinline size_t

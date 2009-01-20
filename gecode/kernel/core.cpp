@@ -328,8 +328,7 @@ namespace Gecode {
 
 
   void
-  Space::commit(const BranchingDesc& d, unsigned int a,
-                CommitStatistics&) {
+  Space::_commit(const BranchingDesc& d, unsigned int a) {
     if (failed())
       return;
     /*
