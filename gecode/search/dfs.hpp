@@ -37,111 +37,6 @@
 
 namespace Gecode {
 
-  namespace Search {
-
-    /*
-     * DFS engine
-     *
-     */
-    forceinline
-    DfsEngine::DfsEngine(unsigned int c_d0, unsigned int a_d0,
-                         Stop* st, size_t sz)
-      : EngineCtrl(st,sz), rcs(a_d0), cur(NULL), c_d(c_d0), d(0) {}
-
-
-    forceinline void
-    DfsEngine::init(Space* s) {
-      cur = s;
-    }
-
-    forceinline void
-    DfsEngine::reset(Space* s) {
-      delete cur;
-      rcs.reset();
-      cur = s;
-      d   = 0;
-      EngineCtrl::reset(s);
-    }
-
-    forceinline void
-    DfsEngine::reset(void) {
-      delete cur;
-      rcs.reset();
-      cur = NULL;
-      d   = 0;
-      EngineCtrl::reset();
-    }
-
-    forceinline size_t
-    DfsEngine::stacksize(void) const {
-      return rcs.stacksize();
-    }
-
-    forceinline Space*
-    DfsEngine::explore(void) {
-      start();
-      while (true) {
-        while (cur) {
-          if (stop(stacksize()))
-            return NULL;
-          node++;
-          switch (cur->status(*this)) {
-          case SS_FAILED:
-            fail++;
-            delete cur;
-            cur = NULL;
-            EngineCtrl::current(NULL);
-            break;
-          case SS_SOLVED:
-            {
-              Space* s = cur;
-              cur = NULL;
-              EngineCtrl::current(NULL);
-              return s;
-            }
-          case SS_BRANCH:
-            {
-              Space* c;
-              if ((d == 0) || (d >= c_d)) {
-                c = cur->clone();
-                d = 1;
-              } else {
-                c = NULL;
-                d++;
-              }
-              const BranchingDesc* desc = rcs.push(*this,cur,c);
-              EngineCtrl::push(c,desc);
-              cur->commit(*desc,0);
-              break;
-            }
-          default: 
-            GECODE_NEVER;
-          }
-        }
-        do {
-          if (!rcs.next(*this))
-            return NULL;
-          cur = rcs.recompute<false>(d,*this);
-        } while (cur == NULL);
-        EngineCtrl::current(cur);
-      }
-      GECODE_NEVER;
-      return NULL;
-    }
-
-    forceinline
-    DfsEngine::~DfsEngine(void) {
-      delete cur;
-      rcs.reset();
-    }
-
-  }
-
-  /*
-   * Control for DFS search engine
-   *
-   */
-
   template <class T>
   forceinline
   DFS<T>::DFS(T* s, const Search::Options& o)
@@ -158,13 +53,6 @@ namespace Gecode {
       throw DynamicCastFailed("DFS");
     return t;
   }
-
-
-
-  /*
-   * DFS convenience
-   *
-   */
 
   template <class T>
   forceinline T*

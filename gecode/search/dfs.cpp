@@ -39,11 +39,6 @@
 
 namespace Gecode { namespace Search {
 
-  /*
-   * Control for DFS
-   *
-   */
-
   DFS::DFS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz)
     : e(c_d,a_d,st,sz) {
     unsigned long int p = 0;

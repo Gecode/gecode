@@ -235,7 +235,9 @@ SEARCHSRC0 = \
 SEARCHHDR0 = \
 	bab.hpp dfs.hpp lds.hpp restart.hpp  \
 	reco-stack.hpp statistics.hpp \
-	engine-ctrl.hpp stop.hpp options.hpp
+	stop.hpp options.hpp \
+	engine.hpp engine/ctrl.hpp engine/reco-stack.hpp \
+	engine/dfs.hpp engine/bab.hpp engine/lds.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
@@ -258,7 +260,7 @@ export SEARCHSTATICLIB	=
 export SEARCHLIB	=
 export LINKSEARCH       =
 endif
-SEARCHBUILDDIRS = search
+SEARCHBUILDDIRS = search search/engine
 
 #
 # INTEGER COMPONENTS
