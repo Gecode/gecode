@@ -215,7 +215,9 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 The search-engines now collect statistics for the number of nodes
-visited and the maximum depth of the search tree.
+visited and the maximum depth of the search tree. The information
+for number of clone and commit operations has been removed as it
+was too confusing.
 
 [ENTRY]
 Module: int

@@ -103,7 +103,6 @@ namespace Gecode {
             {
               Space* c;
               if ((d == 0) || (d >= c_d)) {
-                clone++;
                 c = cur->clone();
                 d = 1;
               } else {
@@ -112,7 +111,6 @@ namespace Gecode {
               }
               const BranchingDesc* desc = rcs.push(*this,cur,c);
               EngineCtrl::push(c,desc);
-              commit++;
               cur->commit(*desc,0);
               break;
             }

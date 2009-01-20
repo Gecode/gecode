@@ -208,7 +208,6 @@ namespace Gecode { namespace Search {
       ds.top().space(NULL);
       stat.lao(s);
       d = 0;
-      stat.commit++;
       return s;
     }
     // General case for recomputation
@@ -239,7 +238,6 @@ namespace Gecode { namespace Search {
     } else {
       s = s->clone();
     }
-    stat.clone++;
 
     if (d < a_d) {
       // No adaptive recomputation
@@ -268,12 +266,10 @@ namespace Gecode { namespace Search {
         if (ss == SS_FAILED) {
           // s must be deleted as it is not on the stack
           delete s;
-          stat.commit += (i-l);
           stat.fail++;
           unwind(i);
           return NULL;
         }
-        stat.clone++;
         ds[i].space(s->clone());
         stat.adapt(ds[i].space());
         d = static_cast<unsigned int>(n-i);
@@ -282,7 +278,6 @@ namespace Gecode { namespace Search {
       for (; i<n; i++)
         commit(s,i);
     }
-    stat.commit += d;
     return s;
   }
 

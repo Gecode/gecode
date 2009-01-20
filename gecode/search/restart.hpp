@@ -62,7 +62,6 @@ namespace Gecode {
   Restart<T>::next(void) {
     if (best != NULL) {
       root->constrain(*best);
-      this->e.clone++;
       if (root->status(this->e) == SS_FAILED) {
         this->e.reset();
       } else {

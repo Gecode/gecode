@@ -142,7 +142,6 @@ namespace Gecode { namespace Search {
         } else {
           ds.top().next();
           cur = ds.top().space()->clone();
-          clone++;
           cur->commit(*desc,a);
         }
         EngineCtrl::current(cur);
@@ -186,7 +185,6 @@ namespace Gecode { namespace Search {
             Space* cc = cur->clone();
             EngineCtrl::push(cc,desc);
             ProbeNode sn(cc,desc,d_a-1);
-            clone++;
             ds.push(sn);
             cur->commit(*desc,d_a);
             d -= d_a;
@@ -194,7 +192,6 @@ namespace Gecode { namespace Search {
             cur->commit(*desc,0);
             delete desc;
           }
-          commit++;
           goto check_discrepancy;
         }
       default: GECODE_NEVER;
@@ -215,11 +212,9 @@ namespace Gecode { namespace Search {
       e.fail += 1;
       e.current(s);
     } else {
-      e.clone++;;
       Space* c = s->clone();
       if (d_max > 0) {
         root = c->clone();
-        e.clone++;
       }
       e.init(c,0);
       e.current(s);
@@ -245,7 +240,6 @@ namespace Gecode { namespace Search {
           e.reset(root,d_cur);
         root = NULL;
       } else if (root != NULL) {
-        e.clone++;
         e.reset(root->clone(),d_cur);
       }
     }

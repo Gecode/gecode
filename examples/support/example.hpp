@@ -199,7 +199,6 @@ ExampleBase<Space>::run(const Options& o) {
         Script* s = new Script(o);
         unsigned int n_p = s->propagators();
         unsigned int n_b = s->branchings();
-        unsigned long int p = 0;
         Search::Options so;
         so.c_d  = o.c_d();
         so.a_d  = o.a_d();
@@ -216,22 +215,20 @@ ExampleBase<Space>::run(const Options& o) {
         Search::Statistics stat = e.statistics();
         cout << endl;
         cout << "Initial" << endl
-             << "\tpropagators:   " << n_p << endl
-             << "\tbranchings:    " << n_b << endl
+             << "\tpropagators:  " << n_p << endl
+             << "\tbranchings:   " << n_b << endl
              << endl
              << "Summary" << endl
-             << "\truntime:       ";
+             << "\truntime:      ";
         t.stop(cout); 
         cout << endl
-             << "\tsolutions:     " 
+             << "\tsolutions:    " 
              << abs(static_cast<int>(o.solutions()) - i) << endl
-             << "\tpropagations:  " << p+stat.propagate << endl
-             << "\tfailures:      " << stat.fail << endl
-             << "\tclones:        " << stat.clone << endl
-             << "\tcommits:       " << stat.commit << endl
-             << "\tnodes:         " << stat.node << endl
-             << "\tmax depth:     " << stat.depth << endl
-             << "\tpeak memory:   "
+             << "\tpropagations: " << stat.propagate << endl
+             << "\tnodes:        " << stat.node << endl
+             << "\tfailures:     " << stat.fail << endl
+             << "\tpeak depth:   " << stat.depth << endl
+             << "\tpeak memory:  "
              << static_cast<int>((stat.memory+1023) / 1024) << " KB"
              << endl;
       }
@@ -243,7 +240,6 @@ ExampleBase<Space>::run(const Options& o) {
         Script* s = new Script(o);
         unsigned int n_p = s->propagators();
         unsigned int n_b = s->branchings();
-        unsigned long int p = 0;
         Search::Options so;
         so.c_d  = o.c_d();
         so.a_d  = o.a_d();
@@ -257,17 +253,15 @@ ExampleBase<Space>::run(const Options& o) {
         } while (--i != 0);
         Search::Statistics stat = e.statistics();
         cout << endl
-             << "\tpropagators:   " << n_p << endl
-             << "\tbranchings:    " << n_b << endl
-             << "\tsolutions:     " 
+             << "\tpropagators:  " << n_p << endl
+             << "\tbranchings:   " << n_b << endl
+             << "\tsolutions:    " 
              << abs(static_cast<int>(o.solutions()) - i) << endl
-             << "\tpropagations:  " << p+stat.propagate << endl
-             << "\tfailures:      " << stat.fail << endl
-             << "\tclones:        " << stat.clone << endl
-             << "\tcommits:       " << stat.commit << endl
-             << "\tnodes:         " << stat.node << endl
-             << "\tmax depth:     " << stat.depth << endl
-             << "\tpeak memory:   "
+             << "\tpropagations: " << stat.propagate << endl
+             << "\tnodes:        " << stat.node << endl
+             << "\tfailures:     " << stat.fail << endl
+             << "\tpeak depth:   " << stat.depth << endl
+             << "\tpeak memory:  "
              << static_cast<int>((stat.memory+1023) / 1024) << " KB"
              << endl;
       }

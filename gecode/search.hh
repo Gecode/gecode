@@ -99,10 +99,6 @@ namespace Gecode {
     public:
       /// Number of failed nodes in search tree
       unsigned long int fail;
-      /// Number of clones created
-      unsigned long int clone;
-      /// Number of commit operations performed
-      unsigned long int commit;
       /// Number of nodes expanded
       unsigned long int node;
       /// Maximum depth of search stack

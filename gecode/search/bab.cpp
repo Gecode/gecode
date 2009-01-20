@@ -70,7 +70,6 @@ namespace Gecode { namespace Search {
           best = cur;
           cur = NULL;
           mark = rcs.entries();
-          clone++;
           EngineCtrl::current(NULL);
           return best->clone();
         case SS_BRANCH:
@@ -78,7 +77,6 @@ namespace Gecode { namespace Search {
             Space* c;
             if ((d == 0) || (d >= c_d)) {
               c = cur->clone();
-              clone++;
               d = 1;
             } else {
               c = NULL;
@@ -87,7 +85,6 @@ namespace Gecode { namespace Search {
             const BranchingDesc* desc = rcs.push(*this,cur,c);
             EngineCtrl::push(c,desc);
             cur->commit(*desc,0);
-            commit++;
             break;
           }
         default:
