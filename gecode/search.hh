@@ -291,15 +291,8 @@ namespace Gecode {
       /// Engine used for exploration
       DfsEngine e;
     public:
-      /**
-       * \brief Initialize search engine
-       * \param s root node (subclass of Space)
-       * \param c_d minimal recomputation distance
-       * \param a_d adaptive recomputation distance
-       * \param st %Stop-object
-       * \param sz size of one space
-       */
-      DFS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
+      /// Initialize search engine for space \a s (of size \a sz) and options \a o
+      DFS(Space* s, const Search::Options& o, size_t sz);
       /// Return next solution (NULL, if none exists or search has been stopped)
       Space* next(void);
       /// Return statistics
@@ -402,15 +395,10 @@ namespace Gecode {
       /// Engine used for exploration
       BabEngine e;
     public:
-      /**
-       * \brief Initialize engine
-       * \param s root node
-       * \param c_d minimal recomputation distance
-       * \param a_d adaptive recomputation distance
-       * \param st %Stop-object
-       * \param sz size of one space
-       */
-      BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
+      /// Initialize search engine for space \a s (of size \a sz) and options \a o
+      BAB(Space* s, const Search::Options& o, size_t sz);
+      /// Return next solution (NULL, if none exists or search has been stopped)
+      Space* next(void);
       /// Check whether engine has been stopped
       bool stopped(void) const;
       /// Return statistics

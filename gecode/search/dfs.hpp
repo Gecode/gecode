@@ -40,7 +40,7 @@ namespace Gecode {
   template <class T>
   forceinline
   DFS<T>::DFS(T* s, const Search::Options& o)
-    : Search::DFS(s,o.c_d,o.a_d,o.stop,sizeof(T)) {}
+    : Search::DFS(s,o,sizeof(T)) {}
 
   template <class T>
   forceinline T*

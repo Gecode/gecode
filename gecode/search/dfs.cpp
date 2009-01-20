@@ -39,8 +39,8 @@
 
 namespace Gecode { namespace Search {
 
-  DFS::DFS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz)
-    : e(c_d,a_d,st,sz) {
+  DFS::DFS(Space* s, const Search::Options& o, size_t sz)
+    : e(o.c_d,o.a_d,o.stop,sz) {
     unsigned long int p = 0;
     Space* c = (s->status(e) == SS_FAILED) ? NULL : s->clone();
     e.init(c);
