@@ -114,14 +114,18 @@ namespace Gecode {
               cur->commit(*desc,0);
               break;
             }
-          default: GECODE_NEVER;
+          default: 
+            GECODE_NEVER;
           }
         }
-        if (!rcs.next(*this))
-          return NULL;
-        cur = rcs.recompute<false>(d,*this);
+        do {
+          if (!rcs.next(*this))
+            return NULL;
+          cur = rcs.recompute<false>(d,*this);
+        } while (cur == NULL);
         EngineCtrl::current(cur);
       }
+      GECODE_NEVER;
       return NULL;
     }
 
