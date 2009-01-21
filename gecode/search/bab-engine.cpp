@@ -68,7 +68,7 @@ namespace Gecode { namespace Search {
     start();
     while (true) {
       while (cur) {
-        if (stop(opt.stop,rcs.stacksize()))
+        if (stop(opt.stop,path.size()))
           return NULL;
         node++;
         switch (cur->status(*this)) {
@@ -82,7 +82,7 @@ namespace Gecode { namespace Search {
           delete best;
           best = cur;
           cur = NULL;
-          mark = rcs.entries();
+          mark = path.entries();
           Engine::current(NULL);
           return best->clone();
         case SS_BRANCH:
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search {
               c = NULL;
               d++;
             }
-            const BranchingDesc* desc = rcs.push(*this,cur,c);
+            const BranchingDesc* desc = path.push(*this,cur,c);
             Engine::push(c,desc);
             cur->commit(*desc,0);
             break;
@@ -106,9 +106,9 @@ namespace Gecode { namespace Search {
       }
       // Recompute and add constraint if necessary
       do {
-        if (!rcs.next(*this))
+        if (!path.next(*this))
           return NULL;
-        cur = rcs.recompute(d,opt.a_d,*this,best,mark);
+        cur = path.recompute(d,opt.a_d,*this,best,mark);
       } while (cur == NULL);
       Engine::current(cur);
     }
@@ -119,12 +119,12 @@ namespace Gecode { namespace Search {
   Statistics
   BAB::statistics(void) const {
     Statistics s = *this;
-    s.memory += rcs.stacksize();
+    s.memory += path.size();
     return s;
   }
 
   BAB::~BAB(void) {
-    rcs.reset();
+    path.reset();
     delete best;
     delete cur;
   }

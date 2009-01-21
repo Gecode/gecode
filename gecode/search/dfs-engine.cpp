@@ -52,7 +52,7 @@ namespace Gecode { namespace Search {
   void
   DFS::reset(Space* s) {
     delete cur;
-    rcs.reset();
+    path.reset();
     d = 0;
     if (s->status(*this) == SS_FAILED) {
       cur = NULL;
@@ -68,7 +68,7 @@ namespace Gecode { namespace Search {
     start();
     while (true) {
       while (cur) {
-        if (stop(opt.stop,rcs.stacksize()))
+        if (stop(opt.stop,path.size()))
           return NULL;
         node++;
         switch (cur->status(*this)) {
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search {
               c = NULL;
               d++;
             }
-            const BranchingDesc* desc = rcs.push(*this,cur,c);
+            const BranchingDesc* desc = path.push(*this,cur,c);
             Engine::push(c,desc);
             cur->commit(*desc,0);
             break;
@@ -105,9 +105,9 @@ namespace Gecode { namespace Search {
         }
       }
       do {
-        if (!rcs.next(*this))
+        if (!path.next(*this))
           return NULL;
-        cur = rcs.recompute(d,opt.a_d,*this);
+        cur = path.recompute(d,opt.a_d,*this);
       } while (cur == NULL);
       Engine::current(cur);
     }
@@ -118,13 +118,13 @@ namespace Gecode { namespace Search {
   Statistics
   DFS::statistics(void) const {
     Statistics s = *this;
-    s.memory += rcs.stacksize();
+    s.memory += path.size();
     return s;
   }
 
   DFS::~DFS(void) {
     delete cur;
-    rcs.reset();
+    path.reset();
   }
 
 }}

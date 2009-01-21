@@ -37,63 +37,60 @@
 
 namespace Gecode { namespace Search {
 
-  /**
-   * \brief %Search tree node for recomputation
-   *
-   */
-  class ReCoNode {
-  protected:
-    /// Space corresponding to this node (might be NULL)
-    Space* _space;
-    /// Current alternative
-    unsigned int _alt;
-    /// Braching description
-    const BranchingDesc* _desc;
-  public:
-    /// Default constructor
-    ReCoNode(void);
-    /// Node for space \a s with clone \a c (possibly NULL)
-    ReCoNode(Space* s, Space* c);
-
-    /// Return space for node
-    Space* space(void) const;
-    /// Set space to \a s
-    void space(Space* s);
-
-    /// Return branching description
-    const BranchingDesc* desc(void) const;
-
-    /// Return number for alternatives
-    unsigned int alt(void) const;
-    /// Test whether current alternative is rightmost
-    bool rightmost(void) const;
-    /// Move to next alternative
-    void next(void);
-
-    /// Free memory for node
-    void dispose(void);
-  };
 
   /**
-   * \brief Stack of nodes supporting recomputation
+   * \brief Depth-first path (stack of nodes) supporting recomputation
    *
    * Maintains the invariant that it contains
    * the path of the node being currently explored. This
    * is required to support recomputation, of course.
    *
-   * The stack supports adaptive recomputation controlled
+   * The path supports adaptive recomputation controlled
    * by the value of a_d: only if the recomputation
    * distance is at least this large, an additional
    * clone is created.
    *
    */
-  class ReCoStack {
-  private:
+  class Path {
+  public:
+    /// %Search tree node for recomputation
+    class Node {
+    protected:
+      /// Space corresponding to this node (might be NULL)
+      Space* _space;
+      /// Current alternative
+      unsigned int _alt;
+      /// Braching description
+      const BranchingDesc* _desc;
+    public:
+      /// Default constructor
+      Node(void);
+      /// Node for space \a s with clone \a c (possibly NULL)
+      Node(Space* s, Space* c);
+      
+      /// Return space for node
+      Space* space(void) const;
+      /// Set space to \a s
+      void space(Space* s);
+      
+      /// Return branching description
+      const BranchingDesc* desc(void) const;
+      
+      /// Return number for alternatives
+      unsigned int alt(void) const;
+      /// Test whether current alternative is rightmost
+      bool rightmost(void) const;
+      /// Move to next alternative
+      void next(void);
+      
+      /// Free memory for node
+      void dispose(void);
+    };
     /// Stack to store node information
-    Support::DynamicStack<ReCoNode,Heap> ds;
+    Support::DynamicStack<Node,Heap> ds;
   public:
     /// Initialize
-    ReCoStack(void);
+    Path(void);
     /// Push space \a c (a clone of \a s or NULL)
     const BranchingDesc* push(Engine& stat, Space* s, Space* c);
     /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
@@ -118,8 +115,8 @@ namespace Gecode { namespace Search {
                      const Space* best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
-    /// Return stack size used
-    size_t stacksize(void) const;
+    /// Return size used
+    size_t size(void) const;
     /// Reset stack
     void reset(void);
   };
@@ -130,41 +127,41 @@ namespace Gecode { namespace Search {
    *
    */
   forceinline
-  ReCoNode::ReCoNode(void) {}
+  Path::Node::Node(void) {}
 
   forceinline
-  ReCoNode::ReCoNode(Space* s, Space* c)
+  Path::Node::Node(Space* s, Space* c)
     : _space(c), _alt(0), _desc(s->description()) {}
 
   forceinline Space*
-  ReCoNode::space(void) const {
+  Path::Node::space(void) const {
     return _space;
   }
   forceinline void
-  ReCoNode::space(Space* s) {
+  Path::Node::space(Space* s) {
     _space = s;
   }
 
   forceinline unsigned int
-  ReCoNode::alt(void) const {
+  Path::Node::alt(void) const {
     return _alt;
   }
   forceinline bool
-  ReCoNode::rightmost(void) const {
+  Path::Node::rightmost(void) const {
     return _alt+1 == _desc->alternatives();
   }
   forceinline void
-  ReCoNode::next(void) {
+  Path::Node::next(void) {
     _alt++;
   }
 
   forceinline const BranchingDesc*
-  ReCoNode::desc(void) const {
+  Path::Node::desc(void) const {
     return _desc;
   }
 
   forceinline void
-  ReCoNode::dispose(void) {
+  Path::Node::dispose(void) {
     delete _space;
     delete _desc;
   }
@@ -177,11 +174,11 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ReCoStack::ReCoStack(void) : ds(heap) {}
+  Path::Path(void) : ds(heap) {}
 
   forceinline const BranchingDesc*
-  ReCoStack::push(Engine& stat, Space* s, Space* c) {
-    ReCoNode sn(s,c);
+  Path::push(Engine& stat, Space* s, Space* c) {
+    Node sn(s,c);
     ds.push(sn);
     if (stat.depth < static_cast<unsigned int>(ds.entries()))
       stat.depth = ds.entries();
@@ -190,7 +187,7 @@ namespace Gecode { namespace Search {
 
   template <class DescType>
   forceinline const BranchingDesc*
-  ReCoStack::nextDesc(Engine& stat, int& alt, int& closedDescs) {
+  Path::nextDesc(Engine& stat, int& alt, int& closedDescs) {
     closedDescs = 0;
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -208,7 +205,7 @@ namespace Gecode { namespace Search {
 
   template <class DescType, bool inclusive>
   forceinline void
-  ReCoStack::closeBranch(Engine& stat) {
+  Path::closeBranch(Engine& stat) {
     while (!ds.empty()) {
       if (dynamic_cast<const DescType*>(ds.top().desc())) {
         if (inclusive && !ds.empty()) {
@@ -223,7 +220,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline bool
-  ReCoStack::next(Engine& stat) {
+  Path::next(Engine& stat) {
     // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -237,13 +234,13 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  ReCoStack::commit(Space* s, int i) const {
-    const ReCoNode& n = ds[i];
+  Path::commit(Space* s, int i) const {
+    const Node& n = ds[i];
     s->commit(*n.desc(),n.alt());
   }
 
   forceinline int
-  ReCoStack::lc(void) const {
+  Path::lc(void) const {
     int l = ds.entries()-1;
     while (ds[l].space() == NULL)
       l--;
@@ -251,17 +248,17 @@ namespace Gecode { namespace Search {
   }
 
   forceinline int
-  ReCoStack::entries(void) const {
+  Path::entries(void) const {
     return ds.entries();
   }
 
   forceinline size_t
-  ReCoStack::stacksize(void) const {
+  Path::size(void) const {
     return ds.size();
   }
 
   forceinline void
-  ReCoStack::unwind(int l) {
+  Path::unwind(int l) {
     assert((ds[l].space() == NULL) || ds[l].space()->failed());
     int n = ds.entries();
     for (int i=l; i<n; i++)
@@ -270,13 +267,13 @@ namespace Gecode { namespace Search {
   }
 
   inline void
-  ReCoStack::reset(void) {
+  Path::reset(void) {
     while (!ds.empty())
       ds.pop().dispose();
   }
 
   forceinline Space*
-  ReCoStack::recompute(unsigned int& d, unsigned int a_d, Engine& stat) {
+  Path::recompute(unsigned int& d, unsigned int a_d, Engine& stat) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -339,8 +336,8 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  ReCoStack::recompute(unsigned int& d, unsigned int a_d, Engine& stat,
-                       const Space* best, int& mark) {
+  Path::recompute(unsigned int& d, unsigned int a_d, Engine& stat,
+                  const Space* best, int& mark) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying

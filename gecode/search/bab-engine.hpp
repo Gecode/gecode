@@ -44,8 +44,8 @@ namespace Gecode { namespace Search {
   private:
     /// Search options
     Options opt;
-    /// Recomputation stack of nodes
-    ReCoStack rcs;
+    /// Current path in search tree
+    Path path;
     /// Current space being explored
     Space* cur;
     /// Distance until next clone
