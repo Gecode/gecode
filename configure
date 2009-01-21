@@ -742,12 +742,12 @@ LINKCPLSET
 enable_cpltset_vars
 LINKINT
 enable_int_vars
-enable_gist
 QMAKE
 QTINCLUDES
 QTDEFINES
 QTLIBS
 enable_qt
+enable_gist
 enable_examples
 enable_minimodel
 enable_scheduling
@@ -1369,8 +1369,8 @@ Optional Features:
                           representation (can only be used with
                           --enable-set-vars) [default=yes]
   --enable-int-vars       build finite domain library [default=yes]
-  --enable-gist           build Gecode Interactive Search Tool [default=no]
-  --enable-qt             build with Qt support [default=no]
+  --enable-qt             build with Qt support [default=yes]
+  --enable-gist           build Gecode Interactive Search Tool [default=yes]
   --enable-examples       build examples for the enabled variable types
                           [default=yes]
   --enable-minimodel      build modeling support library for the enabled
@@ -11956,47 +11956,12 @@ echo "${ECHO_T}no" >&6; }
 
 
 
-  # Check whether --enable-gist was given.
-if test "${enable_gist+set}" = set; then
-  enableval=$enable_gist;
-fi
-
-  { echo "$as_me:$LINENO: checking whether to build Gist" >&5
-echo $ECHO_N "checking whether to build Gist... $ECHO_C" >&6; }
-  if test "${enable_gist:-no}" = "yes"; then
-    enable_qt="yes";
-    { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; }
-
-cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAS_GIST
-_ACEOF
-
-  else
-    { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-  fi
-  enable_gist=${enable_gist}
-
-
-
   # Check whether --enable-qt was given.
 if test "${enable_qt+set}" = set; then
   enableval=$enable_qt;
 fi
 
-  { echo "$as_me:$LINENO: checking whether to build with Qt support" >&5
-echo $ECHO_N "checking whether to build with Qt support... $ECHO_C" >&6; }
-  if test "${enable_qt:-no}" = "yes"; then
-    { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; }
-
-cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAS_QT
-_ACEOF
-
-
-    # Extract the first word of "qmake", so it can be a program name with args.
+  # Extract the first word of "qmake", so it can be a program name with args.
 set dummy qmake; ac_word=$2
 { echo "$as_me:$LINENO: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
@@ -12033,10 +11998,12 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
+  { echo "$as_me:$LINENO: checking whether to build with Qt support" >&5
+echo $ECHO_N "checking whether to build with Qt support... $ECHO_C" >&6; }
+  if test "${enable_qt:-yes}" = "yes"; then
     if test "${QMAKE}x" = "x"; then
-      { { echo "$as_me:$LINENO: error: The qmake tool was not found." >&5
-echo "$as_me: error: The qmake tool was not found." >&2;}
-   { (exit 1); exit 1; }; }
+      { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
     else
       ac_gecode_qt_version=`qmake -query QT_VERSION`
       ac_gecode_qt_major=`echo ${ac_gecode_qt_version} | grep -o '^[0-9]*'`
@@ -12048,46 +12015,75 @@ echo "$as_me: error: The qmake tool was not found." >&2;}
            fi
       fi
       if test "${ac_gecode_qt_ok}" != "yes"; then
-        { { echo "$as_me:$LINENO: error: Your version of Qt is too old. Minimum required: 4.2. Your version: ${ac_gecode_qt_version}." >&5
-echo "$as_me: error: Your version of Qt is too old. Minimum required: 4.2. Your version: ${ac_gecode_qt_version}." >&2;}
-   { (exit 1); exit 1; }; }
+        { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+      else
+        { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define GECODE_HAS_QT
+_ACEOF
+
+                ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
+        cd ${ac_gecode_qt_tmpdir}
+        echo "QT += script" > a.pro
+        qmake
+        if test -d a.xcodeproj; then
+          ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
+        elif test -f Makefile.Debug; then
+            if test "${enable_debug:-no}" = "no"; then
+              ac_gecode_qt_makefile=Makefile.Release
+            else
+              ac_gecode_qt_makefile=Makefile.Debug
+            fi
+        else
+          ac_gecode_qt_makefile=Makefile
+        fi
+        ac_gecode_qt_defines=`grep ${ac_gecode_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+        ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+        ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+        if test -d a.xcodeproj; then
+          ac_gecode_qt_libs="-framework QtScript -framework QtGui -framework QtCore"
+        fi
+        cd ..
+        rm -r ${ac_gecode_qt_tmpdir}
+        QTINCLUDES=${ac_gecode_qt_inc}
+
+        QTDEFINES=${ac_gecode_qt_defines}
+
+        QTLIBS=${ac_gecode_qt_libs}
+
       fi
     fi
-
-        ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
-    cd ${ac_gecode_qt_tmpdir}
-    echo "QT += script" > a.pro
-    qmake
-    if test -d a.xcodeproj; then
-      ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
-    elif test -f Makefile.Debug; then
-        if test "${enable_debug:-no}" = "no"; then
-          ac_gecode_qt_makefile=Makefile.Release
-        else
-          ac_gecode_qt_makefile=Makefile.Debug
-        fi
-    else
-      ac_gecode_qt_makefile=Makefile
-    fi
-    ac_gecode_qt_defines=`grep ${ac_gecode_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    if test -d a.xcodeproj; then
-      ac_gecode_qt_libs="-framework QtScript -framework QtGui -framework QtCore"
-    fi
-    cd ..
-    rm -r ${ac_gecode_qt_tmpdir}
-    QTINCLUDES=${ac_gecode_qt_inc}
-
-    QTDEFINES=${ac_gecode_qt_defines}
-
-    QTLIBS=${ac_gecode_qt_libs}
-
   else
     { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
   fi
   enable_qt=${enable_qt}
+
+
+
+  # Check whether --enable-gist was given.
+if test "${enable_gist+set}" = set; then
+  enableval=$enable_gist;
+fi
+
+  { echo "$as_me:$LINENO: checking whether to build Gist" >&5
+echo $ECHO_N "checking whether to build Gist... $ECHO_C" >&6; }
+  if test "${enable_gist:-yes}" = "yes" -a "${enable_qt:-yes}" = "yes"; then
+    { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define GECODE_HAS_GIST
+_ACEOF
+
+  else
+    { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  fi
+  enable_gist=${enable_gist}
 
 
 
@@ -13102,12 +13098,12 @@ LINKCPLSET!$LINKCPLSET$ac_delim
 enable_cpltset_vars!$enable_cpltset_vars$ac_delim
 LINKINT!$LINKINT$ac_delim
 enable_int_vars!$enable_int_vars$ac_delim
-enable_gist!$enable_gist$ac_delim
 QMAKE!$QMAKE$ac_delim
 QTINCLUDES!$QTINCLUDES$ac_delim
 QTDEFINES!$QTDEFINES$ac_delim
 QTLIBS!$QTLIBS$ac_delim
 enable_qt!$enable_qt$ac_delim
+enable_gist!$enable_gist$ac_delim
 enable_examples!$enable_examples$ac_delim
 enable_minimodel!$enable_minimodel$ac_delim
 enable_scheduling!$enable_scheduling$ac_delim

@@ -977,15 +977,12 @@ AC_DEFUN([AC_GECODE_QT],
   [
   AC_ARG_ENABLE([qt],
     AC_HELP_STRING([--enable-qt],
-      [build with Qt support @<:@default=no@:>@]))
+      [build with Qt support @<:@default=yes@:>@]))
+  AC_CHECK_PROG(QMAKE, qmake, [found])
   AC_MSG_CHECKING(whether to build with Qt support)
-  if test "${enable_qt:-no}" = "yes"; then
-    AC_MSG_RESULT(yes)
-    AC_DEFINE([GECODE_HAS_QT],[],[Whether Qt is available])
-
-    AC_CHECK_PROG(QMAKE, qmake, [found])
+  if test "${enable_qt:-yes}" = "yes"; then
     if test "${QMAKE}x" = "x"; then
-      AC_MSG_ERROR([The qmake tool was not found.])
+      AC_MSG_RESULT(no)
     else
       ac_gecode_qt_version=`qmake -query QT_VERSION`
       ac_gecode_qt_major=`echo ${ac_gecode_qt_version} | grep -o '^[[0-9]]*'`
@@ -997,37 +994,39 @@ AC_DEFUN([AC_GECODE_QT],
            fi
       fi
       if test "${ac_gecode_qt_ok}" != "yes"; then
-        AC_MSG_ERROR([Your version of Qt is too old. Minimum required: 4.2. Your version: ${ac_gecode_qt_version}.])
+        AC_MSG_RESULT(no)
+      else
+        AC_MSG_RESULT(yes)
+        AC_DEFINE([GECODE_HAS_QT],[],[Whether Qt is available])
+        dnl use qmake to find the Qt installation
+        ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
+        cd ${ac_gecode_qt_tmpdir}
+        echo "QT += script" > a.pro
+        qmake
+        if test -d a.xcodeproj; then
+          ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
+        elif test -f Makefile.Debug; then
+            if test "${enable_debug:-no}" = "no"; then
+              ac_gecode_qt_makefile=Makefile.Release
+            else
+              ac_gecode_qt_makefile=Makefile.Debug
+            fi
+        else
+          ac_gecode_qt_makefile=Makefile
+        fi
+        ac_gecode_qt_defines=`grep ${ac_gecode_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+        ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+        ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
+        if test -d a.xcodeproj; then
+          ac_gecode_qt_libs="-framework QtScript -framework QtGui -framework QtCore"
+        fi
+        cd ..
+        rm -r ${ac_gecode_qt_tmpdir}
+        AC_SUBST(QTINCLUDES, ${ac_gecode_qt_inc})
+        AC_SUBST(QTDEFINES, ${ac_gecode_qt_defines})
+        AC_SUBST(QTLIBS, ${ac_gecode_qt_libs})
       fi
     fi
-
-    dnl use qmake to find the Qt installation
-    ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
-    cd ${ac_gecode_qt_tmpdir}
-    echo "QT += script" > a.pro
-    qmake
-    if test -d a.xcodeproj; then
-      ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
-    elif test -f Makefile.Debug; then
-        if test "${enable_debug:-no}" = "no"; then
-          ac_gecode_qt_makefile=Makefile.Release
-        else
-          ac_gecode_qt_makefile=Makefile.Debug
-        fi
-    else
-      ac_gecode_qt_makefile=Makefile
-    fi
-    ac_gecode_qt_defines=`grep ${ac_gecode_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-    if test -d a.xcodeproj; then
-      ac_gecode_qt_libs="-framework QtScript -framework QtGui -framework QtCore"
-    fi
-    cd ..
-    rm -r ${ac_gecode_qt_tmpdir}
-    AC_SUBST(QTINCLUDES, ${ac_gecode_qt_inc})
-    AC_SUBST(QTDEFINES, ${ac_gecode_qt_defines})
-    AC_SUBST(QTLIBS, ${ac_gecode_qt_libs})
   else
     AC_MSG_RESULT(no)
   fi
@@ -1047,10 +1046,9 @@ AC_DEFUN([AC_GECODE_GIST],
   [
   AC_ARG_ENABLE([gist],
     AC_HELP_STRING([--enable-gist],
-      [build Gecode Interactive Search Tool @<:@default=no@:>@]))
+      [build Gecode Interactive Search Tool @<:@default=yes@:>@]))
   AC_MSG_CHECKING(whether to build Gist)
-  if test "${enable_gist:-no}" = "yes"; then
-    enable_qt="yes";
+  if test "${enable_gist:-yes}" = "yes" -a "${enable_qt:-yes}" = "yes"; then
     AC_MSG_RESULT(yes)
     AC_DEFINE([GECODE_HAS_GIST],[],[Whether Gist is available])
   else
