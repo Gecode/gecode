@@ -346,8 +346,9 @@ namespace Test {
         Model* m = new Model(htb1,htb2,htb3);
         Gecode::Search::FailStop f(2);
         Gecode::Search::Options o;
+        o.d = 50;
         o.stop = &f;
-        Gecode::LDS<Model> lds(m,50,o);
+        Gecode::LDS<Model> lds(m,o);
         int n = m->solutions();
         delete m;
         while (true) {
