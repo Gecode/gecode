@@ -1025,6 +1025,7 @@ AC_DEFUN([AC_GECODE_QT],
         AC_SUBST(QTINCLUDES, ${ac_gecode_qt_inc})
         AC_SUBST(QTDEFINES, ${ac_gecode_qt_defines})
         AC_SUBST(QTLIBS, ${ac_gecode_qt_libs})
+        AC_SUBST(enable_qt,yes)
       fi
     fi
   else
@@ -1050,11 +1051,11 @@ AC_DEFUN([AC_GECODE_GIST],
   AC_MSG_CHECKING(whether to build Gist)
   if test "${enable_gist:-yes}" = "yes" -a "${enable_qt:-yes}" = "yes"; then
     AC_MSG_RESULT(yes)
+    AC_SUBST(enable_gist, yes)
     AC_DEFINE([GECODE_HAS_GIST],[],[Whether Gist is available])
   else
     AC_MSG_RESULT(no)
   fi
-  AC_SUBST(enable_gist, ${enable_gist})
 ])
 
 AC_DEFUN([AC_GECODE_USER_SUFFIX],
