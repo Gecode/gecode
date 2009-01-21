@@ -44,7 +44,7 @@ namespace Gecode { namespace Search {
 
   Space*
   BAB::next(void) {
-    return e.explore();
+    return e.next();
   }
 
   bool
@@ -54,9 +54,7 @@ namespace Gecode { namespace Search {
 
   Statistics
   BAB::statistics(void) const {
-    Statistics s = e;
-    s.memory += e.stacksize();
-    return s;
+    return e.statistics();
   }
 
 }}

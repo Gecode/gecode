@@ -59,9 +59,7 @@ namespace Gecode { namespace Search {
 
   Statistics
   DFS::statistics(void) const {
-    Statistics s = e;
-    s.memory += e.stacksize();
-    return s;
+    return e.statistics();
   }
 
 }}

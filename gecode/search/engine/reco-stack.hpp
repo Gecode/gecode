@@ -93,7 +93,7 @@ namespace Gecode { namespace Search {
   ReCoStack::ReCoStack(void) : ds(heap) {}
 
   forceinline const BranchingDesc*
-  ReCoStack::push(EngineCtrl& stat, Space* s, Space* c) {
+  ReCoStack::push(Engine& stat, Space* s, Space* c) {
     ReCoNode sn(s,c);
     ds.push(sn);
     if (stat.depth < static_cast<unsigned int>(ds.entries()))
@@ -103,7 +103,7 @@ namespace Gecode { namespace Search {
 
   template <class DescType>
   forceinline const BranchingDesc*
-  ReCoStack::nextDesc(EngineCtrl& stat, int& alt, int& closedDescs) {
+  ReCoStack::nextDesc(Engine& stat, int& alt, int& closedDescs) {
     closedDescs = 0;
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -121,7 +121,7 @@ namespace Gecode { namespace Search {
 
   template <class DescType, bool inclusive>
   forceinline void
-  ReCoStack::closeBranch(EngineCtrl& stat) {
+  ReCoStack::closeBranch(Engine& stat) {
     while (!ds.empty()) {
       if (dynamic_cast<const DescType*>(ds.top().desc())) {
         if (inclusive && !ds.empty()) {
@@ -136,7 +136,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline bool
-  ReCoStack::next(EngineCtrl& stat) {
+  ReCoStack::next(Engine& stat) {
     // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -189,7 +189,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  ReCoStack::recompute(unsigned int& d, unsigned int a_d, EngineCtrl& stat) {
+  ReCoStack::recompute(unsigned int& d, unsigned int a_d, Engine& stat) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -252,7 +252,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  ReCoStack::recompute(unsigned int& d, unsigned int a_d, EngineCtrl& stat,
+  ReCoStack::recompute(unsigned int& d, unsigned int a_d, Engine& stat,
                        const Space* best, int& mark) {
     assert(!ds.empty());
     // Recompute space according to path

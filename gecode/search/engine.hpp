@@ -42,7 +42,7 @@ namespace Gecode { namespace Search {
   /**
    * \brief %Search engine control including memory information
    */
-  class EngineCtrl : public Statistics {
+  class Engine : public Statistics {
   protected:
     /// Whether engine has been stopped
     bool _stopped;
@@ -54,7 +54,7 @@ namespace Gecode { namespace Search {
     size_t mem_total;
   public:
     /// Initialize with space size \a sz
-    EngineCtrl(size_t sz);
+    Engine(size_t sz);
     /// Reset stop information
     void start(void);
     /// Check whether engine must be stopped (with additional stackspace \a sz)
@@ -138,16 +138,16 @@ namespace Gecode { namespace Search {
     /// Initialize
     ReCoStack(void);
     /// Push space \a c (a clone of \a s or NULL)
-    const BranchingDesc* push(EngineCtrl& stat, Space* s, Space* c);
+    const BranchingDesc* push(Engine& stat, Space* s, Space* c);
     /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
     template <class DescType>
-    const BranchingDesc* nextDesc(EngineCtrl& s, int& alt,
+    const BranchingDesc* nextDesc(Engine& s, int& alt,
                                   int& closedDescs);
     /// Generate path for next node with BranchingDesc type DescType
     template <class DescType, bool inclusive>
-    void closeBranch(EngineCtrl& s);
+    void closeBranch(Engine& s);
     /// Generate path for next node and return whether a next node exists
-    bool next(EngineCtrl& s);
+    bool next(Engine& s);
     /// Return position on stack of last copy
     int lc(void) const;
     /// Unwind the stack up to position \a l (after failure)
@@ -155,9 +155,9 @@ namespace Gecode { namespace Search {
     /// Commit space \a s as described by stack entry at position \a i
     void commit(Space* s, int i) const;
     /// Recompute space according to path 
-    Space* recompute(unsigned int& d, unsigned int a_d, EngineCtrl& s);
+    Space* recompute(unsigned int& d, unsigned int a_d, Engine& s);
     /// Recompute space according to path
-    Space* recompute(unsigned int& d, unsigned int a_d, EngineCtrl& s,
+    Space* recompute(unsigned int& d, unsigned int a_d, Engine& s,
                      const Space* best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
@@ -171,7 +171,7 @@ namespace Gecode { namespace Search {
    * \brief Depth-first search engine implementation
    *
    */
-  class DfsEngine : public EngineCtrl {
+  class DfsEngine : public Engine {
   private:
     /// Search options
     Options opt;
@@ -188,8 +188,8 @@ namespace Gecode { namespace Search {
     void reset(Space* s);
     /// %Search for next solution
     Space* explore(void);
-    /// Return stack size used by engine
-    size_t stacksize(void) const;
+    /// Return statistics
+    Statistics statistics(void) const;
     /// Destructor
     ~DfsEngine(void);
   };
@@ -198,7 +198,7 @@ namespace Gecode { namespace Search {
    * \brief Probing engine for %LDS
    *
    */
-  class ProbeEngine : public EngineCtrl {
+  class ProbeEngine : public Engine {
   protected:
     /// %Node in the search tree for %LDS
     class ProbeNode {
@@ -238,8 +238,8 @@ namespace Gecode { namespace Search {
     void init(Space* s, unsigned int d);
     /// Reset with space \a s and discrepancy \a d
     void reset(Space* s, unsigned int d);
-    /// Return stack size used by engine
-    size_t stacksize(void) const;
+    /// Return statistics
+    Statistics statistics(void) const;
     /// Destructor
     ~ProbeEngine(void);
     /// %Search for next solution
@@ -251,7 +251,7 @@ namespace Gecode { namespace Search {
   /**
    * \brief Implementation of depth-first branch-and-bound search engines
    */
-  class BabEngine : public EngineCtrl {
+  class BabEngine : public Engine {
   private:
     /// Search options
     Options opt;
@@ -269,9 +269,9 @@ namespace Gecode { namespace Search {
     /// Initialize with space \a s (of size \a sz) and search options \a o
     BabEngine(Space* s, size_t sz, const Options& o);
     /// %Search for next better solution
-    Space* explore(void);
-    /// Return stack size used by engine
-    size_t stacksize(void) const;
+    Space* next(void);
+    /// Return statistics
+    Statistics statistics(void) const;
     /// Destructor
     ~BabEngine(void);
   };

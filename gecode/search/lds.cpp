@@ -90,9 +90,7 @@ namespace Gecode { namespace Search {
 
   Statistics
   LDS::statistics(void) const {
-    Statistics s = e;
-    s.memory += e.stacksize();
-    return e;
+    return e.statistics();
   }
 
 }}

@@ -81,7 +81,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   ProbeEngine::ProbeEngine(size_t sz)
-    : EngineCtrl(sz), ds(heap) {}
+    : Engine(sz), ds(heap) {}
 
   forceinline void
   ProbeEngine::init(Space* s, unsigned int d0) {
@@ -97,12 +97,14 @@ namespace Gecode { namespace Search {
     cur       = s;
     d         = d0;
     exhausted = true;
-    EngineCtrl::reset(s);
+    Engine::reset(s);
   }
 
-  forceinline size_t
-  ProbeEngine::stacksize(void) const {
-    return ds.size();
+  forceinline Statistics
+  ProbeEngine::statistics(void) const {
+    Statistics s = *this;
+    s.memory += ds.size();
+    return s;
   }
 
   forceinline bool
@@ -125,13 +127,13 @@ namespace Gecode { namespace Search {
       backtrack:
         if (ds.empty())
           return NULL;
-        if (stop(st,stacksize()))
+        if (stop(st,ds.size()))
           return NULL;
         unsigned int a            = ds.top().alt();
         const BranchingDesc* desc = ds.top().desc();
         if (a == 0) {
           cur = ds.pop().space();
-          EngineCtrl::pop(cur,desc);
+          Engine::pop(cur,desc);
           cur->commit(*desc,0);
           delete desc;
         } else {
@@ -139,7 +141,7 @@ namespace Gecode { namespace Search {
           cur = ds.top().space()->clone();
           cur->commit(*desc,a);
         }
-        EngineCtrl::current(cur);
+        Engine::current(cur);
         d++;
       }
     check_discrepancy:
@@ -153,7 +155,7 @@ namespace Gecode { namespace Search {
           delete desc;
         }
         cur = NULL;
-        EngineCtrl::current(NULL);
+        Engine::current(NULL);
         if (s->failed()) {
           delete s;
           goto backtrack;
@@ -167,7 +169,7 @@ namespace Gecode { namespace Search {
       case SS_SOLVED:
         delete cur;
         cur = NULL;
-        EngineCtrl::current(NULL);
+        Engine::current(NULL);
         goto backtrack;
       case SS_BRANCH:
         {
@@ -178,7 +180,7 @@ namespace Gecode { namespace Search {
               exhausted = false;
             unsigned int d_a = (d >= alt-1) ? alt-1 : d;
             Space* cc = cur->clone();
-            EngineCtrl::push(cc,desc);
+            Engine::push(cc,desc);
             ProbeNode sn(cc,desc,d_a-1);
             ds.push(sn);
             cur->commit(*desc,d_a);

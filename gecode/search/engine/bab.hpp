@@ -43,7 +43,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   BabEngine::BabEngine(Space* s, size_t sz, const Options& o)
-    : EngineCtrl(sz), opt(o), d(0), mark(0), best(NULL) {
+    : Engine(sz), opt(o), d(0), mark(0), best(NULL) {
     cur = (s->status(*this) == SS_FAILED) ? NULL : s->clone();
     current(s);
     current(NULL);
@@ -53,7 +53,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  BabEngine::explore(void) {
+  BabEngine::next(void) {
     /*
      * The invariant maintained by the engine is:
      *   For all nodes stored at a depth less than mark, there
@@ -67,7 +67,7 @@ namespace Gecode { namespace Search {
     start();
     while (true) {
       while (cur) {
-        if (stop(opt.stop,stacksize()))
+        if (stop(opt.stop,rcs.stacksize()))
           return NULL;
         node++;
         switch (cur->status(*this)) {
@@ -75,14 +75,14 @@ namespace Gecode { namespace Search {
           fail++;
           delete cur;
           cur = NULL;
-          EngineCtrl::current(NULL);
+          Engine::current(NULL);
           break;
         case SS_SOLVED:
           delete best;
           best = cur;
           cur = NULL;
           mark = rcs.entries();
-          EngineCtrl::current(NULL);
+          Engine::current(NULL);
           return best->clone();
         case SS_BRANCH:
           {
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search {
               d++;
             }
             const BranchingDesc* desc = rcs.push(*this,cur,c);
-            EngineCtrl::push(c,desc);
+            Engine::push(c,desc);
             cur->commit(*desc,0);
             break;
           }
@@ -109,15 +109,17 @@ namespace Gecode { namespace Search {
           return NULL;
         cur = rcs.recompute(d,opt.a_d,*this,best,mark);
       } while (cur == NULL);
-      EngineCtrl::current(cur);
+      Engine::current(cur);
     }
     GECODE_NEVER;
     return NULL;
   }
 
-  forceinline size_t
-  BabEngine::stacksize(void) const {
-    return rcs.stacksize();
+  forceinline Statistics
+  BabEngine::statistics(void) const {
+    Statistics s = *this;
+    s.memory += rcs.stacksize();
+    return s;
   }
 
   forceinline

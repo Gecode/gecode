@@ -39,7 +39,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   DfsEngine::DfsEngine(Space* s, size_t sz, const Options& o)
-    : EngineCtrl(sz), opt(o), d(0) {
+    : Engine(sz), opt(o), d(0) {
     cur = (s->status(*this) == SS_FAILED) ? NULL : s->clone();
     current(s);
     current(NULL);
@@ -55,10 +55,10 @@ namespace Gecode { namespace Search {
     d = 0;
     if (s->status(*this) == SS_FAILED) {
       cur = NULL;
-      EngineCtrl::reset();
+      Engine::reset();
     } else {
       cur = s->clone();
-      EngineCtrl::reset(cur);
+      Engine::reset(cur);
     }
   }
 
@@ -67,7 +67,7 @@ namespace Gecode { namespace Search {
     start();
     while (true) {
       while (cur) {
-        if (stop(opt.stop,stacksize()))
+        if (stop(opt.stop,rcs.stacksize()))
           return NULL;
         node++;
         switch (cur->status(*this)) {
@@ -75,13 +75,13 @@ namespace Gecode { namespace Search {
           fail++;
           delete cur;
           cur = NULL;
-          EngineCtrl::current(NULL);
+          Engine::current(NULL);
           break;
         case SS_SOLVED:
           {
             Space* s = cur;
             cur = NULL;
-            EngineCtrl::current(NULL);
+            Engine::current(NULL);
             return s;
           }
         case SS_BRANCH:
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search {
               d++;
             }
             const BranchingDesc* desc = rcs.push(*this,cur,c);
-            EngineCtrl::push(c,desc);
+            Engine::push(c,desc);
             cur->commit(*desc,0);
             break;
           }
@@ -108,15 +108,17 @@ namespace Gecode { namespace Search {
           return NULL;
         cur = rcs.recompute(d,opt.a_d,*this);
       } while (cur == NULL);
-      EngineCtrl::current(cur);
+      Engine::current(cur);
     }
     GECODE_NEVER;
     return NULL;
   }
 
-  forceinline size_t
-  DfsEngine::stacksize(void) const {
-    return rcs.stacksize();
+  forceinline Statistics
+  DfsEngine::statistics(void) const {
+    Statistics s = *this;
+    s.memory += rcs.stacksize();
+    return s;
   }
 
   forceinline
