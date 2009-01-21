@@ -234,7 +234,7 @@ SEARCHSRC0 = \
 	dfs.cpp lds.cpp bab.cpp stop.cpp options.cpp
 SEARCHHDR0 = \
 	bab.hpp dfs.hpp lds.hpp restart.hpp  \
-	reco-stack.hpp statistics.hpp \
+	statistics.hpp \
 	stop.hpp options.hpp \
 	engine.hpp engine/ctrl.hpp engine/reco-stack.hpp \
 	engine/dfs.hpp engine/bab.hpp engine/lds.hpp
