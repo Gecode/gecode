@@ -40,18 +40,12 @@ namespace Gecode {
   template <class T>
   forceinline
   DFS<T>::DFS(T* s, const Search::Options& o)
-    : Search::DFS(s,o,sizeof(T)) {}
+    : Search::DFS(s,sizeof(T),o) {}
 
   template <class T>
   forceinline T*
   DFS<T>::next(void) {
-    Space* s = Search::DFS::next();
-    if (s == NULL)
-      return NULL;
-    T* t = dynamic_cast<T*>(s);
-    if (t == NULL)
-      throw DynamicCastFailed("DFS");
-    return t;
+    return dynamic_cast<T*>(Search::DFS::next());
   }
 
   template <class T>

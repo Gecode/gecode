@@ -59,17 +59,11 @@ namespace Gecode {
   Restart<T>::next(void) {
     if (best != NULL) {
       root->constrain(*best);
-      this->e.reset(root);
+      reset(root);
     }
-    Space* b = this->e.explore();
     delete best;
-    best = (b != NULL) ? b->clone() : NULL;
-    if (b == NULL)
-      return NULL;
-    T* dcb = dynamic_cast<T*>(b);
-    if (dcb == NULL)
-      throw DynamicCastFailed("Restart");
-    return dcb;
+    best = Search::DFS::next();
+    return dynamic_cast<T*>((best != NULL) ? best->clone() : NULL);
   }
 
 

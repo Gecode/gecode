@@ -42,13 +42,14 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  BabEngine::BabEngine(const Options& o,size_t sz)
-    : EngineCtrl(sz), opt(o), cur(NULL), d(0),
-      mark(0), best(NULL) {}
-
-  forceinline void
-  BabEngine::init(Space* s) {
-    cur = s;
+  BabEngine::BabEngine(Space* s, size_t sz, const Options& o)
+    : EngineCtrl(sz), opt(o), d(0), mark(0), best(NULL) {
+    cur = (s->status(*this) == SS_FAILED) ? NULL : s->clone();
+    current(s);
+    current(NULL);
+    current(cur);
+    if (cur == NULL)
+      fail++;
   }
 
   forceinline Space*

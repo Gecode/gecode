@@ -182,10 +182,8 @@ namespace Gecode { namespace Search {
     /// Distance until next clone
     unsigned int d;
   public:
-    /// Initialize engine with options \a o and space \a s (of size \a sz)
-    DfsEngine(const Options& o, size_t sz);
-    /// Initialize engine to start at space \a s
-    void init(Space* s);
+    /// Initialize for space \a s (of size \a sz) with options \a o)
+    DfsEngine(Space* s, size_t sz, const Options& o);
     /// Reset engine to restart at space \a s
     void reset(Space* s);
     /// %Search for next solution
@@ -268,10 +266,8 @@ namespace Gecode { namespace Search {
     /// Best solution found so far
     Space* best;
   public:
-    /// Initialize with search options \a o and space \a s (of size \a sz)
-    BabEngine(const Options& o, size_t sz);
-    /// Initialize engine to start at space \a s
-    void init(Space* s);
+    /// Initialize with space \a s (of size \a sz) and search options \a o
+    BabEngine(Space* s, size_t sz, const Options& o);
     /// %Search for next better solution
     Space* explore(void);
     /// Return stack size used by engine

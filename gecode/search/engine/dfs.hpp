@@ -38,13 +38,14 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  DfsEngine::DfsEngine(const Options& o, size_t sz)
-    : EngineCtrl(sz), opt(o), cur(NULL), d(0) {}
-
-
-  forceinline void
-  DfsEngine::init(Space* s) {
-    cur = s;
+  DfsEngine::DfsEngine(Space* s, size_t sz, const Options& o)
+    : EngineCtrl(sz), opt(o), d(0) {
+    cur = (s->status(*this) == SS_FAILED) ? NULL : s->clone();
+    current(s);
+    current(NULL);
+    current(cur);
+    if (cur == NULL)
+      fail++;
   }
 
   forceinline void

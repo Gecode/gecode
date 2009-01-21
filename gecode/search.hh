@@ -297,8 +297,8 @@ namespace Gecode {
       /// Reset engine for space \a s (must be of same size as initialized)
       void reset(Space* s);
     public:
-      /// Initialize search engine for space \a s (of size \a sz) and options \a o
-      DFS(Space* s, const Search::Options& o, size_t sz);
+      /// Initialize for space \a s (of size \a sz) with options \a o)
+      DFS(Space* s, size_t sz, const Search::Options& o);
       /// Return next solution (NULL, if none exists or search has been stopped)
       Space* next(void);
       /// Return statistics
@@ -395,8 +395,8 @@ namespace Gecode {
       /// Engine used for exploration
       BabEngine e;
     public:
-      /// Initialize search engine for space \a s (of size \a sz) and options \a o
-      BAB(Space* s, const Search::Options& o, size_t sz);
+      /// Initialize for space \a s (of size \a sz) and options \a o
+      BAB(Space* s, size_t sz, const Search::Options& o);
       /// Return next solution (NULL, if none exists or search has been stopped)
       Space* next(void);
       /// Check whether engine has been stopped
