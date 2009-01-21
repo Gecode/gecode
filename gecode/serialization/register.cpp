@@ -513,7 +513,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::rel";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -1437,7 +1437,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::sqrt";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -1485,7 +1485,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::sequence";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -1517,7 +1517,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::sorted";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -1577,7 +1577,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::exactly";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -1803,7 +1803,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::max";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -1910,7 +1910,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::divmod";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -1966,7 +1966,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::distinct";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -2053,7 +2053,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::dom";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -2427,7 +2427,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::count";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -2891,7 +2891,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::match";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -2925,7 +2925,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::element";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3202,7 +3202,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::abs";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3250,7 +3250,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::elementsUnion";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3304,7 +3304,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::atmost";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3530,7 +3530,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::circuit";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3580,7 +3580,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::assign";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3627,7 +3627,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::mult";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3679,7 +3679,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::atmostOne";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3713,7 +3713,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::div";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3765,7 +3765,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::convex";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3794,7 +3794,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::unshare";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3868,7 +3868,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::weights";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -3907,7 +3907,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::linear";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -4551,7 +4551,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::cumulatives";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5161,7 +5161,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::notMax";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5192,7 +5192,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::channel";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5422,7 +5422,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::cardinality";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5470,7 +5470,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::elementsDisjoint";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5504,7 +5504,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::min";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5611,7 +5611,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::sequentialUnion";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5645,7 +5645,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::notMin";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5676,7 +5676,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::branch";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5742,7 +5742,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::atleast";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5968,7 +5968,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::convexHull";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -5999,7 +5999,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::elementsInter";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -6059,7 +6059,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::sqr";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -6107,7 +6107,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::clause";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -6217,7 +6217,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::lex";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -6319,7 +6319,7 @@ public:
   static Gecode::Support::Symbol ati(void) {
     return "Gecode::Post::mod";
   }
-
+  
   /// Post constraint described by \a spec
   static void post(Gecode::Space& home, Gecode::Reflection::VarMap& vm,
                    const Gecode::Reflection::ActorSpec& spec) {
@@ -6410,11 +6410,11 @@ class PostRegistrar {
 
 } // end anonymous namespace
 namespace Gecode { namespace Serialization {
-
+  
   void initRegistry(void) {
     static PostRegistrar r;
     return;
   };
 
-
+  
 }}

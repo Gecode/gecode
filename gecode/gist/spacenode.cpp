@@ -364,9 +364,7 @@ namespace Gecode { namespace Gist {
     if (isUndetermined()) {
       stats.undetermined--;
       acquireSpace(curBest, c_d, a_d);
-      long unsigned int noOfProps;
-      bool wmp;
-      switch (workingSpace->status(noOfProps,wmp)) {
+      switch (workingSpace->status(stats)) {
       case SS_FAILED:
         {
           purge();
@@ -426,7 +424,6 @@ namespace Gecode { namespace Gist {
         stats.undetermined += kids;
         break;
       }
-      stats.hadWMPropagators |= wmp;
       static_cast<VisualNode*>(this)->changedStatus();
       setNumberOfChildren(kids);
       for (int i=kids; i--;) {

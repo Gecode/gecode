@@ -258,7 +258,7 @@ namespace Gecode { namespace Gist {
     failedLabel->setNum(stats.failures);
     choicesLabel->setNum(stats.choices);
     openLabel->setNum(stats.undetermined);
-    if (stats.hadWMPropagators)
+    if (stats.wmp)
       wmpLabel->setText("WMP");
     else
       wmpLabel->setText("");

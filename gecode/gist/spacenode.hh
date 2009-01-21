@@ -78,7 +78,7 @@ namespace Gecode { namespace Gist {
   };
 
   /// Statistics about the search tree
-  class Statistics {
+  class Statistics : public StatusStatistics {
   public:
     /// Number of solutions
     int solutions;
@@ -90,13 +90,10 @@ namespace Gecode { namespace Gist {
     int undetermined;
     /// Maximum depth of the tree
     int maxDepth;
-    /// Whether any weakly monotonic propagators were executed
-    bool hadWMPropagators;
 
     /// Constructor
     Statistics(void)
-    : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0),
-      hadWMPropagators(false) {}
+      : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0) {}
   };
 
   class SpaceNode;
