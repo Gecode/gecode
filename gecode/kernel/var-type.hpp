@@ -43,7 +43,7 @@
  */
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int {
   const Gecode::ModEvent ME_INT_NONE = Gecode::ME_GEN_NONE;
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_INT_VAL = Gecode::ME_GEN_ASSIGNED;
-  /**
+  /** 
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
    * Note that this implies that the domain has not resulted in a value.
@@ -64,7 +64,7 @@ namespace Gecode { namespace Int {
    * assuming a ME_INT_BND modification event.
    */
   const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
-  /**
+  /** 
    * \brief Domain operation has changed the domain
    *
    * Note that this implies that the domain has not resulted in a value
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode { namespace Set { 
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
    * \ingroup TaskActorSet
@@ -251,7 +251,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_CPLTSET_VARS
-namespace Gecode { namespace CpltSet {
+namespace Gecode { namespace CpltSet { 
   /**
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
    * \ingroup TaskActorCpltSet
@@ -282,7 +282,7 @@ namespace Gecode { namespace CpltSet {
    *
    * If a propagator \a p depends on a view \a x with propagation
    * condition PC_CPLTSET_DOM, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_CPLTSET_VAL or
+   * update operation on \a x returns the modification event ME_CPLTSET_VAL or 
    * ME_CPLTSET_DOM.
    */
   const Gecode::PropCond PC_CPLTSET_DOM = Gecode::PC_GEN_ASSIGNED + 1;
@@ -290,7 +290,7 @@ namespace Gecode { namespace CpltSet {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Configuration for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #else
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Dummy configuration for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -331,7 +331,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Configuration for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #else
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   /// Dummy configuration for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode { namespace Set { 
   /// Configuration for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -399,7 +399,7 @@ namespace Gecode { namespace Set {
   };
 }}
 #else
-namespace Gecode { namespace Set {
+namespace Gecode { namespace Set { 
   /// Dummy configuration for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -418,7 +418,7 @@ namespace Gecode { namespace Set {
 #define GECODE_HAS_VAR_DISPOSE 1
 #endif
 
-namespace Gecode { namespace CpltSet {
+namespace Gecode { namespace CpltSet { 
   /// Configuration for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
@@ -445,7 +445,7 @@ namespace Gecode { namespace CpltSet {
   };
 }}
 #else
-namespace Gecode { namespace CpltSet {
+namespace Gecode { namespace CpltSet { 
   /// Dummy configuration for CpltSet-variable implementations
   class CpltSetVarImpConf {
   public:
@@ -475,7 +475,7 @@ namespace Gecode {
 }
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   forceinline Gecode::ModEvent
   IntVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c = (
@@ -551,7 +551,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { 
   forceinline Gecode::ModEvent
   BoolVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     return me1 | me2;
@@ -574,7 +574,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode { namespace Set { 
   forceinline Gecode::ModEvent
   SetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c[ME_SET_CBB+1][ME_SET_CBB+1] = {
@@ -842,7 +842,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_CPLTSET_VARS
-namespace Gecode { namespace CpltSet {
+namespace Gecode { namespace CpltSet { 
   forceinline Gecode::ModEvent
   CpltSetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c = (

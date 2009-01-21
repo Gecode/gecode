@@ -583,7 +583,7 @@ namespace Gecode {
   class PropCost {
     friend class Space;
     friend class Reflection::ActorSpecIter;
-  private:
+  public:
     /// The actual cost values that are used
     enum ActualCost {
       AC_CRAZY_LO     = 0, ///< Exponential complexity, cheap
@@ -602,6 +602,7 @@ namespace Gecode {
       AC_UNARY_HI     = 7, ///< Only single variable, expensive
       AC_MAX          = 7  ///< Maximal cost value
     };
+  private:
     /// Actual cost
     ActualCost ac;
   public:
