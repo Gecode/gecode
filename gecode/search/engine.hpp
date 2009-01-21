@@ -2,11 +2,9 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2002
- *     Guido Tack, 2004
+ *     Christian Schulte, 2004
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -40,61 +38,136 @@
 namespace Gecode { namespace Search {
 
   /**
-   * \brief Probing engine for %LDS
-   *
+   * \brief %Search engine control including memory information
    */
-  class ProbeEngine : public Engine {
+  class Engine : public Statistics {
   protected:
-    /// %Node in the search tree for %LDS
-    class ProbeNode {
-    private:
-      /// %Space of current node
-      Space*               _space;
-      /// Branching description
-      const BranchingDesc* _desc;
-      /// Next alternative to try
-      unsigned int         _alt;
-    public:
-      /// Default constructor
-      ProbeNode(void);
-      /// Initialize with node \a s, description \a d, and alternative \a a
-      ProbeNode(Space* s, const BranchingDesc* d, unsigned int a);
-      /// Return space
-      Space* space(void) const;
-      /// Return branching description
-      const BranchingDesc* desc(void) const;
-      /// Return next alternative
-      unsigned int alt(void) const;
-      /// %Set next alternative
-      void next(void);
-    };
-    /// %Stack storing current path in search tree
-    Support::DynamicStack<ProbeNode,Heap> ds;
-    /// Current space
-    Space* cur;
-    /// Current discrepancy
-    unsigned int d;
-    /// Whether entire search space has been exhausted
-    bool exhausted;
+    /// Whether engine has been stopped
+    bool _stopped;
+    /// Memory required for a single space
+    size_t mem_space;
+    /// Memory for the current space (including memory for caching)
+    size_t mem_cur;
+    /// Current total memory
+    size_t mem_total;
   public:
-    /// Initialize for spaces of size \a s
-    ProbeEngine(size_t s);
-    /// Initialize with space \a s and discrepancy \a d
-    void init(Space* s, unsigned int d);
-    /// Reset with space \a s and discrepancy \a d
-    void reset(Space* s, unsigned int d);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Destructor
-    ~ProbeEngine(void);
-    /// %Search for next solution
-    Space* explore(Stop* st);
-    /// Test whether probing is done
-    bool done(void) const;
+    /// Initialize with space size \a sz
+    Engine(size_t sz);
+    /// Reset stop information
+    void start(void);
+    /// Check whether engine must be stopped (with additional stackspace \a sz)
+    bool stop(Stop* st, size_t sz);
+    /// Check whether engine has been stopped
+    bool stopped(void) const;
+    /// New space \a s and branching description \a d get pushed on stack
+    void push(const Space* s, const BranchingDesc* d);
+    /// Space \a s1 is replaced by space \a s2 due to constraining
+    void constrained(const Space* s1, const Space* s2);
+    /// New space \a s is added for adaptive recomputation
+    void adapt(const Space* s);
+    /// Space \a s and branching description \a d get popped from stack
+    void pop(const Space* s, const BranchingDesc* d);
+    /// Space \a s gets used for LAO (removed from stack)
+    void lao(const Space* s);
+    /// Space \a s becomes current space (\a s = NULL: current space deleted)
+    void current(const Space* s);
+    /// Reset statistics for space \a s
+    void reset(const Space* s);
+    /// Reset statistics for failed space
+    void reset(void);
   };
 
-}}
 
-#include <gecode/search/engine/lds.hpp>
+
+  forceinline
+  Engine::Engine(size_t sz)
+    : _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {
+    memory = 0;
+  }
+
+  forceinline void
+  Engine::start(void) {
+    _stopped = false;
+  }
+
+  forceinline bool
+  Engine::stop(Stop* st, size_t sz) {
+    if (st == NULL)
+      return false;
+    memory += sz;
+    _stopped |= st->stop(*this);
+    memory -= sz;
+    return _stopped;
+  }
+
+  forceinline bool
+  Engine::stopped(void) const {
+    return _stopped;
+  }
+
+  forceinline void
+  Engine::push(const Space* s, const BranchingDesc* d) {
+    if (s != NULL)
+      mem_total += mem_space + s->allocated();
+    mem_total += d->size();
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+  forceinline void
+  Engine::adapt(const Space* s) {
+    mem_total += mem_space + s->allocated();
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+  forceinline void
+  Engine::constrained(const Space* s1, const Space* s2) {
+    mem_total -= s1->allocated();
+    mem_total += s2->allocated();
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+  forceinline void
+  Engine::lao(const Space* s) {
+    mem_total -= mem_space + s->allocated();
+  }
+
+  forceinline void
+  Engine::pop(const Space* s, const BranchingDesc* d) {
+    if (s != NULL)
+      mem_total -= mem_space + s->allocated();
+    mem_total -= d->size();
+  }
+
+  forceinline void
+  Engine::current(const Space* s) {
+    if (s == NULL) {
+      mem_total -= mem_cur;
+      mem_cur = 0;
+    } else {
+      mem_cur = mem_space + s->allocated();
+      mem_total += mem_cur;
+      if (mem_total > memory)
+        memory = mem_total;
+    }
+  }
+
+  forceinline void
+  Engine::reset(const Space* s) {
+    mem_cur   = mem_space + s->allocated();
+    mem_total = mem_cur;
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+  forceinline void
+  Engine::reset(void) {
+    mem_cur   = 0;
+    mem_total = 0;
+  }
+
+}}
 
 // STATISTICS: search-any

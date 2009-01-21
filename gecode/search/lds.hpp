@@ -37,29 +37,28 @@
 
 namespace Gecode {
 
-  /*
-   * Control for LDS engine
-   *
-   */
-
   template <class T>
   forceinline
   LDS<T>::LDS(T* s, const Search::Options& o)
-    : Search::LDS(s,sizeof(T),o) {}
-
+    : e(s,sizeof(T),o) {}
 
   template <class T>
   forceinline T*
   LDS<T>::next(void) {
-    return dynamic_cast<T*>(Search::LDS::next());
+    return dynamic_cast<T*>(e.next());
   }
 
+  template <class T>
+  forceinline Search::Statistics
+  LDS<T>::statistics(void) const {
+    return e.statistics();
+  }
 
-
-  /*
-   * Convenience for LDS
-   *
-   */
+  template <class T>
+  forceinline bool
+  LDS<T>::stopped(void) const {
+    return e.stopped();
+  }
 
   template <class T>
   T*

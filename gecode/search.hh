@@ -276,14 +276,13 @@ namespace Gecode {
 #include <gecode/search/stop.hpp>
 #include <gecode/search/options.hpp>
 
-#include <gecode/search/ctrl.hpp>
-#include <gecode/search/reco-stack.hpp>
-
 #include <gecode/search/engine.hpp>
+#include <gecode/search/path.hpp>
 
 #include <gecode/search/dfs-engine.hpp>
 #include <gecode/search/bab-engine.hpp>
 #include <gecode/search/restart-engine.hpp>
+#include <gecode/search/lds-engine.hpp>
 
 namespace Gecode {
 
@@ -401,49 +400,24 @@ namespace Gecode {
   template <class T>
   T* restart(T* s, const Search::Options& o=Search::Options::def);
 
-}
-
-namespace Gecode {
-
-  namespace Search {
-
-    /**
-     * \brief Limited discrepancy search engine
-     */
-    class GECODE_SEARCH_EXPORT LDS {
-    protected:
-      /// Search options
-      Options opt;
-      ProbeEngine  e;           ///< The probe engine
-      Space*       root;        ///< Root node for problem
-      unsigned int d_cur;       ///< Current discrepancy
-      bool         no_solution; ///< Solution found for current discrepancy
-    public:
-      /// Initialize for space \a s (of size \a sz) with options \a o
-      LDS(Space* s, const Options& o, size_t sz);
-      /// Return next solution (NULL, if none exists or search has been stopped)
-      Space* next(void);
-      /// Return statistics
-      Statistics statistics(void) const;
-      /// Check whether engine has been stopped
-      bool stopped(void) const;
-      /// Destructor
-      ~LDS(void);
-    };
-
-  }
-
   /**
    * \brief Limited discrepancy search engine
    * \ingroup TaskModelSearch
    */
   template <class T>
-  class LDS : public Search::LDS {
+  class LDS {
+  private:
+    /// The actual search engine
+    Search::LDS e;
   public:
-    /// Initialize engine with \a s as root node and options \a o
+    /// Initialize engine for space \a s and options \a o
     LDS(T* s, const Search::Options& o=Search::Options::def);
-    /// Return next solution (NULL, if none exists or search has been stopped)
+    /// Return next better solution (NULL, if none exists or search has been stopped)
     T* next(void);
+    /// Return statistics
+    Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    bool stopped(void) const;
   };
 
   /**

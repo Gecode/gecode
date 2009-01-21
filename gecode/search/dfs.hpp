@@ -60,6 +60,7 @@ namespace Gecode {
     return e.stopped();
   }
 
+
   template <class T>
   forceinline T*
   dfs(T* s, const Search::Options& o) {
