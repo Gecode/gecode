@@ -37,42 +37,28 @@
 
 namespace Gecode {
 
-  /*
-   * Control for restart best solution search engine
-   *
-   */
-
-  template <class T>
-  Restart<T>::Restart(T* s, const Search::Options& o) :
-    Gecode::DFS<T>(s,o),
-    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
-
   template <class T>
   forceinline
-  Restart<T>::~Restart(void) {
-    delete best;
-    delete root;
-  }
+  Restart<T>::Restart(T* s, const Search::Options& o)
+    : e(s,sizeof(T),o) {}
 
   template <class T>
   forceinline T*
   Restart<T>::next(void) {
-    if (best != NULL) {
-      root->constrain(*best);
-      reset(root);
-    }
-    delete best;
-    best = Search::DFS::next();
-    return dynamic_cast<T*>((best != NULL) ? best->clone() : NULL);
+    return dynamic_cast<T*>(e.next());
   }
 
+  template <class T>
+  forceinline Search::Statistics
+  Restart<T>::statistics(void) const {
+    return e.statistics();
+  }
 
-
-
-  /*
-   * Restart convenience
-   *
-   */
+  template <class T>
+  forceinline bool
+  Restart<T>::stopped(void) const {
+    return e.stopped();
+  }
 
   template <class T>
   T*

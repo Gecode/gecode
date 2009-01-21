@@ -39,10 +39,11 @@
  *
  */
 
+#include <gecode/search.hh>
+
 namespace Gecode { namespace Search {
 
-  forceinline
-  BabEngine::BabEngine(Space* s, size_t sz, const Options& o)
+  BAB::BAB(Space* s, size_t sz, const Options& o)
     : Engine(sz), opt(o), d(0), mark(0), best(NULL) {
     cur = (s->status(*this) == SS_FAILED) ? NULL : s->clone();
     current(s);
@@ -52,8 +53,8 @@ namespace Gecode { namespace Search {
       fail++;
   }
 
-  forceinline Space*
-  BabEngine::next(void) {
+  Space*
+  BAB::next(void) {
     /*
      * The invariant maintained by the engine is:
      *   For all nodes stored at a depth less than mark, there
@@ -115,15 +116,14 @@ namespace Gecode { namespace Search {
     return NULL;
   }
 
-  forceinline Statistics
-  BabEngine::statistics(void) const {
+  Statistics
+  BAB::statistics(void) const {
     Statistics s = *this;
     s.memory += rcs.stacksize();
     return s;
   }
 
-  forceinline
-  BabEngine::~BabEngine(void) {
+  BAB::~BAB(void) {
     rcs.reset();
     delete best;
     delete cur;

@@ -7,8 +7,8 @@
  *     Christian Schulte, 2003
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-01-21 21:15:36 +0100 (Wed, 21 Jan 2009) $ by $Author: schulte $
+ *     $Revision: 8092 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,38 +35,30 @@
  *
  */
 
-namespace Gecode {
+#include <gecode/search.hh>
 
-  template <class T>
-  forceinline
-  DFS<T>::DFS(T* s, const Search::Options& o)
-    : e(s,sizeof(T),o) {}
+namespace Gecode { namespace Search {
 
-  template <class T>
-  forceinline T*
-  DFS<T>::next(void) {
-    return dynamic_cast<T*>(e.next());
+  Restart::Restart(Space* s, size_t sz, const Search::Options& o) :
+    DFS(s,sz,o),
+    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
+
+  Space*
+  Restart::next(void) {
+    if (best != NULL) {
+      root->constrain(*best);
+      reset(root);
+    }
+    delete best;
+    best = DFS::next();
+    return (best != NULL) ? best->clone() : NULL;
   }
 
-  template <class T>
-  forceinline Search::Statistics
-  DFS<T>::statistics(void) const {
-    return e.statistics();
+  Restart::~Restart(void) {
+    delete best;
+    delete root;
   }
 
-  template <class T>
-  forceinline bool
-  DFS<T>::stopped(void) const {
-    return e.stopped();
-  }
-
-  template <class T>
-  forceinline T*
-  dfs(T* s, const Search::Options& o) {
-    DFS<T> d(s,o);
-    return d.next();
-  }
-
-}
+}}
 
 // STATISTICS: search-any

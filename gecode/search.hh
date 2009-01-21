@@ -276,38 +276,16 @@ namespace Gecode {
 #include <gecode/search/stop.hpp>
 #include <gecode/search/options.hpp>
 
+#include <gecode/search/ctrl.hpp>
+#include <gecode/search/reco-stack.hpp>
+
 #include <gecode/search/engine.hpp>
 
+#include <gecode/search/dfs-engine.hpp>
+#include <gecode/search/bab-engine.hpp>
+#include <gecode/search/restart-engine.hpp>
+
 namespace Gecode {
-
-  namespace Search {
-
-    /**
-     * \brief Depth-first search engine
-     *
-     * This class implements depth-first exploration for spaces. In order to
-     * use depth-first search on subclasses of Space, additional
-     * functionality providing the necessary typecasts is available
-     * in Gecode::DFS.
-     */
-    class GECODE_SEARCH_EXPORT DFS {
-    protected:
-      /// Engine used for exploration
-      DfsEngine e;
-      /// Reset engine for space \a s (must be of same size as initialized)
-      void reset(Space* s);
-    public:
-      /// Initialize for space \a s (of size \a sz) with options \a o)
-      DFS(Space* s, size_t sz, const Search::Options& o);
-      /// Return next solution (NULL, if none exists or search has been stopped)
-      Space* next(void);
-      /// Return statistics
-      Statistics statistics(void) const;
-      /// Check whether engine has been stopped
-      bool stopped(void) const;
-    };
-
-  }
 
   /**
    * \brief Depth-first search engine
@@ -317,18 +295,115 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template <class T>
-  class DFS : public Search::DFS {
+  class DFS {
+  private:
+    /// The actual search engine
+    Search::DFS e;
   public:
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
+    /// Return statistics
+    Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    bool stopped(void) const;
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
   template <class T>
   T* dfs(T* s, const Search::Options& o=Search::Options::def);
 
+
+
+  /**
+   * \brief Depth-first branch-and-bound search engine
+   *
+   * Additionally, \a s must implement a member function
+   * \code virtual void constrain(const T& t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c.constrain(t) where \a t is the so-far
+   * best solution.
+   * \ingroup TaskModelSearch
+   */
+  template <class T>
+  class BAB {
+  private:
+    /// The actual search engine
+    Search::BAB e;
+  public:
+    /// Initialize engine for space \a s and options \a o
+    BAB(T* s, const Search::Options& o=Search::Options::def);
+    /// Return next better solution (NULL, if none exists or search has been stopped)
+    T* next(void);
+    /// Return statistics
+    Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    bool stopped(void) const;
+  };
+
+  /**
+   * \brief Perform depth-first branch-and-bound search for subclass \a T of space \a s and options \a o
+   *
+   * Additionally, \a s must implement a member function
+   * \code virtual void constrain(const T& t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c.constrain(t) where \a t is the so-far
+   * best solution.
+   *
+   * \ingroup TaskModelSearch
+   */
+  template <class T>
+  T* bab(T* s, const Search::Options& o=Search::Options::def);
+
+
+
+  /**
+   * \brief Depth-first restart best solution search engine
+   *
+   * Additionally, \a s must implement a member function
+   * \code virtual void constrain(T& t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c.constrain(t) where \a t is the so-far
+   * best solution.
+   * \ingroup TaskModelSearch
+   */
+  template <class T>
+  class Restart {
+  private:
+    /// The actual search engine
+    Search::Restart e;
+  public:
+    /// Initialize engine for space \a s and options \a o
+    Restart(T* s, const Search::Options& o=Search::Options::def);
+    /// Return next better solution (NULL, if none exists or search has been stopped)
+    T* next(void);
+    /// Return statistics
+    Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    bool stopped(void) const;
+  };
+
+  /**
+   * \brief Perform depth-first restart best solution search for subclass \a T of space \a s and options \a o
+   *
+   * Additionally, \a s must implement a member function
+   * \code virtual void constrain(T& t) \endcode
+   * Whenever exploration requires to add a constraint
+   * to the space \a c currently being explored, the engine
+   * executes \c c.constrain(t) where \a t is the so-far
+   * best solution.
+   * \ingroup TaskModelSearch
+   */
+  template <class T>
+  T* restart(T* s, const Search::Options& o=Search::Options::def);
+
+}
+
+namespace Gecode {
 
   namespace Search {
 
@@ -378,120 +453,12 @@ namespace Gecode {
   template <class T>
   T* lds(T* s, const Search::Options& o=Search::Options::def);
 
-
-  namespace Search {
-
-    /**
-     * \brief Depth-first branch-and-bound search engine
-     *
-     * This class implements depth-first branch-and-bound exploration
-     * for spaces. In order to use it on subclasses of Space, additional
-     * functionality providing the necessary typecasts is available
-     * in Gecode::BAB:
-     *
-     */
-    class GECODE_SEARCH_EXPORT BAB {
-    protected:
-      /// Engine used for exploration
-      BabEngine e;
-    public:
-      /// Initialize for space \a s (of size \a sz) and options \a o
-      BAB(Space* s, size_t sz, const Search::Options& o);
-      /// Return next solution (NULL, if none exists or search has been stopped)
-      Space* next(void);
-      /// Check whether engine has been stopped
-      bool stopped(void) const;
-      /// Return statistics
-      Statistics statistics(void) const;
-    };
-
-  }
-
-  /**
-   * \brief Depth-first branch-and-bound search engine
-   *
-   * Additionally, \a s must implement a member function
-   * \code virtual void constrain(const T& t) \endcode
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c->constrain(t) where \a t is the so-far
-   * best solution.
-   * \ingroup TaskModelSearch
-   */
-  template <class T>
-  class BAB : public Search::BAB {
-  public:
-    /// Initialize engine for space \a s and options \a o
-    BAB(T* s, const Search::Options& o=Search::Options::def);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    T* next(void);
-  };
-
-  /**
-   * \brief Perform depth-first branch-and-bound search for subclass \a T of space \a s and options \a o
-   *
-   * Additionally, \a s must implement a member function
-   * \code void constrain(T* t) \endcode
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c->constrain(t) where \a t is the so-far
-   * best solution.
-   *
-   * \ingroup TaskModelSearch
-   */
-  template <class T>
-  T* bab(T* s, const Search::Options& o=Search::Options::def);
-
-
-
-  /**
-   * \brief Depth-first restart best solution search engine
-   *
-   * Additionally, \a s must implement a member function
-   * \code void constrain(T* t) \endcode
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c->constrain(t) where \a t is the so-far
-   * best solution.
-   * \ingroup TaskModelSearch
-   */
-  template <class T>
-  class Restart : public DFS<T> {
-  protected:
-    /// Root node
-    Space* root;
-    /// So-far best solution
-    Space* best;
-  public:
-    /// Initialize engine for space \a s and options \a o
-    Restart(T* s, const Search::Options& o=Search::Options::def);
-    /// Destructor
-    ~Restart(void);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    T* next(void);
-  };
-
-  /**
-   * \brief Perform depth-first restart best solution search for subclass \a T of space \a s and options \a o
-   *
-   * Additionally, \a s must implement a member function
-   * \code void constrain(T* t) \endcode
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c->constrain(t) where \a t is the so-far
-   * best solution.
-   * \ingroup TaskModelSearch
-   */
-  template <class T>
-  T* restart(T* s, const Search::Options& o=Search::Options::def);
-
 }
 
-
 #include <gecode/search/dfs.hpp>
-#include <gecode/search/lds.hpp>
 #include <gecode/search/bab.hpp>
 #include <gecode/search/restart.hpp>
+#include <gecode/search/lds.hpp>
 
 #endif
 

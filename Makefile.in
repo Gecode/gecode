@@ -231,13 +231,16 @@ EXTRA_HEADERS   = gecode/support/config.hpp
 #
 
 SEARCHSRC0 = \
-	dfs.cpp lds.cpp bab.cpp stop.cpp options.cpp
+	stop.cpp options.cpp \
+	dfs-engine.cpp bab-engine.cpp restart-engine.cpp lds.cpp 
 SEARCHHDR0 = \
-	bab.hpp dfs.hpp lds.hpp restart.hpp  \
-	statistics.hpp \
-	stop.hpp options.hpp \
-	engine.hpp engine/ctrl.hpp engine/reco-stack.hpp \
-	engine/dfs.hpp engine/bab.hpp engine/lds.hpp
+	statistics.hpp stop.hpp options.hpp \
+	ctrl.hpp reco-stack.hpp \
+	dfs-engine.hpp dfs.hpp \
+	bab-engine.hpp bab.hpp \
+	restart-engine.hpp restart.hpp \
+	lds.hpp \
+	engine.hpp engine/lds.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)

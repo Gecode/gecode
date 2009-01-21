@@ -2,13 +2,15 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2003
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-01-21 21:15:36 +0100 (Wed, 21 Jan 2009) $ by $Author: schulte $
+ *     $Revision: 8092 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,38 +37,34 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Search {
 
-  template <class T>
-  forceinline
-  DFS<T>::DFS(T* s, const Search::Options& o)
-    : e(s,sizeof(T),o) {}
+  /// Implementation of depth-first branch-and-bound search engines
+  class GECODE_SEARCH_EXPORT BAB : public Engine {
+  private:
+    /// Search options
+    Options opt;
+    /// Recomputation stack of nodes
+    ReCoStack rcs;
+    /// Current space being explored
+    Space* cur;
+    /// Distance until next clone
+    unsigned int d;
+    /// Number of entries not yet constrained to be better
+    int mark;
+    /// Best solution found so far
+    Space* best;
+  public:
+    /// Initialize with space \a s (of size \a sz) and search options \a o
+    BAB(Space* s, size_t sz, const Options& o);
+    /// %Search for next better solution
+    Space* next(void);
+    /// Return statistics
+    Statistics statistics(void) const;
+    /// Destructor
+    ~BAB(void);
+  };
 
-  template <class T>
-  forceinline T*
-  DFS<T>::next(void) {
-    return dynamic_cast<T*>(e.next());
-  }
-
-  template <class T>
-  forceinline Search::Statistics
-  DFS<T>::statistics(void) const {
-    return e.statistics();
-  }
-
-  template <class T>
-  forceinline bool
-  DFS<T>::stopped(void) const {
-    return e.stopped();
-  }
-
-  template <class T>
-  forceinline T*
-  dfs(T* s, const Search::Options& o) {
-    DFS<T> d(s,o);
-    return d.next();
-  }
-
-}
+}}
 
 // STATISTICS: search-any

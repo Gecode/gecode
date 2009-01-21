@@ -37,6 +37,48 @@
 
 namespace Gecode { namespace Search {
 
+  /**
+   * \brief %Search engine control including memory information
+   */
+  class Engine : public Statistics {
+  protected:
+    /// Whether engine has been stopped
+    bool _stopped;
+    /// Memory required for a single space
+    size_t mem_space;
+    /// Memory for the current space (including memory for caching)
+    size_t mem_cur;
+    /// Current total memory
+    size_t mem_total;
+  public:
+    /// Initialize with space size \a sz
+    Engine(size_t sz);
+    /// Reset stop information
+    void start(void);
+    /// Check whether engine must be stopped (with additional stackspace \a sz)
+    bool stop(Stop* st, size_t sz);
+    /// Check whether engine has been stopped
+    bool stopped(void) const;
+    /// New space \a s and branching description \a d get pushed on stack
+    void push(const Space* s, const BranchingDesc* d);
+    /// Space \a s1 is replaced by space \a s2 due to constraining
+    void constrained(const Space* s1, const Space* s2);
+    /// New space \a s is added for adaptive recomputation
+    void adapt(const Space* s);
+    /// Space \a s and branching description \a d get popped from stack
+    void pop(const Space* s, const BranchingDesc* d);
+    /// Space \a s gets used for LAO (removed from stack)
+    void lao(const Space* s);
+    /// Space \a s becomes current space (\a s = NULL: current space deleted)
+    void current(const Space* s);
+    /// Reset statistics for space \a s
+    void reset(const Space* s);
+    /// Reset statistics for failed space
+    void reset(void);
+  };
+
+
+
   forceinline
   Engine::Engine(size_t sz)
     : _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {

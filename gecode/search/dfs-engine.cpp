@@ -35,10 +35,11 @@
  *
  */
 
+#include <gecode/search.hh>
+
 namespace Gecode { namespace Search {
 
-  forceinline
-  DfsEngine::DfsEngine(Space* s, size_t sz, const Options& o)
+  DFS::DFS(Space* s, size_t sz, const Options& o)
     : Engine(sz), opt(o), d(0) {
     cur = (s->status(*this) == SS_FAILED) ? NULL : s->clone();
     current(s);
@@ -48,8 +49,8 @@ namespace Gecode { namespace Search {
       fail++;
   }
 
-  forceinline void
-  DfsEngine::reset(Space* s) {
+  void
+  DFS::reset(Space* s) {
     delete cur;
     rcs.reset();
     d = 0;
@@ -62,8 +63,8 @@ namespace Gecode { namespace Search {
     }
   }
 
-  forceinline Space*
-  DfsEngine::explore(void) {
+  Space*
+  DFS::next(void) {
     start();
     while (true) {
       while (cur) {
@@ -114,15 +115,14 @@ namespace Gecode { namespace Search {
     return NULL;
   }
 
-  forceinline Statistics
-  DfsEngine::statistics(void) const {
+  Statistics
+  DFS::statistics(void) const {
     Statistics s = *this;
     s.memory += rcs.stacksize();
     return s;
   }
 
-  forceinline
-  DfsEngine::~DfsEngine(void) {
+  DFS::~DFS(void) {
     delete cur;
     rcs.reset();
   }

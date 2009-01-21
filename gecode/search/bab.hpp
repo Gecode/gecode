@@ -44,12 +44,24 @@ namespace Gecode {
   template <class T>
   forceinline
   BAB<T>::BAB(T* s, const Search::Options& o)
-    : Search::BAB(s,sizeof(T),o) {}
+    : e(s,sizeof(T),o) {}
 
   template <class T>
   forceinline T*
   BAB<T>::next(void) {
-    return dynamic_cast<T*>(Search::BAB::next());
+    return dynamic_cast<T*>(e.next());
+  }
+
+  template <class T>
+  forceinline Search::Statistics
+  BAB<T>::statistics(void) const {
+    return e.statistics();
+  }
+
+  template <class T>
+  forceinline bool
+  BAB<T>::stopped(void) const {
+    return e.stopped();
   }
 
   template <class T>

@@ -2,13 +2,15 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2003
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-01-21 21:15:36 +0100 (Wed, 21 Jan 2009) $ by $Author: schulte $
+ *     $Revision: 8092 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,32 +37,23 @@
  *
  */
 
-#include <gecode/search.hh>
-
 namespace Gecode { namespace Search {
 
-  DFS::DFS(Space* s, size_t sz, const Search::Options& o)
-    : e(s,sz,o) {}
-
-  void
-  DFS::reset(Space* s) {
-    e.reset(s);
-  }
-
-  Space*
-  DFS::next(void) {
-    return e.explore();
-  }
-
-  bool
-  DFS::stopped(void) const {
-    return e.stopped();
-  }
-
-  Statistics
-  DFS::statistics(void) const {
-    return e.statistics();
-  }
+  /// Depth-first restart best solution search engine implementation
+  class GECODE_SEARCH_EXPORT Restart : public DFS {
+  protected:
+    /// Root node
+    Space* root;
+    /// So-far best solution
+    Space* best;
+  public:
+    /// Initialize engine for space \a s (with size \a sz) and options \a o
+    Restart(Space* s, size_t sz, const Search::Options& o);
+    /// Return next better solution (NULL, if none exists or search has been stopped)
+    Space* next(void);
+    /// Destructor
+    ~Restart(void);
+  };
 
 }}
 

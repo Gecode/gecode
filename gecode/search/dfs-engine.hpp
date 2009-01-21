@@ -2,13 +2,15 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2003
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-01-21 21:15:36 +0100 (Wed, 21 Jan 2009) $ by $Author: schulte $
+ *     $Revision: 8092 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,27 +37,32 @@
  *
  */
 
-#include <gecode/search.hh>
-
 namespace Gecode { namespace Search {
 
-  BAB::BAB(Space* s, size_t sz, const Search::Options& o)
-    : e(s,sz,o) {}
-
-  Space*
-  BAB::next(void) {
-    return e.next();
-  }
-
-  bool
-  BAB::stopped(void) const {
-    return e.stopped();
-  }
-
-  Statistics
-  BAB::statistics(void) const {
-    return e.statistics();
-  }
+  /// Depth-first search engine implementation
+  class GECODE_SEARCH_EXPORT DFS : public Engine {
+  private:
+    /// Search options
+    Options opt;
+    /// Recomputation stack of nodes
+    ReCoStack rcs;
+    /// Current space being explored
+    Space* cur;
+    /// Distance until next clone
+    unsigned int d;
+  protected:
+    /// Reset engine to restart at space \a s
+    void reset(Space* s);
+  public:
+    /// Initialize for space \a s (of size \a sz) with options \a o
+    DFS(Space* s, size_t sz, const Options& o);
+    /// %Search for next solution
+    Space* next(void);
+    /// Return statistics
+    Statistics statistics(void) const;
+    /// Destructor
+    ~DFS(void);
+  };
 
 }}
 

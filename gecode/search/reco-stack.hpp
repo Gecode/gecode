@@ -37,11 +37,98 @@
 
 namespace Gecode { namespace Search {
 
+  /**
+   * \brief %Search tree node for recomputation
+   *
+   */
+  class ReCoNode {
+  protected:
+    /// Space corresponding to this node (might be NULL)
+    Space* _space;
+    /// Current alternative
+    unsigned int _alt;
+    /// Braching description
+    const BranchingDesc* _desc;
+  public:
+    /// Default constructor
+    ReCoNode(void);
+    /// Node for space \a s with clone \a c (possibly NULL)
+    ReCoNode(Space* s, Space* c);
+
+    /// Return space for node
+    Space* space(void) const;
+    /// Set space to \a s
+    void space(Space* s);
+
+    /// Return branching description
+    const BranchingDesc* desc(void) const;
+
+    /// Return number for alternatives
+    unsigned int alt(void) const;
+    /// Test whether current alternative is rightmost
+    bool rightmost(void) const;
+    /// Move to next alternative
+    void next(void);
+
+    /// Free memory for node
+    void dispose(void);
+  };
+
+  /**
+   * \brief Stack of nodes supporting recomputation
+   *
+   * Maintains the invariant that it contains
+   * the path of the node being currently explored. This
+   * is required to support recomputation, of course.
+   *
+   * The stack supports adaptive recomputation controlled
+   * by the value of a_d: only if the recomputation
+   * distance is at least this large, an additional
+   * clone is created.
+   *
+   */
+  class ReCoStack {
+  private:
+    /// Stack to store node information
+    Support::DynamicStack<ReCoNode,Heap> ds;
+  public:
+    /// Initialize
+    ReCoStack(void);
+    /// Push space \a c (a clone of \a s or NULL)
+    const BranchingDesc* push(Engine& stat, Space* s, Space* c);
+    /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
+    template <class DescType>
+    const BranchingDesc* nextDesc(Engine& s, int& alt,
+                                  int& closedDescs);
+    /// Generate path for next node with BranchingDesc type DescType
+    template <class DescType, bool inclusive>
+    void closeBranch(Engine& s);
+    /// Generate path for next node and return whether a next node exists
+    bool next(Engine& s);
+    /// Return position on stack of last copy
+    int lc(void) const;
+    /// Unwind the stack up to position \a l (after failure)
+    void unwind(int l);
+    /// Commit space \a s as described by stack entry at position \a i
+    void commit(Space* s, int i) const;
+    /// Recompute space according to path 
+    Space* recompute(unsigned int& d, unsigned int a_d, Engine& s);
+    /// Recompute space according to path
+    Space* recompute(unsigned int& d, unsigned int a_d, Engine& s,
+                     const Space* best, int& mark);
+    /// Return number of entries on stack
+    int entries(void) const;
+    /// Return stack size used
+    size_t stacksize(void) const;
+    /// Reset stack
+    void reset(void);
+  };
+
+
   /*
    * Node for recomputation
    *
    */
-
   forceinline
   ReCoNode::ReCoNode(void) {}
 
