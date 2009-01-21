@@ -400,6 +400,8 @@ namespace Gecode {
   template <class T>
   T* restart(T* s, const Search::Options& o=Search::Options::def);
 
+
+
   /**
    * \brief Limited discrepancy search engine
    * \ingroup TaskModelSearch
