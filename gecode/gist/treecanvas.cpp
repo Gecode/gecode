@@ -52,11 +52,6 @@
 
 namespace Gecode { namespace Gist {
 
-  const int LayoutConfig::minScale;
-  const int LayoutConfig::maxScale;
-  const int LayoutConfig::defScale;
-  const int LayoutConfig::maxAutoZoomScale;
-
   Inspector::~Inspector(void) {}
 
   TreeCanvas::TreeCanvas(Space* rootSpace, bool bab,

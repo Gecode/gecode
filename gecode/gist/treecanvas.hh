@@ -48,17 +48,16 @@
 namespace Gecode {  namespace Gist {
 
   /// \brief Parameters for the tree layout
-  class LayoutConfig {
-  public:
+  namespace LayoutConfig {
     /// Minimum scale factor
-    static const int minScale = 10;
+    const int minScale = 10;
     /// Maximum scale factor
-    static const int maxScale = 400;
+    const int maxScale = 400;
     /// Default scale factor
-    static const int defScale = 100;
+    const int defScale = 100;
     /// Maximum scale factor for automatic zoom
-    static const int maxAutoZoomScale = defScale;
-  };
+    const int maxAutoZoomScale = defScale;
+  }
 
   class TreeCanvas;
 
