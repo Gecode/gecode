@@ -42,11 +42,9 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
-                       Stop* st, size_t sz)
-    : EngineCtrl(st,sz), rcs(a_d), cur(NULL),
-      mark(0), best(NULL),
-      c_d(c_d0), d(0) {}
+  BabEngine::BabEngine(const Options& o,size_t sz)
+    : EngineCtrl(sz), opt(o), cur(NULL), d(0),
+      mark(0), best(NULL) {}
 
   forceinline void
   BabEngine::init(Space* s) {
@@ -68,7 +66,7 @@ namespace Gecode { namespace Search {
     start();
     while (true) {
       while (cur) {
-        if (stop(stacksize()))
+        if (stop(opt.stop,stacksize()))
           return NULL;
         node++;
         switch (cur->status(*this)) {
@@ -88,7 +86,7 @@ namespace Gecode { namespace Search {
         case SS_BRANCH:
           {
             Space* c;
-            if ((d == 0) || (d >= c_d)) {
+            if ((d == 0) || (d >= opt.c_d)) {
               c = cur->clone();
               d = 1;
             } else {
@@ -108,7 +106,7 @@ namespace Gecode { namespace Search {
       do {
         if (!rcs.next(*this))
           return NULL;
-        cur = rcs.recompute(d,*this,best,mark);
+        cur = rcs.recompute(d,opt.a_d,*this,best,mark);
       } while (cur == NULL);
       EngineCtrl::current(cur);
     }

@@ -40,16 +40,19 @@
 namespace Gecode { namespace Search {
 
   DFS::DFS(Space* s, const Search::Options& o, size_t sz)
-    : e(o.c_d,o.a_d,o.stop,sz) {
-    unsigned long int p = 0;
+    : e(o,sz) {
     Space* c = (s->status(e) == SS_FAILED) ? NULL : s->clone();
     e.init(c);
-    e.propagate += p;
     e.current(s);
     e.current(NULL);
     e.current(c);
     if (c == NULL)
       e.fail += 1;
+  }
+
+  void
+  DFS::reset(Space* s) {
+    e.reset(s);
   }
 
   Space*

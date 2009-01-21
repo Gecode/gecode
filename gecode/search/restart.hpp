@@ -45,10 +45,7 @@ namespace Gecode {
   template <class T>
   Restart<T>::Restart(T* s, const Search::Options& o) :
     Gecode::DFS<T>(s,o),
-    root(s->status(this->e) == SS_FAILED ? NULL : s->clone()), best(NULL) {
-    // Failure and propagation must not be counted, has happened already
-    // in the DFS constructor
-  }
+    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
 
   template <class T>
   forceinline
@@ -62,11 +59,7 @@ namespace Gecode {
   Restart<T>::next(void) {
     if (best != NULL) {
       root->constrain(*best);
-      if (root->status(this->e) == SS_FAILED) {
-        this->e.reset();
-      } else {
-        this->e.reset(root->clone());
-      }
+      this->e.reset(root);
     }
     Space* b = this->e.explore();
     delete best;

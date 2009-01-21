@@ -40,7 +40,7 @@
 namespace Gecode { namespace Search {
 
   BAB::BAB(Space* s, const Search::Options& o, size_t sz)
-    : e(o.c_d,o.a_d,o.stop,sz) {
+    : e(o,sz) {
     Space* c = (s->status(e) == SS_FAILED) ? NULL : s->clone(true);
     e.init(c);
     e.current(s);

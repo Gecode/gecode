@@ -44,8 +44,6 @@ namespace Gecode { namespace Search {
    */
   class EngineCtrl : public Statistics {
   protected:
-    /// %Stop-object to be used
-    Stop* st;
     /// Whether engine has been stopped
     bool _stopped;
     /// Memory required for a single space
@@ -55,12 +53,12 @@ namespace Gecode { namespace Search {
     /// Current total memory
     size_t mem_total;
   public:
-    /// Initialize with stop-object \a st and space size \a sz
-    EngineCtrl(Stop* st, size_t sz);
+    /// Initialize with space size \a sz
+    EngineCtrl(size_t sz);
     /// Reset stop information
     void start(void);
     /// Check whether engine must be stopped (with additional stackspace \a sz)
-    bool stop(size_t sz);
+    bool stop(Stop* st, size_t sz);
     /// Check whether engine has been stopped
     bool stopped(void) const;
     /// New space \a s and branching description \a d get pushed on stack
@@ -88,9 +86,9 @@ namespace Gecode { namespace Search {
   class ReCoNode {
   protected:
     /// Space corresponding to this node (might be NULL)
-    Space*               _space;
+    Space* _space;
     /// Current alternative
-    unsigned int         _alt;
+    unsigned int _alt;
     /// Braching description
     const BranchingDesc* _desc;
   public:
@@ -136,11 +134,9 @@ namespace Gecode { namespace Search {
   private:
     /// Stack to store node information
     Support::DynamicStack<ReCoNode,Heap> ds;
-    /// Adaptive recomputation distance
-    const unsigned int a_d;
   public:
-    /// Initialize with adaptive recomputation distance \a a_d
-    ReCoStack(unsigned int a_d);
+    /// Initialize
+    ReCoStack(void);
     /// Push space \a c (a clone of \a s or NULL)
     const BranchingDesc* push(EngineCtrl& stat, Space* s, Space* c);
     /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
@@ -158,10 +154,10 @@ namespace Gecode { namespace Search {
     void unwind(int l);
     /// Commit space \a s as described by stack entry at position \a i
     void commit(Space* s, int i) const;
-    /// Recompute space according to path with copying distance \a d
-    Space* recompute(unsigned int& d, EngineCtrl& s);
-    /// Recompute space according to path with copying distance \a d
-    Space* recompute(unsigned int& d, EngineCtrl& s,
+    /// Recompute space according to path 
+    Space* recompute(unsigned int& d, unsigned int a_d, EngineCtrl& s);
+    /// Recompute space according to path
+    Space* recompute(unsigned int& d, unsigned int a_d, EngineCtrl& s,
                      const Space* best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
@@ -177,29 +173,21 @@ namespace Gecode { namespace Search {
    */
   class DfsEngine : public EngineCtrl {
   private:
+    /// Search options
+    Options opt;
     /// Recomputation stack of nodes
-    ReCoStack          rcs;
+    ReCoStack rcs;
     /// Current space being explored
-    Space*             cur;
-    /// Copying recomputation distance
-    const unsigned int c_d;
+    Space* cur;
     /// Distance until next clone
-    unsigned int       d;
+    unsigned int d;
   public:
-    /**
-     * \brief Initialize engine
-     * \param c_d minimal recomputation distance
-     * \param a_d adaptive recomputation distance
-     * \param st %Stop-object
-     * \param sz size of one space
-     */
-    DfsEngine(unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
+    /// Initialize engine with options \a o and space \a s (of size \a sz)
+    DfsEngine(const Options& o, size_t sz);
     /// Initialize engine to start at space \a s
     void init(Space* s);
     /// Reset engine to restart at space \a s
     void reset(Space* s);
-    /// Reset engine to restart at failed space
-    void reset(void);
     /// %Search for next solution
     Space* explore(void);
     /// Return stack size used by engine
@@ -247,7 +235,7 @@ namespace Gecode { namespace Search {
     bool exhausted;
   public:
     /// Initialize for spaces of size \a s
-    ProbeEngine(Stop* st, size_t s);
+    ProbeEngine(size_t s);
     /// Initialize with space \a s and discrepancy \a d
     void init(Space* s, unsigned int d);
     /// Reset with space \a s and discrepancy \a d
@@ -257,7 +245,7 @@ namespace Gecode { namespace Search {
     /// Destructor
     ~ProbeEngine(void);
     /// %Search for next solution
-    Space* explore(void);
+    Space* explore(Stop* st);
     /// Test whether probing is done
     bool done(void) const;
   };
@@ -267,27 +255,21 @@ namespace Gecode { namespace Search {
    */
   class BabEngine : public EngineCtrl {
   private:
+    /// Search options
+    Options opt;
     /// Recomputation stack of nodes
-    ReCoStack          rcs;
+    ReCoStack rcs;
     /// Current space being explored
-    Space*             cur;
-    /// Number of entries not yet constrained to be better
-    int                mark;
-    /// Best solution found so far
-    Space*             best;
-    /// Copying recomputation distance
-    const unsigned int c_d;
+    Space* cur;
     /// Distance until next clone
-    unsigned int       d;
+    unsigned int d;
+    /// Number of entries not yet constrained to be better
+    int mark;
+    /// Best solution found so far
+    Space* best;
   public:
-    /**
-     * \brief Initialize engine
-     * \param c_d minimal recomputation distance
-     * \param a_d adaptive recomputation distance
-     * \param st %Stop-object
-     * \param sz size of one space
-     */
-    BabEngine(unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
+    /// Initialize with search options \a o and space \a s (of size \a sz)
+    BabEngine(const Options& o, size_t sz);
     /// Initialize engine to start at space \a s
     void init(Space* s);
     /// %Search for next better solution

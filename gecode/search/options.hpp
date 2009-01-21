@@ -39,7 +39,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   Options::Options(void)
-    : c_d(Config::c_d), a_d(Config::a_d), stop(NULL) {}
+    : c_d(Config::c_d), a_d(Config::a_d), d(Config::d), stop(NULL) {}
 
 }}
 

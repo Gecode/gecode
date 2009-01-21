@@ -38,9 +38,8 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  DfsEngine::DfsEngine(unsigned int c_d0, unsigned int a_d0,
-                       Stop* st, size_t sz)
-    : EngineCtrl(st,sz), rcs(a_d0), cur(NULL), c_d(c_d0), d(0) {}
+  DfsEngine::DfsEngine(const Options& o, size_t sz)
+    : EngineCtrl(sz), opt(o), cur(NULL), d(0) {}
 
 
   forceinline void
@@ -52,18 +51,14 @@ namespace Gecode { namespace Search {
   DfsEngine::reset(Space* s) {
     delete cur;
     rcs.reset();
-    cur = s;
-    d   = 0;
-    EngineCtrl::reset(s);
-  }
-
-  forceinline void
-  DfsEngine::reset(void) {
-    delete cur;
-    rcs.reset();
-    cur = NULL;
-    d   = 0;
-    EngineCtrl::reset();
+    d = 0;
+    if (s->status(*this) == SS_FAILED) {
+      cur = NULL;
+      EngineCtrl::reset();
+    } else {
+      cur = s->clone();
+      EngineCtrl::reset(cur);
+    }
   }
 
   forceinline Space*
@@ -71,7 +66,7 @@ namespace Gecode { namespace Search {
     start();
     while (true) {
       while (cur) {
-        if (stop(stacksize()))
+        if (stop(opt.stop,stacksize()))
           return NULL;
         node++;
         switch (cur->status(*this)) {
@@ -91,7 +86,7 @@ namespace Gecode { namespace Search {
         case SS_BRANCH:
           {
             Space* c;
-            if ((d == 0) || (d >= c_d)) {
+            if ((d == 0) || (d >= opt.c_d)) {
               c = cur->clone();
               d = 1;
             } else {
@@ -110,7 +105,7 @@ namespace Gecode { namespace Search {
       do {
         if (!rcs.next(*this))
           return NULL;
-        cur = rcs.recompute(d,*this);
+        cur = rcs.recompute(d,opt.a_d,*this);
       } while (cur == NULL);
       EngineCtrl::current(cur);
     }

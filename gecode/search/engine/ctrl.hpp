@@ -38,8 +38,8 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  EngineCtrl::EngineCtrl(Stop* st0, size_t sz)
-    : st(st0), _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {
+  EngineCtrl::EngineCtrl(size_t sz)
+    : _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {
     memory = 0;
   }
 
@@ -49,7 +49,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline bool
-  EngineCtrl::stop(size_t sz) {
+  EngineCtrl::stop(Stop* st, size_t sz) {
     if (st == NULL)
       return false;
     memory += sz;

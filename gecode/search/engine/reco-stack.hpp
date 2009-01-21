@@ -90,7 +90,7 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ReCoStack::ReCoStack(unsigned int a_d0) : ds(heap), a_d(a_d0) {}
+  ReCoStack::ReCoStack(void) : ds(heap) {}
 
   forceinline const BranchingDesc*
   ReCoStack::push(EngineCtrl& stat, Space* s, Space* c) {
@@ -189,7 +189,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  ReCoStack::recompute(unsigned int& d, EngineCtrl& stat) {
+  ReCoStack::recompute(unsigned int& d, unsigned int a_d, EngineCtrl& stat) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -218,7 +218,7 @@ namespace Gecode { namespace Search {
         commit(s,i);
     } else {
       int m = l + static_cast<int>(d >> 1); // Middle between copy and top
-      int i = l;            // To iterate over all entries
+      int i = l; // To iterate over all entries
       // Recompute up to middle
       for (; i<m; i++ )
         commit(s,i);
@@ -252,7 +252,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  ReCoStack::recompute(unsigned int& d, EngineCtrl& stat,
+  ReCoStack::recompute(unsigned int& d, unsigned int a_d, EngineCtrl& stat,
                        const Space* best, int& mark) {
     assert(!ds.empty());
     // Recompute space according to path

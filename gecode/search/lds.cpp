@@ -42,15 +42,15 @@
 
 namespace Gecode { namespace Search {
 
-  LDS::LDS(Space* s, unsigned int d, Stop* st, size_t sz)
-    : root(NULL), d_cur(0), d_max(d), e(st,sz) {
+  LDS::LDS(Space* s, const Options& o, size_t sz)
+    : opt(o), e(sz), root(NULL), d_cur(0) {
     if (s->status(e) == SS_FAILED) {
       e.init(NULL,0);
       e.fail += 1;
       e.current(s);
     } else {
       Space* c = s->clone();
-      if (d_max > 0) {
+      if (opt.d > 0) {
         root = c->clone();
       }
       e.init(c,0);
@@ -67,12 +67,12 @@ namespace Gecode { namespace Search {
   Space*
   LDS::next(void) {
     while (true) {
-      Space* s = e.explore();
+      Space* s = e.explore(opt.stop);
       if (s != NULL)
         return s;
-      if (((s == NULL) && e.stopped()) || (++d_cur > d_max) || e.done())
+      if (((s == NULL) && e.stopped()) || (++d_cur > opt.d) || e.done())
         break;
-      if (d_cur == d_max) {
+      if (d_cur == opt.d) {
         if (root != NULL)
           e.reset(root,d_cur);
         root = NULL;

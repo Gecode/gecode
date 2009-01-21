@@ -80,13 +80,13 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ProbeEngine::ProbeEngine(Stop* st, size_t sz)
-    : EngineCtrl(st,sz), ds(heap) {}
+  ProbeEngine::ProbeEngine(size_t sz)
+    : EngineCtrl(sz), ds(heap) {}
 
   forceinline void
   ProbeEngine::init(Space* s, unsigned int d0) {
-    cur       = s;
-    d         = d0;
+    cur = s;
+    d = d0;
     exhausted = true;
   }
 
@@ -118,14 +118,14 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  ProbeEngine::explore(void) {
+  ProbeEngine::explore(Stop* st) {
     start();
     while (true) {
       if (cur == NULL) {
       backtrack:
         if (ds.empty())
           return NULL;
-        if (stop(stacksize()))
+        if (stop(st,stacksize()))
           return NULL;
         unsigned int a            = ds.top().alt();
         const BranchingDesc* desc = ds.top().desc();

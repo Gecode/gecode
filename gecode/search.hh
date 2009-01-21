@@ -89,6 +89,8 @@ namespace Gecode {
       const unsigned int c_d = 8;
       /// Create a clone during recomputation if distance is greater than \a a_d
       const unsigned int a_d = 2;
+      /// Default discrepancy limit for LDS
+      const unsigned int d = 5;
     }
 
     /**
@@ -253,10 +255,12 @@ namespace Gecode {
      */
     class Options {
     public:
-      /// Create a clone after every \a c_d commits
+      /// Create a clone after every \a c_d commits (for DFS and BAB)
       unsigned int c_d;
-      /// Create a clone during recomputation if distance is greater than \a a_d
+      /// Create a clone during recomputation if distance is greater than \a a_d (for DFS and BAB)
       unsigned int a_d;
+      /// Discrepancy (for LDS)
+      unsigned int d;
       /// Stop object for stopping search
       Stop* stop;
       /// Default options
@@ -290,6 +294,8 @@ namespace Gecode {
     protected:
       /// Engine used for exploration
       DfsEngine e;
+      /// Reset engine for space \a s (must be of same size as initialized)
+      void reset(Space* s);
     public:
       /// Initialize search engine for space \a s (of size \a sz) and options \a o
       DFS(Space* s, const Search::Options& o, size_t sz);
@@ -331,19 +337,15 @@ namespace Gecode {
      */
     class GECODE_SEARCH_EXPORT LDS {
     protected:
+      /// Search options
+      Options opt;
+      ProbeEngine  e;           ///< The probe engine
       Space*       root;        ///< Root node for problem
       unsigned int d_cur;       ///< Current discrepancy
-      unsigned int d_max;       ///< Maximal discrepancy
       bool         no_solution; ///< Solution found for current discrepancy
-      ProbeEngine  e;           ///< The probe engine
     public:
-      /** Initialize engine
-       * \param s root node
-       * \param d maximal discrepancy
-       * \param st %Stop-object
-       * \param sz size of space
-       */
-      LDS(Space* s, unsigned int d, Stop* st, size_t sz);
+      /// Initialize for space \a s (of size \a sz) with options \a o
+      LDS(Space* s, const Options& o, size_t sz);
       /// Return next solution (NULL, if none exists or search has been stopped)
       Space* next(void);
       /// Return statistics
@@ -363,20 +365,18 @@ namespace Gecode {
   template <class T>
   class LDS : public Search::LDS {
   public:
-    /// Initialize engine with \a s as root node and maximal discrepancy \a d
-    LDS(T* s, unsigned int d,
-        const Search::Options& o=Search::Options::def);
+    /// Initialize engine with \a s as root node and options \a o
+    LDS(T* s, const Search::Options& o=Search::Options::def);
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
   /**
-   * \brief Invoke limited-discrepancy search for \a s as root node and maximal discrepancy \a d
+   * \brief Invoke limited-discrepancy search for \a s as root node and options\a o
    * \ingroup TaskModelSearch
    */
   template <class T>
-  T* lds(T* s, unsigned int d,
-         const Search::Options& o=Search::Options::def);
+  T* lds(T* s, const Search::Options& o=Search::Options::def);
 
 
   namespace Search {
