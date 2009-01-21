@@ -1026,10 +1026,12 @@ AC_DEFUN([AC_GECODE_QT],
         AC_SUBST(QTDEFINES, ${ac_gecode_qt_defines})
         AC_SUBST(QTLIBS, ${ac_gecode_qt_libs})
         AC_SUBST(enable_qt,yes)
+        enable_qt=yes;
       fi
     fi
   else
     AC_MSG_RESULT(no)
+    enable_qt=no;
   fi
   AC_SUBST(enable_qt, ${enable_qt})
 ])
@@ -1049,7 +1051,7 @@ AC_DEFUN([AC_GECODE_GIST],
     AC_HELP_STRING([--enable-gist],
       [build Gecode Interactive Search Tool @<:@default=yes@:>@]))
   AC_MSG_CHECKING(whether to build Gist)
-  if test "${enable_gist:-yes}" = "yes" -a "${enable_qt:-yes}" = "yes"; then
+  if test "${enable_gist:-yes}" = "yes" -a "${enable_qt}" = "yes"; then
     AC_MSG_RESULT(yes)
     AC_SUBST(enable_gist, yes)
     AC_DEFINE([GECODE_HAS_GIST],[],[Whether Gist is available])
