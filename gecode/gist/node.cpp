@@ -105,43 +105,43 @@ namespace Gecode { namespace Gist {
   Node::addChild(Node* child) {
     child->parent = this;
 
-    unsigned int noOfChildren;
+    unsigned int newNoOfChildren;
     switch (getTag()) {
     case UNDET:
       setNumberOfChildren(1);
-      noOfChildren = 1;
+      newNoOfChildren = 1;
       break;
     case LEAF:
       setTag(TWO_CHILDREN);
       c.secondChild = NULL;
-      noOfChildren = 1;
+      newNoOfChildren = 1;
       break;
     case TWO_CHILDREN:
       if (Support::marked(c.secondChild)) {
         Node** newChildren = heap.alloc<Node*>(c.noOfChildren+1);
         newChildren[0] = static_cast<Node*>(getPtr());
         newChildren[1] = static_cast<Node*>(Support::unmark(c.secondChild));
-        noOfChildren = 3;
+        newNoOfChildren = 3;
       } else {
         c.secondChild = static_cast<Node*>(Support::mark(NULL));
-        noOfChildren = 2;
+        newNoOfChildren = 2;
       }
       break;
     case MORE_CHILDREN:
       {
         Node** newChildren = heap.alloc<Node*>(c.noOfChildren+1);
         Node** children = static_cast<Node**>(getPtr());
-        for (int i=noOfChildren; i--;)
+        for (unsigned int i=c.noOfChildren; i--;)
           newChildren[i] = children[i];
-        heap.free<Node*>(children,noOfChildren);
+        heap.free<Node*>(children,c.noOfChildren);
         childrenOrFirstChild = newChildren;
         setTag(MORE_CHILDREN);
         c.noOfChildren++;
-        noOfChildren = c.noOfChildren;
+        newNoOfChildren = c.noOfChildren;
       }
       break;
     }
-    setChild(noOfChildren-1, child);
+    setChild(newNoOfChildren-1, child);
   }
 
 }}
