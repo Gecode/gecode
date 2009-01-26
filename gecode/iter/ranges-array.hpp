@@ -40,7 +40,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /**
    * \brief %Range iterator for array of ranges
    *
-   * Allows to iterate the ranges as defined by an array.
+   * Allows to iterate the ranges as defined by an array where the
+   * ranges must be increasing and non-overlapping.
    * The ranges can be iterated several times provided the iterator
    * is %reset by the reset member function.
    *

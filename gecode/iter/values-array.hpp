@@ -40,7 +40,8 @@ namespace Gecode { namespace Iter { namespace Values {
   /**
    * \brief %Value iterator for array of integers
    *
-   * Allows to iterate the integers as defined by an array.
+   * Allows to iterate the integers as defined by an array where the
+   * values in the array must be sorted in increasing order.
    * The integers can be iterated several times provided the iterator
    * is %reset by the reset member function.
    *

@@ -74,6 +74,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: iter
+What:   documentation
+Rank:   minor
+Thanks:	Anden Blah, Morten Boysen
+[DESCRIPTION]
+Mention that arrays for Iter::Values::Arrays must be sorted.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major
