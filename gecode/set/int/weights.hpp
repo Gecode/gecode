@@ -292,6 +292,19 @@ namespace Gecode { namespace Set { namespace Int {
       if (delta>0 && currentWeights[delta-1]<0)
         lowestWeight+=currentWeights[delta-1];
 
+      // If after including the minimal number of required elements,
+      // no more element with negative weight is available, then
+      // a tighter lower bound can be computed.
+      if ( (x.cardMin() - x.glbSize() > 0 &&
+            currentWeights[x.cardMin() - x.glbSize() - 1] >= 0) ||
+           currentWeights[0] >= 0 ) {
+        int lowestPosWeight = glbWeight;
+        for (int i=0; i<x.cardMin() - x.glbSize(); i++) {
+          lowestPosWeight += currentWeights[i];
+        }
+        lowestWeight = std::max(lowestWeight, lowestPosWeight);        
+      }
+
       // Compute the highest possible weight of x as the weight of the lower
       // bound plus the weight of the delta heaviest elements still in the
       // upper bound.
