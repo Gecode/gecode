@@ -700,8 +700,19 @@ namespace Gecode { namespace Int {
     if (!i() || (i.min() > dom.max()))
       return ME_INT_NONE;
 
-    if ((i.min() <= dom.min()) && (i.max() >= dom.max()))
+    int i_min = i.min();
+    int i_max = i.max();
+    ++i;
+
+    if ((i_min <= dom.min()) && (i_max >= dom.max()))
       return ME_INT_FAILED;
+
+    if ((i_min > dom.min()) && (i_max >= dom.max()))
+      return lq(home,i_min-1);
+    
+    if ((i_min <= dom.min()) && (i_max < dom.max()) &&
+        (!i() || (i.min() > dom.max())))
+      return gq(home,i_max+1);
 
     // Set up two sentinel elements
     RangeList f, l;
@@ -724,16 +735,18 @@ namespace Gecode { namespace Int {
     RangeList* r = f.next(NULL);
 
     while (true) {
-      assert((r != &f) && (r != &l) && i());
-      if (i.min() > r->max()) {
+      assert((r != &f) && (r != &l));
+      if (i_min > r->max()) {
         RangeList* n=r->next(p); p=r; r=n;
         if (r == &l)
           break;
-      } else if (i.max() < r->min()) {
-        ++i;
+      } else if (i_max < r->min()) {
         if (!i())
           break;
-      } else if ((i.min() <= r->min()) && (r->max() <= i.max())) {
+        i_min = i.min();
+        i_max = i.max();
+        ++i;
+      } else if ((i_min <= r->min()) && (r->max() <= i_max)) {
         // r is included in i: remove entire range r
         h += r->width();
         RangeList* n=r->next(p);
@@ -742,36 +755,38 @@ namespace Gecode { namespace Int {
         r=n;
         if (r == &l)
           break;
-      } else if ((i.min() > r->min()) && (i.max() < r->max())) {
+      } else if ((i_min > r->min()) && (i_max < r->max())) {
         // i is included in r: create new range before the current one
-        h += i.width();
-        RangeList* n = new (home) RangeList(r->min(),i.min()-1,p,r);
-        r->min(i.max()+1);
+        h += static_cast<unsigned int>(i_max - i_min) + 1;
+        RangeList* n = new (home) RangeList(r->min(),i_min-1,p,r);
+        r->min(i_max+1);
         p->next(r,n); r->prev(p,n);
         p=n;
-        ++i;
         if (!i())
           break;
-      } else if (i.max() < r->max()) {
-        assert(i.min() <= r->min());
+        i_min = i.min();
+        i_max = i.max();
+        ++i;
+      } else if (i_max < r->max()) {
+        assert(i_min <= r->min());
         // i ends before r: adjust minimum of r
-        h += i.max()-r->min()+1;
-        r->min(i.max()+1);
-        ++i;
+        h += i_max-r->min()+1;
+        r->min(i_max+1);
         if (!i())
           break;
+        i_min = i.min();
+        i_max = i.max();
+        ++i;
       } else {
-        assert((i.max() >= r->max()) && (r->min() < i.min()));
+        assert((i_max >= r->max()) && (r->min() < i_min));
         // r ends before i: adjust maximum of r
-        h += r->max()-i.min()+1;
-        r->max(i.min()-1);
+        h += r->max()-i_min+1;
+        r->max(i_min-1);
         RangeList* n=r->next(p); p=r; r=n;
         if (r == &l)
           break;
       }
     }
-
-    assert((r == &l) || !i());
 
     // New first and last ranges
     RangeList* fn = f.next(NULL);
