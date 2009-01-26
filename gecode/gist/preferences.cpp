@@ -136,6 +136,8 @@ namespace Gecode { namespace Gist {
     refresh = refreshBox->value();
     smoothScrollAndZoom = smoothCheck->isChecked();
     copies = copiesCheck->isChecked();
+    c_d = cdBox->value();
+    a_d = adBox->value();
     QSettings settings("gecode.org", "Gist");
     settings.setValue("search/hideFailed", hideFailed);
     settings.setValue("search/zoom", zoom);
