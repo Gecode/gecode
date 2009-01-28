@@ -71,6 +71,14 @@ namespace Gecode {
           (home,xv,v,a);
       }
       break;
+    case INT_ASSIGN_RND:
+      {
+        Branch::AssignValRnd<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelNone<IntView>,Branch::AssignValRnd<IntView> >
+          (home,xv,v,a);
+      }
+      break;
     default:
       throw UnknownBranching("Int::assign");
     }
@@ -96,6 +104,13 @@ namespace Gecode {
         Branch::AssignValZero<NegBoolView> a(home,o_vals);
         (void) new (home) ViewValBranching
           <ViewSelNone<BoolView>,Branch::AssignValZero<NegBoolView> >
+          (home,xv,v,a);
+      }
+      break;
+    case INT_ASSIGN_RND: {
+        Branch::AssignValRnd<BoolView> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelNone<BoolView>,Branch::AssignValRnd<BoolView> >
           (home,xv,v,a);
       }
       break;

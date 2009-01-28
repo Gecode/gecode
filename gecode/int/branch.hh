@@ -276,6 +276,18 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignValMed(Space& home, const ValBranchOptions& vbo);
   };
 
+  /// Class for assigning random value
+  template<class View>
+  class AssignValRnd : public ValRnd<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValRnd(void);
+    /// Constructor for initialization
+    AssignValRnd(Space& home, const ValBranchOptions& vbo);
+  };
+
   /// Class for assigning zero
   template<class View>
   class AssignValZero : public ValZeroOne<View> {

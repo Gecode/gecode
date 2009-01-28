@@ -207,6 +207,14 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
+  AssignValRnd<View>::AssignValRnd(void) {}
+  template<class View>
+  forceinline
+  AssignValRnd<View>::AssignValRnd(Space& home, const ValBranchOptions& vbo)
+    : ValRnd<View>(home,vbo) {}
+
+  template<class View>
+  forceinline
   AssignValZero<View>::AssignValZero(void) {}
   template<class View>
   forceinline

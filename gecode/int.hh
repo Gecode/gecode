@@ -2162,7 +2162,8 @@ namespace Gecode {
   enum IntAssign {
     INT_ASSIGN_MIN, ///< Select smallest value
     INT_ASSIGN_MED, ///< Select median value (rounding downwards)
-    INT_ASSIGN_MAX  ///< Select maximum value
+    INT_ASSIGN_MAX, ///< Select maximum value
+    INT_ASSIGN_RND  ///< Select random value
   };
 
   /// Assign all \a x with value selection \a vals
