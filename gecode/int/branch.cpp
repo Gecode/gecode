@@ -86,16 +86,16 @@ namespace Gecode {
     switch (vals) {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED: {
-        Branch::AssignValZeroOne<BoolView> a(home,o_vals);
+        Branch::AssignValZero<BoolView> a(home,o_vals);
         (void) new (home) ViewValBranching
-          <ViewSelNone<BoolView>,Branch::AssignValZeroOne<BoolView> >
+          <ViewSelNone<BoolView>,Branch::AssignValZero<BoolView> >
           (home,xv,v,a);
       }
       break;
     case INT_ASSIGN_MAX: {
-        Branch::AssignValZeroOne<NegBoolView> a(home,o_vals);
+        Branch::AssignValZero<NegBoolView> a(home,o_vals);
         (void) new (home) ViewValBranching
-          <ViewSelNone<BoolView>,Branch::AssignValZeroOne<NegBoolView> >
+          <ViewSelNone<BoolView>,Branch::AssignValZero<NegBoolView> >
           (home,xv,v,a);
       }
       break;

@@ -278,14 +278,14 @@ namespace Gecode { namespace Int { namespace Branch {
 
   /// Class for assigning zero
   template<class View>
-  class AssignValZeroOne : public ValZeroOne<View> {
+  class AssignValZero : public ValZeroOne<View> {
   public:
     /// Number of alternatives
     static const unsigned int alternatives = 1;
     /// Default constructor
-    AssignValZeroOne(void);
+    AssignValZero(void);
     /// Constructor for initialization
-    AssignValZeroOne(Space& home, const ValBranchOptions& vbo);
+    AssignValZero(Space& home, const ValBranchOptions& vbo);
   };
 
   /*

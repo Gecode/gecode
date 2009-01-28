@@ -207,11 +207,11 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  AssignValZeroOne<View>::AssignValZeroOne(void) {}
+  AssignValZero<View>::AssignValZero(void) {}
   template<class View>
   forceinline
-  AssignValZeroOne<View>::AssignValZeroOne(Space& home,
-                                           const ValBranchOptions& vbo)
+  AssignValZero<View>::AssignValZero(Space& home,
+                                     const ValBranchOptions& vbo)
     : ValZeroOne<View>(home,vbo) {}
 
 }}
