@@ -72,10 +72,6 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space& home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space& home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
   };
 
   /**
@@ -98,10 +94,6 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space& home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space& home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
   };
 
   /**
@@ -143,10 +135,6 @@ namespace Gecode { namespace Int { namespace Branch {
     void dispose(Space& home);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space& home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, _View x, int n) const;
   };
 
   /**
@@ -169,10 +157,6 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space& home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space& home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, int n) const;
   };
 
 
@@ -207,10 +191,6 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space& home, unsigned int a, View x, NoValue n);
     /// Type of this value selection (for reflection)
     static Support::Symbol type(void);
-    /// Specification of a branch (for reflection)
-    void branchingSpec(const Space& home,
-                       Reflection::VarMap& m, Reflection::BranchingSpec& bs,
-                       int alt, View x, NoValue n) const;
   };
 
 
@@ -262,6 +242,8 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignValMin(void);
     /// Constructor for initialization
     AssignValMin(Space& home, const ValBranchOptions& vbo);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
   };
 
   /// Class for assigning maximum value
@@ -274,6 +256,8 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignValMed(void);
     /// Constructor for initialization
     AssignValMed(Space& home, const ValBranchOptions& vbo);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
   };
 
   /// Class for assigning random value
@@ -286,6 +270,8 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignValRnd(void);
     /// Constructor for initialization
     AssignValRnd(Space& home, const ValBranchOptions& vbo);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
   };
 
   /// Class for assigning zero
@@ -298,6 +284,8 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignValZero(void);
     /// Constructor for initialization
     AssignValZero(Space& home, const ValBranchOptions& vbo);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
   };
 
   /*

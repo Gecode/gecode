@@ -421,6 +421,8 @@ Gecode::IntAssign toEnum_IntAssign(Gecode::Reflection::Arg* a) {
     return Gecode::INT_ASSIGN_MED;
   if (!strcmp(av, "INT_ASSIGN_MAX"))
     return Gecode::INT_ASSIGN_MAX;
+  if (!strcmp(av, "INT_ASSIGN_RND"))
+    return Gecode::INT_ASSIGN_RND;
   throw Gecode::Reflection::ReflectionException("Internal error");
 }
 bool isEnum_IntAssign(Gecode::Reflection::Arg* a) {
@@ -432,6 +434,8 @@ bool isEnum_IntAssign(Gecode::Reflection::Arg* a) {
   if (!strcmp(av, "INT_ASSIGN_MED"))
     return true;
   if (!strcmp(av, "INT_ASSIGN_MAX"))
+    return true;
+  if (!strcmp(av, "INT_ASSIGN_RND"))
     return true;
   return false;
 }
