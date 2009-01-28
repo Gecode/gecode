@@ -41,7 +41,7 @@
 
 #include <gecode/cpltset/branch.hh>
 
-namespace Gecode { namespace CpltSet { namespace Branch {
+namespace Gecode { namespace CpltSet { namespace Branch { 
 
   /// Create virtual view selector for tie-breaking
   void
@@ -83,7 +83,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 }}}
 
-namespace Gecode {
+namespace Gecode { 
 
   void
   branch(Gecode::Space& home, const CpltSetVarArgs& x,

@@ -1004,6 +1004,26 @@ namespace Gecode {
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}
 
+  /**
+   * \defgroup TaskModelSetAssign Assigning
+   * \ingroup TaskModelSet
+   */
+  //@{
+  /// Which value to select for assignment
+  enum SetAssign {
+    SET_ASSIGN_MIN_INC, ///< Include smallest element
+    SET_ASSIGN_MIN_EXC, ///< Exclude smallest element
+    SET_ASSIGN_MAX_INC, ///< Include largest element
+    SET_ASSIGN_MAX_EXC  ///< Exclude largest element
+  };
+
+  /// Assign all \a x with value selection \a vals
+  GECODE_SET_EXPORT void
+  assign(Space& home, const SetVarArgs& x, SetAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+
+  //@}
+
 }
 
 #endif

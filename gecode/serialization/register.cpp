@@ -386,6 +386,35 @@ bool isEnum_BoolOpType(Gecode::Reflection::Arg* a) {
   return false;
 }
 #endif
+#if defined(GECODE_HAS_SET_VARS)
+Gecode::SetAssign toEnum_SetAssign(Gecode::Reflection::Arg* a) {
+  assert(a->isString());
+  const char* av = a->toString();
+  if (!strcmp(av, "SET_ASSIGN_MIN_INC"))
+    return Gecode::SET_ASSIGN_MIN_INC;
+  if (!strcmp(av, "SET_ASSIGN_MIN_EXC"))
+    return Gecode::SET_ASSIGN_MIN_EXC;
+  if (!strcmp(av, "SET_ASSIGN_MAX_INC"))
+    return Gecode::SET_ASSIGN_MAX_INC;
+  if (!strcmp(av, "SET_ASSIGN_MAX_EXC"))
+    return Gecode::SET_ASSIGN_MAX_EXC;
+  throw Gecode::Reflection::ReflectionException("Internal error");
+}
+bool isEnum_SetAssign(Gecode::Reflection::Arg* a) {
+  if (!a->isString())
+    return false;
+  const char* av = a->toString();
+  if (!strcmp(av, "SET_ASSIGN_MIN_INC"))
+    return true;
+  if (!strcmp(av, "SET_ASSIGN_MIN_EXC"))
+    return true;
+  if (!strcmp(av, "SET_ASSIGN_MAX_INC"))
+    return true;
+  if (!strcmp(av, "SET_ASSIGN_MAX_EXC"))
+    return true;
+  return false;
+}
+#endif
 #if defined(GECODE_HAS_INT_VARS)
 Gecode::ExtensionalPropKind toEnum_ExtensionalPropKind(Gecode::Reflection::Arg* a) {
   assert(a->isString());
@@ -3613,6 +3642,19 @@ public:
           for (int i=a0.size(); i--;)
             x0[i] = Gecode::BoolVar(vm.var(a0[i]->toVar()));
           Gecode::IntAssign x1 = toEnum_IntAssign(spec[1]);
+          Gecode::assign(home, x0,x1);
+          return;
+        }
+#endif
+#if defined(GECODE_HAS_SET_VARS)
+        if (isVarArgs<Gecode::SetVar>(vm, spec[0]) &&
+            isEnum_SetAssign(spec[1]))
+        {
+          Gecode::Reflection::ArrayArg& a0 = *spec[0]->toArray();
+          Gecode::VarArgArray<Gecode::SetVar> x0(a0.size());
+          for (int i=a0.size(); i--;)
+            x0[i] = Gecode::SetVar(vm.var(a0[i]->toVar()));
+          Gecode::SetAssign x1 = toEnum_SetAssign(spec[1]);
           Gecode::assign(home, x0,x1);
           return;
         }

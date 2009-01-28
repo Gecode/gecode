@@ -358,7 +358,7 @@ INTBUILDDIRS	= \
 #
 
 SETSRC0 =								 \
-	cardinality.cpp convex.cpp convex/conv.cpp convex/hull.cpp \
+	branch.cpp cardinality.cpp convex.cpp convex/conv.cpp convex/hull.cpp \
 	dom.cpp rel.cpp rel-op.cpp rel-op-const.cpp				 \
 	int.cpp								 \
 	element.cpp element/disjoint.cpp sequence.cpp			 \
@@ -404,7 +404,7 @@ SETHDR0 =								     \
 	projectors/formula.hpp
 
 SETSRC		= $(SETSRC0:%=gecode/set/%) \
-	$(top_srcdir)/gecode/set/branch.cpp
+	$(top_srcdir)/gecode/set/branch/post-view.cpp
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
 SETOBJ0		= $(SETSRC:%.cpp=%$(OBJSUFFIX))
 SETOBJ		= $(subst $(top_srcdir)/,,$(SETOBJ0))
@@ -1042,7 +1042,7 @@ $(top_srcdir)/gecode/int/branch/post-view-bool.cpp: \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/set/branch.cpp: \
+$(top_srcdir)/gecode/set/branch/post-view.cpp: \
 	$(top_srcdir)/gecode/set/branch/post-view.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@

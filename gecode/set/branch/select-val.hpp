@@ -93,6 +93,32 @@ namespace Gecode { namespace Set { namespace Branch {
     return Reflection::mangle("Gecode::Set::Branch::ValMax",inc);
   }
 
+  template<bool inc>
+  forceinline
+  AssignValMin<inc>::AssignValMin(void) {}
+  template<bool inc>
+  forceinline
+  AssignValMin<inc>::AssignValMin(Space& home, const ValBranchOptions& vbo)
+    : ValMin<inc>(home,vbo) {}
+  template<bool inc>
+  inline Support::Symbol
+  AssignValMin<inc>::type(void) {
+    return Reflection::mangle("Gecode::Set::Branch::AssignValMin",inc);
+  }
+
+  template<bool inc>
+  forceinline
+  AssignValMax<inc>::AssignValMax(void) {}
+  template<bool inc>
+  forceinline
+  AssignValMax<inc>::AssignValMax(Space& home, const ValBranchOptions& vbo)
+    : ValMax<inc>(home,vbo) {}
+  template<bool inc>
+  inline Support::Symbol
+  AssignValMax<inc>::type(void) {
+    return Reflection::mangle("Gecode::Set::Branch::AssignValMax",inc);
+  }
+
 }}
 
 #define GECODE_SET_BRANCH_VALTOSTRING(eq,nq) \

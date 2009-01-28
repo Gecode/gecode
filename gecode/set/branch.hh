@@ -111,6 +111,33 @@ namespace Gecode { namespace Set { namespace Branch {
                        int alt, SetView x, int n) const;
   };
 
+  /// Class for assigning minimum value
+  template<bool inc>
+  class AssignValMin : public ValMin<inc> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValMin(void);
+    /// Constructor for initialization
+    AssignValMin(Space& home, const ValBranchOptions& vbo);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /// Class for assigning maximum value
+  template<bool inc>
+  class AssignValMax : public ValMax<inc> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValMax(void);
+    /// Constructor for initialization
+    AssignValMax(Space& home, const ValBranchOptions& vbo);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
+  };
 
   /*
    * View selection classes
