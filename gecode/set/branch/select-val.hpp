@@ -157,6 +157,22 @@ public: \
   class ValSelToString<Set::Branch::ValMax<false> > {
     GECODE_SET_BRANCH_VALTOSTRING("not in","in")
   };
+  template <>
+  class ValSelToString<Set::Branch::AssignValMin<true> > {
+    GECODE_SET_BRANCH_VALTOSTRING("in","not in")
+  };
+  template <>
+  class ValSelToString<Set::Branch::AssignValMin<false> > {
+    GECODE_SET_BRANCH_VALTOSTRING("not in","in")
+  };
+  template <>
+  class ValSelToString<Set::Branch::AssignValMax<true> > {
+    GECODE_SET_BRANCH_VALTOSTRING("in","not in")
+  };
+  template <>
+  class ValSelToString<Set::Branch::AssignValMax<false> > {
+    GECODE_SET_BRANCH_VALTOSTRING("not in","in")
+  };
 #undef GECODE_SET_BRANCH_VALTOSTRING
 
 }
