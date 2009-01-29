@@ -242,7 +242,7 @@ What:   bug
 Rank:   minor
 Thanks: Jonathan Cederberg
 [DESCRIPTION]
-The binary min and max propagators did not do all pruning it
+The binary min and max propagators did not do all pruning they
 should do.
 [MORE]
 Given the constraint x = max(y,z) with the store {x->{1,2,3},
