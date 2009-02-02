@@ -118,7 +118,7 @@ namespace {
   }
 }
 /**
-   \brief %Example: Crowded Chessboard
+   \brief %Example: Crowded chessboard
 
    "You are given a chessboard together with 8 queens, 8 rooks, 14
    bishops, and 21 knights. The puzzle is to arrange the 51 pieces on

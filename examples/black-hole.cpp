@@ -179,7 +179,7 @@ public:
 
 
 /**
- * \brief %Example: Black Hole Patience
+ * \brief %Example: Black hole patience
  *
  * This example solves instances of the black-hole patience game.
  *

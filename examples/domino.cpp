@@ -56,7 +56,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Solitaire Domino
+ * \brief %Example: Solitaire domino
  *
  * The task is to place domino pieces on a board. Each piece covers two
  * fields and has two numbers. There are 28 pieces, from 0-0 to 6-6.

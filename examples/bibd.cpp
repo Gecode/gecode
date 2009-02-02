@@ -83,7 +83,7 @@ public:
 
 
 /**
- * \brief %Example: Balanced Incomplete Block Design (%BIBD)
+ * \brief %Example: Balanced incomplete block design (%BIBD)
  *
  * See problem 28 at http://www.csplib.org/.
  *

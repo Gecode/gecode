@@ -208,7 +208,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Travelling Salesman Problem
+ * \brief %Example: Travelling salesman problem (TSP)
  *
  * Simple travelling salesman problem instances. Just meant
  * as a test for circuit.

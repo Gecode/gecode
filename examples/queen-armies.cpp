@@ -48,7 +48,7 @@
 IntSet* A;
 
 /**
- * \brief %Example: Peaceable co-existing armies of queens.
+ * \brief %Example: Peaceable co-existing armies of queens
  *
  * The goal of this problem is to place as many white and black queens
  * on a chess-board without any two queens of different color

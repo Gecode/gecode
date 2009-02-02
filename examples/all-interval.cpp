@@ -41,7 +41,7 @@
 #include <cstdlib>
 
 /**
- * \brief %Example: All-interval Series
+ * \brief %Example: All-interval series
  *
  * An all-interval series of length \f$n\f$ is a sequence
  * \f[
