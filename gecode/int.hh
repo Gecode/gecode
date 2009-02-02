@@ -2045,9 +2045,11 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   //@{
+  /// Type definition for function arguments
+  typedef void(*SpaceFunction)(Space& home); 
   /// Execute \a t (then) when \a x is assigned one, and \a e (else) otherwise
   GECODE_INT_EXPORT void
-  when(Space& home, BoolVar x, void (*t)(Space&), void (*e)(Space&) = NULL,
+  when(Space& home, BoolVar x, SpaceFunction t, SpaceFunction e = NULL,
        IntConLevel icl=ICL_DEF);
   //@}
 

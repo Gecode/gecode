@@ -55,17 +55,18 @@ namespace Gecode { namespace Int { namespace Exec {
    */
   class When : public UnaryPropagator<BoolView,PC_BOOL_VAL> {
     GECODE_REFLECT_PROPAGATOR_0(When,"Gecode::Int::Exec::When")
-      //    GECODE_REFLECT_ARGS_3(BoolView,x0,void (*t)(Space&),t,void (*e)(Space&),e)
+      // GUIDO: PLEASE HELP!
+      //    GECODE_REFLECT_ARGS_3(BoolView,x0,SpaceFunction,t,SpaceFunction,e)
   protected:
     using UnaryPropagator<BoolView,PC_BOOL_VAL>::x0;
     /// Then function pointer
-    void (*t)(Space&);
+    SpaceFunction t;
     /// Else function pointer
     void (*e)(Space&);
     /// Constructor for cloning \a p
     When(Space& home, bool share, When& p);
     /// Constructor for creation
-    When(Space& home, BoolView x, void (*t0)(Space&), void (*e0)(Space&));
+    When(Space& home, BoolView x, SpaceFunction t0, SpaceFunction e0);
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT 
@@ -76,7 +77,7 @@ namespace Gecode { namespace Int { namespace Exec {
     /// Post propagator
     GECODE_INT_EXPORT 
     static ExecStatus post(Space& home, BoolView x, 
-                           void (*t0)(Space&), void (*e0)(Space&));
+                           SpaceFunction t, SpaceFunction e);
   };
 
 }}}
