@@ -272,7 +272,8 @@ INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
 	var/bool.cpp array.cpp bool.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp extensional.cpp \
-	dom.cpp rel.cpp element.cpp count.cpp arithmetic.cpp \
+	dom.cpp rel.cpp element.cpp count.cpp arithmetic.cpp exec.cpp \
+	exec/when.cpp \
 	linear/int-post.cpp linear-int.cpp \
 	linear/bool-post.cpp linear-bool.cpp \
 	branch.cpp \
@@ -282,6 +283,7 @@ INTSRC0 = \
 	circuit.cpp unshare.cpp
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
+	exec.hh exec/when.hpp \
 	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/mult.hpp \
 	arithmetic/sqr.hpp arithmetic/sqrt.hpp arithmetic/divmod.hpp \
 	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
@@ -351,7 +353,7 @@ export POSTINT          =
 endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
-	int/channel int/linear int/bool int/branch
+	int/channel int/linear int/bool int/branch int/exec
 
 #
 # SET COMPONENTS

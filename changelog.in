@@ -75,6 +75,15 @@ This is a release.
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added support for synchronized execution that executes a function
+or a static member function when a Boolean variable becomes
+assigned (called when).
+
+[ENTRY]
+Module: int
 What:   change
 Rank:   minor
 Thanks:	David Rijsman

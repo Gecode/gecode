@@ -2036,6 +2036,23 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskModelIntExec Synchronized execution
+   * \ingroup TaskModelInt
+   *
+   * Synchronized execution executes a function or a static member function
+   * when a certain event happends.
+   *
+   * \ingroup TaskModelInt
+   */
+  //@{
+  /// Execute \a t (then) when \a x is assigned one, and \a e (else) otherwise
+  GECODE_INT_EXPORT void
+  when(Space& home, BoolVar x, void (*t)(Space&), void (*e)(Space&) = NULL,
+       IntConLevel icl=ICL_DEF);
+  //@}
+
+
+  /**
    * \defgroup TaskModelIntUnshare Unsharing variables
    * \ingroup TaskModelInt
    *
