@@ -256,7 +256,7 @@ AC_GECODE_ENABLE_MODULE(examples, yes,
 AC_GECODE_ENABLE_MODULE(minimodel, yes,
 	[build modeling support library for the enabled variable types])
 
-AC_GECODE_ENABLE_MODULE(scheduling, yes,
+AC_GECODE_ENABLE_MODULE(scheduling, no,
 	[build scheduling library],
 	[AC_DEFINE([GECODE_HAS_SCHEDULING],[],
 	 [Whether scheduling support is built])])
