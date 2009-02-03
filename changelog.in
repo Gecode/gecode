@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The specification of propagation cost has changed. It now must be
+computed by the static member functions of the class
+Gecode::PropCost.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

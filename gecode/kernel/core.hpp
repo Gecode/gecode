@@ -641,72 +641,6 @@ namespace Gecode {
     static PropCost unary(PropCost::Mod m);
   };
 
-  forceinline
-  PropCost::PropCost(PropCost::ActualCost ac0) : ac(ac0) {}
-
-  forceinline PropCost
-  PropCost::cost(PropCost::Mod m,
-                 PropCost::ActualCost lo, PropCost::ActualCost hi,
-                 unsigned int n) {
-    if (n < 2)
-      return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
-    else if (n == 2)
-      return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
-    else if (n == 3)
-      return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
-    else
-      return (m == LO) ? lo : hi;
-  }
-
-  forceinline PropCost
-  PropCost::crazy(PropCost::Mod m, unsigned int n) {
-    return cost(m,AC_CRAZY_LO,AC_CRAZY_HI,n);
-  }
-  forceinline PropCost
-  PropCost::crazy(PropCost::Mod m, int n) {
-    assert(n >= 0);
-    return crazy(m,static_cast<unsigned int>(n));
-  }
-  forceinline PropCost
-  PropCost::cubic(PropCost::Mod m, unsigned int n) {
-    return cost(m,AC_CUBIC_LO,AC_CUBIC_HI,n);
-  }
-  forceinline PropCost
-  PropCost::cubic(PropCost::Mod m, int n) {
-    assert(n >= 0);
-    return cubic(m,static_cast<unsigned int>(n));
-  }
-  forceinline PropCost
-  PropCost::quadratic(PropCost::Mod m, unsigned int n) {
-    return cost(m,AC_QUADRATIC_LO,AC_QUADRATIC_HI,n);
-  }
-  forceinline PropCost
-  PropCost::quadratic(PropCost::Mod m, int n) {
-    assert(n >= 0);
-    return quadratic(m,static_cast<unsigned int>(n));
-  }
-  forceinline PropCost
-  PropCost::linear(PropCost::Mod m, unsigned int n) {
-    return cost(m,AC_LINEAR_LO,AC_LINEAR_HI,n);
-  }
-  forceinline PropCost
-  PropCost::linear(PropCost::Mod m, int n) {
-    assert(n >= 0);
-    return linear(m,static_cast<unsigned int>(n));
-  }
-  forceinline PropCost
-  PropCost::ternary(PropCost::Mod m) {
-    return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
-  }
-  forceinline PropCost
-  PropCost::binary(PropCost::Mod m) {
-    return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
-  }
-  forceinline PropCost
-  PropCost::unary(PropCost::Mod m) {
-    return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
-  }
-
 
   /**
    * \brief Actor properties
@@ -2995,6 +2929,77 @@ namespace Gecode {
   forceinline
   CommitStatistics::CommitStatistics(void) {
     reset();
+  }
+
+  /*
+   * Cost computation
+   *
+   */
+
+  forceinline
+  PropCost::PropCost(PropCost::ActualCost ac0) : ac(ac0) {}
+
+  forceinline PropCost
+  PropCost::cost(PropCost::Mod m,
+                 PropCost::ActualCost lo, PropCost::ActualCost hi,
+                 unsigned int n) {
+    if (n < 2)
+      return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
+    else if (n == 2)
+      return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
+    else if (n == 3)
+      return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
+    else
+      return (m == LO) ? lo : hi;
+  }
+
+  forceinline PropCost
+  PropCost::crazy(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_CRAZY_LO,AC_CRAZY_HI,n);
+  }
+  forceinline PropCost
+  PropCost::crazy(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return crazy(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost
+  PropCost::cubic(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_CUBIC_LO,AC_CUBIC_HI,n);
+  }
+  forceinline PropCost
+  PropCost::cubic(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return cubic(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost
+  PropCost::quadratic(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_QUADRATIC_LO,AC_QUADRATIC_HI,n);
+  }
+  forceinline PropCost
+  PropCost::quadratic(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return quadratic(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost
+  PropCost::linear(PropCost::Mod m, unsigned int n) {
+    return cost(m,AC_LINEAR_LO,AC_LINEAR_HI,n);
+  }
+  forceinline PropCost
+  PropCost::linear(PropCost::Mod m, int n) {
+    assert(n >= 0);
+    return linear(m,static_cast<unsigned int>(n));
+  }
+  forceinline PropCost
+  PropCost::ternary(PropCost::Mod m) {
+    return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
+  }
+  forceinline PropCost
+  PropCost::binary(PropCost::Mod m) {
+    return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
+  }
+  forceinline PropCost
+  PropCost::unary(PropCost::Mod m) {
+    return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
   }
 
 }
