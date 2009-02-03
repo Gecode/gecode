@@ -31,6 +31,7 @@ doxygen.conf.chm
 doxygen.log
 header.html
 GecodeReference.chm
+GecodeReference.tag
 license.hh
 stat.hh
 gecode-*.zip

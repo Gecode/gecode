@@ -1752,7 +1752,7 @@ veryclean: clean
 		$(EXAMPLEEXE:%=%.manifest)
 	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk) \
 		 $(TESTEXE:%=%.manifest)
-	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
+	$(RMF) doc GecodeReference.tag GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
 	$(RMF) $(SERREGSRC:%.cpp=%.gcda) $(SERREGSRC:%.cpp=%.gcno)
