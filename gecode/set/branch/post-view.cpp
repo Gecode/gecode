@@ -41,7 +41,7 @@
 
 #include <gecode/set/branch.hh>
 
-namespace Gecode { namespace Set { namespace Branch { 
+namespace Gecode { namespace Set { namespace Branch {
 
   /// Create virtual view selector for tie-breaking
   void
@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
 }}}
 
-namespace Gecode { 
+namespace Gecode {
 
   void
   branch(Gecode::Space& home, const SetVarArgs& x,

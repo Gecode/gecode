@@ -181,10 +181,12 @@ if ($hasuns) {
 }
 
 print $hdr;
+$cns = "";
 foreach $ns (split('::',$lns)) {
-  print "namespace $ns { ";
+  $cns = $cns."namespace $ns { ";
 }
-print "\n\n";
+$cns =~ s| $||g;
+print "$cns\n\n";
 print "  /// Create virtual view selector for tie-breaking\n";
 print "  void\n";
 print "  virtualize(Gecode::Space& home, $varbranch vars,\n";
@@ -207,10 +209,12 @@ foreach $ns (split('::',$lns)) {
   print "}";
 }
 print "\n\n";
+$cns = "";
 foreach $ns (split('::',$gns)) {
-  print "namespace $ns { ";
+  $cns = $cns."namespace $ns { ";
 }
-print "\n\n";
+$cns =~ s| $||g;
+print "$cns\n\n";
 print "  void\n";
 print "  $branchname(Gecode::Space& home, const $varargs\& x,\n";
 print "         $varbranch vars, $valbranch vals,\n";
