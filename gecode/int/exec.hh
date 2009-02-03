@@ -47,6 +47,9 @@
 
 namespace Gecode { namespace Int { namespace Exec {
 
+  /// Type definition for function arguments
+  typedef void(*SpaceFunction)(Space& home); 
+
   /**
    * \brief Conditional propagator
    *

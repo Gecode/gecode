@@ -45,7 +45,8 @@
 namespace Gecode {
 
   void
-  when(Space& home, BoolVar x, SpaceFunction t, SpaceFunction e,
+  when(Space& home, BoolVar x,
+       void (*t)(Space& home), void (*e)(Space& home),
        IntConLevel) {
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Int::Exec::When::post(home,x,t,e));
