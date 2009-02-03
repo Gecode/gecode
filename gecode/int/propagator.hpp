@@ -108,6 +108,41 @@ namespace Gecode {
   //@}
 
 
+  /**
+   * \brief Reified mixed binary propagator
+   *
+   * Stores two views of type \a View0 and \a View1 with propagation
+   * conditions \a pc0 and \a pc1 and a Boolean control view of type 
+   * \a CtrlView.
+   *
+   * If the propagation conditions \a pc0 or \a pc1 have the values
+   * PC_GEN_NONE, no subscriptions are created.
+   *
+   */
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+            class CtrlView>
+  class ReMixBinaryPropagator : public Propagator {
+  protected:
+    /// View of type \a View0
+    View0 x0;
+    /// View of type \a View1
+    View1 x1;
+    /// Boolean control view
+    CtrlView b;
+    /// Constructor for cloning \a p
+    ReMixBinaryPropagator(Space& home, bool share, ReMixBinaryPropagator& p);
+    /// Constructor for creation
+    ReMixBinaryPropagator(Space& home, View0 x0, View1 x1, CtrlView b);
+    /// Constructor for rewriting \a p during cloning
+    ReMixBinaryPropagator(Space& home, bool share, Propagator& p,
+                          View0 x0, View1 x1, CtrlView b);
+  public:
+    /// Cost function (defined as low binary)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
 
   /*
    * Reified unary propagators
@@ -204,6 +239,67 @@ namespace Gecode {
       x0.cancel(home,*this,pc);
       x1.cancel(home,*this,pc);
     }
+    b.cancel(home,*this,Int::PC_INT_VAL);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  /*
+   * Reified mixed binary propagator
+   *
+   */
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+            class CtrlView>
+  ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
+  ::ReMixBinaryPropagator(Space& home, View0 y0, View1 y1, CtrlView b1)
+    : Propagator(home), x0(y0), x1(y1), b(b1) {
+    if (pc0 != PC_GEN_NONE)
+      x0.subscribe(home,*this,pc);
+    if (pc1 != PC_GEN_NONE)
+      x1.subscribe(home,*this,pc);
+    b.subscribe(home,*this,Int::PC_INT_VAL);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+            class CtrlView>
+  forceinline
+  ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::ReMixBinaryPropagator
+  (Space& home, bool share, 
+   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    b.update(home,share,p.b);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+            class CtrlView>
+  forceinline
+  ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
+  ::ReMixBinaryPropagator
+  (Space& home, bool share, Propagator& p, View0 y0, View1 y1, CtrlView b0)
+    : Propagator(home,share,p) {
+    x0.update(home,share,y0);
+    x1.update(home,share,y1);
+    b.update(home,share,b0);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+            class CtrlView>
+  PropCost
+  ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
+  ::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::binary(PropCost::LO);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+            class CtrlView>
+  forceinline size_t
+  ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::dispose(Space& home) {
+    if (pc0 != PC_GEN_NONE)
+      x0.cancel(home,*this,pc);
+    if (pc1 != PC_GEN_NONE)
+      x1.cancel(home,*this,pc);
     b.cancel(home,*this,Int::PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);

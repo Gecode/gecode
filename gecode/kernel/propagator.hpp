@@ -202,7 +202,9 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   class MixBinaryPropagator : public Propagator {
   protected:
+    /// View of type \a View0
     View0 x0;
+    /// View of type \a View1
     View1 x1;
     /// Constructor for cloning
     MixBinaryPropagator(Space& home,bool,MixBinaryPropagator&);
@@ -232,8 +234,11 @@ namespace Gecode {
             class View2, PropCond pc2>
   class MixTernaryPropagator : public Propagator {
   protected:
+    /// View of type \a View0
     View0 x0;
+    /// View of type \a View1
     View1 x1;
+    /// View of type \a View2
     View2 x2;
     /// Constructor for cloning
     MixTernaryPropagator(Space& home,bool,MixTernaryPropagator&);
