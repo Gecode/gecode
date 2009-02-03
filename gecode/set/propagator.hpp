@@ -117,7 +117,7 @@ namespace Gecode {
   PropCost
   IntSetPropagator<View,pcs,pci>::cost(const Space&,
                                        const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LOW);
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View, PropCond pcs, PropCond pci>
@@ -154,7 +154,7 @@ namespace Gecode {
   PropCost
   IntSetRePropagator<View,pcs,pci>
   ::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::ternary(PropCost::LOW);
+    return PropCost::ternary(PropCost::LO);
   }
 
   template <class View, PropCond pcs, PropCond pci>

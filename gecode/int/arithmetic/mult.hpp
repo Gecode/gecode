@@ -528,9 +528,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlusDom<Val,VA,VB,VC>::cost(const Space&,
                                   const ModEventDelta& med) const {
     if (VA::me(med) == ME_INT_DOM)
-      return PropCost::ternary(PropCost::MED);
+      return PropCost::ternary(PropCost::HI);
     else
-      return PropCost::ternary(PropCost::LOW);
+      return PropCost::ternary(PropCost::LO);
   }
 
   template <class Val, class VA, class VB, class VC>
@@ -586,9 +586,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   PropCost
   MultDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_DOM)
-      return PropCost::ternary(PropCost::MED);
+      return PropCost::ternary(PropCost::HI);
     else
-      return PropCost::ternary(PropCost::LOW);
+      return PropCost::ternary(PropCost::LO);
   }
 
   template <class View>

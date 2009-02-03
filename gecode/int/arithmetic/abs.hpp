@@ -121,9 +121,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   PropCost
   AbsBnd<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PropCost::unary(PropCost::LOW);
+      return PropCost::unary(PropCost::LO);
     else
-      return PropCost::binary(PropCost::LOW);
+      return PropCost::binary(PropCost::LO);
   }
 
   template <class View>
@@ -174,10 +174,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   PropCost
   AbsDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PropCost::unary(PropCost::LOW);
+      return PropCost::unary(PropCost::LO);
     else
       return PropCost::binary((View::me(med) == ME_INT_DOM) ?
-                              PropCost::MED : PropCost::LOW);
+                              PropCost::HI : PropCost::LO);
   }
 
   template <class View>

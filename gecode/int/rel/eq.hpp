@@ -155,11 +155,11 @@ namespace Gecode { namespace Int { namespace Rel {
   PropCost
   EqDom<View0,View1>::cost(const Space&, const ModEventDelta& med) const {
     if ((View0::me(med) == ME_INT_VAL) || (View1::me(med) == ME_INT_VAL))
-      return PropCost::unary(PropCost::LOW);
+      return PropCost::unary(PropCost::LO);
     else if ((View0::me(med) == ME_INT_DOM) || (View1::me(med) == ME_INT_DOM))
-      return PropCost::binary(PropCost::LOW);
+      return PropCost::binary(PropCost::LO);
     else
-      return PropCost::binary(PropCost::MED);
+      return PropCost::binary(PropCost::HI);
   }
 
   template <class View0, class View1>
@@ -246,10 +246,10 @@ namespace Gecode { namespace Int { namespace Rel {
   PropCost
   NaryEqDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PropCost::unary(PropCost::LOW);
+      return PropCost::unary(PropCost::LO);
     else
       return PropCost::linear((View::me(med) == ME_INT_DOM) ?
-                              PropCost::LOW : PropCost::MED, x.size());
+                              PropCost::LO : PropCost::HI, x.size());
   }
 
   template <class View>
@@ -379,9 +379,9 @@ namespace Gecode { namespace Int { namespace Rel {
   PropCost
   NaryEqBnd<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PropCost::unary(PropCost::LOW);
+      return PropCost::unary(PropCost::LO);
     else
-      return PropCost::linear(PropCost::LOW, x.size());
+      return PropCost::linear(PropCost::LO, x.size());
   }
 
   template <class View>

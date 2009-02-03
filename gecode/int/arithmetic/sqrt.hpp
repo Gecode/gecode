@@ -179,11 +179,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   PropCost
   SqrtDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PropCost::unary(PropCost::LOW);
+      return PropCost::unary(PropCost::LO);
     else if (View::me(med) == ME_INT_DOM)
-      return PropCost::binary(PropCost::MED);
+      return PropCost::binary(PropCost::HI);
     else
-      return PropCost::binary(PropCost::LOW);
+      return PropCost::binary(PropCost::LO);
   }
 
   template <class View>

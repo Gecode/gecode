@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class V0, class V1, class Idx, class Val>
   PropCost
   Int<V0,V1,Idx,Val>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::MED);
+    return PropCost::binary(PropCost::HI);
   }
 
   template <class V0, class V1, class Idx, class Val>

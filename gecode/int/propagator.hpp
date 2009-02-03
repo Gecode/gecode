@@ -143,7 +143,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   PropCost
   ReUnaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LOW);
+    return PropCost::unary(PropCost::LO);
   }
 
   template <class View, PropCond pc, class CtrlView>
@@ -194,7 +194,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   PropCost
   ReBinaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LOW);
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View, PropCond pc, class CtrlView>

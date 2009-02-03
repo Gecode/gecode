@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   PropCost
   MemoryLinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LOW, x.size());
+    return PropCost::linear(PropCost::LO, x.size());
   }
 
   /*
@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   PropCost
   SpeedLinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::MED);
+    return PropCost::unary(PropCost::HI);
   }
 
   template <class VX>
@@ -637,7 +637,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class VX>
   PropCost
   NqBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LOW, x.size());
+    return PropCost::linear(PropCost::LO, x.size());
   }
 
   template<class VX>

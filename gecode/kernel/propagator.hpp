@@ -313,7 +313,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   UnaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LOW);
+    return PropCost::unary(PropCost::LO);
   }
 
   template <class View, PropCond pc>
@@ -361,7 +361,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   BinaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LOW);
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View, PropCond pc>
@@ -414,7 +414,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   TernaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::ternary(PropCost::LOW);;
+    return PropCost::ternary(PropCost::LO);;
   }
 
   template <class View, PropCond pc>
@@ -461,7 +461,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   NaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LOW,x.size());
+    return PropCost::linear(PropCost::LO,x.size());
   }
 
   template <class View, PropCond pc>
@@ -509,7 +509,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   PropCost
   NaryOnePropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LOW,x.size()+1);
+    return PropCost::linear(PropCost::LO,x.size()+1);
   }
 
   template <class View, PropCond pc>
@@ -560,7 +560,7 @@ namespace Gecode {
   PropCost
   MixBinaryPropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                  const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LOW);
+    return PropCost::binary(PropCost::LO);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
@@ -621,7 +621,7 @@ namespace Gecode {
   PropCost
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   cost(const Space&, const ModEventDelta&) const {
-    return PropCost::ternary(PropCost::LOW);
+    return PropCost::ternary(PropCost::LO);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
@@ -675,7 +675,7 @@ namespace Gecode {
   PropCost
   MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                   const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LOW,x.size()+1);
+    return PropCost::linear(PropCost::LO,x.size()+1);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>

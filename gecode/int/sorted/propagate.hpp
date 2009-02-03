@@ -400,7 +400,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   PropCost Sorted<View,Perm>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LOW, x.size());
+    return PropCost::linear(PropCost::LO, x.size());
   }
 
   template<class View, bool Perm>

@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   PropCost
   ChannelInt<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::LOW, xs.size()+ys.size());
+    return PropCost::quadratic(PropCost::LO, xs.size()+ys.size());
   }
 
   template <class View>

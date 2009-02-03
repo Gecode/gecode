@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   PropCost
   Val<ViewM,ViewD,ViewH,View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::LOW, start.size());
+    return PropCost::quadratic(PropCost::LO, start.size());
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>

@@ -608,9 +608,8 @@ namespace Gecode {
   public:
     /// Propagation cost modifier
     enum Mod {
-      LOW, ///< Cheap
-      MED, ///< Medium
-      HIGH ///< Expensive
+      LO, ///< Cheap
+      HI  ///< Expensive
     };
   private:
     /// Compute dynamic cost for cost \a lo, expensive cost \a hi, and size measure \a n
@@ -650,13 +649,13 @@ namespace Gecode {
                  PropCost::ActualCost lo, PropCost::ActualCost hi,
                  unsigned int n) {
     if (n < 2)
-      return (m == LOW) ? AC_UNARY_LO : AC_UNARY_HI;
+      return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
     else if (n == 2)
-      return (m == LOW) ? AC_BINARY_LO : AC_BINARY_HI;
+      return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
     else if (n == 3)
-      return (m == LOW) ? AC_TERNARY_LO : AC_TERNARY_HI;
+      return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
     else
-      return (m == LOW) ? lo : hi;
+      return (m == LO) ? lo : hi;
   }
 
   forceinline PropCost
@@ -697,15 +696,15 @@ namespace Gecode {
   }
   forceinline PropCost
   PropCost::ternary(PropCost::Mod m) {
-    return (m == LOW) ? AC_TERNARY_LO : AC_TERNARY_HI;
+    return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
   }
   forceinline PropCost
   PropCost::binary(PropCost::Mod m) {
-    return (m == LOW) ? AC_BINARY_LO : AC_BINARY_HI;
+    return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
   }
   forceinline PropCost
   PropCost::unary(PropCost::Mod m) {
-    return (m == LOW) ? AC_UNARY_LO : AC_UNARY_HI;
+    return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
   }
 
 

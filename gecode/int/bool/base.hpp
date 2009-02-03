@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB>
   PropCost
   BoolBinary<BVA,BVB>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LOW);
+    return PropCost::unary(PropCost::LO);
   }
 
   template<class BVA, class BVB>
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB, class BVC>
   PropCost
   BoolTernary<BVA,BVB,BVC>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LOW);
+    return PropCost::binary(PropCost::LO);
   }
 
   template<class BVA, class BVB, class BVC>

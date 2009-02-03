@@ -341,9 +341,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   PropCost
   Incremental<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
-      return PropCost::quadratic(PropCost::MED,x.size());
+      return PropCost::quadratic(PropCost::HI,x.size());
     else
-      return PropCost::cubic(PropCost::MED,x.size());
+      return PropCost::cubic(PropCost::HI,x.size());
   }
 
   template <class View>

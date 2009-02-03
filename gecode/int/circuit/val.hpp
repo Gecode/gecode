@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   PropCost
   Val<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::MED, x.size());
+    return PropCost::linear(PropCost::HI, x.size());
   }
 
   template <class View>

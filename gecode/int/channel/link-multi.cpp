@@ -95,9 +95,9 @@ namespace Gecode { namespace Int { namespace Channel {
   PropCost
   LinkMulti::cost(const Space&, const ModEventDelta& med) const {
     if (IntView::me(med) == ME_INT_VAL)
-      return PropCost::unary(PropCost::LOW);
+      return PropCost::unary(PropCost::LO);
     else
-      return PropCost::linear(PropCost::LOW, x.size());
+      return PropCost::linear(PropCost::LO, x.size());
   }
 
   ExecStatus

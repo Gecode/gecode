@@ -69,7 +69,7 @@ namespace Gecode { namespace Set { namespace Element {
   PropCost
   ElementIntersection<SView,RView>::cost(const Space&,
                                          const ModEventDelta&) const {
-    return PropCost::linear(PropCost::MED, iv.size()+2);
+    return PropCost::linear(PropCost::HI, iv.size()+2);
   }
 
   template <class SView, class RView>

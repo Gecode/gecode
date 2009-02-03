@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N, PropCond pc>
   PropCost
   Lin<Val,P,N,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LOW, x.size()+y.size());
+    return PropCost::linear(PropCost::LO, x.size()+y.size());
   }
 
   template <class Val, class P, class N, PropCond pc>

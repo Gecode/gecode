@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   PropCost
   Nq<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LOW);
+    return PropCost::unary(PropCost::LO);
   }
 
   template <class View>
