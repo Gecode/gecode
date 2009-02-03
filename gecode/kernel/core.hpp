@@ -594,13 +594,13 @@ namespace Gecode {
       AC_QUADRATIC_HI = 2, ///< Quadratic complexity, expensive
       AC_LINEAR_HI    = 3, ///< Linear complexity, expensive
       AC_LINEAR_LO    = 4, ///< Linear complexity, cheap
-      AC_TERNARY_HI   = 5, ///< Three variables, expensive
-      AC_BINARY_HI    = 6, ///< Two variables, expensive
-      AC_TERNARY_LO   = 6, ///< Three variables, cheap
-      AC_BINARY_LO    = 7, ///< Two variables, cheap
-      AC_UNARY_LO     = 7, ///< Only single variable, cheap
-      AC_UNARY_HI     = 7, ///< Only single variable, expensive
-      AC_MAX          = 7  ///< Maximal cost value
+      AC_TERNARY_HI   = 4, ///< Three variables, expensive
+      AC_BINARY_HI    = 5, ///< Two variables, expensive
+      AC_TERNARY_LO   = 5, ///< Three variables, cheap
+      AC_BINARY_LO    = 6, ///< Two variables, cheap
+      AC_UNARY_LO     = 6, ///< Only single variable, cheap
+      AC_UNARY_HI     = 6, ///< Only single variable, expensive
+      AC_MAX          = 6  ///< Maximal cost value
     };
   private:
     /// Actual cost
