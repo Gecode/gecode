@@ -47,9 +47,6 @@
 
 namespace Gecode { namespace Int { namespace Exec {
 
-  /// Type definition for function arguments
-  typedef void(*SpaceFunction)(Space& home); 
-
   /**
    * \brief Conditional propagator
    *
@@ -60,13 +57,13 @@ namespace Gecode { namespace Int { namespace Exec {
   protected:
     using UnaryPropagator<BoolView,PC_BOOL_VAL>::x0;
     /// Then function pointer
-    SpaceFunction t;
+    void (*t)(Space&);
     /// Else function pointer
     void (*e)(Space&);
     /// Constructor for cloning \a p
     When(Space& home, bool share, When& p);
     /// Constructor for creation
-    When(Space& home, BoolView x, SpaceFunction t0, SpaceFunction e0);
+    When(Space& home, BoolView x, void (*t0)(Space&), void (*e0)(Space&));
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT 
@@ -76,8 +73,8 @@ namespace Gecode { namespace Int { namespace Exec {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
     GECODE_INT_EXPORT 
-    static ExecStatus post(Space& home, BoolView x, 
-                           SpaceFunction t, SpaceFunction e);
+    static ExecStatus post(Space& home, BoolView x,
+                           void (*t)(Space&), void (*e)(Space&));
   };
 
 }}}

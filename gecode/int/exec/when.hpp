@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int { namespace Exec {
 
   forceinline
-  When::When(Space& home, BoolView x, SpaceFunction t0, SpaceFunction e0)
+  When::When(Space& home, BoolView x, void (*t0)(Space&), void (*e0)(Space&))
     : UnaryPropagator<BoolView,PC_BOOL_VAL>(home,x), t(t0), e(e0) {}
 
   forceinline
