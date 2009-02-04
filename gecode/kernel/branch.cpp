@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Mikael Z. Lagerkvist <zayenz@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2008
+ *     Mikael Z. Lagerkvist, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -44,6 +46,67 @@ namespace Gecode {
   const ValBranchOptions ValBranchOptions::def;
 
   const TieBreakVarBranchOptions TieBreakVarBranchOptions::def;
+
+
+  /*
+   * Function branching
+   */
+
+  /// Branching for calling a function
+  class GECODE_KERNEL_EXPORT FunctionBranch : public Branching {
+  protected:
+    /// Minimal branching description storing no information
+    class GECODE_KERNEL_EXPORT Description : public BranchingDesc {
+    public:
+      /// Initialize description for branching \a b, number of alternatives \a a.
+      Description(const Branching& b, unsigned int a) : BranchingDesc(b,a) {}
+      /// Report size occupied
+      virtual size_t size(void) const { return sizeof(Description); }
+    };
+    /// Function to call
+    void (*f)(Space&);
+    /// Call function just once
+    bool done;
+    /// Construct branching
+    FunctionBranch(Space& home, void (*f0)(Space&))
+      : Branching(home), f(f0), done(false) {}
+    /// Copy constructor
+    FunctionBranch(Space& home, bool share, FunctionBranch& b)
+      : Branching(home,share,b), f(b.f), done(b.done) {}
+  public:
+    /// Check status of branching, return true if alternatives left
+    virtual bool status(const Space&) const {
+      return !done;
+    }
+    /// Return branching description
+    virtual const BranchingDesc* description(Space&) {
+      assert(!done);
+      return new Description(*this,1);
+    }
+    /// Perform commit
+    virtual ExecStatus 
+    commit(Space& home, const BranchingDesc&, unsigned int) {
+      done = true;
+      f(home);
+      return home.failed() ? ES_FAILED : ES_OK;
+    }
+    /// Copy branching
+    virtual Actor* copy(Space& home, bool share) {
+      return new (home) FunctionBranch(home,share,*this);
+    }
+    /// Post branching
+    static void post(Space& home, void (*f)(Space&)) {
+      (void) new (home) FunctionBranch(home,f);
+    }
+  };
+
+
+  void
+  branch(Space& home, void (*f)(Space& home)) {
+    if (home.failed())
+      return;
+    FunctionBranch::post(home,f);
+  }
 
 }
 

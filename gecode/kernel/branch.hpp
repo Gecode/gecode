@@ -39,7 +39,18 @@
 
 namespace Gecode {
 
-  /// Variable branch options
+  /**
+   * \defgroup TaskModelBranch Generic branching support
+   *
+   * Support for options to branchings, tie-breaking, and branchings
+   * that are independent of a particular variable domain.
+   *
+   * \ingroup TaskModel
+   */
+
+  /** \brief Variable branch options
+   * \ingroup TaskModelBranch
+   */
   class VarBranchOptions {
   public:
     /// Seed for random variable selection
@@ -52,7 +63,9 @@ namespace Gecode {
     static VarBranchOptions time(void);
   };
 
-  /// Value branch options
+  /** \brief Value branch options
+   * \ingroup TaskModelBranch
+   */
   class ValBranchOptions {
   public:
     /// Seed for random value selection
@@ -79,21 +92,6 @@ namespace Gecode {
                       VarBranch d0 = static_cast<VarBranch>(0));
   };
 
-  /// Combine variable selection criteria \a a and \a b for tie-breaking
-  template <class VarBranch>
-  TieBreakVarBranch<VarBranch>
-  tiebreak(VarBranch a, VarBranch b);
-  /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
-  template <class VarBranch>
-  TieBreakVarBranch<VarBranch>
-  tiebreak(VarBranch a, VarBranch b, VarBranch c);
-  /// Combine variable selection criteria \a a, \a b, \a c, and \a d for tie-breaking
-  template <class VarBranch>
-  TieBreakVarBranch<VarBranch>
-  tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
-
-
-
   /// Combine variable branch options for tie-breaking
   class TieBreakVarBranchOptions {
   public:
@@ -112,6 +110,24 @@ namespace Gecode {
                              = VarBranchOptions::def);
   };
 
+  /** 
+   * \defgroup TaskModelBranchTieBreak Tie-breaking for variable selection
+   * 
+   * \ingroup TaskModelBranch
+   */
+  //@{
+  /// Combine variable selection criteria \a a and \a b for tie-breaking
+  template <class VarBranch>
+  TieBreakVarBranch<VarBranch>
+  tiebreak(VarBranch a, VarBranch b);
+  /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
+  template <class VarBranch>
+  TieBreakVarBranch<VarBranch>
+  tiebreak(VarBranch a, VarBranch b, VarBranch c);
+  /// Combine variable selection criteria \a a, \a b, \a c, and \a d for tie-breaking
+  template <class VarBranch>
+  TieBreakVarBranch<VarBranch>
+  tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
   /// Combine variable branch options \a a and \a b for tie-breaking
   TieBreakVarBranchOptions
   tiebreak(VarBranchOptions a, VarBranchOptions b);
@@ -122,7 +138,23 @@ namespace Gecode {
   TieBreakVarBranchOptions
   tiebreak(VarBranchOptions a, VarBranchOptions b, VarBranchOptions c,
            VarBranchOptions d);
+  //@}
 
+  /** 
+   * \defgroup TaskModelBranchExec Branch with a function
+   * 
+   * This does not really branch (it just offers a single alternative) but
+   * executes a single function during branching. A typical
+   * application is to post more constraints after another branching 
+   * has finished.
+   *
+   * \ingroup TaskModelBranch
+   */
+  //@{
+  /// Call the function \a f (with the current space as argument) for branching
+  GECODE_KERNEL_EXPORT void
+  branch(Space& home, void (*f)(Space& home));
+  //@}
 
 
   // Variable branch options
@@ -180,10 +212,11 @@ namespace Gecode {
    * Combine branch options for tie-breaking
    */
   forceinline
-  TieBreakVarBranchOptions::TieBreakVarBranchOptions(const VarBranchOptions& a0,
-                                                     const VarBranchOptions& b0,
-                                                     const VarBranchOptions& c0,
-                                                     const VarBranchOptions& d0)
+  TieBreakVarBranchOptions::
+  TieBreakVarBranchOptions(const VarBranchOptions& a0,
+                           const VarBranchOptions& b0,
+                           const VarBranchOptions& c0,
+                           const VarBranchOptions& d0)
     : a(a0), b(b0), c(c0), d(d0) {}
 
   forceinline TieBreakVarBranchOptions

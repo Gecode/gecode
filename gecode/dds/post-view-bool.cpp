@@ -45,7 +45,7 @@ using namespace ::Gecode;
 using namespace ::Gecode::Int;
 using namespace ::Gecode::Int::Branch;
 
-namespace Gecode { namespace Decomposition { 
+namespace Gecode { namespace Decomposition {
 
   /// Create virtual view selector for tie-breaking
   void
@@ -105,7 +105,7 @@ namespace Gecode { namespace Decomposition {
 
 }}
 
-namespace Gecode { 
+namespace Gecode {
 
   void
   decomposingBranch(Gecode::Space& home, const BoolVarArgs& x,
@@ -365,60 +365,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    class BranchingRegistrar {
-    public:
-      BranchingRegistrar(void) {
-        using namespace Gecode;
-        using namespace Gecode::Decomposition;
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelRnd<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMin<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMax<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMax<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelDegreeMin<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView< ViewSelNone<BoolView> >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-        Gecode::Decomposition::registerAllBoolView<ViewSelTieBreakStatic<ViewSelNone<BoolView>,
-                           ViewSelTieBreakDynamic<BoolView> > >();
-      }
-    };
-    BranchingRegistrar r;
-  }
 }
 
 

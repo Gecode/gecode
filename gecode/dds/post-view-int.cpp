@@ -45,7 +45,7 @@ using namespace ::Gecode;
 using namespace ::Gecode::Int;
 using namespace ::Gecode::Int::Branch;
 
-namespace Gecode { namespace Decomposition { 
+namespace Gecode { namespace Decomposition {
 
   /// Create virtual view selector for tie-breaking
   void
@@ -105,7 +105,7 @@ namespace Gecode { namespace Decomposition {
 
 }}
 
-namespace Gecode { 
+namespace Gecode {
 
   void
   decomposingBranch(Gecode::Space& home, const IntVarArgs& x,
@@ -365,60 +365,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    class BranchingRegistrar {
-    public:
-      BranchingRegistrar(void) {
-        using namespace Gecode;
-        using namespace Gecode::Decomposition;
-        Gecode::Decomposition::registerAllIntView< ViewSelNone<IntView> >();
-        Gecode::Decomposition::registerAllIntView< ViewSelRnd<IntView> >();
-        Gecode::Decomposition::registerAllIntView< ByMinMin >();
-        Gecode::Decomposition::registerAllIntView< ByMinMax >();
-        Gecode::Decomposition::registerAllIntView< ByMaxMin >();
-        Gecode::Decomposition::registerAllIntView< ByMaxMax >();
-        Gecode::Decomposition::registerAllIntView< BySizeMin >();
-        Gecode::Decomposition::registerAllIntView< BySizeMax >();
-        Gecode::Decomposition::registerAllIntView< ViewSelDegreeMin<IntView> >();
-        Gecode::Decomposition::registerAllIntView< ViewSelDegreeMax<IntView> >();
-        Gecode::Decomposition::registerAllIntView< BySizeDegreeMin >();
-        Gecode::Decomposition::registerAllIntView< BySizeDegreeMax >();
-        Gecode::Decomposition::registerAllIntView< ByRegretMinMin >();
-        Gecode::Decomposition::registerAllIntView< ByRegretMinMax >();
-        Gecode::Decomposition::registerAllIntView< ByRegretMaxMin >();
-        Gecode::Decomposition::registerAllIntView< ByRegretMaxMax >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByMinMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByMinMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByMaxMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByMaxMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<BySizeMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<BySizeMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ViewSelDegreeMin<IntView>,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ViewSelDegreeMax<IntView>,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<BySizeDegreeMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<BySizeDegreeMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByRegretMinMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByRegretMinMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByRegretMaxMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        Gecode::Decomposition::registerAllIntView<ViewSelTieBreakStatic<ByRegretMaxMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-      }
-    };
-    BranchingRegistrar r;
-  }
 }
 
 
