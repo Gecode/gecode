@@ -1033,7 +1033,7 @@ $(top_srcdir)/gecode/kernel/var-imp.hpp: $(top_srcdir)/variables.vsl $(ALLVIS)
 GENBRANCHSRC = \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp \
-	$(top_srcdir)/gecode/set/branch.cpp \
+	$(top_srcdir)/gecode/set/branch/post-view.cpp \
 	$(top_srcdir)/gecode/cpltset/branch.cpp
 
 $(top_srcdir)/gecode/int/branch/post-view-int.cpp: \
