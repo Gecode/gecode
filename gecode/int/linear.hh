@@ -130,8 +130,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B>
   class EqBin : public LinBin<Val,A,B,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(EqBin,Val,A,B,"Gecode::Int::Linear::EqBin")
-    GECODE_REFLECT_ARGS_3(A,x0,B,x1,Val,c)
   protected:
     using LinBin<Val,A,B,PC_INT_BND>::x0;
     using LinBin<Val,A,B,PC_INT_BND>::x1;
@@ -166,9 +164,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B, class Ctrl>
   class ReEqBin : public ReLinBin<Val,A,B,PC_INT_BND,Ctrl> {
-    GECODE_REFLECT_PROPAGATOR_4(ReEqBin,Val,A,B,Ctrl,
-      "Gecode::Int::Linear::ReEqBin")
-    GECODE_REFLECT_ARGS_4(A,x0,B,x1,Val,c,Ctrl,b)
   protected:
     using ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::x0;
     using ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::x1;
@@ -202,8 +197,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B>
   class NqBin : public LinBin<Val,A,B,PC_INT_VAL> {
-    GECODE_REFLECT_PROPAGATOR_3(NqBin,Val,A,B,"Gecode::Int::Linear::NqBin")
-    GECODE_REFLECT_ARGS_3(A,x0,B,x1,Val,c)
   protected:
     using LinBin<Val,A,B,PC_INT_VAL>::x0;
     using LinBin<Val,A,B,PC_INT_VAL>::x1;
@@ -240,8 +233,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B>
   class LqBin : public LinBin<Val,A,B,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(LqBin,Val,A,B,"Gecode::Int::Linear::LqBin")
-    GECODE_REFLECT_ARGS_3(A,x0,B,x1,Val,c)
   protected:
     using LinBin<Val,A,B,PC_INT_BND>::x0;
     using LinBin<Val,A,B,PC_INT_BND>::x1;
@@ -276,8 +267,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B>
   class GqBin : public LinBin<Val,A,B,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(GqBin,Val,A,B,"Gecode::Int::Linear::GqBin")
-    GECODE_REFLECT_ARGS_3(A,x0,B,x1,Val,c)
   protected:
     using LinBin<Val,A,B,PC_INT_BND>::x0;
     using LinBin<Val,A,B,PC_INT_BND>::x1;
@@ -312,8 +301,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B>
   class ReLqBin : public ReLinBin<Val,A,B,PC_INT_BND,BoolView> {
-    GECODE_REFLECT_PROPAGATOR_3(ReLqBin,Val,A,B,"Gecode::Int::Linear::ReLqBin")
-    GECODE_REFLECT_ARGS_4(A,x0,B,x1,Val,c,BoolView,b)
   protected:
     using ReLinBin<Val,A,B,PC_INT_BND,BoolView>::x0;
     using ReLinBin<Val,A,B,PC_INT_BND,BoolView>::x1;
@@ -391,9 +378,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B, class C>
   class EqTer : public LinTer<Val,A,B,C,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_4(EqTer,Val,A,B,C,
-                                "Gecode::Int::Linear::EqTer")
-    GECODE_REFLECT_ARGS_4(A,x0,B,x1,C,x2,Val,c)
   protected:
     using LinTer<Val,A,B,C,PC_INT_BND>::x0;
     using LinTer<Val,A,B,C,PC_INT_BND>::x1;
@@ -429,9 +413,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B, class C>
   class NqTer : public LinTer<Val,A,B,C,PC_INT_VAL> {
-    GECODE_REFLECT_PROPAGATOR_4(NqTer,Val,A,B,C,
-                                "Gecode::Int::Linear::NqTer")
-    GECODE_REFLECT_ARGS_4(A,x0,B,x1,C,x2,Val,c)
   protected:
     using LinTer<Val,A,B,C,PC_INT_VAL>::x0;
     using LinTer<Val,A,B,C,PC_INT_VAL>::x1;
@@ -467,9 +448,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class A, class B, class C>
   class LqTer : public LinTer<Val,A,B,C,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_4(LqTer,Val,A,B,C,
-                                "Gecode::Int::Linear::LqTer")
-    GECODE_REFLECT_ARGS_4(A,x0,B,x1,C,x2,Val,c)
   protected:
     using LinTer<Val,A,B,C,PC_INT_BND>::x0;
     using LinTer<Val,A,B,C,PC_INT_BND>::x1;
@@ -587,9 +565,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   class Eq : public Lin<Val,P,N,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(Eq,Val,P,N,
-                                "Gecode::Int::Linear::Eq")
-    GECODE_REFLECT_ARGS_3(ViewArray<P>,x,ViewArray<N>,y,Val,c)
   protected:
     using Lin<Val,P,N,PC_INT_BND>::x;
     using Lin<Val,P,N,PC_INT_BND>::y;
@@ -622,9 +597,6 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class View>
   class DomEq
     : public Lin<Val,View,View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_2(DomEq,Val,View,
-                                "Gecode::Int::Linear::DomEq")
-    GECODE_REFLECT_ARGS_3(ViewArray<View>,x,ViewArray<View>,y,Val,c)
   protected:
     using Lin<Val,View,View,PC_INT_DOM>::x;
     using Lin<Val,View,View,PC_INT_DOM>::y;
@@ -665,9 +637,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N, class Ctrl>
   class ReEq : public ReLin<Val,P,N,PC_INT_BND,Ctrl> {
-    GECODE_REFLECT_PROPAGATOR_4(ReEq,Val,P,N,Ctrl,
-                                "Gecode::Int::Linear::ReEq")
-    GECODE_REFLECT_ARGS_4(ViewArray<P>,x,ViewArray<N>,y,Val,c,Ctrl,b)
   protected:
     using ReLin<Val,P,N,PC_INT_BND,Ctrl>::x;
     using ReLin<Val,P,N,PC_INT_BND,Ctrl>::y;
@@ -702,9 +671,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   class Nq : public Lin<Val,P,N,PC_INT_VAL> {
-    GECODE_REFLECT_PROPAGATOR_3(Nq,Val,P,N,
-                                "Gecode::Int::Linear::Nq")
-    GECODE_REFLECT_ARGS_3(ViewArray<P>,x,ViewArray<N>,y,Val,c)
   protected:
     using Lin<Val,P,N,PC_INT_VAL>::x;
     using Lin<Val,P,N,PC_INT_VAL>::y;
@@ -738,9 +704,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   class Lq : public Lin<Val,P,N,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(Lq,Val,P,N,
-                                "Gecode::Int::Linear::Lq")
-    GECODE_REFLECT_ARGS_3(ViewArray<P>,x,ViewArray<N>,y,Val,c)
   protected:
     using Lin<Val,P,N,PC_INT_BND>::x;
     using Lin<Val,P,N,PC_INT_BND>::y;
@@ -774,9 +737,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   class ReLq : public ReLin<Val,P,N,PC_INT_BND,BoolView> {
-    GECODE_REFLECT_PROPAGATOR_3(ReLq,Val,P,N,
-                                "Gecode::Int::Linear::ReLq")
-    GECODE_REFLECT_ARGS_4(ViewArray<P>,x,ViewArray<N>,y,Val,c,BoolView,b)
   protected:
     using ReLin<Val,P,N,PC_INT_BND,BoolView>::x;
     using ReLin<Val,P,N,PC_INT_BND,BoolView>::y;
@@ -852,10 +812,7 @@ namespace Gecode { namespace Int { namespace Linear {
     SpeedLinBoolInt(Space& home, bool share, SpeedLinBoolInt& p);
     /// Constructor for creation
     SpeedLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
-    /// Reflection
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                               const Support::Symbol& ati) const;
-    public:
+  public:
     /// Cost function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
@@ -875,14 +832,6 @@ namespace Gecode { namespace Int { namespace Linear {
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
     class Memory : public MemoryLinBoolInt<VX> {
-    private:
-      typedef Memory __PROPCLASS;
-    public:
-      static Support::Symbol ati(void) {
-        return
-          Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Memory");
-      }
-      GECODE_REFLECT_ARGS_2(ViewArray<VX>,x,int,c)
     protected:
       using MemoryLinBoolInt<VX>::x;
       using MemoryLinBoolInt<VX>::n_s;
@@ -901,13 +850,6 @@ namespace Gecode { namespace Int { namespace Linear {
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
-    private:
-      typedef Speed __PROPCLASS;
-    public:
-      static Support::Symbol ati(void) {
-        return
-          Reflection::mangle<VX>("Gecode::Int::Linear::EqBoolInt::Speed");
-      }
     protected:
       using SpeedLinBoolInt<VX>::x;
       using SpeedLinBoolInt<VX>::n_s;
@@ -924,12 +866,7 @@ namespace Gecode { namespace Int { namespace Linear {
       virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
       /// Perform propagation
       virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-      virtual Reflection::ActorSpec spec(const Space& home,
-                                         Reflection::VarMap& m) const;
-      static void post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec);
     };
-
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, int c);
   };
@@ -947,20 +884,10 @@ namespace Gecode { namespace Int { namespace Linear {
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
     class Memory : public MemoryLinBoolInt<VX> {
-    private:
-      typedef Memory __PROPCLASS;
-    public:
-      static Support::Symbol ati(void) {
-        return
-          Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Memory");
-      }
-      GECODE_REFLECT_ARGS_2(ViewArray<VX>,x,int,c)
     protected:
       using MemoryLinBoolInt<VX>::x;
       using MemoryLinBoolInt<VX>::n_s;
       using MemoryLinBoolInt<VX>::c;
-      /// Post propagator for reflection
-      static ExecStatus post(Space& home, ViewArray<VX>& x, int c);
     public:
       /// Constructor for cloning \a p
       Memory(Space& home, bool share, Memory& p);
@@ -973,13 +900,6 @@ namespace Gecode { namespace Int { namespace Linear {
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
-    private:
-      typedef Speed __PROPCLASS;
-    public:
-      static Support::Symbol ati(void) {
-        return
-          Reflection::mangle<VX>("Gecode::Int::Linear::GqBoolInt::Speed");
-      }
     protected:
       using SpeedLinBoolInt<VX>::x;
       using SpeedLinBoolInt<VX>::n_s;
@@ -996,12 +916,6 @@ namespace Gecode { namespace Int { namespace Linear {
       virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
       /// Perform propagation
       virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-      /// Specification for this propagator
-      virtual Reflection::ActorSpec spec(const Space& home,
-                                          Reflection::VarMap& m) const;
-      /// Post propagator according to specification
-      static void post(Space& home, Reflection::VarMap& vars,
-                       const Reflection::ActorSpec& spec);
     };
   public:
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
@@ -1016,9 +930,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX>
   class NqBoolInt : public BinaryPropagator<VX,PC_INT_VAL> {
-      GECODE_REFLECT_PROPAGATOR_1(NqBoolInt,VX,
-        "Gecode::Int::Linear::NqBoolInt")
-      GECODE_REFLECT_ARGS_4(VX,x0, VX,x1, ViewArray<VX>,x, int,c)
   protected:
     using BinaryPropagator<VX,PC_INT_VAL>::x0;
     using BinaryPropagator<VX,PC_INT_VAL>::x1;
@@ -1032,8 +943,6 @@ namespace Gecode { namespace Int { namespace Linear {
     NqBoolInt(Space& home,  ViewArray<VX>& b, int c);
     /// Constructor for cloning \a p
     NqBoolInt(Space& home, bool share, NqBoolInt<VX>& p);
-    /// Post propagator for reflection
-    static ExecStatus post(Space& home,VX x0,VX x1,ViewArray<VX>& b,int c);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -1106,9 +1015,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class XV, class YV>
   class EqBoolView : public LinBoolView<XV,YV> {
-    GECODE_REFLECT_PROPAGATOR_2(EqBoolView,XV,YV,
-      "Gecode::Int::Linear::EqBoolView")
-    GECODE_REFLECT_ARGS_3(ViewArray<XV>,x, YV,y, int,c)
   protected:
     using LinBoolView<XV,YV>::x;
     using LinBoolView<XV,YV>::y;
@@ -1135,9 +1041,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class XV, class YV>
   class NqBoolView : public LinBoolView<XV,YV> {
-    GECODE_REFLECT_PROPAGATOR_2(NqBoolView,XV,YV,
-      "Gecode::Int::Linear::NqBoolView")
-    GECODE_REFLECT_ARGS_3(ViewArray<XV>,x, YV,y, int,c)
   protected:
     using LinBoolView<XV,YV>::x;
     using LinBoolView<XV,YV>::y;
@@ -1164,9 +1067,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class XV, class YV>
   class GqBoolView : public LinBoolView<XV,YV> {
-    GECODE_REFLECT_PROPAGATOR_2(GqBoolView,XV,YV,
-      "Gecode::Int::Linear::GqBoolView")
-    GECODE_REFLECT_ARGS_3(ViewArray<XV>,x, YV,y, int,c)
   protected:
     using LinBoolView<XV,YV>::x;
     using LinBoolView<XV,YV>::y;
@@ -1193,9 +1093,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class XV, class YV, class BV>
   class ReEqBoolView : public ReLinBoolView<XV,YV,BV> {
-    GECODE_REFLECT_PROPAGATOR_3(ReEqBoolView,XV,YV,BV,
-      "Gecode::Int::Linear::ReEqBoolView")
-    GECODE_REFLECT_ARGS_4(ViewArray<XV>,x, YV,y, int,c, BV,b)
   protected:
     using ReLinBoolView<XV,YV,BV>::x;
     using ReLinBoolView<XV,YV,BV>::y;
@@ -1223,9 +1120,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class XV, class YV, class BV>
   class ReGqBoolView : public ReLinBoolView<XV,YV,BV> {
-    GECODE_REFLECT_PROPAGATOR_3(ReGqBoolView,XV,YV,BV,
-      "Gecode::Int::Linear::ReGqBoolView")
-    GECODE_REFLECT_ARGS_4(ViewArray<XV>,x, YV,y, int,c, BV,b)
   protected:
     using ReLinBoolView<XV,YV,BV>::x;
     using ReLinBoolView<XV,YV,BV>::y;
@@ -1290,13 +1184,6 @@ namespace Gecode { namespace Int { namespace Linear {
     bool empty(void) const;
     /// Return number of elements
     int size(void) const;
-    /// Return type of array
-    static Support::Symbol type(void);
-    /// Reflection
-    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-    // Create array from specification
-    ScaleBoolArray(Space& home, const Reflection::VarMap& vars,
-                   Reflection::Arg* spec);
   private:
     /// For sorting array in decreasing order of coefficients
     class ScaleDec {
@@ -1337,13 +1224,6 @@ namespace Gecode { namespace Int { namespace Linear {
     int size(void) const;
     /// Sort array in decreasing order of coefficients
     void sort(void);
-    /// Return type of array
-    static Support::Symbol type(void);
-    /// Reflection
-    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-    // Create array from specification
-    EmptyScaleBoolArray(Space& home, const Reflection::VarMap& vars,
-                        Reflection::Arg* spec);
   };
 
 
@@ -1382,9 +1262,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class SBAP, class SBAN, class VX>
   class EqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(EqBoolScale,SBAP,SBAN,VX,
-      "Gecode::Int::Linear::EqBoolScale")
-    GECODE_REFLECT_ARGS_4(SBAP,p,SBAN,n,VX,x,int,c)
   protected:
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::p;
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::n;
@@ -1412,9 +1289,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class SBAP, class SBAN, class VX>
   class LqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(LqBoolScale,SBAP,SBAN,VX,
-      "Gecode::Int::Linear::LqBoolScale")
-    GECODE_REFLECT_ARGS_4(SBAP,p,SBAN,n,VX,x,int,c)
   protected:
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::p;
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::n;
@@ -1442,9 +1316,6 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class SBAP, class SBAN, class VX>
   class NqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL> {
-    GECODE_REFLECT_PROPAGATOR_3(NqBoolScale,SBAP,SBAN,VX,
-      "Gecode::Int::Linear::NqBoolScale")
-    GECODE_REFLECT_ARGS_4(SBAP,p,SBAN,n,VX,x,int,c)
   protected:
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::p;
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::n;

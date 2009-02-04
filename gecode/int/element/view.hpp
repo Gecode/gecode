@@ -148,33 +148,6 @@ namespace Gecode { namespace Int { namespace Element {
     }
   }
 
-  template <class View>
-  Reflection::Arg*
-  IdxViewArray<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::IntArrayArg* is = Reflection::Arg::newIntArray(n);
-    for (int i = 0; i<n; i++)
-      (*is)[i] = xs[i].idx;
-    Reflection::ArrayArg* s = Reflection::Arg::newArray(n);
-    for (int i = 0; i<n; i++)
-      (*s)[i] = xs[i].view.spec(home, m);
-    return Reflection::Arg::newPair(is,s);
-  }
-
-  template <class View>
-  IdxViewArray<View>::IdxViewArray(Space& home,
-                                   const Reflection::VarMap& vars,
-                                   Reflection::Arg* spec) : xs(NULL) {
-    Reflection::IntArrayArg* is = spec->first()->toIntArray();
-    Reflection::ArrayArg* s = spec->second()->toArray();
-    n = is->size();
-    if (n>0) {
-      xs = IdxView<View>::allocate(home, n);
-      for (int i = n; i--; ) {
-        xs[i].idx = (*is)[i]; xs[i].view = View(home, vars, (*s)[i]);
-      }
-    }
-  }
-
 
   /**
    * \brief Class for bounds-equality test

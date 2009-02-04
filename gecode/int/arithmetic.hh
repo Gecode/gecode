@@ -60,8 +60,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class AbsBnd : public BinaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(AbsBnd,View,"Gecode::Int::Arithmetic::AbsBnd")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
@@ -95,8 +93,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class AbsDom : public BinaryPropagator<View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_1(AbsDom,View,"Gecode::Int::Arithmetic::AbsDom")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_DOM>::x0;
     using BinaryPropagator<View,PC_INT_DOM>::x1;
@@ -132,8 +128,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class MaxBnd : public TernaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(MaxBnd,View,"Gecode::Int::Arithmetic::MaxBnd")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,View,x2)
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
     using TernaryPropagator<View,PC_INT_BND>::x1;
@@ -162,8 +156,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class NaryMaxBnd : public NaryOnePropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(NaryMaxBnd,View,"Gecode::Int::Arithmetic::NaryMaxBnd")
-    GECODE_REFLECT_ARGS_2(ViewArray<View>,x,View,y)
   protected:
     using NaryOnePropagator<View,PC_INT_BND>::x;
     using NaryOnePropagator<View,PC_INT_BND>::y;
@@ -190,8 +182,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   class MaxDom : public
   MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(MaxDom,View,"Gecode::Int::Arithmetic::MaxDom")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,View,x2)
   protected:
     using MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>::x0;
     using MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>::x1;
@@ -228,8 +218,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   class NaryMaxDom
     : public MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(NaryMaxDom,View,"Gecode::Int::Arithmetic::NaryMaxDom")
-    GECODE_REFLECT_ARGS_2(ViewArray<View>,x,View,y)
   protected:
     using MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>::x;
     using MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>::y;
@@ -264,8 +252,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class VA, class VB>
   class SqrPlusBnd : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_2(SqrPlusBnd,VA,VB,"Gecode::Int::Arithmetic::SqrPlusBnd")
-    GECODE_REFLECT_ARGS_2(VA,x0,VB,x1)
   protected:
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x0;
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x1;
@@ -290,8 +276,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class SqrBnd : public BinaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(SqrBnd,View,"Gecode::Int::Arithmetic::SqrBnd")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
@@ -318,8 +302,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class VA, class VB>
   class SqrPlusDom : public MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_2(SqrPlusDom,VA,VB,"Gecode::Int::Arithmetic::SqrPlusDom")
-    GECODE_REFLECT_ARGS_2(VA,x0,VB,x1)
   protected:
     using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x0;
     using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x1;
@@ -352,8 +334,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class SqrDom : public BinaryPropagator<View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_1(SqrDom,View,"Gecode::Int::Arithmetic::SqrDom")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_DOM>::x0;
     using BinaryPropagator<View,PC_INT_DOM>::x1;
@@ -389,8 +369,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class SqrtBnd : public BinaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(SqrtBnd,View,"Gecode::Int::Arithmetic::SqrtBnd")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
@@ -416,8 +394,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class SqrtDom : public BinaryPropagator<View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_1(SqrtDom,View,"Gecode::Int::Arithmetic::SqrtDom")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_DOM>::x0;
     using BinaryPropagator<View,PC_INT_DOM>::x1;
@@ -453,9 +429,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View, PropCond pc>
   class MultZeroOne : public BinaryPropagator<View,pc> {
-    GECODE_REFLECT_PROPAGATOR_1i(MultZeroOne,View,pc,
-                        "Gecode::Int::Arithmetic::MultZeroOne")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,pc>::x0;
     using BinaryPropagator<View,pc>::x1;
@@ -485,9 +458,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class Val, class VA, class VB, class VC>
   class MultPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_4(MultPlusBnd,Val,VA,VB,VC,
-                       "Gecode::Int::Arithmetic::MultPlusBnd")
-    GECODE_REFLECT_ARGS_3(VA,x0,VB,x1,VC,x2)
   protected:
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x0;
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x1;
@@ -514,9 +484,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class MultBnd : public TernaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(MultBnd,View,
-                       "Gecode::Int::Arithmetic::MultBnd")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,View,x2)
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
     using TernaryPropagator<View,PC_INT_BND>::x1;
@@ -545,9 +512,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class Val, class VA, class VB, class VC>
   class MultPlusDom :
     public MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_4(MultPlusDom,Val,VA,VB,VC,
-                       "Gecode::Int::Arithmetic::MultPlusDom")
-    GECODE_REFLECT_ARGS_3(VA,x0,VB,x1,VC,x2)
   protected:
     using MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>::x0;
     using MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>::x1;
@@ -581,9 +545,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class MultDom : public TernaryPropagator<View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_1(MultDom,View,
-                       "Gecode::Int::Arithmetic::MultDom")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,View,x2)
   protected:
     using TernaryPropagator<View,PC_INT_DOM>::x0;
     using TernaryPropagator<View,PC_INT_DOM>::x1;
@@ -617,9 +578,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class Val, class VA, class VB, class VC, bool towardsMinInf=true>
   class DivPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_4i(DivPlusBnd,Val,VA,VB,VC,towardsMinInf,
-                       "Gecode::Int::Arithmetic::DivPlusBnd")
-    GECODE_REFLECT_ARGS_3(VA,x0,VB,x1,VC,x2)
   protected:
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x0;
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x1;
@@ -647,9 +605,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class DivBnd : public TernaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(DivBnd,View,
-                       "Gecode::Int::Arithmetic::DivBnd")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,View,x2)
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
     using TernaryPropagator<View,PC_INT_BND>::x1;
@@ -680,9 +635,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class View>
   class DivMod : public BinaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(DivMod,View,
-                       "Gecode::Int::Arithmetic::DivMod")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;

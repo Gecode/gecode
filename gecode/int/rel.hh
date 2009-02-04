@@ -70,8 +70,6 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View0,class View1>
   class EqDom :
     public MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_2(EqDom,View0,View1,"Gecode::Int::Rel::EqDom")
-    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x0;
     using MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x1;
@@ -108,8 +106,6 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View0, class View1>
   class EqBnd :
     public MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_2(EqBnd,View0,View1,"Gecode::Int::Rel::EqBnd")
-    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x0;
     using MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x1;
@@ -140,8 +136,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View>
   class NaryEqDom : public NaryPropagator<View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_1(NaryEqDom,View,"Gecode::Int::Rel::NaryEqDom")
-    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
   protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
 
@@ -174,8 +168,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View>
   class NaryEqBnd : public NaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(NaryEqBnd,View,"Gecode::Int::Rel::NaryEqBnd")
-    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
   protected:
     using NaryPropagator<View,PC_INT_BND>::x;
 
@@ -207,9 +199,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View, class CtrlView>
   class ReEqDom : public ReBinaryPropagator<View,PC_INT_DOM,CtrlView> {
-    GECODE_REFLECT_PROPAGATOR_2(ReEqDom,View,CtrlView,
-                                "Gecode::Int::Rel::ReEqDom")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,CtrlView,b)
   protected:
     using ReBinaryPropagator<View,PC_INT_DOM,CtrlView>::x0;
     using ReBinaryPropagator<View,PC_INT_DOM,CtrlView>::x1;
@@ -236,9 +225,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View, class CtrlView>
   class ReEqBnd : public ReBinaryPropagator<View,PC_INT_BND,CtrlView> {
-    GECODE_REFLECT_PROPAGATOR_2(ReEqBnd,View,CtrlView,
-                                "Gecode::Int::Rel::ReEqBnd")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,CtrlView,b)
   protected:
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::x0;
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::x1;
@@ -265,9 +251,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View, class CtrlView>
   class ReEqDomInt : public ReUnaryPropagator<View,PC_INT_DOM,CtrlView> {
-    GECODE_REFLECT_PROPAGATOR_2(ReEqDomInt,View,CtrlView,
-                                "Gecode::Int::Rel::ReEqDomInt")
-    GECODE_REFLECT_ARGS_3(View,x0,int,c,CtrlView,b)
   protected:
     using ReUnaryPropagator<View,PC_INT_DOM,CtrlView>::x0;
     using ReUnaryPropagator<View,PC_INT_DOM,CtrlView>::b;
@@ -295,9 +278,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View, class CtrlView>
   class ReEqBndInt : public ReUnaryPropagator<View,PC_INT_BND,CtrlView> {
-    GECODE_REFLECT_PROPAGATOR_2(ReEqBndInt,View,CtrlView,
-                                "Gecode::Int::Rel::ReEqBndInt")
-    GECODE_REFLECT_ARGS_3(View,x0,int,c,CtrlView,b)
   protected:
     using ReUnaryPropagator<View,PC_INT_BND,CtrlView>::x0;
     using ReUnaryPropagator<View,PC_INT_BND,CtrlView>::b;
@@ -333,8 +313,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View>
   class Nq : public BinaryPropagator<View,PC_INT_VAL> {
-    GECODE_REFLECT_PROPAGATOR_1(Nq,View,"Gecode::Int::Rel::Nq")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_VAL>::x0;
     using BinaryPropagator<View,PC_INT_VAL>::x1;
@@ -368,8 +346,6 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View>
   class Lq : public BinaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(Lq,View,"Gecode::Int::Rel::Lq")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
@@ -395,8 +371,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View>
   class Le : public BinaryPropagator<View,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_1(Le,View,"Gecode::Int::Rel::Le")
-    GECODE_REFLECT_ARGS_2(View,x0,View,x1)
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
@@ -429,9 +403,6 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   class ReLq : public ReBinaryPropagator<View,PC_INT_BND,CtrlView> {
-    GECODE_REFLECT_PROPAGATOR_2(ReLq,View,CtrlView,
-                                "Gecode::Int::Rel::ReLq")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,CtrlView,b)
   protected:
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::x0;
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::x1;
@@ -459,9 +430,6 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template <class View, class CtrlView>
   class ReLqInt : public ReUnaryPropagator<View,PC_INT_BND,CtrlView> {
-    GECODE_REFLECT_PROPAGATOR_2(ReLqInt,View,CtrlView,
-                                "Gecode::Int::Rel::ReLqInt")
-    GECODE_REFLECT_ARGS_3(View,x0,int,c,CtrlView,b)
   protected:
     using ReUnaryPropagator<View,PC_INT_BND,CtrlView>::x0;
     using ReUnaryPropagator<View,PC_INT_BND,CtrlView>::b;
@@ -510,9 +478,6 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View>
   class Lex : public Propagator {
-    GECODE_REFLECT_PROPAGATOR_1(Lex,View,
-                                "Gecode::Int::Rel::Lex")
-    GECODE_REFLECT_ARGS_3(ViewArray<View>,x,ViewArray<View>,y,bool,strict)
   protected:
     /// View arrays
     ViewArray<View> x, y;

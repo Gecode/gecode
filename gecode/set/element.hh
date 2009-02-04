@@ -69,11 +69,7 @@ namespace Gecode { namespace Set { namespace Element {
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
-  class ElementIntersection :
-    public Propagator {
-    GECODE_REFLECT_PROPAGATOR_2(ElementIntersection,SView,RView,
-      "Gecode::Set::Element::Intersection")
-    GECODE_REFLECT_ARGS_4(SView,x0,IdxViewArray,iv,RView,x1,IntSet,universe)
+  class ElementIntersection : public Propagator {
   public:
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
@@ -111,11 +107,7 @@ namespace Gecode { namespace Set { namespace Element {
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
-  class ElementUnion :
-    public Propagator {
-    GECODE_REFLECT_PROPAGATOR_2(ElementUnion,SView,RView,
-      "Gecode::Set::Element::Union")
-    GECODE_REFLECT_ARGS_3(SView,x0,IdxViewArray,iv,RView,x1)
+  class ElementUnion : public Propagator {
   public:
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
@@ -151,11 +143,7 @@ namespace Gecode { namespace Set { namespace Element {
    * \ingroup FuncSetProp
    */
   template <class SView, class RView>
-  class ElementUnionConst :
-    public Propagator {
-    GECODE_REFLECT_PROPAGATOR_2(ElementUnionConst,SView,RView,
-      "Gecode::Set::Element::UnionConst")
-    GECODE_REFLECT_ARGS_3(SView,x0,SharedArray<IntSet>,iv,RView,x1)
+  class ElementUnionConst : public Propagator {
   protected:
     SView x0;
     SharedArray<IntSet> iv;
@@ -188,11 +176,7 @@ namespace Gecode { namespace Set { namespace Element {
    * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
-  class ElementDisjoint :
-    public Propagator {
-    GECODE_REFLECT_PROPAGATOR_0(ElementDisjoint,
-      "Gecode::Set::Element::Disjoint")
-    GECODE_REFLECT_ARGS_2(IdxViewArray,iv,SetView,x1)
+  class ElementDisjoint : public Propagator {
   public:
     typedef Gecode::Int::Element::IdxViewArray<SetView> IdxViewArray;
   protected:

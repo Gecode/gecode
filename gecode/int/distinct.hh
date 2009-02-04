@@ -65,8 +65,6 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   template <class View>
   class Val : public NaryPropagator<View,PC_INT_VAL> {
-    GECODE_REFLECT_PROPAGATOR_1(Val,View,"Gecode::Int::Distinct::Val")
-    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
   protected:
     using NaryPropagator<View,PC_INT_VAL>::x;
 
@@ -128,8 +126,6 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   template <class View>
   class Bnd : public Propagator {
-    GECODE_REFLECT_PROPAGATOR_1(Bnd,View,"Gecode::Int::Distinct::Bnd")
-    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
   protected:
     /// Views on which to perform bounds-propagation
     ViewArray<View> x;
@@ -252,8 +248,6 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   template <class View>
   class Dom : public NaryPropagator<View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_1(Dom,View,"Gecode::Int::Distinct::Dom")
-    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
   protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
     /// Propagation controller
@@ -286,8 +280,6 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   template <class View>
   class TerDom : public TernaryPropagator<View,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_1(TerDom,View,"Gecode::Int::Distinct::TerDom")
-    GECODE_REFLECT_ARGS_3(View,x0,View,x1,View,x2)
   protected:
     using TernaryPropagator<View,PC_INT_DOM>::x0;
     using TernaryPropagator<View,PC_INT_DOM>::x1;

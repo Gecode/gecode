@@ -668,16 +668,6 @@ namespace Gecode { namespace Int { namespace Sorted {
     return ES_OK;
   }
 
-  template<class View, bool Perm>
-  ExecStatus
-  Sorted<View,Perm>::
-  post(Space& home,
-       ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z,
-       ViewArray<View>& w, int reachable) {
-    new (home) Sorted<View,Perm>(home,x,y,z,w,reachable);
-    return ES_OK;
-  }
-
 }}}
 
 // STATISTICS: int-prop

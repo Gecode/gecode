@@ -65,8 +65,6 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class V0, class V1, class Idx, class Val>
   class Int : public Propagator {
-    GECODE_REFLECT_PROPAGATOR_4(Int,V0,V1,Idx,Val,"Gecode::Int::Element::Int")
-    GECODE_REFLECT_ARGS_3(IntSharedArray,c,V0,x0,V1,x1)
   protected:
     /**
      * \brief Linked index-value pairs
@@ -194,10 +192,6 @@ namespace Gecode { namespace Int { namespace Element {
     IdxViewArray(void);
     /// Copy constructor
     IdxViewArray(const IdxViewArray<View>&);
-    /// Initialize from specification \a spec with variables \a vars
-    IdxViewArray(Space& home, const Reflection::VarMap& vars,
-                 Reflection::Arg* spec);
-
     /// Construct an IdxViewArray from \a x
     IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
 
@@ -224,9 +218,6 @@ namespace Gecode { namespace Int { namespace Element {
 
     /// Cloning
     void update(Space& home, bool share, IdxViewArray<View>& x);
-
-    // Specification
-    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
   };
 
   /**
@@ -262,9 +253,6 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class VA, class VB, class VC>
   class ViewBnd : public View<VA,VB,VC,PC_INT_BND> {
-    GECODE_REFLECT_PROPAGATOR_3(ViewBnd,VA,VB,VC,
-                                "Gecode::Int::Element::ViewBnd")
-    GECODE_REFLECT_ARGS_3(IdxViewArray<VA>,iv,VB,x0,VC,x1)
   protected:
     using View<VA,VB,VC,PC_INT_BND>::iv;
     using View<VA,VB,VC,PC_INT_BND>::x0;
@@ -295,9 +283,6 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class VA, class VB, class VC>
   class ViewDom : public View<VA,VB,VC,PC_INT_DOM> {
-    GECODE_REFLECT_PROPAGATOR_3(ViewDom,VA,VB,VC,
-                                "Gecode::Int::Element::ViewDom")
-    GECODE_REFLECT_ARGS_3(IdxViewArray<VA>,iv,VB,x0,VC,x1)
   protected:
     using View<VA,VB,VC,PC_INT_DOM>::iv;
     using View<VA,VB,VC,PC_INT_DOM>::x0;

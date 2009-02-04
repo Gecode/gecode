@@ -88,31 +88,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View, bool shared>
-  Gecode::Support::Symbol
-  Basic<View,shared>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Extensional::Basic",shared);
-  }
-
-  template <class View, bool shared>
-  Reflection::ActorSpec
-  Basic<View,shared>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m)
-             << tupleSet.spec(m);
-  }
-
-  template <class View, bool shared>
-  void
-  Basic<View,shared>::post(Space& home, Reflection::VarMap& vars,
-                           const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<View> x(home, vars, spec[0]);
-    TupleSet tupleSet(vars, spec[1]);
-    (void) new (home) Basic<View,shared>(home,x,tupleSet);
-  }
-
-
-  template <class View, bool shared>
   ExecStatus
   Basic<View,shared>::propagate(Space& home, const ModEventDelta&) {
     // Set up datastructures

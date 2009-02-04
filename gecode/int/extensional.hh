@@ -67,9 +67,6 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template <class View, class Degree, class StateIdx>
   class LayeredGraph : public Propagator {
-    GECODE_REFLECT_PROPAGATOR_3(LayeredGraph,View,Degree,StateIdx,
-      "Gecode::Int::Extensional::LayeredGraph")
-    GECODE_REFLECT_ARGS_2(ViewArray<View>,x,DFA,dfa)
   protected:
     /// States are described by number of incoming and outgoing edges
     class State {
@@ -303,15 +300,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
     static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Mangled name of this propagator
-    static Gecode::Support::Symbol ati(void);
   };
+
 }}}
 
 #include <gecode/int/extensional/basic.hpp>
@@ -464,14 +454,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
     /// Delete propagator and return its size
     size_t dispose(Space& home);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Post propagator according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Mangled name of this propagator
-    static Gecode::Support::Symbol ati(void);
   private:
     /// Advisor for computing support
     class SupportAdvisor : public Advisor {

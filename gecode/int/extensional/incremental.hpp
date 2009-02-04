@@ -353,30 +353,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
-  Gecode::Support::Symbol
-  Incremental<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Extensional::Incremental");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  Incremental<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m)
-             << tupleSet.spec(m);
-  }
-
-  template <class View>
-  void
-  Incremental<View>::post(Space& home, Reflection::VarMap& vars,
-                    const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<View> x(home, vars, spec[0]);
-    TupleSet tupleSet(vars, spec[1]);
-    (void) new (home) Incremental<View>(home,x,tupleSet);
-  }
-
-  template <class View>
   ExecStatus
   Incremental<View>::propagate(Space& home, const ModEventDelta&) {
     assert(!w_support.empty() || !w_remove.empty() || unassigned==0);

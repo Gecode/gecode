@@ -194,29 +194,6 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View, bool shared>
-  Support::Symbol
-  Dom<View,shared>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Channel::Dom",shared);
-  }
-
-  template <class View, bool shared>
-  Reflection::ActorSpec
-  Dom<View,shared>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Base<DomInfo<View>,PC_INT_DOM>::spec(home, m, ati());
-  }
-
-  template <class View, bool shared>
-  void
-  Dom<View,shared>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    const int n = spec.noOfArgs();
-    DomInfo<View>* vi = home.alloc<DomInfo<View> >(n);
-    for (int i=n; i--; )
-      vi[i].init(View(home, vars, spec[i]),n/2);
-    (void) new (home) Dom<View,shared>(home,n/2,vi);
-  }
-
-  template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space& home, const ModEventDelta& med) {
     Region r(home);

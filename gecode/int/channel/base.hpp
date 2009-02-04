@@ -61,16 +61,6 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class Info, PropCond pc>
-  Reflection::ActorSpec
-  Base<Info,pc>::spec(const Space& home, Reflection::VarMap& m,
-                      const Support::Symbol& name) const {
-    Reflection::ActorSpec s(name);
-    for (int i=0; i<2*n; i++)
-      s << xy[i].view.spec(home, m);
-    return s;
-  }
-
-  template <class Info, PropCond pc>
   forceinline size_t
   Base<Info,pc>::dispose(Space& home) {
     if (!home.failed())

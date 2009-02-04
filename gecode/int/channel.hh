@@ -68,9 +68,6 @@ namespace Gecode { namespace Int { namespace Channel {
     Base(Space& home, bool share, Base<Info,pc>& p);
     /// Constructor for posting
     Base(Space& home, int n, Info* xy);
-    // Specification for this propagator
-    Reflection::ActorSpec spec(const Space& home, Reflection::VarMap& m,
-                                const Support::Symbol& name) const;
   public:
     /// Propagation cost (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -111,14 +108,6 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling
     static  ExecStatus post(Space& home, int n, ValInfo<View>* xy);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -162,14 +151,6 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling on \a xy
     static  ExecStatus post(Space& home, int n, DomInfo<View>* xy);
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Post according to specification
-    static void post(Space& home, Reflection::VarMap& vars,
-                     const Reflection::ActorSpec& spec);
-    /// Name of this propagator
-    static Support::Symbol ati(void);
   };
 
   /**
@@ -180,9 +161,6 @@ namespace Gecode { namespace Int { namespace Channel {
    */
   class LinkSingle :
     public MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL> {
-      GECODE_REFLECT_PROPAGATOR_0(LinkSingle,
-        "Gecode::Int::Channel::LinkSingle")
-      GECODE_REFLECT_ARGS_2(BoolView,x0,IntView,x1)
   private:
     using MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>::x0;
     using MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>::x1;
@@ -210,9 +188,6 @@ namespace Gecode { namespace Int { namespace Channel {
    */
   class LinkMulti :
     public MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM> {
-      GECODE_REFLECT_PROPAGATOR_0(LinkMulti,
-        "Gecode::Int::Channel::LinkMulti")
-      GECODE_REFLECT_ARGS_3(ViewArray<BoolView>,x,IntView,y,int,o)
   private:
     using MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>::x;
     using MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>::y;

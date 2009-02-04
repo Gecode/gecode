@@ -131,21 +131,6 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
-  inline ExecStatus
-  ClauseTrue<VX,VY>::post(Space& home, VX x0, VY x1,
-                          ViewArray<VX>& x, ViewArray<VY>& y) {
-    ViewArray<VX> xx(home, x.size()+1);
-    for (int i=x.size(); i--;)
-      xx[i] = x[i];
-    xx[x.size()] = x0;
-    ViewArray<VY> yy(home, y.size()+1);
-    for (int i=y.size(); i--;)
-      yy[i] = y[i];
-    yy[y.size()] = x1;
-    return post(home, xx, yy);
-  }
-
-  template<class VX, class VY>
   forceinline ExecStatus
   resubscribe(Space& home, Propagator& p,
               VX& x0, ViewArray<VX>& x,

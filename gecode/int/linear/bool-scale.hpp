@@ -112,45 +112,6 @@ namespace Gecode { namespace Int { namespace Linear {
     Support::quicksort<ScaleBool,ScaleDec>(fst(), size(), scale_dec);
   }
 
-  inline Support::Symbol
-  ScaleBoolArray::type(void) {
-    return Support::Symbol("Gecode::Int::Linear::ScaleBoolArray");
-  }
-
-  inline Reflection::Arg*
-  ScaleBoolArray::spec(const Space& home, Reflection::VarMap& m) const {
-    if (size() == 0)
-      return NULL;
-    Reflection::IntArrayArg* c = Reflection::Arg::newIntArray(size());
-    Reflection::ArrayArg* b = Reflection::Arg::newArray(size());
-
-    int count = 0;
-    for (ScaleBool* f = fst(); f != lst(); f++) {
-      (*c)[count] = f->a;
-      (*b)[count++]  = f->x.spec(home, m);
-    }
-    return Reflection::Arg::newPair(c,b);
-  }
-
-  inline
-  ScaleBoolArray::ScaleBoolArray(Space& home, const Reflection::VarMap& vars,
-                                 Reflection::Arg* spec) {
-    if (spec == NULL) {
-      _fst = _lst = NULL;
-      return;
-    }
-    Reflection::IntArrayArg* c = spec->first()->toIntArray();
-    Reflection::ArrayArg* b = spec->second()->toArray();
-    int n = c->size();
-    _fst = home.alloc<ScaleBool>(n);
-    _lst = _fst+n;
-
-    for (int i=n; i--; ) {
-      _fst[i].x=BoolView(home, vars, (*b)[i]); _fst[i].a=(*c)[i];
-    }
-
-  }
-
 
   /*
    * Empty array of scale Boolean views
@@ -160,9 +121,6 @@ namespace Gecode { namespace Int { namespace Linear {
   EmptyScaleBoolArray::EmptyScaleBoolArray(void) {}
   forceinline
   EmptyScaleBoolArray::EmptyScaleBoolArray(Space&, int) {}
-  forceinline
-  EmptyScaleBoolArray::EmptyScaleBoolArray(Space&, const Reflection::VarMap&,
-                                           Reflection::Arg*) {}
   forceinline void
   EmptyScaleBoolArray::subscribe(Space&, Propagator&) {}
   forceinline void
@@ -183,14 +141,6 @@ namespace Gecode { namespace Int { namespace Linear {
   EmptyScaleBoolArray::size(void) const { return 0; }
   forceinline void
   EmptyScaleBoolArray::sort(void) {}
-  inline Support::Symbol
-  EmptyScaleBoolArray::type(void) {
-    return Support::Symbol("Gecode::Int::Linear::EmptyScaleBoolArray");
-  }
-  inline Reflection::Arg*
-  EmptyScaleBoolArray::spec(const Space&, Reflection::VarMap&) const {
-    return NULL;
-  }
 
 
   /*

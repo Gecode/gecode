@@ -91,16 +91,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
    */
   template <class ViewM, class ViewD, class ViewH, class View>
   class Val : public Propagator {
-    GECODE_REFLECT_PROPAGATOR_4(Val,ViewM,ViewD,ViewH,View,
-      "Gecode::Int::Cumulatives::Val")
-    GECODE_REFLECT_ARGS_7(ViewArray<ViewM>,machine,
-                          ViewArray<View>,start,
-                          ViewArray<ViewD>,duration,
-                          ViewArray<View>,end,
-                          ViewArray<ViewH>,height,
-                          SharedArray<int>,limit,
-                          bool,at_most)
-
+  protected:
     ViewArray<ViewM>  machine;
     ViewArray<View>   start;
     ViewArray<ViewD>  duration;

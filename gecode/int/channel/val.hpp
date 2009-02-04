@@ -223,29 +223,6 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View, bool shared>
-  Support::Symbol
-  Val<View,shared>::ati(void) {
-    return Reflection::mangle<View>("Gecode::Int::Channel::Val",shared);
-  }
-
-  template <class View, bool shared>
-  Reflection::ActorSpec
-  Val<View,shared>::spec(const Space& home, Reflection::VarMap& m) const {
-    return Base<ValInfo<View>,PC_INT_VAL>::spec(home, m, ati());
-  }
-
-  template <class View, bool shared>
-  void
-  Val<View,shared>::post(Space& home, Reflection::VarMap& vars,
-                         const Reflection::ActorSpec& spec) {
-    const int n = spec.noOfArgs();
-    ValInfo<View>* vi = home.alloc<ValInfo<View> >(n);
-    for (int i=n; i--; )
-      vi[i].init(View(home, vars, spec[i]),n/2);
-    (void) new (home) Val<View,shared>(home,n/2,vi);
-  }
-
-  template <class View, bool shared>
   ExecStatus
   Val<View,shared>::post(Space& home, int n, ValInfo<View>* xy) {
     assert(n > 0);

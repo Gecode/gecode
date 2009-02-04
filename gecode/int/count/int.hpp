@@ -428,17 +428,6 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template<class VX, class VY>
-  forceinline ExecStatus
-  NqInt<VX,VY>::post(Space& home, VX x0, VX x1,
-                     ViewArray<VX>& x, VY y, int c) {
-    ViewArray<VX> xx(home, x.size()+2);
-    for (int i=x.size(); i--;)
-      xx[i] = x[i];
-    xx[x.size()] = x0; xx[x.size()+1] = x1;
-    return post(home, xx, y, c);
-  }
-
-  template<class VX, class VY>
   Actor*
   NqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) NqInt<VX,VY>(home,share,*this);

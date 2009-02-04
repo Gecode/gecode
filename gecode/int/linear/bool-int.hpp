@@ -146,22 +146,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return PropCost::unary(PropCost::HI);
   }
 
-  template <class VX>
-  Reflection::ActorSpec
-  SpeedLinBoolInt<VX>::spec(const Space& home, Reflection::VarMap& m,
-                            const Support::Symbol& ati) const {
-    Reflection::ActorSpec s(ati);
-    Reflection::ArrayArg* a =
-      Reflection::Arg::newArray(x.size()+n_s);
-    int i = 0;
-    for (; i<x.size(); i++)
-      (*a)[i] = x[i].spec(home, m);
-    for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as, ++i)
-      (*a)[i] = as.advisor().view().spec(home, m);
-    assert ( i == x.size() + n_s );
-    return s << a << c;
-  }
-
   /*
    * Greater or equal propagator (integer rhs)
    *
@@ -244,22 +228,6 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   GqBoolInt<VX>::Speed::copy(Space& home, bool share) {
     return new (home) Speed(home,share,*this);
-  }
-
-  template <class VX>
-  Reflection::ActorSpec
-  GqBoolInt<VX>::Speed::spec(const Space& home, Reflection::VarMap& m) const {
-    return SpeedLinBoolInt<VX>::spec(home, m, ati());
-  }
-
-  template <class VX>
-  void
-  GqBoolInt<VX>::Speed::post(Space& home, Reflection::VarMap& vars,
-  const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<VX> x(home, vars, spec[0]);
-    int c = spec[1]->toInt();
-    GqBoolInt<VX>::post(home,x,c);
   }
 
   template <class VX>
@@ -348,11 +316,6 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_OK;
   }
 
-  template <class VX>
-  ExecStatus
-  GqBoolInt<VX>::Memory::post(Space& home, ViewArray<VX>& x, int c) {
-    return GqBoolInt<VX>::post(home,x,c);
-  }
 
 
   /*
@@ -445,22 +408,6 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   EqBoolInt<VX>::Speed::copy(Space& home, bool share) {
     return new (home) Speed(home,share,*this);
-  }
-
-  template <class VX>
-  Reflection::ActorSpec
-  EqBoolInt<VX>::Speed::spec(const Space& home, Reflection::VarMap& m) const {
-    return SpeedLinBoolInt<VX>::spec(home, m, ati());
-  }
-
-  template <class VX>
-  void
-  EqBoolInt<VX>::Speed::post(Space& home, Reflection::VarMap& vars,
-                             const Reflection::ActorSpec& spec) {
-    spec.checkArity(2);
-    ViewArray<VX> x(home, vars, spec[0]);
-    int c = spec[1]->toInt();
-    EqBoolInt<VX>::post(home,x,c);
   }
 
   template <class VX>
@@ -616,16 +563,6 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     (void) new (home) NqBoolInt(home,x,c);
     return ES_OK;
-  }
-
-  template<class VX>
-  forceinline ExecStatus
-  NqBoolInt<VX>::post(Space& home, VX x0, VX x1, ViewArray<VX>& x, int c) {
-    ViewArray<VX> xx(home, x.size()+2);
-    for (int i=x.size(); i--;)
-      xx[i] = x[i];
-    xx[x.size()] = x0; xx[x.size()+1] = x1;
-    return post(home, xx, c);
   }
 
   template<class VX>

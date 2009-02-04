@@ -58,8 +58,6 @@ namespace Gecode { namespace Int { namespace Dom {
    */
   template <class View>
   class ReRange : public ReUnaryPropagator<View,PC_INT_BND,BoolView> {
-    GECODE_REFLECT_PROPAGATOR_1(ReRange,View,"Gecode::Int::Dom::ReRange")
-    GECODE_REFLECT_ARGS_4(View,x0,int,min,int,max,BoolView,b)
   protected:
     using ReUnaryPropagator<View,PC_INT_BND,BoolView>::x0;
     using ReUnaryPropagator<View,PC_INT_BND,BoolView>::b;
@@ -88,8 +86,6 @@ namespace Gecode { namespace Int { namespace Dom {
    */
   template <class View>
   class ReIntSet : public ReUnaryPropagator<View,PC_INT_DOM,BoolView> {
-    GECODE_REFLECT_PROPAGATOR_1(ReIntSet,View,"Gecode::Int::Dom::ReIntSet")
-    GECODE_REFLECT_ARGS_3(View,x0,IntSet,is,BoolView,b)
   protected:
     using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::x0;
     using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::b;

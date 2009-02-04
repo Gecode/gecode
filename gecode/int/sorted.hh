@@ -61,12 +61,6 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   class Sorted : public Propagator {
-    GECODE_REFLECT_PROPAGATOR_1i(Sorted,View,Perm,"Gecode::Int::Sorted")
-    GECODE_REFLECT_ARGS_5(ViewArray<View>,x,
-                          ViewArray<View>,y,
-                          ViewArray<View>,z,
-                          ViewArray<View>,w,
-                          int,reachable)
   protected:
     /// Views to be sorted
     ViewArray<View> x;
@@ -85,11 +79,6 @@ namespace Gecode { namespace Int { namespace Sorted {
            ViewArray<View>& z, ViewArray<View>& w, int reachable);
     /// Constructor for cloning
     Sorted(Space& home, bool share, Sorted<View,Perm>& p);
-    /// Post propagator for reflection
-    static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y,
-                            ViewArray<View>& z, ViewArray<View>& w,
-                            int reachable);
-
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);

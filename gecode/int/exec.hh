@@ -57,9 +57,6 @@ namespace Gecode { namespace Int { namespace Exec {
    * \ingroup FuncIntProp
    */
   class When : public UnaryPropagator<BoolView,PC_BOOL_VAL> {
-    GECODE_REFLECT_PROPAGATOR_0(When,"Gecode::Int::Exec::When")
-      // GUIDO: PLEASE HELP!
-      //    GECODE_REFLECT_ARGS_3(BoolView,x0,SpaceFunction,t,SpaceFunction,e)
   protected:
     using UnaryPropagator<BoolView,PC_BOOL_VAL>::x0;
     /// Then function pointer

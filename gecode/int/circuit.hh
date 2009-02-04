@@ -86,8 +86,6 @@ namespace Gecode { namespace Int { namespace Circuit {
    */
   template <class View>
   class Val : public Base<View> {
-    GECODE_REFLECT_PROPAGATOR_1(Val,View,"Gecode::Int::Circuit::Val")
-    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
   protected:
     using Base<View>::x;
     using Base<View>::y;
@@ -120,8 +118,6 @@ namespace Gecode { namespace Int { namespace Circuit {
    */
   template <class View>
   class Dom : public Base<View> {
-    GECODE_REFLECT_PROPAGATOR_1(Dom,View,"Gecode::Int::Circuit::Dom")
-    GECODE_REFLECT_ARGS_1(ViewArray<View>,x)
   protected:
     using Base<View>::x;
     using Base<View>::y;
