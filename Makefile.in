@@ -878,7 +878,7 @@ endif
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear scheduling gcc sorted circuit unshare \
+	rel linear scheduling gcc sorted circuit unshare exec \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))

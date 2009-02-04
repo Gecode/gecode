@@ -7,8 +7,8 @@
  *     Christian Schulte, 2007
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-01-20 23:44:27 +0100 (Tue, 20 Jan 2009) $ by $Author: schulte $
+ *     $Revision: 8082 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -37,61 +37,41 @@
 
 #include "test/int.hh"
 
+#include <gecode/minimodel.hh>
+
 namespace Test { namespace Int {
 
-   /// Tests for circuit constraints
-   namespace Circuit {
+   /// Tests for synchronized execution
+   namespace Exec {
 
      /**
-      * \defgroup TaskTestIntCircuit Circuit constraints
+      * \defgroup TaskTestIntExec Synchronized execution
       * \ingroup TaskTestInt
       */
      //@{
-     /// Simple test for circuit constraint
-     class Circuit : public Test {
+     /// Simple test for when
+     class When : public Test {
      public:
        /// Create and register test
-       Circuit(int n, int min, int max, Gecode::IntConLevel icl)
-         : Test("Circuit::" + str(icl) + "::" + str(n),
-                   n,min,max,false,icl) {
-         contest = CTL_NONE;
-       }
+       When(void) : Test("When",1,0,1,false) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i=x.size(); i--; )
-           if ((x[i] < 0) || (x[i] > x.size()-1))
-             return false;
-         int reachable = 0;
-         {
-           int j=0;
-           for (int i=x.size(); i--; ) {
-             j=x[j]; reachable |= (1 << j);
-           }
-         }
-         for (int i=x.size(); i--; )
-           if (!(reachable & (1 << i)))
-             return false;
-         return true;
+         return x[0]==0;
        }
-       /// Post circuit constraint on \a x
+       /// Post when on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::circuit(home, x, icl);
+         Gecode::when(home, Gecode::channel(home, x[0]), &t, &e);
+       }
+       /// Then-function to be executed
+       static void t(Gecode::Space& home) {
+         home.fail();
+       }
+       /// Else-function to be executed
+       static void e(Gecode::Space& home) {
        }
      };
 
-     /// Help class to create and register tests
-     class Create {
-     public:
-       /// Perform creation and registration
-       Create(void) {
-         for (int i=1; i<=6; i++) {
-           (void) new Circuit(i,0,i-1,Gecode::ICL_VAL);
-           (void) new Circuit(i,0,i-1,Gecode::ICL_DOM);
-         }
-       }
-     };
-
-     Create c;
+     When w;
      //@}
 
    }
