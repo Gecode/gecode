@@ -199,60 +199,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    GECODE_REGISTER1(Rel::DistinctDoit<ConstantView>);
-    GECODE_REGISTER1(Rel::DistinctDoit<SingletonView>);
-    GECODE_REGISTER1(Rel::DistinctDoit<ComplementView<SetView> >);
-    GECODE_REGISTER1(Rel::DistinctDoit<SetView>);
-    GECODE_REGISTER2(Rel::Eq<ConstantView, ComplementView<SetView> >);
-    GECODE_REGISTER2(Rel::Eq<ConstantView, SetView>);
-    GECODE_REGISTER2(Rel::Eq<ConstantView, ConstantView>);
-    GECODE_REGISTER2(Rel::Eq<SingletonView, SetView>);
-    GECODE_REGISTER2(Rel::Eq<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::Eq<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::Eq<ComplementView<SetView>, SetView>);
-    GECODE_REGISTER2(Rel::Eq<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::Eq<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::Eq<SetView, ComplementView<SetView> >);
-    GECODE_REGISTER2(Rel::Eq<SetView, SetView>);
-    GECODE_REGISTER2(Rel::ReEq<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::ReEq<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::ReEq<ComplementView<SetView>, SetView>);
-    GECODE_REGISTER2(Rel::ReEq<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::ReEq<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::ReEq<SetView, SetView>);
-    GECODE_REGISTER2(Rel::Subset<ConstantView, SetView>);
-    GECODE_REGISTER2(Rel::Subset<SingletonView, SetView>);
-    GECODE_REGISTER2(Rel::Subset<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::Subset<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::Subset<ComplementView<SetView>, SetView>);
-    GECODE_REGISTER2(Rel::Subset<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::Subset<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::Subset<SetView, SetView>);
-    GECODE_REGISTER2(Rel::Distinct<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::Distinct<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::Distinct<ComplementView<SetView>, SetView>);
-    GECODE_REGISTER2(Rel::Distinct<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::Distinct<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::Distinct<SetView, SetView>);
-    GECODE_REGISTER2(Rel::NoSubset<ConstantView, SetView>);
-    GECODE_REGISTER2(Rel::NoSubset<SingletonView, SetView>);
-    GECODE_REGISTER2(Rel::NoSubset<ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER2(Rel::NoSubset<ComplementView<SetView>, SingletonView>);
-    GECODE_REGISTER2(Rel::NoSubset<ComplementView<SetView>, SetView>);
-    GECODE_REGISTER2(Rel::NoSubset<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::NoSubset<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::NoSubset<SetView, SetView>);
-    GECODE_REGISTER2(Rel::ReSubset<ConstantView, SetView>);
-    GECODE_REGISTER2(Rel::ReSubset<SingletonView, SetView>);
-    GECODE_REGISTER2(Rel::ReSubset<ConstantView, ComplementView<SetView> >);
-    GECODE_REGISTER2(Rel::ReSubset<SingletonView, ComplementView<SetView> >);
-    GECODE_REGISTER2(Rel::ReSubset<SetView, ComplementView<SetView> >);
-    GECODE_REGISTER2(Rel::ReSubset<SetView, ConstantView>);
-    GECODE_REGISTER2(Rel::ReSubset<SetView, SingletonView>);
-    GECODE_REGISTER2(Rel::ReSubset<SetView, SetView>);
-  }
-
 }
 
 // STATISTICS: set-post

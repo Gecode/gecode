@@ -119,16 +119,6 @@ namespace Gecode {
                          SingletonView>::post(home, z, x, single)));
   }
 
-  namespace {
-    GECODE_REGISTER2(Element::ElementUnion<Gecode::Set::SetView, Gecode::Set::SingletonView>);
-    GECODE_REGISTER2(Element::ElementUnion<Gecode::Set::SetView, Gecode::Set::SetView>);
-    GECODE_REGISTER1(Element::ElementDisjoint);
-    GECODE_REGISTER2(Element::ElementUnionConst<Gecode::Set::SetView, Gecode::Set::SingletonView>);
-    GECODE_REGISTER2(Element::ElementUnionConst<Gecode::Set::SetView, Gecode::Set::SetView>);
-    GECODE_REGISTER2(Element::ElementIntersection<Gecode::Set::SetView, Gecode::Set::SetView>);
-
-  }
-
 }
 
 // STATISTICS: set-post

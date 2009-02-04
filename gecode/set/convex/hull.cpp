@@ -110,12 +110,6 @@ namespace Gecode { namespace Set { namespace Convex {
     return ES_NOFIX;
   }
 
-}}
-
-namespace {
-  GECODE_REGISTER1(Set::Convex::ConvexHull);
-}
-
-}
+}}}
 
 // STATISTICS: set-prop

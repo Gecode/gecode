@@ -121,66 +121,6 @@ namespace Gecode {
     }
   }
 
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned char,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned short int,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned int,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned long int,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned char,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned short int,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned int,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned long int,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned char,long int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned short int,long int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned int,long int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::IntView,unsigned long int,long int>);
-
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned char,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned short int,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned int,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned long int,short int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned char,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned short int,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned int,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned long int,int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned char,long int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned short int,long int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned int,long int>);
-  GECODE_REGISTER3(Int::Extensional::LayeredGraph
-                   <Int::BoolView,unsigned long int,long int>);
-
-
-  GECODE_REGISTER2(Int::Extensional::Basic<Int::IntView,true>);
-  GECODE_REGISTER2(Int::Extensional::Basic<Int::IntView,false>);
-  GECODE_REGISTER1(Int::Extensional::Incremental<Int::IntView>);
-
-  GECODE_REGISTER2(Int::Extensional::Basic<Int::BoolView,true>);
-  GECODE_REGISTER2(Int::Extensional::Basic<Int::BoolView,false>);
-  GECODE_REGISTER1(Int::Extensional::Incremental<Int::BoolView>);
-
 }
 
 // STATISTICS: int-post
-

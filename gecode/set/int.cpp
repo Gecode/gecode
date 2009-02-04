@@ -187,20 +187,6 @@ namespace Gecode {
                                                               weights,x,y));
   }
 
-  namespace {
-    GECODE_REGISTER1(Set::Int::MinElement<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::MaxElement<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::NotMinElement<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::NotMaxElement<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::ReMinElement<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::ReMaxElement<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::Card<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::Match<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::ChannelInt<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::ChannelBool<Set::SetView>);
-    GECODE_REGISTER1(Set::Int::Weights<Set::SetView>);
-  }
-
 }
 
 // STATISTICS: set-post

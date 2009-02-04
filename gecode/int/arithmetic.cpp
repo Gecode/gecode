@@ -180,58 +180,6 @@ namespace Gecode {
     divmod(home, x0, x1, _div, x2, icl);
   }
 
-  namespace {
-    GECODE_REGISTER1(Arithmetic::AbsBnd<IntView>);
-    GECODE_REGISTER1(Arithmetic::AbsDom<IntView>);
-
-    GECODE_REGISTER1(Arithmetic::MaxBnd<IntView>);
-    GECODE_REGISTER1(Arithmetic::MaxDom<IntView>);
-    GECODE_REGISTER1(Arithmetic::MaxBnd<MinusView>);
-    GECODE_REGISTER1(Arithmetic::MaxDom<MinusView>);
-    GECODE_REGISTER1(Arithmetic::NaryMaxBnd<IntView>);
-    GECODE_REGISTER1(Arithmetic::NaryMaxDom<IntView>);
-    GECODE_REGISTER1(Arithmetic::NaryMaxBnd<MinusView>);
-    GECODE_REGISTER1(Arithmetic::NaryMaxDom<MinusView>);
-
-    GECODE_REGISTER2(Arithmetic::MultZeroOne<IntView,PC_INT_BND>);
-    GECODE_REGISTER2(Arithmetic::MultZeroOne<IntView,PC_INT_DOM>);
-    GECODE_REGISTER4(Arithmetic::MultPlusBnd<double,IntView,IntView,IntView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusBnd<double,MinusView,IntView,MinusView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusBnd<double,MinusView,MinusView,IntView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusBnd<int,IntView,IntView,IntView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusBnd<int,MinusView,IntView,MinusView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusBnd<int,MinusView,MinusView,IntView>);
-    GECODE_REGISTER1(Arithmetic::MultBnd<IntView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusDom<double,IntView,IntView,IntView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusDom<double,MinusView,IntView,MinusView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusDom<double,MinusView,MinusView,IntView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusDom<int,IntView,IntView,IntView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusDom<int,MinusView,IntView,MinusView>);
-    GECODE_REGISTER4(Arithmetic::MultPlusDom<int,MinusView,MinusView,IntView>);
-    GECODE_REGISTER1(Arithmetic::MultDom<IntView>);
-
-    GECODE_REGISTER1(Arithmetic::SqrBnd<IntView>);
-    GECODE_REGISTER2(Arithmetic::SqrPlusBnd<IntView,IntView>);
-    GECODE_REGISTER2(Arithmetic::SqrPlusBnd<MinusView,IntView>);
-    GECODE_REGISTER1(Arithmetic::SqrDom<IntView>);
-    GECODE_REGISTER2(Arithmetic::SqrPlusDom<IntView,IntView>);
-    GECODE_REGISTER2(Arithmetic::SqrPlusDom<MinusView,IntView>);
-
-    GECODE_REGISTER1(Arithmetic::SqrtBnd<IntView>);
-    GECODE_REGISTER1(Arithmetic::SqrtDom<IntView>);
-    GECODE_REGISTER1(Arithmetic::DivMod<IntView>);
-
-    GECODE_REGISTER4(Arithmetic::DivPlusBnd<int,IntView,IntView,IntView>);
-    GECODE_REGISTER4(Arithmetic::DivPlusBnd<double,IntView,IntView,IntView>);
-    GECODE_REGISTER4(Arithmetic::DivPlusBnd<double,MinusView,
-                                            MinusView,IntView>);
-    GECODE_REGISTER5(Arithmetic::DivPlusBnd<double,IntView,MinusView,
-                                            MinusView,false>);
-    GECODE_REGISTER5(Arithmetic::DivPlusBnd<double,MinusView,IntView,
-                                            MinusView,false>);
-    GECODE_REGISTER1(Arithmetic::DivBnd<IntView>);
-  }
 }
 
 // STATISTICS: int-post
-

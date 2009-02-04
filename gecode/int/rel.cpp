@@ -366,52 +366,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    using namespace Int;
-    GECODE_REGISTER2(Rel::EqBnd<IntView,IntView>);
-    GECODE_REGISTER2(Rel::EqBnd<IntView,ConstIntView>);
-    GECODE_REGISTER2(Rel::EqBnd<BoolView,ConstIntView>);
-    GECODE_REGISTER2(Rel::EqBnd<BoolView,BoolView>);
-    GECODE_REGISTER2(Rel::EqBnd<MinusView,IntView>);
-    GECODE_REGISTER2(Rel::EqBnd<MinusView,MinusView>);
-
-    GECODE_REGISTER2(Rel::EqDom<IntView,IntView>);
-    GECODE_REGISTER2(Rel::EqDom<IntView,ConstIntView>);
-    GECODE_REGISTER2(Rel::EqDom<MinusView,IntView>);
-
-    GECODE_REGISTER1(Rel::NaryEqBnd<IntView>);
-    GECODE_REGISTER1(Rel::NaryEqDom<IntView>);
-
-    GECODE_REGISTER2(Rel::ReEqDomInt<IntView,NegBoolView>);
-    GECODE_REGISTER2(Rel::ReEqDomInt<IntView,BoolView>);
-    GECODE_REGISTER2(Rel::ReEqDom<IntView,NegBoolView>);
-    GECODE_REGISTER2(Rel::ReEqDom<IntView,BoolView>);
-
-    GECODE_REGISTER2(Rel::ReEqBndInt<IntView,NegBoolView>);
-    GECODE_REGISTER2(Rel::ReEqBndInt<IntView,BoolView>);
-    GECODE_REGISTER2(Rel::ReEqBnd<IntView,NegBoolView>);
-    GECODE_REGISTER2(Rel::ReEqBnd<IntView,BoolView>);
-
-    GECODE_REGISTER1(Rel::Nq<BoolView>);
-    GECODE_REGISTER1(Rel::Nq<IntView>);
-    GECODE_REGISTER1(Rel::Nq<OffsetView>);
-
-    GECODE_REGISTER1(Rel::Lq<BoolView>);
-    GECODE_REGISTER1(Rel::Lq<IntView>);
-    GECODE_REGISTER1(Rel::Lq<MinusView>);
-    GECODE_REGISTER1(Rel::Le<BoolView>);
-    GECODE_REGISTER1(Rel::Le<IntView>);
-    GECODE_REGISTER2(Rel::ReLq<IntView, NegBoolView>);
-    GECODE_REGISTER2(Rel::ReLq<IntView, BoolView>);
-    GECODE_REGISTER2(Rel::ReLqInt<IntView, NegBoolView>);
-    GECODE_REGISTER2(Rel::ReLqInt<IntView, BoolView>);
-
-    GECODE_REGISTER1(Rel::Lex<BoolView>);
-    GECODE_REGISTER1(Rel::Lex<IntView>);
-
-  }
-
 }
 
 // STATISTICS: int-post
-

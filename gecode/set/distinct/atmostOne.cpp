@@ -161,12 +161,6 @@ namespace Gecode { namespace Set { namespace Distinct {
     return ES_NOFIX;
   }
 
-}}
-
-namespace {
-  GECODE_REGISTER1(Set::Distinct::AtmostOne);
-}
-
-}
+}}}
 
 // STATISTICS: set-prop

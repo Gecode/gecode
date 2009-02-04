@@ -362,15 +362,6 @@ namespace Gecode { namespace Int { namespace GCC {
     count(home, x, cards, v, icl);
   }
 
-  GECODE_REGISTER3(Int::GCC::Dom<Gecode::Int::IntView, Gecode::Int::GCC::OccurBndsView, false>);
-  GECODE_REGISTER3(Int::GCC::Dom<Gecode::Int::IntView, Gecode::Int::GCC::CardView, true>);
-  GECODE_REGISTER3(Int::GCC::Val<Gecode::Int::IntView, Gecode::Int::GCC::OccurBndsView, false>);
-  GECODE_REGISTER3(Int::GCC::Val<Gecode::Int::IntView, Gecode::Int::GCC::CardView, true>);
-  GECODE_REGISTER4(Int::GCC::BndImp<Gecode::Int::IntView, Gecode::Int::GCC::OccurBndsView, false, false>);
-  GECODE_REGISTER4(Int::GCC::BndImp<Gecode::Int::IntView, Gecode::Int::GCC::OccurBndsView, false, true>);
-  GECODE_REGISTER4(Int::GCC::BndImp<Gecode::Int::IntView, Gecode::Int::GCC::CardView, true, false>);
-  GECODE_REGISTER4(Int::GCC::BndImp<Gecode::Int::IntView, Gecode::Int::GCC::CardView, true, true>);
 }
-
 
 // STATISTICS: int-post

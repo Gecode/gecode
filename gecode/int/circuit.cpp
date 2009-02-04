@@ -55,9 +55,6 @@ namespace Gecode {
     }
   }
 
-  GECODE_REGISTER1(Int::Circuit::Dom<Int::IntView>);
-  GECODE_REGISTER1(Int::Circuit::Val<Int::IntView>);
-
 }
 
 // STATISTICS: int-post

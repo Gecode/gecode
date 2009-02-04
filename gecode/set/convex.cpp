@@ -39,17 +39,18 @@
 
 #include <gecode/set/convex.hh>
 
-using namespace Gecode::Set;
-
 namespace Gecode {
+
   void
   convex(Space& home, SetVar x) {
+    using namespace Gecode::Set;
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Convex::Convex::post(home, x));
   }
 
   void
   convexHull(Space& home, SetVar x, SetVar y) {
+    using namespace Gecode::Set;
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Convex::ConvexHull::post(home, x,y));
   }

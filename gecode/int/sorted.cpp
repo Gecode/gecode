@@ -73,9 +73,6 @@ namespace Gecode {
                    (Sorted::Sorted<IntView,false>::post(home,x0,y0,z0)));
   }
 
-  GECODE_REGISTER2(Int::Sorted::Sorted<Int::IntView,true>);
-  GECODE_REGISTER2(Int::Sorted::Sorted<Int::IntView,false>);
-
 }
 
 // STATISTICS: int-post

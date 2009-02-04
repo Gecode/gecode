@@ -296,37 +296,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-
-    GECODE_REGISTER3(RelOp::Union<ConstantView, ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER3(RelOp::Union<ConstantView, ComplementView<SetView>, SetView>);
-    GECODE_REGISTER3(RelOp::Union<ConstantView, SetView, ComplementView<SetView> >);
-    GECODE_REGISTER3(RelOp::Union<ConstantView, SetView, ConstantView>);
-    GECODE_REGISTER3(RelOp::Union<ConstantView, SetView, SetView>);
-    GECODE_REGISTER3(RelOp::Union<SetView, SetView, ConstantView>);
-
-    GECODE_REGISTER3(RelOp::Intersection<ConstantView, ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER3(RelOp::Intersection<ConstantView, ComplementView<SetView>, SetView>);
-    GECODE_REGISTER3(RelOp::Intersection<ConstantView, ComplementView<SetView>, ComplementView<SetView> >);
-    GECODE_REGISTER3(RelOp::Intersection<ConstantView, SetView, ComplementView<SetView> >);
-    GECODE_REGISTER3(RelOp::Intersection<ConstantView, SetView, ConstantView>);
-    GECODE_REGISTER3(RelOp::Intersection<ConstantView, SetView, SetView>);
-    GECODE_REGISTER3(RelOp::Intersection<SetView, ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER3(RelOp::Intersection<SetView, SetView, ConstantView>);
-
-    GECODE_REGISTER3(RelOp::SubOfUnion<ConstantView, SetView, ConstantView>);
-    GECODE_REGISTER3(RelOp::SubOfUnion<ConstantView, SetView, SetView>);
-    GECODE_REGISTER3(RelOp::SubOfUnion<SetView, SetView, ConstantView>);
-
-    GECODE_REGISTER3(RelOp::SuperOfInter<ConstantView, ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER3(RelOp::SuperOfInter<ConstantView, ComplementView<SetView>, SetView>);
-    GECODE_REGISTER3(RelOp::SuperOfInter<ConstantView, SetView, EmptyView>);
-    GECODE_REGISTER3(RelOp::SuperOfInter<ConstantView, SetView, ConstantView>);
-    GECODE_REGISTER3(RelOp::SuperOfInter<ConstantView, SetView, SetView>);
-    GECODE_REGISTER3(RelOp::SuperOfInter<SetView, ComplementView<SetView>, ConstantView>);
-    GECODE_REGISTER3(RelOp::SuperOfInter<SetView, SetView, ConstantView>);
-  }
-
 }
 
 // STATISTICS: set-post

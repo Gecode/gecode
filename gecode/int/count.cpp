@@ -276,35 +276,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    using namespace Int;
-    template <template<class,class> class P>
-    class I {
-      GECODE_REGISTER2(P<IntView,ConstIntView>);
-      GECODE_REGISTER2(P<IntView,IntView>);
-      GECODE_REGISTER2(P<OffsetView,ZeroIntView>);
-    };
-    I<Count::EqInt> ieq;
-    I<Count::LqInt> ilq;
-    I<Count::GqInt> igq;
-    I<Count::NqInt> inq;
-
-    template <template <class,class,class,bool> class P,bool b>
-    class VB {
-      GECODE_REGISTER4(P<OffsetView,ZeroIntView,IntView,b>);
-      GECODE_REGISTER4(P<IntView,ConstIntView,IntView,b>);
-      GECODE_REGISTER4(P<IntView,IntView,IntView,b>);
-    };
-    template <template <class,class,class,bool> class P>
-    class V {
-      VB<P,false> vf;
-      VB<P,true> vt;
-    };
-    V<Count::EqView> v1;
-    V<Count::LqView> v2;
-    V<Count::GqView> v3;
-    VB<Count::NqView,true> v4;
-  }
 }
 
 // STATISTICS: int-post

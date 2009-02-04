@@ -89,12 +89,6 @@ namespace Gecode { namespace Set { namespace Convex {
     return ES_FIX;
   }
 
-}}
-
-namespace {
-  GECODE_REGISTER1(Set::Convex::Convex);
-}
-
-}
+}}}
 
 // STATISTICS: set-prop
