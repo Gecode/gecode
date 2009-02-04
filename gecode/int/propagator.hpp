@@ -254,9 +254,9 @@ namespace Gecode {
   ::ReMixBinaryPropagator(Space& home, View0 y0, View1 y1, CtrlView b1)
     : Propagator(home), x0(y0), x1(y1), b(b1) {
     if (pc0 != PC_GEN_NONE)
-      x0.subscribe(home,*this,pc);
+      x0.subscribe(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      x1.subscribe(home,*this,pc);
+      x1.subscribe(home,*this,pc1);
     b.subscribe(home,*this,Int::PC_INT_VAL);
   }
 
@@ -297,9 +297,9 @@ namespace Gecode {
   forceinline size_t
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
-      x0.cancel(home,*this,pc);
+      x0.cancel(home,*this,pc0);
     if (pc1 != PC_GEN_NONE)
-      x1.cancel(home,*this,pc);
+      x1.cancel(home,*this,pc1);
     b.cancel(home,*this,Int::PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
