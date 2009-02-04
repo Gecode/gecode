@@ -149,9 +149,6 @@ namespace Test {
                   << "\t-stop (boolean) default: "
                   << (stop ? "true" : "false") << std::endl
                   << "\t\tstop on first error or continue" << std::endl
-                  << "\t-reflection (boolean) default: "
-                  << (reflection ? "true" : "false") << std::endl
-                  << "\t\tuse reflection also for copying" << std::endl
                   << "\t-list" << std::endl
                   << "\t\toutput list of all test cases and exit" << std::endl
           ;
@@ -186,13 +183,6 @@ namespace Test {
           stop = true;
         } else if (argv[i][0] == 'f') {
           stop = false;
-        }
-      } else if (!strcmp(argv[i],"-reflection")) {
-        if (++i == argc) goto missing;
-        if(argv[i][0] == 't') {
-          reflection = true;
-        } else if (argv[i][0] == 'f') {
-          reflection = false;
         }
       } else if (!strcmp(argv[i],"-list")) {
         list = true;

@@ -126,56 +126,6 @@ namespace Test { namespace Int {
       return new TestSpace(share,*this);
     }
 
-    /// Make a copy of the TestSpace using the reflection API
-    TestSpace* cloneWithReflection(void) {
-      TestSpace* c = new TestSpace(x.size(), d, reified, test);
-      Gecode::Reflection::VarMap vm;
-      vm.putArray(*this, x, "x");
-      vm.put(*this, b, "b");
-      Gecode::Reflection::VarMap cvm;
-      cvm.putArray(*c, c->x, "x", true);
-      cvm.put(*c, c->b, "b", true);
-      Gecode::Reflection::Unreflector d(*c, cvm);
-      Gecode::Reflection::VarMapIter vmi(vm);
-      try {
-        for (Gecode::Reflection::ActorSpecIter si(*this, vm); si(); ++si) {
-          Gecode::Reflection::ActorSpec s = si.actor();
-          for (; vmi(); ++vmi) {
-            try {
-              d.var(vmi.spec());
-            } catch (Gecode::Reflection::ReflectionException e) {
-              delete c;
-              return NULL;
-            }
-          }
-          try {
-            d.post(s);
-          } catch (Gecode::Reflection::ReflectionException e) {
-            delete c;
-            return NULL;
-          }
-        }
-        for (; vmi(); ++vmi) {
-          try {
-            d.var(vmi.spec());
-          } catch (Gecode::Reflection::ReflectionException e) {
-            delete c;
-            return NULL;
-          }
-        }
-        assert(c != NULL);
-        if (failed()) {
-          c->fail();
-        }
-        return c;
-      } catch (Gecode::Reflection::ReflectionException e) {
-        delete c;
-        if (status() == Gecode::SS_FAILED)
-          return this;
-        return static_cast<TestSpace*>(clone());
-      }
-    }
-
     /// Test whether all variables are assigned
     bool assigned(void) const {
       for (int i=x.size(); i--; )
@@ -482,28 +432,6 @@ if (!(T)) {                                                     \
         }
         delete s; delete sc;
       }
-      if (opt.reflection) {
-        START_TEST("Assignment (after posting + reflection)");
-        {
-          TestSpace* s = new TestSpace(arity,dom,false,this);
-          TestSpace* sc = NULL;
-          s->post();
-          if (opt.log)
-            olog << ind(3) << "Reflection copy" << std::endl;
-          sc = s->cloneWithReflection();
-          if (sc == s)
-            s = NULL;
-          CHECK_TEST(sc != NULL, "Reflection error");
-          sc->assign(a);
-          if (sol) {
-            CHECK_TEST(!sc->failed(), "Failed on solution");
-            CHECK_TEST(sc->propagators()==0, "No subsumption");
-          } else {
-            CHECK_TEST(sc->failed(), "Solved on non-solution");
-          }
-          delete s; delete sc;
-        }
-      }
       START_TEST("Partial assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,false,this);
@@ -617,30 +545,6 @@ if (!(T)) {                                                     \
             CHECK_TEST(s->b.val()==0, "One on non-solution");
           }
           delete s;
-        }
-        if (opt.reflection) {
-          START_TEST("Assignment reified (after posting + reflection)");
-          {
-            TestSpace* s = new TestSpace(arity,dom,true,this);
-            TestSpace* sc = NULL;
-            s->post();
-            if (opt.log)
-              olog << ind(3) << "Reflection copy" << std::endl;
-            sc = s->cloneWithReflection();
-            if (sc == s)
-              s = NULL;
-            CHECK_TEST(sc != NULL, "Reflection error");
-            sc->assign(a);
-            CHECK_TEST(!sc->failed(), "Failed");
-            CHECK_TEST(sc->propagators()==0, "No subsumption");
-            CHECK_TEST(sc->b.assigned(), "Control variable unassigned");
-            if (sol) {
-              CHECK_TEST(sc->b.val()==1, "Zero on solution");
-            } else {
-              CHECK_TEST(sc->b.val()==0, "One on non-solution");
-            }
-            delete s; delete sc;
-          }
         }
         START_TEST("Prune reified");
         {
