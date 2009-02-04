@@ -53,11 +53,7 @@ namespace Gecode { namespace Set { namespace Distinct {
    * Requires \code #include <gecode/set/distinct.hh> \endcode
    * \ingroup FuncSetProp
    */
-
-  class AtmostOne :
-    public NaryPropagator<SetView, PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_0(AtmostOne,"Gecode::Set::Distinct::AtmostOne")
-    GECODE_REFLECT_ARGS_2(ViewArray<SetView>,x,unsigned int,c)
+  class AtmostOne : public NaryPropagator<SetView, PC_SET_ANY> {
   protected:
     /// Cardinality of the sets
     unsigned int c;

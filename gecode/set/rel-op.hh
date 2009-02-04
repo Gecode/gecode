@@ -63,11 +63,8 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   class SuperOfInter :
-  public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                              View2,PC_SET_CLUB> {
-    GECODE_REFLECT_PROPAGATOR_3(SuperOfInter,View0,View1,View2,
-                                "Gecode::Set::RelOp::SuperOfInter")
-    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,View2,x2)
+    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                                View2,PC_SET_CLUB> {
   protected:
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                View2,PC_SET_CLUB>::x0;
@@ -97,10 +94,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   class SubOfUnion :
     public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_3(SubOfUnion,View0,View1,View2,
-                                "Gecode::Set::RelOp::SubOfUnion")
-    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,View2,x2)
+                                View2,PC_SET_ANY> {
   protected:
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x0;
@@ -130,11 +124,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     */
   template <class View0, class View1, class View2>
   class Intersection:
-  public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                              View2,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_3(Intersection,View0,View1,View2,
-                                "Gecode::Set::RelOp::Intersection")
-    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,View2,x2)
+    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+                                View2,PC_SET_ANY> {
   protected:
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                View2,PC_SET_ANY>::x0;
@@ -164,10 +155,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   class Union:
     public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                                  View2,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_3(Union,View0,View1,View2,
-                                "Gecode::Set::RelOp::Union")
-    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,View2,x2)
+                                View2,PC_SET_ANY> {
   protected:
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x0;
@@ -195,11 +183,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     * \ingroup FuncSetProp
     */
   template <class View0, class View1>
-  class IntersectionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
-                                                      View1,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_2(IntersectionN,View0,View1,
-                                "Gecode::Set::RelOp::IntersectionN")
-    GECODE_REFLECT_ARGS_3(ViewArray<View0>,x,IntSet,intOfDets,View1,y)
+  class IntersectionN : 
+    public MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
   protected:
     using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
     using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
@@ -234,10 +219,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    */
   template <class View0, class View1>
   class UnionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
-                                               View1,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_2(UnionN,View0,View1,
-                                "Gecode::Set::RelOp::UnionN")
-    GECODE_REFLECT_ARGS_3(ViewArray<View0>,x,IntSet,unionOfDets,View1,y)
+                                             View1,PC_SET_ANY> {
   protected:
     using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
     using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
@@ -273,10 +255,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    */
   template <class View0, class View1>
   class PartitionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
-                                                   View1,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_2(PartitionN,View0,View1,
-                                "Gecode::Set::RelOp::PartitionN")
-    GECODE_REFLECT_ARGS_3(ViewArray<View0>,x,IntSet,unionOfDets,View1,y)
+                                                 View1,PC_SET_ANY> {
   protected:
     using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
     using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;

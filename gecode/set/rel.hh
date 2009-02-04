@@ -63,8 +63,6 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   class Subset :
     public MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB> {
-    GECODE_REFLECT_PROPAGATOR_2(Subset,View0,View1,"Gecode::Set::Rel::Subset")
-    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x0;
     using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x1;
@@ -91,9 +89,6 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   class NoSubset :
     public MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB> {
-    GECODE_REFLECT_PROPAGATOR_2(NoSubset,View0,View1,
-                                "Gecode::Set::Rel::NoSubset")
-    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x0;
     using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x1;
@@ -117,11 +112,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
-  class ReSubset :
-    public Propagator {
-    GECODE_REFLECT_PROPAGATOR_2(ReSubset,View0,View1,
-                                "Gecode::Set::Rel::ReSubset")
-    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,Gecode::Int::BoolView,b)
+  class ReSubset : public Propagator {
   protected:
     View0 x0;
     View1 x1;
@@ -153,10 +144,7 @@ namespace Gecode { namespace Set { namespace Rel {
    */
 
   template <class View0, class View1>
-  class Eq :
-    public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_2(Eq,View0,View1,"Gecode::Set::Rel::Eq")
-    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
+  class Eq : public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
   protected:
     using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
     using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x1;
@@ -180,10 +168,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
-  class ReEq :
-    public Propagator {
-    GECODE_REFLECT_PROPAGATOR_2(ReEq,View0,View1,"Gecode::Set::Rel::ReEq")
-    GECODE_REFLECT_ARGS_3(View0,x0,View1,x1,Gecode::Int::BoolView,b)
+  class ReEq : public Propagator {
   protected:
     View0 x0;
     View1 x1;
@@ -217,9 +202,6 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   class Distinct :
     public MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL> {
-    GECODE_REFLECT_PROPAGATOR_2(Distinct,View0,View1,
-                                "Gecode::Set::Rel::Distinct")
-    GECODE_REFLECT_ARGS_2(View0,x0,View1,x1)
   protected:
     using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x0;
     using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x1;
@@ -248,9 +230,6 @@ namespace Gecode { namespace Set { namespace Rel {
    */
   template <class View0>
   class DistinctDoit : public UnaryPropagator<View0,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_1(DistinctDoit,View0,
-                                "Gecode::Set::Rel::DistinctDoit")
-    GECODE_REFLECT_ARGS_2(View0,x0,ConstantView,y)
   protected:
     using UnaryPropagator<View0,PC_SET_ANY>::x0;
     /// The view that is already assigned

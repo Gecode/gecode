@@ -59,10 +59,7 @@ namespace Gecode { namespace Set { namespace Convex {
    * Requires \code #include <gecode/set/convex.hh> \endcode
    * \ingroup FuncSetProp
    */
-
   class Convex : public UnaryPropagator<SetView,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_0(Convex,"Gecode::Set::Convex::Convex")
-    GECODE_REFLECT_ARGS_1(SetView,x0)
   protected:
     /// Constructor for cloning \a p
     Convex(Space& home, bool share, Convex& p);
@@ -85,8 +82,6 @@ namespace Gecode { namespace Set { namespace Convex {
    */
 
   class ConvexHull : public BinaryPropagator<SetView,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_0(ConvexHull,"Gecode::Set::Convex::ConvexHull")
-    GECODE_REFLECT_ARGS_2(SetView,x0,SetView,x1)
   protected:
     /// Constructor for cloning \a p
     ConvexHull(Space& home, bool share, ConvexHull&);

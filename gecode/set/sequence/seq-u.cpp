@@ -56,16 +56,6 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   ExecStatus
-  SeqU::post(Space& home, ViewArray<SetView> x, SetView y,
-             const IntSet& uod) {
-    SeqU* sequprop = new (home) SeqU(home, x, y);
-    IntSetRanges uodr(uod);
-    sequprop->unionOfDets.includeI(home, uodr);
-    return ES_OK;
-  }
-
-
-  ExecStatus
   SeqU::propagateSeqUnion(Space& home,
                           bool& modified, ViewArray<SetView>& x,
                           SetView& y) {

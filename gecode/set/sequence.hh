@@ -60,10 +60,7 @@ namespace Gecode { namespace Set { namespace Sequence {
    * \ingroup FuncSetProp
    */
 
-  class Seq :
-    public NaryPropagator<SetView, PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_0(Seq,"Gecode::Set::Sequence::Seq")
-    GECODE_REFLECT_ARGS_1(ViewArray<SetView>,x)
+  class Seq : public NaryPropagator<SetView, PC_SET_ANY> {
   protected:
     /// Constructor for cloning \a p
     Seq(Space& home, bool share,Seq& p);
@@ -86,8 +83,6 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   class SeqU : public NaryOnePropagator<SetView,PC_SET_ANY> {
-    GECODE_REFLECT_PROPAGATOR_0(SeqU,"Gecode::Set::Sequence::SeqU")
-    GECODE_REFLECT_ARGS_3(ViewArray<SetView>,x,SetView,y,IntSet,unionOfDets)
   protected:
     GLBndSet unionOfDets; //Union of determined variables dropped form x.
     /// Constructor for cloning \a p
@@ -97,9 +92,6 @@ namespace Gecode { namespace Set { namespace Sequence {
     ExecStatus propagateSeqUnion(Space& home,
                                  bool& modified, ViewArray<SetView>& x,
                                  SetView& y);
-    /// Post for reflection
-    static ExecStatus post(Space& home, ViewArray<SetView>, SetView,
-                           const IntSet&);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*     copy(Space& home, bool);
