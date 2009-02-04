@@ -303,36 +303,6 @@ print "      throw $exception;\n";
 print "    }\n";
 print "  }\n\n";
 
-print "  namespace {\n";
-print "    class BranchingRegistrar {\n";
-print "    public:\n";
-print "      BranchingRegistrar(void) {\n";
-$ans = "";
-foreach $ns (split('::',$lns)) {
-  if ($ans eq "") {
-    $ans = $ns;
-  } else {
-    $ans = "${ans}\:\:$ns";
-  }
-  print "        using namespace $ans;\n";
-}
-
-for ($i=0; $i<$n; $i++) {
-  $l =  "        ".$pns."registerAll$view< $type[$i] >();\n";
-  $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
-  print $l;
-}
-
-for ($i=0; $i<$n; $i++) {
-  next unless ($i != $none) && !$complete[$i];
-  print "        ".$pns."registerAll$view<ViewSelTieBreakStatic<$type[$i],\n";
-  print "                           ViewSelTieBreakDynamic<$view> > >();\n";
-}
-print "      }\n";
-print "    };\n";
-print "    BranchingRegistrar r;\n";
-print "  }\n";
-
 foreach $ns (split('::',$gns)) {
   print "}";
 }

@@ -363,61 +363,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    class BranchingRegistrar {
-    public:
-      BranchingRegistrar(void) {
-        using namespace Gecode;
-        using namespace Gecode::Int;
-        using namespace Gecode::Int::Branch;
-        registerAllIntView< ViewSelNone<IntView> >();
-        registerAllIntView< ViewSelRnd<IntView> >();
-        registerAllIntView< ByMinMin >();
-        registerAllIntView< ByMinMax >();
-        registerAllIntView< ByMaxMin >();
-        registerAllIntView< ByMaxMax >();
-        registerAllIntView< BySizeMin >();
-        registerAllIntView< BySizeMax >();
-        registerAllIntView< ViewSelDegreeMin<IntView> >();
-        registerAllIntView< ViewSelDegreeMax<IntView> >();
-        registerAllIntView< BySizeDegreeMin >();
-        registerAllIntView< BySizeDegreeMax >();
-        registerAllIntView< ByRegretMinMin >();
-        registerAllIntView< ByRegretMinMax >();
-        registerAllIntView< ByRegretMaxMin >();
-        registerAllIntView< ByRegretMaxMax >();
-        registerAllIntView<ViewSelTieBreakStatic<ByMinMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ByMinMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ByMaxMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ByMaxMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<BySizeMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<BySizeMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ViewSelDegreeMin<IntView>,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ViewSelDegreeMax<IntView>,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<BySizeDegreeMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<BySizeDegreeMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ByRegretMinMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ByRegretMinMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ByRegretMaxMin,
-                           ViewSelTieBreakDynamic<IntView> > >();
-        registerAllIntView<ViewSelTieBreakStatic<ByRegretMaxMax,
-                           ViewSelTieBreakDynamic<IntView> > >();
-      }
-    };
-    BranchingRegistrar r;
-  }
 }
 
 

@@ -261,43 +261,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    class BranchingRegistrar {
-    public:
-      BranchingRegistrar(void) {
-        using namespace Gecode;
-        using namespace Gecode::CpltSet;
-        using namespace Gecode::CpltSet::Branch;
-        registerAllCpltSetView< ViewSelNone<CpltSetView> >();
-        registerAllCpltSetView< ViewSelRnd<CpltSetView> >();
-        registerAllCpltSetView< ViewSelDegreeMin<CpltSetView> >();
-        registerAllCpltSetView< ViewSelDegreeMax<CpltSetView> >();
-        registerAllCpltSetView< ByMinMin >();
-        registerAllCpltSetView< ByMinMax >();
-        registerAllCpltSetView< ByMaxMin >();
-        registerAllCpltSetView< ByMaxMax >();
-        registerAllCpltSetView< BySizeMin >();
-        registerAllCpltSetView< BySizeMax >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<ViewSelDegreeMin<CpltSetView>,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<ViewSelDegreeMax<CpltSetView>,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<ByMinMin,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<ByMinMax,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<ByMaxMin,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<ByMaxMax,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<BySizeMin,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-        registerAllCpltSetView<ViewSelTieBreakStatic<BySizeMax,
-                           ViewSelTieBreakDynamic<CpltSetView> > >();
-      }
-    };
-    BranchingRegistrar r;
-  }
 }
 
 

@@ -119,31 +119,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    class Register {
-    public:
-      template <class View, class SelVal>
-      void
-      reg(void) {
-        Reflection::registry().add(
-          ViewValBranching<ViewSelNone<View>,SelVal>::ati(),
-          &ValSelToString<SelVal>::toString);
-      }
-      
-      Register(void) {
-        using namespace Int;
-        reg<IntView,Branch::AssignValMin<IntView> >();
-        reg<IntView,Branch::AssignValMin<MinusView> >();
-        reg<IntView,Branch::AssignValMed<IntView> >();
-        reg<IntView,Branch::AssignValRnd<IntView> >();
-        reg<BoolView,Branch::AssignValZero<BoolView> >();
-        reg<BoolView,Branch::AssignValZero<NegBoolView> >();
-        reg<BoolView,Branch::AssignValRnd<BoolView> >();        
-      }
-    };
-    Register r;
-  }
-
 }
 
 // STATISTICS: int-post

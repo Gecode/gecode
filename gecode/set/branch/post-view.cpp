@@ -261,43 +261,6 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    class BranchingRegistrar {
-    public:
-      BranchingRegistrar(void) {
-        using namespace Gecode;
-        using namespace Gecode::Set;
-        using namespace Gecode::Set::Branch;
-        registerAllSetView< ViewSelNone<SetView> >();
-        registerAllSetView< ViewSelRnd<SetView> >();
-        registerAllSetView< ViewSelDegreeMin<SetView> >();
-        registerAllSetView< ViewSelDegreeMin<SetView> >();
-        registerAllSetView< ByMinMin >();
-        registerAllSetView< ByMinMin >();
-        registerAllSetView< ByMaxMin >();
-        registerAllSetView< ByMaxMax >();
-        registerAllSetView< BySizeMin >();
-        registerAllSetView< BySizeMax >();
-        registerAllSetView<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
-                           ViewSelTieBreakDynamic<SetView> > >();
-        registerAllSetView<ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
-                           ViewSelTieBreakDynamic<SetView> > >();
-        registerAllSetView<ViewSelTieBreakStatic<ByMinMin,
-                           ViewSelTieBreakDynamic<SetView> > >();
-        registerAllSetView<ViewSelTieBreakStatic<ByMinMin,
-                           ViewSelTieBreakDynamic<SetView> > >();
-        registerAllSetView<ViewSelTieBreakStatic<ByMaxMin,
-                           ViewSelTieBreakDynamic<SetView> > >();
-        registerAllSetView<ViewSelTieBreakStatic<ByMaxMax,
-                           ViewSelTieBreakDynamic<SetView> > >();
-        registerAllSetView<ViewSelTieBreakStatic<BySizeMin,
-                           ViewSelTieBreakDynamic<SetView> > >();
-        registerAllSetView<ViewSelTieBreakStatic<BySizeMax,
-                           ViewSelTieBreakDynamic<SetView> > >();
-      }
-    };
-    BranchingRegistrar r;
-  }
 }
 
 

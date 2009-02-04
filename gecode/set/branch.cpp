@@ -91,31 +91,7 @@ namespace Gecode {
     }
   }
 
-  namespace {
-    class Register {
-    public:
-      template <class SelVal>
-      void
-      reg(void) {
-        using namespace Set;
-        Reflection::registry().add(
-          ViewValBranching<ViewSelNone<SetView>,SelVal>::ati(),
-          &ValSelToString<SelVal>::toString);
-      }
-      
-      Register(void) {
-        using namespace Set;
-        reg<Branch::AssignValMin<true> >();
-        reg<Branch::AssignValMin<false> >();
-        reg<Branch::AssignValMax<true> >();
-        reg<Branch::AssignValMax<false> >();
-      }
-    };
-    Register r;
-  }
-  
 }
-
 
 // STATISTICS: set-branch
 
