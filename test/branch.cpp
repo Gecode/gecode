@@ -222,7 +222,9 @@ namespace Test { namespace Branch {
     Gecode::SET_VAR_MAX_MIN,
     Gecode::SET_VAR_MAX_MAX,
     Gecode::SET_VAR_SIZE_MIN,
-    Gecode::SET_VAR_SIZE_MAX
+    Gecode::SET_VAR_SIZE_MAX,
+    Gecode::SET_VAR_SIZE_DEGREE_MIN,
+    Gecode::SET_VAR_SIZE_DEGREE_MAX
   };
   /// Number of set variable selections
   const int n_set_var_branch =
@@ -238,14 +240,18 @@ namespace Test { namespace Branch {
     "SET_VAR_MAX_MIN",
     "SET_VAR_MAX_MAX",
     "SET_VAR_SIZE_MIN",
-    "SET_VAR_SIZE_MAX"
+    "SET_VAR_SIZE_MAX",
+    "SET_VAR_SIZE_DEGREE_MIN",
+    "SET_VAR_SIZE_DEGREE_MAX"
   };
   /// Set value selections
   const Gecode::SetValBranch set_val_branch[] = {
     Gecode::SET_VAL_MIN_INC,
     Gecode::SET_VAL_MIN_EXC,
     Gecode::SET_VAL_MAX_INC,
-    Gecode::SET_VAL_MAX_EXC
+    Gecode::SET_VAL_MAX_EXC,
+    Gecode::SET_VAL_RND_INC,
+    Gecode::SET_VAL_RND_EXC
   };
   /// Number of set value selections
   const int n_set_val_branch =
@@ -255,7 +261,9 @@ namespace Test { namespace Branch {
     "SET_VAL_MIN_INC",
     "SET_VAL_MIN_EXC",
     "SET_VAL_MAX_INC",
-    "SET_VAL_MAX_EXC"
+    "SET_VAL_MAX_EXC",
+    "SET_VAL_RND_INC",
+    "SET_VAL_RND_EXC"
   };
   //@}
 #endif
