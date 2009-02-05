@@ -38,6 +38,7 @@
 #include <gecode/set/branch.hh>
 
 namespace Gecode {
+
   void
   assign(Space& home, const SetVarArgs& x, SetAssign vals,
          const ValBranchOptions& o_vals) {
@@ -78,14 +79,22 @@ namespace Gecode {
           (home,xv,v,a);
       }
       break;
-    // case INT_ASSIGN_RND:
-    //   {
-    //     Branch::AssignValRnd<IntView> a(home,o_vals);
-    //     (void) new (home) ViewValBranching
-    //       <ViewSelNone<IntView>,Branch::AssignValRnd<IntView> >
-    //       (home,xv,v,a);
-    //   }
-    //   break;
+    case SET_ASSIGN_RND_INC:
+      {
+        Branch::AssignValRnd<true> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelNone<SetView>,Branch::AssignValRnd<true> >
+          (home,xv,v,a);
+      }
+      break;
+    case SET_ASSIGN_RND_EXC:
+      {
+        Branch::AssignValRnd<false> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelNone<SetView>,Branch::AssignValRnd<false> >
+          (home,xv,v,a);
+      }
+      break;
     default:
       throw UnknownBranching("Set::assign");
     }

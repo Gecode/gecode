@@ -148,6 +148,14 @@ namespace Gecode { namespace Set { namespace Branch {
   AssignValMax<inc>::AssignValMax(Space& home, const ValBranchOptions& vbo)
     : ValMax<inc>(home,vbo) {}
 
+  template<bool inc>
+  forceinline
+  AssignValRnd<inc>::AssignValRnd(void) {}
+  template<bool inc>
+  forceinline
+  AssignValRnd<inc>::AssignValRnd(Space& home, const ValBranchOptions& vbo)
+    : ValRnd<inc>(home,vbo) {}
+
 }}}
 
 // STATISTICS: set-branch

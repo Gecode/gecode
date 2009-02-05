@@ -162,6 +162,18 @@ namespace Gecode { namespace Set { namespace Branch {
     AssignValMax(Space& home, const ValBranchOptions& vbo);
   };
 
+  /// Class for assigning random value
+  template<bool inc>
+  class AssignValRnd : public ValRnd<inc> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValRnd(void);
+    /// Constructor for initialization
+    AssignValRnd(Space& home, const ValBranchOptions& vbo);
+  };
+
   /*
    * View selection classes
    *

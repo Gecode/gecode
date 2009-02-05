@@ -1016,7 +1016,9 @@ namespace Gecode {
     SET_ASSIGN_MIN_INC, ///< Include smallest element
     SET_ASSIGN_MIN_EXC, ///< Exclude smallest element
     SET_ASSIGN_MAX_INC, ///< Include largest element
-    SET_ASSIGN_MAX_EXC  ///< Exclude largest element
+    SET_ASSIGN_MAX_EXC, ///< Exclude largest element
+    SET_ASSIGN_RND_INC, ///< Include random element
+    SET_ASSIGN_RND_EXC  ///< Exclude random element
   };
 
   /// Assign all \a x with value selection \a vals
