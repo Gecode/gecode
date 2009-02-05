@@ -979,7 +979,9 @@ namespace Gecode {
     SET_VAR_MAX_MIN,    ///< With smallest maximum unknown element
     SET_VAR_MAX_MAX,    ///< With largest maximum unknown element
     SET_VAR_SIZE_MIN,   ///< With smallest unknown set
-    SET_VAR_SIZE_MAX    ///< With largest unknown set
+    SET_VAR_SIZE_MAX,   ///< With largest unknown set
+    SET_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
+    SET_VAR_SIZE_DEGREE_MAX  ///< With largest domain size divided by degree
   };
 
   /// Which values to select first for branching
@@ -987,7 +989,9 @@ namespace Gecode {
     SET_VAL_MIN_INC, ///< Include smallest element
     SET_VAL_MIN_EXC, ///< Exclude smallest element
     SET_VAL_MAX_INC, ///< Include largest element
-    SET_VAL_MAX_EXC  ///< Exclude largest element
+    SET_VAL_MAX_EXC, ///< Exclude largest element
+    SET_VAL_RND_INC, ///< Include random element
+    SET_VAL_RND_EXC  ///< Exclude random element
   };
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals

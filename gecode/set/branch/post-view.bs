@@ -88,4 +88,10 @@ Type:		BySizeMin
 [VarBranch]
 Value:		SET_VAR_SIZE_MAX
 Type:		BySizeMax
+[VarBranch]
+Value:		SET_VAR_SIZE_DEGREE_MIN
+Type:		BySizeDegreeMin
+[VarBranch]
+Value:		SET_VAR_SIZE_DEGREE_MAX
+Type:		BySizeDegreeMax
 [End]

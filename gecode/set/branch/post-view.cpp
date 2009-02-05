@@ -76,6 +76,12 @@ namespace Gecode { namespace Set { namespace Branch {
      case SET_VAR_SIZE_MAX:
        v = new (home) ViewSelVirtual<BySizeMax>(home,o_vars);
        break;
+     case SET_VAR_SIZE_DEGREE_MIN:
+       v = new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
+       break;
+     case SET_VAR_SIZE_DEGREE_MAX:
+       v = new (home) ViewSelVirtual<BySizeDegreeMax>(home,o_vars);
+       break;
     default:
       throw UnknownBranching("Set::branch");
     }
@@ -155,6 +161,18 @@ namespace Gecode {
     case SET_VAR_SIZE_MAX:
       {
         BySizeMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_SIZE_DEGREE_MIN:
+      {
+        BySizeDegreeMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_SIZE_DEGREE_MAX:
+      {
+        BySizeDegreeMax v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -252,6 +270,22 @@ namespace Gecode {
       {
         BySizeMax va(home,o_vars.a);
         ViewSelTieBreakStatic<BySizeMax,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_SIZE_DEGREE_MIN:
+      {
+        BySizeDegreeMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeDegreeMin,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_SIZE_DEGREE_MAX:
+      {
+        BySizeDegreeMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeDegreeMax,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }

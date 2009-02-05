@@ -95,6 +95,57 @@ namespace Gecode { namespace Set { namespace Branch {
 
   template<bool inc>
   forceinline
+  ValRnd<inc>::ValRnd(void) {}
+  template<bool inc>
+  forceinline
+  ValRnd<inc>::ValRnd(Space&, const ValBranchOptions& vbo)
+    : r(vbo.seed) {}
+  template<bool inc>
+  forceinline int
+  ValRnd<inc>::val(Space&, SetView x) {
+    UnknownRanges<SetView> u(x);
+    unsigned int p = r(Iter::Ranges::size(u));
+    for (UnknownRanges<SetView> i(x); i(); ++i) {
+      if (i.width() > p)
+        return i.min() + static_cast<int>(p);
+      p -= i.width();
+    }
+    GECODE_NEVER;
+    return 0;
+  }
+  template<bool inc>
+  forceinline ModEvent
+  ValRnd<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
+    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
+  }
+  template<bool inc>
+  forceinline Support::RandomGenerator
+  ValRnd<inc>::description(Space&) {
+    return r;
+  }
+  template<bool inc>
+  forceinline void
+  ValRnd<inc>::commit(Space&, const Support::RandomGenerator& d,
+                      unsigned int) {
+    r = d;
+  }
+  template<bool inc>
+  forceinline void
+  ValRnd<inc>::update(Space&, bool, ValRnd<inc>& vr) {
+    r = vr.r;
+  }
+  template<bool inc>
+  forceinline void
+  ValRnd<inc>::dispose(Space&) {}
+  template<bool inc>
+  inline Support::Symbol
+  ValRnd<inc>::type(void) {
+    return Reflection::mangle("Gecode::Set::Branch::ValRnd",inc);
+  }
+
+
+  template<bool inc>
+  forceinline
   AssignValMin<inc>::AssignValMin(void) {}
   template<bool inc>
   forceinline

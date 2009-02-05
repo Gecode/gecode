@@ -73,6 +73,18 @@ namespace Gecode { namespace Set { namespace Branch {
         (void) new (home) ViewValBranching<SelView,ValMax<false> >(home,x,v,a);
       }
       break;
+    case SET_VAL_RND_INC:
+      {
+        ValRnd<true> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValRnd<true> >(home,x,v,a);
+      }
+      break;
+    case SET_VAL_RND_EXC:
+      {
+        ValRnd<false> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValRnd<false> >(home,x,v,a);
+      }
+      break;
     default:
       throw UnknownBranching("Set::branch");
     }

@@ -209,7 +209,72 @@ namespace Gecode { namespace Set { namespace Branch {
     return Support::Symbol("Gecode::Set::Branch::ByMaxMax");
   }
 
+  // Select variable with smallest size/degree
+  forceinline
+  BySizeDegreeMin::BySizeDegreeMin(void) {}
+  forceinline
+  BySizeDegreeMin::BySizeDegreeMin(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  BySizeDegreeMin::init(Space&, SetView x) {
+    UnknownRanges<SetView> u(x);
+    sizedegree =
+      static_cast<double>(Iter::Ranges::size(u))/
+      static_cast<double>(x.degree());
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  BySizeDegreeMin::select(Space&, SetView x) {
+    UnknownRanges<SetView> u(x);
+    double sd =
+      static_cast<double>(Iter::Ranges::size(u))/
+      static_cast<double>(x.degree());
+    if (sd < sizedegree) {
+      sizedegree = sd; return VSS_BETTER;
+    } else if (sd > sizedegree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  BySizeDegreeMin::type(void) {
+    return Support::Symbol("Gecode::Set::Branch::BySizeDegreeMin");
+  }
+
+  // Select variable with largest size/degree
+  forceinline
+  BySizeDegreeMax::BySizeDegreeMax(void) {}
+  forceinline
+  BySizeDegreeMax::BySizeDegreeMax(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<SetView>(home,vbo) {}
+  forceinline ViewSelStatus
+  BySizeDegreeMax::init(Space&, SetView x) {
+    UnknownRanges<SetView> u(x);
+    sizedegree =
+      static_cast<double>(Iter::Ranges::size(u))/
+      static_cast<double>(x.degree());
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  BySizeDegreeMax::select(Space&, View x) {
+    UnknownRanges<SetView> u(x);
+    double sd =
+      static_cast<double>(Iter::Ranges::size(u))/
+      static_cast<double>(x.degree());
+    if (sd > sizedegree) {
+      sizedegree = sd; return VSS_BETTER;
+    } else if (sd < sizedegree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  inline Support::Symbol
+  BySizeDegreeMax::type(void) {
+    return Support::Symbol("Gecode::Set::Branch::BySizeDegreeMax");
+  }
+
 }}}
 
 // STATISTICS: set-branch
-

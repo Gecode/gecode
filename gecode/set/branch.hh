@@ -111,6 +111,47 @@ namespace Gecode { namespace Set { namespace Branch {
                        int alt, SetView x, int n) const;
   };
 
+  /**
+   * \brief Class for random value selection
+   *
+   * Requires
+   * \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntSelVal
+   */
+  template<bool inc>
+  class ValRnd {
+  protected:
+    /// Random number generator
+    Support::RandomGenerator r;
+  public:
+    /// View type
+    typedef SetView View;
+    /// Value type
+    typedef int Val;
+    /// Description type
+    typedef Support::RandomGenerator Desc;
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
+    /// Default constructor
+    ValRnd(void);
+    /// Constructor for initialization
+    ValRnd(Space& home, const ValBranchOptions& vbo);
+    /// Return minimum value of view \a x
+    int val(Space& home, SetView x);
+    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
+    ModEvent tell(Space& home, unsigned int a, SetView x, int n);
+    /// Return description
+    Support::RandomGenerator description(Space& home);
+    /// Commit to description
+    void commit(Space& home, const Support::RandomGenerator& d, unsigned a);
+    /// Updating during cloning
+    void update(Space& home, bool share, ValRnd& vs);
+    /// Delete value selection
+    void dispose(Space& home);
+    /// Type of this value selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
   /// Class for assigning minimum value
   template<bool inc>
   class AssignValMin : public ValMin<inc> {
@@ -274,6 +315,54 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeMax(void);
     /// Constructor for initialization
     BySizeMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, SetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with smallest cardinality of lub-glb 
+   * divided by degree.
+   *
+   * Requires \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeDegreeMin : public ViewSelBase<SetView> {
+  protected:
+    /// So-far smallest size/degree
+    double sizedegree;
+  public:
+    /// Default constructor
+    BySizeDegreeMin(void);
+    /// Constructor for initialization
+    BySizeDegreeMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, SetView x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest cardinality of lub-glb 
+   * divided by degree.
+   *
+   * Requires \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeDegreeMax : public ViewSelBase<SetView> {
+  protected:
+    /// So-far largest size/degree
+    double sizedegree;
+  public:
+    /// Default constructor
+    BySizeDegreeMax(void);
+    /// Constructor for initialization
+    BySizeDegreeMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, SetView x);
     /// Possibly select better view \a x
