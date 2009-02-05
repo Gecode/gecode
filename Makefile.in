@@ -1235,7 +1235,7 @@ DIST_FILES= \
 	install-sh \
 	misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
-	misc/gecode-gist.pc.in \
+	misc/gecode-gist.pc.in misc/gecode-scheduling.pc.in \
 	gecode/support/config.hpp.in \
 	variables.vsl \
 	gecode/int/var-imp/int.vis \
@@ -1379,6 +1379,12 @@ doc-apple: doc
 # Installation
 #
 
+ifeq "@enable_scheduling@" "yes"
+SCHED_PKGCONFIGFILE = gecode-scheduling.pc
+else
+SCHED_PKGCONFIGFILE = 
+endif
+
 ifeq "@enable_gist@" "yes"
 GIST_PKGCONFIGFILE = gecode-gist.pc
 else
@@ -1388,7 +1394,8 @@ endif
 ifeq "@HAS_PKGCONFIG@" "yes"
 PKGCONFIGFILES = \
 	gecode.pc gecode-search.pc gecode-minimodel.pc \
-	$(GIST_PKGCONFIGFILE)
+	$(GIST_PKGCONFIGFILE) \
+	$(SCHED_PKGCONFIGFILE)
 else
 PKGCONFIGFILES =
 endif
