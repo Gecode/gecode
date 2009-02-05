@@ -337,7 +337,6 @@ export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
 export INTSTATICLIB	= $(LIBPREFIX)@INT@$(STATICLIBSUFFIX)
 export INTLIB		= $(LIBPREFIX)@INT@$(LIBSUFFIX)
 export LINKINT      	= $(LINKPREFIX)@INT@$(LINKSUFFIX)
-export POSTINT          = gecode/int.hh
 ifeq "@need_soname@" "yes"
 export INTSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@INT@$(SOSUFFIX)
@@ -349,7 +348,6 @@ export INTDLL		=
 export INTSTATICLIB	=
 export INTLIB		=
 export LINKINT      	=
-export POSTINT          =
 endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
@@ -416,7 +414,6 @@ export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
 export SETSTATICLIB	= $(LIBPREFIX)@SET@$(STATICLIBSUFFIX)
 export SETLIB		= $(LIBPREFIX)@SET@$(LIBSUFFIX)
 export LINKSET      	= $(LINKPREFIX)@SET@$(LINKSUFFIX)
-export POSTSET          = gecode/set.hh
 ifeq "@need_soname@" "yes"
 export SETSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SET@$(SOSUFFIX)
@@ -428,7 +425,6 @@ export SETDLL		=
 export SETSTATICLIB	=
 export SETLIB		=
 export LINKSET      	=
-export POSTSET          =
 endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
@@ -565,55 +561,6 @@ endif
 SCHEDBUILDDIRS	= scheduling
 
 #
-# SERIALIZATION COMPONENTS
-#
-
-SERSRC0 = \
-	flatzinc.cpp javascript.cpp boost.cpp
-
-SERREGSRC = gecode/serialization/register.cpp
-
-ifeq "@enable_qt@" "yes"
-SERMOCSRC0 = moc_javascript.cpp
-else
-SERMOCSRC0 =
-endif
-
-SERHDR0 = \
-	boost.hpp javascript.hh
-
-SERSRC 		= $(SERSRC0:%=gecode/serialization/%) 
-SERMOCSRC	= $(SERMOCSRC0:%=gecode/serialization/%)
-SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)
-SEROBJ		= \
-	$(SERSRC:%.cpp=%$(OBJSUFFIX)) \
-	$(SERMOCSRC:%.cpp=%$(OBJSUFFIX)) \
-	$(SERREGSRC:%.cpp=%$(OBJSUFFIX))
-SERSBJ		= \
-	$(SERSRC:%.cpp=%$(SBJSUFFIX)) \
-	$(SERMOCSRC:%.cpp=%$(SBJSUFFIX)) \
-	$(SERREGSRC:%.cpp=%$(SBJSUFFIX))
-
-ifeq "@enable_serialization@" "yes"
-export SERDLL		= $(LIBPREFIX)@SER@$(DLLSUFFIX)
-export SERSTATICLIB	= $(LIBPREFIX)@SER@$(STATICLIBSUFFIX)
-export SERLIB		= $(LIBPREFIX)@SER@$(LIBSUFFIX)
-export LINKSER      	= $(LINKPREFIX)@SER@$(LINKSUFFIX)
-ifeq "@need_soname@" "yes"
-export SERSONAME     = \
-	@WLSONAME@$(LIBPREFIX)@SER@$(SOSUFFIX)
-else
-export SERSONAME     = 
-endif
-else
-export SERDLL		=
-export SERSTATICLIB	=
-export SERLIB		=
-export LINKSER      	=
-endif
-SERBUILDDIRS	= serialization
-
-#
 # ITERATOR HEADERS
 #
 ITERHDR0 =							\
@@ -736,20 +683,10 @@ else
 CPLTSETEXAMPLEEXE  =
 endif
 
-JSEXAMPLESRC0 = javascript
-JSEXAMPLESRC  = $(JSEXAMPLESRC0:%=examples/%.cpp)
-JSEXAMPLEOBJ  = $(JSEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
-JSEXAMPLESBJ  = $(JSEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
-ifeq "@enable_qt@" "yes"
-JSEXAMPLEEXE  = $(JSEXAMPLESRC:%.cpp=%$(EXESUFFIX))
-else
-JSEXAMPLEEXE  =
-endif
-
 EXAMPLEBUILDDIRS = examples examples/support
 
 EXAMPLEEXE = \
-  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(CPLTSETEXAMPLEEXE) $(JSEXAMPLEEXE)
+  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(CPLTSETEXAMPLEEXE)
 
 EXSUPPORTSRC0 = \
 	support/options support/example
@@ -768,17 +705,14 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 ALLSRC = \
 	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SCHEDSRC) \
-	$(SERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
-	$(JSEXAMPLESRC) $(EXSUPPORTSRC) $(GISTSRC)
+	$(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SCHEDHDR) \
-	$(SERHDR) \
 	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
-	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
-	$(SERMOCSRC:%.cpp=%$(OBJSUFFIX))
+	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
 ALLSBJ0 = $(ALLSRC:%.cpp=%$(SBJSUFFIX))
 ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
@@ -786,16 +720,16 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(CPLTSETDLL) $(MMDLL) $(SCHEDDLL) $(SERDLL) $(GISTDLL)
+	$(CPLTSETDLL) $(MMDLL) $(SCHEDDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(CPLTSETLIB) $(MMLIB) $(SCHEDLIB) $(SERLIB) $(GISTLIB)
+	$(CPLTSETLIB) $(MMLIB) $(SCHEDLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SCHEDSTATICLIB) $(SERSTATICLIB) \
+	$(MMSTATICLIB) $(SCHEDSTATICLIB) \
 	$(GISTSTATICLIB)
 endif
 
@@ -803,7 +737,7 @@ ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SCHEDSTATICLIB) $(SERSTATICLIB) \
+	$(MMSTATICLIB) $(SCHEDSTATICLIB) \
 	$(GISTSTATICLIB)
 else
 STATICTARGETS=
@@ -888,7 +822,6 @@ BUILDDIRS = \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(CPLTSETBUILDDIRS:%=gecode/%) \
-	$(SERBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
 	$(SCHEDBUILDDIRS:%=gecode/%) \
 	$(GISTBUILDDIRS:%=gecode/%) \
@@ -1008,24 +941,6 @@ $(top_srcdir)/gecode/cpltset/branch.cpp: \
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 
 #
-# Registry of post functions
-#
-
-POSTHDR = $(POSTINT) $(POSTSET)
-
-$(top_srcdir)/gecode/serialization/register.cpp: \
-	$(top_srcdir)/gecode/int.hh \
-	$(top_srcdir)/gecode/set.hh \
-	$(top_srcdir)/gecode/minimodel.hh \
-	$(top_srcdir)/gecode/scheduling.hh \
-	$(top_srcdir)/misc/genregistry.perl
-	(cd $(top_srcdir) && \
-	 perl misc/genregistry.perl \
-	  gecode/int.hh gecode/set.hh gecode/minimodel.hh \
-	  > gecode/serialization/register.cpp 2>/dev/null)
-
-
-#
 # Object targets
 #
 
@@ -1091,21 +1006,6 @@ gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/serialization/%$(OBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cpp
-	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_SERIALIZATION_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/serialization/%$(SBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cpp
-	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_SERIALIZATION_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-gecode/serialization/moc_%$(OBJSUFFIX): gecode/serialization/moc_%.cpp
-	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_SERIALIZATION_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-.PRECIOUS: gecode/serialization/moc_%.cpp
-gecode/serialization/moc_%.cpp: $(top_srcdir)/gecode/serialization/%.hh
-	$(MOC) $(CPPFLAGS) -pgecode/serialization $< -o $@
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
@@ -1148,7 +1048,7 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
 	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKSCHED) \
-	$(LINKSER) $(LINKCPLTSET) $(LINKSET) $(LINKINT) \
+	$(LINKCPLTSET) $(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) $(SUPPORTSONAME) \
@@ -1198,13 +1098,6 @@ $(SCHEDDLL): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(SCHEDDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) $(SCHEDDLL)
-	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		$(LINKSET) $(LINKMM) $(SCHEDDLL) $(BOOST_LINK) $(LINKQT) \
-		@LINKOUTPUT@$(SERDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
@@ -1237,10 +1130,6 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(SCHEDDLL) $(SCHEDLIB): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SCHEDOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(SCHEDDLL) $(GLDFLAGS)
-$(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) $(SCHEDDLL)
-	$(CXX) $(DLLFLAGS) $(SEROBJ) \
-		@DLLPATH@ $(BOOST_LINK) $(LINKQT) \
-		@LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKQT) \
@@ -1274,9 +1163,6 @@ $(MMSTATICLIB): $(MMOBJ)
 	$(RANLIB) $@
 $(SCHEDSTATICLIB): $(SCHEDOBJ)
 	$(AR) $(ARFLAGS) $@ $(SCHEDOBJ)
-	$(RANLIB) $@
-$(SERSTATICLIB): $(SEROBJ)
-	$(AR) $(ARFLAGS) $@ $(SEROBJ)
 	$(RANLIB) $@
 $(GISTSTATICLIB): $(GISTOBJ)
 	$(AR) $(ARFLAGS) $@ $(GISTOBJ)
@@ -1349,7 +1235,7 @@ DIST_FILES= \
 	install-sh \
 	misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
-	misc/gecode-serialization.pc.in misc/gecode-gist.pc.in \
+	misc/gecode-gist.pc.in \
 	gecode/support/config.hpp.in \
 	variables.vsl \
 	gecode/int/var-imp/int.vis \
@@ -1502,7 +1388,7 @@ endif
 ifeq "@HAS_PKGCONFIG@" "yes"
 PKGCONFIGFILES = \
 	gecode.pc gecode-search.pc gecode-minimodel.pc \
-	gecode-serialization.pc $(GIST_PKGCONFIGFILE)
+	$(GIST_PKGCONFIGFILE)
 else
 PKGCONFIGFILES =
 endif
@@ -1644,8 +1530,7 @@ clean:
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(TESTOBJ) $(TESTSBJ) $(TESTOBJ:%$(OBJSUFFIX)=%.pdb)
-	$(RMF) $(GISTMOCSRC) $(SERMOCSRC)
-	$(RMF) $(SERREGSRC:%.cpp=%$(OBJSUFFIX))
+	$(RMF) $(GISTMOCSRC)
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
@@ -1664,7 +1549,6 @@ veryclean: clean
 	$(RMF) doc GecodeReference.tag GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
-	$(RMF) $(SERREGSRC:%.cpp=%.gcda) $(SERREGSRC:%.cpp=%.gcno)
 
 distclean: veryclean
 	$(RMF) $(VARIMP:%=$(top_srcdir)/%)
@@ -1672,14 +1556,11 @@ distclean: veryclean
 	$(RMF) Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
-	$(RMF) $(SERREGSRC)
 
-depend: $(VARIMP:%=$(top_srcdir)/%) $(GENBRANCHSRC) \
-		$(SERREGSRC:%=$(top_srcdir)/%)
+depend: $(VARIMP:%=$(top_srcdir)/%) $(GENBRANCHSRC)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
-	$(SERREGSRC) \
 	$(TESTSRC) > Makefile.dep
 
 -include Makefile.dep

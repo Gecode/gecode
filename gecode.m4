@@ -581,7 +581,6 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(CPLTSET, "cpltset")
   AC_SUBST(MM,      "minimodel")
   AC_SUBST(SCHED,   "scheduling")
-  AC_SUBST(SER,     "serialization")
   AC_SUBST(GIST,    "gist")])
 
 
@@ -636,7 +635,6 @@ AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "")
    AC_SUBST(GECODE_BUILD_SCHEDULING_FLAG, "")
-   AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "")])
 
 AC_DEFUN([AC_GECODE_BUILDFLAGS],
@@ -648,7 +646,6 @@ AC_DEFUN([AC_GECODE_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "-DGECODE_BUILD_CPLTSET")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "-DGECODE_BUILD_MINIMODEL")
    AC_SUBST(GECODE_BUILD_SCHEDULING_FLAG, "-DGECODE_BUILD_SCHEDULING")
-   AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "-DGECODE_BUILD_SERIALIZATION")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "-DGECODE_BUILD_GIST")])
 
 
@@ -775,7 +772,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(CPLTSET, "CpltSet")
   AC_SUBST(MM,      "Minimodel")
   AC_SUBST(SCHED,   "Scheduling")
-  AC_SUBST(SER,     "Serialization")
   AC_SUBST(GIST,    "Gist")])
 
 dnl Macro:
@@ -951,7 +947,7 @@ AC_DEFUN([AC_GECODE_BOOST],
   [dnl build with support for the boost library
   AC_ARG_WITH([boost-include],
     AC_HELP_STRING([--with-boost-include],
-	[path to the boost header files (used for serialization)]))
+	[path to the boost header files]))
   if test "${with_boost_include:-no}" != "no"; then
       AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost_include}])
       AC_SUBST(BOOST_LINK,["-L${with_boost_include}/../../lib -lboost_serialization"])

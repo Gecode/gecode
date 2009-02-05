@@ -257,11 +257,6 @@ AC_GECODE_ENABLE_MODULE(scheduling, no,
 	[AC_DEFINE([GECODE_HAS_SCHEDULING],[],
 	 [Whether scheduling support is built])])
 
-AC_GECODE_ENABLE_MODULE(serialization, yes,
-	[build serialization library],
-	[AC_DEFINE([GECODE_HAS_SERIALIZATION],[],
-	 [Whether serialization support is built])])
-
 AC_GECODE_ENABLE_MODULE(search, yes,
         [build search engines])
 
@@ -293,7 +288,6 @@ AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
 AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
 AC_CONFIG_FILES([misc/gecode.pc])
 AC_CONFIG_FILES([misc/gecode-search.pc])
-AC_CONFIG_FILES([misc/gecode-serialization.pc])
 AC_CONFIG_FILES([misc/gecode-minimodel.pc])
 AC_CONFIG_FILES([misc/gecode-scheduling.pc])
 AC_CONFIG_FILES([misc/gecode-gist.pc])
