@@ -48,9 +48,6 @@ namespace Gecode { namespace Gist {
     SOLVED,       ///< Node representing a solution
     FAILED,       ///< Node representing failure
     BRANCH,       ///< Node representing a branch
-    DECOMPOSE,    ///< Node representing a decomposing branch
-    SINGLETON,    ///< Node representing a singleton variable decomposition
-    COMPONENT_IGNORED, ///< Node representing an ignored component
     UNDETERMINED, ///< Node that has not been explored yet
     SPECIAL,      ///< Node representing user controlled exploration
     STEP          ///< Node representing one propagation step

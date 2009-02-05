@@ -436,9 +436,6 @@ namespace Gecode { namespace Gist {
     case STEP:
     case SPECIAL:
     case BRANCH:
-    case DECOMPOSE:
-    case COMPONENT_IGNORED:
-    case SINGLETON:
     case SOLVED:
       {
         // SizeCursor sc(currentNode);
@@ -560,8 +557,6 @@ namespace Gecode { namespace Gist {
       case SPECIAL:
         if (currentNode->getNumberOfChildren() < 1)
           break;
-      case COMPONENT_IGNORED:
-      case DECOMPOSE:
       case BRANCH:
           {
             int alt = std::max(0, currentNode->getPathAlternative());
@@ -570,7 +565,6 @@ namespace Gecode { namespace Gist {
             centerCurrentNode();
             break;
           }
-      case SINGLETON:
       case SOLVED:
       case FAILED:
       case UNDETERMINED:
@@ -782,7 +776,7 @@ namespace Gecode { namespace Gist {
       if (event->type() == QEvent::ToolTip) {
         VisualNode* n = eventNode(event);
         if (n != NULL && !n->isHidden() &&
-            (n->getStatus() == BRANCH || n->getStatus() == DECOMPOSE)) {
+            (n->getStatus() == BRANCH)) {
           QHelpEvent* he = static_cast<QHelpEvent*>(event);
           QToolTip::showText(he->globalPos(),
                              QString(n->toolTip(curBest,c_d,a_d).c_str()));

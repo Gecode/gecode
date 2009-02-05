@@ -40,10 +40,6 @@
 #include <gecode/search.hh>
 #include <stack>
 
-#ifdef GECODE_HAS_DDS
-#include <gecode/dds.hh>
-#endif
-
 namespace Gecode { namespace Gist {
 
   // TODO nikopp: doxygen comments
@@ -279,20 +275,7 @@ namespace Gecode { namespace Gist {
   void
   SpaceNode::closeChild(bool hadFailures, bool hadSolutions) {
     setHasFailedChildren(hasFailedChildren() || hadFailures);
-    if (getStatus() == DECOMPOSE) {
-      setHasSolvedChildren(hasSolvedChildren() && hadSolutions);
-      if (!hasSolvedChildren()) {
-        for (unsigned int i=0; i<getNumberOfChildren(); i++) {
-          SpaceNode* c = static_cast<SpaceNode*>(getChild(i));
-          if (c->isOpen()) {
-            c->setStatus(COMPONENT_IGNORED);
-            c->setNumberOfChildren(0);
-          }
-        }
-      }
-    }
-    else
-      setHasSolvedChildren(hasSolvedChildren() || hadSolutions);
+    setHasSolvedChildren(hasSolvedChildren() || hadSolutions);
 
     bool allClosed = true;
     for (int i=getNumberOfChildren(); i--;) {
@@ -313,7 +296,7 @@ namespace Gecode { namespace Gist {
         copy = NULL;
         p->closeChild(hasFailedChildren(), hasSolvedChildren());
       }
-    } else if (hadSolutions && getStatus() != DECOMPOSE) {
+    } else if (hadSolutions) {
       setHasSolvedChildren(true);
       SpaceNode* p = getParent();
       while (p != NULL && !p->hasSolvedChildren()) {
@@ -400,26 +383,7 @@ namespace Gecode { namespace Gist {
         desc.branch = workingSpace->description();
         kids = desc.branch->alternatives();
         setHasOpenChildren(true);
-#ifdef GECODE_HAS_DDS
-        if (dynamic_cast<const Decomposition::SingletonDescBase*>(
-              desc.branch)) {
-          setStatus(SINGLETON);
-          setHasSolvedChildren(true);
-          setHasFailedChildren(false);
-          kids = 0;
-          SpaceNode* p = static_cast<SpaceNode*>(getParent());
-          if (p != NULL)
-            p->closeChild(false, true);
-        } else if (dynamic_cast<const Decomposition::DecompDesc*>(
-            desc.branch)) {
-          setStatus(DECOMPOSE);
-          setHasSolvedChildren(true);
-        } else {
-#endif
-          setStatus(BRANCH);
-#ifdef GECODE_HAS_DDS
-        }
-#endif
+        setStatus(BRANCH);
         stats.choices++;
         stats.undetermined += kids;
         break;

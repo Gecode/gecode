@@ -129,17 +129,6 @@ namespace Gecode { namespace Gist {
                                     myy+shadowOffset, halfNodeWidth,
                                     nodeWidth);
                 break;
-        case Gist::SINGLETON:
-          {
-            QPoint points[3] = {QPoint(myx+shadowOffset,myy+shadowOffset),
-                                QPoint(myx+halfNodeWidth+shadowOffset,
-                                       myy+nodeWidth+shadowOffset),
-                                QPoint(myx-halfNodeWidth+shadowOffset,
-                                       myy+nodeWidth+shadowOffset),
-                               };
-            painter.drawConvexPolygon(points, 3);
-          }
-          break;
         case Gist::SOLVED:
           {
             QPoint points[4] = {QPoint(myx+shadowOffset,myy+shadowOffset),
@@ -158,11 +147,9 @@ namespace Gecode { namespace Gist {
                            myy+shadowOffset, failedWidth, failedWidth);
           break;
         case Gist::BRANCH:
-        case Gist::DECOMPOSE:
           painter.drawEllipse(myx-halfNodeWidth+shadowOffset,
                               myy+shadowOffset, nodeWidth, nodeWidth);
           break;
-        case Gist::COMPONENT_IGNORED:
         case Gist::UNDETERMINED:
           painter.drawEllipse(myx-halfNodeWidth+shadowOffset,
                               myy+shadowOffset, nodeWidth, nodeWidth);
@@ -211,51 +198,9 @@ namespace Gecode { namespace Gist {
         painter.setBrush(QBrush(red));
         painter.drawRect(myx-halfFailedWidth, myy, failedWidth, failedWidth);
         break;
-      case Gist::DECOMPOSE:
-        painter.setBrush(QBrush(blue));
-        painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
-        if (n->isOpen()) {
-          painter.setBrush(Qt::white);
-          painter.drawRect(myx-quarterNodeWidth, myy+quarterNodeWidth,
-                           halfNodeWidth, halfNodeWidth);
-        }
-        else if (n->hasSolvedChildren()) {
-          painter.setBrush(QBrush(green));
-          QPoint points[4] = {QPoint(myx,myy+dSolvedOffset),
-                              QPoint(myx+dSolvedHalfWidth,
-                                     myy+dSolvedOffset+dSolvedHalfWidth),
-                              QPoint(myx,myy+nodeWidth-dSolvedOffset),
-                              QPoint(myx-dSolvedHalfWidth,
-                                     myy+dSolvedOffset+dSolvedHalfWidth)
-                             };
-          painter.drawConvexPolygon(points, 4);
-        }
-        else {
-          painter.setBrush(QBrush(red));
-          painter.drawRect(myx-quarterNodeWidth, myy+quarterNodeWidth,
-                           halfNodeWidth, halfNodeWidth);
-        }
-        break;
       case Gist::BRANCH:
         painter.setBrush(QBrush(blue));
         painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
-        break;
-      case Gist::SINGLETON:
-        {
-          painter.setBrush(QBrush(green));
-          QPoint points[3] = {QPoint(myx,myy),
-                              QPoint(myx+halfNodeWidth,myy+nodeWidth),
-                              QPoint(myx-halfNodeWidth,myy+nodeWidth),
-                             };
-          painter.drawConvexPolygon(points, 3);
-        }
-        break;
-      case Gist::COMPONENT_IGNORED:
-        painter.setBrush(Qt::white);
-        painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
-        painter.setBrush(QBrush(red));
-        painter.drawRect(myx-quarterNodeWidth, myy+quarterNodeWidth,
-                         halfNodeWidth, halfNodeWidth);
         break;
       case Gist::UNDETERMINED:
         painter.setBrush(Qt::white);

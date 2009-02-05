@@ -326,15 +326,6 @@ negation normalform and by this avoids any propagator for
 negation and uses fewer propagators due to the new clause constraint.
 
 [ENTRY]
-Module: search
-What:   new
-Rank:   major
-[DESCRIPTION]
-Decomposition during search (DDS) has been added as a new search engine. DDS 
-is an implementation of And/Or search. It tries to decompose the problem into 
-independent subproblems, potentially reducing the search space dramatically. 
-
-[ENTRY]
 Module: other
 What:   change
 Rank:   minor

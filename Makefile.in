@@ -634,36 +634,6 @@ ITERHDR0 =							\
 ITERHDR = gecode/iter.hh \
 	$(ITERHDR0:%=gecode/iter/%.hpp)
 
-#
-# DDS
-#
-
-DDSSRC0 = decomposing-branching dds post-view-int post-view-bool
-DDSHDR0 = decomposing-branching dds
-
-DDSSRC 		= $(DDSSRC0:%=gecode/dds/%.cpp) 
-DDSHDR 		= gecode/dds.hh $(DDSHDR0:%=gecode/dds/%.hpp)
-DDSOBJ		= $(DDSSRC:%.cpp=%$(OBJSUFFIX))
-DDSSBJ		= $(DDSSRC:%.cpp=%$(SBJSUFFIX))
-
-ifeq "@enable_dds@" "yes"
-export DDSDLL		= $(LIBPREFIX)@DDS@$(DLLSUFFIX)
-export DDSSTATICLIB	= $(LIBPREFIX)@DDS@$(STATICLIBSUFFIX)
-export DDSLIB		= $(LIBPREFIX)@DDS@$(LIBSUFFIX)
-export LINKDDS      	= $(LINKPREFIX)@DDS@$(LINKSUFFIX)
-ifeq "@need_soname@" "yes"
-export DDSSONAME     = \
-	@WLSONAME@$(LIBPREFIX)@DDS@$(SOSUFFIX)
-else
-export DDSSONAME     = 
-endif
-else
-export DDSDLL		=
-export DDSSTATICLIB	=
-export DDSLIB		=
-export LINKDDS      	=
-endif
-DDSBUILDDIRS	= dds
 
 #
 # GIST
@@ -798,13 +768,13 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 ALLSRC = \
 	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SCHEDSRC) \
-	$(SERSRC) $(DDSSRC) \
+	$(SERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
 	$(JSEXAMPLESRC) $(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SCHEDHDR) \
-	$(SERHDR) $(DDSHDR) \
+	$(SERHDR) \
 	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
@@ -816,17 +786,17 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(CPLTSETDLL) $(MMDLL) $(SCHEDDLL) $(SERDLL) $(GISTDLL) $(DDSDLL)
+	$(CPLTSETDLL) $(MMDLL) $(SCHEDDLL) $(SERDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(CPLTSETLIB) $(MMLIB) $(SCHEDLIB) $(SERLIB) $(GISTLIB) $(DDSLIB)
+	$(CPLTSETLIB) $(MMLIB) $(SCHEDLIB) $(SERLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
 	$(MMSTATICLIB) $(SCHEDSTATICLIB) $(SERSTATICLIB) \
-	$(GISTSTATICLIB) $(DDSSTATICLIB)
+	$(GISTSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
@@ -834,7 +804,7 @@ STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
 	$(MMSTATICLIB) $(SCHEDSTATICLIB) $(SERSTATICLIB) \
-	$(GISTSTATICLIB) $(DDSSTATICLIB)
+	$(GISTSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -919,7 +889,6 @@ BUILDDIRS = \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(CPLTSETBUILDDIRS:%=gecode/%) \
 	$(SERBUILDDIRS:%=gecode/%) \
-	$(DDSBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
 	$(SCHEDBUILDDIRS:%=gecode/%) \
 	$(GISTBUILDDIRS:%=gecode/%) \
@@ -1038,15 +1007,6 @@ $(top_srcdir)/gecode/cpltset/branch.cpp: \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 
-$(top_srcdir)/gecode/dds/post-view-int.cpp: \
-	$(top_srcdir)/gecode/dds/post-view-int.bs \
-	$(top_srcdir)/misc/genbranch.perl
-	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/dds/post-view-bool.cpp: \
-	$(top_srcdir)/gecode/dds/post-view-bool.bs \
-	$(top_srcdir)/misc/genbranch.perl
-	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-
 #
 # Registry of post functions
 #
@@ -1131,13 +1091,6 @@ gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/dds/%$(OBJSUFFIX): $(top_srcdir)/gecode/dds/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DDS_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/dds/%$(SBJSUFFIX): $(top_srcdir)/gecode/dds/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DDS_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-
 gecode/serialization/%$(OBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cpp
 	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_SERIALIZATION_FLAG@ \
@@ -1194,7 +1147,7 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
-	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKSCHED) $(LINKDDS) \
+	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKSCHED) \
 	$(LINKSER) $(LINKCPLTSET) $(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
@@ -1245,12 +1198,6 @@ $(SCHEDDLL): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(SCHEDDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(DDSDLL): $(DDSOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(DDSOBJ) $(DDSSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSEARCH) \
-		@LINKOUTPUT@$(DDSDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) $(SCHEDDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
@@ -1258,9 +1205,9 @@ $(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL
 		@LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(DDSDLL)
+$(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKDDS) $(LINKQT) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1290,14 +1237,11 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(SCHEDDLL) $(SCHEDLIB): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SCHEDOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(SCHEDDLL) $(GLDFLAGS)
-$(DDSDLL) $(DDSLIB): $(DDSOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(DDSOBJ) \
-		@DLLPATH@ @LINKOUTPUT@$(DDSDLL) $(GLDFLAGS)
 $(SERDLL) $(SERLIB): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(CPLTSETDLL) $(MMDLL) $(SCHEDDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) \
 		@DLLPATH@ $(BOOST_LINK) $(LINKQT) \
 		@LINKOUTPUT@$(SERDLL) $(GLDFLAGS)
-$(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(DDSDLL)
+$(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
@@ -1330,9 +1274,6 @@ $(MMSTATICLIB): $(MMOBJ)
 	$(RANLIB) $@
 $(SCHEDSTATICLIB): $(SCHEDOBJ)
 	$(AR) $(ARFLAGS) $@ $(SCHEDOBJ)
-	$(RANLIB) $@
-$(DDSSTATICLIB): $(DDSOBJ)
-	$(AR) $(ARFLAGS) $@ $(DDSOBJ)
 	$(RANLIB) $@
 $(SERSTATICLIB): $(SEROBJ)
 	$(AR) $(ARFLAGS) $@ $(SEROBJ)
