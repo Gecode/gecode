@@ -370,18 +370,6 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
-  Sorted<View,Perm>::
-  Sorted(Space& home,
-         ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0,
-         ViewArray<View>& w0, int reachable0) :
-    Propagator(home), x(x0), y(y0), z(z0), w(w0), reachable(reachable0) {
-    x.subscribe(home, *this, PC_INT_BND);
-    y.subscribe(home, *this, PC_INT_BND);
-    if (Perm)
-      z.subscribe(home, *this, PC_INT_BND);
-  }
-
-  template<class View, bool Perm>
   size_t
   Sorted<View,Perm>::dispose(Space& home) {
     assert(!home.failed());
