@@ -191,7 +191,6 @@ namespace Gecode { namespace Gist {
     searchMenu->addAction(c.reset);
 
     QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
-    toolsMenu->addAction(c.addVisualisation);
     inspectorsMenu = new QMenu("Inspectors");
     connect(inspectorsMenu, SIGNAL(aboutToShow()),
             this, SLOT(populateInspectors()));

@@ -179,9 +179,6 @@ namespace Gecode { namespace Gist {
     inspectPath->setShortcut(QKeySequence("Shift+I"));
     connect(inspectPath, SIGNAL(triggered()), canvas, SLOT(inspectPath()));
 
-    addVisualisation = new QAction("Add visualisation", this);
-    addVisualisation->setShortcut(QKeySequence("Shift+V"));
-    connect(addVisualisation, SIGNAL(triggered()), canvas, SLOT(addVisualisation()));
 
     addAction(inspect);
     addAction(stop);
@@ -204,8 +201,6 @@ namespace Gecode { namespace Gist {
     addAction(exportPDF);
     addAction(exportWholeTreePDF);
     addAction(print);
-
-    addAction(addVisualisation);
 
     addAction(setPath);
     addAction(inspectPath);
@@ -325,7 +320,6 @@ namespace Gecode { namespace Gist {
 
       setPath->setEnabled(false);
       inspectPath->setEnabled(false);
-      addVisualisation->setEnabled(false);
     } else {
       inspect->setEnabled(true);
       stop->setEnabled(false);
@@ -385,7 +379,6 @@ namespace Gecode { namespace Gist {
 
       setPath->setEnabled(true);
       inspectPath->setEnabled(true);
-      addVisualisation->setEnabled(true);
     }
     emit statusChanged(stats,finished);
   }

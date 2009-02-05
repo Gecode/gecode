@@ -677,31 +677,16 @@ GISTHDR0 = \
 	spacenode.hh spacenode.hpp qtgist.hh \
 	textoutput.hh treecanvas.hh zoomToFitIcon.hpp \
 	visualnode.hh visualnode.hpp \
-	mainwindow.hh preferences.hh \
-	addvisualisationdialog.hh \
-	ui_addvisualisationdialog.hh\
-	config.hh \
-	visualisation/vararrayview.hh visualisation/vararrayviewt.hh \
-	visualisation/vararrayitem.hh visualisation/varitem.hh \
-	visualisation/intvaritem.hh \
-	visualisation/setvaritem.hh
+	mainwindow.hh preferences.hh
 
 GISTSRC0 = \
 	drawingcursor.cpp gist.cpp gecodelogo.cpp node.cpp nodecursor.cpp \
 	layoutcursor.cpp spacenode.cpp \
 	textoutput.cpp treecanvas.cpp qtgist.cpp visualnode.cpp \
-	mainwindow.cpp preferences.cpp \
-	addvisualisationdialog.cpp \
-	config.cpp \
-	visualisation/vararrayview.cpp \
-	visualisation/varitem.cpp \
-	visualisation/intvaritem.cpp \
-	visualisation/setvaritem.cpp
+	mainwindow.cpp preferences.cpp
 
 GISTMOCSRC0 = \
-	moc_treecanvas.cpp moc_qtgist.cpp moc_mainwindow.cpp moc_preferences.cpp \
-	moc_addvisualisationdialog.cpp \
-	visualisation/moc_vararrayview.cpp
+	moc_treecanvas.cpp moc_qtgist.cpp moc_mainwindow.cpp moc_preferences.cpp
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)
 GISTMOCSRC = $(GISTMOCSRC0:%=gecode/gist/%)
@@ -710,7 +695,7 @@ GISTHDR = $(GISTHDR0:%=gecode/gist/%) gecode/gist.hh
 GISTOBJ	= $(GISTSRC:%.cpp=%$(OBJSUFFIX)) $(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
 GISTSBJ	= $(GISTSRC:%.cpp=%$(SBJSUFFIX)) $(GISTMOCSRC:%.cpp=%$(SBJSUFFIX))
 
-GISTBUILDDIRS = gist gist/visualisation
+GISTBUILDDIRS = gist
 
 ifeq "@enable_gist@" "yes"
 export GISTDLL		= $(LIBPREFIX)@GIST@$(DLLSUFFIX)
@@ -1202,23 +1187,6 @@ gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cpp
 gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
-gecode/gist/visualisation/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_GIST_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-
-gecode/gist/visualisation/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/visualisation/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_GIST_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-gecode/gist/visualisation/moc_%$(OBJSUFFIX): gecode/gist/visualisation/moc_%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
-	@GECODE_BUILD_GIST_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-
-.PRECIOUS: gecode/gist/visualisation/moc_%.cpp
-gecode/gist/visualisation/moc_%.cpp: $(top_srcdir)/gecode/gist/visualisation/%.hh
-	$(MOC) $(CPPFLAGS) -pgecode/gist/visualisation $< -o $@
 
 #
 # DLL Targets

@@ -46,7 +46,6 @@
 #include <gecode/gist/layoutcursor.hh>
 #include <gecode/gist/visualnode.hh>
 #include <gecode/gist/drawingcursor.hh>
-#include <gecode/gist/addvisualisationdialog.hh>
 
 #include <gecode/search.hh>
 
@@ -965,55 +964,6 @@ namespace Gecode { namespace Gist {
       Space* space = root->getSpace(curBest,c_d,a_d);
       space->getVars(vm, false);
       delete space;
-    }
-  }
-
-  void
-  TreeCanvas::addVisualisation(QStringList vars, QString visType, QString windowName) {
-    Config conf;
-
-    pt2createView cv = conf.visualisationMap.value(visType);
-
-    if(cv != NULL && root->getStatus() != FAILED) {
-      Reflection::VarMap vm;
-      Space* rootSpace = root->getSpace(curBest,c_d,a_d);
-      rootSpace->getVars(vm, false);
-      delete rootSpace;
-
-      QWidget* varView = cv(vm, nextPit, vars, this);
-
-      varView->setWindowTitle(windowName);
-
-      varView->setWindowFlags(Qt::Tool);
-
-      varView->show();
-
-      connect(this, SIGNAL(inspect(Gecode::Reflection::VarMap&, int)),
-              varView, SLOT(display(Gecode::Reflection::VarMap&, int)));
-      connect(this, SIGNAL(pointInTimeChanged(int)),
-              varView, SLOT(displayOld(int)));
-      connect(varView, SIGNAL(pointInTimeChanged(int)),
-              this, SLOT(markCurrentNode(int)));
-    }
-  }
-
-  void
-  TreeCanvas::addVisualisation(void) {
-
-    Config conf;
-
-    Reflection::VarMap rootVm;
-    getRootVars(rootVm);
-
-    AddVisualisationDialog* addVisDialog = new AddVisualisationDialog(conf, rootVm, this);
-
-    if(addVisDialog->exec()) {
-
-      QStringList itemList = addVisDialog->vars();
-      QString visualisation = addVisDialog->vis();
-      QString name = addVisDialog->name();
-
-      addVisualisation(itemList, visualisation, name);
     }
   }
 

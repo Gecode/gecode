@@ -110,8 +110,6 @@ namespace Gecode {  namespace Gist {
     QAction* setPath;
     /// Inspect all nodes on selected path
     QAction* inspectPath;
-    /// Add a visualisation
-    QAction* addVisualisation;
 
     /// Group of all actions for inspectors
     QActionGroup* inspectorGroup;

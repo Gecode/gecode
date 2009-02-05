@@ -180,10 +180,6 @@ namespace Gecode {  namespace Gist {
 
     /// Calls getVars(\a vm) on the space of the root node
     void getRootVars(Gecode::Reflection::VarMap& vm);
-    /// Add a visualisation of type \a visType for \a vars
-    void addVisualisation(QStringList vars, QString visType, QString windowName = "");
-    /// Add a visualisation via a dialog
-    void addVisualisation(void);
 
     /// Stop search and wait for it to finish
     void finish(void);
