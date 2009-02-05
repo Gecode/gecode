@@ -61,11 +61,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMin<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
-  template <bool inc>
-  inline Support::Symbol
-  ValMin<inc>::type(void) {
-    return Reflection::mangle("Gecode::Set::Branch::ValMin",inc);
-  }
+
 
   template <bool inc>
   forceinline
@@ -87,11 +83,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMax<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
-  template <bool inc>
-  inline Support::Symbol
-  ValMax<inc>::type(void) {
-    return Reflection::mangle("Gecode::Set::Branch::ValMax",inc);
-  }
+
 
   template<bool inc>
   forceinline
@@ -137,11 +129,6 @@ namespace Gecode { namespace Set { namespace Branch {
   template<bool inc>
   forceinline void
   ValRnd<inc>::dispose(Space&) {}
-  template<bool inc>
-  inline Support::Symbol
-  ValRnd<inc>::type(void) {
-    return Reflection::mangle("Gecode::Set::Branch::ValRnd",inc);
-  }
 
 
   template<bool inc>
@@ -151,11 +138,7 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline
   AssignValMin<inc>::AssignValMin(Space& home, const ValBranchOptions& vbo)
     : ValMin<inc>(home,vbo) {}
-  template<bool inc>
-  inline Support::Symbol
-  AssignValMin<inc>::type(void) {
-    return Reflection::mangle("Gecode::Set::Branch::AssignValMin",inc);
-  }
+
 
   template<bool inc>
   forceinline
@@ -164,68 +147,7 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline
   AssignValMax<inc>::AssignValMax(Space& home, const ValBranchOptions& vbo)
     : ValMax<inc>(home,vbo) {}
-  template<bool inc>
-  inline Support::Symbol
-  AssignValMax<inc>::type(void) {
-    return Reflection::mangle("Gecode::Set::Branch::AssignValMax",inc);
-  }
 
-}}
-
-#define GECODE_SET_BRANCH_VALTOSTRING(eq,nq) \
-public: \
-  static std::ostream& toString(std::ostream& os, \
-                                Space&, Reflection::VarMap& vm, \
-                                const Reflection::BranchingSpec& bs, \
-                                unsigned int alt) { \
-    os << bs[1]->toInt(); \
-    if (alt == 0) \
-      os << " " << eq << " "; \
-    else \
-      os << " " << nq << " "; \
-    int v = bs[0]->toVar(); \
-    if (vm.hasName(v)) \
-      os << vm.name(v).toString(); \
-    else { \
-      os << "_v" << v; \
-    } \
-    return os; \
-  }
-
-  template <>
-  class ValSelToString<Set::Branch::ValMin<true> > {
-    GECODE_SET_BRANCH_VALTOSTRING("in","not in")
-  };
-  template <>
-  class ValSelToString<Set::Branch::ValMin<false> > {
-    GECODE_SET_BRANCH_VALTOSTRING("not in","in")
-  };
-  template <>
-  class ValSelToString<Set::Branch::ValMax<true> > {
-    GECODE_SET_BRANCH_VALTOSTRING("in","not in")
-  };
-  template <>
-  class ValSelToString<Set::Branch::ValMax<false> > {
-    GECODE_SET_BRANCH_VALTOSTRING("not in","in")
-  };
-  template <>
-  class ValSelToString<Set::Branch::AssignValMin<true> > {
-    GECODE_SET_BRANCH_VALTOSTRING("in","not in")
-  };
-  template <>
-  class ValSelToString<Set::Branch::AssignValMin<false> > {
-    GECODE_SET_BRANCH_VALTOSTRING("not in","in")
-  };
-  template <>
-  class ValSelToString<Set::Branch::AssignValMax<true> > {
-    GECODE_SET_BRANCH_VALTOSTRING("in","not in")
-  };
-  template <>
-  class ValSelToString<Set::Branch::AssignValMax<false> > {
-    GECODE_SET_BRANCH_VALTOSTRING("not in","in")
-  };
-#undef GECODE_SET_BRANCH_VALTOSTRING
-
-}
+}}}
 
 // STATISTICS: set-branch

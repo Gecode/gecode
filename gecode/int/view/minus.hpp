@@ -52,11 +52,6 @@ namespace Gecode {
     MinusView::init(const IntView& x) {
       view = x;
     }
-    forceinline
-    MinusView::MinusView(Space& home, const Reflection::VarMap& vars,
-                         Reflection::Arg* arg)
-    : DerivedViewBase<IntView>(IntView(home, vars, arg)) {}
-
 
 
     /*
@@ -290,18 +285,6 @@ namespace Gecode {
       view.update(home,share,x.view);
     }
 
-    /*
-     * Serialization
-     *
-     */
-    forceinline Reflection::Arg*
-    MinusView::spec(const Space& home, Reflection::VarMap& m) const {
-      return view.spec(home, m);
-    }
-    inline Support::Symbol
-    MinusView::type(void) {
-      return Support::Symbol("Gecode::Int::MinusView");
-    }
 
     /**
      * \brief %Range iterator for minus integer views

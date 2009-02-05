@@ -54,11 +54,6 @@ namespace Gecode {
    * Actor
    *
    */
-  Reflection::ActorSpec
-  Actor::spec(const Space&, Reflection::VarMap&) const {
-    throw Reflection::NoReflectionDefinedException();
-  }
-
   size_t
   Actor::allocated(void) const {
     return 0;
@@ -79,18 +74,6 @@ namespace Gecode {
   Propagator::advise(Space&, Advisor&, const Delta&) {
     assert(false);
     return ES_FAILED;
-  }
-
-
-
-  /*
-   * Branching
-   *
-   */
-  Reflection::BranchingSpec
-  Branching::branchingSpec(const Space&,
-                           Reflection::VarMap&, const BranchingDesc&) const {
-    throw Reflection::NoReflectionDefinedException();
   }
 
 
@@ -164,19 +147,6 @@ namespace Gecode {
          a != &a_actors; a = a->next())
       n++;
     return n;
-  }
-
-  void
-  Space::getVars(Reflection::VarMap&, bool) {}
-
-  Reflection::BranchingSpec
-  Space::branchingSpec(Reflection::VarMap& m, const BranchingDesc& d) const {
-    const Branching* b = b_commit;
-    while ((b != Branching::cast(&a_actors)) && (d._id != b->id))
-      b = Branching::cast(b->next());
-    if (b == Branching::cast(&a_actors))
-      throw SpaceNoBranching();
-    return b->branchingSpec(*this, m, d);
   }
 
   Space::~Space(void) {

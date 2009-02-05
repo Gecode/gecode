@@ -71,9 +71,6 @@ namespace Gecode {
       SetView(const SetVar& x);
       /// Initialize from set variable \a x
       SetView(SetVarImp* x);
-      /// Initialize from specification
-      SetView(Space& home, const Reflection::VarMap& vars,
-              Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -159,13 +156,6 @@ namespace Gecode {
       void update(Space& home, bool share, SetView& x);
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -183,7 +173,6 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned from lub
       bool lubAny(const Delta& d) const;
       //@}
-
     };
 
     /**
@@ -256,9 +245,6 @@ namespace Gecode {
       ConstantView(void);
       /// Construct with \a s as the domain
       ConstantView(Space& home, const IntSet& s);
-      /// Initialize from specification
-      ConstantView(Space& home, const Reflection::VarMap& vars,
-                   Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -371,13 +357,6 @@ namespace Gecode {
       void update(Space& home, bool share, ConstantView& x);
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -446,14 +425,10 @@ namespace Gecode {
       //@{
       /// Default constructor
       EmptyView(void);
-      /// Initialize from specification
-      EmptyView(Space& home, const Reflection::VarMap& vars,
-                Reflection::Arg* arg);
       //@}
 
       /// \name Value access
       //@{
-
       /// Return minimum cardinality
       unsigned int cardMin(void) const;
       /// Return maximum cardinality
@@ -562,13 +537,6 @@ namespace Gecode {
       void update(Space& home, bool share, EmptyView& x);
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -639,9 +607,6 @@ namespace Gecode {
       //@{
       /// Default constructor
       UniverseView(void);
-      /// Initialize from specification
-      UniverseView(Space& home, const Reflection::VarMap& vars,
-                   Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -755,13 +720,6 @@ namespace Gecode {
       void update(Space& home, bool share, UniverseView& x);
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -846,9 +804,6 @@ namespace Gecode {
       SingletonView(void);
       /// Initialize with integer view \a x
       SingletonView(Gecode::Int::IntView& x);
-      /// Initialize from specification
-      SingletonView(Space& home, const Reflection::VarMap& vars,
-                    Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -963,13 +918,6 @@ namespace Gecode {
       void update(Space& home, bool share, SingletonView& x);
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -1053,9 +1001,6 @@ namespace Gecode {
       ComplementView(void);
       /// Initialize with set view x
       ComplementView(View& x);
-      /// Initialize from specification
-      ComplementView(Space& home, const Reflection::VarMap& vars,
-                     Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -1170,13 +1115,6 @@ namespace Gecode {
       void update(Space& home, bool share, ComplementView& x);
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -1260,9 +1198,6 @@ namespace Gecode {
       OffsetSetView(void);
       /// Initialize with set view \a x and offset \a k0
       OffsetSetView(View& x, int k0);
-      /// Initialize from specification
-      OffsetSetView(Space& home, const Reflection::VarMap& vars,
-                    Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -1376,13 +1311,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, OffsetSetView& x);
-      //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
       //@}
 
       /// \name Delta information for advisors

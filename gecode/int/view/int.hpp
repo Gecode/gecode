@@ -49,10 +49,6 @@ namespace Gecode { namespace Int {
   forceinline
   IntView::IntView(IntVarImp* x)
     : VarViewBase<IntVarImp>(x) {}
-  forceinline
-  IntView::IntView(Space&, const Reflection::VarMap& vars,
-                   Reflection::Arg* arg)
-    : VarViewBase<IntVarImp>(IntVar(vars.var(arg->toVar())).var()) {}
 
   /*
    * Value access
@@ -255,19 +251,6 @@ namespace Gecode { namespace Int {
   forceinline void
   IntView::update(Space& home, bool share, IntView& x) {
     varimp = x.varimp->copy(home,share);
-  }
-
-  /*
-   * Serialization
-   *
-   */
-  forceinline Reflection::Arg*
-  IntView::spec(const Space& home, Reflection::VarMap& m) const {
-    return varimp->spec(home, m);
-  }
-  inline Support::Symbol
-  IntView::type(void) {
-    return Support::Symbol("Gecode::Int::IntView");
   }
 
 

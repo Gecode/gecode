@@ -56,10 +56,6 @@ namespace Gecode { namespace Set {
   forceinline
   SetView::SetView(SetVarImp* y)
     : VarViewBase<SetVarImp>(y) {}
-  forceinline
-  SetView::SetView(Space&, const Reflection::VarMap& vars,
-                   Reflection::Arg* arg)
-    : VarViewBase<SetVarImp>(SetVar(vars.var(arg->toVar())).var()) {}
 
   /*
    * Variable information
@@ -181,15 +177,6 @@ namespace Gecode { namespace Set {
     varimp = y.varimp->copy(home,share);
   }
 
-  forceinline Reflection::Arg*
-  SetView::spec(const Space& home, Reflection::VarMap& m) const {
-    return varimp->spec(home, m);
-  }
-
-  inline Support::Symbol
-  SetView::type(void) {
-    return Support::Symbol("Gecode::Set::SetView");
-  }
 
   /*
    * Delta information for advisors

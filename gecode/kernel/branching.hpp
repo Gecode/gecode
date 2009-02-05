@@ -125,19 +125,6 @@ namespace Gecode {
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a);
-    /// Return specification for this branching given a variable map \a m
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
-    /// Return specification for a branch
-    virtual Reflection::BranchingSpec
-    branchingSpec(const Space& home,
-                  Reflection::VarMap& m,
-                  const BranchingDesc& d) const;
-    /// Actor type identifier of this branching
-    static Support::Symbol ati(void);
-    /// Post branching according to specification
-    static void post(Space& home, Reflection::VarMap& m,
-                     const Reflection::ActorSpec& spec);
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Delete branching and return its size
@@ -378,53 +365,12 @@ namespace Gecode {
   }
 
   template <class ViewSel, class ValSel>
-  Support::Symbol
-  ViewValBranching<ViewSel,ValSel>::ati(void) {
-    return Reflection::mangle<ViewSel,ValSel>("Gecode::ViewValBranching");
-  }
-
-  template <class ViewSel, class ValSel>
-  void
-  ViewValBranching<ViewSel,ValSel>
-  ::post(Space& home, Reflection::VarMap& vars,
-         const Reflection::ActorSpec& spec) {
-    spec.checkArity(1);
-    ViewArray<typename ViewSel::View> x(home, vars, spec[0]);
-    (void) new (home) ViewValBranching<ViewSel,ValSel>(home, x);
-  }
-
-  template <class ViewSel, class ValSel>
-  Reflection::ActorSpec
-  ViewValBranching<ViewSel,ValSel>
-  ::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ActorSpec s(ati());
-    return s << x.spec(home, m);
-  }
-
-  template <class ViewSel, class ValSel>
-  Reflection::BranchingSpec
-  ViewValBranching<ViewSel,ValSel>
-  ::branchingSpec(const Space& home,
-                  Reflection::VarMap& m, const BranchingDesc& d) const {
-    (void) home; (void) m;
-    const PosValDesc<ViewSel,ValSel>& pvd
-      = static_cast<const PosValDesc<ViewSel,ValSel>&>(d);
-    Reflection::BranchingSpec bs(ati(), 2);
-    bs[0] = view(pvd.pos()).spec(home, m);
-    bs[1] = Reflection::Arg::newInt(pvd.val());
-    return bs;
-  }
-
-  template <class ViewSel, class ValSel>
   forceinline size_t
   ViewValBranching<ViewSel,ValSel>::dispose(Space& home) {
     valsel.dispose(home);
     (void) ViewBranching<ViewSel>::dispose(home);
     return sizeof(ViewValBranching<ViewSel,ValSel>);
   }
-
-  template <class View>
-  class ValSelToString {};
 
 }
 

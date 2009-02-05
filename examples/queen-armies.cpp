@@ -223,15 +223,11 @@ public:
         ? ES_FAILED
         : ES_OK;
     }
-    /// Clone
+    /// Copy branching during cloning
     virtual Actor* copy(Space& home, bool share) {
       return new (home) QueenBranch(home, share, *this);
     }
-    /// Reflection name
-    virtual const char* name(void) const {
-      return "QueenBranching";
-    }
-
+    /// Post branching
     static void post(QueenArmies& home) {
       (void) new (home) QueenBranch(home);
     }

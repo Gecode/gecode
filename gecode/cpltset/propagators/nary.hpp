@@ -113,18 +113,6 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  Support::Symbol
-  NaryCpltSetPropagator<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::CpltSet::NaryCpltSetPropagator");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  NaryCpltSetPropagator<View>::spec(const Space&, Reflection::VarMap&) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
-  template <class View>
   size_t
   NaryCpltSetPropagator<View>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

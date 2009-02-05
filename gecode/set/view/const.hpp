@@ -108,15 +108,6 @@ namespace Gecode { namespace Set {
     init(home, dom);
   }
 
-  forceinline
-  ConstantView::ConstantView(Space& home,
-                             const Reflection::VarMap&,
-                             Reflection::Arg* arg) {
-    Reflection::IntArrayArgRanges r(arg->toIntArray());
-    IntSet is(r);
-    init(home, is);
-  }
-
   forceinline bool
   ConstantView::assigned(void) const { return true; }
 
@@ -283,25 +274,6 @@ namespace Gecode { namespace Set {
     }
   }
 
-  forceinline Reflection::Arg*
-  ConstantView::spec(const Space&, Reflection::VarMap&) const {
-    int count = 0;
-    for (ArrayRanges ars(ranges, size); ars(); ++ars) {
-      count++;
-    }
-    Reflection::IntArrayArg* args = Reflection::Arg::newIntArray(count*2);
-    count = 0;
-    for (ArrayRanges ars(ranges, size); ars(); ++ars) {
-      (*args)[count++] = ars.min();
-      (*args)[count++] = ars.max();
-    }
-    return args;
-  }
-
-  inline Support::Symbol
-  ConstantView::type(void) {
-    return Support::Symbol("Gecode::Set::ConstantView");
-  }
 
   /*
    * Delta information for advisors
@@ -353,9 +325,6 @@ namespace Gecode { namespace Set {
   forceinline
   EmptyView::EmptyView(void) {}
 
-  forceinline
-  EmptyView::EmptyView(Space&, const Reflection::VarMap&,
-                       Reflection::Arg*) {}
 
 
   forceinline bool
@@ -472,15 +441,6 @@ namespace Gecode { namespace Set {
   forceinline void
   EmptyView::update(Space&, bool, EmptyView&) {}
 
-  forceinline Reflection::Arg*
-  EmptyView::spec(const Space&, Reflection::VarMap&) const {
-    return NULL;
-  }
-
-  inline Support::Symbol
-  EmptyView::type(void) {
-    return Support::Symbol("Gecode::Set::EmptyView");
-  }
 
   /*
    * Delta information for advisors
@@ -533,11 +493,6 @@ namespace Gecode { namespace Set {
 
   forceinline
   UniverseView::UniverseView(void) {}
-
-  forceinline
-  UniverseView::UniverseView(Space&,
-                             const Reflection::VarMap&,
-                             Reflection::Arg*) {}
 
   forceinline bool
   UniverseView::assigned(void) const { return true; }
@@ -658,15 +613,6 @@ namespace Gecode { namespace Set {
   forceinline void
   UniverseView::update(Space&, bool, UniverseView&) {}
 
-  forceinline Reflection::Arg*
-  UniverseView::spec(const Space&, Reflection::VarMap&) const {
-    return NULL;
-  }
-
-  inline Support::Symbol
-  UniverseView::type(void) {
-    return Support::Symbol("Gecode::Set::UniverseView");
-  }
 
   /*
    * Delta information for advisors

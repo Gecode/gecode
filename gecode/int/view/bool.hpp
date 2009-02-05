@@ -51,10 +51,6 @@ namespace Gecode {
     forceinline
     BoolView::BoolView(BoolVarImp* x)
       : VarViewBase<BoolVarImp>(x) {}
-    forceinline
-    BoolView::BoolView(Space&, const Reflection::VarMap& vars,
-                       Reflection::Arg* arg)
-      : VarViewBase<BoolVarImp>(BoolVar(vars.var(arg->toVar())).var()) {}
 
     /*
      * Value access
@@ -309,20 +305,6 @@ namespace Gecode {
     BoolView::update(Space& home, bool share, BoolView& x) {
       varimp = x.varimp->copy(home,share);
     }
-
-    /*
-     * Serialization
-     *
-     */
-    forceinline Reflection::Arg*
-    BoolView::spec(const Space& home, Reflection::VarMap& m) const {
-      return varimp->spec(home, m);
-    }
-    inline Support::Symbol
-    BoolView::type(void) {
-      return Support::Symbol("Gecode::Int::BoolView");
-    }
-
 
     /**
      * \brief %Range iterator for Boolean variable views

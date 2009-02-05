@@ -55,13 +55,6 @@ namespace Gecode {
       : DerivedViewBase<View>(s0) {}
 
     template <class View>
-    forceinline
-    ComplementView<View>::ComplementView(Space& home,
-                                         const Reflection::VarMap& vars,
-                                         Reflection::Arg* arg)
-      : DerivedViewBase<View>(View(home, vars, arg)) {}
-
-    template <class View>
     forceinline ModEvent
     ComplementView<View>::me_negateset(ModEvent me) {
       switch(me) {
@@ -299,20 +292,6 @@ namespace Gecode {
       view.update(home,share,y.view);
     }
 
-    template <class View>
-    forceinline Reflection::Arg*
-    ComplementView<View>::spec(const Space& home, Reflection::VarMap& m) const {
-      return view.spec(home, m);
-    }
-
-    template <class View>
-    inline Support::Symbol
-    ComplementView<View>::type(void) {
-      Support::Symbol t("Set::ComplementView<");
-      t += View::type();
-      t += ">";
-      return t;
-    }
 
     /*
      * Delta information for advisors

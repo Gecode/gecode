@@ -73,12 +73,6 @@ namespace Gecode { namespace Int { namespace GCC {
     void subscribe(Space&, Advisor&) {}
 
     void update(Space&, bool, OccurBndsView&);
-
-    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-    OccurBndsView(Space& home, const Reflection::VarMap& m,
-                  Reflection::Arg* arg);
-    static Support::Symbol type(void);
-
   };
 
   forceinline
@@ -188,27 +182,6 @@ namespace Gecode { namespace Int { namespace GCC {
     count = oc.count;
   }
 
-  forceinline Reflection::Arg*
-  OccurBndsView::spec(const Space&, Reflection::VarMap&) const {
-    return Reflection::Arg::newPair(
-      Reflection::Arg::newPair(Reflection::Arg::newInt(_min),
-        Reflection::Arg::newInt(_max)),
-      Reflection::Arg::newPair(Reflection::Arg::newInt(c),
-        Reflection::Arg::newInt(count)));
-  }
-  inline Support::Symbol
-  OccurBndsView::type(void) {
-    return Support::Symbol("Gecode::Int::GCC::OccurBndsView");
-  }
-
-  forceinline
-  OccurBndsView::OccurBndsView(Space&, const Reflection::VarMap&,
-                               Reflection::Arg* arg) {
-    _min = arg->first()->first()->toInt();
-    _max = arg->first()->second()->toInt();
-    c    = arg->second()->first()->toInt();
-    count = arg->second()->second()->toInt();
-  }
 
   /**
    * \brief Return the index of v in the array
@@ -419,17 +392,6 @@ namespace Gecode { namespace Int { namespace GCC {
     ///@{
     /// Update this view to be a clone of view \a x
     void update(Space& home, bool share, CardView& x);
-    ///@}
-
-    /// \name Reflection
-    ///@{
-    /// Return specification for this view, using variable map \a m
-    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-    /// Return type of this view
-    static Support::Symbol type(void);
-    /// Create from specification
-    CardView(Space& home, const Reflection::VarMap& m,
-             Reflection::Arg* arg);
     ///@}
 
     /// \name View comparison
@@ -728,29 +690,6 @@ namespace Gecode { namespace Int { namespace GCC {
     count = x.count;
     view.update(home,share,x.view);
   }
-
-  /*
-   * Serialization
-   *
-   */
-  forceinline Reflection::Arg*
-  CardView::spec(const Space& home, Reflection::VarMap& m) const {
-    return Reflection::Arg::newPair(
-      Reflection::Arg::newPair(Reflection::Arg::newInt(c),
-        Reflection::Arg::newInt(count)), view.spec(home, m));
-  }
-  inline Support::Symbol
-  CardView::type(void) {
-    return Support::Symbol("Gecode::Int::GCC::CardView");
-  }
-  forceinline
-  CardView::CardView(Space& home, const Reflection::VarMap& m,
-                     Reflection::Arg* arg)
-   : DerivedViewBase<IntView>(IntView(home, m, arg->second())) {
-    c = arg->first()->first()->toInt();
-    count = arg->first()->second()->toInt();
-  }
-
 
 }
 

@@ -60,46 +60,6 @@ namespace Gecode { namespace Int {
     return notify(home,ME_BOOL_VAL,d);
   }
 
-
-  Reflection::Arg*
-  BoolVarImp::spec(const Space&, Reflection::VarMap& m) const {
-    int specIndex = m.index(this);
-    if (specIndex != -1)
-      return Reflection::Arg::newVar(specIndex);
-    Reflection::VarSpec* spec =
-      new Reflection::VarSpec(vti, Reflection::Arg::newInt(status()),
-                              assigned());
-    return (Reflection::Arg::newVar(m.put(this, spec)));
-  }
-
-
-  VarImpBase*
-  BoolVarImp::create(Space& home, Reflection::VarSpec& spec) {
-    unsigned int dom = spec.dom()->toInt();
-    int min = 0;
-    int max = 1;
-    if (dom == Int::BoolVarImp::ZERO)
-      max = 0;
-    else if (dom == Int::BoolVarImp::ONE)
-      min = 1;
-    return new (home) BoolVarImp(home, min, max);
-  }
-
-  void
-  BoolVarImp::constrain(Space& home, VarImpBase* v,
-                        Reflection::VarSpec& spec) {
-    unsigned int d = spec.dom()->toInt();
-    if (d == Int::BoolVarImp::ZERO) {
-      GECODE_ME_FAIL(home, static_cast<Int::BoolVarImp*>(v)->zero(home));
-    } else if (d == Int::BoolVarImp::ONE) {
-      GECODE_ME_FAIL(home, static_cast<Int::BoolVarImp*>(v)->one(home));
-    }
-  }
-
-  namespace {
-    Reflection::VarImpRegistrar<BoolVarImp> registerBoolVarImp;
-  }
-
 }}
 
 // STATISTICS: int-var

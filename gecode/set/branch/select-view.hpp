@@ -65,10 +65,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  BySizeMin::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::BySizeMin");
-  }
+
 
   forceinline
   BySizeMax::BySizeMax(void) {}
@@ -92,10 +89,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  BySizeMax::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::BySizeMax");
-  }
+
 
   forceinline
   ByMinMin::ByMinMin(void) {}
@@ -119,10 +113,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMinMin::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::ByMinMin");
-  }
+
 
   forceinline
   ByMinMax::ByMinMax(void) {}
@@ -146,10 +137,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMinMax::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::ByMinMax");
-  }
+
 
   forceinline
   ByMaxMin::ByMaxMin(void) {}
@@ -175,10 +163,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMaxMin::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::ByMaxMin");
-  }
+
 
   forceinline
   ByMaxMax::ByMaxMax(void) {}
@@ -204,10 +189,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMaxMax::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::ByMaxMax");
-  }
+
 
   // Select variable with smallest size/degree
   forceinline
@@ -237,10 +219,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  BySizeDegreeMin::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::BySizeDegreeMin");
-  }
+
 
   // Select variable with largest size/degree
   forceinline
@@ -269,10 +248,6 @@ namespace Gecode { namespace Set { namespace Branch {
     } else {
       return VSS_TIE;
     }
-  }
-  inline Support::Symbol
-  BySizeDegreeMax::type(void) {
-    return Support::Symbol("Gecode::Set::Branch::BySizeDegreeMax");
   }
 
 }}}

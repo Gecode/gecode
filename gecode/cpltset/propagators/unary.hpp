@@ -70,19 +70,6 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  Support::Symbol
-  UnaryCpltSetPropagator<View>::ati(void) {
-    return Reflection::mangle<View>("Gecode::CpltSet::UnaryCpltSetPropagator");
-  }
-
-  template <class View>
-  Reflection::ActorSpec
-  UnaryCpltSetPropagator<View>::spec(const Space&,
-                                     Reflection::VarMap&) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
-  template <class View>
   size_t
   UnaryCpltSetPropagator<View>::dispose(Space& home) {
     // std::cout << "dispose propagator\n";

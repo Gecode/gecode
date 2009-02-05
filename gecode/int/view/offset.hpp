@@ -56,11 +56,7 @@ namespace Gecode {
     OffsetView::offset(void) const {
       return c;
     }
-    forceinline
-    OffsetView::OffsetView(Space& home, const Reflection::VarMap& vars,
-                           Reflection::Arg* arg)
-    : DerivedViewBase<IntView>(IntView(home, vars, arg->second())),
-      c(arg->first()->toInt()) {}
+
 
     /*
      * Value access
@@ -293,19 +289,6 @@ namespace Gecode {
       c=x.c; view.update(home,share,x.view);
     }
 
-    /*
-     * Serialization
-     *
-     */
-    forceinline Reflection::Arg*
-    OffsetView::spec(const Space& home, Reflection::VarMap& m) const {
-      return Reflection::Arg::newPair(Reflection::Arg::newInt(c),
-                                      view.spec(home, m));
-    }
-    inline Support::Symbol
-    OffsetView::type(void) {
-      return Support::Symbol("Gecode::Int::OffsetView");
-    }
 
     /**
      * \brief %Range iterator for offset integer views

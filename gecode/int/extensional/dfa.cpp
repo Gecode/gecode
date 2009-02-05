@@ -471,58 +471,6 @@ namespace Gecode {
     heap.free<Transition>(trans,n_trans);
   }
 
-  DFA::DFA(Space&, Reflection::VarMap& vm, Reflection::Arg* arg) {
-    if (arg->isSharedReference()) {
-      DFAI* d =
-        static_cast<DFAI*>(vm.getSharedObject(arg->toSharedReference()));
-      object(d);
-      return;
-    }
-
-    Reflection::IntArrayArg* a = arg->toSharedObject()->toIntArray();
-
-    // All done... Construct the automaton
-
-    int n_trans = (a->size() - 5) / 3;
-    DFAI* d = new DFAI(n_trans);
-    d->n_states   = (*a)[0];
-    d->n_symbols  = (*a)[1];
-    d->max_degree = (*a)[2];
-    d->final_fst  = (*a)[3];
-    d->final_lst  = (*a)[4];
-    d->n_trans    = n_trans;
-    for (int i=0; i<n_trans; i++) {
-      d->trans[i].i_state = (*a)[5+3*i+0];
-      d->trans[i].symbol  = (*a)[5+3*i+1];
-      d->trans[i].o_state = (*a)[5+3*i+2];
-    }
-    d->fill();
-    object(d);
-    vm.putMasterObject(object());
-  }
-
-  Reflection::Arg*
-  DFA::spec(const Space&, Reflection::VarMap& vm) const {
-    int sharedIndex = vm.getSharedIndex(object());
-    if (sharedIndex >= 0)
-      return Reflection::Arg::newSharedReference(sharedIndex);
-    Reflection::IntArrayArg* a =
-      Reflection::Arg::newIntArray(static_cast<int>(5+3*n_transitions()));
-    (*a)[0] = n_states();
-    (*a)[1] = n_symbols();
-    (*a)[2] = max_degree();
-    (*a)[3] = final_fst();
-    (*a)[4] = final_lst();
-    const DFAI* o = static_cast<DFAI*>(object());
-    for (unsigned int i=0; i<n_transitions(); i++ ) {
-      (*a)[5+3*i+0] = o->trans[i].i_state;
-      (*a)[5+3*i+1] = o->trans[i].symbol;
-      (*a)[5+3*i+2] = o->trans[i].o_state;
-    }
-    vm.putMasterObject(object());
-    return Reflection::Arg::newSharedObject(a);
-  }
-
   SharedHandle::Object*
   DFA::DFAI::copy(void) const {
     DFAI* d = new DFAI(n_trans);

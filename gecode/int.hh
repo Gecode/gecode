@@ -330,8 +330,6 @@ namespace Gecode {
     IntVar(const IntVar& x);
     /// Initialize from integer view \a x
     IntVar(const Int::IntView& x);
-    /// Initialize from reflection variable \a x
-    IntVar(const Reflection::Var& x);
     /**
      * \brief Initialize variable with range domain
      *
@@ -494,8 +492,6 @@ namespace Gecode {
     BoolVar(const BoolVar& x);
     /// Initialize from Boolean view \a x
     BoolVar(const Int::BoolView& x);
-    /// Initialize from reflection variable \a x
-    BoolVar(const Reflection::Var& x);
     /**
      * \brief Initialize Boolean variable with range domain
      *
@@ -1622,13 +1618,6 @@ namespace Gecode {
     int symbol_min(void) const;
     /// Return largest symbol in DFA
     int symbol_max(void) const;
-
-    /// Initialize DFA from reflection specification
-    GECODE_INT_EXPORT
-    DFA(Space& home, Reflection::VarMap& vm, Reflection::Arg* arg);
-    /// Create reflection specification for the DFA
-    GECODE_INT_EXPORT
-    Reflection::Arg* spec(const Space& home,Reflection::VarMap& vm) const;
   };
 
 
@@ -1713,11 +1702,6 @@ namespace Gecode {
     int min(void) const;
     /// Maximum domain element
     int max(void) const;
-
-    /// Initialize TupleSet from reflection specification
-    GECODE_INT_EXPORT TupleSet(Reflection::VarMap& vm, Reflection::Arg* arg);
-    /// Create reflection specification for the TupleSet
-    GECODE_INT_EXPORT Reflection::Arg* spec(Reflection::VarMap& vm) const;
   };
 
   /** \brief Post propagator for \f$x\in T\f$.

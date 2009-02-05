@@ -56,11 +56,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
                                CpltSetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
-  template<bool inc>
-  inline Support::Symbol
-  ValMin<inc>::type(void) {
-    return Support::Symbol("CpltSet::Branch::ValMin");
-  }
 
 
   template<bool inc>
@@ -82,11 +77,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   forceinline ModEvent
   ValMax<inc>::tell(Space& home, unsigned int a, CpltSetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
-  }
-  template<bool inc>
-  inline Support::Symbol
-  ValMax<inc>::type(void) {
-    return Support::Symbol("CpltSet::Branch::ValMax");
   }
 
 
@@ -128,46 +118,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     }
   }
 
-}}
-
-#define GECODE_CPLTSET_BRANCH_VALTOSTRING(eq,nq) \
-public: \
-  static std::ostream& toString(std::ostream& os, \
-                                Space&, Reflection::VarMap& vm, \
-                                const Reflection::BranchingSpec& bs, \
-                                unsigned int alt) { \
-    os << bs[1]->toInt(); \
-    if (alt == 0) \
-      os << " " << eq << " "; \
-    else \
-      os << " " << nq << " "; \
-    int v = bs[0]->toVar(); \
-    if (vm.hasName(v)) \
-      os << vm.name(v).toString(); \
-    else { \
-      os << "_v" << v; \
-    } \
-    return os; \
-  }
-
-  template <>
-  class ValSelToString<CpltSet::Branch::ValMin<true> > {
-    GECODE_CPLTSET_BRANCH_VALTOSTRING("in","not in")
-  };
-  template <>
-  class ValSelToString<CpltSet::Branch::ValMin<false> > {
-    GECODE_CPLTSET_BRANCH_VALTOSTRING("not in","in")
-  };
-  template <>
-  class ValSelToString<CpltSet::Branch::ValMax<true> > {
-    GECODE_CPLTSET_BRANCH_VALTOSTRING("in","not in")
-  };
-  template <>
-  class ValSelToString<CpltSet::Branch::ValMax<false> > {
-    GECODE_CPLTSET_BRANCH_VALTOSTRING("not in","in")
-  };
-#undef GECODE_CPLTSET_BRANCH_VALTOSTRING
-
-}
+}}}
 
 // STATISTICS: cpltset-branch

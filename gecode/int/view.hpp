@@ -146,9 +146,6 @@ namespace Gecode {
       IntView(const IntVar& x);
       /// Initialize from integer variable \a x
       IntView(IntVarImp* x);
-      /// Initialize from specification
-      IntView(Space& home, const Reflection::VarMap& vars,
-              Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -275,14 +272,6 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, IntView& x);
       //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
     };
 
     /**
@@ -339,9 +328,6 @@ namespace Gecode {
       MinusView(void);
       /// Initialize with integer view \a x
       MinusView(const IntView& x);
-      /// Initialize from specification
-      MinusView(Space& home, const Reflection::VarMap& vars,
-                Reflection::Arg* arg);
       /// Initialize with integer view \a x
       void init(const IntView& x);
       //@}
@@ -488,13 +474,6 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, MinusView& x);
       //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
     };
 
     /**
@@ -553,9 +532,6 @@ namespace Gecode {
       OffsetView(void);
       /// Initialize with integer view \a x and offset \a c
       OffsetView(const IntView& x, int c);
-      /// Initialize from specification
-      OffsetView(Space& home, const Reflection::VarMap& vars,
-                 Reflection::Arg* arg);
       /// Initialize with integer view \a x and offset \a c
       void init(const IntView& x, int c);
       /// Return offset
@@ -704,13 +680,6 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, OffsetView& x);
       //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
     };
 
     /**
@@ -807,9 +776,6 @@ namespace Gecode {
       ScaleView(void);
       /// Initialize as \f$b\cdot y\f$
       ScaleView(int b, const IntView& y);
-      /// Initialize from specification
-      ScaleView(Space& home, const Reflection::VarMap& vars,
-                Reflection::Arg* arg);
       /// Initialize as \f$b\cdot y\f$
       void init(int b, const IntView& y);
       /// Return scale factor of scale view
@@ -909,13 +875,6 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ScaleView<Val,UnsVal>& x);
       //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
     };
 
     /**
@@ -999,9 +958,6 @@ namespace Gecode {
       ConstIntView(int n);
       /// Initialize with integer value \a n
       void init(int n);
-      /// Initialize from specification
-      ConstIntView(Space& home, const Reflection::VarMap& vars,
-                   Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -1146,13 +1102,6 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ConstIntView& x);
       //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
     };
 
     /**
@@ -1206,9 +1155,6 @@ namespace Gecode {
       ZeroIntView(void);
       /// Initialize
       void init(void);
-      /// Initialize from specification
-      ZeroIntView(Space& home, const Reflection::VarMap& vars,
-                  Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -1353,13 +1299,6 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, ZeroIntView& x);
       //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
     };
 
     /**
@@ -1416,9 +1355,6 @@ namespace Gecode {
       BoolView(const BoolVar& x);
       /// Initialize from Boolean variable \a x
       BoolView(BoolVarImp* x);
-      /// Initialize from specification
-      BoolView(Space& home, const Reflection::VarMap& vars,
-               Reflection::Arg* arg);
       //@}
 
       /// \name Domain status access
@@ -1586,13 +1522,6 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, BoolView& x);
       //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
     };
 
     /**
@@ -1652,9 +1581,6 @@ namespace Gecode {
       NegBoolView(const BoolView& b);
       /// Initialize with Boolean view \a b
       void init(const BoolView& b);
-      /// Initialize from specification
-      NegBoolView(Space& home, const Reflection::VarMap& vars,
-                  Reflection::Arg* arg);
       //@}
 
       /// \name Domain status access
@@ -1757,13 +1683,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space& home, bool share, NegBoolView& x);
-      //@}
-
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
       //@}
     };
 

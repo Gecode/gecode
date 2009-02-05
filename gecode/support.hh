@@ -107,8 +107,6 @@
 #include <gecode/support/random.hpp>
 #include <gecode/support/sort.hpp>
 #include <gecode/support/static-stack.hpp>
-#include <gecode/support/symbol.hpp>
-#include <gecode/support/map.hpp>
 
 #endif
 

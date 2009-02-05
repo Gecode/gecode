@@ -368,19 +368,6 @@ namespace Gecode { namespace Int {
     IntVarImp* copy(Space& home, bool share);
     //@}
 
-    /// \name Reflection
-    //@{
-    /// Return specification
-    GECODE_INT_EXPORT Reflection::Arg*
-    spec(const Space& home, Reflection::VarMap& m) const;
-    /// Create variable implementation from specification
-    static GECODE_INT_EXPORT VarImpBase*
-    create(Space& home, Reflection::VarSpec& spec);
-    /// Constrain variable implementation using specification
-    static GECODE_INT_EXPORT void
-    constrain(Space& home, VarImpBase* v, Reflection::VarSpec& spec);
-    //@}
-
     /// \name Delta information for advisors
     //@{
     /// Return modification event
@@ -721,19 +708,6 @@ namespace Gecode { namespace Int {
     //@{
     /// Return copy of this variable
     BoolVarImp* copy(Space& home, bool share);
-    //@}
-
-    /// \name Reflection
-    //@{
-    /// Return specification
-    GECODE_INT_EXPORT Reflection::Arg*
-    spec(const Space& home, Reflection::VarMap& m) const;
-    /// Create variable implementation from specification
-    static GECODE_INT_EXPORT VarImpBase*
-    create(Space& home, Reflection::VarSpec& spec);
-    /// Constrain variable implementation using specification
-    static GECODE_INT_EXPORT void
-    constrain(Space& home, VarImpBase* v, Reflection::VarSpec& spec);
     //@}
 
   };

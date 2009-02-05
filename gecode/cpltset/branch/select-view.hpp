@@ -59,10 +59,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  BySizeMin::type(void) {
-    return Support::Symbol("Gecode::CpltSet::Branch::BySizeMin");
-  }
+
 
   forceinline
   BySizeMax::BySizeMax(void) {}
@@ -85,10 +82,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     } else {
       return VSS_TIE;
     }
-  }
-  inline Support::Symbol
-  BySizeMax::type(void) {
-    return Support::Symbol("Gecode::CpltSet::Branch::BySizeMax");
   }
 
 
@@ -116,10 +109,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMinMin::type(void) {
-    return Support::Symbol("Gecode::CpltSet::Branch::ByMinMin");
-  }
+
 
 
   forceinline
@@ -145,10 +135,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMinMax::type(void) {
-    return Support::Symbol("Gecode::CpltSet::Branch::ByMinMax");
-  }
+
 
 
   forceinline
@@ -175,10 +162,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMaxMin::type(void) {
-    return Support::Symbol("Gecode::CpltSet::Branch::ByMaxMin");
-  }
+
 
   forceinline
   ByMaxMax::ByMaxMax(void) {}
@@ -204,10 +188,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMaxMax::type(void) {
-    return Support::Symbol("Gecode::CpltSet::Branch::ByMaxMax");
-  }
+
 
 }}}
 

@@ -74,6 +74,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: other
+What:   removed
+Rank:   major
+[DESCRIPTION]
+All support for reflection has been removed: not clean enough,
+not powerful enough, too difficult, and too much trouble.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

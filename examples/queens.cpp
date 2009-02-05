@@ -115,12 +115,6 @@ public:
     }
     os << std::endl;
   }
-
-  /// Make variables available for visualisation
-  virtual void
-  getVars(Gecode::Reflection::VarMap& vm, bool registerOnly) {
-    vm.putArray(*this,q,"q", registerOnly);
-  }
 };
 
 /** \brief Main-function

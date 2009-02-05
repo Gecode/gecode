@@ -74,9 +74,6 @@ namespace Gecode { namespace Int { namespace Sorted {
     int reachable;
     /// Constructor for posting
     Sorted(Space&, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
-    /// Constructor for posting from reflection
-    Sorted(Space&, ViewArray<View>& x, ViewArray<View>& y,
-           ViewArray<View>& z, ViewArray<View>& w, int reachable);
     /// Constructor for cloning
     Sorted(Space& home, bool share, Sorted<View,Perm>& p);
   public:

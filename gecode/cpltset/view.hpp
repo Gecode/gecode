@@ -185,13 +185,6 @@ namespace Gecode {
       void update(Space& home, bool share, CpltSetView& x);
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
-      static Support::Symbol type(void);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event

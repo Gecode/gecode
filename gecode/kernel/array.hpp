@@ -157,9 +157,6 @@ namespace Gecode {
     ViewArray(Space& home, int m);
     /// Initialize from view array \a a (share elements)
     ViewArray(const ViewArray<View>& a);
-    /// Initialize from specification \a spec with variables \a vars
-    ViewArray(Space& home, const Reflection::VarMap& vars,
-              Reflection::Arg* spec);
     /// Initialize from view array \a a (copy elements)
     ViewArray(Space& home, const ViewArray<View>& a);
     /// Initialize from view array \a a (share elements)
@@ -336,11 +333,6 @@ namespace Gecode {
      */
     template <class ViewY>
     bool shared(const Space& home, const ViewArray<ViewY>& y) const;
-    //@}
-
-    /// \name Reflection
-    //@{
-    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const;
     //@}
 
   private:
@@ -697,21 +689,6 @@ namespace Gecode {
   }
 
   template <class View>
-  ViewArray<View>::ViewArray(Space& home, const Reflection::VarMap& vars,
-                             Reflection::Arg* spec) {
-    if (spec == NULL) {
-      x = NULL;
-      n = 0;
-      return;
-    }
-    Reflection::ArrayArg* a = spec->toArray();
-    n = a->size();
-    x = n>0 ? home.alloc<View>(n) : NULL;
-    for (int i=n; i--;)
-      x[i] = View(home, vars, (*a)[i]);
-  }
-
-  template <class View>
   forceinline
   ViewArray<View>::ViewArray(const ViewArray<View>& a)
     : n(a.n), x(a.x) {}
@@ -1030,15 +1007,6 @@ namespace Gecode {
     r.free<View>(xs,size());
     r.free<ViewY>(ys,y.size());
     return false;
-  }
-
-  template <class View>
-  Reflection::Arg*
-  ViewArray<View>::spec(const Space& home, Reflection::VarMap& m) const {
-    Reflection::ArrayArg* s = Reflection::Arg::newArray(n);
-    for (int i = 0; i<n; i++)
-      (*s)[i] = x[i].spec(home, m);
-    return s;
   }
 
   template <class View>

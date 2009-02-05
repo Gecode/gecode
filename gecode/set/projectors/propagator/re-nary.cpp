@@ -65,16 +65,6 @@ namespace Gecode { namespace Set { namespace Projection {
     return new (home) ReNaryProjection(home,share,*this);
   }
 
-  Support::Symbol
-  ReNaryProjection::ati(void) {
-    return Support::Symbol("set.projectors.ReNaryProjection");
-  }
-
-  Reflection::ActorSpec
-  ReNaryProjection::spec(const Space&, Reflection::VarMap&) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
   ExecStatus
   ReNaryProjection::propagate(Space& home, const ModEventDelta&) {
     ProjectorSet newps(ps);

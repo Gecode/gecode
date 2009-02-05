@@ -105,13 +105,6 @@ namespace Gecode {
 
     /// Return number of elements
     int size(void) const;
-
-    /// Return specification for reflection
-    Reflection::Arg* spec(Reflection::VarMap& vm) const;
-
-    /// Recreate from specification
-    SharedArray(Reflection::VarMap& vm, Reflection::Arg* arg);
-
   };
 
   /**
@@ -219,54 +212,6 @@ namespace Gecode {
     return static_cast<SAO*>(object())->size();
   }
 
-  /// Serialization helper for SharedArray objects
-  template <class T>
-  class SharedArraySerialization {
-  public:
-    static Reflection::Arg* t(const T& t) { return NULL; }
-    static T t(Reflection::Arg* arg) { T tt; return tt; }
-  };
-
-  /// Serialization helper for SharedArray<int> objects
-  template <>
-  class SharedArraySerialization<int> {
-  public:
-    static Reflection::Arg* t(const int& t) {
-      return Reflection::Arg::newInt(t);
-    }
-    static int t(Reflection::Arg* arg) {
-      return arg->toInt();
-    }
-  };
-
-  template <class T>
-  Reflection::Arg*
-  SharedArray<T>::spec(Reflection::VarMap& vm) const {
-    int sharedIndex = vm.getSharedIndex(object());
-    if (sharedIndex >= 0)
-      return Reflection::Arg::newSharedReference(sharedIndex);
-    Reflection::ArrayArg* a = Reflection::Arg::newArray(size());
-    for (int i=size(); i--; )
-      (*a)[i] = SharedArraySerialization<T>::t((*this)[i]);
-    vm.putMasterObject(object());
-    return Reflection::Arg::newSharedObject(a);
-  }
-
-  template <class T>
-  SharedArray<T>::SharedArray(Reflection::VarMap& vm,
-                              Reflection::Arg* arg) {
-    if (arg->isSharedReference()) {
-      object(static_cast<SAO*>(vm.getSharedObject(arg->toSharedReference())));
-    } else {
-      Reflection::ArrayArg* a = arg->toSharedObject()->toArray();
-      object(new SAO(a->size()));
-      for (int i=a->size(); i--; ) {
-        (*this)[i] = SharedArraySerialization<T>::t((*a)[i]);
-      }
-      vm.putMasterObject(object());
-    }
-  }
-
   template<class Char, class Traits, class T>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
@@ -281,26 +226,6 @@ namespace Gecode {
     }
     s << '}';
     return os << s.str();
-  }
-
-  namespace Reflection {
-    template<>
-    forceinline
-    void operator>>(PostHelper& p, SharedArray<int>& isa) {
-      Reflection::IntArrayArg* a = p.spec[p.arg++]->toIntArray();
-      SharedArray<int> is(a->size());
-      for (int i=a->size(); i--; ) {
-        is[i] = (*a)[i];
-      }
-      isa = is;
-    }
-
-    template <>
-    forceinline
-    void operator<<(SpecHelper& s,
-                    const SharedArray<int>& isa) {
-      s.s << Arg::newIntArray(isa);
-    }
   }
 
 }

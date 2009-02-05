@@ -51,9 +51,6 @@ namespace Gecode {
     ConstIntView::init(int n) {
       x=n;
     }
-    forceinline
-    ConstIntView::ConstIntView(Space&, const Reflection::VarMap&,
-                               Reflection::Arg* arg) : x(arg->toInt()) {}
 
 
     /*
@@ -296,18 +293,6 @@ namespace Gecode {
       x = y.x;
     }
 
-    /*
-     * Serialization
-     *
-     */
-    forceinline Reflection::Arg*
-    ConstIntView::spec(const Space&, Reflection::VarMap&) const {
-      return Reflection::Arg::newInt(x);
-    }
-    inline Support::Symbol
-    ConstIntView::type(void) {
-      return Support::Symbol("Gecode::Int::ConstIntView");
-    }
 
     /**
      * \brief %Range iterator for constant integer views

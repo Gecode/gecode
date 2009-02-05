@@ -40,8 +40,6 @@ namespace Gecode { namespace Int { namespace Bool {
   /// Binary Boolean disjunction propagator (subsumed)
   template<class BV>
   class OrTrueSubsumed : public BoolBinary<BV,BV> {
-    GECODE_REFLECT_PROPAGATOR_1(OrTrueSubsumed,BV,"Gecode::Int::Bool::OrTrueSubsumed")
-    GECODE_REFLECT_ARGS_2(BV,x0,BV,x1)
   protected:
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;

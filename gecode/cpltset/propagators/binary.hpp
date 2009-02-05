@@ -73,20 +73,6 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  Support::Symbol
-  BinaryCpltSetPropagator<View0,View1>::ati(void) {
-    return
-      Reflection::mangle<View0,View1>("Gecode::CpltSet::BinaryCpltSetPropagator");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  BinaryCpltSetPropagator<View0,View1>::spec(const Space&,
-                                             Reflection::VarMap&) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
-  template <class View0, class View1>
   size_t
   BinaryCpltSetPropagator<View0,View1>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

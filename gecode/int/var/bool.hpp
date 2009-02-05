@@ -56,9 +56,6 @@ namespace Gecode {
   forceinline
   BoolVar::BoolVar(const Int::BoolView& x)
     : VarBase<Int::BoolVarImp>(x.var()) {}
-  forceinline
-  BoolVar::BoolVar(const Reflection::Var& x)
-    : VarBase<Int::BoolVarImp>(x.var<Int::BoolVarImp>()) {}
 
   forceinline int
   BoolVar::val(void) const {

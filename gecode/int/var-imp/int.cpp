@@ -354,54 +354,6 @@ namespace Gecode { namespace Int {
     return new (home) IntVarImp(home,share,*this);
   }
 
-  Reflection::Arg*
-  IntVarImp::spec(const Space&, Reflection::VarMap& m) const {
-    int varIndex = m.index(this);
-    if (varIndex != -1)
-      return Reflection::Arg::newVar(varIndex);
-
-    int count = 0;
-    const RangeList* p=NULL;
-    const RangeList* c=ranges_fwd();
-    while (c != NULL) {
-      const RangeList* n = c->next(p); p=c; c=n;
-      count++;
-    }
-    Reflection::IntArrayArg* args = Reflection::Arg::newIntArray(count*2);
-
-    Reflection::VarSpec* spec = new Reflection::VarSpec(vti, args,
-                                                        assigned());
-
-    count = 0;
-    p=NULL;
-    c=ranges_fwd();
-    while (c != NULL) {
-      (*args)[count++] = c->min();
-      (*args)[count++] = c->max();
-      const RangeList* n = c->next(p); p=c; c=n;
-    }
-
-    return Reflection::Arg::newVar(m.put(this, spec));
-  }
-
-  VarImpBase*
-  IntVarImp::create(Space& home, Reflection::VarSpec& spec) {
-    Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
-    return new (home) IntVarImp(home, IntSet(ai));
-  }
-
-  void
-  IntVarImp::constrain(Space& home, VarImpBase* v,
-                       Reflection::VarSpec& spec) {
-    Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
-    GECODE_ME_FAIL(home,
-      static_cast<Int::IntVarImp*>(v)->inter_r(home, ai, false));
-  }
-
-  namespace {
-    Reflection::VarImpRegistrar<IntVarImp> registerIntVarImp;
-  }
-
 }}
 
 // STATISTICS: int-var

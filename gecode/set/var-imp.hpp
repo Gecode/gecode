@@ -691,19 +691,6 @@ namespace Gecode { namespace Set {
     SetVarImp* copy(Space& home, bool share);
     //@}
 
-    /// \name Reflection
-    //@{
-    /// Return specification
-    GECODE_SET_EXPORT Reflection::Arg*
-    spec(const Space& home, Reflection::VarMap& m) const;
-    /// Create variable implementation from specification
-    static GECODE_SET_EXPORT VarImpBase*
-    create(Space& home, Reflection::VarSpec& spec);
-    /// Constrain variable implementation using specification
-    static GECODE_SET_EXPORT void
-    constrain(Space& home, VarImpBase* v, Reflection::VarSpec& spec);
-    //@}
-
     /// \name Delta information for advisors
     //@{
     /// Return modification event

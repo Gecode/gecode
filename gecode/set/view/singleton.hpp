@@ -50,13 +50,6 @@ namespace Gecode {
     SingletonView::SingletonView(Gecode::Int::IntView& i0)
       : DerivedViewBase<Gecode::Int::IntView>(i0) {}
 
-    forceinline
-    SingletonView::SingletonView(Space& home,
-                                 const Reflection::VarMap& vars,
-                                 Reflection::Arg* arg)
-  : DerivedViewBase<Gecode::Int::IntView>(Gecode::Int::IntView(home, vars,
-                                                               arg)) {}
-
     forceinline PropCond
     SingletonView::pc_settoint(PropCond pc) {
       switch(pc) {
@@ -271,15 +264,6 @@ namespace Gecode {
       view.update(home,share,y.view);
     }
 
-    forceinline Reflection::Arg*
-    SingletonView::spec(const Space& home, Reflection::VarMap& m) const {
-      return view.spec(home, m);
-    }
-
-    inline Support::Symbol
-    SingletonView::type(void) {
-      return Support::Symbol("Gecode::Set::SingletonView");
-    }
 
     /*
      * Delta information for advisors

@@ -47,9 +47,7 @@ namespace Gecode {
     ZeroIntView::ZeroIntView(void) {}
     forceinline void
     ZeroIntView::init(void) {}
-    forceinline
-    ZeroIntView::ZeroIntView(Space&, const Reflection::VarMap&,
-                             Reflection::Arg*) {}
+
 
     /*
      * Value access
@@ -288,18 +286,6 @@ namespace Gecode {
     forceinline void
     ZeroIntView::update(Space&, bool, ZeroIntView&) {}
 
-    /*
-     * Serialization
-     *
-     */
-    forceinline Reflection::Arg*
-    ZeroIntView::spec(const Space&, Reflection::VarMap&) const {
-      return Reflection::Arg::newInt(0);
-    }
-    inline Support::Symbol
-    ZeroIntView::type(void) {
-      return Support::Symbol("ConstIntView");
-    }
 
     /**
      * \brief %Range iterator for constant integer views

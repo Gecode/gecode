@@ -55,10 +55,6 @@ namespace Gecode {
   forceinline
   IntVar::IntVar(const Int::IntView& x)
     : VarBase<Int::IntVarImp>(x.var()) {}
-  forceinline
-  IntVar::IntVar(const Reflection::Var& x)
-    : VarBase<Int::IntVarImp>(x.var<Int::IntVarImp>()) {}
-
 
   forceinline int
   IntVar::val(void) const {

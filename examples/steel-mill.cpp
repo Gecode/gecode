@@ -394,10 +394,6 @@ public:
     virtual Actor* copy(Space& home, bool share) {
       return new (home) SteelMillBranch(home, share, *this);
     }
-    /// Reflection name
-    virtual const char* name(void) const {
-      return "SteelMillBranch";
-    }
     /// Post branching
     static void post(Space& home) {
       (void) new (home) SteelMillBranch(home);

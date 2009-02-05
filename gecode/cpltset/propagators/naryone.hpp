@@ -64,20 +64,6 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  Support::Symbol
-  NaryOneCpltSetPropagator<View0, View1>::ati(void) {
-    return
-      Reflection::mangle<View0,View1>("Gecode::CpltSet::NaryOneCpltSetPropagator");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec
-  NaryOneCpltSetPropagator<View0,View1>::spec(const Space& home,
-                                              Reflection::VarMap& m) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
-  template <class View0, class View1>
   forceinline Actor*
   NaryOneCpltSetPropagator<View0, View1>::copy(Space& home, bool share) {
     return new (home) NaryOneCpltSetPropagator(home, share, *this);

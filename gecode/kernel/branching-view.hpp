@@ -88,8 +88,6 @@ namespace Gecode {
     ViewSelStatus init(Space& home, View x);
     /// Possibly select better view \a x
     ViewSelStatus select(Space& home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
   };
 
   /**
@@ -109,8 +107,6 @@ namespace Gecode {
     ViewSelStatus init(Space& home, View x);
     /// Possibly select better view \a x
     ViewSelStatus select(Space& home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
   };
 
   /**
@@ -130,8 +126,6 @@ namespace Gecode {
     ViewSelStatus init(Space& home, View x);
     /// Possibly select better view \a x
     ViewSelStatus select(Space& home, View x);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
   };
 
   /**
@@ -165,8 +159,6 @@ namespace Gecode {
     void update(Space& home, bool share, ViewSelRnd& vs);
     /// Delete view selection
     void dispose(Space& home);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
   };
   //@}
 
@@ -217,11 +209,6 @@ namespace Gecode {
   ViewSelNone<View>::select(Space&, View) {
     return VSS_BEST;
   }
-  template<class View>
-  inline Support::Symbol
-  ViewSelNone<View>::type(void) {
-    return Support::Symbol("Gecode::ViewSel::None");
-  }
 
 
   // Select variable with smallest degree
@@ -251,11 +238,7 @@ namespace Gecode {
       return VSS_TIE;
     }
   }
-  template<class View>
-  inline Support::Symbol
-  ViewSelDegreeMin<View>::type(void) {
-    return Support::Symbol("Gecode::ViewSel::DegreeMin");
-  }
+
 
   // Select variable with largest degree
   template<class View>
@@ -284,11 +267,7 @@ namespace Gecode {
       return VSS_TIE;
     }
   }
-  template<class View>
-  inline Support::Symbol
-  ViewSelDegreeMax<View>::type(void) {
-    return Support::Symbol("Gecode::ViewSel::DegreeMax");
-  }
+
 
   // Select variable by random
   template<class View>
@@ -329,11 +308,6 @@ namespace Gecode {
   template<class View>
   forceinline void
   ViewSelRnd<View>::dispose(Space&) {
-  }
-  template<class View>
-  inline Support::Symbol
-  ViewSelRnd<View>::type(void) {
-    return Support::Symbol("Gecode::ViewSel::Rnd");
   }
 
 }

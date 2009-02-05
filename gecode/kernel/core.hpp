@@ -258,8 +258,6 @@ namespace Gecode {
     static Gecode::ModEvent me_combine(ModEvent me1, ModEvent me2);
     /// Update modification even delta \a med by \a me, return true on change
     static bool med_update(ModEventDelta& med, ModEvent me);
-    /// Variable type identifier for reflection
-    static GECODE_KERNEL_EXPORT const Support::Symbol vti;
   };
 
   forceinline ModEvent
@@ -538,26 +536,7 @@ namespace Gecode {
     /// Needed for exceptions
     static void  operator delete(void*);
     //@}
-
-    /// \name Reflection
-    //@{
-    /// Variable type identifier
-    static const Support::Symbol vti;
-    //@}
-
   };
-
-  template <class VIC>
-  const Support::Symbol
-  VarImp<VIC>::vti = VIC::vti;
-
-
-  namespace Reflection {
-    class ActorSpecIter;
-    class ActorSpec;
-    class BranchingSpec;
-    class VarMap;
-  }
 
   /**
    * \defgroup TaskActorStatus Status of constraint propagation and branching commit
@@ -582,7 +561,6 @@ namespace Gecode {
    */
   class PropCost {
     friend class Space;
-    friend class Reflection::ActorSpecIter;
   public:
     /// The actual cost values that are used
     enum ActualCost {
@@ -713,7 +691,6 @@ namespace Gecode {
     friend class Propagator;
     friend class Advisor;
     friend class Branching;
-    friend class Reflection::ActorSpecIter;
     template <class VIC> friend class VarImp;
     template <class A> friend class Council;
   private:
@@ -737,10 +714,6 @@ namespace Gecode {
     static void* operator new(size_t s, Space& home);
     /// No-op for exceptions
     static void  operator delete(void* p, Space& home);
-    /// Return specification for this actor given a variable map \a m
-    GECODE_KERNEL_EXPORT
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                       Reflection::VarMap& m) const;
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)
@@ -1050,7 +1023,6 @@ namespace Gecode {
    */
   class BranchingDesc {
     friend class Space;
-    friend class Reflection::BranchingSpec;
   private:
     unsigned int _id;  ///< Identity to match creating branching
     unsigned int _alt; ///< Number of alternatives
@@ -1086,7 +1058,6 @@ namespace Gecode {
     friend class ActorLink;
     friend class Space;
     friend class BranchingDesc;
-    friend class Reflection::ActorSpecIter;
   private:
     /// Unique identity (to match to branching descriptions)
     unsigned int id;
@@ -1129,14 +1100,6 @@ namespace Gecode {
      */
     virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a) = 0;
-    //@}
-
-    /// \name Reflection
-    //@{
-    /// Specification for BranchingDesc \a d
-    virtual GECODE_KERNEL_EXPORT Reflection::BranchingSpec
-    branchingSpec(const Space& home,
-                  Reflection::VarMap& m, const BranchingDesc& d) const;
     //@}
   };
 
@@ -1200,7 +1163,6 @@ namespace Gecode {
     friend class Propagator;
     friend class Branching;
     friend class Advisor;
-    friend class Reflection::ActorSpecIter;
     template <class VIC> friend class VarImp;
     template <class VarType> friend class VarDisposer;
     friend class CopiedHandle;
@@ -1564,19 +1526,6 @@ namespace Gecode {
      * branchings.
      */
     GECODE_KERNEL_EXPORT unsigned int branchings(void) const;
-
-    /**
-     * \name Reflection
-     */
-    //@{
-    /// Enter variables into \a m
-    GECODE_KERNEL_EXPORT
-    virtual void getVars(Reflection::VarMap& m, bool registerOnly);
-    /// Get reflection for BranchingDesc \a d
-    GECODE_KERNEL_EXPORT
-    Reflection::BranchingSpec branchingSpec(Reflection::VarMap& m,
-                                            const BranchingDesc& d) const;
-    //@}
 
     /**
      * \defgroup FuncMemSpace Space-memory management

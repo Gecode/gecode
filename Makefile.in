@@ -125,12 +125,11 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	exception symbol heap
+	exception heap
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
-	dynamic-stack exception map heap \
-	macros random sort \
-	static-stack symbol \
+	dynamic-stack exception heap \
+	macros random sort static-stack \
 	marked-pointer int-type auto-link
 
 BUDDYSRC0 = \
@@ -192,16 +191,15 @@ VARIMPHDR = \
 	gecode/kernel/var-type.hpp \
 	gecode/kernel/var-imp.hpp
 
-VARIMP = $(VARIMPHDR) gecode/kernel/var-type.cpp
+VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
-	core reflection var-map var-type memory-manager branch \
-	region
+	core memory-manager branch region
 
 KERNELHDR0 = \
 	array shared-array core exception \
 	macros memory-config memory-manager region modevent \
-	propagator advisor view var var-traits var-map reflection \
+	propagator advisor view var var-traits \
 	branch branching branching-view branching-tiebreak \
 	branching-val
 

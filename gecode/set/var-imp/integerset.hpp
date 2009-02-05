@@ -509,33 +509,6 @@ namespace Gecode { namespace Set {
       Limits::max,I>::init(i);
   }
 
-}
-
-namespace Reflection {
-
-  template <> forceinline
-  void operator<<(SpecHelper& s, const Gecode::Set::BndSet& x) {
-    int count = 0;
-    for (Gecode::Set::BndSetRanges xr(x); xr(); ++xr)
-      count++;
-    IntArrayArg* a = Arg::newIntArray(count*2);
-    count = 0;
-    for (Gecode::Set::BndSetRanges xr(x); xr(); ++xr) {
-      (*a)[count++] = xr.min();
-      (*a)[count++] = xr.max();
-    }
-    s.s << a;
-  }
-
-  template <> forceinline
-  void operator<<(SpecHelper& s, const Gecode::Set::LUBndSet& x) {
-    s << static_cast<const Gecode::Set::BndSet>(x);
-  }
-  template <> forceinline
-  void operator<<(SpecHelper& s, const Gecode::Set::GLBndSet& x) {
-    s << static_cast<const Gecode::Set::BndSet>(x);
-  }
-
 }}
 
 // STATISTICS: set-var

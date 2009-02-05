@@ -58,10 +58,6 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMinMin::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByMinMin");
-  }
 
   // Select variable with largest min
   forceinline
@@ -83,10 +79,6 @@ namespace Gecode { namespace Int { namespace Branch {
     } else {
       return VSS_TIE;
     }
-  }
-  inline Support::Symbol
-  ByMinMax::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByMinMax");
   }
 
   // Select variable with smallest max
@@ -110,10 +102,6 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByMaxMin::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByMaxMin");
-  }
 
   // Select variable with largest max
   forceinline
@@ -135,10 +123,6 @@ namespace Gecode { namespace Int { namespace Branch {
     } else {
       return VSS_TIE;
     }
-  }
-  inline Support::Symbol
-  ByMaxMax::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByMaxMax");
   }
 
   // Select variable with smallest size
@@ -163,10 +147,6 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  BySizeMin::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::BySizeMin");
-  }
 
   // Select variable with largest size
   forceinline
@@ -189,10 +169,6 @@ namespace Gecode { namespace Int { namespace Branch {
     } else {
       return VSS_TIE;
     }
-  }
-  inline Support::Symbol
-  BySizeMax::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::BySizeMax");
   }
 
   // Select variable with smallest size/degree
@@ -219,10 +195,6 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  BySizeDegreeMin::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::BySizeDegreeMin");
-  }
 
   // Select variable with largest size/degree
   forceinline
@@ -248,10 +220,6 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  BySizeDegreeMax::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::BySizeDegreeMax");
-  }
 
   // Select variable with smallest min-regret
   forceinline
@@ -274,10 +242,6 @@ namespace Gecode { namespace Int { namespace Branch {
     } else {
       return VSS_TIE;
     }
-  }
-  inline Support::Symbol
-  ByRegretMinMin::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByRegretMinMin");
   }
 
   // Select variable with largest min-regret
@@ -302,10 +266,6 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByRegretMinMax::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByRegretMinMax");
-  }
 
   // Select variable with smallest max-regret
   forceinline
@@ -329,10 +289,6 @@ namespace Gecode { namespace Int { namespace Branch {
       return VSS_TIE;
     }
   }
-  inline Support::Symbol
-  ByRegretMaxMin::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByRegretMaxMin");
-  }
 
   // Select variable with largest max-regret
   forceinline
@@ -355,10 +311,6 @@ namespace Gecode { namespace Int { namespace Branch {
     } else {
       return VSS_TIE;
     }
-  }
-  inline Support::Symbol
-  ByRegretMaxMax::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::ByRegretMaxMax");
   }
 
 }}}

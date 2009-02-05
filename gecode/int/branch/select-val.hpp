@@ -54,11 +54,6 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMin<View>::tell(Space& home, unsigned int a, View x, int n) {
     return (a == 0) ? x.eq(home,n) : x.gr(home,n);
   }
-  template<class View>
-  inline Support::Symbol
-  ValMin<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::ValMin");
-  }
 
   template<class View>
   forceinline
@@ -77,11 +72,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMed<View>::tell(Space& home, unsigned int a, View x, int n) {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
-  template<class View>
-  inline Support::Symbol
-  ValMed<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::ValMed");
-  }
+
 
   template<class View>
   forceinline
@@ -126,11 +117,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline void
   ValRnd<View>::dispose(Space&) {}
-  template<class View>
-  inline Support::Symbol
-  ValRnd<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::ValRnd");
-  }
+
 
   template<class View>
   forceinline
@@ -149,22 +136,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSplitMin<View>::tell(Space& home, unsigned int a, View x, int n) {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
   }
-  template<class View>
-  inline Support::Symbol
-  ValSplitMin<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::ValSplitMin");
-  }
 
-
-  inline Support::Symbol
-  NoValue::type(void) {
-    return Support::Symbol("Gecode::Int::Branch::NoValue");
-  }
-
-  forceinline
-  NoValue::operator int(void) const {
-    return 0;
-  }
 
   template<class View>
   forceinline
@@ -183,11 +155,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ValZeroOne<View>::tell(Space& home, unsigned int a, View x, NoValue) {
     return (a == 0) ? x.zero(home) : x.one(home);
   }
-  template<class View>
-  inline Support::Symbol
-  ValZeroOne<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::ValZeroOne");
-  }
+
 
   template<class View>
   forceinline
@@ -196,11 +164,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   AssignValMin<View>::AssignValMin(Space& home, const ValBranchOptions& vbo)
     : ValMin<View>(home,vbo) {}
-  template<class View>
-  inline Support::Symbol
-  AssignValMin<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::AssignValMin");
-  }
+
 
   template<class View>
   forceinline
@@ -209,11 +173,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   AssignValMed<View>::AssignValMed(Space& home, const ValBranchOptions& vbo)
     : ValMed<View>(home,vbo) {}
-  template<class View>
-  inline Support::Symbol
-  AssignValMed<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::AssignValMed");
-  }
+
 
   template<class View>
   forceinline
@@ -222,11 +182,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   AssignValRnd<View>::AssignValRnd(Space& home, const ValBranchOptions& vbo)
     : ValRnd<View>(home,vbo) {}
-  template<class View>
-  inline Support::Symbol
-  AssignValRnd<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::AssignValRnd");
-  }
+
 
   template<class View>
   forceinline
@@ -236,107 +192,8 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignValZero<View>::AssignValZero(Space& home,
                                      const ValBranchOptions& vbo)
     : ValZeroOne<View>(home,vbo) {}
-  template<class View>
-  inline Support::Symbol
-  AssignValZero<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::Int::Branch::AssignValZero");
-  }
 
-}}
-
-#define GECODE_INT_BRANCH_VALTOSTRING(multiplier,eq,nq,isBool) \
-public: \
-  static std::ostream& toString(std::ostream& os, \
-                                Space&, Reflection::VarMap& vm, \
-                                const Reflection::BranchingSpec& bs, \
-                                unsigned int alt) { \
-    int v = bs[0]->toVar(); \
-    if (vm.hasName(v)) \
-      os << vm.name(v).toString(); \
-    else { \
-      os << "_v" << v; \
-    } \
-    if (alt == 0) \
-      os << " " << eq << " "; \
-    else \
-      os << " " << nq << " "; \
-    if (isBool) \
-      os << multiplier; \
-    else \
-      os << multiplier*bs[1]->toInt(); \
-    return os; \
-  }
-
-  template <>
-  class ValSelToString<Int::Branch::ValMin<Int::IntView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==",">",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValMin<Int::MinusView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(-1,"==","<",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValMed<Int::IntView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValRnd<Int::IntView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValRnd<Int::BoolView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValSplitMin<Int::IntView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"<=",">",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValSplitMin<Int::MinusView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(-1,">=","<",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValZeroOne<Int::BoolView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(0,"==","!=",true)
-  };
-  template <>
-  class ValSelToString<Int::Branch::ValZeroOne<Int::NegBoolView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",true)
-  };
-
-  template <>
-  class ValSelToString<Int::Branch::AssignValMin<Int::IntView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==",">",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::AssignValMin<Int::MinusView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(-1,"==","<",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::AssignValMed<Int::IntView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::AssignValRnd<Int::IntView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::AssignValZero<Int::BoolView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::AssignValZero<Int::NegBoolView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-  template <>
-  class ValSelToString<Int::Branch::AssignValRnd<Int::BoolView> > {
-    GECODE_INT_BRANCH_VALTOSTRING(1,"==","!=",false)
-  };
-
-#undef GECODE_INT_BRANCH_VALTOSTRING
-
-}
-
+}}}
 
 // STATISTICS: int-branch
 

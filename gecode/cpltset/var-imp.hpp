@@ -342,12 +342,6 @@ namespace Gecode { namespace CpltSet {
     CpltSetVarImp* copy(Space& home, bool share);
     //@}
 
-    /// \name Reflection
-    //@{
-    GECODE_CPLTSET_EXPORT Reflection::Arg*
-    spec(const Space& home, Reflection::VarMap& m) const;
-    //@}
-
     /// \name Delta information for advisors
     //@{
     /// Return modification event

@@ -78,22 +78,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     }
   }
 
-  template <class SelView, class SelVal>
-  void
-  registerOne(void) {
-    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(),
-                               &ValSelToString<SelVal>::toString);
-  }
-
-  template <class SelView>
-  void
-  registerAllCpltSetView(void) {
-    registerOne<SelView,ValMin<false> >();
-    registerOne<SelView,ValMin<true> >();
-    registerOne<SelView,ValMax<false> >();
-    registerOne<SelView,ValMax<true> >();
-  }
-
 }}}
 
 // STATISTICS: cpltset-branch

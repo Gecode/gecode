@@ -61,18 +61,6 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View1, class View2>
-  Support::Symbol
-  Singleton<View1,View2>::ati(void) {
-    return Reflection::mangle<View1,View2>("Gecode::CpltSet::Singleton");
-  }
-
-  template <class View1, class View2>
-  Reflection::ActorSpec
-  Singleton<View1,View2>::spec(const Space&, Reflection::VarMap&) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
-  template <class View1, class View2>
   size_t
   Singleton<View1, View2>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

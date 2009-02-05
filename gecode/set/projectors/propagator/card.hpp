@@ -67,16 +67,6 @@ namespace Gecode { namespace Set { namespace Projection {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  inline Support::Symbol
-  CardProjection::ati(void) {
-    return Support::Symbol("set.projectors.CardProjection");
-  }
-
-  forceinline Reflection::ActorSpec
-  CardProjection::spec(const Space&, Reflection::VarMap&) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
   inline size_t
   CardProjection::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

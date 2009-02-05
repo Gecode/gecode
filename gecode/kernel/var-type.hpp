@@ -312,8 +312,6 @@ namespace Gecode { namespace Int {
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
     /// Update modification even delta \a med by \a me, return true on change
     static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
-    /// Variable type identifier for reflection
-    static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
 }}
 #else
@@ -353,8 +351,6 @@ namespace Gecode { namespace Int {
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
     /// Update modification even delta \a med by \a me, return true on change
     static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
-    /// Variable type identifier for reflection
-    static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
 }}
 #else
@@ -394,8 +390,6 @@ namespace Gecode { namespace Set {
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
     /// Update modification even delta \a med by \a me, return true on change
     static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
-    /// Variable type identifier for reflection
-    static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
 }}
 #else
@@ -440,8 +434,6 @@ namespace Gecode { namespace CpltSet {
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
     /// Update modification even delta \a med by \a me, return true on change
     static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
-    /// Variable type identifier for reflection
-    static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;
   };
 }}
 #else

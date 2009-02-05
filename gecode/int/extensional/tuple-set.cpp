@@ -216,56 +216,6 @@ namespace Gecode {
     heap.rfree(last);
   }
 
-
-  TupleSet::TupleSet(Reflection::VarMap& vm, Reflection::Arg* arg) {
-    if (arg->isSharedReference()) {
-      TupleSetI* d =
-        static_cast<TupleSetI*>(vm.getSharedObject(arg->toSharedReference()));
-      object(d);
-      return;
-    }
-
-    Reflection::IntArrayArg* a = arg->toSharedObject()->toIntArray();
-
-    // All done... Construct the table
-
-    int arity = (*a)[0];
-    int n_tuples = (a->size() - 1) / arity;
-    assert(n_tuples*arity == a->size()-1);
-    int pos = 1;
-    IntArgs ia(arity);
-    for (int i = n_tuples; i--; ) {
-      for (int j = 0; j < arity; ++j) {
-        ia[j] = (*a)[pos++];
-      }
-      add(ia);
-    }
-    finalize();
-
-    vm.putMasterObject(object());
-  }
-
-  Reflection::Arg*
-  TupleSet::spec(Reflection::VarMap& vm) const {
-    int sharedIndex = vm.getSharedIndex(object());
-    if (sharedIndex >= 0)
-      return Reflection::Arg::newSharedReference(sharedIndex);
-    Reflection::IntArrayArg* a =
-      Reflection::Arg::newIntArray(static_cast<int>(1+arity()*tuples()));
-
-    (*a)[0] = arity();
-
-    int pos = 1;
-    for (int i = 0; i < tuples(); ++i) {
-      for (int j = 0; j < arity(); ++j) {
-        (*a)[pos++] = (*this)[i][j];
-      }
-    }
-
-    vm.putMasterObject(object());
-    return Reflection::Arg::newSharedObject(a);
-  }
-
 }
 
 // STATISTICS: int-prop

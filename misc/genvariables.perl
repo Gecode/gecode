@@ -43,8 +43,6 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
     $gen_header = 1;
   } elsif ($arg eq "-typehpp") {
     $gen_typehpp   = 1;
-  } elsif ($arg eq "-typecpp") {
-    $gen_typecpp   = 1;
   }
 }
 
@@ -428,8 +426,6 @@ if ($gen_typehpp) {
     print "    static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);\n";
     print "    /// Update modification even delta \\a med by \\a me, return true on change\n";
     print "    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);\n";
-    print "    /// Variable type identifier for reflection\n";
-    print "    static GECODE_KERNEL_EXPORT const Gecode::Support::Symbol vti;\n";
     print "  };\n";
     print $ftr[$f];
     if (!($ifdef[$f] eq "")) {
@@ -653,19 +649,6 @@ if ($gen_typehpp) {
   }
   print "    return med1;\n";
   print "  }\n}\n\n";
-}
-
-if ($gen_typecpp) {
-  print "#include <gecode/kernel.hh>\n";
-  print "\n";
-  for ($f = 0; $f<$n_files; $f++) {
-    print $ifdef[$f];
-    print $hdr[$f];
-    print "  const Gecode::Support::Symbol $conf[$f]::vti = \"$name[$f]\";\n";
-    print $ftr[$f];
-    print $endif[$f];
-  }
-  print "\n";
 }
 
 if ($gen_header) {

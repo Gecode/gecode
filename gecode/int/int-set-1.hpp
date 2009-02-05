@@ -226,58 +226,6 @@ namespace Gecode {
     return os << s.str();
   }
 
-  namespace Reflection {
-    template<>
-    forceinline
-    void operator>>(PostHelper& p, IntSet& is) {
-      Reflection::IntArrayArgRanges r(p.spec[p.arg++]->toIntArray());
-      is = IntSet(r);
-    }
-
-    template <>
-    forceinline
-    void operator<<(SpecHelper& s, const IntSet& is) {
-      int count=0;
-      for (IntSetRanges isr(is); isr(); ++isr)
-        count++;
-      Reflection::IntArrayArg* a = Reflection::Arg::newIntArray(count*2);
-      count = 0;
-      for (IntSetRanges isr(is); isr(); ++isr) {
-        (*a)[count++] = isr.min();
-        (*a)[count++] = isr.max();
-      }
-      s.s << a;
-    }
-
-    template <> forceinline void
-    operator<<(SpecHelper& s, const SharedArray<IntSet>& sa) {
-      ArrayArg* a = Arg::newArray(sa.size());
-      for (int i=0; i<sa.size(); i++) {
-        int count = 0;
-        for (IntSetRanges isr(sa[i]); isr(); ++isr)
-          count++;
-        IntArrayArg* aa = Arg::newIntArray(count*2);
-        count = 0;
-        for (IntSetRanges isr(sa[i]); isr(); ++isr) {
-          (*aa)[count++] = isr.min();
-          (*aa)[count++] = isr.max();
-        }
-        (*a)[i] = aa;
-      }
-      s.s << a;
-    }
-    template <> forceinline void
-    operator>>(PostHelper& p, SharedArray<IntSet>& sa) {
-      ArrayArg* a = p.spec[p.arg++]->toArray();
-      SharedArray<IntSet> saa(a->size());
-      for (int i=a->size(); i--;) {
-        Reflection::IntArrayArgRanges r((*a)[i]->toIntArray());
-        new (&saa[i]) IntSet(r);
-      }
-      sa = saa;
-    }
-
-  }
 }
 
 // STATISTICS: int-var

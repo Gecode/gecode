@@ -71,11 +71,6 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
 
     /// Delete propagator
     virtual size_t dispose(Space& home);
@@ -121,11 +116,6 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
 
     /// Delete propagator
     virtual size_t dispose(Space& home);
@@ -153,11 +143,6 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
 
     /// Delete propagator
     virtual size_t dispose(Space& home);
@@ -195,11 +180,6 @@ namespace Gecode { namespace CpltSet {
     ExecStatus divide_conquer(Space& home, bdd& p,
                               int l, int r, int ypos);
   public:
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Delete propagator
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
@@ -240,11 +220,6 @@ namespace Gecode { namespace CpltSet {
     ExecStatus divide_conquer(Space& home, bdd& p, int l, int r,
                               int ypos, int zpos);
   public:
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator
@@ -306,12 +281,6 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec spec(const Space& home,
-                                        Reflection::VarMap& m) const;
-    /// Name of this propagator
-    static Support::Symbol ati(void);
-
     /// Delete propagator
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning

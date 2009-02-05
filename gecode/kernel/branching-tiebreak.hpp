@@ -84,8 +84,6 @@ namespace Gecode {
     void update(Space& home, bool share, ViewSelTieBreakStatic& vs);
     /// Delete view selection
     void dispose(Space& home);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
   };
 
   /**
@@ -234,8 +232,6 @@ namespace Gecode {
     void update(Space& home, bool share, ViewSelTieBreakDynamic& vs);
     /// Delete view selection
     void dispose(Space& home);
-    /// Type of this view selection (for reflection)
-    static Support::Symbol type(void);
   };
   //@}
 
@@ -302,11 +298,6 @@ namespace Gecode {
                                      unsigned int al) {
     a.commit(home, d.a, al);
     b.commit(home, d.b, al);
-  }
-  template<class A, class B>
-  inline Support::Symbol
-  ViewSelTieBreakStatic<A,B>::type(void) {
-    return Reflection::mangle<A,B>("Gecode::ViewSel::TieBreakStatic");
   }
   template<class A, class B>
   forceinline void
@@ -535,11 +526,6 @@ namespace Gecode {
   (Space& home, const typename ViewSelTieBreakDynamic<View>::Desc& d,
    unsigned int a) {
     d.commit(home,a,tb);
-  }
-  template<class View>
-  inline Support::Symbol
-  ViewSelTieBreakDynamic<View>::type(void) {
-    return Reflection::mangle<View>("Gecode::ViewSel::TieBreakDynamic");
   }
   template<class View>
   forceinline void

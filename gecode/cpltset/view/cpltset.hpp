@@ -225,19 +225,6 @@ namespace Gecode { namespace CpltSet {
   }
 
   /*
-   * Serialization
-   *
-   */
-  forceinline Reflection::Arg*
-  CpltSetView::spec(const Space& home, Reflection::VarMap& m) const {
-    return varimp->spec(home, m);
-  }
-  inline Support::Symbol
-  CpltSetView::type(void) {
-    return Support::Symbol("CpltSet::CpltSetView");
-  }
-
-  /*
    * Delta information for advisors
    *
    */

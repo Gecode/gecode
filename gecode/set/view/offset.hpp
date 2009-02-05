@@ -55,14 +55,6 @@ namespace Gecode {
       : DerivedViewBase<View>(s0), k(k0) {}
 
     template <class View>
-    forceinline
-    OffsetSetView<View>::OffsetSetView(Space& home,
-                                       const Reflection::VarMap& vars,
-                                       Reflection::Arg* arg)
-      : DerivedViewBase<View>(View(home, vars, arg->second())),
-        k(arg->first()->toInt()) {}
-
-    template <class View>
     forceinline bool
     OffsetSetView<View>::assigned(void) const { return view.assigned(); }
 
@@ -264,21 +256,6 @@ namespace Gecode {
       view.update(home,share,y.view);
     }
 
-    template <class View>
-    forceinline Reflection::Arg*
-    OffsetSetView<View>::spec(const Space& home, Reflection::VarMap& m) const {
-      return Reflection::Arg::newPair(Reflection::Arg::newInt(k),
-                                      view.spec(home, m));
-    }
-
-    template <class View>
-    inline Support::Symbol
-    OffsetSetView<View>::type(void) {
-      Support::Symbol t("Set::OffsetSetView<");
-      t += View::type();
-      t += ">";
-      return t;
-    }
 
     /*
      * Delta information for advisors

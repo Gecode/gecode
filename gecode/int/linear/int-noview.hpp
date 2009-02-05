@@ -194,19 +194,6 @@ namespace Gecode {
       }
       //@}
 
-      /// \name Reflection
-      //@{
-      /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const {
-        (void) home; (void) m;
-        return NULL;
-      }
-      /// Type of this view
-      static Support::Symbol type(void) {
-        return Support::Symbol("Gecode::Int::Linear::NoView");
-      }
-      //@}
-
       /// \name View comparison
       //@{
       /// Test whether this view is the same as \a x
@@ -240,8 +227,6 @@ namespace Gecode {
     ViewArray(const ViewArray<Int::Linear::NoView>&) {}
     /// Initialize
     ViewArray(Space&, const ViewArray<Int::Linear::NoView>&) {}
-    /// Initialize
-    ViewArray(Space&, const Reflection::VarMap&, Reflection::Arg*) {}
     /// Initialize
     const ViewArray<Int::Linear::NoView>& operator =(const ViewArray<Int::Linear::NoView>&) { return *this; }
     //@}
@@ -289,16 +274,6 @@ namespace Gecode {
       (void) share; (void) a;
     }
     //@}
-
-    /// \name Reflection
-    //@{
-    /// Return specification for this array, using variable map \a m
-    Reflection::Arg* spec(const Space& home, Reflection::VarMap& m) const {
-      (void) home; (void) m;
-      return Reflection::Arg::newArray(0);
-    }
-    //@}
-
 
     /// \name Moving elements
     //@{

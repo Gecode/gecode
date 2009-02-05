@@ -202,12 +202,6 @@ namespace Gecode { namespace CpltSet {
     return ptr;
   }
 
-  Reflection::Arg*
-  CpltSetVarImp::spec(const Space&, Reflection::VarMap&) const {
-    // \todo FIXME implemente reflection
-    return NULL;
-  }
-
   // a variable is only assigned if all bdd variables representing
   // the elements of the set have either a constant false or a constant true
   bool

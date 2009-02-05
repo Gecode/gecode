@@ -72,21 +72,6 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   template <bool negated>
-  Support::Symbol
-  NaryProjection<negated>::ati(void) {
-    if (negated)
-      return Support::Symbol("set.projectors.NaryProjection<true>");
-    else
-      return Support::Symbol("set.projectors.NaryProjection<false>");
-  }
-
-  template <bool negated>
-  Reflection::ActorSpec
-  NaryProjection<negated>::spec(const Space&, Reflection::VarMap&) const {
-    throw Reflection::ReflectionException("Not implemented");
-  }
-
-  template <bool negated>
   size_t
   NaryProjection<negated>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

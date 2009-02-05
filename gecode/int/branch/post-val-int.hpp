@@ -98,28 +98,6 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
-  template <class SelView, class SelVal>
-  void
-  registerOneIntView(void) {
-    Reflection::registry().add(ViewValBranching<SelView,SelVal>::ati(),
-                               &ValSelToString<SelVal>::toString);
-  }
-
-  template <class SelView>
-  void
-  registerAllIntView(void) {
-    registerOneIntView<SelView,ValMin<IntView> >();
-    registerOneIntView<SelView,ValMed<IntView> >();
-    registerOneIntView<SelView,ValMin<MinusView> >();
-    registerOneIntView<SelView,ValRnd<IntView> >();
-    registerOneIntView<SelView,ValSplitMin<IntView> >();
-    registerOneIntView<SelView,ValSplitMin<MinusView> >();
-    Reflection::registry().add(ViewValuesBranching<SelView,IntView>::ati(),
-      &ViewValuesBranchingToString<IntView>::toString);
-    Reflection::registry().add(ViewValuesBranching<SelView,MinusView>::ati(),
-      &ViewValuesBranchingToString<MinusView>::toString);
-  }
-
 }}}
 
 // STATISTICS: int-branch

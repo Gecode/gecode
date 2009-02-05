@@ -151,14 +151,6 @@
 
 
 /*
- * Access to the constraint graph
- *
- */
-
-#include <gecode/kernel/reflection.hpp>
-
-
-/*
  * Views
  *
  */
@@ -172,14 +164,6 @@
  */
 
 #include <gecode/kernel/array.hpp>
-
-
-/*
- * Access to the constraint graph
- *
- */
-
-#include <gecode/kernel/var-map.hpp>
 
 
 /*

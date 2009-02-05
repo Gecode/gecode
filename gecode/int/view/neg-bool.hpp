@@ -57,10 +57,6 @@ namespace Gecode {
     NegBoolView::init(const BoolView& b) {
       view = b;
     }
-    forceinline
-    NegBoolView::NegBoolView(Space& home, const Reflection::VarMap& vars,
-                             Reflection::Arg* arg)
-    : DerivedViewBase<BoolView>(BoolView(home, vars, arg)) {}
 
 
     /*
@@ -216,18 +212,6 @@ namespace Gecode {
       view.update(home,share,b.view);
     }
 
-    /*
-     * Serialization
-     *
-     */
-    forceinline Reflection::Arg*
-    NegBoolView::spec(const Space& home, Reflection::VarMap& m) const {
-      return view.spec(home, m);
-    }
-    inline Support::Symbol
-    NegBoolView::type(void) {
-      return Support::Symbol("Gecode::Int::NegBoolView");
-    }
 
     /**
      * \brief %Range iterator for negated Boolean variable views

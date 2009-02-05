@@ -153,44 +153,6 @@
  */
 
 /**
- * \defgroup TaskReflSer Reflection and serialization
- * \ingroup Task
- *
- * Reflection allows you to query a Space object for the propagators, 
- * branchings, and variables that it contains.
- *
- * Serialization provides methods for producing a text or binary 
- * representation of a space that can be used to recreate a copy of the space.
- */
-
-/**
- * \defgroup TaskReflection Reflection API
- *
- * The reflection API provides information about the propagators, branchings,
- * and variables in a space. More detailed, step-by-step information can be 
- * found in the \ref PageReflection "reflection tutorial".
- *
- * Requires \code #include <gecode/kernel.hh> \endcode
- *
- * \ingroup TaskReflSer
- */
-
-#include "doxygen/reflection.hh"
-
-/**
- * \defgroup TaskSerialization Serialization
- *
- * The serialization API lets you produce text or binary representations of a 
- * space, and recreate a copy of the original space from that representation.  
- * It provides funcionality for creating variables and posting propagators in 
- * a space using the specifications obtained through reflection.
- *
- * Requires \code #include <gecode/serialization.hh> \endcode
- *
- * \ingroup TaskReflSer
- */
-
-/**
  * \defgroup TaskGist Gist
  *
  * Gist is the Gecode Interactive Search Tool. It is based on the
@@ -715,8 +677,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    (see for example \ref TaskModelCpltSet and \ref TaskActorCpltSet).
  *  - gecode/minimodel.hh must be included, if direct modelling support
  *    is used (see for example \ref TaskModelMiniModel).
- *  - gecode/serialization.hh must be included, if support for serialization
- *    is used.
  *
  * Other functionality is available through a set of header files. For example
  * to access the implementation of particular propagators, a particular header
@@ -742,8 +702,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    required.
  *  - If gecode/minimodel.hh is included, linking against the minimodel
  *    library is required.
- *  - If gecode/serialization.hh is included, linking against the 
- *    serialization library is required.
  *
  * The functionality in \ref FuncIter requires no
  * library for linking. Reusing integer or set propagators of course
@@ -754,8 +712,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * corresponding DLL must be available for execution (such as in the
  * PATH environment variable).
  *
- * The libraries contain code that is executed at link time (for registering
- * part of the reflection functionality).  If you create static libraries,
+ * The libraries might contain code that is executed at link time.  
+ * If you create static libraries,
  * this code will not be linked into your executable as it is not directly
  * referenced. You will have to tell your linker to include all symbols from 
  * the library (e.g. using -Wl,--whole-archive on Linux). Please refer to your
@@ -792,7 +750,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - Set library: libgecodeset.&lt;EXT&gt;
  *  - CpltSet library: libgecodecpltset.&lt;EXT&gt;
  *  - Minimodel library: libgecodeminimodel.&lt;EXT&gt;
- *  - Serialization library: libgecodeserialization.&lt;EXT&gt;
  *
  * where &lt;EXT&gt; depends on the library type and platform:
  *

@@ -108,14 +108,6 @@ namespace Gecode {
       : DerivedViewBase<IntView>(x), a(b) {}
 
     template <class Val, class UnsVal>
-    forceinline
-    ScaleView<Val,UnsVal>::ScaleView(Space& home,
-                                     const Reflection::VarMap& vars,
-                                     Reflection::Arg* arg)
-    : DerivedViewBase<IntView>(IntView(home, vars, arg->second())),
-      a(arg->first()->toInt()) {}
-
-    template <class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::init(int b, const IntView& x) {
       view=x; a=b;
@@ -341,22 +333,6 @@ namespace Gecode {
       a=x.a; view.update(home,share,x.view);
     }
 
-    /*
-     * Serialization
-     *
-     */
-    template <class Val, class UnsVal>
-    forceinline Reflection::Arg*
-    ScaleView<Val,UnsVal>::spec(const Space& home,
-                                Reflection::VarMap& m) const {
-      return Reflection::Arg::newPair(Reflection::Arg::newInt(a),
-                                      view.spec(home, m));
-    }
-    template <class Val, class UnsVal>
-    inline Support::Symbol
-    ScaleView<Val,UnsVal>::type(void) {
-      return Support::Symbol("Gecode::Int::ScaleView");
-    }
 
 
     /**
