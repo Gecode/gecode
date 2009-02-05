@@ -463,9 +463,6 @@ namespace Gecode { namespace Gist {
           delete curSpace;
           curSpace = dfsSpace;
         }
-        Reflection::VarMap vm;
-        curSpace->getVars(vm, false);
-        emit inspect(vm, nextPit);
         saveCurrentNode();
         if (activeInspector != -1) {
           inspectors[activeInspector]->inspect(*curSpace);
@@ -955,16 +952,6 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::setSmoothScrollAndZoom(bool b) {
     smoothScrollAndZoom = b;
-  }
-
-  void
-  TreeCanvas::getRootVars(Gecode::Reflection::VarMap& vm) {
-    QMutexLocker locker(&mutex);
-    if(root != NULL) {
-      Space* space = root->getSpace(curBest,c_d,a_d);
-      space->getVars(vm, false);
-      delete space;
-    }
   }
 
 }}

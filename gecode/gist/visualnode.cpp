@@ -216,28 +216,8 @@ namespace Gecode { namespace Gist {
   }
 
   std::string
-  VisualNode::toolTip(BestNode* curBest, int c_d, int a_d) {
-    if (getStatus() != BRANCH && getStatus() != DECOMPOSE)
-      return "";
-    acquireSpace(curBest,c_d,a_d);
-    assert(workingSpace->status() == SS_BRANCH);
-    const BranchingDesc* d = desc.branch;
-    Reflection::VarMap vm;
-    workingSpace->getVars(vm, false);
-    std::ostringstream tt;
-    try {
-      Reflection::BranchingSpec bs = workingSpace->branchingSpec(vm,*d);
-      tt << "Alternatives of branching " << bs.ati().toString() << ":\n";
-      for (int i=0; i<d->alternatives(); i++) {
-        tt << i << ": ";
-        Reflection::registry().printBranchingSpec(tt,*workingSpace,vm,bs,i);
-        if (i < d->alternatives()-1)
-          tt << "\n";
-      }
-    } catch (Reflection::ReflectionException&) {
-      tt << "No information available";
-    }
-    return tt.str();
+  VisualNode::toolTip(BestNode*, int, int) {
+    return "";
   }
 
   /// \brief Helper functions for the layout algorithm

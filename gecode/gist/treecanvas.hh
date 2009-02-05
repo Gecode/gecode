@@ -178,9 +178,6 @@ namespace Gecode {  namespace Gist {
     /// Resize to the outer widget size if auto zoom is enabled
     void resizeToOuter(void);
 
-    /// Calls getVars(\a vm) on the space of the root node
-    void getRootVars(Gecode::Reflection::VarMap& vm);
-
     /// Stop search and wait for it to finish
     void finish(void);
 
@@ -193,8 +190,6 @@ namespace Gecode {  namespace Gist {
     void contextMenu(QContextMenuEvent*);
     /// Status bar update
     void statusChanged(VisualNode*,const Statistics&, bool);
-    /// The node with space \a s is inspected at point in time \a pit
-    void inspect(Gecode::Reflection::VarMap& vm, int pit);
     /// The point in time changed to \a pit
     void pointInTimeChanged(int pit);
     /// A new solution \a s has been found
