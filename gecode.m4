@@ -822,7 +822,7 @@ AC_DEFUN([AC_GECODE_DOC_SWITCHES],
      AC_HELP_STRING([--enable-doc-tagfile],
 	[generate doxygen tagfile @<:@default=yes@:>@]))
    AC_MSG_CHECKING(whether to generate a doxygen tagfile)
-   if test "${enable_doc_tagfile:-no}" = "yes"; then
+   if test "${enable_doc_tagfile:-yes}" = "yes"; then
      AC_MSG_RESULT(yes)
      AC_SUBST(GECODE_DOXYGEN_TAGFILE, "doc/gecode-doc.tag")
    else
