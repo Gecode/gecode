@@ -85,9 +85,9 @@ namespace Gecode {
      * \ingroup TaskModelSearch
      */
     namespace Config {
-      /// Create a clone after every \a c_d commits
+      /// Create a clone after every \a c_d commits (commit distance)
       const unsigned int c_d = 8;
-      /// Create a clone during recomputation if distance is greater than \a a_d
+      /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       const unsigned int a_d = 2;
       /// Default discrepancy limit for LDS
       const unsigned int d = 5;
@@ -255,9 +255,9 @@ namespace Gecode {
      */
     class Options {
     public:
-      /// Create a clone after every \a c_d commits (for DFS and BAB)
+      /// Create a clone after every \a c_d commits (commit distance)
       unsigned int c_d;
-      /// Create a clone during recomputation if distance is greater than \a a_d (for DFS and BAB)
+      /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
       /// Discrepancy (for LDS)
       unsigned int d;
