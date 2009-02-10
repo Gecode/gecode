@@ -74,6 +74,14 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+More set branching strategies have been added (for instance random variable 
+and value selection), as well as set assignment.
+
+[ENTRY]
 Module: other
 What:   removed
 Rank:   major

@@ -986,6 +986,8 @@ namespace Gecode {
   enum SetValBranch {
     SET_VAL_MIN_INC, ///< Include smallest element
     SET_VAL_MIN_EXC, ///< Exclude smallest element
+    SET_VAL_MED_INC, ///< Include median element (rounding downwards)
+    SET_VAL_MED_EXC, ///< Exclude median element (rounding downwards)
     SET_VAL_MAX_INC, ///< Include largest element
     SET_VAL_MAX_EXC, ///< Exclude largest element
     SET_VAL_RND_INC, ///< Include random element
@@ -1015,6 +1017,8 @@ namespace Gecode {
   enum SetAssign {
     SET_ASSIGN_MIN_INC, ///< Include smallest element
     SET_ASSIGN_MIN_EXC, ///< Exclude smallest element
+    SET_ASSIGN_MED_INC, ///< Include median element (rounding downwards)
+    SET_ASSIGN_MED_EXC, ///< Exclude median element (rounding downwards)
     SET_ASSIGN_MAX_INC, ///< Include largest element
     SET_ASSIGN_MAX_EXC, ///< Exclude largest element
     SET_ASSIGN_RND_INC, ///< Include random element

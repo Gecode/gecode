@@ -80,6 +80,26 @@ namespace Gecode { namespace Set { namespace Branch {
   };
 
   /**
+   * \brief Class for selecting median value (rounding downwards)
+   *
+   * All value selection classes require
+   * \code #include <gecode/set/branch.hh> \endcode
+   * \ingroup FuncSetSelVal
+   */
+  template <bool inc>
+  class ValMed : public ValSelBase<SetView,int> {
+  public:
+    /// Default constructor
+    ValMed(void);
+    /// Constructor for initialization
+    ValMed(Space& home, const ValBranchOptions& vbo);
+    /// Return minimum value of view \a x
+    int val(Space& home, SetView x) const;
+    /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
+    ModEvent tell(Space& home, unsigned int a, SetView x, int v);
+  };
+
+  /**
    * \brief Class for selecting maximum value
    *
    * All value selection classes require
@@ -148,6 +168,18 @@ namespace Gecode { namespace Set { namespace Branch {
     AssignValMin(void);
     /// Constructor for initialization
     AssignValMin(Space& home, const ValBranchOptions& vbo);
+  };
+
+  /// Class for assigning median value (rounding downwards)
+  template<bool inc>
+  class AssignValMed : public ValMed<inc> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValMed(void);
+    /// Constructor for initialization
+    AssignValMed(Space& home, const ValBranchOptions& vbo);
   };
 
   /// Class for assigning maximum value

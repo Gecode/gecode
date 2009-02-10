@@ -248,6 +248,8 @@ namespace Test { namespace Branch {
   const Gecode::SetValBranch set_val_branch[] = {
     Gecode::SET_VAL_MIN_INC,
     Gecode::SET_VAL_MIN_EXC,
+    Gecode::SET_VAL_MED_INC,
+    Gecode::SET_VAL_MED_EXC,
     Gecode::SET_VAL_MAX_INC,
     Gecode::SET_VAL_MAX_EXC,
     Gecode::SET_VAL_RND_INC,
@@ -260,6 +262,8 @@ namespace Test { namespace Branch {
   const char* set_val_branch_name[] = {
     "SET_VAL_MIN_INC",
     "SET_VAL_MIN_EXC",
+    "SET_VAL_MED_INC",
+    "SET_VAL_MED_EXC",
     "SET_VAL_MAX_INC",
     "SET_VAL_MAX_EXC",
     "SET_VAL_RND_INC",

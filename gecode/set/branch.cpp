@@ -63,6 +63,22 @@ namespace Gecode {
           (home,xv,v,a);
       }
       break;
+    case SET_ASSIGN_MED_INC:
+      {
+        Branch::AssignValMed<true> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelNone<SetView>,Branch::AssignValMed<true> >
+          (home,xv,v,a);
+      }
+      break;
+    case SET_ASSIGN_MED_EXC:
+      {
+        Branch::AssignValMed<false> a(home,o_vals);
+        (void) new (home) ViewValBranching
+          <ViewSelNone<SetView>,Branch::AssignValMed<false> >
+          (home,xv,v,a);
+      }
+      break;
     case SET_ASSIGN_MAX_INC:
       {
         Branch::AssignValMax<true> a(home,o_vals);

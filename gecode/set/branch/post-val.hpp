@@ -61,6 +61,18 @@ namespace Gecode { namespace Set { namespace Branch {
         (void) new (home) ViewValBranching<SelView,ValMin<false> >(home,x,v,a);
       }
       break;
+    case SET_VAL_MED_INC:
+      {
+        ValMed<true> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMed<true> >(home,x,v,a);
+      }
+      break;
+    case SET_VAL_MED_EXC:
+      {
+        ValMed<false> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValMed<false> >(home,x,v,a);
+      }
+      break;
     case SET_VAL_MAX_INC:
       {
         ValMax<true> a(home,o_vals);

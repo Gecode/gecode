@@ -65,6 +65,37 @@ namespace Gecode { namespace Set { namespace Branch {
 
   template <bool inc>
   forceinline
+  ValMed<inc>::ValMed(void) {}
+  template <bool inc>
+  forceinline
+  ValMed<inc>::ValMed(Space& home, const ValBranchOptions& vbo)
+    : ValSelBase<SetView,int>(home,vbo) {}
+  template <bool inc>
+  forceinline int
+  ValMed<inc>::val(Space&, SetView x) const {
+    UnknownRanges<SetView> u1(x);
+    unsigned int i = Iter::Ranges::size(u1) / 2;
+    UnknownRanges<SetView> u2(x);
+    int med = (u2.min()+u2.max()) / 2;
+    ++u2;
+    if (!u2()) {
+      return med;
+    }
+    UnknownRanges<SetView> u3(x);
+    while (i >= u3.width()) {
+      i -= u3.width();
+      ++u3;
+    }
+    return u3.min() + static_cast<int>(i);
+  }
+  template <bool inc>
+  forceinline ModEvent
+  ValMed<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
+    return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
+  }
+
+  template <bool inc>
+  forceinline
   ValMax<inc>::ValMax(void) {}
   template <bool inc>
   forceinline
@@ -139,6 +170,13 @@ namespace Gecode { namespace Set { namespace Branch {
   AssignValMin<inc>::AssignValMin(Space& home, const ValBranchOptions& vbo)
     : ValMin<inc>(home,vbo) {}
 
+  template<bool inc>
+  forceinline
+  AssignValMed<inc>::AssignValMed(void) {}
+  template<bool inc>
+  forceinline
+  AssignValMed<inc>::AssignValMed(Space& home, const ValBranchOptions& vbo)
+    : ValMed<inc>(home,vbo) {}
 
   template<bool inc>
   forceinline
