@@ -92,24 +92,26 @@ namespace Gecode {
       t->to->insertHtml(s);
     }
 
+    const Options Options::def;
+
     int
-    explore(Space* root, bool bab, Inspector* gi) {
+    explore(Space* root, bool bab, const Options& opt) {
       char* argv = ""; int argc=0;
       QApplication app(argc, &argv);
-      GistMainWindow mw(root, bab, gi);
+      GistMainWindow mw(root, bab, opt);
       return app.exec();
     }
 
   }
 
   int
-  explore(Space* root, Gist::Inspector* gi) {
-    return Gist::explore(root, false, gi);
+  explore(Space* root, const Gist::Options& opt) {
+    return Gist::explore(root, false, opt);
   }
 
   int
-  exploreBest(Space* root, Gist::Inspector* gi) {
-    return Gist::explore(root, true, gi);
+  exploreBest(Space* root, const Gist::Options& opt) {
+    return Gist::explore(root, true, opt);
   }
 
 }

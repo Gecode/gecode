@@ -83,11 +83,11 @@ namespace Gecode { namespace Gist {
   protected Q_SLOTS:
     void statusChanged(const Statistics& stats, bool finished);
     void about(void);
-    void preferences(bool setup=false);
+    void preferences(bool setup=false, const Options& opt=Options::def);
     void populateInspectors(void);
   public:
     /// Constructor
-    GistMainWindow(Space* root, bool bab, Inspector* gi);
+    GistMainWindow(Space* root, bool bab, const Options& opt);
   protected:
     void closeEvent(QCloseEvent* event);
   };

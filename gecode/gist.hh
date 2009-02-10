@@ -38,6 +38,7 @@
 #define __GECODE_GIST_HH__
 
 #include <gecode/kernel.hh>
+#include <gecode/search.hh>
 
 /*
  * Configure linking
@@ -138,9 +139,26 @@ namespace Gecode {
     virtual void inspect(Space& node);
   };
 
-  /// Create a new stand-alone Gist for \a root using \a b and \a gi
+  /**
+   * \brief Options for %Gist
+   *
+   * Note that the \a d and \a stop fields of the Search::Options class
+   * are not used by Gist.
+   *
+   */
+  class Options : public Search::Options {
+  public:
+    /// Inspector for reacting on node double clicks
+    Inspector* inspector;
+    /// Default options
+    GECODE_GIST_EXPORT static const Options def;
+    /// Initialize with default values
+    Options(void);
+  };
+
+  /// Create a new stand-alone Gist for \a root using \a bab and \a gi
   GECODE_GIST_EXPORT
-  int explore(Space* root, bool bab, Inspector* gi);
+  int explore(Space* root, bool bab, const Options& opt);
 
   }	
 
@@ -150,7 +168,7 @@ namespace Gecode {
    * \ingroup TaskGist
    */
   GECODE_GIST_EXPORT
-  int explore(Space* root, Gist::Inspector* gi = 0);
+  int explore(Space* root, const Gist::Options& opt = Gist::Options::def);
 
   /**
    * \brief Create a new stand-alone Gist for branch-and-bound search of \a root, using \a gi
@@ -158,7 +176,7 @@ namespace Gecode {
    * \ingroup TaskGist
    */
   GECODE_GIST_EXPORT
-  int exploreBest(Space* root, Gist::Inspector* gi = 0);
+  int exploreBest(Space* root, const Gist::Options& opt = Gist::Options::def);
 
 }
 

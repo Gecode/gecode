@@ -129,10 +129,10 @@ namespace Gecode { namespace Gist {
   }
 
   GistMainWindow::GistMainWindow(Space* root, bool bab,
-                                 Inspector* gi)
+                                 const Options& opt)
   : c(root,bab,this), aboutGist(this) {
-    if (gi != NULL) {
-      c.addInspector(gi);
+    if (opt.inspector != NULL) {
+      c.addInspector(opt.inspector);
     }
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));
@@ -233,7 +233,7 @@ namespace Gecode { namespace Gist {
     connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
 
-    preferences(true);
+    preferences(true, opt);
     show();
     c.reset->trigger();
   }
@@ -269,8 +269,8 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  GistMainWindow::preferences(bool setup) {
-    PreferencesDialog pd(this);
+  GistMainWindow::preferences(bool setup, const Options& opt) {
+    PreferencesDialog pd(opt, this);
     if (setup) {
       c.setAutoZoom(pd.zoom);
     }

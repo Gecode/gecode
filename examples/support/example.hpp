@@ -155,8 +155,8 @@ class GistEngine {
 template <typename S>
 class GistEngine<DFS<S> > {
 public:
-  static void explore(S* root, Gist::Inspector* i) {
-    (void) Gecode::explore(root, i);
+  static void explore(S* root, const Gist::Options& opt) {
+    (void) Gecode::explore(root, opt);
   }
 };
 
@@ -164,8 +164,8 @@ public:
 template <typename S>
 class GistEngine<LDS<S> > {
 public:
-  static void explore(S* root, Gist::Inspector* i) {
-    (void) Gecode::explore(root, i);
+  static void explore(S* root, const Gist::Options& opt) {
+    (void) Gecode::explore(root, opt);
   }
 };
 
@@ -173,8 +173,8 @@ public:
 template <typename S>
 class GistEngine<BAB<S> > {
 public:
-  static void explore(S* root, Gist::Inspector* i) {
-    (void) exploreBest(root, i);
+  static void explore(S* root, const Gist::Options& opt) {
+    (void) exploreBest(root, opt);
   }
 };
 
@@ -182,8 +182,8 @@ public:
 template <typename S>
 class GistEngine<Restart<S> > {
 public:
-  static void explore(S* root, Gist::Inspector* i) {
-    (void) exploreBest(root, i);
+  static void explore(S* root, const Gist::Options& opt) {
+    (void) exploreBest(root, opt);
   }
 };
 
@@ -311,8 +311,9 @@ ExampleBase<Space>::run(const Options& o) {
     case EM_GIST:
       {
         Gist::PrintingInspector<Script> pi(o.name());
+        Gist::Options opt; opt.inspector = &pi;
         Script* s = new Script(o);
-        (void) GistEngine<Engine<Script> >::explore(s, &pi);
+        (void) GistEngine<Engine<Script> >::explore(s, opt);
         delete s;
       }
       break;

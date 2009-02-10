@@ -39,6 +39,7 @@
 #define GECODE_GIST_PREFERENCES_HH
 
 #include <QtGui>
+#include <gecode/gist.hh>
 
 namespace Gecode { namespace Gist {
 
@@ -63,7 +64,7 @@ namespace Gecode { namespace Gist {
     void defaults(void);
   public:
     /// Constructor
-    PreferencesDialog(QWidget* parent = 0);
+    PreferencesDialog(const Options& opt, QWidget* parent = 0);
 
     /// Whether to automatically hide failed subtrees during search
     bool hideFailed;

@@ -39,7 +39,8 @@
 
 namespace Gecode { namespace Gist {
 
-  PreferencesDialog::PreferencesDialog(QWidget *parent) : QDialog(parent) {
+  PreferencesDialog::PreferencesDialog(const Options& opt, QWidget *parent)
+  : QDialog(parent) {
     QSettings settings("gecode.org", "Gist");
     hideFailed = settings.value("search/hideFailed", true).toBool();
     zoom = settings.value("search/zoom", false).toBool();
@@ -48,8 +49,8 @@ namespace Gecode { namespace Gist {
     smoothScrollAndZoom =
       settings.value("smoothScrollAndZoom", true).toBool();
 
-    c_d = settings.value("search/cd", 8).toInt();
-    a_d = settings.value("search/ad", 2).toInt();
+    c_d = opt.c_d;
+    a_d = opt.a_d;
 
     hideCheck =
       new QCheckBox(tr("Hide failed subtrees automatically"));
@@ -144,8 +145,6 @@ namespace Gecode { namespace Gist {
     settings.setValue("search/copies", copies);
     settings.setValue("search/refresh", refresh);
     settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
-    settings.setValue("search/cd", c_d);
-    settings.setValue("search/ad", a_d);
 
     accept();
   }

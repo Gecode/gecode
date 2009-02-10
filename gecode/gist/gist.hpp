@@ -50,6 +50,9 @@ namespace Gecode {
       dynamic_cast<S&>(node).print(getStream());
     }
 
+    forceinline
+    Options::Options(void) : inspector(NULL) {}
+
   }
 
 }
