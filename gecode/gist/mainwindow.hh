@@ -70,8 +70,10 @@ namespace Gecode { namespace Gist {
     QLabel* choicesLabel;
     /// Status bar label for number of open nodes
     QLabel* openLabel;
-    /// Menu for inspectors
-    QMenu* inspectorsMenu;
+    /// Menu for solution inspectors
+    QMenu* solutionInspectorsMenu;
+    /// Menu for double click inspectors
+    QMenu* doubleClickInspectorsMenu;
   protected:
     /// The contained %Gist object
     Gist c;

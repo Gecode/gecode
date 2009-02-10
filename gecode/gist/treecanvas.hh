@@ -96,9 +96,13 @@ namespace Gecode {  namespace Gist {
     ~TreeCanvas(void);
 
     /// Add inspector \a i
-    void addInspector(Inspector* i);
+    void addDoubleClickInspector(Inspector* i);
     /// Set active inspector
-    void setActiveInspector(int i);
+    void setActiveDoubleClickInspector(int i);
+    /// Add inspector \a i
+    void addSolutionInspector(Inspector* i);
+    /// Set active inspector
+    void setActiveSolutionInspector(int i);
 
   public Q_SLOTS:
     /// Set scale factor to \a scale0
@@ -124,7 +128,7 @@ namespace Gecode {  namespace Gist {
     void zoomToFit(void);
     /// Center the view on the currently selected node
     void centerCurrentNode(void);
-    /// Call the inspector for the currently selected node
+    /// Call the double click inspector for the currently selected node
     void inspectCurrentNode(void);
 
     /// Stop current search
@@ -152,7 +156,7 @@ namespace Gecode {  namespace Gist {
 
     /// Set the current node to be the head of the path
     void setPath(void);
-    /// Call the inspector for all nodes on the path from root to head of the path
+    /// Call the double click inspector for all nodes on the path from root to head of the path
     void inspectPath(void);
 
     /// Set recomputation distances
@@ -192,8 +196,8 @@ namespace Gecode {  namespace Gist {
     void statusChanged(VisualNode*,const Statistics&, bool);
     /// The point in time changed to \a pit
     void pointInTimeChanged(int pit);
-    /// A new solution \a s has been found
-    void solution(const Space* s);
+    /// Signals that a solution has been found
+    void solution(const Space*);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
@@ -216,9 +220,13 @@ namespace Gecode {  namespace Gist {
     /// The history of inspected nodes
     QVector<VisualNode*> nodeMap;
     /// The registered inspectors
-    QVector<Inspector*> inspectors;
-    /// The active inspector
-    int activeInspector;
+    QVector<Inspector*> doubleClickInspectors;
+    /// The registered inspectors
+    QVector<Inspector*> solutionInspectors;
+    /// The active double click inspector
+    int activeDoubleClickInspector;
+    /// The active solution inspector
+    int activeSolutionInspector;
 
     /// The scale bar
     QSlider* scaleBar;
@@ -298,6 +306,8 @@ namespace Gecode {  namespace Gist {
     void statusChanged(bool);
     /// Export PDF of the subtree of \a n
     void exportNodePDF(VisualNode* n);
+    /// A new solution \a s has been found
+    void inspectSolution(const Space* s);
   };
 
 }}

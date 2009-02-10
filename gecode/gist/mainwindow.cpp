@@ -131,8 +131,11 @@ namespace Gecode { namespace Gist {
   GistMainWindow::GistMainWindow(Space* root, bool bab,
                                  const Options& opt)
   : c(root,bab,this), aboutGist(this) {
-    if (opt.inspector != NULL) {
-      c.addInspector(opt.inspector);
+    if (opt.solutionInspector != NULL) {
+      c.addSolutionInspector(opt.solutionInspector);
+    }
+    if (opt.doubleClickInspector != NULL) {
+      c.addDoubleClickInspector(opt.doubleClickInspector);
     }
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));
@@ -191,10 +194,14 @@ namespace Gecode { namespace Gist {
     searchMenu->addAction(c.reset);
 
     QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
-    inspectorsMenu = new QMenu("Inspectors");
-    connect(inspectorsMenu, SIGNAL(aboutToShow()),
+    doubleClickInspectorsMenu = new QMenu("Double click Inspectors");
+    connect(doubleClickInspectorsMenu, SIGNAL(aboutToShow()),
             this, SLOT(populateInspectors()));
-    toolsMenu->addMenu(inspectorsMenu);
+    toolsMenu->addMenu(doubleClickInspectorsMenu);
+    solutionInspectorsMenu = new QMenu("Solution inspectors");
+    connect(solutionInspectorsMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectors()));
+    toolsMenu->addMenu(solutionInspectorsMenu);
 
     QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
     QAction* aboutAction = helpMenu->addAction(tr("About"));
@@ -285,8 +292,11 @@ namespace Gecode { namespace Gist {
 
   void
   GistMainWindow::populateInspectors(void) {
-    inspectorsMenu->clear();
-    inspectorsMenu->addActions(c.inspectorGroup->actions());
+    doubleClickInspectorsMenu->clear();
+    doubleClickInspectorsMenu->addActions(
+      c.doubleClickInspectorGroup->actions());
+    solutionInspectorsMenu->clear();
+    solutionInspectorsMenu->addActions(c.solutionInspectorGroup->actions());
   }
 
 }}

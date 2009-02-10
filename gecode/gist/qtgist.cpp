@@ -205,15 +205,29 @@ namespace Gecode { namespace Gist {
     addAction(setPath);
     addAction(inspectPath);
 
-    nullInspector = new QAction("<none>",this);
-    inspectorGroup = new QActionGroup(this);
-    inspectorGroup->setExclusive(true);
-    inspectorGroup->addAction(nullInspector);
-    connect(inspectorGroup, SIGNAL(triggered(QAction*)),
-            this, SLOT(selectInspector(QAction*)));
+    nullSolutionInspector = new QAction("<none>",this);
+    nullSolutionInspector->setCheckable(true);
+    nullSolutionInspector->setChecked(true);
+    solutionInspectorGroup = new QActionGroup(this);
+    solutionInspectorGroup->setExclusive(true);
+    solutionInspectorGroup->addAction(nullSolutionInspector);
+    connect(solutionInspectorGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(selectSolutionInspector(QAction*)));
 
-    inspectorMenu = new QMenu("Inspectors");
-    inspectorMenu->addActions(inspectorGroup->actions());
+    nullDoubleClickInspector = new QAction("<none>",this);
+    nullDoubleClickInspector->setCheckable(true);
+    nullDoubleClickInspector->setChecked(true);
+    doubleClickInspectorGroup = new QActionGroup(this);
+    doubleClickInspectorGroup->setExclusive(true);
+    doubleClickInspectorGroup->addAction(nullDoubleClickInspector);
+    connect(doubleClickInspectorGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(selectDoubleClickInspector(QAction*)));
+
+    solutionInspectorMenu = new QMenu("Solution inspectors");
+    solutionInspectorMenu->addActions(solutionInspectorGroup->actions());
+    doubleClickInspectorMenu = new QMenu("Double click inspectors");
+    doubleClickInspectorMenu->addActions(
+      doubleClickInspectorGroup->actions());
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(inspect);
@@ -237,7 +251,8 @@ namespace Gecode { namespace Gist {
 
     contextMenu->addSeparator();
 
-    contextMenu->addMenu(inspectorMenu);
+    contextMenu->addMenu(doubleClickInspectorMenu);
+    contextMenu->addMenu(solutionInspectorMenu);
 
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
@@ -272,17 +287,39 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  Gist::addInspector(Inspector* i0) {
-    canvas->addInspector(i0);
-    QAction* na = new QAction(i0->name().c_str(), this);
-    na->setCheckable(true);
-    inspectorGroup->addAction(na);
-    inspectorMenu->clear();
-    if (nullInspector->actionGroup() == inspectorGroup) {
-      inspectorGroup->removeAction(nullInspector);
-      na->setChecked(true);
+  Gist::addInspector(Inspector* i0, bool solutionInspector) {
+    canvas->addSolutionInspector(i0);
+    canvas->addDoubleClickInspector(i0);
+    QAction* nas = new QAction(i0->name().c_str(), this);
+    nas->setCheckable(true);
+    solutionInspectorGroup->addAction(nas);
+    solutionInspectorMenu->clear();
+    solutionInspectorMenu->addActions(solutionInspectorGroup->actions());
+
+    QAction* nad = new QAction(i0->name().c_str(), this);
+    nad->setCheckable(true);
+    doubleClickInspectorGroup->addAction(nad);
+    doubleClickInspectorMenu->clear();
+    doubleClickInspectorMenu->addActions(
+      doubleClickInspectorGroup->actions());
+
+    if (solutionInspector) {
+      selectSolutionInspector(nas);
+      nas->setChecked(true);
+    } else {
+      selectDoubleClickInspector(nad);
+      nad->setChecked(true);
     }
-    inspectorMenu->addActions(inspectorGroup->actions());
+  }
+
+  void
+  Gist::addSolutionInspector(Inspector* i) {
+    addInspector(i, true);
+  }
+
+  void
+  Gist::addDoubleClickInspector(Inspector* i) {
+    addInspector(i, false);
   }
 
   Gist::~Gist(void) { delete canvas; }
@@ -395,9 +432,14 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  Gist::selectInspector(QAction* a) {
-    if (a != nullInspector)
-      canvas->setActiveInspector(inspectorGroup->actions().indexOf(a));
+  Gist::selectDoubleClickInspector(QAction* a) {
+    canvas->setActiveDoubleClickInspector(
+      doubleClickInspectorGroup->actions().indexOf(a)-1);
+  }
+  void
+  Gist::selectSolutionInspector(QAction* a) {
+    canvas->setActiveSolutionInspector(
+      solutionInspectorGroup->actions().indexOf(a)-1);
   }
 
   void

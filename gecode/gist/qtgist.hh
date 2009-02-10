@@ -60,10 +60,14 @@ namespace Gecode {  namespace Gist {
     QSlider* timeBar;
     /// Context menu
     QMenu* contextMenu;
-    /// Action used when no inspector is registered
-    QAction* nullInspector;
-    /// Menu of inspectors
-    QMenu* inspectorMenu;
+    /// Action used when no solution inspector is registered
+    QAction* nullSolutionInspector;
+    /// Menu of solution inspectors
+    QMenu* solutionInspectorMenu;
+    /// Action used when no double click inspector is registered
+    QAction* nullDoubleClickInspector;
+    /// Menu of double click inspectors
+    QMenu* doubleClickInspectorMenu;
   public:
     /// Inspect current node
     QAction* inspect;
@@ -111,16 +115,20 @@ namespace Gecode {  namespace Gist {
     /// Inspect all nodes on selected path
     QAction* inspectPath;
 
-    /// Group of all actions for inspectors
-    QActionGroup* inspectorGroup;
+    /// Group of all actions for solution inspectors
+    QActionGroup* solutionInspectorGroup;
+    /// Group of all actions for double click inspectors
+    QActionGroup* doubleClickInspectorGroup;
   public:
     /// Constructor
     Gist(Space* root, bool bab = false, QWidget* parent = NULL);
     /// Destructor
     ~Gist(void);
 
-    /// Add inspector \a i0
-    void addInspector(Inspector* i0);
+    /// Add double click inspector \a i0
+    void addDoubleClickInspector(Inspector* i0);
+    /// Add solution inspector \a i0
+    void addSolutionInspector(Inspector* i0);
 
     /// Set preference whether to automatically hide failed subtrees
     void setAutoHideFailed(bool b);
@@ -167,11 +175,15 @@ namespace Gecode {  namespace Gist {
     void on_canvas_contextMenu(QContextMenuEvent*);
     /// Reacts on status changes
     void on_canvas_statusChanged(VisualNode*, const Statistics&, bool);
-    /// Reacts on inspector selection
-    void selectInspector(QAction*);
+    /// Reacts on double click inspector selection
+    void selectDoubleClickInspector(QAction*);
+    /// Reacts on solution inspector selection
+    void selectSolutionInspector(QAction*);
   protected:
     /// Close the widget
     void closeEvent(QCloseEvent* event);
+    /// Add inspector \a i0
+    void addInspector(Inspector* i, bool solutionInspector);
   };
 
 }}

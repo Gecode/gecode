@@ -58,7 +58,8 @@ namespace Gecode { namespace Gist {
     : QWidget(parent)
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
-    , activeInspector(-1)
+    , activeDoubleClickInspector(-1)
+    , activeSolutionInspector(-1)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false), nextPit(0)
     , targetZoom(LayoutConfig::defScale)
@@ -92,6 +93,9 @@ namespace Gecode { namespace Gist {
       connect(&searcher, SIGNAL(solution(const Space*)),
               this, SIGNAL(solution(const Space*)),
               Qt::BlockingQueuedConnection);
+      connect(&searcher, SIGNAL(solution(const Space*)),
+              this, SLOT(inspectSolution(const Space*)),
+              Qt::BlockingQueuedConnection);
 
       qRegisterMetaType<Statistics>("Statistics");
       update();
@@ -100,15 +104,23 @@ namespace Gecode { namespace Gist {
   TreeCanvas::~TreeCanvas(void) { delete root; delete na; }
 
   void
-  TreeCanvas::addInspector(Inspector* i) {
-    inspectors.append(i);
-    if (activeInspector == -1)
-      activeInspector = 0;
+  TreeCanvas::addDoubleClickInspector(Inspector* i) {
+    doubleClickInspectors.append(i);
   }
 
   void
-  TreeCanvas::setActiveInspector(int i) {
-    activeInspector = i;
+  TreeCanvas::setActiveDoubleClickInspector(int i) {
+    activeDoubleClickInspector = i;
+  }
+
+  void
+  TreeCanvas::addSolutionInspector(Inspector* i) {
+    solutionInspectors.append(i);
+  }
+
+  void
+  TreeCanvas::setActiveSolutionInspector(int i) {
+    activeSolutionInspector = i;
   }
 
   void
@@ -461,8 +473,9 @@ namespace Gecode { namespace Gist {
           curSpace = dfsSpace;
         }
         saveCurrentNode();
-        if (activeInspector != -1) {
-          inspectors[activeInspector]->inspect(*curSpace);
+        if (activeDoubleClickInspector != -1) {
+          doubleClickInspectors[activeDoubleClickInspector]
+            ->inspect(*curSpace);
         }
         delete curSpace;
       }
@@ -472,6 +485,15 @@ namespace Gecode { namespace Gist {
     currentNode->dirtyUp();
     update();
     centerCurrentNode();
+  }
+
+  void
+  TreeCanvas::inspectSolution(const Space* s) {
+    if (activeSolutionInspector != -1) {
+      Space* c = s->clone();
+      solutionInspectors[activeSolutionInspector]->inspect(*c);
+      delete c;
+    }    
   }
 
   void

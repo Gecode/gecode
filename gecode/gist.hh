@@ -148,8 +148,10 @@ namespace Gecode {
    */
   class Options : public Search::Options {
   public:
-    /// Inspector for reacting on node double clicks
-    Inspector* inspector;
+    /// Inspector that reacts on each new solution that is found
+    Inspector* solutionInspector;
+    /// Inspector that reacts on node double clicks
+    Inspector* doubleClickInspector;
     /// Default options
     GECODE_GIST_EXPORT static const Options def;
     /// Initialize with default values

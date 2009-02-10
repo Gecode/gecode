@@ -51,7 +51,8 @@ namespace Gecode {
     }
 
     forceinline
-    Options::Options(void) : inspector(NULL) {}
+    Options::Options(void)
+    : solutionInspector(NULL), doubleClickInspector(NULL) {}
 
   }
 
