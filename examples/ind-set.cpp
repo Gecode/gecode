@@ -90,11 +90,12 @@ public:
   /// Actual model
   IndSet(const SizeOptions& opt)
     : g(opt.size() == 0 ?  g_20_10 : g_40_20),
-      v(*this,g.n_v,0,1), k(*this,0,g.n_e) {
+      v(*this,g.n_v,0,1), k(*this,0,g.n_v) {
     const int* e = g.e;
-    const int* e1 = e++; const int* e2 = e++;
-    for (int i = g.n_e; i--; )
+    for (int i = g.n_e; i--; ) {
+      const int* e1 = e++; const int* e2 = e++;
       rel(*this, v[*e1], BOT_AND, v[*e2], 0);
+    }
     linear(*this, v, IRT_EQ, k);
     branch(*this, v, INT_VAR_NONE, INT_VAL_MIN);
   }

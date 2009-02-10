@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks:	Setfano Gualandi
+[DESCRIPTION]
+A bug in the independent set example has been fixed (most edges
+were ignored).
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   minor
