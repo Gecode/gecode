@@ -234,7 +234,8 @@ namespace Gecode {
    */
   template <class VarImp>
   forceinline
-  VarViewBase<VarImp>::VarViewBase(void) {}
+  VarViewBase<VarImp>::VarViewBase(void)
+    : varimp(NULL) {}
   template <class VarImp>
   forceinline
   VarViewBase<VarImp>::VarViewBase(VarImp* x)

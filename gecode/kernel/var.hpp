@@ -81,7 +81,8 @@ namespace Gecode {
    */
   template <class VarImp>
   forceinline
-  VarBase<VarImp>::VarBase(void) {}
+  VarBase<VarImp>::VarBase(void)
+    : varimp(NULL) {}
   template <class VarImp>
   forceinline
   VarBase<VarImp>::VarBase(VarImp* x)
