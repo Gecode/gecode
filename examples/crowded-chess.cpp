@@ -40,7 +40,7 @@
 #include "examples/support.hh"
 #include <gecode/minimodel.hh>
 
-/** The maximum number of knights placeable.
+/** The maximum number of knights placeable
  *
  * \relates QueensArmies
  */
@@ -52,11 +52,11 @@ const int kval[] = {
 };
 
 namespace {
-  /** \brief Set of valid positions for the bishops.
+  /** \brief Set of valid positions for the bishops
    * \relates CrowdedChess
    */
   TupleSet bishops;
-  /** \brief Class for solving the bishops sub-problem.
+  /** \brief Class for solving the bishops sub-problem
    * \relates CrowdedChess
    */
   class Bishops : public Space {
@@ -99,7 +99,7 @@ namespace {
       return new Bishops(share,*this);
     }
   };
-  /** \brief Initialize bishops.
+  /** \brief Initialize bishops
    * \relates CrowdedChess
    */
   void init_bishops(int size) {
@@ -257,7 +257,7 @@ public:
     count(*this, s, B, IRT_EQ, b, opt.icl());
     count(*this, s, K, IRT_EQ, k, opt.icl());
 
-    // Collect rows and columns for handling rooks and queens.
+    // Collect rows and columns for handling rooks and queens
     for (int i = 0; i < n; ++i) {
       IntVarArgs aa = m.row(i), bb = m.col(i);
 
@@ -266,7 +266,7 @@ public:
       count(*this, aa, R, IRT_EQ, 1, opt.icl());
       count(*this, bb, R, IRT_EQ, 1, opt.icl());
 
-      //Connect (queens|rooks)[i] to the row it is in
+      // Connect (queens|rooks)[i] to the row it is in
       element(*this, aa, queens[i], Q, ICL_DOM);
       element(*this, aa,  rooks[i], R, ICL_DOM);
     }
@@ -312,7 +312,7 @@ public:
     }
 
     // Handle knigths
-    //Connect knigths to board
+    // Connect knigths to board
     for(int i = n*n; i--; )
       knights[i] = post(*this, ~(s[i] == K));
     knight_constraints();
@@ -323,10 +323,9 @@ public:
     // ***********************
 
     // Queens and rooks not in the same place
-    // Faster than going through the channeled board-connection
-    for (int i = n; i--; ) {
+    // Faster than going through the channelled board-connection
+    for (int i = n; i--; )
       rel(*this, queens[i], IRT_NQ, rooks[i]);
-    }
 
     // Place bishops in two corners (from Schimpf and Hansens solution)
     // Avoids some symmetries of the problem
@@ -337,7 +336,7 @@ public:
     // ***********************
     // Branchings
     // ***********************
-    //Place each piece in turn
+    // Place each piece in turn
     branch(*this, s, INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
 

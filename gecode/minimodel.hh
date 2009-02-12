@@ -1290,14 +1290,6 @@ namespace Gecode {
 
 }
 
-/**
- * \addtogroup TaskModelMiniModelMatrix Matrix interface for arrays
- *
- * Wrapper for arrays to act as a two-dimensional matrix.
- *
- * \ingroup TaskModelMiniModel
- */
-//@{
 namespace Gecode {
 
   /** \brief Matrix-interface for arrays
@@ -1308,7 +1300,7 @@ namespace Gecode {
    * \note This is a light-weight wrapper, and is not intended for
    * storing variables directly instead of in an array.
    *
-   * \ingroup TaskModelMiniModelMatrix
+   * \ingroup TaskModelMiniModel
    */
   template <class A>
   class Matrix {
@@ -1414,7 +1406,6 @@ namespace Gecode {
     Slice col(int c);
   };
 }
-//@}
 
 #include <gecode/minimodel/matrix.hpp>
 
