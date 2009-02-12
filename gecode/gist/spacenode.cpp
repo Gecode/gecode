@@ -185,7 +185,7 @@ namespace Gecode { namespace Gist {
           if (b.ownBest->workingSpace->status() != SS_SOLVED) {
             // in the presence of weakly monotonic propagators, we may have to
             // use search to find the solution here
-            Space* dfsSpace = dfs(b.ownBest->workingSpace);
+            Space* dfsSpace = Gecode::dfs(b.ownBest->workingSpace);
             delete b.ownBest->workingSpace;
             b.ownBest->workingSpace = dfsSpace;
           }
@@ -223,7 +223,7 @@ namespace Gecode { namespace Gist {
           if (ownBest->workingSpace->status() != SS_SOLVED) {
             // in the presence of weakly monotonic propagators, we may have to
             // use search to find the solution here
-            Space* dfsSpace = dfs(ownBest->workingSpace);
+            Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
             delete ownBest->workingSpace;
             ownBest->workingSpace = dfsSpace;
           }
@@ -258,7 +258,7 @@ namespace Gecode { namespace Gist {
           if (ownBest->workingSpace->status() != SS_SOLVED) {
             // in the presence of weakly monotonic propagators, we may have to
             // use search to find the solution here
-            Space* dfsSpace = dfs(ownBest->workingSpace);
+            Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
             delete ownBest->workingSpace;
             ownBest->workingSpace = dfsSpace;
           }

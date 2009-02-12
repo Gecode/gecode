@@ -88,6 +88,11 @@
  */
 
 /**
+ * \defgroup TaskGist Gist: the Gecode Interactive Search Tool
+ * \ingroup TaskModel
+ */
+
+/**
  * \defgroup TaskModelSet Using finite integer sets
  * \ingroup TaskModel
  */
@@ -150,14 +155,6 @@
 /**
  * \defgroup TaskTest Testing
  * \ingroup Task
- */
-
-/**
- * \defgroup TaskGist Gist
- *
- * Gist is the Gecode Interactive Search Tool. It is based on the
- * <a href="http://trolltech.com/products/qt">Qt GUI toolkit</a>.
- *
  */
 
 /**
@@ -429,7 +426,6 @@
  *  - \ref TaskVar
  *  - \ref TaskTest
  *  - \ref TaskReflSer
- *  - \ref TaskGist
  *
  * \section SecByFunc Available functionality
  *

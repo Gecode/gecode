@@ -35,27 +35,34 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Gist {
 
-  namespace Gist {
-
-    template <class S>
-    PrintingInspector<S>::PrintingInspector(const std::string& name)
+  template <class S>
+  PrintingInspector<S>::PrintingInspector(const std::string& name)
     : TextInspector(name) {}
 
-    template <class S>
-    void
-    PrintingInspector<S>::inspect(Space& node) {
-      init();
-      dynamic_cast<S&>(node).print(getStream());
-    }
-
-    forceinline
-    Options::Options(void)
-    : solutionInspector(NULL), doubleClickInspector(NULL) {}
-
+  template <class S>
+  void
+  PrintingInspector<S>::inspect(Space& node) {
+    init();
+    dynamic_cast<S&>(node).print(getStream());
   }
 
-}
+  forceinline
+  Options::Options(void)
+    : solutionInspector(NULL), doubleClickInspector(NULL) {}
+  
+
+  inline int
+  dfs(Space* root, const Gist::Options& opt) {
+    return explore(root, false, opt);
+  }
+
+  inline int
+  bab(Space* root, const Gist::Options& opt) {
+    return Gist::explore(root, true, opt);
+  }
+
+}}
 
 // STATISTICS: gist-any

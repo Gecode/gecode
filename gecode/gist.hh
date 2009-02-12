@@ -85,100 +85,98 @@ namespace Gecode {
    * a Qt-based graphical search engine.
    *
    */
-
   namespace Gist {
-  /** \brief Abstract base class for Inspectors
-    *
-    * An inspector provides a virtual method that is called
-    * when a node in the search tree is inspected (e.g. by
-    * double-clicking)
-    *
-    * \ingroup TaskGist
-    */
-  class GECODE_GIST_EXPORT Inspector {
-  public:
-    /// Call-back function
-    virtual void inspect(Space& node) = 0;
-    /// Name of the inspector
-    virtual std::string name(void);
-    /// Destructor
-    virtual ~Inspector(void);
-  };
 
-  /// \brief An inspector base class for simple text output
-  class GECODE_GIST_EXPORT TextInspector : public Inspector {
-  private:
-    class TextInspectorImpl;
-    /// The implementation object
-    TextInspectorImpl *t;
-    /// The name of the inspector
-    std::string n;
-  protected:
-    /// Initialize the implementation object
-    void init(void);
-    /// Get the stream that is used to output text
-    std::ostream& getStream(void);
-    /// Add html text \a s to the output
-    void addHtml(const char* s);
-  public:
-    /// Constructor
-    TextInspector(const std::string& name);
-    /// Destructor
-    virtual ~TextInspector(void);
-    /// Name of the inspector
-    virtual std::string name(void);
-  };
-
-  /// \brief An inspector for printing simple text output
-  template <class S>
-  class PrintingInspector : public TextInspector {
-  public:
-    /// Constructor
-    PrintingInspector(const std::string& name);
-    /// Use the print method of the template class S to print a space
-    virtual void inspect(Space& node);
-  };
-
-  /**
-   * \brief Options for %Gist
-   *
-   * Note that the \a d and \a stop fields of the Search::Options class
-   * are not used by Gist.
-   *
-   */
-  class Options : public Search::Options {
-  public:
-    /// Inspector that reacts on each new solution that is found
-    Inspector* solutionInspector;
-    /// Inspector that reacts on node double clicks
-    Inspector* doubleClickInspector;
-    /// Default options
-    GECODE_GIST_EXPORT static const Options def;
-    /// Initialize with default values
-    Options(void);
-  };
-
-  /// Create a new stand-alone Gist for \a root using \a bab and \a gi
-  GECODE_GIST_EXPORT
-  int explore(Space* root, bool bab, const Options& opt);
-
+    /** \brief Abstract base class for Inspectors
+     *
+     * An inspector provides a virtual method that is called
+     * when a node in the search tree is inspected (e.g. by
+     * double-clicking)
+     *
+     * \ingroup TaskGist
+     */
+    class GECODE_GIST_EXPORT Inspector {
+    public:
+      /// Call-back function
+      virtual void inspect(Space& node) = 0;
+      /// Name of the inspector
+      virtual std::string name(void);
+      /// Destructor
+      virtual ~Inspector(void);
+    };
+    
+    /// An inspector base class for simple text output
+    class GECODE_GIST_EXPORT TextInspector : public Inspector {
+    private:
+      class TextInspectorImpl;
+      /// The implementation object
+      TextInspectorImpl *t;
+      /// The name of the inspector
+      std::string n;
+    protected:
+      /// Initialize the implementation object
+      void init(void);
+      /// Get the stream that is used to output text
+      std::ostream& getStream(void);
+      /// Add html text \a s to the output
+      void addHtml(const char* s);
+    public:
+      /// Constructor
+      TextInspector(const std::string& name);
+      /// Destructor
+      virtual ~TextInspector(void);
+      /// Name of the inspector
+      virtual std::string name(void);
+    };
+    
+    /// An inspector for printing simple text output
+    template <class S>
+    class PrintingInspector : public TextInspector {
+    public:
+      /// Constructor
+      PrintingInspector(const std::string& name);
+      /// Use the print method of the template class S to print a space
+      virtual void inspect(Space& node);
+    };
+    
+    /**
+     * \brief Options for %Gist
+     *
+     * Note that the \a d and \a stop fields of the Search::Options class
+     * are not used by Gist.
+     *
+     */
+    class Options : public Search::Options {
+    public:
+      /// Inspector that reacts on each new solution that is found
+      Inspector* solutionInspector;
+      /// Inspector that reacts on node double clicks
+      Inspector* doubleClickInspector;
+      /// Default options
+      GECODE_GIST_EXPORT static const Options def;
+      /// Initialize with default values
+      Options(void);
+    };
+    
+    /// Create a new stand-alone Gist for \a root using \a bab
+    GECODE_GIST_EXPORT int 
+    explore(Space* root, bool bab, const Options& opt);
+    
+    /**
+     * \brief Create a new stand-alone Gist for \a root
+     * \ingroup TaskGist
+     */
+    int 
+    dfs(Space* root, const Gist::Options& opt = Gist::Options::def);
+    
+    /**
+     * \brief Create a new stand-alone Gist for branch-and-bound search of \a root
+     * \ingroup TaskGist
+     */
+    int 
+    bab(Space* root, const Gist::Options& opt = Gist::Options::def);
+    
   }	
-
-  /**
-   * \brief Create a new stand-alone Gist for \a root using \a gi
-   *
-   * \ingroup TaskGist
-   */
-  GECODE_GIST_EXPORT
-  int explore(Space* root, const Gist::Options& opt = Gist::Options::def);
-
-  /**
-   * \brief Create a new stand-alone Gist for branch-and-bound search of \a root, using \a gi
-   *
-   * \ingroup TaskGist
-   */
-  GECODE_GIST_EXPORT
-  int exploreBest(Space* root, const Gist::Options& opt = Gist::Options::def);
 
 }
 

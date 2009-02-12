@@ -156,7 +156,7 @@ template <typename S>
 class GistEngine<DFS<S> > {
 public:
   static void explore(S* root, const Gist::Options& opt) {
-    (void) Gecode::explore(root, opt);
+    (void) Gist::dfs(root, opt);
   }
 };
 
@@ -165,7 +165,7 @@ template <typename S>
 class GistEngine<LDS<S> > {
 public:
   static void explore(S* root, const Gist::Options& opt) {
-    (void) Gecode::explore(root, opt);
+    (void) Gist::dfs(root, opt);
   }
 };
 
@@ -174,7 +174,7 @@ template <typename S>
 class GistEngine<BAB<S> > {
 public:
   static void explore(S* root, const Gist::Options& opt) {
-    (void) exploreBest(root, opt);
+    (void) Gist::bab(root, opt);
   }
 };
 
@@ -183,7 +183,7 @@ template <typename S>
 class GistEngine<Restart<S> > {
 public:
   static void explore(S* root, const Gist::Options& opt) {
-    (void) exploreBest(root, opt);
+    (void) Gist::bab(root, opt);
   }
 };
 

@@ -468,7 +468,7 @@ namespace Gecode { namespace Gist {
             curSpace->status() != SS_SOLVED) {
           // in the presence of weakly monotonic propagators, we may have to
           // use search to find the solution here
-          Space* dfsSpace = dfs(curSpace);
+          Space* dfsSpace = Gecode::dfs(curSpace);
           delete curSpace;
           curSpace = dfsSpace;
         }

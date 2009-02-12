@@ -41,79 +41,65 @@
 #include <gecode/gist/textoutput.hh>
 #include <gecode/gist/mainwindow.hh>
 
-namespace Gecode {
+namespace Gecode { namespace Gist {
 
-  namespace Gist {
-
-    std::string
-    Inspector::name(void) { return "Inspector"; }
-
-    /// Implementation of the TextInspector
-    class TextInspector::TextInspectorImpl {
-    public:
-      /// The window where the text is output
-      TextOutput* to;
-      /// Constructor
-      TextInspectorImpl(const std::string& name) {
-        to = new TextOutput(name);
-        to->show();
-      }
-      /// Destructor
-      ~TextInspectorImpl(void) {
-        delete to;
-      }
-    };
-
-    TextInspector::TextInspector(const std::string& name)
+  std::string
+  Inspector::name(void) { return "Inspector"; }
+  
+  /// Implementation of the TextInspector
+  class TextInspector::TextInspectorImpl {
+  public:
+    /// The window where the text is output
+    TextOutput* to;
+    /// Constructor
+    TextInspectorImpl(const std::string& name) {
+      to = new TextOutput(name);
+      to->show();
+    }
+    /// Destructor
+    ~TextInspectorImpl(void) {
+      delete to;
+    }
+  };
+  
+  TextInspector::TextInspector(const std::string& name)
     : t(NULL), n(name) {}
-
-    TextInspector::~TextInspector(void) {
-      delete t;
-    }
-
-    std::string
-    TextInspector::name(void) { return n; }
-
-    void
-    TextInspector::init(void) {
-      if (t == NULL) {
-        t = new TextInspectorImpl(n);
-      }
-      t->to->setVisible(true);
-    }
-
-    std::ostream&
-    TextInspector::getStream(void) {
-      return t->to->getStream();
-    }
-
-    void
-    TextInspector::addHtml(const char* s) {
-      t->to->insertHtml(s);
-    }
-
-    const Options Options::def;
-
-    int
-    explore(Space* root, bool bab, const Options& opt) {
-      char* argv = ""; int argc=0;
-      QApplication app(argc, &argv);
-      GistMainWindow mw(root, bab, opt);
-      return app.exec();
-    }
-
+  
+  TextInspector::~TextInspector(void) {
+    delete t;
   }
 
+  std::string
+  TextInspector::name(void) { return n; }
+  
+  void
+  TextInspector::init(void) {
+    if (t == NULL) {
+      t = new TextInspectorImpl(n);
+    }
+    t->to->setVisible(true);
+  }
+
+  std::ostream&
+  TextInspector::getStream(void) {
+    return t->to->getStream();
+  }
+  
+  void
+  TextInspector::addHtml(const char* s) {
+    t->to->insertHtml(s);
+  }
+
+  const Options Options::def;
+  
   int
-  explore(Space* root, const Gist::Options& opt) {
-    return Gist::explore(root, false, opt);
+  explore(Space* root, bool bab, const Options& opt) {
+    char* argv = ""; int argc=0;
+    QApplication app(argc, &argv);
+    GistMainWindow mw(root, bab, opt);
+    return app.exec();
   }
 
-  int
-  exploreBest(Space* root, const Gist::Options& opt) {
-    return Gist::explore(root, true, opt);
-  }
-
-}
+}}
 
 // STATISTICS: gist-any
