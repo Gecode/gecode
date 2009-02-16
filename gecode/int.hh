@@ -736,9 +736,9 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   enum IntConLevel {
-    ICL_VAL, ///< Value consistency (naive)
-    ICL_BND, ///< Bounds consistency
-    ICL_DOM, ///< Domain consistency
+    ICL_VAL, ///< Value propagation or consistency (naive)
+    ICL_BND, ///< Bounds propagation or consistency
+    ICL_DOM, ///< Domain propagation or consistency
     ICL_DEF  ///< The default consistency for a constraint
   };
 
@@ -1115,8 +1115,8 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ x_i = j\leftrightarrow y_j=i\f$ for all \f$0\leq i<|x|\f$
    *
-   * \li Supports domain (\a icl = ICL_DOM) and value propagation (all other
-   *     values for \a icl).
+   * \li Supports domain consistency (\a icl = ICL_DOM) and value 
+   *     propagation (all other values for \a icl).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
@@ -1130,8 +1130,8 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ x_i - \mathit{xoff} = j\leftrightarrow y_j - \mathit{yoff} = i\f$ for all \f$0\leq i<|x|\f$
    *
-   * \li Supports domain (\a icl = ICL_DOM) and value propagation (all other
-   *     values for \a icl).
+   * \li Supports domain consistency (\a icl = ICL_DOM) and value 
+   *     propagation (all other values for \a icl).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
