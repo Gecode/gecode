@@ -177,7 +177,7 @@ const unsigned int n_specs = sizeof(specs) / sizeof(int*);
 //@}
 
 /**
- * \brief %Example: packing squares into a rectangle
+ * \brief %Example: Packing squares into a rectangle
  *
  * See problem 9 at http://www.csplib.org/.
  *
