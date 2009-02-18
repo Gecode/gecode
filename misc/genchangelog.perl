@@ -140,7 +140,7 @@ while ($l = <>) {
     goto LINE;
   }
   if ($l =~ /^\[ENTRY\]/) {
-    my $mod, $what, $rank, $bug, $desc, $more, $thanks;
+    my $mod, $what, $rank, $bug, $desc, $more, $thanks, $author;
     $desc = "";
     $more = "";
     $bug = "";
@@ -148,6 +148,7 @@ while ($l = <>) {
     $what = "";
     $mod = "";
     $thanks = "";
+    $author = "";
     while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
       if ($l =~ /Module:[\t ]*(.*)$/) {
 	$mod  = $1;
@@ -159,6 +160,8 @@ while ($l = <>) {
 	$bug  = $1;
       } elsif ($l =~ /Thanks:[\t ]*(.*)$/) {
 	$thanks  = $1;
+      } elsif ($l =~ /Author:[\t ]*(.*)$/) {
+	$author  = $1;
       }
     }
     
@@ -185,6 +188,9 @@ while ($l = <>) {
     }
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
+    }
+    if (!($author eq "")) {
+      $rb = $rb . " , contributed by $author";
     }
     if (!($more eq "")) {
 	$more =~ s/^        //;

@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Tias Guns <tias.guns@cs.kuleuven.be>
  *
  *  Copyright:
  *     Christian Schulte, 2006
+ *     Tias Guns, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -634,6 +636,518 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_SUBSUMED(*this,sizeof(*this));
     }
     return ES_FIX;
+  }
+
+  //** REIFIED **//
+
+  /*
+   * Baseclass for reified integer Boolean sum using dependencies
+   *
+   */
+  template <class VX, class VB>
+  forceinline
+  MemoryReLinBoolInt<VX,VB>::MemoryReLinBoolInt(Space& home, ViewArray<VX>& x0,
+                                         int n_s0, int c0, VB b0)
+    : MemoryLinBoolInt<VX>(home,x0,n_s0,c0), b(b0) {
+    b.subscribe(home,*this,PC_BOOL_VAL);
+  }
+
+  template <class VX, class VB>
+  forceinline size_t
+  MemoryReLinBoolInt<VX,VB>::dispose(Space& home) {
+    assert(!home.failed());
+    b.cancel(home,*this,PC_BOOL_VAL);
+    (void) MemoryLinBoolInt<VX>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class VX, class VB>
+  forceinline
+  MemoryReLinBoolInt<VX,VB>::MemoryReLinBoolInt(Space& home, bool share, 
+                                         MemoryReLinBoolInt<VX,VB>& p)
+    : MemoryLinBoolInt<VX>(home,share,p) {
+    b.update(home,share,p.b);
+  }
+
+  /*
+   * Baseclass for reified integer Boolean sum using advisors
+   *
+   */
+  template <class VX, class VB>
+  forceinline
+  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, ViewArray<VX>& x0,
+                                         int n_s0, int c0, VB b0)
+    : SpeedLinBoolInt<VX>(home,x0,n_s0,c0), b(b0) {
+    b.subscribe(home,*this,PC_BOOL_VAL);
+  }
+
+  template <class VX, class VB>
+  forceinline size_t
+  SpeedReLinBoolInt<VX,VB>::dispose(Space& home) {
+    assert(!home.failed());
+    b.cancel(home,*this,PC_BOOL_VAL);
+    (void) SpeedLinBoolInt<VX>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class VX, class VB>
+  forceinline
+  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, bool share, 
+                                         SpeedReLinBoolInt<VX,VB>& p)
+    : SpeedLinBoolInt<VX>(home,share,p) {
+    b.update(home,share,p.b);
+  }
+
+
+  /*
+   * Reified greater or equal propagator (integer rhs)
+   * 
+   */
+
+  template <class VX, class VB>
+  forceinline
+  ReGqBoolInt<VX,VB>::Memory::Memory(Space& home, ViewArray<VX>& x, int c, VB b)
+  // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
+    : MemoryReLinBoolInt<VX,VB>
+        (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
+  template <class VX, class VB>
+  forceinline
+  ReEqBoolInt<VX,VB>::Memory::Memory(Space& home, ViewArray<VX>& x, int c, VB b)
+  // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
+    : MemoryReLinBoolInt<VX,VB>
+        (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
+
+  template <class VX, class VB>
+  forceinline
+  ReGqBoolInt<VX,VB>::Memory::Memory(Space& home, bool share, 
+                                typename ReGqBoolInt<VX,VB>::Memory& p)
+    : MemoryReLinBoolInt<VX,VB>(home,share,p) {}
+  template <class VX, class VB>
+  forceinline
+  ReEqBoolInt<VX,VB>::Memory::Memory(Space& home, bool share, 
+                                typename ReEqBoolInt<VX,VB>::Memory& p)
+    : MemoryReLinBoolInt<VX,VB>(home,share,p) {}
+
+  template <class VX, class VB>
+  Actor*
+  ReGqBoolInt<VX,VB>::Memory::copy(Space& home, bool share) {
+    return new (home) Memory(home,share,*this);
+  }
+  template <class VX, class VB>
+  Actor*
+  ReEqBoolInt<VX,VB>::Memory::copy(Space& home, bool share) {
+    return new (home) Memory(home,share,*this);
+  }
+
+  template <class VX, class VB>
+  inline ExecStatus
+  ReGqBoolInt<VX,VB>::Memory::rewrite_inverse(Space& home, 
+                                              ViewArray<BoolView>& x, int c) {
+    ViewArray<NegBoolView> y(home,x.size());
+    for (int i=x.size(); i--; )
+      y[i]=x[i];
+    GECODE_REWRITE(*this,(GqBoolInt<NegBoolView>::post(home,y,x.size()-c+1)));
+  }
+
+  template <class VX, class VB>
+  inline ExecStatus
+  ReGqBoolInt<VX,VB>::Memory::rewrite_inverse(Space& home, 
+                                              ViewArray<NegBoolView>& x, int c) {
+    ViewArray<BoolView> y(home,x.size());
+    for (int i=x.size(); i--; )
+      y[i]=x[i].base();
+    GECODE_REWRITE(*this,(GqBoolInt<BoolView>::post(home,y,x.size()-c+1)));
+  }
+
+
+  template <class VX, class VB>
+  ExecStatus
+  ReGqBoolInt<VX,VB>::Memory::propagate(Space& home, const ModEventDelta&) {
+    // Eliminate assigned views from subscribed views
+    int n_x = x.size();
+    for (int i=n_s; i--; )
+      if (x[i].zero()) {
+        x[i]=x[--n_s]; x[n_s]=x[--n_x];
+      } else if (x[i].one()) {
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
+      }
+    x.size(n_x);
+
+    // b got assigned, subsume or rewrite
+    if (b.assigned()) {
+      if (n_x == 0)
+        return ES_SUBSUMED(*this,home);
+      if (b.one())
+        GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home,x,c)));
+      if (b.zero())
+        return rewrite_inverse(home, x, c);
+    }
+
+    if (n_x < c) {
+      GECODE_ME_CHECK(b.zero_none(home));
+      return ES_SUBSUMED(*this,home);
+    }
+    if (c <= 0) {
+      GECODE_ME_CHECK(b.one_none(home));
+      return ES_SUBSUMED(*this,home);
+    }
+    // Find unassigned variables to subscribe to
+    int n_s0 = c; // minimal number of subscriptions !
+    // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
+    n_s0 = std::min(x.size(),std::max(c,x.size()-c)+1);
+
+    while ((n_s < n_x) && (n_s <= n_s0)) 
+      if (x[n_s].zero()) {
+        x[n_s]=x[--n_x];
+      } else if (x[n_s].one()) {
+        x[n_s]=x[--n_x]; c--;
+      } else {
+        x[n_s++].subscribe(home,*this,PC_INT_VAL,false);
+      }
+    x.size(n_x);
+    if (n_x < c) {
+      GECODE_ME_CHECK(b.zero_none(home));
+      return ES_SUBSUMED(*this,home);
+    }
+    if (c <= 0) {
+      GECODE_ME_CHECK(b.one_none(home));
+      return ES_SUBSUMED(*this,home);
+    }
+    return ES_FIX;
+  }
+
+  template <class VX, class VB>
+  ExecStatus
+  ReEqBoolInt<VX,VB>::Memory::propagate(Space& home, const ModEventDelta&) {
+    // Eliminate assigned views from subscribed views
+    int n_x = x.size();
+    for (int i=n_s; i--; )
+      if (x[i].zero()) {
+        x[i]=x[--n_s]; x[n_s]=x[--n_x];
+      } else if (x[i].one()) {
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
+      }
+    x.size(n_x);
+
+    // b got assigned, subsume or rewrite
+    if (b.assigned()) {
+      if (n_x == 0)
+        return ES_SUBSUMED(*this,home);
+      if (b.one())
+        GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home,x,c)));
+      if (b.zero())
+        GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home,x,c)));
+    }
+
+    if ((c < 0) || (c > n_x)) {
+      GECODE_ME_CHECK(b.zero_none(home));
+      return ES_SUBSUMED(*this,home);
+    }
+    // Find unassigned variables to subscribe to
+    int n_s0 = c; // minimal number of subscriptions !
+    // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
+    n_s0 = std::min(x.size(),std::max(c,x.size()-c)+1);
+
+    while ((n_s < n_x) && (n_s <= n_s0)) 
+      if (x[n_s].zero()) {
+        x[n_s]=x[--n_x];
+      } else if (x[n_s].one()) {
+        x[n_s]=x[--n_x]; c--;
+      } else {
+        x[n_s++].subscribe(home,*this,PC_INT_VAL,false);
+      }
+    x.size(n_x);
+    if ((c < 0) || (c > n_x)) {
+      GECODE_ME_CHECK(b.zero_none(home));
+      return ES_SUBSUMED(*this,home);
+    }
+    if (c == 0 && n_x == 0) {
+      GECODE_ME_CHECK(b.one_none(home));
+      return ES_SUBSUMED(*this,home);
+    }
+    return ES_FIX;
+  }
+
+
+
+  template <class VX, class VB>
+  forceinline
+  ReGqBoolInt<VX,VB>::Speed::Speed(Space& home, ViewArray<VX>& x, int c, VB b)
+  // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
+    : SpeedReLinBoolInt<VX,VB>
+          (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
+  template <class VX, class VB>
+  forceinline
+  ReEqBoolInt<VX,VB>::Speed::Speed(Space& home, ViewArray<VX>& x, int c, VB b)
+  // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
+    : SpeedReLinBoolInt<VX,VB>
+          (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
+
+  template <class VX, class VB>
+  forceinline
+  ReGqBoolInt<VX,VB>::Speed::Speed(Space& home, bool share, 
+                              typename ReGqBoolInt<VX,VB>::Speed& p)
+    : SpeedReLinBoolInt<VX,VB>(home,share,p) {}
+  template <class VX, class VB>
+  forceinline
+  ReEqBoolInt<VX,VB>::Speed::Speed(Space& home, bool share, 
+                              typename ReEqBoolInt<VX,VB>::Speed& p)
+    : SpeedReLinBoolInt<VX,VB>(home,share,p) {}
+
+  template <class VX, class VB>
+  Actor*
+  ReGqBoolInt<VX,VB>::Speed::copy(Space& home, bool share) {
+    return new (home) Speed(home,share,*this);
+  }
+  template <class VX, class VB>
+  Actor*
+  ReEqBoolInt<VX,VB>::Speed::copy(Space& home, bool share) {
+    return new (home) Speed(home,share,*this);
+  }
+
+
+  template <class VX, class VB>
+  inline ExecStatus
+  ReGqBoolInt<VX,VB>::Speed::rewrite_inverse(Space& home, 
+                                             ViewArray<BoolView>& x, int c) {
+    ViewArray<NegBoolView> y(home,x.size());
+    for (int i=x.size(); i--; )
+      y[i]=x[i];
+    GECODE_REWRITE(*this,(GqBoolInt<NegBoolView>::post(home,y,x.size()-c+1)));
+  }
+
+  template <class VX, class VB>
+  inline ExecStatus
+  ReGqBoolInt<VX,VB>::Speed::rewrite_inverse(Space& home, 
+                                             ViewArray<NegBoolView>& x, int c) {
+    ViewArray<BoolView> y(home,x.size());
+    for (int i=x.size(); i--; )
+      y[i]=x[i].base();
+    GECODE_REWRITE(*this,(GqBoolInt<BoolView>::post(home,y,x.size()-c+1)));
+  }
+
+
+  template <class VX, class VB>
+  ExecStatus
+  ReGqBoolInt<VX,VB>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
+    ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
+    if (n_s == 0)
+      return ES_SUBSUMED_FIX(a,home,co);
+
+    // elminate view
+    assert(!a.view().none());
+    if (a.view().one())
+      c--;
+    n_s--;
+    if ((n_s+x.size() < c) || (c <= 0))
+      return ES_SUBSUMED_NOFIX(a,home,co);
+
+    // Find a new subscription
+    int n_s0 = std::min(x.size(),std::max(c,x.size()-c)+1);
+    if (n_s < n_s0) {
+      assert(n_s == n_s0-1);
+      for (int i = x.size(); i--; ) {
+        // if (x[i].zero()) // continue
+        if (x[i].one()) {
+          c--;
+        } else if (x[i].none()) {
+          // view i is unassigned (offset 0)
+          if ((n_s+(i+1) < c) || (c < 0)) {
+            x.size(i+1);
+            return ES_SUBSUMED_NOFIX(a,home,co);
+          }
+          a.view(home,x[i]);
+          n_s++;
+          x.size(i);
+          return ES_FIX;
+        }
+      }
+      // No view left
+      x.size(0);
+      if ((n_s+x.size() < c) || (c <= 0))
+        return ES_SUBSUMED_NOFIX(a,home,co);
+    }
+    // This advisor is obsolete
+    return ES_SUBSUMED_FIX(a,home,co);
+  }
+
+  template <class VX, class VB>
+  ExecStatus
+  ReEqBoolInt<VX,VB>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
+    ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
+    if (n_s == 0)
+      return ES_SUBSUMED_FIX(a,home,co);
+
+    // elminate view
+    assert(!a.view().none());
+    if (a.view().one())
+      c--;
+    n_s--;
+    if ((c < 0) || (n_s+x.size() < c) || (n_s+x.size() == 0))
+    //if ((n_s+x.size() < c) || (c < 0))
+      return ES_SUBSUMED_NOFIX(a,home,co);
+
+    // Find a new subscription
+    int n_s0 = std::min(x.size(),std::max(c,x.size()-c)+1);
+    if (n_s < n_s0) {
+      assert(n_s == n_s0-1);
+      for (int i = x.size(); i--; ) {
+        // if (x[i].zero()) // continue
+        if (x[i].one()) {
+          c--;
+        } else if (x[i].none()) {
+          // view i is unassigned (offset 0)
+          if ((n_s+(i+1) < c) || (c < 0)) {
+            x.size(i+1);
+            return ES_SUBSUMED_NOFIX(a,home,co);
+          }
+          a.view(home,x[i]);
+          n_s++;
+          x.size(i);
+          return ES_FIX;
+        }
+      }
+      // No view left
+      x.size(0);
+      if ((c < 0) || (n_s < c) || (n_s == 0))
+        return ES_SUBSUMED_NOFIX(a,home,co);
+    }
+    // This advisor is obsolete
+    return ES_SUBSUMED_FIX(a,home,co);
+  }
+
+
+
+  template <class VX, class VB>
+  ExecStatus
+  ReGqBoolInt<VX,VB>::Speed::propagate(Space& home, const ModEventDelta&) {
+    // either b got assigned, or an advisor called ES_SUBSUMED_NOFIX
+    int real_n_s = n_s;
+    // Signal to advisors that propagator runs
+    n_s = 0;
+    if (b.none()) {
+      if (c <= 0) {
+        GECODE_ME_CHECK(b.one_none(home));
+      } else {
+        GECODE_ME_CHECK(b.zero_none(home));
+      }
+    } else {
+      // Problem: now we need to add all advised views back to x !
+      int real_n = x.size();
+      ViewArray<VX> real_x(home, real_n+real_n_s);
+      for (int i=real_n; i--; )
+        real_x[i] = x[i];
+      x.size(0);
+      for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
+        real_x[real_n++] = as.advisor().view();
+
+      if (b.one())
+        GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home,real_x,c)));
+      if (b.zero())
+        return rewrite_inverse(home, real_x, c);
+    }
+    return ES_SUBSUMED(*this,home);
+  }
+
+  template <class VX, class VB>
+  ExecStatus
+  ReEqBoolInt<VX,VB>::Speed::propagate(Space& home, const ModEventDelta&) {
+    // either b got assigned, or an advisor called ES_SUBSUMED_NOFIX
+    int real_n_s = n_s;
+    // Signal to advisors that propagator runs
+    n_s = 0;
+
+    if (b.none()) {
+      if (c == 0 && real_n_s+x.size() == 0) {
+        GECODE_ME_CHECK(b.one_none(home));
+      } else {
+        GECODE_ME_CHECK(b.zero_none(home));
+      }
+    } else {
+      // Problem: now we need to add all advised views back to x !
+      int real_n = x.size();
+      ViewArray<VX> real_x(home, real_n+real_n_s);
+      for (int i=real_n; i--; )
+        real_x[i] = x[i];
+      x.size(0);
+      for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
+        real_x[real_n++] = as.advisor().view();
+
+      if (b.one())
+        GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home,real_x,c)));
+      if (b.zero())
+        GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home,real_x,c)));
+    }
+    return ES_SUBSUMED(*this,home);
+  }
+
+
+
+  template <class VX, class VB>
+  ExecStatus
+  ReGqBoolInt<VX,VB>::post(Space& home, ViewArray<VX>& x, int c, VB b) {
+    assert(!b.assigned()); // checked before posting
+
+    // Eliminate assigned views
+    int n_x = x.size();
+    for (int i=n_x; i--; )
+      if (x[i].zero()) {
+        x[i] = x[--n_x];
+      } else if (x[i].one()) {
+        x[i] = x[--n_x]; c--;
+      }
+    // RHS too large
+    if (n_x < c) {
+      GECODE_ME_CHECK(b.zero_none(home));
+      return ES_OK;
+    }
+    // Whatever the x[i] take for values, the inequality is subsumed
+    if (c <= 0) {
+      GECODE_ME_CHECK(b.one_none(home));
+      return ES_OK;
+    }
+    // This is the needed invariant as c subscriptions must be created (c+1 in non-reified)
+    assert(n_x >= c);
+    x.size(n_x);
+    if (x.size() > threshold) // this used to be PropKind
+      (void) new (home) Speed(home,x,c,b);
+    else
+      (void) new (home) Memory(home,x,c,b);
+    return ES_OK;
+  }
+
+  template <class VX, class VB>
+  ExecStatus
+  ReEqBoolInt<VX,VB>::post(Space& home, ViewArray<VX>& x, int c, VB b) {
+    assert(!b.assigned()); // checked before posting
+
+    // Eliminate assigned views
+    int n_x = x.size();
+    for (int i=n_x; i--; )
+      if (x[i].zero()) {
+        x[i] = x[--n_x];
+      } else if (x[i].one()) {
+        x[i] = x[--n_x]; c--;
+      }
+    // RHS too large || whatever the x[i] take for values, the equality is subsumed
+    if ((n_x < c) || (c < 0)) {
+      GECODE_ME_CHECK(b.zero_none(home));
+      return ES_OK;
+    }
+    // all variables set, and c == 0: equality
+    if ((c == 0) && (n_x == 0)) {
+      GECODE_ME_CHECK(b.one_none(home));
+      return ES_OK;
+    }
+    // This is the needed invariant as c subscriptions must be created (c+1 in non-reified)
+    assert(n_x >= c);
+    x.size(n_x);
+    if (x.size() > threshold) {// this used to be PropKind
+      (void) new (home) Speed(home,x,c,b);
+    } else {
+      (void) new (home) Memory(home,x,c,b);
+    }
+    return ES_OK;
   }
 
 

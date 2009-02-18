@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Tias Guns <tias.guns@cs.kuleuven.be>
  *
  *  Copyright:
  *     Christian Schulte, 2002
+ *     Tias Guns, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,6 +40,49 @@
 #include <gecode/int/linear.hh>
 
 namespace Gecode { namespace Int { namespace Linear {
+
+  /// Inverse the relation
+  inline IntRelType 
+  inverse(const IntRelType r) {
+    switch (r) {
+      case IRT_EQ: return IRT_NQ; break;
+      case IRT_NQ: return IRT_EQ; break;
+      case IRT_GQ: return IRT_LE; break;
+      case IRT_LQ: return IRT_GR; break;
+      case IRT_LE: return IRT_GQ; break;
+      case IRT_GR: return IRT_LQ; break;
+      default: GECODE_NEVER;
+    }
+    throw UnknownRelation("Int::linear");
+  }
+
+  /// Eliminate assigned views
+  inline void
+  eliminate(Term<BoolView>* t, int &n, double& d) {
+    for (int i=n; i--; )
+      if (t[i].x.one()) {
+        d -= t[i].a; t[i]=t[--n];
+      } else if (t[i].x.zero()) {
+        t[i]=t[--n];
+      }
+
+    Limits::check(d,"Int::linear");
+  }
+
+  /// Rewrite non-strict relations
+  inline void
+  rewrite(IntRelType &r, double &d) {
+      switch (r) {
+      case IRT_EQ: case IRT_NQ: case IRT_LQ: case IRT_GQ:
+        break;
+      case IRT_LE:
+        d--; r = IRT_LQ; break;
+      case IRT_GR:
+        d++; r = IRT_GQ; break;
+      default:
+        throw UnknownRelation("Int::linear");
+      }
+  }
 
   void
   post_pos_unit(Space& home,
@@ -120,6 +165,49 @@ namespace Gecode { namespace Int { namespace Linear {
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
         GECODE_ES_FAIL(home,(GqBoolInt<NegBoolView>::post(home,x,n_p-c)));
+      }
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
+  void
+  post_pos_unit_reif(Space& home,
+                     Term<BoolView>* t_p, int n_p,
+                     IntRelType r, int c, BoolView b,
+                     IntConLevel) {
+    switch (r) {
+    case IRT_EQ:
+      {
+        ViewArray<BoolView> x(home,n_p);
+        for (int i=n_p; i--; )
+          x[i]=t_p[i].x;
+        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,BoolView>::post(home,x,c,b)));
+      }
+      break;
+    case IRT_NQ:
+      {
+        ViewArray<BoolView> x(home,n_p);
+        for (int i=n_p; i--; )
+          x[i]=t_p[i].x;
+        NegBoolView nb(b);
+        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,NegBoolView>::post(home,x,c,nb)));
+      }
+      break;
+    case IRT_GQ:
+      {
+        ViewArray<BoolView> x(home,n_p);
+        for (int i=n_p; i--; )
+          x[i]=t_p[i].x;
+        GECODE_ES_FAIL(home,(ReGqBoolInt<BoolView,BoolView>::post(home,x,c,b)));
+      }
+      break;
+    case IRT_LQ:
+      {
+        ViewArray<NegBoolView> x(home,n_p);
+        for (int i=n_p; i--; )
+          x[i]=t_p[i].x;
+        GECODE_ES_FAIL(home,(ReGqBoolInt<NegBoolView,BoolView>::post(home,x,n_p-c,b)));
       }
       break;
     default: GECODE_NEVER;
@@ -215,6 +303,48 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
+  void
+  post_neg_unit_reif(Space& home,
+                     Term<BoolView>* t_n, int n_n,
+                     IntRelType r, int c, BoolView b,
+                     IntConLevel) {
+    switch (r) {
+    case IRT_EQ:
+      {
+        ViewArray<BoolView> x(home,n_n);
+        for (int i=n_n; i--; )
+          x[i]=t_n[i].x;
+        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,BoolView>::post(home,x,-c,b)));
+      }
+      break;
+    case IRT_NQ:
+      {
+        ViewArray<BoolView> x(home,n_n);
+        for (int i=n_n; i--; )
+          x[i]=t_n[i].x;
+        NegBoolView nb(b);
+        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,NegBoolView>::post(home,x,-c,nb)));
+      }
+      break;
+    case IRT_GQ:
+      {
+        ViewArray<NegBoolView> x(home,n_n);
+        for (int i=n_n; i--; )
+          x[i]=t_n[i].x;
+        GECODE_ES_FAIL(home,(ReGqBoolInt<NegBoolView,BoolView>::post(home,x,n_n+c,b)));
+      }
+      break;
+    case IRT_LQ:
+      {
+        ViewArray<BoolView> x(home,n_n);
+        for (int i=n_n; i--; )
+          x[i]=t_n[i].x;
+        GECODE_ES_FAIL(home,(ReGqBoolInt<BoolView,BoolView>::post(home,x,-c,b)));
+      }
+      break;
+    default: GECODE_NEVER;
+    }
+  }
 
   void
   post_mixed(Space& home,
@@ -318,33 +448,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
     Limits::check(c,"Int::linear");
 
-    {
-      double d = c;
+    double d = c;
 
-      // Eliminate non-strict relations
-      switch (r) {
-      case IRT_EQ: case IRT_NQ: case IRT_LQ: case IRT_GQ:
-        break;
-      case IRT_LE:
-        d--; r = IRT_LQ; break;
-      case IRT_GR:
-        d++; r = IRT_GQ; break;
-      default:
-        throw UnknownRelation("Int::linear");
-      }
+    eliminate(t,n,d);
 
-      // Eliminate assigned views
-      for (int i=n; i--; )
-        if (t[i].x.one()) {
-          d -= t[i].a; t[i]=t[--n];
-        } else if (t[i].x.zero()) {
-          t[i]=t[--n];
-        }
+    rewrite(r,d);
 
-      Limits::check(d,"Int::linear");
-
-      c = static_cast<int>(d);
-    }
+    c = static_cast<int>(d);
 
     Term<BoolView> *t_p, *t_n;
     int n_p, n_n;
@@ -416,11 +526,74 @@ namespace Gecode { namespace Int { namespace Linear {
   post(Space& home,
        Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel icl) {
-    int l, u;
-    estimate(t,n,0,l,u);
-    IntVar z(home,l,u); IntView zv(z);
-    post_all(home,t,n,IRT_EQ,zv,0);
-    rel(home,z,r,c,b,icl);
+
+    if (b.one())
+      return post(home,t,n,r,c,icl);
+    if (b.zero())
+      return post(home,t,n,inverse(r),c,icl);
+
+    Limits::check(c,"Int::linear");
+
+    double d = c;
+
+    eliminate(t,n,d);
+
+    rewrite(r,d);
+
+    c = static_cast<int>(d);
+
+    if (n == 0) {
+      bool fail = false;
+      switch (r) {
+      case IRT_EQ: fail = (0 != c); break;
+      case IRT_NQ: fail = (0 == c); break;
+      case IRT_GQ: fail = (0 < c); break;
+      case IRT_LQ: fail = (0 > c); break;
+      default: GECODE_NEVER;
+      }
+      if ((fail ? b.zero(home) : b.one(home)) == ME_INT_FAILED)
+        home.fail();
+      return;
+    }
+
+    Term<BoolView> *t_p, *t_n;
+    int n_p, n_n;
+    bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n);
+
+    // Check for overflow
+    {
+      double sl = c;
+      double su = c;
+      for (int i=n_p; i--; )
+        su -= t_p[i].a;
+      for (int i=n_n; i--; )
+        sl += t_n[i].a;
+      Limits::check(sl,"Int::linear");
+      Limits::check(su,"Int::linear");
+    }
+
+    if (unit && (n_n == 0)) {
+      /// All coefficients are 1
+      post_pos_unit_reif(home,t_p,n_p,r,c,b,icl);
+    } else if (unit && (n_p == 0)) {
+      // All coefficients are -1
+      post_neg_unit_reif(home,t_n,n_n,r,c,b,icl);
+    } else {
+      // Mixed coefficients
+      /*
+       * Denormalize: Make all t_n coefficients negative again
+       * (t_p and t_n are shared in t)
+       */
+      for (int i=n_n; i--; )
+        t_n[i].a = -t_n[i].a;
+
+      // Note: still slow implementation
+      int l, u;
+      estimate(t,n,0,l,u);
+      IntVar z(home,l,u); IntView zv(z);
+      post_all(home,t,n,IRT_EQ,zv,0);
+      rel(home,z,r,c,b,icl);
+    }
   }
 
 }}}

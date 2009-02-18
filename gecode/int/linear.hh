@@ -3,10 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
+ *     Tias Guns <tias.guns@cs.kuleuven.be>
  *
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2004
+ *     Tias Guns, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -952,6 +954,171 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
     static  ExecStatus post(Space& home, ViewArray<VX>& b, int c);
+  };
+
+
+  /*
+   * Reified boolean linear propagators
+   *
+   */
+
+  /**
+   * \brief Baseclass for reified integer Boolean sum using dependencies
+   *
+   */
+  template <class VX, class VB>
+  class MemoryReLinBoolInt : public MemoryLinBoolInt<VX> {
+  protected:
+    using MemoryLinBoolInt<VX>::x;
+    using MemoryLinBoolInt<VX>::n_s;
+    using MemoryLinBoolInt<VX>::c;
+    /// Boolean view
+    VB b;
+    /// Constructor for cloning \a p
+    MemoryReLinBoolInt(Space& home, bool share, MemoryReLinBoolInt& p);
+    /// Constructor for creation
+    MemoryReLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c, VB b);
+  public:
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+  /**
+   * \brief Baseclass for reified integer Boolean sum using advisors
+   *
+   */
+  template <class VX, class VB>
+  class SpeedReLinBoolInt : public SpeedLinBoolInt<VX> {
+  protected:
+    using SpeedLinBoolInt<VX>::x;
+    using SpeedLinBoolInt<VX>::n_s;
+    using SpeedLinBoolInt<VX>::c;
+    using SpeedLinBoolInt<VX>::co;
+    /// Boolean view
+    VB b;
+    /// Constructor for cloning \a p
+    SpeedReLinBoolInt(Space& home, bool share, SpeedReLinBoolInt& p);
+    /// Constructor for creation
+    SpeedReLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c, VB b);
+  public:
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+
+
+
+  /**
+   * \brief %Propagator for reified integer less or equal to Boolean sum (cardinality)
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class VX, class VB>
+  class ReGqBoolInt {
+  public:
+    /// Threshold of whether to prefer speed or memory
+    static const int threshold = 32;
+    /// Propagator using less memory but with linear runtime
+    class Memory : public MemoryReLinBoolInt<VX,VB> {
+    protected:
+      using MemoryReLinBoolInt<VX,VB>::x;
+      using MemoryReLinBoolInt<VX,VB>::n_s;
+      using MemoryReLinBoolInt<VX,VB>::c;
+      using MemoryReLinBoolInt<VX,VB>::b;
+    public:
+      /// Constructor for cloning \a p
+      Memory(Space& home, bool share, Memory& p);
+      /// Constructor for creation
+      Memory(Space& home, ViewArray<VX>& x, int c, VB b);
+      /// Create copy during cloning
+      virtual Actor* copy(Space& home, bool share);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+      /// Rewrite when reif is false, BoolView
+      ExecStatus rewrite_inverse(Space& home, ViewArray<BoolView>& x, int c);
+      /// Rewrite when reif is false, NegBoolView
+      ExecStatus rewrite_inverse(Space& home, ViewArray<NegBoolView>& x, int c);
+    };
+    /// Propagator using more memory but with constant runtime
+    class Speed : public SpeedReLinBoolInt<VX,VB> {
+    protected:
+      using SpeedReLinBoolInt<VX,VB>::x;
+      using SpeedReLinBoolInt<VX,VB>::n_s;
+      using SpeedReLinBoolInt<VX,VB>::c;
+      using SpeedReLinBoolInt<VX,VB>::co;
+      using SpeedReLinBoolInt<VX,VB>::b;
+    public:
+      /// Constructor for cloning \a p
+      Speed(Space& home, bool share, Speed& p);
+      /// Constructor for creation
+      Speed(Space& home, ViewArray<VX>& x, int c, VB b);
+      /// Create copy during cloning
+      virtual Actor* copy(Space& home, bool share);
+      /// Give advice to propagator
+      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+      /// Rewrite when reif is false, BoolView
+      ExecStatus rewrite_inverse(Space& home, ViewArray<BoolView>& x, int c);
+      /// Rewrite when reif is false, NegBoolView
+      ExecStatus rewrite_inverse(Space& home, ViewArray<NegBoolView>& x, int c);
+    };
+  public:
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c <=> b\f$
+    static ExecStatus post(Space& home, ViewArray<VX>& x, int c, VB b);
+  };
+
+  /**
+   * \brief %Propagator for reified integer equal to Boolean sum (cardinality)
+   *
+   * Requires \code #include <gecode/int/linear.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class VX, class VB>
+  class ReEqBoolInt {
+  public:
+    /// Threshold of whether to prefer speed or memory
+    static const int threshold = 32;
+    /// Propagator using less memory but with linear runtime
+    class Memory : public MemoryReLinBoolInt<VX,VB> {
+    protected:
+      using MemoryReLinBoolInt<VX,VB>::x;
+      using MemoryReLinBoolInt<VX,VB>::n_s;
+      using MemoryReLinBoolInt<VX,VB>::c;
+      using MemoryReLinBoolInt<VX,VB>::b;
+    public:
+      /// Constructor for cloning \a p
+      Memory(Space& home, bool share, Memory& p);
+      /// Constructor for creation
+      Memory(Space& home, ViewArray<VX>& x, int c, VB b);
+      /// Create copy during cloning
+      virtual Actor* copy(Space& home, bool share);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    };
+    /// Propagator using more memory but with constant runtime
+    class Speed : public SpeedReLinBoolInt<VX,VB> {
+    protected:
+      using SpeedReLinBoolInt<VX,VB>::x;
+      using SpeedReLinBoolInt<VX,VB>::n_s;
+      using SpeedReLinBoolInt<VX,VB>::c;
+      using SpeedReLinBoolInt<VX,VB>::co;
+      using SpeedReLinBoolInt<VX,VB>::b;
+    public:
+      /// Constructor for cloning \a p
+      Speed(Space& home, bool share, Speed& p);
+      /// Constructor for creation
+      Speed(Space& home, ViewArray<VX>& x, int c, VB b);
+      /// Create copy during cloning
+      virtual Actor* copy(Space& home, bool share);
+      /// Give advice to propagator
+      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    };
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
+    static ExecStatus post(Space& home, ViewArray<VX>& x, int c, VB b);
   };
 
 }}}
