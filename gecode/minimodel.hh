@@ -1412,7 +1412,7 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \defgroup TaskModelMiniModelOptimize Support for optimization
+   * \defgroup TaskModelMiniModelOptimize Support for cost-based optimization
    *
    * Provides for minimizing or maximizing the cost value as defined by
    * a cost-member function of a space.

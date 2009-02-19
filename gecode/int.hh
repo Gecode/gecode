@@ -1350,7 +1350,7 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskModelIntCard Cardinality constraints
+   * \defgroup TaskModelIntCount Counting constraints
    * \ingroup TaskModelInt
    *
    *  \note
@@ -1460,7 +1460,7 @@ namespace Gecode {
     * the same unassigned variable multiply.
     *
     * Throws an exception of type Int::ArgumentSizeMismatch, if
-    *  \a cards and \a values are of different size.
+    *  \a c and \a v are of different size.
     */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
@@ -1481,7 +1481,7 @@ namespace Gecode {
     * the same unassigned variable multiply.
     *
     * Throws an exception of type Int::ArgumentSizeMismatch, if
-    *  \a cards and \a values are of different size.
+    *  \a c and \a v are of different size.
     */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
@@ -1502,7 +1502,7 @@ namespace Gecode {
     * the same unassigned variable multiply.
     *
     * Throws an exception of type Int::ArgumentSizeMismatch, if
-    *  \a cards and \a values are of different size.
+    *  \a c and \a v are of different size.
     */
   GECODE_INT_EXPORT void
   count(Space& home, const IntVarArgs& x,
@@ -1681,7 +1681,7 @@ namespace Gecode {
     /// Get implementation
     TupleSetI* implementation(void);
 
-    /// Construct empty tuple
+    /// Construct empty tuple set
     TupleSet(void);
     /// Initialize by TupleSet \a d (tuple set is shared)
     TupleSet(const TupleSet& d);
