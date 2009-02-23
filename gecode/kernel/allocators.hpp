@@ -229,7 +229,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * \i bad_alloc if the storage is unavailable.
      */
     pointer allocate(size_type count) {
-      return reinterpret_cast<pointer>(space.ralloc(sizeof(T)*count));
+      return static_cast<pointer>(space.ralloc(sizeof(T)*count));
     }
 
     /**
@@ -249,7 +249,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
 
     /// Deallocates the storage obtained by a call to #allocate() with arguments \a count and \a p.
     void deallocate(pointer p, size_type count) {
-      space.rfree(reinterpret_cast<void*>(p), count);
+      space.rfree(static_cast<void*>(p), count);
     }
 
     /*
@@ -385,7 +385,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
       * \i bad_alloc if the storage is unavailable.
       */
     pointer allocate(size_type count) {
-      return reinterpret_cast<pointer>(region.ralloc(sizeof(T)*count));
+      return static_cast<pointer>(region.ralloc(sizeof(T)*count));
     }
 
      /**
@@ -413,7 +413,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * the memory is released when the region is destroyed.
      */
     void deallocate(pointer* p, size_type count) {
-      region.rfree(reinterpret_cast<void*>(p), count);
+      region.rfree(static_cast<void*>(p), count);
     }
 
     /**

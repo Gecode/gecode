@@ -271,35 +271,35 @@ namespace Gecode {
   template<class T, typename A1> 
   forceinline T& 
   Region::construct(A1 const& a1) {
-    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1);
     return t;
   }
   template<class T, typename A1, typename A2> 
   forceinline T& 
   Region::construct(A1 const& a1, A2 const& a2) {
-    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3>
   forceinline T& 
   Region::construct(A1 const& a1, A2 const& a2, A3 const& a3) {
-    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3, typename A4>
   forceinline T& 
   Region::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4) {
-    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3,a4);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3, typename A4, typename A5>
   forceinline T& 
   Region::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5) {
-    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3,a4,a5);
     return t;
   }
