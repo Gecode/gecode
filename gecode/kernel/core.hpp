@@ -1595,6 +1595,54 @@ namespace Gecode {
      */
     size_t allocated(void) const;
     //@}
+
+    /**
+     * \brief Class to iterate over propagators of a space
+     * 
+     * Note that the iterator cannot be used during cloning.
+     */
+    class Propagators {
+    private:
+      /// current space
+      const Space& home;
+      /// current queue
+      const ActorLink* q;
+      /// current propagator
+      const ActorLink* c;
+      /// end mark
+      const ActorLink* e;
+    public:
+      /// Initialize
+      Propagators(const Space& home);
+      /// Test whether there are propagators left
+      bool operator ()(void) const;
+      /// Move iterator to next propagator
+      void operator ++(void);
+      /// Return propagator
+      const Propagator& propagator(void) const;
+    };
+
+    /**
+     * \brief Class to iterate over branchings of a space
+     * 
+     * Note that the iterator cannot be used during cloning.
+     */
+    class Branchings {
+    private:
+      /// current branching
+      const ActorLink* c;
+      /// end mark
+      const ActorLink* e;
+    public:
+      /// Initialize
+      Branchings(const Space& home);
+      /// Test whether there are branchings left
+      bool operator ()(void) const;
+      /// Move iterator to next branching
+      void operator ++(void);
+      /// Return propagator
+      const Branching& branching(void) const;
+    };    
   };
 
 
@@ -2948,6 +2996,77 @@ namespace Gecode {
   forceinline PropCost
   PropCost::unary(PropCost::Mod m) {
     return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
+  }
+
+  /*
+   * Iterators for propagators and branchings of a space
+   *
+   */
+  forceinline
+  Space::Propagators::Propagators(const Space& home0) 
+    : home(home0), q(home.pc.p.active) {
+    while (q >= &home.pc.p.queue[0]) {
+      if (q->next() != q) {
+        c = q->next(); e = q; q--;
+        return;
+      }
+      q--;
+    }
+    q = NULL;
+    if (Branching::cast(home.a_actors.next()) != home.b_commit) {
+      c = home.a_actors.next();
+      e = Propagator::cast(home.b_commit);
+    } else {
+      c = NULL;
+    }
+  }
+  forceinline bool 
+  Space::Propagators::operator ()(void) const {
+    return c != NULL;
+  }
+  forceinline void 
+  Space::Propagators::operator ++(void) {
+    c = c->next();
+    if (c == e) {
+      if (q == NULL) {
+        c = NULL;
+      } else {
+        while (q >= &home.pc.p.queue[0]) {
+          if (q->next() != q) {
+            c = q->next(); e = q; q--;
+            return;
+          }
+          q--;
+        }
+        q = NULL;
+        if (Branching::cast(home.a_actors.next()) != home.b_commit) {
+          c = home.a_actors.next();
+          e = Propagator::cast(home.b_commit);
+        } else {
+          c = NULL;
+        }
+      }
+    }
+  }
+  forceinline const Propagator& 
+  Space::Propagators::propagator(void) const {
+    return *Propagator::cast(c);
+  }
+
+  forceinline
+  Space::Branchings::Branchings(const Space& home) 
+    : c(Branching::cast(home.b_status)), e(&home.a_actors) {}
+  forceinline bool 
+  Space::Branchings::operator ()(void) const {
+    return c != e;
+  }
+  forceinline void 
+  Space::Branchings::operator ++(void) {
+    c = c->next();
+  }
+  forceinline const Branching& 
+  Space::Branchings::branching(void) const {
+    return *Branching::cast(c);
   }
 
 }

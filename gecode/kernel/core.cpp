@@ -131,11 +131,15 @@ namespace Gecode {
   unsigned int
   Space::propagators(void) const {
     unsigned int n = 0;
+    /*
     for (ActorLink* q = pc.p.active; q >= &pc.p.queue[0]; q--)
       for (ActorLink* a = q->next(); a != q; a = a->next())
         n++;
     for (ActorLink* a = a_actors.next();
          Branching::cast(a) != b_commit; a = a->next())
+      n++;
+    */
+    for (Propagators p(*this); p(); ++p)
       n++;
     return n;
   }
@@ -143,8 +147,7 @@ namespace Gecode {
   unsigned int
   Space::branchings(void) const {
     unsigned int n = 0;
-    for (ActorLink* a = Branching::cast(b_status);
-         a != &a_actors; a = a->next())
+    for (Branchings b(*this); b(); ++b)
       n++;
     return n;
   }
