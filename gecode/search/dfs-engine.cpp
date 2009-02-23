@@ -41,7 +41,7 @@ namespace Gecode { namespace Search {
 
   DFS::DFS(Space* s, size_t sz, const Options& o)
     : Engine(sz), opt(o), d(0) {
-    cur = (s->status(*this) == SS_FAILED) ? NULL : s->clone();
+    cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,opt);
     current(s);
     current(NULL);
     current(cur);

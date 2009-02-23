@@ -7,8 +7,8 @@
  *     Christian Schulte, 2008
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-01-21 15:05:01 +0100 (Wed, 21 Jan 2009) $ by $Author: schulte $
+ *     $Revision: 8089 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -37,10 +37,11 @@
 
 namespace Gecode { namespace Search {
 
-  forceinline
-  Options::Options(void)
-    : clone(Config::clone), c_d(Config::c_d), a_d(Config::a_d), d(Config::d), 
-      stop(NULL) {}
+  /// Clone space \a s dependening on options \a o
+  forceinline Space*
+  snapshot(Space* s, const Options& o) {
+    return o.clone ? s->clone() : s;
+  }
 
 }}
 

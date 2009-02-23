@@ -207,7 +207,7 @@ namespace Gecode { namespace Search {
       e.fail += 1;
       e.current(s);
     } else {
-      Space* c = s->clone();
+      Space* c = snapshot(s,opt);
       if (opt.d > 0) {
         root = c->clone();
       }

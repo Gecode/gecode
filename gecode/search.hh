@@ -85,6 +85,8 @@ namespace Gecode {
      * \ingroup TaskModelSearch
      */
     namespace Config {
+      /// Whether engines create a clone when being initialized
+      const bool clone = true;
       /// Create a clone after every \a c_d commits (commit distance)
       const unsigned int c_d = 8;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -255,6 +257,8 @@ namespace Gecode {
      */
     class Options {
     public:
+      /// Whether engines create a clone when being initialized
+      bool clone;
       /// Create a clone after every \a c_d commits (commit distance)
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -275,6 +279,7 @@ namespace Gecode {
 #include <gecode/search/statistics.hpp>
 #include <gecode/search/stop.hpp>
 #include <gecode/search/options.hpp>
+#include <gecode/search/snapshot.hpp>
 
 #include <gecode/search/engine.hpp>
 #include <gecode/search/path.hpp>

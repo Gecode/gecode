@@ -237,7 +237,7 @@ SEARCHHDR0 = \
 	dfs-engine.hpp dfs.hpp \
 	bab-engine.hpp bab.hpp \
 	restart-engine.hpp restart.hpp \
-	lds-engine.hpp lds.hpp
+	lds-engine.hpp lds.hpp snapshot.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
