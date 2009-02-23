@@ -91,7 +91,8 @@ namespace Gecode {  namespace Gist {
 
   public:
     /// Constructor
-    TreeCanvas(Space* rootSpace, bool bab, QWidget* parent = NULL);
+    TreeCanvas(Space* rootSpace, bool bab, QWidget* parent, 
+               const Options& opt);
     /// Destructor
     ~TreeCanvas(void);
 

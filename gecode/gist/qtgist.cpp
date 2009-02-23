@@ -43,7 +43,8 @@
 
 namespace Gecode { namespace Gist {
 
-  Gist::Gist(Space* root, bool bab, QWidget* parent) : QWidget(parent) {
+  Gist::Gist(Space* root, bool bab, QWidget* parent,
+             const Options& opt) : QWidget(parent) {
     QGridLayout* layout = new QGridLayout(this);
 
     QScrollArea* scrollArea = new QScrollArea(this);
@@ -55,7 +56,7 @@ namespace Gecode { namespace Gist {
     QPalette myPalette(scrollArea->palette());
     myPalette.setColor(QPalette::Window, Qt::white);
     scrollArea->setPalette(myPalette);
-    canvas = new TreeCanvas(root, bab, this);
+    canvas = new TreeCanvas(root, bab, this,opt);
     canvas->setPalette(myPalette);
     canvas->setObjectName("canvas");
 

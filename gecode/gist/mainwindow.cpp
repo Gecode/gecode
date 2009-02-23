@@ -130,7 +130,7 @@ namespace Gecode { namespace Gist {
 
   GistMainWindow::GistMainWindow(Space* root, bool bab,
                                  const Options& opt)
-  : c(root,bab,this), aboutGist(this) {
+  : c(root,bab,this,opt), aboutGist(this) {
     if (opt.solutionInspector != NULL) {
       c.addSolutionInspector(opt.solutionInspector);
     }

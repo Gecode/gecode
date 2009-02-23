@@ -121,7 +121,7 @@ namespace Gecode {  namespace Gist {
     QActionGroup* doubleClickInspectorGroup;
   public:
     /// Constructor
-    Gist(Space* root, bool bab = false, QWidget* parent = NULL);
+    Gist(Space* root, bool bab, QWidget* parent, const Options& opt);
     /// Destructor
     ~Gist(void);
 

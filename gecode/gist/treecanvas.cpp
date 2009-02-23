@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
   Inspector::~Inspector(void) {}
 
   TreeCanvas::TreeCanvas(Space* rootSpace, bool bab,
-                         QWidget* parent)
+                         QWidget* parent, const Options& opt)
     : QWidget(parent)
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
@@ -73,7 +73,7 @@ namespace Gecode { namespace Gist {
       if (rootSpace->status() == SS_FAILED) {
         rootSpace = NULL;
       } else {
-        rootSpace = rootSpace->clone();
+        rootSpace = Gecode::Search::snapshot(rootSpace,opt);
       }
       na = new Node::NodeAllocator();
       root = new (*na) VisualNode(rootSpace);
