@@ -206,11 +206,11 @@ ExampleBase<Space>::run(const Options& o) {
         unsigned int n_p = s->propagators();
         unsigned int n_b = s->branchings();
         Search::Options so;
-        so.c_d  = o.c_d();
-        so.a_d  = o.a_d();
-        so.stop = Cutoff::create(o.node(),o.fail(), o.time());
+        so.c_d   = o.c_d();
+        so.a_d   = o.a_d();
+        so.stop  = Cutoff::create(o.node(),o.fail(), o.time());
+        so.clone = false;
         Engine<Script> e(s,so);
-        delete s;
         do {
           Script* ex = e.next();
           if (ex == NULL)
@@ -247,10 +247,10 @@ ExampleBase<Space>::run(const Options& o) {
         unsigned int n_p = s->propagators();
         unsigned int n_b = s->branchings();
         Search::Options so;
-        so.c_d  = o.c_d();
-        so.a_d  = o.a_d();
+        so.c_d   = o.c_d();
+        so.a_d   = o.a_d();
+        so.clone = false;
         Engine<Script> e(s,so);
-        delete s;
         do {
           Script* ex = e.next();
           if (ex == NULL)
@@ -283,10 +283,10 @@ ExampleBase<Space>::run(const Options& o) {
             unsigned int i = o.solutions();
             Script* s = new Script(o);
             Search::Options so;
-            so.c_d  = o.c_d();
-            so.a_d  = o.a_d();
+            so.c_d   = o.c_d();
+            so.a_d   = o.a_d();
+            so.clone = false;
             Engine<Script> e(s,so);
-            delete s;
             do {
               Script* ex = e.next();
               if (ex == NULL)
@@ -311,10 +311,11 @@ ExampleBase<Space>::run(const Options& o) {
     case EM_GIST:
       {
         Gist::PrintingInspector<Script> pi(o.name());
-        Gist::Options opt; opt.doubleClickInspector = &pi;
+        Gist::Options opt; 
+        opt.doubleClickInspector = &pi;
+        opt.clone = false;
         Script* s = new Script(o);
         (void) GistEngine<Engine<Script> >::explore(s, opt);
-        delete s;
       }
       break;
 #endif
