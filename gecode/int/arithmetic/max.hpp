@@ -115,9 +115,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   MaxBnd<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
-    if (x0.max() <= x1.min() || x0.max() < x2.min())
+    if ((x0.max() <= x1.min()) || (x0.max() < x2.min()))
       GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x1,x2)));
-    if (x1.max() <= x0.min() || x1.max() < x2.min())
+    if ((x1.max() <= x0.min()) || (x1.max() < x2.min()))
       GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x0,x2)));
     return x0.assigned() && x1.assigned() && x2.assigned() ?
       ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
@@ -235,8 +235,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   MaxDom<View>::MaxDom(Space& home, View x0, View x1, View x2)
-    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
-  (home,x0,x1,x2) {}
+    : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
 
   template <class View>
   ExecStatus
@@ -256,15 +255,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   MaxDom<View>::MaxDom(Space& home, bool share, MaxDom<View>& p)
-    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
-  (home,share,p) {}
+    : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
   forceinline
   MaxDom<View>::MaxDom(Space& home, bool share, Propagator& p,
                        View x0, View x1, View x2)
-    : MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>
-  (home,share,p,x0,x1,x2) {}
+    : TernaryPropagator<View,PC_INT_DOM>(home,share,p,x0,x1,x2) {}
 
   template <class View>
   Actor*
@@ -284,9 +281,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MaxDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
-      if (x0.max() <= x1.min() || x0.max() < x2.min())
+      if ((x0.max() <= x1.min()) || (x0.max() < x2.min()))
         GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x1,x2)));
-      if (x1.max() <= x0.min() || x1.max() < x2.min())
+      if ((x1.max() <= x0.min()) || (x1.max() < x2.min()))
         GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
       return x0.assigned() && x1.assigned() && x2.assigned() ?
         ES_SUBSUMED(*this,sizeof(*this)) :
@@ -295,6 +292,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     ViewRanges<View> r0(x0), r1(x1);
     Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
     GECODE_ME_CHECK(x2.inter_r(home,u,false));
+    if (rtest_nq_dom(x0,x2)) {
+      GECODE_ES_CHECK(Rel::Lq<View>::post(home,x0,x2));
+      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x1,x2)));
+    }
+    if (rtest_nq_dom(x1,x2)) {
+      GECODE_ES_CHECK(Rel::Lq<View>::post(home,x1,x2));
+      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
+    }
     return ES_FIX;
   }
 
@@ -306,7 +311,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   NaryMaxDom<View>::NaryMaxDom(Space& home, ViewArray<View>& x, View y)
-    : MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>(home,x,y) {}
+    : NaryOnePropagator<View,PC_INT_DOM>(home,x,y) {}
 
   template <class View>
   ExecStatus
@@ -338,7 +343,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   forceinline
   NaryMaxDom<View>::NaryMaxDom(Space& home, bool share, NaryMaxDom<View>& p)
-    : MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>(home,share,p) {}
+    : NaryOnePropagator<View,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
   Actor*
@@ -376,6 +381,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     Iter::Ranges::NaryUnion<ViewRanges<View> > u(i_x,x.size());
     GECODE_ME_CHECK(y.inter_r(home,u,false));
+    for (int i = x.size(); i--; )
+      if (rtest_nq_dom(x[i],y) == RT_TRUE) {
+        GECODE_ES_CHECK(Rel::Lq<View>::post(home,x[i],y));
+        x.move_lst(i,home,*this,PC_INT_DOM);
+      }
+    assert(x.size() > 0);
+    if (x.size() == 1)
+      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x[0],y)));
     return ES_FIX;
   }
 

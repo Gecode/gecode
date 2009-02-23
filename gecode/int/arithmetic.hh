@@ -180,12 +180,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class MaxDom : public
-  MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND> {
+  class MaxDom : public TernaryPropagator<View,PC_INT_DOM> {
   protected:
-    using MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>::x0;
-    using MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>::x1;
-    using MixTernaryPropagator<View,PC_INT_DOM,View,PC_INT_DOM,View,PC_INT_BND>::x2;
+    using TernaryPropagator<View,PC_INT_DOM>::x0;
+    using TernaryPropagator<View,PC_INT_DOM>::x1;
+    using TernaryPropagator<View,PC_INT_DOM>::x2;
 
     /// Constructor for cloning \a p
     MaxDom(Space& home, bool share, MaxDom& p);
@@ -216,11 +215,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class NaryMaxDom
-    : public MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND> {
+  class NaryMaxDom : public NaryOnePropagator<View,PC_INT_DOM> {
   protected:
-    using MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>::x;
-    using MixNaryOnePropagator<View,PC_INT_DOM,View,PC_INT_BND>::y;
+    using NaryOnePropagator<View,PC_INT_DOM>::x;
+    using NaryOnePropagator<View,PC_INT_DOM>::y;
 
     /// Constructor for cloning \a p
     NaryMaxDom(Space& home, bool share, NaryMaxDom& p);
