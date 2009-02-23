@@ -813,7 +813,7 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskModelSetConnect Connection constraints to finite domain variables
+   * \defgroup TaskModelSetConnect Connection constraints to integer variables
    * \ingroup TaskModelSet
    *
    */
@@ -892,7 +892,7 @@ namespace Gecode {
    * sequence, and \f$ [y] \f$ for the index variable.
    *
    * Set element constraints are closely related to the ::element constraint
-   * on finite domain variables.
+   * on integer variables.
    */
 
   //@{

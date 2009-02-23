@@ -104,7 +104,7 @@ public:
     IntSet germanDS(germanSpeaking, noOfGermanSpeaking);
 
     for (int i=0; i<noOfFlights; i++) {
-      IntVarArray ia(*this,5,0,noOfEmployees-1);
+      IntVarArray required(*this,5,0,noOfEmployees-1);
       SetVar team = flight[i];
 
       int N        = requiredCrew[i].staff;
@@ -114,33 +114,39 @@ public:
       int NSpanish = requiredCrew[i].spanish;
       int NGerman  = requiredCrew[i].german;
 
+      // The team has N members (as required by the specification)
       cardinality(*this, team,N,N);
-      SetVar stewardsInFS(*this);
-      SetVar hostessesInFS(*this);
-      SetVar spanishInFS(*this);
-      SetVar frenchInFS(*this);
-      SetVar germanInFS(*this);
 
-      rel(*this, team, SOT_INTER, stewardsDS, SRT_EQ, stewardsInFS);
-      rel(*this, team, SOT_INTER, hostessesDS, SRT_EQ, hostessesInFS);
-      rel(*this, team, SOT_INTER, spanishDS, SRT_EQ, spanishInFS);
-      rel(*this, team, SOT_INTER, frenchDS, SRT_EQ, frenchInFS);
-      rel(*this, team, SOT_INTER, germanDS, SRT_EQ, germanInFS);
+      // Make sure that enough team members of different categories are on board
 
-      cardinality(*this, stewardsInFS, ia[0]);
-      cardinality(*this, hostessesInFS, ia[1]);
-      cardinality(*this, spanishInFS, ia[2]);
-      cardinality(*this, frenchInFS, ia[3]);
-      cardinality(*this, germanInFS, ia[4]);
+      SetVar stewardsInTeam(*this);
+      rel(*this, team, SOT_INTER, stewardsDS, SRT_EQ, stewardsInTeam);
+      cardinality(*this, stewardsInTeam, required[0]);
+      rel(*this, required[0], IRT_GQ, NStew);
 
-      rel(*this, ia[0], IRT_GQ, NStew);
-      rel(*this, ia[1], IRT_GQ, NHost);
-      rel(*this, ia[2], IRT_GQ, NSpanish);
-      rel(*this, ia[3], IRT_GQ, NFrench);
-      rel(*this, ia[4], IRT_GQ, NGerman);
+      SetVar hostessesInTeam(*this);
+      rel(*this, team, SOT_INTER, hostessesDS, SRT_EQ, hostessesInTeam);
+      cardinality(*this, hostessesInTeam, required[1]);
+      rel(*this, required[1], IRT_GQ, NHost);
+
+      SetVar spanishInTeam(*this);
+      rel(*this, team, SOT_INTER, spanishDS, SRT_EQ, spanishInTeam);
+      cardinality(*this, spanishInTeam, required[2]);
+      rel(*this, required[2], IRT_GQ, NSpanish);
+
+      SetVar frenchInTeam(*this);
+      rel(*this, team, SOT_INTER, frenchDS, SRT_EQ, frenchInTeam);
+      cardinality(*this, frenchInTeam, required[3]);
+      rel(*this, required[3], IRT_GQ, NFrench);
+
+      SetVar germanInTeam(*this);
+      rel(*this, team, SOT_INTER, germanDS, SRT_EQ, germanInTeam);
+      cardinality(*this, germanInTeam, required[4]);
+      rel(*this, required[4], IRT_GQ, NGerman);
 
     }
 
+    // No crew member of flight i works on flights i+1 and i+2
     for (int i=0; i<noOfFlights-2; i++) {
       rel(*this, flight[i], SRT_DISJ, flight[i+1]);
       rel(*this, flight[i], SRT_DISJ, flight[i+2]);
