@@ -5,10 +5,14 @@
  *     Guido Tack <tack@gecode.org>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
+ *  Contributing authors:
+ *     Filip Konvicka <filip.konvicka@logis.cz>
+ *
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2003
  *     Mikael Lagerkvist, 2006
+ *     LOGIS, s.r.o., 2009
  *
  *  Bugfixes provided by:
  *     Alexander Samoilov <alexander_samoilov@yahoo.com>
@@ -1595,6 +1599,49 @@ namespace Gecode {
      */
     size_t allocated(void) const;
     //@}
+    /// Construction routines
+    //@{
+    /**
+     * \brief Constructs a single object of type \a T from space heap using the default constructor.
+     */
+    template<class T> 
+    T& construct(void);
+    /**
+     * \brief Constructs a single object of type \a T from space heap using a unary constructor.
+     *
+     * The parameter is passed as a const reference.
+     */
+    template<class T, typename A1> 
+    T& construct(A1 const& a1);
+    /**
+     * \brief Constructs a single object of type \a T from space heap using a binary constructor.
+     *
+     * The parameters are passed as const references.
+     */
+    template<class T, typename A1, typename A2> 
+    T& construct(A1 const& a1, A2 const& a2);
+    /**
+     * \brief Constructs a single object of type \a T from space heap using a ternary constructor.
+     *
+     * The parameters are passed as const references.
+     */
+    template<class T, typename A1, typename A2, typename A3>
+    T& construct(A1 const& a1, A2 const& a2, A3 const& a3);
+    /**
+     * \brief Constructs a single object of type \a T from space heap using a quaternary constructor.
+     *
+     * The parameters are passed as const references.
+     */
+    template<class T, typename A1, typename A2, typename A3, typename A4>
+    T& construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4);
+    /**
+     * \brief Constructs a single object of type \a T from space heap using a quinary constructor.
+     *
+     * The parameters are passed as const references.
+     */
+    template<class T, typename A1, typename A2, typename A3, typename A4, typename A5>
+    T& construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5);
+    //@}
 
     /**
      * \brief Class to iterate over propagators of a space
@@ -3067,6 +3114,51 @@ namespace Gecode {
   forceinline const Branching& 
   Space::Branchings::branching(void) const {
     return *Branching::cast(c);
+  }
+
+  /*
+   * Space construction support
+   *
+   */
+  template<class T> 
+  forceinline T& 
+  Space::construct(void) {
+    return alloc<T>(1);
+  }
+  template<class T, typename A1> 
+  forceinline T& 
+  Space::construct(A1 const& a1) {
+    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    new (&t) T(a1);
+    return t;
+  }
+  template<class T, typename A1, typename A2> 
+  forceinline T& 
+  Space::construct(A1 const& a1, A2 const& a2) {
+    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    new (&t) T(a1,a2);
+    return t;
+  }
+  template<class T, typename A1, typename A2, typename A3>
+  forceinline T& 
+  Space::construct(A1 const& a1, A2 const& a2, A3 const& a3) {
+    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    new (&t) T(a1,a2,a3);
+    return t;
+  }
+  template<class T, typename A1, typename A2, typename A3, typename A4>
+  forceinline T& 
+  Space::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4) {
+    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    new (&t) T(a1,a2,a3,a4);
+    return t;
+  }
+  template<class T, typename A1, typename A2, typename A3, typename A4, typename A5>
+  forceinline T& 
+  Space::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5) {
+    T& t = *reinterpret_cast<T*>(ralloc(sizeof(T)));
+    new (&t) T(a1,a2,a3,a4,a5);
+    return t;
   }
 
 }

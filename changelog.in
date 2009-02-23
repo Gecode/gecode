@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+Author:	Filip Konvicka
+[DESCRIPTION]
+Integrated space and region-based allocators that work with STL
+classes.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

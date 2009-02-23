@@ -201,7 +201,7 @@ KERNELHDR0 = \
 	macros memory-config memory-manager region modevent \
 	propagator advisor view var var-traits \
 	branch branching branching-view branching-tiebreak \
-	branching-val
+	branching-val allocators
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \

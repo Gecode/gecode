@@ -195,6 +195,13 @@
 
 #include <gecode/kernel/var-imp.hpp>
 
+/*
+ * Allocator support
+ *
+ */
+
+#include <gecode/kernel/allocators.hpp>
+
 #endif
 
 // STATISTICS: kernel-other
