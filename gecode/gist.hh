@@ -148,15 +148,18 @@ namespace Gecode {
      */
     class Options : public Search::Options {
     public:
-      /// Inspector that reacts on each new solution that is found
-      Inspector* solutionInspector;
-      /// Inspector that reacts on node double clicks
-      Inspector* doubleClickInspector;
+      struct {
+        /// Inspector that reacts on node double clicks
+        Inspector* click;
+        /// Inspector that reacts on each new solution that is found
+        Inspector* solution;
+      } inspect;
       /// Default options
       GECODE_GIST_EXPORT static const Options def;
       /// Initialize with default values
       Options(void);
     };
+
     
     /// Create a new stand-alone Gist for \a root using \a bab
     GECODE_GIST_EXPORT int 

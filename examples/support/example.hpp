@@ -311,8 +311,8 @@ ExampleBase<Space>::run(const Options& o) {
     case EM_GIST:
       {
         Gist::PrintingInspector<Script> pi(o.name());
-        Gist::Options opt; 
-        opt.doubleClickInspector = &pi;
+        Gist::Options opt;
+        opt.inspect.click = &pi;
         opt.clone = false;
         Script* s = new Script(o);
         (void) GistEngine<Engine<Script> >::explore(s, opt);

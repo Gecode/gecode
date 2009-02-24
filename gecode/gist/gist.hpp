@@ -49,9 +49,10 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline
-  Options::Options(void)
-    : solutionInspector(NULL), doubleClickInspector(NULL) {}
-  
+  Options::Options(void) {
+    inspect.click = NULL;
+    inspect.solution = NULL;
+  }  
 
   inline int
   dfs(Space* root, const Gist::Options& opt) {
