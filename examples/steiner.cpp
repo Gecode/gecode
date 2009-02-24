@@ -103,11 +103,11 @@ public:
 
           IntVarArgs xargs(3);
           xargs[0] = x1; xargs[1] = x2; xargs[2] = x3;
-          match(*this, x,xargs);
+          channel(*this, xargs, x);
 
           IntVarArgs yargs(3);
           yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
-          match(*this, y,yargs);
+          channel(*this, yargs, y);
         } else if (opt.model() == MODEL_SEQ) {
           SetVar tmp20(*this,IntSet::empty,1,n);
           SetVar tmp21(*this,IntSet::empty,1,n);

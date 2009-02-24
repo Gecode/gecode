@@ -151,7 +151,7 @@ namespace Gecode {
   }
 
   void
-  match(Space& home, SetVar s, const IntVarArgs& x) {
+  channel(Space& home, const IntVarArgs& x, SetVar s) {
     if (home.failed()) return;
     ViewArray<IntView> xa(home,x);
     GECODE_ES_FAIL(home,Set::Int::Match<Set::SetView>::post(home,s,xa));

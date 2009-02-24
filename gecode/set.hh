@@ -850,9 +850,9 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   max(Space& home, SetVar s, IntVar x, BoolVar b);
 
-  /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
+  /// Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$ and \f$x_i<x_{i+1}\f$
   GECODE_SET_EXPORT void
-  match(Space& home, SetVar s, const IntVarArgs& x);
+  channel(Space& home, const IntVarArgs& x, SetVar y);
 
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
