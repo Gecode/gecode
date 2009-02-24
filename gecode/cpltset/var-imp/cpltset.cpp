@@ -75,7 +75,7 @@ namespace Gecode { namespace CpltSet {
 
     IntSetRanges lub(lubD);
     Iter::Ranges::ToValues<IntSetRanges> lval(lub);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(lval);
+    ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(lval);
 
     _offset = manager.allocate(tableWidth());
     vc.last();
@@ -115,7 +115,7 @@ namespace Gecode { namespace CpltSet {
 
     IntSetRanges glb(glbD);
     Iter::Ranges::ToValues<IntSetRanges> gval(glb);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(gval);
+    ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(gval);
 
     vc.last();
     _offset = manager.allocate(tableWidth());
@@ -143,11 +143,11 @@ namespace Gecode { namespace CpltSet {
 
     IntSetRanges glb(glbD);
     Iter::Ranges::ToValues<IntSetRanges> gval(glb);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> >
+    ValCache<Iter::Ranges::ToValues<IntSetRanges> >
       vcglb(gval);
     IntSetRanges lub(lubD);
     Iter::Ranges::ToValues<IntSetRanges> lval(lub);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> >
+    ValCache<Iter::Ranges::ToValues<IntSetRanges> >
       vclub(lval);
 
     _offset = manager.allocate(tableWidth());

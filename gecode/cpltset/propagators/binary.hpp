@@ -198,7 +198,7 @@ namespace Gecode { namespace CpltSet {
       Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
       > ival(inter);
 
-    Iter::Ranges::ValCache<
+    ValCache<
       Iter::Ranges::ToValues<
          Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
       >

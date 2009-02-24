@@ -152,7 +152,7 @@ namespace Gecode {
             Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
               Set::LubRanges<View> > > ival(inter);
 
-          Gecode::Iter::Ranges::ValCache<
+          ValCache<
             Gecode::Iter::Ranges::ToValues<
               Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
                 Set::LubRanges<View> > > > cache(ival);

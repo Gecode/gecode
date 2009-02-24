@@ -105,7 +105,7 @@ namespace Gecode { namespace CpltSet {
       Iter::Ranges::Inter<Iter::Ranges::Singleton, I>
       > val(inter);
 
-    Iter::Ranges::ValCache<
+    ValCache<
       Iter::Ranges::ToValues<
       Iter::Ranges::Inter<Iter::Ranges::Singleton, I> >
       > cache(val);
@@ -135,7 +135,7 @@ namespace Gecode { namespace CpltSet {
 
     bdd in_glb  = bdd_true();
     Iter::Ranges::ToValues<I> val(i);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<I> > cache(val);
+    ValCache<Iter::Ranges::ToValues<I> > cache(val);
 
     for (cache.last(); cache(); --cache) {
       int v = cache.min();
@@ -203,7 +203,7 @@ namespace Gecode { namespace CpltSet {
   CpltSetVarImp::iterToBdd(I& i) {
 
     Iter::Ranges::ToValues<I> vali(i);
-    Iter::Ranges::ValCache<Iter::Ranges::ToValues<I> > vc(vali);
+    ValCache<Iter::Ranges::ToValues<I> > vc(vali);
 
     bdd ass = bdd_true();
     // start at the end for backwards iteration

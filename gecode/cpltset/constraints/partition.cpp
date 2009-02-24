@@ -63,7 +63,7 @@ namespace Gecode {
           SetLub luby(x[j]);
           IR::Inter<SetLub, SetLub> inter(lubx, luby);
           IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > >
+          ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > >
             cache(values);
 
           for (cache.last(); cache(); --cache) {
@@ -107,7 +107,7 @@ namespace Gecode {
           SetLub luby(x[j]);
           IR::Inter<SetLub, SetLub> inter(lubx, luby);
           IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > >
+          ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > >
             cache(values);
 
           for (cache.last(); cache(); --cache) {
@@ -294,7 +294,7 @@ namespace Gecode {
           Gecode::Iter::Ranges::ToValues<
             Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
               Set::LubRanges<View> > > values(inter);
-          Gecode::Iter::Ranges::ValCache<
+          ValCache<
             Gecode::Iter::Ranges::ToValues<
                 Gecode::Iter::Ranges::Inter<Set::LubRanges<View>,
                   Set::LubRanges<View> > > > cache(values);

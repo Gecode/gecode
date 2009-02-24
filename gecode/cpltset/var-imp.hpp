@@ -47,6 +47,7 @@ namespace Gecode { namespace CpltSet {
     UNDET = 5
   };
 
+
   /// Iterate the values in the greatest lower bound of a CpltSetvariable
   template <class T> class GlbValues {
   public:

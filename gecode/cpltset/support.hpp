@@ -37,6 +37,185 @@
 
 namespace Gecode { namespace CpltSet {
 
+  /**
+   * \brief %Range iterator cache
+   *
+   * Allows to iterate the ranges as defined by the input iterator
+   * several times provided the ValCache is %reset by the reset member
+   * function.
+   */
+
+  template <class I>
+  class ValCache : public Gecode::Iter::Values::IsValueIter<I> {
+  protected:
+    /// Array for ranges
+    SharedArray<int> r;
+    /// Current range
+    int c;
+    /// Number of ranges in cache
+    int n;
+    /// Number of elements in cache
+    int s;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ValCache(void);
+    /// Initialize with ranges from \a i
+    ValCache(I& i);
+    /// Initialize with ranges from \a i
+    void init(I& i);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator ()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator ++(void);
+    /// Move iterator to previous range (if possible)
+    void operator --(void);
+    /// Reset iterator to start from beginning
+    void reset(void);
+    /// Start iteration from end
+    void last(void);
+    /// Stop iteration
+    void finish(void);
+    //@}
+
+    /// \name %Range access
+    //@{
+    /// Always returns val
+    int min(void) const;
+    /// Always returns val
+    int max(void) const;
+    /// Return value
+    int val(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    /// Return size of the union over all ranges
+    unsigned int size(void) const;
+    //@}
+
+    /// \name %Index acces
+    //@{
+    /// Start iteration from ith range in cache
+    void index(unsigned int i);
+    /// Get the index of the current range
+    unsigned int index(void);
+    //@}
+
+  };
+
+  template <class I>
+  forceinline
+  ValCache<I>::ValCache(void) {}
+
+  template <class I>
+  inline void
+  ValCache<I>::init(I& i) {
+    Support::DynamicArray<int,Heap> d(heap);
+    int j = 0;
+    s = 0;
+    while (i()) {
+      d[j] = i.val();
+      ++j; ++i;
+      s++;
+    }
+    c = 0;
+    n = j;
+
+    r.init(n);
+    for (int j = n; j--; )
+      r[j] = d[j];
+    c = 0;
+  }
+
+  template <class I>
+  inline
+  ValCache<I>::ValCache(I& i) {
+    init(i);
+  }
+
+  template <class I>
+  forceinline void
+  ValCache<I>::operator ++(void) {
+    c++;
+  }
+
+  template <class I>
+  forceinline void
+  ValCache<I>::operator --(void) {
+    c--;
+  }
+
+  template <class I>
+  forceinline bool
+  ValCache<I>::operator ()(void) const {
+    return -1 < c && c < n;
+  }
+
+  template <class I>
+  forceinline void
+  ValCache<I>::reset(void) {
+    c = 0;
+  }
+
+  template <class I>
+  forceinline void
+  ValCache<I>::last(void) {
+    c = n - 1;
+  }
+
+  template <class I>
+  forceinline void
+  ValCache<I>::finish(void) {
+    c = -1;
+  }
+
+  template <class I>
+  forceinline int
+  ValCache<I>::min(void) const {
+    return r[c];
+  }
+
+  template <class I>
+  forceinline int
+  ValCache<I>::max(void) const {
+    return r[c];
+  }
+
+  template <class I>
+  forceinline int
+  ValCache<I>::val(void) const {
+    return r[c];
+  }
+
+  template <class I>
+  forceinline unsigned int
+  ValCache<I>::width(void) const {
+    return 1;
+  }
+
+  template <class I>
+  forceinline unsigned int
+  ValCache<I>::size(void) const {
+    return s;
+  }
+
+  template <class I>
+  forceinline void
+  ValCache<I>::index(unsigned int i) {
+    // maybe add an exception here
+    c = i;
+  }
+
+  template <class I>
+  forceinline unsigned int
+  ValCache<I>::index(void) {
+    return c;
+  }
+
   /// Check whether range specifications for initialization are consistent
   forceinline void
   testConsistency(const IntSet& glb, const IntSet& lub,
@@ -234,7 +413,7 @@ namespace Gecode { namespace CpltSet {
   /// Build the ROBDD for \f$ |x|=c\f$
   template <class I, class View0, class View1>
   bdd
-  extcardeq(Space& home, Gecode::Iter::Ranges::ValCache<I>& inter,
+  extcardeq(Space& home, ValCache<I>& inter,
             View0& x, View1& y, unsigned int c, int n, int) {
     int xmin = x.initialLubMin();
     int ymin = y.initialLubMin();
@@ -285,7 +464,7 @@ namespace Gecode { namespace CpltSet {
   template <class I, class View0, class View1>
   bdd
   extcardlqgq(Space& home,
-              Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y,
+              ValCache<I>& inter, View0& x, View1& y,
               unsigned int cl, unsigned int cr, int n, int r) {
     Region re(home);
     bdd* layer = re.alloc<bdd>(n);
@@ -445,7 +624,7 @@ namespace Gecode { namespace CpltSet {
       Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>,
         Set::LubRanges<View1> > > values(common);
 
-    Gecode::Iter::Ranges::ValCache<
+    ValCache<
       Gecode::Iter::Ranges::ToValues<
         Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>,
           Set::LubRanges<View1> > > > inter(values);
@@ -513,7 +692,7 @@ namespace Gecode { namespace CpltSet {
     // Invariant: We require that the IntSet provided is a subset of the
     // variable range
     Gecode::Iter::Ranges::ToValues<I> ir(is);
-    Gecode::Iter::Ranges::ValCache<Gecode::Iter::Ranges::ToValues<I> > inter(ir);
+    ValCache<Gecode::Iter::Ranges::ToValues<I> > inter(ir);
 
     int r = inter.size() - 1;
     int n = cr + 1;
