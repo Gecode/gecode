@@ -196,7 +196,7 @@ namespace Gecode { namespace Int {
   IntVarImp::IntVarImp(Space& home, const IntSet& d)
     : IntVarImpBase(home), dom(d.min(),d.max()) {
     if (d.ranges() > 1) {
-      unsigned int n = d.ranges();
+      int n = d.ranges();
       assert(n >= 2);
       RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int {
       h -= d.width(0);
       r[0].min(d.min(0)); r[0].max(d.max(0));
       r[0].prevnext(NULL,&r[1]);
-      for (unsigned int i = 1; i < n-1; i++) {
+      for (int i = 1; i < n-1; i++) {
         h -= d.width(i);
         r[i].min(d.min(i)); r[i].max(d.max(i));
         r[i].prevnext(&r[i-1],&r[i+1]);
