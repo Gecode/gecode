@@ -38,7 +38,7 @@
 namespace Gecode {
 
 #ifndef __INTEL_COMPILER
-  template <>
+  template<>
 #endif
   forceinline
   IntSet::IntSet(const IntArgs& i) {

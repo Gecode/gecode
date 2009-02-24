@@ -39,10 +39,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min
   forceinline
-  ByMinMin::ByMinMin(void) {}
+  ByMinMin::ByMinMin(void) : min(0) {}
   forceinline
   ByMinMin::ByMinMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), min(0) {}
   forceinline ViewSelStatus
   ByMinMin::init(Space&, View x) {
     min = x.min();
@@ -61,10 +61,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest min
   forceinline
-  ByMinMax::ByMinMax(void) {}
+  ByMinMax::ByMinMax(void) : min(0) {}
   forceinline
   ByMinMax::ByMinMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), min(0) {}
   forceinline ViewSelStatus
   ByMinMax::init(Space&, View x) {
     min = x.min();
@@ -83,10 +83,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest max
   forceinline
-  ByMaxMin::ByMaxMin(void) {}
+  ByMaxMin::ByMaxMin(void) : max(0) {}
   forceinline
   ByMaxMin::ByMaxMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), max(0) {}
   forceinline ViewSelStatus
   ByMaxMin::init(Space&, View x) {
     max = x.max();
@@ -105,10 +105,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest max
   forceinline
-  ByMaxMax::ByMaxMax(void) {}
+  ByMaxMax::ByMaxMax(void) : max(0) {}
   forceinline
   ByMaxMax::ByMaxMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), max(0) {}
   forceinline ViewSelStatus
   ByMaxMax::init(Space&, View x) {
     max = x.max();
@@ -127,10 +127,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest size
   forceinline
-  BySizeMin::BySizeMin(void) {}
+  BySizeMin::BySizeMin(void) : size(0U) {}
   forceinline
   BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), size(0U) {}
   forceinline ViewSelStatus
   BySizeMin::init(Space&, View x) {
     size = x.size();
@@ -150,10 +150,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest size
   forceinline
-  BySizeMax::BySizeMax(void) {}
+  BySizeMax::BySizeMax(void) : size(0U) {}
   forceinline
   BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), size(0U) {}
   forceinline ViewSelStatus
   BySizeMax::init(Space&, View x) {
     size = x.size();
@@ -173,10 +173,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest size/degree
   forceinline
-  BySizeDegreeMin::BySizeDegreeMin(void) {}
+  BySizeDegreeMin::BySizeDegreeMin(void) : sizedegree(0) {}
   forceinline
   BySizeDegreeMin::BySizeDegreeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), sizedegree(0) {}
   forceinline ViewSelStatus
   BySizeDegreeMin::init(Space&, View x) {
     sizedegree =
@@ -198,10 +198,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest size/degree
   forceinline
-  BySizeDegreeMax::BySizeDegreeMax(void) {}
+  BySizeDegreeMax::BySizeDegreeMax(void) : sizedegree(0) {}
   forceinline
   BySizeDegreeMax::BySizeDegreeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), sizedegree(0) {}
   forceinline ViewSelStatus
   BySizeDegreeMax::init(Space&, View x) {
     sizedegree =
@@ -223,10 +223,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min-regret
   forceinline
-  ByRegretMinMin::ByRegretMinMin(void) {}
+  ByRegretMinMin::ByRegretMinMin(void) : regret(0U) {}
   forceinline
   ByRegretMinMin::ByRegretMinMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
   forceinline ViewSelStatus
   ByRegretMinMin::init(Space&, View x) {
     regret = x.regret_min();
@@ -246,10 +246,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest min-regret
   forceinline
-  ByRegretMinMax::ByRegretMinMax(void) {}
+  ByRegretMinMax::ByRegretMinMax(void) : regret(0U) {}
   forceinline
   ByRegretMinMax::ByRegretMinMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
   forceinline ViewSelStatus
   ByRegretMinMax::init(Space&, View x) {
     regret = x.regret_min();
@@ -269,10 +269,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest max-regret
   forceinline
-  ByRegretMaxMin::ByRegretMaxMin(void) {}
+  ByRegretMaxMin::ByRegretMaxMin(void) : regret(0U) {}
   forceinline
   ByRegretMaxMin::ByRegretMaxMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
   forceinline ViewSelStatus
   ByRegretMaxMin::init(Space&, View x) {
     regret = x.regret_max();
@@ -292,10 +292,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest max-regret
   forceinline
-  ByRegretMaxMax::ByRegretMaxMax(void) {}
+  ByRegretMaxMax::ByRegretMaxMax(void) : regret(0U) {}
   forceinline
   ByRegretMaxMax::ByRegretMaxMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo) {}
+    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
   forceinline ViewSelStatus
   ByRegretMaxMax::init(Space&, View x) {
     regret = x.regret_max();

@@ -44,10 +44,10 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   forceinline
-  BySizeMin::BySizeMin(void) {}
+  BySizeMin::BySizeMin(void) : size(0U) {}
   forceinline
   BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), size(0U) {}
   forceinline ViewSelStatus
   BySizeMin::init(Space&, SetView x) {
     size = x.unknownSize();
@@ -68,10 +68,10 @@ namespace Gecode { namespace Set { namespace Branch {
 
 
   forceinline
-  BySizeMax::BySizeMax(void) {}
+  BySizeMax::BySizeMax(void) : size(0U) {}
   forceinline
   BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), size(0U) {}
   forceinline ViewSelStatus
   BySizeMax::init(Space&, SetView x) {
     size = x.unknownSize();
@@ -92,7 +92,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
 
   forceinline
-  ByMinMin::ByMinMin(void) {}
+  ByMinMin::ByMinMin(void) : min(0) {}
   forceinline
   ByMinMin::ByMinMin(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
@@ -116,7 +116,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
 
   forceinline
-  ByMinMax::ByMinMax(void) {}
+  ByMinMax::ByMinMax(void) : min(0) {}
   forceinline
   ByMinMax::ByMinMax(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
@@ -140,7 +140,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
 
   forceinline
-  ByMaxMin::ByMaxMin(void) {}
+  ByMaxMin::ByMaxMin(void) : max(0) {}
   forceinline
   ByMaxMin::ByMaxMin(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
 
   forceinline
-  ByMaxMax::ByMaxMax(void) {}
+  ByMaxMax::ByMaxMax(void) : max(0) {}
   forceinline
   ByMaxMax::ByMaxMax(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
@@ -193,7 +193,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
   // Select variable with smallest size/degree
   forceinline
-  BySizeDegreeMin::BySizeDegreeMin(void) {}
+  BySizeDegreeMin::BySizeDegreeMin(void) : sizedegree(0) {}
   forceinline
   BySizeDegreeMin::BySizeDegreeMin(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}
@@ -223,7 +223,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
   // Select variable with largest size/degree
   forceinline
-  BySizeDegreeMax::BySizeDegreeMax(void) {}
+  BySizeDegreeMax::BySizeDegreeMax(void) : sizedegree(0) {}
   forceinline
   BySizeDegreeMax::BySizeDegreeMax(Space& home, const VarBranchOptions& vbo)
     : ViewSelBase<SetView>(home,vbo) {}

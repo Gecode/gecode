@@ -130,7 +130,7 @@ namespace Gecode {
     /// Description of the fixpoint to compute
     enum FixpointType {
       NO_FIX,    ///< Do not compute fixpoint, return ES_NOFIX
-      ITER_FIX,  ///< Compute fixpoint by iteration
+      ITER_FIX   ///< Compute fixpoint by iteration
     };
     /// Description of how generic the propagator should be
     enum ViewsType {

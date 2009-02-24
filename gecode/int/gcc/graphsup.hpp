@@ -1022,7 +1022,7 @@ namespace Gecode { namespace Int { namespace GCC {
     next_edge(NULL), prev_edge(NULL),
     next_vedge(NULL), prev_vedge(NULL),
     mrklb(false), mrkub(false),
-    um(false), lm(false), deleted(false) {};
+    um(false), lm(false), deleted(false) {}
 
   forceinline void*
   Edge::operator new(size_t, void* p){ //why is there no argument?
@@ -1516,7 +1516,7 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n_var; i--; ) {
 
       VarNode* vrn = vars[i];
-      if(x[i].size() != vrn->noe){
+      if(static_cast<int>(x[i].size()) != vrn->noe){
         // if the variable is already assigned
         if (x[i].assigned()) {
           int  v = x[i].val();

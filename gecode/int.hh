@@ -185,6 +185,8 @@ namespace Gecode {
     IntSet(const IntSet& s);
     /// Initialize with integer set \a s
     IntSet(IntSet& s);
+    /// Initialize with integers \a i
+    IntSet(const IntArgs& i);
 #endif
     //@}
 

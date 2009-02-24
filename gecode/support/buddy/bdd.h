@@ -831,7 +831,7 @@ inline int bdd_addvarblock(const bdd &v, int f)
 /*=== Inline C++ functions =============================================*/
 inline void bdd::setroot(const int r) {
   root = r;
-};
+}
 
 inline int bdd::id(void) const
 { return root; }

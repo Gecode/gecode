@@ -214,12 +214,12 @@ namespace Gecode {
   // Select variable with smallest degree
   template<class View>
   forceinline
-  ViewSelDegreeMin<View>::ViewSelDegreeMin(void) {}
+  ViewSelDegreeMin<View>::ViewSelDegreeMin(void) : degree(0U) {}
   template<class View>
   forceinline
   ViewSelDegreeMin<View>::ViewSelDegreeMin(Space& home,
                                            const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo) {}
+    : ViewSelBase<View>(home,vbo), degree(0U) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelDegreeMin<View>::init(Space&, View x) {
@@ -243,12 +243,12 @@ namespace Gecode {
   // Select variable with largest degree
   template<class View>
   forceinline
-  ViewSelDegreeMax<View>::ViewSelDegreeMax(void) {}
+  ViewSelDegreeMax<View>::ViewSelDegreeMax(void) : degree(0) {}
   template<class View>
   forceinline
   ViewSelDegreeMax<View>::ViewSelDegreeMax(Space& home,
                                            const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo) {}
+    : ViewSelBase<View>(home,vbo), degree(0U) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelDegreeMax<View>::init(Space&, View x) {
@@ -272,11 +272,11 @@ namespace Gecode {
   // Select variable by random
   template<class View>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(void) {}
+  ViewSelRnd<View>::ViewSelRnd(void) : n(0) {}
   template<class View>
   forceinline
   ViewSelRnd<View>::ViewSelRnd(Space&, const VarBranchOptions& vbo)
-    : r(vbo.seed) {}
+    : r(vbo.seed), n(0) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelRnd<View>::init(Space&, View) {
