@@ -149,7 +149,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I>
   forceinline unsigned int
   Cache<I>::width(void) const {
-    return r[c].max-r[c].min+1;
+    return static_cast<unsigned int>(r[c].max-r[c].min+1);
   }
 
   // VALUECACHE

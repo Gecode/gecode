@@ -188,7 +188,7 @@ namespace Gecode { namespace Int {
   template<class View, class A>
   forceinline int
   SupportValues<View,A>::Unsupported::val(void) const {
-    return rp->min+(p-rp->pos);
+    return static_cast<int>(rp->min+(p-rp->pos));
   }
 
   template<class View, class A>

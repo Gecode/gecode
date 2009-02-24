@@ -81,7 +81,7 @@ namespace Gecode { namespace Set {
   }
   forceinline unsigned int
   RangeList::width(void) const {
-    return _max - _min + 1;
+    return static_cast<unsigned int>(_max - _min + 1);
   }
 
 
@@ -157,7 +157,7 @@ namespace Gecode { namespace Set {
       RangeList* p =
         new (home) RangeList(mn,mx,NULL);
       fst(p); lst(p);
-      _size = mx-mn+1;
+      _size = static_cast<unsigned int>(mx-mn+1);
     }
   }
 
@@ -178,14 +178,18 @@ namespace Gecode { namespace Set {
 
   forceinline int
   BndSet::min(void) const {
-    if (fst()==NULL) { return MIN_OF_EMPTY; }
-    else { return fst()->min(); }
+    if (fst()==NULL)
+      return MIN_OF_EMPTY;
+    else
+      return fst()->min();
   }
 
   forceinline int
   BndSet::max(void) const {
-    if (lst()==NULL) { return MAX_OF_EMPTY; }
-    else { return lst()->max(); }
+    if (lst()==NULL) 
+      return MAX_OF_EMPTY;
+    else 
+      return lst()->max();
   }
 
   // nth smallest element
@@ -193,7 +197,7 @@ namespace Gecode { namespace Set {
   BndSet::minN(unsigned int n) const {
     for (RangeList* c = fst(); c != NULL; c = c->next()) {
       if (c->width() > n)
-        return c->min() + n;
+        return static_cast<int>(c->min() + n);
       n -= c->width();
     }
     return MIN_OF_EMPTY;
@@ -372,7 +376,7 @@ namespace Gecode { namespace Set {
       RangeList* p = new (home) RangeList(mi,ma,NULL);
       fst(p);
       lst(p);
-      _size=ma-mi+1;
+      _size=static_cast<unsigned int>(ma-mi+1);
       d._glbMin = mi;
       d._glbMax = ma;
       return true;

@@ -85,7 +85,7 @@ namespace Gecode {
       /// Return maximum of the least upper bound
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
-      int lubMinN(int n) const;
+      int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound
@@ -234,7 +234,7 @@ namespace Gecode {
                                  const Gecode::Set::ConstantView&);
     private:
       int *ranges;
-      unsigned int size;
+      int size;
       unsigned int domSize;
       /// Initialize with constant \a s
       void init(Space& home, const IntSet& s);
@@ -258,7 +258,7 @@ namespace Gecode {
       /// Return maximum of the least upper bound
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
-      int lubMinN(int n) const;
+      int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound
@@ -438,7 +438,7 @@ namespace Gecode {
       /// Return maximum of the least upper bound
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
-      int lubMinN(int n) const;
+      int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound
@@ -621,7 +621,7 @@ namespace Gecode {
       /// Return maximum of the least upper bound
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
-      int lubMinN(int n) const;
+      int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound
@@ -818,7 +818,7 @@ namespace Gecode {
       /// Return maximum of the least upper bound
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
-      int lubMinN(int n) const;
+      int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound
@@ -1015,7 +1015,7 @@ namespace Gecode {
       /// Return maximum of the least upper bound
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
-      int lubMinN(int n) const;
+      int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound
@@ -1211,7 +1211,7 @@ namespace Gecode {
       /// Return maximum of the least upper bound
       int lubMax(void) const;
       /// Return n-th smallest element of the least upper bound
-      int lubMinN(int n) const;
+      int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
       /// Return maximum of the greatest lower bound

@@ -126,12 +126,12 @@ namespace Gecode { namespace Int { namespace GCC {
 
   public:
     /// stores the variable index of the node
-    unsigned int var;
+    int var;
     /// stores the number of incident edges on the node
-    unsigned int noe;
+    int noe;
 
     /// stores the variable index of the node
-    unsigned int xindex;
+    int xindex;
 
     /// \name Constructors and initialization
     //@{

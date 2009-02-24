@@ -464,7 +464,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
     ModEvent me = ME_INT_BND;
-    for (StateIdx i=x.size(); i--; )
+    for (StateIdx i=static_cast<StateIdx>(x.size()); i--; )
       if (x[i].assigned())
         me = ME_INT_VAL;
       else

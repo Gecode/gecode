@@ -76,7 +76,7 @@ namespace Gecode { namespace Set {
     int max(void) const { return _ranges[_pos*2+1]; }
     /// Return width of range (distance between minimum and maximum)
     unsigned int width(void) const {
-      return _ranges[_pos*2+1]-_ranges[_pos*2]+1;
+      return static_cast<unsigned int>(_ranges[_pos*2+1]-_ranges[_pos*2]+1);
     }
     //@}
   };
@@ -96,7 +96,7 @@ namespace Gecode { namespace Set {
         int min = dr.min(); int max = dr.max();
         ranges[i] = min;
         ranges[i+1] = max;
-        domSize += (max-min+1);
+        domSize += static_cast<unsigned int>(max-min+1);
       }
     } else {
       ranges = NULL;
@@ -122,7 +122,7 @@ namespace Gecode { namespace Set {
 
   forceinline bool
   ConstantView::contains(int i) const {
-    for (unsigned int j=size; j--; ) {
+    for (int j=size; j--; ) {
       if (ranges[2*j+1] < i)
         return false;
       if (ranges[2*j] >= i)
@@ -267,7 +267,7 @@ namespace Gecode { namespace Set {
     } else {
       // copy ranges from p
       ranges = home.alloc<int>(2*size);
-      for (unsigned int i=size; i--; ) {
+      for (int i=size; i--; ) {
         ranges[2*i]   = p.ranges[2*i];
         ranges[2*i+1] = p.ranges[2*i+1];
       }

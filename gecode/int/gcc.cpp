@@ -76,8 +76,8 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class View>
-  forceinline int
-  x_card(Space& home, ViewArray<View>& x, IntConLevel) {
+  forceinline unsigned int
+  x_card(Space& home, ViewArray<View>& x) {
     int n = x.size();
     Region r(home);
     ViewRanges<View>* xrange = r.alloc<ViewRanges<View> >(n);
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   post_template(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k,
                 IntConLevel& icl){
-    int  n        = x_card(home, x, icl);
+    int n = static_cast<int>(x_card(home, x));
     bool rewrite  = false;
     rewrite = check_alldiff<Card,isView>(n, k);
     GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size())));
@@ -200,8 +200,8 @@ namespace Gecode { namespace Int { namespace GCC {
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
 
     // |cards| = |values|
-    unsigned int vsize = v.size();
-    unsigned int csize = c.size();
+    int vsize = v.size();
+    int csize = c.size();
     if (vsize != csize)
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))

@@ -94,9 +94,9 @@ namespace Gecode { namespace Set {
   }
 
 
-  forceinline  bool
+  forceinline bool
   SetVarImp::assigned(void) const {
-    return ( glb.size() == lub.size() );
+    return glb.size() == lub.size();
   }
 
   forceinline unsigned int
@@ -118,7 +118,7 @@ namespace Gecode { namespace Set {
   SetVarImp::lubMax(void) const { return lub.max(); }
 
   forceinline int
-  SetVarImp::lubMinN(int n) const { return lub.minN(n); }
+  SetVarImp::lubMinN(unsigned int n) const { return lub.minN(n); }
 
   forceinline int
   SetVarImp::glbMin(void) const { return glb.min(); }

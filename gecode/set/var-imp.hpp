@@ -586,7 +586,7 @@ namespace Gecode { namespace Set {
     /// Return maximum of the least upper bound
     int lubMax(void) const;
     /// Return \a n -th smallest element in the least upper bound
-    int lubMinN(int n) const;
+    int lubMinN(unsigned int n) const;
     /// Return minimum of the greatest lower bound
     int glbMin(void) const;
     /// Return maximum of the greatest lower bound
