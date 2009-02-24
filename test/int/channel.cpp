@@ -56,10 +56,9 @@ namespace Test { namespace Int {
        int yoff; //< Offset for the y variables
      public:
        /// Construct and register test
-       ChannelFull(Gecode::IntConLevel icl,
-                   unsigned int xoff0 = 0, unsigned int yoff0 = 0)
-         : Test("Channel::Full::"+str(icl)+"::"+
-                str(xoff0)+"::"+str(yoff0),8,0,3,false,icl),
+       ChannelFull(int xoff0, int yoff0, Gecode::IntConLevel icl)
+         : Test("Channel::Full::"+str(xoff0)+"::"+str(yoff0)+"::"+str(icl),
+                8,0,3,false,icl),
            xoff(xoff0), yoff(yoff0) {
          contest = CTL_NONE;
        }
@@ -209,14 +208,14 @@ namespace Test { namespace Int {
 
 
 
-     ChannelFull cfd(Gecode::ICL_DOM);
-     ChannelFull cfv(Gecode::ICL_VAL);
+     ChannelFull cfd(0,0,Gecode::ICL_DOM);
+     ChannelFull cfv(0,0,Gecode::ICL_VAL);
 
-     ChannelFull cfd11(Gecode::ICL_DOM,1,1);
-     ChannelFull cfv11(Gecode::ICL_VAL,1,1);
+     ChannelFull cfd11(1,1,Gecode::ICL_DOM);
+     ChannelFull cfv11(1,1,Gecode::ICL_VAL);
 
-     ChannelFull cfd35(Gecode::ICL_DOM,3,5);
-     ChannelFull cfv35(Gecode::ICL_VAL,3,5);
+     ChannelFull cfd35(3,5,Gecode::ICL_DOM);
+     ChannelFull cfv35(3,5,Gecode::ICL_VAL);
 
      ChannelHalf chd(Gecode::ICL_DOM);
      ChannelHalf chv(Gecode::ICL_VAL);
