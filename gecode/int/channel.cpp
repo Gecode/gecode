@@ -40,8 +40,8 @@
 namespace Gecode {
 
   void
-  channel(Space& home, const IntVarArgs& x, unsigned int xoff,
-          const IntVarArgs& y, unsigned int yoff,
+  channel(Space& home, const IntVarArgs& x, int xoff,
+          const IntVarArgs& y, int yoff,
           IntConLevel icl) {
     using namespace Int;
     using namespace Channel;
@@ -50,6 +50,10 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::channel");
     if (x.same(home) || y.same(home))
       throw ArgumentSame("Int::channel");
+    Limits::check(xoff,"Int::channel");
+    Limits::check(yoff,"Int::channel");
+    if ((xoff < 0) || (yoff < 0))
+      throw OutOfLimits("Int::channel");
     if (home.failed()) return;
     if (n == 0)
       return;

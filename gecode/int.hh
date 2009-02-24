@@ -1138,10 +1138,12 @@ namespace Gecode {
    *     \a y contain the same unassigned variable multiply. Note that a
    *     variable can occur in both \a x and \a y, but not more than
    *     once in either \a x or \a y.
+   * \li Throws an exception of type Int::OutOfLimits, if \a xoff or
+   *     \a yoff are negative.
    */
   GECODE_INT_EXPORT void
-  channel(Space& home, const IntVarArgs& x, unsigned int xoff,
-          const IntVarArgs& y, unsigned int yoff,
+  channel(Space& home, const IntVarArgs& x, int xoff,
+          const IntVarArgs& y, int yoff,
           IntConLevel icl=ICL_DEF);
 
   /// Post propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
@@ -1603,11 +1605,11 @@ namespace Gecode {
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
     /// Return the number of states
-    unsigned int n_states(void) const;
+    int n_states(void) const;
+    /// Return the number of transitions
+    int n_transitions(void) const;
     /// Return the number of symbols
     unsigned int n_symbols(void) const;
-    /// Return the number of transitions
-    unsigned int n_transitions(void) const;
     /// Return maximal degree (in-degree and out-degree) of any state
     unsigned int max_degree(void) const;
     /// Return the number of the first final state
