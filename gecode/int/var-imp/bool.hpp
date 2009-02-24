@@ -64,11 +64,11 @@ namespace Gecode { namespace Int {
   }
   forceinline int
   BoolVarImp::min(void) const {
-    return bits() & 1;
+    return static_cast<int>(bits() & 1);
   }
   forceinline int
   BoolVarImp::max(void) const {
-    return (bits() & 2) >> 1;
+    return static_cast<int>((bits() & 2) >> 1);
   }
   forceinline int
   BoolVarImp::med(void) const {

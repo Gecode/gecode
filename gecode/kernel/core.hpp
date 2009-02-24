@@ -1545,6 +1545,14 @@ namespace Gecode {
     template <class T>
     T* alloc(unsigned int n);
     /**
+     * \brief Allocate block of \a n objects of type \a T from space heap
+     *
+     * Note that this function implements C++ semantics: the default
+     * constructor of \a T is run for all \a n objects.
+     */
+    template <class T>
+    T* alloc(int n);
+    /**
      * \brief Delete \a n objects allocated from space heap starting at \a b
      *
      * Note that this function implements C++ semantics: the destructor
@@ -1555,6 +1563,17 @@ namespace Gecode {
      */
     template <class T>
     void free(T* b, unsigned int n);
+    /**
+     * \brief Delete \a n objects allocated from space heap starting at \a b
+     *
+     * Note that this function implements C++ semantics: the destructor
+     * of \a T is run for all \a n objects.
+     *
+     * Note that the memory is not freed, it is just scheduled for latter
+     * reusal.
+     */
+    template <class T>
+    void free(T* b, int n);
     /**
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
      *
@@ -1569,6 +1588,19 @@ namespace Gecode {
     template <class T>
     T* realloc(T* b, unsigned int n, unsigned int m);
     /**
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
+     *
+     * Note that this function implements C++ semantics: the copy constructor
+     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+     * constructor of \a T is run for all remaining
+     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+     * run for all \a n objects in \a b.
+     *
+     * Returns the address of the new block.
+     */
+    template <class T>
+    T* realloc(T* b, int n, int m);
+    /**
      * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from the space heap
      *
      * Returns the address of the new block.
@@ -1576,7 +1608,16 @@ namespace Gecode {
      * This is a specialization for performance.
      */
     template <class T>
-    T** realloc(T** b, unsigned int, unsigned int m);
+    T** realloc(T** b, unsigned int n, unsigned int m);
+    /**
+     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from the space heap
+     *
+     * Returns the address of the new block.
+     *
+     * This is a specialization for performance.
+     */
+    template <class T>
+    T** realloc(T** b, int n, int m);
     /// Allocate memory on space heap
     void* ralloc(size_t s);
     /// Free memory previously allocated with alloc (might be reused later)
@@ -1782,6 +1823,12 @@ namespace Gecode {
       (void) new (p+i) T();
     return p;
   }
+  template <class T>
+  forceinline T*
+  Space::alloc(int n) {
+    assert(n > 0);
+    return alloc<T>(static_cast<unsigned int>(n));
+  }
 
   template <class T>
   forceinline void
@@ -1789,6 +1836,12 @@ namespace Gecode {
     for (unsigned int i=n; i--; )
       b[i].~T();
     rfree(b,n*sizeof(T));
+  }
+  template <class T>
+  forceinline void
+  Space::free(T* b, int n) {
+    assert(n > 0);
+    free<T>(b,static_cast<unsigned int>(n));
   }
 
   template <class T>
@@ -1807,12 +1860,26 @@ namespace Gecode {
       return b;
     }
   }
+  template <class T>
+  forceinline T*
+  Space::realloc(T* b, int n, int m) {
+    assert((n > 0) && (m > 0));
+    return realloc<T>(b,static_cast<unsigned int>(n),
+                      static_cast<unsigned int>(m));
+  }
 
 #define GECODE_KERNEL_REALLOC(T)                                        \
   template <>                                                           \
   forceinline T*                                                        \
   Space::realloc<T>(T* b, unsigned int n, unsigned int m) {             \
     return static_cast<T*>(rrealloc(b,n*sizeof(T),m*sizeof(T)));        \
+  }                                                                     \
+  template <>                                                           \
+  forceinline T*                                                        \
+  Space::realloc<T>(T* b, int n, int m) {                               \
+    assert((n > 0) && (m > 0));                                         \
+    return realloc<T>(b,static_cast<unsigned int>(n),                   \
+                      static_cast<unsigned int>(m));                    \
   }
 
   GECODE_KERNEL_REALLOC(bool)
@@ -1833,6 +1900,13 @@ namespace Gecode {
   forceinline T**
   Space::realloc(T** b, unsigned int n, unsigned int m) {
     return static_cast<T**>(rrealloc(b,n*sizeof(T),m*sizeof(T*)));
+  }
+  template <class T>
+  forceinline T**
+  Space::realloc(T** b, int n, int m) {
+    assert((n > 0) && (m > 0));
+    return realloc<T*>(b,static_cast<unsigned int n>,
+                       static_cast<unsigned int>(m));
   }
 
 

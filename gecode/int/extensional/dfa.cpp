@@ -406,7 +406,7 @@ namespace Gecode {
         re[i] = m_states++;
 
     // Count number of remaining transitions
-    unsigned int m_trans = 0;
+    int m_trans = 0;
     for (int i = n_trans; i--; )
       if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0))
         m_trans++;
@@ -432,7 +432,7 @@ namespace Gecode {
     {
       // Count number of symbols
       unsigned int n_symbols = 0;
-      for (unsigned int i = 0; i<m_trans; ) {
+      for (int i = 0; i<m_trans; ) {
         int s = d->trans[i++].symbol;
         n_symbols++;
         while ((i<m_trans) && (d->trans[i].symbol == s))
@@ -446,19 +446,19 @@ namespace Gecode {
       unsigned int* deg = heap.alloc<unsigned int>(m_states);
 
       // Compute in-degree per state
-      for (unsigned int i = m_states; i--; )
+      for (int i = m_states; i--; )
         deg[i] = 0;
-      for (unsigned int i = m_trans; i--; )
+      for (int i = m_trans; i--; )
         deg[d->trans[i].o_state]++;
-      for (unsigned int i = m_states; i--; )
+      for (int i = m_states; i--; )
         max_degree = std::max(max_degree,deg[i]);
 
       // Compute out-degree per state
-      for (unsigned int i = m_states; i--; )
+      for (int i = m_states; i--; )
         deg[i] = 0;
-      for (unsigned int i = m_trans; i--; )
+      for (int i = m_trans; i--; )
         deg[d->trans[i].i_state]++;
-      for (unsigned int i = m_states; i--; )
+      for (int i = m_states; i--; )
         max_degree = std::max(max_degree,deg[i]);
 
       heap.free<unsigned int>(deg,m_states);
@@ -498,7 +498,7 @@ namespace Gecode {
       table[i].fst = table[i].lst = NULL;
     int mask = (1 << n_log) - 1;
     // Enter transitions to table
-    for (unsigned int i = 0; i<n_trans; ) {
+    for (int i = 0; i<n_trans; ) {
       int s = trans[i].symbol;
       Transition* fst = &trans[i];
       i++;

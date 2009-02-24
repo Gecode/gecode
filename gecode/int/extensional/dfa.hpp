@@ -46,11 +46,11 @@ namespace Gecode {
   class DFA::DFAI : public SharedHandle::Object {
   public:
     /// Number of states
-    unsigned int n_states;
+    int n_states;
     /// Number of symbols
     unsigned int n_symbols;
     /// Number of transitions
-    unsigned int n_trans;
+    int n_trans;
     /// Return maximal degree (in-degree and out-degree) of any state
     unsigned int max_degree;
     /// First final state
@@ -73,7 +73,7 @@ namespace Gecode {
     /// Fill hash table
     GECODE_INT_EXPORT void fill(void);
     /// Initialize automaton implementation with \a nt transitions
-    DFAI(unsigned int nt);
+    DFAI(int nt);
     /// Initialize automaton implementation as empty
     GECODE_INT_EXPORT DFAI(void);
     /// Delete automaton implemenentation
@@ -83,7 +83,7 @@ namespace Gecode {
   };
 
   forceinline
-  DFA::DFAI::DFAI(unsigned int nt)
+  DFA::DFAI::DFAI(int nt)
     : trans(nt == 0 ? NULL : heap.alloc<Transition>(nt)) {}
 
   forceinline
@@ -101,7 +101,7 @@ namespace Gecode {
   DFA::DFA(const DFA& d)
     : SharedHandle(d) {}
 
-  forceinline unsigned int
+  forceinline int
   DFA::n_states(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
     return (d == NULL) ? 1 : d->n_states;
@@ -113,7 +113,7 @@ namespace Gecode {
     return (d == NULL) ? 0 : d->n_symbols;
   }
 
-  forceinline unsigned int
+  forceinline int
   DFA::n_transitions(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
     return (d == NULL) ? 0 : d->n_trans;

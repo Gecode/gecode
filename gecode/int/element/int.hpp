@@ -194,12 +194,12 @@ namespace Gecode { namespace Int { namespace Element {
         Idx i = 0;
         ViewValues<V0> v(x0);
         while (v()) {
-          by_idx[i].idx = v.val();
-          by_idx[i].val = c[v.val()];
+          by_idx[i].idx = static_cast<Idx>(v.val());
+          by_idx[i].val = static_cast<Val>(c[v.val()]);
           ++i; ++v;
         }
       }
-      Idx size = x0.size();
+      Idx size = static_cast<Idx>(x0.size());
       // Create val links sorted by val
       Region r(home);
       Idx* by_val = r.alloc<Idx>(size);

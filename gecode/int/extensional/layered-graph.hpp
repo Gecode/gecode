@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       return;
     assert(layers[0].size == 1);
     // Skip all layers corresponding to assigned views
-    int i = 1;
+    StateIdx i = 1;
     while (layers[i].size == 1)
       i++;
     // There is only a single edge
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     int n = x.size();
     layers = home.alloc<Layer>(n+2)+1;
 
-    unsigned int n_states = dfa.n_states();
+    int n_states = dfa.n_states();
 
     // Allocate memory
     states = home.alloc<State>((n+1)*n_states);
@@ -203,9 +203,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         Edge* e = NULL;
         for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
           if (states[i*n_states + t.i_state()].i_deg != 0) {
-            int i_s = i*n_states + t.i_state();
+            StateIdx i_s = static_cast<StateIdx>(i*n_states + t.i_state());
             states[i_s].o_deg++;
-            int o_s = (i+1)*n_states +  t.o_state();
+            StateIdx o_s = static_cast<StateIdx>((i+1)*n_states +  t.o_state());
             states[o_s].i_deg++;
             e = new (home) Edge(i_s, o_s, e);
           }
@@ -464,7 +464,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
     ModEvent me = ME_INT_BND;
-    for (int i=x.size(); i--; )
+    for (StateIdx i=x.size(); i--; )
       if (x[i].assigned())
         me = ME_INT_VAL;
       else

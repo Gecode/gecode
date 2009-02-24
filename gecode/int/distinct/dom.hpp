@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       max = std::max(max,x[i].max());
     }
 
-    unsigned int width = max-min+1;
+    unsigned int width = static_cast<unsigned int>(max-min+1);
 
     // Definitly not enough values
     if (width < static_cast<unsigned int>(n_view))

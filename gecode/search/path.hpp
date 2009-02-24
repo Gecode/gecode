@@ -181,7 +181,7 @@ namespace Gecode { namespace Search {
     Node sn(s,c);
     ds.push(sn);
     if (stat.depth < static_cast<unsigned int>(ds.entries()))
-      stat.depth = ds.entries();
+      stat.depth = static_cast<unsigned int>(ds.entries());
     return sn.desc();
   }
 

@@ -100,6 +100,14 @@ namespace Gecode {
     template <class T>
     T* alloc(unsigned int n);
     /**
+     * \brief Allocate block of \a n objects of type \a T from region
+     *
+     * Note that this function implements C++ semantics: the default
+     * constructor of \a T is run for all \a n objects.
+     */
+    template <class T>
+    T* alloc(int n);
+    /**
      * \brief Delete \a n objects allocated from the region starting at \a b
      *
      * Note that this function implements C++ semantics: the destructor
@@ -110,6 +118,17 @@ namespace Gecode {
      */
     template <class T>
     void free(T* b, unsigned int n);
+    /**
+     * \brief Delete \a n objects allocated from the region starting at \a b
+     *
+     * Note that this function implements C++ semantics: the destructor
+     * of \a T is run for all \a n objects.
+     *
+     * Note that the memory is not freed, the only effect is running the
+     * destructors.
+     */
+    template <class T>
+    void free(T* b, int n);
     /**
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the region
      *
@@ -123,6 +142,19 @@ namespace Gecode {
      */
     template <class T>
     T* realloc(T* b, unsigned int n, unsigned int m);
+    /**
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the region
+     *
+     * Note that this function implements C++ semantics: the copy constructor
+     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+     * constructor of \a T is run for all remaining
+     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+     * run for all \a n objects in \a b.
+     *
+     * Returns the address of the new block.
+     */
+    template <class T>
+    T* realloc(T* b, int n, int m);
     //@}
     /// \name Raw allocation routines
     //@{
@@ -233,6 +265,12 @@ namespace Gecode {
       (void) new (p+i) T();
     return p;
   }
+  template <class T>
+  forceinline T*
+  Region::alloc(int n) {
+    assert(n > 0);
+    return alloc<T>(static_cast<unsigned int>(n));
+  }
 
   template <class T>
   forceinline void
@@ -240,6 +278,12 @@ namespace Gecode {
     for (unsigned int i=n; i--; )
       b[i].~T();
     rfree(b,n*sizeof(T));
+  }
+  template <class T>
+  forceinline void
+  Region::free(T* b, int n) {
+    assert(n > 0);
+    free<T>(b,static_cast<unsigned int>(n));
   }
 
   template <class T>
@@ -257,6 +301,13 @@ namespace Gecode {
       free<T>(b+m,m-n);
       return b;
     }
+  }
+  template <class T>
+  forceinline T*
+  Region::realloc(T* b, int n, int m) {
+    assert((n > 0) && (m > 0));
+    return realloc<T>(b,static_cast<unsigned int>(n),
+                      static_cast<unsigned int>(m));
   }
 
   /*
