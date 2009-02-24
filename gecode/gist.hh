@@ -131,10 +131,10 @@ namespace Gecode {
     
     /// An inspector for printing simple text output
     template <class S>
-    class PrintingInspector : public TextInspector {
+    class Print : public TextInspector {
     public:
       /// Constructor
-      PrintingInspector(const std::string& name);
+      Print(const std::string& name);
       /// Use the print method of the template class S to print a space
       virtual void inspect(Space& node);
     };

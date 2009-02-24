@@ -38,12 +38,12 @@
 namespace Gecode { namespace Gist {
 
   template <class S>
-  PrintingInspector<S>::PrintingInspector(const std::string& name)
+  Print<S>::Print(const std::string& name)
     : TextInspector(name) {}
 
   template <class S>
   void
-  PrintingInspector<S>::inspect(Space& node) {
+  Print<S>::inspect(Space& node) {
     init();
     dynamic_cast<S&>(node).print(getStream());
   }

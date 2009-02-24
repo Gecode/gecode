@@ -310,7 +310,7 @@ ExampleBase<Space>::run(const Options& o) {
 #ifdef GECODE_HAS_GIST
     case EM_GIST:
       {
-        Gist::PrintingInspector<Script> pi(o.name());
+        Gist::Print<Script> pi(o.name());
         Gist::Options opt;
         opt.inspect.click = &pi;
         opt.clone = false;
