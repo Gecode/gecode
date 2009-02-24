@@ -99,31 +99,31 @@ namespace Gecode {
   }
 
   forceinline unsigned int
-  CpltSetVar::cardMin(void) const { return varimp->cardMin(); };
+  CpltSetVar::cardMin(void) const { return varimp->cardMin(); }
 
   forceinline unsigned int
-  CpltSetVar::cardMax(void) const { return varimp->cardMax(); };
+  CpltSetVar::cardMax(void) const { return varimp->cardMax(); }
 
   forceinline int
-  CpltSetVar::lubMin(void) const { return varimp->lubMin(); };
+  CpltSetVar::lubMin(void) const { return varimp->lubMin(); }
 
   forceinline int
-  CpltSetVar::lubMax(void) const{ return varimp->lubMax(); };
+  CpltSetVar::lubMax(void) const{ return varimp->lubMax(); }
 
   forceinline int
-  CpltSetVar::glbMin(void) const { return varimp->glbMin(); };
+  CpltSetVar::glbMin(void) const { return varimp->glbMin(); }
 
   forceinline int
-  CpltSetVar::glbMax(void) const { return varimp->glbMax(); };
+  CpltSetVar::glbMax(void) const { return varimp->glbMax(); }
 
   forceinline unsigned int
-  CpltSetVar::glbSize(void) const { return varimp->glbSize(); };
+  CpltSetVar::glbSize(void) const { return varimp->glbSize(); }
 
   forceinline unsigned int
-  CpltSetVar::lubSize(void) const { return varimp->lubSize(); };
+  CpltSetVar::lubSize(void) const { return varimp->lubSize(); }
 
   forceinline unsigned int
-  CpltSetVar::unknownSize(void) const { return varimp->unknownSize(); };
+  CpltSetVar::unknownSize(void) const { return varimp->unknownSize(); }
 
   forceinline
   CpltSetVarGlbRanges::CpltSetVarGlbRanges(void) {}

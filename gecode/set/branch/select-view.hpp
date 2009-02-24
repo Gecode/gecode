@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ByMinMin::ByMinMin(void) : min(0) {}
   forceinline
   ByMinMin::ByMinMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), min(0) {}
   forceinline ViewSelStatus
   ByMinMin::init(Space&, SetView x) {
     UnknownRanges<SetView> u(x);
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ByMinMax::ByMinMax(void) : min(0) {}
   forceinline
   ByMinMax::ByMinMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), min(0) {}
   forceinline ViewSelStatus
   ByMinMax::init(Space&, SetView x) {
     UnknownRanges<SetView> u(x);
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ByMaxMin::ByMaxMin(void) : max(0) {}
   forceinline
   ByMaxMin::ByMaxMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), max(0) {}
   forceinline ViewSelStatus
   ByMaxMin::init(Space&, SetView x) {
     for (UnknownRanges<SetView> u(x); u(); ++u)
@@ -169,7 +169,7 @@ namespace Gecode { namespace Set { namespace Branch {
   ByMaxMax::ByMaxMax(void) : max(0) {}
   forceinline
   ByMaxMax::ByMaxMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), max(0) {}
   forceinline ViewSelStatus
   ByMaxMax::init(Space&, SetView x) {
     for (UnknownRanges<SetView> u(x); u(); ++u)
@@ -196,7 +196,7 @@ namespace Gecode { namespace Set { namespace Branch {
   BySizeDegreeMin::BySizeDegreeMin(void) : sizedegree(0) {}
   forceinline
   BySizeDegreeMin::BySizeDegreeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), sizedegree(0) {}
   forceinline ViewSelStatus
   BySizeDegreeMin::init(Space&, SetView x) {
     UnknownRanges<SetView> u(x);
@@ -226,7 +226,7 @@ namespace Gecode { namespace Set { namespace Branch {
   BySizeDegreeMax::BySizeDegreeMax(void) : sizedegree(0) {}
   forceinline
   BySizeDegreeMax::BySizeDegreeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo) {}
+    : ViewSelBase<SetView>(home,vbo), sizedegree(0) {}
   forceinline ViewSelStatus
   BySizeDegreeMax::init(Space&, SetView x) {
     UnknownRanges<SetView> u(x);

@@ -94,7 +94,7 @@ namespace Gecode { namespace Gist {
   
   int
   explore(Space* root, bool bab, const Options& opt) {
-    char* argv = ""; int argc=0;
+    char* argv=""; int argc=0;
     QApplication app(argc, &argv);
     GistMainWindow mw(root, bab, opt);
     return app.exec();

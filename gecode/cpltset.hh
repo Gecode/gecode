@@ -539,7 +539,7 @@ namespace Gecode {
    * \ingroup TaskModelCpltSet
    */
   enum CpltSetOpType {
-    SOT_SYMDIFF,  ///< Symmetric Difference
+    SOT_SYMDIFF  ///< Symmetric Difference
   };
 
   /**

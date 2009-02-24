@@ -38,10 +38,10 @@
 namespace Gecode { namespace CpltSet { namespace Branch {
 
   forceinline
-  BySizeMin::BySizeMin(void) {}
+  BySizeMin::BySizeMin(void) : size(0U) {}
   forceinline
   BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<CpltSetView>(home,vbo) {}
+    : ViewSelBase<CpltSetView>(home,vbo), size(0U) {}
   forceinline ViewSelStatus
   BySizeMin::init(Space&, CpltSetView x) {
     size = x.unknownSize();
@@ -62,10 +62,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 
   forceinline
-  BySizeMax::BySizeMax(void) {}
+  BySizeMax::BySizeMax(void) : size(0U) {}
   forceinline
   BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<CpltSetView>(home,vbo) {}
+    : ViewSelBase<CpltSetView>(home,vbo), size(0U) {}
   forceinline ViewSelStatus
   BySizeMax::init(Space&, CpltSetView x) {
     size = x.unknownSize();
@@ -87,10 +87,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 
   forceinline
-  ByMinMin::ByMinMin(void) {}
+  ByMinMin::ByMinMin(void) : min(0) {}
   forceinline
   ByMinMin::ByMinMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<CpltSetView>(home,vbo) {}
+    : ViewSelBase<CpltSetView>(home,vbo), min(0) {}
   forceinline ViewSelStatus
   ByMinMin::init(Space&, CpltSetView x) {
     Set::UnknownRanges<CpltSetView> u(x);
@@ -113,10 +113,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 
   forceinline
-  ByMinMax::ByMinMax(void) {}
+  ByMinMax::ByMinMax(void) : min(0) {}
   forceinline
   ByMinMax::ByMinMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<CpltSetView>(home,vbo) {}
+    : ViewSelBase<CpltSetView>(home,vbo), min(0) {}
   forceinline ViewSelStatus
   ByMinMax::init(Space&, CpltSetView x) {
     Set::UnknownRanges<CpltSetView> u(x);
@@ -139,10 +139,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 
   forceinline
-  ByMaxMin::ByMaxMin(void) {}
+  ByMaxMin::ByMaxMin(void) : max(0) {}
   forceinline
   ByMaxMin::ByMaxMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<CpltSetView>(home,vbo) {}
+    : ViewSelBase<CpltSetView>(home,vbo), max(0) {}
   forceinline ViewSelStatus
   ByMaxMin::init (Space&, CpltSetView x) {
     for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)
@@ -165,10 +165,10 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 
   forceinline
-  ByMaxMax::ByMaxMax(void) {}
+  ByMaxMax::ByMaxMax(void) : max(0) {}
   forceinline
   ByMaxMax::ByMaxMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<CpltSetView>(home,vbo) {}
+    : ViewSelBase<CpltSetView>(home,vbo), max(0) {}
   forceinline ViewSelStatus
   ByMaxMax::init (Space&, CpltSetView x) {
     for (Set::UnknownRanges<CpltSetView> u(x); u(); ++u)

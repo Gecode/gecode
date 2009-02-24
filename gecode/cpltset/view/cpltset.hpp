@@ -117,7 +117,7 @@ namespace Gecode { namespace CpltSet {
   CpltSetView::initialLubMax(void)  const { return varimp->initialLubMax(); }
 
   forceinline bdd
-  CpltSetView::dom(void) const {  return varimp->dom(); };
+  CpltSetView::dom(void) const {  return varimp->dom(); }
 
 
   /*
