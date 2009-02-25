@@ -98,9 +98,10 @@ namespace Gecode {
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
 #endif
-    // Initialize actor and branching links
-    a_actors.init();
-    b_status = b_commit = Branching::cast(&a_actors);
+    // Initialize propagator and branching links
+    pl.init();
+    bl.init();
+    b_status = b_commit = Branching::cast(&bl);
     // Initialize array for forced deletion to be empty
     d_fst = d_cur = d_lst = NULL;
     // Initialize propagator queues
@@ -224,7 +225,7 @@ namespace Gecode {
         // Fall through
       case ES_FIX:
         // Clear med and put into idle queue
-        p->u.med = 0; p->unlink(); a_actors.head(p);
+        p->u.med = 0; p->unlink(); pl.head(p);
       stable_or_unstable:
         // There might be a propagator in the queue
         do {
@@ -274,7 +275,7 @@ namespace Gecode {
      * branching.
      *
      */
-    while (b_status != Branching::cast(&a_actors)) {
+    while (b_status != Branching::cast(&bl)) {
       if (b_status->status(*this)) {
         s = SS_BRANCH; goto exit;
       }
@@ -301,7 +302,7 @@ namespace Gecode {
      * as all of its descriptions must have been used already.
      *
      */
-    while ((b_commit != Branching::cast(&a_actors)) &&
+    while ((b_commit != Branching::cast(&bl)) &&
            (d._id != b_commit->id)) {
       Branching* b = b_commit;
       b_commit = Branching::cast(b_commit->next());
@@ -310,7 +311,7 @@ namespace Gecode {
       b->unlink();
       rfree(b,b->dispose(*this));
     }
-    if (b_commit == Branching::cast(&a_actors))
+    if (b_commit == Branching::cast(&bl))
       throw SpaceNoBranching();
     if (a >= d.alternatives())
       throw SpaceIllegalAlternative();
@@ -342,10 +343,10 @@ namespace Gecode {
       pc.c.vars_u[i] = NULL;
     pc.c.vars_noidx = NULL;
     pc.c.copied = NULL;
-    // Copy all actors
+    // Copy all propagators
     {
-      ActorLink* p = &a_actors;
-      ActorLink* e = &s.a_actors;
+      ActorLink* p = &pl;
+      ActorLink* e = &s.pl;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
         Actor* c = Actor::cast(a)->copy(*this,share);
         // Link copied actor
@@ -354,7 +355,21 @@ namespace Gecode {
         p = c;
       }
       // Link last actor
-      p->next(&a_actors); a_actors.prev(p);
+      p->next(&pl); pl.prev(p);
+    }
+    // Copy all branchings
+    {
+      ActorLink* p = &bl;
+      ActorLink* e = &s.bl;
+      for (ActorLink* a = e->next(); a != e; a = a->next()) {
+        Actor* c = Actor::cast(a)->copy(*this,share);
+        // Link copied actor
+        p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
+        // Note that forwarding is done in the constructors
+        p = c;
+      }
+      // Link last actor
+      p->next(&bl); bl.prev(p);
     }
     // Setup array for actor disposal
     {
@@ -374,13 +389,13 @@ namespace Gecode {
       }
     }
     // Setup branching pointers
-    if (s.b_status == &s.a_actors) {
-      b_status = Branching::cast(&a_actors);
+    if (s.b_status == &s.bl) {
+      b_status = Branching::cast(&bl);
     } else {
       b_status = Branching::cast(s.b_status->prev());
     }
-    if (s.b_commit == &s.a_actors) {
-      b_commit = Branching::cast(&a_actors);
+    if (s.b_commit == &s.bl) {
+      b_commit = Branching::cast(&bl);
     } else {
       b_commit = Branching::cast(s.b_commit->prev());
     }
@@ -408,25 +423,30 @@ namespace Gecode {
     c->update(static_cast<ActorLink**>(c->mm.subscriptions()));
 
     // Re-establish prev links (reset forwarding information)
-    ActorLink* p_a = &a_actors;
-    ActorLink* c_a = p_a->next();
-    // First update propagators and check for advisors that also must be reset
-    while (c_a != b_commit) {
-      Propagator* p = Propagator::cast(c_a);
-      if (p->u.advisors != NULL) {
-        ActorLink* a = p->u.advisors;
-        p->u.advisors = NULL;
-        do {
-          a->prev(p); a = a->next();
-        } while (a != NULL);
+    {
+      ActorLink* p_a = &pl;
+      ActorLink* c_a = p_a->next();
+      // First update propagators and advisors
+      while (c_a != &pl) {
+        Propagator* p = Propagator::cast(c_a);
+        if (p->u.advisors != NULL) {
+          ActorLink* a = p->u.advisors;
+          p->u.advisors = NULL;
+          do {
+            a->prev(p); a = a->next();
+          } while (a != NULL);
+        }
+        c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
       }
-      c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
     }
-    // Update branchings
-    while (c_a != &a_actors) {
-      c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
+    {
+      ActorLink* p_a = &bl;
+      ActorLink* c_a = p_a->next();
+      // Update branchings
+      while (c_a != &bl) {
+        c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
+      }
     }
-    assert(c_a->prev() == p_a);
 
     // Reset links for copied objects
     for (CopiedHandle::Object* s = c->pc.c.copied; s != NULL; s = s->next)

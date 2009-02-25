@@ -305,7 +305,7 @@ namespace Gecode {
   template <class T>
   forceinline T*
   Region::realloc(T* b, int n, int m) {
-    assert((n > 0) && (m > 0));
+    assert((n >= 0) && (m >= 0));
     return realloc<T>(b,static_cast<unsigned int>(n),
                       static_cast<unsigned int>(m));
   }

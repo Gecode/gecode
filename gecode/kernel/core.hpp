@@ -678,6 +678,8 @@ namespace Gecode {
     void head(ActorLink* al);
     /// Insert \a al directly before this
     void tail(ActorLink* al);
+    /// Test whether actor link is empty (points to itself)
+    bool empty(void) const;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     template <class T> static ActorLink* cast(T* a);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -1176,17 +1178,14 @@ namespace Gecode {
     MemoryManager mm;
     /// Shared region area
     SharedRegionArea* sra;
-    /**
-     * \brief Doubly linked list of all actors
-     *
-     * Propagators are stored at the beginning, branchings (if any) at
-     * the end.
-     */
-    ActorLink a_actors;
+    /// Doubly linked list of all propagators
+    ActorLink pl;
+    /// Doubly linked list of all branchings
+    ActorLink bl;
     /**
      * \brief Points to the first branching to be used for status
      *
-     * If equal to &a_actors, no branching does exist.
+     * If equal to &bl, no branching does exist.
      */
     Branching* b_status;
     /**
@@ -1198,7 +1197,7 @@ namespace Gecode {
      * returns false) but there might be still branching descriptions
      * referring to the earlier branching.
      *
-     * If equal to &a_actors, no branching does exist.
+     * If equal to &bl, no branching does exist.
      */
     Branching* b_commit;
     union {
@@ -1863,7 +1862,7 @@ namespace Gecode {
   template <class T>
   forceinline T*
   Space::realloc(T* b, int n, int m) {
-    assert((n > 0) && (m > 0));
+    assert((n >= 0) && (m >= 0));
     return realloc<T>(b,static_cast<unsigned int>(n),
                       static_cast<unsigned int>(m));
   }
@@ -1877,7 +1876,7 @@ namespace Gecode {
   template <>                                                           \
   forceinline T*                                                        \
   Space::realloc<T>(T* b, int n, int m) {                               \
-    assert((n > 0) && (m > 0));                                         \
+    assert((n >= 0) && (m >= 0));                                       \
     return realloc<T>(b,static_cast<unsigned int>(n),                   \
                       static_cast<unsigned int>(m));                    \
   }
@@ -1904,7 +1903,7 @@ namespace Gecode {
   template <class T>
   forceinline T**
   Space::realloc(T** b, int n, int m) {
-    assert((n > 0) && (m > 0));
+    assert((n >= 0) && (m >= 0));
     return realloc<T*>(b,static_cast<unsigned int>(n),
                        static_cast<unsigned int>(m));
   }
@@ -2135,6 +2134,11 @@ namespace Gecode {
     p->_next = a; a->_prev = p;
   }
 
+  forceinline bool
+  ActorLink::empty(void) const {
+    return _next == this;
+  }
+
   template <class T>
   forceinline ActorLink*
   ActorLink::cast(T* a) {
@@ -2251,7 +2255,7 @@ namespace Gecode {
   Propagator::Propagator(Space& home) {
     u.advisors = NULL;
     assert(u.med == 0 && u.size == 0);
-    home.a_actors.head(this);
+    home.pl.head(this);
   }
 
   forceinline
@@ -2315,12 +2319,12 @@ namespace Gecode {
     // Propagators are put at the tail of the link of actors
     id = home.pc.p.branch_id++;
     // If no branching available, make it the first one
-    if (home.b_status == &(home.a_actors)) {
+    if (home.b_status == &home.bl) {
       home.b_status = this;
-      if (home.b_commit == &(home.a_actors))
+      if (home.b_commit == &home.bl)
         home.b_commit = this;
     }
-    home.a_actors.tail(this);
+    home.bl.tail(this);
   }
 
   forceinline
@@ -3134,9 +3138,9 @@ namespace Gecode {
       q--;
     }
     q = NULL;
-    if (Branching::cast(home.a_actors.next()) != home.b_commit) {
-      c = home.a_actors.next();
-      e = Propagator::cast(home.b_commit);
+    if (!home.pl.empty()) {
+      c = Propagator::cast(home.pl.next());
+      e = Propagator::cast(&home.pl);
     } else {
       c = NULL;
     }
@@ -3160,9 +3164,9 @@ namespace Gecode {
           q--;
         }
         q = NULL;
-        if (Branching::cast(home.a_actors.next()) != home.b_commit) {
-          c = home.a_actors.next();
-          e = Propagator::cast(home.b_commit);
+        if (!home.pl.empty()) {
+          c = Propagator::cast(home.pl.next());
+          e = Propagator::cast(&home.pl);
         } else {
           c = NULL;
         }
@@ -3176,7 +3180,7 @@ namespace Gecode {
 
   forceinline
   Space::Branchings::Branchings(const Space& home) 
-    : c(Branching::cast(home.b_status)), e(&home.a_actors) {}
+    : c(Branching::cast(home.bl.next())), e(&home.bl) {}
   forceinline bool 
   Space::Branchings::operator ()(void) const {
     return c != e;
