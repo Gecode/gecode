@@ -362,13 +362,7 @@ SETSRC0 =								 \
 	element.cpp element/disjoint.cpp sequence.cpp			 \
 	distinct.cpp distinct/atmostOne.cpp				 \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
-	var-imp/integerset.cpp var/set.cpp 		 \
-	projectors.cpp							 \
-	projectors/set-expr.cpp projectors/projector.cpp			 \
-	projectors/projector-set.cpp					 \
-	projectors/propagator/re-nary.cpp				 \
-	projectors/compiler.cpp						 \
-	projectors/formula.cpp
+	var-imp/integerset.cpp var/set.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -393,13 +387,7 @@ SETHDR0 =								     \
 	sequence/common.hpp convex/conv.hpp convex/hull.hpp convex.hh	     \
 	propagator.hpp rel-op.hh					     \
 	branch.hh branch/select-val.hpp branch/select-view.hpp		     \
-	branch/post-val.hpp \
-	projectors.hh projectors-compiler.hh				     \
-	projectors/projector.hpp					     \
-	projectors/projector-set.hpp projectors/set-expr.hpp		     \
-	projectors/propagator.hh projectors/propagator/nary.hpp		     \
-	projectors/propagator/card.hpp projectors/propagator/re-nary.hpp     \
-	projectors/formula.hpp
+	branch/post-val.hpp
 
 SETSRC		= $(SETSRC0:%=gecode/set/%) \
 	$(top_srcdir)/gecode/set/branch/post-view.cpp
@@ -426,8 +414,7 @@ export LINKSET      	=
 endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
-	set/element set/sequence set/var set/var-imp set/view 	\
-	set/projectors set/projectors/propagator
+	set/element set/sequence set/var set/var-imp set/view
 
 #
 # MINIMODEL COMPONENTS
@@ -702,7 +689,7 @@ INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 SETTESTSRC00 = \
 	construct dom rel rel-op rel-op-const convex sequence int select \
-	distinct projection 
+	distinct
 SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
 
 ifeq "@enable_set_vars@" "yes"

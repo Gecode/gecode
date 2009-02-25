@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed automatically generated set projectors, they will come
+back eventually. This makes no change to the available
+functionality for set variables.
+
+[ENTRY]
 Module: cpltset
 What:   removed
 Rank:   major
