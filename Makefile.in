@@ -132,42 +132,11 @@ SUPPORTHDR0 = \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link
 
-BUDDYSRC0 = \
-	bddio.c \
-	bddop.c \
-	bvec.c \
-	cache.c \
-	cppext.cpp \
-	fdd.c \
-	imatrix.c \
-	kernel.c \
-	pairs.c \
-	prime.c \
-	reorder.c \
-	tree.c
-
-BUDDYHDR0 = \
-	bdd.h \
-	bddtree.h \
-	bvec.h \
-	cache.h \
-	config.h \
-	fdd.h \
-	imatrix.h \
-	kernel.h \
-	prime.h
-
-BUDDYSRC = $(BUDDYSRC0:%=gecode/support/buddy/%)
-BUDDYHDR = $(BUDDYHDR0:%=gecode/support/buddy/%)
-BUDDYOBJ0 = $(BUDDYSRC:%.c=%$(OBJSUFFIX))
-BUDDYOBJ = $(BUDDYOBJ0:%.cpp=%$(OBJSUFFIX))
-
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR  =  gecode/support.hh \
-	$(SUPPORTHDR0:%=gecode/support/%.hpp) \
-	$(BUDDYHDR)
-SUPPORTOBJ  =  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX)) $(BUDDYOBJ)
-SUPPORTSRC  =  $(SUPPORTSRC1) $(BUDDYSRC)
+	$(SUPPORTHDR0:%=gecode/support/%.hpp)
+SUPPORTOBJ  =  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX))
+SUPPORTSRC  =  $(SUPPORTSRC1)
 
 export SUPPORTDLL	= $(LIBPREFIX)@SUPPORT@$(DLLSUFFIX)
 export SUPPORTLIB	= $(LIBPREFIX)@SUPPORT@$(LIBSUFFIX)
@@ -180,7 +149,7 @@ endif
 export SUPPORTSTATICLIB	= $(LIBPREFIX)@SUPPORT@$(STATICLIBSUFFIX)
 export LINKSUPPORT      = \
 	$(LINKPREFIX)@SUPPORT@$(LINKSUFFIX)
-SUPPORTBUILDDIRS = support support/buddy
+SUPPORTBUILDDIRS = support
 
 
 #
@@ -619,7 +588,7 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 #
 
 ALLSRC = \
-	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
+	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(SETSRC) $(MMSRC) $(SCHEDSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(EXSUPPORTSRC) $(GISTSRC)
@@ -1126,10 +1095,6 @@ DIST_FILES= \
 	gecode/int/branch/post-view-int.bs \
 	gecode/int/branch/post-view-bool.bs \
 	gecode/set/branch/post-view.bs \
-	gecode/support/buddy/AUTHORS \
-	gecode/support/buddy/ChangeLog \
-	gecode/support/buddy/NEWS \
-	gecode/support/buddy/README \
 	examples/support.hh \
 	examples/support/example.hpp \
 	examples/support/options.hpp \
