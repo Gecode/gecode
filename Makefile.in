@@ -430,66 +430,6 @@ SETBUILDDIRS	=						\
 	set/projectors set/projectors/propagator
 
 #
-# CpltSet COMPONENTS
-#
-
-CPLTSETSRC0 =	\
-	array.cpp support.cpp             			          \
-	bddmanager.cpp 							  \
-	var-imp/cpltset.cpp var/cpltset.cpp                    \
-	constraints/singleton.cpp 					  \
-	constraints/dom.cpp constraints/rel.cpp constraints/cardinality.cpp  \
-	constraints/atmost.cpp constraints/partition.cpp 			  \
-	constraints/select.cpp constraints/distinct.cpp  			  \
-	constraints/rangeroots.cpp
-
-CPLTSETHDR0 =		                \
-	view.hpp bddmanager.hpp exception.hpp array.hpp \
-	support.hpp var-imp.hpp \
-	var-imp/cpltset.hpp \
-	var/cpltset.hpp var/print.hpp \
-	view/cpltset.hpp view/print.hpp \
-	propagators.hh \
-	propagators/unary.hpp propagators/binary.hpp \
-	propagators/nary.hpp propagators/naryone.hpp propagators/narytwo.hpp \
-	propagators/singleton.hpp \
-	branch.hh branch/select-val.hpp branch/select-view.hpp	\
-	branch/post-val.hpp
-
-
-CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/cpltset/%) \
-	$(top_srcdir)/gecode/cpltset/branch.cpp
-CPLTSETHDR	= gecode/cpltset.hh $(CPLTSETHDR0:%=gecode/cpltset/%)
-CPLTSETOBJ0	= $(CPLTSETSRC:%.cpp=%$(OBJSUFFIX))
-CPLTSETOBJ	= $(subst $(top_srcdir)/,,$(CPLTSETOBJ0))
-
-ifeq "@enable_cpltset_vars@" "yes"
-export CPLTSETDLL		= $(LIBPREFIX)@CPLTSET@$(DLLSUFFIX)
-export CPLTSETSTATICLIB	= $(LIBPREFIX)@CPLTSET@$(STATICLIBSUFFIX)
-export CPLTSETLIB		= $(LIBPREFIX)@CPLTSET@$(LIBSUFFIX)
-ifeq "@CXX@" "cl"
-export LINKCPLTSET      	= $(LINKPREFIX)@CPLTSET@$(LINKSUFFIX) 
-else
-export LINKCPLTSET      	= $(LINKPREFIX)@CPLTSET@$(LINKSUFFIX) $(CPLTSETFLAG)
-endif
-
-ifeq "@need_soname@" "yes"
-export CPLTSETSONAME     = \
-	@WLSONAME@$(LIBPREFIX)@CPLTSET@$(SOSUFFIX)
-else
-export CPLTSETSONAME     = 
-endif
-else
-export CPLTSETDLL		=
-export CPLTSETSTATICLIB	=
-export CPLTSETLIB		=
-export LINKCPLTSET      	=
-endif
-CPLTSETBUILDDIRS	=						\
-	cpltset cpltset/var cpltset/var-imp cpltset/view cpltset/propagators \
-	cpltset/branch cpltset/constraints
-
-#
 # MINIMODEL COMPONENTS
 #
 
@@ -671,20 +611,11 @@ else
 SETEXAMPLEEXE  = 
 endif
 
-CPLTSETEXAMPLESRC0 = \
-CPLTSETEXAMPLESRC  = $(CPLTSETEXAMPLESRC0:%=examples/%.cpp)
-CPLTSETEXAMPLEOBJ  = $(CPLTSETEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
-CPLTSETEXAMPLESBJ  = $(CPLTSETEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
-ifeq "@enable_cpltset_vars@" "yes"
-CPLTSETEXAMPLEEXE  = $(CPLTSETEXAMPLESRC:%.cpp=%$(EXESUFFIX))
-else
-CPLTSETEXAMPLEEXE  =
-endif
 
 EXAMPLEBUILDDIRS = examples examples/support
 
 EXAMPLEEXE = \
-  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(CPLTSETEXAMPLEEXE)
+  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
 
 EXSUPPORTSRC0 = \
 	support/options support/example
@@ -702,12 +633,12 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 
 ALLSRC = \
 	$(SUPPORTSRC) $(BUDDYSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(CPLTSETSRC) $(MMSRC) $(SCHEDSRC) \
-	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
+        $(INTSRC) $(SETSRC) $(MMSRC) $(SCHEDSRC) \
+	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) $(SCHEDHDR) \
+        $(INTHDR) $(SETHDR) $(MMHDR) $(SCHEDHDR) \
 	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
@@ -718,15 +649,15 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(CPLTSETDLL) $(MMDLL) $(SCHEDDLL) $(GISTDLL)
+	$(MMDLL) $(SCHEDDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(CPLTSETLIB) $(MMLIB) $(SCHEDLIB) $(GISTLIB)
+	$(MMLIB) $(SCHEDLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
+	$(INTSTATICLIB) $(SETSTATICLIB) \
 	$(MMSTATICLIB) $(SCHEDSTATICLIB) \
 	$(GISTSTATICLIB)
 endif
@@ -734,7 +665,7 @@ endif
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
+	$(INTSTATICLIB) $(SETSTATICLIB) \
 	$(MMSTATICLIB) $(SCHEDSTATICLIB) \
 	$(GISTSTATICLIB)
 else
@@ -773,24 +704,16 @@ SETTESTSRC00 = \
 	construct dom rel rel-op rel-op-const convex sequence int select \
 	distinct projection 
 SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
-CPLTSETTESTSRC00 = \
-	dom rel atmost partition cardinality select
-CPLTSETTESTSRC0 = test/cpltset.cpp $(CPLTSETTESTSRC00:%=test/cpltset/%.cpp)
 
 ifeq "@enable_set_vars@" "yes"
 SETTESTOBJ = $(SETTESTSRC0:%.cpp=%$(OBJSUFFIX))
 else
 SETTESTOBJ=
 endif
-ifeq "@enable_cpltset_vars@" "yes"
-CPLTSETTESTOBJ = $(CPLTSETTESTSRC0:%.cpp=%$(OBJSUFFIX))
-else
-CPLTSETTESTOBJ =
-endif
 
 BRANCHTESTSRC0 = \
 	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
-	test/branch/set.cpp test/branch/cpltset.cpp \
+	test/branch/set.cpp \
 	test/assign.cpp test/assign/int.cpp test/assign/bool.cpp
 
 SEARCHTESTSRC0 = \
@@ -800,26 +723,25 @@ TESTSRC0 = test/test.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) \
-	$(SETTESTSRC0) $(CPLTSETTESTSRC0) \
+	$(SETTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0)
 
 TESTHDR0 = \
-	test.hh test.hpp int.hh int.hpp set.hh set.hpp cpltset.hh \
+	test.hh test.hpp int.hh int.hpp set.hh set.hpp \
 	branch.hh assign.hh
 TESTHDR = $(TESTHDR0:%=test/%)
-TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(CPLTSETTESTOBJ) \
+TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
-TESTBUILDDIRS = test test/int test/set test/branch test/cpltset test/assign
+TESTBUILDDIRS = test test/int test/set test/branch test/assign
 
 BUILDDIRS = \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
-	$(CPLTSETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
 	$(SCHEDBUILDDIRS:%=gecode/%) \
 	$(GISTBUILDDIRS:%=gecode/%) \
@@ -899,8 +821,7 @@ compilesubdirs:
 ALLVIS0 = \
 	gecode/int/var-imp/int \
 	gecode/int/var-imp/bool \
-	gecode/set/var-imp/set \
-	gecode/cpltset/var-imp/cpltset
+	gecode/set/var-imp/set
 ALLVIS = \
 	$(ALLVIS0:%=$(top_srcdir)/%.vis) \
 	$(top_srcdir)/misc/genvariables.perl
@@ -918,8 +839,7 @@ $(top_srcdir)/gecode/kernel/var-imp.hpp: $(top_srcdir)/variables.vsl $(ALLVIS)
 GENBRANCHSRC = \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp \
-	$(top_srcdir)/gecode/set/branch/post-view.cpp \
-	$(top_srcdir)/gecode/cpltset/branch.cpp
+	$(top_srcdir)/gecode/set/branch/post-view.cpp
 
 $(top_srcdir)/gecode/int/branch/post-view-int.cpp: \
 	$(top_srcdir)/gecode/int/branch/post-view-int.bs \
@@ -933,10 +853,7 @@ $(top_srcdir)/gecode/set/branch/post-view.cpp: \
 	$(top_srcdir)/gecode/set/branch/post-view.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/cpltset/branch.cpp: \
-	$(top_srcdir)/gecode/cpltset/branch/post-view.bs \
-	$(top_srcdir)/misc/genbranch.perl
-	perl $(top_srcdir)/misc/genbranch.perl $< > $@
+
 
 #
 # Object targets
@@ -981,13 +898,6 @@ gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cpp
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-
-gecode/cpltset/%$(OBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/cpltset/%$(SBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
@@ -1046,7 +956,7 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
 	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKSCHED) \
-	$(LINKCPLTSET) $(LINKSET) $(LINKINT) \
+	$(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) $(SUPPORTSONAME) \
@@ -1075,13 +985,6 @@ $(SETDLL): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(SETDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(CPLTSETDLL): $(CPLTSETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
-	$(CXX) $(DLLFLAGS) $(CPLTSETOBJ) $(CPLTSETSONAME)  \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		$(LINKSET)\
-		@LINKOUTPUT@$(CPLTSETDLL) 
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
@@ -1119,9 +1022,6 @@ $(INTDLL) $(INTLIB): $(INTOBJ) $(SUPPORTDLL) $(KERNELDLL)
 $(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(SETDLL) $(GLDFLAGS) 
-$(CPLTSETDLL) $(CPLTSETLIB): $(CPLTSETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
-	$(CXX) $(DLLFLAGS) $(CPLTSETOBJ) \
-		@DLLPATH@ @LINKOUTPUT@$(CPLTSETDLL) $(GLDFLAGS) 
 $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
@@ -1152,9 +1052,6 @@ $(INTSTATICLIB): $(INTOBJ)
 	$(RANLIB) $@
 $(SETSTATICLIB): $(SETOBJ)
 	$(AR) $(ARFLAGS) $@ $(SETOBJ)
-	$(RANLIB) $@
-$(CPLTSETSTATICLIB): $(CPLTSETOBJ)
-	$(AR) $(ARFLAGS) $@ $(CPLTSETOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)
@@ -1239,11 +1136,9 @@ DIST_FILES= \
 	gecode/int/var-imp/int.vis \
 	gecode/int/var-imp/bool.vis \
 	gecode/set/var-imp/set.vis \
-	gecode/cpltset/var-imp/cpltset.vis \
 	gecode/int/branch/post-view-int.bs \
 	gecode/int/branch/post-view-bool.bs \
 	gecode/set/branch/post-view.bs \
-	gecode/cpltset/branch/post-view.bs \
 	gecode/support/buddy/AUTHORS \
 	gecode/support/buddy/ChangeLog \
 	gecode/support/buddy/NEWS \

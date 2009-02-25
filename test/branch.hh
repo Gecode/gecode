@@ -46,10 +46,6 @@
 #include <gecode/set.hh>
 #endif
 
-#ifdef GECODE_HAS_CPLTSET_VARS
-#include <gecode/cpltset.hh>
-#endif
-
 #include "test/test.hh"
 
 namespace Test {
@@ -111,27 +107,6 @@ namespace Test {
       virtual bool run(void);
       /// Post propagators on variables \a x
       virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
-    };
-#endif
-
-#ifdef GECODE_HAS_CPLTSET_VARS
-    /**
-     * \brief Base class for tests for branching on CpltSet variables
-     *
-     */
-    class CpltSetTest : public Base {
-    protected:
-      /// Number of variables
-      int arity;
-      /// Domain of variables
-      Gecode::IntSet dom;
-    public:
-      /// Construct and register test
-      CpltSetTest(const std::string& s, int a, const Gecode::IntSet& d);
-      /// Perform test
-      virtual bool run(void);
-      /// Post propagators on variables \a x
-      virtual void post(Gecode::Space& home, Gecode::CpltSetVarArray& x) = 0;
     };
 #endif
 

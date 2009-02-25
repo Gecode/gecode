@@ -6,7 +6,6 @@
  *     - gecode/int/var-imp/int.vis
  *     - gecode/int/var-imp/bool.vis
  *     - gecode/set/var-imp/set.vis
- *     - gecode/cpltset/var-imp/cpltset.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -144,46 +143,6 @@ namespace Gecode { namespace Set {
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     //@}
-  };
-}}
-#endif
-#ifdef GECODE_HAS_CPLTSET_VARS
-namespace Gecode { namespace CpltSet { 
-  /// Base-class for CpltSet-variable implementations
-  class CpltSetVarImpBase : public Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf> {
-  private:
-    /// Link to next variable, used for disposal
-    CpltSetVarImpBase* _next_d;
-  protected:
-    /// Constructor for cloning \a x
-    CpltSetVarImpBase(Gecode::Space& home, bool share, CpltSetVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    CpltSetVarImpBase(void);
-    /// Constructor for creating variable
-    CpltSetVarImpBase(Gecode::Space& home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_CPLTSET_VAL.
-     */
-    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
-    //@}
-    /// Return link to next variable to be disposed
-    CpltSetVarImpBase* next_d(void) const;
   };
 }}
 #endif
@@ -356,62 +315,6 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
-#ifdef GECODE_HAS_CPLTSET_VARS
-namespace Gecode { namespace CpltSet { 
-
-  forceinline
-  CpltSetVarImpBase::CpltSetVarImpBase(void) {}
-
-  forceinline
-  CpltSetVarImpBase::CpltSetVarImpBase(Gecode::Space& home)
-    : Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>(home) {
-     _next_d = static_cast<CpltSetVarImpBase*>(vars_d(home)); vars_d(home,this);
-  }
-
-  forceinline
-  CpltSetVarImpBase::CpltSetVarImpBase(Gecode::Space& home, bool share, CpltSetVarImpBase& x)
-    : Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>(home,share,x) {
-     _next_d = static_cast<CpltSetVarImpBase*>(vars_d(home)); vars_d(home,this);
-  }
-
-  forceinline CpltSetVarImpBase*
-  CpltSetVarImpBase::next_d(void) const {
-    return _next_d;
-  }
-
-
-  forceinline void
-  CpltSetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
-    Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,p,pc,assigned,ME_CPLTSET_DOM,schedule);
-  }
-  forceinline void
-  CpltSetVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
-    Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::subscribe(home,a,assigned);
-  }
-
-  forceinline Gecode::ModEvent
-  CpltSetVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
-    switch (me) {
-    case ME_CPLTSET_VAL:
-      // Conditions: VAL, DOM
-      schedule(home,PC_CPLTSET_VAL,PC_CPLTSET_DOM,ME_CPLTSET_VAL);
-      if (!Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::advise(home,ME_CPLTSET_VAL,d))
-        return ME_CPLTSET_FAILED;
-      cancel(home);
-      break;
-    case ME_CPLTSET_DOM:
-      // Conditions: DOM
-      schedule(home,PC_CPLTSET_DOM,PC_CPLTSET_DOM,ME_CPLTSET_DOM);
-      if (!Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::advise(home,ME_CPLTSET_DOM,d))
-        return ME_CPLTSET_FAILED;
-      break;
-    default: GECODE_NEVER;
-    }
-    return me;
-  }
-
-}}
-#endif
 namespace Gecode {
 
   forceinline void
@@ -424,9 +327,6 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_SET_VARS
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::update(*this,sub);
-#endif
-#ifdef GECODE_HAS_CPLTSET_VARS
-    Gecode::VarImp<Gecode::CpltSet::CpltSetVarImpConf>::update(*this,sub);
 #endif
   }
 }

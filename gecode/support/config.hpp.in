@@ -49,9 +49,6 @@
 /* Whether to compile boost dependent parts */
 #undef GECODE_HAS_BOOST
 
-/* Whether to build CPLTSET variables */
-#undef GECODE_HAS_CPLTSET_VARS
-
 /* Whether to build FLOAT variables */
 #undef GECODE_HAS_FLOAT_VARS
 

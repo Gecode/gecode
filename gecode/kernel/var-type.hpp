@@ -6,7 +6,6 @@
  *     - gecode/int/var-imp/int.vis
  *     - gecode/int/var-imp/bool.vis
  *     - gecode/set/var-imp/set.vis
- *     - gecode/cpltset/var-imp/cpltset.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -250,45 +249,6 @@ namespace Gecode { namespace Set {
   //@}
 }}
 #endif
-#ifdef GECODE_HAS_CPLTSET_VARS
-namespace Gecode { namespace CpltSet { 
-  /**
-   * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
-   * \ingroup TaskActorCpltSet
-   */
-  //@{
-  /// Domain operation has resulted in failure
-  const Gecode::ModEvent ME_CPLTSET_FAILED = Gecode::ME_GEN_FAILED;
-  /// Domain operation has not changed domain
-  const Gecode::ModEvent ME_CPLTSET_NONE = Gecode::ME_GEN_NONE;
-  /// Domain operation has resulted in a value (assigned variable)
-  const Gecode::ModEvent ME_CPLTSET_VAL = Gecode::ME_GEN_ASSIGNED;
-  /**
-   * \brief Domain operation has modified set
-   */
-  const Gecode::ModEvent ME_CPLTSET_DOM = Gecode::ME_GEN_ASSIGNED + 1;
-  /// Propagation condition to be ignored (convenience)
-  const Gecode::PropCond PC_CPLTSET_NONE = Gecode::PC_GEN_NONE;
-  /**
-   * \brief Propagate when a view becomes assigned (single value)
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_CPLTSET_VAL, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_CPLTSET_VAL.
-   */
-  const Gecode::PropCond PC_CPLTSET_VAL = Gecode::PC_GEN_ASSIGNED;
- /**
-   * \brief Propagate when the domain of a view changes
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_CPLTSET_DOM, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_CPLTSET_VAL or 
-   * ME_CPLTSET_DOM.
-   */
-  const Gecode::PropCond PC_CPLTSET_DOM = Gecode::PC_GEN_ASSIGNED + 1;
-  //@}
-}}
-#endif
 #ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /// Configuration for Int-variable implementations
@@ -406,50 +366,6 @@ namespace Gecode { namespace Set {
   };
 }}
 #endif
-#ifdef GECODE_HAS_CPLTSET_VARS
-
-#ifndef GECODE_HAS_VAR_DISPOSE
-#define GECODE_HAS_VAR_DISPOSE 1
-#endif
-
-namespace Gecode { namespace CpltSet { 
-  /// Configuration for CpltSet-variable implementations
-  class CpltSetVarImpConf {
-  public:
-    /// Index for cloning
-    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c+1;
-    /// Index for disposal
-    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
-    /// Maximal propagation condition
-    static const Gecode::PropCond pc_max = PC_CPLTSET_DOM;
-    /// Freely available bits
-    static const int free_bits = 0;
-    /// Start of bits for modification event delta
-    static const int med_fst = Gecode::Set::SetVarImpConf::med_lst;
-    /// End of bits for modification event delta
-    static const int med_lst = med_fst + 2;
-    /// Bitmask for modification event delta
-    static const int med_mask = ((1 << 2) - 1) << med_fst;
-    /// Combine modification events \a me1 and \a me2
-    static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
-    /// Update modification even delta \a med by \a me, return true on change
-    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
-  };
-}}
-#else
-namespace Gecode { namespace CpltSet { 
-  /// Dummy configuration for CpltSet-variable implementations
-  class CpltSetVarImpConf {
-  public:
-    /// Index for cloning
-    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c;
-    /// Index for disposal
-    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
-    /// End of bits for modification event delta
-    static const int med_lst = Gecode::Set::SetVarImpConf::med_lst;
-  };
-}}
-#endif
 
 namespace Gecode {
 
@@ -457,9 +373,9 @@ namespace Gecode {
   class AllVarConf {
   public:
     /// Index for cloning
-    static const int idx_c = Gecode::CpltSet::CpltSetVarImpConf::idx_c+1;
+    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c+1;
     /// Index for dispose
-    static const int idx_d = Gecode::CpltSet::CpltSetVarImpConf::idx_d+1;
+    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
     /// Combine modification event delta \a med1 with \a med2
     static ModEventDelta med_combine(ModEventDelta med1, ModEventDelta med2);
   };
@@ -833,58 +749,6 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
-#ifdef GECODE_HAS_CPLTSET_VARS
-namespace Gecode { namespace CpltSet { 
-  forceinline Gecode::ModEvent
-  CpltSetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
-    static const Gecode::ModEvent me_c = (
-      (
-        (ME_CPLTSET_NONE <<  0) |  // [ME_CPLTSET_NONE][ME_CPLTSET_NONE]
-        (ME_CPLTSET_VAL  <<  2) |  // [ME_CPLTSET_NONE][ME_CPLTSET_VAL ]
-        (ME_CPLTSET_DOM  <<  4)    // [ME_CPLTSET_NONE][ME_CPLTSET_DOM ]
-      ) |
-      (
-        (ME_CPLTSET_VAL  <<  8) |  // [ME_CPLTSET_VAL ][ME_CPLTSET_NONE]
-        (ME_CPLTSET_VAL  << 10) |  // [ME_CPLTSET_VAL ][ME_CPLTSET_VAL ]
-        (ME_CPLTSET_VAL  << 12)    // [ME_CPLTSET_VAL ][ME_CPLTSET_DOM ]
-      ) |
-      (
-        (ME_CPLTSET_DOM  << 16) |  // [ME_CPLTSET_DOM ][ME_CPLTSET_NONE]
-        (ME_CPLTSET_VAL  << 18) |  // [ME_CPLTSET_DOM ][ME_CPLTSET_VAL ]
-        (ME_CPLTSET_DOM  << 20)    // [ME_CPLTSET_DOM ][ME_CPLTSET_DOM ]
-      )
-    );
-    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;
-  }
-  forceinline bool
-  CpltSetVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
-    switch (me) {
-    case ME_CPLTSET_NONE:
-      return false;
-    case ME_CPLTSET_VAL:
-      {
-        Gecode::ModEventDelta med_cpltset = med & med_mask;
-        if (med_cpltset == (ME_CPLTSET_VAL << med_fst))
-          return false;
-        med ^= med_cpltset;
-        med ^= ME_CPLTSET_VAL << med_fst;
-        break;
-      }
-    case ME_CPLTSET_DOM:
-      {
-        Gecode::ModEventDelta med_cpltset = med & med_mask;
-        if (med_cpltset != 0)
-          return false;
-        med |= ME_CPLTSET_DOM << med_fst;
-        break;
-      }
-    default: GECODE_NEVER;
-    }
-    return true;
-  }
-
-}}
-#endif
 namespace Gecode {
   forceinline ModEventDelta
   AllVarConf::med_combine(ModEventDelta med1, ModEventDelta med2) {
@@ -896,9 +760,6 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_SET_VARS
     (void) Gecode::Set::SetVarImpConf::med_update(med1,(med2 & Gecode::Set::SetVarImpConf::med_mask) >> Gecode::Set::SetVarImpConf::med_fst);
-#endif
-#ifdef GECODE_HAS_CPLTSET_VARS
-    (void) Gecode::CpltSet::CpltSetVarImpConf::med_update(med1,(med2 & Gecode::CpltSet::CpltSetVarImpConf::med_mask) >> Gecode::CpltSet::CpltSetVarImpConf::med_fst);
 #endif
     return med1;
   }

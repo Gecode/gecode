@@ -217,17 +217,6 @@ AC_GECODE_VTI(set,
 	]
 	)
 
-if test "${enable_set_vars}" != "yes"; then
-	enable_cpltset_vars="no"
-fi
-
-AC_GECODE_VTI(cpltset, finite set library using complete domain representation (can only be used with --enable-set-vars), yes, [
-	AC_SUBST(LINKCPLTSET,[${LINKLIBDIR}${LINKPREFIX}${CPLTSET}${DLL_ARCH}${LINKSUFFIX}])
-	],
-	[
-	 AC_SUBST(LINKCPLSET,[])
-	])
-
 AC_GECODE_VTI(int, finite domain library, yes, [
   	 AC_SUBST(LINKINT,[${LINKLIBDIR}${LINKPREFIX}${INT}${DLL_ARCH}${LINKSUFFIX}])
 	],

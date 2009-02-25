@@ -111,27 +111,6 @@ namespace Test { namespace Branch {
   };
 #endif
 
-#ifdef GECODE_HAS_CPLTSET_VARS
-  /// Space for executing Boolean tests
-  class CpltSetTestSpace : public Gecode::Space {
-  public:
-    /// Variables to be tested
-    Gecode::CpltSetVarArray x;
-    /// Initialize test space
-    CpltSetTestSpace(int n, Gecode::IntSet& d)
-      : x(*this, n, Gecode::IntSet::empty, d) {}
-    /// Constructor for cloning \a s
-    CpltSetTestSpace(bool share, CpltSetTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
-    }
-    /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new CpltSetTestSpace(share,*this);
-    }
-  };
-#endif
-
   /** \name Collection of possible arguments for integer branchings
    *
    * \relates IntTestSpace BoolTestSpace
@@ -268,61 +247,6 @@ namespace Test { namespace Branch {
     "SET_VAL_MAX_EXC",
     "SET_VAL_RND_INC",
     "SET_VAL_RND_EXC"
-  };
-  //@}
-#endif
-
-#ifdef GECODE_HAS_CPLTSET_VARS
-  /** \name Collection of possible arguments for CpltSet branchings
-   *
-   * \relates CpltSetTestSpace
-   */
-  //@{
-  /// CpltSet variable selections
-  const Gecode::CpltSetVarBranch cpltset_var_branch[] = {
-    Gecode::CPLTSET_VAR_NONE,
-    Gecode::CPLTSET_VAR_RND,
-    Gecode::CPLTSET_VAR_DEGREE_MIN,
-    Gecode::CPLTSET_VAR_DEGREE_MAX,
-    Gecode::CPLTSET_VAR_MIN_MIN,
-    Gecode::CPLTSET_VAR_MIN_MAX,
-    Gecode::CPLTSET_VAR_MAX_MIN,
-    Gecode::CPLTSET_VAR_MAX_MAX,
-    Gecode::CPLTSET_VAR_SIZE_MIN,
-    Gecode::CPLTSET_VAR_SIZE_MAX
-  };
-  /// Number of CpltSet variable selections
-  const int n_cpltset_var_branch =
-    sizeof(cpltset_var_branch)/sizeof(Gecode::CpltSetVarBranch);
-  /// Names for CpltSet variable selections
-  const char* cpltset_var_branch_name[] = {
-    "CPLTSET_VAR_NONE",
-    "CPLTSET_VAR_RND",
-    "CPLTSET_VAR_DEGREE_MIN",
-    "CPLTSET_VAR_DEGREE_MAX",
-    "CPLTSET_VAR_MIN_MIN",
-    "CPLTSET_VAR_MIN_MAX",
-    "CPLTSET_VAR_MAX_MIN",
-    "CPLTSET_VAR_MAX_MAX",
-    "CPLTSET_VAR_SIZE_MIN",
-    "CPLTSET_VAR_SIZE_MAX"
-  };
-  /// Set value selections
-  const Gecode::CpltSetValBranch cpltset_val_branch[] = {
-    Gecode::CPLTSET_VAL_MIN_INC,
-    Gecode::CPLTSET_VAL_MIN_EXC,
-    Gecode::CPLTSET_VAL_MAX_INC,
-    Gecode::CPLTSET_VAL_MAX_EXC
-  };
-  /// Number of set value selections
-  const int n_cpltset_val_branch =
-    sizeof(cpltset_val_branch)/sizeof(Gecode::CpltSetValBranch);
-  /// Names for set value selections
-  const char* cpltset_val_branch_name[] = {
-    "CPLTSET_VAL_MIN_INC",
-    "CPLTSET_VAL_MIN_EXC",
-    "CPLTSET_VAL_MAX_INC",
-    "CPLTSET_VAL_MAX_EXC"
   };
   //@}
 #endif
@@ -510,64 +434,6 @@ namespace Test { namespace Branch {
             (RunInfo(set_var_branch_name[vara],
                      set_var_branch_name[varb],
                      set_val_branch_name[val],
-                     o));
-        }
-      }
-    }
-    if (results.size() > 1)
-      goto failed;
-    delete root;
-    return true;
-  failed:
-    std::cout   << "FAILURE" << std::endl;
-    for (map<int, vector<RunInfo> >::iterator it = results.begin();
-         it != results.end(); ++it) {
-      std::cout << "Number of solutions: " << it->first << std::endl;
-      for (unsigned int i = 0; i < it->second.size(); ++i)
-        std::cout << it->second[i] << " ";
-      std::cout << std::endl;
-    }
-
-    delete root;
-    return results.size() == 1;
-  }
-#endif
-
-#ifdef GECODE_HAS_CPLTSET_VARS
-  CpltSetTest::CpltSetTest(const std::string& s, int a,
-                           const Gecode::IntSet& d)
-    : Base("Branch::CpltSet::"+s), arity(a), dom(d) {
-  }
-
-  bool
-  CpltSetTest::run(void) {
-    using std::map;
-    using std::vector;
-    using std::string;
-    using std::ostream;
-    using namespace Gecode;
-
-    // Results of tests run
-    map<int, vector<RunInfo> > results;
-    // Set up root space
-    CpltSetTestSpace* root = new CpltSetTestSpace(arity,dom);
-    post(*root, root->x);
-    root->status();
-    results.clear();
-
-    for (int vara = n_cpltset_var_branch; vara--; ) {
-      for (int varb = n_cpltset_var_branch; varb--; ) {
-        for (int val = n_cpltset_val_branch; val--; ) {
-          CpltSetTestSpace* c =
-            static_cast<CpltSetTestSpace*>(root->clone(false));
-          branch(*c, c->x,
-                 tiebreak(cpltset_var_branch[vara], cpltset_var_branch[varb]),
-                 cpltset_val_branch[val]);
-          Gecode::Search::Options o;
-          results[solutions(c,o)].push_back
-            (RunInfo(cpltset_var_branch_name[vara],
-                     cpltset_var_branch_name[varb],
-                     cpltset_val_branch_name[val],
                      o));
         }
       }

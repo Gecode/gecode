@@ -74,9 +74,16 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: cpltset
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Complete sets have been removed (just not good enough).
+
+[ENTRY]
 Module: kernel
 What:   new
-Rank:   major
+Rank:   minor
 Author:	Filip Konvicka
 [DESCRIPTION]
 Integrated space and region-based allocators that work with STL
@@ -625,27 +632,6 @@ The following values have been renamed:
  - SET_VAR_MAX_UNKNOWN_ELEM -> SET_VAR_MAX_MAX
  - SET_VAL_MIN -> SET_VAL_MIN_INC
  - SET_VAL_MAX -> SET_VAL_MAX_INC
- .
-Tie-breaking and random selection is now supported.
-
-[ENTRY]
-Module: cpltset
-What:   change
-Rank:   major
-[DESCRIPTION]
-The values for variable and value selection for branching have
-been made consistent and extended. 
-[MORE]
-The following values have 
-been renamed:
- - CPLTSET_VAR_MIN_CARD -> CPLTSET_VAR_SIZE_MIN
- - CPLTSET_VAR_MAX_CARD -> CPLTSET_VAR_SIZE_MAX
- - CPLTSET_VAR_MIN_UNKNOWN_ELEM -> CPLTSET_VAR_MIN_MIN
- - CPLTSET_VAR_MAX_UNKNOWN_ELEM -> CPLTSET_VAR_MAX_MAX
- - CPLTSET_VAL_MIN_UNKNOWN -> CPLTSET_VAL_MIN_INC
- - CPLTSET_VAL_MAX_UNKNOWN -> CPLTSET_VAL_MAX_INC
- - CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MIN_EXC
- - CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST -> CPLTSET_VAL_MAX_EXC
  .
 Tie-breaking and random selection is now supported.
 

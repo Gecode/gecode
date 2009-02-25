@@ -103,16 +103,6 @@
  */
 
 /**
- * \defgroup TaskModelCpltSet Using finite integer sets with complete domain representation
- * \ingroup TaskModel
- */
-
-/**
- * \defgroup TaskModelCpltSetVars Set variables with complete domain representation
- * \ingroup TaskModelCpltSet
- */
-
-/**
  * \defgroup TaskModelMiniModel Direct modelling
  * \ingroup TaskModel
  */
@@ -134,11 +124,6 @@
 
 /**
  * \defgroup TaskActorSet Programming set actors
- * \ingroup TaskActor
- */
-
-/**
- * \defgroup TaskActorCpltSet Programming CpltSet actors
  * \ingroup TaskActor
  */
 
@@ -318,40 +303,6 @@
  *
  * All value selection classes require 
  * \code #include <gecode/set/branch.hh> \endcode
- * \ingroup Other
- */
-
-/**
- * \defgroup FuncCpltSetProp CpltSet propagators
- *
- * This module contains a description of all predefined
- * propagators for CpltSet variables. They can be reused, for example, for 
- * rewriting newly defined CpltSet propagators into already available
- * propagators.
- * \ingroup Other
- */
-
-/**
- * \defgroup FuncCpltSetSelView CpltSet view selection for branching
- *
- * Contains a description of view selection strategies on CpltSet
- * views that can be used together with the generic view/value
- * branching class Gecode::ViewValBranching (argument \a ViewSel).
- *
- * All view selection classes require 
- * \code #include <gecode/cpltset/branch.hh> \endcode
- * \ingroup Other
- */
-
-/**
- * \defgroup FuncCpltSetSelVal CpltSet value selection for branching
- *
- * Contains a description of value selection strategies on CpltSet
- * views that can be used together with the generic view/value
- * branching class Gecode::ViewValBranching (argument \a ValSel).
- *
- * All value selection classes require 
- * \code #include <gecode/cpltset/branch.hh> \endcode
  * \ingroup Other
  */
 
@@ -667,9 +618,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    (see for example \ref TaskModelInt and \ref TaskActorInt).
  *  - gecode/set.hh must be included, if any finite set functionality is used
  *    (see for example \ref TaskModelSet and \ref TaskActorSet).
- *  - gecode/cpltset.hh must be included, if any complete finite set 
- *    functionality is used
- *    (see for example \ref TaskModelCpltSet and \ref TaskActorCpltSet).
  *  - gecode/minimodel.hh must be included, if direct modelling support
  *    is used (see for example \ref TaskModelMiniModel).
  *
@@ -692,8 +640,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - If gecode/int.hh is included, linking against the integer library is
  *    required.
  *  - If gecode/set.hh is included, linking against the set library is
- *    required.
- *  - If gecode/cpltset.hh is included, linking against the cpltset library is
  *    required.
  *  - If gecode/minimodel.hh is included, linking against the minimodel
  *    library is required.
@@ -743,7 +689,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - Search library: libgecodesearch.&lt;EXT&gt;
  *  - Integer library: libgecodeint.&lt;EXT&gt;
  *  - Set library: libgecodeset.&lt;EXT&gt;
- *  - CpltSet library: libgecodecpltset.&lt;EXT&gt;
  *  - Minimodel library: libgecodeminimodel.&lt;EXT&gt;
  *
  * where &lt;EXT&gt; depends on the library type and platform:
