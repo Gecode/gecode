@@ -122,6 +122,13 @@ namespace Gecode { namespace Int {
     ValOfUnassignedVar(const char* l);
   };
 
+  /// %Exception: Tuple set not yet finalized
+  class GECODE_VTABLE_EXPORT NotYetFinalized : public Exception {
+  public:
+    /// Initialize with location \a l
+    NotYetFinalized(const char* l);
+  };
+
   //@}
 
 
@@ -178,6 +185,10 @@ namespace Gecode { namespace Int {
   inline
   ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
     : Exception(l,"Attempt to access value of unassigned variable") {}
+
+  inline
+  NotYetFinalized::NotYetFinalized(const char* l)
+    : Exception(l,"Tuple set not yet finalized") {}
 
 }}
 

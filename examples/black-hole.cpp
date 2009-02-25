@@ -269,19 +269,16 @@ public:
     } else { // opt.propagation() == PROPAGATION_TUPLE_SET)
       // Build table for allowed tuples
       TupleSet tupleSet;
-      for (int r = 13; r--; ) {
-        for (int s1 = 4; s1--; ) {
-          for (int s2 = 4; s2--; ) {
+      for (int r = 13; r--; )
+        for (int s1 = 4; s1--; )
+          for (int s2 = 4; s2--; )
             for (int i = -1; i <= 1; i+=2) {
               IntArgs t(2);
               t[0] = r+13*s1;
               t[1] = (r+i+52+13*s2)%52;
               tupleSet.add(t);
             }
-          }
-        }
-      }
-
+      tupleSet.finalize();
       for (int i = 51; i--; ) {
         IntVarArgs iva(2);
         iva[0] = x[i]; iva[1] = x[i+1];

@@ -68,7 +68,7 @@ namespace Gecode {
               ExtensionalPropKind epk, IntConLevel) {
     using namespace Int;
     if (!t.finalized())
-      const_cast<TupleSet&>(t).finalize();
+      throw NotYetFinalized("Int::extensional");
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (home.failed()) return;
@@ -97,7 +97,7 @@ namespace Gecode {
               ExtensionalPropKind epk, IntConLevel) {
     using namespace Int;
     if (!t.finalized())
-      const_cast<TupleSet&>(t).finalize();
+      throw NotYetFinalized("Int::extensional");
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (home.failed()) return;

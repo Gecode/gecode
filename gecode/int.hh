@@ -1708,13 +1708,15 @@ namespace Gecode {
     int max(void) const;
   };
 
-  /** \brief Post propagator for \f$x\in T\f$.
+  /** \brief Post propagator for \f$x\in t\f$.
    *
    * \li Supports implementations optimized for memory (\a epk = \a
    *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
    * \li Supports domain consistency (\a icl = ICL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
    *
    * \warning If the domains for the \f$x_i\f$ are not dense and
    * have similar bounds, lots of memory will be wasted (memory
@@ -1728,13 +1730,15 @@ namespace Gecode {
   extensional(Space& home, const IntVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
 
-  /** \brief Post propagator for \f$x\in T\f$.
+  /** \brief Post propagator for \f$x\in t\f$.
    *
    * \li Supports implementations optimized for memory (\a epk = \a
    *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
    * \li Supports domain consistency (\a icl = ICL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
    */
   GECODE_INT_EXPORT void
   extensional(Space& home, const BoolVarArgs& x, const TupleSet& t,
