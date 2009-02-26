@@ -311,6 +311,28 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
      $1="$ac_cv_cxx_compiler_vendor"])dnl
 
 
+AC_DEFUN([AC_CHECK_GCC_VERSION],
+    [
+    AC_LANG_PUSH(C)
+    AC_COMPILE_IFELSE(
+    [#if __GNUC__ < $1 || (__GNUC__ == $1 && __GNUC_MINOR__ < $2)
+     #error Version too old
+     really, the version is too old
+     #endif],[],
+    [AC_MSG_ERROR([Your version of gcc is too old. You need at least version $1.$2.])]
+    )
+    AC_LANG_POP()
+    AC_LANG_PUSH(C++)
+    AC_COMPILE_IFELSE(
+    [#if __GNUC__ < $1 || (__GNUC__ == $1 && __GNUC_MINOR__ < $2)
+     #error Version too old
+     really, the version is too old
+     #endif],[],
+    [AC_MSG_ERROR([Your version of g++ is too old. You need at least version $1.$2.])]
+    )
+    AC_LANG_POP()
+    ])
+
 dnl Macro:
 dnl   AC_GECODE_VTI (vartype, help-string, default,
 dnl		     [ACTION-IF-ENABLED], [ACTION-IF-DISABLED])

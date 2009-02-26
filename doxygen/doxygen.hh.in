@@ -758,9 +758,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *     Linux and MacOS X. The GNU gcc is open source software and available
  *     from <a href="http://gcc.gnu.org/">the GCC home page</a>. It is included
  *     in all Linux distributions and the Apple MacOS X developer tools.
- *     %Gecode requires at least version 3.4 of gcc. We recommend using version
- *     4.2 or higher. Very unfortunately, the parser used in versions of gcc
- *     before 3.4 is broken and hence cannot compile %Gecode.
+ *     %Gecode requires at least version 4.2 of gcc.
  *
  * The Intel C++ compiler is currently not supported (even though Gecode is
  * likely to compile with it).
