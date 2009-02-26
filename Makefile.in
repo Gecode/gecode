@@ -657,7 +657,7 @@ INTTESTSRC00 = \
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 SETTESTSRC00 = \
-	construct dom rel rel-op rel-op-const convex sequence int select \
+	construct dom rel rel-op rel-op-const convex sequence int element \
 	distinct
 SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
 
