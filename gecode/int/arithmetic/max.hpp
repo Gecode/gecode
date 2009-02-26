@@ -292,11 +292,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     ViewRanges<View> r0(x0), r1(x1);
     Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
     GECODE_ME_CHECK(x2.inter_r(home,u,false));
-    if (rtest_nq_dom(x0,x2)) {
+    if (rtest_nq_dom(x0,x2) == RT_TRUE) {
       GECODE_ES_CHECK(Rel::Lq<View>::post(home,x0,x2));
       GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x1,x2)));
     }
-    if (rtest_nq_dom(x1,x2)) {
+    if (rtest_nq_dom(x1,x2) == RT_TRUE) {
       GECODE_ES_CHECK(Rel::Lq<View>::post(home,x1,x2));
       GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
     }
