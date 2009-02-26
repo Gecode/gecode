@@ -92,8 +92,7 @@ namespace Gecode { namespace Gist {
     editor->setFont(font);
     editor->setReadOnly(true);
     editor->setLineWrapMode(QTextEdit::FixedColumnWidth);
-    editor->setLineWrapColumnOrWidth(80);
-    editor->setTabStopWidth(2);
+    editor->setLineWrapColumnOrWidth(40);
     os = new GistOutputStream(editor);
 
     QAction* clearText = new QAction("Clear", this);
