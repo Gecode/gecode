@@ -241,9 +241,9 @@ namespace Gecode {
     /// View of type \a View2
     View2 x2;
     /// Constructor for cloning
-    MixTernaryPropagator(Space& home,bool,MixTernaryPropagator&);
+    MixTernaryPropagator(Space& home, bool share, MixTernaryPropagator& p);
     /// Constructor for creation
-    MixTernaryPropagator(Space& home,View0,View1,View2);
+    MixTernaryPropagator(Space& home, View0 x0, View1 x1, View2 x2);
     /// Constructor for rewriting \a p during cloning
     MixTernaryPropagator(Space& home, bool share, Propagator& p,
                          View0 x0, View1 x1, View2 x2);
