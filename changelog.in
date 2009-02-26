@@ -74,6 +74,29 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Element and convexity constraints on set variables have a more uniform interface, and the match constrained has been renamed to channel.
+
+[ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Gist now takes an optional argument specifying options for the search, including 
+the inspectors to be used. The Qt interface has been cleaned up, so that Gist is 
+easier to extend.
+
+[ENTRY]
+Module: gist
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added inspectors that react on every solution instead of a double click. 
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor
