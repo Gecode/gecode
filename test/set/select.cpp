@@ -88,7 +88,7 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
-        Gecode::elementsUnion(home, xs, x[x.size()-2], x[x.size()-1]);
+        Gecode::element(home, SOT_UNION, xs, x[x.size()-2], x[x.size()-1]);
       }
     };
     ElementUnion _elementunion("Element::Union");
@@ -132,7 +132,7 @@ namespace Test { namespace Set {
       virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
         IntSetArgs xs(3);
         xs[0] = i0; xs[1] = i1; xs[2] = i2;
-        Gecode::elementsUnion(home, xs, x[0], x[1]);
+        Gecode::element(home, SOT_UNION, xs, x[0], x[1]);
       }
     };
     ElementUnionConst _elementunionconst("Element::UnionConst");
@@ -172,7 +172,7 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
-        Gecode::elementsInter(home, xs, x[x.size()-2], x[x.size()-1]);
+        Gecode::element(home, SOT_INTER, xs, x[x.size()-2], x[x.size()-1]);
       }
     };
     ElementInter _elementinter("Element::Inter");
@@ -212,7 +212,8 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-2);
         for (int i=x.size()-2; i--;)
           xs[i]=x[i];
-        Gecode::elementsInter(home, xs, x[x.size()-2], x[x.size()-1], ds_12);
+        Gecode::element(home, SOT_INTER, xs, x[x.size()-2], x[x.size()-1], 
+          ds_12);
       }
     };
     ElementInterIn _elementinterin("Element::InterIn");
@@ -222,7 +223,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementDisjoint(const char* t)
-        : SetTest(t,4,ds_12,false) {}
+        : SetTest(t,5,ds_12,false) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -230,9 +231,10 @@ namespace Test { namespace Set {
              ++sel2, selected++) {
           if (sel2.val() < 0)
             return false;
-        };
-        if (selected <= 1)
-          return true;
+        }
+        CountableSetValues x4v(x.lub, x[4]);
+        if (selected == 0)
+          return !x4v();
         CountableSetRanges* sel = new CountableSetRanges[selected];
         CountableSetValues selector(x.lub, x[3]);
         unsigned int cardsum = 0;
@@ -246,16 +248,21 @@ namespace Test { namespace Set {
           cardsum += Iter::Ranges::size(xicard);
         }
         Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
-        bool ret = Iter::Ranges::size(u) == cardsum;
+        Iter::Ranges::Cache<Iter::Ranges::NaryUnion<CountableSetRanges> >
+          uc(u);
+        bool ret = Iter::Ranges::size(uc) == cardsum;
+        uc.reset();
+        CountableSetRanges z(x.lub, x[4]);
+        ret &= Iter::Ranges::equal(uc, z);
         delete[] sel;
         return ret;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(x.size()-1);
-        for (int i=x.size()-1; i--;)
+        SetVarArgs xs(x.size()-2);
+        for (int i=x.size()-2; i--;)
           xs[i]=x[i];
-        Gecode::elementsDisjoint(home, xs, x[x.size()-1]);
+        Gecode::element(home, SOT_DUNION, xs, x[x.size()-2], x[x.size()-1]);
       }
     };
     ElementDisjoint _elementdisjoint("Element::Disjoint");

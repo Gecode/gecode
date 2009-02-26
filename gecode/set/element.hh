@@ -74,14 +74,14 @@ namespace Gecode { namespace Set { namespace Element {
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
     IntSet universe;
-    SView x0;
+    RView x0;
     IdxViewArray iv;
     RView x1;
 
     /// Constructor for cloning \a p
     ElementIntersection(Space& home, bool share,ElementIntersection& p);
     /// Constructor for posting
-    ElementIntersection(Space& home,SView,IdxViewArray&,RView,
+    ElementIntersection(Space& home,RView,IdxViewArray&,RView,
                        const IntSet& universe);
   public:
     /// Copy propagator during cloning
@@ -96,7 +96,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be the given universe
      * \a u (as an empty intersection is the universe).
      */
-    static ExecStatus post(Space& home,SView z,IdxViewArray& x,
+    static ExecStatus post(Space& home,RView z,IdxViewArray& x,
                            RView y, const IntSet& u);
   };
 
@@ -176,27 +176,28 @@ namespace Gecode { namespace Set { namespace Element {
    * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
+  template <class SView, class RView>
   class ElementDisjoint : public Propagator {
   public:
-    typedef Gecode::Int::Element::IdxViewArray<SetView> IdxViewArray;
+    typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
   protected:
     IdxViewArray iv;
-    SetView x1;
+    RView x1;
 
     /// Constructor for cloning \a p
     ElementDisjoint(Space& home, bool share,ElementDisjoint& p);
     /// Constructor for posting
-    ElementDisjoint(Space& home,IdxViewArray&,SetView);
+    ElementDisjoint(Space& home,IdxViewArray&,RView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
-    GECODE_SET_EXPORT virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual Actor*      copy(Space& home,bool);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
-    GECODE_SET_EXPORT virtual size_t dispose(Space& home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
-    static  ExecStatus  post(Space& home,IdxViewArray& x,SetView y);
+    static  ExecStatus  post(Space& home,IdxViewArray& x,RView y);
   };
 
 }}}

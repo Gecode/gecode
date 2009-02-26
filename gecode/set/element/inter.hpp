@@ -42,7 +42,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   forceinline
   ElementIntersection<SView,RView>::
-  ElementIntersection(Space& home, SView y0,
+  ElementIntersection(Space& home, RView y0,
                      IdxViewArray& iv0,
                      RView y1,
                      const IntSet& theUniverse)
@@ -89,7 +89,7 @@ namespace Gecode { namespace Set { namespace Element {
   template <class SView, class RView>
   ExecStatus
   ElementIntersection<SView,RView>::
-  post(Space& home, SView x0, IdxViewArray& xs,
+  post(Space& home, RView x0, IdxViewArray& xs,
        RView x1, const IntSet& universe) {
     int n = xs.size();
 
@@ -154,9 +154,9 @@ namespace Gecode { namespace Set { namespace Element {
         int candidateInd = iv[j].idx;
 
         // inter = glb(x0) & complement(lub(candidate))
-        GlbRanges<SView> x0lb(x0);
+        GlbRanges<RView> x0lb(x0);
         LubRanges<SView> candub(candidate);
-        Iter::Ranges::Diff<GlbRanges<SView>,LubRanges<SView> >
+        Iter::Ranges::Diff<GlbRanges<RView>,LubRanges<SView> >
           inter(x0lb, candub);
 
         // exclude inconsistent x_i
@@ -179,7 +179,7 @@ namespace Gecode { namespace Set { namespace Element {
           // that its index is in x1
           if (vx1() && vx1.val()==candidateInd) {
             // x0 <= candidate, candidate >= x0
-            GlbRanges<SView> x0lb(x0);
+            GlbRanges<RView> x0lb(x0);
             ModEvent me = candidate.includeI(home,x0lb);
             loopVar |= me_modified(me);
             GECODE_ME_CHECK(me);
@@ -243,10 +243,10 @@ namespace Gecode { namespace Set { namespace Element {
         // extra = inter(before[i], sofarAfter) - lub(x0)
         BndSetRanges b(before[i]);
         BndSetRanges s(sofarAfter);
-        LubRanges<SView> x0ub(x0);
+        LubRanges<RView> x0ub(x0);
         Iter::Ranges::Inter<BndSetRanges, BndSetRanges> inter(b,s);
         Iter::Ranges::Diff<Iter::Ranges::Inter<BndSetRanges,
-          BndSetRanges>, LubRanges<SView> > diff(inter, x0ub);
+          BndSetRanges>, LubRanges<RView> > diff(inter, x0ub);
         if (diff()) {
           ModEvent me = (x1.include(home,iv[i].idx));
           loopVar |= me_modified(me);
@@ -274,17 +274,17 @@ namespace Gecode { namespace Set { namespace Element {
         ViewArray<SView> is(home,ubsize);
         for (int i=n; i--;)
           is[i]=iv[i].view;
-        GECODE_REWRITE(*this,(RelOp::IntersectionN<SView, SView>
+        GECODE_REWRITE(*this,(RelOp::IntersectionN<SView, RView>
                         ::post(home,is,x0)));
       } else if (ubsize == 2) {
         assert(n==2);
         SView a = iv[0].view;
         SView b = iv[1].view;
-        GECODE_REWRITE(*this,(RelOp::Intersection<SView, SView, SView>
+        GECODE_REWRITE(*this,(RelOp::Intersection<SView, SView, RView>
                        ::post(home,a,b,x0)));
       } else if (ubsize == 1) {
         assert(n==1);
-        GECODE_REWRITE(*this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].view)));
+        GECODE_REWRITE(*this,(Rel::Eq<RView,SView>::post(home,x0,iv[0].view)));
       } else {
         GECODE_ME_CHECK(x0.cardMax(home, 0));
         return ES_SUBSUMED(*this,home);

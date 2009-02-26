@@ -777,7 +777,7 @@ namespace Gecode {
 
   /// Post propagator that propagates that \a y is the convex hull of \a x
   GECODE_SET_EXPORT void
-  convexHull(Space& home, SetVar x, SetVar y);
+  convex(Space& home, SetVar x, SetVar y);
 
   //@}
 
@@ -898,54 +898,35 @@ namespace Gecode {
   //@{
 
   /**
-   * \brief Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
+   * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
-   * If \a y is the empty set, \a z will also be constrained to be empty
-   * (as an empty union is empty).
-   * The indices for \a s start at 0.
+   * If \a y is the empty set, the usual conventions for set operations apply:
+   * an empty union is empty, while an empty intersection is the universe,
+   * which can be given as the optional parameter \a u.
+   *
+   * The indices for \a y start at 0.
    */
   GECODE_SET_EXPORT void
-  elementsUnion(Space& home, const SetVarArgs& x, SetVar y, SetVar z);
+  element(Space& home, SetOpType op, const SetVarArgs& x, SetVar y, SetVar z,
+    const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
 
   /**
-   * \brief Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
+   * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
-   * If \a y is the empty set, \a z will also be constrained to be empty
-   * (as an empty union is empty).
-   * The indices for \a s start at 0.
+   * If \a y is the empty set, the usual conventions for set operations apply:
+   * an empty union is empty, while an empty intersection is the universe,
+   * which can be given as the optional parameter \a u.
+   *
+   * The indices for \a y start at 0.
    */
   GECODE_SET_EXPORT void
-  elementsUnion(Space& home, const IntSetArgs& s, SetVar y, SetVar z);
-
-  /**
-   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \f$ \mathcal{U} \f$ as universe
-   *
-   * If \a y is empty, \a z will be constrained to be the universe
-   * \f$ \mathcal{U} \f$ (as an empty intersection is the universe).
-   * The indices for \a s start at 0.
-   */
-  GECODE_SET_EXPORT void
-  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z);
-
-  /**
-   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
-   *
-   * If \a y is empty, \a z will be constrained to be the given universe
-   * \a u (as an empty intersection is the universe).
-   * The indices for \a s start at 0.
-   */
-  GECODE_SET_EXPORT void
-  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z,
-               const IntSet& u);
-
-  /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
-  GECODE_SET_EXPORT void
-  elementsDisjoint(Space& home, const SetVarArgs& x, SetVar y);
+  element(Space& home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z,
+    const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
 
   /**
    * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
-   * The indices for \a s start at 0.
+   * The indices for \a y start at 0.
    */
   GECODE_SET_EXPORT void
   element(Space& home, const SetVarArgs& x, IntVar y, SetVar z);
@@ -953,7 +934,7 @@ namespace Gecode {
   /**
    * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y] \f$
    *
-   * The indices for \a s start at 0.
+   * The indices for \a y start at 0.
    */
   GECODE_SET_EXPORT void
   element(Space& home, const IntSetArgs& s, IntVar y, SetVar z);

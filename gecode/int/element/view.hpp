@@ -95,6 +95,14 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class View>
+  IdxViewArray<View>::IdxViewArray(Space& home, int n0) : xs(NULL) {
+    n = n0;
+    if (n>0) {
+      xs = IdxView<View>::allocate(home, n);
+    }
+  }
+
+  template <class View>
   forceinline int
   IdxViewArray<View>::size(void) const {
     return n;

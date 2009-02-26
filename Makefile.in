@@ -328,7 +328,7 @@ SETSRC0 =								 \
 	branch.cpp cardinality.cpp convex.cpp convex/conv.cpp convex/hull.cpp \
 	dom.cpp rel.cpp rel-op.cpp rel-op-const.cpp				 \
 	int.cpp								 \
-	element.cpp element/disjoint.cpp sequence.cpp			 \
+	element.cpp sequence.cpp			 \
 	distinct.cpp distinct/atmostOne.cpp				 \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp

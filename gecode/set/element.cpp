@@ -41,54 +41,97 @@
 
 namespace Gecode {
 
+  namespace Int { namespace Element {
+    template<>
+    class ViewToVarArg<Gecode::Set::ConstantView> {
+    public:
+      typedef IntSetArgs argtype;
+    };
+  }}
+
   using namespace Gecode::Set;
 
   void
-  elementsUnion(Space& home, const SetVarArgs& x, SetVar y, SetVar z) {
+  element(Space& home, SetOpType op, const SetVarArgs& x, SetVar y, SetVar z,
+    const IntSet& universe) {
     if (home.failed()) return;
-    Set::Element::ElementUnion<SetView,SetView>::IdxViewArray iv(home, x);
-    GECODE_ES_FAIL(home,
-                   (Element::ElementUnion<SetView,SetView>::
-                    post(home,z,iv,y)));
+    
+    switch (op) {
+    case SOT_DUNION:
+      {
+        Set::Element::ElementDisjoint<SetView,SetView>::IdxViewArray
+          iv(home, x);
+        GECODE_ES_FAIL(home,(Element::ElementDisjoint<SetView,SetView>::
+                        post(home,iv,y)));
+      }
+      // fall through
+    case SOT_UNION:
+      {
+        Set::Element::ElementUnion<SetView,SetView>::IdxViewArray iv(home, x);
+        GECODE_ES_FAIL(home,
+                       (Element::ElementUnion<SetView,SetView>::
+                        post(home,z,iv,y)));
+      }
+      break;
+    case SOT_INTER:
+      {
+        Set::Element::ElementIntersection<SetView,SetView>::IdxViewArray
+          iv(home, x);
+        GECODE_ES_FAIL(home,
+                       (Element::ElementIntersection<SetView,SetView>::
+                        post(home,z,iv,y,universe)));
+      }
+      break;
+    case SOT_MINUS:
+      throw InvalidRelation("rel minus");
+      break;
+    }
   }
 
   void
-  elementsUnion(Space& home, const IntSetArgs& s, SetVar y, SetVar z) {
-    SharedArray<IntSet> x(s.size());
-    for (int i=s.size(); i--;)
-      new (&x[i]) IntSet(s[i]);
+  element(Space& home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z,
+    const IntSet& universe) {
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,
-                   (Element::ElementUnionConst<SetView,SetView>::
-                    post(home,z,x,y)));
-  }
 
-  void
-  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z) {
-    if (home.failed()) return;
-    Set::Element::ElementIntersection<SetView,SetView>::IdxViewArray iv(home, x);
-    IntSet universe(Set::Limits::min,
-                    Set::Limits::max);
-    GECODE_ES_FAIL(home,
-                   (Element::ElementIntersection<SetView,SetView>::
-                    post(home,z,iv,y,universe)));
-  }
-
-  void
-  elementsInter(Space& home, const SetVarArgs& x, SetVar y, SetVar z,
-                const IntSet& universe) {
-    if (home.failed()) return;
-    Set::Element::ElementIntersection<SetView,SetView>::IdxViewArray iv(home, x);
-    GECODE_ES_FAIL(home,
-                   (Element::ElementIntersection<SetView,SetView>::
-                    post(home,z,iv,y,universe)));
-  }
-
-  void
-  elementsDisjoint(Space& home, const SetVarArgs& x, SetVar y) {
-    if (home.failed()) return;
-    Set::Element::ElementDisjoint::IdxViewArray iv(home, x);
-    GECODE_ES_FAIL(home,Element::ElementDisjoint::post(home,iv,y));
+    switch (op) {
+    case SOT_DUNION:
+      {
+        Set::Element::ElementDisjoint<ConstantView,SetView>::IdxViewArray
+          iv(home, x.size());
+        for (int i=x.size(); i--;) {
+          iv[i].idx = i; iv[i].view = ConstantView(home, x[i]);
+        }
+        GECODE_ES_FAIL(home,(Element::ElementDisjoint<ConstantView,SetView>::
+                        post(home,iv,y)));
+      }
+      // fall through
+    case SOT_UNION:
+      {
+        SharedArray<IntSet> s(s.size());
+        for (int i=s.size(); i--;)
+          new (&s[i]) IntSet(x[i]);
+        GECODE_ES_FAIL(home,
+                       (Element::ElementUnionConst<SetView,SetView>::
+                        post(home,z,s,y)));
+      }
+      break;
+    case SOT_INTER:
+      {
+        Set::Element::ElementIntersection<ConstantView,SetView>::IdxViewArray
+          iv(home, x.size());
+        for (int i=x.size(); i--;) {
+          iv[i].idx = i; iv[i].view = ConstantView(home, x[i]);
+        }
+        GECODE_ES_FAIL(home,
+                       (Element::ElementIntersection<ConstantView,SetView>::
+                        post(home,z,iv,y,universe)));
+      }
+      break;
+    case SOT_MINUS:
+      throw InvalidRelation("rel minus");
+      break;
+    }
+    
   }
 
   void

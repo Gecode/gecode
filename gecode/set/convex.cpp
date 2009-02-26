@@ -49,7 +49,7 @@ namespace Gecode {
   }
 
   void
-  convexHull(Space& home, SetVar x, SetVar y) {
+  convex(Space& home, SetVar x, SetVar y) {
     using namespace Gecode::Set;
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Convex::ConvexHull::post(home, x,y));

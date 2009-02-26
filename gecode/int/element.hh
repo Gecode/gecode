@@ -194,6 +194,8 @@ namespace Gecode { namespace Int { namespace Element {
     IdxViewArray(const IdxViewArray<View>&);
     /// Construct an IdxViewArray from \a x
     IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
+    /// Construct an IdxViewArray of size \a n
+    IdxViewArray(Space& home, int n);
 
     /// Return the current size
     int size(void) const;
