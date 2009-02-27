@@ -99,8 +99,18 @@ AC_CHECK_PROG(PROG_PERL, perl, [ok])
 
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)
-AC_CHECK_GCC_VERSION(4,2)
 
+case $ac_gecode_compiler_vendor in
+gnu)
+  AC_CHECK_GCC_VERSION(4,2)
+  ;;
+intel)
+  ;;
+microsoft)
+  ;;
+*)
+  ;;
+esac
 
 dnl check whether we want to build universal binaries on Mac OS X
 AC_GECODE_UNIVERSAL
