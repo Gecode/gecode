@@ -79,6 +79,8 @@ namespace Gecode { namespace Search {
           Engine::current(NULL);
           break;
         case SS_SOLVED:
+          // Deletes all pending branchings
+          (void) cur->description();
           delete best;
           best = cur;
           cur = NULL;

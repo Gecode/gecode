@@ -80,6 +80,8 @@ namespace Gecode { namespace Search {
           break;
         case SS_SOLVED:
           {
+            // Deletes all pending branchings
+            (void) cur->description();
             Space* s = cur;
             cur = NULL;
             Engine::current(NULL);

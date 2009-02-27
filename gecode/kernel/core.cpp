@@ -248,7 +248,7 @@ namespace Gecode {
      * Find the next branching that has still alternatives left
      *
      * It is important to note that branchings reporting to have no more
-     * alternatives left can not be deleted. They can not be deleted
+     * alternatives left cannot be deleted. They cannot be deleted
      * as there might be branching descriptions to be used in commit
      * that refer to one of these branchings. This e.g. happens when
      * we combine branch-and-bound search with adaptive recomputation: during
@@ -259,19 +259,25 @@ namespace Gecode {
      * constraints that the space must be better than the previous solution,
      * the corresponding Branchings may already have no alternatives left.
      *
-     * A branching reporting that no more alternatives exist will eventually
-     * be deleted in commit. It will be deleted if the first branching
-     * description is used in commit that does not refer to this branching.
-     * As we insist that branching descriptions are used in order of
-     * creation, all further branching descriptions cannot refer to this
-     * branching.
+     * The same situation may arise due to weakly monotonic propagators.
      *
+     * A branching reporting that no more alternatives exist is
+     * deleted when it has no more pending descriptions. The problem
+     * is that the last branching in a solution will never be deleted!
      */
     while (b_status != Branching::cast(&bl)) {
       if (b_status->status(*this)) {
         s = SS_BRANCH; goto exit;
       }
+      Branching* b = b_status;
       b_status = Branching::cast(b_status->next());
+      if (!b->pending) {
+        // There are no pending descriptions, so the branching can be deleted
+        if (b == b_commit)
+          b_commit = b_status;
+        b->unlink();
+        rfree(b,b->dispose(*this));
+      }
     }
     // No branching with alternatives left, space is solved
     s = SS_SOLVED;
@@ -282,31 +288,80 @@ namespace Gecode {
   }
 
 
+  const BranchingDesc*
+  Space::description(void) {
+    if (!stable())
+      throw SpaceNotStable("Space::description");
+    if (failed() || (b_status == Branching::cast(&bl))) {
+      // There are no more descriptions to be generated
+      // Delete all branchings
+      Branching* b = Branching::cast(bl.next()); 
+      while (b != Branching::cast(&bl)) {
+        Branching* d = b;
+        b = Branching::cast(b->next());
+        rfree(d,d->dispose(*this));
+      }
+      bl.init();
+      b_status = b_commit = Branching::cast(&bl);
+      return NULL;
+    }
+    /*
+     * Mark all but the current branching as not pending
+     * 
+     * The call to description() says that no older branching descriptions 
+     * can be used.
+     */
+    Branching* b = Branching::cast(bl.next());
+    while (b != b_status) {
+      b->pending = false; b = Branching::cast(b->next());
+    }
+    b_status->pending = true;
+    while (b != Branching::cast(&bl)) {
+      b->pending = false; b = Branching::cast(b->next());
+    }
+    return b_status->description(*this);
+  }
+
   void
   Space::_commit(const BranchingDesc& d, unsigned int a) {
+    if (a >= d.alternatives())
+      throw SpaceIllegalAlternative();
     if (failed())
       return;
     /*
-     * This relies on the fact that branching descriptions must be
-     * used in the order of creation. If a branching description
-     * with an id different from the id of the current branching
-     * is used, it is clear that the current branching can be discarded
-     * as all of its descriptions must have been used already.
+     * Due to weakly monotonic propagators the following scenario might
+     * occur: a branching has been committed with all its available
+     * branching descriptions. Then, propagation determines less information
+     * than before and the branching now will create new branching 
+     * descriptions. Later, during recomputation, all of these branching 
+     * descriptions can be used together, possibly interleaved with 
+     * descriptions for other branchings. That means all branchings
+     * must be scanned to find the matching branching for the description.
      *
+     * b_commit tries to optimize scanning as it is most likely that
+     * recomputation does not generate new descriptions during recomputation
+     * and hence b_commit is moved from newer to older branchings.
      */
-    while ((b_commit != Branching::cast(&bl)) &&
-           (d._id != b_commit->id)) {
-      Branching* b = b_commit;
-      b_commit = Branching::cast(b_commit->next());
-      if (b == b_status)
-        b_status = b_commit;
-      b->unlink();
-      rfree(b,b->dispose(*this));
+    Branching* b_old = b_commit;
+    // Try whether we are lucky
+    while (b_commit != Branching::cast(&bl))
+      if (d._id != b_commit->id)
+        b_commit = Branching::cast(b_commit->next());
+      else
+        goto found;
+    if (b_commit == Branching::cast(&bl)) {
+      // We did not find the branching, start at the beginning
+      b_commit = Branching::cast(bl.next());
+      while (b_commit != b_old)
+        if (d._id != b_commit->id)
+          b_commit = Branching::cast(b_commit->next());
+        else
+          goto found;
     }
-    if (b_commit == Branching::cast(&bl))
-      throw SpaceNoBranching();
-    if (a >= d.alternatives())
-      throw SpaceIllegalAlternative();
+    // There is no matching branching!
+    throw SpaceNoBranching();
+  found:
+    // There is a matching branching
     if (b_commit->commit(*this,d,a) == ES_FAILED)
       fail();
   }

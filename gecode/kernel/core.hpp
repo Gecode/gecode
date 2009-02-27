@@ -1067,6 +1067,8 @@ namespace Gecode {
   private:
     /// Unique identity (to match to branching descriptions)
     unsigned int id;
+    /// Whether the branching might have outstanding descriptions
+    bool pending;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Branching* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -1320,6 +1322,10 @@ namespace Gecode {
      * function status and then new branching descriptions are
      * computed, these branching descriptions are different.
      *
+     * Only descriptions can be used that are up-to-date in the following
+     * sense: if a new description is created (via the description member
+     * function), no older descriptions can be used.
+     *
      * Committing throws the following exceptions:
      *  - SpaceNoBranching, if the space has no current branching (it is
      *    already solved).
@@ -1417,11 +1423,22 @@ namespace Gecode {
      * applied to a space with no current branching, the system will
      * crash.
      *
+     * After a new description has been created, no older descriptions
+     * can be used on the space.
+     *
+     * If the status() member function has returned that the space has
+     * no more branchings (that is, the result was either SS_FAILED or
+     * SS_SOLVED), a call to description() will return NULL and purge
+     * all remaining branching inside the space. This is interesting
+     * for the case SS_SOLVED, where the call to description serves as
+     * garbage collection.
+     *
      * Throws an exception of type SpaceNotStable when applied to a not
      * yet stable space.
      *
      * \ingroup TaskSearch
      */
+    GECODE_KERNEL_EXPORT
     const BranchingDesc* description(void);
 
     /**
@@ -1464,6 +1481,10 @@ namespace Gecode {
      * However, if propagation is performed by calling the member
      * function status and then new branching descriptions are
      * computed, these branching descriptions are different.
+     *
+     * Only descriptions can be used that are up-to-date in the following
+     * sense: if a new description is created (via the description member
+     * function), no older descriptions can be used.
      *
      * Committing throws the following exceptions:
      *  - SpaceNoBranching, if the space has no current branching (it is
@@ -2315,9 +2336,8 @@ namespace Gecode {
   }
 
   forceinline
-  Branching::Branching(Space& home) {
-    // Propagators are put at the tail of the link of actors
-    id = home.pc.p.branch_id++;
+  Branching::Branching(Space& home) 
+    : id(home.pc.p.branch_id++), pending(false) {
     // If no branching available, make it the first one
     if (home.b_status == &home.bl) {
       home.b_status = this;
@@ -2329,7 +2349,7 @@ namespace Gecode {
 
   forceinline
   Branching::Branching(Space&, bool, Branching& b)
-    : id(b.id)  {
+    : id(b.id), pending(b.pending)  {
     // Set forwarding pointer
     b.prev(this);
   }
@@ -2573,13 +2593,6 @@ namespace Gecode {
   forceinline bool
   Space::stable(void) const {
     return pc.p.active < &pc.p.queue[0];
-  }
-
-  forceinline const BranchingDesc*
-  Space::description(void) {
-    if (!stable())
-      throw SpaceNotStable("Space::description");
-    return b_status->description(*this);
   }
 
 

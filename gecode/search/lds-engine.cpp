@@ -164,6 +164,8 @@ namespace Gecode { namespace Search {
           delete s;
           goto backtrack;
         }
+        // Deletes all pending branchings
+        (void) s->description();
         return s;
       }
       node++;
