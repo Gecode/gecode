@@ -369,7 +369,7 @@ public:
   }
   /// Print the solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\tm = " << m << std::endl
        << "\tv[] = {";
     for (int i = 0; i < v.size(); i++) {

@@ -106,7 +106,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\t";
     for (int i = 0; i < n; i++) {
       os << ((char) (i+'a')) << '=' << le[i] << ((i<n-1)?", ":"\n");

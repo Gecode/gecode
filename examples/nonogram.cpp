@@ -81,6 +81,10 @@ protected:
   BoolVar pos(int h, int w) {
     return b[h*width() + w];
   }
+  /// Access position (h,w) in matrix
+  const BoolVar pos(int h, int w) const {
+    return b[h*width() + w];
+  }
 
   /// Returns next regular expression for line starting from spos
   DFA line(int& spos) {
@@ -128,7 +132,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     for (int h = 0; h < height(); ++h) {
       os << '\t';
       for (int w = 0; w < width(); ++w)

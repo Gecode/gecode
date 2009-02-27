@@ -70,7 +70,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\tx[" << x.size() << "] = " << x << std::endl;
   }
 };

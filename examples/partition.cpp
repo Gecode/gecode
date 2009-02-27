@@ -102,7 +102,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\t";
     int a, b;
     a = b = 0;

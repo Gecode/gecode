@@ -179,7 +179,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "  ";
     for (int i = 0; i<n*n*n*n; i++) {
       if (x[i].assigned()) {
@@ -305,7 +305,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << '\t';
     for (int i = 0; i<n*n*n*n; i++) {
       for (int j=0; j<n*n; j++) {
@@ -369,7 +369,7 @@ public:
   }
 
   /// Print solution
-  virtual void print(std::ostream& os) { SudokuInt::print(os); }
+  virtual void print(std::ostream& os) const { SudokuInt::print(os); }
 
 };
 

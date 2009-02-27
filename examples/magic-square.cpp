@@ -106,7 +106,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     // Matrix-wrapper for the square
     Matrix<IntVarArray> m(x, n, n);
     for (int i = 0; i<n; i++) {

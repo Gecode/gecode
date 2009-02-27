@@ -77,7 +77,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream&) {}
+  print(std::ostream&) const {}
 };
 
 /** \brief Main-function

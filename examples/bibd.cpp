@@ -102,6 +102,11 @@ public:
     // row, column
     return _p[i*opt.b+j];
   }
+  /// Access variable by row and column
+  const BoolVar& p(int i, int j) const {
+    // row, column
+    return _p[i*opt.b+j];
+  }
   /// Actual model
   BIBD(const BIBDOptions& o)
     : opt(o), _p(*this,opt.v*opt.b,0,1) {
@@ -155,7 +160,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\tBIBD("
        << opt.v << "," << opt.k << ","
        << opt.lambda << ")" << std::endl;

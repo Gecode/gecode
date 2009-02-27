@@ -53,7 +53,7 @@ public:
   };
   /// Return field at position \a x, \a y
   int
-  field(int x, int y) {
+  field(int x, int y) const {
     return x*n+y;
   }
   /// Compute array of neighbours
@@ -81,7 +81,7 @@ public:
   }
   /// Print board
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     int* jump = new int[n*n];
     {
       int j=0;

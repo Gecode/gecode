@@ -101,7 +101,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     const int n = x.size();
     os << "\tx[" << n << "] = {";
     for (int i = 0; i < n-1; i++)

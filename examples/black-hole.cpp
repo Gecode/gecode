@@ -197,7 +197,7 @@ protected:
 
   /// Return a string representing the card of value val
   std::string
-  card(int val) {
+  card(int val) const {
     const char* suit = "SCHD";
     std::ostringstream o;
     o << std::setw(2) << (1 + (val%13)) << suit[val/13];
@@ -339,7 +339,7 @@ public:
 
   /// Print instance and solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "Layout:" << std::endl;
     for (int i = 0; i < 17; i++) {
       for (int j = 0; j < 3; j++)

@@ -112,7 +112,7 @@ public:
   }
   /// Print sequence
   virtual
-  void print(std::ostream& os) {
+  void print(std::ostream& os) const {
     os << "\t";
     for (int i = 0; i<n; i++) {
       os << s[i] << ", ";

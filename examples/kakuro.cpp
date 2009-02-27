@@ -530,6 +530,11 @@ public:
     assert((x >= 0) && (x < w) && (y >= 0) && (y < h));
     return _b[x+y*w];
   }
+  /// Access the field at position \a x, \a y
+  const IntVar& b(int x, int y) const {
+    assert((x >= 0) && (x < w) && (y >= 0) && (y < h));
+    return _b[x+y*w];
+  }
   /// Init the field at position \a x, \a y if necessary
   void init(int x, int y) {
     if (b(x,y).min() == 0)
@@ -640,7 +645,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     for (int y=0; y<h; y++) {
       os << '\t';
       for (int x=0; x<w; x++)

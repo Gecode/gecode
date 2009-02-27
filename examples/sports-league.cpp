@@ -197,12 +197,24 @@ protected:
   IntVar& h(int p, int w) {
     return home[p*teams + w];
   }
+  /// Home team in period \a p and week \a w
+  const IntVar& h(int p, int w) const {
+    return home[p*teams + w];
+  }
   /// Away team in period \a p and week \a w
   IntVar& a(int p, int w) {
     return away[p*teams + w];
   }
+  /// Away team in period \a p and week \a w
+  const IntVar& a(int p, int w) const {
+    return away[p*teams + w];
+  }
   /// Return game number for game in period \a p and week \a w
   IntVar& g(int p, int w) {
+    return game[p*weeks() + w];
+  }
+  /// Return game number for game in period \a p and week \a w
+  const IntVar& g(int p, int w) const {
     return game[p*weeks() + w];
   }
 
@@ -292,7 +304,7 @@ public:
     return new SportsLeague(share, *this);
   }
   /// Print solution
-  virtual void print(std::ostream& os) {
+  virtual void print(std::ostream& os) const {
     // print period index
     os << "\t       ";
     for (int p=0; p<periods(); p++) {

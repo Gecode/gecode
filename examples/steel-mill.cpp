@@ -253,7 +253,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "What slab="  << slab << std::endl;
     os << "Slab load="  << slabload << std::endl;
     os << "Slab cost="  << slabcost << std::endl;

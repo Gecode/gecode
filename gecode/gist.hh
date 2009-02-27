@@ -98,7 +98,7 @@ namespace Gecode {
     class GECODE_GIST_EXPORT Inspector {
     public:
       /// Call-back function
-      virtual void inspect(Space& node) = 0;
+      virtual void inspect(const Space& node) = 0;
       /// Name of the inspector
       virtual std::string name(void);
       /// Destructor
@@ -136,7 +136,7 @@ namespace Gecode {
       /// Constructor
       Print(const std::string& name);
       /// Use the print method of the template class S to print a space
-      virtual void inspect(Space& node);
+      virtual void inspect(const Space& node);
     };
     
     /**

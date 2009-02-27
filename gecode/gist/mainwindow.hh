@@ -83,14 +83,19 @@ namespace Gecode { namespace Gist {
     AboutGist aboutGist;
 
   protected Q_SLOTS:
+    /// The status has changed (e.g., new solutions have been found)
     void statusChanged(const Statistics& stats, bool finished);
+    /// Open the about dialog
     void about(void);
+    /// Open the preferences dialog
     void preferences(bool setup=false, const Options& opt=Options::def);
+    /// Populate the inspector menus from the actions found in Gist
     void populateInspectors(void);
   public:
     /// Constructor
     GistMainWindow(Space* root, bool bab, const Options& opt);
   protected:
+    /// Close Gist
     void closeEvent(QCloseEvent* event);
   };
 

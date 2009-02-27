@@ -323,7 +323,7 @@ public:
   /// Constructor used for cloning
   ExampleBase(bool share, ExampleBase& e) : BaseSpace(share,e) {}
   /// Print a solution to \a os
-  virtual void print(std::ostream& os) { (void) os; }
+  virtual void print(std::ostream& os) const { (void) os; }
   /// Run example with search engine \a Engine and options \a opt
   template <class Script, template<class> class Engine, class Options>
   static void run(const Options& opt);

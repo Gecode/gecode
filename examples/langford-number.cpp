@@ -176,7 +176,7 @@ public:
   }
 
   /// Print solution
-  virtual void print(std::ostream& os){
+  virtual void print(std::ostream& os) const {
     os << "\t" << y << std::endl;
   }
 

@@ -166,7 +166,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     std::vector<std::list<int> > period(curr.p);
     for (int i=x.size(); i--;)
       period[x[i].val()].push_back(i);

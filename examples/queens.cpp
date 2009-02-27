@@ -106,8 +106,8 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
-    os << "\t";
+  print(std::ostream& os) const {
+    os << "queens\t";
     for (int i = 0; i < q.size(); i++) {
       os << q[i] << ", ";
       if ((i+1) % 10 == 0)

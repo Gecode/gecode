@@ -94,7 +94,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\t" << le << std::endl;
   }
 

@@ -43,9 +43,9 @@ namespace Gecode { namespace Gist {
 
   template <class S>
   void
-  Print<S>::inspect(Space& node) {
+  Print<S>::inspect(const Space& node) {
     init();
-    dynamic_cast<S&>(node).print(getStream());
+    dynamic_cast<const S&>(node).print(getStream());
   }
 
   forceinline

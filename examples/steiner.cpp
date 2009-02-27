@@ -152,7 +152,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     for (int i=0; i<noOfTriples; i++) {
       os << "\t[" << i << "] = " << triples[i] << std::endl;
     }

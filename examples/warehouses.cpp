@@ -164,7 +164,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\tSupplier: " << supplier << std::endl
        << "\tCost: " << scost << std::endl
        << "\tTotal cost: " << total << std::endl

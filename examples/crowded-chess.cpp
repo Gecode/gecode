@@ -357,7 +357,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     Matrix<IntVarArray> m(s, n);
     char names[PMAX];
     names[E] = '.'; names[Q] = 'Q'; names[R] = 'R';

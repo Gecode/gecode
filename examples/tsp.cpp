@@ -279,7 +279,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     bool assigned = true;
     for (int i=0; i<succ.size(); i++) {
       if (!succ[i].assigned()) {

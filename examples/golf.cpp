@@ -94,6 +94,10 @@ public:
   SetVar& group(int w, int g) {
     return groupsS[w*groups+g];
   }
+  /// Return group number \a g in week \a w
+  const SetVar& group(int w, int g) const {
+    return groupsS[w*groups+g];
+  }
 
   /// Actual model
   Golf(const SizeOptions& opt) :
@@ -223,7 +227,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "Tournament plan" << std::endl;
 
     for (int w=0; w<weeks; w++) {

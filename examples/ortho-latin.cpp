@@ -56,8 +56,16 @@ public:
   IntVar& y1(int i, int j) {
     return x1[i*n+j];
   }
+  /// Access field at position \a i and \a j in first square
+  const IntVar& y1(int i, int j) const {
+    return x1[i*n+j];
+  }
   /// Access field at position \a i and \a j in second square
   IntVar& y2(int i, int j) {
+    return x2[i*n+j];
+  }
+  /// Access field at position \a i and \a j in second square
+  const IntVar& y2(int i, int j) const {
     return x2[i*n+j];
   }
 
@@ -131,7 +139,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     for (int i = 0; i<n; i++) {
       os << "\t";
       for (int j = 0; j<n; j++) {

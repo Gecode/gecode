@@ -90,7 +90,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\tx[" << n << "] = " << x << std::endl;
   }
 };

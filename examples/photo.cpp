@@ -133,7 +133,7 @@ public:
   }
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     os << "\tpos[] = " << pos << std::endl
        << "\tsat: " << sat << std::endl;
   }

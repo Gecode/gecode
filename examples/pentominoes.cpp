@@ -452,7 +452,7 @@ public:
 
   /// Print solution
   virtual void
-  print(std::ostream& os) {
+  print(std::ostream& os) const {
     for (int h = 0; h < height; ++h) {
       os << "\t";
       for (int w = 0; w < width-1; ++w) {
