@@ -74,6 +74,15 @@ Date: 2008-
 This is a release.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+Thanks:	Vincent Barichard
+[DESCRIPTION]
+Updating of a council of advisors crashed if a propagator has no
+advisors (as we had no example of this kind of propagators).
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor

@@ -2517,6 +2517,8 @@ namespace Gecode {
       // Enter advisor link for reset
       assert(p_f->u.advisors == NULL);
       p_f->u.advisors = c.advisors;
+    } else {
+      advisors = NULL;
     }
   }
 
