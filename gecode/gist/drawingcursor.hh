@@ -69,6 +69,8 @@ namespace Gecode { namespace Gist {
     static const QColor blue;
     /// The color for the best solution
     static const QColor orange;
+    /// White color
+    static const QColor white;
 
     /// The color for expanded failed nodes
     static const QColor lightRed;

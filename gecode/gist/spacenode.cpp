@@ -296,12 +296,22 @@ namespace Gecode { namespace Gist {
         copy = NULL;
         p->closeChild(hasFailedChildren(), hasSolvedChildren());
       }
-    } else if (hadSolutions) {
-      setHasSolvedChildren(true);
-      SpaceNode* p = getParent();
-      while (p != NULL && !p->hasSolvedChildren()) {
-        p->setHasSolvedChildren(true);
-        p = p->getParent();
+    } else {
+      
+      if (hadSolutions) {
+        setHasSolvedChildren(true);
+        SpaceNode* p = getParent();
+        while (p != NULL && !p->hasSolvedChildren()) {
+          p->setHasSolvedChildren(true);
+          p = p->getParent();
+        }
+      }
+      if (hadFailures) {
+        SpaceNode* p = getParent();
+        while (p != NULL && !p->hasFailedChildren()) {
+          p->setHasFailedChildren(true);
+          p = p->getParent();
+        }        
       }
     }
 

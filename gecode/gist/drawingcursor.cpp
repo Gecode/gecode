@@ -47,6 +47,8 @@ namespace Gecode { namespace Gist {
   const QColor DrawingCursor::blue(0, 92, 161);
   /// Orange color for best solutions
   const QColor DrawingCursor::orange(235, 137, 27);
+  /// White color
+  const QColor DrawingCursor::white(255,255,255);
 
   /// Red color for expanded failed nodes
   const QColor DrawingCursor::lightRed(218, 37, 29, 120);
@@ -160,7 +162,26 @@ namespace Gecode { namespace Gist {
 
     painter.setPen(Qt::SolidLine);
     if (n->isHidden()) {
-      painter.setBrush(QBrush(red));
+      if (n->hasOpenChildren()) {
+        QLinearGradient gradient(myx-nodeWidth,myy,myx+nodeWidth*1.3,myy+hiddenDepth*1.3);
+        if (n->hasSolvedChildren()) {
+          gradient.setColorAt(0, white);
+          gradient.setColorAt(1, green);
+        } else if (n->hasFailedChildren()) {
+          gradient.setColorAt(0, white);
+          gradient.setColorAt(1, red);          
+        } else {
+          gradient.setColorAt(0, white);
+          gradient.setColorAt(1, QColor(0,0,0));
+        }
+        painter.setBrush(gradient);
+      } else {
+        if (n->hasSolvedChildren())
+          painter.setBrush(QBrush(green));
+        else
+          painter.setBrush(QBrush(red));
+      }
+      
       QPoint points[3] = {QPoint(myx,myy),
                           QPoint(myx+nodeWidth,myy+hiddenDepth),
                           QPoint(myx-nodeWidth,myy+hiddenDepth),
