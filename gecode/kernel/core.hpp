@@ -3188,7 +3188,7 @@ namespace Gecode {
       c = Propagator::cast(home.pl.next());
       e = Propagator::cast(&home.pl);
     } else {
-      c = NULL;
+      c = e = NULL;
     }
   }
   forceinline bool 
