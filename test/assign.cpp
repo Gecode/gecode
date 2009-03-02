@@ -81,6 +81,25 @@ namespace Test { namespace Assign {
 
 #ifdef GECODE_HAS_SET_VARS
 
+  /// Space for executing Boolean tests
+  class SetTestSpace : public Gecode::Space {
+  public:
+    /// Variables to be tested
+    Gecode::SetVarArray x;
+    /// Initialize test space
+    SetTestSpace(int n, const Gecode::IntSet& d)
+      : x(*this, n, Gecode::IntSet::empty, d) {}
+    /// Constructor for cloning \a s
+    SetTestSpace(bool share, SetTestSpace& s)
+      : Gecode::Space(share,s) {
+      x.update(*this, share, s.x);
+    }
+    /// Copy space during cloning
+    virtual Gecode::Space* copy(bool share) {
+      return new SetTestSpace(share,*this);
+    }
+  };
+
 #endif
 
   /** \name Collection of possible arguments for integer assignments
@@ -116,6 +135,7 @@ namespace Test { namespace Assign {
     using namespace Gecode;
     IntTestSpace* root = new IntTestSpace(arity,dom);
     post(*root, root->x);
+    (void) root->status();
 
     for (int val = n_int_assign; val--; ) {
       IntTestSpace* clone = static_cast<IntTestSpace*>(root->clone(false));
@@ -152,6 +172,7 @@ namespace Test { namespace Assign {
     using namespace Gecode;
     BoolTestSpace* root = new BoolTestSpace(arity);
     post(*root, root->x);
+    (void) root->status();
 
     for (int val = n_int_assign; val--; ) {
       BoolTestSpace* clone = static_cast<BoolTestSpace*>(root->clone(false));
@@ -178,6 +199,79 @@ namespace Test { namespace Assign {
     delete root;
     return true;
   }
+
+#ifdef GECODE_HAS_SET_VARS
+
+  /** \name Collection of possible arguments for set assignments
+   *
+   * \relates SetTestSpace
+   */
+  //@{
+  /// Set value assignments
+  const Gecode::SetAssign set_assign[] = {
+    Gecode::SET_ASSIGN_MIN_INC,
+    Gecode::SET_ASSIGN_MIN_EXC,
+    Gecode::SET_ASSIGN_MED_INC,
+    Gecode::SET_ASSIGN_MED_EXC,
+    Gecode::SET_ASSIGN_MAX_INC,
+    Gecode::SET_ASSIGN_MAX_EXC,
+    Gecode::SET_ASSIGN_RND_INC,
+    Gecode::SET_ASSIGN_RND_EXC
+  };
+  /// Number of set value selections
+  const int n_set_assign =
+    sizeof(set_assign)/sizeof(Gecode::SetAssign);
+  /// Names for integer assignments
+  const char* set_assign_name[] = {
+    "SET_ASSIGN_MIN_INC",
+    "SET_ASSIGN_MIN_EXC",
+    "SET_ASSIGN_MED_INC",
+    "SET_ASSIGN_MED_EXC",
+    "SET_ASSIGN_MAX_INC",
+    "SET_ASSIGN_MAX_EXC",
+    "SET_ASSIGN_RND_INC",
+    "SET_ASSIGN_RND_EXC"
+  };
+  //@}
+
+  SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d)
+    : Base("Set::Assign::"+s), arity(a), dom(d) {
+  }
+
+  bool
+  SetTest::run(void) {
+    using namespace Gecode;
+    SetTestSpace* root = new SetTestSpace(arity,dom);
+    post(*root, root->x);
+    (void) root->status();
+
+    for (int val = n_int_assign; val--; ) {
+      SetTestSpace* clone = static_cast<SetTestSpace*>(root->clone(false));
+      Gecode::Search::Options o;
+      o.a_d = Base::rand(10);
+      o.c_d = Base::rand(10);
+      assign(*clone, clone->x, set_assign[val]);
+      Gecode::DFS<SetTestSpace> e_s(clone, o);
+      delete clone;
+
+      // Find number of solutions
+      int solutions = 0;
+      while (Space* s = e_s.next()) {
+        delete s; solutions++;
+      }
+      if (solutions != 1) {
+        std::cout << "FAILURE" << std::endl
+                  << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << std::endl
+                  << "\t" << set_assign_name[val] << std::endl;
+        delete root;
+        return false;
+      }
+    }
+    delete root;
+    return true;
+  }
+
+#endif
 
 }}
 

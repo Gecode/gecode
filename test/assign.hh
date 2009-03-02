@@ -89,6 +89,25 @@ namespace Test {
 
 #ifdef GECODE_HAS_SET_VARS
 
+    /**
+     * \brief Base class for tests for branching on set variables
+     *
+     */
+    class SetTest : public Base {
+    protected:
+      /// Number of variables
+      int arity;
+      /// Upper bound of variable domains
+      Gecode::IntSet dom;
+    public:
+      /// Construct and register test
+      SetTest(const std::string& s, int a, const Gecode::IntSet& d);
+      /// Perform test
+      virtual bool run(void);
+      /// Post assignment on variables \a x
+      virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
+    };
+
 #endif
 
   }

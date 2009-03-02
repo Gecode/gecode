@@ -670,7 +670,8 @@ endif
 BRANCHTESTSRC0 = \
 	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
 	test/branch/set.cpp \
-	test/assign.cpp test/assign/int.cpp test/assign/bool.cpp
+	test/assign.cpp test/assign/int.cpp test/assign/bool.cpp \
+	test/assign/set.cpp
 
 SEARCHTESTSRC0 = \
 	test/search.cpp
