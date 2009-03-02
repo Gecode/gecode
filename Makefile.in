@@ -1399,14 +1399,14 @@ veryclean: clean
 		$(EXAMPLEEXE:%=%.manifest)
 	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk) \
 		 $(TESTEXE:%=%.manifest)
-	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.conf doxygen.hh
+	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
 
 distclean: veryclean
 	$(RMF) $(VARIMP:%=$(top_srcdir)/%)
 	$(RMF) $(GENBRANCHSRC)
-	$(RMF) Makefile
+	$(RMF) Makefile doxygen.conf
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 

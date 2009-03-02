@@ -71,7 +71,26 @@
 Version: 3.0.0
 Date: 2009-03-04
 [DESCRIPTION]
-This is a release.
+This release is a major consolidation release: interfaces have
+been cleaned up (consistent parameter passing, consistent naming,
+simpler Gist interface, namespaces for operator overloading);
+some functionality has been extended (propagators can be
+non-monotonic; branchings support tie-breaking and random
+variable and value selection); some functionality that did not
+meet our quality goals has been removed (complete set variables,
+reflection); usage has been simplified (auto-linking on Windows,
+more commonly used filename extensions); important aspects have
+been optimized (memory management, memory usage and efficiency on
+64bit machines). These cleanups were in particular necessary to
+make %Gecode easier to document (this release is the first to be
+accompanied by tutorial documentation explaining how to model
+with %Gecode).
+
+Apart from that, many small fixes and additions. Please see below
+for the details.
+
+As the interfaces have changed considerably, please consult \ref
+PageHowToChange_3 "How to Change to Gecode 3.0.0".
 
 [ENTRY]
 Module: kernel
@@ -338,7 +357,7 @@ Domain constraints (dom) also accept integers now.
 [ENTRY]
 Module: other
 What:   change
-Rank:   minor
+Rank:   major
 Thanks: Max
 [DESCRIPTION]
 All operators are now in their correct namespace.
@@ -369,10 +388,17 @@ Module: search
 What:   new
 Rank:   minor
 [DESCRIPTION]
-The search-engines now collect statistics for the number of nodes
+The search engines now collect statistics for the number of nodes
 visited and the maximum depth of the search tree. The information
 for number of clone and commit operations has been removed as it
 was too confusing.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Search engines have been completely reimplemented.
 
 [ENTRY]
 Module: int
@@ -504,7 +530,7 @@ Rank:   major
 %Gecode now supports weakly monotonic propagators. 
 [MORE]
 A weakly monotonic propagator must only be able to decide for
-assignments wether they are solutions or not (which is a very
+assignments whether they are solutions or not (which is a very
 natural property as it means the propagator must be a correct
 implementation of a constraint). Otherwise, the propagator does
 not have to be monotonic, it can even be indeterministic.
@@ -571,12 +597,13 @@ Rank:   major
 Now everything is passed as reference (Space, Propagator,
 ModEventDelta, Advisor, Branching, and BranchingDesc). 
 [MORE]
-The reason for this massive change is to be more C++ and make it
-consistent (at some places things were passed as references and
-at other places as pointers, for no obvious and explainable
-reason). Routines that create objects rather than pass them (such
-as copy, clone, or description) still return a pointer to an
-object (so that it can actually be deleted!).
+The reason for this massive change is to be more C++ compliant
+and make the interfaces more consistent (at some places things
+were passed as references and at other places as pointers, for no
+obvious and explainable reason). Routines that create objects
+rather than pass them (such as copy, clone, or description) still
+return a pointer to an object (so that it can actually be
+deleted!).
 
 You will have to rewrite your models and other programs using
 %Gecode. For models this is easy enough:
@@ -708,7 +735,7 @@ Rank:   minor
 The variable selection INT_VAR_DEGREE_MIN and INT_VAR_DEGREE_MAX
 do not have tiebreaking with smallest domain size built in.
 [MORE]
-The old behaviour can be reclaimed by explicit tiebreaking, for
+The old behavior can be reclaimed by explicit tiebreaking, for
 example replace INT_VAR_DEGREE_MAX by
 tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN).
 
@@ -727,6 +754,7 @@ Rank:   major
 [DESCRIPTION]
 View and value assignments have been removed as they now can be
 expressed by view and value branchings.
+
 
 [RELEASE]
 Version: 2.2.0

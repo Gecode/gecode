@@ -971,11 +971,11 @@ same propagator. Examples of views are \ref TaskActorIntView and
 
 
 /**
- * \page PageHowToChange_2 How to Change from Gecode 1.3.1 to Gecode 2.0.x
+ * \page PageHowToChange_2 How to Change from %Gecode 1.3.1 to %Gecode 2.0.x
  *
 
-As Gecode 2.0.0 is a major revision of Gecode, your programs that are written
-for Gecode 1.3.1 are likely to require some modifications before they work
+As %Gecode 2.0.0 is a major revision of %Gecode, your programs that are written
+for %Gecode 1.3.1 are likely to require some modifications before they work
 again. All modifications are straightforward, though.
 
 This short summary shows how to adapt your models and linker invocation, for
@@ -1032,10 +1032,80 @@ documentation for \ref TaskModelIntCount "details".
 
 The sortedness constraint has been renamed to sorted.
 
-\section Linking
+\section SecChange2Linking Linking
 
 Some generic functionality has been put into its own library (\code
 libgecodesupport \endcode on Unix systems, \code GecodeSupport.dll \endcode on
 Windows). You have to link against this library now.
+
+*/
+
+/**
+ * \page PageHowToChange_3 How to Change from %Gecode 2.2.2 to %Gecode 3.0.0
+ *
+
+As %Gecode 3.0.0 is a major revision of %Gecode, your programs that
+are written for %Gecode 2.2.2 are likely to require some
+modifications before they work again. All modifications are
+straightforward, though.
+
+This short summary shows how to adapt your models, for changes to
+propagator implementations, etc, please consult the changelog.
+
+\section SecChange3Param Passing parameters
+
+Now everything is passed as reference (Space, Propagator,
+ModEventDelta, Advisor, Branching, and BranchingDesc). 
+
+The reason for this massive change is to be more C++ compliant
+and make the interfaces more consistent (at some places things were passed as
+references and at other places as pointers, for no obvious and
+explainable reason). Routines that create objects rather than
+pass them (such as copy, clone, or description) still return a
+pointer to an object (so that it can actually be deleted!).
+
+You will have to rewrite your models and other programs using
+%Gecode. For models this is easy enough:
+ - Replace "(Space* home" by "(Space& home".
+ - Replace "home->" by "home.".
+ - Replace "(this" by "(*this".
+ .
+That should do the trick for 99% of the models.
+
+For the other changes, just lookout for the changes in types and
+that "this" becomes "*this" now.
+
+
+\section SecChange3Set Set constrains
+
+Element and convexity constraints on set variables have a more
+uniform interface, and the match constrained has been renamed to
+channel.
+
+The values for variable and value selection for branching have
+been made consistent and extended. 
+The following values have been renamed:
+ - SET_VAR_MIN_CARD -> SET_VAR_SIZE_MIN
+ - SET_VAR_MAX_CARD -> SET_VAR_SIZE_MAX
+ - SET_VAR_MIN_UNKNOWN_ELEM -> SET_VAR_MIN_MIN
+ - SET_VAR_MAX_UNKNOWN_ELEM -> SET_VAR_MAX_MAX
+ - SET_VAL_MIN -> SET_VAL_MIN_INC
+ - SET_VAL_MAX -> SET_VAL_MAX_INC
+ .
+Tie-breaking and random selection is now supported.
+
+\section SecChange3Files Naming scheme for files
+
+All files with extension .cc have been renamed to .cpp, and .icc
+has become .hpp. This avoids conflicts as .icc is typically used
+for other file types. All include directives are now specified
+using <...> notation instead of "...", so that %Gecode headers do
+not clutter the include namespace of a client program.
+
+\section SecChange3 Constrain method for best solution search
+
+The constrain method used for best solution search must be
+virtual and takes an argument of type const Space& rather than
+Space* as argument.
 
 */
