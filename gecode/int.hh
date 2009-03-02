@@ -187,6 +187,8 @@ namespace Gecode {
     IntSet(IntSet& s);
     /// Initialize with integers \a i
     IntSet(const PrimArgArray<int>& i);
+    /// Initialize with integers \a i
+    IntSet(PrimArgArray<int>& i);
 #endif
     //@}
 

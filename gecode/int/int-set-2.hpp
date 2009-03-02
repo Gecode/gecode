@@ -45,6 +45,14 @@ namespace Gecode {
     init(&i[0],i.size());
   }
 
+#ifndef __INTEL_COMPILER
+  template<>
+#endif
+  forceinline
+  IntSet::IntSet(IntArgs& i) {
+    init(&i[0],i.size());
+  }
+
 }
 
 // STATISTICS: int-var
