@@ -271,7 +271,7 @@ namespace Gecode {
       }
       Branching* b = b_status;
       b_status = Branching::cast(b_status->next());
-      if (!b->pending) {
+      if (!b->pending()) {
         // There are no pending descriptions, so the branching can be deleted
         if (b == b_commit)
           b_commit = b_status;
@@ -313,13 +313,13 @@ namespace Gecode {
      */
     Branching* b = Branching::cast(bl.next());
     while (b != b_status) {
-      b->pending = false; b = Branching::cast(b->next());
+      b->pending(false); b = Branching::cast(b->next());
     }
     assert(b == b_status);
-    b->pending = true;
+    b->pending(true);
     b = Branching::cast(b->next());
     while (b != Branching::cast(&bl)) {
-      b->pending = false; b = Branching::cast(b->next());
+      b->pending(false); b = Branching::cast(b->next());
     }
     return b_status->description(*this);
   }
@@ -347,7 +347,7 @@ namespace Gecode {
     Branching* b_old = b_commit;
     // Try whether we are lucky
     while (b_commit != Branching::cast(&bl))
-      if (d._id != b_commit->id)
+      if (d._id != b_commit->id())
         b_commit = Branching::cast(b_commit->next());
       else
         goto found;
@@ -355,7 +355,7 @@ namespace Gecode {
       // We did not find the branching, start at the beginning
       b_commit = Branching::cast(bl.next());
       while (b_commit != b_old)
-        if (d._id != b_commit->id)
+        if (d._id != b_commit->id())
           b_commit = Branching::cast(b_commit->next());
         else
           goto found;

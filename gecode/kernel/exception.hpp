@@ -79,6 +79,13 @@ namespace Gecode {
     SpaceConstrainUndefined(void);
   };
 
+  /// %Exception: too many branchings
+  class GECODE_VTABLE_EXPORT TooManyBranchings : public Exception {
+  public:
+    /// Initialize with location \a l
+    TooManyBranchings(const char* l);
+  };
+
   //@}
 
   /*
@@ -107,6 +114,10 @@ namespace Gecode {
   SpaceConstrainUndefined::SpaceConstrainUndefined(void)
     : Exception("Space::constrain",
                 "Attempt to use undefined constrain function") {}
+
+  inline
+  TooManyBranchings::TooManyBranchings(const char* l)
+    : Exception(l,"Too many branchings created") {}
 
 }
 
