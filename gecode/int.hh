@@ -993,7 +993,7 @@ namespace Gecode {
    * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0
    * \diamond_{\mathit{o}} \cdots \diamond_{\mathit{o}} \neg y_{|y|-1}= z\f$
    *
-   * Throws an exception of type Int::IllegalBoolOp, if \a o is different
+   * Throws an exception of type Int::IllegalOperation, if \a o is different
    * from BOT_AND or BOT_OR.
    */
   GECODE_INT_EXPORT void
@@ -1008,7 +1008,7 @@ namespace Gecode {
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
    *
-   * Throws an exception of type Int::IllegalBoolOp, if \a o is different
+   * Throws an exception of type Int::IllegalOperation, if \a o is different
    * from BOT_AND or BOT_OR.
    */
   GECODE_INT_EXPORT void

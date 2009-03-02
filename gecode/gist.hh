@@ -79,9 +79,9 @@ namespace Gecode {
 
   /**
    * \namespace Gecode::Gist
-   * \brief The Gecode Interactive Search Tool
+   * \brief The %Gecode Interactive %Search Tool
    *
-   * The Gecode::Gist namespace contains the %Gecode Interactive Search Tool,
+   * The Gecode::Gist namespace contains the %Gecode Interactive %Search Tool,
    * a Qt-based graphical search engine.
    *
    */

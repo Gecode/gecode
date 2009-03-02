@@ -68,8 +68,8 @@
 
 
 [RELEASE]
-Version: 3.x
-Date: 2008-
+Version: 3.0.0
+Date: 2009-03-04
 [DESCRIPTION]
 This is a release.
 
@@ -87,23 +87,26 @@ Module: set
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Element and convexity constraints on set variables have a more uniform interface, and the match constrained has been renamed to channel.
+Element and convexity constraints on set variables have a more
+uniform interface, and the match constrained has been renamed to
+channel.
 
 [ENTRY]
 Module: gist
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Gist now takes an optional argument specifying options for the search, including 
-the inspectors to be used. The Qt interface has been cleaned up, so that Gist is 
-easier to extend.
+Gist now takes an optional argument specifying options for the
+search, including the inspectors to be used. The Qt interface has
+been cleaned up, so that Gist is easier to extend.
 
 [ENTRY]
 Module: gist
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added inspectors that react on every solution instead of a double click. 
+Added inspectors that react on every solution instead of a double
+click.
 
 [ENTRY]
 Module: int
@@ -259,11 +262,13 @@ Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Introduced CopiedHandle as a new base class for SharedHandle. A copied handle 
-provides access to an object that is used by entities in a space, and that is 
-copied when then space is copied. This abstraction can be used e.g. to pass 
-information between different entities in a space, such as between propagators 
-and branchings.
+Introduced CopiedHandle as a new base class for SharedHandle. 
+[MORE]
+A copied handle provides access to an object that is used by
+entities in a space, and that is copied when then space is
+copied. This abstraction can be used e.g. to pass information
+between different entities in a space, such as between
+propagators and branchings.
 
 [ENTRY]
 Module: support
@@ -416,7 +421,9 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 For the Microsoft compiler, auto-link information is added during
-compilation. That is, by including %Gecode headers during
+compilation.
+[MORE]
+That is, by including %Gecode headers during
 compilation the right libraries will be found automatically
 during linking. To simplify development and deployment, the
 libraries (and DLLs) encode version, platform, and build type
@@ -434,13 +441,15 @@ negation and uses fewer propagators due to the new clause constraint.
 [ENTRY]
 Module: other
 What:   change
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
-Changed naming scheme: All files with extension .cc have been renamed to .cpp, 
-and .icc has become .hpp. This avoids conflicts as .icc is typically used for 
-other file types. All include directives are now specified using <...>
-notation instead of "...", so that %Gecode headers do not clutter the include
-namespace of a client program.
+Changed naming scheme for files. 
+[MORE]
+All files with extension .cc have been renamed to .cpp, and .icc
+has become .hpp. This avoids conflicts as .icc is typically used
+for other file types. All include directives are now specified
+using <...> notation instead of "...", so that %Gecode headers do
+not clutter the include namespace of a client program.
 
 [ENTRY]
 Module: minimodel
@@ -463,8 +472,10 @@ Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The index structure for variable dependencies is now implemented using ints
-instead of pointers, saving memory on 64 bit machines. For example, the index 
+The index structure for variable dependencies is now implemented using integers
+instead of pointers, saving memory on 64 bit machines.
+[MORE]
+For example, the index 
 structure of integer variables is now 40% smaller, for Boolean variables 
 (which have the smallest possible index structure) we still save 16%.
 
@@ -490,12 +501,13 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-%Gecode now supports weakly monotonic propagators. A weakly monotonic
-propagator must only be able to decide for assignments wether they are
-solutions or not (which is a very natural property as it means the
-propagator must be a correct implementation of a
-constraint). Otherwise, the propagator does not have to be monotonic,
-it can even be indeterministic.
+%Gecode now supports weakly monotonic propagators. 
+[MORE]
+A weakly monotonic propagator must only be able to decide for
+assignments wether they are solutions or not (which is a very
+natural property as it means the propagator must be a correct
+implementation of a constraint). Otherwise, the propagator does
+not have to be monotonic, it can even be indeterministic.
 
 Weakly monotonic but not monotonic propagators must notify a
 space about their existence: if a weakly monotonic propagator is
@@ -508,11 +520,12 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The functions force and unforce of an actor to force disposal
-have been removed. Now, the new interface based on notice and
-ignore using actor properties must be used instead. So, instead
-of "force(home)", write "home.notice(*this,AP_DISPOSE)" and,
-instead of "unforce(home)", write
-"home.ignore(*this,AP_DISPOSE)".
+have been removed. 
+[MORE]
+Now, the new interface based on notice and ignore using actor
+properties must be used instead. So, instead of "force(home)",
+write "home.notice(*this,AP_DISPOSE)" and, instead of
+"unforce(home)", write "home.ignore(*this,AP_DISPOSE)".
 
 [ENTRY]
 Module: int
@@ -528,10 +541,11 @@ What:   performance
 Rank:   minor
 [DESCRIPTION]
 The element propagator for integer arrays now chooses
-datastructures according to and the elements of the array. This
-can save more than 80% memory on a 64 bit machine, and up to 75%
-on a 32 bit machine. In common cases, one can expect a reduction by
-at least 50%.
+datastructures according to and the elements of the array.
+[MORE]
+This can save more than 80% memory on a 64 bit machine, and up to
+75% on a 32 bit machine. In common cases, one can expect a
+reduction by at least 50%.
 
 [ENTRY]
 Module: int
@@ -555,10 +569,11 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 Now everything is passed as reference (Space, Propagator,
-ModEventDelta, Advisor, Branching, and BranchingDesc). The reason
-for this massive change is to be more C++ and make it consistent
-(at some places things were passed as references and at other
-places as pointers, for no obvious and explainable
+ModEventDelta, Advisor, Branching, and BranchingDesc). 
+[MORE]
+The reason for this massive change is to be more C++ and make it
+consistent (at some places things were passed as references and
+at other places as pointers, for no obvious and explainable
 reason). Routines that create objects rather than pass them (such
 as copy, clone, or description) still return a pointer to an
 object (so that it can actually be deleted!).
@@ -579,18 +594,19 @@ Module: other
 What:   change
 Rank:   major
 [DESCRIPTION]
-The memory management has been completely reworked. It is now
-more robust, more portable (does not use alloca any longer), more
-efficient, fits C++ better and is much easier too
+The memory management has been completely reworked. 
+[MORE]
+It is now more robust, more portable (does not use alloca any
+longer), more efficient, fits C++ better and is much easier too
 understand. There are now three memory areas: a single heap,
-spaces, and regions. Heap and spaces are as before. A region
-(an object of class Region) is a simple and very efficient
-memory manager for temporary memory managed in a stack
-fashion. These three memory managers provide uniform operations
-for allocation (alloc), deallocation (free), and reallocation
-(realloc). These operations use constructors, destructors, and
-assignment operators as required by C++ and are implemented with
-efficient specializations for basic data types.
+spaces, and regions. Heap and spaces are as before. A region (an
+object of class Region) is a simple and very efficient memory
+manager for temporary memory managed in a stack fashion. These
+three memory managers provide uniform operations for allocation
+(alloc), deallocation (free), and reallocation (realloc). These
+operations use constructors, destructors, and assignment
+operators as required by C++ and are implemented with efficient
+specializations for basic data types.
 
 [ENTRY]
 Module: support
@@ -690,9 +706,10 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The variable selection INT_VAR_DEGREE_MIN and INT_VAR_DEGREE_MAX
-do not have tiebreaking with smallest domain size built in. The old
-behaviour can be reclaimed by explicit tiebreaking, for example
-replace INT_VAR_DEGREE_MAX by
+do not have tiebreaking with smallest domain size built in.
+[MORE]
+The old behaviour can be reclaimed by explicit tiebreaking, for
+example replace INT_VAR_DEGREE_MAX by
 tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN).
 
 [ENTRY]

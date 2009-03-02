@@ -62,7 +62,7 @@ namespace Gecode {
     ConstantView yv(home, y);
 
     if (op==SOT_MINUS) {
-      switch(r) {
+      switch (r) {
       case SRT_EQ:
         {
           GlbRanges<ConstantView> yr(yv);
@@ -148,6 +148,8 @@ namespace Gecode {
                           SetView>::post(home, yv, cx, z)));
         }
         break;
+      default:
+        throw UnknownRelation("Set::rel");
       }
     } else {
       rel_op_post<ConstantView,SetView,SetView>(home, yv, op, x, r, z);
@@ -197,7 +199,7 @@ namespace Gecode {
     ConstantView zv(home, z);
 
     if (op==SOT_MINUS) {
-      switch(r) {
+      switch (r) {
       case SRT_EQ:
         {
           GlbRanges<ConstantView> yr(yv);
@@ -282,17 +284,17 @@ namespace Gecode {
                           ConstantView>::post(home, yv, cx, zv)));
         }
         break;
+      default:
+        throw UnknownRelation("Set::rel");
       }
+    } else if (r == SRT_CMPL) {
+      IntSetRanges zr(z);
+      RangesCompl<IntSetRanges> zrc(zr);
+      IntSet zc(zrc);
+      ConstantView cz(home, zc);
+      rel_eq<ConstantView,SetView,ConstantView>(home, yv, op, x, cz);
     } else {
-      if (r == SRT_CMPL) {
-        IntSetRanges zr(z);
-        RangesCompl<IntSetRanges> zrc(zr);
-        IntSet zc(zrc);
-        ConstantView cz(home, zc);
-        rel_eq<ConstantView,SetView,ConstantView>(home, yv, op, x, cz);
-      } else {
-        rel_op_post_nocompl<ConstantView,SetView,ConstantView>(home, yv, op, x, r, zv);
-      }
+      rel_op_post_nocompl<ConstantView,SetView,ConstantView>(home, yv, op, x, r, zv);
     }
   }
 

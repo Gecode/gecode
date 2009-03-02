@@ -1846,7 +1846,7 @@ namespace Gecode {
   template <class T>
   forceinline T*
   Space::alloc(int n) {
-    assert(n > 0);
+    assert(n >= 0);
     return alloc<T>(static_cast<unsigned int>(n));
   }
 
@@ -1860,7 +1860,7 @@ namespace Gecode {
   template <class T>
   forceinline void
   Space::free(T* b, int n) {
-    assert(n > 0);
+    assert(n >= 0);
     free<T>(b,static_cast<unsigned int>(n));
   }
 

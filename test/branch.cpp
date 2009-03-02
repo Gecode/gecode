@@ -296,7 +296,7 @@ namespace Test { namespace Branch {
   }
 
   IntTest::IntTest(const std::string& s, int a, const Gecode::IntSet& d)
-    : Base("Branch::Int::"+s), arity(a), dom(d) {
+    : Base("Int::Branch::"+s), arity(a), dom(d) {
   }
 
   bool
@@ -349,7 +349,7 @@ namespace Test { namespace Branch {
   }
 
   BoolTest::BoolTest(const std::string& s, int a)
-    : Base("Branch::Bool::"+s), arity(a) {
+    : Base("Bool::Branch::"+s), arity(a) {
   }
 
   bool
@@ -403,7 +403,7 @@ namespace Test { namespace Branch {
 
 #ifdef GECODE_HAS_SET_VARS
   SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d)
-    : Base("Branch::Set::"+s), arity(a), dom(d) {
+    : Base("Set::Branch::"+s), arity(a), dom(d) {
   }
 
   bool

@@ -65,7 +65,7 @@ namespace Gecode {
 
     Set::SetView _s(s);
 
-    switch(r) {
+    switch (r) {
     case SRT_EQ:
       {
         if (is.ranges() == 1) {
@@ -138,6 +138,8 @@ namespace Gecode {
         }
       }
       break;
+    default:
+      throw Set::UnknownRelation("Set::dom");
     }
   }
 
@@ -160,7 +162,7 @@ namespace Gecode {
   dom(Space& home, SetVar s, SetRelType r, const IntSet& is, BoolVar b) {
     Set::Limits::check(is, "Set::dom");
     if (home.failed()) return;
-    switch(r) {
+    switch (r) {
     case SRT_EQ:
       {
         Set::ConstantView cv(home, is);
@@ -224,6 +226,8 @@ namespace Gecode {
                         ::post(home, sv, cvcompl, b)));
       }
       break;
+    default:
+      throw Set::UnknownRelation("Set::dom");
     }
   }
 

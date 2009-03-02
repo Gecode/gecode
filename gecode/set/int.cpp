@@ -49,7 +49,7 @@ namespace Gecode {
   void
   rel(Space& home, SetVar s, IntRelType r, IntVar x) {
     if (home.failed()) return;
-    switch(r) {
+    switch (r) {
     case IRT_EQ:
       {
         Gecode::Int::IntView xv(x);
@@ -100,6 +100,8 @@ namespace Gecode {
         GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,tmp));
       }
       break;
+    default:
+      throw UnknownRelation("Set::rel");
     }
 
   }

@@ -41,7 +41,7 @@
 #include "examples/support.hh"
 
 /**
- * \brief Options for BIBD problems
+ * \brief %Options for %BIBD problems
  *
  */
 class BIBDOptions : public Options {

@@ -315,7 +315,9 @@ namespace Gecode {
     while (b != b_status) {
       b->pending = false; b = Branching::cast(b->next());
     }
-    b_status->pending = true;
+    assert(b == b_status);
+    b->pending = true;
+    b = Branching::cast(b->next());
     while (b != Branching::cast(&bl)) {
       b->pending = false; b = Branching::cast(b->next());
     }

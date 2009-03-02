@@ -39,14 +39,7 @@
 #
 #
 
-print <<EOF
-/**
-
-EOF
-;
-
-
-# 
+#
 # Compile changelog
 #
 
@@ -91,6 +84,7 @@ foreach $mod (@modorder) {
 }
 
 $versions = "";
+$body = "";
 
 while ($l = <>) {
  LINE:
@@ -98,30 +92,29 @@ while ($l = <>) {
   if ($l =~ /^\[RELEASE\]/) {
     # Print previous
     if (!$first) {
-      $sid = "PageChanges_$version";
+      $sid = "SectionChanges_$version";
       $sid =~ s|\.|_|g;
       $versions = $versions . "\n - \\ref $sid \"Gecode $version ($date)\"";
-      print "*/\n/**\n";
-      print "\\page $sid Changes in Version $version ($date)\n\n";
+      $body = $body."\\section $sid Changes in Version $version ($date)\n\n";
 
-      print "$info\n\n";
+      $body = $body."$info\n\n";
 
       foreach $mod (@modorder) {
 	if ($hastext{$mod}) {
-	  print " - " . $modclear{$mod} . "\n";
+	  $body = $body." - " . $modclear{$mod} . "\n";
 	  $hastext{$mod} = 0;
 	  foreach $what (@whatorder) {
 	    if (!($text{"$mod-$what"} eq "")) {
-	      print "   - " . $whatclear{$what} . "\n";
-	      print $text{"$mod-$what"};
+	      $body = $body."   - " . $whatclear{$what} . "\n";
+	      $body = $body.$text{"$mod-$what"};
 	      $text{"$mod-$what"} = "";
-	      print "      .\n";
+	      $body = $body."      .\n";
 	    }
 	  }
-	  print "   .\n";
+	  $body = $body."   .\n";
 	}
       }
-      print "\n\n";
+      $body = $body."\n\n";
     }
     $first   = 0;
     $version = "";
@@ -213,18 +206,14 @@ while ($l = <>) {
 }
 
 print <<EOF
-*/
 /**
-\\page PageChanges_1_0_0 Changes in Version 1.0.0 (2005-12-06, initial release)
-
-No changes, of course.
 
 \\page PageChange Changelog
 
 \\section SectionChangeList Changes in Gecode Versions
 
 $versions
- - \\ref PageChanges_1_0_0 "Gecode 1.0.0 (2005-12-06)"
+ - \\ref SectionChanges_1_0_0 "Gecode 1.0.0 (2005-12-06)"
 
 \\section SectionChangeWhat Gecode Version Numbers
 
@@ -241,4 +230,12 @@ according to the following rules (of thumb):
 EOF
 ;
 
+print $body;
+print <<EOF
+\\section SectionChanges_1_0_0 Changes in Version 1.0.0 (2005-12-06, initial release)
+
+No changes, of course.
+
+EOF
+;
 print "\n\n*/\n";

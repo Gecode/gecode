@@ -83,8 +83,10 @@ namespace Gecode {
       }
       break;
     case SOT_MINUS:
-      throw InvalidRelation("rel minus");
+      throw IllegalOperation("Set::element");
       break;
+    default:
+      throw UnknownOperation("Set::element");
     }
   }
 
@@ -107,7 +109,7 @@ namespace Gecode {
       // fall through
     case SOT_UNION:
       {
-        SharedArray<IntSet> s(s.size());
+        SharedArray<IntSet> s(x.size());
         for (int i=s.size(); i--;)
           new (&s[i]) IntSet(x[i]);
         GECODE_ES_FAIL(home,
@@ -128,8 +130,10 @@ namespace Gecode {
       }
       break;
     case SOT_MINUS:
-      throw InvalidRelation("rel minus");
+      throw IllegalOperation("Set::element");
       break;
+    default:
+      throw UnknownOperation("Set::element");
     }
     
   }

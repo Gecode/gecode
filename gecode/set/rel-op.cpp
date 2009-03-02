@@ -54,7 +54,7 @@ namespace Gecode {
   rel(Space& home, SetOpType op, const SetVarArgs& x, SetVar y) {
     if (home.failed()) return;
     ViewArray<SetView> xa(home,x);
-    switch(op) {
+    switch (op) {
     case SOT_UNION:
       GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, y)));
       break;
@@ -70,8 +70,10 @@ namespace Gecode {
       }
       break;
     case SOT_MINUS:
-      throw InvalidRelation("rel minus");
+      throw IllegalOperation("Set::rel");
       break;
+    default:
+      throw UnknownOperation("Set::rel");
     }
   }
 
@@ -80,7 +82,7 @@ namespace Gecode {
     if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");
     ViewArray<SetView> xa(home,x);
-    switch(op) {
+    switch (op) {
     case SOT_UNION:
       GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, z, y)));
       break;
@@ -96,8 +98,10 @@ namespace Gecode {
       }
       break;
     case SOT_MINUS:
-      throw InvalidRelation("rel minus");
+      throw IllegalOperation("Set::rel");
       break;
+    default:
+      throw UnknownOperation("Set::rel");
     }
   }
 
@@ -111,7 +115,7 @@ namespace Gecode {
       xa[i] = sv;
     }
 
-    switch(op) {
+    switch (op) {
     case SOT_UNION:
       GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>
                            ::post(home, xa, y)));
@@ -126,13 +130,16 @@ namespace Gecode {
                       ::post(home, xa, y)));
       break;
     case SOT_MINUS:
-      throw InvalidRelation("rel minus");
+      throw IllegalOperation("Set::rel");
       break;
+    default:
+      throw UnknownOperation("Set::rel");
     }
   }
 
   void
-  rel(Space& home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y) {
+  rel(Space& home, SetOpType op, const IntVarArgs& x, const IntSet& z, 
+      SetVar y) {
     if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");
     ViewArray<SingletonView> xa(home,x.size());
@@ -142,7 +149,7 @@ namespace Gecode {
       xa[i] = sv;
     }
 
-    switch(op) {
+    switch (op) {
     case SOT_UNION:
       GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>
                            ::post(home, xa, z, y)));
@@ -157,8 +164,10 @@ namespace Gecode {
                       ::post(home, xa, z, y)));
       break;
     case SOT_MINUS:
-      throw InvalidRelation("rel minus");
+      throw IllegalOperation("set::rel");
       break;
+    default:
+      throw UnknownOperation("Set::rel");
     }
   }
 

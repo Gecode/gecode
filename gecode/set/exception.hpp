@@ -73,25 +73,32 @@ namespace Gecode { namespace Set {
     ArgumentSizeMismatch(const char* l);
   };
 
-  /// %Exception: Invalid relation passed as argument
-  class GECODE_VTABLE_EXPORT InvalidRelation : public Exception  {
-  public:
-    /// Initialize with location \a l
-    InvalidRelation(const char* l);
-  };
-
-  /// %Exception: Invalid projector passed as argument
-  class GECODE_VTABLE_EXPORT InvalidProjector : public Exception  {
-  public:
-    /// Initialize with location \a l
-    InvalidProjector(const char* l);
-  };
-
   /// %Exception: Unknown value or variable selection passed as argument
   class GECODE_VTABLE_EXPORT UnknownBranching : public Exception {
   public:
     /// Initialize with location \a l
     UnknownBranching(const char* l);
+  };
+
+  /// %Exception: Unknown relation type passed as argument
+  class GECODE_VTABLE_EXPORT UnknownRelation : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnknownRelation(const char* l);
+  };
+
+  /// %Exception: Unknown operation type passed as argument
+  class GECODE_VTABLE_EXPORT UnknownOperation : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnknownOperation(const char* l);
+  };
+
+  /// %Exception: Illegal operation passed as argument
+  class GECODE_VTABLE_EXPORT IllegalOperation : public Exception  {
+  public:
+    /// Initialize with location \a l
+    IllegalOperation(const char* l);
   };
 
   //@}
@@ -118,16 +125,20 @@ namespace Gecode { namespace Set {
     : Exception(l,"Sizes of argument arrays mismatch") {}
 
   inline
-  InvalidRelation::InvalidRelation(const char* l)
-    : Exception(l,"Invalid relation type") {}
-
-  inline
-  InvalidProjector::InvalidProjector(const char* l)
-    : Exception(l,"Invalid projector specification") {}
+  IllegalOperation::IllegalOperation(const char* l)
+    : Exception(l,"Illegal operation type") {}
 
   inline
   UnknownBranching::UnknownBranching(const char* l)
     : Exception(l,"Unknown branching type") {}
+
+  inline
+  UnknownRelation::UnknownRelation(const char* l)
+    : Exception(l,"Unknown relation type") {}
+
+  inline
+  UnknownOperation::UnknownOperation(const char* l)
+    : Exception(l,"Unknown operation type") {}
 
 }}
 

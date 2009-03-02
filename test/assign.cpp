@@ -37,8 +37,6 @@
 
 #include "test/assign.hh"
 
-#include <gecode/kernel.hh>
-#include <gecode/int.hh>
 #include <gecode/search.hh>
 
 namespace Test { namespace Assign {
@@ -81,6 +79,9 @@ namespace Test { namespace Assign {
     }
   };
 
+#ifdef GECODE_HAS_SET_VARS
+
+#endif
 
   /** \name Collection of possible arguments for integer assignments
    *
@@ -91,7 +92,8 @@ namespace Test { namespace Assign {
   const Gecode::IntAssign int_assign[] = {
     Gecode::INT_ASSIGN_MIN,
     Gecode::INT_ASSIGN_MED,
-    Gecode::INT_ASSIGN_MAX
+    Gecode::INT_ASSIGN_MAX,
+    Gecode::INT_ASSIGN_RND
   };
   /// Number of integer value selections
   const int n_int_assign =
@@ -100,12 +102,13 @@ namespace Test { namespace Assign {
   const char* int_assign_name[] = {
     "INT_ASSIGN_MIN",
     "INT_ASSIGN_MED",
-    "INT_ASSIGN_MAX"
+    "INT_ASSIGN_MAX",
+    "INT_ASSIGN_RND"
   };
   //@}
 
   IntTest::IntTest(const std::string& s, int a, const Gecode::IntSet& d)
-    : Base("Assign::Int::"+s), arity(a), dom(d) {
+    : Base("Int::Assign::"+s), arity(a), dom(d) {
   }
 
   bool
@@ -141,7 +144,7 @@ namespace Test { namespace Assign {
   }
 
   BoolTest::BoolTest(const std::string& s, int a)
-    : Base("Assign::Bool::"+s), arity(a) {
+    : Base("Bool::Assign::"+s), arity(a) {
   }
 
   bool

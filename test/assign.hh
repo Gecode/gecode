@@ -40,6 +40,9 @@
 
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
+#ifdef GECODE_HAS_SET_VARS
+#include <gecode/set.hh>
+#endif
 
 #include "test/test.hh"
 
@@ -83,6 +86,10 @@ namespace Test {
       /// Post assignment on variables \a x
       virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
     };
+
+#ifdef GECODE_HAS_SET_VARS
+
+#endif
 
   }
 

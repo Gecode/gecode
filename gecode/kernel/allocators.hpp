@@ -71,28 +71,28 @@ struct MySpace : public Space {
 };
 \endcode
 
-In this example, \i S is a set that allocates its nodes from the
+In this example, \a S is a set that allocates its nodes from the
 space heap. Note that we pass an instance of space_allocator
 bound to this space to the constructor of the set. A similar
 thing must be done in the copying constructor, where we must be
 sure to pass an allocator that allocates memory from the
 destination ("this") space, not "other".  Note that the set
-itself is a member of \i MySpace, so it is destroyed within
+itself is a member of \a MySpace, so it is destroyed within
 <i>MySpace::~MySpace</i> as usual.  The set destructor destroys
 all contained items and deallocates all nodes in its destructors.
 
 \section FuncMemAllocatorB Preventing unnecessary destruction overhead
 
-In the above example, we know that the value type in \i S is a
+In the above example, we know that the value type in \a S is a
 builtin type and does not have a destructor.  So what happens
-during \i safe_set destruction is that it just deallocates all
+during \a safe_set destruction is that it just deallocates all
 nodes. However, we know that all nodes were allocated from the
 space heap, which is going to disappear with the space anyway.
-If we prevent calling \i safe_set destructor, we may save a
+If we prevent calling \a safe_set destructor, we may save a
 significant amount of time during space destruction.  A safe way
 of doing this is to allocate the set object itself on the space
 heap, and keep only a reference to it as a member of the
-space. We can use the convenience helpers #Space::construct for
+space. We can use the convenience helpers Space::construct for
 the construction.
 
 \code
@@ -119,7 +119,7 @@ struct MySpace : public Space {
 The above examples were using a space_allocator. A region_allocator
 works similarly, one just should keep in mind that regions never
 really release any memory. Similar to Space, Region provides
-helper functions #Region::construct to make non-stack allocation
+helper functions Region::construct to make non-stack allocation
 easy.
 
 \code
@@ -179,15 +179,15 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     typedef ptrdiff_t difference_type;
     /// Type of pointers returned by the allocator.
     typedef T* pointer;
-    /// Const version of #pointer.
-    typedef T const*  const_pointer;
-    /// Non-const reference to \i T.
+    /// Const version of pointer.
+    typedef T const* const_pointer;
+    /// Non-const reference to \a T.
     typedef T& reference;
-    /// Const reference to \i T.
+    /// Const reference to \a T.
     typedef T const&  const_reference;
-    /// Rebinding helper (returns the type of a similar allocator for type \i U).
+    /// Rebinding helper (returns the type of a similar allocator for type \a U).
     template<class U> struct rebind { 
-      /// The allocator type for \i U
+      /// The allocator type for \a U
       typedef space_allocator<U> other;
     };
 
@@ -215,7 +215,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     pointer address(reference x) const { return &x; }
     /// Convert a const reference \a x to a const pointer
     const_pointer address(const_reference x) const { return &x; }
-    /// Returns the largest size for which a call to #allocate() might succeed.
+    /// Returns the largest size for which a call to allocate might succeed.
     size_type max_size() const throw() {
       return std::numeric_limits<size_type>::max() / 
         (sizeof(T)>0 ? sizeof(T) : 1);
@@ -226,7 +226,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * Returns a pointer to the first element in a block of storage
      * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
      * appropriately for objects of type \a T. Throws the exception 
-     * \i bad_alloc if the storage is unavailable.
+     * \a bad_alloc if the storage is unavailable.
      */
     pointer allocate(size_type count) {
       return static_cast<pointer>(space.ralloc(sizeof(T)*count));
@@ -238,7 +238,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * Returns a pointer to the first element in a block of storage
      * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
      * appropriately for objects of type \a T. Throws the exception 
-     * \i bad_alloc if the storage is unavailable.
+     * \a bad_alloc if the storage is unavailable.
      * The (unused) parameter could be used as an allocation hint, 
      * but this allocator ignores it.
      */
@@ -247,7 +247,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
       return allocate(count);
     }
 
-    /// Deallocates the storage obtained by a call to #allocate() with arguments \a count and \a p.
+    /// Deallocates the storage obtained by a call to allocate() with arguments \a count and \a p.
     void deallocate(pointer p, size_type count) {
       space.rfree(static_cast<void*>(p), count);
     }
@@ -330,7 +330,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     typedef ptrdiff_t difference_type;
     /// Type of pointers returned by the allocator.
     typedef T* pointer;
-    /// Const version of #pointer.
+    /// Const version of pointer.
     typedef T const*  const_pointer;
     /// Non-const reference to \a T.
     typedef T&  reference;
@@ -339,7 +339,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
 
     /// Rebinding helper (returns the type of a similar allocator for type \a U).
     template<class U> struct rebind { 
-      /// The allocator type for \i U
+      /// The allocator type for \a U
      typedef region_allocator<U> other;
     };
 
@@ -366,11 +366,11 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     region_allocator(region_allocator<U> const& al) throw() 
       : region(al.region) {}
 
-    /// Convert a reference \a x to a pointer.
+    /// Convert a reference \a x to a pointer
     pointer address(reference x) const { return &x; }
-    /// Convert a const reference \a x to a const pointer.
+    /// Convert a const reference \a x to a const pointer
     const_pointer address(const_reference x) const { return &x; }
-    /// Returns the largest size for which a call to #allocate() might succeed.
+    /// Returns the largest size for which a call to allocate might succeed.
     size_type max_size() const throw() {
       return std::numeric_limits<size_type>::max() 
         / (sizeof(T)>0 ? sizeof(T) : 1);
@@ -382,7 +382,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
       * Returns a pointer to the first element in a block of storage
       * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
       * appropriately for objects of type \a T. Throws the exception 
-      * \i bad_alloc if the storage is unavailable.
+      * \a bad_alloc if the storage is unavailable.
       */
     pointer allocate(size_type count) {
       return static_cast<pointer>(region.ralloc(sizeof(T)*count));
@@ -394,7 +394,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
       * Returns a pointer to the first element in a block of storage
       * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
       * appropriately for objects of type \a T. Throws the exception 
-      * \i bad_alloc if the storage is unavailable.
+      * \a bad_alloc if the storage is unavailable.
       *
       * The (unused) parameter could be used as an allocation hint, 
       * but this allocator ignores it.
@@ -407,7 +407,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     /**
      * \brief Deallocates storage
      *
-     * Deallocates storage obtained by a call to #allocate() with 
+     * Deallocates storage obtained by a call to allocate() with 
      * arguments \a count and \a p. Note that region allocator never 
      * actually deallocates memory (so this function does nothing);
      * the memory is released when the region is destroyed.

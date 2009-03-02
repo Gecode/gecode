@@ -71,7 +71,7 @@
 
 /**
  * \namespace Gecode::Scheduling
- * \brief Scheduling support
+ * \brief %Scheduling support
  *
  * The Gecode::Scheduling namespace contains abstractions, propagators and
  * branchings for modelling and solving scheduling problems.

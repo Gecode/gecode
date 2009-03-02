@@ -153,7 +153,7 @@ namespace {
  * \section ExamplePentominoesOnePiece Placing one piece
  *
  * The constraint for each piece placement uses regular expressions
- * (and consequently the \ref extensional constraint) for expressing
+ * (and consequently the extensional constraint) for expressing
  * placement of (rotated) pieces on the grid. Consider the simple
  * example of placing the piece
  * \code

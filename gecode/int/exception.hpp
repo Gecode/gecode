@@ -94,18 +94,18 @@ namespace Gecode { namespace Int {
     UnknownRelation(const char* l);
   };
 
-  /// %Exception: Unknown Boolean operation passed as argument
-  class GECODE_VTABLE_EXPORT UnknownBoolOp : public Exception  {
+  /// %Exception: Unknown operation passed as argument
+  class GECODE_VTABLE_EXPORT UnknownOperation : public Exception  {
   public:
     /// Initialize with location \a l
-    UnknownBoolOp(const char* l);
+    UnknownOperation(const char* l);
   };
 
-  /// %Exception: Illegal Boolean operation passed as argument
-  class GECODE_VTABLE_EXPORT IllegalBoolOp : public Exception  {
+  /// %Exception: Illegal operation passed as argument
+  class GECODE_VTABLE_EXPORT IllegalOperation : public Exception  {
   public:
     /// Initialize with location \a l
-    IllegalBoolOp(const char* l);
+    IllegalOperation(const char* l);
   };
 
   /// %Exception: Unknown value or variable selection passed as argument
@@ -171,12 +171,12 @@ namespace Gecode { namespace Int {
     : Exception(l,"Unknown relation type") {}
 
   inline
-  UnknownBoolOp::UnknownBoolOp(const char* l)
-    : Exception(l,"Unknown Boolean operation") {}
+  UnknownOperation::UnknownOperation(const char* l)
+    : Exception(l,"Unknown operation type") {}
 
   inline
-  IllegalBoolOp::IllegalBoolOp(const char* l)
-    : Exception(l,"Illegal Boolean operation") {}
+  IllegalOperation::IllegalOperation(const char* l)
+    : Exception(l,"Illegal operation type") {}
 
   inline
   UnknownBranching::UnknownBranching(const char* l)

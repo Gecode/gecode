@@ -38,7 +38,7 @@
 #include "examples/support.hh"
 
 /**
- * \brief %Example: Baseline test
+ * \brief %Example: %Baseline test
  *
  * \ingroup ExProblem
  *

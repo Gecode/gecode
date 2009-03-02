@@ -51,7 +51,7 @@ namespace Gecode {
   void
   rel_post(Space& home, View0 x0, SetRelType r, View1 x1) {
     if (home.failed()) return;
-    switch(r) {
+    switch (r) {
     case SRT_EQ:
       {
         GECODE_ES_FAIL(home,
@@ -91,6 +91,8 @@ namespace Gecode {
                         ::post(home, cx0, x1)));
       }
       break;
+    default:
+      throw UnknownRelation("Set::rel");
     }
   }
 
@@ -98,7 +100,7 @@ namespace Gecode {
   void
   rel_re(Space& home, View0 x, SetRelType r, View1 y, BoolVar b) {
     if (home.failed()) return;
-    switch(r) {
+    switch (r) {
     case SRT_EQ:
       {
         GECODE_ES_FAIL(home,
@@ -144,6 +146,8 @@ namespace Gecode {
                        ::post(home, xc, y, b)));
       }
       break;
+    default:
+      throw UnknownRelation("Set::rel");
     }
   }
 
@@ -161,7 +165,7 @@ namespace Gecode {
 
   void
   rel(Space& home, IntVar x, SetRelType r, SetVar s) {
-    switch(r) {
+    switch (r) {
     case SRT_SUB:
       rel(home, s, SRT_SUP, x);
       break;
@@ -187,7 +191,7 @@ namespace Gecode {
 
   void
   rel(Space& home, IntVar x, SetRelType r, SetVar s, BoolVar b) {
-    switch(r) {
+    switch (r) {
     case SRT_SUB:
       rel(home, s, SRT_SUP, x, b);
       break;

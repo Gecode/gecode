@@ -40,7 +40,7 @@
 
 #include <fstream>
 
-/** \breif Order-specifications
+/** \brief Order-specifications
  *
  * Used in the \ref SteelMill example.
  *
@@ -51,7 +51,7 @@ extern const int order_weight; ///< Weight-position in order-array elements
 extern const int order_color;  ///< Color-position in order-array elements
 //@}
 
-/** \breif Constants for CSPLib instance of the Steel Mill Slab Design Problem.
+/** \brief Constants for CSPLib instance of the Steel Mill Slab Design Problem.
  *
  * Used in the \ref SteelMill example.
  */

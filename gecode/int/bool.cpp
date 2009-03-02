@@ -462,7 +462,7 @@ namespace Gecode {
     case BOT_IMP: post_imp(home,x0,x1,x2); break;
     case BOT_EQV: post_eqv(home,x0,x1,x2); break;
     case BOT_XOR: post_xor(home,x0,x1,x2); break;
-    default: throw UnknownBoolOp("Int::rel");
+    default: throw UnknownOperation("Int::rel");
     }
   }
 
@@ -506,7 +506,7 @@ namespace Gecode {
                              ::post(home,x0,x1)));
         break;
       default:
-        throw UnknownBoolOp("Int::rel");
+        throw UnknownOperation("Int::rel");
       }
     } else if (n == 1) {
       switch (o) {
@@ -540,7 +540,7 @@ namespace Gecode {
         }
         break;
       default:
-        throw UnknownBoolOp("Int::rel");
+        throw UnknownOperation("Int::rel");
       }
     } else {
       throw NotZeroOne("Int::rel");
@@ -611,7 +611,7 @@ namespace Gecode {
       }
       break;
     default:
-      throw UnknownBoolOp("Int::rel");
+      throw UnknownOperation("Int::rel");
     }
   }
 
@@ -687,7 +687,7 @@ namespace Gecode {
       }
       break;
     default:
-      throw UnknownBoolOp("Int::rel");
+      throw UnknownOperation("Int::rel");
     }
   }
 
@@ -738,7 +738,7 @@ namespace Gecode {
       }
       break;
     default:
-      throw IllegalBoolOp("Int::clause");
+      throw IllegalOperation("Int::clause");
     }
   }
 
@@ -774,7 +774,7 @@ namespace Gecode {
       }
       break;
     default:
-      throw IllegalBoolOp("Int::clause");
+      throw IllegalOperation("Int::clause");
     }
   }
 

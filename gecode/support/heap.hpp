@@ -240,7 +240,7 @@ namespace Gecode {
   template <class T>
   forceinline T*
   Heap::alloc(int n) {
-    assert(n > 0);
+    assert(n >= 0);
     return alloc<T>(static_cast<unsigned int>(n));
   }
 
@@ -254,7 +254,7 @@ namespace Gecode {
   template <class T>
   forceinline void
   Heap::free(T* b, int n) {
-    assert(n > 0);
+    assert(n >= 0);
     free<T>(b, static_cast<unsigned int>(n));
   }
 

@@ -200,7 +200,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        VarIntShared(Gecode::IntConLevel icl)
-         : Test("Element::Var::Int::Shared::"+str(icl),5,-1,3,false,icl) {}
+         : Test("Element::Var::Int::Shared::"+str(icl),5,-1,3,false,icl) {
+         contest = CTL_NONE;
+       }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==x[0];

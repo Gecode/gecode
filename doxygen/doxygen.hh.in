@@ -423,7 +423,7 @@
  * \section NotationHome The home space
  *
  * Many functions and member functions take an argument \a home of 
- * type \c Space*. The home space serves as manager to many
+ * type \c Space&. The home space serves as manager to many
  * operations used by variables, views, propagators, spaces, and so
  * on. It provides
  * services such as failure management, propagation control, 
@@ -512,11 +512,9 @@ TaskModelScript, \ref TaskSearch, and \ref FuncMemSpace.
 A modification event describes how a view (\ref GlossaryView) or
 variable implementation (\ref GlossaryVarImp) is changed by an
 update operation performed on the view or variable. Each variable
-domain defines its own modification events (see \ref
-TaskActorIntMEPC and \ref TaskActorSetMEPC). However modification
+domain defines its own modification events. However modification
 events that describe generic events such as failure, no
-modification, or assignment to a single value are predefined (see
-\ref TaskVarMEPC).
+modification, or assignment to a single value are predefined.
 
 \section GlossaryPropCond Propagation condition
 
@@ -759,9 +757,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *     from <a href="http://gcc.gnu.org/">the GCC home page</a>. It is included
  *     in all Linux distributions and the Apple MacOS X developer tools.
  *     %Gecode requires at least version 4.2 of gcc.
- *
- * The Intel C++ compiler is currently not supported (even though Gecode is
- * likely to compile with it).
+ *   - The Intel C++ compiler.
  *
  * \section CompConf Configuring the sources
  *
@@ -797,7 +793,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * To compile on a <b>Unix machine</b> using a different than the default
  * <code>gcc</code> compiler, and install under <code>/opt/gecode</code>, use
  *
- * <code>./configure --prefix=/opt/gecode CC=gcc-4.0 CXX=g++-4.0</code>
+ * <code>./configure --prefix=/opt/gecode CC=gcc-4.2 CXX=g++-4.2</code>
  *
  * To compile a <b>debug build</b> on Unix, turning on all assertions and not
  * inlining anything, use
@@ -807,15 +803,16 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * To compile on <b>Cygwin</b>, but linking against the <b>Windows libraries</b> instead
  * of the Cygwin libraries, use
  *
- * <code>./configure CC="gcc -mno-cygwin" CXX="g++ -mno-cygwin"</code>
- * Note that we only support building static libraries on Cygwin.
+ * <code>./configure CC="gcc-4 -mno-cygwin" CXX="g++-4 -mno-cygwin"</code>
+ * Note that we only support building static libraries on Cygwin and that
+ * you cannot use the standard gcc that comes with Cygwin. 
  *
  * To compile on a system using a different than the default compiler,
  * and a <code>/bin/sh</code> that is not bash compatible (e.g. a
  * <b>Solaris machine</b>), use
  *
  * <code>./configure --with-host-os=linux \ </code><br>
- * <code>&nbsp;&nbsp;&nbsp;CC="gcc-4.0" CXX="g++-4.0" \ </code><br>
+ * <code>&nbsp;&nbsp;&nbsp;CC="gcc-4.2" CXX="g++-4.2" \ </code><br>
  * <code>&nbsp;&nbsp;&nbsp;SHELL="/bin/bash"</code><br>
  * <code>make SHELL="/bin/bash"</code>
  *
@@ -1029,7 +1026,7 @@ Replace BVAL_* by INT_VAL_*, BVAR_* by INT_VAR_*, and so on.
 
 The interface for the global cardinality constraint has been
 simplified.  The constraint is now called count. Please check the
-documentation for \ref TaskModelIntCard "details".
+documentation for \ref TaskModelIntCount "details".
 
 \section SecChange2Sorted Sortedness constraint
 
