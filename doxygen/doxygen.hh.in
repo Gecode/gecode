@@ -757,7 +757,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *     from <a href="http://gcc.gnu.org/">the GCC home page</a>. It is included
  *     in all Linux distributions and the Apple MacOS X developer tools.
  *     %Gecode requires at least version 4.2 of gcc.
- *   - The Intel C++ compiler.
+ *   - the Intel C++ compiler, also we do not test the binaries produced by it.
  *
  * \section CompConf Configuring the sources
  *
