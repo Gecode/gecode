@@ -383,7 +383,8 @@ export LINKSET      	=
 endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
-	set/element set/sequence set/var set/var-imp set/view
+	set/element set/sequence set/var set/var-imp set/view \
+	set/branch
 
 #
 # MINIMODEL COMPONENTS
