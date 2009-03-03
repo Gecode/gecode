@@ -55,13 +55,11 @@ namespace Test { namespace Assign {
       Gecode::rel(home, Gecode::SOT_UNION, y, x[x.size()-1]);
     }
   };
-
-  int sparse[] = {-100,-10,0,10,100};
     
   Set d_3("Dense::3",Gecode::IntSet(-2,2),3);
   Set d_4("Dense::4",Gecode::IntSet(-2,2),4);
-  Set s_3("Sparse::3",Gecode::IntSet(sparse,5),3);
-  Set s_4("Sparse::4",Gecode::IntSet(sparse,5),4);
+  Set s_3("Sparse::3",Gecode::IntSet(Gecode::IntArgs(5, -100,-10,0,10,100)),3);
+  Set s_4("Sparse::4",Gecode::IntSet(Gecode::IntArgs(5, -100,-10,0,10,100)),4);
 
 }}
 
