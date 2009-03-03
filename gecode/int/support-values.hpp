@@ -85,7 +85,7 @@ namespace Gecode { namespace Int {
   inline
   SupportValues<View,A>::~SupportValues(void) {
     a.free(bits,sz);
-    a.free(rp_fst,static_cast<unsigned int>(rp_lst-rp_fst+1));
+    a.free(rp_fst,rp_lst-rp_fst+1);
   }
 
   template<class View, class A>

@@ -282,9 +282,9 @@ namespace Gecode {
   class Actor;
   class Propagator;
   class Advisor;
-  template <class A> class Council;
-  template <class A> class Advisors;
-  template <class VIC> class VarImp;
+  template<class A> class Council;
+  template<class A> class Advisors;
+  template<class VIC> class VarImp;
 
 
   /*
@@ -321,7 +321,7 @@ namespace Gecode {
    * Controls disposal of variables.
    * \ingroup TaskVar
    */
-  template <class VarType>
+  template<class VarType>
   class VarDisposer : public VarDisposerBase {
   public:
     /// Constructor (registers disposer with kernel)
@@ -332,7 +332,7 @@ namespace Gecode {
 
   /// Generic domain change information to be supplied to advisors
   class Delta {
-    template <class VIC> friend class VarImp;
+    template<class VIC> friend class VarImp;
   private:
     /// Modification event
     ModEvent me;
@@ -348,11 +348,11 @@ namespace Gecode {
    * configuration of type \a VIC.
    * \ingroup TaskVar
    */
-  template <class VIC>
+  template<class VIC>
   class VarImp : public VarImpBase {
     friend class Space;
     friend class Propagator;
-    template <class VarType> friend class VarDisposer;
+    template<class VarType> friend class VarDisposer;
   private:
     /**
      * \brief Subscribed actors
@@ -659,7 +659,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Branching;
     friend class Space;
-    template <class VIC> friend class VarImp;
+    template<class VIC> friend class VarImp;
   private:
     ActorLink* _next; ActorLink* _prev;
   public:
@@ -681,9 +681,9 @@ namespace Gecode {
     /// Test whether actor link is empty (points to itself)
     bool empty(void) const;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
-    template <class T> static ActorLink* cast(T* a);
+    template<class T> static ActorLink* cast(T* a);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
-    template <class T> static const ActorLink* cast(const T* a);
+    template<class T> static const ActorLink* cast(const T* a);
   };
 
 
@@ -697,8 +697,8 @@ namespace Gecode {
     friend class Propagator;
     friend class Advisor;
     friend class Branching;
-    template <class VIC> friend class VarImp;
-    template <class A> friend class Council;
+    template<class VIC> friend class VarImp;
+    template<class A> friend class Council;
   private:
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Actor* cast(ActorLink* al);
@@ -799,13 +799,13 @@ namespace Gecode {
   class GECODE_VTABLE_EXPORT Propagator : public Actor {
     friend class ActorLink;
     friend class Space;
-    template <class VIC> friend class VarImp;
+    template<class VIC> friend class VarImp;
     friend ExecStatus ES_SUBSUMED(Propagator&, size_t);
     friend ExecStatus ES_SUBSUMED(Propagator&, Space&);
     friend ExecStatus ES_FIX_PARTIAL(Propagator&, const ModEventDelta&);
     friend ExecStatus ES_NOFIX_PARTIAL(Propagator&, const ModEventDelta&);
     friend class Advisor;
-    template <class A> friend class Council;
+    template<class A> friend class Council;
   private:
     union {
       /// A set of modification events (used during propagation)
@@ -896,7 +896,7 @@ namespace Gecode {
    * through a council.
    * \ingroup TaskActor
    */
-  template <class A>
+  template<class A>
   class Council {
     friend class Advisor;
     friend class Advisors<A>;
@@ -921,7 +921,7 @@ namespace Gecode {
    * \brief Class to iterate over advisors of a council
    * \ingroup TaskActor
    */
-  template <class A>
+  template<class A>
   class Advisors {
   private:
     /// The current advisor
@@ -949,7 +949,7 @@ namespace Gecode {
    *          returning from advise.
    * \ingroup TaskActorStatus
    */
-  template <class A>
+  template<class A>
   ExecStatus ES_SUBSUMED_FIX(A& a, Space& home, Council<A>& c);
   /**
    * \brief %Advisor \a a is subsumed
@@ -962,7 +962,7 @@ namespace Gecode {
    *          returning from advise.
    * \ingroup TaskActorStatus
    */
-  template <class A>
+  template<class A>
   ExecStatus ES_SUBSUMED_NOFIX(A& a, Space& home, Council<A>& c);
 
   /**
@@ -976,9 +976,9 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class Advisor : private ActorLink {
-    template <class VIC> friend class VarImp;
-    template <class A> friend class Council;
-    template <class A> friend class Advisors;
+    template<class VIC> friend class VarImp;
+    template<class A> friend class Council;
+    template<class A> friend class Advisors;
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
@@ -991,7 +991,7 @@ namespace Gecode {
     Propagator& propagator(void) const;
   public:
     /// Constructor for creation
-    template <class A>
+    template<class A>
     Advisor(Space& home, Propagator& p, Council<A>& c);
     /// Copying constructor
     Advisor(Space& home, bool share, Advisor& a);
@@ -999,7 +999,7 @@ namespace Gecode {
     /// \name Memory management
     //@{
     /// Dispose the advisor
-    template <class A>
+    template<class A>
     void dispose(Space& home, Council<A>& c);
     /// Allocate memory from space
     static void* operator new(size_t s, Space& home);
@@ -1177,8 +1177,8 @@ namespace Gecode {
     friend class Propagator;
     friend class Branching;
     friend class Advisor;
-    template <class VIC> friend class VarImp;
-    template <class VarType> friend class VarDisposer;
+    template<class VIC> friend class VarImp;
+    template<class VarType> friend class VarDisposer;
     friend class CopiedHandle;
     friend class Region;
   private:
@@ -1253,9 +1253,9 @@ namespace Gecode {
     /// Entries for disposing variables
     VarImpBase* _vars_d[AllVarConf::idx_d];
     /// Return reference to variables (dispose)
-    template <class VIC> VarImpBase* vars_d(void) const;
+    template<class VIC> VarImpBase* vars_d(void) const;
     /// Set reference to variables (dispose)
-    template <class VIC> void vars_d(VarImpBase* x);
+    template<class VIC> void vars_d(VarImpBase* x);
 #endif
     /// Update all cloned variables
     void update(ActorLink** sub);
@@ -1568,7 +1568,23 @@ namespace Gecode {
      * Note that this function implements C++ semantics: the default
      * constructor of \a T is run for all \a n objects.
      */
-    template <class T>
+    template<class T>
+    T* alloc(long unsigned int n);
+    /**
+     * \brief Allocate block of \a n objects of type \a T from space heap
+     *
+     * Note that this function implements C++ semantics: the default
+     * constructor of \a T is run for all \a n objects.
+     */
+    template<class T>
+    T* alloc(long int n);
+    /**
+     * \brief Allocate block of \a n objects of type \a T from space heap
+     *
+     * Note that this function implements C++ semantics: the default
+     * constructor of \a T is run for all \a n objects.
+     */
+    template<class T>
     T* alloc(unsigned int n);
     /**
      * \brief Allocate block of \a n objects of type \a T from space heap
@@ -1576,7 +1592,7 @@ namespace Gecode {
      * Note that this function implements C++ semantics: the default
      * constructor of \a T is run for all \a n objects.
      */
-    template <class T>
+    template<class T>
     T* alloc(int n);
     /**
      * \brief Delete \a n objects allocated from space heap starting at \a b
@@ -1587,7 +1603,29 @@ namespace Gecode {
      * Note that the memory is not freed, it is just scheduled for latter
      * reusal.
      */
-    template <class T>
+    template<class T>
+    void free(T* b, long unsigned int n);
+    /**
+     * \brief Delete \a n objects allocated from space heap starting at \a b
+     *
+     * Note that this function implements C++ semantics: the destructor
+     * of \a T is run for all \a n objects.
+     *
+     * Note that the memory is not freed, it is just scheduled for latter
+     * reusal.
+     */
+    template<class T>
+    void free(T* b, long int n);
+    /**
+     * \brief Delete \a n objects allocated from space heap starting at \a b
+     *
+     * Note that this function implements C++ semantics: the destructor
+     * of \a T is run for all \a n objects.
+     *
+     * Note that the memory is not freed, it is just scheduled for latter
+     * reusal.
+     */
+    template<class T>
     void free(T* b, unsigned int n);
     /**
      * \brief Delete \a n objects allocated from space heap starting at \a b
@@ -1598,7 +1636,7 @@ namespace Gecode {
      * Note that the memory is not freed, it is just scheduled for latter
      * reusal.
      */
-    template <class T>
+    template<class T>
     void free(T* b, int n);
     /**
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
@@ -1611,7 +1649,33 @@ namespace Gecode {
      *
      * Returns the address of the new block.
      */
-    template <class T>
+    template<class T>
+    T* realloc(T* b, long unsigned int n, long unsigned int m);
+    /**
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
+     *
+     * Note that this function implements C++ semantics: the copy constructor
+     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+     * constructor of \a T is run for all remaining
+     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+     * run for all \a n objects in \a b.
+     *
+     * Returns the address of the new block.
+     */
+    template<class T>
+    T* realloc(T* b, long int n, long int m);
+    /**
+     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
+     *
+     * Note that this function implements C++ semantics: the copy constructor
+     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+     * constructor of \a T is run for all remaining
+     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+     * run for all \a n objects in \a b.
+     *
+     * Returns the address of the new block.
+     */
+    template<class T>
     T* realloc(T* b, unsigned int n, unsigned int m);
     /**
      * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from the space heap
@@ -1624,7 +1688,7 @@ namespace Gecode {
      *
      * Returns the address of the new block.
      */
-    template <class T>
+    template<class T>
     T* realloc(T* b, int n, int m);
     /**
      * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from the space heap
@@ -1633,7 +1697,25 @@ namespace Gecode {
      *
      * This is a specialization for performance.
      */
-    template <class T>
+    template<class T>
+    T** realloc(T** b, long unsigned int n, long unsigned int m);
+    /**
+     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from the space heap
+     *
+     * Returns the address of the new block.
+     *
+     * This is a specialization for performance.
+     */
+    template<class T>
+    T** realloc(T** b, long int n, long int m);
+    /**
+     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from the space heap
+     *
+     * Returns the address of the new block.
+     *
+     * This is a specialization for performance.
+     */
+    template<class T>
     T** realloc(T** b, unsigned int n, unsigned int m);
     /**
      * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from the space heap
@@ -1642,7 +1724,7 @@ namespace Gecode {
      *
      * This is a specialization for performance.
      */
-    template <class T>
+    template<class T>
     T** realloc(T** b, int n, int m);
     /// Allocate memory on space heap
     void* ralloc(size_t s);
@@ -1651,13 +1733,13 @@ namespace Gecode {
     /// Reallocate memory block starting at \a b from size \a n to size \a s
     void* rrealloc(void* b, size_t n, size_t m);
     /// Allocate from freelist-managed memory
-    template <size_t> void* fl_alloc(void);
+    template<size_t> void* fl_alloc(void);
     /**
      * \brief Return freelist-managed memory to freelist
      *
      * The first list element to be retuned is \a f, the last is \a l.
      */
-    template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
+    template<size_t> void  fl_dispose(FreeList* f, FreeList* l);
     /**
      * \brief Return how much heap memory is allocated
      *
@@ -1818,12 +1900,12 @@ namespace Gecode {
     }
   }
 
-  template <size_t s>
+  template<size_t s>
   forceinline void*
   Space::fl_alloc(void) {
     return mm.template fl_alloc<s>();
   }
-  template <size_t s>
+  template<size_t s>
   forceinline void
   Space::fl_dispose(FreeList* f, FreeList* l) {
     mm.template fl_dispose<s>(f,l);
@@ -1841,43 +1923,65 @@ namespace Gecode {
    * Typed allocation routines
    *
    */
-  template <class T>
+  template<class T>
   forceinline T*
-  Space::alloc(unsigned int n) {
+  Space::alloc(long unsigned int n) {
     T* p = static_cast<T*>(ralloc(sizeof(T)*n));
-    for (unsigned int i=n; i--; )
+    for (long unsigned int i=n; i--; )
       (void) new (p+i) T();
     return p;
   }
-  template <class T>
+  template<class T>
+  forceinline T*
+  Space::alloc(long int n) {
+    assert(n >= 0);
+    return alloc<T>(static_cast<long unsigned int>(n));
+  }
+  template<class T>
+  forceinline T*
+  Space::alloc(unsigned int n) {
+    return alloc<T>(static_cast<long unsigned int>(n));
+  }
+  template<class T>
   forceinline T*
   Space::alloc(int n) {
     assert(n >= 0);
-    return alloc<T>(static_cast<unsigned int>(n));
+    return alloc<T>(static_cast<long unsigned int>(n));
   }
 
-  template <class T>
+  template<class T>
   forceinline void
-  Space::free(T* b, unsigned int n) {
-    for (unsigned int i=n; i--; )
+  Space::free(T* b, long unsigned int n) {
+    for (long unsigned int i=n; i--; )
       b[i].~T();
     rfree(b,n*sizeof(T));
   }
-  template <class T>
+  template<class T>
+  forceinline void
+  Space::free(T* b, long int n) {
+    assert(n >= 0);
+    free<T>(b,static_cast<long unsigned int>(n));
+  }
+  template<class T>
+  forceinline void
+  Space::free(T* b, unsigned int n) {
+    free<T>(b,static_cast<long unsigned int>(n));
+  }
+  template<class T>
   forceinline void
   Space::free(T* b, int n) {
     assert(n >= 0);
-    free<T>(b,static_cast<unsigned int>(n));
+    free<T>(b,static_cast<long unsigned int>(n));
   }
 
-  template <class T>
+  template<class T>
   forceinline T*
-  Space::realloc(T* b, unsigned int n, unsigned int m) {
+  Space::realloc(T* b, long unsigned int n, long unsigned int m) {
     if (n < m) {
       T* p = static_cast<T*>(ralloc(sizeof(T)*m));
-      for (unsigned int i=n; i--; )
+      for (long unsigned int i=n; i--; )
         (void) new (p+i) T(b[i]);
-      for (unsigned int i=n; i<m; i++)
+      for (long unsigned int i=n; i<m; i++)
         (void) new (p+i) T();
       free<T>(b,n);
       return p;
@@ -1886,26 +1990,52 @@ namespace Gecode {
       return b;
     }
   }
-  template <class T>
+  template<class T>
+  forceinline T*
+  Space::realloc(T* b, long int n, long int m) {
+    assert((n >= 0) && (m >= 0));
+    return realloc<T>(b,static_cast<long unsigned int>(n),
+                      static_cast<long unsigned int>(m));
+  }
+  template<class T>
+  forceinline T*
+  Space::realloc(T* b, unsigned int n, unsigned int m) {
+    return realloc<T>(b,static_cast<long unsigned int>(n),
+                      static_cast<long unsigned int>(m));
+  }
+  template<class T>
   forceinline T*
   Space::realloc(T* b, int n, int m) {
     assert((n >= 0) && (m >= 0));
-    return realloc<T>(b,static_cast<unsigned int>(n),
-                      static_cast<unsigned int>(m));
+    return realloc<T>(b,static_cast<long unsigned int>(n),
+                      static_cast<long unsigned int>(m));
   }
 
 #define GECODE_KERNEL_REALLOC(T)                                        \
-  template <>                                                           \
+  template<>                                                            \
   forceinline T*                                                        \
-  Space::realloc<T>(T* b, unsigned int n, unsigned int m) {             \
+  Space::realloc<T>(T* b, long unsigned int n, long unsigned int m) {   \
     return static_cast<T*>(rrealloc(b,n*sizeof(T),m*sizeof(T)));        \
   }                                                                     \
-  template <>                                                           \
+  template<>                                                            \
+  forceinline T*                                                        \
+  Space::realloc<T>(T* b, long int n, long int m) {                     \
+    assert((n >= 0) && (m >= 0));                                       \
+    return realloc<T>(b,static_cast<long unsigned int>(n),              \
+                      static_cast<long unsigned int>(m));               \
+  }                                                                     \
+  template<>                                                            \
+  forceinline T*                                                        \
+  Space::realloc<T>(T* b, unsigned int n, unsigned int m) {             \
+    return realloc<T>(b,static_cast<long unsigned int>(n),              \
+                      static_cast<long unsigned int>(m));               \
+  }                                                                     \
+  template<>                                                            \
   forceinline T*                                                        \
   Space::realloc<T>(T* b, int n, int m) {                               \
     assert((n >= 0) && (m >= 0));                                       \
-    return realloc<T>(b,static_cast<unsigned int>(n),                   \
-                      static_cast<unsigned int>(m));                    \
+    return realloc<T>(b,static_cast<long unsigned int>(n),              \
+                      static_cast<long unsigned int>(m));               \
   }
 
   GECODE_KERNEL_REALLOC(bool)
@@ -1922,27 +2052,40 @@ namespace Gecode {
 
 #undef GECODE_KERNEL_REALLOC
 
-  template <class T>
+  template<class T>
   forceinline T**
-  Space::realloc(T** b, unsigned int n, unsigned int m) {
+  Space::realloc(T** b, long unsigned int n, long unsigned int m) {
     return static_cast<T**>(rrealloc(b,n*sizeof(T),m*sizeof(T*)));
   }
-  template <class T>
+  template<class T>
+  forceinline T**
+  Space::realloc(T** b, long int n, long int m) {
+    assert((n >= 0) && (m >= 0));
+    return realloc<T*>(b,static_cast<long unsigned int>(n),
+                       static_cast<long unsigned int>(m));
+  }
+  template<class T>
+  forceinline T**
+  Space::realloc(T** b, unsigned int n, unsigned int m) {
+    return realloc<T*>(b,static_cast<long unsigned int>(n),
+                       static_cast<long unsigned int>(m));
+  }
+  template<class T>
   forceinline T**
   Space::realloc(T** b, int n, int m) {
     assert((n >= 0) && (m >= 0));
-    return realloc<T*>(b,static_cast<unsigned int>(n),
-                       static_cast<unsigned int>(m));
+    return realloc<T*>(b,static_cast<long unsigned int>(n),
+                       static_cast<long unsigned int>(m));
   }
 
 
 #ifdef GECODE_HAS_VAR_DISPOSE
-  template <class VIC>
+  template<class VIC>
   forceinline VarImpBase*
   Space::vars_d(void) const {
     return _vars_d[VIC::idx_d];
   }
-  template <class VIC>
+  template<class VIC>
   forceinline void
   Space::vars_d(VarImpBase* x) {
     _vars_d[VIC::idx_d] = x;
@@ -1959,13 +2102,13 @@ namespace Gecode {
     return home.ralloc(s);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::operator delete(void*) {}
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::operator delete(void*, Space&) {}
-  template <class VIC>
+  template<class VIC>
   forceinline void*
   VarImp<VIC>::operator new(size_t s, Space& home) {
     return home.ralloc(s);
@@ -2166,7 +2309,7 @@ namespace Gecode {
     return _next == this;
   }
 
-  template <class T>
+  template<class T>
   forceinline ActorLink*
   ActorLink::cast(T* a) {
     // Turning al into a reference is for gcc, assume is for MSVC
@@ -2175,7 +2318,7 @@ namespace Gecode {
     return static_cast<ActorLink*>(&t);
   }
 
-  template <class T>
+  template<class T>
   forceinline const ActorLink*
   ActorLink::cast(const T* a) {
     // Turning al into a reference is for gcc, assume is for MSVC
@@ -2425,7 +2568,7 @@ namespace Gecode {
    * Advisor
    *
    */
-  template <class A>
+  template<class A>
   forceinline
   Advisor::Advisor(Space&, Propagator& p, Council<A>& c) {
     // Store propagator and forwarding in prev()
@@ -2458,7 +2601,7 @@ namespace Gecode {
     return *Propagator::cast(ActorLink::prev());
   }
 
-  template <class A>
+  template<class A>
   forceinline void
   Advisor::dispose(Space&,Council<A>&) {
     assert(!disposed());
@@ -2469,14 +2612,14 @@ namespace Gecode {
       next(n->next());
   }
 
-  template <class A>
+  template<class A>
   forceinline ExecStatus
   ES_SUBSUMED_FIX(A& a, Space& home, Council<A>& c) {
     a.dispose(home,c);
     return ES_FIX;
   }
 
-  template <class A>
+  template<class A>
   forceinline ExecStatus
   ES_SUBSUMED_NOFIX(A& a, Space& home, Council<A>& c) {
     a.dispose(home,c);
@@ -2489,16 +2632,16 @@ namespace Gecode {
    * Advisor council
    *
    */
-  template <class A>
+  template<class A>
   forceinline
   Council<A>::Council(void) {}
 
-  template <class A>
+  template<class A>
   forceinline
   Council<A>::Council(Space&)
     : advisors(NULL) {}
 
-  template <class A>
+  template<class A>
   forceinline bool
   Council<A>::empty(void) const {
     ActorLink* a = advisors;
@@ -2508,7 +2651,7 @@ namespace Gecode {
     return a == NULL;
   }
 
-  template <class A>
+  template<class A>
   forceinline void
   Council<A>::update(Space& home, bool share, Council<A>& c) {
     // Skip all disposed advisors
@@ -2553,7 +2696,7 @@ namespace Gecode {
     }
   }
 
-  template <class A>
+  template<class A>
   forceinline void
   Council<A>::dispose(Space& home) {
     ActorLink* a = advisors;
@@ -2570,7 +2713,7 @@ namespace Gecode {
    * Advisor iterator
    *
    */
-  template <class A>
+  template<class A>
   forceinline
   Advisors<A>::Advisors(const Council<A>& c)
     : a(c.advisors) {
@@ -2578,13 +2721,13 @@ namespace Gecode {
       a = a->next();
   }
 
-  template <class A>
+  template<class A>
   forceinline bool
   Advisors<A>::operator ()(void) const {
     return a != NULL;
   }
 
-  template <class A>
+  template<class A>
   forceinline void
   Advisors<A>::operator ++(void) {
     do {
@@ -2592,7 +2735,7 @@ namespace Gecode {
     } while ((a != NULL) && static_cast<A*>(a)->disposed());
   }
 
-  template <class A>
+  template<class A>
   forceinline A&
   Advisors<A>::advisor(void) const {
     return *static_cast<A*>(a);
@@ -2634,35 +2777,35 @@ namespace Gecode {
    * Variable implementation
    *
    */
-  template <class VIC>
+  template<class VIC>
   forceinline ActorLink**
   VarImp<VIC>::actor(PropCond pc) {
     assert((pc >= 0)  && (pc < pc_max+2));
     return (pc == 0) ? base : base+u.idx[pc-1];
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline ActorLink**
   VarImp<VIC>::actorNonZero(PropCond pc) {
     assert((pc > 0)  && (pc < pc_max+2));
     return base+u.idx[pc-1];
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline unsigned int&
   VarImp<VIC>::idx(PropCond pc) {
     assert((pc > 0)  && (pc < pc_max+2));
     return u.idx[pc-1];
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline unsigned int
   VarImp<VIC>::idx(PropCond pc) const {
     assert((pc > 0)  && (pc < pc_max+2));
     return u.idx[pc-1];
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space&) {
     base = NULL; entries = 0;
@@ -2671,7 +2814,7 @@ namespace Gecode {
     free_and_bits = 0;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline
   VarImp<VIC>::VarImp(void) {
     base = NULL; entries = 0;
@@ -2680,60 +2823,60 @@ namespace Gecode {
     free_and_bits = 0;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline unsigned int
   VarImp<VIC>::degree(void) const {
     assert(!copied());
     return entries;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline unsigned int
   VarImp<VIC>::bits(void) const {
     return free_and_bits;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline unsigned int&
   VarImp<VIC>::bits(void) {
     return free_and_bits;
   }
 
 #ifdef GECODE_HAS_VAR_DISPOSE
-  template <class VIC>
+  template<class VIC>
   forceinline VarImp<VIC>*
   VarImp<VIC>::vars_d(Space& home) {
     return static_cast<VarImp<VIC>*>(home.vars_d<VIC>());
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::vars_d(Space& home, VarImp<VIC>* x) {
     home.vars_d<VIC>(x);
   }
 #endif
 
-  template <class VIC>
+  template<class VIC>
   forceinline bool
   VarImp<VIC>::copied(void) const {
     return Support::marked(base);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline VarImp<VIC>*
   VarImp<VIC>::forward(void) const {
     assert(copied());
     return reinterpret_cast<VarImp<VIC>*>(Support::unmark(base));
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline VarImp<VIC>*
   VarImp<VIC>::next(void) const {
     assert(copied());
     return u.next;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space& home, bool, VarImp<VIC>& x) {
     VarImpBase** reg;
@@ -2757,32 +2900,32 @@ namespace Gecode {
     x.u.next = static_cast<VarImp<VIC>*>(*reg); *reg = &x;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline ModEvent
   VarImp<VIC>::me(const ModEventDelta& med) {
     return static_cast<ModEvent>((med & VIC::med_mask) >> VIC::med_fst);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline ModEventDelta
   VarImp<VIC>::med(ModEvent me) {
     return static_cast<ModEventDelta>(me << VIC::med_fst);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline ModEvent
   VarImp<VIC>::me_combine(ModEvent me1, ModEvent me2) {
     return VIC::me_combine(me1,me2);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::schedule(Space& home, Propagator& p, ModEvent me) {
     if (VIC::med_update(p.u.med,me))
       home.enqueue(&p);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::schedule(Space& home, PropCond pc1, PropCond pc2, ModEvent me) {
     ActorLink** b = actor(pc1);
@@ -2791,7 +2934,7 @@ namespace Gecode {
       schedule(home,*Propagator::cast(*p),me);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::enter(Space& home, Propagator* p, PropCond pc) {
     assert(pc <= pc_max);
@@ -2824,7 +2967,7 @@ namespace Gecode {
 #endif
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::enter(Space& home, Advisor* a) {
     // Count one new subscription
@@ -2838,7 +2981,7 @@ namespace Gecode {
     *actorNonZero(pc_max+1) = a;
   }
 
-  template <class VIC>
+  template<class VIC>
   void
   VarImp<VIC>::resize(Space& home) {
     if (base == NULL) {
@@ -2865,7 +3008,7 @@ namespace Gecode {
     }
   }
 
-  template <class VIC>
+  template<class VIC>
   void
   VarImp<VIC>::subscribe(Space& home, Propagator& p, PropCond pc,
                          bool assigned, ModEvent me, bool schedule) {
@@ -2881,14 +3024,14 @@ namespace Gecode {
     }
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned) {
     if (!assigned)
       enter(home,&a);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::remove(Space& home, Propagator* p, PropCond pc) {
     assert(pc <= pc_max);
@@ -2919,7 +3062,7 @@ namespace Gecode {
     home.pc.p.n_sub -= 1;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::remove(Space& home, Advisor* a) {
     // Find actor in dependency array
@@ -2941,21 +3084,21 @@ namespace Gecode {
     home.pc.p.n_sub -= 1;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home, Propagator& p, PropCond pc, bool assigned) {
     if (!assigned)
       remove(home,&p,pc);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home, Advisor& a, bool assigned) {
     if (!assigned)
       remove(home,&a);
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home) {
     // Entries in index structure are disabled. However they
@@ -2968,7 +3111,7 @@ namespace Gecode {
     entries = 0;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline bool
   VarImp<VIC>::advise(Space& home, ModEvent me, Delta& d) {
     /*
@@ -3003,7 +3146,7 @@ namespace Gecode {
     return true;
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::update(VarImp<VIC>* x, ActorLink**& sub) {
     // this refers to the variable to be updated (clone)
@@ -3036,7 +3179,7 @@ namespace Gecode {
     }
   }
 
-  template <class VIC>
+  template<class VIC>
   forceinline void
   VarImp<VIC>::update(Space& home, ActorLink**& sub) {
     VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home.pc.c.vars_u[idx_c]);
@@ -3051,14 +3194,14 @@ namespace Gecode {
    * Variable disposer
    *
    */
-  template <class VarType>
+  template<class VarType>
   VarDisposer<VarType>::VarDisposer(void) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     Space::vd[VarType::idx_d] = this;
 #endif
   }
 
-  template <class VarType>
+  template<class VarType>
   void
   VarDisposer<VarType>::dispose(Space& home, VarImpBase* _x) {
     VarType* x = static_cast<VarType*>(_x);
