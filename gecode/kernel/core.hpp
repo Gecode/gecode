@@ -2989,6 +2989,8 @@ namespace Gecode {
       // Create fresh dependency array with four entries
       free_and_bits += 4 << free_bits;
       base = home.alloc<ActorLink*>(4);
+      for (int i=0; i<pc_max+1; i++)
+        u.idx[i] = 0;
     } else {
       // Resize dependency array
       unsigned int n = degree();
