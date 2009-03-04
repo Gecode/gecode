@@ -95,7 +95,7 @@ namespace Gecode { namespace Gist {
     page1->setLayout(layout);
     tabs->addTab(page1, "Drawing");
 
-    QLabel* cdlabel = new QLabel(tr("Copying distance:"));
+    QLabel* cdlabel = new QLabel(tr("Commit distance:"));
     cdBox  = new QSpinBox();
     cdBox->setRange(0, 10000);
     cdBox->setValue(c_d);
@@ -112,7 +112,7 @@ namespace Gecode { namespace Gist {
     adLayout->addWidget(adlabel);
     adLayout->addWidget(adBox);
     copiesCheck =
-      new QCheckBox(tr("Show copies in the tree"));
+      new QCheckBox(tr("Show clones in the tree"));
     copiesCheck->setChecked(copies);
     layout = new QVBoxLayout();
     layout->addLayout(cdLayout);
