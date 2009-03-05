@@ -67,7 +67,9 @@ namespace Gecode { namespace Gist {
     , zoomTimerId(0)
     , targetScrollX(0), targetScrollY(0)
     , metaScrollXCurrent(0.0), metaScrollYCurrent(0.0)
-    , scrollTimerId(0) {
+    , scrollTimerId(0)
+    , targetW(0), targetH(0), targetScale(0)
+    , layoutDoneTimerId(0) {
       QMutexLocker locker(&mutex);
       curBest = (bab ? new BestNode(NULL) : NULL);
       if (rootSpace->status() == SS_FAILED) {
@@ -162,17 +164,9 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::layoutDone(int w, int h, int scale0) {
-    if (!smoothScrollAndZoom) {
-      scaleTree(scale0);
-    } else {
-      metaZoomCurrent = static_cast<int>(scale*100);
-      targetZoom = scale0;
-      targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
-                            LayoutConfig::maxAutoZoomScale);
-      zoomTimerId = startTimer(15);
-    }
-    resize(w,h);
-    QWidget::update();
+    targetW = w; targetH = h; targetScale = scale0;
+    if (layoutDoneTimerId == 0)
+      layoutDoneTimerId = startTimer(15);
   }
 
   void
@@ -350,6 +344,20 @@ namespace Gecode { namespace Gist {
         killTimer(scrollTimerId);
         scrollTimerId = 0;
       }
+    } else if (e->timerId() == layoutDoneTimerId) {
+      if (!smoothScrollAndZoom) {
+        scaleTree(targetScale);
+      } else {
+        metaZoomCurrent = static_cast<int>(scale*100);
+        targetZoom = targetScale;
+        targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
+                              LayoutConfig::maxAutoZoomScale);
+        zoomTimerId = startTimer(15);
+      }
+      resize(targetW,targetH);
+      QWidget::update();
+      killTimer(layoutDoneTimerId);
+      layoutDoneTimerId = 0;
     }
   }
 
@@ -499,6 +507,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::stopSearch(void) {
     stopSearchFlag = true;
+    layoutDoneTimerId = startTimer(15);
   }
 
   void

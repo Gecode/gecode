@@ -294,6 +294,15 @@ namespace Gecode {  namespace Gist {
     /// Timer id for smooth scrolling
     int scrollTimerId;
 
+    /// Target width after layout
+    int targetW;
+    /// Target height after layout
+    int targetH;
+    /// Target scale after layout
+    int targetScale;
+    /// Timer id for delaying the update
+    int layoutDoneTimerId;
+
     /// Timer invoked for smooth zooming and scrolling
     virtual void timerEvent(QTimerEvent* e);
 
