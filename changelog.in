@@ -93,6 +93,14 @@ As the interfaces have changed considerably, please consult \ref
 PageHowToChange_3 "How to Change to Gecode 3.0.0".
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks:	Stefano Gualandi
+[DESCRIPTION]
+Fixed bug in creation of set variables.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   major
