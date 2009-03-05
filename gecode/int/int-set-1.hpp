@@ -122,13 +122,13 @@ namespace Gecode {
   forceinline int
   IntSet::min(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? 1 : o->r[0].min;
+    return (o == NULL) ? Int::Limits::max : o->r[0].min;
   }
 
   forceinline int
   IntSet::max(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? 0 : o->r[o->n-1].max;
+    return (o == NULL) ? Int::Limits::min : o->r[o->n-1].max;
   }
 
   forceinline unsigned int

@@ -57,63 +57,132 @@ namespace Test { namespace Set {
       void con(Space& home, int glbMin, int glbMax,
                      int lubMin, int lubMax,
                      unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card) {
+                     unsigned int maxCard = Gecode::Set::Limits::card,
+                     bool fail=true) {
+        bool ok = false;
         try {
           SetVar x(home, glbMin, glbMax, lubMin, lubMax, minCard, maxCard);
+          ok = true;
         } catch (Gecode::Set::VariableEmptyDomain&) {
+          if (!fail) {
+            home.fail();
+            return;
+          }
+          ok = true;
+        }
+
+        if (ok) {
           try {
             SetVarArray xs(home, 1,
                            glbMin, glbMax, lubMin, lubMax, minCard, maxCard);
           } catch (Gecode::Set::VariableEmptyDomain&) {
-            return;
+            if (!fail) {
+              home.fail();
+              return;
+            } else {
+              return;
+            }
+          }
+          if (fail) {
+            home.fail();
           }
         }
-        home.fail();
       }
       void con(Space& home, const IntSet& glb, int lubMin, int lubMax,
                      unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card) {
+                     unsigned int maxCard = Gecode::Set::Limits::card,
+                     bool fail=true) {
+        bool ok = false;
         try {
           SetVar x(home, glb, lubMin, lubMax, minCard, maxCard);
+          ok = true;
         } catch (Gecode::Set::VariableEmptyDomain&) {
+          if (!fail) {
+            home.fail();
+            return;
+          }
+          ok = true;
+        }
+        if (ok) {
           try {
             SetVarArray xs(home, 1,
                            glb, lubMin, lubMax, minCard, maxCard);
           } catch (Gecode::Set::VariableEmptyDomain&) {
-            return;
+            if (!fail) {
+              home.fail();
+              return;
+            } else {
+              return;
+            }
+          }
+          if (fail) {
+            home.fail();
           }
         }
-        home.fail();
       }
       void con(Space& home, int glbMin, int glbMax, const IntSet& lub,
                      unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card) {
+                     unsigned int maxCard = Gecode::Set::Limits::card,
+                     bool fail=true) {
+        bool ok = false;
         try {
           SetVar x(home, glbMin, glbMax, lub, minCard, maxCard);
+          ok = true;
         } catch (Gecode::Set::VariableEmptyDomain&) {
+          if (!fail) {
+            home.fail();
+            return;
+          }
+          ok = true;
+        }
+        if (ok) {
           try {
             SetVarArray xs(home, 1,
                            glbMin, glbMax, lub, minCard, maxCard);
           } catch (Gecode::Set::VariableEmptyDomain&) {
-            return;
+            if (!fail) {
+              home.fail();
+              return;
+            } else {
+              return;
+            }
+          }
+          if (fail) {
+            home.fail();
           }
         }
-        home.fail();
       }
       void con(Space& home, const IntSet& glb, const IntSet& lub,
                      unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card) {
+                     unsigned int maxCard = Gecode::Set::Limits::card,
+                     bool fail=true) {
+        bool ok = false;
         try {
           SetVar x(home, glb, lub, minCard, maxCard);
+          ok = true;
         } catch (Gecode::Set::VariableEmptyDomain&) {
+          if (!fail) {
+            home.fail();
+            return;
+          }
+          ok = true;
+        }
+        if (ok) {
           try {
             SetVarArray xs(home, 1,
                            glb, lub, minCard, maxCard);
           } catch (Gecode::Set::VariableEmptyDomain&) {
-            return;
+            if (!fail) {
+              home.fail();
+              return;
+            } else {
+              return;
+            }
+          }
+          if (fail) {
+            home.fail();
           }
         }
-        home.fail();
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray&, IntVarArray&) {
@@ -144,6 +213,8 @@ namespace Test { namespace Set {
         con(home, IntSet(1,4), 1,3);
         con(home, 1,4, IntSet(1,3));
         con(home, IntSet(1,4), IntSet(1,3));
+        
+        con(home, IntSet::empty, 2, 4, 0, 10, false);
       }
     };
     Construct _con;
