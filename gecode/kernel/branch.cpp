@@ -2,11 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Mikael Z. Lagerkvist <zayenz@gecode.org>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2008
- *     Mikael Z. Lagerkvist, 2008
+ *     Mikael Lagerkvist, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
