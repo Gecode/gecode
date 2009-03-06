@@ -815,6 +815,9 @@ namespace Gecode {
       /// A list of advisors (used during cloning)
       Gecode::ActorLink* advisors;
     } u;
+#ifdef GECODE_GROUPS
+    Group* group;
+#endif
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Propagator* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -1117,7 +1120,40 @@ namespace Gecode {
     //@}
   };
 
+#ifdef GECODE_GROUPS
 
+  /// Represents a group where a propagator can be scheduled
+  class GECODE_VTABLE_EXPORT Group {
+  public:
+    virtual void schedule(Space& home, Propagator& p, ModEvent me) = 0;
+  };
+
+  /// Set the group of a space
+  class SetSpaceGroup {
+    /// Space in which the Group is set
+    Space& home;
+    /// The old group used
+    Group* old_group;
+  public:
+    /// Set the group of \a home0 to \a new_group
+    SetSpaceGroup(Space& home0, Group* new_group);
+    /// Automatically called reset-function
+    ~SetSpaceGroup(void);
+  };
+
+  /// Set the group of a propagator
+  class SetPropagatorGroup {
+    /// Propagatorin which the Group is set
+    Propagator& prop;
+    /// The old group used
+    Group* old_group;
+  public:
+    /// Set the group of \a prop0 to \a new_group
+    SetPropagatorGroup(Propagator& prop0, Group* new_group);
+    /// Automatically called reset-function
+    ~SetPropagatorGroup(void);
+  };
+#endif
 
   /**
    * \brief %Space status
@@ -1208,6 +1244,9 @@ namespace Gecode {
      * If equal to &bl, no branching does exist.
      */
     Branching* b_commit;
+#ifdef GECODE_GROUPS
+    Group* group;
+#endif
     union {
       /// Data only available during propagation
       struct {
@@ -2328,6 +2367,28 @@ namespace Gecode {
   }
 
 
+#ifdef GECODE_GROUPS
+  /*
+   * Group
+   *
+   */
+  SetSpaceGroup::SetSpaceGroup(Space& home0, Group* new_group) 
+    : home(home0), old_group(home->group) {
+    home->group = new_group;
+  }
+  SetSpaceGroup::~SetSpaceGroup(void) {
+    home->group = old_group;
+  }
+
+  SetPropagatorGroup::SetPropagatorGroup(Propagator& prop0, Group* new_group) 
+    : prop(prop0), old_group(prop->group) {
+    prop->group = new_group;
+  }
+  SetPropagatorGroup::~SetPropagatorGroup(void) {
+    prop->group = old_group;
+  }
+#endif
+
   /*
    * Actor
    *
@@ -2921,8 +2982,17 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::schedule(Space& home, Propagator& p, ModEvent me) {
+#ifdef GECODE_GROUPS
+    if (__builtin_expect(p.group == NULL, 1)) {
+      if (VIC::med_update(p.u.med,me))
+        home.enqueue(&p);
+    } else {
+      home.group->schedule(home, p, me);
+    }
+#else
     if (VIC::med_update(p.u.med,me))
       home.enqueue(&p);
+#endif
   }
 
   template<class VIC>
