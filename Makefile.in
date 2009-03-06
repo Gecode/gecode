@@ -642,9 +642,11 @@ endif
 PDBS = $(ALLLIB:%$(LIBSUFFIX)=%$(PDBSUFFIX))
 
 ifeq "@INSTALLLIBS@" "yes"
-LIBLIBTARGETS = $(ALLLIB) $(PDBS)
+LIBLIBTARGETS = $(ALLLIB)
+PDBTARGETS = $(PDBS)
 else
 LIBLIBTARGETS =
+PDBTARGETS =
 endif
 
 #
@@ -1277,7 +1279,7 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 doinstalllib: 
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
 	mkdir -p $(DESTDIR)$(libdir) && \
-	for_libtargets="$(LIBTARGETS)" && \
+	for_libtargets="$(LIBTARGETS) $(PDBTARGETS)" && \
 	  for f in $$for_libtargets; do \
 	    cp $$f $(DESTDIR)$(sharedlibdir); done && \
 	for_liblinktargets="$(LIBLINKTARGETS)" && \
