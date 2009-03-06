@@ -1011,7 +1011,7 @@ AC_DEFUN([AC_GECODE_QT],
         dnl use qmake to find the Qt installation
         ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
         cd ${ac_gecode_qt_tmpdir}
-        echo "QT += script" > a.pro
+        touch a.pro
         qmake
         if test -d a.xcodeproj; then
           ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
@@ -1028,7 +1028,7 @@ AC_DEFUN([AC_GECODE_QT],
         ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
         ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
         if test -d a.xcodeproj; then
-          ac_gecode_qt_libs="-framework QtScript -framework QtGui -framework QtCore"
+          ac_gecode_qt_libs="-framework QtGui -framework QtCore"
         fi
         cd ..
         rm -r ${ac_gecode_qt_tmpdir}
