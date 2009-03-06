@@ -128,9 +128,6 @@ AC_GECODE_LEAK_DEBUG
 dnl check whether we want audit code in our build
 AC_GECODE_AUDIT
 
-dnl check whether we want groups in our build
-AC_GECODE_GROUPS
-
 dnl check whether we want to produce code suitable for profiling
 AC_GECODE_PROFILE
 

@@ -494,19 +494,6 @@ AC_DEFUN([AC_GECODE_AUDIT],
 	    AC_MSG_RESULT(no)
 	 fi])
 
-AC_DEFUN([AC_GECODE_GROUPS],
-	[AC_ARG_ENABLE([groups],
-	   AC_HELP_STRING([--enable-groups],
-	     [build with groups @<:@default=no@:>@]))
-	 AC_MSG_CHECKING(whether to build with groups)
-	 if test "${enable_groups:-no}" = "yes"; then
-	    AC_DEFINE([GECODE_GROUPS],[],
-	              [Whether to include groups])
-	    AC_MSG_RESULT(yes)
-	 else
-	    AC_MSG_RESULT(no)
-	 fi])
-
 
 AC_DEFUN([AC_GECODE_PROFILE],
 	 [AC_ARG_ENABLE([profile],
