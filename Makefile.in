@@ -148,7 +148,7 @@ export SUPPORTSONAME     =
 endif
 export SUPPORTSTATICLIB	= $(LIBPREFIX)@SUPPORT@$(STATICLIBSUFFIX)
 export LINKSUPPORT      = \
-	$(LINKPREFIX)@SUPPORT@$(LINKSUFFIX) -L/Users/tack/Programming/tools/lib -ltcmalloc
+	$(LINKPREFIX)@SUPPORT@$(LINKSUFFIX)
 SUPPORTBUILDDIRS = support
 
 
