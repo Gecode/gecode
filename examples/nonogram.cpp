@@ -77,24 +77,15 @@ protected:
     return spec[1];
   }
 
-  /// Access position (h,w) in matrix
-  BoolVar pos(int h, int w) {
-    return b[h*width() + w];
-  }
-  /// Access position (h,w) in matrix
-  const BoolVar pos(int h, int w) const {
-    return b[h*width() + w];
-  }
-
   /// Returns next regular expression for line starting from spos
   DFA line(int& spos) {
     REG r0(0), r1(1);
     REG border = *r0;
     REG between = +r0;
-    int size = spec[spos++];
+    int hints = spec[spos++];
     REG r = border + r1(spec[spos],spec[spos]);
     spos++;
-    for (int i=size-1; i--; spos++)
+    for (int i=hints-1; i--; spos++)
       r += between + r1(spec[spos],spec[spos]);
     return r + border;
   }
@@ -104,19 +95,50 @@ public:
   /// Construction of the model.
   Nonogram(const SizeOptions& opt)
     : spec(specs[opt.size()]), b(*this,width()*height(),0,1) {
-    int spos = 2;
     Matrix<BoolVarArray> m(b, width(), height());
 
-    // Post constraints for columns
-    for (int w = 0; w < width(); ++w)
-      extensional(*this, m.col(w), line(spos));
+    {
+      int spos = 2;
+      // Post constraints for columns
+      for (int w=0; w<width(); w++)
+        extensional(*this, m.col(w), line(spos));
+      // Post constraints for rows
+      for (int h=0; h<height(); h++)
+        extensional(*this, m.row(h), line(spos));
+    }
 
-    // Post constraints for rows
-    for (int h = 0; h < height(); ++h)
-      extensional(*this, m.row(h), line(spos));
+    // Number of hints for columns
+    int cols = 0;
+    // Number of hints for rows
+    int rows = 0;
+    // Compute number of hints
+    {
+      int spos = 2;
+      for (int w=0; w<width(); w++) {
+        int hint = spec[spos++];
+        cols += hint; spos += hint;
+      }
+      for (int h=0; h<height(); h++) {
+        int hint = spec[spos++];
+        rows += hint; spos += hint;
+      }
+    }
 
-    // Install branchings
-    branch(*this, b, INT_VAR_NONE, INT_VAL_MAX);
+    /*
+     * The following branches either by columns or rows, depending on
+     * whether there are more hints relative to the height or width
+     * for columns or rows.
+     *
+     * This idea is due to Pascal Van Hentenryck and has been suggested
+     * to use by Håkan Kjellerstrand.
+     */
+    if (rows*width() > cols*height()) {
+      for (int w=0; w<width(); w++)
+        branch(*this, m.col(w), INT_VAR_NONE, INT_VAL_MAX);
+    } else {
+      for (int h=0; h<height(); h++)
+        branch(*this, m.row(h), INT_VAR_NONE, INT_VAL_MAX);
+    }
   }
 
   /// Constructor for cloning \a s
@@ -133,10 +155,11 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
+    Matrix<BoolVarArray> m(b, width(), height());
     for (int h = 0; h < height(); ++h) {
       os << '\t';
       for (int w = 0; w < width(); ++w)
-        os << ((pos(h,w).val() == 1) ? '#' : ' ');
+        os << ((m(w,h).val() == 1) ? '#' : ' ');
       os << std::endl;
     }
     os << std::endl;

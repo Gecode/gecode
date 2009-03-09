@@ -93,6 +93,14 @@ As the interfaces have changed considerably, please consult \ref
 PageHowToChange_3 "How to Change to Gecode 3.0.0".
 
 [ENTRY]
+Module: example
+What:   performance
+Rank:   minor
+Thanks:	Håkan Kjellerstrand
+[DESCRIPTION]
+Improved branching for Nonogram examples.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
