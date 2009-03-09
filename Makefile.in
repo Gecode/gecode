@@ -422,40 +422,6 @@ endif
 MMBUILDDIRS	= minimodel
 
 #
-# SCHEDULING COMPONENTS
-#
-
-SCHEDSRC0 = \
-	unary.cpp
-SCHEDHDR0 = \
-	exception.hpp \
-	imp/schedule.hpp imp/resource.hpp imp/task.hpp
-
-SCHEDSRC 	= $(SCHEDSRC0:%=gecode/scheduling/%)
-SCHEDHDR 	= gecode/scheduling.hh $(SCHEDHDR0:%=gecode/scheduling/%)
-SCHEDOBJ	= $(SCHEDSRC:%.cpp=%$(OBJSUFFIX))
-SCHEDSBJ	= $(SCHEDSRC:%.cpp=%$(SBJSUFFIX))
-
-ifeq "@enable_scheduling@" "yes"
-export SCHEDDLL		= $(LIBPREFIX)@SCHED@$(DLLSUFFIX)
-export SCHEDSTATICLIB	= $(LIBPREFIX)@SCHED@$(STATICLIBSUFFIX)
-export SCHEDLIB		= $(LIBPREFIX)@SCHED@$(LIBSUFFIX)
-export LINKSCHED      	= $(LINKPREFIX)@SCHED@$(LINKSUFFIX)
-ifeq "@need_soname@" "yes"
-export SCHEDSONAME     = \
-	@WLSONAME@$(LIBPREFIX)@SCHED@$(SOSUFFIX)
-else
-export SCHEDSONAME     = 
-endif
-else
-export SCHEDDLL		=
-export SCHEDSTATICLIB	=
-export SCHEDLIB		=
-export LINKSCHED      	=
-endif
-SCHEDBUILDDIRS	= scheduling
-
-#
 # ITERATOR HEADERS
 #
 ITERHDR0 =							\
@@ -590,12 +556,12 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(MMSRC) $(SCHEDSRC) \
+        $(INTSRC) $(SETSRC) $(MMSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(MMHDR) $(SCHEDHDR) \
+        $(INTHDR) $(SETHDR) $(MMHDR) \
 	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
@@ -606,16 +572,16 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(MMDLL) $(SCHEDDLL) $(GISTDLL)
+	$(MMDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(MMLIB) $(SCHEDLIB) $(GISTLIB)
+	$(MMLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(SCHEDSTATICLIB) \
+	$(MMSTATICLIB) \
 	$(GISTSTATICLIB)
 endif
 
@@ -623,7 +589,7 @@ ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(SCHEDSTATICLIB) \
+	$(MMSTATICLIB) \
 	$(GISTSTATICLIB)
 else
 STATICTARGETS=
@@ -703,7 +669,6 @@ BUILDDIRS = \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
-	$(SCHEDBUILDDIRS:%=gecode/%) \
 	$(GISTBUILDDIRS:%=gecode/%) \
 	$(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
@@ -867,13 +832,6 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/scheduling/%$(OBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
@@ -915,7 +873,7 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
-	$(LINKGIST) $(LINKSEARCH) $(LINKMM) $(LINKSCHED) \
+	$(LINKGIST) $(LINKSEARCH) $(LINKMM) \
 	$(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
@@ -953,12 +911,6 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SCHEDDLL): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(SCHEDOBJ) $(SCHEDSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		@LINKOUTPUT@$(SCHEDDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
@@ -985,9 +937,6 @@ $(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
-$(SCHEDDLL) $(SCHEDLIB): $(SCHEDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(SCHEDOBJ) \
-		@DLLPATH@ @LINKOUTPUT@$(SCHEDDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKQT) \
@@ -1015,9 +964,6 @@ $(SETSTATICLIB): $(SETOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)
-	$(RANLIB) $@
-$(SCHEDSTATICLIB): $(SCHEDOBJ)
-	$(AR) $(ARFLAGS) $@ $(SCHEDOBJ)
 	$(RANLIB) $@
 $(GISTSTATICLIB): $(GISTOBJ)
 	$(AR) $(ARFLAGS) $@ $(GISTOBJ)
@@ -1090,7 +1036,7 @@ DIST_FILES= \
 	install-sh \
 	misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
-	misc/gecode-gist.pc.in misc/gecode-scheduling.pc.in \
+	misc/gecode-gist.pc.in \
 	gecode/support/config.hpp.in \
 	variables.vsl \
 	gecode/int/var-imp/int.vis \
@@ -1228,12 +1174,6 @@ doc-apple: doc
 # Installation
 #
 
-ifeq "@enable_scheduling@" "yes"
-SCHED_PKGCONFIGFILE = gecode-scheduling.pc
-else
-SCHED_PKGCONFIGFILE = 
-endif
-
 ifeq "@enable_gist@" "yes"
 GIST_PKGCONFIGFILE = gecode-gist.pc
 else
@@ -1243,8 +1183,7 @@ endif
 ifeq "@HAS_PKGCONFIG@" "yes"
 PKGCONFIGFILES = \
 	gecode.pc gecode-search.pc gecode-minimodel.pc \
-	$(GIST_PKGCONFIGFILE) \
-	$(SCHED_PKGCONFIGFILE)
+	$(GIST_PKGCONFIGFILE)
 else
 PKGCONFIGFILES =
 endif

@@ -648,7 +648,6 @@ VERSION
 PKG_CONFIG_CXXFLAGS
 subdirs
 enable_search
-enable_scheduling
 enable_minimodel
 enable_examples
 enable_gist
@@ -668,7 +667,6 @@ ENABLEDOCSEARCH
 GECODE_DOXYGEN_DOT
 DOT
 GIST
-SCHED
 MM
 SET
 INT
@@ -693,7 +691,6 @@ LIBPREFIX
 LIBEXT
 SBJEXT
 GECODE_BUILD_GIST_FLAG
-GECODE_BUILD_SCHEDULING_FLAG
 GECODE_BUILD_MINIMODEL_FLAG
 GECODE_BUILD_SET_FLAG
 GECODE_BUILD_INT_FLAG
@@ -805,7 +802,6 @@ enable_qt
 enable_gist
 enable_examples
 enable_minimodel
-enable_scheduling
 enable_search
 '
       ac_precious_vars='build_alias
@@ -1468,7 +1464,6 @@ Optional Features:
                           [default=yes]
   --enable-minimodel      build modeling support library for the enabled
                           variable types [default=yes]
-  --enable-scheduling     build scheduling library [default=no]
   --enable-search         build search engines [default=yes]
 
 Optional Packages:
@@ -7056,8 +7051,6 @@ gnu)
 
    GECODE_BUILD_MINIMODEL_FLAG=""
 
-   GECODE_BUILD_SCHEDULING_FLAG=""
-
    GECODE_BUILD_GIST_FLAG=""
 
        ;;
@@ -7098,8 +7091,6 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
        ;;
@@ -7128,8 +7119,6 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
    GECODE_BUILD_SET_FLAG=""
 
    GECODE_BUILD_MINIMODEL_FLAG=""
-
-   GECODE_BUILD_SCHEDULING_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
 
@@ -8161,8 +8150,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   SET="set"
 
   MM="minimodel"
-
-  SCHED="scheduling"
 
   GIST="gist"
 
@@ -9479,8 +9466,6 @@ $as_echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
 
@@ -9514,8 +9499,6 @@ $as_echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
   SET="Set"
 
   MM="Minimodel"
-
-  SCHED="Scheduling"
 
   GIST="Gist"
 
@@ -9658,8 +9641,6 @@ $as_echo "no" >&6; }
 
    GECODE_BUILD_MINIMODEL_FLAG=""
 
-   GECODE_BUILD_SCHEDULING_FLAG=""
-
    GECODE_BUILD_GIST_FLAG=""
 
        ;;
@@ -9700,8 +9681,6 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
        ;;
@@ -9730,8 +9709,6 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
    GECODE_BUILD_SET_FLAG=""
 
    GECODE_BUILD_MINIMODEL_FLAG=""
-
-   GECODE_BUILD_SCHEDULING_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
 
@@ -10764,8 +10741,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   MM="minimodel"
 
-  SCHED="scheduling"
-
   GIST="gist"
 
 
@@ -11674,8 +11649,6 @@ $as_echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
 
@@ -11709,8 +11682,6 @@ $as_echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
   SET="Set"
 
   MM="Minimodel"
-
-  SCHED="Scheduling"
 
   GIST="Gist"
 
@@ -12182,7 +12153,7 @@ _ACEOF
 
                 ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
         cd ${ac_gecode_qt_tmpdir}
-        echo "QT += script" > a.pro
+        touch a.pro
         qmake
         if test -d a.xcodeproj; then
           ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
@@ -12199,7 +12170,7 @@ _ACEOF
         ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
         ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
         if test -d a.xcodeproj; then
-          ac_gecode_qt_libs="-framework QtScript -framework QtGui -framework QtCore"
+          ac_gecode_qt_libs="-framework QtGui -framework QtCore"
         fi
         cd ..
         rm -r ${ac_gecode_qt_tmpdir}
@@ -12290,31 +12261,6 @@ $as_echo "yes" >&6; }
 $as_echo "no" >&6; }
 	 fi
    	 enable_minimodel=${enable_minimodel}
-
-
-
-     # Check whether --enable-scheduling was given.
-if test "${enable_scheduling+set}" = set; then
-  enableval=$enable_scheduling;
-fi
-
-	 { $as_echo "$as_me:$LINENO: checking whether to build scheduling" >&5
-$as_echo_n "checking whether to build scheduling... " >&6; }
-	 if test "${enable_scheduling:-no}" = "yes"; then
-	    enable_scheduling="yes";
-	    { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
-
-cat >>confdefs.h <<\_ACEOF
-#define GECODE_HAS_SCHEDULING /**/
-_ACEOF
-
-	 else
-	    enable_scheduling="no";
-	    { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
-	 fi
-   	 enable_scheduling=${enable_scheduling}
 
 
 
@@ -12412,8 +12358,6 @@ ac_config_files="$ac_config_files misc/gecode.pc"
 ac_config_files="$ac_config_files misc/gecode-search.pc"
 
 ac_config_files="$ac_config_files misc/gecode-minimodel.pc"
-
-ac_config_files="$ac_config_files misc/gecode-scheduling.pc"
 
 ac_config_files="$ac_config_files misc/gecode-gist.pc"
 
@@ -13017,7 +12961,6 @@ do
     "misc/gecode.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode.pc" ;;
     "misc/gecode-search.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-search.pc" ;;
     "misc/gecode-minimodel.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-minimodel.pc" ;;
-    "misc/gecode-scheduling.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-scheduling.pc" ;;
     "misc/gecode-gist.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-gist.pc" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
