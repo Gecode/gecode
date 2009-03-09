@@ -130,7 +130,7 @@ public:
      * for columns or rows.
      *
      * This idea is due to Pascal Van Hentenryck and has been suggested
-     * to use by Håkan Kjellerstrand.
+     * to us by Hakan Kjellerstrand.
      */
     if (rows*width() > cols*height()) {
       for (int w=0; w<width(); w++)
