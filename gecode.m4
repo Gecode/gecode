@@ -752,7 +752,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     AC_SUBST(MANIFEST, "@true")
   else
     AC_MSG_RESULT(yes)
-    AC_SUBST(MANIFEST, ${MANIFEST})
+    AC_SUBST(MANIFEST, ["mt -nologo"])
   fi
 
   AC_SUBST(DLLPATH, "")
