@@ -565,6 +565,9 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
   AC_SUBST(docdir, "${datadir}/doc/gecode")
 
+  dnl do not use manifest tool with gcc
+  AC_SUBST(MANIFEST, "@true")
+
   dnl file extensions
   AC_SUBST(SBJEXT, "s")
   AC_SUBST(LIBEXT, "${DLLEXT}")
@@ -740,6 +743,16 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(docdir, "${prefix}")
   if test "${enable_static:-no}" = "yes"; then
     AC_MSG_ERROR([Static linking not supported for Windows/cl.])
+  fi
+
+  AC_CHECK_PROG(MANIFEST, mt.exe, [found])
+  AC_MSG_CHECKING(whether manifest tool is available)
+  if test "${MANIFEST}x" = "x"; then
+    AC_MSG_RESULT(no)
+    AC_SUBST(MANIFEST, "@true")
+  else
+    AC_MSG_RESULT(yes)
+    AC_SUBST(MANIFEST, ${MANIFEST})
   fi
 
   AC_SUBST(DLLPATH, "")
