@@ -936,8 +936,6 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - <code>distdir</code> creates a source distribution in a directory, not 
  *    including the contributions found in the <code>contribs</code> directory
  *  - <code>distdoc</code> creates tgz and zip archives of the documentation
- *  - <code>distzip</code> creates a binary distribution as a zip archive
- *  - <code>disttgz</code> creates a binary distribution as a tgz archive
  *
  * \section CompileGist Compilation with Gist
  *
