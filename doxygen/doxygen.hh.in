@@ -964,7 +964,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
 
 
 /**
- * \page PageHowToChange_2 How to Change from %Gecode 1.3.1 to %Gecode 2.0.x
+ * \page PageHowToChange_2 How to Change from Gecode 1.3.1 to Gecode 2.0.x
  *
 
 As %Gecode 2.0.0 is a major revision of %Gecode, your programs that are written
@@ -1034,10 +1034,10 @@ Windows). You have to link against this library now.
 */
 
 /**
- * \page PageHowToChange_3 How to Change from %Gecode 2.2.2 to %Gecode 3.0.0
+ * \page PageHowToChange_3 How to Change from Gecode 2.2.2 to Gecode 3.0.0
  *
 
-As %Gecode 3.0.0 is a major revision of %Gecode, your programs that
+As %Gecode 3.0.0 is a major revision, your programs that
 are written for %Gecode 2.2.2 are likely to require some
 modifications before they work again. All modifications are
 straightforward, though.
