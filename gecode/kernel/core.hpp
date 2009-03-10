@@ -1065,16 +1065,8 @@ namespace Gecode {
     friend class Space;
     friend class BranchingDesc;
   private:
-    /// Unique identity and whether branching is already exhausted
-    unsigned int _id_exhausted;
-    /// Whether the branching is exhausted (cannot create any more descriptions)
-    bool exhausted(void) const;
-    /// Set whether the branching is exhausted
-    void exhausted(bool p);
-    /// Return branching id
-    unsigned int id(void) const;
-    /// Set branching id to \a i
-    void id(unsigned int i);
+    /// Unique identity
+    unsigned int _id;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Branching* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -1084,7 +1076,6 @@ namespace Gecode {
     Branching(Space& home);
     /// Constructor for cloning \a b
     Branching(Space& home, bool share, Branching& b);
-
   public:
     /// \name Branching
     //@{
@@ -1114,6 +1105,8 @@ namespace Gecode {
      */
     virtual ExecStatus commit(Space& home, const BranchingDesc& d,
                               unsigned int a) = 0;
+    /// Return unsigned branching id
+    unsigned int id(void) const;
     //@}
   };
 
@@ -2484,35 +2477,11 @@ namespace Gecode {
     return static_cast<const Branching*>(&t);
   }
 
-  forceinline bool
-  Branching::exhausted(void) const {
-    return (_id_exhausted & 1) != 0;
-  }
-  forceinline void
-  Branching::exhausted(bool p) {
-    if (p) {
-      _id_exhausted |= 1U;
-    } else {
-      _id_exhausted &= ~1U;
-    }
-  }
-
-  forceinline unsigned int
-  Branching::id(void) const {
-    return _id_exhausted >> 1;
-  }
-  forceinline void
-  Branching::id(unsigned int i) {
-    _id_exhausted = (i << 1) | (_id_exhausted & 1U);
-  }
-
   forceinline
-  Branching::Branching(Space& home) {
-    id(home.pc.p.branch_id++); 
-    if ((home.pc.p.branch_id << 1) == 0U)
+  Branching::Branching(Space& home) :
+    _id(home.pc.p.branch_id++) {
+    if (home.pc.p.branch_id == 0U)
       throw TooManyBranchings("Branching::Branching");
-    // Branching might have choices left
-    exhausted(false);
     // If no branching available, make it the first one
     if (home.b_status == &home.bl) {
       home.b_status = this;
@@ -2524,9 +2493,14 @@ namespace Gecode {
 
   forceinline
   Branching::Branching(Space&, bool, Branching& b)
-    : _id_exhausted(b._id_exhausted) {
+    : _id(b._id) {
     // Set forwarding pointer
     b.prev(this);
+  }
+
+  forceinline unsigned int
+  Branching::id(void) const {
+    return _id;
   }
 
 

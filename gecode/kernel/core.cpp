@@ -261,8 +261,9 @@ namespace Gecode {
      *
      * The same situation may arise due to weakly monotonic propagators.
      *
-     * A branching reporting that no more alternatives exist is marked
-     * as exhausted. Only when it is known that no more branching descriptions
+     * A branching reporting that no more alternatives exist is exhausted.
+     * All exhausted branchings will be left of the current pointer b_status.
+     * Only when it is known that no more branching descriptions
      * can be used for commit an exhausted branching can actually be deleted.
      * This becomes known when description is called.
      */
@@ -272,7 +273,6 @@ namespace Gecode {
         s = SS_BRANCH; goto exit;
       } else {
         // Branching is exhausted
-        b_status->exhausted(true);
         b_status = Branching::cast(b_status->next());
       }
     // No branching with alternatives left, space is solved
@@ -309,11 +309,9 @@ namespace Gecode {
     while (b != b_status) {
       Branching* d = b;
       b = Branching::cast(b->next());
-      assert(d->exhausted());
       d->unlink();
       rfree(d,d->dispose(*this));
     }
-    assert((b == b_status) && !b->exhausted());
     // Make sure that b_commit does not point to a deleted branching!
     b_commit = b_status;
     return b_status->description(*this);
