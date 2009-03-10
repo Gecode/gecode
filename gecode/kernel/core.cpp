@@ -261,24 +261,20 @@ namespace Gecode {
      *
      * The same situation may arise due to weakly monotonic propagators.
      *
-     * A branching reporting that no more alternatives exist is
-     * deleted when it has no more pending descriptions. The problem
-     * is that the last branching in a solution will never be deleted!
+     * A branching reporting that no more alternatives exist is marked
+     * as exhausted. Only when it is known that no more branching descriptions
+     * can be used for commit an exhausted branching can actually be deleted.
+     * This becomes known when description is called.
      */
-    while (b_status != Branching::cast(&bl)) {
+    while (b_status != Branching::cast(&bl))
       if (b_status->status(*this)) {
+        // Branching still has choices to generate
         s = SS_BRANCH; goto exit;
+      } else {
+        // Branching is exhausted
+        b_status->exhausted(true);
+        b_status = Branching::cast(b_status->next());
       }
-      Branching* b = b_status;
-      b_status = Branching::cast(b_status->next());
-      if (!b->pending()) {
-        // There are no pending descriptions, so the branching can be deleted
-        if (b == b_commit)
-          b_commit = b_status;
-        b->unlink();
-        rfree(b,b->dispose(*this));
-      }
-    }
     // No branching with alternatives left, space is solved
     s = SS_SOLVED;
   exit:
@@ -306,21 +302,20 @@ namespace Gecode {
       return NULL;
     }
     /*
-     * Mark all but the current branching as not pending
-     * 
      * The call to description() says that no older branching descriptions 
-     * can be used.
+     * can be used. Hence, all branchings that are exhausted can be deleted.
      */
     Branching* b = Branching::cast(bl.next());
     while (b != b_status) {
-      b->pending(false); b = Branching::cast(b->next());
+      Branching* d = b;
+      b = Branching::cast(b->next());
+      assert(d->exhausted());
+      d->unlink();
+      rfree(d,d->dispose(*this));
     }
-    assert(b == b_status);
-    b->pending(true);
-    b = Branching::cast(b->next());
-    while (b != Branching::cast(&bl)) {
-      b->pending(false); b = Branching::cast(b->next());
-    }
+    assert((b == b_status) && !b->exhausted());
+    // Make sure that b_commit does not point to a deleted branching!
+    b_commit = b_status;
     return b_status->description(*this);
   }
 

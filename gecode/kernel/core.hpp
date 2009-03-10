@@ -1065,12 +1065,12 @@ namespace Gecode {
     friend class Space;
     friend class BranchingDesc;
   private:
-    /// Unique identity and whether branching might have outstanding description
-    unsigned int _id_pending;
-    /// Whether the branching might have outstanding descriptions
-    bool pending(void) const;
-    /// Set whether the branching might have outstanding descriptions
-    void pending(bool p);
+    /// Unique identity and whether branching is already exhausted
+    unsigned int _id_exhausted;
+    /// Whether the branching is exhausted (cannot create any more descriptions)
+    bool exhausted(void) const;
+    /// Set whether the branching is exhausted
+    void exhausted(bool p);
     /// Return branching id
     unsigned int id(void) const;
     /// Set branching id to \a i
@@ -2485,25 +2485,25 @@ namespace Gecode {
   }
 
   forceinline bool
-  Branching::pending(void) const {
-    return (_id_pending & 1) != 0;
+  Branching::exhausted(void) const {
+    return (_id_exhausted & 1) != 0;
   }
   forceinline void
-  Branching::pending(bool p) {
+  Branching::exhausted(bool p) {
     if (p) {
-      _id_pending |= 1U;
+      _id_exhausted |= 1U;
     } else {
-      _id_pending &= ~1U;
+      _id_exhausted &= ~1U;
     }
   }
 
   forceinline unsigned int
   Branching::id(void) const {
-    return _id_pending >> 1;
+    return _id_exhausted >> 1;
   }
   forceinline void
   Branching::id(unsigned int i) {
-    _id_pending = (i << 1) | (_id_pending & 1U);
+    _id_exhausted = (i << 1) | (_id_exhausted & 1U);
   }
 
   forceinline
@@ -2511,7 +2511,8 @@ namespace Gecode {
     id(home.pc.p.branch_id++); 
     if ((home.pc.p.branch_id << 1) == 0U)
       throw TooManyBranchings("Branching::Branching");
-    pending(false);
+    // Branching might have choices left
+    exhausted(false);
     // If no branching available, make it the first one
     if (home.b_status == &home.bl) {
       home.b_status = this;
@@ -2523,7 +2524,7 @@ namespace Gecode {
 
   forceinline
   Branching::Branching(Space&, bool, Branching& b)
-    : _id_pending(b._id_pending) {
+    : _id_exhausted(b._id_exhausted) {
     // Set forwarding pointer
     b.prev(this);
   }
