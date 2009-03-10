@@ -742,6 +742,16 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     AC_MSG_ERROR([Static linking not supported for Windows/cl.])
   fi
 
+  AC_CHECK_PROG(MANIFEST, mt.exe, [found])
+  AC_MSG_CHECKING(whether manifest tool is available)
+  if test "${MANIFEST}x" = "x"; then
+    AC_MSG_RESULT(no)
+    AC_SUBST(MANIFEST, "@true")
+  else
+    AC_MSG_RESULT(yes)
+    AC_SUBST(MANIFEST, ["mt -nologo"])
+  fi
+
   AC_SUBST(DLLPATH, "")
 
   dnl file extensions

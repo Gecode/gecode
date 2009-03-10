@@ -99,7 +99,6 @@ AC_CHECK_PROG(PROG_PERL, perl, [ok])
 
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)
-
 case $ac_gecode_compiler_vendor in
 gnu)
   AC_CHECK_GCC_VERSION(4,2)
