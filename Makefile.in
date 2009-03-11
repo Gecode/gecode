@@ -113,6 +113,7 @@ export SOSUFFIX         = @DLL_ARCH@@USERSUFFIX@@SOSUFFIX@
 #
 export RMF		= rm -rf
 export MV		= mv
+export MANIFEST	= @MANIFEST@
 
 ifeq "@need_soname@" "yes"
 export CREATELINK       = ln -fs
@@ -1005,10 +1006,12 @@ endif
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(EXSUPPORTOBJ) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(EXSUPPORTOBJ) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
+	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 $(TESTEXE): $(TESTOBJ) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
+	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 
 

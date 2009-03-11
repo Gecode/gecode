@@ -565,6 +565,9 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
   AC_SUBST(docdir, "${datadir}/doc/gecode")
 
+  dnl do not use manifest tool with gcc
+  AC_SUBST(MANIFEST, "@true")
+
   dnl file extensions
   AC_SUBST(SBJEXT, "s")
   AC_SUBST(LIBEXT, "${DLLEXT}")
