@@ -69,7 +69,7 @@
 
 [RELEASE]
 Version: 3.0.0
-Date: 2009-03-04
+Date: 2009-03-13
 [DESCRIPTION]
 This release is a major consolidation release: interfaces have
 been cleaned up (consistent parameter passing, consistent naming,
