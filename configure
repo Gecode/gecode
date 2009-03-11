@@ -697,6 +697,7 @@ GECODE_BUILD_INT_FLAG
 GECODE_BUILD_SET_FLAG
 GECODE_BUILD_MINIMODEL_FLAG
 GECODE_BUILD_GIST_FLAG
+MANIFEST
 SBJEXT
 LIBEXT
 LIBPREFIX
@@ -721,7 +722,6 @@ INT
 SET
 MM
 GIST
-MANIFEST
 DOT
 GECODE_DOXYGEN_DOT
 ENABLEDOCSEARCH
@@ -7968,6 +7968,9 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   docdir="${datadir}/doc/gecode"
 
 
+    MANIFEST="@true"
+
+
     SBJEXT="s"
 
   LIBEXT="${DLLEXT}"
@@ -10579,6 +10582,9 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   docdir="${datadir}/doc/gecode"
 
 
+    MANIFEST="@true"
+
+
     SBJEXT="s"
 
   LIBEXT="${DLLEXT}"
@@ -12991,6 +12997,7 @@ GECODE_BUILD_INT_FLAG!$GECODE_BUILD_INT_FLAG$ac_delim
 GECODE_BUILD_SET_FLAG!$GECODE_BUILD_SET_FLAG$ac_delim
 GECODE_BUILD_MINIMODEL_FLAG!$GECODE_BUILD_MINIMODEL_FLAG$ac_delim
 GECODE_BUILD_GIST_FLAG!$GECODE_BUILD_GIST_FLAG$ac_delim
+MANIFEST!$MANIFEST$ac_delim
 SBJEXT!$SBJEXT$ac_delim
 LIBEXT!$LIBEXT$ac_delim
 LIBPREFIX!$LIBPREFIX$ac_delim
@@ -13006,7 +13013,6 @@ EXAMPLES_EXTRA_CXXFLAGS!$EXAMPLES_EXTRA_CXXFLAGS$ac_delim
 INSTALLLIBS!$INSTALLLIBS$ac_delim
 LINKPREFIX!$LINKPREFIX$ac_delim
 LINKSUFFIX!$LINKSUFFIX$ac_delim
-LINKOUTPUT!$LINKOUTPUT$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -13048,6 +13054,7 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
+LINKOUTPUT!$LINKOUTPUT$ac_delim
 EXEOUTPUT!$EXEOUTPUT$ac_delim
 SUPPORT!$SUPPORT$ac_delim
 KERNEL!$KERNEL$ac_delim
@@ -13056,7 +13063,6 @@ INT!$INT$ac_delim
 SET!$SET$ac_delim
 MM!$MM$ac_delim
 GIST!$GIST$ac_delim
-MANIFEST!$MANIFEST$ac_delim
 DOT!$DOT$ac_delim
 GECODE_DOXYGEN_DOT!$GECODE_DOXYGEN_DOT$ac_delim
 ENABLEDOCSEARCH!$ENABLEDOCSEARCH$ac_delim
