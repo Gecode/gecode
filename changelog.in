@@ -68,6 +68,22 @@
 
 
 [RELEASE]
+Version: 3.y.z
+Date: some date
+[DESCRIPTION]
+This is a release
+
+[ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Bug:    56
+Thanks: Chris Mears
+[DESCRIPTION]
+The Steel Mill Slab Design example had two bugs in the search
+heuristic and a missing redundant constraint.
+
+[RELEASE]
 Version: 3.0.0
 Date: 2009-03-13
 [DESCRIPTION]

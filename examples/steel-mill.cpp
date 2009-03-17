@@ -205,6 +205,12 @@ public:
       }
       linear(*this, c, x, IRT_EQ, slabload[s]);
     }
+    // Redundant packing constraint
+    int totalweight = 0;
+    for (unsigned int i = norders; i-- ; ) 
+       totalweight += orders[i][order_weight] ;
+    linear(*this, slabload, IRT_EQ, totalweight);
+
 
     // Color constraints
     IntArgs nofcolor(ncolors);
@@ -354,15 +360,16 @@ public:
       assert(!sm.slab[start].assigned());
       // Find order with a) minimum size, b) largest weight
       unsigned int size = sm.norders;
-      int weight = sm.maxcapacity;
+      int weight = 0;
       unsigned int pos = start;
       for (unsigned int i = start; i<sm.norders; ++i) {
         if (!sm.slab[i].assigned()) {
-          if (sm.slab[i].size() == size && sm.orders[i][order_weight] > weight) {
+          if (sm.slab[i].size() == size && 
+              sm.orders[i][order_weight] > weight) {
             weight = sm.orders[i][order_weight];
             pos = i;
           } else if (sm.slab[i].size() < size) {
-            size = sm.slab[i].size() < size;
+            size = sm.slab[i].size();
             weight = sm.orders[i][order_weight];
             pos = i;
           }
