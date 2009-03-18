@@ -139,13 +139,10 @@ private:
   /// Cost to be minimized
   IntVar _cost;
 
-  /// Whether we are in the nested search
-  BoolVar nested;
-  
 public:
   /// The actual problem
   Radiotherapy(const SizeOptions& opt)
-  : rd(rds[opt.size()]), nested(*this,0,1) {
+  : rd(rds[opt.size()]) {
 
     // Initialize variables
     beamtime = IntVar(*this, rd.btMin, rd.intsSum);
@@ -205,14 +202,11 @@ public:
   /// Constructor for cloning \a s
   Radiotherapy(bool share, Radiotherapy& s)
   : MinimizeExample(share,s), rd(s.rd) {
-    nested.update(*this, share, s.nested);
-    if (!s.nested.assigned()) {
-      beamtime.update(*this, share, s.beamtime);
-      N.update(*this, share, s.N);
-      K.update(*this, share, s.K);
-      _cost.update(*this, share, s._cost);      
-      q.update(*this, share, s.q);
-    }
+    beamtime.update(*this, share, s.beamtime);
+    N.update(*this, share, s.N);
+    K.update(*this, share, s.K);
+    _cost.update(*this, share, s._cost);      
+    q.update(*this, share, s.q);
   }
 
   /// Perform copying during cloning
@@ -256,8 +250,8 @@ public:
     NestedSearch(Space& home, bool share, NestedSearch& b)
       : Branching(home, share, b), done(b.done) {}
   public:
-    virtual bool status(const Space& home) const {
-      return !static_cast<const Radiotherapy&>(home).nested.assigned() && !done;
+    virtual bool status(const Space&) const {
+      return !done;
     }
 
     IntVarArgs getRow(Radiotherapy* row, int i) {
@@ -272,6 +266,7 @@ public:
     }
 
     virtual BranchingDesc* description(Space& home) {
+      done = true;
       Radiotherapy& rt = static_cast<Radiotherapy&>(home);
 
       std::cerr << "*";
@@ -281,8 +276,6 @@ public:
       for (int i=0; i<rt.rd.m; i++) {
         // Create fresh clone for row i
         Radiotherapy* row = static_cast<Radiotherapy*>(rt.clone());
-        // Place mark that we are in the nested search now
-        Int::BoolView(row->nested).one_none(home);
 
         // Branch over row i
         branch(*row, getRow(row, i), INT_VAR_NONE, INT_VAL_SPLIT_MIN);
@@ -301,7 +294,6 @@ public:
       return new Description(*this, fail);
     }
     virtual ExecStatus commit(Space&, const BranchingDesc& d, unsigned int) {
-      done = true;
       return static_cast<const Description&>(d).fail ? ES_FAILED : ES_OK;
     }
     /// Copy branching
