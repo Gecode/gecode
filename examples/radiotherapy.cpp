@@ -38,8 +38,6 @@
 #include "examples/support.hh"
 #include <gecode/minimodel.hh>
 
-class Radiotherapy;
-  
 /// Instance data for radio therapy problem
 class RadiotherapyData {
   /// Compute incremental sum
@@ -108,9 +106,6 @@ namespace {
 
   RadiotherapyData rds[] = {rd0, rd1};
   const unsigned int rds_n = sizeof(rds) / sizeof(RadiotherapyData);
-
-  /// Global model instance used for nested search
-  Radiotherapy* radiotherapy;
 }
 
 /**
@@ -145,14 +140,12 @@ private:
   IntVar _cost;
 
   /// Whether we are in the nested search
-  bool nested;
-  /// Whether copies of the variables are required
-  bool copiesRequired;
+  BoolVar nested;
   
 public:
   /// The actual problem
-  Radiotherapy(const SizeOptions& opt, bool nested0 = false)
-  : rd(rds[opt.size()]), nested(nested0), copiesRequired(true) {
+  Radiotherapy(const SizeOptions& opt)
+  : rd(rds[opt.size()]), nested(*this,0,1) {
 
     // Initialize variables
     beamtime = IntVar(*this, rd.btMin, rd.intsSum);
@@ -193,8 +186,7 @@ public:
     branch(*this, N, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
 
     // Then perform a nested search over q
-    if (!nested)
-      NestedSearch::post(*this);
+    NestedSearch::post(*this);
 
   }
 
@@ -212,15 +204,14 @@ public:
 
   /// Constructor for cloning \a s
   Radiotherapy(bool share, Radiotherapy& s)
-  : MinimizeExample(share,s), rd(s.rd),
-    nested(s.nested), copiesRequired(s.copiesRequired) {
-    if (copiesRequired) {
+  : MinimizeExample(share,s), rd(s.rd) {
+    nested.update(*this, share, s.nested);
+    if (!s.nested.assigned()) {
       beamtime.update(*this, share, s.beamtime);
       N.update(*this, share, s.N);
       K.update(*this, share, s.K);
       _cost.update(*this, share, s._cost);      
-      // if (nested)
-        q.update(*this, share, s.q);
+      q.update(*this, share, s.q);
     }
   }
 
@@ -237,7 +228,8 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "B / K = " << beamtime << " / " << K << ",\nN = " << N << std::endl;
+    os << std::endl 
+       << "B / K = " << beamtime << " / " << K << ",\nN = " << N << std::endl;
   }
 
   /// Nested search on the q variables
@@ -264,41 +256,36 @@ public:
     NestedSearch(Space& home, bool share, NestedSearch& b)
       : Branching(home, share, b), done(b.done) {}
   public:
-    virtual bool status(const Space&) const {
-      return !done;
+    virtual bool status(const Space& home) const {
+      return !static_cast<const Radiotherapy&>(home).nested.assigned() && !done;
     }
+
+    IntVarArgs getRow(Radiotherapy* row, int i) {
+      IntVarArgs ri(row->rd.n*row->rd.btMax);
+      for (int j=0; j<row->rd.n; j++) {
+        for (int b=0; b<row->rd.btMax; b++) {
+          ri[j*row->rd.btMax+b] = 
+            row->q[i*row->rd.n*row->rd.btMax+j*row->rd.btMax+b];
+        }
+      }
+      return ri;
+    }
+
     virtual BranchingDesc* description(Space& home) {
       Radiotherapy& rt = static_cast<Radiotherapy&>(home);
-      
-      // Fetch fresh clone from globally cached problem instance
-      Radiotherapy* nest = 
-        static_cast<Radiotherapy*>(radiotherapy->clone());
-        
-      // Copy the values of beamtime and the N from rt to the clone
-      rel(*nest, nest->beamtime, IRT_EQ, rt.beamtime.val());
-      int i;
-      for (i=rt.N.size(); i--;)
-        rel(*nest, nest->N[i], IRT_EQ, rt.N[i].val());
-      nest->status();
-      
+
       std::cerr << "*";
       
       // Perform nested search for each row
       bool fail = false;
-      for (i=0; i<rt.rd.m; i++) {
+      for (int i=0; i<rt.rd.m; i++) {
         // Create fresh clone for row i
-        Radiotherapy* row = static_cast<Radiotherapy*>(nest->clone());
-        // No further copies required here
-        row->copiesRequired = false;
-        IntVarArgs ri(row->rd.n*row->rd.btMax);
-        for (int j=0; j<row->rd.n; j++) {
-          for (int b=0; b<row->rd.btMax; b++) {
-            ri[j*row->rd.btMax+b] = 
-              row->q[i*row->rd.n*row->rd.btMax+j*row->rd.btMax+b];
-          }
-        }
+        Radiotherapy* row = static_cast<Radiotherapy*>(rt.clone());
+        // Place mark that we are in the nested search now
+        Int::BoolView(row->nested).one_none(home);
+
         // Branch over row i
-        branch(*row, ri, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+        branch(*row, getRow(row, i), INT_VAR_NONE, INT_VAL_SPLIT_MIN);
         Search::Options o; o.clone = false;
         if ( Radiotherapy* newSol = dfs(row, o) ) {
           // Found a solution for row i, so try to find one for i+1
@@ -308,12 +295,9 @@ public:
           // Found no solution for row i, so back to search the N variables
           fail = true;
           break;
-        }
-      
-        if (i==rt.rd.m)
-          std::cerr << "(k=<" << nest->K << ")" << std::endl;
+        }      
       }
-      delete nest;
+      // delete nest;
       return new Description(*this, fail);
     }
     virtual ExecStatus commit(Space&, const BranchingDesc& d, unsigned int) {
@@ -348,9 +332,6 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  radiotherapy = new Radiotherapy(opt, true);
-  radiotherapy->status();
-  
   MinimizeExample::run<Radiotherapy,BAB,SizeOptions>(opt);
   return 0;
 }
