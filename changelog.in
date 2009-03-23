@@ -68,10 +68,10 @@
 
 
 [RELEASE]
-Version: 3.y.z
-Date: some date
+Version: 3.0.1
+Date: 2009-03-30
 [DESCRIPTION]
-This is a release
+This is a bug fix release fixing an embarassing bug.
 
 [ENTRY]
 Module: example
@@ -82,6 +82,15 @@ Thanks: Chris Mears
 [DESCRIPTION]
 The Steel Mill Slab Design example had two bugs in the search
 heuristic and a missing redundant constraint.
+
+[ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added new example for Radiotherapy.
+
+
 
 [RELEASE]
 Version: 3.0.0
