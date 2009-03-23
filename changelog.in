@@ -69,9 +69,20 @@
 
 [RELEASE]
 Version: 3.0.1
-Date: 2009-03-30
+Date: 2009-03-24
 [DESCRIPTION]
-This is a bug fix release fixing an embarassing bug.
+This is a bug fix release fixing an embarassing bug in reified
+Boolean linear constraints.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks: Alberto Delgado
+[DESCRIPTION]
+Fixed bug in reified Boolean linear constraints (an optimization
+is currently disabled and will be active in the next release: the
+optimization was incorrect and was never tested).
 
 [ENTRY]
 Module: example

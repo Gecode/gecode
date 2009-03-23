@@ -774,14 +774,10 @@ namespace Gecode { namespace Int { namespace Linear {
     x.size(n_x);
 
     // b got assigned, subsume or rewrite
-    if (b.assigned()) {
-      if (n_x == 0)
-        return ES_SUBSUMED(*this,home);
-      if (b.one())
-        GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home,x,c)));
-      if (b.zero())
-        return rewrite_inverse(home, x, c);
-    }
+    if (b.one())
+      GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home,x,c)));
+    if (b.zero())
+      return rewrite_inverse(home, x, c);
 
     if (n_x < c) {
       GECODE_ME_CHECK(b.zero_none(home));
@@ -830,14 +826,10 @@ namespace Gecode { namespace Int { namespace Linear {
     x.size(n_x);
 
     // b got assigned, subsume or rewrite
-    if (b.assigned()) {
-      if (n_x == 0)
-        return ES_SUBSUMED(*this,home);
-      if (b.one())
-        GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home,x,c)));
-      if (b.zero())
-        GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home,x,c)));
-    }
+    if (b.one())
+      GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home,x,c)));
+    if (b.zero())
+      GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home,x,c)));
 
     if ((c < 0) || (c > n_x)) {
       GECODE_ME_CHECK(b.zero_none(home));
@@ -1109,10 +1101,15 @@ namespace Gecode { namespace Int { namespace Linear {
     // This is the needed invariant as c subscriptions must be created (c+1 in non-reified)
     assert(n_x >= c);
     x.size(n_x);
-    if (x.size() > threshold) // this used to be PropKind
+#if 0
+    // The code for Speed is broken, hence disabled
+    if (x.size() > threshold)
       (void) new (home) Speed(home,x,c,b);
     else
       (void) new (home) Memory(home,x,c,b);
+#else
+    (void) new (home) Memory(home,x,c,b);
+#endif
     return ES_OK;
   }
 
@@ -1142,11 +1139,15 @@ namespace Gecode { namespace Int { namespace Linear {
     // This is the needed invariant as c subscriptions must be created (c+1 in non-reified)
     assert(n_x >= c);
     x.size(n_x);
-    if (x.size() > threshold) {// this used to be PropKind
+#if 0
+    // The code for Speed is broken, hence disabled
+    if (x.size() > threshold)
       (void) new (home) Speed(home,x,c,b);
-    } else {
+    else
       (void) new (home) Memory(home,x,c,b);
-    }
+#else
+    (void) new (home) Memory(home,x,c,b);
+#endif
     return ES_OK;
   }
 
