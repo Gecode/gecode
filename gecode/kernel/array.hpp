@@ -433,6 +433,34 @@ namespace Gecode {
   };
 
   /**
+   * \brief Argument array for non-primitive types
+   *
+   * Argument arrays are used as convenient mechanism of passing arguments
+   * when calling functions as they combine both the size and the elements
+   * of an array. For a small number of elements, memory is allocated by
+   * creating an argument array object. Otherwise the memory is allocated
+   * from the heap.
+   *
+   * \ingroup TaskVar
+   */
+  template <class T>
+  class ArgArray : public ArgArrayBase<T> {
+  protected:
+    using ArgArrayBase<T>::a;
+  public:
+    using ArgArrayBase<T>::size;
+    /// \name Constructors and initialization
+    //@{
+    /// Allocate array with \a n elements
+    ArgArray(int n);
+    /// Allocate array with \a n elements and initialize with elements from array \a e
+    ArgArray(int n, const T* e);
+    /// Initialize from primitive argument array \a a (copy elements)
+    ArgArray(const ArgArray<T>& a);
+    //@}
+  };
+
+  /**
    * \brief Argument array for variables
    *
    * Argument arrays are used as convenient mechanism of passing arguments
@@ -1117,6 +1145,29 @@ namespace Gecode {
   template <class T>
   forceinline
   PrimArgArray<T>::PrimArgArray(const PrimArgArray<T>& aa)
+    : ArgArrayBase<T>(aa) {}
+
+
+  /*
+   * Argument arrays for non-primitive types
+   *
+   */
+
+  template <class T>
+  forceinline
+  ArgArray<T>::ArgArray(int n)
+    : ArgArrayBase<T>(n) {}
+
+  template <class T>
+  ArgArray<T>::ArgArray(int n, const T* a0)
+    : ArgArrayBase<T>(n) {
+    for (int i=n; i--; )
+      a[i] = a0[i];
+  }
+
+  template <class T>
+  forceinline
+  ArgArray<T>::ArgArray(const ArgArray<T>& aa)
     : ArgArrayBase<T>(aa) {}
 
 

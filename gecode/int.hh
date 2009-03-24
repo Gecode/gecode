@@ -606,7 +606,7 @@ namespace Gecode {
   /// Passing Boolean variables
   typedef VarArgArray<BoolVar> BoolVarArgs;
   /// Passing set arguments
-  typedef PrimArgArray<IntSet> IntSetArgs;
+  typedef ArgArray<IntSet> IntSetArgs;
   //@}
 
   /**

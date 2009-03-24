@@ -527,8 +527,6 @@ namespace Gecode {
    */
 
   //@{
-  /// Passing set arguments
-  typedef PrimArgArray<IntSet> IntSetArgs;
   /// Passing set variables
   typedef VarArgArray<SetVar>  SetVarArgs;
   //@}
