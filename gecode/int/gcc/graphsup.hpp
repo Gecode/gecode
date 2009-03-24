@@ -1685,19 +1685,25 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n_val; i--; ) {
       ValNode* v = vals[i];
       if (isView)
-        if (k[i].counter() == 0)
-          if (me_failed(k[i].lq(home, v->noe))) {
+        if (k[i].counter() == 0) {
+          ModEvent me = k[i].lq(home, v->noe);
+          if (me_failed(me)) {
             failed(true);
             return false;
           }
+          modified |= me_modified(me);
+        }
 
       if (v->noe > 0) {
 
-        if (isView)
-          if (me_failed(k[i].lq(home, v->noe))) {
+        if (isView) {
+          ModEvent me = k[i].lq(home, v->noe);
+          if (me_failed(me)) {
             failed(true);
             return false;
           }
+          modified |= me_modified(me);
+        }
 
         // If the maximum number of occurences of a value is reached
         // it cannot be consumed by another view
@@ -1714,6 +1720,7 @@ namespace Gecode { namespace Int { namespace GCC {
                 failed(true);
                 return false;
               }
+              modified |= me_modified(me);
             }
           }
 
@@ -1744,10 +1751,12 @@ namespace Gecode { namespace Int { namespace GCC {
 
             } else {
               if (delall) {
-                if (me_failed(x[vrn->get_info()].nq(home, v->val))) {
+                ModEvent me = x[vrn->get_info()].nq(home, v->val);
+                if (me_failed(me)) {
                   failed(true);
                   return false;
                 }
+                modified |= me_modified(me);
                 vrn->noe--;
                 v->noe--;
                 e->del_edge();
@@ -1801,8 +1810,7 @@ namespace Gecode { namespace Int { namespace GCC {
               failed(true);
               return false;
             }
-            if (me_modified(me))
-              modified = true;
+            modified |= me_modified(me);
           } else {
             e->template free<direction>();
           }
