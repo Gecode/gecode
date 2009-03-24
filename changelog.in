@@ -71,16 +71,26 @@
 Version: 3.0.1
 Date: 2009-03-24
 [DESCRIPTION]
-This is a bug fix release fixing an embarassing bug in reified
-Boolean linear constraints.
+This is a bug fix release fixing two embarassing bugs that were
+not caught by our test infrastructure. Please update asap.
+
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks: Vincent Barichard
+[DESCRIPTION]
+Fixed bug in element with integer values.
 
 [ENTRY]
 Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-IntSetArgs no longer inherit from PrimArgArray, which was wrong as IntSet is no 
-primitive type and hence does not support vararg initializers.
+IntSetArgs no longer inherit from PrimArgArray, which was wrong
+as IntSet is no primitive type and hence does not support vararg
+initializers.
 
 [ENTRY]
 Module: example

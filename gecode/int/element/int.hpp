@@ -281,40 +281,15 @@ namespace Gecode { namespace Int { namespace Element {
       min = std::min(c[i],min);
       max = std::max(c[i],max);
     }
-    switch (std::max(Support::s_type(min),Support::s_type(max))) {
+    switch (std::max(std::max(Support::s_type(min),
+                              Support::s_type(max)),
+                     Support::s_type(c.size()+2))) {
     case Support::IT_CHAR:
-      switch (Support::s_type(c.size()+2)) {
-      case Support::IT_CHAR:
-        return Int<V0,V1,signed char,signed char>::post(home,c,x0,x1);
-      case Support::IT_SHRT:
-        return Int<V0,V1,signed char,signed short int>::post(home,c,x0,x1);
-      case Support::IT_INT:
-        return Int<V0,V1,signed char,signed int>::post(home,c,x0,x1);
-      default: GECODE_NEVER;
-      }
-      break;
+      return Int<V0,V1,signed char,signed char>::post(home,c,x0,x1);
     case Support::IT_SHRT:
-      switch (Support::s_type(c.size()+1)) {
-      case Support::IT_CHAR:
-        return Int<V0,V1,signed short int,signed char>::post(home,c,x0,x1);
-      case Support::IT_SHRT:
-        return Int<V0,V1,signed short int,signed short int>::post(home,c,x0,x1);
-      case Support::IT_INT:
-        return Int<V0,V1,signed short int,signed int>::post(home,c,x0,x1);
-      default: GECODE_NEVER;
-      }
-      break;
+      return Int<V0,V1,signed short int,signed short int>::post(home,c,x0,x1);
     case Support::IT_INT:
-      switch (Support::s_type(c.size()+1)) {
-      case Support::IT_CHAR:
-        return Int<V0,V1,signed int,signed char>::post(home,c,x0,x1);
-      case Support::IT_SHRT:
-        return Int<V0,V1,signed int,signed short int>::post(home,c,x0,x1);
-      case Support::IT_INT:
-        return Int<V0,V1,signed int,signed int>::post(home,c,x0,x1);
-      default: GECODE_NEVER;
-      }
-      break;
+      return Int<V0,V1,signed int,signed int>::post(home,c,x0,x1);
     default: GECODE_NEVER;
     }
     return ES_OK;
