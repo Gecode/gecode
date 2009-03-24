@@ -45,7 +45,9 @@ namespace Gecode { namespace Gist {
   void
   Print<S>::inspect(const Space& node) {
     init();
+    addHtml("<pre>\n");
     dynamic_cast<const S&>(node).print(getStream());
+    addHtml("</pre><hr />");
   }
 
   forceinline

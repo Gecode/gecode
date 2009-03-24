@@ -54,6 +54,9 @@ namespace Gecode { namespace Gist {
     protected:
       virtual int overflow(int v = std::char_traits<char>::eof()) {
         if (v == '\n') {
+          QTextBlockFormat bf = editor->textCursor().blockFormat();
+          bf.setBottomMargin(0);
+          editor->textCursor().setBlockFormat(bf);
           editor->append(buffer);
           buffer.clear();
         } else {
@@ -92,7 +95,7 @@ namespace Gecode { namespace Gist {
     editor->setFont(font);
     editor->setReadOnly(true);
     editor->setLineWrapMode(QTextEdit::FixedColumnWidth);
-    editor->setLineWrapColumnOrWidth(40);
+    editor->setLineWrapColumnOrWidth(80);
     os = new GistOutputStream(editor);
 
     QAction* clearText = new QAction("Clear", this);
@@ -126,6 +129,9 @@ namespace Gecode { namespace Gist {
 
   void
   TextOutput::insertHtml(const QString& s) {
+    QTextBlockFormat bf = editor->textCursor().blockFormat();
+    bf.setBottomMargin(0);
+    editor->textCursor().setBlockFormat(bf);
     editor->insertHtml(s);
   }
 
