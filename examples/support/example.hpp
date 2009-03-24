@@ -314,6 +314,8 @@ ExampleBase<Space>::run(const Options& o) {
         Gist::Options opt;
         opt.inspect.click = &pi;
         opt.clone = false;
+        opt.c_d   = o.c_d();
+        opt.a_d   = o.a_d();
         Script* s = new Script(o);
         (void) GistEngine<Engine<Script> >::explore(s, opt);
       }

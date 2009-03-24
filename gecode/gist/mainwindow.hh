@@ -58,6 +58,8 @@ namespace Gecode { namespace Gist {
   class GistMainWindow : public QMainWindow {
     Q_OBJECT
   private:
+    /// Options
+    Options opt;
     /// Whether search is currently running
     bool isSearching;
     /// Status bar label for weakly monotonic propagator indicator
@@ -88,7 +90,7 @@ namespace Gecode { namespace Gist {
     /// Open the about dialog
     void about(void);
     /// Open the preferences dialog
-    void preferences(bool setup=false, const Options& opt=Options::def);
+    void preferences(bool setup=false);
     /// Populate the inspector menus from the actions found in Gist
     void populateInspectors(void);
   public:
