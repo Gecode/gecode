@@ -77,6 +77,21 @@ Boolean linear constraints.
 [ENTRY]
 Module: int
 What:   bug
+Rank:   minor
+[DESCRIPTION]
+IntSetArgs no longer inherit from PrimArgArray, which was wrong as IntSet is no 
+primitive type and hence does not support vararg initializers.
+
+[ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The examples now pass the c-d and a-d command line options correctly to Gist.
+
+[ENTRY]
+Module: int
+What:   bug
 Rank:   major
 Thanks: Alberto Delgado
 [DESCRIPTION]
