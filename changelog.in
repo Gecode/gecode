@@ -71,10 +71,17 @@
 Version: 3.0.2
 Date: 2009-03-26
 [DESCRIPTION]
-This is a bug fix release fixing two more embarassing
+This is a bug fix release fixing two more embarrassing
 bugs. However, this time we redesigned our tests carefully such
 that they cover all changes and optimizations done for the
 transition from 2.2.0 to 3.0.*. Please update asap.
+
+[ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The radiotherapy example was missing in the Makefile.
 
 [ENTRY]
 Module: int
@@ -101,6 +108,13 @@ Rank:   minor
 [DESCRIPTION]
 Reoptimized element with integer values and created bizarre
 testcases.
+
+[ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+A separator is printed between solutions in the TextInspector.
 
 
 [RELEASE]
