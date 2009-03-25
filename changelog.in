@@ -81,7 +81,18 @@ Module: int
 What:   bug
 Rank:   major
 [DESCRIPTION]
-Fixed bug in optimization of extensional constraints with DFAs.
+Fixed bug in optimization of extensional constraints with DFAs
+(hard to reproduce, almost impossible).
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   major
+Thanks: Gustavo Guiterrez
+[DESCRIPTION]
+Fixed bug in posting of Boolean expressions including reified
+linear expressions. Again, that escaped our testsuite (also
+fixed).
 
 [ENTRY]
 Module: int

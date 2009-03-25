@@ -695,22 +695,20 @@ namespace Gecode {
       /// Union depending on nodetype \a t
       union {
         /// For binary nodes (and, or, eqv)
-struct {
-  /// Left subtree
-NNF* l;
-  /// Right subtree
-NNF* r;
-} b;
+        struct {
+          /// Left subtree
+          NNF* l;
+          /// Right subtree
+          NNF* r;
+        } b;
         /// For atomic nodes
-struct {
-  /// Is atomic formula negative
-bool neg;
-  /// Pointer to corresponding Boolean expression node
-Node* x;
-} a;
+        struct {
+          /// Is atomic formula negative
+          bool neg;
+          /// Pointer to corresponding Boolean expression node
+          Node* x;
+        } a;
       } u;
-      /// Check whether node is atomic
-      bool atomic(void) const;
       /// Create negation normalform
       GECODE_MINIMODEL_EXPORT
       static NNF* nnf(Region& r, Node* n, bool neg);
