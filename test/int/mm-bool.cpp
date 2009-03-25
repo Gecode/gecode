@@ -120,15 +120,16 @@ namespace Test { namespace Int {
            bis(bis0), c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int reg[4] = {x[0],x[1],x[2],x[3]};
+         int reg[4] = {(x[0] != x[2]), x[1],
+                       (x[2] > 0), x[3]};
          return eval(bis, reg) == c;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::BoolExpr reg[4] = {
-           channel(home,x[0]),channel(home,x[1]),
-           channel(home,x[2]),channel(home,x[3])
+           ~(x[0] != x[2]),channel(home,x[1]),
+           ~(x[2] > 0),channel(home,x[3])
          };
          if (c == 0)
            Gecode::post(home, ff(eval(bis,reg)));
@@ -148,15 +149,16 @@ namespace Test { namespace Int {
          : Test("MiniModel::BoolExpr::Var::"+s,5,0,1), bis(bis0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int reg[4] = {x[0],x[1],x[2],x[3]};
+         int reg[4] = {(x[0] > x[2]), x[1],
+                       (x[2] != 1), x[3]};
          return eval(bis, reg) == x[4];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::BoolExpr reg[4] = {
-           channel(home,x[0]),channel(home,x[1]),
-           channel(home,x[2]),channel(home,x[3])
+           ~(x[0] > x[2]),channel(home,x[1]),
+           ~(channel(home,x[2]) != 1),channel(home,x[3])
          };
          rel(home, Gecode::post(home, eval(bis,reg)), IRT_EQ,
              channel(home,x[4]));

@@ -155,11 +155,6 @@ namespace Gecode {
     return r.ralloc(s);
   }
 
-  forceinline bool
-  BoolExpr::NNF::atomic(void) const {
-    return (t == NT_VAR) || (t == NT_RLIN_INT) || (t == NT_RLIN_BOOL);
-  }
-
   BoolVar
   BoolExpr::NNF::post(Space& home, IntConLevel icl) const {
     if ((t == NT_VAR) && !u.a.neg)
@@ -343,13 +338,13 @@ namespace Gecode {
         x->u.b.l = nnf(r,n->l,neg);
         x->u.b.r = nnf(r,n->r,neg);
         unsigned int p_l, n_l;
-        if ((x->u.b.l->t == t) || x->u.b.l->atomic()) {
+        if ((x->u.b.l->t == t) || (x->u.b.l->t == NT_VAR)) {
           p_l=x->u.b.l->p; n_l=x->u.b.l->n;
         } else {
           p_l=1; n_l=0;
         }
         unsigned int p_r, n_r;
-        if ((x->u.b.r->t == t) || x->u.b.r->atomic()) {
+        if ((x->u.b.r->t == t) || (x->u.b.r->t == NT_VAR)) {
           p_r=x->u.b.r->p; n_r=x->u.b.r->n;
         } else {
           p_r=1; n_r=0;
