@@ -57,17 +57,31 @@ namespace Test { namespace Branch {
   public:
     /// Variables to be tested
     Gecode::IntVarArray x;
+    /// Variable selection criteria
+    Gecode::IntVarBranch vara, varb;
+    /// Varlue selection criterion
+    Gecode::IntValBranch val;
     /// Initialize test space
     IntTestSpace(int n, Gecode::IntSet& d)
-      : x(*this, n, d) {}
+      : x(*this, n, d), 
+        vara(Gecode::INT_VAR_NONE), varb(Gecode::INT_VAR_NONE),
+        val(Gecode::INT_VAL_MIN) {}
     /// Constructor for cloning \a s
     IntTestSpace(bool share, IntTestSpace& s)
-      : Gecode::Space(share,s) {
+      : Gecode::Space(share,s), vara(s.vara), varb(s.varb), val(s.val) {
       x.update(*this, share, s.x);
     }
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
       return new IntTestSpace(share,*this);
+    }
+    /// Create actual branching
+    static void branch(Gecode::Space& _home) {
+      IntTestSpace& home =
+        static_cast<IntTestSpace&>(_home);
+      Gecode::branch(home, home.x, 
+                     Gecode::tiebreak(home.vara,home.varb), 
+                     home.val);
     }
   };
 
@@ -318,9 +332,10 @@ namespace Test { namespace Branch {
       for (int varb = n_int_var_branch; varb--; ) {
         for (int val = n_int_val_branch; val--; ) {
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
-          branch(*c, c->x,
-                 tiebreak(int_var_branch[vara],int_var_branch[varb]),
-                 int_val_branch[val]);
+          c->vara = int_var_branch[vara];
+          c->varb = int_var_branch[varb];
+          c->val  = int_val_branch[val];
+          branch(*c, &IntTestSpace::branch);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(int_var_branch_name[vara],

@@ -177,7 +177,7 @@ namespace Test { namespace Set {
         : SetTest(t,1,ds_33,true,1) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
+        for (CountableSetValues xr(x.lub, x[0]);xr();++xr)
           if (xr.val()==x.intval())
             return true;
         return false;
@@ -201,7 +201,7 @@ namespace Test { namespace Set {
         : SetTest(t,1,ds_33,false,1) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
+        for (CountableSetValues xr(x.lub, x[0]);xr();++xr)
           if (xr.val()==x.intval())
             return false;
         return true;
