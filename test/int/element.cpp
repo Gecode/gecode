@@ -38,6 +38,7 @@
 #include "test/int.hh"
 
 #include <gecode/minimodel.hh>
+#include <climits>
 
 namespace Test { namespace Int {
 
@@ -56,8 +57,10 @@ namespace Test { namespace Int {
        Gecode::IntArgs c;
      public:
        /// Create and register test
-       IntIntVar(const std::string& s, const Gecode::IntArgs& c0)
-         : Test("Element::Int::Int::Var::"+s,2,-4,8), c(c0) {}
+       IntIntVar(const std::string& s, const Gecode::IntArgs& c0,
+                 int min, int max)
+         : Test("Element::Int::Int::Var::"+s,2,min,max), 
+           c(c0) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
@@ -268,6 +271,17 @@ namespace Test { namespace Int {
      /// Help class to create and register tests
      class Create {
      public:
+       /// Test size-dependent optimizations
+       void optimized(int idx, int val) {
+         Gecode::IntArgs c(idx);
+         for (int i=0; i<idx; i++)
+           c[i]=std::max(val-i,0);
+         (void) new IntIntVar(Test::str(idx)+"::"+Test::str(val)+"::val",c,
+                              val-8,val-1);
+         if (idx != val)
+           (void) new IntIntVar(Test::str(idx)+"::"+Test::str(val)+"::idx",c,
+                                idx-8,idx-1);
+       }
        /// Perform creation and registration
        Create(void) {
          using namespace Gecode;
@@ -281,10 +295,22 @@ namespace Test { namespace Int {
          IntArgs bc2(8, 1,1,0,1,0,1,0,0);
          IntArgs bc3(1, 1);
 
-         (void) new IntIntVar("A",ic1);
-         (void) new IntIntVar("B",ic2);
-         (void) new IntIntVar("C",ic3);
-         (void) new IntIntVar("D",ic4);
+         (void) new IntIntVar("A",ic1,-8,8);
+         (void) new IntIntVar("B",ic2,-8,8);
+         (void) new IntIntVar("C",ic3,-8,8);
+         (void) new IntIntVar("D",ic4,-8,8);
+
+         // Test optimizations
+         {
+           int ov[] = {
+             SCHAR_MAX-1,SCHAR_MAX,
+             SHRT_MAX-1,SHRT_MAX,
+             0
+           };
+           for (int i=0; ov[i] != 0; i++)
+             for (int j=0; ov[j] != 0; j++)
+               optimized(ov[i],ov[j]);
+         }
 
          for (int i=-4; i<=4; i++) {
            (void) new IntIntInt("A",ic1,i);

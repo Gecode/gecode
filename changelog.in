@@ -76,6 +76,14 @@ bug. However, this time we redesigned our tests carefully such
 that they cover all changes and optimizations done for the
 transition from 2.2.0 to 3.0.*. Please update asap.
 
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Reoptimized element with integer values and created bizarre
+testcases.
+
 
 [RELEASE]
 Version: 3.0.1

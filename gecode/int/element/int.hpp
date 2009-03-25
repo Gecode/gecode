@@ -275,21 +275,50 @@ namespace Gecode { namespace Int { namespace Element {
   template <class V0, class V1>
   forceinline ExecStatus
   post_int(Space& home, IntSharedArray& c, V0 x0, V1 x1) {
-    int min = INT_MAX;
-    int max = INT_MIN;
+    GECODE_ME_CHECK(x0.gq(home,0));
+    GECODE_ME_CHECK(x0.le(home,c.size()));
+    Support::IntType idx_type = Support::s_type(c.size());
+    int min = x1.min();
+    int max = x1.max();
     for (int i=c.size(); i--; ) {
-      min = std::min(c[i],min);
-      max = std::max(c[i],max);
+      min = std::min(c[i],min); max = std::max(c[i],max);
     }
-    switch (std::max(std::max(Support::s_type(min),
-                              Support::s_type(max)),
-                     Support::s_type(c.size()+2))) {
+    Support::IntType val_type = 
+      std::max(Support::s_type(min),Support::s_type(max));
+    switch (idx_type) {
     case Support::IT_CHAR:
-      return Int<V0,V1,signed char,signed char>::post(home,c,x0,x1);
+      switch (val_type) {
+      case Support::IT_CHAR:
+        return Int<V0,V1,signed char,signed char>::post(home,c,x0,x1);
+      case Support::IT_SHRT:
+        return Int<V0,V1,signed char,signed short int>::post(home,c,x0,x1);
+      case Support::IT_INT:
+        return Int<V0,V1,signed char,signed int>::post(home,c,x0,x1);
+      default: GECODE_NEVER;
+      }
+      break;
     case Support::IT_SHRT:
-      return Int<V0,V1,signed short int,signed short int>::post(home,c,x0,x1);
+      switch (val_type) {
+      case Support::IT_CHAR:
+        return Int<V0,V1,signed short int,signed char>::post(home,c,x0,x1);
+      case Support::IT_SHRT:
+        return Int<V0,V1,signed short int,signed short int>::post(home,c,x0,x1);
+      case Support::IT_INT:
+        return Int<V0,V1,signed short int,signed int>::post(home,c,x0,x1);
+      default: GECODE_NEVER;
+      }
+      break;
     case Support::IT_INT:
-      return Int<V0,V1,signed int,signed int>::post(home,c,x0,x1);
+      switch (val_type) {
+      case Support::IT_CHAR:
+        return Int<V0,V1,signed int,signed char>::post(home,c,x0,x1);
+      case Support::IT_SHRT:
+        return Int<V0,V1,signed int,signed short int>::post(home,c,x0,x1);
+      case Support::IT_INT:
+        return Int<V0,V1,signed int,signed int>::post(home,c,x0,x1);
+      default: GECODE_NEVER;
+      }
+      break;
     default: GECODE_NEVER;
     }
     return ES_OK;
