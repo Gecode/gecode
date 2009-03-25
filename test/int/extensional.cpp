@@ -363,9 +363,20 @@ namespace Test { namespace Int {
          IntArgs t4(4,  1, 3, 2, 3);
          IntArgs t5(4,  3, 3, 3, 2);
          t.add(t1);
+         t.add(t1);
+         t.add(t2);
          t.add(t2);
          t.add(t3);
+         t.add(t3);
          t.add(t4);
+         t.add(t4);
+         t.add(t5);
+         t.add(t5);
+         t.add(t5);
+         t.add(t5);
+         t.add(t5);
+         t.add(t5);
+         t.add(t5);
          t.add(t5);
          t.finalize();
 
