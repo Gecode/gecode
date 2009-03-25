@@ -71,8 +71,8 @@
 Version: 3.0.2
 Date: 2009-03-26
 [DESCRIPTION]
-This is a bug fix release fixing one more embarassing
-bug. However, this time we redesigned our tests carefully such
+This is a bug fix release fixing two more embarassing
+bugs. However, this time we redesigned our tests carefully such
 that they cover all changes and optimizations done for the
 transition from 2.2.0 to 3.0.*. Please update asap.
 
