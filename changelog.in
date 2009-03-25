@@ -78,6 +78,13 @@ transition from 2.2.0 to 3.0.*. Please update asap.
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed bug in optimization of extensional constraints with DFAs.
+
+[ENTRY]
+Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]

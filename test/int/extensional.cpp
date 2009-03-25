@@ -40,6 +40,7 @@
 #include "test/int.hh"
 
 #include <gecode/minimodel.hh>
+#include <climits>
 
 namespace Test { namespace Int {
 
@@ -334,6 +335,45 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Test for optimizations
+     class RegOpt : public Test {
+     protected:
+       /// DFA size characteristic
+       int n;
+     public:
+       /// Create and register test
+       RegOpt(int n0) 
+         : Test("Extensional::Reg::Opt::"+str(n0),1,0,15), n(n0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] < n) && ((x[0] & 1) == 0);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA::Transition* t = new DFA::Transition[n+1];
+         DFA::Transition* ti = t;
+         int* f = new int[n+1];
+         int* fi = f;
+         for (int i=0; i<n; i++) {
+           ti->i_state = 0;
+           ti->symbol  = i;
+           ti->o_state = i+1;
+           ti++;
+           if ((i & 1) == 0) {
+             *fi = i+1; fi++;
+           }
+         }
+         ti->i_state = -1;
+         *fi = -1;
+         DFA d(0, t, f, false);
+         delete [] t;
+         delete [] f;
+         extensional(home, x, d);
+       }
+       
+     };
+
      /// Test with tuple set
      class TupleSetA : public Test {
      protected:
@@ -504,6 +544,14 @@ namespace Test { namespace Int {
      RegEmptyDFA redfa;
      RegEmptyREG rereg;
 
+     RegOpt ro0(CHAR_MAX-1);
+     RegOpt ro1(CHAR_MAX);
+     RegOpt ro2(static_cast<int>(UCHAR_MAX-1));
+     RegOpt ro3(static_cast<int>(UCHAR_MAX));
+     RegOpt ro4(SHRT_MAX-1);
+     RegOpt ro5(SHRT_MAX);
+     RegOpt ro6(static_cast<int>(USHRT_MAX-1));
+     RegOpt ro7(static_cast<int>(USHRT_MAX));
 
      TupleSetA tsam(Gecode::EPK_MEMORY);
      TupleSetA tsas(Gecode::EPK_SPEED);

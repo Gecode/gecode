@@ -534,7 +534,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   post_lgp(Space& home, ViewArray<View>& x, DFA dfa) {
     Gecode::Support::IntType t_state_idx =
-      Gecode::Support::s_type(x.size()*dfa.n_states());
+      Gecode::Support::s_type((x.size()+2)*dfa.n_states());
     Gecode::Support::IntType t_degree =
       Gecode::Support::u_type(dfa.max_degree());
     switch (t_state_idx) {
