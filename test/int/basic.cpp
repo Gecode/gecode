@@ -52,8 +52,11 @@ namespace Test { namespace Int {
      class Basic : public Test {
      public:
        /// Initialize test
-       Basic(void)
-         : Test("Basic",3,-3,3,true) {}
+       Basic(int n)
+         : Test("Basic",3,-n,n,true) {}
+       /// Initialize test
+       Basic(Gecode::IntArgs& i)
+         : Test("Basic",3,Gecode::IntSet(i),true) {}
        /// Check whether \a x is a solution
        virtual bool solution(const Assignment&) const {
          return true;
@@ -68,7 +71,9 @@ namespace Test { namespace Int {
        }
      };
 
-     Basic b;
+     Gecode::IntArgs i(4, 1,2,3,4);
+     Basic b1(3);
+     Basic b2(i);
      //@}
 
    }
