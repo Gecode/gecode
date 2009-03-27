@@ -650,6 +650,7 @@ subdirs
 enable_search
 enable_minimodel
 enable_examples
+enable_driver
 enable_gist
 enable_qt
 QTLIBS
@@ -666,6 +667,7 @@ GECODE_DOXYGEN_TAGFILE
 ENABLEDOCSEARCH
 GECODE_DOXYGEN_DOT
 DOT
+DRIVER
 GIST
 MM
 SET
@@ -691,6 +693,7 @@ LIBPREFIX
 LIBEXT
 SBJEXT
 MANIFEST
+GECODE_BUILD_DRIVER_FLAG
 GECODE_BUILD_GIST_FLAG
 GECODE_BUILD_MINIMODEL_FLAG
 GECODE_BUILD_SET_FLAG
@@ -801,6 +804,7 @@ enable_set_vars
 enable_int_vars
 enable_qt
 enable_gist
+enable_driver
 enable_examples
 enable_minimodel
 enable_search
@@ -1461,6 +1465,8 @@ Optional Features:
   --enable-int-vars       build finite domain library [default=yes]
   --enable-qt             build with Qt support [default=yes]
   --enable-gist           build Gecode Interactive Search Tool [default=yes]
+  --enable-driver         build script commandline driver library
+                          [default=yes]
   --enable-examples       build examples for the enabled variable types
                           [default=yes]
   --enable-minimodel      build modeling support library for the enabled
@@ -7053,6 +7059,8 @@ gnu)
 
    GECODE_BUILD_GIST_FLAG=""
 
+   GECODE_BUILD_DRIVER_FLAG=""
+
        ;;
      windows*)
        need_soname="no"
@@ -7093,6 +7101,8 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
+   GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
+
        ;;
      *)
        need_soname="yes"
@@ -7121,6 +7131,8 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
    GECODE_BUILD_MINIMODEL_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
+
+   GECODE_BUILD_DRIVER_FLAG=""
 
        ;;
   esac
@@ -8155,6 +8167,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   MM="minimodel"
 
   GIST="gist"
+
+  DRIVER="driver"
 
     # Check whether --enable-gcc-visibility was given.
 if test "${enable_gcc_visibility+set}" = set; then
@@ -9522,6 +9536,8 @@ $as_echo "yes" >&6; }
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
+   GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
+
 
     COMPILEOBJ="-c -Fo"
 
@@ -9555,6 +9571,8 @@ $as_echo "yes" >&6; }
   MM="Minimodel"
 
   GIST="Gist"
+
+  DRIVER="Driver"
 
        ;;
      *)
@@ -9697,6 +9715,8 @@ $as_echo "no" >&6; }
 
    GECODE_BUILD_GIST_FLAG=""
 
+   GECODE_BUILD_DRIVER_FLAG=""
+
        ;;
      windows*)
        need_soname="no"
@@ -9737,6 +9757,8 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
+   GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
+
        ;;
      *)
        need_soname="yes"
@@ -9765,6 +9787,8 @@ $as_echo "$as_me: error: Only either static or shared libraries can be built." >
    GECODE_BUILD_MINIMODEL_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
+
+   GECODE_BUILD_DRIVER_FLAG=""
 
        ;;
   esac
@@ -10800,6 +10824,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   GIST="gist"
 
+  DRIVER="driver"
+
 
        if test "${enable_debug:-no}" = "no"; then
          	 { $as_echo "$as_me:$LINENO: checking if compiler supports forced inlining" >&5
@@ -11759,6 +11785,8 @@ $as_echo "yes" >&6; }
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
+   GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
+
 
     COMPILEOBJ="-c -Fo"
 
@@ -11792,6 +11820,8 @@ $as_echo "yes" >&6; }
   MM="Minimodel"
 
   GIST="Gist"
+
+  DRIVER="Driver"
 
   ;;
 *)
@@ -12326,6 +12356,29 @@ $as_echo "no" >&6; }
 
 
 
+     # Check whether --enable-driver was given.
+if test "${enable_driver+set}" = set; then
+  enableval=$enable_driver;
+fi
+
+	 { $as_echo "$as_me:$LINENO: checking whether to build driver" >&5
+$as_echo_n "checking whether to build driver... " >&6; }
+	 if test "${enable_driver:-yes}" = "yes"; then
+	    enable_driver="yes";
+	    { $as_echo "$as_me:$LINENO: result: yes" >&5
+$as_echo "yes" >&6; }
+	    enable_search="yes";
+         enable_int="yes";
+
+	 else
+	    enable_driver="no";
+	    { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+	 fi
+   	 enable_driver=${enable_driver}
+
+
+
      # Check whether --enable-examples was given.
 if test "${enable_examples+set}" = set; then
   enableval=$enable_examples;
@@ -12338,6 +12391,7 @@ $as_echo_n "checking whether to build examples... " >&6; }
 	    { $as_echo "$as_me:$LINENO: result: yes" >&5
 $as_echo "yes" >&6; }
 	    enable_search="yes";
+         enable_driver="yes";
 	 if test ${enable_int_vars:-yes} = "yes"; then
 	   enable_minimodel="yes";
 	 fi;
@@ -12466,6 +12520,8 @@ ac_config_files="$ac_config_files misc/gecode.pc"
 ac_config_files="$ac_config_files misc/gecode-search.pc"
 
 ac_config_files="$ac_config_files misc/gecode-minimodel.pc"
+
+ac_config_files="$ac_config_files misc/gecode-driver.pc"
 
 ac_config_files="$ac_config_files misc/gecode-gist.pc"
 
@@ -13069,6 +13125,7 @@ do
     "misc/gecode.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode.pc" ;;
     "misc/gecode-search.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-search.pc" ;;
     "misc/gecode-minimodel.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-minimodel.pc" ;;
+    "misc/gecode-driver.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-driver.pc" ;;
     "misc/gecode-gist.pc") CONFIG_FILES="$CONFIG_FILES misc/gecode-gist.pc" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

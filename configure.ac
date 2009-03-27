@@ -245,9 +245,16 @@ dnl ------------------------------------------------------------------
 AC_GECODE_QT
 AC_GECODE_GIST
 
+AC_GECODE_ENABLE_MODULE(driver, yes,
+	[build script commandline driver library],
+	[enable_search="yes";
+         enable_int="yes";
+	])
+
 AC_GECODE_ENABLE_MODULE(examples, yes,
 	[build examples for the enabled variable types],
 	[enable_search="yes";
+         enable_driver="yes";
 	 if test ${enable_int_vars:-yes} = "yes"; then
 	   enable_minimodel="yes";
 	 fi;
@@ -288,5 +295,6 @@ AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
 AC_CONFIG_FILES([misc/gecode.pc])
 AC_CONFIG_FILES([misc/gecode-search.pc])
 AC_CONFIG_FILES([misc/gecode-minimodel.pc])
+AC_CONFIG_FILES([misc/gecode-driver.pc])
 AC_CONFIG_FILES([misc/gecode-gist.pc])
 AC_OUTPUT

@@ -83,7 +83,7 @@ while ($file = @ARGV[$i++]) {
   close FILE;
 }
 
-@modorder = ("kernel","search","int","set","minimodel",
+@modorder = ("kernel","search","int","set","minimodel","driver",
 	     "iter","support","example","test");
 
 @catorder = ("core","var","prop","branch","post","search",
@@ -95,6 +95,7 @@ $modclear{"search"} = "Search engines";
 $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
 $modclear{"minimodel"} = "Minimal modelling support";
+$modclear{"driver"} = "Script commandline driver";
 $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "\%Example scripts";

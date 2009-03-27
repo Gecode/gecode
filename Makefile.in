@@ -423,6 +423,37 @@ endif
 MMBUILDDIRS	= minimodel
 
 #
+# DRIVER COMPONENTS
+#
+
+DRIVERSRC0 = options.cpp script.cpp
+DRIVERHDR0 = options.hpp script.hpp
+
+DRIVERSRC 	= $(DRIVERSRC0:%=gecode/driver/%)
+DRIVERHDR 	= gecode/driver.hh $(DRIVERHDR0:%=gecode/driver/%)
+DRIVEROBJ	= $(DRIVERSRC:%.cpp=%$(OBJSUFFIX))
+DRIVERSBJ	= $(DRIVERSRC:%.cpp=%$(SBJSUFFIX))
+
+ifeq "@enable_driver@" "yes"
+export DRIVERDLL	= $(LIBPREFIX)@DRIVER@$(DLLSUFFIX)
+export DRIVERSTATICLIB	= $(LIBPREFIX)@DRIVER@$(STATICLIBSUFFIX)
+export DRIVERLIB	= $(LIBPREFIX)@DRIVER@$(LIBSUFFIX)
+export LINKDRIVER      	= $(LINKPREFIX)@DRIVER@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export DRIVERSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@DRIVER@$(SOSUFFIX)
+else
+export DRIVERSONAME     = 
+endif
+else
+export DRIVERDLL	=
+export DRIVERSTATICLIB	=
+export DRIVERLIB	=
+export LINKDRIVER      	=
+endif
+DRIVERBUILDDIRS	= driver
+
+#
 # ITERATOR HEADERS
 #
 ITERHDR0 =							\
@@ -557,12 +588,12 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(MMSRC) \
+        $(INTSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(EXSUPPORTSRC) $(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(MMHDR) \
+        $(INTHDR) $(SETHDR) $(MMHDR) $(DRIVERHDR) \
 	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
@@ -573,16 +604,16 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(MMDLL) $(GISTDLL)
+	$(MMDLL) $(DRIVERDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(MMLIB) $(GISTLIB)
+	$(MMLIB) $(DRIVERLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) \
+	$(MMSTATICLIB) $(DRIVERSTATICLIB) \
 	$(GISTSTATICLIB)
 endif
 
@@ -590,7 +621,7 @@ ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) \
+	$(MMSTATICLIB) $(DRIVERSTATICLIB) \
 	$(GISTSTATICLIB)
 else
 STATICTARGETS=
@@ -670,6 +701,7 @@ BUILDDIRS = \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
+	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
 	$(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
@@ -833,6 +865,13 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
+gecode/driver/%$(OBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+gecode/driver/%$(SBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
+
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
@@ -874,7 +913,7 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
-	$(LINKGIST) $(LINKSEARCH) $(LINKMM) \
+	$(LINKDRIVE) $(LINKGIST) $(LINKSEARCH) $(LINKMM) \
 	$(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
@@ -912,6 +951,12 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(DRIVERDLL): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL) 
+	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) $(DRIVERSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKGIST) \
+		@LINKOUTPUT@$(DRIVERDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKQT) \
@@ -938,6 +983,10 @@ $(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
+$(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) \
+	$(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL)
+	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) \
+		@DLLPATH@ @LINKOUTPUT@$(DRIVERDLL) $(GLDFLAGS)
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKQT) \
@@ -965,6 +1014,9 @@ $(SETSTATICLIB): $(SETOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)
+	$(RANLIB) $@
+$(DRIVERSTATICLIB): $(DRIVEROBJ)
+	$(AR) $(ARFLAGS) $@ $(DRIVEROBJ)
 	$(RANLIB) $@
 $(GISTSTATICLIB): $(GISTOBJ)
 	$(AR) $(ARFLAGS) $@ $(GISTOBJ)
@@ -1039,7 +1091,7 @@ DIST_FILES= \
 	install-sh \
 	misc/gecode.pc.in \
 	misc/gecode-search.pc.in  misc/gecode-minimodel.pc.in \
-	misc/gecode-gist.pc.in \
+	misc/gecode-gist.pc.in misc/gecode-driver.pc.in \
 	gecode/support/config.hpp.in \
 	variables.vsl \
 	gecode/int/var-imp/int.vis \
@@ -1183,9 +1235,23 @@ else
 GIST_PKGCONFIGFILE = 
 endif
 
+ifeq "@enable_minimodel@" "yes"
+MM_PKGCONFIGFILE = gecode-minimodel.pc
+else
+MM_PKGCONFIGFILE = 
+endif
+
+ifeq "@enable_driver@" "yes"
+DRIVER_PKGCONFIGFILE = gecode-driver.pc
+else
+DRIVER_PKGCONFIGFILE = 
+endif
+
 ifeq "@HAS_PKGCONFIG@" "yes"
 PKGCONFIGFILES = \
-	gecode.pc gecode-search.pc gecode-minimodel.pc \
+	gecode.pc gecode-search.pc \
+	$(MM_PKGCONFIGFILE) \
+	$(DRIVER_PKGCONFIGFILE) \
 	$(GIST_PKGCONFIGFILE)
 else
 PKGCONFIGFILES =

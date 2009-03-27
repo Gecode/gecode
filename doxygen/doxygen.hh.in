@@ -98,7 +98,12 @@
  */
 
 /**
- * \defgroup TaskModelMiniModel Direct modelling
+ * \defgroup TaskModelMiniModel Direct modeling support
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskDriver Script commandline driver
  * \ingroup TaskModel
  */
 
@@ -613,6 +618,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    (see for example \ref TaskModelSet and \ref TaskActorSet).
  *  - gecode/minimodel.hh must be included, if direct modelling support
  *    is used (see for example \ref TaskModelMiniModel).
+ *  - gecode/driver.hh must be included, if the script commandline driver
+ *    is used (see for example \ref TaskDriver).
  *
  * Other functionality is available through a set of header files. For example
  * to access the implementation of particular propagators, a particular header
@@ -635,6 +642,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - If gecode/set.hh is included, linking against the set library is
  *    required.
  *  - If gecode/minimodel.hh is included, linking against the minimodel
+ *    library is required.
+ *  - If gecode/driver.hh is included, linking against the driver
  *    library is required.
  *
  * The functionality in \ref FuncIter requires no
@@ -683,6 +692,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - Integer library: libgecodeint.&lt;EXT&gt;
  *  - Set library: libgecodeset.&lt;EXT&gt;
  *  - Minimodel library: libgecodeminimodel.&lt;EXT&gt;
+ *  - Driver library: libgecodedriver.&lt;EXT&gt;
  *
  * where &lt;EXT&gt; depends on the library type and platform:
  *

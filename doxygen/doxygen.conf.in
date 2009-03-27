@@ -1033,6 +1033,8 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_KERNEL_EXPORT=" \
                          "GECODE_SEARCH_EXPORT=" \
                          "GECODE_MINIMODEL_EXPORT=" \
+                         "GECODE_DRIVER_EXPORT=" \
+                         "GECODE_GIST_EXPORT=" \
                          "GECODE_SUPPORT_EXPORT=" \
                          "GECODE_MSC_VIRTUAL=" \
                          "GECODE_HAVE_INT_VARS=1" \
