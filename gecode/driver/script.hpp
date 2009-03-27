@@ -225,7 +225,7 @@ namespace Gecode { namespace Driver {
           t.stop(cout);
           cout << endl
                << "\tsolutions:    "
-               << abs(static_cast<int>(o.solutions()) - i) << endl
+               << ::abs(static_cast<int>(o.solutions()) - i) << endl
                << "\tpropagations: " << stat.propagate << endl
                << "\tnodes:        " << stat.node << endl
                << "\tfailures:     " << stat.fail << endl
@@ -258,7 +258,7 @@ namespace Gecode { namespace Driver {
                << "\tpropagators:  " << n_p << endl
                << "\tbranchings:   " << n_b << endl
                << "\tsolutions:    "
-               << abs(static_cast<int>(o.solutions()) - i) << endl
+               << ::abs(static_cast<int>(o.solutions()) - i) << endl
                << "\tpropagations: " << stat.propagate << endl
                << "\tnodes:        " << stat.node << endl
                << "\tfailures:     " << stat.fail << endl

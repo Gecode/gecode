@@ -38,7 +38,6 @@
 #ifndef __GECODE_DRIVER_HH__
 #define __GECODE_DRIVER_HH__
 
-#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
 #ifdef GECODE_HAS_GIST
