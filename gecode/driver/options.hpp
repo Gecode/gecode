@@ -68,6 +68,22 @@ namespace Gecode {
     }
     
     /*
+     * Integer option
+     *
+     */
+    inline
+    IntOption::IntOption(const char* o, const char* e, int v)
+      : BaseOption(o,e), cur(v) {}
+    inline void
+    IntOption::value(int v) {
+      cur = v;
+    }
+    inline int
+    IntOption::value(void) const {
+      return cur;
+    }
+
+    /*
      * Unsigned integer option
      *
      */
@@ -83,6 +99,7 @@ namespace Gecode {
     UnsignedIntOption::value(void) const {
       return cur;
     }
+
   }
   
   /*

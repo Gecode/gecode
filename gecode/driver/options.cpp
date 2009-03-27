@@ -117,6 +117,29 @@ namespace Gecode {
     
     
     bool
+    IntOption::parse(int& argc, char* argv[]) {
+      if ((argc < 2) || strcmp(argv[1],opt))
+        return false;
+      if (argc == 2) {
+        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      cur = atoi(argv[2]);
+      // Remove options
+      argc -= 2;
+      for (int i=1; i<argc; i++)
+        argv[i] = argv[i+2];
+      return true;
+    }
+    
+    void
+    IntOption::help(void) {
+      using namespace std;
+      cerr << '\t' << opt << " (int) default: " << cur << endl
+           << "\t\t" << exp << endl;
+    }
+  
+    bool
     UnsignedIntOption::parse(int& argc, char* argv[]) {
       if ((argc < 2) || strcmp(argv[1],opt))
         return false;

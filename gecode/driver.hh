@@ -166,6 +166,26 @@ namespace Gecode {
   
 
     /**
+     * \brief Integer option
+     *
+     */
+    class GECODE_DRIVER_EXPORT IntOption : public BaseOption {
+    protected:
+      int cur; ///< Current value
+    public:
+      /// Initialize for option \a o and explanation \a e and default value \a v
+      IntOption(const char* o, const char* e, int v=0);
+      /// Set default value to \a v
+      void value(int v);
+      /// Return current option value
+      int value(void) const;
+      /// Parse option at first position
+      virtual bool parse(int& argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
+    /**
      * \brief Unsigned integer option
      *
      */
