@@ -160,6 +160,15 @@ namespace Gecode { namespace Support {
     }
   }
 
+  /// Comparison class for sorting using \a <
+  template <class Type>
+  class Less {
+  public:
+    bool operator ()(const Type& lhs, const Type& rhs) {
+      return lhs < rhs;
+    }
+  };
+
   /**
    * \brief Insertion sort
    *
@@ -185,6 +194,27 @@ namespace Gecode { namespace Support {
   }
 
   /**
+   * \brief Insertion sort
+   *
+   * Sorts by insertion the \a n first elements of array \a x according
+   * to the order \a <.
+   *
+   * The algorithm is largely based on the following book:
+   * Robert Sedgewick, Algorithms in C++, 3rd edition, 1998, Addison Wesley.
+   *
+   * \ingroup FuncSupport
+   */
+  template <class Type>
+  forceinline void
+  insertion(Type* x, int n) {
+    if (n < 2)
+      return;
+    Less<Type> l;
+    assert(!l(x[0],x[0]));
+    insertion(x,x+n-1,l);
+  }
+
+  /**
    * \brief Quicksort
    *
    * Sorts with quicksort the \a n first elements of array \a x according
@@ -204,6 +234,29 @@ namespace Gecode { namespace Support {
   quicksort(Type* x, int n, Less &l) {
     if (n < 2)
       return;
+    assert(!l(x[0],x[0]));
+    if (n > QuickSortCutoff)
+      quicksort(x,x+n-1,l);
+    insertion(x,x+n-1,l);
+  }
+
+  /**
+   * \brief Quicksort
+   *
+   * Sorts with quicksort the \a n first elements of array \a x according
+   * to the order \a <.
+   *
+   * The algorithm is largely based on the following book:
+   * Robert Sedgewick, Algorithms in C++, 3rd edition, 1998, Addison Wesley.
+   *
+   * \ingroup FuncSupport
+   */
+  template <class Type>
+  forceinline void
+  quicksort(Type* x, int n) {
+    if (n < 2)
+      return;
+    Less<Type> l;
     assert(!l(x[0],x[0]));
     if (n > QuickSortCutoff)
       quicksort(x,x+n-1,l);
