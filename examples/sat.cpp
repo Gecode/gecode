@@ -37,12 +37,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 
 #include <fstream>
 #include <string>
 #include <vector>
 
+using namespace Gecode;
 
 /** \brief Options for %SAT problems
  *
@@ -76,7 +78,7 @@ public:
 };
 
 /**
- * \brief %Example: CNF SAT solver
+ * \brief %Script: CNF SAT solver
  *
  * SAT finds assignments of Boolean variables such
  * that a set of clauses is satisfied or shows that
@@ -110,7 +112,7 @@ public:
  *
  * \ingroup ExProblem
  */
-class Sat : public Example {
+class Sat : public Script {
 private:
   /// The Boolean variables
   BoolVarArray x;
@@ -122,7 +124,7 @@ public:
   }
 
   /// Constructor for cloning
-  Sat(bool share, Sat& s) : Example(share,s) {
+  Sat(bool share, Sat& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
 
@@ -251,7 +253,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Run SAT solver
-  Example::run<Sat,DFS,SatOptions>(opt);
+  Script::run<Sat,DFS,SatOptions>(opt);
   return 0;
 }
 

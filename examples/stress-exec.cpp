@@ -35,10 +35,13 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Execution stress test
+ * \brief %Script: Execution stress test
  *
  * The size argument defines how many duplicate propagators
  * are created.
@@ -46,7 +49,7 @@
  * \ingroup ExStress
  *
  */
-class StressExec : public Example {
+class StressExec : public Script {
 protected:
   /// Variables
   IntVarArray x;
@@ -65,7 +68,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  StressExec(bool share, StressExec& s) : Example(share,s) {
+  StressExec(bool share, StressExec& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
 
@@ -89,7 +92,7 @@ main(int argc, char* argv[]) {
   opt.iterations(20);
   opt.size(1);
   opt.parse(argc,argv);
-  Example::run<StressExec,DFS,SizeOptions>(opt);
+  Script::run<StressExec,DFS,SizeOptions>(opt);
   return 0;
 }
 

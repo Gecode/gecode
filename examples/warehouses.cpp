@@ -35,8 +35,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /// Number of warehouses
 const int n_suppliers = 5;
@@ -68,7 +71,7 @@ const int cost_matrix[n_stores][n_suppliers] = {
 
 
 /**
- * \brief %Example: Locating warehouses
+ * \brief %Script: Locating warehouses
  *
  * A company needs to construct warehouses to supply stores with
  * goods. Each warehouse possibly to be constructed has a certain
@@ -90,7 +93,7 @@ const int cost_matrix[n_stores][n_suppliers] = {
  * \ingroup ExProblem
  *
  */
-class Warehouses : public MinimizeExample {
+class Warehouses : public MinimizeScript {
 protected:
   /// Map store to the supplier
   IntVarArray supplier;
@@ -150,7 +153,7 @@ public:
     return total;
   }
   /// Constructor for cloning \a s
-  Warehouses(bool share, Warehouses& s) : MinimizeExample(share,s) {
+  Warehouses(bool share, Warehouses& s) : MinimizeScript(share,s) {
     supplier.update(*this, share, s.supplier);
     open.update(*this, share, s.open);
     scost.update(*this, share, s.scost);
@@ -181,7 +184,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(10);
   opt.parse(argc,argv);
-  MinimizeExample::run<Warehouses,BAB,Options>(opt);
+  MinimizeScript::run<Warehouses,BAB,Options>(opt);
   return 0;
 }
 

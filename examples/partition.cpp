@@ -35,15 +35,18 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: partition numbers into two groups
+ * \brief %Script: partition numbers into two groups
  *
  * \ingroup ExProblem
  */
-class Partition : public Example {
+class Partition : public Script {
 protected:
   /// First group of numbers
   IntVarArray x;
@@ -91,7 +94,7 @@ public:
   }
 
   /// Constructor used during cloning \a s
-  Partition(bool share, Partition& s) : Example(share,s) {
+  Partition(bool share, Partition& s) : Script(share,s) {
     x.update(*this, share, s.x);
     y.update(*this, share, s.y);
   }
@@ -132,7 +135,7 @@ main(int argc, char* argv[]) {
   opt.size(32);
   opt.icl(ICL_BND);
   opt.parse(argc,argv);
-  Example::run<Partition,DFS,SizeOptions>(opt);
+  Script::run<Partition,DFS,SizeOptions>(opt);
   return 0;
 }
 

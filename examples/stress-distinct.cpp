@@ -35,10 +35,13 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Stress distinct propagator
+ * \brief %Script: Stress distinct propagator
  *
  * Performs propagation on a pathological example. The example is taken
  * from: Jean-Francois Puget, A fast algorithm for the bound consistency
@@ -47,7 +50,7 @@
  *
  * \ingroup ExStress
  */
-class StressDistinct : public Example {
+class StressDistinct : public Script {
 protected:
   /// Variables
   IntVarArray x;
@@ -60,7 +63,7 @@ public:
       rel(*this, x[i], IRT_LQ, i);
   }
   /// Constructor for cloning \a s
-  StressDistinct(bool share, StressDistinct& s) : Example(share,s) {
+  StressDistinct(bool share, StressDistinct& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
@@ -83,7 +86,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressDistinct");
   opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressDistinct,DFS,SizeOptions>(opt);
+  Script::run<StressDistinct,DFS,SizeOptions>(opt);
   return 0;
 }
 

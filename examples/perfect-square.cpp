@@ -37,8 +37,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /**
  * \name Specifications for perfect square problems
@@ -177,13 +180,13 @@ const unsigned int n_specs = sizeof(specs) / sizeof(int*);
 //@}
 
 /**
- * \brief %Example: Packing squares into a rectangle
+ * \brief %Script: Packing squares into a rectangle
  *
  * See problem 9 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  */
-class PerfectSquare : public Example {
+class PerfectSquare : public Script {
 protected:
   /// Array of x-coordinates of squares
   IntVarArray x;
@@ -267,7 +270,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  PerfectSquare(bool share, PerfectSquare& s) : Example(share,s) {
+  PerfectSquare(bool share, PerfectSquare& s) : Script(share,s) {
     x.update(*this, share, s.x);
     y.update(*this, share, s.y);
   }
@@ -303,7 +306,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<PerfectSquare,DFS,SizeOptions>(opt);
+  Script::run<PerfectSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 

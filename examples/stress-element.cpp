@@ -35,10 +35,13 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Stress test for element constraint (involving integers)
+ * \brief %Script: Stress test for element constraint (involving integers)
  *
  * This stress test is an adaption of the benchmark for element posted
  * by Neng-Fa Zhou for B-Prolog, November, 2005.
@@ -46,7 +49,7 @@
  * \ingroup ExStress
  *
  */
-class StressElement : public Example {
+class StressElement : public Script {
 protected:
   /// Number of elements in array
   static const int n = 15;
@@ -78,7 +81,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  StressElement(bool share, StressElement& s) : Example(share,s) {
+  StressElement(bool share, StressElement& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
 
@@ -104,7 +107,7 @@ int
 main(int argc, char* argv[]) {
   Options opt("StressElement");
   opt.parse(argc,argv);
-  Example::run<StressElement,DFS,Options>(opt);
+  Script::run<StressElement,DFS,Options>(opt);
   return 0;
 }
 

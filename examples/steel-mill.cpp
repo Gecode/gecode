@@ -35,10 +35,13 @@
  *
  */
 
-#include "examples/support.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+#include <gecode/minimodel.hh>
 
 #include <fstream>
+
+using namespace Gecode;
 
 /** \brief Order-specifications
  *
@@ -114,7 +117,7 @@ public:
 
 
 /**
- * \brief %Example: Steel-mill slab design problem
+ * \brief %Script: Steel-mill slab design problem
  *
  * This model solves the Steel Mill Slab Design Problem (Problem 38 in
  * <a href="http://csplib.org">CSPLib</a>). The model is from Gargani
@@ -141,7 +144,7 @@ public:
  * \ingroup ExProblem
  *
  */
-class SteelMill : public MinimizeExample {
+class SteelMill : public MinimizeScript {
 protected:
   /** \name Instance specification
    */
@@ -284,7 +287,7 @@ public:
 
   /// Constructor for cloning \a s
   SteelMill(bool share, SteelMill& s)
-    : MinimizeExample(share,s),
+    : MinimizeScript(share,s),
       capacities(s.capacities), ncapacities(s.ncapacities),
       maxcapacity(s.maxcapacity), loss(s.loss),
       ncolors(s.ncolors), orders(s.orders),
@@ -420,7 +423,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   if (!opt.parse(argc,argv))
     return 1;
-  Example::run<SteelMill,BAB,SteelMillOptions>(opt);
+  Script::run<SteelMill,BAB,SteelMillOptions>(opt);
   return 0;
 }
 

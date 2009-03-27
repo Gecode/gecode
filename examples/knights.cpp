@@ -35,11 +35,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /// Base-class for Knights tour example
-class Knights : public Example {
+class Knights : public Script {
 protected:
   /// Size of board
   const int n;
@@ -76,7 +79,7 @@ public:
   Knights(const SizeOptions& opt)
     : n(opt.size()), succ(*this,n*n,0,n*n-1) {}
   /// Constructor for cloning \a s
-  Knights(bool share, Knights& s) : Example(share,s), n(s.n) {
+  Knights(bool share, Knights& s) : Script(share,s), n(s.n) {
     succ.update(*this, share, s.succ);
   }
   /// Print board
@@ -103,7 +106,7 @@ public:
 };
 
 /**
- * \brief %Example: n-%Knights tour (simple model)
+ * \brief %Script: n-%Knights tour (simple model)
  *
  * Fill an n times n chess board with knights such that the
  * knights do a full tour by knights move (last knight reaches
@@ -161,7 +164,7 @@ public:
 };
 
 /**
- * \brief %Example: n-%Knights tour (model using circuit)
+ * \brief %Script: n-%Knights tour (model using circuit)
  *
  * Fill an n times n chess board with knights such that the
  * knights do a full tour by knights move (last knight reaches
@@ -209,9 +212,9 @@ main(int argc, char* argv[]) {
   opt.propagation(Knights::PROP_CIRCUIT, "circuit");
   opt.parse(argc,argv);
   if (opt.propagation() == Knights::PROP_REIFIED) {
-    Example::run<KnightsReified,DFS,SizeOptions>(opt);
+    Script::run<KnightsReified,DFS,SizeOptions>(opt);
   } else {
-    Example::run<KnightsCircuit,DFS,SizeOptions>(opt);
+    Script::run<KnightsCircuit,DFS,SizeOptions>(opt);
   }
   return 0;
 }

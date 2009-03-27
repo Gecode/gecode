@@ -35,18 +35,20 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 
+using namespace Gecode;
 
 /**
- * \brief %Example: Stress extensional propagator
+ * \brief %Script: Stress extensional propagator
  *
  * Creates a huge DFA specifying that all values are pairwise distinct
  * and use the DFA for propagation.
  *
  * \ingroup ExStress
  */
-class StressExtensional : public Example {
+class StressExtensional : public Script {
 protected:
   /// Variables
   IntVarArray x;
@@ -104,7 +106,7 @@ public:
     branch(*this, y, INT_VAR_NONE, INT_VAL_MED);
   }
   /// Constructor for cloning \a s
-  StressExtensional(bool share, StressExtensional& s) : Example(share,s) {
+  StressExtensional(bool share, StressExtensional& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
@@ -127,7 +129,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressExtensional");
   opt.size(7);
   opt.parse(argc,argv);
-  Example::run<StressExtensional,DFS,SizeOptions>(opt);
+  Script::run<StressExtensional,DFS,SizeOptions>(opt);
   return 0;
 }
 

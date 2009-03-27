@@ -39,8 +39,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /** \brief Specification of one tile
  *
@@ -122,9 +125,9 @@ namespace {
 }
 
 /**
- * \brief %Example: %Pentominoes
+ * \brief %Script: %Pentominoes
  *
- * \section ExamplePentominoesProblem The Problem
+ * \section ScriptPentominoesProblem The Problem
  *
  * This example places pieces of a puzzle, where each piece is
  * composed of a collection of squares, onto a grid. The pieces may
@@ -143,14 +146,14 @@ namespace {
  * squares.
  *
  *
- * \section ExamplePentominoesVariables The Variables
+ * \section ScriptPentominoesVariables The Variables
  *
  * The variables for the model is the grid of squares that the  pieces
  * are placed on, where each of the variables for the squares takes
  * the value of the number of the piece which is placed overonto it.
  *
  *
- * \section ExamplePentominoesOnePiece Placing one piece
+ * \section ScriptPentominoesOnePiece Placing one piece
  *
  * The constraint for each piece placement uses regular expressions
  * (and consequently the extensional constraint) for expressing
@@ -197,7 +200,7 @@ namespace {
  * include the extra column, \f$0^*1100001000010^*\f$.
  *
  *
- * \section ExamplePentominoesRotatingPiece Rotating pieces
+ * \section ScriptPentominoesRotatingPiece Rotating pieces
  *
  * To handle rotations of the piece, we can use disjunctions of
  * regular expressions for all the relevant rotations. Consider the
@@ -219,7 +222,7 @@ namespace {
  * is computed, since it is minimized.
  *
  *
- * \section ExamplePentominoesSeveral Placing several pieces
+ * \section ScriptPentominoesSeveral Placing several pieces
  *
  * To generalize the above model to several pieces, we let the
  * variables range from 0 to n, where n is the number of pieces to
@@ -235,7 +238,7 @@ namespace {
  * 0/1-variables for each piece to place.
  *
  *
- * \section ExamplePentominoesHeuristic The Branching
+ * \section ScriptPentominoesHeuristic The Branching
  *
  * This model does not use any advanced heuristic for the
  * branching. The variables selection is simply in order, and the
@@ -246,7 +249,7 @@ namespace {
  * largness or hardness to place.
  *
  *
- * \section ExamplePentominoesSymmetries Removing board symmetries
+ * \section ScriptPentominoesSymmetries Removing board symmetries
  *
  * Especially when searching for all solutions of a puzzle instance,
  * we might want to remove the symmetrical boards from the
@@ -257,7 +260,7 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class Pentominoes : public Example {
+class Pentominoes : public Script {
 public:
   /// Choice of propagators
   enum {
@@ -439,7 +442,7 @@ public:
 
   /// Constructor for cloning \a s
   Pentominoes(bool share, Pentominoes& s) :
-    Example(share,s), spec(s.spec), width(s.width), height(s.height),
+    Script(share,s), spec(s.spec), width(s.width), height(s.height),
     filled(s.filled), nspecs(s.nspecs) {
     board.update(*this, share, s.board);
   }
@@ -492,7 +495,7 @@ main(int argc, char* argv[]) {
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Pentominoes,DFS,SizeOptions>(opt);
+  Script::run<Pentominoes,DFS,SizeOptions>(opt);
   return 0;
 }
 

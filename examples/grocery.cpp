@@ -35,11 +35,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: %Grocery puzzle
+ * \brief %Script: %Grocery puzzle
  *
  * A kid goes into a grocery store and buys four items. The cashier
  * charges $7.11, the kid pays and is about to leave when the cashier
@@ -54,7 +57,7 @@
  * \ingroup ExProblem
  *
  */
-class Grocery : public Example {
+class Grocery : public Script {
 protected:
   /// The price of each item
   IntVarArray x;
@@ -84,7 +87,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Grocery(bool share, Grocery& s) : Example(share,s) {
+  Grocery(bool share, Grocery& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
 
@@ -109,7 +112,7 @@ main(int argc, char* argv[]) {
   Options opt("Grocery");
   opt.iterations(20);
   opt.parse(argc,argv);
-  Example::run<Grocery,DFS,Options>(opt);
+  Script::run<Grocery,DFS,Options>(opt);
   return 0;
 }
 

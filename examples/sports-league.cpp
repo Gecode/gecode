@@ -39,11 +39,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
 #include <algorithm>
 #include <iomanip>
+
+using namespace Gecode;
 
 /// Entry in round robin schedule
 class Play {
@@ -163,7 +166,7 @@ public:
 
 
 /**
- * \brief %Example: %Sports league scheduling
+ * \brief %Script: %Sports league scheduling
  *
  * -# There are \f$ t \f$ teams (\f$ t \f$  even).
  * -# The season lasts \f$ t - 1 \f$ weeks.
@@ -178,7 +181,7 @@ public:
  *
  * \ingroup ExProblem
  */
-class SportsLeague : public Example {
+class SportsLeague : public Script {
 protected:
   const int teams;  ///< number of teams
   IntVarArray home; ///< home teams
@@ -293,7 +296,7 @@ public:
   }
   /// Constructor for cloning \a s
   SportsLeague(bool share, SportsLeague& s)
-    : Example(share, s), teams(s.teams) {
+    : Script(share, s), teams(s.teams) {
     home.update(*this, share, s.home);
     away.update(*this, share, s.away);
     game.update(*this, share, s.game);
@@ -347,7 +350,7 @@ main(int argc, char* argv[]) {
     std::cerr << "Number of teams has to be even!" << std::endl;
     return 1;
   }
-  Example::run<SportsLeague, DFS,SizeOptions>(opt);
+  Script::run<SportsLeague, DFS,SizeOptions>(opt);
   return 0;
 }
 

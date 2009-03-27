@@ -35,11 +35,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: Magic squares
+ * \brief %Script: Magic squares
  *
  * Compute magic squares of arbitrary size
  *
@@ -48,7 +51,7 @@
  * \ingroup ExProblem
  *
  */
-class MagicSquare : public Example {
+class MagicSquare : public Script {
 private:
   /// Size of magic square
   const int n;
@@ -95,7 +98,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  MagicSquare(bool share, MagicSquare& s) : Example(share,s), n(s.n) {
+  MagicSquare(bool share, MagicSquare& s) : Script(share,s), n(s.n) {
     x.update(*this, share, s.x);
   }
 
@@ -130,7 +133,7 @@ main(int argc, char* argv[]) {
   opt.iterations(1);
   opt.size(7);
   opt.parse(argc,argv);
-  Example::run<MagicSquare,DFS,SizeOptions>(opt);
+  Script::run<MagicSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 

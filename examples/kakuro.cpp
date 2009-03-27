@@ -39,8 +39,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 namespace {
 
@@ -503,13 +506,13 @@ namespace {
 
 
 /**
- * \brief %Example: Kakuro
+ * \brief %Script: Kakuro
  *
  * Another puzzle in the style of Sudoku.
  *
  * \ingroup ExProblem
  */
-class Kakuro : public Example {
+class Kakuro : public Script {
 protected:
   const int w;    ///< Width of board
   const int h;    ///< Height of board
@@ -635,7 +638,7 @@ public:
     branch(*this, _b, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
-  Kakuro(bool share, Kakuro& s) : Example(share,s), w(s.w), h(s.h) {
+  Kakuro(bool share, Kakuro& s) : Script(share,s), w(s.w), h(s.h) {
     _b.update(*this, share, s._b);
   }
   /// Perform copying during cloning
@@ -684,7 +687,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Kakuro,DFS,SizeOptions>(opt);
+  Script::run<Kakuro,DFS,SizeOptions>(opt);
   return 0;
 }
 

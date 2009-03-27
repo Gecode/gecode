@@ -35,8 +35,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /**
  * \name Graph specification for independent sets
@@ -73,12 +76,12 @@ const Graph g_40_20(40, 20, e_40_20);
 
 
 /**
- * \brief %Example: Independent sets in a graph
+ * \brief %Script: Independent sets in a graph
  *
  * \ingroup ExProblem
  *
  */
-class IndSet : public MaximizeExample {
+class IndSet : public MaximizeScript {
 protected:
   /// Graph used
   const Graph& g;
@@ -101,7 +104,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  IndSet(bool share, IndSet& s) : MaximizeExample(share,s), g(s.g) {
+  IndSet(bool share, IndSet& s) : MaximizeScript(share,s), g(s.g) {
     v.update(*this, share, s.v);
     k.update(*this, share, s.k);
   }
@@ -133,7 +136,7 @@ main(int argc, char* argv[]) {
   opt.size(1);
   opt.iterations(2000);
   opt.parse(argc,argv);
-  MaximizeExample::run<IndSet,BAB,SizeOptions>(opt);
+  MaximizeScript::run<IndSet,BAB,SizeOptions>(opt);
   return 0;
 }
 

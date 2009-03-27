@@ -35,18 +35,21 @@
  *
  */
 
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/set.hh>
-#include "examples/support.hh"
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Steiner triples
+ * \brief %Script: Steiner triples
  *
  * See also problem 044 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  *
  */
-class Steiner : public Example {
+class Steiner : public Script {
 public:
 
   /// Model variants
@@ -159,7 +162,7 @@ public:
   }
 
   /// Constructor for copying \a s
-  Steiner(bool share, Steiner& s) : Example(share,s), n(s.n), noOfTriples(s.noOfTriples) {
+  Steiner(bool share, Steiner& s) : Script(share,s), n(s.n), noOfTriples(s.noOfTriples) {
     triples.update(*this, share, s.triples);
   }
   /// Copy during cloning
@@ -183,7 +186,7 @@ main(int argc, char* argv[]) {
   opt.size(9);
   opt.iterations(20);
   opt.parse(argc,argv);
-  Example::run<Steiner,DFS,SizeOptions>(opt);
+  Script::run<Steiner,DFS,SizeOptions>(opt);
   return 0;
 }
 

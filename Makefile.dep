@@ -2620,7 +2620,7 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -2669,7 +2669,7 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -2718,7 +2718,7 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -2767,7 +2767,7 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -2816,7 +2816,7 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -2865,7 +2865,7 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -2914,7 +2914,7 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -2963,7 +2963,7 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3012,7 +3012,7 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3061,7 +3061,7 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3110,7 +3110,7 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3159,7 +3159,7 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3208,7 +3208,7 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3257,7 +3257,7 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3306,7 +3306,7 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3355,7 +3355,7 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3404,7 +3404,7 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3453,7 +3453,7 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3502,7 +3502,7 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3551,7 +3551,7 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3607,7 +3607,7 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp 
 examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3656,7 +3656,7 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3705,7 +3705,7 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3754,7 +3754,7 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3803,7 +3803,7 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3852,7 +3852,7 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3901,7 +3901,7 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3950,7 +3950,7 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -3999,7 +3999,7 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4048,7 +4048,7 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4097,7 +4097,7 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4146,7 +4146,7 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4195,7 +4195,7 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4244,7 +4244,7 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4293,7 +4293,7 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4342,7 +4342,7 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4391,7 +4391,7 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4440,7 +4440,7 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4489,7 +4489,7 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4538,7 +4538,7 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4587,7 +4587,7 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4636,7 +4636,7 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4685,7 +4685,7 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4734,7 +4734,7 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4790,7 +4790,7 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp 
 examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4846,7 +4846,7 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp 
 examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4902,7 +4902,7 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp 
 examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -4958,7 +4958,7 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp 
 examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
+	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
@@ -5013,104 +5013,6 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp 
-examples/support/options$(OBJSUFFIX) examples/support/options$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
-	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/linear.hh ./gecode/int/linear/bool-int.hpp \
-	./gecode/int/linear/bool-scale.hpp ./gecode/int/linear/bool-view.hpp ./gecode/int/linear/int-bin.hpp \
-	./gecode/int/linear/int-dom.hpp ./gecode/int/linear/int-nary.hpp ./gecode/int/linear/int-noview.hpp \
-	./gecode/int/linear/int-ter.hpp ./gecode/int/linear/post.hpp ./gecode/int/propagator.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
-	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
-	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
-	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
-	./gecode/iter/priority-queue.hpp ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
-	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
-	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp \
-	./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp \
-	./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
-	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
-	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
-	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
-	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
-	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
-	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/minimodel.hh ./gecode/minimodel/arithmetic.hpp ./gecode/minimodel/bool-expr.hpp \
-	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
-	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
-	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
-examples/support/example$(OBJSUFFIX) examples/support/example$(SBJSUFFIX): \
-	./examples/support.hh ./examples/support/example.hpp ./examples/support/options.hpp \
-	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/linear.hh ./gecode/int/linear/bool-int.hpp \
-	./gecode/int/linear/bool-scale.hpp ./gecode/int/linear/bool-view.hpp ./gecode/int/linear/int-bin.hpp \
-	./gecode/int/linear/int-dom.hpp ./gecode/int/linear/int-nary.hpp ./gecode/int/linear/int-noview.hpp \
-	./gecode/int/linear/int-ter.hpp ./gecode/int/linear/post.hpp ./gecode/int/propagator.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
-	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
-	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
-	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
-	./gecode/iter/priority-queue.hpp ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
-	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
-	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp \
-	./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp \
-	./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
-	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
-	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
-	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
-	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
-	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
-	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/minimodel.hh ./gecode/minimodel/arithmetic.hpp ./gecode/minimodel/bool-expr.hpp \
-	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
-	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
-	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/gist/drawingcursor.hh ./gecode/gist/drawingcursor.hpp ./gecode/gist/layoutcursor.hh \
 	./gecode/gist/layoutcursor.hpp ./gecode/gist/node.hh ./gecode/gist/node.hpp \

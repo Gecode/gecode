@@ -35,18 +35,21 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: DONALD+GERALD=ROBERT puzzle
+ * \brief %Script: DONALD+GERALD=ROBERT puzzle
  *
  * Well-known cryptoarithmetic puzzle of unknown origin.
  *
  * \ingroup ExProblem
  *
  */
-class Donald : public Example {
+class Donald : public Script {
 private:
   /// Number of letters
   static const int nl = 10;
@@ -95,7 +98,7 @@ public:
     branch(*this, le, INT_VAR_SIZE_MIN, INT_VAL_MAX);
   }
   /// Constructor for cloning \a s
-  Donald(bool share, Donald& s) : Example(share,s) {
+  Donald(bool share, Donald& s) : Script(share,s) {
     le.update(*this, share, s.le);
   }
   /// Copy during cloning
@@ -124,7 +127,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(1500);
   opt.parse(argc,argv);
-  Example::run<Donald,DFS,Options>(opt);
+  Script::run<Donald,DFS,Options>(opt);
   return 0;
 }
 

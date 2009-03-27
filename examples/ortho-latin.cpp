@@ -35,14 +35,17 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Orthogonal latin squares
+ * \brief %Script: Orthogonal latin squares
  *
  * \ingroup ExProblem
  */
-class OrthoLatinSquare : public Example {
+class OrthoLatinSquare : public Script {
 protected:
   /// Size of squares
   const int n;
@@ -127,7 +130,7 @@ public:
 
   /// Constructor for cloning \a s
   OrthoLatinSquare(bool share, OrthoLatinSquare& s)
-    : Example(share,s), n(s.n) {
+    : Script(share,s), n(s.n) {
       x1.update(*this, share, s.x1);
       x2.update(*this, share, s.x2);
   }
@@ -172,7 +175,7 @@ main(int argc, char* argv[]) {
   opt.size(7);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
-  Example::run<OrthoLatinSquare,DFS,SizeOptions>(opt);
+  Script::run<OrthoLatinSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 

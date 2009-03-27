@@ -35,18 +35,22 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: %Alpha puzzle
+ * \brief %Script: %Alpha puzzle
  *
  * Well-known cryptoarithmetic puzzle of unknown origin.
  *
  * \ingroup ExProblem
  *
  */
-class Alpha : public Example {
+class Alpha : public Script {
 protected:
   /// Alphabet has 26 letters
   static const int n = 26;
@@ -96,7 +100,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Alpha(bool share, Alpha& s) : Example(share,s) {
+  Alpha(bool share, Alpha& s) : Script(share,s) {
     le.update(*this, share, s.le);
   }
   /// Copy during cloning
@@ -129,7 +133,7 @@ main(int argc, char* argv[]) {
   opt.branching(Alpha::BRANCH_NONE, "none");
   opt.branching(Alpha::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
-  Example::run<Alpha,DFS,Options>(opt);
+  Script::run<Alpha,DFS,Options>(opt);
   return 0;
 }
 

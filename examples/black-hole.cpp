@@ -35,13 +35,14 @@
  *
  */
 
-#include "examples/support.hh"
-
-#include <gecode/minimodel.hh>
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 
 #include <vector>
 #include <algorithm>
 #include <sstream>
+
+using namespace Gecode;
 
 namespace {
   using std::vector;
@@ -175,7 +176,7 @@ public:
 
 
 /**
- * \brief %Example: Black hole patience
+ * \brief %Script: Black hole patience
  *
  * This example solves instances of the black-hole patience game.
  *
@@ -190,7 +191,7 @@ public:
  * \ingroup ExProblem
  *
  */
-class BlackHole : public Example {
+class BlackHole : public Script {
 protected:
   IntVarArray x, ///< Card at position
     y; ///< Position of card
@@ -365,7 +366,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  BlackHole(bool share, BlackHole& s) : Example(share,s) {
+  BlackHole(bool share, BlackHole& s) : Script(share,s) {
     x.update(*this, share, s.x);
     y.update(*this, share, s.y);
   }
@@ -396,7 +397,7 @@ main(int argc, char* argv[]) {
   opt.parse(argc,argv);
   // Generates the new board
   generate(opt.size());
-  Example::run<BlackHole,DFS,SizeOptions>(opt);
+  Script::run<BlackHole,DFS,SizeOptions>(opt);
   return 0;
 }
 

@@ -35,15 +35,17 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 
+using namespace Gecode;
 
 /**
- * \brief %Example: Stress linear Boolean inequality
+ * \brief %Script: Stress linear Boolean inequality
  *
  * \ingroup ExStress
  */
-class StressLinearBool : public Example {
+class StressLinearBool : public Script {
 protected:
   /// Variables
   BoolVarArray x;
@@ -67,7 +69,7 @@ public:
 
   }
   /// Constructor for cloning \a s
-  StressLinearBool(bool share, StressLinearBool& s) : Example(share,s) {
+  StressLinearBool(bool share, StressLinearBool& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
@@ -90,7 +92,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressLinearBool");
   opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressLinearBool,DFS,SizeOptions>(opt);
+  Script::run<StressLinearBool,DFS,SizeOptions>(opt);
   return 0;
 }
 

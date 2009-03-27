@@ -35,11 +35,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: n-%Queens puzzle
+ * \brief %Script: n-%Queens puzzle
  *
  * Place n queens on an n times n chessboard such that they do not
  * attack each other.
@@ -47,7 +50,7 @@
  * \ingroup ExProblem
  *
  */
-class Queens : public Example {
+class Queens : public Script {
 protected:
   /// Position of queens on boards
   IntVarArray q;
@@ -94,7 +97,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Queens(bool share, Queens& s) : Example(share,s) {
+  Queens(bool share, Queens& s) : Script(share,s) {
     q.update(*this, share, s.q);
   }
 
@@ -133,7 +136,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Queens::PROP_DISTINCT, "distinct",
                       "three distinct constraints");
   opt.parse(argc,argv);
-  Example::run<Queens,DFS,SizeOptions>(opt);
+  Script::run<Queens,DFS,SizeOptions>(opt);
   return 0;
 }
 

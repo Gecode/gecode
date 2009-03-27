@@ -39,8 +39,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /// Instance data for radio therapy problem
 class RadiotherapyData {
@@ -82,7 +85,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Radiotherapy
+ * \brief %Script: Radiotherapy
  *
  * Implementation of the model for cancer radiation treatment planning
  * from the paper
@@ -95,7 +98,7 @@ namespace {
  *
  */
 
-class Radiotherapy : public MinimizeExample {
+class Radiotherapy : public MinimizeScript {
 private:
   /// Instance data
   const RadiotherapyData rd;
@@ -174,7 +177,7 @@ public:
 
   /// Constructor for cloning \a s
   Radiotherapy(bool share, Radiotherapy& s)
-  : MinimizeExample(share,s), rd(s.rd) {
+  : MinimizeScript(share,s), rd(s.rd) {
     beamtime.update(*this, share, s.beamtime);
     N.update(*this, share, s.N);
     K.update(*this, share, s.K);
@@ -342,7 +345,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  MinimizeExample::run<Radiotherapy,BAB,SizeOptions>(opt);
+  MinimizeScript::run<Radiotherapy,BAB,SizeOptions>(opt);
   return 0;
 }
 

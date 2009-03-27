@@ -35,17 +35,20 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Solving 20 linear equations
+ * \brief %Script: Solving 20 linear equations
  *
  * Standard benchmark for solving linear equations.
  *
  * \ingroup ExProblem
  *
  */
-class Eq20 : public Example {
+class Eq20 : public Script {
 private:
   /// Number of variables
   static const int x_n = 7;
@@ -90,7 +93,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Eq20(bool share, Eq20& s) : Example(share,s) {
+  Eq20(bool share, Eq20& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
@@ -115,7 +118,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(1000);
   opt.parse(argc,argv);
-  Example::run<Eq20,DFS,Options>(opt);
+  Script::run<Eq20,DFS,Options>(opt);
   return 0;
 }
 

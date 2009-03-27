@@ -38,7 +38,10 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
  * \brief %Options for %BIBD problems
@@ -83,14 +86,14 @@ public:
 
 
 /**
- * \brief %Example: Balanced incomplete block design (%BIBD)
+ * \brief %Script: Balanced incomplete block design (%BIBD)
  *
  * See problem 28 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  *
  */
-class BIBD : public Example {
+class BIBD : public Script {
 protected:
   /// Options providing access to parameters
   const BIBDOptions& opt;
@@ -175,7 +178,7 @@ public:
 
   /// Constructor for cloning \a s
   BIBD(bool share, BIBD& s)
-    : Example(share,s), opt(s.opt) {
+    : Script(share,s), opt(s.opt) {
     _p.update(*this,share,s._p);
   }
 
@@ -200,7 +203,7 @@ main(int argc, char* argv[]) {
    * BIBD(7,3,1), BIBD(6,3,2), BIBD(7,3,20), ...
    */
 
-  Example::run<BIBD,DFS,BIBDOptions>(opt);
+  Script::run<BIBD,DFS,BIBDOptions>(opt);
   return 0;
 }
 

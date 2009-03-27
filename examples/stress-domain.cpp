@@ -35,15 +35,18 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Domain stress test
+ * \brief %Script: Domain stress test
  *
  * \ingroup ExStress
  *
  */
-class StressDomain : public Example {
+class StressDomain : public Script {
 protected:
   /// Variables
   IntVarArray x;
@@ -69,7 +72,7 @@ public:
       }
   }
   /// Constructor for cloning \a s
-  StressDomain(bool share, StressDomain& s) : Example(share,s) {
+  StressDomain(bool share, StressDomain& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
   /// Perform copying during cloning
@@ -91,7 +94,7 @@ main(int argc, char* argv[]) {
   opt.iterations(200);
   opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressDomain,DFS,SizeOptions>(opt);
+  Script::run<StressDomain,DFS,SizeOptions>(opt);
   return 0;
 }
 

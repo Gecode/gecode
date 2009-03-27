@@ -53,7 +53,8 @@ $modclear{"search"} = "Search engines";
 $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
 $modclear{"cpltset"} = "Finite integer sets with complete representation";
-$modclear{"minimodel"} = "Minimal modelling support";
+$modclear{"minimodel"} = "Minimal modeling support";
+$modclear{"driver"} = "Script commandline driver";
 $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "\%Example scripts";
@@ -71,7 +72,7 @@ $whatclear{"change"} = "Other changes";
 $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
-@modorder = ("kernel","search","int","set","cpltset","minimodel",
+@modorder = ("kernel","search","int","set","cpltset","minimodel","driver",
 	     "iter","support","example","test","gist","other");
 
 @whatorder = ("new","removed","change","bug","performance","documentation");

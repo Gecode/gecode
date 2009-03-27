@@ -35,7 +35,10 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
  * \name Graph specification for graph coloring
@@ -300,12 +303,12 @@ const GraphColorSpec g2(200, g2_e, g2_c);
 //@}
 
 /**
- * \brief %Example: Clique-based graph coloring
+ * \brief %Script: Clique-based graph coloring
  *
  * \ingroup ExProblem
  *
  */
-class GraphColor : public Example {
+class GraphColor : public Script {
 private:
   const GraphColorSpec& g;
   /// Color of nodes
@@ -358,7 +361,7 @@ public:
     }
   }
   /// Constructor for cloning \a s
-  GraphColor(bool share, GraphColor& s) : Example(share,s), g(s.g) {
+  GraphColor(bool share, GraphColor& s) : Script(share,s), g(s.g) {
     v.update(*this, share, s.v);
     m.update(*this, share, s.m);
   }
@@ -400,7 +403,7 @@ main(int argc, char* argv[]) {
   opt.branching(GraphColor::BRANCH_SIZE, "size");
   opt.branching(GraphColor::BRANCH_SIZE_DEGREE, "sizedegree");
   opt.parse(argc,argv);
-  Example::run<GraphColor,DFS,SizeOptions>(opt);
+  Script::run<GraphColor,DFS,SizeOptions>(opt);
   return 0;
 }
 

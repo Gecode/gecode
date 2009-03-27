@@ -38,8 +38,11 @@
  */
 
 
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/set.hh>
-#include "examples/support.hh"
+
+using namespace Gecode;
 
 namespace {
   /// The airline employees
@@ -79,7 +82,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Airline crew allocation
+ * \brief %Script: Airline crew allocation
  *
  * Assign 20 flight attendants to 10 flights. Each flight needs a certain
  * number of cabin crew, and they have to speak certain languages.
@@ -88,7 +91,7 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class Crew : public Example {
+class Crew : public Script {
 public:
   /// The crew for each flight
   SetVarArray flight;
@@ -190,7 +193,7 @@ public:
 
   /// Constructor for cloning \a s
   Crew(bool share, Crew& s)
-    : Example(share,s) {
+    : Script(share,s) {
     flight.update(*this,share,s.flight);
   }
   /// Copy during cloning
@@ -209,7 +212,7 @@ main(int argc, char* argv[]) {
   Options o("Crew");
   o.iterations(100);
   o.parse(argc,argv);
-  Example::run<Crew,DFS,Options>(o);
+  Script::run<Crew,DFS,Options>(o);
   return 0;
 }
 

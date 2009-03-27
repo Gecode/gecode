@@ -37,11 +37,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: Magic sequence
+ * \brief %Script: Magic sequence
  *
  * Find a magic sequence of length \f$n\f$. A magic sequence of
  * length \f$n\f$ is a sequence \f[x_0,x_1, \ldots, x_{n-1}\f]
@@ -54,7 +57,7 @@
  * \ingroup ExProblem
  *
  */
-class MagicSequence : public Example {
+class MagicSequence : public Script {
 private:
   /// Length of sequence
   const int n;
@@ -102,7 +105,7 @@ public:
   }
 
   /// Constructor for cloning \a e
-  MagicSequence(bool share, MagicSequence& e) : Example(share,e), n(e.n) {
+  MagicSequence(bool share, MagicSequence& e) : Script(share,e), n(e.n) {
     s.update(*this, share, e.s);
   }
   /// Copy during cloning
@@ -138,7 +141,7 @@ main(int argc, char* argv[]) {
   opt.propagation(MagicSequence::PROP_COUNT,   "count");
   opt.propagation(MagicSequence::PROP_GCC,     "gcc");
   opt.parse(argc,argv);
-  Example::run<MagicSequence,DFS,SizeOptions>(opt);
+  Script::run<MagicSequence,DFS,SizeOptions>(opt);
   return 0;
 }
 

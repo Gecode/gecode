@@ -35,15 +35,18 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: %Baseline test
+ * \brief %Script: %Baseline test
  *
  * \ingroup ExProblem
  *
  */
-class Baseline : public Example {
+class Baseline : public Script {
 protected:
   /// Variables
   IntVarArray x;
@@ -55,7 +58,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Baseline(bool share, Baseline& s) : Example(share,s) {
+  Baseline(bool share, Baseline& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
 
@@ -79,7 +82,7 @@ main(int argc, char* argv[]) {
   opt.iterations(2000);
   opt.solutions(0);
   opt.parse(argc,argv);
-  Example::run<Baseline,DFS,Options>(opt);
+  Script::run<Baseline,DFS,Options>(opt);
   return 0;
 }
 

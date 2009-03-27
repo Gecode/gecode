@@ -35,10 +35,13 @@
  *
  */
 
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+#include <gecode/minimodel.hh>
+
 #include <cctype>
 
-#include "examples/support.hh"
-#include <gecode/minimodel.hh>
+using namespace Gecode;
 
 namespace {
   extern const char *specs[];
@@ -48,7 +51,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Minesweeper
+ * \brief %Script: Minesweeper
  *
  * This is the classical MineSweeper game.
  *
@@ -58,7 +61,7 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class MineSweeper : public Example {
+class MineSweeper : public Script {
 private:
   const char *spec;
   int size;
@@ -134,7 +137,7 @@ public:
 
   /// Constructor for cloning \a s
   MineSweeper(bool share, MineSweeper& s) :
-    Example(share,s), spec(s.spec), size(s.size) {
+    Script(share,s), spec(s.spec), size(s.size) {
     b.update(*this, share, s.b);
   }
   /// Copy space during cloning
@@ -159,7 +162,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<MineSweeper,DFS,SizeOptions>(opt);
+  Script::run<MineSweeper,DFS,SizeOptions>(opt);
   return 0;
 }
 

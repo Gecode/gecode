@@ -572,14 +572,6 @@ EXAMPLEBUILDDIRS = examples examples/support
 EXAMPLEEXE = \
   $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
 
-EXSUPPORTSRC0 = \
-	support/options support/example
-EXSUPPORTHDR0 = \
-	support.hh support/options.hpp support/example.hpp
-EXSUPPORTSRC = 	$(EXSUPPORTSRC0:%=examples/%.cpp)
-EXSUPPORTHDR  = $(EXSUPPORTHDR0:%=examples/%)
-export EXSUPPORTOBJ = $(EXSUPPORTSRC:%.cpp=%$(OBJSUFFIX))
-EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cpp=%$(SBJSUFFIX))
 
 
 #
@@ -590,7 +582,7 @@ ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
-	$(EXSUPPORTSRC) $(GISTSRC)
+	$(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(MMHDR) $(DRIVERHDR) \
@@ -1055,8 +1047,8 @@ endif
 #
 
 .PRECIOUS: examples/%$(OBJSUFFIX)
-examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(EXSUPPORTOBJ) $(ALLLIB)
-	$(CXX) @EXEOUTPUT@$@ $< $(EXSUPPORTOBJ) $(DLLPATH) $(CXXFLAGS) \
+examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
+	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 

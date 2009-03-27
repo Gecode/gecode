@@ -35,15 +35,18 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Search stress test
+ * \brief %Script: Search stress test
  *
  * \ingroup ExStress
  *
  */
-class StressSearch : public Example {
+class StressSearch : public Script {
 protected:
   /// Variables
   IntVarArray x;
@@ -55,7 +58,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  StressSearch(bool share, StressSearch& s) : Example(share,s) {
+  StressSearch(bool share, StressSearch& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
 
@@ -80,7 +83,7 @@ main(int argc, char* argv[]) {
   opt.size(6);
   opt.solutions(0);
   opt.parse(argc,argv);
-  Example::run<StressSearch,DFS,SizeOptions>(opt);
+  Script::run<StressSearch,DFS,SizeOptions>(opt);
   return 0;
 }
 

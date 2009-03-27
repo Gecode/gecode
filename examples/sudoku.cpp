@@ -39,17 +39,19 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+#include <gecode/minimodel.hh>
 
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #endif
 
-#include <gecode/minimodel.hh>
-
 #include <string>
 #include <cmath>
 #include <cctype>
+
+using namespace Gecode;
 
 namespace {
   extern const char* examples[];
@@ -59,7 +61,7 @@ namespace {
 }
 
 /// Base class for %Sudoku puzzles
-class Sudoku : public Example {
+class Sudoku : public Script {
 protected:
   /// The size of the problem
   const int n;
@@ -77,12 +79,12 @@ public:
   Sudoku(const SizeOptions& opt) : n(example_size(examples[opt.size()])) {}
 
   /// Constructor for cloning \a s
-  Sudoku(bool share, Sudoku& s) : Example(share,s), n(s.n) {}
+  Sudoku(bool share, Sudoku& s) : Script(share,s), n(s.n) {}
 
 };
 
 /**
- * \brief %Example: Solving %Sudoku puzzles using integer constraints
+ * \brief %Script: Solving %Sudoku puzzles using integer constraints
  *
  * \ingroup ExProblem
  */
@@ -221,7 +223,7 @@ private:
 
 #ifdef GECODE_HAS_SET_VARS
 /**
- * \brief %Example: Solving %Sudoku puzzles using set constraints
+ * \brief %Script: Solving %Sudoku puzzles using set constraints
  *
  * \ingroup ExProblem
  */
@@ -326,7 +328,7 @@ public:
 
 
 /**
- * \brief %Example: Solving %Sudoku puzzles using both set and integer
+ * \brief %Script: Solving %Sudoku puzzles using both set and integer
  * constraints
  *
  * \ingroup ExProblem
@@ -404,17 +406,17 @@ main(int argc, char* argv[]) {
 #ifdef GECODE_HAS_SET_VARS
   switch (opt.model()) {
   case Sudoku::MODEL_INT:
-    Example::run<SudokuInt,DFS,SizeOptions>(opt);
+    Script::run<SudokuInt,DFS,SizeOptions>(opt);
     break;
   case Sudoku::MODEL_SET:
-    Example::run<SudokuSet,DFS,SizeOptions>(opt);
+    Script::run<SudokuSet,DFS,SizeOptions>(opt);
     break;
   case Sudoku::MODEL_MIXED:
-    Example::run<SudokuMixed,DFS,SizeOptions>(opt);
+    Script::run<SudokuMixed,DFS,SizeOptions>(opt);
     break;
   }
 #else
-  Example::run<SudokuInt,DFS,SizeOptions>(opt);
+  Script::run<SudokuInt,DFS,SizeOptions>(opt);
 #endif
   return 0;
 }

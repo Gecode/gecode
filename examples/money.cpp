@@ -35,11 +35,14 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: SEND+MORE=MONEY puzzle
+ * \brief %Script: SEND+MORE=MONEY puzzle
  *
  * Well-known cryptoarithmetic puzzle.
  * Henry Dudeney, Strand Magazine, July 1924.
@@ -47,7 +50,7 @@
  * \ingroup ExProblem
  *
  */
-class Money : public Example {
+class Money : public Script {
 protected:
   /// Number of letters
   static const int nl = 8;
@@ -99,7 +102,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Money(bool share, Money& s) : Example(share,s) {
+  Money(bool share, Money& s) : Script(share,s) {
     le.update(*this, share, s.le);
   }
   /// Copy during cloning
@@ -121,7 +124,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(20000);
   opt.parse(argc,argv);
-  Example::run<Money,DFS,Options>(opt);
+  Script::run<Money,DFS,Options>(opt);
   return 0;
 }
 

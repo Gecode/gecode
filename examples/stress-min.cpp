@@ -35,15 +35,18 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Stress test for the minimum constraint
+ * \brief %Script: Stress test for the minimum constraint
  *
  * \ingroup ExStress
  *
  */
-class StressMin : public Example {
+class StressMin : public Script {
 protected:
   /// Size of problem
   const int n;
@@ -65,7 +68,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  StressMin(bool share, StressMin& s) : Example(share,s), n(s.n) {
+  StressMin(bool share, StressMin& s) : Script(share,s), n(s.n) {
     x.update(*this, share, s.x);
   }
 
@@ -91,7 +94,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("StressMin");
   opt.parse(argc,argv);
   opt.size(200);
-  Example::run<StressMin,DFS,SizeOptions>(opt);
+  Script::run<StressMin,DFS,SizeOptions>(opt);
   return 0;
 }
 

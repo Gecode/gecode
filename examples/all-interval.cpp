@@ -35,13 +35,16 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
 #include <cstdlib>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: All-interval series
+ * \brief %Script: All-interval series
  *
  * An all-interval series of length \f$n\f$ is a sequence
  * \f[
@@ -60,7 +63,7 @@
  *
  * \ingroup ExProblem
  */
-class AllInterval : public Example {
+class AllInterval : public Script {
 private:
   /// The numbers
   IntVarArray x;
@@ -91,7 +94,7 @@ public:
   }
   /// Constructor for cloning \a e
   AllInterval(bool share, AllInterval& e)
-    : Example(share, e) {
+    : Script(share, e) {
     x.update(*this, share, e.x);
   }
   /// Copy during cloning
@@ -125,7 +128,7 @@ main(int argc, char* argv[]){
     std::cerr << "size must be at least 2!" << std::endl;
     return -1;
   }
-  Example::run<AllInterval,DFS,SizeOptions>(opt);
+  Script::run<AllInterval,DFS,SizeOptions>(opt);
   return 0;
 }
 

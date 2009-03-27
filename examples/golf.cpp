@@ -35,8 +35,11 @@
  *
  */
 
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/set.hh>
-#include "examples/support.hh"
+
+using namespace Gecode;
 
 /**
  * \name Parameters for golf tournaments
@@ -64,14 +67,14 @@ static const unsigned int n_examples = sizeof(t) / sizeof(Tournament);
 //@}
 
 /**
- * \brief %Example: Golf tournament
+ * \brief %Script: Golf tournament
  *
  * Schedule a golf tournament. This is problem 010 from csplib.
  *
  * \ingroup ExProblem
  *
  */
-class Golf : public Example {
+class Golf : public Script {
 public:
   /// Model variants
   enum {
@@ -252,7 +255,7 @@ public:
   }
 
   /// Constructor for copying \a s
-  Golf(bool share, Golf& s) : Example(share,s),
+  Golf(bool share, Golf& s) : Script(share,s),
       groups(s.groups), playersInGroup(s.playersInGroup),
       weeks(s.weeks), players(s.players) {
     groupsS.update(*this, share, s.groupsS);
@@ -284,7 +287,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<Golf,DFS,SizeOptions>(opt);
+  Script::run<Golf,DFS,SizeOptions>(opt);
   return 0;
 }
 

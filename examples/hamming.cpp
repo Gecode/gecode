@@ -35,12 +35,15 @@
  *
  */
 
-#include <gecode/set.hh>
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+#include <gecode/set.hh>
+
+using namespace Gecode;
 
 /**
- * \brief %Example: Generating %Hamming codes
+ * \brief %Script: Generating %Hamming codes
  *
  * Generate a Hamming code that fits in b-bit words to code n symbols where
  * the Hamming distance between every two symbol codes is at least d.
@@ -52,7 +55,7 @@
  * \ingroup ExProblem
  *
  */
-class Hamming : public Example {
+class Hamming : public Script {
 public:
   /// The hamming code
   SetVarArray xs;
@@ -101,7 +104,7 @@ public:
   }
 
   /// Constructor for copying \a s
-  Hamming(bool share, Hamming& s) : Example(share,s) {
+  Hamming(bool share, Hamming& s) : Script(share,s) {
     xs.update(*this, share, s.xs);
   }
   /// Copy during cloning
@@ -120,7 +123,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("Hamming");
   opt.size(32);
   opt.parse(argc,argv);
-  Example::run<Hamming,DFS,SizeOptions>(opt);
+  Script::run<Hamming,DFS,SizeOptions>(opt);
   return 0;
 }
 

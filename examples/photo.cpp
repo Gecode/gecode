@@ -35,8 +35,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /// Specifications for the Photo example
 class PhotoSpec {
@@ -64,7 +67,7 @@ const int l_prefs[] = {
 const PhotoSpec p_large(9,17, l_prefs);
 
 /**
- * \brief %Example: Placing people on a photo
+ * \brief %Script: Placing people on a photo
  *
  * A group of people wants to take a group photo. Each person can give
  * preferences next to whom he or she wants to be placed on the
@@ -74,7 +77,7 @@ const PhotoSpec p_large(9,17, l_prefs);
  * \ingroup ExProblem
  *
  */
-class Photo : public MaximizeExample {
+class Photo : public MaximizeScript {
 protected:
   /// Photo specification
   const PhotoSpec& spec;
@@ -122,7 +125,7 @@ public:
 
   /// Constructor for cloning \a s
   Photo(bool share, Photo& s) :
-    MaximizeExample(share,s), spec(s.spec) {
+    MaximizeScript(share,s), spec(s.spec) {
     pos.update(*this, share, s.pos);
     sat.update(*this, share, s.sat);
   }
@@ -157,7 +160,7 @@ main(int argc, char* argv[]) {
   opt.branching(Photo::BRANCH_NONE, "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
-  MaximizeExample::run<Photo,BAB,SizeOptions>(opt);
+  MaximizeScript::run<Photo,BAB,SizeOptions>(opt);
   return 0;
 }
 

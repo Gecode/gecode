@@ -37,8 +37,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /** The maximum number of knights placeable
  *
@@ -118,7 +121,7 @@ namespace {
   }
 }
 /**
-   \brief %Example: Crowded chessboard
+   \brief %Script: Crowded chessboard
 
    "You are given a chessboard together with 8 queens, 8 rooks, 14
    bishops, and 21 knights. The puzzle is to arrange the 51 pieces on
@@ -181,7 +184,7 @@ namespace {
 
    \ingroup ExProblem
 */
-class CrowdedChess : public Example {
+class CrowdedChess : public Script {
 protected:
   const int n;          ///< Board-size
   IntVarArray s;        ///< The board
@@ -342,7 +345,7 @@ public:
 
   /// Constructor for cloning e
   CrowdedChess(bool share, CrowdedChess& e)
-    : Example(share,e), n(e.n) {
+    : Script(share,e), n(e.n) {
     s.update(*this, share, e.s);
     queens.update(*this, share, e.queens);
     rooks.update(*this, share, e.rooks);
@@ -416,7 +419,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
   init_bishops(opt.size());
-  Example::run<CrowdedChess,DFS,SizeOptions>(opt);
+  Script::run<CrowdedChess,DFS,SizeOptions>(opt);
   return 0;
 }
 

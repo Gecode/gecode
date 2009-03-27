@@ -35,13 +35,16 @@
  *
  */
 
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
-#include "examples/support.hh"
 
 #include <map>
 #include <string>
 #include <list>
 #include <vector>
+
+using namespace Gecode;
 
 /// A course \relates BACP
 class Course {
@@ -78,14 +81,14 @@ namespace {
 }
 
 /**
- * \brief %Example: The balanced academic curriculum problem
+ * \brief %Script: The balanced academic curriculum problem
  *
  * This is problem 030 from http://www.csplib.org/.
  *
  * \ingroup ExProblem
  *
  */
-class BACP : public MinimizeExample {
+class BACP : public MinimizeScript {
 protected:
   /// The curriculum to be scheduled
   const Curriculum curr;
@@ -150,7 +153,7 @@ public:
   }
 
   /// Constructor for copying \a bacp
-  BACP(bool share, BACP& bacp) : MinimizeExample(share,bacp),
+  BACP(bool share, BACP& bacp) : MinimizeScript(share,bacp),
     curr(bacp.curr) {
     u.update(*this, share, bacp.u);
     x.update(*this, share, bacp.x);
@@ -199,7 +202,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  MinimizeExample::run<BACP,BAB,SizeOptions>(opt);
+  MinimizeScript::run<BACP,BAB,SizeOptions>(opt);
   return 0;
 }
 

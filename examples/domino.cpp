@@ -37,8 +37,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 namespace {
 
@@ -56,7 +59,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Solitaire domino
+ * \brief %Script: Solitaire domino
  *
  * The task is to place domino pieces on a board. Each piece covers two
  * fields and has two numbers. There are 28 pieces, from 0-0 to 6-6.
@@ -66,7 +69,7 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class Domino : public Example {
+class Domino : public Script {
 private:
   /// Specification of the board
   const int *spec;
@@ -207,7 +210,7 @@ public:
   }
   /// Constructor for cloning \a s
   Domino(bool share, Domino& s) :
-    Example(share,s), spec(s.spec), width(s.width), height(s.height) {
+    Script(share,s), spec(s.spec), width(s.width), height(s.height) {
       x.update(*this, share, s.x);
   }
   /// Copy space during cloning
@@ -235,7 +238,7 @@ main(int argc, char* argv[]) {
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Domino,DFS,SizeOptions>(opt);
+  Script::run<Domino,DFS,SizeOptions>(opt);
   return 0;
 }
 
@@ -248,7 +251,7 @@ namespace {
    */
   //@{
 
-  /// %Example 0
+  /// %Script 0
   const int domino0[] =
     { // width*height of the board
       8,7,
@@ -262,7 +265,7 @@ namespace {
       4,2,0,6,5,3,3,6
     };
 
-  /// %Example 1
+  /// %Script 1
   const int domino1[] =
     { // width*height of the board
       8,7,
@@ -276,7 +279,7 @@ namespace {
       1,3,6,1,2,3,5,2
     };
 
-  /// %Example 2
+  /// %Script 2
   const int domino2[] =
     { // width*height of the board
       8,7,
@@ -290,7 +293,7 @@ namespace {
       5,1,6,0,0,0,4,0
     };
 
-  /// %Example 3
+  /// %Script 3
   const int domino3[] =
     { // width*height of the board
       8,7,
@@ -304,7 +307,7 @@ namespace {
       0,5,4,6,2,1,6,1
     };
 
-  /// %Example 4
+  /// %Script 4
   const int domino4[] =
     { // width*height of the board
       8,7,
@@ -318,7 +321,7 @@ namespace {
       3,2,4,5,4,2,6,0
     };
 
-  /// %Example 5
+  /// %Script 5
   const int domino5[] =
     { // width*height of the board
       8,7,

@@ -36,10 +36,12 @@
  */
 
 
-#include "examples/support.hh"
-#include <gecode/set.hh>
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+#include <gecode/set.hh>
 
+using namespace Gecode;
 
 /** \name Constant sets for attacking queens.
  *
@@ -48,7 +50,7 @@
 IntSet* A;
 
 /**
- * \brief %Example: Peaceable co-existing armies of queens
+ * \brief %Script: Peaceable co-existing armies of queens
  *
  * The goal of this problem is to place as many white and black queens
  * on a chess-board without any two queens of different color
@@ -66,7 +68,7 @@ IntSet* A;
  * \ingroup ExProblem
  *
  */
-class QueenArmies : public MaximizeExample {
+class QueenArmies : public MaximizeScript {
 public:
   const int n;
   SetVar U, ///< Set of un-attacked squares
@@ -119,7 +121,7 @@ public:
   }
   /// Constructor for cloning
   QueenArmies(bool share, QueenArmies& s)
-    : MaximizeExample(share,s), n(s.n) {
+    : MaximizeScript(share,s), n(s.n) {
     U.update(*this, share, s.U);
     W.update(*this, share, s.W);
     w.update(*this, share, s.w);
@@ -289,7 +291,7 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  MaximizeExample::run<QueenArmies,BAB,SizeOptions>(opt);
+  MaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt);
   return 0;
 }
 

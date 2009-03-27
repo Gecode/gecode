@@ -35,8 +35,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 namespace {
 
@@ -48,7 +51,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Nonogram
+ * \brief %Script: Nonogram
  *
  * This example solves nonograms. A nonogram is composed of a matrix of
  * markers. For each row/column there is a specification on how many groups
@@ -61,7 +64,7 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class Nonogram : public Example {
+class Nonogram : public Script {
 protected:
   /// Specification to be used
   const int* spec;
@@ -142,7 +145,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Nonogram(bool share, Nonogram& s) : Example(share,s), spec(s.spec) {
+  Nonogram(bool share, Nonogram& s) : Script(share,s), spec(s.spec) {
     b.update(*this, share, s.b);
   }
 
@@ -180,7 +183,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Nonogram,DFS,SizeOptions>(opt);
+  Script::run<Nonogram,DFS,SizeOptions>(opt);
   return 0;
 }
 

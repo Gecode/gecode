@@ -35,10 +35,13 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
 #include <algorithm>
+
+using namespace Gecode;
 
 /// Support for TSP instances
 namespace {
@@ -208,7 +211,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Travelling salesman problem (TSP)
+ * \brief %Script: Travelling salesman problem (TSP)
  *
  * Simple travelling salesman problem instances. Just meant
  * as a test for circuit.
@@ -216,7 +219,7 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class TSP : public MinimizeExample {
+class TSP : public MinimizeScript {
 protected:
   /// Problem instance to be solved
   Problem     p;
@@ -268,7 +271,7 @@ public:
     return total;
   }
   /// Constructor for cloning \a s
-  TSP(bool share, TSP& s) : MinimizeExample(share,s), p(s.p) {
+  TSP(bool share, TSP& s) : MinimizeScript(share,s), p(s.p) {
     succ.update(*this, share, s.succ);
     total.update(*this, share, s.total);
   }
@@ -324,7 +327,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  MinimizeExample::run<TSP,BAB,SizeOptions>(opt);
+  MinimizeScript::run<TSP,BAB,SizeOptions>(opt);
   return 0;
 }
 

@@ -35,13 +35,16 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
 #include <iomanip>
 
+using namespace Gecode;
+
 /**
- * \brief %Example: Finding optimal %Golomb rulers
+ * \brief %Script: Finding optimal %Golomb rulers
  *
  * The script makes use of two lower bounds taken from:
  *   Barbara Smith, Kostas Stergiou, Toby Walsh,
@@ -54,7 +57,7 @@
  * \ingroup ExProblem
  *
  */
-class GolombRuler : public MinimizeExample {
+class GolombRuler : public MinimizeScript {
 protected:
   /// Number of marks
   const int n;
@@ -150,7 +153,7 @@ public:
 
   /// Constructor for cloning \a s
   GolombRuler(bool share, GolombRuler& s)
-    : MinimizeExample(share,s), n(s.n) {
+    : MinimizeScript(share,s), n(s.n) {
     m.update(*this, share, s.m);
   }
   /// Copy during cloning
@@ -184,11 +187,11 @@ main(int argc, char* argv[]) {
   if (opt.size() > 0)
     switch (opt.search()) {
     case GolombRuler::SEARCH_DFS:
-      MinimizeExample::run<GolombRuler,DFS,SizeOptions>(opt); break;
+      MinimizeScript::run<GolombRuler,DFS,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_BAB:
-      MinimizeExample::run<GolombRuler,BAB,SizeOptions>(opt); break;
+      MinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_RESTART:
-      MinimizeExample::run<GolombRuler,Restart,SizeOptions>(opt); break;
+      MinimizeScript::run<GolombRuler,Restart,SizeOptions>(opt); break;
     }
   return 0;
 }

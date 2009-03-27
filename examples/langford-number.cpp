@@ -39,8 +39,11 @@
  *
  */
 
-#include "examples/support.hh"
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+
+using namespace Gecode;
 
 /**
  * \brief Options taking two additional parameters
@@ -72,13 +75,13 @@ public:
 };
 
 /**
- * \brief %Example: Langford's number problem
+ * \brief %Script: Langford's number problem
  *
  * See problem 24 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  */
-class LangfordNumber : public Example {
+class LangfordNumber : public Script {
 protected:
   int k, n;      ///< Problem parameters
   IntVarArray y; ///< Sequence variables
@@ -182,7 +185,7 @@ public:
 
   /// Constructor for cloning \a l
   LangfordNumber(bool share, LangfordNumber& l)
-    : Example(share, l), k(l.k), n(l.n) {
+    : Script(share, l), k(l.k), n(l.n) {
     y.update(*this, share, l.y);
 
   }
@@ -217,7 +220,7 @@ main(int argc, char* argv[]) {
     std::cerr << "n must be at least k!" << std::endl;
     return 1;
   }
-  Example::run<LangfordNumber,DFS,LangfordNumberOptions>(opt);
+  Script::run<LangfordNumber,DFS,LangfordNumberOptions>(opt);
   return 0;
 }
 
