@@ -1,7 +1,7 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Raphael Reischuk <raphael@ps.uni-sb.de>
+ *     Raphael Reischuk <reischuk@cs.uni-sb.de>
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
