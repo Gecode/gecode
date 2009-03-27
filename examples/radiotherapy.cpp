@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
  *  Copyright:
  *     Guido Tack, 2009
+ *     Mikael Lagerkvist, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -48,13 +52,13 @@ class RadiotherapyData {
     return sum;
   }
 public:
-  const int  m; //< Height of intensity matrix
-  const int  n; //< Width of intensity matrix
-  const int* intensity; //< Intensity matrix
+  const int  m; ///< Height of intensity matrix
+  const int  n; ///< Width of intensity matrix
+  const int* intensity; ///< Intensity matrix
 
-  int btMin;   //< Minimal beam time (computed from other parameters)
-  int btMax;   //< Maximal beam time (computed from other parameters)
-  int intsSum; //< Sum of all intensities
+  int btMin;   ///< Minimal beam time (computed from other parameters)
+  int btMax;   ///< Maximal beam time (computed from other parameters)
+  int intsSum; ///< Sum of all intensities
 
   /// Construct instance data
   RadiotherapyData(int m0, int n0, const int* intensity0)
@@ -200,6 +204,15 @@ public:
   private:
     /// Flag that the branching is done after one commit
     bool done;
+    /// Mapping of index to weight
+    struct Idx { 
+      int idx;    ///< Index
+      int weight; ///< Weight
+      /// Sort order (higher weights go first)
+      bool operator<(const Idx& rhs) const { return weight > rhs.weight; }
+    };
+    /// Weighted ordering of rows
+    SharedArray<Idx> index;
     /// Description that only signals failure or success
     class Description : public BranchingDesc {
     public:
@@ -214,10 +227,29 @@ public:
       }
     };
     /// Construct branching
-    NestedSearch(Space& home) : Branching(home), done(false) {}
+    NestedSearch(Space& home) : Branching(home), done(false) {
+      Radiotherapy& rt = static_cast<Radiotherapy&>(home);
+      // Set up ordering of rows.  As a heuristic, pre-order the rows
+      // with the potentially cheapest ones first.
+      index.init(rt.rd.m+1);
+      for (int i = rt.rd.m; i--; ) {
+        index[i].idx    = i;
+        index[i].weight = 0;
+        for (int j = rt.rd.n; j--; )
+          index[i].weight += rt.rd.intensity[i*rt.rd.n + j] == 0;
+      }
+      Support::quicksort(&(index[0]), rt.rd.m);
+      for (int i = rt.rd.m; i--; )
+        index[i].weight = 0;
+      index[rt.rd.m].idx = 10;
+      // A shared object must be disposed properly
+      home.notice(*this, AP_DISPOSE);
+    }
     /// Copy constructor
     NestedSearch(Space& home, bool share, NestedSearch& b)
-      : Branching(home, share, b), done(b.done) {}
+      : Branching(home, share, b), done(b.done) {
+      index.update(home, share, b.index);
+    }
   public:
     virtual bool status(const Space&) const {
       return !done;
@@ -238,7 +270,7 @@ public:
       done = true;
       Radiotherapy& rt = static_cast<Radiotherapy&>(home);
 
-      std::cerr << "*";
+      std::cout << "*";
       
       // Perform nested search for each row
       bool fail = false;
@@ -247,19 +279,23 @@ public:
         Radiotherapy* row = static_cast<Radiotherapy*>(rt.clone());
 
         // Branch over row i
-        branch(*row, getRow(row, i), INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+        branch(*row, getRow(row, index[i].idx), 
+               INT_VAR_NONE, INT_VAL_SPLIT_MIN);
         Search::Options o; o.clone = false;
         if ( Radiotherapy* newSol = dfs(row, o) ) {
           // Found a solution for row i, so try to find one for i+1
           delete newSol;
-          std::cerr << i+1;
+          std::cerr << index[i].idx;
         } else {
           // Found no solution for row i, so back to search the N variables
           fail = true;
+          index[i].weight += 1;
+          if (i && index[i] < index[i-1])
+            std::swap(index[i], index[i-1]);
           break;
         }      
       }
-      // delete nest;
+
       return new Description(*this, fail);
     }
     virtual ExecStatus commit(Space&, const BranchingDesc& d, unsigned int) {
@@ -272,6 +308,19 @@ public:
     /// Post branching
     static void post(Space& home) {
       (void) new (home) NestedSearch(home);
+    }
+    /// Dispose member function
+    size_t dispose(Space& home) {
+      home.ignore(*this,AP_DISPOSE);
+      // Periodic scaling of weights
+      if (!--index[index.size()-1].idx) {
+        index[index.size()-1].idx = 10;
+        for (int i = index.size()-1; i--; )
+          index[i].weight *= 0.9;
+      }
+      (void) Branching::dispose(home);
+      (void) index.~SharedArray<Idx>();
+      return sizeof(*this);
     }
   };
 
