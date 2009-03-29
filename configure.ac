@@ -72,9 +72,6 @@ AC_LANG(C++)
 
 AC_PROG_RANLIB
 
-dnl check whether we have pkgconfig and should generate config files for it
-AC_GECODE_PKGCONFIG
-
 dnl check whether we have certain programs we need
 AC_CHECK_PROG(PROG_DIFF, diff, [ok])
  if test "${PROG_DIFF}x" = "x"; then
@@ -270,7 +267,6 @@ dnl Configure contributions
 AC_CONFIG_SUBDIRS()
 dnl @SUBDIRS@
 
-AC_SUBST(PKG_CONFIG_CXXFLAGS, ${ac_gecode_pkg_cxxflags})
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
@@ -292,9 +288,4 @@ fi
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
 AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
-AC_CONFIG_FILES([misc/gecode.pc])
-AC_CONFIG_FILES([misc/gecode-search.pc])
-AC_CONFIG_FILES([misc/gecode-minimodel.pc])
-AC_CONFIG_FILES([misc/gecode-driver.pc])
-AC_CONFIG_FILES([misc/gecode-gist.pc])
 AC_OUTPUT

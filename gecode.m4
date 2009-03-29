@@ -35,18 +35,6 @@ dnl WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 dnl
 dnl
 
-dnl check whether we have pkgconfig and should generate config files for it
-AC_DEFUN([AC_GECODE_PKGCONFIG],
-	[AC_CHECK_PROG(PKGCONFIG, pkg-config, [found])
-	 AC_MSG_CHECKING(whether to generate pkg-config files)
-	 if test "${PKGCONFIG}x" = "x"; then
-	    AC_MSG_RESULT(no)
-	    AC_SUBST(HAS_PKGCONFIG, "no")
-	 else
-	    AC_MSG_RESULT(yes)
-	    AC_SUBST(HAS_PKGCONFIG, "yes")
-	 fi])
-
 AC_DEFUN([AC_GECODE_GET_OS],
 	[AC_ARG_WITH([host-os],
            AC_HELP_STRING([--with-host-os],
@@ -95,8 +83,6 @@ AC_DEFUN([AC_GECODE_ADD_TO_CFLAGS],
    [CFLAGS="${CFLAGS}${CFLAGS:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_GLDFLAGS],
    [GLDFLAGS="${GLDFLAGS}${GLDFLAGS:+ }$1"])
-AC_DEFUN([AC_GECODE_ADD_TO_PKG_CXXFLAGS],
-  [ac_gecode_pkg_cxxflags="${ac_gecode_pkg_cxxflags}${ac_gecode_pkg_cxxflags:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_DLLFLAGS],
   [DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }$1"])
 
