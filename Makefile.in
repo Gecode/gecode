@@ -905,7 +905,7 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
-	$(LINKDRIVE) $(LINKGIST) $(LINKSEARCH) $(LINKMM) \
+	$(LINKDRIVER) $(LINKGIST) $(LINKSEARCH) $(LINKMM) \
 	$(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
