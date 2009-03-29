@@ -113,7 +113,7 @@ namespace Gecode {
      *
      */
     class GECODE_DRIVER_EXPORT BaseOption {
-      friend class Options;
+      friend class Gecode::Options;
     protected:
       const char* opt;  ///< String for option (including hyphen)
       const char* exp;  ///< Short explanation
