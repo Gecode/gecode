@@ -361,8 +361,6 @@ namespace Gecode { namespace Int { namespace Bool {
     NaryOrTrue(Space& home, ViewArray<BV>& x);
     /// Constructor for cloning \a p
     NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p);
-    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
-    static  ExecStatus post(Space& home, BV x0, BV x1, ViewArray<BV>& b);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
