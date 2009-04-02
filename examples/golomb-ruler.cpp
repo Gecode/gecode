@@ -44,7 +44,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Finding optimal %Golomb rulers
+ * \brief %Example: Finding optimal %Golomb rulers
  *
  * The script makes use of two lower bounds taken from:
  *   Barbara Smith, Kostas Stergiou, Toby Walsh,

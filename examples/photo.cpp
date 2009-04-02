@@ -67,7 +67,7 @@ const int l_prefs[] = {
 const PhotoSpec p_large(9,17, l_prefs);
 
 /**
- * \brief %Script: Placing people on a photo
+ * \brief %Example: Placing people on a photo
  *
  * A group of people wants to take a group photo. Each person can give
  * preferences next to whom he or she wants to be placed on the

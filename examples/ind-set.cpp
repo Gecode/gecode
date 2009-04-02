@@ -76,7 +76,7 @@ const Graph g_40_20(40, 20, e_40_20);
 
 
 /**
- * \brief %Script: Independent sets in a graph
+ * \brief %Example: Independent sets in a graph
  *
  * \ingroup ExProblem
  *

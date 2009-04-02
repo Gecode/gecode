@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Stress extensional propagator
+ * \brief %Example: Stress extensional propagator
  *
  * Creates a huge DFA specifying that all values are pairwise distinct
  * and use the DFA for propagation.

@@ -125,7 +125,7 @@ namespace {
 }
 
 /**
- * \brief %Script: %Pentominoes
+ * \brief %Example: %Pentominoes
  *
  * \section ScriptPentominoesProblem The Problem
  *

@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: %Baseline test
+ * \brief %Example: %Baseline test
  *
  * \ingroup ExProblem
  *

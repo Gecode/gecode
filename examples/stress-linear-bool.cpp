@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Stress linear Boolean inequality
+ * \brief %Example: Stress linear Boolean inequality
  *
  * \ingroup ExStress
  */

@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Orthogonal latin squares
+ * \brief %Example: Orthogonal latin squares
  *
  * \ingroup ExProblem
  */

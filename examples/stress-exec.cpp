@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Execution stress test
+ * \brief %Example: Execution stress test
  *
  * The size argument defines how many duplicate propagators
  * are created.

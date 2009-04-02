@@ -43,7 +43,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Generating %Hamming codes
+ * \brief %Example: Generating %Hamming codes
  *
  * Generate a Hamming code that fits in b-bit words to code n symbols where
  * the Hamming distance between every two symbol codes is at least d.

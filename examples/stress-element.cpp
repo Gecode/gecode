@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Stress test for element constraint (involving integers)
+ * \brief %Example: Stress test for element constraint (involving integers)
  *
  * This stress test is an adaption of the benchmark for element posted
  * by Neng-Fa Zhou for B-Prolog, November, 2005.

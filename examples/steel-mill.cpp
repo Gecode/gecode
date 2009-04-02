@@ -117,7 +117,7 @@ public:
 
 
 /**
- * \brief %Script: Steel-mill slab design problem
+ * \brief %Example: Steel-mill slab design problem
  *
  * This model solves the Steel Mill Slab Design Problem (Problem 38 in
  * <a href="http://csplib.org">CSPLib</a>). The model is from Gargani

@@ -42,7 +42,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Steiner triples
+ * \brief %Example: Steiner triples
  *
  * See also problem 044 at http://www.csplib.org/.
  *

@@ -85,7 +85,7 @@ namespace {
 }
 
 /**
- * \brief %Script: Radiotherapy
+ * \brief %Example: Radiotherapy
  *
  * Implementation of the model for cancer radiation treatment planning
  * from the paper

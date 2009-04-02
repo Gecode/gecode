@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Domain stress test
+ * \brief %Example: Domain stress test
  *
  * \ingroup ExStress
  *

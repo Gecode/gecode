@@ -43,7 +43,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: %Alpha puzzle
+ * \brief %Example: %Alpha puzzle
  *
  * Well-known cryptoarithmetic puzzle of unknown origin.
  *

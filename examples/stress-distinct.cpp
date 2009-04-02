@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Stress distinct propagator
+ * \brief %Example: Stress distinct propagator
  *
  * Performs propagation on a pathological example. The example is taken
  * from: Jean-Francois Puget, A fast algorithm for the bound consistency

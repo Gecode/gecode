@@ -42,7 +42,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: DONALD+GERALD=ROBERT puzzle
+ * \brief %Example: DONALD+GERALD=ROBERT puzzle
  *
  * Well-known cryptoarithmetic puzzle of unknown origin.
  *

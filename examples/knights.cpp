@@ -106,7 +106,7 @@ public:
 };
 
 /**
- * \brief %Script: n-%Knights tour (simple model)
+ * \brief %Example: n-%Knights tour (simple model)
  *
  * Fill an n times n chess board with knights such that the
  * knights do a full tour by knights move (last knight reaches
@@ -164,7 +164,7 @@ public:
 };
 
 /**
- * \brief %Script: n-%Knights tour (model using circuit)
+ * \brief %Example: n-%Knights tour (model using circuit)
  *
  * Fill an n times n chess board with knights such that the
  * knights do a full tour by knights move (last knight reaches

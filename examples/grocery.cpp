@@ -42,7 +42,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: %Grocery puzzle
+ * \brief %Example: %Grocery puzzle
  *
  * A kid goes into a grocery store and buys four items. The cashier
  * charges $7.11, the kid pays and is about to leave when the cashier

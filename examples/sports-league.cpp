@@ -166,7 +166,7 @@ public:
 
 
 /**
- * \brief %Script: %Sports league scheduling
+ * \brief %Example: %Sports league scheduling
  *
  * -# There are \f$ t \f$ teams (\f$ t \f$  even).
  * -# The season lasts \f$ t - 1 \f$ weeks.

@@ -86,7 +86,7 @@ public:
 
 
 /**
- * \brief %Script: Balanced incomplete block design (%BIBD)
+ * \brief %Example: Balanced incomplete block design (%BIBD)
  *
  * See problem 28 at http://www.csplib.org/.
  *

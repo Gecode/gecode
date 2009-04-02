@@ -81,7 +81,7 @@ namespace {
 }
 
 /**
- * \brief %Script: The balanced academic curriculum problem
+ * \brief %Example: The balanced academic curriculum problem
  *
  * This is problem 030 from http://www.csplib.org/.
  *

@@ -51,7 +51,7 @@ namespace {
 }
 
 /**
- * \brief %Script: Minesweeper
+ * \brief %Example: Minesweeper
  *
  * This is the classical MineSweeper game.
  *

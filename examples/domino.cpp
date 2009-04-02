@@ -59,7 +59,7 @@ namespace {
 }
 
 /**
- * \brief %Script: Solitaire domino
+ * \brief %Example: Solitaire domino
  *
  * The task is to place domino pieces on a board. Each piece covers two
  * fields and has two numbers. There are 28 pieces, from 0-0 to 6-6.
@@ -251,7 +251,7 @@ namespace {
    */
   //@{
 
-  /// %Script 0
+  /// %Example 0
   const int domino0[] =
     { // width*height of the board
       8,7,
@@ -265,7 +265,7 @@ namespace {
       4,2,0,6,5,3,3,6
     };
 
-  /// %Script 1
+  /// %Example 1
   const int domino1[] =
     { // width*height of the board
       8,7,
@@ -279,7 +279,7 @@ namespace {
       1,3,6,1,2,3,5,2
     };
 
-  /// %Script 2
+  /// %Example 2
   const int domino2[] =
     { // width*height of the board
       8,7,
@@ -293,7 +293,7 @@ namespace {
       5,1,6,0,0,0,4,0
     };
 
-  /// %Script 3
+  /// %Example 3
   const int domino3[] =
     { // width*height of the board
       8,7,
@@ -307,7 +307,7 @@ namespace {
       0,5,4,6,2,1,6,1
     };
 
-  /// %Script 4
+  /// %Example 4
   const int domino4[] =
     { // width*height of the board
       8,7,
@@ -321,7 +321,7 @@ namespace {
       3,2,4,5,4,2,6,0
     };
 
-  /// %Script 5
+  /// %Example 5
   const int domino5[] =
     { // width*height of the board
       8,7,

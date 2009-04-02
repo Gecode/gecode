@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Search stress test
+ * \brief %Example: Search stress test
  *
  * \ingroup ExStress
  *

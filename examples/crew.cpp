@@ -82,7 +82,7 @@ namespace {
 }
 
 /**
- * \brief %Script: Airline crew allocation
+ * \brief %Example: Airline crew allocation
  *
  * Assign 20 flight attendants to 10 flights. Each flight needs a certain
  * number of cabin crew, and they have to speak certain languages.

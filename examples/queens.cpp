@@ -42,7 +42,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: n-%Queens puzzle
+ * \brief %Example: n-%Queens puzzle
  *
  * Place n queens on an n times n chessboard such that they do not
  * attack each other.

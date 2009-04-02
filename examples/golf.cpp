@@ -67,7 +67,7 @@ static const unsigned int n_examples = sizeof(t) / sizeof(Tournament);
 //@}
 
 /**
- * \brief %Script: Golf tournament
+ * \brief %Example: Golf tournament
  *
  * Schedule a golf tournament. This is problem 010 from csplib.
  *

@@ -42,7 +42,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: partition numbers into two groups
+ * \brief %Example: partition numbers into two groups
  *
  * \ingroup ExProblem
  */

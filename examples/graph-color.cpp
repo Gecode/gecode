@@ -303,7 +303,7 @@ const GraphColorSpec g2(200, g2_e, g2_c);
 //@}
 
 /**
- * \brief %Script: Clique-based graph coloring
+ * \brief %Example: Clique-based graph coloring
  *
  * \ingroup ExProblem
  *

@@ -44,7 +44,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Magic sequence
+ * \brief %Example: Magic sequence
  *
  * Find a magic sequence of length \f$n\f$. A magic sequence of
  * length \f$n\f$ is a sequence \f[x_0,x_1, \ldots, x_{n-1}\f]

@@ -44,7 +44,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: All-interval series
+ * \brief %Example: All-interval series
  *
  * An all-interval series of length \f$n\f$ is a sequence
  * \f[

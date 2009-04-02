@@ -71,7 +71,7 @@ const int cost_matrix[n_stores][n_suppliers] = {
 
 
 /**
- * \brief %Script: Locating warehouses
+ * \brief %Example: Locating warehouses
  *
  * A company needs to construct warehouses to supply stores with
  * goods. Each warehouse possibly to be constructed has a certain

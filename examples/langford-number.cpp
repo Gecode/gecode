@@ -75,7 +75,7 @@ public:
 };
 
 /**
- * \brief %Script: Langford's number problem
+ * \brief %Example: Langford's number problem
  *
  * See problem 24 at http://www.csplib.org/.
  *

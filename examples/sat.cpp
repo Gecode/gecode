@@ -78,7 +78,7 @@ public:
 };
 
 /**
- * \brief %Script: CNF SAT solver
+ * \brief %Example: CNF SAT solver
  *
  * SAT finds assignments of Boolean variables such
  * that a set of clauses is satisfied or shows that

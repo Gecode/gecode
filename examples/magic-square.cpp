@@ -42,7 +42,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Magic squares
+ * \brief %Example: Magic squares
  *
  * Compute magic squares of arbitrary size
  *

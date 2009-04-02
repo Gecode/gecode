@@ -42,7 +42,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: SEND+MORE=MONEY puzzle
+ * \brief %Example: SEND+MORE=MONEY puzzle
  *
  * Well-known cryptoarithmetic puzzle.
  * Henry Dudeney, Strand Magazine, July 1924.

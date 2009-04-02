@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Solving 20 linear equations
+ * \brief %Example: Solving 20 linear equations
  *
  * Standard benchmark for solving linear equations.
  *

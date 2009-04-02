@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \brief %Script: Stress test for the minimum constraint
+ * \brief %Example: Stress test for the minimum constraint
  *
  * \ingroup ExStress
  *

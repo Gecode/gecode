@@ -84,7 +84,7 @@ public:
 };
 
 /**
- * \brief %Script: Solving %Sudoku puzzles using integer constraints
+ * \brief %Example: Solving %Sudoku puzzles using integer constraints
  *
  * \ingroup ExProblem
  */
@@ -223,7 +223,7 @@ private:
 
 #ifdef GECODE_HAS_SET_VARS
 /**
- * \brief %Script: Solving %Sudoku puzzles using set constraints
+ * \brief %Example: Solving %Sudoku puzzles using set constraints
  *
  * \ingroup ExProblem
  */
@@ -328,7 +328,7 @@ public:
 
 
 /**
- * \brief %Script: Solving %Sudoku puzzles using both set and integer
+ * \brief %Example: Solving %Sudoku puzzles using both set and integer
  * constraints
  *
  * \ingroup ExProblem
