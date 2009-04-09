@@ -179,6 +179,68 @@ namespace Test {
       ~SetAssignment(void) { delete [] dsv; }
     };
 
+
+    class SetTest;
+    
+    /// Space for executing set tests
+    class SetTestSpace : public Gecode::Space {
+    public:
+      /// Initial domain
+      Gecode::IntSet d;
+      /// Set variables to be tested
+      Gecode::SetVarArray x;
+      /// Int variables to be tested
+      Gecode::IntVarArray y;
+      /// How many integer variables are used by the test
+      int withInt;
+      /// Control variable for reified propagators
+      Gecode::BoolVar b;
+      /// Whether the test is for a reified propagator
+      bool reified;
+      /// The test currently run
+      SetTest* test;
+      
+      /**
+       * \brief Create test space
+       *
+       * Creates \a n set variables with domain \a d0,
+       * \a i integer variables with domain \a d0, and stores whether
+       * the test is for a reified propagator (\a r), and the test itself
+       * (\a t).
+       *
+       */
+      SetTestSpace(int n, Gecode::IntSet& d0, int i, bool r, SetTest* t,
+                   bool log=true);
+      /// Constructor for cloning \a s
+      SetTestSpace(bool share, SetTestSpace& s);
+      /// Copy space during cloning
+      virtual Gecode::Space* copy(bool share);
+      /// Post propagator
+      void post(void);
+      /// Compute a fixpoint and check for failure
+      bool failed(void);
+      /// Perform set tell operation on \a x[i]
+      void rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is);
+      /// Perform cardinality tell operation on \a x[i]
+      void cardinality(int i, int cmin, int cmax);
+      /// Perform integer tell operation on \a y[i]
+      void rel(int i, Gecode::IntRelType irt, int n);
+      /// Perform Boolean tell on \a b
+      void rel(bool sol);
+      /// Assign all variables to values in \a a
+      void assign(const SetAssignment& a);
+      /// Test whether all variables are assigned
+      bool assigned(void) const;
+      /// Remove value \a v from the upper bound of \a x[i]
+      void removeFromLub(int v, int i, const SetAssignment& a);
+      /// Remove value \a v from the lower bound of \a x[i]
+      void addToGlb(int v, int i, const SetAssignment& a);
+      /// Perform fixpoint computation
+      bool fixprob(void);
+      /// Perform random pruning
+      bool prune(const SetAssignment& a);
+    };
+
     /**
      * \brief Base class for tests with set constraints
      *

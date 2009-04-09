@@ -124,6 +124,61 @@ namespace Test {
       CTL_BOUNDS_Z, ///< Test for bounds(z)-consistency
     };
 
+    class Test;
+
+    /// Space for executing tests
+    class TestSpace : public Gecode::Space {
+    public:
+      /// Initial domain
+      Gecode::IntSet d;
+      /// Variables to be tested
+      Gecode::IntVarArray x;
+      /// Control variable for reified propagators
+      Gecode::BoolVar b;
+      /// Whether the test is for a reified propagator
+      bool reified;
+      /// The test currently run
+      Test* test;
+
+      /**
+       * \brief Create test space
+       *
+       * Creates \a n variables with domain \a d0 and stores whether
+       * the test is for a reified propagator (\a r), and the test itself
+       * (\a t).
+       *
+       */
+      TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log=true);
+      /// Constructor for cloning \a s
+      TestSpace(bool share, TestSpace& s);
+      /// Copy space during cloning
+      virtual Gecode::Space* copy(bool share);
+      /// Test whether all variables are assigned
+      bool assigned(void) const;
+      /// Post propagator
+      void post(void);
+      /// Compute a fixpoint and check for failure
+      bool failed(void);
+      /// Perform integer tell operation on \a x[i]
+      void rel(int i, Gecode::IntRelType irt, int n);
+      /// Perform Boolean tell on \a b
+      void rel(bool sol);
+      /// Assign all (or all but one, if \a skip is true) variables to values in \a a
+      void assign(const Assignment& a, bool skip=false);
+      /// Assing a random variable to a random bound
+      void bound(void);
+      /** \brief Prune some random values from variable \a i
+       *
+       * If \a bounds_only is true, then the pruning is only done on the
+       * bounds of the variable.
+       */
+      void prune(int i, bool bounds_only);
+      /// Prune some random values for some random variable
+      void prune(void);
+      /// Prune values but not those in assignment \a a
+      bool prune(const Assignment& a);
+    };
+
     /**
      * \brief Base class for tests with integer constraints
      *

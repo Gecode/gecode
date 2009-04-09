@@ -2039,6 +2039,22 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   //@{
+  /// Execute \a c when \a x becomes assigned
+  GECODE_INT_EXPORT void
+  wait(Space& home, IntVar x, void (*c)(Space& home),
+       IntConLevel icl=ICL_DEF);
+  /// Execute \a c when \a x becomes assigned
+  GECODE_INT_EXPORT void
+  wait(Space& home, BoolVar x, void (*c)(Space& home),
+       IntConLevel icl=ICL_DEF);
+  /// Execute \a c when all variables in \a x become assigned
+  GECODE_INT_EXPORT void
+  wait(Space& home, const IntVarArgs& x, void (*c)(Space& home),
+       IntConLevel icl=ICL_DEF);
+  /// Execute \a c when all variables in \a x become assigned
+  GECODE_INT_EXPORT void
+  wait(Space& home, const BoolVarArgs& x, void (*c)(Space& home),
+       IntConLevel icl=ICL_DEF);
   /// Execute \a t (then) when \a x is assigned one, and \a e (else) otherwise
   GECODE_INT_EXPORT void
   when(Space& home, BoolVar x, 

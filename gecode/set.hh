@@ -940,6 +940,24 @@ namespace Gecode {
   //@}
 
   /**
+   * \defgroup TaskModelSetExec Synchronized execution
+   * \ingroup TaskModelSet
+   *
+   * Synchronized execution executes a function or a static member function
+   * when a certain event happends.
+   *
+   * \ingroup TaskModelSet
+   */
+  //@{
+  /// Execute \a c when \a x becomes assigned
+  GECODE_SET_EXPORT void
+  wait(Space& home, SetVar x, void (*c)(Space& home));
+  /// Execute \a c when all variables in \a x become assigned
+  GECODE_SET_EXPORT void
+  wait(Space& home, const SetVarArgs& x, void (*c)(Space& home));
+  //@}
+
+  /**
    * \defgroup TaskModelSetBranch Branching
    * \ingroup TaskModelSet
    */

@@ -175,7 +175,7 @@ KERNELHDR0 = \
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
-	gecode/kernel.hh \
+	gecode/kernel.hh gecode/kernel/wait.hh \
 	$(KERNELHDR0:%=gecode/kernel/%.hpp) \
 	$(VARIMPHDR)
 KERNELOBJ	= $(KERNELSRC:%.cpp=%$(OBJSUFFIX))
@@ -332,7 +332,8 @@ SETSRC0 =								 \
 	element.cpp sequence.cpp			 \
 	distinct.cpp distinct/atmostOne.cpp				 \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
-	var-imp/integerset.cpp var/set.cpp
+	var-imp/integerset.cpp var/set.cpp \
+	exec.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -651,7 +652,7 @@ INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 SETTESTSRC00 = \
 	construct dom rel rel-op rel-op-const convex sequence int element \
-	distinct
+	distinct exec
 SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
 
 ifeq "@enable_set_vars@" "yes"

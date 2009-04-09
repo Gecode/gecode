@@ -35,49 +35,24 @@
  *
  */
 
-#include <gecode/int/exec.hh>
+#include <gecode/set.hh>
 #include <gecode/kernel/wait.hh>
 
 namespace Gecode {
 
   void
-  wait(Space& home, IntVar x, void (*c)(Space& home),
-       IntConLevel) {
+  wait(Space& home, SetVar x, void (*c)(Space& home)) {
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Kernel::UnaryWait<Int::IntView>::post(home,x,c));
+    GECODE_ES_FAIL(home,Kernel::UnaryWait<Set::SetView>::post(home,x,c));
   }
 
   void
-  wait(Space& home, BoolVar x, void (*c)(Space& home),
-       IntConLevel) {
+  wait(Space& home, const SetVarArgs& x, void (*c)(Space& home)) {
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Kernel::UnaryWait<Int::BoolView>::post(home,x,c));
-  }
-
-  void
-  wait(Space& home, const IntVarArgs& x, void (*c)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    ViewArray<Int::IntView> xv(home,x);
-    GECODE_ES_FAIL(home,Kernel::NaryWait<Int::IntView>::post(home,xv,c));
-  }
-
-  void
-  wait(Space& home, const BoolVarArgs& x, void (*c)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    ViewArray<Int::BoolView> xv(home,x);
-    GECODE_ES_FAIL(home,Kernel::NaryWait<Int::BoolView>::post(home,xv,c));
-  }
-
-  void
-  when(Space& home, BoolVar x,
-       void (*t)(Space& home), void (*e)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    GECODE_ES_FAIL(home,Int::Exec::When::post(home,x,t,e));
+    ViewArray<Set::SetView> xv(home,x);
+    GECODE_ES_FAIL(home,Kernel::NaryWait<Set::SetView>::post(home,xv,c));
   }
 
 }
 
-// STATISTICS: int-post
+// STATISTICS: set-post

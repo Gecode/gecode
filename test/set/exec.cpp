@@ -35,49 +35,51 @@
  *
  */
 
-#include <gecode/int/exec.hh>
-#include <gecode/kernel/wait.hh>
+#include "test/set.hh"
 
-namespace Gecode {
+namespace Test { namespace Set {
 
-  void
-  wait(Space& home, IntVar x, void (*c)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    GECODE_ES_FAIL(home,Kernel::UnaryWait<Int::IntView>::post(home,x,c));
-  }
+   /// Tests for synchronized execution
+   namespace Exec {
 
-  void
-  wait(Space& home, BoolVar x, void (*c)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    GECODE_ES_FAIL(home,Kernel::UnaryWait<Int::BoolView>::post(home,x,c));
-  }
+     /**
+      * \defgroup TaskTestSetExec Synchronized execution
+      * \ingroup TaskTestSet
+      */
+     //@{
+     /// Simple test for wait (set variables)
+     class Wait : public SetTest {
+     public:
+       /// Create and register test
+       Wait(int n) 
+         : SetTest("Wait::"+str(n),n,Gecode::IntSet(0,n),false) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const SetAssignment& x) const {
+         return true;
+       }
+       /// Post wait on \a x
+       virtual void post(Gecode::Space& home, Gecode::SetVarArray& x,
+                         Gecode::IntVarArray&) {
+         if (x.size() > 1)
+           Gecode::wait(home, x, &c);
+         else
+           Gecode::wait(home, x[0], &c);
+       }
+       /// Continuation to be executed
+       static void c(Gecode::Space& _home) {
+         SetTestSpace& home = static_cast<SetTestSpace&>(_home);
+         for (int i=0; i<home.x.size(); i++)
+           if (!home.x[i].assigned())
+             home.fail();
+       }
+     };
 
-  void
-  wait(Space& home, const IntVarArgs& x, void (*c)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    ViewArray<Int::IntView> xv(home,x);
-    GECODE_ES_FAIL(home,Kernel::NaryWait<Int::IntView>::post(home,xv,c));
-  }
+     Wait w1(1), w2(2);
 
-  void
-  wait(Space& home, const BoolVarArgs& x, void (*c)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    ViewArray<Int::BoolView> xv(home,x);
-    GECODE_ES_FAIL(home,Kernel::NaryWait<Int::BoolView>::post(home,xv,c));
-  }
+     //@}
 
-  void
-  when(Space& home, BoolVar x,
-       void (*t)(Space& home), void (*e)(Space& home),
-       IntConLevel) {
-    if (home.failed()) return;
-    GECODE_ES_FAIL(home,Int::Exec::When::post(home,x,t,e));
-  }
+   }
 
-}
+}}
 
-// STATISTICS: int-post
+// STATISTICS: test-int

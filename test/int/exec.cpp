@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -49,6 +49,71 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
+     /// Simple test for wait (integer variables)
+     class IntWait : public Test {
+     public:
+       /// Create and register test
+       IntWait(int n) 
+         : Test("Wait::Int::"+str(n),n,0,n,false) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int i=0; i<x.size(); i++)
+           for (int j=i+1; j<x.size(); j++)
+             if (x[i] == x[j])
+               return false;
+         return true;
+       }
+       /// Post wait on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         if (x.size() > 1)
+           Gecode::wait(home, x, &c);
+         else
+           Gecode::wait(home, x[0], &c);
+       }
+       /// Continuation to be executed
+       static void c(Gecode::Space& _home) {
+         TestSpace& home = static_cast<TestSpace&>(_home);
+         for (int i=0; i<home.x.size(); i++)
+           for (int j=i+1; j<home.x.size(); j++)
+             if (home.x[i].val() == home.x[j].val())
+               home.fail();
+       }
+     };
+
+     /// Simple test for wait (Boolean variables)
+     class BoolWait : public Test {
+     public:
+       /// Create and register test
+       BoolWait(int n) 
+         : Test("Wait::Bool::"+str(n),n,0,1,false) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int t=0;
+         for (int i=0; i<x.size(); i++)
+           t += x[i];
+         return t==2;
+       }
+       /// Post wait on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::BoolVarArgs b(x.size());
+         for (int i=b.size(); i--; )
+           b[i]=Gecode::channel(home,x[i]);
+         if (b.size() > 1)
+           Gecode::wait(home, b, &c);
+         else
+           Gecode::wait(home, b[0], &c);
+       }
+       /// Continuation to be executed
+       static void c(Gecode::Space& _home) {
+         TestSpace& home = static_cast<TestSpace&>(_home);
+         int t=0;
+         for (int i=0; i<home.x.size(); i++)
+           t += home.x[i].val();
+         if (t!=2)
+           home.fail();
+       }
+     };
+
      /// Simple test for when
      class When : public Test {
      public:
@@ -71,10 +136,14 @@ namespace Test { namespace Int {
        }
      };
 
-     When w;
+     IntWait iw1(1), iw2(2), iw3(3), iw4(4);
+     BoolWait bw1(1), bw2(2), bw3(3), bw4(4);
+
+     When when;
      //@}
 
    }
+
 }}
 
 // STATISTICS: test-int

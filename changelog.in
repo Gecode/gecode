@@ -74,6 +74,22 @@ Date: some date
 This is a release
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a wait propagator: executes a function when a variable (or
+variables) become(s) assigned.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a wait propagator: executes a function when a variable (or
+variables) become(s) assigned.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor

@@ -83,246 +83,227 @@ operator<<(std::ostream& os, const Test::Int::Assignment& a) {
 
 namespace Test { namespace Int {
 
-  /// Space for executing tests
-  class TestSpace : public Gecode::Space {
-  public:
-    /// Initial domain
-    Gecode::IntSet d;
-    /// Variables to be tested
-    Gecode::IntVarArray x;
-    /// Control variable for reified propagators
-    Gecode::BoolVar b;
-    /// Whether the test is for a reified propagator
-    bool reified;
-    /// The test currently run
-    Test* test;
+  TestSpace::TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log)
+    : d(d0), x(*this,n,d), b(*this,0,1), reified(r), test(t) {
+    if (opt.log && log) {
+      olog << ind(2) << "Initial: x[]=" << x;
+      if (reified)
+        olog << " b=" << b;
+      olog << std::endl;
+    }
+  }
 
-  public:
-    /**
-     * \brief Create test space
-     *
-     * Creates \a n variables with domain \a d0 and stores whether
-     * the test is for a reified propagator (\a r), and the test itself
-     * (\a t).
-     *
-     */
-    TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log=true)
-      : d(d0), x(*this,n,d), b(*this,0,1), reified(r), test(t) {
-      if (opt.log && log) {
-        olog << ind(2) << "Initial: x[]=" << x;
-        if (reified)
-          olog << " b=" << b;
-        olog << std::endl;
-      }
-    }
-    /// Constructor for cloning \a s
-    TestSpace(bool share, TestSpace& s)
-      : Gecode::Space(share,s), d(s.d), reified(s.reified), test(s.test) {
-      x.update(*this, share, s.x);
-      b.update(*this, share, s.b);
-    }
-    /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new TestSpace(share,*this);
-    }
+  TestSpace::TestSpace(bool share, TestSpace& s)
+    : Gecode::Space(share,s), d(s.d), reified(s.reified), test(s.test) {
+    x.update(*this, share, s.x);
+    b.update(*this, share, s.b);
+  }
 
-    /// Test whether all variables are assigned
-    bool assigned(void) const {
-      for (int i=x.size(); i--; )
-        if (!x[i].assigned())
-          return false;
-      return true;
-    }
+  Gecode::Space* 
+  TestSpace::copy(bool share) {
+    return new TestSpace(share,*this);
+  }
 
-    /// Post propagator
-    void post(void) {
-      if (reified){
-        test->post(*this,x,b);
-        if (opt.log)
-          olog << ind(3) << "Posting reified propagator" << std::endl;
-      } else {
-        test->post(*this,x);
-        if (opt.log)
-          olog << ind(3) << "Posting propagator" << std::endl;
-        }
-    }
-    /// Compute a fixpoint and check for failure
-    bool failed(void) {
-      if (opt.log) {
-        olog << ind(3) << "Fixpoint: " << x;
-        bool f=(status() == Gecode::SS_FAILED);
-        olog << std::endl << ind(3) << "     -->  " << x << std::endl;
-        return f;
-      } else {
-        return status() == Gecode::SS_FAILED;
-      }
-    }
-    /// Perform integer tell operation on \a x[i]
-    void rel(int i, Gecode::IntRelType irt, int n) {
-      if (opt.log) {
-        olog << ind(4) << "x[" << i << "] ";
-        switch (irt) {
-        case Gecode::IRT_EQ: olog << "="; break;
-        case Gecode::IRT_NQ: olog << "!="; break;
-        case Gecode::IRT_LQ: olog << "<="; break;
-        case Gecode::IRT_LE: olog << "<"; break;
-        case Gecode::IRT_GQ: olog << ">="; break;
-        case Gecode::IRT_GR: olog << ">"; break;
-        }
-        olog << " " << n << std::endl;
-      }
-      Gecode::rel(*this, x[i], irt, n);
-    }
-    /// Perform Boolean tell on \a b
-    void rel(bool sol) {
-      int n = sol ? 1 : 0;
-      assert(reified);
+  bool 
+  TestSpace::assigned(void) const {
+    for (int i=x.size(); i--; )
+      if (!x[i].assigned())
+        return false;
+    return true;
+  }
+
+  void 
+  TestSpace::post(void) {
+    if (reified){
+      test->post(*this,x,b);
       if (opt.log)
-        olog << ind(4) << "b = " << n << std::endl;
-      Gecode::rel(*this, b, Gecode::IRT_EQ, n);
+        olog << ind(3) << "Posting reified propagator" << std::endl;
+    } else {
+      test->post(*this,x);
+      if (opt.log)
+        olog << ind(3) << "Posting propagator" << std::endl;
     }
-    /// Assign all (or all but one, if \a skip is true) variables to values in \a a
-    void assign(const Assignment& a, bool skip=false) {
-      using namespace Gecode;
-      int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
-      for (int j=a.size(); j--; )
-        if (i != j) {
-          rel(j, IRT_EQ, a[j]);
-          if (Base::fixpoint() && failed())
-            return;
-        }
-    }
-    /// Assing a random variable to a random bound
-    void bound(void) {
-      using namespace Gecode;
-      // Select variable to be assigned
-      int i = Base::rand(x.size());
-      while (x[i].assigned()) {
-        i = (i+1) % x.size();
-      }
-      bool min = Base::rand(2);
-      rel(i, IRT_EQ, min ? x[i].min() : x[i].max());
-    }
-    /** \brief Prune some random values from variable \a i
-     *
-     * If \a bounds_only is true, then the pruning is only done on the
-     * bounds of the variable.
-     */
-    void prune(int i, bool bounds_only) {
-      using namespace Gecode;
-      // Prune values
-      if (bounds_only) {
-        if (Base::rand(2) && !x[i].assigned()) {
-          int v=x[i].min()+1+Base::rand(static_cast
-                                        <unsigned int>(x[i].max()-x[i].min()));
-          assert((v > x[i].min()) && (v <= x[i].max()));
-          rel(i, Gecode::IRT_LE, v);
-        }
-        if (Base::rand(2) && !x[i].assigned()) {
-          int v=x[i].min()+Base::rand(static_cast
-                                      <unsigned int>(x[i].max()-x[i].min()));
-          assert((v < x[i].max()) && (v >= x[i].min()));
-          rel(i, Gecode::IRT_GR, v);
-        }
-      } else {
-        for (int vals = Base::rand(x[i].size()-1)+1; vals--; ) {
-          int v;
-          Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
-          unsigned int skip = Base::rand(x[i].size()-1);
-          while (true) {
-            if (it.width() > skip) {
-              v = it.min() + skip; break;
-            }
-            skip -= it.width(); ++it;
-          }
-          rel(i, IRT_NQ, v);
-        }
-      }
-    }
-    /// Prune some random values for some random variable
-    void prune(void) {
-      using namespace Gecode;
-      // Select variable to be pruned
-      int i = Base::rand(x.size());
-      while (x[i].assigned()) {
-        i = (i+1) % x.size();
-      }
-      prune(i, false);
-    }
-    /// Prune values but not those in assignment \a a
-    bool prune(const Assignment& a) {
-      // Select variable to be pruned
-      int i = Base::rand(x.size());
-      while (x[i].assigned())
-        i = (i+1) % x.size();
-      // Select mode for pruning
-      switch (Base::rand(3)) {
-      case 0:
-        if (a[i] < x[i].max()) {
-          int v=a[i]+1+Base::rand(static_cast
-                                  <unsigned int>(x[i].max()-a[i]));
-          assert((v > a[i]) && (v <= x[i].max()));
-          rel(i, Gecode::IRT_LE, v);
-        }
-        break;
-      case 1:
-        if (a[i] > x[i].min()) {
-          int v=x[i].min()+Base::rand(static_cast
-                                      <unsigned int>(a[i]-x[i].min()));
-          assert((v < a[i]) && (v >= x[i].min()));
-          rel(i, Gecode::IRT_GR, v);
-        }
-        break;
-      default:
-        {
-          int v;
-          Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
-          unsigned int skip = Base::rand(x[i].size()-1);
-          while (true) {
-            if (it.width() > skip) {
-              v = it.min() + skip;
-              if (v == a[i]) {
-                if (it.width() == 1) {
-                  ++it; v = it.min();
-                } else if (v < it.max()) {
-                  ++v;
-                } else {
-                  --v;
-                }
-              }
-              break;
-            }
-            skip -= it.width(); ++it;
-          }
-          rel(i, Gecode::IRT_NQ, v);
-          break;
-        }
-      }
-      if (Base::fixpoint()) {
-        if (failed())
-          return true;
-        TestSpace* c = static_cast<TestSpace*>(clone());
-        if (opt.log)
-          olog << ind(3) << "Testing fixpoint on copy" << std::endl;
-        c->post();
-        if (c->failed()) {
-          delete c; return false;
-        }
-        for (int i=x.size(); i--; )
-          if (x[i].size() != c->x[i].size()) {
-            delete c; return false;
-          }
-        if (reified && (b.size() != c->b.size())) {
-          delete c; return false;
-        }
-        if (opt.log)
-          olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
-        delete c;
-      }
-      return true;
-    }
+  }
 
-  };
+  bool 
+  TestSpace::failed(void) {
+    if (opt.log) {
+      olog << ind(3) << "Fixpoint: " << x;
+      bool f=(status() == Gecode::SS_FAILED);
+      olog << std::endl << ind(3) << "     -->  " << x << std::endl;
+      return f;
+    } else {
+      return status() == Gecode::SS_FAILED;
+    }
+  }
+
+  void 
+  TestSpace::rel(int i, Gecode::IntRelType irt, int n) {
+    if (opt.log) {
+      olog << ind(4) << "x[" << i << "] ";
+      switch (irt) {
+      case Gecode::IRT_EQ: olog << "="; break;
+      case Gecode::IRT_NQ: olog << "!="; break;
+      case Gecode::IRT_LQ: olog << "<="; break;
+      case Gecode::IRT_LE: olog << "<"; break;
+      case Gecode::IRT_GQ: olog << ">="; break;
+      case Gecode::IRT_GR: olog << ">"; break;
+      }
+      olog << " " << n << std::endl;
+    }
+    Gecode::rel(*this, x[i], irt, n);
+  }
+
+  void 
+  TestSpace::rel(bool sol) {
+    int n = sol ? 1 : 0;
+    assert(reified);
+    if (opt.log)
+      olog << ind(4) << "b = " << n << std::endl;
+    Gecode::rel(*this, b, Gecode::IRT_EQ, n);
+  }
+
+  void 
+  TestSpace::assign(const Assignment& a, bool skip) {
+    using namespace Gecode;
+    int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
+    for (int j=a.size(); j--; )
+      if (i != j) {
+        rel(j, IRT_EQ, a[j]);
+        if (Base::fixpoint() && failed())
+          return;
+      }
+  }
+
+  void 
+  TestSpace::bound(void) {
+    using namespace Gecode;
+    // Select variable to be assigned
+    int i = Base::rand(x.size());
+    while (x[i].assigned()) {
+      i = (i+1) % x.size();
+    }
+    bool min = Base::rand(2);
+    rel(i, IRT_EQ, min ? x[i].min() : x[i].max());
+  }
+
+  void 
+  TestSpace::prune(int i, bool bounds_only) {
+    using namespace Gecode;
+    // Prune values
+    if (bounds_only) {
+      if (Base::rand(2) && !x[i].assigned()) {
+        int v=x[i].min()+1+Base::rand(static_cast
+                                      <unsigned int>(x[i].max()-x[i].min()));
+        assert((v > x[i].min()) && (v <= x[i].max()));
+        rel(i, Gecode::IRT_LE, v);
+      }
+      if (Base::rand(2) && !x[i].assigned()) {
+        int v=x[i].min()+Base::rand(static_cast
+                                    <unsigned int>(x[i].max()-x[i].min()));
+        assert((v < x[i].max()) && (v >= x[i].min()));
+        rel(i, Gecode::IRT_GR, v);
+      }
+    } else {
+      for (int vals = Base::rand(x[i].size()-1)+1; vals--; ) {
+        int v;
+        Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
+        unsigned int skip = Base::rand(x[i].size()-1);
+        while (true) {
+          if (it.width() > skip) {
+            v = it.min() + skip; break;
+          }
+          skip -= it.width(); ++it;
+        }
+        rel(i, IRT_NQ, v);
+      }
+    }
+  }
+
+  void 
+  TestSpace::prune(void) {
+    using namespace Gecode;
+    // Select variable to be pruned
+    int i = Base::rand(x.size());
+    while (x[i].assigned()) {
+      i = (i+1) % x.size();
+    }
+    prune(i, false);
+  }
+
+  bool 
+  TestSpace::prune(const Assignment& a) {
+    // Select variable to be pruned
+    int i = Base::rand(x.size());
+    while (x[i].assigned())
+      i = (i+1) % x.size();
+    // Select mode for pruning
+    switch (Base::rand(3)) {
+    case 0:
+      if (a[i] < x[i].max()) {
+        int v=a[i]+1+Base::rand(static_cast
+                                <unsigned int>(x[i].max()-a[i]));
+        assert((v > a[i]) && (v <= x[i].max()));
+        rel(i, Gecode::IRT_LE, v);
+      }
+      break;
+    case 1:
+      if (a[i] > x[i].min()) {
+        int v=x[i].min()+Base::rand(static_cast
+                                    <unsigned int>(a[i]-x[i].min()));
+        assert((v < a[i]) && (v >= x[i].min()));
+        rel(i, Gecode::IRT_GR, v);
+      }
+      break;
+    default:
+      {
+        int v;
+        Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
+        unsigned int skip = Base::rand(x[i].size()-1);
+        while (true) {
+          if (it.width() > skip) {
+            v = it.min() + skip;
+            if (v == a[i]) {
+              if (it.width() == 1) {
+                ++it; v = it.min();
+              } else if (v < it.max()) {
+                ++v;
+              } else {
+                --v;
+              }
+            }
+            break;
+          }
+          skip -= it.width(); ++it;
+        }
+        rel(i, Gecode::IRT_NQ, v);
+        break;
+      }
+    }
+    if (Base::fixpoint()) {
+      if (failed())
+        return true;
+      TestSpace* c = static_cast<TestSpace*>(clone());
+      if (opt.log)
+        olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+      c->post();
+      if (c->failed()) {
+        delete c; return false;
+      }
+      for (int i=x.size(); i--; )
+        if (x[i].size() != c->x[i].size()) {
+          delete c; return false;
+        }
+      if (reified && (b.size() != c->b.size())) {
+        delete c; return false;
+      }
+      if (opt.log)
+        olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
+      delete c;
+    }
+    return true;
+  }
+
 
   const Gecode::IntConLevel IntConLevels::icls[] =
     {Gecode::ICL_DOM,Gecode::ICL_BND,Gecode::ICL_VAL};

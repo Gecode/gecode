@@ -239,6 +239,14 @@
  */
 
 /**
+ * \defgroup FuncKernelProp Generic propagators
+ *
+ * This module contains a description of all predefined generic
+ * propagators. 
+ * \ingroup Other
+ */
+
+/**
  * \defgroup FuncIntProp Integer propagators
  *
  * This module contains a description of all predefined integer 
