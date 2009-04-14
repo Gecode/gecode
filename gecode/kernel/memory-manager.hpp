@@ -41,6 +41,49 @@
 
 namespace Gecode {
 
+  /// Memory-chunks with size information
+  class MemoryChunk {
+  public:
+    /// Next chunk
+    MemoryChunk* next;
+    /// Size of chunk
+    size_t size;
+  };
+
+  class Region;
+
+  /// Shared object for several memory areas
+  class SharedMemory {
+    friend class Region;
+  private:
+    /// How many spaces use this shared memory object
+    unsigned int use_cnt;
+    /// The components for the shared region area
+    struct {
+      /// Amount of free memory
+      size_t free;
+      /// The actual memory area (allocated from top to bottom)
+      double area[MemoryConfig::region_area_size / sizeof(double)];
+    } region;
+  public:
+    /// Initialize
+    SharedMemory(void);
+    /// \name Region management
+    //@
+    /// Return memory block if available
+    bool region_alloc(size_t s, void*& p);
+    //@}
+    /// Return copy during cloning
+    SharedMemory* copy(bool share);
+    /// Release by one space
+    bool release(void);
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+  };
+
+
   /**
    * \brief Base-class for freelist-managed objects
    *
@@ -70,10 +113,8 @@ namespace Gecode {
   class MemoryManager {
   private:
     /// Memory-chunks allocated from heap
-    class HeapChunk {
+    class HeapChunk : public MemoryChunk {
     public:
-      /// Next heap chunk already allocated
-      HeapChunk* next;
       /// Start of memory area inside chunk
       double area[1];
     };
@@ -125,53 +166,54 @@ namespace Gecode {
     template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
 
   private:
-    /// Memory-chunks for reusing slack memory
-    class ReuseChunk {
-    public:
-      /// Size of chunk
-      size_t      size;
-      /// Next chunk for reusal
-      ReuseChunk* next;
-    };
     /// Slack memory chunks
-    ReuseChunk* slack;
+    MemoryChunk* slack;
   public:
     /// Store for reusal, if of sufficient size for free list
     void reuse(void* p, size_t s);
   };
 
-  class Region;
 
-  /// Shared object for several memory areas
-  class SharedMemory {
-    friend class Region;
-  private:
-    /// How many spaces use this shared memory object
-    unsigned int use_cnt;
-    /// The components for the shared region area
-    struct {
-      /// Amount of free memory
-      size_t free;
-      /// The actual memory area (allocated from top to bottom)
-      double area[MemoryConfig::region_area_size / sizeof(double)];
-    } region;
-  public:
-    /// Initialize
-    SharedMemory(void);
-    /// \name Region management
-    //@
-    /// Return memory block if available
-    bool region_alloc(size_t s, void*& p);
-    //@}
-    /// Return copy during cloning
-    SharedMemory* copy(bool share);
-    /// Release by one space
-    bool release(void);
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-  };
+  /*
+   * Shared memory area
+   *
+   */
+
+  forceinline void*
+  SharedMemory::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  SharedMemory::operator delete(void* p) {
+    heap.rfree(p);
+  }
+  forceinline
+  SharedMemory::SharedMemory(void)
+    : use_cnt(1) {
+    region.free = MemoryConfig::region_area_size;
+  }
+  forceinline SharedMemory*
+  SharedMemory::copy(bool share) {
+    if (share) {
+      use_cnt++;
+      return this;
+    } else {
+      return new SharedMemory();
+    }
+  }
+  forceinline bool
+  SharedMemory::release(void) {
+    return --use_cnt == 0;
+  }
+  forceinline bool
+  SharedMemory::region_alloc(size_t s, void*& p) {
+    MemoryConfig::align(s);
+    if (s > region.free)
+      return false;
+    region.free -= s;
+    p = Support::ptr_cast<char*>(&region.area[0]) + region.free;
+    return true;
+  }
 
 
   /*
@@ -258,6 +300,7 @@ namespace Gecode {
                        (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
     // Request a chunk of size allocate
     HeapChunk* hc = static_cast<HeapChunk*>(heap.ralloc(allocate));
+    hc->size = allocate;
     start = Support::ptr_cast<char*>(&hc->area[0]);
     lsz   = allocate - overhead;
     // Link heap chunk, where the first heap chunk is kept in place
@@ -305,7 +348,7 @@ namespace Gecode {
     // Release all allocated heap chunks
     HeapChunk* hc = cur_hc;
     do {
-      HeapChunk* t = hc; hc = hc->next;
+      HeapChunk* t = hc; hc = static_cast<HeapChunk*>(hc->next);
       heap.rfree(t);
     } while (hc != NULL);
   }
@@ -330,7 +373,7 @@ namespace Gecode {
     if (s < (MemoryConfig::fl_size_min<<MemoryConfig::fl_unit_size))
       return;
     if (s > (MemoryConfig::fl_size_max<<MemoryConfig::fl_unit_size)) {
-      ReuseChunk* rc = static_cast<ReuseChunk*>(p);
+      MemoryChunk* rc = static_cast<MemoryChunk*>(p);
       rc->next = slack;
       rc->size = s;
       slack = rc;
@@ -372,7 +415,7 @@ namespace Gecode {
   MemoryManager::fl_refill(void) {
     // Try to acquire memory from slack
     if (slack != NULL) {
-      ReuseChunk* m = slack;
+      MemoryChunk* m = slack;
       slack = NULL;
       do {
         char*  block = Support::ptr_cast<char*>(m);
@@ -401,48 +444,6 @@ namespace Gecode {
         (Support::ptr_cast<FreeList*>(NULL));
     }
   }
-
-  /*
-   * Shared memory area
-   *
-   */
-
-  forceinline void*
-  SharedMemory::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  SharedMemory::operator delete(void* p) {
-    heap.rfree(p);
-  }
-  forceinline
-  SharedMemory::SharedMemory(void)
-    : use_cnt(1) {
-    region.free = MemoryConfig::region_area_size;
-  }
-  forceinline SharedMemory*
-  SharedMemory::copy(bool share) {
-    if (share) {
-      use_cnt++;
-      return this;
-    } else {
-      return new SharedMemory();
-    }
-  }
-  forceinline bool
-  SharedMemory::release(void) {
-    return --use_cnt == 0;
-  }
-  forceinline bool
-  SharedMemory::region_alloc(size_t s, void*& p) {
-    MemoryConfig::align(s);
-    if (s > region.free)
-      return false;
-    region.free -= s;
-    p = Support::ptr_cast<char*>(&region.area[0]) + region.free;
-    return true;
-  }
-
 
 }
 
