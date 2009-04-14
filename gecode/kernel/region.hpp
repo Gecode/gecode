@@ -296,12 +296,12 @@ namespace Gecode {
    */
   forceinline
   Region::Region(const Space& h)
-    : home(const_cast<Space&>(h)), free_reset(home.sra->free), hi(0) {}
+    : home(const_cast<Space&>(h)), free_reset(home.sm->region.free), hi(0) {}
 
   forceinline void*
   Region::ralloc(size_t s) {
     void* p;
-    if (home.sra->alloc(s,p))
+    if (home.sm->region_alloc(s,p))
       return p;
     return heap_alloc(s);
   }
@@ -311,7 +311,7 @@ namespace Gecode {
 
   forceinline
   Region::~Region(void) {
-    home.sra->free = free_reset;
+    home.sm->region.free = free_reset;
     if (hi != NULL)
       heap_free();
   }

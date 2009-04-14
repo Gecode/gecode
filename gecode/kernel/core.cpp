@@ -93,7 +93,7 @@ namespace Gecode {
 #endif
 
   Space::Space(void)
-    : sra(new SharedRegionArea), n_wmp(0) {
+    : sm(new SharedMemory), n_wmp(0) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -147,8 +147,8 @@ namespace Gecode {
 
   Space::~Space(void) {
     // Release region area
-    if (sra->release())
-      delete sra;
+    if (sm->release())
+      delete sm;
     // Mark space as failed
     fail();
     // Delete actors that must be deleted
@@ -376,7 +376,7 @@ namespace Gecode {
    */
   Space::Space(bool share, Space& s)
     : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
-      sra(s.sra->copy(share)), n_wmp(s.n_wmp) {
+      sm(s.sm->copy(share)), n_wmp(s.n_wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;

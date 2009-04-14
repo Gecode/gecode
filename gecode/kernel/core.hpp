@@ -1177,8 +1177,8 @@ namespace Gecode {
   private:
     /// Performs memory management for space
     MemoryManager mm;
-    /// Shared region area
-    SharedRegionArea* sra;
+    /// Shared memory
+    SharedMemory* sm;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchings

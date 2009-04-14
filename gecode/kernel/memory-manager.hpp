@@ -142,23 +142,29 @@ namespace Gecode {
 
   class Region;
 
-  /// Shared object for scratch area
-  class SharedRegionArea {
+  /// Shared object for several memory areas
+  class SharedMemory {
     friend class Region;
   private:
-    /// How many spaces use this scratch area object
+    /// How many spaces use this shared memory object
     unsigned int use_cnt;
-    /// Amount of free memory
-    size_t free;
-    /// The actual memory area (allocated from top to bottom)
-    double area[MemoryConfig::region_area_size / sizeof(double)];
+    /// The components for the shared region area
+    struct {
+      /// Amount of free memory
+      size_t free;
+      /// The actual memory area (allocated from top to bottom)
+      double area[MemoryConfig::region_area_size / sizeof(double)];
+    } region;
   public:
     /// Initialize
-    SharedRegionArea(void);
+    SharedMemory(void);
+    /// \name Region management
+    //@
     /// Return memory block if available
-    bool alloc(size_t s, void*& p);
+    bool region_alloc(size_t s, void*& p);
+    //@}
     /// Return copy during cloning
-    SharedRegionArea* copy(bool share);
+    SharedMemory* copy(bool share);
     /// Release by one space
     bool release(void);
     /// Allocate memory from heap
@@ -397,41 +403,43 @@ namespace Gecode {
   }
 
   /*
-   * Shared region area
+   * Shared memory area
    *
    */
 
   forceinline void*
-  SharedRegionArea::operator new(size_t s) {
+  SharedMemory::operator new(size_t s) {
     return heap.ralloc(s);
   }
   forceinline void
-  SharedRegionArea::operator delete(void* p) {
+  SharedMemory::operator delete(void* p) {
     heap.rfree(p);
   }
   forceinline
-  SharedRegionArea::SharedRegionArea(void)
-    : use_cnt(1), free(MemoryConfig::region_area_size) {}
-  forceinline SharedRegionArea*
-  SharedRegionArea::copy(bool share) {
+  SharedMemory::SharedMemory(void)
+    : use_cnt(1) {
+    region.free = MemoryConfig::region_area_size;
+  }
+  forceinline SharedMemory*
+  SharedMemory::copy(bool share) {
     if (share) {
       use_cnt++;
       return this;
     } else {
-      return new SharedRegionArea();
+      return new SharedMemory();
     }
   }
   forceinline bool
-  SharedRegionArea::release(void) {
+  SharedMemory::release(void) {
     return --use_cnt == 0;
   }
   forceinline bool
-  SharedRegionArea::alloc(size_t s, void*& p) {
+  SharedMemory::region_alloc(size_t s, void*& p) {
     MemoryConfig::align(s);
-    if (s > free)
+    if (s > region.free)
       return false;
-    free -= s;
-    p = Support::ptr_cast<char*>(&area[0]) + free;
+    region.free -= s;
+    p = Support::ptr_cast<char*>(&region.area[0]) + region.free;
     return true;
   }
 
