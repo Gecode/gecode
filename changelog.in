@@ -76,7 +76,7 @@ This is a release
 [ENTRY]
 Module: kernel
 What:   performance
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 Cache memory blocks from deleted spaces.
 
