@@ -1175,10 +1175,10 @@ namespace Gecode {
     friend class CopiedHandle;
     friend class Region;
   private:
+    /// Manager for shared memory areas
+    SharedMemory* sm;
     /// Performs memory management for space
     MemoryManager mm;
-    /// Shared memory
-    SharedMemory* sm;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchings
@@ -1873,7 +1873,7 @@ namespace Gecode {
   // Space allocation: general space heaps and free lists
   forceinline void*
   Space::ralloc(size_t s) {
-    return mm.alloc(s);
+    return mm.alloc(sm,s);
   }
   forceinline void
   Space::rfree(void* p, size_t s) {
@@ -1896,7 +1896,7 @@ namespace Gecode {
   template<size_t s>
   forceinline void*
   Space::fl_alloc(void) {
-    return mm.template fl_alloc<s>();
+    return mm.template fl_alloc<s>(sm);
   }
   template<size_t s>
   forceinline void

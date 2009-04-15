@@ -43,6 +43,11 @@ namespace Gecode {
    */
   namespace MemoryConfig {
     /**
+     * \brief How many heap chunks should be cached at most
+     */
+    const unsigned int n_hc_cache = 4*4;
+
+    /**
      * \brief Minimal size of a heap chunk requested from the OS
      */
     const size_t hcsz_min =  2 * 1024;

@@ -93,7 +93,7 @@ namespace Gecode {
 #endif
 
   Space::Space(void)
-    : sm(new SharedMemory), n_wmp(0) {
+    : sm(new SharedMemory), mm(sm), n_wmp(0) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -146,9 +146,6 @@ namespace Gecode {
   }
 
   Space::~Space(void) {
-    // Release region area
-    if (sm->release())
-      delete sm;
     // Mark space as failed
     fail();
     // Delete actors that must be deleted
@@ -168,6 +165,14 @@ namespace Gecode {
       if (_vars_d[i] != NULL)
         vd[i]->dispose(*this, _vars_d[i]);
 #endif
+    // Release memory from memory manager
+    mm.release(sm);
+    // Release shared memory
+    if (sm->release()) {
+      delete sm;
+      // Mark that this was the last space and no more caching is possible 
+      sm = NULL;
+    }
   }
 
 
@@ -375,8 +380,9 @@ namespace Gecode {
    *
    */
   Space::Space(bool share, Space& s)
-    : mm(s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
-      sm(s.sm->copy(share)), n_wmp(s.n_wmp) {
+    : sm(s.sm->copy(share)), 
+      mm(s.sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
+      n_wmp(s.n_wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;

@@ -74,6 +74,13 @@ Date: some date
 This is a release
 
 [ENTRY]
+Module: kernel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Cache memory blocks from deleted spaces.
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   minor
