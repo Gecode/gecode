@@ -108,7 +108,7 @@ variables) become(s) assigned.
 [ENTRY]
 Module: driver
 What:   new
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 Added a new module "driver" as a commandline driver for
 scripts. This is due to popular request: most people have been
