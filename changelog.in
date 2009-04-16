@@ -74,6 +74,13 @@ Date: some date
 This is a release
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added new example for equidistant frequency permutation arrays (EFPA).
+
+[ENTRY]
 Module: kernel
 What:   performance
 Rank:   major
@@ -107,7 +114,7 @@ Added a new module "driver" as a commandline driver for
 scripts. This is due to popular request: most people have been
 using the support functionality for examples anyway. This
 function is now wrapped into a proper module (and Example is
-Script to be more general).
+now called Script to be more general).
 
 [ENTRY]
 Module: support

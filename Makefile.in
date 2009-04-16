@@ -542,7 +542,7 @@ INTEXAMPLESRC0 =						\
 	sudoku kakuro nonogram pentominoes			\
 	crowded-chess black-hole minesweeper domino		\
 	steel-mill sports-league all-interval			\
-	langford-number warehouses				\
+	efpa langford-number warehouses				\
 	stress-domain stress-exec stress-search baseline	\
 	stress-element stress-min stress-distinct		\
 	stress-extensional stress-linear-bool sat radiotherapy
