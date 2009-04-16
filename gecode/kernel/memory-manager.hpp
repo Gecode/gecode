@@ -82,6 +82,8 @@ namespace Gecode {
   public:
     /// Initialize
     SharedMemory(void);
+    /// Flush all cached memory
+    void flush(void);
     /// Destructor
     ~SharedMemory(void);
     /// \name Region management
@@ -210,13 +212,17 @@ namespace Gecode {
     heap.n_hc = MemoryConfig::n_hc_cache;
     heap.hc = NULL;
   }
-  forceinline
-  SharedMemory::~SharedMemory(void) {
+  forceinline void
+  SharedMemory::flush(void) {
     while (heap.hc != NULL) {
       HeapChunk* hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
       Gecode::heap.rfree(hc);
-    }    
+    }
+  }
+  forceinline
+  SharedMemory::~SharedMemory(void) {
+    flush();
   }
   forceinline SharedMemory*
   SharedMemory::copy(bool share) {
@@ -359,10 +365,10 @@ namespace Gecode {
     lsz   = hc->size - overhead;
     // Link heap chunk, where the first heap chunk is kept in place
     if (first) {
-      requested = allocate;
+      requested = hc->size;
       hc->next = NULL; cur_hc = hc;
     } else {
-      requested += allocate;
+      requested += hc->size;
       hc->next = cur_hc->next; cur_hc->next = hc;
     }
 #ifdef GECODE_MEMORY_CHECK

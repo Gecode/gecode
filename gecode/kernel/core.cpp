@@ -145,6 +145,11 @@ namespace Gecode {
     return n;
   }
 
+  void
+  Space::flush(void) {
+    sm->flush();
+  }
+
   Space::~Space(void) {
     // Mark space as failed
     fail();
@@ -168,11 +173,8 @@ namespace Gecode {
     // Release memory from memory manager
     mm.release(sm);
     // Release shared memory
-    if (sm->release()) {
+    if (sm->release())
       delete sm;
-      // Mark that this was the last space and no more caching is possible 
-      sm = NULL;
-    }
   }
 
 

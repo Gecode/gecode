@@ -1740,6 +1740,14 @@ namespace Gecode {
      * as well as additional memory allocated by actors.
      */
     size_t allocated(void) const;
+    /**
+     * \brief Flush cached memory blocks
+     *
+     * All spaces that are obtained as non-shared clones from some same space
+     * try to cache memory blocks from failed spaces. To minimize memory
+     * consumption, these blocks can be flushed.
+     */
+    GECODE_KERNEL_EXPORT void flush(void);
     //@}
     /// Construction routines
     //@{

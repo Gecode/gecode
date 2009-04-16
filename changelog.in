@@ -78,7 +78,9 @@ Module: kernel
 What:   performance
 Rank:   major
 [DESCRIPTION]
-Cache memory blocks from deleted spaces.
+Cache memory blocks from deleted spaces. This never increases
+peak memory consumption. It improves performance on Windows and
+Linux only by up to 5%, but on MacOS by 50% in some cases.
 
 [ENTRY]
 Module: set
