@@ -104,7 +104,7 @@ public:
 
 
 /**
- * \brief %Script: Equidistant Frequency Permutation Arrays
+ * \brief %Example: Equidistant Frequency Permutation Arrays
  *
  * This example solves instances of the equidistant frequency
  * permutation arrays problem.
