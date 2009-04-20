@@ -383,7 +383,7 @@ namespace Gecode {
    */
   Space::Space(bool share, Space& s)
     : sm(s.sm->copy(share)), 
-      mm(s.sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
+      mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       n_wmp(s.n_wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
