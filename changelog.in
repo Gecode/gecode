@@ -85,9 +85,10 @@ Module: kernel
 What:   performance
 Rank:   major
 [DESCRIPTION]
-Cache memory blocks from deleted spaces. This never increases
+Cache memory blocks from deleted spaces. This hardly increases
 peak memory consumption. It improves performance on Windows and
-Linux only by up to 5%, but on MacOS by 50% in some cases.
+Linux only by up to 5%, but on MacOS by 50% in some cases (this
+improvement is absolutely essential for parallel execution).
 
 [ENTRY]
 Module: set
@@ -114,7 +115,8 @@ Added a new module "driver" as a commandline driver for
 scripts. This is due to popular request: most people have been
 using the support functionality for examples anyway. This
 function is now wrapped into a proper module (and Example is
-now called Script to be more general).
+now called Script to be more general). See "Modeling with Gecode" 
+for documentation.
 
 [ENTRY]
 Module: support
