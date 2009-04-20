@@ -74,7 +74,7 @@ namespace Gecode {
     } region;
     /// The components for shared heap memory
     struct {
-      /// How many heap chunks can still be cached
+      /// How many heap chunks are available for caching
       unsigned int n_hc;
       /// A list of cached heap chunks
       HeapChunk* hc;
@@ -209,11 +209,12 @@ namespace Gecode {
   SharedMemory::SharedMemory(void)
     : use_cnt(1) {
     region.free = MemoryConfig::region_area_size;
-    heap.n_hc = MemoryConfig::n_hc_cache;
+    heap.n_hc = 0;
     heap.hc = NULL;
   }
   forceinline void
   SharedMemory::flush(void) {
+    heap.n_hc = 0;
     while (heap.hc != NULL) {
       HeapChunk* hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
@@ -249,18 +250,18 @@ namespace Gecode {
   forceinline HeapChunk*
   SharedMemory::heap_alloc(size_t s, size_t l) {
     while ((heap.hc != NULL) && (heap.hc->size < l)) {
-      heap.n_hc++;
+      heap.n_hc--;
       HeapChunk* hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
       Gecode::heap.rfree(hc);
     }
     if (heap.hc == NULL) {
-      assert(heap.n_hc == MemoryConfig::n_hc_cache);
+      assert(heap.n_hc == 0);
       HeapChunk* hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
       hc->size = s;
       return hc;
     } else {
-      heap.n_hc++;
+      heap.n_hc--;
       HeapChunk* hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
       return hc;
@@ -268,10 +269,10 @@ namespace Gecode {
   }
   forceinline void
   SharedMemory::heap_free(HeapChunk* hc) {
-    if (heap.n_hc == 0) {
+    if (heap.n_hc == MemoryConfig::n_hc_cache) {
       Gecode::heap.rfree(hc);
     } else {
-      heap.n_hc--;
+      heap.n_hc++;
       hc->next = heap.hc; heap.hc = hc;
     }
   }
@@ -329,7 +330,6 @@ namespace Gecode {
 
   forceinline void*
   MemoryManager::alloc(SharedMemory* sm, size_t sz) {
-    // Size must be a multiple of four
     assert(sz > 0);
     // Perform alignment
     MemoryConfig::align(sz);
@@ -359,7 +359,7 @@ namespace Gecode {
     // Round size to next multiple of current heap chunk size
     size_t allocate = ((sz > cur_hcsz) ?
                        (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
-    // Request a chunk of size allocate
+    // Request a chunk of preferably size allocate, but at least size sz
     HeapChunk* hc = sm->heap_alloc(allocate,sz);
     start = Support::ptr_cast<char*>(&hc->area[0]);
     lsz   = hc->size - overhead;
