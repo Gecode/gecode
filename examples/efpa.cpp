@@ -7,8 +7,8 @@
  *     Mikael Lagerkvist, 2009
  *
  *  Last modified:
- *     $Date: 2009-03-27 17:11:36 +0100 (Fri, 27 Mar 2009) $ by $Author: schulte $
- *     $Revision: 8597 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

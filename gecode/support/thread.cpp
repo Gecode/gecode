@@ -7,8 +7,8 @@
  *     Christian Schulte, 2009
  *
  *  Last modified:
- *     $Date: 2009-02-05 11:48:53 +0100 (Thu, 05 Feb 2009) $ by $Author: schulte $
- *     $Revision: 8155 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -85,9 +85,11 @@ namespace Gecode { namespace Support {
    * Thread
    */
   /// Function to start execution
-  void
+  void*
   bootstrap(void* p) {
     static_cast<Runnable*>(p)->run();
+    pthread_exit(NULL);
+    return NULL;
   }
 
   Thread::Thread(Runnable& r) {
@@ -108,7 +110,7 @@ namespace Gecode { namespace Support {
   }
 
   Mutex::~Mutex(void) {
-    pthread_mutex_destroy(&p_m);    
+    pthread_mutex_destroy(&p_m);
   }
 
 }}
