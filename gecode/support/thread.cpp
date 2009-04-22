@@ -52,8 +52,7 @@ namespace Gecode { namespace Support {
   }
 
   Thread::Thread(Runnable& r) 
-    : w_h(CreateThread(NULL, 0, bootstrap, &r, 0, NULL)), 
-      current(false) {}
+    : w_h(CreateThread(NULL, 0, bootstrap, &r, 0, NULL)) {}
   
   unsigned int
   Thread::npu(void) {
@@ -81,6 +80,36 @@ namespace Gecode { namespace Support {
 #ifdef GECODE_THREADS_PTHREADS
 
 namespace Gecode { namespace Support {
+
+  /*
+   * Thread
+   */
+  /// Function to start execution
+  void
+  bootstrap(void* p) {
+    static_cast<Runnable*>(p)->run();
+  }
+
+  Thread::Thread(Runnable& r) {
+    (void) pthread_create(&p_t, NULL, bootstrap, &r);
+  }
+  
+  unsigned int
+  Thread::npu(void) {
+    return 0;
+  }
+
+  /*
+   * Mutex
+   */
+
+  Mutex::Mutex(void) {
+    pthread_mutex_init(&p_m,NULL);
+  }
+
+  Mutex::~Mutex(void) {
+    pthread_mutex_destroy(&p_m);    
+  }
 
 }}
 

@@ -35,8 +35,6 @@
  *
  */
 
-#ifdef GECODE_HAS_THREADS
-
 #ifndef __GECODE_SUPPORT_THREAD_HH__
 #define __GECODE_SUPPORT_THREAD_HH__
 
@@ -44,10 +42,15 @@
 
 #ifdef GECODE_THREADS_WINDOWS
 #include <windows.h>
+#define GECODE_HAS_THREADS
 #endif
+
 #ifdef GECODE_THREADS_PTHREADS
 #include <pthread.h>
+#define GECODE_HAS_THREADS
 #endif
+
+#ifdef GECODE_HAS_THREADS
 
 namespace Gecode { namespace Support {
 
@@ -73,6 +76,8 @@ namespace Gecode { namespace Support {
     /// A class for thread identification
     class Id {
       friend class Thread;
+      friend bool operator ==(const Thread::Id&, const Thread::Id&);
+      friend bool operator !=(const Thread::Id&, const Thread::Id&);
     private:
 #ifdef GECODE_THREADS_WINDOWS
       /// The Windows-specific id
@@ -89,10 +94,10 @@ namespace Gecode { namespace Support {
     Thread(Runnable& r);
     /// Destroy thread handle (does not terminate thread)
     ~Thread(void);
-    /// Sleep for \a ms milliseconds
-    void sleep(unsigned int ms);
-    /// Stop executing the thread
-    void yield(void);
+    /// Put current thread to sleep for \a ms milliseconds
+    static void sleep(unsigned int ms);
+    /// Stop executing current thread
+    static void yield(void);
     /// Return identifier for thread
     Id id(void) const;
     /// Return number of processing units (0 if information not available)
@@ -104,6 +109,28 @@ namespace Gecode { namespace Support {
     void operator=(const Thread&) {}
   };
 
+  /**
+   * \brief Test whether thread identifiers are equal
+   * \relates Thread::Id
+   */
+  bool operator ==(const Thread::Id& ti1, const Thread::Id& ti2);
+  /**
+   * \brief Test whether thread identifiers are not equal
+   * \relates Thread::Id
+   */
+  bool operator !=(const Thread::Id& ti1, const Thread::Id& ti2);
+
+  /**
+   * \brief Test whether threads are equal
+   * \relates Thread
+   */
+  bool operator ==(const Thread& t1, const Thread& t2);
+  /**
+   * \brief Test whether threads are not equal
+   * \relates Thread::Id
+   */
+  bool operator !=(const Thread& t1, const Thread& t2);
+
 
   /// A mutex for mutual exclusion among several threads
   class Mutex {
@@ -114,17 +141,17 @@ namespace Gecode { namespace Support {
 #endif
 #ifdef GECODE_THREADS_PTHREADS
     /// The Pthread-mutex
-    pthread_mutex_t p_mutex;
+    pthread_mutex_t p_m;
 #endif
   public:
     /// Create a new mutex
     Mutex(void);
-    /// Enter the mutex and possible block
-    void enter(void);
-    /// Try to enter the mutex, return if succesful
-    bool tryenter(void);
-    /// Leave the mutex
-    void leave(void);
+    /// Lock the mutex and possible block
+    void lock(void);
+    /// Try to lock the mutex, return true if succesful
+    bool trylock(void);
+    /// Unlock the mutex
+    void unlock(void);
     /// Delete mutex object
     ~Mutex(void);
   private:

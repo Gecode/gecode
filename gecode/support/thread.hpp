@@ -58,25 +58,40 @@ namespace Gecode { namespace Support {
   Thread::yield(void) {
     Sleep(0);
   }
+
   forceinline Thread::Id
   Thread::id(void) const {
     Id i; i.w_id = GetThreadId(w_h);
     return i;
   } 
 
+
+  /*
+   * Equality checks for thread identifiers
+   */
+  forceinline bool 
+  operator ==(const Thread::Id& ti1, const Thread::Id& ti2) {
+    return ti1.w_id == ti2.w_id;
+  }
+  forceinline bool 
+  operator !=(const Thread::Id& ti1, const Thread::Id& ti2) {
+    return ti1.w_id != ti2.w_id;
+  }
+
+
   /*
    * Mutex
    */
   forceinline void
-  Mutex::enter(void) {
+  Mutex::lock(void) {
     EnterCriticalSection(&w_cs);
   }
   forceinline bool
-  Mutex::tryenter(void) {
+  Mutex::trylock(void) {
     return TryEnterCriticalSection(&w_cs) != 0;
   }
   forceinline void
-  Mutex::leave(void) {
+  Mutex::unlock(void) {
     LeaveCriticalSection(&w_cs);
   }
 
@@ -85,6 +100,10 @@ namespace Gecode { namespace Support {
 #endif
 
 #ifdef GECODE_THREADS_PTHREADS
+
+#include <unistd.h>
+
+namespace Gecode { namespace Support {
 
   /*
    * Thread
@@ -98,12 +117,18 @@ namespace Gecode { namespace Support {
 
   forceinline void
   Thread::sleep(unsigned int ms) {
-    Sleep(static_cast<DWORD>(ms));
+    if (ms > 1000) {
+      // More than one millinon microseconds, use sleep
+      sleep(ms / 1000);
+    } else {
+      usleep(ms * 1000);
+    }
   }
   forceinline void
   Thread::yield(void) {
-    pthread
+    pthread_yield();
   }
+
   forceinline Thread::Id
   Thread::id(void) const {
     Id i; i.p_t = p_t;
@@ -112,19 +137,32 @@ namespace Gecode { namespace Support {
 
 
   /*
+   * Equality checks for thread identifiers
+   */
+  forceinline bool 
+  operator ==(const Thread::Id& ti1, const Thread::Id& ti2) {
+    return pthread_equal(ti1.p_t,ti2.p_t) != 0;
+  }
+  forceinline bool 
+  operator !=(const Thread::Id& ti1, const Thread::Id& ti2) {
+    return pthread_equal(ti1.p_t,ti2.p_t) == 0;
+  }
+
+
+  /*
    * Mutex
    */
   forceinline void
-  Mutex::enter(void) {
-    EnterCriticalSection(&w_cs);
+  Mutex::lock(void) {
+    (void) pthread_mutex_lock(&p_m);
   }
   forceinline bool
-  Mutex::tryenter(void) {
-    return TryEnterCriticalSection(&w_cs) != 0;
+  Mutex::trylock(void) {
+    return pthread_mutex_trylock(&p_m) == 0;
   }
   forceinline void
-  Mutex::leave(void) {
-    LeaveCriticalSection(&w_cs);
+  Mutex::unlockvoid) {
+    (void) pthread_mutex_unlock(&p_m);
   }
 
 #endif
@@ -132,15 +170,28 @@ namespace Gecode { namespace Support {
 namespace Gecode { namespace Support {
 
   /*
+   * Equality checks for threads
+   */
+  inline bool 
+  operator ==(const Thread& t1, const Thread& t2) {
+    return t1.id() == t2.id();
+  }
+  inline bool 
+  operator !=(const Thread& t1, const Thread& t2) {
+    return t1.id() != t2.id();
+  }
+
+
+  /*
    * Locks
    */
   forceinline
   Lock::Lock(Mutex& m0) : m(m0) {
-    m.enter();
+    m.lock();
   }
   forceinline
   Lock::~Lock(void) {
-    m.leave();
+    m.unlock();
   }
 
 }}
