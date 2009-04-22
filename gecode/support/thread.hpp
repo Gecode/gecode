@@ -50,11 +50,6 @@ namespace Gecode { namespace Support {
     CloseHandle(w_h);
   }
 
-  forceinline void
-  Thread::sleep(unsigned int ms) {
-    Sleep(static_cast<DWORD>(ms));
-  }
-
   forceinline Thread::Id
   Thread::id(void) const {
     Id i; i.w_id = GetThreadId(w_h);
@@ -109,16 +104,6 @@ namespace Gecode { namespace Support {
     : p_t(pthread_self()) {} 
   forceinline
   Thread::~Thread(void) {
-  }
-
-  forceinline void
-  Thread::sleep(unsigned int ms) {
-    if (ms > 1000) {
-      // More than one millinon microseconds, use sleep
-      sleep(ms / 1000);
-    } else {
-      usleep(ms * 1000);
-    }
   }
 
   forceinline Thread::Id

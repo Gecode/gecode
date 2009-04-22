@@ -54,6 +54,11 @@ namespace Gecode { namespace Support {
   Thread::Thread(Runnable& r) 
     : w_h(CreateThread(NULL, 0, bootstrap, &r, 0, NULL)) {}
   
+  void
+  Thread::sleep(unsigned int ms) {
+    Sleep(static_cast<DWORD>(ms));
+  }
+
   unsigned int
   Thread::npu(void) {
     SYSTEM_INFO si;
@@ -96,9 +101,26 @@ namespace Gecode { namespace Support {
     (void) pthread_create(&p_t, NULL, bootstrap, &r);
   }
   
+  void
+  Thread::sleep(unsigned int ms) {
+#ifdef GECODE_HAS_UNISTD_H
+    if (ms > 1000) {
+      // More than one millinon microseconds, use sleep
+      sleep(ms / 1000);
+    } else {
+      usleep(ms * 1000);
+    }
+#endif
+  }
+
   unsigned int
   Thread::npu(void) {
+#ifdef GECODE_HAS_UNISTD_H
+    int n=sysconf(_SC_NPROCESSORS_ONLN);
+    return (n>0) ? n : 0;
+#else
     return 0;
+#endif
   }
 
   /*
