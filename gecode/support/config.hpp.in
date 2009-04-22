@@ -67,6 +67,9 @@
 /* Whether to build SET variables */
 #undef GECODE_HAS_SET_VARS
 
+/* Whether unistd.h is available */
+#undef GECODE_HAS_UNISTD_H
+
 /* Gecode version */
 #undef GECODE_LIBRARY_VERSION
 
@@ -75,6 +78,12 @@
 
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
+
+/* Whether we have posix threads */
+#undef GECODE_THREADS_PTHREADS
+
+/* Whether we have windows threads */
+#undef GECODE_THREADS_WINDOWS
 
 /* How to tell the compiler to really, really inline */
 #undef forceinline
