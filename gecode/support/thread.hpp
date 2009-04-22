@@ -54,10 +54,6 @@ namespace Gecode { namespace Support {
   Thread::sleep(unsigned int ms) {
     Sleep(static_cast<DWORD>(ms));
   }
-  forceinline void
-  Thread::yield(void) {
-    Sleep(0);
-  }
 
   forceinline Thread::Id
   Thread::id(void) const {
@@ -123,10 +119,6 @@ namespace Gecode { namespace Support {
     } else {
       usleep(ms * 1000);
     }
-  }
-  forceinline void
-  Thread::yield(void) {
-    //    pthread_yield();
   }
 
   forceinline Thread::Id

@@ -96,8 +96,6 @@ namespace Gecode { namespace Support {
     ~Thread(void);
     /// Put current thread to sleep for \a ms milliseconds
     static void sleep(unsigned int ms);
-    /// Stop executing current thread
-    static void yield(void);
     /// Return identifier for thread
     Id id(void) const;
     /// Return number of processing units (0 if information not available)
