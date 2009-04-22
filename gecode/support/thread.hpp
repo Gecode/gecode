@@ -126,7 +126,7 @@ namespace Gecode { namespace Support {
   }
   forceinline void
   Thread::yield(void) {
-    pthread_yield();
+    //    pthread_yield();
   }
 
   forceinline Thread::Id
@@ -161,9 +161,11 @@ namespace Gecode { namespace Support {
     return pthread_mutex_trylock(&p_m) == 0;
   }
   forceinline void
-  Mutex::unlockvoid) {
+  Mutex::unlock(void) {
     (void) pthread_mutex_unlock(&p_m);
   }
+
+}}
 
 #endif
 
