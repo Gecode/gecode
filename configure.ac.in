@@ -137,6 +137,9 @@ AC_GECODE_CHECK_ARITH
 dnl check whether we compile with boost support
 AC_GECODE_BOOST
 
+dnl checking for thread support
+AC_GECODE_THREADS
+
 case $ac_gecode_compiler_vendor in
 gnu)
   dnl general compiler flags
