@@ -191,7 +191,7 @@ namespace Gecode { namespace Kernel {
   }
   template <class View>
   ExecStatus 
-  NaryWait<View>::propagate(Space& home, const ModEventDelta& med) {
+  NaryWait<View>::propagate(Space& home, const ModEventDelta& ) {
     assert(x[0].assigned());
     for (int i=x.size()-1; i>0; i--)
       if (x[i].assigned())
