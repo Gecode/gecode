@@ -35,117 +35,6 @@
  *
  */
 
-#ifdef GECODE_THREADS_WINDOWS
-
-namespace Gecode { namespace Support {
-
-  /*
-   * Thread
-   */
-  forceinline
-  Thread::Thread(void) 
-    : w_h(GetCurrentThread()) {} 
-  forceinline
-  Thread::~Thread(void) {
-    CloseHandle(w_h);
-  }
-
-  forceinline Thread::Id
-  Thread::id(void) const {
-    Id i; i.w_id = GetThreadId(w_h);
-    return i;
-  } 
-
-
-  /*
-   * Equality checks for thread identifiers
-   */
-  forceinline bool 
-  operator ==(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return ti1.w_id == ti2.w_id;
-  }
-  forceinline bool 
-  operator !=(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return ti1.w_id != ti2.w_id;
-  }
-
-
-  /*
-   * Mutex
-   */
-  forceinline void
-  Mutex::lock(void) {
-    EnterCriticalSection(&w_cs);
-  }
-  forceinline bool
-  Mutex::trylock(void) {
-    return TryEnterCriticalSection(&w_cs) != 0;
-  }
-  forceinline void
-  Mutex::unlock(void) {
-    LeaveCriticalSection(&w_cs);
-  }
-
-}}
-
-#endif
-
-#ifdef GECODE_THREADS_PTHREADS
-
-#include <unistd.h>
-
-namespace Gecode { namespace Support {
-
-  /*
-   * Thread
-   */
-  forceinline
-  Thread::Thread(void) 
-    : p_t(pthread_self()) {} 
-  forceinline
-  Thread::~Thread(void) {
-  }
-
-  forceinline Thread::Id
-  Thread::id(void) const {
-    Id i; i.p_t = p_t;
-    return i;
-  } 
-
-
-  /*
-   * Equality checks for thread identifiers
-   */
-  forceinline bool 
-  operator ==(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return pthread_equal(ti1.p_t,ti2.p_t) != 0;
-  }
-  forceinline bool 
-  operator !=(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return pthread_equal(ti1.p_t,ti2.p_t) == 0;
-  }
-
-
-  /*
-   * Mutex
-   */
-  forceinline void
-  Mutex::lock(void) {
-    (void) pthread_mutex_lock(&p_m);
-  }
-  forceinline bool
-  Mutex::trylock(void) {
-    return pthread_mutex_trylock(&p_m) == 0;
-  }
-  forceinline void
-  Mutex::unlock(void) {
-    (void) pthread_mutex_unlock(&p_m);
-  }
-
-}}
-
-#endif
-
 namespace Gecode { namespace Support {
 
   /*
@@ -166,11 +55,11 @@ namespace Gecode { namespace Support {
    */
   forceinline
   Lock::Lock(Mutex& m0) : m(m0) {
-    m.lock();
+    m.acquire();
   }
   forceinline
   Lock::~Lock(void) {
-    m.unlock();
+    m.release();
   }
 
 }}

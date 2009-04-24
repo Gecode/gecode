@@ -52,6 +52,20 @@
 
 #ifdef GECODE_HAS_THREADS
 
+/**
+ * \defgroup FuncSupportThread Simple thread and synchronization support
+ *
+ * This is very simplistic, just enough for parallel search engines. Do
+ * not mistake it for a full-fledged thread package.
+ *
+ * Requires \code #include <gecode/support/thread.hh> \endcode
+ * 
+ * If the platform supports threads, after inclusion the macro
+ * GECODE_HAS_THREADS is defined.
+ *
+ * \ingroup FuncSupport
+ */  
+
 namespace Gecode { namespace Support {
 
   /// An interface for objects that can be run by a thread
@@ -61,7 +75,12 @@ namespace Gecode { namespace Support {
     virtual void run(void) = 0;
   };
 
-  /// Simple threads
+  /**
+   * \brief Simple threads
+   *
+   * Threads are assumed to properly terminate, the destructor will
+   * only release the handle to a thread but will not terminate it.
+   */
   class GECODE_SUPPORT_EXPORT Thread {
   private:
 #ifdef GECODE_THREADS_WINDOWS
@@ -130,7 +149,13 @@ namespace Gecode { namespace Support {
   bool operator !=(const Thread& t1, const Thread& t2);
 
 
-  /// A mutex for mutual exclusion among several threads
+  /**
+   * \brief A mutex for mutual exclausion among several threads
+   * 
+   * The mutex is recursive: if a thread already holds the mutex,
+   * then it can acquire it again. However, the number of acquire and
+   * release operations must match.
+   */
   class Mutex {
   private:
 #ifdef GECODE_THREADS_WINDOWS
@@ -142,15 +167,15 @@ namespace Gecode { namespace Support {
     pthread_mutex_t p_m;
 #endif
   public:
-    /// Create a new mutex
+    /// Initialize mutex
     Mutex(void);
-    /// Lock the mutex and possible block
-    void lock(void);
-    /// Try to lock the mutex, return true if succesful
-    bool trylock(void);
-    /// Unlock the mutex
-    void unlock(void);
-    /// Delete mutex object
+    /// Acquire the mutex and possibly block
+    void acquire(void);
+    /// Try to acquire the mutex, return true if succesful
+    bool tryacquire(void);
+    /// Release the mutex
+    void release(void);
+    /// Delete mutex
     ~Mutex(void);
   private:
     /// A mutex cannot be copied
@@ -165,15 +190,27 @@ namespace Gecode { namespace Support {
     /// The mutex used for the lock
     Mutex& m;
   public:
-    /// Enter mutex
+    /// Enter lock
     Lock(Mutex& m0);
-    /// Leave mutex
+    /// Leave lock
     ~Lock(void);
+  private:
+    /// A lock cannot be copied
+    Lock(const Lock& l) : m(l.m) {}
+    /// A lock cannot be assigned
+    void operator=(const Lock&) {}
   };
 
 }}
 
-#include <gecode/support/thread.hpp>
+#ifdef GECODE_THREADS_WINDOWS
+#include <gecode/support/thread/windows.hpp>
+#endif
+#ifdef GECODE_THREADS_PTHREADS
+#include <gecode/support/thread/pthreads.hpp>
+#endif
+
+#include <gecode/support/thread/thread.hpp>
 
 #endif
 

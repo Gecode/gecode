@@ -126,12 +126,13 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	exception heap thread
+	exception heap thread/windows thread/pthreads
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
 	dynamic-stack exception heap \
 	macros random sort static-stack \
-	marked-pointer int-type auto-link thread
+	marked-pointer int-type auto-link \
+	thread/windows thread/pthreads
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR  =  gecode/support.hh gecode/support/thread.hh \
@@ -150,7 +151,7 @@ endif
 export SUPPORTSTATICLIB	= $(LIBPREFIX)@SUPPORT@$(STATICLIBSUFFIX)
 export LINKSUPPORT      = \
 	$(LINKPREFIX)@SUPPORT@$(LINKSUFFIX)
-SUPPORTBUILDDIRS = support
+SUPPORTBUILDDIRS = support support/thread
 
 
 #
