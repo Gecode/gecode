@@ -72,15 +72,15 @@ namespace Gecode { namespace Support {
    */
   forceinline void
   Mutex::acquire(void) {
-    (void) pthread_mutex_acquire(&p_m);
+    (void) pthread_mutex_lock(&p_m);
   }
   forceinline bool
   Mutex::tryacquire(void) {
-    return pthread_mutex_tryacquire(&p_m) == 0;
+    return pthread_mutex_trylock(&p_m) == 0;
   }
   forceinline void
   Mutex::release(void) {
-    (void) pthread_mutex_release(&p_m);
+    (void) pthread_mutex_unlock(&p_m);
   }
 
 }}
