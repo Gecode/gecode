@@ -76,16 +76,16 @@ namespace Gecode { namespace Support {
   Thread::npu(void) {
 #ifdef GECODE_HAS_UNISTD_H
     int n=sysconf(_SC_NPROCESSORS_ONLN);
-    return (n>0) ? n : 0;
+    return (n>1) ? n : 1;
 #else
-    return 0;
+    return 1;
 #endif
   }
+
 
   /*
    * Mutex
    */
-
   Mutex::Mutex(void) {
     pthread_mutex_init(&p_m,NULL);
   }
@@ -93,6 +93,17 @@ namespace Gecode { namespace Support {
   Mutex::~Mutex(void) {
     pthread_mutex_destroy(&p_m);
   }
+
+
+  /*
+   * Event
+   */
+  Event::Event(void) {
+  }
+
+  Event::~Event(void) {
+  }
+
 
 }}
 

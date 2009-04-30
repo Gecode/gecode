@@ -117,7 +117,7 @@ namespace Gecode { namespace Support {
     static void sleep(unsigned int ms);
     /// Return identifier for thread
     Id id(void) const;
-    /// Return number of processing units (0 if information not available)
+    /// Return number of processing units (1 if information not available)
     static unsigned int npu(void);
   private:
     /// A thread cannot be copied
@@ -144,7 +144,7 @@ namespace Gecode { namespace Support {
   bool operator ==(const Thread& t1, const Thread& t2);
   /**
    * \brief Test whether threads are not equal
-   * \relates Thread::Id
+   * \relates Thread
    */
   bool operator !=(const Thread& t1, const Thread& t2);
 
@@ -152,11 +152,11 @@ namespace Gecode { namespace Support {
   /**
    * \brief A mutex for mutual exclausion among several threads
    * 
-   * The mutex is recursive: if a thread already holds the mutex,
-   * then it can acquire it again. However, the number of acquire and
-   * release operations must match.
+   * It is not specified whether the mutex is recursive or not.
+   * Likewise, there is no guarantee of fairness among the
+   * blocking threads.
    */
-  class Mutex {
+  class GECODE_SUPPORT_EXPORT Mutex {
   private:
 #ifdef GECODE_THREADS_WINDOWS
     /// Use a simple but more efficient critical section on Windows
@@ -199,6 +199,34 @@ namespace Gecode { namespace Support {
     Lock(const Lock& l) : m(l.m) {}
     /// A lock cannot be assigned
     void operator=(const Lock&) {}
+  };
+
+  /**
+   * \brief An event for synchronization
+   * 
+   * An event can be waited on by a single thread until the event is
+   * signalled.
+   */
+  class GECODE_SUPPORT_EXPORT Event {
+  private:
+#ifdef GECODE_THREADS_WINDOWS
+#endif
+#ifdef GECODE_THREADS_PTHREADS
+#endif
+  public:
+    /// Initialize event
+    Event(void);
+    /// Signal the event
+    void signal(void);
+    /// Wait until the event becomes signalled
+    void wait(void);
+    /// Delete event
+    ~Event(void);
+  private:
+    /// An event cannot be copied
+    Event(const Event&) {}
+    /// An event cannot be assigned
+    void operator=(const Event&) {}
   };
 
 }}

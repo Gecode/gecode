@@ -86,6 +86,18 @@ namespace Gecode { namespace Support {
     LeaveCriticalSection(&w_cs);
   }
 
+
+  /*
+   * Event
+   */
+  forceinline void
+  Event::signal(void) {
+  }
+  forceinline void
+  Event::wait(void) {
+  }
+
+
 }}
 
 #endif

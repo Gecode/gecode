@@ -83,6 +83,18 @@ namespace Gecode { namespace Support {
     (void) pthread_mutex_unlock(&p_m);
   }
 
+
+  /*
+   * Event
+   */
+  forceinline void
+  Event::signal(void) {
+  }
+  forceinline void
+  Event::wait(void) {
+  }
+
+
 }}
 
 // STATISTICS: support-any

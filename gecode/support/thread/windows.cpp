@@ -66,10 +66,10 @@ namespace Gecode { namespace Support {
     return static_cast<unsigned int>(si.dwNumberOfProcessors);
   }
 
+
   /*
    * Mutex
    */
-
   Mutex::Mutex(void) {
     InitializeCriticalSection(&w_cs);
   }
@@ -77,6 +77,17 @@ namespace Gecode { namespace Support {
   Mutex::~Mutex(void) {
     DeleteCriticalSection(&w_cs);
   }
+
+
+  /*
+   * Event
+   */
+  Event::Event(void) {
+  }
+
+  Event::~Event(void) {
+  }
+
 
 }}
 
