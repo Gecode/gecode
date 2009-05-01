@@ -57,7 +57,8 @@ namespace Gecode { namespace Support {
   }
 
   Thread::Thread(Runnable& r) {
-    (void) pthread_create(&p_t, NULL, bootstrap, &r);
+    if (pthread_create(&p_t, NULL, bootstrap, &r) != 0)
+      throw OperatingSystemError("Thread::Thread[pthread_create]");
   }
   
   void
@@ -87,21 +88,31 @@ namespace Gecode { namespace Support {
    * Mutex
    */
   Mutex::Mutex(void) {
-    pthread_mutex_init(&p_m,NULL);
+    if (pthread_mutex_init(&p_m,NULL) != 0)
+      throw OperatingSystemError("Mutex::Mutex[pthread_mutex_init]");
   }
 
   Mutex::~Mutex(void) {
-    pthread_mutex_destroy(&p_m);
+    if (pthread_mutex_destroy(&p_m) != 0)
+      throw OperatingSystemError("Mutex::~Mutex[pthread_mutex_destroy]");
   }
 
 
   /*
    * Event
    */
-  Event::Event(void) {
+  Event::Event(void) : p_s(false), p_w(false) {
+    if (pthread_mutex_init(&p_m,NULL) != 0)
+      throw OperatingSystemError("Event::Event[pthread_mutex_init]");
+    if (pthread_cond_init(&p_c,NULL) != 0)
+      throw OperatingSystemError("Event::Event[pthread_cond_init]");
   }
 
   Event::~Event(void) {
+    if (pthread_cond_destroy(&p_c) != 0)
+      throw OperatingSystemError("Event::~Event[pthread_cond_destroy]");
+    if (pthread_mutex_destroy(&p_m) != 0)
+      throw OperatingSystemError("Event::~Event[pthread_mutex_destroy]");
   }
 
 

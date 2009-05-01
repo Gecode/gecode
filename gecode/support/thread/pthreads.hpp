@@ -72,7 +72,8 @@ namespace Gecode { namespace Support {
    */
   forceinline void
   Mutex::acquire(void) {
-    (void) pthread_mutex_lock(&p_m);
+    if (pthread_mutex_lock(&p_m) != 0)
+      throw OperatingSystemError("Mutex::acquire[pthread_mutex_lock]");
   }
   forceinline bool
   Mutex::tryacquire(void) {
@@ -80,7 +81,8 @@ namespace Gecode { namespace Support {
   }
   forceinline void
   Mutex::release(void) {
-    (void) pthread_mutex_unlock(&p_m);
+    if (pthread_mutex_unlock(&p_m) != 0)
+      throw OperatingSystemError("Mutex::release[pthread_mutex_unlock]");
   }
 
 
@@ -89,9 +91,30 @@ namespace Gecode { namespace Support {
    */
   forceinline void
   Event::signal(void) {
+    if (pthread_mutex_lock(&p_m) != 0)
+      throw OperatingSystemError("Event::signal[pthread_mutex_lock]");
+    if (!p_s) {
+      p_s = true;
+      if (p_w && (pthread_cond_signal(&p_c) != 0))
+        throw OperatingSystemError("Event::signal[pthread_cond_signal]");
+    }
+    if (pthread_mutex_unlock(&p_m) != 0)
+      throw OperatingSystemError("Event::signal[pthread_mutex_unlock]");
   }
   forceinline void
   Event::wait(void) {
+    if (pthread_mutex_lock(&p_m) != 0)
+      throw OperatingSystemError("Event::wait[pthread_mutex_lock]");
+    if (!p_s) {
+      p_w = true;
+      if (pthread_cond_wait(&p_c,&p_m) != 0)
+        throw OperatingSystemError("Event::wait[pthread_cond_wait]");
+      p_w = false;
+      assert(p_s);
+    }
+    p_s = false;
+    if (pthread_mutex_unlock(&p_m) != 0)
+      throw OperatingSystemError("Event::wait[pthread_mutex_unlock]");
   }
 
 

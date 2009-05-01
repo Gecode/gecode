@@ -47,7 +47,8 @@ namespace Gecode { namespace Support {
     : w_h(GetCurrentThread()) {} 
   forceinline
   Thread::~Thread(void) {
-    CloseHandle(w_h);
+    if (CloseHandle(w_h) == 0)
+      throw OperatingSystemError("Thread::~Thread[Windows::CloseHandle]");
   }
 
   forceinline Thread::Id
@@ -92,9 +93,13 @@ namespace Gecode { namespace Support {
    */
   forceinline void
   Event::signal(void) {
+    if (SetEvent(w_h) == 0)
+      throw OperatingSystemError("Event::signal[Windows::SetEvent]");
   }
   forceinline void
   Event::wait(void) {
+    if (WaitForSingleObject(w_h,INFINITE) != 0)
+      throw OperatingSystemError("Event::wait[Windows::WaitForSingleObject]");
   }
 
 

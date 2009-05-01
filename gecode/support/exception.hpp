@@ -73,6 +73,12 @@ namespace Gecode {
     /// Initialize with location \a l
     DynamicCastFailed(const char* l);
   };
+  /// %Exception: operating system error
+  class GECODE_VTABLE_EXPORT OperatingSystemError : public Exception {
+  public:
+    /// Initialize with location \a l
+    OperatingSystemError(const char* l);
+  };
   //@}
 
   /*
@@ -86,6 +92,11 @@ namespace Gecode {
   inline
   DynamicCastFailed::DynamicCastFailed(const char* l)
     : Exception(l,"Attempt to perform dynamic_cast failed") {}
+
+  inline
+  OperatingSystemError::OperatingSystemError(const char* l)
+    : Exception(l,"Operating system error") {}
+
 
 }
 

@@ -163,7 +163,7 @@ namespace Gecode { namespace Support {
     CRITICAL_SECTION w_cs;
 #endif
 #ifdef GECODE_THREADS_PTHREADS
-    /// The Pthread-mutex
+    /// The Pthread mutex
     pthread_mutex_t p_m;
 #endif
   public:
@@ -210,8 +210,18 @@ namespace Gecode { namespace Support {
   class GECODE_SUPPORT_EXPORT Event {
   private:
 #ifdef GECODE_THREADS_WINDOWS
+    /// The Windows specific handle to an event
+    HANDLE w_h;    
 #endif
 #ifdef GECODE_THREADS_PTHREADS
+    /// The Pthread mutex
+    pthread_mutex_t p_m;
+    /// The Pthread condition variable
+    pthread_cond_t p_c;
+    /// Whether the event is signalled
+    bool p_s;
+    /// Whether a thread is waiting
+    bool p_w;
 #endif
   public:
     /// Initialize event

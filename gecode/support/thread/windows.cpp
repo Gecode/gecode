@@ -51,8 +51,11 @@ namespace Gecode { namespace Support {
     return 0;
   }
 
-  Thread::Thread(Runnable& r) 
-    : w_h(CreateThread(NULL, 0, bootstrap, &r, 0, NULL)) {}
+  Thread::Thread(Runnable& r)
+    : w_h(CreateThread(NULL, 0, bootstrap, &r, 0, NULL)) {
+    if (w_h == NULL)
+      throw OperatingSystemError("Thread::Thread[Windows::CreateThread]");
+  }
   
   void
   Thread::sleep(unsigned int ms) {
@@ -82,10 +85,15 @@ namespace Gecode { namespace Support {
   /*
    * Event
    */
-  Event::Event(void) {
+  Event::Event(void)
+    : w_h(CreateEvent(NULL, FALSE, FALSE, NULL)) {
+    if (w_h == NULL)
+      throw OperatingSystemError("Event::Event[Windows::CreateEvent]");
   }
 
   Event::~Event(void) {
+    if (CloseHandle(w_h) == 0)
+      throw OperatingSystemError("Event::~Event[Windows::CloseHandle]");
   }
 
 
