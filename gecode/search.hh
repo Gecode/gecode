@@ -294,6 +294,12 @@ namespace Gecode {
       virtual ~Engine(void) {}
     };
 
+    /// Sequential search engine implementations
+    namespace Sequential {}
+
+    /// Parallel search engine implementations
+    namespace Parallel {}
+
   }
 
 }
