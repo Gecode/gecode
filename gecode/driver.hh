@@ -228,6 +228,7 @@ namespace Gecode {
     //@{
     Driver::StringOption      _search;    ///< Search options
     Driver::UnsignedIntOption _solutions; ///< How many solutions
+    Driver::UnsignedIntOption _threads;   ///< How many threads to use
     Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
     Driver::UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
     Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
@@ -298,6 +299,11 @@ namespace Gecode {
     /// Return number of solutions to search for
     unsigned int solutions(void) const;
 
+    /// Set number of parallel threads
+    void threads(unsigned int n);
+    /// Return number of parallel threads
+    unsigned int threads(void) const;
+    
     /// Set default copy recomputation distance
     void c_d(unsigned int d);
     /// Return copy recomputation distance

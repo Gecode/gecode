@@ -200,6 +200,15 @@ namespace Gecode {
   }
   
   inline void
+  Options::threads(unsigned int n) {
+    _threads.value(n);
+  }
+  inline unsigned int
+  Options::threads(void) const {
+    return _threads.value();
+  }
+  
+  inline void
   Options::c_d(unsigned int d) {
     _c_d.value(d);
   }

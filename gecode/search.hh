@@ -87,6 +87,8 @@ namespace Gecode {
     namespace Config {
       /// Whether engines create a clone when being initialized
       const bool clone = true;
+      /// Number of threads to use
+      const unsigned int threads = 1;
       /// Create a clone after every \a c_d commits (commit distance)
       const unsigned int c_d = 8;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -259,6 +261,8 @@ namespace Gecode {
     public:
       /// Whether engines create a clone when being initialized
       bool clone;
+      /// Number of threads to use
+      unsigned int threads;
       /// Create a clone after every \a c_d commits (commit distance)
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)

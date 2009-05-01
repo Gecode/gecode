@@ -42,12 +42,10 @@
 
 #ifdef GECODE_THREADS_WINDOWS
 #include <windows.h>
-#define GECODE_HAS_THREADS
 #endif
 
 #ifdef GECODE_THREADS_PTHREADS
 #include <pthread.h>
-#define GECODE_HAS_THREADS
 #endif
 
 #ifdef GECODE_HAS_THREADS
@@ -60,15 +58,20 @@
  *
  * Requires \code #include <gecode/support/thread.hh> \endcode
  * 
- * If the platform supports threads, after inclusion the macro
- * GECODE_HAS_THREADS is defined.
+ * If the platform supports threads, the macro GECODE_HAS_THREADS is defined.
  *
  * \ingroup FuncSupport
  */  
 
 namespace Gecode { namespace Support {
 
-  /// An interface for objects that can be run by a thread
+  /**
+   * \brief An interface for objects that can be run by a thread
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
+   */
   class Runnable {
   public:
     /// The function that is executed when the thread starts
@@ -80,6 +83,10 @@ namespace Gecode { namespace Support {
    *
    * Threads are assumed to properly terminate, the destructor will
    * only release the handle to a thread but will not terminate it.
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
    */
   class GECODE_SUPPORT_EXPORT Thread {
   private:
@@ -129,22 +136,38 @@ namespace Gecode { namespace Support {
   /**
    * \brief Test whether thread identifiers are equal
    * \relates Thread::Id
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
    */
   bool operator ==(const Thread::Id& ti1, const Thread::Id& ti2);
   /**
    * \brief Test whether thread identifiers are not equal
    * \relates Thread::Id
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
    */
   bool operator !=(const Thread::Id& ti1, const Thread::Id& ti2);
 
   /**
    * \brief Test whether threads are equal
    * \relates Thread
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
    */
   bool operator ==(const Thread& t1, const Thread& t2);
   /**
    * \brief Test whether threads are not equal
    * \relates Thread
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
    */
   bool operator !=(const Thread& t1, const Thread& t2);
 
@@ -155,6 +178,10 @@ namespace Gecode { namespace Support {
    * It is not specified whether the mutex is recursive or not.
    * Likewise, there is no guarantee of fairness among the
    * blocking threads.
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
    */
   class GECODE_SUPPORT_EXPORT Mutex {
   private:
@@ -184,7 +211,13 @@ namespace Gecode { namespace Support {
     void operator=(const Mutex&) {}
   };
 
-  /// A lock as a scoped frontend for a mutex
+  /**
+   * \brief A lock as a scoped frontend for a mutex
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
+   */
   class Lock {
   private:
     /// The mutex used for the lock
@@ -206,6 +239,10 @@ namespace Gecode { namespace Support {
    * 
    * An event can be waited on by a single thread until the event is
    * signalled.
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
    */
   class GECODE_SUPPORT_EXPORT Event {
   private:

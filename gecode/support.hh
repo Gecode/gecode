@@ -84,6 +84,16 @@
 #include <gecode/support/auto-link.hpp>
 #endif
 
+// Configure threads
+#ifdef GECODE_THREADS_WINDOWS
+#define GECODE_HAS_THREADS
+#endif
+
+#ifdef GECODE_THREADS_PTHREADS
+#define GECODE_HAS_THREADS
+#endif
+
+
 /*
  * Basic support needed everywhere
  *
