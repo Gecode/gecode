@@ -256,6 +256,8 @@ namespace Gecode {
      * All recomputation performed is based on batch recomputation: batch
      * recomputation performs propagation only once for an entire path
      * used in recomputation.
+     *
+     * \ingroup TaskModelSearch
      */
     class Options {
     public:
@@ -277,20 +279,34 @@ namespace Gecode {
       Options(void);
     };
 
+    /**
+     * \brief %Search engine interface
+     */
+    class Engine {
+    public:
+      /// Return next solution (NULL, if none exists or search has been stopped)
+      virtual Space* next(void) = 0;
+      /// Return statistics
+      virtual Search::Statistics statistics(void) const = 0;
+      /// Check whether engine has been stopped
+      virtual bool stopped(void) const = 0;
+      /// Destructor
+      virtual ~Engine(void) {}
+    };
+
   }
+
 }
 
 #include <gecode/search/statistics.hpp>
 #include <gecode/search/stop.hpp>
 #include <gecode/search/options.hpp>
-#include <gecode/search/snapshot.hpp>
+#include <gecode/search/support.hpp>
 
 #include <gecode/search/worker.hpp>
 #include <gecode/search/path.hpp>
-#include <gecode/search/engine.hpp>
 
 #include <gecode/search/dfs-engine.hpp>
-#include <gecode/search/bab-engine.hpp>
 #include <gecode/search/restart-engine.hpp>
 #include <gecode/search/lds-engine.hpp>
 
@@ -340,7 +356,7 @@ namespace Gecode {
   class BAB {
   private:
     /// The actual search engine
-    Search::BAB e;
+    Search::Engine* e;
   public:
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
@@ -350,6 +366,8 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
+    /// Destructor
+    ~BAB(void);
   };
 
   /**

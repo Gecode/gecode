@@ -2,15 +2,13 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2002
- *     Guido Tack, 2004
+ *     Christian Schulte, 2008
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: $ by $Author: $
+ *     $Revision: -1 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -37,33 +35,26 @@
  *
  */
 
+#include <gecode/search.hh>
+
+#ifdef GECODE_HAS_THREADS
+#include <gecode/support/thread.hh>
+#endif
+
 namespace Gecode { namespace Search {
 
-  /// Implementation of depth-first branch-and-bound search engines
-  class GECODE_SEARCH_EXPORT BAB : public Worker {
-  private:
-    /// Search options
-    Options opt;
-    /// Current path in search tree
-    Path path;
-    /// Current space being explored
-    Space* cur;
-    /// Distance until next clone
-    unsigned int d;
-    /// Number of entries not yet constrained to be better
-    int mark;
-    /// Best solution found so far
-    Space* best;
-  public:
-    /// Initialize with space \a s (of size \a sz) and search options \a o
-    BAB(Space* s, size_t sz, const Options& o);
-    /// %Search for next better solution
-    Space* next(void);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Destructor
-    ~BAB(void);
-  };
+  Options
+  threads(const Options& o) {
+#ifdef GECODE_HAS_THREADS
+    Options to(o);
+    if (to.threads == 0) {
+      to.threads = Support::Thread::npu();
+    }
+    return to;
+#else
+    return o;
+#endif
+  }
 
 }}
 

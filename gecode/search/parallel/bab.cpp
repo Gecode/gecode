@@ -3,12 +3,8 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contributing authors:
- *     Guido Tack <tack@gecode.org>
- *
  *  Copyright:
- *     Christian Schulte, 2004
- *     Guido Tack, 2004
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -41,7 +37,33 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace Search { namespace Parallel {
+
+  /// Implementation of depth-first branch-and-bound search engine
+  class BAB : public Worker {
+  private:
+    /// Search options
+    Options opt;
+    /// Current path in search tree
+    Path path;
+    /// Current space being explored
+    Space* cur;
+    /// Distance until next clone
+    unsigned int d;
+    /// Number of entries not yet constrained to be better
+    int mark;
+    /// Best solution found so far
+    Space* best;
+  public:
+    /// Initialize with space \a s (of size \a sz) and search options \a o
+    BAB(Space* s, size_t sz, const Options& o);
+    /// %Search for next better solution
+    Space* next(void);
+    /// Return statistics
+    Statistics statistics(void) const;
+    /// Destructor
+    ~BAB(void);
+  };
 
   BAB::BAB(Space* s, size_t sz, const Options& o)
     : Worker(sz), opt(o), d(0), mark(0), best(NULL) {
@@ -131,6 +153,13 @@ namespace Gecode { namespace Search {
     delete cur;
   }
 
-}}
+
+  // Create branch and bound engine
+  Engine* bab(Space* s, size_t sz, const Options& o) {
+    return new WorkerToEngine<BAB>(s,sz,o);
+  }
+
+
+}}}
 
 // STATISTICS: search-any

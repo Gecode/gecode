@@ -43,6 +43,46 @@ namespace Gecode { namespace Search {
     return o.clone ? s->clone() : s;
   }
 
+  /// Compute real number of threads
+  GECODE_SEARCH_EXPORT Options
+  threads(const Options& o);
+
+  /// Virtualize a worker to an engine
+  template <class Worker>
+  class WorkerToEngine : public Engine {
+  protected:
+    Worker w;
+  public:
+    /// Initialization
+    WorkerToEngine(Space* s, size_t sz, const Options& o);
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual Space* next(void);
+    /// Return statistics
+    virtual Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+  };
+
+  template <class Worker>
+  WorkerToEngine<Worker>::WorkerToEngine(Space* s, size_t sz, 
+                                         const Options& o) 
+    : w(s,sz,o) {}
+  template <class Worker>
+  Space* 
+  WorkerToEngine<Worker>::next(void) {
+    return w.next();
+  }
+  template <class Worker>
+  Search::Statistics 
+  WorkerToEngine<Worker>::statistics(void) const {
+    return w.statistics();
+  }
+  template <class Worker>
+  bool 
+  WorkerToEngine<Worker>::stopped(void) const {
+    return w.stopped();
+  }
+
 }}
 
 // STATISTICS: search-any

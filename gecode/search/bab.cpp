@@ -3,12 +3,16 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Guido Tack <tack@gecode.org>
+ *
  *  Copyright:
  *     Christian Schulte, 2004
+ *     Guido Tack, 2004
  *
  *  Last modified:
- *     $Date: $ by $Author: $
- *     $Revision: -1 $
+ *     $Date: 2009-01-21 22:10:32 +0100 (Wed, 21 Jan 2009) $ by $Author: schulte $
+ *     $Revision: 8093 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,20 +39,40 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#include <gecode/search.hh>
 
-  /**
-   * \brief %Search engine
-   */
-  class Engine {
-  public:
-    /// Return next solution (NULL, if none exists or search has been stopped)
-    virtual Space* next(void) = 0;
-    /// Return statistics
-    virtual Search::Statistics statistics(void) const = 0;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const = 0;
-  };
+namespace Gecode { namespace Search {
+    
+  namespace Sequential {
+
+    /// Create branch and bound engine
+    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
+
+  }
+
+#ifdef GECODE_HAS_THREADS
+
+  namespace Parallel {
+
+    /// Create branch and bound engine
+    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
+
+  }
+
+#endif
+
+  Engine* 
+  bab(Space* s, size_t sz, const Options& o) {
+#ifdef GECODE_HAS_THREADS
+    Options to = threads(o);
+    if (to.threads == 1)
+      return Sequential::bab(s,sz,to);
+    else
+      return Parallel::bab(s,sz,to);
+#else
+    return Sequential::bab(s,sz,o);
+#endif
+  }
 
 }}
 

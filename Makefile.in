@@ -201,14 +201,16 @@ EXTRA_HEADERS   = gecode/support/config.hpp
 
 SEARCHSRC0 = \
 	stop.cpp options.cpp \
-	dfs-engine.cpp bab-engine.cpp restart-engine.cpp lds-engine.cpp 
+	bab.cpp sequential/bab.cpp parallel/bab.cpp \
+	dfs-engine.cpp restart-engine.cpp lds-engine.cpp \
+	support.cpp
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp \
-	worker.hpp path.hpp engine.hpp \
+	worker.hpp path.hpp \
 	dfs-engine.hpp dfs.hpp \
 	bab-engine.hpp bab.hpp \
 	restart-engine.hpp restart.hpp \
-	lds-engine.hpp lds.hpp snapshot.hpp
+	lds-engine.hpp lds.hpp support.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
@@ -231,7 +233,7 @@ export SEARCHSTATICLIB	=
 export SEARCHLIB	=
 export LINKSEARCH       =
 endif
-SEARCHBUILDDIRS = search
+SEARCHBUILDDIRS = search search/sequential search/parallel
 
 #
 # INTEGER COMPONENTS

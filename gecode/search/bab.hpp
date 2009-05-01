@@ -41,27 +41,40 @@
 
 namespace Gecode {
 
+  namespace Search {
+    
+    /// Create branch and bound engine
+    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
+
+  }
+
   template <class T>
   forceinline
   BAB<T>::BAB(T* s, const Search::Options& o)
-    : e(s,sizeof(T),o) {}
+    : e(Search::bab(s,sizeof(T),o)) {}
 
   template <class T>
   forceinline T*
   BAB<T>::next(void) {
-    return dynamic_cast<T*>(e.next());
+    return dynamic_cast<T*>(e->next());
   }
 
   template <class T>
   forceinline Search::Statistics
   BAB<T>::statistics(void) const {
-    return e.statistics();
+    return e->statistics();
   }
 
   template <class T>
   forceinline bool
   BAB<T>::stopped(void) const {
-    return e.stopped();
+    return e->stopped();
+  }
+
+  template <class T>
+  forceinline
+  BAB<T>::~BAB(void) {
+    delete e;
   }
 
   template <class T>
