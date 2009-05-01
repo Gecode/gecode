@@ -40,7 +40,7 @@
 namespace Gecode { namespace Search {
 
   /// Probe engine for %LDS
-  class Probe : public Engine {
+  class Probe : public Worker {
   protected:
     /// %Node in the search tree for %LDS
     class Node {

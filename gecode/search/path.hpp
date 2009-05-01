@@ -92,16 +92,16 @@ namespace Gecode { namespace Search {
     /// Initialize
     Path(void);
     /// Push space \a c (a clone of \a s or NULL)
-    const BranchingDesc* push(Engine& stat, Space* s, Space* c);
+    const BranchingDesc* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
     template <class DescType>
-    const BranchingDesc* nextDesc(Engine& s, int& alt,
+    const BranchingDesc* nextDesc(Worker& s, int& alt,
                                   int& closedDescs);
     /// Generate path for next node with BranchingDesc type DescType
     template <class DescType, bool inclusive>
-    void closeBranch(Engine& s);
+    void closeBranch(Worker& s);
     /// Generate path for next node and return whether a next node exists
-    bool next(Engine& s);
+    bool next(Worker& s);
     /// Return position on stack of last copy
     int lc(void) const;
     /// Unwind the stack up to position \a l (after failure)
@@ -109,9 +109,9 @@ namespace Gecode { namespace Search {
     /// Commit space \a s as described by stack entry at position \a i
     void commit(Space* s, int i) const;
     /// Recompute space according to path 
-    Space* recompute(unsigned int& d, unsigned int a_d, Engine& s);
+    Space* recompute(unsigned int& d, unsigned int a_d, Worker& s);
     /// Recompute space according to path
-    Space* recompute(unsigned int& d, unsigned int a_d, Engine& s,
+    Space* recompute(unsigned int& d, unsigned int a_d, Worker& s,
                      const Space* best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
@@ -177,7 +177,7 @@ namespace Gecode { namespace Search {
   Path::Path(void) : ds(heap) {}
 
   forceinline const BranchingDesc*
-  Path::push(Engine& stat, Space* s, Space* c) {
+  Path::push(Worker& stat, Space* s, Space* c) {
     Node sn(s,c);
     ds.push(sn);
     if (stat.depth < static_cast<unsigned int>(ds.entries()))
@@ -187,7 +187,7 @@ namespace Gecode { namespace Search {
 
   template <class DescType>
   forceinline const BranchingDesc*
-  Path::nextDesc(Engine& stat, int& alt, int& closedDescs) {
+  Path::nextDesc(Worker& stat, int& alt, int& closedDescs) {
     closedDescs = 0;
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -205,7 +205,7 @@ namespace Gecode { namespace Search {
 
   template <class DescType, bool inclusive>
   forceinline void
-  Path::closeBranch(Engine& stat) {
+  Path::closeBranch(Worker& stat) {
     while (!ds.empty()) {
       if (dynamic_cast<const DescType*>(ds.top().desc())) {
         if (inclusive && !ds.empty()) {
@@ -220,7 +220,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline bool
-  Path::next(Engine& stat) {
+  Path::next(Worker& stat) {
     // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -273,7 +273,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  Path::recompute(unsigned int& d, unsigned int a_d, Engine& stat) {
+  Path::recompute(unsigned int& d, unsigned int a_d, Worker& stat) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -336,7 +336,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline Space*
-  Path::recompute(unsigned int& d, unsigned int a_d, Engine& stat,
+  Path::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
                   const Space* best, int& mark) {
     assert(!ds.empty());
     // Recompute space according to path

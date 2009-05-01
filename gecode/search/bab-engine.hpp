@@ -40,7 +40,7 @@
 namespace Gecode { namespace Search {
 
   /// Implementation of depth-first branch-and-bound search engines
-  class GECODE_SEARCH_EXPORT BAB : public Engine {
+  class GECODE_SEARCH_EXPORT BAB : public Worker {
   private:
     /// Search options
     Options opt;

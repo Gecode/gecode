@@ -204,7 +204,7 @@ SEARCHSRC0 = \
 	dfs-engine.cpp bab-engine.cpp restart-engine.cpp lds-engine.cpp 
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp \
-	engine.hpp path.hpp \
+	worker.hpp path.hpp \
 	dfs-engine.hpp dfs.hpp \
 	bab-engine.hpp bab.hpp \
 	restart-engine.hpp restart.hpp \

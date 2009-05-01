@@ -38,9 +38,9 @@
 namespace Gecode { namespace Search {
 
   /**
-   * \brief %Search engine control including memory information
+   * \brief %Search worker control including memory information
    */
-  class Engine : public Statistics {
+  class Worker : public Statistics {
   protected:
     /// Whether engine has been stopped
     bool _stopped;
@@ -52,7 +52,7 @@ namespace Gecode { namespace Search {
     size_t mem_total;
   public:
     /// Initialize with space size \a sz
-    Engine(size_t sz);
+    Worker(size_t sz);
     /// Reset stop information
     void start(void);
     /// Check whether engine must be stopped (with additional stackspace \a sz)
@@ -80,18 +80,18 @@ namespace Gecode { namespace Search {
 
 
   forceinline
-  Engine::Engine(size_t sz)
+  Worker::Worker(size_t sz)
     : _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {
     memory = 0;
   }
 
   forceinline void
-  Engine::start(void) {
+  Worker::start(void) {
     _stopped = false;
   }
 
   forceinline bool
-  Engine::stop(Stop* st, size_t sz) {
+  Worker::stop(Stop* st, size_t sz) {
     if (st == NULL)
       return false;
     memory += sz;
@@ -101,12 +101,12 @@ namespace Gecode { namespace Search {
   }
 
   forceinline bool
-  Engine::stopped(void) const {
+  Worker::stopped(void) const {
     return _stopped;
   }
 
   forceinline void
-  Engine::push(const Space* s, const BranchingDesc* d) {
+  Worker::push(const Space* s, const BranchingDesc* d) {
     if (s != NULL)
       mem_total += mem_space + s->allocated();
     mem_total += d->size();
@@ -115,14 +115,14 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  Engine::adapt(const Space* s) {
+  Worker::adapt(const Space* s) {
     mem_total += mem_space + s->allocated();
     if (mem_total > memory)
       memory = mem_total;
   }
 
   forceinline void
-  Engine::constrained(const Space* s1, const Space* s2) {
+  Worker::constrained(const Space* s1, const Space* s2) {
     mem_total -= s1->allocated();
     mem_total += s2->allocated();
     if (mem_total > memory)
@@ -130,19 +130,19 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  Engine::lao(const Space* s) {
+  Worker::lao(const Space* s) {
     mem_total -= mem_space + s->allocated();
   }
 
   forceinline void
-  Engine::pop(const Space* s, const BranchingDesc* d) {
+  Worker::pop(const Space* s, const BranchingDesc* d) {
     if (s != NULL)
       mem_total -= mem_space + s->allocated();
     mem_total -= d->size();
   }
 
   forceinline void
-  Engine::current(const Space* s) {
+  Worker::current(const Space* s) {
     if (s == NULL) {
       mem_total -= mem_cur;
       mem_cur = 0;
@@ -155,7 +155,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  Engine::reset(const Space* s) {
+  Worker::reset(const Space* s) {
     mem_cur   = mem_space + s->allocated();
     mem_total = mem_cur;
     if (mem_total > memory)
@@ -163,7 +163,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  Engine::reset(void) {
+  Worker::reset(void) {
     mem_cur   = 0;
     mem_total = 0;
   }

@@ -44,7 +44,7 @@
 namespace Gecode { namespace Search {
 
   BAB::BAB(Space* s, size_t sz, const Options& o)
-    : Engine(sz), opt(o), d(0), mark(0), best(NULL) {
+    : Worker(sz), opt(o), d(0), mark(0), best(NULL) {
     cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,opt);
     current(s);
     current(NULL);
@@ -76,7 +76,7 @@ namespace Gecode { namespace Search {
           fail++;
           delete cur;
           cur = NULL;
-          Engine::current(NULL);
+          Worker::current(NULL);
           break;
         case SS_SOLVED:
           // Deletes all pending branchings
@@ -85,7 +85,7 @@ namespace Gecode { namespace Search {
           best = cur;
           cur = NULL;
           mark = path.entries();
-          Engine::current(NULL);
+          Worker::current(NULL);
           return best->clone();
         case SS_BRANCH:
           {
@@ -98,7 +98,7 @@ namespace Gecode { namespace Search {
               d++;
             }
             const BranchingDesc* desc = path.push(*this,cur,c);
-            Engine::push(c,desc);
+            Worker::push(c,desc);
             cur->commit(*desc,0);
             break;
           }
@@ -112,7 +112,7 @@ namespace Gecode { namespace Search {
           return NULL;
         cur = path.recompute(d,opt.a_d,*this,best,mark);
       } while (cur == NULL);
-      Engine::current(cur);
+      Worker::current(cur);
     }
     GECODE_NEVER;
     return NULL;

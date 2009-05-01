@@ -92,10 +92,10 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -111,10 +111,10 @@ gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -130,10 +130,10 @@ gecode/search/dfs-engine$(OBJSUFFIX) gecode/search/dfs-engine$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -149,10 +149,10 @@ gecode/search/bab-engine$(OBJSUFFIX) gecode/search/bab-engine$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -168,10 +168,10 @@ gecode/search/restart-engine$(OBJSUFFIX) gecode/search/restart-engine$(SBJSUFFIX
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -187,10 +187,10 @@ gecode/search/lds-engine$(OBJSUFFIX) gecode/search/lds-engine$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -2620,10 +2620,10 @@ gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -2669,10 +2669,10 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -2718,10 +2718,10 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -2767,10 +2767,10 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -2816,10 +2816,10 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -2865,10 +2865,10 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -2914,10 +2914,10 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -2963,10 +2963,10 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3012,10 +3012,10 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3061,10 +3061,10 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3110,10 +3110,10 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3159,10 +3159,10 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3208,10 +3208,10 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3257,10 +3257,10 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3306,10 +3306,10 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3355,10 +3355,10 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3404,10 +3404,10 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3453,10 +3453,10 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3502,10 +3502,10 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3551,10 +3551,10 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3600,10 +3600,10 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3649,10 +3649,10 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -3705,10 +3705,10 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3754,10 +3754,10 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3803,10 +3803,10 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3852,10 +3852,10 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3901,10 +3901,10 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3950,10 +3950,10 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -3999,10 +3999,10 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4048,10 +4048,10 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4097,10 +4097,10 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4146,10 +4146,10 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4195,10 +4195,10 @@ examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4244,10 +4244,10 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4293,10 +4293,10 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4342,10 +4342,10 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4391,10 +4391,10 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4440,10 +4440,10 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4489,10 +4489,10 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4538,10 +4538,10 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4587,10 +4587,10 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4636,10 +4636,10 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4685,10 +4685,10 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4734,10 +4734,10 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4783,10 +4783,10 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4832,10 +4832,10 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -4881,10 +4881,10 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -4937,10 +4937,10 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -4993,10 +4993,10 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -5049,10 +5049,10 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -5105,10 +5105,10 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -5153,10 +5153,10 @@ gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -5226,10 +5226,10 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -5253,10 +5253,10 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 	./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -5277,10 +5277,10 @@ gecode/gist/qtgist$(OBJSUFFIX) gecode/gist/qtgist$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -5320,10 +5320,10 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -5340,10 +5340,10 @@ gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -5359,10 +5359,10 @@ test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
-	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
+	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/search/worker.hpp ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
@@ -5401,10 +5401,10 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -5451,10 +5451,10 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -5493,10 +5493,10 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -5536,10 +5536,10 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -5586,10 +5586,10 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -5628,10 +5628,10 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -5671,10 +5671,10 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -5714,10 +5714,10 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -5764,10 +5764,10 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -5813,10 +5813,10 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -5862,10 +5862,10 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -5911,10 +5911,10 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -5960,10 +5960,10 @@ test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6002,10 +6002,10 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -6045,10 +6045,10 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -6088,10 +6088,10 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
@@ -6138,10 +6138,10 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6187,10 +6187,10 @@ test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6236,10 +6236,10 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6285,10 +6285,10 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6334,10 +6334,10 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6383,10 +6383,10 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6432,10 +6432,10 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
@@ -6474,10 +6474,10 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6524,10 +6524,10 @@ test/set/construct$(OBJSUFFIX) test/set/construct$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6574,10 +6574,10 @@ test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6624,10 +6624,10 @@ test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6674,10 +6674,10 @@ test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6724,10 +6724,10 @@ test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6774,10 +6774,10 @@ test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6824,10 +6824,10 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6881,10 +6881,10 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/array.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/set.hh ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
 	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
@@ -6930,10 +6930,10 @@ test/set/element$(OBJSUFFIX) test/set/element$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -6980,10 +6980,10 @@ test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7030,10 +7030,10 @@ test/set/exec$(OBJSUFFIX) test/set/exec$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7080,10 +7080,10 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7129,10 +7129,10 @@ test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7178,10 +7178,10 @@ test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7227,10 +7227,10 @@ test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7276,10 +7276,10 @@ test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7325,10 +7325,10 @@ test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7374,10 +7374,10 @@ test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7423,10 +7423,10 @@ test/assign/set$(OBJSUFFIX) test/assign/set$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab-engine.hpp ./gecode/search/bab.hpp \
-	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/engine.hpp \
-	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
-	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
-	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp ./gecode/search/lds-engine.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/path.hpp \
+	./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp ./gecode/search/snapshot.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/worker.hpp \
 	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
 	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
@@ -7479,10 +7479,10 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab-engine.hpp \
 	./gecode/search/bab.hpp ./gecode/search/dfs-engine.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine.hpp ./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/path.hpp ./gecode/search/restart-engine.hpp \
-	./gecode/search/restart.hpp ./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/search/lds-engine.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
+	./gecode/search/path.hpp ./gecode/search/restart-engine.hpp ./gecode/search/restart.hpp \
+	./gecode/search/snapshot.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/worker.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \

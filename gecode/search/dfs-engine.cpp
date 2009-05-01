@@ -40,7 +40,7 @@
 namespace Gecode { namespace Search {
 
   DFS::DFS(Space* s, size_t sz, const Options& o)
-    : Engine(sz), opt(o), d(0) {
+    : Worker(sz), opt(o), d(0) {
     cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,opt);
     current(s);
     current(NULL);
@@ -56,10 +56,10 @@ namespace Gecode { namespace Search {
     d = 0;
     if (s->status(*this) == SS_FAILED) {
       cur = NULL;
-      Engine::reset();
+      Worker::reset();
     } else {
       cur = s->clone();
-      Engine::reset(cur);
+      Worker::reset(cur);
     }
   }
 
@@ -76,7 +76,7 @@ namespace Gecode { namespace Search {
           fail++;
           delete cur;
           cur = NULL;
-          Engine::current(NULL);
+          Worker::current(NULL);
           break;
         case SS_SOLVED:
           {
@@ -84,7 +84,7 @@ namespace Gecode { namespace Search {
             (void) cur->description();
             Space* s = cur;
             cur = NULL;
-            Engine::current(NULL);
+            Worker::current(NULL);
             return s;
           }
         case SS_BRANCH:
@@ -98,7 +98,7 @@ namespace Gecode { namespace Search {
               d++;
             }
             const BranchingDesc* desc = path.push(*this,cur,c);
-            Engine::push(c,desc);
+            Worker::push(c,desc);
             cur->commit(*desc,0);
             break;
           }
@@ -111,7 +111,7 @@ namespace Gecode { namespace Search {
           return NULL;
         cur = path.recompute(d,opt.a_d,*this);
       } while (cur == NULL);
-      Engine::current(cur);
+      Worker::current(cur);
     }
     GECODE_NEVER;
     return NULL;

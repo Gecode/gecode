@@ -85,7 +85,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   Probe::Probe(size_t sz)
-    : Engine(sz), ds(heap) {}
+    : Worker(sz), ds(heap) {}
 
   forceinline void
   Probe::init(Space* s, unsigned int d0) {
@@ -101,7 +101,7 @@ namespace Gecode { namespace Search {
     cur       = s;
     d         = d0;
     exhausted = true;
-    Engine::reset(s);
+    Worker::reset(s);
   }
 
   forceinline Statistics
@@ -137,7 +137,7 @@ namespace Gecode { namespace Search {
         const BranchingDesc* desc = ds.top().desc();
         if (a == 0) {
           cur = ds.pop().space();
-          Engine::pop(cur,desc);
+          Worker::pop(cur,desc);
           cur->commit(*desc,0);
           delete desc;
         } else {
@@ -145,7 +145,7 @@ namespace Gecode { namespace Search {
           cur = ds.top().space()->clone();
           cur->commit(*desc,a);
         }
-        Engine::current(cur);
+        Worker::current(cur);
         d++;
       }
     check_discrepancy:
@@ -159,7 +159,7 @@ namespace Gecode { namespace Search {
           delete desc;
         }
         cur = NULL;
-        Engine::current(NULL);
+        Worker::current(NULL);
         if (s->failed()) {
           delete s;
           goto backtrack;
@@ -175,7 +175,7 @@ namespace Gecode { namespace Search {
       case SS_SOLVED:
         delete cur;
         cur = NULL;
-        Engine::current(NULL);
+        Worker::current(NULL);
         goto backtrack;
       case SS_BRANCH:
         {
@@ -186,7 +186,7 @@ namespace Gecode { namespace Search {
               exhausted = false;
             unsigned int d_a = (d >= alt-1) ? alt-1 : d;
             Space* cc = cur->clone();
-            Engine::push(cc,desc);
+            Worker::push(cc,desc);
             Node sn(cc,desc,d_a-1);
             ds.push(sn);
             cur->commit(*desc,d_a);

@@ -285,7 +285,7 @@ namespace Gecode {
 #include <gecode/search/options.hpp>
 #include <gecode/search/snapshot.hpp>
 
-#include <gecode/search/engine.hpp>
+#include <gecode/search/worker.hpp>
 #include <gecode/search/path.hpp>
 
 #include <gecode/search/dfs-engine.hpp>
