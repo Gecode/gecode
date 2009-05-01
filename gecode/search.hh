@@ -287,6 +287,7 @@ namespace Gecode {
 
 #include <gecode/search/worker.hpp>
 #include <gecode/search/path.hpp>
+#include <gecode/search/engine.hpp>
 
 #include <gecode/search/dfs-engine.hpp>
 #include <gecode/search/bab-engine.hpp>
