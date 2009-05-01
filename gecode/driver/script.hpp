@@ -202,10 +202,11 @@ namespace Gecode { namespace Driver {
           unsigned int n_p = s->propagators();
           unsigned int n_b = s->branchings();
           Search::Options so;
-          so.c_d   = o.c_d();
-          so.a_d   = o.a_d();
-          so.stop  = Cutoff::create(o.node(),o.fail(), o.time());
-          so.clone = false;
+          so.threads = o.threads();
+          so.c_d     = o.c_d();
+          so.a_d     = o.a_d();
+          so.stop    = Cutoff::create(o.node(),o.fail(), o.time());
+          so.clone   = false;
           Engine<Script> e(s,so);
           do {
             Script* ex = e.next();
@@ -243,9 +244,10 @@ namespace Gecode { namespace Driver {
           unsigned int n_p = s->propagators();
           unsigned int n_b = s->branchings();
           Search::Options so;
-          so.c_d   = o.c_d();
-          so.a_d   = o.a_d();
-          so.clone = false;
+          so.clone   = false;
+          so.threads = o.threads();
+          so.c_d     = o.c_d();
+          so.a_d     = o.a_d();
           Engine<Script> e(s,so);
           do {
             Script* ex = e.next();
@@ -279,9 +281,10 @@ namespace Gecode { namespace Driver {
               unsigned int i = o.solutions();
               Script* s = new Script(o);
               Search::Options so;
-              so.c_d   = o.c_d();
-              so.a_d   = o.a_d();
-              so.clone = false;
+              so.clone   = false;
+              so.threads = o.threads();
+              so.c_d     = o.c_d();
+              so.a_d     = o.a_d();
               Engine<Script> e(s,so);
               do {
                 Script* ex = e.next();
