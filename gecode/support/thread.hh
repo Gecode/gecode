@@ -88,7 +88,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupportThread
    */
-  class GECODE_SUPPORT_EXPORT Thread {
+  class Thread {
   private:
 #ifdef GECODE_THREADS_WINDOWS
     /// The Windows specific handle to a thread
@@ -117,15 +117,15 @@ namespace Gecode { namespace Support {
     /// Get a handle on the current thread
     Thread(void);
     /// Construct a new thread and run \a r (\a r must outlive the thread)
-    Thread(Runnable& r);
+    GECODE_SUPPORT_EXPORT Thread(Runnable& r);
     /// Destroy thread handle (does not terminate thread)
-    ~Thread(void);
+    GECODE_SUPPORT_EXPORT ~Thread(void);
     /// Put current thread to sleep for \a ms milliseconds
-    static void sleep(unsigned int ms);
+    GECODE_SUPPORT_EXPORT static void sleep(unsigned int ms);
     /// Return identifier for thread
     Id id(void) const;
     /// Return number of processing units (1 if information not available)
-    static unsigned int npu(void);
+    GECODE_SUPPORT_EXPORT static unsigned int npu(void);
   private:
     /// A thread cannot be copied
     Thread(const Thread&) {}
@@ -183,7 +183,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupportThread
    */
-  class GECODE_SUPPORT_EXPORT Mutex {
+  class Mutex {
   private:
 #ifdef GECODE_THREADS_WINDOWS
     /// Use a simple but more efficient critical section on Windows
@@ -195,7 +195,7 @@ namespace Gecode { namespace Support {
 #endif
   public:
     /// Initialize mutex
-    Mutex(void);
+    GECODE_SUPPORT_EXPORT Mutex(void);
     /// Acquire the mutex and possibly block
     void acquire(void);
     /// Try to acquire the mutex, return true if succesful
@@ -203,7 +203,7 @@ namespace Gecode { namespace Support {
     /// Release the mutex
     void release(void);
     /// Delete mutex
-    ~Mutex(void);
+    GECODE_SUPPORT_EXPORT ~Mutex(void);
   private:
     /// A mutex cannot be copied
     Mutex(const Mutex&) {}
@@ -244,7 +244,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupportThread
    */
-  class GECODE_SUPPORT_EXPORT Event {
+  class Event {
   private:
 #ifdef GECODE_THREADS_WINDOWS
     /// The Windows specific handle to an event
@@ -262,13 +262,13 @@ namespace Gecode { namespace Support {
 #endif
   public:
     /// Initialize event
-    Event(void);
+    GECODE_SUPPORT_EXPORT Event(void);
     /// Signal the event
     void signal(void);
     /// Wait until the event becomes signalled
     void wait(void);
     /// Delete event
-    ~Event(void);
+    GECODE_SUPPORT_EXPORT ~Event(void);
   private:
     /// An event cannot be copied
     Event(const Event&) {}

@@ -64,12 +64,13 @@ namespace Gecode { namespace Support {
   void
   Thread::sleep(unsigned int ms) {
 #ifdef GECODE_HAS_UNISTD_H
-    if (ms > 1000) {
-      // More than one millinon microseconds, use sleep
-      sleep(ms / 1000);
-    } else {
-      usleep(ms * 1000);
+    unsigned int s = ms / 1000;
+    ms -= 1000 * s;
+    if (s > 0) {
+      // More than one million microseconds, use sleep
+      sleep(s);
     }
+    usleep(ms * 1000);
 #endif
   }
 
