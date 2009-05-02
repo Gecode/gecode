@@ -40,128 +40,14 @@
 #include <gecode/search/worker.hh>
 #include <gecode/search/path.hh>
 
+#include <gecode/support/thread.hh>
+
 namespace Gecode { namespace Search { namespace Parallel {
 
-  /// Implementation of depth-first branch-and-bound search engine
-  class BAB : public Worker {
-  private:
-    /// Search options
-    Options opt;
-    /// Current path in search tree
-    Path path;
-    /// Current space being explored
-    Space* cur;
-    /// Distance until next clone
-    unsigned int d;
-    /// Number of entries not yet constrained to be better
-    int mark;
-    /// Best solution found so far
-    Space* best;
-  public:
-    /// Initialize with space \a s (of size \a sz) and search options \a o
-    BAB(Space* s, size_t sz, const Options& o);
-    /// %Search for next better solution
-    Space* next(void);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Destructor
-    ~BAB(void);
-  };
-
-  BAB::BAB(Space* s, size_t sz, const Options& o)
-    : Worker(sz), opt(o), d(0), mark(0), best(NULL) {
-    cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,opt);
-    current(s);
-    current(NULL);
-    current(cur);
-    if (cur == NULL)
-      fail++;
-  }
-
-  Space*
-  BAB::next(void) {
-    /*
-     * The invariant maintained by the engine is:
-     *   For all nodes stored at a depth less than mark, there
-     *   is no guarantee of betterness. For those above the mark,
-     *   betterness is guaranteed.
-     *
-     * The engine maintains the path on the stack for the current
-     * node to be explored.
-     *
-     */
-    start();
-    while (true) {
-      while (cur) {
-        if (stop(opt.stop,path.size()))
-          return NULL;
-        node++;
-        switch (cur->status(*this)) {
-        case SS_FAILED:
-          fail++;
-          delete cur;
-          cur = NULL;
-          Worker::current(NULL);
-          break;
-        case SS_SOLVED:
-          // Deletes all pending branchings
-          (void) cur->description();
-          delete best;
-          best = cur;
-          cur = NULL;
-          mark = path.entries();
-          Worker::current(NULL);
-          return best->clone();
-        case SS_BRANCH:
-          {
-            Space* c;
-            if ((d == 0) || (d >= opt.c_d)) {
-              c = cur->clone();
-              d = 1;
-            } else {
-              c = NULL;
-              d++;
-            }
-            const BranchingDesc* desc = path.push(*this,cur,c);
-            Worker::push(c,desc);
-            cur->commit(*desc,0);
-            break;
-          }
-        default:
-          GECODE_NEVER;
-        }
-      }
-      // Recompute and add constraint if necessary
-      do {
-        if (!path.next(*this))
-          return NULL;
-        cur = path.recompute(d,opt.a_d,*this,best,mark);
-      } while (cur == NULL);
-      Worker::current(cur);
-    }
-    GECODE_NEVER;
-    return NULL;
-  }
-
-  Statistics
-  BAB::statistics(void) const {
-    Statistics s = *this;
-    s.memory += path.size();
-    return s;
-  }
-
-  BAB::~BAB(void) {
-    path.reset();
-    delete best;
-    delete cur;
-  }
-
-
-  // Create branch and bound engine
+  // Create parallel branch and bound engine
   Engine* bab(Space* s, size_t sz, const Options& o) {
-    return new WorkerToEngine<BAB>(s,sz,o);
+    return ::Gecode::Search::Sequential::bab(s,sz,o);
   }
-
 
 }}}
 

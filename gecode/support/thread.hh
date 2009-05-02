@@ -76,6 +76,8 @@ namespace Gecode { namespace Support {
   public:
     /// The function that is executed when the thread starts
     virtual void run(void) = 0;
+    /// Destructor
+    virtual ~Runnable(void) {}
   };
 
   /**
@@ -286,6 +288,16 @@ namespace Gecode { namespace Support {
 #endif
 
 #include <gecode/support/thread/thread.hpp>
+
+// Workaround for broken windows headers
+#ifdef GECODE_THREADS_WINDOWS
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+#endif
 
 #endif
 

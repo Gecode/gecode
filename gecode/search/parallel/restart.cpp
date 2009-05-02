@@ -37,22 +37,18 @@
 
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
+#include <gecode/search/worker.hh>
+#include <gecode/search/path.hh>
 
-namespace Gecode { namespace Search {
-    
-  Engine* 
-  dfs(Space* s, size_t sz, const Options& o) {
-#ifdef GECODE_HAS_THREADS
-    Options to = threads(o);
-    if (to.threads == 1)
-      return Sequential::dfs(s,sz,to);
-    else
-      return Parallel::dfs(s,sz,to);
-#else
-    return Sequential::dfs(s,sz,o);
-#endif
+#include <gecode/support/thread.hh>
+
+namespace Gecode { namespace Search { namespace Parallel {
+
+  // Create parallel restart engine
+  Engine* restart(Space* s, size_t sz, const Options& o) {
+    return ::Gecode::Search::Sequential::restart(s,sz,o);
   }
 
-}}
+}}}
 
 // STATISTICS: search-any

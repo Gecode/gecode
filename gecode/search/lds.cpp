@@ -50,7 +50,7 @@ namespace Gecode { namespace Search {
     if (to.threads == 1)
       return Sequential::lds(s,sz,to);
     else
-      return Sequential::lds(s,sz,to);
+      return Parallel::lds(s,sz,to);
 #else
     return Sequential::lds(s,sz,o);
 #endif

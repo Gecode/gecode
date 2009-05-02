@@ -48,6 +48,7 @@
 #include <gecode/gist/drawingcursor.hh>
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 
 namespace Gecode { namespace Gist {
 

@@ -47,7 +47,7 @@ namespace Gecode { namespace Search {
     if (to.threads == 1)
       return Sequential::restart(s,sz,to);
     else
-      return Sequential::restart(s,sz,to);
+      return Parallel::restart(s,sz,to);
 #else
     return Sequential::restart(s,sz,o);
 #endif
