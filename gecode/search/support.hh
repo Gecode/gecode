@@ -4,10 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
- *
- *  Bugfixes provided by:
- *     Stefano Gualandi
+ *     Christian Schulte, 2008
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,24 +35,75 @@
  *
  */
 
+#ifndef __GECODE_SEARCH_SUPPORT_HH__
+#define __GECODE_SEARCH_SUPPORT_HH__
+
 #include <gecode/search.hh>
-#include <gecode/search/support.hh>
+
+#ifdef GECODE_HAS_THREADS
+#include <gecode/support/thread.hh>
+#endif
 
 namespace Gecode { namespace Search {
-    
-  Engine* 
-  lds(Space* s, size_t sz, const Options& o) {
+
+  /// Clone space \a s dependening on options \a o
+  forceinline Space*
+  snapshot(Space* s, const Options& o) {
+    return o.clone ? s->clone() : s;
+  }
+
+  /// Compute real number of threads
+  inline Options
+  threads(const Options& o) {
 #ifdef GECODE_HAS_THREADS
-    Options to = threads(o);
-    if (to.threads == 1)
-      return Sequential::lds(s,sz,to);
-    else
-      return Sequential::lds(s,sz,to);
+    Options to(o);
+    if (to.threads == 0) {
+      to.threads = Support::Thread::npu();
+    }
+    return to;
 #else
-    return Sequential::lds(s,sz,o);
+    return o;
 #endif
   }
 
+  /// Virtualize a worker to an engine
+  template <class Worker>
+  class WorkerToEngine : public Engine {
+  protected:
+    Worker w;
+  public:
+    /// Initialization
+    WorkerToEngine(Space* s, size_t sz, const Options& o);
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual Space* next(void);
+    /// Return statistics
+    virtual Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+  };
+
+  template <class Worker>
+  WorkerToEngine<Worker>::WorkerToEngine(Space* s, size_t sz, 
+                                         const Options& o) 
+    : w(s,sz,o) {}
+  template <class Worker>
+  Space* 
+  WorkerToEngine<Worker>::next(void) {
+    return w.next();
+  }
+  template <class Worker>
+  Search::Statistics 
+  WorkerToEngine<Worker>::statistics(void) const {
+    return w.statistics();
+  }
+  template <class Worker>
+  bool 
+  WorkerToEngine<Worker>::stopped(void) const {
+    return w.stopped();
+  }
+
 }}
+
+#endif
 
 // STATISTICS: search-any

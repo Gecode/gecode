@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,54 +35,43 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#ifndef __GECODE_SEARCH_SEQUENTIAL_DFS_HH__
+#define __GECODE_SEARCH_SEQUENTIAL_DFS_HH__
 
-  /// Clone space \a s dependening on options \a o
-  forceinline Space*
-  snapshot(Space* s, const Options& o) {
-    return o.clone ? s->clone() : s;
-  }
+#include <gecode/search.hh>
+#include <gecode/search/support.hh>
+#include <gecode/search/worker.hh>
+#include <gecode/search/path.hh>
 
-  /// Compute real number of threads
-  GECODE_SEARCH_EXPORT Options
-  threads(const Options& o);
+namespace Gecode { namespace Search { namespace Sequential {
 
-  /// Virtualize a worker to an engine
-  template <class Worker>
-  class WorkerToEngine : public Engine {
+  /// Depth-first search engine implementation
+  class GECODE_SEARCH_EXPORT DFS : public Worker {
+  private:
+    /// Search options
+    Options opt;
+    /// Current path ins search tree
+    Path path;
+    /// Current space being explored
+    Space* cur;
+    /// Distance until next clone
+    unsigned int d;
   protected:
-    Worker w;
+    /// Reset engine to restart at space \a s
+    void reset(Space* s);
   public:
-    /// Initialization
-    WorkerToEngine(Space* s, size_t sz, const Options& o);
-    /// Return next solution (NULL, if none exists or search has been stopped)
-    virtual Space* next(void);
+    /// Initialize for space \a s (of size \a sz) with options \a o
+    DFS(Space* s, size_t sz, const Options& o);
+    /// %Search for next solution
+    Space* next(void);
     /// Return statistics
-    virtual Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    Statistics statistics(void) const;
+    /// Destructor
+    ~DFS(void);
   };
 
-  template <class Worker>
-  WorkerToEngine<Worker>::WorkerToEngine(Space* s, size_t sz, 
-                                         const Options& o) 
-    : w(s,sz,o) {}
-  template <class Worker>
-  Space* 
-  WorkerToEngine<Worker>::next(void) {
-    return w.next();
-  }
-  template <class Worker>
-  Search::Statistics 
-  WorkerToEngine<Worker>::statistics(void) const {
-    return w.statistics();
-  }
-  template <class Worker>
-  bool 
-  WorkerToEngine<Worker>::stopped(void) const {
-    return w.stopped();
-  }
+}}}
 
-}}
+#endif
 
 // STATISTICS: search-any

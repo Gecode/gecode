@@ -35,6 +35,11 @@
  *
  */
 
+#ifndef __GECODE_SEARCH_WORKER_HH__
+#define __GECODE_SEARCH_WORKER_HH__
+
+#include <gecode/search.hh>
+
 namespace Gecode { namespace Search {
 
   /**
@@ -169,5 +174,7 @@ namespace Gecode { namespace Search {
   }
 
 }}
+
+#endif
 
 // STATISTICS: search-any

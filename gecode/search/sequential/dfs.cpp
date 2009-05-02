@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2003
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,9 +35,9 @@
  *
  */
 
-#include <gecode/search.hh>
+#include <gecode/search/sequential/dfs.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace Search { namespace Sequential {
 
   DFS::DFS(Space* s, size_t sz, const Options& o)
     : Worker(sz), opt(o), d(0) {
@@ -129,6 +129,11 @@ namespace Gecode { namespace Search {
     path.reset();
   }
 
-}}
+  // Create depth first engine
+  Engine* dfs(Space* s, size_t sz, const Options& o) {
+    return new WorkerToEngine<DFS>(s,sz,o);
+  }
+
+}}}
 
 // STATISTICS: search-any

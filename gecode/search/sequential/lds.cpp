@@ -39,8 +39,88 @@
  */
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
+#include <gecode/search/worker.hh>
+#include <gecode/search/path.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace Search { namespace Sequential {
+
+  /// Probe engine for %LDS
+  class Probe : public Worker {
+  protected:
+    /// %Node in the search tree for %LDS
+    class Node {
+    private:
+      /// %Space of current node
+      Space*               _space;
+      /// Branching description
+      const BranchingDesc* _desc;
+      /// Next alternative to try
+      unsigned int         _alt;
+    public:
+      /// Default constructor
+      Node(void);
+      /// Initialize with node \a s, description \a d, and alternative \a a
+      Node(Space* s, const BranchingDesc* d, unsigned int a);
+      /// Return space
+      Space* space(void) const;
+      /// Return branching description
+      const BranchingDesc* desc(void) const;
+      /// Return next alternative
+      unsigned int alt(void) const;
+      /// %Set next alternative
+      void next(void);
+    };
+    /// %Stack storing current path in search tree
+    Support::DynamicStack<Node,Heap> ds;
+    /// Current space
+    Space* cur;
+    /// Current discrepancy
+    unsigned int d;
+    /// Whether entire search space has been exhausted
+    bool exhausted;
+  public:
+    /// Initialize for spaces of size \a s
+    Probe(size_t s);
+    /// Initialize with space \a s and discrepancy \a d
+    void init(Space* s, unsigned int d);
+    /// Reset with space \a s and discrepancy \a d
+    void reset(Space* s, unsigned int d);
+    /// Return statistics
+    Statistics statistics(void) const;
+    /// Destructor
+    ~Probe(void);
+    /// %Search for next solution
+    Space* explore(Stop* st);
+    /// Test whether probing is done
+    bool done(void) const;
+  };
+
+  /// Limited discrepancy search engine implementation
+  class LDS : public Engine {
+  protected:
+    /// Search options
+    Options opt; 
+    /// The probe engine
+    Probe e;           
+    /// Root node for problem
+    Space* root;        
+    /// Current discrepancy
+    unsigned int d;       
+    /// Solution found for current discrepancy
+    bool no_solution; 
+  public:
+    /// Initialize for space \a s (of size \a sz) with options \a o
+    LDS(Space* s, size_t sz, const Options& o);
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual Space* next(void);
+    /// Return statistics
+    virtual Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+    /// Destructor
+    virtual ~LDS(void);
+  };
 
   /*
    * Nodes for the probing engine (just remember next alternative
@@ -253,6 +333,13 @@ namespace Gecode { namespace Search {
     delete root;
   }
 
-}}
+
+  // Create lds engine
+  Engine* lds(Space* s, size_t sz, const Options& o) {
+    return new LDS(s,sz,o);
+  }
+
+
+}}}
 
 // STATISTICS: search-any

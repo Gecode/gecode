@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,27 +35,51 @@
  *
  */
 
-#include <gecode/search.hh>
+#include <gecode/search/sequential/dfs.hh>
 
-#ifdef GECODE_HAS_THREADS
-#include <gecode/support/thread.hh>
-#endif
+namespace Gecode { namespace Search { namespace Sequential {
 
-namespace Gecode { namespace Search {
+  /// Depth-first restart best solution search engine implementation
+  class GECODE_SEARCH_EXPORT Restart : public DFS {
+  protected:
+    /// Root node
+    Space* root;
+    /// So-far best solution
+    Space* best;
+  public:
+    /// Initialize engine for space \a s (with size \a sz) and options \a o
+    Restart(Space* s, size_t sz, const Search::Options& o);
+    /// Return next better solution (NULL, if none exists or search has been stopped)
+    Space* next(void);
+    /// Destructor
+    ~Restart(void);
+  };
 
-  Options
-  threads(const Options& o) {
-#ifdef GECODE_HAS_THREADS
-    Options to(o);
-    if (to.threads == 0) {
-      to.threads = Support::Thread::npu();
+  Restart::Restart(Space* s, size_t sz, const Search::Options& o) :
+    DFS(s,sz,o),
+    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
+
+  Space*
+  Restart::next(void) {
+    if (best != NULL) {
+      root->constrain(*best);
+      reset(root);
     }
-    return to;
-#else
-    return o;
-#endif
+    delete best;
+    best = DFS::next();
+    return (best != NULL) ? best->clone() : NULL;
   }
 
-}}
+  Restart::~Restart(void) {
+    delete best;
+    delete root;
+  }
+
+  // Create restart engine
+  Engine* restart(Space* s, size_t sz, const Options& o) {
+    return new WorkerToEngine<Restart>(s,sz,o);
+  }
+
+}}}
 
 // STATISTICS: search-any

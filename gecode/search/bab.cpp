@@ -3,12 +3,8 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contributing authors:
- *     Guido Tack <tack@gecode.org>
- *
  *  Copyright:
- *     Christian Schulte, 2004
- *     Guido Tack, 2004
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -40,27 +36,10 @@
  */
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 
 namespace Gecode { namespace Search {
     
-  namespace Sequential {
-
-    /// Create branch and bound engine
-    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
-
-  }
-
-#ifdef GECODE_HAS_THREADS
-
-  namespace Parallel {
-
-    /// Create branch and bound engine
-    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
-
-  }
-
-#endif
-
   Engine* 
   bab(Space* s, size_t sz, const Options& o) {
 #ifdef GECODE_HAS_THREADS

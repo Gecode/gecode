@@ -41,11 +41,21 @@
 
 namespace Gecode {
 
-  namespace Search {
-    
+  namespace Search { namespace Sequential {
     /// Create branch and bound engine
     GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
+  }}
 
+#ifdef GECODE_HAS_THREADS
+  namespace Search { namespace Parallel {
+    /// Create branch and bound engine
+    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
+  }}
+#endif
+
+  namespace Search {
+    /// Create branch and bound engine
+    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
   }
 
   template <class T>

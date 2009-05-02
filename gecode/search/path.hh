@@ -35,8 +35,12 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#ifndef __GECODE_SEARCH_PATH_HH__
+#define __GECODE_SEARCH_PATH_HH__
 
+#include <gecode/search.hh>
+
+namespace Gecode { namespace Search {
 
   /**
    * \brief Depth-first path (stack of nodes) supporting recomputation
@@ -428,5 +432,7 @@ namespace Gecode { namespace Search {
   }
 
 }}
+
+#endif
 
 // STATISTICS: search-any

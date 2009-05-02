@@ -36,6 +36,9 @@
  */
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
+#include <gecode/search/worker.hh>
+#include <gecode/search/path.hh>
 
 namespace Gecode { namespace Search { namespace Parallel {
 

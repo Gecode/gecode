@@ -2,15 +2,13 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2002
- *     Guido Tack, 2004
+ *     Christian Schulte, 2009
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-05-01 21:37:58 +0200 (Fri, 01 May 2009) $ by $Author: schulte $
+ *     $Revision: 8956 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -37,32 +35,23 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#include <gecode/search.hh>
+#include <gecode/search/support.hh>
 
-  /// Depth-first search engine implementation
-  class GECODE_SEARCH_EXPORT DFS : public Worker {
-  private:
-    /// Search options
-    Options opt;
-    /// Current path ins search tree
-    Path path;
-    /// Current space being explored
-    Space* cur;
-    /// Distance until next clone
-    unsigned int d;
-  protected:
-    /// Reset engine to restart at space \a s
-    void reset(Space* s);
-  public:
-    /// Initialize for space \a s (of size \a sz) with options \a o
-    DFS(Space* s, size_t sz, const Options& o);
-    /// %Search for next solution
-    Space* next(void);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Destructor
-    ~DFS(void);
-  };
+namespace Gecode { namespace Search {
+    
+  Engine* 
+  dfs(Space* s, size_t sz, const Options& o) {
+#ifdef GECODE_HAS_THREADS
+    Options to = threads(o);
+    if (to.threads == 1)
+      return Sequential::dfs(s,sz,to);
+    else
+      return Sequential::dfs(s,sz,to);
+#else
+    return Sequential::dfs(s,sz,o);
+#endif
+  }
 
 }}
 

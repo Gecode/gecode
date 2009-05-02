@@ -200,19 +200,17 @@ EXTRA_HEADERS   = gecode/support/config.hpp
 #
 
 SEARCHSRC0 = \
-	stop.cpp options.cpp \
-	bab.cpp sequential/bab.cpp parallel/bab.cpp \
-	dfs-engine.cpp restart-engine.cpp lds-engine.cpp \
-	support.cpp
+	stop options \
+	dfs sequential/dfs \
+	bab sequential/bab parallel/bab \
+	restart sequential/restart \
+	lds sequential/lds
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp \
-	worker.hpp path.hpp \
-	dfs-engine.hpp dfs.hpp \
-	bab-engine.hpp bab.hpp \
-	restart-engine.hpp restart.hpp \
-	lds-engine.hpp lds.hpp support.hpp
+	support.hh worker.hh path.hh \
+	dfs.hpp sequential/dfs.hh bab.hpp restart.hpp lds.hpp
 
-SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
+SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
 SEARCHOBJ	= $(SEARCHSRC:%.cpp=%$(OBJSUFFIX))
 

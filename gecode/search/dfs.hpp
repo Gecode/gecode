@@ -37,27 +37,50 @@
 
 namespace Gecode {
 
+  namespace Search { namespace Sequential {
+    /// Create depth-first engine
+    GECODE_SEARCH_EXPORT Engine* dfs(Space* s, size_t sz, const Options& o);
+  }}
+
+#ifdef GECODE_HAS_THREADS
+  namespace Search { namespace Parallel {
+    /// Create depth-first engine
+    GECODE_SEARCH_EXPORT Engine* dfs(Space* s, size_t sz, const Options& o);
+  }}
+#endif
+
+  namespace Search {
+    /// Create depth-first engine
+    GECODE_SEARCH_EXPORT Engine* dfs(Space* s, size_t sz, const Options& o);
+  }
+
   template <class T>
   forceinline
   DFS<T>::DFS(T* s, const Search::Options& o)
-    : e(s,sizeof(T),o) {}
+    : e(Search::dfs(s,sizeof(T),o)) {}
 
   template <class T>
   forceinline T*
   DFS<T>::next(void) {
-    return dynamic_cast<T*>(e.next());
+    return dynamic_cast<T*>(e->next());
   }
 
   template <class T>
   forceinline Search::Statistics
   DFS<T>::statistics(void) const {
-    return e.statistics();
+    return e->statistics();
   }
 
   template <class T>
   forceinline bool
   DFS<T>::stopped(void) const {
-    return e.stopped();
+    return e->stopped();
+  }
+
+  template <class T>
+  forceinline
+  DFS<T>::~DFS(void) {
+    delete e;
   }
 
 

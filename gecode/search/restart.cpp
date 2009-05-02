@@ -2,15 +2,13 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2002
- *     Guido Tack, 2004
+ *     Christian Schulte, 2009
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-05-01 21:37:58 +0200 (Fri, 01 May 2009) $ by $Author: schulte $
+ *     $Revision: 8956 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -37,23 +35,23 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#include <gecode/search.hh>
+#include <gecode/search/support.hh>
 
-  /// Depth-first restart best solution search engine implementation
-  class GECODE_SEARCH_EXPORT Restart : public DFS {
-  protected:
-    /// Root node
-    Space* root;
-    /// So-far best solution
-    Space* best;
-  public:
-    /// Initialize engine for space \a s (with size \a sz) and options \a o
-    Restart(Space* s, size_t sz, const Search::Options& o);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    Space* next(void);
-    /// Destructor
-    ~Restart(void);
-  };
+namespace Gecode { namespace Search {
+    
+  Engine* 
+  restart(Space* s, size_t sz, const Options& o) {
+#ifdef GECODE_HAS_THREADS
+    Options to = threads(o);
+    if (to.threads == 1)
+      return Sequential::restart(s,sz,to);
+    else
+      return Sequential::restart(s,sz,to);
+#else
+    return Sequential::restart(s,sz,o);
+#endif
+  }
 
 }}
 

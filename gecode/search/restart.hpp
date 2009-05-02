@@ -37,28 +37,52 @@
 
 namespace Gecode {
 
+  namespace Search { namespace Sequential {
+    /// Create restart engine
+    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);
+  }}
+
+#ifdef GECODE_HAS_THREADS
+  namespace Search { namespace Parallel {
+    /// Create restart engine
+    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);
+  }}
+#endif
+
+  namespace Search {
+    /// Create restart engine
+    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);
+  }
+
   template <class T>
   forceinline
   Restart<T>::Restart(T* s, const Search::Options& o)
-    : e(s,sizeof(T),o) {}
+    : e(Search::restart(s,sizeof(T),o)) {}
 
   template <class T>
   forceinline T*
   Restart<T>::next(void) {
-    return dynamic_cast<T*>(e.next());
+    return dynamic_cast<T*>(e->next());
   }
 
   template <class T>
   forceinline Search::Statistics
   Restart<T>::statistics(void) const {
-    return e.statistics();
+    return e->statistics();
   }
 
   template <class T>
   forceinline bool
   Restart<T>::stopped(void) const {
-    return e.stopped();
+    return e->stopped();
   }
+
+  template <class T>
+  forceinline
+  Restart<T>::~Restart(void) {
+    delete e;
+  }
+
 
   template <class T>
   T*

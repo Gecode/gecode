@@ -307,14 +307,6 @@ namespace Gecode {
 #include <gecode/search/statistics.hpp>
 #include <gecode/search/stop.hpp>
 #include <gecode/search/options.hpp>
-#include <gecode/search/support.hpp>
-
-#include <gecode/search/worker.hpp>
-#include <gecode/search/path.hpp>
-
-#include <gecode/search/dfs-engine.hpp>
-#include <gecode/search/restart-engine.hpp>
-#include <gecode/search/lds-engine.hpp>
 
 namespace Gecode {
 
@@ -329,7 +321,7 @@ namespace Gecode {
   class DFS {
   private:
     /// The actual search engine
-    Search::DFS e;
+    Search::Engine* e;
   public:
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
@@ -339,6 +331,8 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
+    /// Destructor
+    ~DFS(void);
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
@@ -408,7 +402,7 @@ namespace Gecode {
   class Restart {
   private:
     /// The actual search engine
-    Search::Restart e;
+    Search::Engine* e;
   public:
     /// Initialize engine for space \a s and options \a o
     Restart(T* s, const Search::Options& o=Search::Options::def);
@@ -418,6 +412,8 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
+    /// Destructor
+    ~Restart(void);
   };
 
   /**
@@ -444,7 +440,7 @@ namespace Gecode {
   class LDS {
   private:
     /// The actual search engine
-    Search::LDS e;
+    Search::Engine* e;
   public:
     /// Initialize engine for space \a s and options \a o
     LDS(T* s, const Search::Options& o=Search::Options::def);
@@ -454,6 +450,8 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
+    /// Destructor
+    ~LDS(void);
   };
 
   /**

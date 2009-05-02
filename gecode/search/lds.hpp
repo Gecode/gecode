@@ -37,27 +37,50 @@
 
 namespace Gecode {
 
+  namespace Search { namespace Sequential {
+    /// Create sequential lds engine
+    GECODE_SEARCH_EXPORT Engine* lds(Space* s, size_t sz, const Options& o);
+  }}
+
+#ifdef GECODE_HAS_THREADS
+  namespace Search { namespace Parallel {
+    /// Create parallel lds engine
+    GECODE_SEARCH_EXPORT Engine* lds(Space* s, size_t sz, const Options& o);
+  }}
+#endif
+
+  namespace Search {
+    /// Create lds engine
+    GECODE_SEARCH_EXPORT Engine* lds(Space* s, size_t sz, const Options& o);
+  }
+
   template <class T>
   forceinline
   LDS<T>::LDS(T* s, const Search::Options& o)
-    : e(s,sizeof(T),o) {}
+    : e(Search::lds(s,sizeof(T),o)) {}
 
   template <class T>
   forceinline T*
   LDS<T>::next(void) {
-    return dynamic_cast<T*>(e.next());
+    return dynamic_cast<T*>(e->next());
   }
 
   template <class T>
   forceinline Search::Statistics
   LDS<T>::statistics(void) const {
-    return e.statistics();
+    return e->statistics();
   }
 
   template <class T>
   forceinline bool
   LDS<T>::stopped(void) const {
-    return e.stopped();
+    return e->stopped();
+  }
+
+  template <class T>
+  forceinline
+  LDS<T>::~LDS(void) {
+    delete e;
   }
 
   template <class T>
