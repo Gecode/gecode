@@ -38,7 +38,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
-#include <gecode/search/path.hh>
+#include <gecode/search/parallel/path.hh>
 
 #include <gecode/support/thread.hh>
 

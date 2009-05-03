@@ -35,12 +35,12 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_PATH_HH__
-#define __GECODE_SEARCH_PATH_HH__
+#ifndef __GECODE_SEARCH_PARALLEL_PATH_HH__
+#define __GECODE_SEARCH_PARALLEL_PATH_HH__
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace Search { namespace Parallel {
 
   /**
    * \brief Depth-first path (stack of nodes) supporting recomputation
@@ -431,7 +431,7 @@ namespace Gecode { namespace Search {
     return s;
   }
 
-}}
+}}}
 
 #endif
 
