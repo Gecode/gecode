@@ -47,25 +47,6 @@ namespace Gecode { namespace Support {
   Thread::~Thread(void) {
   }
 
-  forceinline Thread::Id
-  Thread::id(void) const {
-    Id i; i.p_t = p_t;
-    return i;
-  } 
-
-
-  /*
-   * Equality checks for thread identifiers
-   */
-  forceinline bool 
-  operator ==(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return pthread_equal(ti1.p_t,ti2.p_t) != 0;
-  }
-  forceinline bool 
-  operator !=(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return pthread_equal(ti1.p_t,ti2.p_t) == 0;
-  }
-
 
   /*
    * Mutex

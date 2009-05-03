@@ -52,12 +52,13 @@ namespace Gecode { namespace Support {
   void*
   bootstrap(void* p) {
     static_cast<Runnable*>(p)->run();
+    delete static_cast<Runnable*>(p);
     pthread_exit(NULL);
     return NULL;
   }
 
-  Thread::Thread(Runnable& r) {
-    if (pthread_create(&p_t, NULL, bootstrap, &r) != 0)
+  Thread::Thread(Runnable* r) {
+    if (pthread_create(&p_t, NULL, bootstrap, r) != 0)
       throw OperatingSystemError("Thread::Thread[pthread_create]");
   }
   

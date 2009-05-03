@@ -38,19 +38,6 @@
 namespace Gecode { namespace Support {
 
   /*
-   * Equality checks for threads
-   */
-  inline bool 
-  operator ==(const Thread& t1, const Thread& t2) {
-    return t1.id() == t2.id();
-  }
-  inline bool 
-  operator !=(const Thread& t1, const Thread& t2) {
-    return t1.id() != t2.id();
-  }
-
-
-  /*
    * Locks
    */
   forceinline

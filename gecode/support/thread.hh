@@ -85,6 +85,8 @@ namespace Gecode { namespace Support {
    *
    * Threads are assumed to properly terminate, the destructor will
    * only release the handle to a thread but will not terminate it.
+   * The thread ceases when the call to run terminates, then the
+   * runnable object passed will also be deleted.
    *
    * Requires \code #include <gecode/support/thread.hh> \endcode
    *
@@ -101,31 +103,19 @@ namespace Gecode { namespace Support {
     pthread_t p_t;
 #endif
   public:
-    /// A class for thread identification
-    class Id {
-      friend class Thread;
-      friend bool operator ==(const Thread::Id&, const Thread::Id&);
-      friend bool operator !=(const Thread::Id&, const Thread::Id&);
-    private:
-#ifdef GECODE_THREADS_WINDOWS
-      /// The Windows-specific id
-      DWORD w_id;
-#endif
-#ifdef GECODE_THREADS_PTHREADS
-      /// The Pthread-specific id
-      pthread_t p_t;
-#endif
-    };
     /// Get a handle on the current thread
     Thread(void);
-    /// Construct a new thread and run \a r (\a r must outlive the thread)
-    GECODE_SUPPORT_EXPORT Thread(Runnable& r);
+    /**
+     * \brief Construct a new thread and run \a r
+     *
+     * After \a r terminates, \a r is deleted. After that, the thread
+     * terminates.
+     */
+    GECODE_SUPPORT_EXPORT Thread(Runnable* r);
     /// Destroy thread handle (does not terminate thread)
     GECODE_SUPPORT_EXPORT ~Thread(void);
     /// Put current thread to sleep for \a ms milliseconds
     GECODE_SUPPORT_EXPORT static void sleep(unsigned int ms);
-    /// Return identifier for thread
-    Id id(void) const;
     /// Return number of processing units (1 if information not available)
     GECODE_SUPPORT_EXPORT static unsigned int npu(void);
   private:
@@ -134,44 +124,6 @@ namespace Gecode { namespace Support {
     /// A thread cannot be assigned
     void operator=(const Thread&) {}
   };
-
-  /**
-   * \brief Test whether thread identifiers are equal
-   * \relates Thread::Id
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
-   * \ingroup FuncSupportThread
-   */
-  bool operator ==(const Thread::Id& ti1, const Thread::Id& ti2);
-  /**
-   * \brief Test whether thread identifiers are not equal
-   * \relates Thread::Id
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
-   * \ingroup FuncSupportThread
-   */
-  bool operator !=(const Thread::Id& ti1, const Thread::Id& ti2);
-
-  /**
-   * \brief Test whether threads are equal
-   * \relates Thread
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
-   * \ingroup FuncSupportThread
-   */
-  bool operator ==(const Thread& t1, const Thread& t2);
-  /**
-   * \brief Test whether threads are not equal
-   * \relates Thread
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
-   * \ingroup FuncSupportThread
-   */
-  bool operator !=(const Thread& t1, const Thread& t2);
 
 
   /**

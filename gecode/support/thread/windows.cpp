@@ -48,11 +48,12 @@ namespace Gecode { namespace Support {
   DWORD WINAPI 
   bootstrap(LPVOID p) {
     static_cast<Runnable*>(p)->run();
+    delete static_cast<Runnable*>(p);
     return 0;
   }
 
-  Thread::Thread(Runnable& r)
-    : w_h(CreateThread(NULL, 0, bootstrap, &r, 0, NULL)) {
+  Thread::Thread(Runnable* r)
+    : w_h(CreateThread(NULL, 0, bootstrap, r, 0, NULL)) {
     if (w_h == NULL)
       throw OperatingSystemError("Thread::Thread[Windows::CreateThread]");
   }

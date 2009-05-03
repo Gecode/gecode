@@ -51,25 +51,6 @@ namespace Gecode { namespace Support {
       throw OperatingSystemError("Thread::~Thread[Windows::CloseHandle]");
   }
 
-  forceinline Thread::Id
-  Thread::id(void) const {
-    Id i; i.w_id = GetThreadId(w_h);
-    return i;
-  } 
-
-
-  /*
-   * Equality checks for thread identifiers
-   */
-  forceinline bool 
-  operator ==(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return ti1.w_id == ti2.w_id;
-  }
-  forceinline bool 
-  operator !=(const Thread::Id& ti1, const Thread::Id& ti2) {
-    return ti1.w_id != ti2.w_id;
-  }
-
 
   /*
    * Mutex
