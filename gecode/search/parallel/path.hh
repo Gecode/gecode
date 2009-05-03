@@ -123,6 +123,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     size_t size(void) const;
     /// Reset stack
     void reset(void);
+    /// Steal work
+    Space* steal(void);
   };
 
 
@@ -274,6 +276,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   Path::reset(void) {
     while (!ds.empty())
       ds.pop().dispose();
+  }
+
+  inline Space*
+  Path::steal(void) {
+    return NULL;
   }
 
   forceinline Space*

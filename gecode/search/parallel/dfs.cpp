@@ -79,6 +79,9 @@ namespace Gecode { namespace Search { namespace Parallel {
     Support::Event e_terminate;
     /// Whether a worker had been stopped
     bool stop;
+    /// Whether search state changed such that signal is needed
+    bool signal(void) const;
+
     /// Initialize for space \a s (of size \a sz) with options \a o
     DfsEngine(Space* s, size_t sz, const Options& o);
     /// Return next solution (NULL, if none exists or search has been stopped)
@@ -114,6 +117,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     DfsWorker(Space* s, size_t sz, DfsEngine& e);
     /// Start execution of worker
     virtual void run(void);
+    /// Hand over some work
+    Space* steal(void);
     /// %Search for next solution
     void next(void);
     /// Return statistics
@@ -183,15 +188,23 @@ namespace Gecode { namespace Search { namespace Parallel {
     m_search.release();
     return NULL;
   }
+
+  bool
+  DfsEngine::signal(void) const {
+    return solutions.empty() && (n_busy > 0) && !stop;
+  }
+
   Statistics 
   DfsEngine::statistics(void) const {
     Statistics s;
     return s;
   }
+
   bool 
   DfsEngine::stopped(void) const {
     return stop;
   }
+
   DfsEngine::~DfsEngine(void) {
     // Invariant: the engine has the wait mutex
     m_search.acquire();
@@ -238,13 +251,34 @@ namespace Gecode { namespace Search { namespace Parallel {
     }
   }
 
+  Space*
+  DfsWorker::steal(void) {
+    m.acquire();
+    Space* s = path.steal();
+    m.release();
+    // Tell that there will be one more busy worker
+    if (s != NULL) {
+      engine.m_search.acquire();
+      assert(engine.n_busy > 0);
+      engine.n_busy++;
+      engine.m_search.release();
+    }
+    return s;
+  }
   void
   DfsWorker::next(void) {
     start();
     while (true) {
       while (cur) {
-        if (stop(engine.opt.stop,path.size()))
-          return;
+        if (stop(engine.opt.stop,path.size())) {
+          // Report stop
+          engine.m_search.acquire();
+          bool signal = engine.signal();
+          engine.stop = true;
+          if (signal)
+            engine.e_search.signal();
+          engine.m_search.release();
+        }
         node++;
         switch (cur->status(*this)) {
         case SS_FAILED:
@@ -257,10 +291,17 @@ namespace Gecode { namespace Search { namespace Parallel {
           {
             // Deletes all pending branchings
             (void) cur->description();
-            Space* s = cur;
+            Space* s = cur->clone(false);
+            delete cur;
             cur = NULL;
             Worker::current(NULL);
-            return;
+            // Report solution
+            engine.m_search.acquire();
+            bool signal = engine.signal();
+            engine.solutions.push(s);
+            if (signal)
+              engine.e_search.signal();
+            engine.m_search.release();
           }
         case SS_BRANCH:
           {
@@ -282,8 +323,23 @@ namespace Gecode { namespace Search { namespace Parallel {
         }
       }
       do {
-        if (!path.next(*this))
-          return;
+        if (!path.next(*this)) {
+          // Report that worker is idle
+          engine.m_search.acquire();
+          bool signal = engine.signal();
+          engine.n_busy--;
+          if (signal && (engine.n_busy == 0))
+            engine.e_search.signal();
+          engine.m_search.release();
+          // Try to find new work (even if there is none)
+          // This must happen outside the worker lock: otherwise deadlock
+          for (unsigned int i=0; i<engine.opt.threads; i++)
+            if (engine.worker[i] != this)
+              if (Space* s = engine.worker[i]->steal()) {
+                // Reset this guy
+                cur = s;
+              }
+        }
         cur = path.recompute(d,engine.opt.a_d,*this);
       } while (cur == NULL);
       Worker::current(cur);
