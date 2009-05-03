@@ -113,6 +113,7 @@
 
 #include <gecode/support/block-allocator.hpp>
 #include <gecode/support/dynamic-array.hpp>
+#include <gecode/support/dynamic-queue.hpp>
 #include <gecode/support/dynamic-stack.hpp>
 #include <gecode/support/random.hpp>
 #include <gecode/support/sort.hpp>
