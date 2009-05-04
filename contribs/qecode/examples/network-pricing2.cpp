@@ -22,8 +22,8 @@ THE SOFTWARE.
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
-#include "Implicative.hh"
-#include "qsolver.hh"
+#include "QCOPPlus.hh"
+#include "qsolver_general.hh"
 #include <iostream>
 
 using namespace std;
@@ -76,7 +76,7 @@ int main() {
     nv[1] = 1;
     nv[2] = 9;
 
-    Implicative problem(3,q,nv);
+    Qcop problem(3,q,nv);
     for (int i=0;i<NArc;i++)
         problem.QIntVar(i,0,10); // t[i]
     IntVarArgs branch1(NArc);

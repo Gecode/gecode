@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
 
-#include "qsolver.hh"
+#include "qsolver_general.hh"
 #include <climits>
 
-QSolver::QSolver(Implicative* sp) {
+QSolver::QSolver(Qcop* sp) {
     this->sp = sp;
     nbRanges=new int;
 }
@@ -34,7 +34,7 @@ Strategy QSolver::solve(unsigned long int& nodes) {
     return rSolve(sp,0,plop,nodes);
 }
 
-Strategy QSolver::rSolve(Implicative* qs,int scope, vector<int> assignments, unsigned long int& nodes) {
+Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned long int& nodes) {
     nodes++;
 //    cout<<"rSolve for scope "<<scope<<" with assignments ";
 //    for (int i=0;i<assignments.size();i++) cout<<assignments[i]<<" ";
@@ -77,7 +77,7 @@ Strategy QSolver::rSolve(Implicative* qs,int scope, vector<int> assignments, uns
         MySpace* espace = qs->getSpace(scope);
         if (espace == NULL) cout<<"I caught a NULL for scope "<<scope<<". I will crash..."<<endl;
 //        cout<<"size of assignments "<<assignments.size()<<endl;
-        for (unsigned int i=0;i<assignments.size();i++) {
+        for (int i=0;i<assignments.size();i++) {
 //            cout<<"I assign variable "<<i<<" with value "<<assignments[i]<<endl; cout.flush();
             switch (espace->type_of_v[i]) {
                 case VTYPE_INT : 

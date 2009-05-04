@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 #include "qecode.hh"
 #include <vector>
-#include <gecode/minimodel.hh>
+#include "gecode/minimodel.hh"
 #include "vartype.hh"
 
 using namespace Gecode;
@@ -37,20 +37,20 @@ using namespace Gecode::Int;
 */
 
 class QECODE_VTABLE_EXPORT MySpace : public Space {
-
+    
 protected :
     unsigned int n;
-
+    
 public:
     /** \brief This array contains all the variables this space contains.
     */
     void** v;
-
-
+    
+    
     /** \brief This array indicates the type of each variable
     */
     VarType* type_of_v;
-
+    
     /** \brief Constructor of a space with a fixed number of variables
         *
         * Builds a space which will contain  nv variables (the variables themselves are however not declared).
@@ -61,6 +61,19 @@ public:
     QECODE_EXPORT MySpace(bool share,MySpace& ms);
     QECODE_EXPORT virtual MySpace* copy(bool share);
     QECODE_EXPORT virtual ~MySpace();
+    
+    /** \brief Returns the integer variables before idMax
+        *
+        * Returns an IntVarArgs containing all the integer variables of index inferior than parameter idMax
+        */
+    QECODE_EXPORT IntVarArgs getIntVars(unsigned int idMax);
+    
+    /** \brief Returns the boolean variables before idMax
+        *
+        * Returns a BoolVarArgs containing all the boolean variables of index inferior than parameter idMax
+        */
+    QECODE_EXPORT BoolVarArgs getBoolVars(unsigned int idMax);
+    
 };
 
 

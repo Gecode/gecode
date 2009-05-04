@@ -1,5 +1,5 @@
-/****   , [ qsolver.hh ],
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
+/****   , [ UnblockableBranching.hh ], 
+Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,28 +19,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
-#ifndef __QECODE_QSOLVER_OPT__
-#define __QECODE_QSOLVER_OPT__
+#ifndef __QECODE_UNBLOCKABLE_BRANCHING__
+#define __QECODE_UNBLOCKABLE_BRANCHING__
 
-#include "Implicative.hh"
-#include <iostream>
-#include <cstdlib>
-#include <gecode/minimodel.hh>
-#include <gecode/search.hh>
-#include "Strategy.hh"
-#include "qecode.hh"
+#include "myspace.hh"
 
-using namespace Gecode;
-class QECODE_VTABLE_EXPORT QSolver {
-
-private:
-    int n;
-    Implicative* sp;
-    int* nbRanges;
-    Strategy rSolve(Implicative* qs,int scope,vector<int> assignments,unsigned long int& nodes);
+class UnblockableBranching {
 public:
-    QECODE_EXPORT QSolver(Implicative* sp);
-    QECODE_EXPORT Strategy solve(unsigned long int& nodes);
+    virtual ~UnblockableBranching() {}
+    virtual void branch(MySpace* s,IntVarArgs ivars, BoolVarArgs bvars)=0;
 };
 
 #endif
+

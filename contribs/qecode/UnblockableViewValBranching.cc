@@ -1,5 +1,5 @@
-/****   , [ StrategyNode.hh ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ UnblockableViewValBranching.cc ], 
+Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +19,43 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
-#ifndef __QECODE_STRATEGY_NODE__
-#define __QECODE_STRATEGY_NODE__
-#include "qecode.hh"
-#include <iostream>
-#include <vector>
-using namespace std;
-class QECODE_VTABLE_EXPORT StrategyNode {
-public:
-    int type; // 0 = dummy, 1 = empty, 2 = normal.
-    bool quantifier;
-    int Vmin;
-    int Vmax;
-    int scope;
-    vector<int> valeurs;
-    
-    QECODE_EXPORT StrategyNode();
-    QECODE_EXPORT StrategyNode(int type,bool qt,int Vmin, int Vmax, int scope);
-    QECODE_EXPORT ~StrategyNode();
-    QECODE_EXPORT static StrategyNode STrue() { return StrategyNode(1,true,-1,-1,-1);}
-    QECODE_EXPORT static StrategyNode SFalse() { return StrategyNode(1,false,-1,-1,-1);}
-    QECODE_EXPORT static StrategyNode Dummy() { return StrategyNode(0,true,-1,-1,-1);}
-    QECODE_EXPORT bool isFalse() { return ( (type==1) && (quantifier == false) );}
-    QECODE_EXPORT bool isTrue() { return ( (type==1) && (quantifier == true) );}
-    QECODE_EXPORT bool isDummy() { return (type==0);}
-};
-#endif
 
+#include "UnblockableViewValBranching.hh"
+#include <iostream>
+
+using namespace std;
+
+UnblockableViewValBranching::UnblockableViewValBranching(IntVarBranch vrb,IntValBranch vlb,bool booleans_before) {
+    ivrb=vrb;
+    bvrb=vrb;
+    ivlb=vlb;
+    bvlb=vlb;
+    before=booleans_before;
+}
+
+UnblockableViewValBranching::UnblockableViewValBranching(IntVarBranch Ivrb,IntValBranch Ivlb,IntVarBranch Bvrb,IntValBranch Bvlb,bool booleans_before) {
+    ivrb=Ivrb;
+    ivlb=Ivlb;
+    bvrb=Bvrb;
+    bvlb=Bvlb;
+    before=booleans_before;
+}
+
+void UnblockableViewValBranching::branch(MySpace* s,IntVarArgs ivars, BoolVarArgs bvars) {
+    if (before) {
+        if (bvars.size() != 0) {
+            Gecode::branch(*s,bvars,bvrb,bvlb);
+        }
+        if (ivars.size() != 0) {
+            Gecode::branch(*s,ivars,ivrb,ivlb);
+        }
+    }
+    else {
+        if (ivars.size() != 0) {
+            Gecode::branch(*s,ivars,ivrb,ivlb);
+        }
+        if (bvars.size() != 0) {
+            Gecode::branch(*s,bvars,bvrb,bvlb);
+        }
+    }
+}

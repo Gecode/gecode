@@ -26,26 +26,38 @@ THE SOFTWARE.
 
 using namespace std;
 
-MySpace::MySpace(unsigned int nv) {
+MySpace::MySpace(unsigned int nv) : Space() {
+  //  cout <<"Space with "<<nv<<" variables"<<endl;
     n=nv;
-    v=new void*[n];
-    type_of_v=new VarType[n];
+    v=new void*[nv];
+    type_of_v=new VarType[nv];
 }
 
 
 MySpace::~MySpace() {
-    for (unsigned int i=0;i<n;i++)
-      delete v[i]; // TODO : Ract real type on this before deleting
+    for (int i=0;i<n;i++)
+        switch (type_of_v[i]) {
+            case VTYPE_INT : 
+                delete static_cast<IntVar*>(v[i]);
+                break;
+            case VTYPE_BOOL : 
+                delete static_cast<BoolVar*>(v[i]);
+                break;
+            default :
+                cout<<"Unsupported variable type"<<endl;
+                abort();
+        }
     
     delete[] v;
     delete[] type_of_v;
 }
 
+
 MySpace::MySpace(bool share,MySpace& ms) : Space(share,ms) {
   n=ms.n;
     v=new void*[n];
     type_of_v=new VarType[n];
-    for (unsigned int i=0;i<n;i++) {
+    for (int i=0;i<n;i++) {
         type_of_v[i] = ms.type_of_v[i];
         switch (type_of_v[i]) {
             case VTYPE_INT :
@@ -65,3 +77,43 @@ MySpace::MySpace(bool share,MySpace& ms) : Space(share,ms) {
 
 
 MySpace* MySpace::copy(bool share) {return new MySpace(share,*this);}
+
+IntVarArgs MySpace::getIntVars(unsigned int idMax) {
+    int cpt=0;
+    int i=0;
+    if (n<idMax) idMax=n;
+    
+    for (int i=0;i<idMax;i++) {
+        if (type_of_v[i]==VTYPE_INT) cpt++;
+    }
+    IntVarArgs ret(cpt);
+    cpt=0;
+    for (i=0;i<idMax;i++) {
+        if (type_of_v[i]==VTYPE_INT) {
+            ret[cpt]=*(static_cast<IntVar*>(v[i]));
+            cpt++;
+        }
+    }
+    
+    return ret;
+}
+
+BoolVarArgs MySpace::getBoolVars(unsigned int idMax) {
+    int cpt=0;
+    int i=0;
+    if (n<idMax) idMax=n;
+    
+    for (int i=0;i<idMax;i++) {
+        if (type_of_v[i]==VTYPE_BOOL) cpt++;
+    }
+    BoolVarArgs ret(cpt);
+    cpt=0;
+    for (i=0;i<idMax;i++) {
+        if (type_of_v[i]==VTYPE_BOOL) {
+            ret[cpt]=*(static_cast<BoolVar*>(v[i]));
+            cpt++;
+        }
+    }
+    
+    return ret;
+}

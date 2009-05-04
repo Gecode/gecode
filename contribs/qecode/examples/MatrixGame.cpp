@@ -29,8 +29,8 @@ THE SOFTWARE.
 #include <gecode/minimodel.hh>
 #include <gecode/int/element.hh>
 
-#include "qsolver.hh"
-#include "implicative.hh"
+#include "qsolver_general.hh"
+#include "QCOPPlus.hh"
 
 #define UNIVERSAL true
 #define EXISTENTIAL false

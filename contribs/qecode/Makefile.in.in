@@ -19,14 +19,12 @@ SUPPORTOBJ := $(SUPPORTOBJ:%=../../%)
 
 
 ifeq "$(LIBPREFIX)" "$(LINKPREFIX)"
-LINKSET:=../../$(LINKSET)
 LINKSUPPORT:=../../$(LINKSUPPORT)
 LINKKERNEL:=../../$(LINKKERNEL)
 LINKINT:=../../$(LINKINT)
 LINKMM:=../../$(LINKMM)
 LINKSEARCH:=../../$(LINKSEARCH)
-LINKSUPPORT:=../../$(LINKSUPPORT)
-LINKALL := $(LINKMM) $(LINKSET) $(LINKINT) $(LINKSEARCH) $(LINKKERNEL) $(LINKSUPPORT)
+LINKALL := $(LINKMM) $(LINKINT) $(LINKSEARCH) $(LINKKERNEL)
 else
 EXTRALINKFLAGS := -L../..
 endif
@@ -35,7 +33,7 @@ endif
 # QECODE COMPONENTS
 #
 
-QECODESRC0 = Implicative.cc myspace.cc OptVar.cc qsolver.cc Strategy.cc StrategyNode.cc
+QECODESRC0 = QCOPPlus.cc myspace.cc OptVar.cc qsolver_general.cc Strategy.cc StrategyNode.cc QCSPPlusUnblockable.cc qsolver_unblockable.cc UnblockableViewValBranching.cc
 QECODEHDR0 = 
 
 

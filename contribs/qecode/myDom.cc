@@ -1,7 +1,7 @@
 
 #ifndef QECODE_MYDOM
 #define QECODE_MYDOM
-#include <gecode/minimodel.hh>
+#include "gecode/minimodel.hh"
 using namespace Gecode;
 using namespace Gecode::Int;
 using namespace std;

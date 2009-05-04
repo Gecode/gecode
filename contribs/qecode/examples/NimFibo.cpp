@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
 
-#include "qsolver.hh"
-#include "implicative.hh"
+#include "qsolver_general.hh"
+#include "QCOPPlus.hh"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // This is a model of the nim-fibonacci game. We have a N matches set. First player may  //
@@ -38,7 +38,7 @@ int main() {
         qtScope[i] = ( i%2 != 0);
         scopeSize[i] = 2;
     }
-    Implicative p(N+2,qtScope,scopeSize);
+    Qcop p(N+2,qtScope,scopeSize);
 
     p.QIntVar(0,1,N-1);
     p.QIntVar(1,0,N);

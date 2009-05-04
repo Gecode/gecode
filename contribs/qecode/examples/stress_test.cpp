@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 *************************************************************************/
 
-#include "qsolver.hh"
-#include "implicative.hh"
+#include "qsolver_general.hh"
+#include "QCOPPlus.hh"
 #include <iostream>
 
 using namespace std;
@@ -35,7 +35,7 @@ int main() {
     // Ax in 1..3 []  -> x=1
     int sc1[] = {1};
     bool q1[] = {QECODE_UNIVERSAL};
-    Implicative test1(1,q1,sc1);
+    Qcop test1(1,q1,sc1);
     test1.QIntVar(0,1,3);
     IntVarArgs b1(1);
     b1[0] = test1.var(0);
@@ -52,7 +52,7 @@ int main() {
     //Ex in 1..3 [] st x=1
     int sc2[] = {1};
     bool q2[] = {QECODE_EXISTENTIAL};
-    Implicative test2(1,q2,sc2);
+    Qcop test2(1,q2,sc2);
     test2.QIntVar(0,1,3);
 
     IntVarArgs b2(1);
@@ -73,7 +73,7 @@ int main() {
     //Ax in 1..3 [x=1] -> x=2
     int sc3[] = {1};
     bool q3[] = {QECODE_UNIVERSAL};
-    Implicative test3(1,q3,sc3);
+    Qcop test3(1,q3,sc3);
     test3.QIntVar(0,1,3);
     post(*(test3.space()),test3.var(0) == 1);
 
@@ -95,7 +95,7 @@ int main() {
     // Ex in 1..3 [x=1] st x=2
     int sc4[] = {1};
     bool q4[] = {QECODE_EXISTENTIAL};
-    Implicative test4(1,q4,sc4);
+    Qcop test4(1,q4,sc4);
     test4.QIntVar(0,1,3);
     post(*(test4.space()),test4.var(0) == 1);
 
@@ -116,7 +116,7 @@ int main() {
     // Ax in 1..3 [x=1] -> Ey in 1..3 [x=2] -> y=1
     int sc5[] = {1,1};
     bool q5[] = {QECODE_UNIVERSAL,QECODE_EXISTENTIAL};
-    Implicative test5(2,q5,sc5);
+    Qcop test5(2,q5,sc5);
     test5.QIntVar(0,1,3);
     test5.QIntVar(1,1,3);
     post(*(test5.space()),test5.var(0) == 1);
@@ -147,7 +147,7 @@ int main() {
     // Ax in 1..3 [x=1] -> Ey in 1..3 [x=1] -> x=2
     int sc6[] = {1,1};
     bool q6[] = {QECODE_UNIVERSAL,QECODE_EXISTENTIAL};
-    Implicative test6(2,q6,sc6);
+    Qcop test6(2,q6,sc6);
     test6.QIntVar(0,1,3);
     test6.QIntVar(1,1,3);
     post(*(test6.space()),test6.var(0) == 1);
@@ -178,7 +178,7 @@ int main() {
     //Ex in 1..3 [] Ay in 0..3 [y<2] -> y=0
     int sc7[] = {1,1};
     bool q7[] = {QECODE_EXISTENTIAL,QECODE_UNIVERSAL};
-    Implicative test7(2,q7,sc7);
+    Qcop test7(2,q7,sc7);
     test7.QIntVar(0,1,3);
     test7.QIntVar(1,0,3);
 
@@ -208,7 +208,7 @@ int main() {
     //Ex in 1..3 [] Ay in 0..3 [y=0] -> y=0
     int sc8[] = {1,1};
     bool q8[] = {QECODE_EXISTENTIAL,QECODE_UNIVERSAL};
-    Implicative test8(2,q8,sc8);
+    Qcop test8(2,q8,sc8);
     test8.QIntVar(0,1,3);
     test8.QIntVar(1,0,3);
 

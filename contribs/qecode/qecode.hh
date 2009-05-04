@@ -1,5 +1,5 @@
-/****   , [ qecode.hh ],
-Copyright (c) 2007 Universite d'Orleans - Jeremie Vautard
+/****   , [ qecode.hh ], 
+Copyright (c) 2007 Universite d'Orleans - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef __QECODE_HH__
 #define __QECODE_HH__
 
-#include <gecode/kernel.hh>
+#include "gecode/kernel.hh"
 
 #if !defined(GECODE_STATIC_LIBS) && \
 (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))

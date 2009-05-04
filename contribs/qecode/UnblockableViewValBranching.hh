@@ -1,5 +1,5 @@
-/****   qecode2, [ vartype.hh ], 
-Copyright (c) 2007 Universite d'Orleans - Jeremie Vautard 
+/****   , [ UnblockableViewValBranching.hh ], 
+Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,13 +19,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
+#ifndef __QECODE_UNBLOK_VIEWVAL_BRANCH__
+#define __QECODE_UNBLOK_VIEWVAL_BRANCH__
 
-#ifndef QECODE_VARTYPE
-#define QECODE_VARTYPE
+#include "qecode.hh"
+#include "gecode/minimodel.hh"
+#include "qecode.hh"
+#include "UnblockableBranching.hh"
 
-enum VarType {
-    VTYPE_INT,
-    VTYPE_BOOL
+class QECODE_VTABLE_EXPORT UnblockableViewValBranching : public UnblockableBranching {
+private :
+    IntVarBranch ivrb;
+    IntVarBranch bvrb;
+    IntValBranch ivlb;
+    IntValBranch bvlb;
+    bool before;
+    
+public :
+    QECODE_EXPORT UnblockableViewValBranching(IntVarBranch vrb,IntValBranch vlb,bool booleans_before);
+    QECODE_EXPORT UnblockableViewValBranching(IntVarBranch Ivrb,IntValBranch Ivlb,IntVarBranch Bvrb,IntValBranch Bvlb,bool booleans_before);
+    QECODE_EXPORT virtual void branch(MySpace* s,IntVarArgs ivars, BoolVarArgs bvars);
 };
 
 #endif
+
