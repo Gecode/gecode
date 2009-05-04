@@ -1107,17 +1107,9 @@ AC_DEFUN([AC_GECODE_THREADS],[
   )
   AC_CHECK_HEADER(pthread.h,
   [AC_DEFINE(GECODE_THREADS_PTHREADS,1,[Whether we have posix threads])
+   AC_GECODE_ADD_TO_GLDFLAGS([-lpthread])
   ],
   [AC_CHECK_HEADER(windows.h,
     [AC_DEFINE(GECODE_THREADS_WINDOWS,1,[Whether we have windows threads])])]
   )
 ])
-
-
-
-
-
-
-
-
-
