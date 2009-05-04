@@ -209,7 +209,7 @@ SEARCHSRC0 = \
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp \
 	support.hh worker.hh \
-	sequential/path.hh parallel/path.hpp \
+	sequential/path.hh parallel/path.hh \
 	dfs.hpp sequential/dfs.hh bab.hpp restart.hpp lds.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
