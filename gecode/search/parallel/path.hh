@@ -262,7 +262,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     while (n >= 0) {
       if (ds[n].stealable())
         w++;
-      if (w > 4) {
+      if (w > 5) {
         // Okay, there is sufficient work left
         int l=n;
         // Find last copy
