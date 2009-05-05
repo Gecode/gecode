@@ -76,7 +76,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Try to find some work
       void find(void);
       /// Return statistics
-      Statistics statistics(void) const;
+      Statistics statistics(void);
       /// Destructor
       ~Worker(void);
     };
@@ -323,15 +323,19 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Statistics
    */
   forceinline Statistics
-  DFS::Worker::statistics(void) const {
+  DFS::Worker::statistics(void) {
+    m.acquire();
     Statistics s = *this;
     s.memory += path.size();
+    m.release();
     return s;
   }
 
   Statistics 
   DFS::statistics(void) const {
     Statistics s;
+    for (unsigned int i=0; i<workers(); i++)
+      s += worker(i)->statistics();
     return s;
   }
 

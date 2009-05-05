@@ -1136,6 +1136,10 @@ namespace Gecode {
     StatusStatistics(void);
     /// Reset information
     void reset(void);
+    /// Return sum with \a s
+    StatusStatistics operator +(const StatusStatistics& s);
+    /// Increment by statistics \a s
+    StatusStatistics& operator +=(const StatusStatistics& s);
   };
 
   /**
@@ -1148,6 +1152,10 @@ namespace Gecode {
     CloneStatistics(void);
     /// Reset information
     void reset(void);
+    /// Return sum with \a s
+    CloneStatistics operator +(const CloneStatistics& s);
+    /// Increment by statistics \a s
+    CloneStatistics& operator +=(const CloneStatistics& s);
   };
 
   /**
@@ -1160,6 +1168,10 @@ namespace Gecode {
     CommitStatistics(void);
     /// Reset information
     void reset(void);
+    /// Return sum with \a s
+    CommitStatistics operator +(const CommitStatistics& s);
+    /// Increment by statistics \a s
+    CommitStatistics& operator +=(const CommitStatistics& s);
   };
 
   /**
@@ -3204,10 +3216,20 @@ namespace Gecode {
     propagate = 0;
     wmp = false;
   }
-
   forceinline
   StatusStatistics::StatusStatistics(void) {
     reset();
+  }
+  forceinline StatusStatistics&
+  StatusStatistics::operator +=(const StatusStatistics& s) { 
+    propagate += s.propagate;
+    wmp |= s.wmp;
+    return *this;
+  }
+  forceinline StatusStatistics
+  StatusStatistics::operator +(const StatusStatistics& s) {
+    StatusStatistics t(s);
+    return t += *this;
   }
 
   forceinline void
@@ -3217,6 +3239,15 @@ namespace Gecode {
   CloneStatistics::CloneStatistics(void) {
     reset();
   }
+  forceinline CloneStatistics
+  CloneStatistics::operator +(const CloneStatistics&) {
+    CloneStatistics s;
+    return s;
+  }
+  forceinline CloneStatistics&
+  CloneStatistics::operator +=(const CloneStatistics&) { 
+    return *this;
+  }
 
   forceinline void
   CommitStatistics::reset(void) {}
@@ -3224,6 +3255,15 @@ namespace Gecode {
   forceinline
   CommitStatistics::CommitStatistics(void) {
     reset();
+  }
+  forceinline CommitStatistics
+  CommitStatistics::operator +(const CommitStatistics&) {
+    CommitStatistics s;
+    return s;
+  }
+  forceinline CommitStatistics&
+  CommitStatistics::operator +=(const CommitStatistics&) { 
+    return *this;
   }
 
   /*

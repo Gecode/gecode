@@ -35,6 +35,8 @@
  *
  */
 
+#include <algorithm>
+
 namespace Gecode { namespace Search {
 
   forceinline void
@@ -46,6 +48,22 @@ namespace Gecode { namespace Search {
   forceinline
   Statistics::Statistics(void)
     : fail(0), node(0), depth(0), memory(0) {}
+
+  forceinline Statistics&
+  Statistics::operator +=(const Statistics& s) {
+    (void) StatusStatistics::operator +=(s);
+    fail += s.fail;
+    node += s.node;
+    depth = std::max(depth,s.depth);
+    memory += s.memory;
+    return *this;
+  }
+
+  forceinline Statistics
+  Statistics::operator +(const Statistics& s) {
+    Statistics t(s); 
+    return t += *this;
+  }
 
 }}
 

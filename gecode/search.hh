@@ -115,6 +115,10 @@ namespace Gecode {
       Statistics(void);
       /// Reset
       void reset(void);
+      /// Return sum with \a s
+      Statistics operator +(const Statistics& s);
+      /// Increment by statistics \a s
+      Statistics& operator +=(const Statistics& s);
     };
 
 
