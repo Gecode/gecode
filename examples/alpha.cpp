@@ -55,12 +55,13 @@ protected:
   /// Alphabet has 26 letters
   static const int n = 26;
   /// Array for letters
-  IntVarArray      le;
+  IntVarArray le;
 public:
   /// Branching to use for model
   enum {
-    BRANCH_NONE, ///< Choose variable left to right
-    BRANCH_SIZE  ///< Choose variable with smallest size
+    BRANCH_NONE,    ///< Choose variable left to right
+    BRANCH_INVERSE, ///< Choose variable right to left
+    BRANCH_SIZE     ///< Choose variable with smallest size
   };
   /// Actual model
   Alpha(const Options& opt) : le(*this,n,1,n) {
@@ -94,9 +95,23 @@ public:
 
     distinct(*this, le, opt.icl());
 
-    branch(*this, le,
-           (opt.branching() == BRANCH_NONE) ? INT_VAR_NONE : INT_VAR_SIZE_MIN,
-           INT_VAL_MIN);
+    switch (opt.branching()) {
+    case BRANCH_NONE:
+      branch(*this, le, INT_VAR_NONE, INT_VAL_MIN);
+      break;
+    case BRANCH_INVERSE:
+      {
+        IntVarArgs el(le.size());
+        int j=0;
+        for (int i=le.size(); i--; )
+          el[j++]=le[i];
+        branch(*this, el, INT_VAR_NONE, INT_VAL_MIN);
+      }
+      break;
+    case BRANCH_SIZE:
+      branch(*this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+      break;
+    }
   }
 
   /// Constructor for cloning \a s
@@ -131,6 +146,7 @@ main(int argc, char* argv[]) {
   opt.iterations(10);
   opt.branching(Alpha::BRANCH_NONE);
   opt.branching(Alpha::BRANCH_NONE, "none");
+  opt.branching(Alpha::BRANCH_INVERSE, "inverse");
   opt.branching(Alpha::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
   Script::run<Alpha,DFS,Options>(opt);
