@@ -409,10 +409,14 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   forceinline void 
   DFS::terminated(void) {
+    unsigned int n;
     _m_terminate.acquire();
-    if (--_n_not_terminated == 0)
-      _e_terminate.signal();
+    n = --_n_not_terminated;
     _m_terminate.release();
+    // The signal must be outside of the look, otherwise a thread might be 
+    // terminated that still holds a mutex.
+    if (n == 0)
+      _e_terminate.signal();
   }
 
 
