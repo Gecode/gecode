@@ -448,7 +448,9 @@ namespace Gecode { namespace Search { namespace Parallel {
           // Reset this guy
           m.acquire();
           idle = false;
+          d = 0;
           cur = s;
+          Search::Worker::reset(cur);
           m.release();
           return;
         }
