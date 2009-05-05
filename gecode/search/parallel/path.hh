@@ -90,6 +90,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       bool stealable(void) const;
       /// Move to next alternative
       void next(void);
+      /// Steal rightmost alternative and return its number
+      unsigned int steal(void);
       
       /// Free memory for node
       void dispose(void);
@@ -162,6 +164,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline void
   Path::Node::next(void) {
     _alt++;
+  }
+  forceinline unsigned int
+  Path::Node::steal(void) {
+    assert(stealable());
+    return _alt_max--;
   }
 
   forceinline const BranchingDesc*
@@ -249,6 +256,26 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   inline Space*
   Path::steal(void) {
+    // Find position to steal: leave sufficient work
+    int n = ds.entries()-1;
+    int w = 0;
+    while (n >= 0) {
+      if (ds[n].stealable())
+        w++;
+      if (w > 4) {
+        // Okay, there is sufficient work left
+        int l=n;
+        // Find last copy
+        while (ds[l].space() == NULL)
+          l--;
+        Space* c = ds[l].space()->clone(false);
+        for (int i=l; i<n; i++)
+          commit(c,i);
+        commit(c,ds[n].steal());
+        return c;
+      }
+      n--;
+    }
     return NULL;
   }
 

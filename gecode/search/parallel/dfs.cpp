@@ -438,6 +438,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     if (idle)
       return NULL;
     m.acquire();
+    // Reember to count intial clone!
     Space* s = path.steal();
     m.release();
     // Tell that there will be one more busy worker
