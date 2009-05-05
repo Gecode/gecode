@@ -449,6 +449,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   void
   DFS::Worker::find(void) {
+#define GECODE_SEARCH_TRACE 1
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine.workers(); i++)
       if (engine.worker(i) != this) {
@@ -460,21 +461,15 @@ namespace Gecode { namespace Search { namespace Parallel {
 #ifdef GECODE_SEARCH_TRACE
           std::cout << "STOLEN (" << number() << ")" << std::endl;
 #endif
+#undef GECODE_SEARCH_TRACE
           // Reset this guy
           m.acquire();
           idle = false;
           cur = s;
           m.release();
-          break;
+          return;
         }
       }
-#ifdef GECODE_SEARCH_TRACE
-    std::cout << "BEFORE SLEEP (" << number() << ")" << std::endl;
-#endif
-    Support::Thread::sleep(10);
-#ifdef GECODE_SEARCH_TRACE
-    std::cout << "AFTER IDLE (" << number() << ")" << std::endl;
-#endif
   }
 
   void
@@ -521,9 +516,11 @@ namespace Gecode { namespace Search { namespace Parallel {
               m.release();
               engine.stop();
             } else {
+#define GECODE_SEARCH_TRACE 1
 #ifdef GECODE_SEARCH_TRACE
               std::cout << "EXPLORE (" << number() << ")" << std::endl;
 #endif
+#undef GECODE_SEARCH_TRACE
               node++;
               switch (cur->status(*this)) {
               case SS_FAILED:

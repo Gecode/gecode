@@ -269,6 +269,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         while (ds[l].space() == NULL)
           l--;
         Space* c = ds[l].space()->clone(false);
+        // Recompute, if necessary
         for (int i=l; i<n; i++)
           commit(c,i);
         commit(c,ds[n].steal());
