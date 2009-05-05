@@ -123,13 +123,23 @@ namespace Gecode { namespace Search { namespace Parallel {
   protected:
     /// Mutex for access to termination information
     Support::Mutex _m_terminate;
+    /// Number of workers that have not yet acknowledged termination
+    volatile unsigned int _n_not_acknowledged;
+    /// Event for termination acknowledgment
+    Support::Event _e_acknowledged;
+    /// Mutex for waiting for termination
+    Support::Mutex _m_wait_terminate;
     /// Number of not yet terminated workers
     volatile unsigned int _n_not_terminated;
     /// Event for termination (all threads have terminated)
     Support::Event _e_terminate;
   public:
+    /// For worker to acknowledge termination command
+    void acknowledge(void);
     /// For worker to register termination
     void terminated(void);
+    /// For worker to wait until termination is legal
+    void wait_terminate(void);
     //@}
 
     /// \name Search control
@@ -251,6 +261,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     for (unsigned int i=0; i<workers(); i++)
       (void) new (&_thread[i]) Support::Thread(_worker[i]);
     // Initialize termination information
+    _n_not_acknowledged = workers();
     _n_not_terminated = workers();
     // Initialize search information
     n_busy = workers();
@@ -419,6 +430,20 @@ namespace Gecode { namespace Search { namespace Parallel {
       _e_terminate.signal();
   }
 
+  forceinline void 
+  DFS::acknowledge(void) {
+    _m_terminate.acquire();
+    if (--_n_not_acknowledged == 0)
+      _e_acknowledged.signal();
+    _m_terminate.release();
+  }
+
+  forceinline void 
+  DFS::wait_terminate(void) {
+    _m_wait_terminate.acquire();
+    _m_wait_terminate.release();
+  }
+
 
   /*
    * Worker: finding and stealing working
@@ -471,6 +496,10 @@ namespace Gecode { namespace Search { namespace Parallel {
         engine.wait();
         break;
       case DFS::C_TERMINATE:
+        // Acknowledge termination request
+        engine.acknowledge();
+        // Wait until termination can proceed
+        engine.wait_terminate();
         // Terminate thread
         engine.terminated();
         return;
@@ -557,8 +586,14 @@ namespace Gecode { namespace Search { namespace Parallel {
     path.reset();
   }
   DFS::~DFS(void) {
+    // Grab the wait mutex for termination
+    _m_wait_terminate.acquire();
     // Release all threads
     release(C_TERMINATE);
+    // Wait until all threads have acknowledged termination request
+    _e_acknowledged.wait();
+    // Release waiting threads
+    _m_wait_terminate.release();    
     // Wait until all threads have in fact terminated
     _e_terminate.wait();
     // Now all threads are terminated!
