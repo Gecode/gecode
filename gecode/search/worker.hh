@@ -84,6 +84,8 @@ namespace Gecode { namespace Search {
     void reset(void);
     /// Record stack depth \a d
     void stack_depth(unsigned long int d);
+    /// Return steal depth
+    unsigned long int steal_depth(unsigned long int d) const;
   };
 
 
@@ -186,6 +188,11 @@ namespace Gecode { namespace Search {
   Worker::stack_depth(unsigned long int d) {
     if (depth < root_depth + d)
       depth = root_depth + d;
+  }
+
+  forceinline unsigned long int
+  Worker::steal_depth(unsigned long int d) const {
+    return root_depth + d;
   }
 
 }}

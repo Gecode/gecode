@@ -72,7 +72,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Start execution of worker
       virtual void run(void);
       /// Hand over some work (NULL if no work available)
-      Space* steal(void);
+      Space* steal(unsigned long int& d);
       /// Try to find some work
       void find(void);
       /// Return statistics
@@ -420,7 +420,7 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Worker: finding and stealing working
    */
   Space*
-  DFS::Worker::steal(void) {
+  DFS::Worker::steal(unsigned long int& d) {
     /*
      * Make a quick whether the work is idle.
      *
@@ -430,8 +430,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     if (idle)
       return NULL;
     m.acquire();
-    // Reember to count intial clone!
-    Space* s = path.steal();
+    Space* s = path.steal(*this,d);
     m.release();
     // Tell that there will be one more busy worker
     if (s != NULL) 
@@ -442,15 +441,16 @@ namespace Gecode { namespace Search { namespace Parallel {
   void
   DFS::Worker::find(void) {
     // Try to find new work (even if there is none)
+    unsigned long int d;
     for (unsigned int i=0; i<engine.workers(); i++)
       if (engine.worker(i) != this)
-        if (Space* s = engine.worker(i)->steal()) {
+        if (Space* s = engine.worker(i)->steal(d)) {
           // Reset this guy
           m.acquire();
           idle = false;
           d = 0;
           cur = s;
-          Search::Worker::reset(cur);
+          Search::Worker::reset(cur,d);
           m.release();
           return;
         }

@@ -122,8 +122,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     size_t size(void) const;
     /// Reset stack
     void reset(void);
-    /// Steal work
-    Space* steal(void);
+    /// Steal work at depth \a d
+    Space* steal(Worker& stat, unsigned long int& d);
   };
 
 
@@ -254,7 +254,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   inline Space*
-  Path::steal(void) {
+  Path::steal(Worker& stat, unsigned long int& d) {
     // Find position to steal: leave sufficient work
     int n = ds.entries()-1;
     int w = 0;
@@ -272,6 +272,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         for (int i=l; i<n; i++)
           commit(c,i);
         c->commit(*ds[n].desc(),ds[n].steal());
+        d = stat.steal_depth(static_cast<unsigned long int>(n));
         return c;
       }
       n--;
