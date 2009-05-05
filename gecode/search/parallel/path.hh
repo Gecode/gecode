@@ -272,7 +272,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         for (int i=l; i<n; i++)
           commit(c,i);
         c->commit(*ds[n].desc(),ds[n].steal());
-        d = stat.steal_depth(static_cast<unsigned long int>(n));
+        d = stat.steal_depth(static_cast<unsigned long int>(n+1));
         return c;
       }
       n--;
