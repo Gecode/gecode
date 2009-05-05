@@ -95,6 +95,9 @@ namespace Gecode {
       const unsigned int a_d = 2;
       /// Default discrepancy limit for LDS
       const unsigned int d = 5;
+
+      /// Minimal number of open nodes for stealing
+      const int steal_limit = 5;
     }
 
     /**
