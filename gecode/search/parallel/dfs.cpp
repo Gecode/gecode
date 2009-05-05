@@ -44,24 +44,55 @@
 
 namespace Gecode { namespace Search { namespace Parallel {
 
-  class DfsWorker;
-
   /// Parallel DFS engine
-  class DfsEngine : public Engine {
+  class DFS : public Engine {
   protected:
+    /// Parallel depth-first search worker
+    class Worker : public Search::Worker, public Support::Runnable {
+    private:
+      /// Reference to engine
+      DFS& engine;
+      /// Mutex for access to worker
+      Support::Mutex m;
+      /// Current path ins search tree
+      Path path;
+      /// Current space being explored
+      Space* cur;
+      /// Distance until next clone
+      unsigned int d;
+      /// Whether worker is currently idle
+      bool idle;
+    protected:
+      /// Reset engine to restart at space \a s
+      void reset(Space* s);
+    public:
+      /// Initialize for space \a s (of size \a sz) with engine \a e
+      Worker(Space* s, size_t sz, DFS& e);
+      unsigned int number(void) const;
+      /// Start execution of worker
+      virtual void run(void);
+      /// Hand over some work (NULL if no work available)
+      Space* steal(void);
+      /// Try to find some work
+      void find(void);
+      /// Return statistics
+      Statistics statistics(void) const;
+      /// Destructor
+      ~Worker(void);
+    };
     /// Search options
     const Options _opt;
     /// Array of threads
     Support::Thread* _thread;
     /// Array of worker references
-    DfsWorker** _worker;
+    Worker** _worker;
   public:
     /// Provide access to search options
     const Options& opt(void) const;
     /// Return number of workers
     unsigned int workers(void) const;
     /// Provide access to worker \a i
-    DfsWorker* worker(unsigned int i) const;
+    Worker* worker(unsigned int i) const;
     
     /// \name Commands from engine to workers and wait management
     //@{
@@ -80,19 +111,11 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// Return current command
     Cmd cmd(void) const;
     /// Block all workers
-    void block(void) {
-      _cmd = C_WAIT;
-      _m_wait.acquire();
-    }
+    void block(void);
     /// Release all workers
-    void release(Cmd c) {
-      _cmd = c;
-      _m_wait.release();
-    }
+    void release(Cmd c);
     /// Ensure that worker waits
-    void wait(void) {
-      _m_wait.acquire(); _m_wait.release();
-    }
+    void wait(void);
     //@}
 
     /// \name Termination control
@@ -106,12 +129,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     Support::Event _e_terminate;
   public:
     /// For worker to register termination
-    void terminated(void) {
-      _m_terminate.acquire();
-      if (--_n_not_terminated == 0)
-        _e_terminate.signal();
-      _m_terminate.release();
-    }
+    void terminated(void);
     //@}
 
     /// \name Search control
@@ -131,43 +149,19 @@ namespace Gecode { namespace Search { namespace Parallel {
     bool signal(void) const;
   public:
     /// Report solution \a s
-    void solution(Space* s) {
-      m_search.acquire();
-      bool bs = signal();
-      solutions.push(s);
-      if (bs)
-        e_search.signal();
-      m_search.release();
-    }
+    void solution(Space* s);
     /// Report that worker is idle
-    void idle(void) {
-      m_search.acquire();
-      bool bs = signal();
-      n_busy--;
-      if (bs && (n_busy == 0))
-        e_search.signal();
-      m_search.release();
-    }
+    void idle(void);
     /// Report that worker is busy
-    void busy(void) {
-      m_search.acquire();
-      assert(n_busy > 0);
-      n_busy++;
-      m_search.release();
-    }
+    void busy(void);
     /// Report that worker has been stopped
-    void stop(void) {
-      m_search.acquire();
-      bool bs = signal();
-      has_stopped = true;
-      if (bs)
-        e_search.signal();
-      m_search.release();
-    }
+    void stop(void);
     //@}
 
+    /// \name Engine interface
+    //@{
     /// Initialize for space \a s (of size \a sz) with options \a o
-    DfsEngine(Space* s, size_t sz, const Options& o);
+    DFS(Space* s, size_t sz, const Options& o);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
@@ -175,80 +169,80 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
     /// Destructor
-    virtual ~DfsEngine(void);
+    virtual ~DFS(void);
+    //@}
   };
 
 
-  /// Parallel depth-first search worker
-  class GECODE_SEARCH_EXPORT DfsWorker 
-    : public Worker, public Support::Runnable {
-  private:
-    /// Reference to engine
-    DfsEngine& engine;
-    /// Mutex for access to worker
-    Support::Mutex m;
-    /// Current path ins search tree
-    Path path;
-    /// Current space being explored
-    Space* cur;
-    /// Distance until next clone
-    unsigned int d;
-    /// Whether worker is currently idle
-    bool idle;
-  protected:
-    /// Reset engine to restart at space \a s
-    void reset(Space* s);
-  public:
-    /// Initialize for space \a s (of size \a sz) with engine \a e
-    DfsWorker(Space* s, size_t sz, DfsEngine& e);
-    unsigned int number(void) const;
-    /// Start execution of worker
-    virtual void run(void);
-    /// Hand over some work (NULL if no work available)
-    Space* steal(void);
-    /// Try to find some work
-    void find(void);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Destructor
-    ~DfsWorker(void);
-  };
-
-
+  /*
+   * Engine: basic access routines
+   */
   forceinline const Options&
-  DfsEngine::opt(void) const {
+  DFS::opt(void) const {
     return _opt;
   }
   forceinline unsigned int
-  DfsEngine::workers(void) const {
+  DFS::workers(void) const {
     return opt().threads;
   }
-  forceinline DfsWorker*
-  DfsEngine::worker(unsigned int i) const {
+  forceinline DFS::Worker*
+  DFS::worker(unsigned int i) const {
     return _worker[i];
   }
 
-  /*
-   * Engine: command handling
-   */
-  forceinline DfsEngine::Cmd
-  DfsEngine::cmd(void) const {
-    return _cmd;
-  }
 
   /*
-   * Engine
+   * Engine: command and wait handling
    */
-  DfsEngine::DfsEngine(Space* s, size_t sz, const Options& o)
+  forceinline DFS::Cmd
+  DFS::cmd(void) const {
+    return _cmd;
+  }
+  forceinline void 
+  DFS::block(void) {
+    _cmd = C_WAIT;
+    _m_wait.acquire();
+  }
+  forceinline void 
+  DFS::release(Cmd c) {
+    _cmd = c;
+    _m_wait.release();
+  }
+  forceinline void 
+  DFS::wait(void) {
+    _m_wait.acquire(); _m_wait.release();
+  }
+
+
+  /*
+   * Engine: initialization
+   */
+  forceinline
+  DFS::Worker::Worker(Space* s, size_t sz, DFS& e)
+    : Search::Worker(sz), engine(e), d(0), idle(false) {
+    if (s != NULL) {
+      cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,engine.opt());
+      if (cur == NULL)
+        fail++;
+    } else {
+      cur = NULL;
+    }
+    current(s);
+    current(NULL);
+    current(cur);
+  }
+
+  forceinline
+  DFS::DFS(Space* s, size_t sz, const Options& o)
     : _opt(o), solutions(heap) {
     // Create workers
-    _worker = static_cast<DfsWorker**>
-      (heap.ralloc(workers() * sizeof(DfsWorker*)));
+    _worker = static_cast<Worker**>
+      (heap.ralloc(workers() * sizeof(Worker*)));
     // The first worker gets the entire search tree
-    _worker[0] = new DfsWorker(s,sz,*this);
+    _worker[0] = new Worker(s,sz,*this);
     // All other workers start with no work
     for (unsigned int i=1; i<workers(); i++)
-      _worker[i] = new DfsWorker(NULL,sz,*this);
+      _worker[i] = new Worker(NULL,sz,*this);
     // Block all workers
     block();
     // Create and start threads
@@ -263,8 +257,12 @@ namespace Gecode { namespace Search { namespace Parallel {
     has_stopped = false;
   }
 
+
+  /*
+   * Engine: search control
+   */
   Space* 
-  DfsEngine::next(void) {
+  DFS::next(void) {
     // Invariant: the worker holds the wait mutex
     m_search.acquire();
     if (!solutions.empty()) {
@@ -324,53 +322,33 @@ namespace Gecode { namespace Search { namespace Parallel {
     return NULL;
   }
 
-  bool
-  DfsEngine::signal(void) const {
-    return solutions.empty() && (n_busy > 0) && !has_stopped;
-  }
-
-  Statistics 
-  DfsEngine::statistics(void) const {
-    Statistics s;
-    return s;
-  }
 
   bool 
-  DfsEngine::stopped(void) const {
+  DFS::stopped(void) const {
     return has_stopped;
   }
 
-  DfsEngine::~DfsEngine(void) {
-    // Release all threads
-    release(C_TERMINATE);
-    // Wait until all threads have in fact terminated
-    _e_terminate.wait();
-    // Now all threads are terminated!
-    heap.rfree(_worker);
-    heap.rfree(_thread);
-  }
 
 
 
   /*
-   * Worker
+   * Statistics
    */
-  DfsWorker::DfsWorker(Space* s, size_t sz, DfsEngine& e)
-    : Worker(sz), engine(e), d(0), idle(false) {
-    if (s != NULL) {
-      cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,engine.opt());
-      if (cur == NULL)
-        fail++;
-    } else {
-      cur = NULL;
-    }
-    current(s);
-    current(NULL);
-    current(cur);
+  forceinline Statistics
+  DFS::Worker::statistics(void) const {
+    Statistics s = *this;
+    s.memory += path.size();
+    return s;
+  }
+
+  Statistics 
+  DFS::statistics(void) const {
+    Statistics s;
+    return s;
   }
 
   unsigned int
-  DfsWorker::number(void) const {
+  DFS::Worker::number(void) const {
     unsigned int i = 0;
     while (engine.worker(i) != this)
       i++;
@@ -378,21 +356,79 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   void
-  DfsWorker::reset(Space* s) {
+  DFS::Worker::reset(Space* s) {
     delete cur;
     path.reset();
     d = 0;
     if (s->status(*this) == SS_FAILED) {
       cur = NULL;
-      Worker::reset();
+      Search::Worker::reset();
     } else {
       cur = s->clone();
-      Worker::reset(cur);
+      Search::Worker::reset(cur);
     }
   }
 
+  /*
+   * Engine: search control
+   */
+  forceinline bool
+  DFS::signal(void) const {
+    return solutions.empty() && (n_busy > 0) && !has_stopped;
+  }
+  forceinline void 
+  DFS::solution(Space* s) {
+    m_search.acquire();
+    bool bs = signal();
+    solutions.push(s);
+    if (bs)
+      e_search.signal();
+    m_search.release();
+  }
+  forceinline void 
+  DFS::idle(void) {
+    m_search.acquire();
+    bool bs = signal();
+    n_busy--;
+    if (bs && (n_busy == 0))
+      e_search.signal();
+    m_search.release();
+  }
+  forceinline void 
+  DFS::busy(void) {
+    m_search.acquire();
+    assert(n_busy > 0);
+    n_busy++;
+    m_search.release();
+  }
+  forceinline void 
+  DFS::stop(void) {
+    m_search.acquire();
+    bool bs = signal();
+    has_stopped = true;
+    if (bs)
+      e_search.signal();
+    m_search.release();
+  }
+  
+
+  /*
+   * Engine: termination control
+   */
+  forceinline void 
+  DFS::terminated(void) {
+    _m_terminate.acquire();
+    if (--_n_not_terminated == 0)
+      _e_terminate.signal();
+    _m_terminate.release();
+  }
+
+
+  /*
+   * Worker: finding and stealing working
+   */
   Space*
-  DfsWorker::steal(void) {
+  DFS::Worker::steal(void) {
     /*
      * Make a quick whether the work is idle.
      *
@@ -409,8 +445,9 @@ namespace Gecode { namespace Search { namespace Parallel {
       engine.busy();
     return s;
   }
+
   void
-  DfsWorker::find(void) {
+  DFS::Worker::find(void) {
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine.workers(); i++)
       if (engine.worker(i) != this) {
@@ -438,15 +475,16 @@ namespace Gecode { namespace Search { namespace Parallel {
     std::cout << "AFTER IDLE (" << number() << ")" << std::endl;
 #endif
   }
+
   void
-  DfsWorker::run(void) {
+  DFS::Worker::run(void) {
     // Okay, we are in business, start working
     while (true) {
 #ifdef GECODE_SEARCH_TRACE
       std::cout << "RUN (" << number() << ")" << std::endl;
 #endif
       switch (engine.cmd()) {
-      case DfsEngine::C_WAIT:
+      case DFS::C_WAIT:
         // Wait as ordered by engine
 #ifdef GECODE_SEARCH_TRACE
         std::cout << "WAIT (" << number() << ")" << std::endl;
@@ -456,7 +494,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         std::cout << "CONTINUE (" << number() << ")" << std::endl;
 #endif
         break;
-      case DfsEngine::C_TERMINATE:
+      case DFS::C_TERMINATE:
         // Terminate thread
 #ifdef GECODE_SEARCH_TRACE
         std::cout << "TERMINATE (" << number() << ")" << std::endl;
@@ -466,7 +504,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         std::cout << "LEAVING (" << number() << ")" << std::endl;
 #endif
         return;
-      case DfsEngine::C_WORK:
+      case DFS::C_WORK:
         {
           m.acquire();
           if (idle) {
@@ -548,23 +586,29 @@ namespace Gecode { namespace Search { namespace Parallel {
     }
   }
 
-  Statistics
-  DfsWorker::statistics(void) const {
-    Statistics s = *this;
-    s.memory += path.size();
-    return s;
-  }
 
-  DfsWorker::~DfsWorker(void) {
+  /*
+   * Termination and deletion
+   */
+  DFS::Worker::~Worker(void) {
     delete cur;
     path.reset();
+  }
+  DFS::~DFS(void) {
+    // Release all threads
+    release(C_TERMINATE);
+    // Wait until all threads have in fact terminated
+    _e_terminate.wait();
+    // Now all threads are terminated!
+    heap.rfree(_worker);
+    heap.rfree(_thread);
   }
 
 
   // Create parallel depth-first engine
   Engine* dfs(Space* s, size_t sz, const Options& o) {
-        return new DfsEngine(s,sz,o);
-        // return ::Gecode::Search::Sequential::dfs(s,sz,o);
+    return new DFS(s,sz,o);
+    // return ::Gecode::Search::Sequential::dfs(s,sz,o);
   }
 
 }}}
