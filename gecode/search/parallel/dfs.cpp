@@ -289,12 +289,18 @@ namespace Gecode { namespace Search { namespace Parallel {
      * something new happened.
      */
     while (true) {
+#ifdef GECODE_SEARCH_TRACE
       std::cout << "WAITING ON SIGNAL" << std::endl;
+#endif
       e_search.wait();
+#ifdef GECODE_SEARCH_TRACE
       std::cout << "AFTER SIGNAL" << std::endl;
+#endif
       m_search.acquire();
       if (!solutions.empty()) {
+#ifdef GECODE_SEARCH_TRACE
         std::cout << "FOUND SOLUTION" << std::endl;
+#endif
         // Report solution
         Space* s = solutions.pop();
         m_search.release();
@@ -304,7 +310,9 @@ namespace Gecode { namespace Search { namespace Parallel {
       }
       // No more solutions or stopped?
       if ((n_busy == NULL) || has_stopped) {
+#ifdef GECODE_SEARCH_TRACE
         std::cout << "FOUND OTHER SEARCH EVENT" << std::endl;
+#endif
         m_search.release();
         // Make workers wait again
         block();
@@ -406,10 +414,14 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine.workers(); i++)
       if (engine.worker(i) != this) {
+#ifdef GECODE_SEARCH_TRACE
         std::cout << "STEAL (" << i << " -> " 
                   << number() << ")" << std::endl;
+#endif
         if (Space* s = engine.worker(i)->steal()) {
+#ifdef GECODE_SEARCH_TRACE
           std::cout << "STOLEN (" << number() << ")" << std::endl;
+#endif
           // Reset this guy
           m.acquire();
           idle = false;
@@ -418,33 +430,49 @@ namespace Gecode { namespace Search { namespace Parallel {
           break;
         }
       }
+#ifdef GECODE_SEARCH_TRACE
     std::cout << "BEFORE SLEEP (" << number() << ")" << std::endl;
+#endif
     Support::Thread::sleep(10);
+#ifdef GECODE_SEARCH_TRACE
     std::cout << "AFTER IDLE (" << number() << ")" << std::endl;
+#endif
   }
   void
   DfsWorker::run(void) {
     // Okay, we are in business, start working
     while (true) {
+#ifdef GECODE_SEARCH_TRACE
       std::cout << "RUN (" << number() << ")" << std::endl;
+#endif
       switch (engine.cmd()) {
       case DfsEngine::C_WAIT:
         // Wait as ordered by engine
+#ifdef GECODE_SEARCH_TRACE
         std::cout << "WAIT (" << number() << ")" << std::endl;
+#endif
         engine.wait();
+#ifdef GECODE_SEARCH_TRACE
         std::cout << "CONTINUE (" << number() << ")" << std::endl;
+#endif
         break;
       case DfsEngine::C_TERMINATE:
         // Terminate thread
+#ifdef GECODE_SEARCH_TRACE
         std::cout << "TERMINATE (" << number() << ")" << std::endl;
+#endif
         engine.terminated();
+#ifdef GECODE_SEARCH_TRACE
         std::cout << "LEAVING (" << number() << ")" << std::endl;
+#endif
         return;
       case DfsEngine::C_WORK:
         {
           m.acquire();
           if (idle) {
+#ifdef GECODE_SEARCH_TRACE
             std::cout << "IDLE (" << number() << ")" << std::endl;
+#endif
             m.release();
             find();
           } else if (cur != NULL) {
@@ -454,7 +482,9 @@ namespace Gecode { namespace Search { namespace Parallel {
               m.release();
               engine.stop();
             } else {
+#ifdef GECODE_SEARCH_TRACE
               std::cout << "EXPLORE (" << number() << ")" << std::endl;
+#endif
               node++;
               switch (cur->status(*this)) {
               case SS_FAILED:
@@ -497,21 +527,23 @@ namespace Gecode { namespace Search { namespace Parallel {
               }
             }
           } else {
+#ifdef GECODE_SEARCH_TRACE
             std::cout << "RECOMPUTE (" << number() << ")" << std::endl;
-            if (!path.next(*this)) {
+#endif
+            if (path.next(*this)) {
+              cur = path.recompute(d,engine.opt().a_d,*this);
+              Worker::current(cur);
+            } else {
               idle = true;
-              m.release();
               // Report that worker is idle
               engine.idle();
-              m.acquire();
-            } else {
-              cur = path.recompute(d,engine.opt().a_d,*this);
             }
-            Worker::current(cur);
             m.release();
           }
         }
-      break;
+        break;
+      default:
+        GECODE_NEVER;
       }
     }
   }
