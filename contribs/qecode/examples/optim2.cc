@@ -22,8 +22,8 @@ THE SOFTWARE.
 
 #include "gecode/minimodel.hh"
 #include "gecode/search.hh"
-#include "Implicative.hh"
-#include "qsolver.hh"
+#include "QCOPPlus.hh"
+#include "qsolver_general.hh"
 #include <iostream>
 
 using namespace std;
@@ -76,20 +76,20 @@ int main() {
     nv[1] = 1;
     nv[2] = 9;
     
-    Implicative problem(3,q,nv);
+    Qcop problem(3,q,nv);
     for (int i=0;i<NArc;i++)
         problem.QIntVar(i,0,10); // t[i]
     IntVarArgs branch1(NArc);
     for (int i=0;i<NArc;i++) 
         branch1[i] = problem.var(i);
-    branch(problem.space(),branch1,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(problem.space()),branch1,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     problem.nextScope();
     
     problem.QIntVar(NArc,0,NCustomer-1); // k
     IntVarArgs branch2(NArc+1);
     for (int i=0;i<NArc+1;i++) 
         branch2[i] = problem.var(i);
-    branch(problem.space(),branch2,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(problem.space()),branch2,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     problem.nextScope();
     
     problem.QIntVar(NArc+1,0,NArc-1); // a
@@ -111,22 +111,22 @@ int main() {
     IntVar aux5(problem.var(NArc+8)); // c[]+t[]
     IntVar aux6(problem.var(NArc+9)); // u[k]
     IntVar k(problem.var(NArc));
-    post(problem.space(), aux1 == ( NArc * k + a) );
-    element(problem.space(),carg,aux1,aux2);
+    post(*(problem.space()), aux1 == ( NArc * k + a) );
+    element(*(problem.space()),carg,aux1,aux2);
     IntVarArgs t(NArc);
     for (int i=0;i<NArc;i++) t[i]=problem.var(i);
-    element(problem.space(),t,a,aux3);
-    element(problem.space(),darg,k,aux4);
-    post(problem.space(), aux5 == aux2 + aux3);
-    mult(problem.space(),aux5,aux4,cost); // cost = aux5 * aux4
-    mult(problem.space(),aux3,aux4,income);
-    element(problem.space(),uarg,k,aux6);
-    post(problem.space(),cost <= aux6);
+    element(*(problem.space()),t,a,aux3);
+    element(*(problem.space()),darg,k,aux4);
+    post(*(problem.space()), aux5 == aux2 + aux3);
+    mult(*(problem.space()),aux5,aux4,cost); // cost = aux5 * aux4
+    mult(*(problem.space()),aux3,aux4,income);
+    element(*(problem.space()),uarg,k,aux6);
+    post(*(problem.space()),cost <= aux6);
 
     IntVarArgs branch3(NArc+10);
     for (int i=0;i<NArc+10;i++) 
         branch3[i] = problem.var(i);
-    branch(problem.space(),branch3,INT_VAR_SIZE_MIN,INT_VAL_MIN);
+    branch(*(problem.space()),branch3,INT_VAR_SIZE_MIN,INT_VAL_MIN);
     
     OptVar* costopt = problem.getExistential(NArc+2);
     OptVar* incomeopt = problem.getExistential(NArc+3);

@@ -225,18 +225,18 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
 //////////////////////
 //////////////////////
 
-QSolverUnblock2::QSolverUnblock2(Qcop* sp) {
+QSolverUnblockable2::QSolverUnblockable2(Qcop* sp) {
     this->sp = sp;
     nbRanges=new int;
 }
 
-Strategy QSolverUnblock2::solve(unsigned long int& nodes) {
+Strategy QSolverUnblockable2::solve(unsigned long int& nodes) {
     vector<int> plop;
     plop.clear();
     return rSolve(sp,0,plop,nodes);
 }
 
-Strategy QSolverUnblock2::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned long int& nodes) {
+Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned long int& nodes) {
     nodes++;
     //cout<<"rSolve for scope "<<scope<<" with assignments ";
     //    for (int i=0;i<assignments.size();i++) cout<<assignments[i]<<" ";

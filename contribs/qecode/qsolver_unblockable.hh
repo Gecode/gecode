@@ -72,7 +72,7 @@ public:
         /** Public constructor.
         @param sp The problem to solve
         */
-        QECODE_EXPORT QSolverUnblock2(Qcop* sp);
+        QECODE_EXPORT QSolverUnblockable2(Qcop* sp);
 
     /** Solves the problem and returns a corresponding winning strategy. 
         WARNING : Defined optimization conditions and aggregates are NOT taken into account.

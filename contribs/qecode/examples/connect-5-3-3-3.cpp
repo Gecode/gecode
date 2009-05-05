@@ -36,7 +36,7 @@ int main () {
             
 	int scopesSize[] = {19, 10, 10, 10, 10, 10, 10, 10, 18};
     bool qts[] = {EXISTENTIAL,UNIVERSAL,EXISTENTIAL,UNIVERSAL,EXISTENTIAL,UNIVERSAL,EXISTENTIAL,UNIVERSAL,EXISTENTIAL};
-	Implicative p(9, qts, scopesSize);
+	Qcop p(9, qts, scopesSize);
 
 	p.QIntVar(0, 0, 2);  // B(1,1,0)
 	p.QIntVar(1, 0, 2);  // B(1,2,0)

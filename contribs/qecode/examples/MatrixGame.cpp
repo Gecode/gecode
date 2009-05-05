@@ -86,7 +86,7 @@ int main (int argc, char * const argv[]) {
         scopesSize[i]=1;
     scopesSize[nbScope-1]=2;
 
-    Implicative p(nbScope, qtScopes, scopesSize);
+    Qcop p(nbScope, qtScopes, scopesSize);
 
     // Defining the variable of the n first scopes ...
     for (int i=0; i<nbDecisionVar; i++)
