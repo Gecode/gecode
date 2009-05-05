@@ -78,6 +78,10 @@ namespace Gecode { namespace Support {
     virtual void run(void) = 0;
     /// Destructor
     virtual ~Runnable(void) {}
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
   };
 
   /**

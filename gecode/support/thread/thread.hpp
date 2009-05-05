@@ -38,6 +38,19 @@
 namespace Gecode { namespace Support {
 
   /*
+   * Runnable objects
+   */
+  forceinline void
+  Runnable::operator delete(void* p) {
+    heap.rfree(p);
+  }
+  forceinline void*
+  Runnable::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+
+
+  /*
    * Locks
    */
   forceinline
