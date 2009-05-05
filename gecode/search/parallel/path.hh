@@ -101,13 +101,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     Path(void);
     /// Push space \a c (a clone of \a s or NULL)
     const BranchingDesc* push(Worker& stat, Space* s, Space* c);
-    /// Generate path for next node and return BranchingDesc for next node if its type is \a DescType, or NULL otherwise
-    template <class DescType>
-    const BranchingDesc* nextDesc(Worker& s, int& alt,
-                                  int& closedDescs);
-    /// Generate path for next node with BranchingDesc type DescType
-    template <class DescType, bool inclusive>
-    void closeBranch(Worker& s);
     /// Generate path for next node and return whether a next node exists
     bool next(Worker& s);
     /// Return position on stack of last copy
@@ -199,40 +192,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     if (stat.depth < static_cast<unsigned int>(ds.entries()))
       stat.depth = static_cast<unsigned int>(ds.entries());
     return sn.desc();
-  }
-
-  template <class DescType>
-  forceinline const BranchingDesc*
-  Path::nextDesc(Worker& stat, int& alt, int& closedDescs) {
-    closedDescs = 0;
-    while (!ds.empty())
-      if (ds.top().rightmost()) {
-        stat.pop(ds.top().space(),ds.top().desc());
-        if (dynamic_cast<const DescType*>(ds.top().desc()))
-          closedDescs++;
-        ds.pop().dispose();
-      } else {
-        ds.top().next();
-        alt = ds.top().alt();
-        return ds.top().desc();
-      }
-    return NULL;
-  }
-
-  template <class DescType, bool inclusive>
-  forceinline void
-  Path::closeBranch(Worker& stat) {
-    while (!ds.empty()) {
-      if (dynamic_cast<const DescType*>(ds.top().desc())) {
-        if (inclusive && !ds.empty()) {
-          stat.pop(ds.top().space(),ds.top().desc());
-          ds.pop().dispose();
-        }
-        break;
-      }
-      stat.pop(ds.top().space(),ds.top().desc());
-      ds.pop().dispose();
-    }
   }
 
   forceinline bool
