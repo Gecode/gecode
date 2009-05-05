@@ -309,7 +309,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         return s;
       }
       // No more solutions or stopped?
-      if ((n_busy == NULL) || has_stopped) {
+      if ((n_busy == 0) || has_stopped) {
 #ifdef GECODE_SEARCH_TRACE
         std::cout << "FOUND OTHER SEARCH EVENT" << std::endl;
 #endif
