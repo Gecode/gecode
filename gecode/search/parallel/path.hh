@@ -64,6 +64,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       Space* _space;
       /// Current alternative
       unsigned int _alt;
+      /// Number of alternatives left
+      unsigned int _alt_max;
       /// Braching description
       const BranchingDesc* _desc;
     public:
@@ -84,6 +86,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       unsigned int alt(void) const;
       /// Test whether current alternative is rightmost
       bool rightmost(void) const;
+      /// Test whether there is an alternative that can be stolen
+      bool stealable(void) const;
       /// Move to next alternative
       void next(void);
       
@@ -137,7 +141,9 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline
   Path::Node::Node(Space* s, Space* c)
-    : _space(c), _alt(0), _desc(s->description()) {}
+    : _space(c), _alt(0), _desc(s->description()) {
+    _alt_max = _desc->alternatives()-1;
+  }
 
   forceinline Space*
   Path::Node::space(void) const {
@@ -154,7 +160,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
   forceinline bool
   Path::Node::rightmost(void) const {
-    return _alt+1 == _desc->alternatives();
+    return _alt == _alt_max;
+  }
+  forceinline bool
+  Path::Node::stealable(void) const {
+    return _alt != _alt_max;
   }
   forceinline void
   Path::Node::next(void) {
