@@ -449,7 +449,6 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   void
   DFS::Worker::find(void) {
-#define GECODE_SEARCH_TRACE 1
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine.workers(); i++)
       if (engine.worker(i) != this) {
@@ -516,7 +515,6 @@ namespace Gecode { namespace Search { namespace Parallel {
               m.release();
               engine.stop();
             } else {
-#define GECODE_SEARCH_TRACE 1
 #ifdef GECODE_SEARCH_TRACE
               std::cout << "EXPLORE (" << number() << ")" << std::endl;
 #endif
