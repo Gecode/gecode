@@ -196,8 +196,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   Path::push(Worker& stat, Space* s, Space* c) {
     Node sn(s,c);
     ds.push(sn);
-    if (stat.depth < static_cast<unsigned int>(ds.entries()))
-      stat.depth = static_cast<unsigned int>(ds.entries());
+    stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
     return sn.desc();
   }
 

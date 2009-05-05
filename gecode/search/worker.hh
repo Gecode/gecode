@@ -55,6 +55,8 @@ namespace Gecode { namespace Search {
     size_t mem_cur;
     /// Current total memory
     size_t mem_total;
+    /// Depth of root node (for work stealing)
+    unsigned long int root_depth;
   public:
     /// Initialize with space size \a sz
     Worker(size_t sz);
@@ -76,17 +78,20 @@ namespace Gecode { namespace Search {
     void lao(const Space* s);
     /// Space \a s becomes current space (\a s = NULL: current space deleted)
     void current(const Space* s);
-    /// Reset statistics for space \a s
-    void reset(const Space* s);
+    /// Reset statistics for space \a s with root depth \a d
+    void reset(const Space* s, unsigned long int d=0);
     /// Reset statistics for failed space
     void reset(void);
+    /// Record stack depth \a d
+    void stack_depth(unsigned long int d);
   };
 
 
 
   forceinline
   Worker::Worker(size_t sz)
-    : _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {
+    : _stopped(false), mem_space(sz), mem_cur(0), mem_total(0), 
+      root_depth(0) {
     memory = 0;
   }
 
@@ -160,17 +165,27 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  Worker::reset(const Space* s) {
+  Worker::reset(const Space* s, unsigned long int d) {
     mem_cur   = mem_space + s->allocated();
     mem_total = mem_cur;
     if (mem_total > memory)
       memory = mem_total;
+    root_depth = d;
+    if (depth < d)
+      depth = d;
   }
 
   forceinline void
   Worker::reset(void) {
-    mem_cur   = 0;
-    mem_total = 0;
+    mem_cur    = 0;
+    mem_total  = 0;
+    root_depth = 0;
+  }
+
+  forceinline void
+  Worker::stack_depth(unsigned long int d) {
+    if (depth < root_depth + d)
+      depth = root_depth + d;
   }
 
 }}
