@@ -239,7 +239,9 @@ namespace Gecode { namespace Driver {
       case SM_STAT:
         {
           cout << o.name() << endl;
+          Timer t;
           int i = o.solutions();
+          t.start();
           Script* s = new Script(o);
           unsigned int n_p = s->propagators();
           unsigned int n_b = s->branchings();
@@ -248,6 +250,7 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
+          so.stop    = Cutoff::create(o.node(),o.fail(), o.time());
           Engine<Script> e(s,so);
           do {
             Script* ex = e.next();
@@ -259,6 +262,9 @@ namespace Gecode { namespace Driver {
           cout << endl
                << "\tpropagators:  " << n_p << endl
                << "\tbranchings:   " << n_b << endl
+               << "\truntime:      ";
+          t.stop(cout);
+          cout << endl
                << "\tsolutions:    "
                << ::abs(static_cast<int>(o.solutions()) - i) << endl
                << "\tpropagations: " << stat.propagate << endl
@@ -285,6 +291,7 @@ namespace Gecode { namespace Driver {
               so.threads = o.threads();
               so.c_d     = o.c_d();
               so.a_d     = o.a_d();
+              so.stop    = Cutoff::create(o.node(),o.fail(), o.time());
               Engine<Script> e(s,so);
               do {
                 Script* ex = e.next();
