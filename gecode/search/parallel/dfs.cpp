@@ -287,18 +287,9 @@ namespace Gecode { namespace Search { namespace Parallel {
      * something new happened.
      */
     while (true) {
-#ifdef GECODE_SEARCH_TRACE
-      std::cout << "WAITING ON SIGNAL" << std::endl;
-#endif
       e_search.wait();
-#ifdef GECODE_SEARCH_TRACE
-      std::cout << "AFTER SIGNAL" << std::endl;
-#endif
       m_search.acquire();
       if (!solutions.empty()) {
-#ifdef GECODE_SEARCH_TRACE
-        std::cout << "FOUND SOLUTION" << std::endl;
-#endif
         // Report solution
         Space* s = solutions.pop();
         m_search.release();
@@ -308,9 +299,6 @@ namespace Gecode { namespace Search { namespace Parallel {
       }
       // No more solutions or stopped?
       if ((n_busy == 0) || has_stopped) {
-#ifdef GECODE_SEARCH_TRACE
-        std::cout << "FOUND OTHER SEARCH EVENT" << std::endl;
-#endif
         m_search.release();
         // Make workers wait again
         block();
@@ -451,16 +439,8 @@ namespace Gecode { namespace Search { namespace Parallel {
   DFS::Worker::find(void) {
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine.workers(); i++)
-      if (engine.worker(i) != this) {
-#ifdef GECODE_SEARCH_TRACE
-        std::cout << "STEAL (" << i << " -> " 
-                  << number() << ")" << std::endl;
-#endif
+      if (engine.worker(i) != this)
         if (Space* s = engine.worker(i)->steal()) {
-#ifdef GECODE_SEARCH_TRACE
-          std::cout << "STOLEN (" << number() << ")" << std::endl;
-#endif
-#undef GECODE_SEARCH_TRACE
           // Reset this guy
           m.acquire();
           idle = false;
@@ -468,45 +448,28 @@ namespace Gecode { namespace Search { namespace Parallel {
           m.release();
           return;
         }
-      }
   }
 
   void
   DFS::Worker::run(void) {
     // Okay, we are in business, start working
     while (true) {
-#ifdef GECODE_SEARCH_TRACE
-      std::cout << "RUN (" << number() << ")" << std::endl;
-#endif
       switch (engine.cmd()) {
       case DFS::C_WAIT:
-        // Wait as ordered by engine
-#ifdef GECODE_SEARCH_TRACE
-        std::cout << "WAIT (" << number() << ")" << std::endl;
-#endif
+        // Wait
         engine.wait();
-#ifdef GECODE_SEARCH_TRACE
-        std::cout << "CONTINUE (" << number() << ")" << std::endl;
-#endif
         break;
       case DFS::C_TERMINATE:
         // Terminate thread
-#ifdef GECODE_SEARCH_TRACE
-        std::cout << "TERMINATE (" << number() << ")" << std::endl;
-#endif
         engine.terminated();
-#ifdef GECODE_SEARCH_TRACE
-        std::cout << "LEAVING (" << number() << ")" << std::endl;
-#endif
         return;
       case DFS::C_WORK:
+        // Perform exploration work
         {
           m.acquire();
           if (idle) {
-#ifdef GECODE_SEARCH_TRACE
-            std::cout << "IDLE (" << number() << ")" << std::endl;
-#endif
             m.release();
+            // Try to find new work
             find();
           } else if (cur != NULL) {
             start();
@@ -515,10 +478,6 @@ namespace Gecode { namespace Search { namespace Parallel {
               m.release();
               engine.stop();
             } else {
-#ifdef GECODE_SEARCH_TRACE
-              std::cout << "EXPLORE (" << number() << ")" << std::endl;
-#endif
-#undef GECODE_SEARCH_TRACE
               node++;
               switch (cur->status(*this)) {
               case SS_FAILED:
@@ -560,19 +519,15 @@ namespace Gecode { namespace Search { namespace Parallel {
                 GECODE_NEVER;
               }
             }
-          } else {
-#ifdef GECODE_SEARCH_TRACE
-            std::cout << "RECOMPUTE (" << number() << ")" << std::endl;
-#endif
-            if (path.next(*this)) {
-              cur = path.recompute(d,engine.opt().a_d,*this);
-              Worker::current(cur);
-            } else {
-              idle = true;
-              // Report that worker is idle
-              engine.idle();
-            }
+          } else if (path.next(*this)) {
+            cur = path.recompute(d,engine.opt().a_d,*this);
+            Worker::current(cur);
             m.release();
+          } else {
+            idle = true;
+            m.release();
+            // Report that worker is idle
+            engine.idle();
           }
         }
         break;
@@ -604,7 +559,6 @@ namespace Gecode { namespace Search { namespace Parallel {
   // Create parallel depth-first engine
   Engine* dfs(Space* s, size_t sz, const Options& o) {
     return new DFS(s,sz,o);
-    // return ::Gecode::Search::Sequential::dfs(s,sz,o);
   }
 
 }}}
