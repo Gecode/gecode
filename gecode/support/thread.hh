@@ -115,11 +115,11 @@ namespace Gecode { namespace Support {
      */
     GECODE_SUPPORT_EXPORT Thread(Runnable* r);
     /// Destroy thread handle (does not terminate thread)
-    GECODE_SUPPORT_EXPORT ~Thread(void);
+    ~Thread(void);
     /// Put current thread to sleep for \a ms milliseconds
-    GECODE_SUPPORT_EXPORT static void sleep(unsigned int ms);
+    static void sleep(unsigned int ms);
     /// Return number of processing units (1 if information not available)
-    GECODE_SUPPORT_EXPORT static unsigned int npu(void);
+    static unsigned int npu(void);
   private:
     /// A thread cannot be copied
     Thread(const Thread&) {}
@@ -151,7 +151,7 @@ namespace Gecode { namespace Support {
 #endif
   public:
     /// Initialize mutex
-    GECODE_SUPPORT_EXPORT Mutex(void);
+    Mutex(void);
     /// Acquire the mutex and possibly block
     void acquire(void);
     /// Try to acquire the mutex, return true if succesful
@@ -159,7 +159,7 @@ namespace Gecode { namespace Support {
     /// Release the mutex
     void release(void);
     /// Delete mutex
-    GECODE_SUPPORT_EXPORT ~Mutex(void);
+    ~Mutex(void);
   private:
     /// A mutex cannot be copied
     Mutex(const Mutex&) {}
@@ -218,13 +218,13 @@ namespace Gecode { namespace Support {
 #endif
   public:
     /// Initialize event
-    GECODE_SUPPORT_EXPORT Event(void);
+    Event(void);
     /// Signal the event
     void signal(void);
     /// Wait until the event becomes signalled
     void wait(void);
     /// Delete event
-    GECODE_SUPPORT_EXPORT ~Event(void);
+    ~Event(void);
   private:
     /// An event cannot be copied
     Event(const Event&) {}

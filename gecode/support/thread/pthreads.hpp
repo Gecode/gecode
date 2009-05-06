@@ -40,6 +40,27 @@ namespace Gecode { namespace Support {
   /*
    * Thread
    */
+  forceinline void
+  Thread::sleep(unsigned int ms) {
+#ifdef GECODE_HAS_UNISTD_H
+    unsigned int s = ms / 1000;
+    ms -= 1000 * s;
+    if (s > 0) {
+      // More than one million microseconds, use sleep
+      sleep(s);
+    }
+    usleep(ms * 1000);
+#endif
+  }
+  forceinline unsigned int
+  Thread::npu(void) {
+#ifdef GECODE_HAS_UNISTD_H
+    int n=sysconf(_SC_NPROCESSORS_ONLN);
+    return (n>1) ? n : 1;
+#else
+    return 1;
+#endif
+  }
   forceinline
   Thread::~Thread(void) {
   }
@@ -48,6 +69,11 @@ namespace Gecode { namespace Support {
   /*
    * Mutex
    */
+  forceinline
+  Mutex::Mutex(void) {
+    if (pthread_mutex_init(&p_m,NULL) != 0)
+      throw OperatingSystemError("Mutex::Mutex[pthread_mutex_init]");
+  }
   forceinline void
   Mutex::acquire(void) {
     if (pthread_mutex_lock(&p_m) != 0)
@@ -62,11 +88,23 @@ namespace Gecode { namespace Support {
     if (pthread_mutex_unlock(&p_m) != 0)
       throw OperatingSystemError("Mutex::release[pthread_mutex_unlock]");
   }
+  forceinline
+  Mutex::~Mutex(void) {
+    if (pthread_mutex_destroy(&p_m) != 0)
+      throw OperatingSystemError("Mutex::~Mutex[pthread_mutex_destroy]");
+  }
 
 
   /*
    * Event
    */
+  forceinline
+  Event::Event(void) : p_s(false), p_w(false) {
+    if (pthread_mutex_init(&p_m,NULL) != 0)
+      throw OperatingSystemError("Event::Event[pthread_mutex_init]");
+    if (pthread_cond_init(&p_c,NULL) != 0)
+      throw OperatingSystemError("Event::Event[pthread_cond_init]");
+  }
   forceinline void
   Event::signal(void) {
     if (pthread_mutex_lock(&p_m) != 0)
@@ -93,6 +131,13 @@ namespace Gecode { namespace Support {
     p_s = false;
     if (pthread_mutex_unlock(&p_m) != 0)
       throw OperatingSystemError("Event::wait[pthread_mutex_unlock]");
+  }
+  forceinline
+  Event::~Event(void) {
+    if (pthread_cond_destroy(&p_c) != 0)
+      throw OperatingSystemError("Event::~Event[pthread_cond_destroy]");
+    if (pthread_mutex_destroy(&p_m) != 0)
+      throw OperatingSystemError("Event::~Event[pthread_mutex_destroy]");
   }
 
 

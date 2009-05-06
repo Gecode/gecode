@@ -41,9 +41,6 @@
 
 namespace Gecode { namespace Support {
 
-  /*
-   * Thread
-   */
   /// Function to start execution
   DWORD WINAPI 
   bootstrap(LPVOID p) {
@@ -57,46 +54,6 @@ namespace Gecode { namespace Support {
     if (w_h == NULL)
       throw OperatingSystemError("Thread::Thread[Windows::CreateThread]");
   }
-  
-  void
-  Thread::sleep(unsigned int ms) {
-    Sleep(static_cast<DWORD>(ms));
-  }
-
-  unsigned int
-  Thread::npu(void) {
-    SYSTEM_INFO si;
-    GetSystemInfo(&si);
-    return static_cast<unsigned int>(si.dwNumberOfProcessors);
-  }
-
-
-  /*
-   * Mutex
-   */
-  Mutex::Mutex(void) {
-    InitializeCriticalSection(&w_cs);
-  }
-
-  Mutex::~Mutex(void) {
-    DeleteCriticalSection(&w_cs);
-  }
-
-
-  /*
-   * Event
-   */
-  Event::Event(void)
-    : w_h(CreateEvent(NULL, FALSE, FALSE, NULL)) {
-    if (w_h == NULL)
-      throw OperatingSystemError("Event::Event[Windows::CreateEvent]");
-  }
-
-  Event::~Event(void) {
-    if (CloseHandle(w_h) == 0)
-      throw OperatingSystemError("Event::~Event[Windows::CloseHandle]");
-  }
-
 
 }}
 

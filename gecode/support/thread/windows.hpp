@@ -42,6 +42,18 @@ namespace Gecode { namespace Support {
   /*
    * Thread
    */
+  forceinline void
+  Thread::sleep(unsigned int ms) {
+    Sleep(static_cast<DWORD>(ms));
+  }
+
+  forceinline unsigned int
+  Thread::npu(void) {
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    return static_cast<unsigned int>(si.dwNumberOfProcessors);
+  }
+
   forceinline
   Thread::~Thread(void) {
     if (CloseHandle(w_h) == 0)
@@ -52,6 +64,10 @@ namespace Gecode { namespace Support {
   /*
    * Mutex
    */
+  forceinline
+  Mutex::Mutex(void) {
+    InitializeCriticalSection(&w_cs);
+  }
   forceinline void
   Mutex::acquire(void) {
     EnterCriticalSection(&w_cs);
@@ -64,11 +80,21 @@ namespace Gecode { namespace Support {
   Mutex::release(void) {
     LeaveCriticalSection(&w_cs);
   }
+  forceinline
+  Mutex::~Mutex(void) {
+    DeleteCriticalSection(&w_cs);
+  }
 
 
   /*
    * Event
    */
+  forceinline
+  Event::Event(void)
+    : w_h(CreateEvent(NULL, FALSE, FALSE, NULL)) {
+    if (w_h == NULL)
+      throw OperatingSystemError("Event::Event[Windows::CreateEvent]");
+  }
   forceinline void
   Event::signal(void) {
     if (SetEvent(w_h) == 0)
@@ -78,6 +104,11 @@ namespace Gecode { namespace Support {
   Event::wait(void) {
     if (WaitForSingleObject(w_h,INFINITE) != 0)
       throw OperatingSystemError("Event::wait[Windows::WaitForSingleObject]");
+  }
+  forceinline
+  Event::~Event(void) {
+    if (CloseHandle(w_h) == 0)
+      throw OperatingSystemError("Event::~Event[Windows::CloseHandle]");
   }
 
 

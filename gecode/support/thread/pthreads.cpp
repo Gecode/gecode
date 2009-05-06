@@ -45,9 +45,6 @@
 
 namespace Gecode { namespace Support {
 
-  /*
-   * Thread
-   */
   /// Function to start execution
   void*
   bootstrap(void* p) {
@@ -62,62 +59,6 @@ namespace Gecode { namespace Support {
       throw OperatingSystemError("Thread::Thread[pthread_create]");
   }
   
-  void
-  Thread::sleep(unsigned int ms) {
-#ifdef GECODE_HAS_UNISTD_H
-    unsigned int s = ms / 1000;
-    ms -= 1000 * s;
-    if (s > 0) {
-      // More than one million microseconds, use sleep
-      sleep(s);
-    }
-    usleep(ms * 1000);
-#endif
-  }
-
-  unsigned int
-  Thread::npu(void) {
-#ifdef GECODE_HAS_UNISTD_H
-    int n=sysconf(_SC_NPROCESSORS_ONLN);
-    return (n>1) ? n : 1;
-#else
-    return 1;
-#endif
-  }
-
-
-  /*
-   * Mutex
-   */
-  Mutex::Mutex(void) {
-    if (pthread_mutex_init(&p_m,NULL) != 0)
-      throw OperatingSystemError("Mutex::Mutex[pthread_mutex_init]");
-  }
-
-  Mutex::~Mutex(void) {
-    if (pthread_mutex_destroy(&p_m) != 0)
-      throw OperatingSystemError("Mutex::~Mutex[pthread_mutex_destroy]");
-  }
-
-
-  /*
-   * Event
-   */
-  Event::Event(void) : p_s(false), p_w(false) {
-    if (pthread_mutex_init(&p_m,NULL) != 0)
-      throw OperatingSystemError("Event::Event[pthread_mutex_init]");
-    if (pthread_cond_init(&p_c,NULL) != 0)
-      throw OperatingSystemError("Event::Event[pthread_cond_init]");
-  }
-
-  Event::~Event(void) {
-    if (pthread_cond_destroy(&p_c) != 0)
-      throw OperatingSystemError("Event::~Event[pthread_cond_destroy]");
-    if (pthread_mutex_destroy(&p_m) != 0)
-      throw OperatingSystemError("Event::~Event[pthread_mutex_destroy]");
-  }
-
-
 }}
 
 #endif
