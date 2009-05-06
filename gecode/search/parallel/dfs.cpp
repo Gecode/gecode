@@ -451,12 +451,12 @@ namespace Gecode { namespace Search { namespace Parallel {
   Space*
   DFS::Worker::steal(unsigned long int& d) {
     /*
-     * Make a quick whether the work is idle.
+     * Make a quick check whether the worker is idle.
      *
      * If that is not true any longer, the worker will be asked
      * again eventually.
      */
-    if (idle)
+    if (idle || (path.entries() <= Config::steal_limit))
       return NULL;
     m.acquire();
     Space* s = path.steal(*this,d);
