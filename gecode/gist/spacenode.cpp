@@ -353,7 +353,7 @@ namespace Gecode { namespace Gist {
   SpaceNode::getNumberOfChildNodes(NodeAllocator& na,
                                    BestNode* curBest, Statistics& stats,
                                    int c_d, int a_d) {
-    int kids;
+    int kids = 0;
     if (isUndetermined()) {
       stats.undetermined--;
       acquireSpace(curBest, c_d, a_d);

@@ -105,7 +105,7 @@ namespace Gecode { namespace Gist {
   Node::addChild(Node* child) {
     child->parent = this;
 
-    unsigned int newNoOfChildren;
+    unsigned int newNoOfChildren = 0;
     switch (getTag()) {
     case UNDET:
       setNumberOfChildren(1);
