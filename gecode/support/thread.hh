@@ -107,8 +107,6 @@ namespace Gecode { namespace Support {
     pthread_t p_t;
 #endif
   public:
-    /// Get a handle on the current thread
-    Thread(void);
     /**
      * \brief Construct a new thread and run \a r
      *

@@ -41,9 +41,6 @@ namespace Gecode { namespace Support {
    * Thread
    */
   forceinline
-  Thread::Thread(void) 
-    : p_t(pthread_self()) {} 
-  forceinline
   Thread::~Thread(void) {
   }
 

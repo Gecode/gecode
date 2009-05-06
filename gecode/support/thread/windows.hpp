@@ -43,9 +43,6 @@ namespace Gecode { namespace Support {
    * Thread
    */
   forceinline
-  Thread::Thread(void) 
-    : w_h(GetCurrentThread()) {} 
-  forceinline
   Thread::~Thread(void) {
     if (CloseHandle(w_h) == 0)
       throw OperatingSystemError("Thread::~Thread[Windows::CloseHandle]");
