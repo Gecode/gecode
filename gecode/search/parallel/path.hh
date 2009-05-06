@@ -247,13 +247,13 @@ namespace Gecode { namespace Search { namespace Parallel {
     assert(ds.entries() == l);
   }
 
-  inline void
+  forceinline void
   Path::reset(void) {
     while (!ds.empty())
       ds.pop().dispose();
   }
 
-  inline Space*
+  forceinline Space*
   Path::steal(Worker& stat, unsigned long int& d) {
     // Find position to steal: leave sufficient work
     int n = ds.entries()-1;

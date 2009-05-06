@@ -445,7 +445,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Worker: finding and stealing working
    */
-  Space*
+  forceinline Space*
   DFS::Worker::steal(unsigned long int& d) {
     /*
      * Make a quick check whether the worker is idle.
@@ -464,7 +464,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     return s;
   }
 
-  void
+  forceinline void
   DFS::Worker::find(void) {
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine.workers(); i++)
