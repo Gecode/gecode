@@ -308,7 +308,7 @@ const GraphColorSpec g2(200, g2_e, g2_c);
  * \ingroup ExProblem
  *
  */
-class GraphColor : public Script {
+class GraphColor : public MinimizeScript {
 private:
   const GraphColorSpec& g;
   /// Color of nodes
@@ -360,8 +360,12 @@ public:
       branch(*this, v, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_MIN);
     }
   }
+  /// Cost function
+  virtual IntVar cost(void) const {
+    return m;
+  }
   /// Constructor for cloning \a s
-  GraphColor(bool share, GraphColor& s) : Script(share,s), g(s.g) {
+  GraphColor(bool share, GraphColor& s) : MinimizeScript(share,s), g(s.g) {
     v.update(*this, share, s.v);
     m.update(*this, share, s.m);
   }
@@ -393,6 +397,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("GraphColor");
   opt.icl(ICL_DOM);
   opt.iterations(20);
+  opt.solutions(0);
   opt.model(GraphColor::MODEL_NONE);
   opt.model(GraphColor::MODEL_NONE, "none",
             "no lower bound");
@@ -403,7 +408,7 @@ main(int argc, char* argv[]) {
   opt.branching(GraphColor::BRANCH_SIZE, "size");
   opt.branching(GraphColor::BRANCH_SIZE_DEGREE, "sizedegree");
   opt.parse(argc,argv);
-  Script::run<GraphColor,DFS,SizeOptions>(opt);
+  Script::run<GraphColor,BAB,SizeOptions>(opt);
   return 0;
 }
 

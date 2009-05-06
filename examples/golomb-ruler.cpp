@@ -72,7 +72,6 @@ public:
   };
   /// Search variants
   enum {
-    SEARCH_DFS,    ///< Use depth first search to find the smallest tick
     SEARCH_BAB,    ///< Use branch and bound to optimize
     SEARCH_RESTART ///< Use restart to optimize
   };
@@ -131,12 +130,6 @@ public:
     if (n > 2)
       rel(*this, d[diag(0,1)], IRT_LE, d[diag(n-2,n-1)]);
 
-    if (opt.search() == SEARCH_DFS) {
-      IntVarArgs max(1);
-      max[0]=m[n-1];
-      branch(*this, max, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
-    }
-
     branch(*this, m, INT_VAR_NONE, INT_VAL_MIN);
   }
 
@@ -180,14 +173,11 @@ main(int argc, char* argv[]) {
   opt.model(GolombRuler::MODEL_RULER, "ruler",
             "use size of smaller rulers as lower bound");
   opt.search(GolombRuler::SEARCH_BAB);
-  opt.search(GolombRuler::SEARCH_DFS, "dfs");
   opt.search(GolombRuler::SEARCH_BAB, "bab");
   opt.search(GolombRuler::SEARCH_RESTART, "restart");
   opt.parse(argc,argv);
   if (opt.size() > 0)
     switch (opt.search()) {
-    case GolombRuler::SEARCH_DFS:
-      MinimizeScript::run<GolombRuler,DFS,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_BAB:
       MinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt); break;
     case GolombRuler::SEARCH_RESTART:
