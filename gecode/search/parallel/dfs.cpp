@@ -82,8 +82,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     };
     /// Search options
     const Options _opt;
-    /// Array of threads
-    Support::Thread* _thread;
     /// Array of worker references
     Worker** _worker;
   public:
@@ -256,10 +254,9 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Block all workers
     block();
     // Create and start threads
-    _thread = static_cast<Support::Thread*>
-      (heap.ralloc(workers() * sizeof(Support::Thread)));
-    for (unsigned int i=0; i<workers(); i++)
-      (void) new (&_thread[i]) Support::Thread(_worker[i]);
+    for (unsigned int i=0; i<workers(); i++) {
+      Support::Thread t(_worker[i]);
+    }
     // Initialize termination information
     _n_not_acknowledged = workers();
     _n_not_terminated = workers();
@@ -598,7 +595,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     _e_terminate.wait();
     // Now all threads are terminated!
     heap.rfree(_worker);
-    heap.rfree(_thread);
   }
 
 
