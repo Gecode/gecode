@@ -69,7 +69,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     public:
       /// Initialize for space \a s (of size \a sz) with engine \a e
       Worker(Space* s, size_t sz, BAB& e);
-      unsigned int number(void) const;
       /// Start execution of worker
       virtual void run(void);
       /// Hand over some work (NULL if no work available)
@@ -354,13 +353,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     return s;
   }
 
-  unsigned int
-  BAB::Worker::number(void) const {
-    unsigned int i = 0;
-    while (engine.worker(i) != this)
-      i++;
-    return i;
-  }
 
   /*
    * Engine: search control
