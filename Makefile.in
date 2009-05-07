@@ -133,7 +133,7 @@ SUPPORTHDR0 = \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \
 	thread/windows thread/pthreads \
-	dynamic-queue
+	dynamic-queue timer
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR  =  gecode/support.hh gecode/support/thread.hh \

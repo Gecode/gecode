@@ -1113,3 +1113,9 @@ AC_DEFUN([AC_GECODE_THREADS],[
     [AC_DEFINE(GECODE_THREADS_WINDOWS,1,[Whether we have windows threads])])]
   )
 ])
+
+AC_DEFUN([AC_GECODE_TIMER],[
+  AC_CHECK_HEADER(sys/time.h,
+  [AC_DEFINE(GECODE_USE_GETTIMEOFDAY,1,[Use gettimeofday for time-measurement])],
+  [AC_DEFINE(GECODE_USE_CLOCK,1,[Use clock() for time-measurement])])
+])

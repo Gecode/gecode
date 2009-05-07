@@ -85,6 +85,12 @@
 /* Whether we have windows threads */
 #undef GECODE_THREADS_WINDOWS
 
+/* Use clock() for time-measurement */
+#undef GECODE_USE_CLOCK
+
+/* Use gettimeofday for time-measurement */
+#undef GECODE_USE_GETTIMEOFDAY
+
 /* How to tell the compiler to really, really inline */
 #undef forceinline
 

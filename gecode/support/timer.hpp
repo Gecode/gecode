@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
  *  Copyright:
  *     Christian Schulte, 2004
+ *     Mikael Lagerkvist, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -13,7 +17,6 @@
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org
- *
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -36,67 +39,51 @@
  *
  */
 
-#include <gecode/driver.hh>
+#ifdef GECODE_USE_GETTIMEOFDAY
+#include <sys/time.h>
+#endif
 
-#include <cmath>
+namespace Gecode { namespace Support {
 
-namespace Gecode { namespace Driver {
-    
-  void 
-  stop(Support::Timer& timer, std::ostream& os) {
-    double t = timer.stop();
-    double sec = floor(t / 1000.0);
-    int o_msec = static_cast<int>(t - 1000.0*sec);
-    double min = floor(sec / 60.0);
-    int o_sec = static_cast<int>(sec - 60.0*min);
-    double hour = floor(min / 60.0);
-    int o_min = static_cast<int>(min - 60.0*hour);
-    double day = floor(hour / 24.0);
-    int o_hour = static_cast<int>(hour - 24.0*day);
-    int o_day = static_cast<int>(day);
-    if (o_day)
-      os << o_day << " days, ";
-    if (o_hour)
-      os << o_hour << ":";
-    if (o_min) {
-      if (o_hour) {
-        os.width(2); os.fill('0');
-      }
-      os << o_min << ":";
-      os.width(2); os.fill('0');
+  /** \brief %Timer.
+   * 
+   * This class represents a best-effort at measuring wall-clock time
+   * in milliseconds.
+   *
+   * \ingroup FuncSupport
+   */
+  class Timer {
+  private:
+#if   defined(GECODE_USE_GETTIMEOFDAY)
+    timeval t0; ///< Start time
+#elif defined(GECODE_USE_CLOCK)
+    clock_t t0; ///< Start time
+#endif
+  public:
+    /// Start timer
+    void start(void) {
+#if   defined(GECODE_USE_GETTIMEOFDAY)
+      if (gettimeofday(&t0, NULL))
+	  throw OperatingSystemError("Timer::start[gettimeofday]");
+#elif defined(GECODE_USE_CLOCK)
+      t0 = clock();
+#endif
     }
-    os << o_sec << ".";
-    os.width(3); os.fill('0');
-    os << o_msec
-       << " ("
-       << std::showpoint << std::fixed
-       << std::setprecision(6) << t << " ms)";
-  }
-  
-  
-  double
-  am(double t[], int n) {
-    if (n < 1)
-      return 0.0;
-    double s = 0;
-    for (int i=n; i--; )
-      s += t[i];
-    return s / n;
-  }
-  
-  double
-  dev(double t[], int n) {
-    if (n < 2)
-      return 0.0;
-    double m = am(t,n);
-    double s = 0.0;
-    for (int i=n; i--; ) {
-      double d = t[i]-m;
-      s += d*d;
+    /// Get time since start of timer
+    double stop(void) {
+#if   defined(GECODE_USE_GETTIMEOFDAY)
+      timeval t1, t;
+      if (gettimeofday(&t1, NULL))
+	  throw OperatingSystemError("Timer::stop[gettimeofday]");
+      timersub(&t1, &t0, &t);
+      return (static_cast<double>(t.tv_sec) * 1000.0) + 
+	  (static_cast<double>(t.tv_usec)/1000.0);
+#elif defined(GECODE_USE_CLOCK)
+      return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+#endif
     }
-    return ::sqrt(s / (n-1)) / m;
-  }
+  };
 
 }}
 
-// STATISTICS: driver-any
+// STATISTICS: support-any

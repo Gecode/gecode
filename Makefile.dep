@@ -4,14 +4,14 @@ gecode/support/exception$(OBJSUFFIX) gecode/support/exception$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/support/heap$(OBJSUFFIX) gecode/support/heap$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/support/thread/windows$(OBJSUFFIX) gecode/support/thread/windows$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -19,7 +19,7 @@ gecode/support/thread/windows$(OBJSUFFIX) gecode/support/thread/windows$(SBJSUFF
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp ./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/support/thread/pthreads$(OBJSUFFIX) gecode/support/thread/pthreads$(SBJSUFFIX): \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -27,7 +27,7 @@ gecode/support/thread/pthreads$(OBJSUFFIX) gecode/support/thread/pthreads$(SBJSU
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp ./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/kernel/core$(OBJSUFFIX) gecode/kernel/core$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -41,7 +41,8 @@ gecode/kernel/core$(OBJSUFFIX) gecode/kernel/core$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -55,7 +56,8 @@ gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/kernel/branch$(OBJSUFFIX) gecode/kernel/branch$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -69,7 +71,8 @@ gecode/kernel/branch$(OBJSUFFIX) gecode/kernel/branch$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/kernel/region$(OBJSUFFIX) gecode/kernel/region$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -83,7 +86,8 @@ gecode/kernel/region$(OBJSUFFIX) gecode/kernel/region$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -100,7 +104,7 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -117,7 +121,7 @@ gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -136,7 +140,7 @@ gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
-	./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/search/sequential/dfs$(OBJSUFFIX) gecode/search/sequential/dfs$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -156,7 +160,7 @@ gecode/search/sequential/dfs$(OBJSUFFIX) gecode/search/sequential/dfs$(SBJSUFFIX
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
-	./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/search/parallel/dfs$(OBJSUFFIX) gecode/search/parallel/dfs$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -175,7 +179,8 @@ gecode/search/parallel/dfs$(OBJSUFFIX) gecode/search/parallel/dfs$(SBJSUFFIX): \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hh \
-	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -194,7 +199,7 @@ gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
-	./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/search/sequential/bab$(OBJSUFFIX) gecode/search/sequential/bab$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -213,7 +218,8 @@ gecode/search/sequential/bab$(OBJSUFFIX) gecode/search/sequential/bab$(SBJSUFFIX
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hh \
-	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -232,7 +238,8 @@ gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hh \
-	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -251,7 +258,7 @@ gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
-	./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/search/sequential/restart$(OBJSUFFIX) gecode/search/sequential/restart$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -271,7 +278,7 @@ gecode/search/sequential/restart$(OBJSUFFIX) gecode/search/sequential/restart$(S
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
-	./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/search/parallel/restart$(OBJSUFFIX) gecode/search/parallel/restart$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -290,7 +297,8 @@ gecode/search/parallel/restart$(OBJSUFFIX) gecode/search/parallel/restart$(SBJSU
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hh \
-	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/search/lds$(OBJSUFFIX) gecode/search/lds$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -309,7 +317,7 @@ gecode/search/lds$(OBJSUFFIX) gecode/search/lds$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
-	./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/search/sequential/lds$(OBJSUFFIX) gecode/search/sequential/lds$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -328,7 +336,7 @@ gecode/search/sequential/lds$(OBJSUFFIX) gecode/search/sequential/lds$(SBJSUFFIX
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
 	./gecode/support/static-stack.hpp ./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/search/parallel/lds$(OBJSUFFIX) gecode/search/parallel/lds$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -347,7 +355,8 @@ gecode/search/parallel/lds$(OBJSUFFIX) gecode/search/parallel/lds$(SBJSUFFIX): \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hh \
-	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -384,7 +393,7 @@ gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/var-imp/int$(OBJSUFFIX) gecode/int/var-imp/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -421,7 +430,7 @@ gecode/int/var-imp/int$(OBJSUFFIX) gecode/int/var-imp/int$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/var-imp/bool$(OBJSUFFIX) gecode/int/var-imp/bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -458,7 +467,7 @@ gecode/int/var-imp/bool$(OBJSUFFIX) gecode/int/var-imp/bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -495,7 +504,7 @@ gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -532,7 +541,7 @@ gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/array$(OBJSUFFIX) gecode/int/array$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -569,7 +578,7 @@ gecode/int/array$(OBJSUFFIX) gecode/int/array$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/bool.hh \
 	./gecode/int/bool/base.hpp ./gecode/int/bool/clause.hpp ./gecode/int/bool/eq.hpp \
@@ -610,7 +619,7 @@ gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -647,7 +656,7 @@ gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/extensional/tuple-set$(OBJSUFFIX) gecode/int/extensional/tuple-set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -684,7 +693,7 @@ gecode/int/extensional/tuple-set$(OBJSUFFIX) gecode/int/extensional/tuple-set$(S
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional.hh ./gecode/int/extensional/base.hpp ./gecode/int/extensional/basic.hpp \
@@ -724,7 +733,8 @@ gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/dom.hh \
 	./gecode/int/dom/range.hpp ./gecode/int/dom/spec.hpp ./gecode/int/exception.hpp \
@@ -763,7 +773,8 @@ gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/bool.hh \
 	./gecode/int/bool/base.hpp ./gecode/int/bool/clause.hpp ./gecode/int/bool/eq.hpp \
@@ -804,7 +815,7 @@ gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/element.hh \
 	./gecode/int/element/int.hpp ./gecode/int/element/view.hpp ./gecode/int/exception.hpp \
@@ -843,7 +854,8 @@ gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/count.hh \
 	./gecode/int/count/int.hpp ./gecode/int/count/rel.hpp ./gecode/int/count/view.hpp \
@@ -883,7 +895,7 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/arithmetic.hh ./gecode/int/arithmetic/abs.hpp \
 	./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/max.hpp ./gecode/int/arithmetic/mult.hpp \
@@ -928,7 +940,7 @@ gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/exec$(OBJSUFFIX) gecode/int/exec$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/exec.hh ./gecode/int/exec/when.hpp ./gecode/int/extensional/dfa.hpp \
@@ -966,7 +978,7 @@ gecode/int/exec$(OBJSUFFIX) gecode/int/exec$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/exec/when$(OBJSUFFIX) gecode/int/exec/when$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/exec.hh ./gecode/int/exec/when.hpp ./gecode/int/extensional/dfa.hpp \
@@ -1003,7 +1015,8 @@ gecode/int/exec/when$(OBJSUFFIX) gecode/int/exec/when$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1045,7 +1058,7 @@ gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1085,7 +1098,7 @@ gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1125,7 +1138,7 @@ gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX):
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1165,7 +1178,7 @@ gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/branch$(OBJSUFFIX) gecode/int/branch$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/branch.hh \
 	./gecode/int/branch/post-val-bool.hpp ./gecode/int/branch/post-val-int.hpp ./gecode/int/branch/select-val.hpp \
@@ -1204,7 +1217,7 @@ gecode/int/branch$(OBJSUFFIX) gecode/int/branch$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/distinct.hh \
 	./gecode/int/distinct/bilink.hpp ./gecode/int/distinct/bnd.hpp ./gecode/int/distinct/combptr.hpp \
@@ -1245,7 +1258,8 @@ gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/cumulatives.hh \
 	./gecode/int/cumulatives/val.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
@@ -1286,7 +1300,7 @@ gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/distinct.hh \
 	./gecode/int/distinct/bilink.hpp ./gecode/int/distinct/bnd.hpp ./gecode/int/distinct/combptr.hpp \
@@ -1329,7 +1343,8 @@ gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/distinct.hh \
 	./gecode/int/distinct/bilink.hpp ./gecode/int/distinct/bnd.hpp ./gecode/int/distinct/combptr.hpp \
@@ -1373,7 +1388,8 @@ gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/channel.hh \
 	./gecode/int/channel/base.hpp ./gecode/int/channel/dom.hpp ./gecode/int/channel/link-multi.hpp \
@@ -1416,7 +1432,8 @@ gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/channel/link-single$(OBJSUFFIX) gecode/int/channel/link-single$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/channel.hh \
 	./gecode/int/channel/base.hpp ./gecode/int/channel/dom.hpp ./gecode/int/channel/link-multi.hpp \
@@ -1459,7 +1476,8 @@ gecode/int/channel/link-single$(OBJSUFFIX) gecode/int/channel/link-single$(SBJSU
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/channel/link-multi$(OBJSUFFIX) gecode/int/channel/link-multi$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/channel.hh \
 	./gecode/int/channel/base.hpp ./gecode/int/channel/dom.hpp ./gecode/int/channel/link-multi.hpp \
@@ -1502,7 +1520,8 @@ gecode/int/channel/link-multi$(OBJSUFFIX) gecode/int/channel/link-multi$(SBJSUFF
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/int/circuit$(OBJSUFFIX) gecode/int/circuit$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/circuit.hh \
 	./gecode/int/circuit/base.hpp ./gecode/int/circuit/dom.hpp ./gecode/int/circuit/val.hpp \
@@ -1545,7 +1564,7 @@ gecode/int/circuit$(OBJSUFFIX) gecode/int/circuit$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/bool.hh \
 	./gecode/int/bool/base.hpp ./gecode/int/bool/clause.hpp ./gecode/int/bool/eq.hpp \
@@ -1586,7 +1605,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 ./gecode/int/branch/post-view-int$(OBJSUFFIX) ./gecode/int/branch/post-view-int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/branch.hh \
 	./gecode/int/branch/post-val-bool.hpp ./gecode/int/branch/post-val-int.hpp ./gecode/int/branch/select-val.hpp \
@@ -1625,7 +1644,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 ./gecode/int/branch/post-view-bool$(OBJSUFFIX) ./gecode/int/branch/post-view-bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/branch.hh \
 	./gecode/int/branch/post-val-bool.hpp ./gecode/int/branch/post-val-int.hpp ./gecode/int/branch/select-val.hpp \
@@ -1664,7 +1683,7 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1708,7 +1727,8 @@ gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1756,7 +1776,7 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1800,7 +1820,7 @@ gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1844,7 +1864,7 @@ gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1888,7 +1908,7 @@ gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1934,7 +1954,7 @@ gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -1985,7 +2005,7 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2033,7 +2053,8 @@ gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2081,7 +2102,8 @@ gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2129,7 +2151,7 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/element.hh \
 	./gecode/int/element/int.hpp ./gecode/int/element/view.hpp ./gecode/int/exception.hpp \
@@ -2182,7 +2204,7 @@ gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2229,7 +2251,8 @@ gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2273,7 +2296,7 @@ gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2317,7 +2340,7 @@ gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFF
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2364,7 +2387,8 @@ gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2411,7 +2435,8 @@ gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2454,7 +2479,7 @@ gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/var-imp/set$(OBJSUFFIX) gecode/set/var-imp/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2497,7 +2522,7 @@ gecode/set/var-imp/set$(OBJSUFFIX) gecode/set/var-imp/set$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/var-imp/integerset$(OBJSUFFIX) gecode/set/var-imp/integerset$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2540,7 +2565,7 @@ gecode/set/var-imp/integerset$(OBJSUFFIX) gecode/set/var-imp/integerset$(SBJSUFF
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2583,7 +2608,7 @@ gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/set/exec$(OBJSUFFIX) gecode/set/exec$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2626,7 +2651,8 @@ gecode/set/exec$(OBJSUFFIX) gecode/set/exec$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 ./gecode/set/branch/post-view$(OBJSUFFIX) ./gecode/set/branch/post-view$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2670,7 +2696,8 @@ gecode/set/exec$(OBJSUFFIX) gecode/set/exec$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2713,7 +2740,7 @@ gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2756,7 +2783,7 @@ gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2803,7 +2830,8 @@ gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2850,7 +2878,8 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2897,7 +2926,8 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2944,7 +2974,8 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2991,7 +3022,8 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3038,7 +3070,8 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3085,7 +3118,8 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3132,7 +3166,8 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3179,7 +3214,8 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3226,7 +3262,8 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3273,7 +3310,8 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3320,7 +3358,8 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3367,7 +3406,8 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3414,7 +3454,8 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3461,7 +3502,8 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3508,7 +3550,8 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3555,7 +3598,8 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3602,7 +3646,8 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3649,7 +3694,8 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3696,7 +3742,8 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3743,7 +3790,8 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3797,7 +3845,7 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3844,7 +3892,8 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3891,7 +3940,8 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3938,7 +3988,8 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3985,7 +4036,8 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4032,7 +4084,8 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4079,7 +4132,8 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4126,7 +4180,8 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4173,7 +4228,8 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4220,7 +4276,8 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4267,7 +4324,8 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4314,7 +4372,8 @@ examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4361,7 +4420,8 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4408,7 +4468,8 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4455,7 +4516,8 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4502,7 +4564,8 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4549,7 +4612,8 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4596,7 +4660,8 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4643,7 +4708,8 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4690,7 +4756,8 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4737,7 +4804,8 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4784,7 +4852,8 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4831,7 +4900,8 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4878,7 +4948,8 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4925,7 +4996,8 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4979,7 +5051,7 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -5033,7 +5105,7 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -5087,7 +5159,7 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -5141,7 +5213,7 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -5195,7 +5267,7 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/gist/drawingcursor.hh ./gecode/gist/drawingcursor.hpp ./gecode/gist/layoutcursor.hh \
 	./gecode/gist/layoutcursor.hpp ./gecode/gist/node.hh ./gecode/gist/node.hpp \
@@ -5213,7 +5285,8 @@ gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/mainwindow.hh \
 	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/qtgist.hh \
@@ -5234,7 +5307,7 @@ gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/gist/gecodelogo$(OBJSUFFIX) gecode/gist/gecodelogo$(SBJSUFFIX): \
 	./gecode/gist/gecodelogo.hh 
 gecode/gist/node$(OBJSUFFIX) gecode/gist/node$(SBJSUFFIX): \
@@ -5252,7 +5325,8 @@ gecode/gist/node$(OBJSUFFIX) gecode/gist/node$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/gist/nodecursor$(OBJSUFFIX) gecode/gist/nodecursor$(SBJSUFFIX): \
 	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh \
 	./gecode/gist/nodecursor.hpp ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
@@ -5269,7 +5343,7 @@ gecode/gist/nodecursor$(OBJSUFFIX) gecode/gist/nodecursor$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/gist/layoutcursor$(OBJSUFFIX) gecode/gist/layoutcursor$(SBJSUFFIX): \
 	./gecode/gist/layoutcursor.hh ./gecode/gist/layoutcursor.hpp ./gecode/gist/node.hh \
 	./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp \
@@ -5287,7 +5361,7 @@ gecode/gist/layoutcursor$(OBJSUFFIX) gecode/gist/layoutcursor$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/spacenode.hh \
 	./gecode/gist/spacenode.hpp ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
@@ -5306,7 +5380,7 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/gist/textoutput$(OBJSUFFIX) gecode/gist/textoutput$(SBJSUFFIX): \
 	./gecode/gist/gecodelogo.hh ./gecode/gist/textoutput.hh 
 gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
@@ -5332,7 +5406,8 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hh \
-	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/gist/qtgist$(OBJSUFFIX) gecode/gist/qtgist$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/node.hh \
 	./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp \
@@ -5354,7 +5429,7 @@ gecode/gist/qtgist$(OBJSUFFIX) gecode/gist/qtgist$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/gist/layoutcursor.hh ./gecode/gist/layoutcursor.hpp ./gecode/gist/node.hh \
 	./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp \
@@ -5372,7 +5447,8 @@ gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/drawingcursor.hh ./gecode/gist/drawingcursor.hpp \
 	./gecode/gist/gecodelogo.hh ./gecode/gist/gist.hpp ./gecode/gist/layoutcursor.hh \
@@ -5395,7 +5471,8 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hpp 
 gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/preferences.hh \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
@@ -5413,7 +5490,7 @@ gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp 
 test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
@@ -5430,8 +5507,8 @@ test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5471,8 +5548,8 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5518,8 +5595,8 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5559,8 +5636,8 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5600,8 +5677,8 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5647,8 +5724,8 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5688,8 +5765,8 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5729,8 +5806,8 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5770,8 +5847,8 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5817,8 +5894,8 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5864,8 +5941,8 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5911,8 +5988,8 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5958,8 +6035,8 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6005,8 +6082,8 @@ test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6046,8 +6123,8 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6087,8 +6164,8 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6128,8 +6205,8 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./test/int.hh ./test/int.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/test.hh ./test/test.hpp 
 test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6175,8 +6252,8 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6222,8 +6299,8 @@ test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6269,8 +6346,8 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6316,8 +6393,8 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6363,8 +6440,8 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6410,8 +6487,8 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6457,8 +6534,8 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/test.hh ./test/test.hpp 
 test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6504,9 +6581,9 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/construct$(OBJSUFFIX) test/set/construct$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6552,9 +6629,9 @@ test/set/construct$(OBJSUFFIX) test/set/construct$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6600,9 +6677,9 @@ test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6648,9 +6725,9 @@ test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6696,9 +6773,9 @@ test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6744,9 +6821,9 @@ test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6792,9 +6869,9 @@ test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6840,9 +6917,9 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6894,9 +6971,9 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
 	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
 	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./test/int.hh \
-	./test/int.hpp ./test/set.hh ./test/set.hpp \
-	./test/test.hh ./test/test.hpp 
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hpp \
+	./test/int.hh ./test/int.hpp ./test/set.hh \
+	./test/set.hpp ./test/test.hh ./test/test.hpp 
 test/set/element$(OBJSUFFIX) test/set/element$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6942,9 +7019,9 @@ test/set/element$(OBJSUFFIX) test/set/element$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6990,9 +7067,9 @@ test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/set/exec$(OBJSUFFIX) test/set/exec$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7038,9 +7115,9 @@ test/set/exec$(OBJSUFFIX) test/set/exec$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/int.hh ./test/int.hpp \
-	./test/set.hh ./test/set.hpp ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/int.hh \
+	./test/int.hpp ./test/set.hh ./test/set.hpp \
+	./test/test.hh ./test/test.hpp 
 test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7086,8 +7163,8 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/branch.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7133,8 +7210,8 @@ test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/branch.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7180,8 +7257,8 @@ test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/branch.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7227,8 +7304,8 @@ test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/branch.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7274,8 +7351,8 @@ test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/assign.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7321,8 +7398,8 @@ test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/assign.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7368,8 +7445,8 @@ test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/assign.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign/set$(OBJSUFFIX) test/assign/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7415,8 +7492,8 @@ test/assign/set$(OBJSUFFIX) test/assign/set$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/assign.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7462,4 +7539,5 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
 	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
 	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hpp ./test/test.hh \
+	./test/test.hpp 

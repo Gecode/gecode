@@ -140,6 +140,9 @@ AC_GECODE_BOOST
 dnl checking for thread support
 AC_GECODE_THREADS
 
+dnl checking for timer to use
+AC_GECODE_TIMER
+
 case $ac_gecode_compiler_vendor in
 gnu)
   dnl general compiler flags

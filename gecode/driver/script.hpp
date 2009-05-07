@@ -79,61 +79,21 @@ namespace Gecode { namespace Driver {
     }
   };
 
-  /// Timer interface used for scripts
-  class Timer {
-  private:
-    clock_t t0; ///< Start time
-  public:
-    /// Start timer
-    void start(void) {
-      t0 = clock();
-    }
-    /// Stop timer
-    double stop(void) {
-      return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
-    }
-    /// Stop timer and print user friendly time information
-    void stop(std::ostream& os) {
-      double t = stop();
-      double sec = floor(t / 1000.0);
-      int o_msec = static_cast<int>(t - 1000.0*sec);
-      double min = floor(sec / 60.0);
-      int o_sec = static_cast<int>(sec - 60.0*min);
-      double hour = floor(min / 60.0);
-      int o_min = static_cast<int>(min - 60.0*hour);
-      double day = floor(hour / 24.0);
-      int o_hour = static_cast<int>(hour - 24.0*day);
-      int o_day = static_cast<int>(day);
-      if (o_day)
-        os << o_day << " days, ";
-      if (o_hour)
-        os << o_hour << ":";
-      if (o_min) {
-        if (o_hour) {
-          os.width(2); os.fill('0');
-        }
-        os << o_min << ":";
-        os.width(2); os.fill('0');
-      }
-      os << o_sec << ".";
-      os.width(3); os.fill('0');
-      os << o_msec
-         << " ("
-         << std::showpoint << std::fixed
-         << std::setprecision(6) << t << " ms)";
-    }
-  };
+  /**
+   * \brief Get time since start of timer and print user friendly time
+   * information.
+   */
+  GECODE_DRIVER_EXPORT void 
+  stop(Support::Timer& t, std::ostream& os);
 
   /**
    * \brief Compute arithmetic mean of \a n elements in \a t
-   * \relates Timer
    */
   GECODE_DRIVER_EXPORT double
   am(double t[], int n);
   
   /**
    * \brief Compute deviation of \a n elements in \a t
-   * \relates Timer
    */
   GECODE_DRIVER_EXPORT double
   dev(double t[], int n);
@@ -195,7 +155,7 @@ namespace Gecode { namespace Driver {
       case SM_SOLUTION:
         {
           cout << o.name() << endl;
-          Timer t;
+          Support::Timer t;
           int i = o.solutions();
           t.start();
           Script* s = new Script(o);
@@ -223,7 +183,7 @@ namespace Gecode { namespace Driver {
                << endl
                << "Summary" << endl
                << "\truntime:      ";
-          t.stop(cout);
+          stop(t, cout);
           cout << endl
                << "\tsolutions:    "
                << ::abs(static_cast<int>(o.solutions()) - i) << endl
@@ -239,7 +199,7 @@ namespace Gecode { namespace Driver {
       case SM_STAT:
         {
           cout << o.name() << endl;
-          Timer t;
+          Support::Timer t;
           int i = o.solutions();
           t.start();
           Script* s = new Script(o);
@@ -263,7 +223,7 @@ namespace Gecode { namespace Driver {
                << "\tpropagators:  " << n_p << endl
                << "\tbranchings:   " << n_b << endl
                << "\truntime:      ";
-          t.stop(cout);
+          stop(t, cout);
           cout << endl
                << "\tsolutions:    "
                << ::abs(static_cast<int>(o.solutions()) - i) << endl
@@ -279,7 +239,7 @@ namespace Gecode { namespace Driver {
       case SM_TIME:
         {
           cout << o.name() << endl;
-          Timer t;
+          Support::Timer t;
           double* ts = new double[o.samples()];
           for (unsigned int s = o.samples(); s--; ) {
             t.start();

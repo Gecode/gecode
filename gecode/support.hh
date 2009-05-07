@@ -119,6 +119,12 @@
 #include <gecode/support/sort.hpp>
 #include <gecode/support/static-stack.hpp>
 
+/*
+ * General utilities
+ *
+ */
+#include <gecode/support/timer.hpp>
+
 #endif
 
 // STATISTICS: support-any
