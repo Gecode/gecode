@@ -383,25 +383,23 @@ namespace Gecode { namespace Search { namespace Parallel {
   BAB::solution(Space* s) {
     m_search.acquire();
     if (best != NULL) {
-      best->constrain(*s);
-      if (best->status() == SS_FAILED) {
-        delete best;
-        best = s->clone();
-      } else {
+      s->constrain(*best);
+      if (s->status() == SS_FAILED) {
         delete s;
         m_search.release();
         return;
+      } else {
+        delete best;
+        best = s->clone();
       }
     } else {
       best = s->clone();
     }
-    bool bs = signal();
-    solutions.push(s);
     // Announce better solutions
-    /*
     for (unsigned int i=0; i<workers(); i++)
       worker(i)->better(best);
-    */
+    bool bs = signal();
+    solutions.push(s);
     if (bs)
       e_search.signal();
     m_search.release();
@@ -536,6 +534,12 @@ namespace Gecode { namespace Search { namespace Parallel {
               m.release();
               engine.stop();
             } else {
+              /*
+               * The invariant maintained by the engine is:
+               *   For all nodes stored at a depth less than mark, there
+               *   is no guarantee of betterness. For those above the mark,
+               *   betterness is guaranteed.
+               */
               node++;
               switch (cur->status(*this)) {
               case SS_FAILED:
@@ -601,6 +605,7 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   BAB::Worker::~Worker(void) {
     delete cur;
+    delete best;
     path.reset();
   }
   BAB::~BAB(void) {
