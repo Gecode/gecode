@@ -43,9 +43,11 @@
 #include <sys/time.h>
 #endif
 
+#include <ctime>
+
 namespace Gecode { namespace Support {
 
-  /** \brief %Timer.
+  /** \brief %Timer
    * 
    * This class represents a best-effort at measuring wall-clock time
    * in milliseconds.
@@ -74,10 +76,10 @@ namespace Gecode { namespace Support {
 #if   defined(GECODE_USE_GETTIMEOFDAY)
       timeval t1, t;
       if (gettimeofday(&t1, NULL))
-	  throw OperatingSystemError("Timer::stop[gettimeofday]");
+        throw OperatingSystemError("Timer::stop[gettimeofday]");
       timersub(&t1, &t0, &t);
       return (static_cast<double>(t.tv_sec) * 1000.0) + 
-	  (static_cast<double>(t.tv_usec)/1000.0);
+        (static_cast<double>(t.tv_usec)/1000.0);
 #elif defined(GECODE_USE_CLOCK)
       return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
 #endif

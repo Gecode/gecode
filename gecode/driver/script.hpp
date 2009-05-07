@@ -39,8 +39,6 @@
 #include <iostream>
 #include <iomanip>
 
-#include <ctime>
-
 namespace Gecode { namespace Driver {
 
   /**
