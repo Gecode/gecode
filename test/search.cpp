@@ -300,21 +300,24 @@ namespace Test {
       unsigned int c_d;
       /// Adaptive recomputation distance
       unsigned int a_d;
+      /// Number of threads
+      unsigned int t;
     public:
       /// Initialize test
       DFS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
-          unsigned int c_d0, unsigned int a_d0)
+          unsigned int c_d0, unsigned int a_d0, unsigned int t0)
         : Test("DFS::"+Model::name()+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
-               str(c_d0)+"::"+str(a_d0),
-               htb1,htb2,htb3), c_d(c_d0), a_d(a_d0) {}
+               str(c_d0)+"::"+str(a_d0)+"::"+str(t0),
+               htb1,htb2,htb3), c_d(c_d0), a_d(a_d0), t(t0) {}
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
         Gecode::Search::FailStop f(2);
         Gecode::Search::Options o;
-        o.c_d  = c_d;
-        o.a_d  = a_d;
+        o.c_d = c_d;
+        o.a_d = a_d;
+        o.threads = t;
         o.stop = &f;
         Gecode::DFS<Model> dfs(m,o);
         int n = m->solutions();
@@ -335,17 +338,22 @@ namespace Test {
     /// Test for limited discrepancy search
     template <class Model>
     class LDS : public Test {
+    private:
+      /// Number of threads
+      unsigned int t;
     public:
       /// Initialize test
-      LDS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3)
+      LDS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
+          unsigned int t0)
         : Test("LDS::"+Model::name()+"::"+
-               str(htb1)+"::"+str(htb2)+"::"+str(htb3),
-               htb1,htb2,htb3) {}
+               str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+str(t0),
+               htb1,htb2,htb3), t(t0) {}
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
         Gecode::Search::FailStop f(2);
         Gecode::Search::Options o;
+        o.threads = t;
         o.d = 50;
         o.stop = &f;
         Gecode::LDS<Model> lds(m,o);
@@ -372,22 +380,25 @@ namespace Test {
       unsigned int c_d;
       /// Adaptive recomputation distance
       unsigned int a_d;
+      /// Number of threads
+      unsigned int t;
     public:
       /// Initialize test
       Best(const std::string& b, HowToConstrain htc,
            HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
-           unsigned int c_d0, unsigned int a_d0)
+           unsigned int c_d0, unsigned int a_d0, unsigned int t0)
         : Test(b+"::"+Model::name()+"::"+str(htc)+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
-               str(c_d0)+"::"+str(a_d0),
-               htb1,htb2,htb3,htc), c_d(c_d0), a_d(a_d0) {}
+               str(c_d0)+"::"+str(a_d0)+"::"+str(t0),
+               htb1,htb2,htb3,htc), c_d(c_d0), a_d(a_d0), t(t0) {}
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3,htc);
         Gecode::Search::FailStop f(2);
         Gecode::Search::Options o;
-        o.c_d  = c_d;
-        o.a_d  = a_d;
+        o.c_d = c_d;
+        o.a_d = a_d;
+        o.threads = t;
         o.stop = &f;
         Engine<Model> best(m,o);
         delete m;
@@ -467,43 +478,52 @@ namespace Test {
       /// Perform creation and registration
       Create(void) {
         // Depth-first search
-        for (unsigned int c_d = 1; c_d<10; c_d++)
-          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
-            for (BranchTypes htb1; htb1(); ++htb1)
-              for (BranchTypes htb2; htb2(); ++htb2)
-                for (BranchTypes htb3; htb3(); ++htb3)
-                  (void) new DFS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb(),
-                                               c_d, a_d);
-            new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, c_d, a_d);
-            new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, c_d, a_d);
-          }
-
-        // Limited discrepancy search
-        for (BranchTypes htb1; htb1(); ++htb1)
-          for (BranchTypes htb2; htb2(); ++htb2)
-            for (BranchTypes htb3; htb3(); ++htb3)
-              (void) new LDS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb());
-        new LDS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE);
-        new LDS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE);
-
-        // Best solution search
-        for (unsigned int c_d = 1; c_d<10; c_d++)
-          for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
-            for (ConstrainTypes htc; htc(); ++htc)
+        for (unsigned int t = 1; t<=4; t++)
+          for (unsigned int c_d = 1; c_d<10; c_d++)
+            for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
               for (BranchTypes htb1; htb1(); ++htb1)
                 for (BranchTypes htb2; htb2(); ++htb2)
-                  for (BranchTypes htb3; htb3(); ++htb3) {
-                    (void) new Best<HasSolutions,BAB>
-                      ("BAB",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),c_d,a_d);
-                    (void) new Best<HasSolutions,Restart>
-                      ("Restart",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),c_d,a_d);
-                  }
-            (void) new Best<FailImmediate,BAB>
-              ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
-            (void) new Best<HasSolutions,BAB>
-              ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d);
-          }
+                  for (BranchTypes htb3; htb3(); ++htb3)
+                    (void) new DFS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb(),
+                                                 c_d, a_d, t);
+              new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, 
+                                     c_d, a_d, t);
+              new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, 
+                                    c_d, a_d, t);
+            }
 
+        // Limited discrepancy search
+        for (unsigned int t = 1; t<=4; t++) {
+          for (BranchTypes htb1; htb1(); ++htb1)
+            for (BranchTypes htb2; htb2(); ++htb2)
+              for (BranchTypes htb3; htb3(); ++htb3)
+                (void) new LDS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb()
+                                             ,t);
+          new LDS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, t);
+          new LDS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, t);
+        }
+
+        // Best solution search
+        for (unsigned int t = 1; t<=4; t++)
+          for (unsigned int c_d = 1; c_d<10; c_d++)
+            for (unsigned int a_d = 1; a_d<=c_d; a_d++) {
+              for (ConstrainTypes htc; htc(); ++htc)
+                for (BranchTypes htb1; htb1(); ++htb1)
+                  for (BranchTypes htb2; htb2(); ++htb2)
+                    for (BranchTypes htb3; htb3(); ++htb3) {
+                      (void) new Best<HasSolutions,BAB>
+                        ("BAB",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
+                         c_d,a_d,t);
+                      (void) new Best<HasSolutions,Restart>
+                        ("Restart",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
+                         c_d,a_d,t);
+                  }
+              (void) new Best<FailImmediate,BAB>
+                ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+              (void) new Best<HasSolutions,BAB>
+                ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+            }
+        
       }
     };
 

@@ -602,6 +602,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     delete best;
     path.reset();
   }
+
   BAB::~BAB(void) {
     // Grab the wait mutex for termination
     _m_wait_terminate.acquire();
