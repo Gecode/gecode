@@ -154,12 +154,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     heap.rfree(_worker);
   }
 
-
-  // Create parallel depth-first engine
-  Search::Engine* dfs(Space* s, size_t sz, const Options& o) {
-    return new DFS(s,sz,o);
-  }
-
 }}}
 
 // STATISTICS: search-any

@@ -36,20 +36,24 @@
  */
 
 #include <gecode/search.hh>
+#include <gecode/search/sequential/dfs.hh>
+#ifdef GECODE_HAS_THREADS
+#include <gecode/search/parallel/dfs.hh>
+#endif
 #include <gecode/search/support.hh>
 
 namespace Gecode { namespace Search {
-    
+
   Engine* 
   dfs(Space* s, size_t sz, const Options& o) {
 #ifdef GECODE_HAS_THREADS
     Options to = threads(o);
     if (to.threads == 1)
-      return Sequential::dfs(s,sz,to);
+      return new WorkerToEngine<Sequential::DFS>(s,sz,o);
     else
-      return Parallel::dfs(s,sz,to);
+      return new Parallel::DFS(s,sz,o);
 #else
-    return Sequential::dfs(s,sz,o);
+    return new WorkerToEngine<Sequential::DFS>(s,sz,o);
 #endif
   }
 

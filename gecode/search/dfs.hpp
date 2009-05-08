@@ -37,18 +37,6 @@
 
 namespace Gecode {
 
-  namespace Search { namespace Sequential {
-    /// Create depth-first engine
-    GECODE_SEARCH_EXPORT Engine* dfs(Space* s, size_t sz, const Options& o);
-  }}
-
-#ifdef GECODE_HAS_THREADS
-  namespace Search { namespace Parallel {
-    /// Create depth-first engine
-    GECODE_SEARCH_EXPORT Engine* dfs(Space* s, size_t sz, const Options& o);
-  }}
-#endif
-
   namespace Search {
     /// Create depth-first engine
     GECODE_SEARCH_EXPORT Engine* dfs(Space* s, size_t sz, const Options& o);

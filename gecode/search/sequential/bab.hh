@@ -39,6 +39,9 @@
  *
  */
 
+#ifndef __GECODE_SEARCH_SEQUENTIAL_BAB_HH__
+#define __GECODE_SEARCH_SEQUENTIAL_BAB_HH__
+
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
@@ -162,13 +165,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     delete cur;
   }
 
-
-  // Create branch and bound engine
-  Engine* bab(Space* s, size_t sz, const Options& o) {
-    return new WorkerToEngine<BAB>(s,sz,o);
-  }
-
-
 }}}
+
+#endif
 
 // STATISTICS: search-any

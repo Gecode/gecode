@@ -36,6 +36,10 @@
  */
 
 #include <gecode/search.hh>
+#include <gecode/search/sequential/bab.hh>
+#ifdef GECODE_HAS_THREADS
+#include <gecode/search/parallel/bab.hh>
+#endif
 #include <gecode/search/support.hh>
 
 namespace Gecode { namespace Search {
@@ -45,11 +49,11 @@ namespace Gecode { namespace Search {
 #ifdef GECODE_HAS_THREADS
     Options to = threads(o);
     if (to.threads == 1)
-      return Sequential::bab(s,sz,to);
+      return new WorkerToEngine<Sequential::BAB>(s,sz,o);
     else
-      return Parallel::bab(s,sz,to);
+      return new Parallel::BAB(s,sz,o);
 #else
-    return Sequential::bab(s,sz,o);
+    return new WorkerToEngine<Sequential::BAB>(s,sz,o);
 #endif
   }
 
