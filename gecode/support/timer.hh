@@ -1,13 +1,9 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
- *
- *  Contributing authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
  *     Mikael Lagerkvist, 2009
  *
  *  Last modified:
@@ -38,6 +34,9 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
+#ifndef __GECODE_SUPPORT_TIMER_HH__
+#define __GECODE_SUPPORT_TIMER_HH__
 
 #include <gecode/support.hh>
 
@@ -91,5 +90,7 @@ namespace Gecode { namespace Support {
   };
 
 }}
+
+#endif
 
 // STATISTICS: support-any

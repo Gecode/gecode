@@ -40,9 +40,8 @@
 #ifndef __GECODE_SEARCH_HH__
 #define __GECODE_SEARCH_HH__
 
-#include <ctime>
-
 #include <gecode/kernel.hh>
+#include <gecode/support/timer.hh>
 
 /*
  * Configure linking
@@ -270,8 +269,8 @@ namespace Gecode {
      */
     class GECODE_SEARCH_EXPORT TimeStop : public Stop {
     protected:
-      /// Clock when execution should stop
-      clock_t s;
+      /// Time when execution should stop
+      Support::Timer t;
       /// Current limit in milliseconds
       unsigned long int l;
     public:

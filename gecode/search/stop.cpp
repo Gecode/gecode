@@ -75,8 +75,7 @@ namespace Gecode { namespace Search {
    */
   bool
   TimeStop::stop(const Statistics&, const Options&) {
-    return static_cast<unsigned long int>
-      ((static_cast<double>(clock()-s)/CLOCKS_PER_SEC) * 1000.0) > l;
+    return t.stop() > l;
   }
 
 }}

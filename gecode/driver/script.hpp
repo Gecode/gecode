@@ -36,6 +36,8 @@
  *
  */
 
+#include <gecode/support/timer.hh>
+
 #include <iostream>
 #include <iomanip>
 

@@ -113,7 +113,9 @@ namespace Gecode { namespace Search {
 
   forceinline
   TimeStop::TimeStop(unsigned long int l0)
-    : s(clock()), l(l0) {}
+    : l(l0) {
+    t.start();
+  }
 
   forceinline unsigned long int
   TimeStop::limit(void) const {
@@ -127,7 +129,7 @@ namespace Gecode { namespace Search {
 
   forceinline void
   TimeStop::reset(void) {
-    s=clock();
+    t.start();
   }
 
 }}
