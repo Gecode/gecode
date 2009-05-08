@@ -40,7 +40,7 @@
 namespace Gecode { namespace Search { namespace Sequential {
 
   /// Depth-first restart best solution search engine implementation
-  class GECODE_SEARCH_EXPORT Restart : public DFS {
+  class Restart : public DFS {
   protected:
     /// Root node
     Space* root;
@@ -55,11 +55,12 @@ namespace Gecode { namespace Search { namespace Sequential {
     ~Restart(void);
   };
 
+  forceinline 
   Restart::Restart(Space* s, size_t sz, const Search::Options& o) :
     DFS(s,sz,o),
     root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
 
-  Space*
+  forceinline Space*
   Restart::next(void) {
     if (best != NULL) {
       root->constrain(*best);
@@ -70,6 +71,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     return (best != NULL) ? best->clone() : NULL;
   }
 
+  forceinline 
   Restart::~Restart(void) {
     delete best;
     delete root;

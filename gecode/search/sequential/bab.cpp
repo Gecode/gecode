@@ -72,6 +72,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     ~BAB(void);
   };
 
+  forceinline 
   BAB::BAB(Space* s, size_t sz, const Options& o)
     : Worker(sz), opt(o), d(0), mark(0), best(NULL) {
     cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,opt);
@@ -82,7 +83,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       fail++;
   }
 
-  Space*
+  forceinline Space*
   BAB::next(void) {
     /*
      * The invariant maintained by the engine is:
@@ -147,13 +148,14 @@ namespace Gecode { namespace Search { namespace Sequential {
     return NULL;
   }
 
-  Statistics
+  forceinline Statistics
   BAB::statistics(void) const {
     Statistics s = *this;
     s.memory += path.size();
     return s;
   }
 
+  forceinline 
   BAB::~BAB(void) {
     path.reset();
     delete best;

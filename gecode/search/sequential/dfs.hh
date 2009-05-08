@@ -46,7 +46,7 @@
 namespace Gecode { namespace Search { namespace Sequential {
 
   /// Depth-first search engine implementation
-  class GECODE_SEARCH_EXPORT DFS : public Worker {
+  class DFS : public Worker {
   private:
     /// Search options
     Options opt;
@@ -69,6 +69,98 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Destructor
     ~DFS(void);
   };
+
+  forceinline 
+  DFS::DFS(Space* s, size_t sz, const Options& o)
+    : Worker(sz), opt(o), d(0) {
+    cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,opt);
+    current(s);
+    current(NULL);
+    current(cur);
+    if (cur == NULL)
+      fail++;
+  }
+
+  forceinline void
+  DFS::reset(Space* s) {
+    delete cur;
+    path.reset();
+    d = 0;
+    if (s->status(*this) == SS_FAILED) {
+      cur = NULL;
+      Worker::reset();
+    } else {
+      cur = s->clone();
+      Worker::reset(cur);
+    }
+  }
+
+  forceinline Space*
+  DFS::next(void) {
+    start();
+    while (true) {
+      while (cur) {
+        if (stop(opt.stop,path.size()))
+          return NULL;
+        node++;
+        switch (cur->status(*this)) {
+        case SS_FAILED:
+          fail++;
+          delete cur;
+          cur = NULL;
+          Worker::current(NULL);
+          break;
+        case SS_SOLVED:
+          {
+            // Deletes all pending branchings
+            (void) cur->description();
+            Space* s = cur;
+            cur = NULL;
+            Worker::current(NULL);
+            return s;
+          }
+        case SS_BRANCH:
+          {
+            Space* c;
+            if ((d == 0) || (d >= opt.c_d)) {
+              c = cur->clone();
+              d = 1;
+            } else {
+              c = NULL;
+              d++;
+            }
+            const BranchingDesc* desc = path.push(*this,cur,c);
+            Worker::push(c,desc);
+            cur->commit(*desc,0);
+            break;
+          }
+        default:
+          GECODE_NEVER;
+        }
+      }
+      do {
+        if (!path.next(*this))
+          return NULL;
+        cur = path.recompute(d,opt.a_d,*this);
+      } while (cur == NULL);
+      Worker::current(cur);
+    }
+    GECODE_NEVER;
+    return NULL;
+  }
+
+  forceinline Statistics
+  DFS::statistics(void) const {
+    Statistics s = *this;
+    s.memory += path.size();
+    return s;
+  }
+
+  forceinline 
+  DFS::~DFS(void) {
+    delete cur;
+    path.reset();
+  }
 
 }}}
 
