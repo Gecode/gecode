@@ -523,8 +523,9 @@ EXCLUDE_SYMLINKS       = NO
 # certain files from those directories.
 
 EXCLUDE_PATTERNS       = \
-	*/.svn/* \
-	*moc_*
+	*.svn/* \
+	*moc_* \
+	*contribs/*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
@@ -1036,7 +1037,7 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_GIST_EXPORT=" \
                          "GECODE_SUPPORT_EXPORT=" \
                          "GECODE_MSC_VIRTUAL=" \
-                         "GECODE_HAVE_INT_VARS=1" \
+                         "GECODE_HAS_INT_VARS=1" \
                          "GECODE_HAVE_SET_VARS=1" \
                          "forceinline=inline"
 
