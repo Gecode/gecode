@@ -461,20 +461,19 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline void
   DFS::Worker::find(void) {
     // Try to find new work (even if there is none)
-    for (unsigned int i=0; i<engine.workers(); i++)
-      if (engine.worker(i) != this) {
-        unsigned long int r_d;
-        if (Space* s = engine.worker(i)->steal(r_d)) {
-          // Reset this guy
-          m.acquire();
-          idle = false;
-          d = 0;
-          cur = s;
-          Search::Worker::reset(cur,r_d);
-          m.release();
-          return;
-        }
+    for (unsigned int i=0; i<engine.workers(); i++) {
+      unsigned long int r_d;
+      if (Space* s = engine.worker(i)->steal(r_d)) {
+        // Reset this guy
+        m.acquire();
+        idle = false;
+        d = 0;
+        cur = s;
+        Search::Worker::reset(cur,r_d);
+        m.release();
+        return;
       }
+    }
   }
 
   void

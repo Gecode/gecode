@@ -365,7 +365,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   BAB::Worker::better(Space* b) {
     m.acquire();
     delete best;
-    best = b->clone();
+    best = b->clone(false);
     mark = path.entries();
     if (cur != NULL)
       cur->constrain(*best);
@@ -478,20 +478,22 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline void
   BAB::Worker::find(void) {
     // Try to find new work (even if there is none)
-    for (unsigned int i=0; i<engine.workers(); i++)
-      if (engine.worker(i) != this) {
-        unsigned long int r_d;
-        if (Space* s = engine.worker(i)->steal(r_d)) {
-          // Reset this guy
-          m.acquire();
-          idle = false;
-          d = 0;
-          cur = s;
-          Search::Worker::reset(cur,r_d);
-          m.release();
-          return;
-        }
+    for (unsigned int i=0; i<engine.workers(); i++) {
+      unsigned long int r_d;
+      if (Space* s = engine.worker(i)->steal(r_d)) {
+        // Reset this guy
+        m.acquire();
+        idle = false;
+        d = 0;
+        cur = s;
+        mark = 0;
+        if (best != NULL)
+          cur->constrain(*best);
+        Search::Worker::reset(cur,r_d);
+        m.release();
+        return;
       }
+    }
   }
 
   void
