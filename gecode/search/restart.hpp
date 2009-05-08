@@ -37,18 +37,6 @@
 
 namespace Gecode {
 
-  namespace Search { namespace Sequential {
-    /// Create restart engine
-    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);
-  }}
-
-#ifdef GECODE_HAS_THREADS
-  namespace Search { namespace Parallel {
-    /// Create restart engine
-    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);
-  }}
-#endif
-
   namespace Search {
     /// Create restart engine
     GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);

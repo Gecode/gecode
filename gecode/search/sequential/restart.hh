@@ -35,28 +35,53 @@
  *
  */
 
-#include <gecode/search.hh>
-#include <gecode/search/sequential/restart.hh>
-#ifdef GECODE_HAS_THREADS
-#include <gecode/search/parallel/restart.hh>
-#endif
-#include <gecode/search/support.hh>
+#ifndef __GECODE_SEARCH_SEQUENTIAL_RESTART_HH__
+#define __GECODE_SEARCH_SEQUENTIAL_RESTART_HH__
 
-namespace Gecode { namespace Search {
-    
-  Engine* 
-  restart(Space* s, size_t sz, const Options& o) {
-#ifdef GECODE_HAS_THREADS
-    Options to = threads(o);
-    if (to.threads == 1)
-      return new WorkerToEngine<Sequential::Restart>(s,sz,o);
-    else
-      return new Parallel::Restart(s,sz,o);
-#else
-    return new WorkerToEngine<Sequential::Restart>(s,sz,o);
-#endif
+#include <gecode/search/sequential/dfs.hh>
+
+namespace Gecode { namespace Search { namespace Sequential {
+
+  /// Depth-first restart best solution search engine implementation
+  class Restart : public DFS {
+  protected:
+    /// Root node
+    Space* root;
+    /// So-far best solution
+    Space* best;
+  public:
+    /// Initialize engine for space \a s (with size \a sz) and options \a o
+    Restart(Space* s, size_t sz, const Search::Options& o);
+    /// Return next better solution (NULL, if none exists or search has been stopped)
+    Space* next(void);
+    /// Destructor
+    ~Restart(void);
+  };
+
+  forceinline 
+  Restart::Restart(Space* s, size_t sz, const Search::Options& o) :
+    DFS(s,sz,o),
+    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
+
+  forceinline Space*
+  Restart::next(void) {
+    if (best != NULL) {
+      root->constrain(*best);
+      reset(root);
+    }
+    delete best;
+    best = DFS::next();
+    return (best != NULL) ? best->clone() : NULL;
   }
 
-}}
+  forceinline 
+  Restart::~Restart(void) {
+    delete best;
+    delete root;
+  }
+
+}}}
+
+#endif
 
 // STATISTICS: search-any

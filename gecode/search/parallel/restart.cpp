@@ -35,18 +35,24 @@
  *
  */
 
-#include <gecode/search.hh>
-#include <gecode/search/support.hh>
-#include <gecode/search/worker.hh>
-#include <gecode/search/parallel/path.hh>
-
-#include <gecode/support/thread.hh>
+#include <gecode/search/parallel/restart.hh>
 
 namespace Gecode { namespace Search { namespace Parallel {
 
-  // Create parallel restart engine
-  Engine* restart(Space* s, size_t sz, const Options& o) {
-    return ::Gecode::Search::Sequential::restart(s,sz,o);
+  Space*
+  Restart::next(void) {
+    if (best != NULL) {
+      root->constrain(*best);
+      reset(root);
+    }
+    delete best;
+    best = DFS::next();
+    return (best != NULL) ? best->clone() : NULL;
+  }
+
+  Restart::~Restart(void) {
+    delete best;
+    delete root;
   }
 
 }}}

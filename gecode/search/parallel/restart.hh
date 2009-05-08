@@ -35,9 +35,12 @@
  *
  */
 
-#include <gecode/search/sequential/dfs.hh>
+#ifndef __GECODE_SEARCH_PARALLEL_RESTART_HH__
+#define __GECODE_SEARCH_PARALLEL_RESTART_HH__
 
-namespace Gecode { namespace Search { namespace Sequential {
+#include <gecode/search/parallel/dfs.hh>
+
+namespace Gecode { namespace Search { namespace Parallel {
 
   /// Depth-first restart best solution search engine implementation
   class Restart : public DFS {
@@ -50,9 +53,9 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Initialize engine for space \a s (with size \a sz) and options \a o
     Restart(Space* s, size_t sz, const Search::Options& o);
     /// Return next better solution (NULL, if none exists or search has been stopped)
-    Space* next(void);
+    virtual Space* next(void);
     /// Destructor
-    ~Restart(void);
+    virtual ~Restart(void);
   };
 
   forceinline 
@@ -60,28 +63,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     DFS(s,sz,o),
     root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
 
-  forceinline Space*
-  Restart::next(void) {
-    if (best != NULL) {
-      root->constrain(*best);
-      reset(root);
-    }
-    delete best;
-    best = DFS::next();
-    return (best != NULL) ? best->clone() : NULL;
-  }
-
-  forceinline 
-  Restart::~Restart(void) {
-    delete best;
-    delete root;
-  }
-
-  // Create restart engine
-  Engine* restart(Space* s, size_t sz, const Options& o) {
-    return new WorkerToEngine<Restart>(s,sz,o);
-  }
-
 }}}
+
+#endif
 
 // STATISTICS: search-any
