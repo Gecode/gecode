@@ -74,6 +74,17 @@ Date: some date
 This is a release
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The INT_VAL_MED value selection now selects the greatest element in the domain 
+not greater than the median (instead of the least element not less than the 
+median). Instead of INT_VAL_SPLIT_{MIN,MAX}, there is now 
+INT_VAL_SPLIT_{MEAN,MED}_{MIN,MAX} to support splitting by median or by the mean 
+of the smallest and largest element.
+
+[ENTRY]
 Module: driver
 What:   change
 Rank:   minor
