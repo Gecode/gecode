@@ -459,12 +459,12 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline Space*
   BAB::Worker::steal(unsigned long int& d) {
     /*
-     * Make a quick check whether the worker is idle.
+     * Make a quick check whether the worker might have work
      *
      * If that is not true any longer, the worker will be asked
      * again eventually.
      */
-    if (idle || (path.entries() <= Config::steal_limit))
+    if (!path.steal())
       return NULL;
     m.acquire();
     Space* s = path.steal(*this,d);

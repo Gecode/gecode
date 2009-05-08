@@ -87,7 +87,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Test whether current alternative is rightmost
       bool rightmost(void) const;
       /// Test whether there is an alternative that can be stolen
-      bool stealable(void) const;
+      bool work(void) const;
       /// Move to next alternative
       void next(void);
       /// Steal rightmost alternative and return its number
@@ -98,6 +98,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     };
     /// Stack to store node information
     Support::DynamicStack<Node,Heap> ds;
+    /// Number of nodes that have work for stealing
+    unsigned int n_work;
   public:
     /// Initialize
     Path(void);
@@ -122,6 +124,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     size_t size(void) const;
     /// Reset stack
     void reset(void);
+    /// Make a quick check whether stealing might be feasible
+    bool steal(void) const;
     /// Steal work at depth \a d
     Space* steal(Worker& stat, unsigned long int& d);
   };
@@ -158,7 +162,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     return _alt == _alt_max;
   }
   forceinline bool
-  Path::Node::stealable(void) const {
+  Path::Node::work(void) const {
     return _alt != _alt_max;
   }
   forceinline void
@@ -167,7 +171,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
   forceinline unsigned int
   Path::Node::steal(void) {
-    assert(stealable());
+    assert(work());
     return _alt_max--;
   }
 
@@ -190,11 +194,13 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
 
   forceinline
-  Path::Path(void) : ds(heap) {}
+  Path::Path(void) : ds(heap), n_work(0) {}
 
   forceinline const BranchingDesc*
   Path::push(Worker& stat, Space* s, Space* c) {
     Node sn(s,c);
+    if (sn.work())
+      n_work++;
     ds.push(sn);
     stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
     return sn.desc();
@@ -208,7 +214,10 @@ namespace Gecode { namespace Search { namespace Parallel {
         stat.pop(ds.top().space(),ds.top().desc());
         ds.pop().dispose();
       } else {
+        assert(ds.top().work());
         ds.top().next();
+        if (!ds.top().work())
+          n_work--;
         return true;
       }
     return false;
@@ -242,15 +251,24 @@ namespace Gecode { namespace Search { namespace Parallel {
   Path::unwind(int l) {
     assert((ds[l].space() == NULL) || ds[l].space()->failed());
     int n = ds.entries();
-    for (int i=l; i<n; i++)
+    for (int i=l; i<n; i++) {
+      if (ds.top().work())
+        n_work--;
       ds.pop().dispose();
+    }
     assert(ds.entries() == l);
   }
 
   forceinline void
   Path::reset(void) {
+    n_work = 0;
     while (!ds.empty())
       ds.pop().dispose();
+  }
+
+  forceinline bool
+  Path::steal(void) const {
+    return n_work > Config::steal_limit;
   }
 
   forceinline Space*
@@ -259,7 +277,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     int n = ds.entries()-1;
     int w = 0;
     while (n >= 0) {
-      if (ds[n].stealable())
+      if (ds[n].work())
         w++;
       if (w > Config::steal_limit) {
         // Okay, there is sufficient work left
@@ -272,6 +290,8 @@ namespace Gecode { namespace Search { namespace Parallel {
         for (int i=l; i<n; i++)
           commit(c,i);
         c->commit(*ds[n].desc(),ds[n].steal());
+        if (!ds[n].work())
+          n_work--;
         d = stat.steal_depth(static_cast<unsigned long int>(n+1));
         return c;
       }
