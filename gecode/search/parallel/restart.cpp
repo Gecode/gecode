@@ -45,9 +45,25 @@ namespace Gecode { namespace Search { namespace Parallel {
       root->constrain(*best);
       reset(root);
     }
-    delete best;
-    best = DFS::next();
-    return (best != NULL) ? best->clone() : NULL;
+    while (true) {
+      Space* s = DFS::next();
+      if (s == NULL)
+        return NULL;
+      if (best == NULL) {
+        best = s->clone();
+        return s;
+      }
+      s->constrain(*best);
+      if (s->status() == SS_FAILED) {
+        delete s;
+      } else {
+        delete best;
+        best = s->clone();
+        return s;
+      }
+    }
+    GECODE_NEVER;
+    return NULL;
   }
 
   Restart::~Restart(void) {
