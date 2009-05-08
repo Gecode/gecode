@@ -59,7 +59,7 @@ namespace Gecode {
       int min(void) const { return 0; }
       /// Return maximum of domain
       int max(void) const { return 0; }
-      /// Return median of domain
+      /// Return median of domain (greatest element not greater than the median)
       int med(void) const { return 0; }
       /// Return assigned value (only if assigned)
       int val(void) const { return 0; }

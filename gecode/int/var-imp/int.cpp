@@ -52,6 +52,8 @@ namespace Gecode { namespace Int {
     if (fst() == NULL)
       return (dom.min()+dom.max())/2;
     unsigned int i = size() / 2;
+    if (size() % 2 == 0)
+      i--;
     const RangeList* p = NULL;
     const RangeList* c = fst();
     while (i >= c->width()) {

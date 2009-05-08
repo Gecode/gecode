@@ -154,7 +154,7 @@ namespace Gecode {
       int min(void) const;
       /// Return maximum of domain
       int max(void) const;
-      /// Return median of domain
+      /// Return median of domain (greatest element not greater than the median)
       int med(void) const;
       /// Return assigned value (only if assigned)
       int val(void) const;
@@ -544,7 +544,7 @@ namespace Gecode {
       int min(void) const;
       /// Return maximum of domain
       int max(void) const;
-      /// Return median of domain
+      /// Return median of domain (greatest element not greater than the median)
       int med(void) const;
       /// Return assigned value (only if assigned)
       int val(void) const;
@@ -789,7 +789,7 @@ namespace Gecode {
       Val min(void) const;
       /// Return maximum of domain
       Val max(void) const;
-      /// Return median of domain
+      /// Return median of domain (greatest element not greater than the median)
       Val med(void) const;
       /// Return assigned value (only if assigned)
       Val val(void) const;
@@ -966,7 +966,7 @@ namespace Gecode {
       int min(void) const;
       /// Return maximum of domain
       int max(void) const;
-      /// Return median of domain
+      /// Return median of domain (greatest element not greater than the median)
       int med(void) const;
       /// Return assigned value (only if assigned)
       int val(void) const;
@@ -1163,7 +1163,7 @@ namespace Gecode {
       int min(void) const;
       /// Return maximum of domain
       int max(void) const;
-      /// Return median of domain
+      /// Return median of domain (greatest element not greater than the median)
       int med(void) const;
       /// Return assigned value (only if assigned)
       int val(void) const;
@@ -1377,7 +1377,7 @@ namespace Gecode {
       int min(void) const;
       /// Return maximum of domain
       int max(void) const;
-      /// Return median of domain
+      /// Return median of domain (greatest element not greater than the median)
       int med(void) const;
       /// Return assigned value (only if assigned)
       int val(void) const;

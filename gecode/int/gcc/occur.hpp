@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int min(void) const;
     /// Return maximum of domain
     int max(void) const;
-    /// Return median of domain
+    /// Return median of domain (greatest element not greater than the median)
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;

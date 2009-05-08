@@ -218,7 +218,7 @@ namespace Gecode { namespace Int {
     int max(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    /// Return median of domain (rounding downwards)
+    /// Return median of domain (greatest element not greater than the median)
     GECODE_INT_EXPORT int med(void) const;
 
     /// Return size (cardinality) of domain
@@ -540,7 +540,7 @@ namespace Gecode { namespace Int {
     int max(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    /// Return median of domain
+    /// Return median of domain (greatest element not greater than the median)
     int med(void) const;
 
     /// Return size (cardinality) of domain

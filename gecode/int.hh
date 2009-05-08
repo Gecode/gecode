@@ -390,7 +390,7 @@ namespace Gecode {
     int min(void) const;
     /// Return maximum of domain
     int max(void) const;
-    /// Return median of domain (rounding downwards)
+    /// Return median of domain (greatest element not greater than the median)
     int med(void) const;
     /**
      * \brief Return assigned value
@@ -528,7 +528,7 @@ namespace Gecode {
     int min(void) const;
     /// Return maximum of domain
     int max(void) const;
-    /// Return median of domain
+    /// Return median of domain (greatest element not greater than the median)
     int med(void) const;
     /**
      * \brief Return assigned value
@@ -2146,7 +2146,7 @@ namespace Gecode {
   /// Which values to select first for branching
   enum IntValBranch {
     INT_VAL_MIN,       ///< Select smallest value
-    INT_VAL_MED,       ///< Select median value (rounding downwards)
+    INT_VAL_MED,       ///< Select greatest value not greater than the median
     INT_VAL_MAX,       ///< Select largest value
     INT_VAL_RND,       ///< Select random value
     INT_VAL_SPLIT_MIN, ///< Select lower half of domain
@@ -2189,7 +2189,7 @@ namespace Gecode {
   /// Which value to select for assignment
   enum IntAssign {
     INT_ASSIGN_MIN, ///< Select smallest value
-    INT_ASSIGN_MED, ///< Select median value (rounding downwards)
+    INT_ASSIGN_MED, ///< Select greatest element not greater than the median
     INT_ASSIGN_MAX, ///< Select maximum value
     INT_ASSIGN_RND  ///< Select random value
   };
