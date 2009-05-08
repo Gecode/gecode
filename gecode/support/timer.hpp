@@ -39,11 +39,15 @@
  *
  */
 
+#include <gecode/support.hh>
+
 #ifdef GECODE_USE_GETTIMEOFDAY
 #include <sys/time.h>
 #endif
 
+#ifdef GECODE_USE_CLOCK
 #include <ctime>
+#endif
 
 namespace Gecode { namespace Support {
 
