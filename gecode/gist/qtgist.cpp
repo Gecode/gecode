@@ -208,18 +208,20 @@ namespace Gecode { namespace Gist {
 
     nullSolutionInspector = new QAction("<none>",this);
     nullSolutionInspector->setCheckable(true);
-    nullSolutionInspector->setChecked(true);
+    nullSolutionInspector->setChecked(false);
+    nullSolutionInspector->setEnabled(false);
     solutionInspectorGroup = new QActionGroup(this);
-    solutionInspectorGroup->setExclusive(true);
+    solutionInspectorGroup->setExclusive(false);
     solutionInspectorGroup->addAction(nullSolutionInspector);
     connect(solutionInspectorGroup, SIGNAL(triggered(QAction*)),
             this, SLOT(selectSolutionInspector(QAction*)));
 
     nullDoubleClickInspector = new QAction("<none>",this);
     nullDoubleClickInspector->setCheckable(true);
-    nullDoubleClickInspector->setChecked(true);
+    nullDoubleClickInspector->setChecked(false);
+    nullDoubleClickInspector->setEnabled(false);
     doubleClickInspectorGroup = new QActionGroup(this);
-    doubleClickInspectorGroup->setExclusive(true);
+    doubleClickInspectorGroup->setExclusive(false);
     doubleClickInspectorGroup->addAction(nullDoubleClickInspector);
     connect(doubleClickInspectorGroup, SIGNAL(triggered(QAction*)),
             this, SLOT(selectDoubleClickInspector(QAction*)));
@@ -289,6 +291,11 @@ namespace Gecode { namespace Gist {
 
   void
   Gist::addInspector(Inspector* i0, bool solutionInspector) {
+    if (doubleClickInspectorGroup->
+      actions().indexOf(nullDoubleClickInspector) != -1) {
+      doubleClickInspectorGroup->removeAction(nullDoubleClickInspector);
+      solutionInspectorGroup->removeAction(nullSolutionInspector);
+    }
     canvas->addSolutionInspector(i0);
     canvas->addDoubleClickInspector(i0);
     QAction* nas = new QAction(i0->name().c_str(), this);
@@ -305,11 +312,11 @@ namespace Gecode { namespace Gist {
       doubleClickInspectorGroup->actions());
 
     if (solutionInspector) {
-      selectSolutionInspector(nas);
       nas->setChecked(true);
+      selectSolutionInspector(nas);
     } else {
-      selectDoubleClickInspector(nad);
       nad->setChecked(true);
+      selectDoubleClickInspector(nad);
     }
   }
 
@@ -434,13 +441,15 @@ namespace Gecode { namespace Gist {
 
   void
   Gist::selectDoubleClickInspector(QAction* a) {
-    canvas->setActiveDoubleClickInspector(
-      doubleClickInspectorGroup->actions().indexOf(a)-1);
+    canvas->activateDoubleClickInspector(
+      doubleClickInspectorGroup->actions().indexOf(a),
+      a->isChecked());
   }
   void
   Gist::selectSolutionInspector(QAction* a) {
-    canvas->setActiveSolutionInspector(
-      solutionInspectorGroup->actions().indexOf(a)-1);
+    canvas->activateSolutionInspector(
+      solutionInspectorGroup->actions().indexOf(a),
+      a->isChecked());
   }
 
   void

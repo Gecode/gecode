@@ -99,11 +99,11 @@ namespace Gecode {  namespace Gist {
     /// Add inspector \a i
     void addDoubleClickInspector(Inspector* i);
     /// Set active inspector
-    void setActiveDoubleClickInspector(int i);
+    void activateDoubleClickInspector(int i, bool active);
     /// Add inspector \a i
     void addSolutionInspector(Inspector* i);
     /// Set active inspector
-    void setActiveSolutionInspector(int i);
+    void activateSolutionInspector(int i, bool active);
 
   public Q_SLOTS:
     /// Set scale factor to \a scale0
@@ -220,14 +220,10 @@ namespace Gecode {  namespace Gist {
     VisualNode* pathHead;
     /// The history of inspected nodes
     QVector<VisualNode*> nodeMap;
-    /// The registered inspectors
-    QVector<Inspector*> doubleClickInspectors;
-    /// The registered inspectors
-    QVector<Inspector*> solutionInspectors;
-    /// The active double click inspector
-    int activeDoubleClickInspector;
-    /// The active solution inspector
-    int activeSolutionInspector;
+    /// The registered click inspectors, and whether they are active
+    QVector<QPair<Inspector*,bool> > doubleClickInspectors;
+    /// The registered solution inspectors, and whether they are active
+    QVector<QPair<Inspector*,bool> > solutionInspectors;
 
     /// The scale bar
     QSlider* scaleBar;

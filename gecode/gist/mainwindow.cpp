@@ -131,11 +131,15 @@ namespace Gecode { namespace Gist {
   GistMainWindow::GistMainWindow(Space* root, bool bab,
                                  const Options& opt0)
   : opt(opt0), c(root,bab,this,opt), aboutGist(this) {
-    if (opt.inspect.solution != NULL) {
-      c.addSolutionInspector(opt.inspect.solution);
-    }
-    if (opt.inspect.click != NULL) {
-      c.addDoubleClickInspector(opt.inspect.click);
+    {
+      int i = 0;
+      while (opt.inspect.solution(i)) {
+        c.addSolutionInspector(opt.inspect.solution(i++));
+      }
+      i = 0;
+      while (opt.inspect.click(i)) {
+        c.addDoubleClickInspector(opt.inspect.click(i++));
+      }
     }
     setCentralWidget(&c);
     setWindowTitle(tr("Gist"));

@@ -59,8 +59,6 @@ namespace Gecode { namespace Gist {
     : QWidget(parent)
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
-    , activeDoubleClickInspector(-1)
-    , activeSolutionInspector(-1)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false), nextPit(0)
     , targetZoom(LayoutConfig::defScale)
@@ -108,22 +106,22 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::addDoubleClickInspector(Inspector* i) {
-    doubleClickInspectors.append(i);
+    doubleClickInspectors.append(QPair<Inspector*,bool>(i,false));
   }
 
   void
-  TreeCanvas::setActiveDoubleClickInspector(int i) {
-    activeDoubleClickInspector = i;
+  TreeCanvas::activateDoubleClickInspector(int i, bool active) {
+    doubleClickInspectors[i].second = active;
   }
 
   void
   TreeCanvas::addSolutionInspector(Inspector* i) {
-    solutionInspectors.append(i);
+    solutionInspectors.append(QPair<Inspector*,bool>(i,false));
   }
 
   void
-  TreeCanvas::setActiveSolutionInspector(int i) {
-    activeSolutionInspector = i;
+  TreeCanvas::activateSolutionInspector(int i, bool active) {
+    solutionInspectors[i].second = active;
   }
 
   void
@@ -482,9 +480,11 @@ namespace Gecode { namespace Gist {
           curSpace = dfsSpace;
         }
         saveCurrentNode();
-        if (activeDoubleClickInspector != -1) {
-          doubleClickInspectors[activeDoubleClickInspector]
-            ->inspect(*curSpace);
+
+        for (int i=0; i<doubleClickInspectors.size(); i++) {
+          if (doubleClickInspectors[i].second) {
+            doubleClickInspectors[i].first->inspect(*curSpace);
+          }
         }
         delete curSpace;
       }
@@ -498,11 +498,15 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::inspectSolution(const Space* s) {
-    if (activeSolutionInspector != -1) {
-      Space* c = s->clone();
-      solutionInspectors[activeSolutionInspector]->inspect(*c);
-      delete c;
-    }    
+    Space* c = NULL;
+    for (int i=0; i<solutionInspectors.size(); i++) {
+      if (solutionInspectors[i].second) {
+        if (c == NULL)
+          c = s->clone();
+        solutionInspectors[i].first->inspect(*c);
+      }
+    }
+    delete c;
   }
 
   void

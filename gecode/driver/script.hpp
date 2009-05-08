@@ -155,7 +155,7 @@ namespace Gecode { namespace Driver {
         {
           Gist::Print<Script> pi(o.name());
           Gist::Options opt;
-          opt.inspect.click = &pi;
+          opt.inspect.click(&pi);
           opt.clone = false;
           opt.c_d   = o.c_d();
           opt.a_d   = o.a_d();

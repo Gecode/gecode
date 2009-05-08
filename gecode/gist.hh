@@ -70,8 +70,6 @@
 #include <gecode/support/auto-link.hpp>
 #endif
 
-class QWidget;
-
 #include <string>
 #include <sstream>
 
@@ -148,11 +146,25 @@ namespace Gecode {
      */
     class Options : public Search::Options {
     public:
-      struct {
-        /// Inspector that reacts on node double clicks
-        Inspector* click;
-        /// Inspector that reacts on each new solution that is found
-        Inspector* solution;
+      /// Helper class storing inspectors
+      class _I {
+      private:
+        Support::DynamicArray<Inspector*,Heap> _click;
+        int n_click;
+        Support::DynamicArray<Inspector*,Heap> _solution;
+        int n_solution;
+      public:
+        /// Constructor
+        _I(void);
+        /// Add inspector that reacts on node double clicks
+        void click(Inspector* i);
+        /// Add inspector that reacts on each new solution that is found
+        void solution(Inspector* i);
+        
+        /// Return click inspector number \a i, or NULL if it does not exist
+        Inspector* click(int i);
+        /// Return solution inspector number \a i, or NULL if it does not exist
+        Inspector* solution(int i);
       } inspect;
       /// Default options
       GECODE_GIST_EXPORT static const Options def;

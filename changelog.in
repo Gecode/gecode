@@ -74,6 +74,15 @@ Date: some date
 This is a release
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Easily add multiple inspectors to Gist. Inspectors are not exclusive any longer, 
+you can select any combination of them to respond to clicks or solutions 
+simultaneously.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

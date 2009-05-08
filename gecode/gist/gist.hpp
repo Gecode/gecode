@@ -51,10 +51,28 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline
-  Options::Options(void) {
-    inspect.click = NULL;
-    inspect.solution = NULL;
-  }  
+  Options::Options(void) {} 
+
+  forceinline
+  Options::_I::_I(void) : _click(heap,1), n_click(0),
+    _solution(heap,1), n_solution(0) {}
+
+  forceinline void
+  Options::_I::click(Inspector* i) {
+    _click[n_click++] = i;
+  }
+  forceinline void
+  Options::_I::solution(Inspector* i) {
+    _solution[n_solution++] = i;
+  }
+  forceinline Inspector*
+  Options::_I::click(int i) {
+    return (i < n_click) ? _click[i] : NULL;
+  }
+  forceinline Inspector*
+  Options::_I::solution(int i) {
+    return (i < n_solution) ? _solution[i] : NULL;
+  }
 
   inline int
   dfs(Space* root, const Gist::Options& opt) {
