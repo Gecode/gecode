@@ -44,7 +44,7 @@ namespace Gecode { namespace Search {
    *
    */
   bool
-  MemoryStop::stop(const Statistics& s) {
+  MemoryStop::stop(const Statistics& s, const Options&) {
     return s.memory > l;
   }
 
@@ -54,7 +54,7 @@ namespace Gecode { namespace Search {
    *
    */
   bool
-  NodeStop::stop(const Statistics& s) {
+  NodeStop::stop(const Statistics& s, const Options&) {
     return s.node > l;
   }
 
@@ -64,7 +64,7 @@ namespace Gecode { namespace Search {
    *
    */
   bool
-  FailStop::stop(const Statistics& s) {
+  FailStop::stop(const Statistics& s, const Options&) {
     return s.fail > l;
   }
 
@@ -74,7 +74,7 @@ namespace Gecode { namespace Search {
    *
    */
   bool
-  TimeStop::stop(const Statistics&) {
+  TimeStop::stop(const Statistics&, const Options&) {
     return static_cast<unsigned long int>
       ((static_cast<double>(clock()-s)/CLOCKS_PER_SEC) * 1000.0) > l;
   }

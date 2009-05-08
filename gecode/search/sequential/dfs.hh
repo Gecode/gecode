@@ -100,7 +100,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     start();
     while (true) {
       while (cur) {
-        if (stop(opt.stop,path.size()))
+        if (stop(opt,path.size()))
           return NULL;
         node++;
         switch (cur->status(*this)) {

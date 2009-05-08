@@ -57,11 +57,11 @@ namespace Gecode { namespace Driver {
         ts((time > 0) ? new Search::TimeStop(time) : NULL) {}
   public:
     /// Test whether search must be stopped
-    virtual bool stop(const Search::Statistics& s) {
+    virtual bool stop(const Search::Statistics& s, const Search::Options& o) {
       return
-        ((ns != NULL) && ns->stop(s)) ||
-        ((fs != NULL) && fs->stop(s)) ||
-        ((ts != NULL) && ts->stop(s));
+        ((ns != NULL) && ns->stop(s,o)) ||
+        ((fs != NULL) && fs->stop(s,o)) ||
+        ((ts != NULL) && ts->stop(s,o));
     }
     /// Create appropriate stop-object
     static Search::Stop*

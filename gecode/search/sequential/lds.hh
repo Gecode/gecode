@@ -90,7 +90,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Destructor
     ~Probe(void);
     /// %Search for next solution
-    Space* explore(Stop* st);
+    Space* explore(const Options& o);
     /// Test whether probing is done
     bool done(void) const;
   };
@@ -203,14 +203,14 @@ namespace Gecode { namespace Search { namespace Sequential {
   }
 
   forceinline Space*
-  Probe::explore(Stop* st) {
+  Probe::explore(const Options& opt) {
     start();
     while (true) {
       if (cur == NULL) {
       backtrack:
         if (ds.empty())
           return NULL;
-        if (stop(st,ds.size()))
+        if (stop(opt,ds.size()))
           return NULL;
         unsigned int a            = ds.top().alt();
         const BranchingDesc* desc = ds.top().desc();

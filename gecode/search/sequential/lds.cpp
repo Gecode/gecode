@@ -51,7 +51,7 @@ namespace Gecode { namespace Search { namespace Sequential {
   Space*
   LDS::next(void) {
     while (true) {
-      Space* s = e.explore(opt.stop);
+      Space* s = e.explore(opt);
       if (s != NULL)
         return s;
       if (((s == NULL) && e.stopped()) || (++d > opt.d) || e.done())

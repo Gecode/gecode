@@ -81,7 +81,7 @@ namespace Gecode { namespace Search { namespace Parallel {
             find();
           } else if (cur != NULL) {
             start();
-            if (stop(engine().opt().stop,path.size())) {
+            if (stop(engine().opt(),path.size())) {
               // Report stop
               m.release();
               engine().stop();

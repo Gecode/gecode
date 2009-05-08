@@ -74,24 +74,34 @@ Date: some date
 This is a release
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The stop function of stop object now also take a second argument
+of type Search::Options. This is in particular useful for
+decisions that involve the number of threads used for search.
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Easily add multiple inspectors to Gist. Inspectors are not exclusive any longer, 
-you can select any combination of them to respond to clicks or solutions 
-simultaneously.
+Easily add multiple inspectors to Gist. Inspectors are not
+exclusive any longer, you can select any combination of them to
+respond to clicks or solutions simultaneously.
 
 [ENTRY]
 Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The INT_VAL_MED value selection now selects the greatest element in the domain 
-not greater than the median (instead of the least element not less than the 
-median). Instead of INT_VAL_SPLIT_{MIN,MAX}, there is now 
-INT_VAL_SPLIT_{MEAN,MED}_{MIN,MAX} to support splitting by median or by the mean 
-of the smallest and largest element.
+The INT_VAL_MED value selection now selects the greatest element
+in the domain not greater than the median (instead of the least
+element not less than the median). Instead of
+INT_VAL_SPLIT_{MIN,MAX}, there is now
+INT_VAL_SPLIT_{MEAN,MED}_{MIN,MAX} to support splitting by median
+or by the mean of the smallest and largest element.
 
 [ENTRY]
 Module: driver

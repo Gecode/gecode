@@ -124,119 +124,7 @@ namespace Gecode {
       Statistics& operator +=(const Statistics& s);
     };
 
-
-    /**
-     * \defgroup TaskModelSearchStop Stop-objects for stopping search
-     * \ingroup TaskModelSearch
-     *
-     * Allows to specify various criteria when a search engine should
-     * stop exploration. Only exploration but neither recomputation
-     * nor propagation will be interrupted.
-     *
-     */
-
-    /**
-     * \brief Base-class for %Stop-object
-     * \ingroup TaskModelSearchStop
-     */
-    class GECODE_SEARCH_EXPORT Stop {
-    public:
-      /// Default constructor
-      Stop(void);
-      /// Stop search, if returns true (can be based on statistics \a s)
-      virtual bool stop(const Statistics& s) = 0;
-      /// Destructor
-      virtual ~Stop(void);
-    };
-
-    /**
-     * \brief %Stop-object based on memory consumption
-     *
-     * \ingroup TaskModelSearchStop
-     */
-    class GECODE_SEARCH_EXPORT MemoryStop : public Stop {
-    protected:
-      /// Size limit
-      size_t l;
-    public:
-      /// Stop if memory limit \a l (in bytes) is exceeded
-      MemoryStop(size_t l);
-      /// Return current limit
-      size_t limit(void) const;
-      /// Set current limit to \a l (in bytes)
-      void limit(size_t l);
-      /// Return true if memory limit is exceeded
-      virtual bool stop(const Statistics& s);
-    };
-
-    /**
-     * \brief %Stop-object based on number of nodes
-     *
-     * The number of nodes reported (by the statistics) is the
-     * number since the engine started exploration. It is not the
-     * number since the last stop!
-     * \ingroup TaskModelSearchStop
-     */
-    class GECODE_SEARCH_EXPORT NodeStop : public Stop {
-    protected:
-      /// Node limit
-      unsigned long int l;
-    public:
-      /// Stop if node limit \a l is exceeded
-      NodeStop(unsigned long int l);
-      /// Return current limit
-      unsigned long int limit(void) const;
-      /// Set current limit to \a l bodes
-      void limit(unsigned long int l);
-      /// Return true if node limit is exceeded
-      virtual bool stop(const Statistics& s);
-    };
-
-    /**
-     * \brief %Stop-object based on number of failures
-     *
-     * The number of failures reported (by the statistics) is the
-     * number since the engine started exploration. It is not the
-     * number since the last stop!
-     * \ingroup TaskModelSearchStop
-     */
-    class GECODE_SEARCH_EXPORT FailStop : public Stop {
-    protected:
-      /// Failure limit
-      unsigned long int l;
-    public:
-      /// Stop if failure limit \a l is exceeded
-      FailStop(unsigned long int l);
-      /// Return current limit
-      unsigned long int limit(void) const;
-      /// Set current limit to \a l failures
-      void limit(unsigned long int l);
-      /// Return true if failure limit is exceeded
-      virtual bool stop(const Statistics& s);
-    };
-
-    /**
-     * \brief %Stop-object based on time
-     * \ingroup TaskModelSearchStop
-     */
-    class GECODE_SEARCH_EXPORT TimeStop : public Stop {
-    protected:
-      /// Clock when execution should stop
-      clock_t s;
-      /// Current limit in milliseconds
-      unsigned long int l;
-    public:
-      /// Stop if search exceeds \a l milliseconds (from creation of this object)
-      TimeStop(unsigned long int l);
-      /// Return current limit in milliseconds
-      unsigned long int limit(void) const;
-      /// Set current limit to \a l milliseconds
-      void limit(unsigned long int l);
-      /// Reset time to zero
-      void reset(void);
-      /// Return true if time limit is exceeded
-      virtual bool stop(const Statistics& s);
-    };
+    class Stop;
 
     /**
      * \brief %Search engine options
@@ -285,6 +173,120 @@ namespace Gecode {
       /// Initialize with default values
       Options(void);
     };
+
+    /**
+     * \defgroup TaskModelSearchStop Stop-objects for stopping search
+     * \ingroup TaskModelSearch
+     *
+     * Allows to specify various criteria when a search engine should
+     * stop exploration. Only exploration but neither recomputation
+     * nor propagation will be interrupted.
+     *
+     */
+
+    /**
+     * \brief Base-class for %Stop-object
+     * \ingroup TaskModelSearchStop
+     */
+    class GECODE_SEARCH_EXPORT Stop {
+    public:
+      /// Default constructor
+      Stop(void);
+      /// Stop search, if returns true
+      virtual bool stop(const Statistics& s, const Options& o) = 0;
+      /// Destructor
+      virtual ~Stop(void);
+    };
+
+    /**
+     * \brief %Stop-object based on memory consumption
+     *
+     * \ingroup TaskModelSearchStop
+     */
+    class GECODE_SEARCH_EXPORT MemoryStop : public Stop {
+    protected:
+      /// Size limit
+      size_t l;
+    public:
+      /// Stop if memory limit \a l (in bytes) is exceeded
+      MemoryStop(size_t l);
+      /// Return current limit
+      size_t limit(void) const;
+      /// Set current limit to \a l (in bytes)
+      void limit(size_t l);
+      /// Return true if memory limit is exceeded
+      virtual bool stop(const Statistics& s, const Options& o);
+    };
+
+    /**
+     * \brief %Stop-object based on number of nodes
+     *
+     * The number of nodes reported (by the statistics) is the
+     * number since the engine started exploration. It is not the
+     * number since the last stop!
+     * \ingroup TaskModelSearchStop
+     */
+    class GECODE_SEARCH_EXPORT NodeStop : public Stop {
+    protected:
+      /// Node limit
+      unsigned long int l;
+    public:
+      /// Stop if node limit \a l is exceeded
+      NodeStop(unsigned long int l);
+      /// Return current limit
+      unsigned long int limit(void) const;
+      /// Set current limit to \a l bodes
+      void limit(unsigned long int l);
+      /// Return true if node limit is exceeded
+      virtual bool stop(const Statistics& s, const Options& o);
+    };
+
+    /**
+     * \brief %Stop-object based on number of failures
+     *
+     * The number of failures reported (by the statistics) is the
+     * number since the engine started exploration. It is not the
+     * number since the last stop!
+     * \ingroup TaskModelSearchStop
+     */
+    class GECODE_SEARCH_EXPORT FailStop : public Stop {
+    protected:
+      /// Failure limit
+      unsigned long int l;
+    public:
+      /// Stop if failure limit \a l is exceeded
+      FailStop(unsigned long int l);
+      /// Return current limit
+      unsigned long int limit(void) const;
+      /// Set current limit to \a l failures
+      void limit(unsigned long int l);
+      /// Return true if failure limit is exceeded
+      virtual bool stop(const Statistics& s, const Options& o);
+    };
+
+    /**
+     * \brief %Stop-object based on time
+     * \ingroup TaskModelSearchStop
+     */
+    class GECODE_SEARCH_EXPORT TimeStop : public Stop {
+    protected:
+      /// Clock when execution should stop
+      clock_t s;
+      /// Current limit in milliseconds
+      unsigned long int l;
+    public:
+      /// Stop if search exceeds \a l milliseconds (from creation of this object)
+      TimeStop(unsigned long int l);
+      /// Return current limit in milliseconds
+      unsigned long int limit(void) const;
+      /// Set current limit to \a l milliseconds
+      void limit(unsigned long int l);
+      /// Reset time to zero
+      void reset(void);
+      /// Return true if time limit is exceeded
+      virtual bool stop(const Statistics& s, const Options& o);
+    };
+
 
     /**
      * \brief %Search engine interface

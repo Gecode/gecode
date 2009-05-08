@@ -63,7 +63,7 @@ namespace Gecode { namespace Search {
     /// Reset stop information
     void start(void);
     /// Check whether engine must be stopped (with additional stackspace \a sz)
-    bool stop(Stop* st, size_t sz);
+    bool stop(const Options& o, size_t sz);
     /// Check whether engine has been stopped
     bool stopped(void) const;
     /// New space \a s and branching description \a d get pushed on stack
@@ -103,11 +103,11 @@ namespace Gecode { namespace Search {
   }
 
   forceinline bool
-  Worker::stop(Stop* st, size_t sz) {
-    if (st == NULL)
+  Worker::stop(const Options& o, size_t sz) {
+    if (o.stop == NULL)
       return false;
     memory += sz;
-    _stopped |= st->stop(*this);
+    _stopped |= o.stop->stop(*this,o);
     memory -= sz;
     return _stopped;
   }
