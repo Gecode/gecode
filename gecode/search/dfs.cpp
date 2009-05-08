@@ -49,9 +49,9 @@ namespace Gecode { namespace Search {
 #ifdef GECODE_HAS_THREADS
     Options to = threads(o);
     if (to.threads == 1)
-      return new WorkerToEngine<Sequential::DFS>(s,sz,o);
+      return new WorkerToEngine<Sequential::DFS>(s,sz,to);
     else
-      return new Parallel::DFS(s,sz,o);
+      return new Parallel::DFS(s,sz,to);
 #else
     return new WorkerToEngine<Sequential::DFS>(s,sz,o);
 #endif

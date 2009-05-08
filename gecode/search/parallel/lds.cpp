@@ -35,19 +35,9 @@
  *
  */
 
-#include <gecode/search.hh>
-#include <gecode/search/support.hh>
-#include <gecode/search/worker.hh>
-#include <gecode/search/parallel/path.hh>
-
-#include <gecode/support/thread.hh>
+#include <gecode/search/parallel/lds.hh>
 
 namespace Gecode { namespace Search { namespace Parallel {
-
-  // Create parallel lds engine
-  Engine* lds(Space* s, size_t sz, const Options& o) {
-    return ::Gecode::Search::Sequential::lds(s,sz,o);
-  }
 
 }}}
 

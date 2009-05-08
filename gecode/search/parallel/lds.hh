@@ -4,10 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
- *
- *  Bugfixes provided by:
- *     Stefano Gualandi
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,28 +35,20 @@
  *
  */
 
+#ifndef __GECODE_SEARCH_PARALLEL_LDS_HH__
+#define __GECODE_SEARCH_PARALLEL_LDS_HH__
+
 #include <gecode/search.hh>
-#include <gecode/search/sequential/lds.hh>
-#ifdef GECODE_HAS_THREADS
-#include <gecode/search/parallel/lds.hh>
-#endif
 #include <gecode/search/support.hh>
+#include <gecode/search/worker.hh>
+#include <gecode/search/parallel/path.hh>
 
-namespace Gecode { namespace Search {
-    
-  Engine* 
-  lds(Space* s, size_t sz, const Options& o) {
-#ifdef GECODE_HAS_THREADS
-    Options to = threads(o);
-    if (to.threads == 1)
-      return new Sequential::LDS(s,sz,to);
-    else
-      return new Sequential::LDS(s,sz,to);
-#else
-    return new Sequential::LDS(s,sz,o);
+#include <gecode/support/thread.hh>
+
+namespace Gecode { namespace Search { namespace Parallel {
+
+}}}
+
 #endif
-  }
-
-}}
 
 // STATISTICS: search-any
