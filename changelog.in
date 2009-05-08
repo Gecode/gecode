@@ -74,6 +74,15 @@ Date: some date
 This is a release
 
 [ENTRY]
+Module: driver
+What:   change
+Rank:   minor
+[DESCRIPTION]
+If Gist is not available, -mode gist is the same as -mode
+solution. Invocation with -help also prints information about how
+Gecode has been configured.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

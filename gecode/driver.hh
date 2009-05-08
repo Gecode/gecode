@@ -98,11 +98,8 @@ namespace Gecode {
   enum ScriptMode {
     SM_SOLUTION, ///< Print solution and some statistics
     SM_TIME,     ///< Measure average runtime
-    SM_STAT      ///< Print statistics for script
-#ifdef GECODE_HAS_GIST
-    ,
+    SM_STAT,     ///< Print statistics for script
     SM_GIST      ///< Run script in Gist
-#endif
   };
 
   class Options;

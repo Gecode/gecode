@@ -38,6 +38,8 @@
 
 #include <gecode/driver.hh>
 
+#include <gecode/support/thread.hh>
+
 #include <iostream>
 #include <iomanip>
 
@@ -195,9 +197,7 @@ namespace Gecode {
     _mode.add(SM_SOLUTION, "solution");
     _mode.add(SM_TIME, "time");
     _mode.add(SM_STAT, "stat");
-#ifdef GECODE_HAS_GIST
     _mode.add(SM_GIST, "gist");
-#endif
     
     add(_model); add(_propagation); add(_icl); add(_branching);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
@@ -207,7 +207,31 @@ namespace Gecode {
   
   void
   Options::help(void) {
-    std::cerr << "Options for " << name() << ":" << std::endl
+    std::cerr << "Gecode configuration information:" << std::endl
+              << " - Version: " << GECODE_VERSION << std::endl
+              << " - Variable types: ";
+#ifdef GECODE_HAS_INT_VARS
+    std::cerr << "BoolVar IntVar ";
+#endif
+#ifdef GECODE_HAS_SET_VARS
+    std::cerr << "SetVar";
+#endif
+    std::cerr << std::endl
+              << " - Thread support: ";
+#ifdef GECODE_HAS_THREADS
+    std::cerr << "enabled (" << Support::Thread::npu() << " processing units)";
+#else
+    std::cerr << "disabled";
+#endif
+    std::cerr << std::endl
+              << " - Gist support: ";
+#ifdef GECODE_HAS_GIST
+    std::cerr << "enabled";
+#else
+    std::cerr << "disabled";
+#endif
+    std::cerr << std::endl << std::endl
+              << "Options for " << name() << ":" << std::endl
               << "\t-help, --help, -?" << std::endl
               << "\t\tprint this help message" << std::endl;
     for (Driver::BaseOption* o = fst; o != NULL; o = o->next)

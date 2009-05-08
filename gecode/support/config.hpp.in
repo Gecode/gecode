@@ -71,6 +71,9 @@
 #undef GECODE_HAS_UNISTD_H
 
 /* Gecode version */
+#undef GECODE_VERSION
+
+/* Gecode version */
 #undef GECODE_LIBRARY_VERSION
 
 /* Heap memory alignment */

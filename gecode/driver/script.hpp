@@ -150,6 +150,21 @@ namespace Gecode { namespace Driver {
     using namespace std;
     try {
       switch (o.mode()) {
+      case SM_GIST:
+#ifdef GECODE_HAS_GIST
+        {
+          Gist::Print<Script> pi(o.name());
+          Gist::Options opt;
+          opt.inspect.click = &pi;
+          opt.clone = false;
+          opt.c_d   = o.c_d();
+          opt.a_d   = o.a_d();
+          Script* s = new Script(o);
+          (void) GistEngine<Engine<Script> >::explore(s, opt);
+        }
+        break;
+        // If Gist is not available, fall through
+#endif
       case SM_SOLUTION:
         {
           cout << o.name() << endl;
@@ -271,20 +286,6 @@ namespace Gecode { namespace Driver {
                << endl;
         }
         break;
-#ifdef GECODE_HAS_GIST
-      case SM_GIST:
-        {
-          Gist::Print<Script> pi(o.name());
-          Gist::Options opt;
-          opt.inspect.click = &pi;
-          opt.clone = false;
-          opt.c_d   = o.c_d();
-          opt.a_d   = o.a_d();
-          Script* s = new Script(o);
-          (void) GistEngine<Engine<Script> >::explore(s, opt);
-        }
-        break;
-#endif
       }
     } catch (Exception e) {
       cout << "Exception: " << e.what() << "." << endl
