@@ -261,7 +261,7 @@ public:
     rel(*this, succ[0], IRT_LE, succ[1]);
 
     // First enumerate cost values, prefer those that maximize cost reduction
-    branch(*this, costs, INT_VAR_REGRET_MAX_MAX, INT_VAL_SPLIT_MIN);
+    branch(*this, costs, INT_VAR_REGRET_MAX_MAX, INT_VAL_SPLIT_MEAN_MIN);
 
     // Then fix the remaining successors
     branch(*this, succ,  INT_VAR_MIN_MIN, INT_VAL_MIN);

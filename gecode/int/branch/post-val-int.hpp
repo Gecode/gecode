@@ -71,17 +71,31 @@ namespace Gecode { namespace Int { namespace Branch {
           (home,x,v,a);
       }
       break;
-    case INT_VAL_SPLIT_MIN:
+    case INT_VAL_SPLIT_MEAN_MIN:
       {
-        ValSplitMin<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValSplitMin<IntView> >
+        ValSplitMeanMin<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValSplitMeanMin<IntView> >
           (home,x,v,a);
       }
       break;
-    case INT_VAL_SPLIT_MAX:
+    case INT_VAL_SPLIT_MEAN_MAX:
       {
-        ValSplitMin<MinusView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValSplitMin<MinusView> >
+        ValSplitMeanMin<MinusView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValSplitMeanMin<MinusView> >
+          (home,x,v,a);
+      }
+      break;
+    case INT_VAL_SPLIT_MED_MIN:
+      {
+        ValSplitMedMin<IntView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValSplitMedMin<IntView> >
+          (home,x,v,a);
+      }
+      break;
+    case INT_VAL_SPLIT_MED_MAX:
+      {
+        ValSplitMedMin<MinusView> a(home,o_vals);
+        (void) new (home) ViewValBranching<SelView,ValSplitMedMin<MinusView> >
           (home,x,v,a);
       }
       break;

@@ -101,7 +101,7 @@ public:
     for (int j = n; j--; )
       c[j] = j-1;
     linear(*this, c, s, IRT_EQ, 0);
-    branch(*this, s, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
+    branch(*this, s, INT_VAR_NONE, INT_VAL_SPLIT_MEAN_MAX);
   }
 
   /// Constructor for cloning \a e

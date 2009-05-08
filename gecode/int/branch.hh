@@ -132,25 +132,45 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief Class for splitting domain (lower half first)
+   * \brief Class for splitting domain at mean of smallest and largest element 
+   * (lower half first)
    *
    * Requires
    * \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
   template<class View>
-  class ValSplitMin : public ValSelBase<View,int> {
+  class ValSplitMeanMin : public ValSelBase<View,int> {
   public:
     /// Default constructor
-    ValSplitMin(void);
+    ValSplitMeanMin(void);
     /// Constructor for initialization
-    ValSplitMin(Space& home, const ValBranchOptions& vbo);
+    ValSplitMeanMin(Space& home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
     int val(Space& home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, int n);
   };
 
+  /**
+   * \brief Class for splitting domain at median (lower half first)
+   *
+   * Requires
+   * \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntSelVal
+   */
+  template<class View>
+  class ValSplitMedMin : public ValSelBase<View,int> {
+  public:
+    /// Default constructor
+    ValSplitMedMin(void);
+    /// Constructor for initialization
+    ValSplitMedMin(Space& home, const ValBranchOptions& vbo);
+    /// Return minimum value of view \a x
+    int val(Space& home, View x) const;
+    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
+    ModEvent tell(Space& home, unsigned int a, View x, int n);
+  };
 
 
 

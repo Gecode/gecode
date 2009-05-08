@@ -156,7 +156,7 @@ public:
     // First branch over beamtime and N
     IntVarArgs ba(1); ba[0] = beamtime;
     branch(*this, ba, INT_VAR_NONE, INT_VAL_MIN);
-    branch(*this, N, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+    branch(*this, N, INT_VAR_NONE, INT_VAL_SPLIT_MEAN_MIN);
 
     // Then perform a nested search over q
     NestedSearch::post(*this);
@@ -283,7 +283,7 @@ public:
 
         // Branch over row i
         branch(*row, getRow(row, index[i].idx), 
-               INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+               INT_VAR_NONE, INT_VAL_SPLIT_MEAN_MIN);
         Search::Options o; o.clone = false;
         if ( Radiotherapy* newSol = dfs(row, o) ) {
           // Found a solution for row i, so try to find one for i+1
