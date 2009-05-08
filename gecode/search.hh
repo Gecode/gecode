@@ -478,4 +478,4 @@ namespace Gecode {
 
 #endif
 
-// STATISTICS: search-any
+// STATISTICS: search-other

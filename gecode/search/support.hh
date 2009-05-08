@@ -106,4 +106,4 @@ namespace Gecode { namespace Search {
 
 #endif
 
-// STATISTICS: search-any
+// STATISTICS: search-other

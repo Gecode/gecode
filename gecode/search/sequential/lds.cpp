@@ -83,4 +83,4 @@ namespace Gecode { namespace Search { namespace Sequential {
 
 }}}
 
-// STATISTICS: search-any
+// STATISTICS: search-sequential

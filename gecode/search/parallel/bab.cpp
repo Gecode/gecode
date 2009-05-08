@@ -165,4 +165,4 @@ namespace Gecode { namespace Search { namespace Parallel {
 
 }}}
 
-// STATISTICS: search-any
+// STATISTICS: search-parallel

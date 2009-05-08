@@ -67,4 +67,4 @@ namespace Gecode { namespace Search { namespace Parallel {
 
 #endif
 
-// STATISTICS: search-any
+// STATISTICS: search-parallel
