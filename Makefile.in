@@ -202,6 +202,7 @@ EXTRA_HEADERS   = gecode/support/config.hpp
 
 SEARCHSRC0 = \
 	stop options \
+	parallel/engine \
 	dfs sequential/dfs parallel/dfs \
 	bab sequential/bab parallel/bab \
 	restart sequential/restart parallel/restart \
@@ -210,6 +211,7 @@ SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp \
 	support.hh worker.hh \
 	sequential/path.hh parallel/path.hh \
+	parallel/engine.hh \
 	dfs.hpp sequential/dfs.hh bab.hpp restart.hpp lds.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
