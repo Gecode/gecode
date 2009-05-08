@@ -361,7 +361,9 @@ if (!(T)) {                                                     \
     TestSpace* search_s = new TestSpace(arity,dom,false,this,false);
     post(*search_s,search_s->x);
     branch(*search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
-    DFS<TestSpace> e_s(search_s);
+    Search::Options search_o;
+    search_o.threads = 1;
+    DFS<TestSpace> e_s(search_s,search_o);
     delete search_s;
 
     while (a()) {
