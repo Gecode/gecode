@@ -422,7 +422,7 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate array with \a n elements
-    PrimArgArray(int n);
+    explicit PrimArgArray(int n);
     /// Allocate array with \a n elements and initialize with \a e0, ...
     PrimArgArray(int n, T e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
@@ -452,7 +452,7 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate array with \a n elements
-    ArgArray(int n);
+    explicit ArgArray(int n);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     ArgArray(int n, const T* e);
     /// Initialize from primitive argument array \a a (copy elements)
@@ -486,7 +486,7 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate array with \a n elements
-    VarArgArray(int n);
+    explicit VarArgArray(int n);
     /// Initialize from variable argument array \a a (copy elements)
     VarArgArray(const VarArgArray<Var>& a);
     /// Initialize from variable array \a a (copy elements)
