@@ -78,9 +78,24 @@ Module: search
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The stop function of stop object now also take a second argument
+The stop function of stop objects now also takes a second argument
 of type Search::Options. This is in particular useful for
 decisions that involve the number of threads used for search.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The inspectors are finalized before Gist exits. This fixes a bug where (at least 
+on Mac OS) some memory was not freed in the correct order.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Gist now correctly centers the current node after search has finished.
 
 [ENTRY]
 Module: gist
@@ -221,7 +236,7 @@ A separator is printed between solutions in the TextInspector.
 Version: 3.0.1
 Date: 2009-03-24
 [DESCRIPTION]
-This is a bug fix release fixing two embarassing bugs that were
+This is a bug fix release fixing two embarrassing bugs that were
 not caught by our test infrastructure. Please update asap.
 
 

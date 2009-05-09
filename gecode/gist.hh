@@ -99,16 +99,19 @@ namespace Gecode {
       virtual void inspect(const Space& node) = 0;
       /// Name of the inspector
       virtual std::string name(void);
+      /// Clean up when Gist exits
+      virtual void finalize(void);
       /// Destructor
       virtual ~Inspector(void);
     };
     
+    class TextOutput;
+    
     /// An inspector base class for simple text output
     class GECODE_GIST_EXPORT TextInspector : public Inspector {
     private:
-      class TextInspectorImpl;
       /// The implementation object
-      TextInspectorImpl *t;
+      TextOutput *t;
       /// The name of the inspector
       std::string n;
     protected:
@@ -121,6 +124,8 @@ namespace Gecode {
     public:
       /// Constructor
       TextInspector(const std::string& name);
+      /// Clean up when Gist exits
+      virtual void finalize(void);
       /// Destructor
       virtual ~TextInspector(void);
       /// Name of the inspector
@@ -150,9 +155,9 @@ namespace Gecode {
       class _I {
       private:
         Support::DynamicArray<Inspector*,Heap> _click;
-        int n_click;
+        unsigned int n_click;
         Support::DynamicArray<Inspector*,Heap> _solution;
-        int n_solution;
+        unsigned int n_solution;
       public:
         /// Constructor
         _I(void);
@@ -162,9 +167,9 @@ namespace Gecode {
         void solution(Inspector* i);
         
         /// Return click inspector number \a i, or NULL if it does not exist
-        Inspector* click(int i);
+        Inspector* click(unsigned int i) const;
         /// Return solution inspector number \a i, or NULL if it does not exist
-        Inspector* solution(int i);
+        Inspector* solution(unsigned int i) const;
       } inspect;
       /// Default options
       GECODE_GIST_EXPORT static const Options def;

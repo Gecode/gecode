@@ -52,8 +52,6 @@
 
 namespace Gecode { namespace Gist {
 
-  Inspector::~Inspector(void) {}
-
   TreeCanvas::TreeCanvas(Space* rootSpace, bool bab,
                          QWidget* parent, const Options& opt)
     : QWidget(parent)
@@ -901,6 +899,10 @@ namespace Gecode { namespace Gist {
   TreeCanvas::finish(void) {
     stopSearchFlag = true;
     searcher.wait();
+    for (int i=0; i<doubleClickInspectors.size(); i++)
+      doubleClickInspectors[i].first->finalize();
+    for (int i=0; i<solutionInspectors.size(); i++)
+      solutionInspectors[i].first->finalize();
   }
 
   void

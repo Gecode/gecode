@@ -66,11 +66,11 @@ namespace Gecode { namespace Gist {
     _solution[n_solution++] = i;
   }
   forceinline Inspector*
-  Options::_I::click(int i) {
+  Options::_I::click(unsigned int i) const {
     return (i < n_click) ? _click[i] : NULL;
   }
   forceinline Inspector*
-  Options::_I::solution(int i) {
+  Options::_I::solution(unsigned int i) const {
     return (i < n_solution) ? _solution[i] : NULL;
   }
 

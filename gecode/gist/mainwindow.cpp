@@ -132,7 +132,7 @@ namespace Gecode { namespace Gist {
                                  const Options& opt0)
   : opt(opt0), c(root,bab,this,opt), aboutGist(this) {
     {
-      int i = 0;
+      unsigned int i = 0;
       while (opt.inspect.solution(i)) {
         c.addSolutionInspector(opt.inspect.solution(i++));
       }

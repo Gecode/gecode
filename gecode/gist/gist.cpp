@@ -46,24 +46,19 @@ namespace Gecode { namespace Gist {
   std::string
   Inspector::name(void) { return "Inspector"; }
   
-  /// Implementation of the TextInspector
-  class TextInspector::TextInspectorImpl {
-  public:
-    /// The window where the text is output
-    TextOutput* to;
-    /// Constructor
-    TextInspectorImpl(const std::string& name) {
-      to = new TextOutput(name);
-      to->show();
-    }
-    /// Destructor
-    ~TextInspectorImpl(void) {
-      delete to;
-    }
-  };
+  void
+  Inspector::finalize(void) {}
   
+  Inspector::~Inspector(void) {}
+    
   TextInspector::TextInspector(const std::string& name)
     : t(NULL), n(name) {}
+  
+  void
+  TextInspector::finalize(void) {
+    delete t;
+    t = NULL;
+  }
   
   TextInspector::~TextInspector(void) {
     delete t;
@@ -75,19 +70,19 @@ namespace Gecode { namespace Gist {
   void
   TextInspector::init(void) {
     if (t == NULL) {
-      t = new TextInspectorImpl(n);
+      t = new TextOutput(n);
     }
-    t->to->setVisible(true);
+    t->setVisible(true);
   }
 
   std::ostream&
   TextInspector::getStream(void) {
-    return t->to->getStream();
+    return t->getStream();
   }
   
   void
   TextInspector::addHtml(const char* s) {
-    t->to->insertHtml(s);
+    t->insertHtml(s);
   }
 
   const Options Options::def;
