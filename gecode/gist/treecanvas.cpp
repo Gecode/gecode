@@ -170,8 +170,10 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::statusChanged(bool finished) {
-    if (finished)
+    if (finished) {
+      update();
       centerCurrentNode();
+    }
     emit statusChanged(currentNode, stats, finished);
   }
 
