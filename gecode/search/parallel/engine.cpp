@@ -52,13 +52,13 @@ namespace Gecode { namespace Search { namespace Parallel {
       m_search.release();
       return s;
     }
+    // We ignore stopped (it will be reported again if needed)
+    has_stopped = false;
     // No more solutions?
     if (n_busy == 0) {
       m_search.release();
       return NULL;
     }
-    // We ignore stopped (that's okay because it will be reported again then)
-    has_stopped = false;
     m_search.release();
     // Okay, now search has to continue, make the guys work
     release(C_WORK);
