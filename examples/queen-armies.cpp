@@ -82,6 +82,13 @@ public:
     BRANCH_NAIVE,   ///< Choose variables left to right
     BRANCH_SPECIFIC ///< Choose variable with problem specific strategy
   };
+
+  /// Search variants
+  enum {
+    SEARCH_BAB,    ///< Use branch and bound to optimize
+    SEARCH_RESTART ///< Use restart to optimize
+  };
+
   /// Constructor
   QueenArmies(const SizeOptions& opt) :
     n(opt.size()),
@@ -254,6 +261,9 @@ main(int argc, char* argv[]) {
   opt.branching(QueenArmies::BRANCH_SPECIFIC);
   opt.branching(QueenArmies::BRANCH_NAIVE, "naive");
   opt.branching(QueenArmies::BRANCH_SPECIFIC, "specific");
+  opt.search(QueenArmies::SEARCH_BAB);
+  opt.search(QueenArmies::SEARCH_BAB, "bab");
+  opt.search(QueenArmies::SEARCH_RESTART, "restart");
   opt.solutions(0);
   opt.parse(argc,argv);
 
@@ -291,7 +301,13 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  MaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt);
+
+  switch (opt.search()) {
+  case QueenArmies::SEARCH_BAB:
+    MaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt); break;
+  case QueenArmies::SEARCH_RESTART:
+    MaximizeScript::run<QueenArmies,Restart,SizeOptions>(opt); break;
+  }
   return 0;
 }
 
