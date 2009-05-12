@@ -67,8 +67,10 @@ namespace Gecode { namespace Search { namespace Sequential {
   Restart::next(void) {
     if (best != NULL) {
       root->constrain(*best);
-      reset(root);
+      root = reset(root);
     }
+    if (root == NULL)
+      return NULL;
     delete best;
     best = DFS::next();
     return (best != NULL) ? best->clone() : NULL;

@@ -57,8 +57,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Distance until next clone
     unsigned int d;
   protected:
-    /// Reset engine to restart at space \a s
-    void reset(Space* s);
+    /// Reset engine to restart at space \a s and return new root
+    Space* reset(Space* s);
   public:
     /// Initialize for space \a s (of size \a sz) with options \a o
     DFS(Space* s, size_t sz, const Options& o);
@@ -81,7 +81,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       fail++;
   }
 
-  forceinline void
+  forceinline Space*
   DFS::reset(Space* s) {
     delete cur;
     path.reset();
@@ -89,9 +89,11 @@ namespace Gecode { namespace Search { namespace Sequential {
     if (s->status(*this) == SS_FAILED) {
       cur = NULL;
       Worker::reset();
+      return NULL;
     } else {
-      cur = s->clone();
+      cur = s;
       Worker::reset(cur);
+      return cur->clone();
     }
   }
 
