@@ -199,8 +199,6 @@ namespace Gecode { namespace Gist {
     void setBoundingBox(BoundingBox b);
     /// Return the bounding box
     BoundingBox getBoundingBox(void);
-    /// Return depth of the subtree of this node
-    int depth(void);
     /// Signal that the status has changed
     void changedStatus();
     /// Return the parent

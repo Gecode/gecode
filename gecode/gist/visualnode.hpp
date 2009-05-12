@@ -181,9 +181,6 @@ namespace Gecode { namespace Gist {
   forceinline BoundingBox
   VisualNode::getBoundingBox(void) { return box; }
 
-  forceinline int
-  VisualNode::depth(void) { return shape->depth(); }
-
   forceinline VisualNode*
   VisualNode::getParent() {
     return static_cast<VisualNode*>(SpaceNode::getParent());

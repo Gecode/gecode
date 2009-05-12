@@ -223,6 +223,9 @@ namespace Gecode { namespace Gist {
     hbl->setContentsMargins(0,0,0,0);
     wmpLabel = new QLabel("");
     hbl->addWidget(wmpLabel);
+    hbl->addWidget(new QLabel("Depth:"));
+    depthLabel = new QLabel("0");
+    hbl->addWidget(depthLabel);
     hbl->addWidget(new StatusBarNode(SOLVED));
     solvedLabel = new QLabel("0");
     hbl->addWidget(solvedLabel);
@@ -264,6 +267,7 @@ namespace Gecode { namespace Gist {
       statusBar()->showMessage("Searching");
       isSearching = true;
     }
+    depthLabel->setNum(stats.maxDepth);
     solvedLabel->setNum(stats.solutions);
     failedLabel->setNum(stats.failures);
     choicesLabel->setNum(stats.choices);

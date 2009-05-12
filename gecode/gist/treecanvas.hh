@@ -66,6 +66,7 @@ namespace Gecode {  namespace Gist {
     Q_OBJECT
   private:
     VisualNode* node;
+    int depth;
     bool a;
     TreeCanvas* t;
     void updateCanvas(void);

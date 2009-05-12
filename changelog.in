@@ -122,6 +122,14 @@ Module: gist
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Small user interface changes: disable search from hidden nodes, add depth 
+information to status bar.
+
+[ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Easily add multiple inspectors to Gist. Inspectors are not
 exclusive any longer, you can select any combination of them to
 respond to clicks or solutions simultaneously.

@@ -133,7 +133,8 @@ namespace Gecode { namespace Gist {
     int w =
       static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
     int h =
-      static_cast<int>(2*Layout::extent+root->depth()*Layout::dist_y*scale);
+      static_cast<int>(2*Layout::extent+
+        root->getShape()->depth()*Layout::dist_y*scale);
     resize(w,h);
     emit scaleChanged(scale0);
     QWidget::update();
@@ -149,7 +150,8 @@ namespace Gecode { namespace Gist {
 
       int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
       int h =
-        static_cast<int>(2*Layout::extent+root->depth()*Layout::dist_y*scale);
+        static_cast<int>(2*Layout::extent+
+          root->getShape()->depth()*Layout::dist_y*scale);
       xtrans = -bb.left+(Layout::extent / 2);
       resize(w,h);
     }
@@ -178,6 +180,11 @@ namespace Gecode { namespace Gist {
   void
   SearcherThread::search(VisualNode* n, bool all, TreeCanvas* ti) {
     node = n;
+    
+    depth = -1;
+    for (VisualNode* p = n; p != NULL; p = p->getParent())
+      depth++;
+    
     a = all;
     t = ti;
     start();
@@ -192,12 +199,22 @@ namespace Gecode { namespace Gist {
     if (t->autoHideFailed) {
       t->root->hideFailed();
     }
+    for (VisualNode* n = t->currentNode; n != NULL; n = n->getParent()) {
+      if (n->isHidden()) {
+        t->currentNode->setMarked(false);
+        t->currentNode = n;
+        t->currentNode->setMarked(true);
+        break;
+      }
+    }
+    
     t->root->layout();
     BoundingBox bb = t->root->getBoundingBox();
 
     int w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
     int h = static_cast<int>(2*Layout::extent+
-                             t->root->depth()*Layout::dist_y*t->scale);
+                             t->root->getShape()->depth()
+                              *Layout::dist_y*t->scale);
     t->xtrans = -bb.left+(Layout::extent / 2);
 
     int scale0 = static_cast<int>(t->scale*100);
@@ -209,7 +226,7 @@ namespace Gecode { namespace Gist {
                                              Layout::extent);
         double newYScale =
           static_cast<double>(p->height()) /
-          (t->root->depth() * Layout::dist_y + 2*Layout::extent);
+          (t->root->getShape()->depth() * Layout::dist_y + 2*Layout::extent);
 
         scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
         if (scale0<LayoutConfig::minScale)
@@ -220,20 +237,45 @@ namespace Gecode { namespace Gist {
 
         w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
         h = static_cast<int>(2*Layout::extent+
-                             t->root->depth()*Layout::dist_y*scale);
+                             t->root->getShape()->depth()*Layout::dist_y*scale);
       }
     }
     t->layoutMutex.unlock();
     emit update(w,h,scale0);
   }
 
+  class SearchItem {
+  public:
+    VisualNode* n;
+    int i;
+    int noOfChildren;
+    SearchItem(VisualNode* n0, int noOfChildren0)
+      : n(n0), i(-1), noOfChildren(noOfChildren0) {}
+  };
+
   void
   SearcherThread::run() {
     {
+      if (!node->isOpen())
+        return;
       t->mutex.lock();
       emit statusChanged(false);
-      std::stack<VisualNode*> stck;
-      stck.push(node);
+
+      unsigned int kids = 
+        node->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
+                                    t->c_d, t->a_d);
+      if (kids == 0) {
+        t->mutex.unlock();
+        updateCanvas();
+        emit statusChanged(true);
+        return;
+      }
+
+      std::stack<SearchItem> stck;
+      stck.push(SearchItem(node,kids));
+      t->stats.maxDepth =
+        std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
+        depth+stck.size());
 
       VisualNode* sol = NULL;
       int nodeCount = 0;
@@ -245,21 +287,30 @@ namespace Gecode { namespace Gist {
           emit statusChanged(false);
           nodeCount = 0;
         }
-        VisualNode* n = stck.top(); stck.pop();
-        if (n->isOpen()) {
-          int kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
-                                              t->c_d, t->a_d);
-          if (n->getStatus() == SOLVED) {
-            assert(n->hasWorkingSpace());
-            emit solution(n->getWorkingSpace());
-            n->purge();
-            if (!a) {
-              sol = n;
-              break;
+        SearchItem& si = stck.top();
+        si.i++;
+        if (si.i == si.noOfChildren) {
+          stck.pop();
+        } else {
+          VisualNode* n = si.n->getChild(si.i);
+          if (n->isOpen()) {
+            kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
+                                            t->c_d, t->a_d);
+            if (kids == 0) {
+              if (n->getStatus() == SOLVED) {
+                assert(n->hasWorkingSpace());
+                emit solution(n->getWorkingSpace());
+                n->purge();
+                sol = n;
+                if (!a)
+                  break;
+              }
+            } else {
+              stck.push(SearchItem(n,kids));
+              t->stats.maxDepth =
+                std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
+                depth+stck.size());
             }
-          }
-          for (int i=kids; i--;) {
-            stck.push(n->getChild(i));
           }
         }
       }
@@ -294,6 +345,7 @@ namespace Gecode { namespace Gist {
     currentNode->toggleHidden();
     update();
     centerCurrentNode();
+    emit statusChanged(currentNode, stats, true);
   }
 
   void
@@ -302,6 +354,7 @@ namespace Gecode { namespace Gist {
     currentNode->hideFailed();
     update();
     centerCurrentNode();
+    emit statusChanged(currentNode, stats, true);
   }
 
   void
@@ -311,6 +364,7 @@ namespace Gecode { namespace Gist {
     currentNode->unhideAll();
     update();
     centerCurrentNode();
+    emit statusChanged(currentNode, stats, true);
   }
 
   void
@@ -372,7 +426,8 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->width()) / (bb.right - bb.left +
                                              Layout::extent);
         double newYScale =
-          static_cast<double>(p->height()) / (root->depth() * Layout::dist_y +
+          static_cast<double>(p->height()) / (root->getShape()->depth() * 
+                                              Layout::dist_y +
                                               2*Layout::extent);
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
         if (scale0<LayoutConfig::minScale)
@@ -441,8 +496,15 @@ namespace Gecode { namespace Gist {
     switch (currentNode->getStatus()) {
     case UNDETERMINED:
         {
-          (void) currentNode->getNumberOfChildNodes(*na,curBest,stats,
-                                                    c_d,a_d);
+          unsigned int kids =  
+            currentNode->getNumberOfChildNodes(*na,curBest,stats,c_d,a_d);
+          int depth = -1;
+          for (VisualNode* p = currentNode; p != NULL; p = p->getParent())
+            depth++;
+          if (kids > 0)
+            depth++;
+          stats.maxDepth =
+            std::max(stats.maxDepth, depth);
           if (currentNode->getStatus() == SOLVED) {
             assert(currentNode->hasWorkingSpace());
             emit solution(currentNode->getWorkingSpace());
@@ -690,7 +752,7 @@ namespace Gecode { namespace Gist {
       BoundingBox bb = n->getBoundingBox();
       printer.setFullPage(true);
       printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
-                                  n->depth() * Layout::dist_y +
+                                  n->getShape()->depth() * Layout::dist_y +
                                   Layout::extent), QPrinter::Point);
       printer.setOutputFileName(filename);
       QPainter painter(&printer);
@@ -703,7 +765,7 @@ namespace Gecode { namespace Gist {
                                                  Layout::extent);
       double newYScale =
         static_cast<double>(pageRect.height()) /
-                            (n->depth() * Layout::dist_y +
+                            (n->getShape()->depth() * Layout::dist_y +
                              Layout::extent);
       double printScale = std::min(newXScale, newYScale);
       painter.scale(printScale,printScale);
@@ -748,7 +810,7 @@ namespace Gecode { namespace Gist {
                                                  Layout::extent);
       double newYScale =
         static_cast<double>(pageRect.height()) /
-                            (root->depth() * Layout::dist_y +
+                            (root->getShape()->depth() * Layout::dist_y +
                              2*Layout::extent);
       double printScale = std::min(newXScale, newYScale)*100;
       if (printScale<1.0)

@@ -370,7 +370,7 @@ namespace Gecode { namespace Gist {
       stop->setEnabled(false);
       reset->setEnabled(true);
 
-      if (n->isOpen() || n->hasOpenChildren()) {
+      if ( (n->isOpen() || n->hasOpenChildren()) && (!n->isHidden()) ) {
         searchNext->setEnabled(true);
         searchAll->setEnabled(true);
       } else {
