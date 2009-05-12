@@ -43,6 +43,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   Restart::next(void) {
     // Invariant: the worker holds the wait mutex
     m_search.acquire();
+    // Check whether root space is already failed
+    if (root == NULL) {
+      m_search.release();
+      return NULL;
+    }
     while (!solutions.empty()) {
       // No search needs to be done, try to take leftover solution
       Space* s = solutions.pop();
@@ -79,15 +84,20 @@ namespace Gecode { namespace Search { namespace Parallel {
       m_search.release();
       // Wait for reset cycle completed
       e_reset_ack.wait();
+      // Acquire search lock
+      m_search.acquire();
       // Perform reset
-      reset(root);
+      root = reset(root);
       // Block workers
       block();
       // Release reset lock
       m_wait_reset.release();
-    } else {
-      m_search.release();
+      if (root == NULL) {
+        m_search.release();
+        return NULL;
+      }
     }
+    m_search.release();
 
     // Okay, now search has to continue, make the guys work
     release(C_WORK);
