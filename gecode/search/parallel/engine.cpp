@@ -47,7 +47,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Invariant: the worker holds the wait mutex
     m_search.acquire();
     if (!solutions.empty()) {
-      // No search to be done, take leftover solution
+      // No search needs to be done, take leftover solution
       Space* s = solutions.pop();
       m_search.release();
       return s;

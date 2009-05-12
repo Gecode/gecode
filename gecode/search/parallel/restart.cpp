@@ -41,26 +41,82 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   Space*
   Restart::next(void) {
+    // Invariant: the worker holds the wait mutex
+    m_search.acquire();
+    while (!solutions.empty()) {
+      // No search needs to be done, try to take leftover solution
+      Space* s = solutions.pop();
+      if (best == NULL) {
+        best = s->clone();
+        m_search.release();
+        return s;
+      } else {
+        s->constrain(*best);
+        if (s->status() == SS_FAILED) {
+          delete s;
+        } else {
+          delete best;
+          best = s->clone();
+          m_search.release();
+          return s;
+        }
+      }
+    }
+    // We ignore stopped (it will be reported again if needed)
+    has_stopped = false;
+    // No more solutions?
+    if (n_busy == 0) {
+      m_search.release();
+      return NULL;
+    }
+    m_search.release();
     if (best != NULL) {
       root->constrain(*best);
       reset(root);
     }
+    // Okay, now search has to continue, make the guys work
+    release(C_WORK);
+
+    /*
+     * Wait until a search related event has happened. It might be that
+     * the event has already been signalled in the last run, but the
+     * solution has been removed. So we have to try until there has
+     * something new happened.
+     */
     while (true) {
-      Space* s = DFS::next();
-      if (s == NULL)
+      e_search.wait();
+      m_search.acquire();
+      while (!solutions.empty()) {
+        // Check solution
+        Space* s = solutions.pop();
+        if (best == NULL) {
+          best = s->clone();
+          m_search.release();
+          // Make workers wait again
+          block();
+          return s;
+        } else {
+          s->constrain(*best);
+          if (s->status() == SS_FAILED) {
+            delete s;
+          } else {
+            delete best;
+            best = s->clone();
+            m_search.release();
+            // Make workers wait again
+            block();
+            return s;
+          }
+        }
+      }
+      // No more solutions or stopped?
+      if ((n_busy == 0) || has_stopped) {
+        m_search.release();
+        // Make workers wait again
+        block();
         return NULL;
-      if (best == NULL) {
-        best = s->clone();
-        return s;
       }
-      s->constrain(*best);
-      if (s->status() == SS_FAILED) {
-        delete s;
-      } else {
-        delete best;
-        best = s->clone();
-        return s;
-      }
+      m_search.release();
     }
     GECODE_NEVER;
     return NULL;
