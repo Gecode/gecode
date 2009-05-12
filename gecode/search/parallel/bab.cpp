@@ -163,6 +163,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   BAB::~BAB(void) {
     terminate();
+    delete best;
     heap.rfree(_worker);
   }
 
