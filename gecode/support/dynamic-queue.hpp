@@ -68,6 +68,9 @@ namespace Gecode { namespace Support {
     /// Test whether queue is empty
     bool empty(void) const;
 
+    /// Reset queue to be empty
+    void reset(void);
+
     /// Pop element added first from queue and return it
     T pop(void);
     /// Push element \a x to queue
@@ -122,6 +125,12 @@ namespace Gecode { namespace Support {
   forceinline bool
   DynamicQueue<T,A>::empty(void) const {
     return fst == lst;
+  }
+
+  template <class T, class A>
+  forceinline void
+  DynamicQueue<T,A>::reset(void) {
+    fst = lst = 0;
   }
 
   template <class T, class A>
