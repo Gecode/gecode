@@ -47,6 +47,7 @@ using namespace Gecode;
  * \relates EFPA
  */
 class EFPAOptions : public Options {
+private:
   Driver::UnsignedIntOption _v;   ///< Parameter v.
   Driver::UnsignedIntOption _q;   ///< Parameter q.
   Driver::UnsignedIntOption _l;   ///< Parameter lambda.
@@ -119,18 +120,14 @@ public:
  */
 class EFPA : public Script {
 protected:
-  int v;
-  int q;
-  int l;
-  int d;
-  int n;
-  int nseqpair;  ///< Number of sequence pairs
-  IntVarArray  c;
-  BoolVarArray diff;
-
-  int seqpair(int a, int b) {
-    return -10000+a+b;
-  }
+  int v; ///< Number of sequences
+  int q; ///< Number of symbols
+  int l; ///< Number of sets of symbols for a sequence (\f$\lambda\f$)
+  int d; ///< Hamming distance between any pair of sequences
+  int n; ///< Length of sequence (\f$q\cdot\lambda\f$)
+  int nseqpair;  ///< Number of sequence pairs (\f$\frac{v(v-1)}{2}\f$)
+  IntVarArray  c; ///< Variables for sequences
+  BoolVarArray diff; ///< Differences between sequences
 
 public:
   /// Actual model
@@ -156,7 +153,7 @@ public:
       for (int i = q; i--; ) values[i] = i+1;
       IntSet cardinality(l, l);
       for (int i = v; i--; )
-        count(*this, cm.row(i), cardinality, values);
+        count(*this, cm.row(i), cardinality, values, opt.icl());
     }
     
     // Difference variables
@@ -236,7 +233,7 @@ public:
           // ...into values in row2
           for (int i = 0; i < d; ++i) {
             IntVar index(*this, 0, 2*d);
-            post(*this, cform*d + i == index, ICL_DOM);
+            post(*this, cform*d + i == index);
             IntVar value(*this, 1, q);
             element(*this, _p, index, value);
             element(*this, row2, perm[i], value);

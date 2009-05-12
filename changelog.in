@@ -197,7 +197,7 @@ Module: support
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Support::quicksort and Support:insertion support using the less than
+Support::quicksort and Support::insertion support using the less than
 operator for the sort order by leaving out the comparator object.
 
 
