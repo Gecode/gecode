@@ -97,6 +97,8 @@ namespace Gecode {
 
       /// Minimal number of open nodes for stealing
       const int steal_limit = 5;
+      /// Initial delay in milliseconds for all but first worker thread
+      const unsigned int initial_delay = 5;
     }
 
     /**

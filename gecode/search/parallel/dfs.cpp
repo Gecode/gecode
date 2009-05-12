@@ -56,6 +56,9 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   void
   DFS::Worker::run(void) {
+    // Peform initial delay, if not first worker
+    if (this != engine().worker(0))
+      Support::Thread::sleep(Config::initial_delay);
     // Okay, we are in business, start working
     while (true) {
       switch (engine().cmd()) {
