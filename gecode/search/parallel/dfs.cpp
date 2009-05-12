@@ -65,12 +65,20 @@ namespace Gecode { namespace Search { namespace Parallel {
         break;
       case C_TERMINATE:
         // Acknowledge termination request
-        engine().acknowledge();
+        engine().ack_terminate();
         // Wait until termination can proceed
         engine().wait_terminate();
         // Terminate thread
         engine().terminated();
         return;
+      case C_RESET:
+        // Acknowledge reset request
+        engine().ack_reset_start();
+        // Wait until reset has been performed
+        engine().wait_reset();
+        // Acknowledge that reset cycle is over
+        engine().ack_reset_stop();
+        break;
       case C_WORK:
         // Perform exploration work
         {

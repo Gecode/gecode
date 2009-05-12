@@ -91,6 +91,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     enum Cmd {
       C_WORK,     ///< Perform work
       C_WAIT,     ///< Run into wait lock
+      C_RESET,    ///< Perform reset operation
       C_TERMINATE ///< Terminate
     };
   protected:
@@ -113,11 +114,11 @@ namespace Gecode { namespace Search { namespace Parallel {
     //@{
   protected:
     /// Mutex for access to termination information
-    Support::Mutex _m_terminate;
+    Support::Mutex _m_term;
     /// Number of workers that have not yet acknowledged termination
-    volatile unsigned int _n_not_acknowledged;
+    volatile unsigned int _n_term_not_ack;
     /// Event for termination acknowledgment
-    Support::Event _e_acknowledged;
+    Support::Event _e_term_ack;
     /// Mutex for waiting for termination
     Support::Mutex _m_wait_terminate;
     /// Number of not yet terminated workers
@@ -126,13 +127,33 @@ namespace Gecode { namespace Search { namespace Parallel {
     Support::Event _e_terminate;
   public:
     /// For worker to acknowledge termination command
-    void acknowledge(void);
+    void ack_terminate(void);
     /// For worker to register termination
     void terminated(void);
     /// For worker to wait until termination is legal
     void wait_terminate(void);
     /// For engine to peform thread termination
     void terminate(void);
+    //@}
+
+    /// \name Reset control
+    //@{
+  protected:
+    /// Mutex for access to reset information
+    Support::Mutex _m_reset;
+    /// Number of workers that have not yet acknowledged reset
+    volatile unsigned int _n_reset_not_ack;
+    /// Event for reset acknowledgment
+    Support::Event e_reset_ack;
+    /// Mutex for waiting for reset
+    Support::Mutex m_wait_reset;
+  public:
+    /// For worker to acknowledge start of reset cycle
+    void ack_reset_start(void);
+    /// For worker to acknowledge stop of reset cycle
+    void ack_reset_stop(void);
+    /// For worker to wait for all workers to reset
+    void wait_reset(void);
     //@}
 
     /// \name Search control
@@ -234,11 +255,13 @@ namespace Gecode { namespace Search { namespace Parallel {
   Engine::Engine(Space* s, size_t sz, const Options& o)
     : _opt(o), solutions(heap) {
     // Initialize termination information
-    _n_not_acknowledged = workers();
+    _n_term_not_ack = workers();
     _n_not_terminated = workers();
     // Initialize search information
     n_busy = workers();
     has_stopped = false;
+    // Initialize reset information
+    _n_reset_not_ack = workers();
   }
 
 
@@ -295,9 +318,9 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline void 
   Engine::terminated(void) {
     unsigned int n;
-    _m_terminate.acquire();
+    _m_term.acquire();
     n = --_n_not_terminated;
-    _m_terminate.release();
+    _m_term.release();
     // The signal must be outside of the look, otherwise a thread might be 
     // terminated that still holds a mutex.
     if (n == 0)
@@ -305,11 +328,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   forceinline void 
-  Engine::acknowledge(void) {
-    _m_terminate.acquire();
-    if (--_n_not_acknowledged == 0)
-      _e_acknowledged.signal();
-    _m_terminate.release();
+  Engine::ack_terminate(void) {
+    _m_term.acquire();
+    if (--_n_term_not_ack == 0)
+      _e_term_ack.signal();
+    _m_term.release();
   }
 
   forceinline void 
@@ -325,12 +348,38 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Release all threads
     release(C_TERMINATE);
     // Wait until all threads have acknowledged termination request
-    _e_acknowledged.wait();
+    _e_term_ack.wait();
     // Release waiting threads
     _m_wait_terminate.release();    
     // Wait until all threads have in fact terminated
     _e_terminate.wait();
     // Now all threads are terminated!
+  }
+
+
+
+  /*
+   * Engine: reset control
+   */
+  forceinline void 
+  Engine::ack_reset_start(void) {
+    _m_reset.acquire();
+    if (--_n_reset_not_ack == 0)
+      e_reset_ack.signal();
+    _m_reset.release();
+  }
+
+  forceinline void 
+  Engine::ack_reset_stop(void) {
+    _m_reset.acquire();
+    ++_n_reset_not_ack;
+    _m_reset.release();
+  }
+
+  forceinline void 
+  Engine::wait_reset(void) {
+    m_wait_reset.acquire();
+    m_wait_reset.release();
   }
 
 
