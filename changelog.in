@@ -83,12 +83,32 @@ of type Search::Options. This is in particular useful for
 decisions that involve the number of threads used for search.
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added parallel search engines for DFS, BAB, and Restart (but not
+LDS). This is still EXPERIMENTAL and performance is only good on
+large search trees. Please make sure to read the section
+"Parallel search" in "Modeling with Gecode".
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a tiny portable thread package specifically tailored to the
+needs for parallel search. Unfortunately, other portable thread
+packages have just too many issues.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-The inspectors are finalized before Gist exits. This fixes a bug where (at least 
-on Mac OS) some memory was not freed in the correct order.
+The inspectors are finalized before Gist exits. This fixes a bug
+where (at least on Mac OS) some memory was not freed in the
+correct order.
 
 [ENTRY]
 Module: gist
