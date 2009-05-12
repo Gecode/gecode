@@ -40,30 +40,12 @@
 
 #include <gecode/search.hh>
 
-#ifdef GECODE_HAS_THREADS
-#include <gecode/support/thread.hh>
-#endif
-
 namespace Gecode { namespace Search {
 
   /// Clone space \a s dependening on options \a o
   forceinline Space*
   snapshot(Space* s, const Options& o) {
     return o.clone ? s->clone() : s;
-  }
-
-  /// Compute real number of threads
-  inline Options
-  threads(const Options& o) {
-#ifdef GECODE_HAS_THREADS
-    Options to(o);
-    if (to.threads == 0) {
-      to.threads = Support::Thread::npu();
-    }
-    return to;
-#else
-    return o;
-#endif
   }
 
   /// Virtualize a worker to an engine

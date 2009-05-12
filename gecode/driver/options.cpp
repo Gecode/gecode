@@ -141,6 +141,7 @@ namespace Gecode {
            << "\t\t" << exp << endl;
     }
   
+
     bool
     UnsignedIntOption::parse(int& argc, char* argv[]) {
       if ((argc < 2) || strcmp(argv[1],opt))
@@ -164,7 +165,32 @@ namespace Gecode {
            << "\t\t" << exp << endl;
     }
   
+
+    bool
+    DoubleOption::parse(int& argc, char* argv[]) {
+      if ((argc < 2) || strcmp(argv[1],opt))
+        return false;
+      if (argc == 2) {
+        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      cur = atof(argv[2]);
+      // Remove options
+      argc -= 2;
+      for (int i=1; i<argc; i++)
+        argv[i] = argv[i+2];
+      return true;
+    }
+    
+    void
+    DoubleOption::help(void) {
+      using namespace std;
+      cerr << '\t' << opt << " (double) default: " << cur << endl
+           << "\t\t" << exp << endl;
+    }
+  
   }
+
 
   Options::Options(const char* n)
     : fst(NULL), lst(NULL),

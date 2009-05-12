@@ -201,6 +201,26 @@ namespace Gecode {
       virtual void help(void);
     };
 
+    /**
+     * \brief Double option
+     *
+     */
+    class GECODE_DRIVER_EXPORT DoubleOption : public BaseOption {
+    protected:
+      double cur; ///< Current value
+    public:
+      /// Initialize for option \a o and explanation \a e and default value \a v
+      DoubleOption(const char* o, const char* e, unsigned int v=0);
+      /// Set default value to \a v
+      void value(double v);
+      /// Return current option value
+      double value(void) const;
+      /// Parse option at first position
+      virtual bool parse(int& argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
   }
   
   /**
@@ -225,7 +245,7 @@ namespace Gecode {
     //@{
     Driver::StringOption      _search;    ///< Search options
     Driver::UnsignedIntOption _solutions; ///< How many solutions
-    Driver::UnsignedIntOption _threads;   ///< How many threads to use
+    Driver::DoubleOption      _threads;   ///< How many threads to use
     Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
     Driver::UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
     Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
@@ -297,9 +317,9 @@ namespace Gecode {
     unsigned int solutions(void) const;
 
     /// Set number of parallel threads
-    void threads(unsigned int n);
+    void threads(double n);
     /// Return number of parallel threads
-    unsigned int threads(void) const;
+    double threads(void) const;
     
     /// Set default copy recomputation distance
     void c_d(unsigned int d);

@@ -87,7 +87,7 @@ namespace Gecode {
       /// Whether engines create a clone when being initialized
       const bool clone = true;
       /// Number of threads to use
-      const unsigned int threads = 1;
+      const double threads = 1.0;
       /// Create a clone after every \a c_d commits (commit distance)
       const unsigned int c_d = 8;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -151,6 +151,15 @@ namespace Gecode {
      * recomputation performs propagation only once for an entire path
      * used in recomputation.
      *
+     * The number of threads to be used is controlled by a double \f$n\f$
+     * (assume that \f$m\f$ is the number of processing units available). If
+     * \f$1 \leq n\f$, \f$n\f$ threads are chosen (of course with rounding).
+     * If \f$n \leq -1\f$, then \f$m + n\f$ threads are 
+     * chosen (all but \f$-n\f$ processing units get a thread). If \f$n\f$
+     * is zero, \f$m\f$ threads are chosen. If \f$0<n<1\f$\a,
+     * \f$n \times m\f$ threads are chosen. If \f$-1 <n<0\f$, 
+     * \f$(1+n)\times m\f$ threads are chosen.
+     * 
      * \ingroup TaskModelSearch
      */
     class Options {
@@ -158,7 +167,7 @@ namespace Gecode {
       /// Whether engines create a clone when being initialized
       bool clone;
       /// Number of threads to use
-      unsigned int threads;
+      double threads;
       /// Create a clone after every \a c_d commits (commit distance)
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -171,6 +180,9 @@ namespace Gecode {
       GECODE_SEARCH_EXPORT static const Options def;
       /// Initialize with default values
       Options(void);
+      /// Expand with real number of threads
+      GECODE_SEARCH_EXPORT Options
+      expand(void) const;
     };
 
     /**

@@ -37,9 +37,39 @@
 
 #include <gecode/search.hh>
 
+#ifdef GECODE_HAS_THREADS
+#include <gecode/support/thread.hh>
+#endif
+
+#include <cmath>
+
 namespace Gecode { namespace Search {
 
   const Options Options::def;
+
+  Options
+  Options::expand(void) const {
+#ifdef GECODE_HAS_THREADS
+    double t = threads;
+    if (t <= -1.0) {
+      t = Support::Thread::npu() + t;
+    } else if (t < 0.0) {
+      t = (1.0 + t) * Support::Thread::npu();
+    } else if (t == 0.0) {
+      t = Support::Thread::npu();
+    } else if (t < 1.0) {
+      t = t * Support::Thread::npu();
+    }
+    t = floor(t+0.5);
+    if (t < 1.0)
+      t = 1.0;
+    Options o(*this);
+    o.threads = t;
+    return o;
+#else
+    return *this;
+#endif
+  }
 
 }}
 

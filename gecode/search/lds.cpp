@@ -50,8 +50,8 @@ namespace Gecode { namespace Search {
   Engine* 
   lds(Space* s, size_t sz, const Options& o) {
 #ifdef GECODE_HAS_THREADS
-    Options to = threads(o);
-    if (to.threads == 1)
+    Options to = o.expand();
+    if (to.threads == 1.0)
       return new Sequential::LDS(s,sz,to);
     else
       return new Sequential::LDS(s,sz,to);

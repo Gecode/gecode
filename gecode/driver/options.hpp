@@ -100,6 +100,23 @@ namespace Gecode {
       return cur;
     }
 
+    /*
+     * Double option
+     *
+     */
+    inline
+    DoubleOption::DoubleOption(const char* o, const char* e,
+                               unsigned int v)
+      : BaseOption(o,e), cur(v) {}
+    inline void
+    DoubleOption::value(double v) {
+      cur = v;
+    }
+    inline double
+    DoubleOption::value(void) const {
+      return cur;
+    }
+
   }
   
   /*
@@ -200,10 +217,10 @@ namespace Gecode {
   }
   
   inline void
-  Options::threads(unsigned int n) {
+  Options::threads(double n) {
     _threads.value(n);
   }
-  inline unsigned int
+  inline double
   Options::threads(void) const {
     return _threads.value();
   }

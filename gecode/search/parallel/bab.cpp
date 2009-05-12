@@ -58,11 +58,11 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Okay, we are in business, start working
     while (true) {
       switch (engine().cmd()) {
-      case BAB::C_WAIT:
+      case C_WAIT:
         // Wait
         engine().wait();
         break;
-      case BAB::C_TERMINATE:
+      case C_TERMINATE:
         // Acknowledge termination request
         engine().acknowledge();
         // Wait until termination can proceed
@@ -70,7 +70,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         // Terminate thread
         engine().terminated();
         return;
-      case BAB::C_WORK:
+      case C_WORK:
         // Perform exploration work
         {
           m.acquire();
