@@ -139,6 +139,38 @@ namespace Gecode { namespace Gist {
     //@}
   };
 
+  /// \brief A cursor that collects statistics
+  class StatCursor : public NodeCursor<VisualNode> {
+  private:
+    /// Current depth
+    int curDepth;
+  public:
+    /// Depth of the search tree
+    int depth;
+    /// Number of failed nodes
+    int failed;
+    /// Number of solved nodes
+    int solved;
+    /// Number of choice nodes
+    int choice;
+    /// Number of open nodes
+    int open;
+
+    /// Constructor
+    StatCursor(VisualNode* theNode);
+    
+    /// \name Cursor interface
+    //@{
+    /// Collect statistics
+    void processCurrentNode(void);
+    /// Move cursor to the first child node
+    void moveDownwards(void);
+    /// Move cursor to the parent node
+    void moveUpwards(void);
+    //@}
+    
+  };
+
 }}
 
 #include <gecode/gist/nodecursor.hpp>

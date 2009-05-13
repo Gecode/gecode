@@ -39,6 +39,7 @@
 #define GECODE_GIST_QTGIST_HH
 
 #include <gecode/gist/treecanvas.hh>
+#include <gecode/gist/nodestats.hh>
 
 namespace Gecode {  namespace Gist {
 
@@ -68,6 +69,8 @@ namespace Gecode {  namespace Gist {
     QAction* nullDoubleClickInspector;
     /// Menu of double click inspectors
     QMenu* doubleClickInspectorMenu;
+    /// Information about individual nodes
+    NodeStatInspector* nodeStatInspector;
   public:
     /// Inspect current node
     QAction* inspect;
@@ -114,6 +117,8 @@ namespace Gecode {  namespace Gist {
     QAction* setPath;
     /// Inspect all nodes on selected path
     QAction* inspectPath;
+    /// Open node statistics inspector
+    QAction* showNodeStats;
 
     /// Group of all actions for solution inspectors
     QActionGroup* solutionInspectorGroup;

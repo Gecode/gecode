@@ -79,6 +79,10 @@ namespace Gecode { namespace Gist {
     scaleBar->setMaximum(LayoutConfig::maxScale);
     scaleBar->setValue(LayoutConfig::defScale);
 
+    nodeStatInspector  = new NodeStatInspector();
+    connect(canvas, SIGNAL(statusChanged(VisualNode*,const Statistics&, bool)),
+            nodeStatInspector, SLOT(node(VisualNode*,const Statistics&, bool)));
+
     inspect = new QAction("Inspect", this);
     inspect->setShortcut(QKeySequence("Return"));
     connect(inspect, SIGNAL(triggered()), canvas,
@@ -180,6 +184,10 @@ namespace Gecode { namespace Gist {
     inspectPath->setShortcut(QKeySequence("Shift+I"));
     connect(inspectPath, SIGNAL(triggered()), canvas, SLOT(inspectPath()));
 
+    showNodeStats = new QAction("Node statistics", this);
+    showNodeStats->setShortcut(QKeySequence("S"));
+    connect(showNodeStats, SIGNAL(triggered()),
+            nodeStatInspector, SLOT(showStats()));
 
     addAction(inspect);
     addAction(stop);
@@ -205,6 +213,7 @@ namespace Gecode { namespace Gist {
 
     addAction(setPath);
     addAction(inspectPath);
+    addAction(showNodeStats);
 
     nullSolutionInspector = new QAction("<none>",this);
     nullSolutionInspector->setCheckable(true);
@@ -234,6 +243,7 @@ namespace Gecode { namespace Gist {
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(inspect);
+    contextMenu->addAction(showNodeStats);
     contextMenu->addAction(center);
 
     contextMenu->addSeparator();

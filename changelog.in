@@ -123,7 +123,8 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 Small user interface changes: disable search from hidden nodes, add depth 
-information to status bar.
+information to status bar, and add statistics for subtrees (available from the 
+node context menu and the Node menu).
 
 [ENTRY]
 Module: gist

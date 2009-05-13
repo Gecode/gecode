@@ -119,6 +119,35 @@ namespace Gecode { namespace Gist {
     }
   }
 
+  StatCursor::StatCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root),
+     curDepth(0), depth(0), failed(0), solved(0), choice(0), open(0) {}
+
+  void
+  StatCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    switch (n->getStatus()) {
+    case SOLVED: solved++; break;
+    case FAILED: failed++; break;
+    case BRANCH: choice++; break;
+    case UNDETERMINED: open++; break;
+    default: break;
+    }
+  }
+
+  void
+  StatCursor::moveDownwards(void) {
+    curDepth++;
+    depth = std::max(depth,curDepth); 
+    NodeCursor<VisualNode>::moveDownwards();
+  }
+
+  void
+  StatCursor::moveUpwards(void) {
+    curDepth--;
+    NodeCursor<VisualNode>::moveUpwards();
+  }
+
 }}
 
 // STATISTICS: gist-any

@@ -5237,25 +5237,26 @@ gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/mainwindow.hh \
-	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/qtgist.hh \
-	./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp ./gecode/gist/textoutput.hh \
-	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
-	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
-	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
-	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
-	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
-	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
-	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
+	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/nodestats.hh \
+	./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
+	./gecode/gist/textoutput.hh ./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh \
+	./gecode/gist/visualnode.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
+	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
+	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
+	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
+	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
+	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hh 
 gecode/gist/gecodelogo$(OBJSUFFIX) gecode/gist/gecodelogo$(SBJSUFFIX): \
 	./gecode/gist/gecodelogo.hh 
 gecode/gist/node$(OBJSUFFIX) gecode/gist/node$(SBJSUFFIX): \
@@ -5356,25 +5357,26 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 gecode/gist/qtgist$(OBJSUFFIX) gecode/gist/qtgist$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/node.hh \
 	./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp \
-	./gecode/gist/nodevisitor.hh ./gecode/gist/nodevisitor.hpp ./gecode/gist/qtgist.hh \
-	./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp ./gecode/gist/treecanvas.hh \
-	./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp ./gecode/gist/zoomToFitIcon.hpp \
-	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
-	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
-	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
-	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
-	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
-	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/lds.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
+	./gecode/gist/nodestats.hh ./gecode/gist/nodevisitor.hh ./gecode/gist/nodevisitor.hpp \
+	./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
+	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
+	./gecode/gist/zoomToFitIcon.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
+	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
+	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
+	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
+	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
+	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
+	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
+	./gecode/support/timer.hh 
 gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/gist/layoutcursor.hh ./gecode/gist/layoutcursor.hpp ./gecode/gist/node.hh \
 	./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp \
@@ -5393,12 +5395,11 @@ gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
-gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
-	./gecode/gist.hh ./gecode/gist/drawingcursor.hh ./gecode/gist/drawingcursor.hpp \
-	./gecode/gist/gecodelogo.hh ./gecode/gist/gist.hpp ./gecode/gist/layoutcursor.hh \
-	./gecode/gist/layoutcursor.hpp ./gecode/gist/mainwindow.hh ./gecode/gist/node.hh \
+gecode/gist/nodestats$(OBJSUFFIX) gecode/gist/nodestats$(SBJSUFFIX): \
+	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/node.hh \
 	./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp \
-	./gecode/gist/preferences.hh ./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh \
+	./gecode/gist/nodestats.hh ./gecode/gist/nodevisitor.hh ./gecode/gist/nodevisitor.hpp \
+	./gecode/gist/nodewidget.hh ./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh \
 	./gecode/gist/spacenode.hpp ./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh \
 	./gecode/gist/visualnode.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
@@ -5417,6 +5418,53 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/timer.hh 
+gecode/gist/nodewidget$(OBJSUFFIX) gecode/gist/nodewidget$(SBJSUFFIX): \
+	./gecode/gist.hh ./gecode/gist/drawingcursor.hh ./gecode/gist/drawingcursor.hpp \
+	./gecode/gist/gist.hpp ./gecode/gist/layoutcursor.hh ./gecode/gist/layoutcursor.hpp \
+	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh \
+	./gecode/gist/nodecursor.hpp ./gecode/gist/nodestats.hh ./gecode/gist/nodewidget.hh \
+	./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
+	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
+	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
+	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
+	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
+gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
+	./gecode/gist.hh ./gecode/gist/drawingcursor.hh ./gecode/gist/drawingcursor.hpp \
+	./gecode/gist/gecodelogo.hh ./gecode/gist/gist.hpp ./gecode/gist/layoutcursor.hh \
+	./gecode/gist/layoutcursor.hpp ./gecode/gist/mainwindow.hh ./gecode/gist/node.hh \
+	./gecode/gist/node.hpp ./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp \
+	./gecode/gist/nodestats.hh ./gecode/gist/nodewidget.hh ./gecode/gist/preferences.hh \
+	./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
+	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
+	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
+	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
+	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/lds.hpp \
+	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/preferences.hh \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \

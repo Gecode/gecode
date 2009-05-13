@@ -37,62 +37,12 @@
 
 #include <gecode/gist/mainwindow.hh>
 #include <gecode/gist/preferences.hh>
+#include <gecode/gist/nodewidget.hh>
 #include <gecode/gist/drawingcursor.hh>
 
 #include <gecode/gist/gecodelogo.hh>
 
 namespace Gecode { namespace Gist {
-
-  /// \brief Small node drawings for the status bar
-  class StatusBarNode : public QWidget {
-  public:
-    StatusBarNode(NodeStatus s) : status(s) {
-      setMinimumSize(22,22);
-      setMaximumSize(22,22);
-    }
-  protected:
-    NodeStatus status;
-    void paintEvent(QPaintEvent*) {
-      QPainter painter(this);
-      painter.setRenderHint(QPainter::Antialiasing);
-      int hw= width()/2;
-      int myx = hw+2; int myy = 2;
-      switch (status) {
-        case SOLVED:
-          {
-            QPoint points[4] = {QPoint(myx,myy),
-                                QPoint(myx+8,myy+8),
-                                QPoint(myx,myy+16),
-                                QPoint(myx-8,myy+8)
-                               };
-            painter.setBrush(QBrush(DrawingCursor::green));
-            painter.drawConvexPolygon(points, 4);
-          }
-          break;
-        case FAILED:
-          {
-            painter.setBrush(QBrush(DrawingCursor::red));
-            painter.drawRect(myx-6, myy+2, 12, 12);
-          }
-          break;
-        case BRANCH:
-          {
-            painter.setBrush(QBrush(DrawingCursor::blue));
-            painter.drawEllipse(myx-8, myy, 16, 16);
-          }
-          break;
-        case UNDETERMINED:
-          {
-            painter.setBrush(QBrush(Qt::white));
-            painter.drawEllipse(myx-8, myy, 16, 16);
-          }
-          break;
-        default:
-          break;
-      }
-
-    }
-  };
 
   AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
 
@@ -170,6 +120,7 @@ namespace Gecode { namespace Gist {
     nodeMenu->addAction(c.inspect);
     nodeMenu->addAction(c.setPath);
     nodeMenu->addAction(c.inspectPath);
+    nodeMenu->addAction(c.showNodeStats);
     nodeMenu->addSeparator();
     nodeMenu->addAction(c.navUp);
     nodeMenu->addAction(c.navDown);
@@ -226,16 +177,16 @@ namespace Gecode { namespace Gist {
     hbl->addWidget(new QLabel("Depth:"));
     depthLabel = new QLabel("0");
     hbl->addWidget(depthLabel);
-    hbl->addWidget(new StatusBarNode(SOLVED));
+    hbl->addWidget(new NodeWidget(SOLVED));
     solvedLabel = new QLabel("0");
     hbl->addWidget(solvedLabel);
-    hbl->addWidget(new StatusBarNode(FAILED));
+    hbl->addWidget(new NodeWidget(FAILED));
     failedLabel = new QLabel("0");
     hbl->addWidget(failedLabel);
-    hbl->addWidget(new StatusBarNode(BRANCH));
+    hbl->addWidget(new NodeWidget(BRANCH));
     choicesLabel = new QLabel("0");
     hbl->addWidget(choicesLabel);
-    hbl->addWidget(new StatusBarNode(UNDETERMINED));
+    hbl->addWidget(new NodeWidget(UNDETERMINED));
     openLabel = new QLabel("     0");
     hbl->addWidget(openLabel);
     stw->setLayout(hbl);
