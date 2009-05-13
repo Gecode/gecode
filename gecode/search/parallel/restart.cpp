@@ -53,6 +53,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       Space* s = solutions.pop();
       if (best == NULL) {
         best = s->clone();
+        reset_needed = true;
         m_search.release();
         return s;
       } else {
@@ -62,6 +63,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         } else {
           delete best;
           best = s->clone();
+          reset_needed = true;
           m_search.release();
           return s;
         }
@@ -74,7 +76,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       m_search.release();
       return NULL;
     }
-    if (best != NULL) {
+    if (reset_needed) {
+      reset_needed = false;
       root->constrain(*best);
       // Leave lock
       m_search.release();
@@ -113,6 +116,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         Space* s = solutions.pop();
         if (best == NULL) {
           best = s->clone();
+          reset_needed = true;
           m_search.release();
           // Make workers wait again
           block();
@@ -124,6 +128,7 @@ namespace Gecode { namespace Search { namespace Parallel {
           } else {
             delete best;
             best = s->clone();
+            reset_needed = true;
             m_search.release();
             // Make workers wait again
             block();

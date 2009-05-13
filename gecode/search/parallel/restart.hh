@@ -49,6 +49,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     Space* root;
     /// So-far best solution
     Space* best;
+    /// Whether a reset is needed
+    bool reset_needed;
   public:
     /// Initialize engine for space \a s (with size \a sz) and options \a o
     Restart(Space* s, size_t sz, const Search::Options& o);
@@ -61,7 +63,8 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline 
   Restart::Restart(Space* s, size_t sz, const Search::Options& o) :
     DFS(s,sz,o),
-    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
+    root(s->status() == SS_FAILED ? NULL : s->clone()), 
+    best(NULL), reset_needed(false) {}
 
 }}}
 
