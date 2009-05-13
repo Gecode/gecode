@@ -79,7 +79,7 @@ namespace Gecode { namespace Gist {
     scaleBar->setMaximum(LayoutConfig::maxScale);
     scaleBar->setValue(LayoutConfig::defScale);
 
-    nodeStatInspector  = new NodeStatInspector();
+    nodeStatInspector = new NodeStatInspector();
     connect(canvas, SIGNAL(statusChanged(VisualNode*,const Statistics&, bool)),
             nodeStatInspector, SLOT(node(VisualNode*,const Statistics&, bool)));
 
@@ -187,7 +187,7 @@ namespace Gecode { namespace Gist {
     showNodeStats = new QAction("Node statistics", this);
     showNodeStats->setShortcut(QKeySequence("S"));
     connect(showNodeStats, SIGNAL(triggered()),
-            nodeStatInspector, SLOT(showStats()));
+            this, SLOT(showStats()));
 
     addAction(inspect);
     addAction(stop);
@@ -501,6 +501,12 @@ namespace Gecode { namespace Gist {
   bool
   Gist::getShowCopies(void) {
     return canvas->getShowCopies();
+  }
+
+  void
+  Gist::showStats(void) {
+    nodeStatInspector->showStats();
+    canvas->emitStatusChanged();
   }
 
 }}

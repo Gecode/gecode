@@ -634,6 +634,11 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvas::emitStatusChanged(void) {
+    emit statusChanged(currentNode, stats, true);
+  }
+
+  void
   TreeCanvas::navUp(void) {
     QMutexLocker locker(&mutex);
 

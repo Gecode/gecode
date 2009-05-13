@@ -160,6 +160,8 @@ namespace Gecode {  namespace Gist {
     void setPath(void);
     /// Call the double click inspector for all nodes on the path from root to head of the path
     void inspectPath(void);
+    /// Re-emit status change information for current node
+    void emitStatusChanged(void);
 
     /// Set recomputation distances
     void setRecompDistances(int c_d, int a_d);

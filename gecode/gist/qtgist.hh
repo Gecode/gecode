@@ -184,6 +184,8 @@ namespace Gecode {  namespace Gist {
     void selectDoubleClickInspector(QAction*);
     /// Reacts on solution inspector selection
     void selectSolutionInspector(QAction*);
+    /// Shows node status information
+    void showStats(void);
   protected:
     /// Close the widget
     void closeEvent(QCloseEvent* event);

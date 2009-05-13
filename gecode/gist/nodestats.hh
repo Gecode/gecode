@@ -51,17 +51,19 @@ namespace Gecode { namespace Gist {
     Q_OBJECT
   private:
     /// Label for node depth indicator
-    QLabel* nodeDepthLabel;
+    QGraphicsTextItem* nodeDepthLabel;
     /// Label for subtree depth indicator
-    QLabel* subtreeDepthLabel;
+    QGraphicsTextItem* subtreeDepthLabel;
     /// Label for number of solutions
-    QLabel* solvedLabel;
+    QGraphicsTextItem* solvedLabel;
     /// Label for number of failures
-    QLabel* failedLabel;
+    QGraphicsTextItem* failedLabel;
     /// Label for number of choices
-    QLabel* choicesLabel;
+    QGraphicsTextItem* choicesLabel;
     /// Label for number of open nodes
-    QLabel* openLabel;
+    QGraphicsTextItem* openLabel;
+    /// Layout
+    QVBoxLayout* boxLayout;
   public:
     NodeStatInspector(void);
   public Q_SLOTS:
