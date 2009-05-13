@@ -131,6 +131,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     delete cur;
     path.reset();
     d = 0;
+    idle = false;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = NULL;
@@ -144,6 +145,8 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
   forceinline Space*
   DFS::reset(Space* s) {
+    // All workers are marked as busy again
+    n_busy = workers();
     for (unsigned int i=1; i<workers(); i++)
       (void) worker(i)->reset(NULL);
     return worker(0)->reset(s);
