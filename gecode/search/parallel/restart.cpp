@@ -76,28 +76,25 @@ namespace Gecode { namespace Search { namespace Parallel {
     }
     if (best != NULL) {
       root->constrain(*best);
+      // Leave lock
+      m_search.release();
       // Grab wait lock for reset
       m_wait_reset.acquire();
       // Release workers for reset
       release(C_RESET);
-      // Leave lock
-      m_search.release();
       // Wait for reset cycle completed
       e_reset_ack.wait();
-      // Acquire search lock
-      m_search.acquire();
       // Perform reset
       root = reset(root);
       // Block workers
       block();
       // Release reset lock
       m_wait_reset.release();
-      if (root == NULL) {
-        m_search.release();
+      if (root == NULL)
         return NULL;
-      }
+    } else {
+      m_search.release();
     }
-    m_search.release();
 
     // Okay, now search has to continue, make the guys work
     release(C_WORK);

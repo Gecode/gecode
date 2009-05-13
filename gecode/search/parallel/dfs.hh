@@ -143,10 +143,9 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
   forceinline Space*
   DFS::reset(Space* s) {
-    Space* r = worker(0)->reset(s);
     for (unsigned int i=1; i<workers(); i++)
       (void) worker(i)->reset(NULL);
-    return r;
+    return worker(0)->reset(s);
   }
 
   /*
