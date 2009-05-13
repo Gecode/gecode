@@ -68,10 +68,13 @@
 
 
 [RELEASE]
-Version: 3.0.3
-Date: some date
+Version: 3.1.0
+Date: 2009-05-15
 [DESCRIPTION]
-This is a release
+This release introduces parallel search, features improved memory
+management (can double efficiency on MacOS X), and provides a
+reusable command line driver upon popular request. And, of
+course, some this and that.
 
 [ENTRY]
 Module: search
