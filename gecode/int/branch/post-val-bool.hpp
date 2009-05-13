@@ -45,8 +45,7 @@ namespace Gecode { namespace Int { namespace Branch {
     switch (vals) {
     case INT_VAL_MIN:
     case INT_VAL_MED:
-    case INT_VAL_SPLIT_MEAN_MIN:
-    case INT_VAL_SPLIT_MED_MIN:
+    case INT_VAL_SPLIT_MIN:
     case INT_VALUES_MIN:
       {
         ValZeroOne<BoolView> a(home,o_vals);
@@ -55,8 +54,7 @@ namespace Gecode { namespace Int { namespace Branch {
       }
       break;
     case INT_VAL_MAX:
-    case INT_VAL_SPLIT_MEAN_MAX:
-    case INT_VAL_SPLIT_MED_MAX:
+    case INT_VAL_SPLIT_MAX:
     case INT_VALUES_MAX:
       {
         ValZeroOne<NegBoolView> a(home,o_vals);

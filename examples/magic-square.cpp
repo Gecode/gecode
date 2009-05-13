@@ -94,7 +94,7 @@ public:
     rel(*this, m(0,0), IRT_GR, m(0,n-1));
     rel(*this, m(0,0), IRT_GR, m(n-1,0));
 
-    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MEAN_MIN);
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
 
   /// Constructor for cloning \a s

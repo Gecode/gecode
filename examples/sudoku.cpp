@@ -165,7 +165,7 @@ public:
     }
 #endif
 
-    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MEAN_MIN);
+    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
 
   /// Constructor for cloning \a s

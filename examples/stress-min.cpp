@@ -64,7 +64,7 @@ public:
       min(*this, y, m);
       rel(*this, m, IRT_GR, x[i]);
     }
-    branch(*this, x, INT_VAR_NONE, INT_VAL_SPLIT_MEAN_MAX);
+    branch(*this, x, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
   }
 
   /// Constructor for cloning \a s

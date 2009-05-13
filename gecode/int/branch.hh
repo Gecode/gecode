@@ -140,38 +140,17 @@ namespace Gecode { namespace Int { namespace Branch {
    * \ingroup FuncIntSelVal
    */
   template<class View>
-  class ValSplitMeanMin : public ValSelBase<View,int> {
+  class ValSplitMin : public ValSelBase<View,int> {
   public:
     /// Default constructor
-    ValSplitMeanMin(void);
+    ValSplitMin(void);
     /// Constructor for initialization
-    ValSplitMeanMin(Space& home, const ValBranchOptions& vbo);
+    ValSplitMin(Space& home, const ValBranchOptions& vbo);
     /// Return minimum value of view \a x
     int val(Space& home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, int n);
   };
-
-  /**
-   * \brief Class for splitting domain at median (lower half first)
-   *
-   * Requires
-   * \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelVal
-   */
-  template<class View>
-  class ValSplitMedMin : public ValSelBase<View,int> {
-  public:
-    /// Default constructor
-    ValSplitMedMin(void);
-    /// Constructor for initialization
-    ValSplitMedMin(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x
-    int val(Space& home, View x) const;
-    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
-    ModEvent tell(Space& home, unsigned int a, View x, int n);
-  };
-
 
 
   /// For Boolean branchings not needing a value

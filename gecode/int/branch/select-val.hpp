@@ -121,40 +121,20 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValSplitMeanMin<View>::ValSplitMeanMin(void) {}
+  ValSplitMin<View>::ValSplitMin(void) {}
   template<class View>
   forceinline
-  ValSplitMeanMin<View>::ValSplitMeanMin(Space& home,
+  ValSplitMin<View>::ValSplitMin(Space& home,
     const ValBranchOptions& vbo)
     : ValSelBase<View,int>(home,vbo) {}
   template<class View>
   forceinline int
-  ValSplitMeanMin<View>::val(Space&, View x) const {
+  ValSplitMin<View>::val(Space&, View x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
   template<class View>
   forceinline ModEvent
-  ValSplitMeanMin<View>::tell(Space& home, unsigned int a, View x, int n) {
-    return (a == 0) ? x.lq(home,n) : x.gr(home,n);
-  }
-
-
-  template<class View>
-  forceinline
-  ValSplitMedMin<View>::ValSplitMedMin(void) {}
-  template<class View>
-  forceinline
-  ValSplitMedMin<View>::ValSplitMedMin(Space& home,
-    const ValBranchOptions& vbo)
-    : ValSelBase<View,int>(home,vbo) {}
-  template<class View>
-  forceinline int
-  ValSplitMedMin<View>::val(Space&, View x) const {
-    return x.med();
-  }
-  template<class View>
-  forceinline ModEvent
-  ValSplitMedMin<View>::tell(Space& home, unsigned int a, View x, int n) {
+  ValSplitMin<View>::tell(Space& home, unsigned int a, View x, int n) {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
   }
 

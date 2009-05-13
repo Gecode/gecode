@@ -2145,16 +2145,14 @@ namespace Gecode {
 
   /// Which values to select first for branching
   enum IntValBranch {
-    INT_VAL_MIN,            ///< Select smallest value
-    INT_VAL_MED,            ///< Select greatest value not greater than the median
-    INT_VAL_MAX,            ///< Select largest value
-    INT_VAL_RND,            ///< Select random value
-    INT_VAL_SPLIT_MEAN_MIN, ///< Select values not greater than mean of smallest and largest value
-    INT_VAL_SPLIT_MEAN_MAX, ///< Select values greater than mean of smallest and largest value
-    INT_VAL_SPLIT_MED_MIN,  ///< Select values not greater than median of domain
-    INT_VAL_SPLIT_MED_MAX,  ///< Select values greater than median of domain
-    INT_VALUES_MIN,         ///< Try all values starting from smallest
-    INT_VALUES_MAX          ///< Try all values starting from largest
+    INT_VAL_MIN,       ///< Select smallest value
+    INT_VAL_MED,       ///< Select greatest value not greater than the median
+    INT_VAL_MAX,       ///< Select largest value
+    INT_VAL_RND,       ///< Select random value
+    INT_VAL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
+    INT_VAL_SPLIT_MAX, ///< Select values greater than mean of smallest and largest value
+    INT_VALUES_MIN,    ///< Try all values starting from smallest
+    INT_VALUES_MAX     ///< Try all values starting from largest
   };
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals
