@@ -47,7 +47,7 @@ namespace Gecode { namespace Support {
     ms -= 1000 * s;
     if (s > 0) {
       // More than one million microseconds, use sleep
-      sleep(s);
+      ::sleep(s);
     }
     usleep(ms * 1000);
 #endif
