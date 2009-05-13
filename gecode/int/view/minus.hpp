@@ -67,10 +67,6 @@ namespace Gecode {
       return -view.min();
     }
     forceinline int
-    MinusView::med(void) const {
-      return -view.med();
-    }
-    forceinline int
     MinusView::val(void) const {
       return -view.val();
     }
@@ -331,6 +327,22 @@ namespace Gecode {
     forceinline int
     ViewRanges<MinusView>::max(void) const {
       return -IntVarImpBwd::min();
+    }
+
+    inline int
+    MinusView::med(void) const {
+      if (view.range())
+        return (min()+max())/2 - ((min()+max())%2 < 0 ? 1 : 0);
+
+      unsigned int i = view.size() / 2;
+      if (size() % 2 == 0)
+        i--;
+      ViewRanges<MinusView> r(view);
+      while (i >= r.width()) {
+        i -= r.width();
+        ++r;
+      }
+      return r.min() + static_cast<int>(i);
     }
 
   }

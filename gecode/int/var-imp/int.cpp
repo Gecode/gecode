@@ -50,7 +50,7 @@ namespace Gecode { namespace Int {
   IntVarImp::med(void) const {
     // Computes the median
     if (fst() == NULL)
-      return (dom.min()+dom.max())/2;
+      return (dom.min()+dom.max())/2 - ((dom.min()+dom.max())%2 < 0 ? 1 : 0);
     unsigned int i = size() / 2;
     if (size() % 2 == 0)
       i--;
