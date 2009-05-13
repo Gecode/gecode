@@ -93,10 +93,10 @@ namespace Gecode { namespace Search { namespace Parallel {
       m_wait_reset.release();
       // Wait for reset cycle stopped
       e_reset_ack_stop.wait();
-      if (root == NULL)
-        return NULL;
       // Block workers
       block();
+      if (root == NULL)
+        return NULL;
     } else {
       m_search.release();
     }

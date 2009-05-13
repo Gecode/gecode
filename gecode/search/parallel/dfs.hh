@@ -132,6 +132,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     path.reset();
     d = 0;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+      delete s;
       cur = NULL;
       Search::Worker::reset();
       return NULL;
