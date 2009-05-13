@@ -85,17 +85,18 @@ namespace Gecode { namespace Search { namespace Parallel {
       m_wait_reset.acquire();
       // Release workers for reset
       release(C_RESET);
-      // Wait for reset cycle completed
-      if (!already_reset())
-        e_reset_ack.wait();
+      // Wait for reset cycle started
+      e_reset_ack_start.wait();
       // Perform reset
       root = reset(root);
-      // Block workers
-      block();
       // Release reset lock
       m_wait_reset.release();
+      // Wait for reset cycle stopped
+      e_reset_ack_stop.wait();
       if (root == NULL)
         return NULL;
+      // Block workers
+      block();
     } else {
       m_search.release();
     }

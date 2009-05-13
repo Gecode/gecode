@@ -143,13 +143,13 @@ namespace Gecode { namespace Search { namespace Parallel {
     Support::Mutex _m_reset;
     /// Number of workers that have not yet acknowledged reset
     volatile unsigned int _n_reset_not_ack;
-    /// Event for reset acknowledgment
-    Support::Event e_reset_ack;
+    /// Event for reset acknowledgment started
+    Support::Event e_reset_ack_start;
+    /// Event for reset acknowledgment stopped
+    Support::Event e_reset_ack_stop;
     /// Mutex for waiting for reset
     Support::Mutex m_wait_reset;
   public:
-    /// Are all workers already waiting?
-    bool already_reset(void);
     /// For worker to acknowledge start of reset cycle
     void ack_reset_start(void);
     /// For worker to acknowledge stop of reset cycle
@@ -363,27 +363,19 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Engine: reset control
    */
-  forceinline bool
-  Engine::already_reset(void) {
-    unsigned int n;
-    _m_reset.acquire();
-    n = _n_reset_not_ack;
-    _m_reset.release();
-    return n == 0;
-  }
-
   forceinline void 
   Engine::ack_reset_start(void) {
     _m_reset.acquire();
     if (--_n_reset_not_ack == 0)
-      e_reset_ack.signal();
+      e_reset_ack_start.signal();
     _m_reset.release();
   }
 
   forceinline void 
   Engine::ack_reset_stop(void) {
     _m_reset.acquire();
-    ++_n_reset_not_ack;
+    if (++_n_reset_not_ack == workers())
+      e_reset_ack_stop.signal();
     _m_reset.release();
   }
 
