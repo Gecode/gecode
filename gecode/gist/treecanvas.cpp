@@ -275,7 +275,7 @@ namespace Gecode { namespace Gist {
       stck.push(SearchItem(node,kids));
       t->stats.maxDepth =
         std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
-        depth+stck.size());
+                 static_cast<long unsigned int>(depth+stck.size()));
 
       VisualNode* sol = NULL;
       int nodeCount = 0;
@@ -309,7 +309,7 @@ namespace Gecode { namespace Gist {
               stck.push(SearchItem(n,kids));
               t->stats.maxDepth =
                 std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
-                depth+stck.size());
+                         static_cast<long unsigned int>(depth+stck.size()));
             }
           }
         }
