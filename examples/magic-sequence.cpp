@@ -66,28 +66,13 @@ private:
 public:
   /// Propagation to use for model
   enum {
-    PROP_REIFIED, ///< Use reified constraints
     PROP_COUNT,   ///< Use count constraints
     PROP_GCC      ///< Use single global cardinality constraint
   };
-  /// Naive version for counting number of ocurrences of \a i
-  void
-  exactly(IntVarArray& v, IntVar& x, int i) {
-    // I occurs in V X times
-    BoolVarArgs b(v.size());
-    for (int j = v.size(); j--; )
-      b[j] = post(*this, ~(v[j] == i));
-    linear(*this, b, IRT_EQ, x);
-  }
   /// The actual model
   MagicSequence(const SizeOptions& opt)
     : n(opt.size()), s(*this,n,0,n-1) {
     switch (opt.propagation()) {
-    case PROP_REIFIED:
-      for (int i=n; i--; )
-        exactly(s, s[i], i);
-      linear(*this, s, IRT_EQ, n);
-      break;
     case PROP_COUNT:
       for (int i=n; i--; )
         count(*this, s, i, IRT_EQ, s[i]);
@@ -137,7 +122,6 @@ main(int argc, char* argv[]) {
   opt.iterations(4);
   opt.size(500);
   opt.propagation(MagicSequence::PROP_COUNT);
-  opt.propagation(MagicSequence::PROP_REIFIED, "reified");
   opt.propagation(MagicSequence::PROP_COUNT,   "count");
   opt.propagation(MagicSequence::PROP_GCC,     "gcc");
   opt.parse(argc,argv);
