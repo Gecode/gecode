@@ -106,7 +106,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     : Engine::Worker(s,sz,e) {}
   forceinline
   DFS::DFS(Space* s, size_t sz, const Options& o)
-    : Engine(s,sz,o) {
+    : Engine(o) {
     // Create workers
     _worker = static_cast<Worker**>
       (heap.ralloc(workers() * sizeof(Worker*)));

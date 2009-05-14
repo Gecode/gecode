@@ -115,7 +115,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline
   BAB::BAB(Space* s, size_t sz, const Options& o)
-    : Engine(s,sz,o), best(NULL) {
+    : Engine(o), best(NULL) {
     // Create workers
     _worker = static_cast<Worker**>
       (heap.ralloc(workers() * sizeof(Worker*)));

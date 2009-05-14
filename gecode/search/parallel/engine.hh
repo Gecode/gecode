@@ -184,8 +184,8 @@ namespace Gecode { namespace Search { namespace Parallel {
 
     /// \name Engine interface
     //@{
-    /// Initialize for space \a s (of size \a sz) with options \a o
-    Engine(Space* s, size_t sz, const Options& o);
+    /// Initialize with options \a o
+    Engine(const Options& o);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Check whether engine has been stopped
@@ -254,7 +254,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   forceinline
-  Engine::Engine(Space* s, size_t sz, const Options& o)
+  Engine::Engine(const Options& o)
     : _opt(o), solutions(heap) {
     // Initialize termination information
     _n_term_not_ack = workers();
