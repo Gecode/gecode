@@ -116,6 +116,14 @@ Module: gist
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Fixed a dead lock that could occur when closing the Gist main window while 
+search is still running.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 The inspectors are finalized before Gist exits. This fixes a bug
 where (at least on Mac OS) some memory was not freed in the
 correct order.
