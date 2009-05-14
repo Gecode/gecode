@@ -349,8 +349,13 @@
  */
 
 /**
- * \namespace Gecode::Support 
+ * \namespace Gecode::Support
  * \brief %Support algorithms and datastructures
+ */
+
+/**
+ * \namespace Gecode::Kernel
+ * \brief Kernel functionality
  */
 
 /**

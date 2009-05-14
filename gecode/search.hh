@@ -316,10 +316,10 @@ namespace Gecode {
       virtual ~Engine(void) {}
     };
 
-    /// Sequential search engine implementations
+    /// %Sequential search engine implementations
     namespace Sequential {}
 
-    /// Parallel search engine implementations
+    /// %Parallel search engine implementations
     namespace Parallel {}
 
   }
