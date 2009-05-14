@@ -77,6 +77,14 @@ reusable command line driver upon popular request. And, of
 course, some this and that.
 
 [ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The parameters of the Hamming Codes example are now configurable
+through command line options (instead of hard-coded).
+
+[ENTRY]
 Module: search
 What:   change
 Rank:   minor
