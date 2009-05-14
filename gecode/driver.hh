@@ -221,6 +221,26 @@ namespace Gecode {
       virtual void help(void);
     };
 
+    /**
+     * \brief Boolean option
+     *
+     */
+    class GECODE_DRIVER_EXPORT BoolOption : public BaseOption {
+    protected:
+      bool cur; ///< Current value
+    public:
+      /// Initialize for option \a o and explanation \a e and default false
+      BoolOption(const char* o, const char* e);
+      /// Set default value to \a v
+      void value(bool v);
+      /// Return current option value
+      bool value(void) const;
+      /// Parse option at first position
+      virtual bool parse(int& argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
   }
   
   /**
@@ -272,6 +292,8 @@ namespace Gecode {
     
     /// Return name of script
     const char* name(void) const;
+    /// Set name of script
+    void name(const char*);
     
     /// \name Model options
     //@{

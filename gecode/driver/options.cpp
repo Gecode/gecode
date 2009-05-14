@@ -188,6 +188,26 @@ namespace Gecode {
       cerr << '\t' << opt << " (double) default: " << cur << endl
            << "\t\t" << exp << endl;
     }
+
+    bool
+    BoolOption::parse(int& argc, char* argv[]) {
+      if ((argc < 2) || strcmp(argv[1],opt)) {
+        return false;
+      }
+      // Remove options
+      argc--;
+      for (int i=1; i<argc; i++)
+        argv[i] = argv[i+1];
+      cur = true;
+      return true;
+    }
+
+    void 
+    BoolOption::help(void) {
+      using namespace std;
+      cerr << '\t' << opt << endl << "\t\t" << exp << endl;
+    }
+
   
   }
 

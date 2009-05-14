@@ -117,6 +117,23 @@ namespace Gecode {
       return cur;
     }
 
+    /*
+     * Bool option
+     *
+     */
+    inline
+    BoolOption::BoolOption(const char* o, const char* e) 
+      : BaseOption(o,e), cur(false) {}
+    inline void
+    BoolOption::value(bool v) {
+      cur = v;
+    }
+    inline bool
+    BoolOption::value(void) const {
+      return cur;
+    }
+
+
   }
   
   /*
@@ -136,6 +153,10 @@ namespace Gecode {
   inline const char*
   Options::name(void) const {
     return _name;
+  }
+  inline void
+  Options::name(const char* n) {
+    _name = n;
   }
   
   /*
