@@ -96,7 +96,7 @@ namespace Gecode { namespace Gist {
     boxLayout->addWidget(view);
     setLayout(boxLayout);
 
-    setWindowTitle("Gist Node info");
+    setWindowTitle("Gist node statistics");
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_DeleteOnClose, false);
   }
