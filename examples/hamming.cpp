@@ -83,7 +83,7 @@ public:
  *
  * Generate a Hamming code that fits in b-bit words to code n symbols where
  * the Hamming distance between every two symbol codes is at least d.
- * The Hamming distance between to words is the number of bit positions
+ * The Hamming distance between two words is the number of bit positions
  * where they differ.
  *
  * \ingroup ExProblem
@@ -93,7 +93,6 @@ class Hamming : public Script {
 private:
   /// The hamming code
   SetVarArray xs;
-
 public:
   /// Actual model
   Hamming(const HammingOptions& opt) :
@@ -114,11 +113,11 @@ public:
 
         rel(*this, x, SOT_INTER, cy, SRT_EQ, xIntCy);
         rel(*this, y, SOT_INTER, cx, SRT_EQ, yIntCx);
-        IntVar diff1(*this,0,1024);
-        IntVar diff2(*this,0,1204);
-        cardinality(*this, xIntCy,diff1);
-        cardinality(*this, yIntCx,diff2);
-        post(*this, diff1+diff2 >= opt.distance());
+        IntVar xIntCyCard(*this,0,x.cardMax());
+        IntVar yIntCxCard(*this,0,y.cardMax());
+        cardinality(*this, xIntCy, xIntCyCard);
+        cardinality(*this, yIntCx, yIntCxCard);
+        post(*this, xIntCyCard+yIntCxCard >= opt.distance());
       }
     }
 
