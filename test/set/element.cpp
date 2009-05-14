@@ -63,7 +63,7 @@ namespace Test { namespace Set {
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[3]); sel2();
-             ++sel2, selected++);
+             ++sel2, selected++) {}
         CountableSetValues x4v(x.lub, x[4]);
         if (selected==0)
           return !x4v();
@@ -107,7 +107,7 @@ namespace Test { namespace Set {
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[0]); sel2();
-             ++sel2, selected++);
+             ++sel2, selected++) {}
         CountableSetValues x4v(x.lub, x[1]);
         if (selected==0)
           return !x4v();
@@ -147,7 +147,7 @@ namespace Test { namespace Set {
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[3]); sel2();
-             ++sel2, selected++);
+             ++sel2, selected++) {}
         CountableSetRanges x4r(x.lub, x[4]);
         if (selected==0)
           return Iter::Ranges::size(x4r)==Gecode::Set::Limits::card;
@@ -187,7 +187,7 @@ namespace Test { namespace Set {
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[3]); sel2();
-             ++sel2, selected++);
+             ++sel2, selected++) {}
         CountableSetRanges x4r(x.lub, x[4]);
         if (selected==0)
           return Iter::Ranges::size(x4r)==4;

@@ -262,7 +262,7 @@ namespace Test { namespace Set {
       CountableSetRanges> diff(ur, air);
     Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff
       <Gecode::SetVarUnknownRanges, CountableSetRanges> > diffV(diff);
-    for (int j=0; j<v; j++, ++diffV);
+    for (int j=0; j<v; j++, ++diffV) {}
     rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
   }
 
@@ -275,7 +275,7 @@ namespace Test { namespace Set {
       CountableSetRanges> inter(ur, air);
     Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter
       <Gecode::SetVarUnknownRanges, CountableSetRanges> > interV(inter);
-    for (int j=0; j<v; j++, ++interV);
+    for (int j=0; j<v; j++, ++interV) {}
     rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
   }
 

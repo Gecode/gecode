@@ -55,6 +55,7 @@ namespace Test { namespace Set {
          : SetTest("Wait::"+str(n),n,Gecode::IntSet(0,n),false) {}
        /// Check whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
+         (void) x;
          return true;
        }
        /// Post wait on \a x

@@ -133,6 +133,7 @@ namespace Test { namespace Int {
        }
        /// Else-function to be executed
        static void e(Gecode::Space& home) {
+         (void) home;
        }
      };
 

@@ -383,8 +383,8 @@ public:
       unsigned int firstzero = 0;
       while (firstzero < sm.nslabs && sm.slabload[firstzero].min() > 0)
         ++firstzero;
-      assert(pos >= 0 && pos < sm.nslabs &&
-             val >= 0 && val < sm.norders);
+      assert(pos < sm.nslabs &&
+             val < sm.norders);
       return new Description(*this, val<firstzero ? 2 : 1, pos, val);
     }
     /// Perform commit for branching description \a d and alternative \a a.
