@@ -102,7 +102,7 @@ namespace Gecode {
     SM_GIST      ///< Run script in Gist
   };
 
-  class Options;
+  class BaseOptions;
 
   namespace Driver {
     /**
@@ -110,7 +110,7 @@ namespace Gecode {
      *
      */
     class GECODE_DRIVER_EXPORT BaseOption {
-      friend class Gecode::Options;
+      friend class Gecode::BaseOptions;
     protected:
       const char* opt;  ///< String for option (including hyphen)
       const char* exp;  ///< Short explanation
@@ -244,15 +244,40 @@ namespace Gecode {
   }
   
   /**
-   * \brief Options for scripts
+   * \brief Base class for script options
    * \ingroup TaskDriverCmd
    */
-  class GECODE_DRIVER_EXPORT Options {
+  class GECODE_DRIVER_EXPORT BaseOptions {
   protected:
     Driver::BaseOption* fst;   ///< First registered option
     Driver::BaseOption* lst;   ///< Last registered option
     const char* _name; ///< Script name
+  public:
+    /// Initialize options for script with name \a s
+    BaseOptions(const char* s);
+    /// Print help text
+    virtual void help(void);
+
+    /// Add new option \a o
+    void add(Driver::BaseOption& o);
+    /// Parse options from arguments \a argv (number is \a argc)
+    void parse(int& argc, char* argv[]);
     
+    /// Return name of script
+    const char* name(void) const;
+    /// Set name of script
+    void name(const char*);
+
+    /// Destructor
+    virtual ~BaseOptions(void);
+  };
+  
+  /**
+   * \brief Options for scripts
+   * \ingroup TaskDriverCmd
+   */
+  class GECODE_DRIVER_EXPORT Options : public BaseOptions {
+  protected:    
     /// \name Model options
     //@{
     Driver::StringOption _model;       ///< General model options
@@ -283,17 +308,6 @@ namespace Gecode {
   public:
     /// Initialize options for script with name \a s
     Options(const char* s);
-    /// Add new option \a o
-    void add(Driver::BaseOption& o);
-    /// Print help text
-    virtual void help(void);
-    /// Parse options from arguments \a argv (number is \a argc)
-    void parse(int& argc, char* argv[]);
-    
-    /// Return name of script
-    const char* name(void) const;
-    /// Set name of script
-    void name(const char*);
     
     /// \name Model options
     //@{
@@ -386,9 +400,6 @@ namespace Gecode {
     /// Return number of samples
     unsigned int samples(void) const;
     //@}
-    
-    /// Destructor
-    virtual ~Options(void);
   };
 
   /**

@@ -141,7 +141,7 @@ namespace Gecode {
    *
    */
   inline void
-  Options::add(Driver::BaseOption& o) {
+  BaseOptions::add(Driver::BaseOption& o) {
     o.next = NULL;
     if (fst == NULL) {
       fst=&o;
@@ -151,14 +151,16 @@ namespace Gecode {
     lst=&o;
   }
   inline const char*
-  Options::name(void) const {
+  BaseOptions::name(void) const {
     return _name;
   }
   inline void
-  Options::name(const char* n) {
+  BaseOptions::name(const char* n) {
     _name = n;
   }
-  
+  inline
+  BaseOptions::~BaseOptions(void) {}
+
   /*
    * Model options
    *
@@ -323,10 +325,7 @@ namespace Gecode {
   Options::samples(void) const {
     return _samples.value();
   }
-  
-  inline
-  Options::~Options(void) {}
-  
+
   /*
    * Options with additional size argument
    *

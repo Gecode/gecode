@@ -211,11 +211,61 @@ namespace Gecode {
   
   }
 
+  BaseOptions::BaseOptions(const char* n)
+    : fst(NULL), lst(NULL), _name(n) {}
+
+  void
+  BaseOptions::help(void) {
+    std::cerr << "Gecode configuration information:" << std::endl
+              << " - Version: " << GECODE_VERSION << std::endl
+              << " - Variable types: ";
+#ifdef GECODE_HAS_INT_VARS
+    std::cerr << "BoolVar IntVar ";
+#endif
+#ifdef GECODE_HAS_SET_VARS
+    std::cerr << "SetVar";
+#endif
+    std::cerr << std::endl
+              << " - Thread support: ";
+#ifdef GECODE_HAS_THREADS
+    std::cerr << "enabled (" << Support::Thread::npu() << " processing units)";
+#else
+    std::cerr << "disabled";
+#endif
+    std::cerr << std::endl
+              << " - Gist support: ";
+#ifdef GECODE_HAS_GIST
+    std::cerr << "enabled";
+#else
+    std::cerr << "disabled";
+#endif
+    std::cerr << std::endl << std::endl
+              << "Options for " << name() << ":" << std::endl
+              << "\t-help, --help, -?" << std::endl
+              << "\t\tprint this help message" << std::endl;
+    for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
+      o->help();
+  }
+
+  void
+  BaseOptions::parse(int& argc, char* argv[]) {
+  next:
+    for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
+      if (o->parse(argc,argv))
+        goto next;
+    if (argc < 2)
+      return;
+    if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
+        !strcmp(argv[1],"-?")) {
+      help();
+      exit(EXIT_SUCCESS);
+    }
+    return;
+  }
+  
 
   Options::Options(const char* n)
-    : fst(NULL), lst(NULL),
-      
-      _name(n),
+    : BaseOptions(n),
       
       _model("-model","model variants"),
       _propagation("-propagation","propagation variants"),
@@ -250,56 +300,7 @@ namespace Gecode {
     add(_node); add(_fail); add(_time);
     add(_mode); add(_iterations); add(_samples);
   }
-  
-  void
-  Options::help(void) {
-    std::cerr << "Gecode configuration information:" << std::endl
-              << " - Version: " << GECODE_VERSION << std::endl
-              << " - Variable types: ";
-#ifdef GECODE_HAS_INT_VARS
-    std::cerr << "BoolVar IntVar ";
-#endif
-#ifdef GECODE_HAS_SET_VARS
-    std::cerr << "SetVar";
-#endif
-    std::cerr << std::endl
-              << " - Thread support: ";
-#ifdef GECODE_HAS_THREADS
-    std::cerr << "enabled (" << Support::Thread::npu() << " processing units)";
-#else
-    std::cerr << "disabled";
-#endif
-    std::cerr << std::endl
-              << " - Gist support: ";
-#ifdef GECODE_HAS_GIST
-    std::cerr << "enabled";
-#else
-    std::cerr << "disabled";
-#endif
-    std::cerr << std::endl << std::endl
-              << "Options for " << name() << ":" << std::endl
-              << "\t-help, --help, -?" << std::endl
-              << "\t\tprint this help message" << std::endl;
-    for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
-      o->help();
-  }
-  
-  void
-  Options::parse(int& argc, char* argv[]) {
-  next:
-    for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
-      if (o->parse(argc,argv))
-        goto next;
-    if (argc < 2)
-      return;
-    if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
-        !strcmp(argv[1],"-?")) {
-      help();
-      exit(EXIT_SUCCESS);
-    }
-    return;
-  }
-  
+
   
   SizeOptions::SizeOptions(const char* e)
     : Options(e), _size(0) {}
