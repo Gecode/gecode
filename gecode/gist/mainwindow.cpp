@@ -80,18 +80,19 @@ namespace Gecode { namespace Gist {
 
   GistMainWindow::GistMainWindow(Space* root, bool bab,
                                  const Options& opt0)
-  : opt(opt0), c(root,bab,this,opt), aboutGist(this) {
+  : opt(opt0), aboutGist(this) {
+    c = new Gist(root,bab,this,opt);
     {
       unsigned int i = 0;
       while (opt.inspect.solution(i)) {
-        c.addSolutionInspector(opt.inspect.solution(i++));
+        c->addSolutionInspector(opt.inspect.solution(i++));
       }
       i = 0;
       while (opt.inspect.click(i)) {
-        c.addDoubleClickInspector(opt.inspect.click(i++));
+        c->addDoubleClickInspector(opt.inspect.click(i++));
       }
     }
-    setCentralWidget(&c);
+    setCentralWidget(c);
     setWindowTitle(tr("Gist"));
 
     Logos logos;
@@ -105,9 +106,9 @@ namespace Gecode { namespace Gist {
     menuBar = new QMenuBar(0);
 
     QMenu* fileMenu = menuBar->addMenu(tr("&File"));
-    fileMenu->addAction(c.print);
+    fileMenu->addAction(c->print);
 #if QT_VERSION >= 0x040400
-    fileMenu->addAction(c.exportWholeTreePDF);
+    fileMenu->addAction(c->exportWholeTreePDF);
 #endif
     QAction* quitAction = fileMenu->addAction(tr("Quit"));
     quitAction->setShortcut(QKeySequence("Ctrl+Q"));
@@ -117,36 +118,36 @@ namespace Gecode { namespace Gist {
     connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
 
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
-    nodeMenu->addAction(c.inspect);
-    nodeMenu->addAction(c.setPath);
-    nodeMenu->addAction(c.inspectPath);
-    nodeMenu->addAction(c.showNodeStats);
+    nodeMenu->addAction(c->inspect);
+    nodeMenu->addAction(c->setPath);
+    nodeMenu->addAction(c->inspectPath);
+    nodeMenu->addAction(c->showNodeStats);
     nodeMenu->addSeparator();
-    nodeMenu->addAction(c.navUp);
-    nodeMenu->addAction(c.navDown);
-    nodeMenu->addAction(c.navLeft);
-    nodeMenu->addAction(c.navRight);
-    nodeMenu->addAction(c.navRoot);
-    nodeMenu->addAction(c.navNextSol);
-    nodeMenu->addAction(c.navPrevSol);
+    nodeMenu->addAction(c->navUp);
+    nodeMenu->addAction(c->navDown);
+    nodeMenu->addAction(c->navLeft);
+    nodeMenu->addAction(c->navRight);
+    nodeMenu->addAction(c->navRoot);
+    nodeMenu->addAction(c->navNextSol);
+    nodeMenu->addAction(c->navPrevSol);
     nodeMenu->addSeparator();
-    nodeMenu->addAction(c.toggleHidden);
-    nodeMenu->addAction(c.hideFailed);
-    nodeMenu->addAction(c.unhideAll);
+    nodeMenu->addAction(c->toggleHidden);
+    nodeMenu->addAction(c->hideFailed);
+    nodeMenu->addAction(c->unhideAll);
     nodeMenu->addSeparator();
-    nodeMenu->addAction(c.zoomToFit);
-    nodeMenu->addAction(c.center);
+    nodeMenu->addAction(c->zoomToFit);
+    nodeMenu->addAction(c->center);
 #if QT_VERSION >= 0x040400
-    nodeMenu->addAction(c.exportPDF);
+    nodeMenu->addAction(c->exportPDF);
 #endif
 
     QMenu* searchMenu = menuBar->addMenu(tr("&Search"));
-    searchMenu->addAction(c.searchNext);
-    searchMenu->addAction(c.searchAll);
+    searchMenu->addAction(c->searchNext);
+    searchMenu->addAction(c->searchAll);
     searchMenu->addSeparator();
-    searchMenu->addAction(c.stop);
+    searchMenu->addAction(c->stop);
     searchMenu->addSeparator();
-    searchMenu->addAction(c.reset);
+    searchMenu->addAction(c->reset);
 
     QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
     doubleClickInspectorsMenu = new QMenu("Double click Inspectors");
@@ -195,18 +196,22 @@ namespace Gecode { namespace Gist {
     isSearching = false;
     statusBar()->showMessage("Ready");
 
-    connect(&c,SIGNAL(statusChanged(const Statistics&,bool)),
+    connect(c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
+
+    connect(c,SIGNAL(finished(void)),this,SLOT(close(void)));
 
     preferences(true);
     show();
-    c.reset->trigger();
+    c->reset->trigger();
   }
 
   void
   GistMainWindow::closeEvent(QCloseEvent* event) {
-    c.finish();
-    event->accept();
+    if (c->finish())
+      event->accept();
+    else
+      event->ignore();
   }
 
   void
@@ -238,14 +243,14 @@ namespace Gecode { namespace Gist {
   GistMainWindow::preferences(bool setup) {
     PreferencesDialog pd(opt, this);
     if (setup) {
-      c.setAutoZoom(pd.zoom);
+      c->setAutoZoom(pd.zoom);
     }
     if (setup || pd.exec() == QDialog::Accepted) {
-      c.setAutoHideFailed(pd.hideFailed);
-      c.setRefresh(pd.refresh);
-      c.setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
-      c.setRecompDistances(pd.c_d,pd.a_d);
-      c.setShowCopies(pd.copies);
+      c->setAutoHideFailed(pd.hideFailed);
+      c->setRefresh(pd.refresh);
+      c->setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
+      c->setRecompDistances(pd.c_d,pd.a_d);
+      c->setShowCopies(pd.copies);
     }
   }
 
@@ -253,9 +258,9 @@ namespace Gecode { namespace Gist {
   GistMainWindow::populateInspectors(void) {
     doubleClickInspectorsMenu->clear();
     doubleClickInspectorsMenu->addActions(
-      c.doubleClickInspectorGroup->actions());
+      c->doubleClickInspectorGroup->actions());
     solutionInspectorsMenu->clear();
-    solutionInspectorsMenu->addActions(c.solutionInspectorGroup->actions());
+    solutionInspectorsMenu->addActions(c->solutionInspectorGroup->actions());
   }
 
 }}

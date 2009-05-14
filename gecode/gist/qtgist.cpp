@@ -65,6 +65,8 @@ namespace Gecode { namespace Gist {
     connect(canvas, SIGNAL(solution(const Space*)),
             this, SIGNAL(solution(const Space*)));
 
+    connect(canvas, SIGNAL(finished(void)), this, SIGNAL(finished(void)));
+
     QPixmap myPic;
     myPic.loadFromData(zoomToFitIcon, sizeof(zoomToFitIcon));
 
@@ -438,15 +440,9 @@ namespace Gecode { namespace Gist {
     emit statusChanged(stats,finished);
   }
 
-  void
+  bool
   Gist::finish(void) {
-    canvas->finish();
-  }
-
-  void
-  Gist::closeEvent(QCloseEvent* event) {
-    canvas->finish();
-    event->accept();
+    return canvas->finish();
   }
 
   void

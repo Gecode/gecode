@@ -96,6 +96,8 @@ namespace Gecode { namespace Gist {
               this, SLOT(inspectSolution(const Space*)),
               Qt::BlockingQueuedConnection);
 
+      connect(&searcher, SIGNAL(finished(void)), this, SIGNAL(finished(void)));
+
       qRegisterMetaType<Statistics>("Statistics");
       update();
   }
@@ -325,6 +327,8 @@ namespace Gecode { namespace Gist {
     }
     updateCanvas();
     emit statusChanged(true);
+    if (t->finishedFlag)
+      emit finished();
   }
 
   void
@@ -962,14 +966,17 @@ namespace Gecode { namespace Gist {
     event->ignore();
   }
 
-  void
+  bool
   TreeCanvas::finish(void) {
+    if (finishedFlag)
+      return true;
     stopSearchFlag = true;
-    searcher.wait();
+    finishedFlag = true;
     for (int i=0; i<doubleClickInspectors.size(); i++)
       doubleClickInspectors[i].first->finalize();
     for (int i=0; i<solutionInspectors.size(); i++)
       solutionInspectors[i].first->finalize();
+    return !searcher.isRunning();
   }
 
   void

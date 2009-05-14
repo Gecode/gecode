@@ -80,7 +80,7 @@ namespace Gecode { namespace Gist {
     QMenu* doubleClickInspectorsMenu;
   protected:
     /// The contained %Gist object
-    Gist c;
+    Gist* c;
     /// A menu bar
     QMenuBar* menuBar;
     /// About dialog

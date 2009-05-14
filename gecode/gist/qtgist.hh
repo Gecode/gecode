@@ -163,7 +163,7 @@ namespace Gecode {  namespace Gist {
     int getAd(void);
 
     /// Stop search and wait until finished
-    void finish(void);
+    bool finish(void);
 
     /// Handle resize event
     void resizeEvent(QResizeEvent*);
@@ -174,6 +174,9 @@ namespace Gecode {  namespace Gist {
 
     /// Signals that a solution has been found
     void solution(const Space*);
+
+    /// Signals that %Gist is ready to be closed
+    void finished(void);
 
   private Q_SLOTS:
     /// Displays the context menu for a node
@@ -187,8 +190,6 @@ namespace Gecode {  namespace Gist {
     /// Shows node status information
     void showStats(void);
   protected:
-    /// Close the widget
-    void closeEvent(QCloseEvent* event);
     /// Add inspector \a i0
     void addInspector(Inspector* i, bool solutionInspector);
   };

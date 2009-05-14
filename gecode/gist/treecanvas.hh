@@ -78,7 +78,7 @@ namespace Gecode {  namespace Gist {
     void statusChanged(bool);
     void scaleChanged(int);
     void solution(const Space*);
-
+    void finished(void);
   protected:
     void run(void);
   };
@@ -187,7 +187,7 @@ namespace Gecode {  namespace Gist {
     void resizeToOuter(void);
 
     /// Stop search and wait for it to finish
-    void finish(void);
+    bool finish(void);
 
   Q_SIGNALS:
     /// The scale factor has changed
@@ -202,6 +202,8 @@ namespace Gecode {  namespace Gist {
     void pointInTimeChanged(int pit);
     /// Signals that a solution has been found
     void solution(const Space*);
+    /// Signals that %Gist is finished
+    void finished(void);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
@@ -211,6 +213,8 @@ namespace Gecode {  namespace Gist {
     SearcherThread searcher;
     /// Flag signalling the search to stop
     bool stopSearchFlag;
+    /// Flag signalling that Gist is ready to be closed
+    bool finishedFlag;
     /// Allocator for nodes
     Node::NodeAllocator* na;
     /// The root node of the tree
