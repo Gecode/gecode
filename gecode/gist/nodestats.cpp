@@ -43,7 +43,10 @@
 
 namespace Gecode { namespace Gist {
 
-  NodeStatInspector::NodeStatInspector(void) {
+  NodeStatInspector::NodeStatInspector(QWidget* parent)
+  : QDockWidget("Gist node statistics",parent) {
+    setAllowedAreas(Qt::NoDockWidgetArea);
+    setFloating(true);
     QGraphicsScene* scene = new QGraphicsScene();
     
     scene->addEllipse(70,10,16,16,QPen(),QBrush(DrawingCursor::white));
@@ -87,18 +90,14 @@ namespace Gecode { namespace Gist {
 
     QGraphicsView* view = new QGraphicsView(scene);
     view->setRenderHints(view->renderHints() | QPainter::Antialiasing);
-    view->show();
 
     scene->setBackgroundBrush(Qt::white);
 
-    boxLayout = new QVBoxLayout();
-    boxLayout->setContentsMargins(0,0,0,0);
-    boxLayout->addWidget(view);
-    setLayout(boxLayout);
-
-    setWindowTitle("Gist node statistics");
+    setWidget(view);
+    
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_DeleteOnClose, false);
+    hide();
   }
 
   void

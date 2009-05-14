@@ -81,7 +81,7 @@ namespace Gecode { namespace Gist {
     scaleBar->setMaximum(LayoutConfig::maxScale);
     scaleBar->setValue(LayoutConfig::defScale);
 
-    nodeStatInspector = new NodeStatInspector();
+    nodeStatInspector = new NodeStatInspector(this);
     connect(canvas, SIGNAL(statusChanged(VisualNode*,const Statistics&, bool)),
             nodeStatInspector, SLOT(node(VisualNode*,const Statistics&, bool)));
 

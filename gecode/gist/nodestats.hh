@@ -47,7 +47,7 @@ namespace Gecode { namespace Gist {
   /**
    * \brief Display information about nodes
    */
-  class NodeStatInspector : public QWidget {
+  class NodeStatInspector : public QDockWidget {
     Q_OBJECT
   private:
     /// Label for node depth indicator
@@ -65,7 +65,7 @@ namespace Gecode { namespace Gist {
     /// Layout
     QVBoxLayout* boxLayout;
   public:
-    NodeStatInspector(void);
+    NodeStatInspector(QWidget* parent);
   public Q_SLOTS:
     /// Update display to reflect information about \a n
     void node(VisualNode*,const Statistics&, bool);
