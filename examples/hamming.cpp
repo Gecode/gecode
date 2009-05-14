@@ -86,8 +86,6 @@ public:
  * The Hamming distance between to words is the number of bit positions
  * where they differ.
  *
- * This instance fixes b to 20 and d to 3.
- *
  * \ingroup ExProblem
  *
  */
