@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   void
-  sequentialUnion(Space& home, const SetVarArgs& xa, SetVar y) {
+  sequence(Space& home, const SetVarArgs& xa, SetVar y) {
     if (home.failed()) return;
     ViewArray<SetView> x(home,xa);
     GECODE_ES_FAIL(home,Sequence::SeqU::post(home, x,y));

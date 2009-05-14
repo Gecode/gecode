@@ -77,6 +77,13 @@ reusable command line driver upon popular request. And, of
 course, some this and that.
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The set constraint sequentialUnion has been renamed to sequence.
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor

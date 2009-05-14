@@ -128,8 +128,8 @@ public:
           xargs[0] = tmp20; xargs[1] = tmp21; xargs[2] = tmp22;
           SetVarArgs yargs(3);
           yargs[0] = tmp23; yargs[1] = tmp24; yargs[2] = tmp25;
-          sequentialUnion(*this,xargs,x);
-          sequentialUnion(*this,yargs,y);
+          sequence(*this,xargs,x);
+          sequence(*this,yargs,y);
         }
 
         /* Breaking symmetries */

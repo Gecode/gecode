@@ -792,7 +792,7 @@ namespace Gecode {
 
   /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
   GECODE_SET_EXPORT void
-  sequentialUnion(Space& home, const SetVarArgs& y, SetVar x);
+  sequence(Space& home, const SetVarArgs& y, SetVar x);
 
   //@}
 

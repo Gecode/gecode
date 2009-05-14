@@ -115,7 +115,7 @@ namespace Test { namespace Set {
         SetVarArgs xs(x.size()-1);
         for (int i=x.size()-1; i--;)
           xs[i]=x[i];
-        Gecode::sequentialUnion(home, xs, x[x.size()-1]);
+        Gecode::sequence(home, xs, x[x.size()-1]);
       }
     };
     SeqU _sequ0(0);
