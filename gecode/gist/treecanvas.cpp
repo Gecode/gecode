@@ -57,6 +57,7 @@ namespace Gecode { namespace Gist {
     : QWidget(parent)
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
+    , finishedFlag(false)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false), nextPit(0)
     , targetZoom(LayoutConfig::defScale)
