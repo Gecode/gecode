@@ -99,9 +99,8 @@ What:   new
 Rank:   major
 [DESCRIPTION]
 Added parallel search engines for DFS, BAB, and Restart (but not
-LDS). This is still EXPERIMENTAL and performance is only good on
-large search trees. Please make sure to read the section
-"Parallel search" in "Modeling with Gecode".
+LDS). Please make sure to read the section "Parallel search" in
+"Modeling with Gecode".
 
 [ENTRY]
 Module: support
