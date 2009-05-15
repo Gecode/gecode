@@ -47,7 +47,7 @@ namespace Gecode { namespace Gist {
   /**
    * \brief Display information about nodes
    */
-  class NodeStatInspector : public QDockWidget {
+  class NodeStatInspector : public QWidget {
     Q_OBJECT
   private:
     /// Label for node depth indicator
