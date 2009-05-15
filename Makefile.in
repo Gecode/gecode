@@ -892,19 +892,25 @@ test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
 		@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
+$(GISTSRC:%.cpp=%$(OBJSUFFIX)): gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
-gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
+$(GISTSRC:%.cpp=%$(SBJSUFFIX)): gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
-gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cpp
+
+$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)): gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
+
+$(GISTMOCSRC:%.cpp=%$(SBJSUFFIX)): gecode/gist/moc_%$(SBJSUFFIX): gecode/gist/moc_%.cpp
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	@GECODE_BUILD_GIST_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
 
 .PRECIOUS: gecode/gist/moc_%.cpp
 gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
