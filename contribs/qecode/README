@@ -1,0 +1,6 @@
+QeCode is a quantified constraint satisfaction problems (QCSP) solver based on Gecode. 
+It can also solve QCSP+, an extension of QCSP where quantifiers can be restricted and QCOP+, a quantified optimizaion problem formalism which scopes multi-level programming problems. 
+
+QeCode have been developped at Universite d'Orleans by Jeremie Vautard, Arnaud Lallouet and Marco Benedetti. More info is available on
+http://www.univ-orleans.fr/lifo/software/qecode/
+
