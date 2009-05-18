@@ -275,7 +275,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   Path::steal(Worker& stat, unsigned long int& d) {
     // Find position to steal: leave sufficient work
     int n = ds.entries()-1;
-    int w = 0;
+    unsigned int w = 0;
     while (n >= 0) {
       if (ds[n].work())
         w++;
