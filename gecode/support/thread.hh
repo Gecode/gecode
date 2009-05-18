@@ -213,8 +213,6 @@ namespace Gecode { namespace Support {
     pthread_cond_t p_c;
     /// Whether the event is signalled
     bool p_s;
-    /// Whether a thread is waiting
-    bool p_w;
 #endif
   public:
     /// Initialize event

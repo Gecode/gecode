@@ -99,7 +99,7 @@ namespace Gecode { namespace Support {
    * Event
    */
   forceinline
-  Event::Event(void) : p_s(false), p_w(false) {
+  Event::Event(void) : p_s(false) {
     if (pthread_mutex_init(&p_m,NULL) != 0)
       throw OperatingSystemError("Event::Event[pthread_mutex_init]");
     if (pthread_cond_init(&p_c,NULL) != 0)
@@ -111,7 +111,7 @@ namespace Gecode { namespace Support {
       throw OperatingSystemError("Event::signal[pthread_mutex_lock]");
     if (!p_s) {
       p_s = true;
-      if (p_w && (pthread_cond_signal(&p_c) != 0))
+      if (pthread_cond_signal(&p_c) != 0)
         throw OperatingSystemError("Event::signal[pthread_cond_signal]");
     }
     if (pthread_mutex_unlock(&p_m) != 0)
@@ -121,12 +121,9 @@ namespace Gecode { namespace Support {
   Event::wait(void) {
     if (pthread_mutex_lock(&p_m) != 0)
       throw OperatingSystemError("Event::wait[pthread_mutex_lock]");
-    while (!p_s) {
-      p_w = true;
+    while (!p_s)
       if (pthread_cond_wait(&p_c,&p_m) != 0)
         throw OperatingSystemError("Event::wait[pthread_cond_wait]");
-      p_w = false;
-    }
     p_s = false;
     if (pthread_mutex_unlock(&p_m) != 0)
       throw OperatingSystemError("Event::wait[pthread_mutex_unlock]");
