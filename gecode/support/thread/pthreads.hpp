@@ -121,12 +121,11 @@ namespace Gecode { namespace Support {
   Event::wait(void) {
     if (pthread_mutex_lock(&p_m) != 0)
       throw OperatingSystemError("Event::wait[pthread_mutex_lock]");
-    if (!p_s) {
+    while (!p_s) {
       p_w = true;
       if (pthread_cond_wait(&p_c,&p_m) != 0)
         throw OperatingSystemError("Event::wait[pthread_cond_wait]");
       p_w = false;
-      assert(p_s);
     }
     p_s = false;
     if (pthread_mutex_unlock(&p_m) != 0)
