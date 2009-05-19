@@ -108,6 +108,12 @@ Rank:   major
 Added parallel search engines for DFS, BAB, and Restart (but not
 LDS). Please make sure to read the section "Parallel search" in
 "Modeling with Gecode".
+[MORE]
+Parallel search is still experimental: creating and destroying a
+large number (more than 1000) of search engines (and hence a
+large number of threads) might raise exceptions on operating
+systems using pthreads as thread implementation. This will be
+fixed in a future release by using thread pools.
 
 [ENTRY]
 Module: support
