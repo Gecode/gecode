@@ -39,10 +39,6 @@
 
 #ifdef GECODE_THREADS_PTHREADS
 
-#ifdef GECODE_HAS_UNISTD_H
-#include <unistd.h>
-#endif
-
 namespace Gecode { namespace Support {
 
   /// Function to start execution
