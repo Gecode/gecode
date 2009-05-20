@@ -66,6 +66,11 @@
 #    optional section in the html page.
 #
 
+[RELEASE]
+Version: 3.1.1
+Date: ?
+[DESCRIPTION]
+The next release.
 
 [RELEASE]
 Version: 3.1.0
