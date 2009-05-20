@@ -35,6 +35,10 @@
  *
  */
 
+#ifdef GECODE_HAS_UNISTD_H
+#include <unistd.h>
+#endif
+
 namespace Gecode { namespace Support {
 
   /*
