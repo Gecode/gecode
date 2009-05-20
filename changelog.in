@@ -69,7 +69,7 @@
 
 [RELEASE]
 Version: 3.1.0
-Date: 2009-05-15
+Date: 2009-05-20
 [DESCRIPTION]
 This release introduces parallel search, features improved memory
 management (can double efficiency on MacOS X), and provides a
