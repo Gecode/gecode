@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     int pos = (i*ts()->domsize) + n;
     ++(last_data[pos]);
     if (last(i,n)[i] != (n+ts()->min))
-      last_data[pos] = ts()->nullptr;
+      last_data[pos] = ts()->nullpointer;
     return last(i,n);
   }
 

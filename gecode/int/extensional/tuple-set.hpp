@@ -65,7 +65,7 @@ namespace Gecode {
     /// Initial last structure
     Tuple** last;
     /// Pointer to NULL-pointer
-    Tuple* nullptr;
+    Tuple* nullpointer;
 
     /// Add Tuple. Assumes that arity matches.
     template <class T>
@@ -103,7 +103,7 @@ namespace Gecode {
       max(Int::Limits::min),
       domsize(0),
       last(NULL),
-      nullptr(NULL)
+      nullpointer(NULL)
   {}
 
 

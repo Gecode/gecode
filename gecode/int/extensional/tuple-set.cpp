@@ -112,7 +112,7 @@ namespace Gecode {
     tuples = heap.alloc<Tuple*>(arity);
     tuple_data = heap.alloc<Tuple>(size*arity+1);
     tuple_data[size*arity] = NULL;
-    nullptr = tuple_data+(size*arity);
+    nullpointer = tuple_data+(size*arity);
 
     // Rearrange the tuples for faster comparisons.
     for (int i = arity; i--; )
@@ -153,7 +153,7 @@ namespace Gecode {
           last[(i*domsize) + d] = t;
           ++t;
         } else {
-          last[(i*domsize) + d] = nullptr;
+          last[(i*domsize) + d] = nullpointer;
         }
       }
     }
@@ -188,7 +188,7 @@ namespace Gecode {
     d->tuples = heap.alloc<Tuple*>(arity);
     d->tuple_data = heap.alloc<Tuple>(size*arity+1);
     d->tuple_data[size*arity] = NULL;
-    d->nullptr = d->tuple_data+(size*arity);
+    d->nullpointer = d->tuple_data+(size*arity);
 
     // Rearrange the tuples for faster comparisons.
     for (int i = arity; i--; )
