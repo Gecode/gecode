@@ -60,35 +60,37 @@ using namespace Gecode;
 class Grocery : public Script {
 protected:
   /// The price of each item
-  IntVarArray x;
+  IntVarArray abcd;
   /// Sum and product of prices
   static const int s = 711;
+  /// Decimal product of prices
+  static const int p = 711 * 100 * 100 * 100;
 public:
   /// The actual model
-  Grocery(const Options& opt) : x(*this,4,0,s) {
-
+  Grocery(const Options& opt) : abcd(*this,4,0,s) {
+    IntVar a(abcd[0]), b(abcd[1]), c(abcd[2]), d(abcd[3]);
     // The sum of all variables is s
-    post(*this, x[0]+x[1]+x[2]+x[3] == s, opt.icl());
+    post(*this, a+b+c+d == s, opt.icl());
 
     // The product of all variables is s (corrected by scale factor)
     rel(*this,
         mult(*this,
-             mult(*this, x[0], x[1], opt.icl()),
-             mult(*this, x[2], x[3], opt.icl()),
+             mult(*this, a, b, opt.icl()),
+             mult(*this, c, d, opt.icl()),
              opt.icl()),
-        IRT_EQ, s*100*100*100);
+        IRT_EQ, p);
 
     // Break symmetries: order the variables
-    rel(*this, x[0], IRT_LQ, x[1]);
-    rel(*this, x[1], IRT_LQ, x[2]);
-    rel(*this, x[2], IRT_LQ, x[3]);
+    rel(*this, a, IRT_LQ, b);
+    rel(*this, b, IRT_LQ, c);
+    rel(*this, c, IRT_LQ, d);
 
-    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, abcd, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
   }
 
   /// Constructor for cloning \a s
   Grocery(bool share, Grocery& s) : Script(share,s) {
-    x.update(*this, share, s.x);
+    abcd.update(*this, share, s.abcd);
   }
 
   /// Copy during cloning
@@ -100,7 +102,7 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\t" << x << std::endl;
+    os << "\t" << abcd << std::endl;
   }
 };
 
