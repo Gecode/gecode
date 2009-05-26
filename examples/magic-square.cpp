@@ -72,8 +72,8 @@ public:
     Matrix<IntVarArray> m(x, n, n);
 
     for (int i = n; i--; ) {
-        linear(*this, m.row(i), IRT_EQ, s, opt.icl());
-        linear(*this, m.col(i), IRT_EQ, s, opt.icl());
+      linear(*this, m.row(i), IRT_EQ, s, opt.icl());
+      linear(*this, m.col(i), IRT_EQ, s, opt.icl());
     }
     // Both diagonals must have sum s
     {
