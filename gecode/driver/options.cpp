@@ -50,12 +50,40 @@ namespace Gecode {
 
   namespace Driver {
 
+    /*
+     * Option baseclass
+     *
+     */
+    char*
+    BaseOption::strdup(const char* s) {
+      if (s == NULL)
+        return NULL;
+      char* d = heap.alloc<char>(static_cast<unsigned long int>(strlen(s)+1));
+      (void) strcpy(d,s);
+      return d;
+    }
+
+    void
+    BaseOption::strdel(const char* s) {
+      if (s == NULL)
+        return;
+      heap.rfree(const_cast<char*>(s));
+    }
+
+    BaseOption::BaseOption(const char* o, const char* e)
+      : opt(strdup(o)), exp(strdup(e)) {}
+
+    BaseOption::~BaseOption(void) {
+      strdel(opt);
+      strdel(exp);
+    }
+
     void
     StringOption::add(int v, const char* o, const char* h) {
       Value* n = new Value;
       n->val  = v;
-      n->opt  = o;
-      n->help = h;
+      n->opt  = strdup(o);
+      n->help = strdup(h);
       n->next = NULL;
       if (fst == NULL) {
         fst = n;
@@ -111,6 +139,8 @@ namespace Gecode {
     StringOption::~StringOption(void) {
       Value* v = fst;
       while (v != NULL) {
+        strdel(v->opt);
+        strdel(v->help);
         Value* n = v->next;
         delete v;
         v = n;
@@ -212,7 +242,14 @@ namespace Gecode {
   }
 
   BaseOptions::BaseOptions(const char* n)
-    : fst(NULL), lst(NULL), _name(n) {}
+    : fst(NULL), lst(NULL), 
+      _name(Driver::BaseOption::strdup(n)) {}
+
+  void
+  BaseOptions::name(const char* n) {
+    Driver::BaseOption::strdel(_name);
+    _name = Driver::BaseOption::strdup(n);
+  }
 
   void
   BaseOptions::help(void) {
@@ -263,6 +300,10 @@ namespace Gecode {
     return;
   }
   
+  BaseOptions::~BaseOptions(void) {
+    Driver::BaseOption::strdel(_name);
+  }
+
 
   Options::Options(const char* n)
     : BaseOptions(n),

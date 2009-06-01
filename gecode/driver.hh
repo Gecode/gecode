@@ -124,6 +124,10 @@ namespace Gecode {
       virtual void help(void) = 0;
       /// Destructor
       virtual ~BaseOption(void);
+      /// Create heap-allocated copy of string \a s
+      static char* strdup(const char* s);
+      /// Delete heap-allocated copy of string \a s
+      static void strdel(const char* s);
     };
     
     /**

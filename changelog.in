@@ -72,6 +72,16 @@ Date: ?
 [DESCRIPTION]
 The next release.
 
+[ENTRY]
+Module: driver
+What:   change
+Rank:   minor
+Bug:    59
+Thanks: Luca Di Gaspero
+[DESCRIPTION]
+The driver takes copies of all string values passed top it.
+
+
 [RELEASE]
 Version: 3.1.0
 Date: 2009-05-20

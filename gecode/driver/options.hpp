@@ -36,21 +36,11 @@
  *
  */
 
+#include <cstring>
+
 namespace Gecode {
 
   namespace Driver {
-    /*
-     * Option baseclass
-     *
-     */
-    inline
-    BaseOption::BaseOption(const char* o, const char* e)
-      : opt(o), exp(e) {}
-    inline
-    BaseOption::~BaseOption(void) {
-    }
-    
-    
     /*
      * String option
      *
@@ -154,12 +144,8 @@ namespace Gecode {
   BaseOptions::name(void) const {
     return _name;
   }
-  inline void
-  BaseOptions::name(const char* n) {
-    _name = n;
-  }
-  inline
-  BaseOptions::~BaseOptions(void) {}
+
+
 
   /*
    * Model options
