@@ -1322,16 +1322,15 @@ namespace Gecode {
         _fr,            ///< From row
         _tr;            ///< To row
     public:
-      Slice(Matrix<A>& a,
-            unsigned int fc, unsigned int tc,
-            unsigned int fr, unsigned int tr);
-
+      /// Construct slice
+      Slice(Matrix<A>& a, int fc, int tc, int fr, int tr);
       /** \brief Reverses the contents of the slice, and returns a
        *  reference to it.
        */
       Slice& reverse(void);
-
+      /// Cast to array type
       operator args_type(void);
+      /// Cast to matrix type
       operator Matrix<args_type>(void);
     };
 
@@ -1339,8 +1338,8 @@ namespace Gecode {
     /// The type of storage for this array
     typedef typename ArrayTraits<A>::storage_type storage_type;
     storage_type _a; ///< The array wrapped
-    unsigned int _w, ///< The width of the matrix
-      _h;            ///< The height of the matrix
+    int _w; ///< The width of the matrix
+    int _h; ///< The height of the matrix
 
   public:
     /** \brief Basic constructor
@@ -1355,7 +1354,7 @@ namespace Gecode {
      *            parameters \a w and \a h doesn't match the size
      *            of the array \a a.
      */
-    Matrix(A a, unsigned int w, unsigned int h);
+    Matrix(A a, int w, int h);
 
     /** \brief Basic constructor
      *
@@ -1369,12 +1368,12 @@ namespace Gecode {
      *            parameter \a n doesn't match the size
      *            of the array \a a.
      */
-    Matrix(A a, unsigned int n);
+    Matrix(A a, int n);
 
     /// Return the width of the matrix
-    unsigned int width(void) const;
+    int width(void) const;
     /// Return the height of the matrix
-    unsigned int height(void) const;
+    int height(void) const;
     /// Return an Args-array of the contents of the matrix
     args_type const get_array(void);
 
@@ -1383,7 +1382,7 @@ namespace Gecode {
      * \exception MiniModel::ArgumentOutOfRange Raised if \a c or \a r
      *            are out of range.
      */
-    value_type& operator ()(unsigned int c, unsigned int r);
+    value_type& operator ()(int c, int r);
 
     /** \brief Access slice of the matrix
      *
@@ -1394,8 +1393,7 @@ namespace Gecode {
      *
      * For further information, see Slice.
      */
-    Slice slice(unsigned int fc, unsigned int tc,
-                unsigned int fr, unsigned int tr);
+    Slice slice(int fc, int tc, int fr, int tr);
 
     /// Access row \a r.
     Slice row(int r);

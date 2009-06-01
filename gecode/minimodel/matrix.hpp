@@ -45,8 +45,7 @@ namespace Gecode {
   template <class A>
   inline
   Matrix<A>::Slice::Slice(Matrix<A>& a,
-                          unsigned int fc, unsigned int tc,
-                          unsigned int fr, unsigned int tr)
+                          int fc, int tc, int fr, int tr)
     : _r(0), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
     if (tc > a.width() || tr > a.height())
       throw MiniModel::ArgumentOutOfRange("Matrix::Slice::Slice");
@@ -56,84 +55,81 @@ namespace Gecode {
     _r = args_type((tc-fc)*(tr-fr));
 
     int i = 0;
-    for (unsigned int h = fr; h < tr; ++h) {
-      for (unsigned int w = fc; w < tc; ++w) {
+    for (int h = fr; h < tr; h++)
+      for (int w = fc; w < tc; w++)
         _r[i++] = a(w, h);
-      }
-    }
   }
 
   template <class A>
   typename Matrix<A>::Slice&
   Matrix<A>::Slice::reverse(void) {
-    for (int i = 0; i < _r.size()/2; ++i)
+    for (int i = 0; i < _r.size()/2; i++)
       std::swap(_r[i], _r[_r.size()-i-1]);
     return *this;
   }
 
   template <class A>
-  inline
+  forceinline
   Matrix<A>::Slice::operator typename Matrix<A>::args_type(void) {
     return _r;
   }
   template <class A>
-  inline
+  forceinline
   Matrix<A>::Slice::operator Matrix<typename Matrix<A>::args_type>(void) {
     return Matrix<args_type>(_r, _tc-_fc, _tr-_fr);
   }
 
 
   template <class A>
-  inline
-  Matrix<A>::Matrix(A a, unsigned int w, unsigned int h)
+  forceinline
+  Matrix<A>::Matrix(A a, int w, int h)
     : _a(a), _w(w), _h(h) {
-    if (_w * _h != static_cast<unsigned int>(_a.size()))
+    if ((_w * _h) != _a.size())
       throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, w, h)");
   }
 
   template <class A>
-  inline
-  Matrix<A>::Matrix(A a, unsigned int n)
+  forceinline
+  Matrix<A>::Matrix(A a, int n)
     : _a(a), _w(n), _h(n) {
-    if (n*n != static_cast<unsigned int>(_a.size()))
+    if (n*n != _a.size())
       throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, n)");
   }
 
   template <class A>
-  inline unsigned int
+  forceinline int
   Matrix<A>::width(void) const  { return _w; }
   template <class A>
-  inline unsigned int
+  forceinline int
   Matrix<A>::height(void) const { return _h; }
   template <class A>
-  inline typename Matrix<A>::args_type const
+  forceinline typename Matrix<A>::args_type const
   Matrix<A>::get_array(void) {
     return args_type(_a);
   }
 
   template <class A>
-  inline typename Matrix<A>::value_type&
-  Matrix<A>::operator ()(unsigned int c, unsigned int r) {
+  forceinline typename Matrix<A>::value_type&
+  Matrix<A>::operator ()(int c, int r) {
     if ((c >= _w) || (r >= _h))
       throw MiniModel::ArgumentOutOfRange("Matrix::operator ()");
     return _a[r*_w + c];
   }
 
   template <class A>
-  inline typename Matrix<A>::Slice
-  Matrix<A>::slice(unsigned int fc, unsigned int tc,
-                   unsigned int fr, unsigned int tr) {
+  forceinline typename Matrix<A>::Slice
+  Matrix<A>::slice(int fc, int tc, int fr, int tr) {
     return Slice(*this, fc, tc, fr, tr);
   }
 
   template <class A>
-  inline typename Matrix<A>::Slice
+  forceinline typename Matrix<A>::Slice
   Matrix<A>::row(int r) {
     return slice(0, width(), r, r+1);
   }
 
   template <class A>
-  inline typename Matrix<A>::Slice
+  forceinline typename Matrix<A>::Slice
   Matrix<A>::col(int c) {
     return slice(c, c+1, 0, height());
   }
