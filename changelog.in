@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   minor
+Thanks: Vincent Barichard
+[DESCRIPTION]
+Path for search provides top and empty methods.
+
+[ENTRY]
 Module: driver
 What:   change
 Rank:   minor

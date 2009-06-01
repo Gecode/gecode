@@ -90,6 +90,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       /// Free memory for node
       void dispose(void);
     };
+  protected:
     /// Stack to store node information
     Support::DynamicStack<Node,Heap> ds;
   public:
@@ -99,6 +100,10 @@ namespace Gecode { namespace Search { namespace Sequential {
     const BranchingDesc* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
     bool next(Worker& s);
+    /// Provide access to topmost node
+    Node& top(void) const;
+    /// Test whether path is empty
+    bool empty(void) const;
     /// Return position on stack of last copy
     int lc(void) const;
     /// Unwind the stack up to position \a l (after failure)
@@ -193,6 +198,17 @@ namespace Gecode { namespace Search { namespace Sequential {
         return true;
       }
     return false;
+  }
+
+  forceinline Path::Node&
+  Path::top(void) const {
+    assert(!ds.empty());
+    return ds.top();
+  }
+
+  forceinline bool
+  Path::empty(void) const {
+    return ds.empty();
   }
 
   forceinline void

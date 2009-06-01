@@ -96,6 +96,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Free memory for node
       void dispose(void);
     };
+  protected:
     /// Stack to store node information
     Support::DynamicStack<Node,Heap> ds;
     /// Number of nodes that have work for stealing
@@ -107,6 +108,10 @@ namespace Gecode { namespace Search { namespace Parallel {
     const BranchingDesc* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
     bool next(Worker& s);
+    /// Provide access to topmost node
+    Node& top(void) const;
+    /// Test whether path is empty
+    bool empty(void) const;
     /// Return position on stack of last copy
     int lc(void) const;
     /// Unwind the stack up to position \a l (after failure)
@@ -221,6 +226,17 @@ namespace Gecode { namespace Search { namespace Parallel {
         return true;
       }
     return false;
+  }
+
+  forceinline Path::Node&
+  Path::top(void) const {
+    assert(!ds.empty());
+    return ds.top();
+  }
+
+  forceinline bool
+  Path::empty(void) const {
+    return ds.empty();
   }
 
   forceinline void
