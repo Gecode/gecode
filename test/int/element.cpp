@@ -268,6 +268,119 @@ namespace Test { namespace Int {
        }
      };
 
+
+     /// Test for matrix element with integer array and integer variable
+     class MatrixIntIntVarXY : public Test {
+     protected:
+       /// Array for test matrix
+       Gecode::IntArgs tm;
+     public:
+       /// Create and register test
+       MatrixIntIntVarXY(void)
+         : Test("Element::Matrix::Int::IntVar::XY",3,0,3,false), 
+           tm(4, 0,1,2,3) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
+         using namespace Gecode;
+         if ((x[0] > 1) || (x[1] > 1))
+           return false;
+         Matrix<IntArgs> m(tm,2,2);
+         return m(x[0],x[1]) == x[2];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
+         using namespace Gecode;
+         Matrix<IntArgs> m(tm,2,2);
+         element(home, m, x[0], x[1], x[2]);
+       }
+     };
+
+     /// Test for matrix element with integer array and integer variable
+     class MatrixIntIntVarXX : public Test {
+     protected:
+       /// Array for test matrix
+       Gecode::IntArgs tm;
+     public:
+       /// Create and register test
+       MatrixIntIntVarXX(void)
+         : Test("Element::Matrix::Int::IntVar::XX",2,0,3,false), 
+           tm(4, 0,1,2,3) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
+         using namespace Gecode;
+         if (x[0] > 1)
+           return false;
+         Matrix<IntArgs> m(tm,2,2);
+         return m(x[0],x[0]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
+         using namespace Gecode;
+         Matrix<IntArgs> m(tm,2,2);
+         element(home, m, x[0], x[0], x[1]);
+       }
+     };
+
+     /// Test for matrix element with integer array and Boolean variable
+     class MatrixIntBoolVarXY : public Test {
+     protected:
+       /// Array for test matrix
+       Gecode::IntArgs tm;
+     public:
+       /// Create and register test
+       MatrixIntBoolVarXY(void)
+         : Test("Element::Matrix::Int::BoolVar::XY",3,0,3,false), 
+           tm(4, 0,1,1,0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
+         using namespace Gecode;
+         if ((x[0] > 1) || (x[1] > 1))
+           return false;
+         Matrix<IntArgs> m(tm,2,2);
+         return m(x[0],x[1]) == x[2];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
+         using namespace Gecode;
+         Matrix<IntArgs> m(tm,2,2);
+         element(home, m, x[0], x[1], channel(home,x[2]));
+       }
+     };
+
+     /// Test for matrix element with integer array and Boolean variable
+     class MatrixIntBoolVarXX : public Test {
+     protected:
+       /// Array for test matrix
+       Gecode::IntArgs tm;
+     public:
+       /// Create and register test
+       MatrixIntBoolVarXX(void)
+         : Test("Element::Matrix::Int::BoolVar::XX",2,0,3,false), 
+           tm(4, 0,1,1,0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
+         using namespace Gecode;
+         if (x[0] > 1)
+           return false;
+         Matrix<IntArgs> m(tm,2,2);
+         return m(x[0],x[0]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
+         using namespace Gecode;
+         Matrix<IntArgs> m(tm,2,2);
+         element(home, m, x[0], x[0], channel(home,x[1]));
+       }
+     };
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -349,6 +462,12 @@ namespace Test { namespace Int {
          (void) new VarBoolVar();
          (void) new VarBoolInt(0);
          (void) new VarBoolInt(1);
+
+         // Matrix tests
+         (void) new MatrixIntIntVarXY();
+         (void) new MatrixIntIntVarXX();
+         (void) new MatrixIntBoolVarXY();
+         (void) new MatrixIntBoolVarXX();
        }
      };
 
