@@ -1073,6 +1073,58 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Space& home, const BoolVarArgs& x, IntVar y0, int y1,
           IntConLevel icl=ICL_DEF);
+
+  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Space& home, const IntArgs& a, 
+          IntVar x, int w, IntVar y, int h, IntVar z,
+          IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Space& home, const IntArgs& a, 
+          IntVar x, int w, IntVar y, int h, BoolVar z,
+          IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain consistency (\a icl = ICL_DOM, default).
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Space& home, const IntVarArgs& a, 
+          IntVar x, int w, IntVar y, int h, IntVar z,
+          IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Space& home, const BoolVarArgs& a, 
+          IntVar x, int w, IntVar y, int h, BoolVar z,
+          IntConLevel icl=ICL_DEF);
   //@}
 
 

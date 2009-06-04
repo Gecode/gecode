@@ -130,6 +130,62 @@ namespace Gecode {
                          ::post(home,iv,x0,v1)));
   }
 
+
+  IntVar
+  mockup(Space& home, IntVar x, int w, IntVar y, int h) {
+    int n=w*h;
+    IntVar z(home,0,n-1);
+    IntArgs d(n), m(n);
+    for (int i=0; i<w; i++)
+      for (int j=0; j<h; j++) {
+        d[i+w*j] = j;
+        m[i+w*j] = i;
+      }
+    element(home, d, z, y);
+    element(home, m, z, x);
+    return z;
+  }
+
+  void
+  element(Space& home, const IntArgs& a, 
+          IntVar x, int w, IntVar y, int h, IntVar z,
+          IntConLevel icl) {
+    if (a.size() != w*h)
+      throw Int::ArgumentSizeMismatch("Int::element");
+    if (home.failed()) return;
+    element(home, a, mockup(home,x,w,y,h), z);
+  }
+
+  void
+  element(Space& home, const IntArgs& a, 
+          IntVar x, int w, IntVar y, int h, BoolVar z,
+          IntConLevel icl) {
+    if (a.size() != w*h)
+      throw Int::ArgumentSizeMismatch("Int::element");
+    if (home.failed()) return;
+    element(home, a, mockup(home,x,w,y,h), z);
+  }
+
+  void
+  element(Space& home, const IntVarArgs& a, 
+          IntVar x, int w, IntVar y, int h, IntVar z,
+          IntConLevel icl) {
+    if (a.size() != w*h)
+      throw Int::ArgumentSizeMismatch("Int::element");
+    if (home.failed()) return;
+    element(home, a, mockup(home,x,w,y,h), z);
+  }
+
+  void
+  element(Space& home, const BoolVarArgs& a, 
+          IntVar x, int w, IntVar y, int h, BoolVar z,
+          IntConLevel icl) {
+    if (a.size() != w*h)
+      throw Int::ArgumentSizeMismatch("Int::element");
+    if (home.failed()) return;
+    element(home, a, mockup(home,x,w,y,h), z);
+  }
+
 }
 
 // STATISTICS: int-post

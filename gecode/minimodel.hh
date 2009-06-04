@@ -44,6 +44,9 @@
 
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
+#ifdef GECODE_HAS_SET_VARS
+#include <gecode/set.hh>
+#endif
 #include <gecode/int/linear.hh>
 
 #include <gecode/minimodel/exception.hpp>
@@ -1305,8 +1308,8 @@ namespace Gecode {
   public:
     /// The type of elements of this array
     typedef typename ArrayTraits<A>::value_type value_type;
-    /// The type of the Args-array type for value_type values.
-    typedef typename ArrayTraits<A>::args_type  args_type;
+    /// The type of the Args-array type for value_type values
+    typedef typename ArrayTraits<A>::args_type args_type;
 
     /** \brief A slice of a matrix.
      *
@@ -1375,7 +1378,7 @@ namespace Gecode {
     /// Return the height of the matrix
     int height(void) const;
     /// Return an Args-array of the contents of the matrix
-    args_type const get_array(void);
+    args_type const get_array(void) const;
 
     /** \brief Access element (\a c, \a r) of the matrix
      *
@@ -1401,6 +1404,58 @@ namespace Gecode {
     /// Access column \a c.
     Slice col(int c);
   };
+
+  /** \brief Element constraint for matrix
+   *
+   * Here, \a x and \a y are the coordinates and \a z is the value
+   * at position \a m(x,y).
+   * \relates Gecode::Matrix
+   */
+  void element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+               IntVar z, IntConLevel icl=ICL_DEF);
+  /** \brief Element constraint for matrix
+   *
+   * Here, \a x and \a y are the coordinates and \a z is the value
+   * at position \a m(x,y).
+   * \relates Gecode::Matrix
+   */
+  void element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+               BoolVar z, IntConLevel icl=ICL_DEF);
+  /** \brief Element constraint for matrix
+   *
+   * Here, \a x and \a y are the coordinates and \a z is the value
+   * at position \a m(x,y).
+   * \relates Gecode::Matrix
+   */
+  void element(Space& home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
+               IntVar z, IntConLevel icl=ICL_DEF);
+  /** \brief Element constraint for matrix
+   *
+   * Here, \a x and \a y are the coordinates and \a z is the value
+   * at position \a m(x,y).
+   * \relates Gecode::Matrix
+   */
+  void element(Space& home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
+               BoolVar z, IntConLevel icl=ICL_DEF);
+#ifdef GECODE_HAS_SET_VARS
+  /** \brief Element constraint for matrix
+   *
+   * Here, \a x and \a y are the coordinates and \a z is the value
+   * at position \a m(x,y).
+   * \relates Gecode::Matrix
+   */
+  void element(Space& home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
+               SetVar z);
+  /** \brief Element constraint for matrix
+   *
+   * Here, \a x and \a y are the coordinates and \a z is the value
+   * at position \a m(x,y).
+   * \relates Gecode::Matrix
+   */
+  void element(Space& home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
+               SetVar z);
+#endif
+
 }
 
 #include <gecode/minimodel/matrix.hpp>

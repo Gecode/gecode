@@ -104,7 +104,7 @@ namespace Gecode {
   Matrix<A>::height(void) const { return _h; }
   template <class A>
   forceinline typename Matrix<A>::args_type const
-  Matrix<A>::get_array(void) {
+  Matrix<A>::get_array(void) const {
     return args_type(_a);
   }
 
@@ -133,6 +133,41 @@ namespace Gecode {
   Matrix<A>::col(int c) {
     return slice(c, c+1, 0, height());
   }
+
+
+  forceinline void
+  element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+          IntVar z, IntConLevel icl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  }
+  forceinline void
+  element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+          BoolVar z, IntConLevel icl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  }
+  forceinline void
+  element(Space& home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
+          IntVar z, IntConLevel icl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  }
+  forceinline void
+  element(Space& home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
+          BoolVar z, IntConLevel icl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  }
+
+#ifdef GECODE_HAS_SET_VARS
+  forceinline void
+  element(Space& home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
+          SetVar z) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z);
+  }
+  forceinline void
+  element(Space& home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
+          SetVar z) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z);
+  }
+#endif
 
 }
 

@@ -937,6 +937,22 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   element(Space& home, const IntSetArgs& s, IntVar y, SetVar z);
 
+  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * Throws an exception of type Set::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_SET_EXPORT void
+  element(Space& home, const IntSetArgs& a, 
+          IntVar x, int w, IntVar y, int h, SetVar z);
+  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * Throws an exception of type Set::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_SET_EXPORT void
+  element(Space& home, const SetVarArgs& a, 
+          IntVar x, int w, IntVar y, int h, SetVar z);
   //@}
 
   /**

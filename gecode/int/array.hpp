@@ -64,6 +64,15 @@ namespace Gecode {
     typedef IntArgs args_type;
   };
 
+  /// Traits of IntSetArgs
+  template <>
+  class ArrayTraits<IntSetArgs> {
+  public:
+    typedef IntSetArgs storage_type;
+    typedef IntSet     value_type;
+    typedef IntSetArgs args_type;
+  };
+
   /// Traits of BoolVarArray
   template <>
   class ArrayTraits<BoolVarArray> {

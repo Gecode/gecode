@@ -2683,12 +2683,18 @@ gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/kernel/view.hpp ./gecode/minimodel.hh ./gecode/minimodel/arithmetic.hpp \
 	./gecode/minimodel/bool-expr.hpp ./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
-	./gecode/minimodel/optimize.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/minimodel/optimize.hpp ./gecode/set.hh ./gecode/set/array.hpp \
+	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2726,12 +2732,18 @@ gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/kernel/view.hpp ./gecode/minimodel.hh ./gecode/minimodel/arithmetic.hpp \
 	./gecode/minimodel/bool-expr.hpp ./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp \
 	./gecode/minimodel/lin-expr.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
-	./gecode/minimodel/optimize.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
+	./gecode/minimodel/optimize.hpp ./gecode/set.hh ./gecode/set/array.hpp \
+	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/propagator.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2773,14 +2785,20 @@ gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
-	./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/thread.hh ./gecode/support/thread/pthreads.hpp \
+	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
 gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2822,13 +2840,19 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2870,13 +2894,19 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2918,13 +2948,19 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -2966,13 +3002,19 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3014,13 +3056,19 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3062,13 +3110,19 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3110,13 +3164,19 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3158,13 +3218,19 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3206,13 +3272,19 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3254,13 +3326,19 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3302,13 +3380,19 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3350,13 +3434,19 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3398,13 +3488,19 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3446,13 +3542,19 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3494,13 +3596,19 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3542,13 +3650,19 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3590,13 +3704,19 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3638,13 +3758,19 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3686,13 +3812,19 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3734,13 +3866,19 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3836,13 +3974,19 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3884,13 +4028,19 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3932,13 +4082,19 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -3980,13 +4136,19 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4028,13 +4190,19 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4076,13 +4244,19 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4124,13 +4298,19 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4172,13 +4352,19 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4220,13 +4406,19 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4268,13 +4460,19 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4316,13 +4514,19 @@ examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4364,13 +4568,19 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4412,13 +4622,19 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4460,13 +4676,19 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4508,13 +4730,19 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4556,13 +4784,19 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4604,13 +4838,19 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4652,13 +4892,19 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4700,13 +4946,19 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4748,13 +5000,19 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4796,13 +5054,19 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4844,13 +5108,19 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4892,13 +5162,19 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -4940,13 +5216,19 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
 	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/timer.hh 
+	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
+	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
+	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
+	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
+	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
@@ -5583,13 +5865,20 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5712,13 +6001,20 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5882,13 +6178,20 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5929,13 +6232,20 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -5976,13 +6286,20 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6023,13 +6340,20 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6070,13 +6394,20 @@ test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6240,13 +6571,20 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6287,13 +6625,20 @@ test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6334,13 +6679,20 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6381,13 +6733,20 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6428,13 +6787,20 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6475,13 +6841,20 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -6522,13 +6895,20 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/int.hh \
-	./test/int.hpp ./test/test.hh ./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/int.hh ./test/int.hpp ./test/test.hh \
+	./test/test.hpp 
 test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -7527,10 +7907,16 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/lds.hpp ./gecode/search/options.hpp \
 	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp ./gecode/support/timer.hh ./test/test.hh \
-	./test/test.hpp 
+	./gecode/set.hh ./gecode/set/array.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
+	./gecode/set/view/offset.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh \
+	./test/test.hh ./test/test.hpp 
