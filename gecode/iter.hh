@@ -102,6 +102,7 @@ namespace Gecode {
 #include <gecode/iter/ranges-singleton-append.hpp>
 
 #include <gecode/iter/values-array.hpp>
+#include <gecode/iter/values-bitset.hpp>
 #include <gecode/iter/values-inter.hpp>
 #include <gecode/iter/values-map.hpp>
 #include <gecode/iter/values-minus.hpp>

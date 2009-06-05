@@ -478,7 +478,7 @@ ITERHDR0 =							\
 	values-array values-minus values-offset values-ranges 	\
 	values-positive values-negative				\
 	values-singleton values-unique values-inter 		\
-	values-union values-map					\
+	values-union values-map	values-bitset			\
 	virtual-ranges virtual-ranges-union			\
 	virtual-ranges-inter virtual-ranges-compl               \
 	priority-queue
