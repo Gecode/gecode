@@ -111,6 +111,7 @@
  *
  */
 
+#include <gecode/support/bitset.hpp>
 #include <gecode/support/block-allocator.hpp>
 #include <gecode/support/dynamic-array.hpp>
 #include <gecode/support/dynamic-queue.hpp>
