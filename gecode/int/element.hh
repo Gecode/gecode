@@ -312,10 +312,39 @@ namespace Gecode { namespace Int { namespace Element {
                             VB x0, VC x1);
   };
 
+  /**
+   * \brief Domain consistent pair propagator
+   *
+   * Requires \code #include <gecode/int/element.hh> \endcode
+   *
+   * \ingroup FuncIntProp
+   */
+  class Pair : public TernaryPropagator<IntView,PC_INT_DOM> {
+  protected:
+    using TernaryPropagator<IntView,PC_INT_DOM>::x0;
+    using TernaryPropagator<IntView,PC_INT_DOM>::x1;
+    using TernaryPropagator<IntView,PC_INT_DOM>::x2;
+    /// Width
+    int w;
+    /// Constructor for cloning \a p
+    Pair(Space& home, bool share, Pair& p);
+  public:
+    /// Constructor for posting
+    Pair(Space& home, IntView x0, IntView x1, IntView x2, int w);
+    /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
+    static ExecStatus post(Space& home, IntView x0, IntView x1, IntView x2, 
+                           int w, int h);
+    /// Copy propagator during cloning
+    GECODE_INT_EXPORT virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
 }}}
 
 #include <gecode/int/element/int.hpp>
 #include <gecode/int/element/view.hpp>
+#include <gecode/int/element/pair.hpp>
 
 #endif
 

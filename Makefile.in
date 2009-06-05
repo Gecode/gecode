@@ -251,7 +251,7 @@ INTSRC0 = \
 	var/bool.cpp array.cpp bool.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp extensional.cpp \
 	dom.cpp rel.cpp element.cpp count.cpp arithmetic.cpp exec.cpp \
-	exec/when.cpp \
+	exec/when.cpp element/pair.cpp \
 	linear/int-post.cpp linear-int.cpp \
 	linear/bool-post.cpp linear-bool.cpp \
 	branch.cpp \
@@ -275,7 +275,7 @@ INTHDR0 = \
 	distinct/dom.hpp distinct/edge.hpp distinct/node.hpp \
 	distinct/val.hpp distinct/ter-dom.hpp \
 	dom/range.hpp dom/spec.hpp \
-	element/int.hpp element/view.hpp \
+	element/int.hpp element/view.hpp element/pair.hpp \
 	gcc/bnd.hpp gcc/dom.hpp gcc/gccbndsup.hpp gcc/graphsup.hpp \
 	gcc/lbc.hpp gcc/ubc.hpp gcc/val.hpp gcc/occur.hpp \
 	linear/post.hpp \

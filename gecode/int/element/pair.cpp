@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,31 +35,31 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+#include <gecode/int/element.hh>
 
-  /**
-   * \brief Value iterator for values in a bitset
-   *
-   * \ingroup FuncIterValues
-   */
-  template<class BS>
-  class BitSet {
+namespace Gecode { namespace Int { namespace Element {
+
+  Actor*
+  Pair::copy(Space& home, bool share) {
+    return new (home) Pair(home,share,*this);
+  }
+
+  /// Value iterator for pair of iterators
+  class PairValues {
   private:
-    /// Bitset
-    const BS& bs;
-    /// Current value
-    int cur;
-    /// Limit value
-    int limit;
-    /// Move to next set bit
-    void move(void);
+    /// View for x-values
+    IntView x;
+    /// Iterator for x-values
+    ViewValues<IntView> xv;
+    /// Iterator for y-values
+    ViewValues<IntView> yv;
+    /// Width
+    int w;
   public:
     /// \name Constructors and initialization
     //@{
-    /// Initialize with bitset \a bs
-    BitSet(const BS& bs);
-    /// Initialize with bitset \a bs and start \a n and stop \a m
-    BitSet(const BS& bs, int n, int m);
+    /// Initialize with views \a x and \a y and width \a w
+    PairValues(IntView x, IntView y, int w);
     //@}
 
     /// \name Iteration control
@@ -77,45 +77,58 @@ namespace Gecode { namespace Iter { namespace Values {
     //@}
   };
 
-
-  template <class BS>
-  forceinline void
-  BitSet<BS>::move(void) {
-    while ((cur < limit) && !bs.get(cur))
-      cur++;
-  }
-
-  template <class BS>
   forceinline
-  BitSet<BS>::BitSet(const BS& bs0) 
-    : bs(bs0), cur(0), limit(bs.size()) {
-    move();
-  }
-
-  template <class BS>
-  forceinline
-  BitSet<BS>::BitSet(const BS& bs0, int n, int m) 
-    : bs(bs0), cur(n), limit(m) {
-    move();
-  }
-
-  template <class BS>
+  PairValues::PairValues(IntView x0, IntView y0, int w0)
+    : x(x0), xv(x0), yv(y0), w(w0) {}
   forceinline void
-  BitSet<BS>::operator ++(void) {
-    cur++; move();
+  PairValues::operator ++(void) {
+    ++xv;
+    if (!xv()) {
+      xv.init(x); ++yv;
+    }
   }
-  template <class BS>
   forceinline bool
-  BitSet<BS>::operator ()(void) const {
-    return cur < bs.size();
+  PairValues::operator ()(void) const {
+    return yv();
+  }
+  forceinline int
+  PairValues::val(void) const {
+    return xv.val()+w*yv.val();
   }
 
-  template <class BS>
-  forceinline int
-  BitSet<BS>::val(void) const {
-    return cur;
+
+  ExecStatus
+  Pair::propagate(Space& home, const ModEventDelta&) {
+    Region r(home);
+    
+    // Bitset for supported div and mod values
+    Support::BitSet<Region> d(r,(x2.max() / w)+1), m(r,w);
+    for (ViewValues<IntView> i(x2); i(); ++i) {
+      d.set(i.val() / w); m.set(i.val() % w);
+    }
+    Iter::Values::BitSet<Support::BitSet<Region> > im(m,x0.min(),x0.max());
+    GECODE_ME_CHECK(x0.inter_v(home,im,false));
+    Iter::Values::BitSet<Support::BitSet<Region> > id(d,x1.min(),x1.max());
+    GECODE_ME_CHECK(x1.inter_v(home,id,false));
+
+    if (x0.assigned() && x1.assigned()) {
+      GECODE_ME_CHECK(x2.eq(home,x0.val()+w*x1.val()));
+      return ES_SUBSUMED(*this,sizeof(*this));
+    }
+
+    PairValues xy(x0,x1,w);
+    GECODE_ME_CHECK(x2.inter_v(home,xy,false));
+
+    if (x2.assigned()) {
+      GECODE_ME_CHECK(x0.eq(home,x2.val() % w));
+      GECODE_ME_CHECK(x1.eq(home,static_cast<int>(x2.val() / w)));
+      return ES_SUBSUMED(*this,sizeof(*this));
+    }
+
+    return ES_NOFIX;
   }
 
 }}}
 
-// STATISTICS: iter-any
+// STATISTICS: int-prop
+

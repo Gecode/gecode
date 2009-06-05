@@ -168,18 +168,11 @@ namespace Gecode {
 
 
   IntVar
-  mockup(Space& home, IntVar x, int w, IntVar y, int h) {
-    int n=w*h;
-    IntVar z(home,0,n-1);
-    IntArgs d(n), m(n);
-    for (int i=0; i<w; i++)
-      for (int j=0; j<h; j++) {
-        d[i+w*j] = j;
-        m[i+w*j] = i;
-      }
-    element(home, d, z, y);
-    element(home, m, z, x);
-    return z;
+  pair(Space& home, IntVar x, int w, IntVar y, int h) {
+    IntVar xy(home,0,w*h-1);
+    if (Int::Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
+      home.fail();
+    return xy;
   }
 
   void
@@ -188,7 +181,7 @@ namespace Gecode {
     if (a.size() != w*h)
       throw Set::ArgumentSizeMismatch("Set::element");
     if (home.failed()) return;
-    element(home, a, mockup(home,x,w,y,h), z);
+    element(home, a, pair(home,x,w,y,h), z);
   }
 
   void
@@ -197,7 +190,7 @@ namespace Gecode {
     if (a.size() != w*h)
       throw Set::ArgumentSizeMismatch("Set::element");
     if (home.failed()) return;
-    element(home, a, mockup(home,x,w,y,h), z);
+    element(home, a, pair(home,x,w,y,h), z);
   }
 
 }
