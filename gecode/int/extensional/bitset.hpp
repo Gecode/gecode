@@ -55,45 +55,45 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Default (empty) initialization of BitSet
     BitSet(void);
     /// BitSet with space for \a s bits. The bits are  set to \a value.
-    BitSet(Space& home, int s, bool value = false);
+    BitSet(Space& home, unsigned int s, bool value = false);
     /// Copy BitSet \a bs
     BitSet(Space& home, const BitSet& bs);
     /// Initialize BitSet for \a s bits. The bits are  set to \a value.
-    void init(Space& home, int s, bool value=false);
+    void init(Space& home, unsigned int s, bool value=false);
     /// Access value at bit \a i
-    bool get(unsigned int i);
+    bool get(unsigned int i) const;
     /// Set value at bit \a i to \a value
     void set(unsigned int i, bool value=true);
   };
 
   forceinline void
-  BitSet::init(Space& home, int s, bool value) {
-    size = static_cast<int>(std::ceil(static_cast<double>(s)
-                                      /(CHAR_BIT*sizeof(Base))));
+  BitSet::init(Space& home, unsigned int s, bool value) {
+    size = static_cast<unsigned int>(std::ceil(static_cast<double>(s)
+                                               /(CHAR_BIT*sizeof(Base))));
     data = home.alloc<Base>(size);
     Base ival = value ? ~0 : 0;
-    for (int i = size; i--; ) data[i] = ival;
+    for (unsigned int i = size; i--; ) data[i] = ival;
   }
 
   forceinline
   BitSet::BitSet(void) : data(NULL), size(0) {}
 
   forceinline
-  BitSet::BitSet(Space& home, int s, bool value)
+  BitSet::BitSet(Space& home, unsigned int s, bool value)
     : data(NULL), size(0) {
     init(home, s, value);
   }
   forceinline
   BitSet::BitSet(Space& home, const BitSet& bs)
     : data(home.alloc<Base>(bs.size)), size(bs.size) {
-    for (int i = size; i--; ) data[i] = bs.data[i];
+    for (unsigned int i = size; i--; ) data[i] = bs.data[i];
   }
   forceinline bool
-  BitSet::get(unsigned int i) {
+  BitSet::get(unsigned int i) const {
     unsigned int pos = i / (sizeof(Base)*CHAR_BIT);
     unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
     assert(pos < size);
-    return data[pos] & ((Base)1 << bit);
+    return (data[pos] & ((Base)1 << bit)) != 0;
   }
   forceinline void
   BitSet::set(unsigned int i, bool value) {
