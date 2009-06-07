@@ -188,22 +188,23 @@ foreach $ns (split('::',$lns)) {
 $cns =~ s| $||g;
 print "$cns\n\n";
 print "  /// Create virtual view selector for tie-breaking\n";
-print "  void\n";
+print "  Gecode::ViewSelVirtualBase<$view>*\n";
 print "  virtualize(Gecode::Space& home, $varbranch vars,\n";
-print "             const Gecode::VarBranchOptions& o_vars,\n";
-print "             Gecode::ViewSelVirtualBase<$view>*& v) {\n";
+print "             const Gecode::VarBranchOptions& o_vars) {\n";
 print "    switch (vars) {\n";
 for ($i=0; $i<$n; $i++) {
   next unless ($i != $none);
-  print "     case $vb[$i]:\n";
-  $l =  "       v = new (home) ViewSelVirtual<$type[$i]>(home,o_vars);\n";
+  print "    case $vb[$i]:\n";
+  $l =  "      return new (home) ViewSelVirtual<$type[$i]>(home,o_vars);\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
-  print "       break;\n";
+  print "      break;\n";
 }
 print "    default:\n";
 print "      throw $exception;\n";
 print "    }\n";
+print "    GECODE_NEVER;\n";
+print "    return NULL;\n";
 print "  }\n\n";
 foreach $ns (split('::',$lns)) {
   print "}";
@@ -279,11 +280,11 @@ print "    ViewArray<$view> xv(home,x);\n";
 print "    Gecode::ViewSelVirtualBase<$view>* tb[3];\n";
 print "    int n=0;\n";
 print "    if (vars.b != $vb[$none])\n";
-print "      virtualize(home,vars.b,o_vars.b,tb[n++]);\n";
+print "      tb[n++]=virtualize(home,vars.b,o_vars.b);\n";
 print "    if (vars.c != $vb[$none])\n";
-print "      virtualize(home,vars.c,o_vars.c,tb[n++]);\n";
+print "      tb[n++]=virtualize(home,vars.c,o_vars.c);\n";
 print "    if (vars.d != $vb[$none])\n";
-print "      virtualize(home,vars.d,o_vars.d,tb[n++]);\n";
+print "      tb[n++]=virtualize(home,vars.d,o_vars.d);\n";
 print "    assert(n > 0);\n";
 print "    ViewSelTieBreakDynamic<$view> vbcd(home,tb,n);\n";
 print "    switch (vars.a) {\n";
