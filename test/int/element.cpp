@@ -277,22 +277,22 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MatrixIntIntVarXY(void)
-         : Test("Element::Matrix::Int::IntVar::XY",3,0,3,false), 
-           tm(4, 0,1,2,3) {}
+         : Test("Element::Matrix::Int::IntVar::XY",3,0,5,false), 
+           tm(6, 0,1,2,3,4,5) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
          using namespace Gecode;
-         if ((x[0] > 1) || (x[1] > 1))
+         if ((x[0] > 2) || (x[1] > 1))
            return false;
-         Matrix<IntArgs> m(tm,2,2);
+         Matrix<IntArgs> m(tm,3,2);
          return m(x[0],x[1]) == x[2];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
          using namespace Gecode;
-         Matrix<IntArgs> m(tm,2,2);
+         Matrix<IntArgs> m(tm,3,2);
          element(home, m, x[0], x[1], x[2]);
        }
      };

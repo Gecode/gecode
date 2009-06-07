@@ -47,7 +47,7 @@ namespace Gecode {
   template <>
   class ArrayTraits<SetVarArray> {
   public:
-    typedef SetVarArgs   storage_type;
+    typedef SetVarArray  storage_type;
     typedef SetVar       value_type;
     typedef SetVarArgs   args_type;
   };

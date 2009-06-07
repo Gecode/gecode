@@ -41,7 +41,7 @@ namespace Gecode {
   template <>
   class ArrayTraits<IntVarArray> {
   public:
-    typedef IntVarArgs   storage_type;
+    typedef IntVarArray  storage_type;
     typedef IntVar       value_type;
     typedef IntVarArgs   args_type;
   };
@@ -77,7 +77,7 @@ namespace Gecode {
   template <>
   class ArrayTraits<BoolVarArray> {
   public:
-    typedef BoolVarArgs   storage_type;
+    typedef BoolVarArray  storage_type;
     typedef BoolVar       value_type;
     typedef BoolVarArgs   args_type;
   };
