@@ -73,6 +73,20 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added branch and assign for single integer and Boolean variable.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added branch and assign for single set variable.
+
+[ENTRY]
 Module: minimodel
 What:   new
 Rank:   minor

@@ -348,9 +348,7 @@ public:
       if (opt.model() == MODEL_CLIQUE)
         rel(*this, m, IRT_GQ, n-1);
     }
-    IntVarArgs ma(1);
-    ma[0] = m;
-    branch(*this, ma, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, m, INT_VAL_MIN);
     if (opt.branching() == BRANCH_SIZE) {
       branch(*this, v, INT_VAR_SIZE_MIN, INT_VAL_MIN);
     } else if (opt.branching() == BRANCH_DEGREE) {

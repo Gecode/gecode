@@ -1019,6 +1019,10 @@ namespace Gecode {
          const TieBreakVarBranch<SetVarBranch>& vars, SetValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Branch over \a x with value selection \a vals
+  GECODE_SET_EXPORT void
+  branch(Space& home, SetVar x, SetValBranch vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}
 
   /**
@@ -1041,6 +1045,10 @@ namespace Gecode {
   /// Assign all \a x with value selection \a vals
   GECODE_SET_EXPORT void
   assign(Space& home, const SetVarArgs& x, SetAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Assign \a x with value selection \a vals
+  GECODE_SET_EXPORT void
+  assign(Space& home, SetVar x, SetAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
 
   //@}

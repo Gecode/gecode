@@ -2219,6 +2219,10 @@ namespace Gecode {
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Branch over \a x with value selection \a vals
+  GECODE_INT_EXPORT void
+  branch(Space& home, IntVar x, IntValBranch vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
   branch(Space& home, const BoolVarArgs& x,
@@ -2230,6 +2234,10 @@ namespace Gecode {
   branch(Space& home, const BoolVarArgs& x,
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Branch over \a x with value selection \a vals
+  GECODE_INT_EXPORT void
+  branch(Space& home, BoolVar x, IntValBranch vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}
 
@@ -2250,9 +2258,17 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   assign(Space& home, const IntVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Assign \a x with value selection \a vals
+  GECODE_INT_EXPORT void
+  assign(Space& home, IntVar x, IntAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
   assign(Space& home, const BoolVarArgs& x, IntAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Assign \a x with value selection \a vals
+  GECODE_INT_EXPORT void
+  assign(Space& home, BoolVar x, IntAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
 
   //@}

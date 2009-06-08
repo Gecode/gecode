@@ -116,6 +116,20 @@ namespace Gecode {
     }
   }
 
+  void
+  branch(Space& home, SetVar x, SetValBranch vals,
+         const ValBranchOptions& o_vals) {
+    SetVarArgs xv(1); xv[0]=x;
+    branch(home, xv, SET_VAR_NONE, vals, VarBranchOptions::def, o_vals);
+  }
+  
+  void
+  assign(Space& home, SetVar x, SetAssign vals,
+         const ValBranchOptions& o_vals) {
+    SetVarArgs xv(1); xv[0]=x;
+    assign(home, xv, vals, o_vals);
+  }
+
 }
 
 // STATISTICS: set-branch

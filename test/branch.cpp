@@ -75,14 +75,6 @@ namespace Test { namespace Branch {
     virtual Gecode::Space* copy(bool share) {
       return new IntTestSpace(share,*this);
     }
-    /// Create actual branching
-    static void branch(Gecode::Space& _home) {
-      IntTestSpace& home =
-        static_cast<IntTestSpace&>(_home);
-      Gecode::branch(home, home.x, 
-                     Gecode::tiebreak(home.vara,home.varb), 
-                     home.val);
-    }
   };
 
   /// Space for executing Boolean tests
@@ -132,6 +124,7 @@ namespace Test { namespace Branch {
   //@{
   /// Integer variable selections
   const Gecode::IntVarBranch int_var_branch[] = {
+    Gecode::INT_VAR_NONE, // Use several single variable branchings
     Gecode::INT_VAR_NONE,
     Gecode::INT_VAR_RND,
     Gecode::INT_VAR_DEGREE_MIN,
@@ -154,6 +147,7 @@ namespace Test { namespace Branch {
     sizeof(int_var_branch)/sizeof(Gecode::IntVarBranch);
   /// Names for integer variable selections
   const char* int_var_branch_name[] = {
+    "SINGLE VARIABLE",
     "INT_VAR_NONE",
     "INT_VAR_RND",
     "INT_VAR_DEGREE_MIN",
@@ -206,6 +200,7 @@ namespace Test { namespace Branch {
   //@{
   /// Set variable selections
   const Gecode::SetVarBranch set_var_branch[] = {
+    Gecode::SET_VAR_NONE, // Use several single variable branchings
     Gecode::SET_VAR_NONE,
     Gecode::SET_VAR_RND,
     Gecode::SET_VAR_DEGREE_MIN,
@@ -224,6 +219,7 @@ namespace Test { namespace Branch {
     sizeof(set_var_branch)/sizeof(Gecode::SetVarBranch);
   /// Names for set variable selections
   const char* set_var_branch_name[] = {
+    "SINGLE VARIABLE",
     "SET_VAR_NONE",
     "SET_VAR_RND",
     "SET_VAR_DEGREE_MIN",
@@ -328,14 +324,17 @@ namespace Test { namespace Branch {
     post(*root, root->x);
     results.clear();
 
-    for (int vara = n_int_var_branch; vara--; ) {
-      for (int varb = n_int_var_branch; varb--; ) {
-        for (int val = n_int_val_branch; val--; ) {
+    for (int vara = 0; vara<n_int_var_branch; vara++) {
+      for (int varb = 1; varb<n_int_var_branch; varb++) {
+        for (int val = 0; val<n_int_val_branch; val++) {
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
-          c->vara = int_var_branch[vara];
-          c->varb = int_var_branch[varb];
-          c->val  = int_val_branch[val];
-          branch(*c, &IntTestSpace::branch);
+          if (vara == 0)
+            for (int i=0; i<c->x.size(); i++)
+              branch(*c, c->x[i], int_val_branch[val]);
+          else
+            branch(*c, c->x,
+                   tiebreak(int_var_branch[vara], int_var_branch[varb]),
+                   int_val_branch[val]);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(int_var_branch_name[vara],
@@ -382,13 +381,17 @@ namespace Test { namespace Branch {
     post(*root, root->x);
     results.clear();
 
-    for (int vara = n_int_var_branch; vara--; ) {
-      for (int varb = n_int_var_branch; varb--; ) {
-        for (int val = n_int_val_branch; val--; ) {
+    for (int vara = 0; vara<n_int_var_branch; vara++) {
+      for (int varb = 1; varb<n_int_var_branch; varb++) {
+        for (int val = 0; val<n_int_val_branch; val++) {
           BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
-          branch(*c, c->x,
-                 tiebreak(int_var_branch[vara], int_var_branch[varb]),
-                 int_val_branch[val]);
+          if (vara == 0)
+            for (int i=0; i<c->x.size(); i++)
+              branch(*c, c->x[i], int_val_branch[val]);
+          else
+            branch(*c, c->x,
+                   tiebreak(int_var_branch[vara], int_var_branch[varb]),
+                   int_val_branch[val]);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(int_var_branch_name[vara],
@@ -437,13 +440,17 @@ namespace Test { namespace Branch {
     root->status();
     results.clear();
 
-    for (int vara = n_set_var_branch; vara--; ) {
-      for (int varb = n_set_var_branch; varb--; ) {
-        for (int val = n_set_val_branch; val--; ) {
+    for (int vara = 0; vara<n_set_var_branch; vara++) {
+      for (int varb = 1; varb<n_set_var_branch; varb++) {
+        for (int val = 0; val<n_set_val_branch; val++) {
           SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
-          branch(*c, c->x,
-                 tiebreak(set_var_branch[vara], set_var_branch[varb]),
-                 set_val_branch[val]);
+          if (vara == 0)
+            for (int i=0; i<c->x.size(); i++)
+              branch(*c, c->x[i], set_val_branch[val]);
+          else
+            branch(*c, c->x,
+                   tiebreak(set_var_branch[vara], set_var_branch[varb]),
+                   set_val_branch[val]);
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(set_var_branch_name[vara],
