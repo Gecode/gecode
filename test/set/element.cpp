@@ -35,6 +35,8 @@
  *
  */
 
+#include <gecode/minimodel.hh>
+
 #include "test/set.hh"
 
 using namespace Gecode;
@@ -318,6 +320,44 @@ namespace Test { namespace Set {
       }
     };
     ElementSetConst _elementsetconst("Element::SetConst");
+
+    /// Test for matrix element with integer set array and set variable
+    class MatrixIntSet : public SetTest {
+     protected:
+       /// Array for test matrix
+       Gecode::IntSetArgs tm;
+     public:
+       /// Create and register test
+       MatrixIntSet(void)
+         : SetTest("Element::Matrix::IntSet",1,IntSet(0,3),false,2), 
+           tm(4) {
+         tm[0]=IntSet(0,0); tm[1]=IntSet(1,1);
+         tm[2]=IntSet(2,2); tm[3]=IntSet(3,3);
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const SetAssignment& x) const {
+         // Get integer assignment
+         const Int::Assignment& y = x.ints();
+         // x-coordinate: y[0], y-coordinate: y[1], result: x[0]
+         using namespace Gecode;
+         if ((y[0] > 1) || (y[1] > 1))
+           return false;
+         Matrix<IntSetArgs> m(tm,2,2);
+         IntSetRanges a(m(y[0],y[1]));
+         CountableSetRanges b(x.lub, x[0]);
+         return Iter::Ranges::equal(a,b);
+       }
+       /// Post constraint on \a x and \a y
+       virtual void post(Gecode::Space& home, Gecode::SetVarArray& x,
+                         Gecode::IntVarArray& y) {
+         // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
+         using namespace Gecode;
+         Matrix<IntSetArgs> m(tm,2,2);
+         element(home, m, y[0], y[1], x[0]);
+       }
+     };
+
+    MatrixIntSet _emis;
 
     //@}
 
