@@ -40,6 +40,7 @@
  */
 
 #include <climits>
+#include <cmath>
 
 namespace Gecode { namespace Support {
 
