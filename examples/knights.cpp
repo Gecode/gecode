@@ -1,9 +1,11 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
+ *     Mikael Lagerkvist, 2008
  *     Christian Schulte, 2001
  *
  *  Last modified:
@@ -41,6 +43,97 @@
 
 using namespace Gecode;
 
+
+/** \brief Custom branching for knights tours using Warnsdorff's rule
+ *
+ * This class implements Warnsdorff's rule for finding Knights
+ * tours. The next position is choosen by taking the jump that
+ * minimizes the number of alternatives in the next step.
+ *
+ * \relates Knights
+ */
+class Warnsdorff : public Branching {
+  /// Views of the branching
+  ViewArray<Int::IntView> x;
+  /// Next variable to branch on
+  mutable int start;
+  /// Branching description
+  class Description : public BranchingDesc {
+  public:
+    /// Position of variable
+    int pos;
+    /// Value of variable
+    int val;
+    /** Initialize description for branching \a b, number of
+     *  alternatives \a a, position \a pos0, and value \a val0.
+     */
+    Description(const Branching& b, unsigned int a, int pos0, int val0)
+      : BranchingDesc(b,a), pos(pos0), val(val0) {}
+    /// Report size occupied
+    virtual size_t size(void) const {
+      return sizeof(Description);
+    }
+  };
+ 
+  /// Construct branching
+  Warnsdorff(Space& home, ViewArray<Int::IntView>& xv) 
+    : Branching(home), x(xv), start(0) {}
+  /// Copy constructor
+  Warnsdorff(Space& home, bool share, Warnsdorff& b) 
+    : Branching(home, share, b), start(b.start) {
+    x.update(home, share, b.x);
+  }
+public:
+  /// Check status of branching, return true if alternatives left
+  virtual bool status(const Space&) const {
+    // Follow path of assigned variables
+    while (true) {
+      if (!x[start].assigned()) 
+        return true;
+      start = x[start].val();
+      if (start == 0) 
+        return false;
+    }
+  }
+  /// Return branching description
+  virtual BranchingDesc* description(Space&) {
+    Int::ViewValues<Int::IntView> iv(x[start]);
+    int n = iv.val();
+    unsigned int min = x[n].size();
+    ++iv;
+    // Choose the value with the fewest neighbours
+    while (iv()) {
+      if (x[iv.val()].size() < min) {
+        n = iv.val();
+        min = x[n].size();
+      }
+      ++iv;
+    }
+    return new Description(*this, 2, start, n);
+  }
+  /// Perform commit for branching description \a d and alternative \a a
+  virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
+                            unsigned int a) {
+    const Description& desc = static_cast<const Description&>(d);
+    if (a == 0)
+      return me_failed(x[desc.pos].eq(home, desc.val)) 
+        ? ES_FAILED : ES_OK;
+    else 
+      return me_failed(x[desc.pos].nq(home, desc.val)) 
+        ? ES_FAILED : ES_OK;
+  }
+  /// Copy branching
+  virtual Actor* copy(Space& home, bool share) {
+    return new (home) Warnsdorff(home, share, *this);
+  }
+  /// Post branching
+  static void post(Space& home, const IntVarArgs& x) {
+    ViewArray<Int::IntView> xv(home, x);
+    (void) new (home) Warnsdorff(home, xv);
+  }
+};
+
+
 /// Base-class for Knights tour example
 class Knights : public Script {
 protected:
@@ -53,6 +146,11 @@ public:
   enum {
     PROP_REIFIED, ///< Use reified constraints
     PROP_CIRCUIT  ///< Use single circuit constraints
+  };
+  /// Branching to use for model
+  enum {
+    BRANCH_NAIVE,      ///< Use naive, lexicographical branching
+    BRANCH_WARNSDORFF, ///< Use Warnsdorff's rule
   };
   /// Return field at position \a x, \a y
   int
@@ -77,7 +175,16 @@ public:
   }
   /// Constructor
   Knights(const SizeOptions& opt)
-    : n(opt.size()), succ(*this,n*n,0,n*n-1) {}
+    : n(opt.size()), succ(*this,n*n,0,n*n-1) {
+    switch (opt.branching()) {
+    case BRANCH_NAIVE:
+      branch(*this, succ, INT_VAR_NONE, INT_VAL_MIN);
+      break;
+    case BRANCH_WARNSDORFF:
+      Warnsdorff::post(*this, succ);
+      break;
+    }
+  }
   /// Constructor for cloning \a s
   Knights(bool share, Knights& s) : Script(share,s), n(s.n) {
     succ.update(*this, share, s.succ);
@@ -152,7 +259,6 @@ public:
       dom(*this, succ[f], ds);
       rel(*this, succ[f], IRT_NQ, pred[f]);
     }
-    branch(*this, succ, INT_VAR_NONE, INT_VAL_MIN);
   }
   /// Constructor for cloning \a s
   KnightsReified(bool share, KnightsReified& s) : Knights(share,s) {}
@@ -188,7 +294,6 @@ public:
       IntSet ds(nbs, n_nbs);
       dom(*this, succ[f], ds);
     }
-    branch(*this, succ, INT_VAR_NONE, INT_VAL_MIN);
   }
   /// Constructor for cloning \a s
   KnightsCircuit(bool share, KnightsCircuit& s) : Knights(share,s) {}
@@ -210,6 +315,9 @@ main(int argc, char* argv[]) {
   opt.propagation(Knights::PROP_CIRCUIT);
   opt.propagation(Knights::PROP_REIFIED, "reified");
   opt.propagation(Knights::PROP_CIRCUIT, "circuit");
+  opt.branching(Knights::BRANCH_NAIVE);
+  opt.branching(Knights::BRANCH_NAIVE, "reified");
+  opt.branching(Knights::BRANCH_WARNSDORFF, "warnsdorff");
   opt.parse(argc,argv);
   if (opt.propagation() == Knights::PROP_REIFIED) {
     Script::run<KnightsReified,DFS,SizeOptions>(opt);
