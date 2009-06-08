@@ -73,6 +73,30 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Added element constraints for Matrix interface to arrays.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Added element constraints for Matrix arrays.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Added element constraints for Matrix arrays.
+
+[ENTRY]
 Module: search
 What:   change
 Rank:   minor
