@@ -73,6 +73,13 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added branching following Warnsdorff's heuristic for Knights.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor
