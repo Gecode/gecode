@@ -584,14 +584,17 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(EXEOUTPUT, "-o ")
 
   dnl the names of the generated dlls
-  AC_SUBST(SUPPORT, "support")
-  AC_SUBST(KERNEL,  "kernel")
-  AC_SUBST(SEARCH,  "search")
-  AC_SUBST(INT,     "int")
-  AC_SUBST(SET,     "set")
-  AC_SUBST(MM,      "minimodel")
-  AC_SUBST(GIST,    "gist")
-  AC_SUBST(DRIVER,  "driver")])
+  AC_SUBST(SUPPORT,    "support")
+  AC_SUBST(KERNEL,     "kernel")
+  AC_SUBST(SEARCH,     "search")
+  AC_SUBST(INT,        "int")
+  AC_SUBST(SET,        "set")
+  AC_SUBST(MM,         "minimodel")
+  AC_SUBST(SCHEDULING, "scheduling")
+  AC_SUBST(GRAPH,      "graph")
+  AC_SUBST(MM,         "minimodel")
+  AC_SUBST(GIST,       "gist")
+  AC_SUBST(DRIVER,     "driver")])
 
 
 AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
@@ -643,6 +646,8 @@ AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_INT_FLAG, "")
    AC_SUBST(GECODE_BUILD_SET_FLAG, "")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "")
+   AC_SUBST(GECODE_BUILD_SCHEDULING_FLAG, "")
+   AC_SUBST(GECODE_BUILD_GRAPH_FLAG, "")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "")
    AC_SUBST(GECODE_BUILD_DRIVER_FLAG, "")])
 
@@ -653,6 +658,8 @@ AC_DEFUN([AC_GECODE_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_INT_FLAG, "-DGECODE_BUILD_INT")
    AC_SUBST(GECODE_BUILD_SET_FLAG, "-DGECODE_BUILD_SET")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "-DGECODE_BUILD_MINIMODEL")
+   AC_SUBST(GECODE_BUILD_SCHEDULING_FLAG, "-DGECODE_BUILD_SCHEDULING")
+   AC_SUBST(GECODE_BUILD_GRAPH_FLAG, "-DGECODE_BUILD_GRAPH")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "-DGECODE_BUILD_GIST")
    AC_SUBST(GECODE_BUILD_DRIVER_FLAG, "-DGECODE_BUILD_DRIVER")])
 
@@ -782,14 +789,16 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(EXEOUTPUT, "-Fe")
 
   dnl the names of the generated dlls
-  AC_SUBST(SUPPORT, "Support")
-  AC_SUBST(KERNEL,  "Kernel")
-  AC_SUBST(SEARCH,  "Search")
-  AC_SUBST(INT,     "Int")
-  AC_SUBST(SET,     "Set")
-  AC_SUBST(MM,      "Minimodel")
-  AC_SUBST(GIST,    "Gist")
-  AC_SUBST(DRIVER,  "Driver")])
+  AC_SUBST(SUPPORT,    "Support")
+  AC_SUBST(KERNEL,     "Kernel")
+  AC_SUBST(SEARCH,     "Search")
+  AC_SUBST(INT,        "Int")
+  AC_SUBST(SET,        "Set")
+  AC_SUBST(MM,         "Minimodel")
+  AC_SUBST(SCHEDULING, "Scheduling")
+  AC_SUBST(GRAPH,      "Graph")
+  AC_SUBST(GIST,       "Gist")
+  AC_SUBST(DRIVER,     "Driver")])
 
 dnl Macro:
 dnl   AC_GECODE_DOC_SWITCHES

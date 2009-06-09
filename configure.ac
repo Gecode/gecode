@@ -254,13 +254,22 @@ AC_GECODE_ENABLE_MODULE(driver, yes,
          enable_int="yes";
 	])
 
+AC_GECODE_ENABLE_MODULE(graph, yes,
+	[build graph library],
+	[enable_int="yes";
+	 enable_set="yes";
+	])
+
+AC_GECODE_ENABLE_MODULE(scheduling, yes,
+	[build scheduling library],
+	[enable_int="yes";
+	])
+
 AC_GECODE_ENABLE_MODULE(examples, yes,
 	[build examples for the enabled variable types],
 	[enable_search="yes";
          enable_driver="yes";
-	 if test ${enable_int_vars:-yes} = "yes"; then
-	   enable_minimodel="yes";
-	 fi;
+	 enable_minimodel="yes";
 	])
 
 AC_GECODE_ENABLE_MODULE(minimodel, yes,

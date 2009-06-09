@@ -59,6 +59,9 @@ $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
 $modclear{"cpltset"} = "Finite integer sets with complete representation";
 $modclear{"minimodel"} = "Minimal modelling support";
+$modclear{"graph"} = "Graph constraints";
+$modclear{"scheduling"} = "Scheduling constraints";
+$modclear{"driver"} = "Script commandline driver";
 $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "Example scripts";
@@ -70,6 +73,7 @@ $whatclear{"bug"} = "Bug fixes";
 $whatclear{"performance"} = "Performance improvements";
 $whatclear{"documentation"} = "Documentation fixes";
 $whatclear{"new"} = "Additions";
+$whatclear{"removed"} = "Removals";
 $whatclear{"change"} = "Other changes";
 
 $rankclear{"minor"} = "minor";

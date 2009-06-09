@@ -46,7 +46,7 @@ for ext in ${KEYWORDEXTS}; do
 done
 
 # List of normal directories to set ignore properties on
-NORMALDIRS="int iter kernel minimodel search set support gist driver"
+NORMALDIRS="int iter kernel minimodel search set support gist driver graph scheduling"
 
 for dir in ${NORMALDIRS}; do
     find . -type d -path "./gecode/$dir*" \
