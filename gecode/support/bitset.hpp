@@ -82,14 +82,14 @@ namespace Gecode { namespace Support {
   forceinline
   BitSet<A>::BitSet(A& a0, int s)
     : a(a0), sz(s) {
-    data = a.alloc<Base>(base(sz));
+    data = a.template alloc<Base>(base(sz));
     for (int i=base(sz); i--; ) data[i] = 0;
   }
 
   template<class A>
   forceinline
   BitSet<A>::BitSet(A& a0, const BitSet<A>& bs)
-    : a(a0), data(a.alloc<Base>(base(bs.sz))), sz(bs.sz) {
+    : a(a0), data(a.template alloc<Base>(base(bs.sz))), sz(bs.sz) {
     for (int i = base(sz); i--; ) 
       data[i] = bs.data[i];
   }
