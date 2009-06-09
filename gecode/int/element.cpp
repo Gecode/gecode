@@ -146,7 +146,7 @@ namespace Gecode {
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z);
+    element(home, a, pair(home,x,w,y,h), z, icl);
   }
 
   void
@@ -156,7 +156,7 @@ namespace Gecode {
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z);
+    element(home, a, pair(home,x,w,y,h), z, icl);
   }
 
   void
@@ -166,7 +166,7 @@ namespace Gecode {
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z);
+    element(home, a, pair(home,x,w,y,h), z, icl);
   }
 
   void
@@ -176,7 +176,7 @@ namespace Gecode {
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z);
+    element(home, a, pair(home,x,w,y,h), z, icl);
   }
 
 }
