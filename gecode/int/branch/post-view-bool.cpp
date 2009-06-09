@@ -44,60 +44,59 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   /// Create virtual view selector for tie-breaking
-  Gecode::ViewSelVirtualBase<BoolView>*
+  void
   virtualize(Gecode::Space& home, IntVarBranch vars,
-             const Gecode::VarBranchOptions& o_vars) {
+             const Gecode::VarBranchOptions& o_vars,
+             Gecode::ViewSelVirtualBase<BoolView>*& v) {
     switch (vars) {
     case INT_VAR_RND:
-      return new (home) ViewSelVirtual<ViewSelRnd<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelRnd<BoolView> >(home,o_vars);
       break;
     case INT_VAR_MIN_MIN:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_MIN_MAX:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_MAX_MIN:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_MAX_MAX:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_SIZE_MIN:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_SIZE_MAX:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_DEGREE_MIN:
-      return new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
       break;
     case INT_VAR_DEGREE_MAX:
-      return new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
-      return new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
-      return new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelDegreeMin<BoolView> >(home,o_vars);
       break;
     case INT_VAR_REGRET_MIN_MIN:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_REGRET_MIN_MAX:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_REGRET_MAX_MIN:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     case INT_VAR_REGRET_MAX_MAX:
-      return new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
       break;
     default:
       throw UnknownBranching("Int::branch");
     }
-    GECODE_NEVER;
-    return NULL;
   }
 
 }}}
@@ -239,11 +238,11 @@ namespace Gecode {
     Gecode::ViewSelVirtualBase<BoolView>* tb[3];
     int n=0;
     if (vars.b != INT_VAR_NONE)
-      tb[n++]=virtualize(home,vars.b,o_vars.b);
+      virtualize(home,vars.b,o_vars.b,tb[n++]);
     if (vars.c != INT_VAR_NONE)
-      tb[n++]=virtualize(home,vars.c,o_vars.c);
+      virtualize(home,vars.c,o_vars.c,tb[n++]);
     if (vars.d != INT_VAR_NONE)
-      tb[n++]=virtualize(home,vars.d,o_vars.d);
+      virtualize(home,vars.d,o_vars.d,tb[n++]);
     assert(n > 0);
     ViewSelTieBreakDynamic<BoolView> vbcd(home,tb,n);
     switch (vars.a) {

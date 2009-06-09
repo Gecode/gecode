@@ -44,48 +44,47 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   /// Create virtual view selector for tie-breaking
-  Gecode::ViewSelVirtualBase<SetView>*
+  void
   virtualize(Gecode::Space& home, SetVarBranch vars,
-             const Gecode::VarBranchOptions& o_vars) {
+             const Gecode::VarBranchOptions& o_vars,
+             Gecode::ViewSelVirtualBase<SetView>*& v) {
     switch (vars) {
     case SET_VAR_RND:
-      return new (home) ViewSelVirtual<ViewSelRnd<SetView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelRnd<SetView> >(home,o_vars);
       break;
     case SET_VAR_DEGREE_MIN:
-      return new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
       break;
     case SET_VAR_DEGREE_MAX:
-      return new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
       break;
     case SET_VAR_MIN_MIN:
-      return new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
       break;
     case SET_VAR_MIN_MAX:
-      return new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
       break;
     case SET_VAR_MAX_MIN:
-      return new (home) ViewSelVirtual<ByMaxMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ByMaxMin>(home,o_vars);
       break;
     case SET_VAR_MAX_MAX:
-      return new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
       break;
     case SET_VAR_SIZE_MIN:
-      return new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
       break;
     case SET_VAR_SIZE_MAX:
-      return new (home) ViewSelVirtual<BySizeMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<BySizeMax>(home,o_vars);
       break;
     case SET_VAR_SIZE_DEGREE_MIN:
-      return new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
       break;
     case SET_VAR_SIZE_DEGREE_MAX:
-      return new (home) ViewSelVirtual<BySizeDegreeMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<BySizeDegreeMax>(home,o_vars);
       break;
     default:
       throw UnknownBranching("Set::branch");
     }
-    GECODE_NEVER;
-    return NULL;
   }
 
 }}}
@@ -203,11 +202,11 @@ namespace Gecode {
     Gecode::ViewSelVirtualBase<SetView>* tb[3];
     int n=0;
     if (vars.b != SET_VAR_NONE)
-      tb[n++]=virtualize(home,vars.b,o_vars.b);
+      virtualize(home,vars.b,o_vars.b,tb[n++]);
     if (vars.c != SET_VAR_NONE)
-      tb[n++]=virtualize(home,vars.c,o_vars.c);
+      virtualize(home,vars.c,o_vars.c,tb[n++]);
     if (vars.d != SET_VAR_NONE)
-      tb[n++]=virtualize(home,vars.d,o_vars.d);
+      virtualize(home,vars.d,o_vars.d,tb[n++]);
     assert(n > 0);
     ViewSelTieBreakDynamic<SetView> vbcd(home,tb,n);
     switch (vars.a) {
