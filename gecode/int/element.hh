@@ -319,7 +319,8 @@ namespace Gecode { namespace Int { namespace Element {
    *
    * \ingroup FuncIntProp
    */
-  class Pair : public TernaryPropagator<IntView,PC_INT_DOM> {
+  class GECODE_VTABLE_EXPORT Pair 
+    : public TernaryPropagator<IntView,PC_INT_DOM> {
   protected:
     using TernaryPropagator<IntView,PC_INT_DOM>::x0;
     using TernaryPropagator<IntView,PC_INT_DOM>::x1;
