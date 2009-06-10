@@ -1797,7 +1797,8 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   extensional(Space& home, const BoolVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
- //@}
+  //@}
+
 }
 
 #include <gecode/int/extensional/dfa.hpp>
@@ -2087,8 +2088,6 @@ namespace Gecode {
    *
    * Synchronized execution executes a function or a static member function
    * when a certain event happends.
-   *
-   * \ingroup TaskModelInt
    */
   //@{
   /// Execute \a c when \a x becomes assigned
@@ -2130,7 +2129,6 @@ namespace Gecode {
    * arrays without multiple occurences of the same variable, for
    * example extensional.
    *
-   * \ingroup TaskModelInt
    */
   //@{
   /**
