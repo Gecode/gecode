@@ -46,7 +46,6 @@ export bindir = @bindir@
 export libdir = @libdir@
 export sharedlibdir = @sharedlibdir@
 export includedir = @includedir@
-export pkgincludedir = $(includedir)/gecode
 export srcdir = @srcdir@
 export datarootdir = @datarootdir@
 export datadir = @datadir@
@@ -59,7 +58,7 @@ DESTDIR=
 
 export subdirs = @subdirs@
 
-export VERSION		= @VERSION@
+export VERSION	= @VERSION@
 
 export CXX = @CXX@
 export CC = @CC@
@@ -1368,34 +1367,6 @@ doc-apple: doc
 # Installation
 #
 
-ifeq "@enable_gist@" "yes"
-GIST_PKGCONFIGFILE = gecode-gist.pc
-else
-GIST_PKGCONFIGFILE = 
-endif
-
-ifeq "@enable_minimodel@" "yes"
-MM_PKGCONFIGFILE = gecode-minimodel.pc
-else
-MM_PKGCONFIGFILE = 
-endif
-
-ifeq "@enable_driver@" "yes"
-DRIVER_PKGCONFIGFILE = gecode-driver.pc
-else
-DRIVER_PKGCONFIGFILE = 
-endif
-
-ifeq "@HAS_PKGCONFIG@" "yes"
-PKGCONFIGFILES = \
-	gecode.pc gecode-search.pc \
-	$(MM_PKGCONFIGFILE) \
-	$(DRIVER_PKGCONFIGFILE) \
-	$(GIST_PKGCONFIGFILE)
-else
-PKGCONFIGFILES =
-endif
-
 .PHONY: install
 
 ifeq "@BUILD_MACOS_FRAMEWORK@" "yes"
@@ -1416,12 +1387,7 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	  (cd $(DESTDIR)$(includedir) && tar xf -) && \
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do \
-	    cp $$f $(DESTDIR)$(pkgincludedir)/support; done && \
-	for_pkgconfigfiles="$(PKGCONFIGFILES)" && \
-	  for f in $$for_pkgconfigfiles; do \
-	    mkdir -p $(DESTDIR)$(libdir)/pkgconfig; \
-	    cp misc/$$f $(DESTDIR)$(libdir)/pkgconfig; \
-	  done
+	    cp $$f $(DESTDIR)$(includedir)/gecode/support; done
 
 doinstalllib: 
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
