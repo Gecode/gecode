@@ -77,6 +77,22 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Moved cumulatives to the new scheduling library.
+
+[ENTRY]
+Module: scheduling
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a new module for graph scheduling. To use scheduling
+constraints, you have to include <gecode/scheduling.hh> and link
+against the scheduling library.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Moved circuit to the new graph library.
 
 [ENTRY]

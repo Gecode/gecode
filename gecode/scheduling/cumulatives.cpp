@@ -35,7 +35,7 @@
  *
  */
 
-#include <gecode/int/cumulatives.hh>
+#include <gecode/scheduling/cumulatives.hh>
 #include <gecode/int/linear.hh>
 
 namespace Gecode {
@@ -45,15 +45,15 @@ namespace Gecode {
   namespace {
     ViewArray<IntView>
     make_view_array(Space& home, const IntVarArgs& in) {
-      return ViewArray<IntView>(home, in);
+      return ViewArray<Int::IntView>(home, in);
     }
 
     ViewArray<ConstIntView>
     make_view_array(Space& home, const IntArgs& in) {
-      ViewArray<ConstIntView> res(home, in.size());
+      ViewArray<Int::ConstIntView> res(home, in.size());
       for (int i = in.size(); i--; ) {
-        Limits::check(in[i],"Int::cumulatives");
-        res[i] = ConstIntView(in[i]);
+        Int::Limits::check(in[i],"Scheduling::cumulatives");
+        res[i] = Int::ConstIntView(in[i]);
       }
 
       return res;
@@ -64,30 +64,30 @@ namespace Gecode {
     template<>
     class ViewType<IntArgs> {
     public:
-      typedef ConstIntView Result;
+      typedef Int::ConstIntView Result;
     };
 
     template<>
     class ViewType<IntVarArgs> {
     public:
-      typedef IntView Result;
+      typedef Int::IntView Result;
     };
 
     void
     sum(Space& home, IntVar s, IntVar d, IntVar e) {
-      Linear::Term<IntView> t[3];
+      Int::Linear::Term<Int::IntView> t[3];
       t[0].a= 1; t[0].x=s;
       t[1].a= 1; t[1].x=d;
       t[2].a=-1; t[2].x=e;
-      Linear::post(home, t, 3, IRT_EQ, 0);
+      Int::Linear::post(home, t, 3, IRT_EQ, 0);
     }
 
     void
     sum(Space& home, IntVar s, int d, IntVar e) {
-      Linear::Term<IntView> t[2];
+      Int::Linear::Term<Int::IntView> t[2];
       t[0].a= 1; t[0].x=s;
       t[1].a=-1; t[1].x=e;
-      Linear::post(home, t, 2, IRT_EQ, -d);
+      Int::Linear::post(home, t, 2, IRT_EQ, -d);
     }
 
     template <class Machine, class Duration, class Height>
@@ -101,7 +101,7 @@ namespace Gecode {
           start.size() != duration.size() ||
           duration.size() != end.size()   ||
           end.size() != height.size())
-        throw ArgumentSizeMismatch("Int::cumulatives");
+        throw ArgumentSizeMismatch("Scheduling::cumulatives");
       if (home.failed()) return;
 
       ViewArray<typename ViewType<Machine>::Result>
@@ -119,7 +119,7 @@ namespace Gecode {
         limit_s[i] = limit[i];
 
       // There is only the value-consistent propagator for this constraint
-      GECODE_ES_FAIL(home,(Cumulatives::Val<
+      GECODE_ES_FAIL(home,(Scheduling::Cumulatives::Val<
                            typename ViewType<Machine>::Result,
                            typename ViewType<Duration>::Result,
                            typename ViewType<Height>::Result,
@@ -217,4 +217,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: int-post
+// STATISTICS: scheduling-post

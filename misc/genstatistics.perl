@@ -159,7 +159,7 @@ foreach $module (@modorder) {
       $doc = $doc .  $code{$k} . " loc, ";
       $doc = $doc .  $comment{$k} . " lod\n";
     }
-  } 
+  }
   print $mn_class . " classes, " . $mn_code . " loc, " . $mn_comment . " lod\n";
   if ($n_cat > 1) {
     print $doc;

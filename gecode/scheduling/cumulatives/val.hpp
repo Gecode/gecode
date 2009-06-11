@@ -44,7 +44,7 @@
  *   Constraint with Negative Heights. CP 2002, pages 63-79, Springer-Verlag.
  */
 
-namespace Gecode { namespace Int { namespace Cumulatives {
+namespace Gecode { namespace Scheduling { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
@@ -388,5 +388,5 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
 }}}
 
-// STATISTICS: int-prop
+// STATISTICS: scheduling-prop
 

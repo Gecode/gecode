@@ -103,11 +103,6 @@
  */
 
 /**
- * \defgroup TaskModelScheduling Scheduling constraints and branchings
- * \ingroup TaskModel
- */
-
-/**
  * \defgroup TaskDriver Script commandline driver
  * \ingroup TaskModel
  */
@@ -265,6 +260,14 @@
  * \defgroup FuncGraphProp Graph propagators
  *
  * This module contains a description of all predefined graph
+ * propagators.
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup FuncScheduingProp Scheduling propagators
+ *
+ * This module contains a description of all predefined scheduling
  * propagators.
  * \ingroup Other
  */

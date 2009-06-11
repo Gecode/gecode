@@ -255,7 +255,7 @@ INTSRC0 = \
 	linear/int-post.cpp linear-int.cpp \
 	linear/bool-post.cpp linear-bool.cpp \
 	branch.cpp \
-	distinct.cpp cumulatives.cpp \
+	distinct.cpp \
 	sorted.cpp gcc.cpp \
 	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
 	unshare.cpp
@@ -270,7 +270,6 @@ INTHDR0 = \
 	branch/select-val.hpp \
 	branch/select-values.hpp branch/select-view.hpp \
 	count/view.hpp count/int.hpp count/rel.hpp \
-	cumulatives/val.hpp \
 	distinct/bilink.hpp distinct/bnd.hpp distinct/combptr.hpp \
 	distinct/dom.hpp distinct/edge.hpp distinct/node.hpp \
 	distinct/val.hpp distinct/ter-dom.hpp \
@@ -295,7 +294,7 @@ INTHDR0 = \
 	view/minus.hpp view/print.hpp view/neg-bool.hpp view/bool-test.hpp \
 	view/offset.hpp view/rel-test.hpp view/scale.hpp view/iter.hpp \
 	arithmetic.hh array.hpp bool.hh branch.hh \
-	count.hh cumulatives.hh distinct.hh dom.hh \
+	count.hh distinct.hh dom.hh \
 	element.hh exception.hpp  gcc.hh linear.hh \
 	propagator.hpp extensional.hh rel.hh \
 	sorted.hh var-imp.hpp view.hpp \
@@ -432,6 +431,42 @@ export LINKGRAPH      	=
 endif
 GRAPHBUILDDIRS	= \
 	graph
+
+
+#
+# SCHEDULING COMPONENTS
+#
+
+SCHEDULINGSRC0 = \
+	cumulatives.cpp
+SCHEDULINGHDR0 = \
+	exception.hpp \
+	cumulatives.hh cumulatives/val.hpp
+
+SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
+SCHEDULINGHDR	= gecode/scheduling.hh $(SCHEDULINGHDR0:%=gecode/scheduling/%)
+SCHEDULINGOBJ0	= $(SCHEDULINGSRC:%.cpp=%$(OBJSUFFIX))
+SCHEDULINGOBJ	= $(subst $(top_srcdir)/,,$(SCHEDULINGOBJ0))
+
+ifeq "@enable_scheduling@" "yes"
+export SCHEDULINGDLL		= $(LIBPREFIX)@SCHEDULING@$(DLLSUFFIX)
+export SCHEDULINGSTATICLIB	= $(LIBPREFIX)@SCHEDULING@$(STATICLIBSUFFIX)
+export SCHEDULINGLIB		= $(LIBPREFIX)@SCHEDULING@$(LIBSUFFIX)
+export LINKSCHEDULING      	= $(LINKPREFIX)@SCHEDULING@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export SCHEDULINGSONAME	= \
+	@WLSONAME@$(LIBPREFIX)@SCHEDULING@$(SOSUFFIX)
+else
+export SCHEDULINGSONAME	= 
+endif
+else
+export SCHEDULINGDLL		=
+export SCHEDULINGSTATICLIB	=
+export SCHEDULINGLIB		=
+export LINKSCHEDULING      	=
+endif
+SCHEDULINGBUILDDIRS	= \
+	scheduling
 
 
 #
@@ -580,16 +615,12 @@ endif
 #
 
 INTEXAMPLESRC0 =						\
-	alpha bacp bibd donald					\
-	eq20 golomb-ruler tsp					\
-	graph-color grocery ind-set knights			\
-	magic-sequence magic-square				\
-	money ortho-latin perfect-square			\
-	partition photo queens					\
-	sudoku kakuro nonogram pentominoes			\
-	crowded-chess black-hole minesweeper domino		\
-	steel-mill sports-league all-interval			\
-	efpa langford-number warehouses				\
+	alpha bacp bibd donald efpa eq20 golomb-ruler		\
+	graph-color grocery ind-set magic-sequence magic-square	\
+	money ortho-latin partition photo queens sudoku kakuro  \
+	nonogram pentominoes crowded-chess black-hole		\
+	minesweeper domino steel-mill sports-league		\
+	all-interval langford-number warehouses			\
 	stress-domain stress-exec stress-search baseline	\
 	stress-element stress-min stress-distinct		\
 	stress-extensional stress-linear-bool sat radiotherapy
@@ -614,11 +645,33 @@ else
 SETEXAMPLEEXE  = 
 endif
 
+GRAPHEXAMPLESRC0 = \
+	knights tsp
+GRAPHEXAMPLESRC  = $(GRAPHEXAMPLESRC0:%=examples/%.cpp)
+GRAPHEXAMPLEOBJ  = $(GRAPHEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
+GRAPHEXAMPLESBJ  = $(GRAPHEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
+ifeq "@enable_graph@" "yes"
+GRAPHEXAMPLEEXE  = $(GRAPHEXAMPLESRC:%.cpp=%$(EXESUFFIX))
+else
+GRAPHEXAMPLEEXE  = 
+endif
+
+SCHEDULINGEXAMPLESRC0 = \
+	perfect-square
+SCHEDULINGEXAMPLESRC  = $(SCHEDULINGEXAMPLESRC0:%=examples/%.cpp)
+SCHEDULINGEXAMPLEOBJ  = $(SCHEDULINGEXAMPLESRC:%.cpp=%$(OBJSUFFIX))
+SCHEDULINGEXAMPLESBJ  = $(SCHEDULINGEXAMPLESRC:%.cpp=%$(SBJSUFFIX))
+ifeq "@enable_scheduling@" "yes"
+SCHEDULINGEXAMPLEEXE  = $(SCHEDULINGEXAMPLESRC:%.cpp=%$(EXESUFFIX))
+else
+SCHEDULINGEXAMPLEEXE  = 
+endif
+
 
 EXAMPLEBUILDDIRS = examples
 
 EXAMPLEEXE = \
-  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
+  $(INTEXAMPLEEXE) $(GRAPHEXAMPLE) $(SCHEDULINGEXAMPLE) $(SETEXAMPLEEXE)
 
 
 
@@ -628,13 +681,14 @@ EXAMPLEEXE = \
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(MMSRC) $(GRAPHSRC) $(DRIVERSRC) \
+        $(INTSRC) $(SETSRC) $(MMSRC) $(GRAPHSRC) $(SCHEDULINGSRC) \
+	$(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(DRIVERHDR) \
-	$(ITERHDR) $(GISTHDR)
+        $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(SCHEDULINGSRC) \
+	$(DRIVERHDR) $(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
@@ -644,25 +698,25 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(MMDLL) $(GRAPHDLL) $(DRIVERDLL) $(GISTDLL)
+	$(MMDLL) $(GRAPHDLL) $(SCHEDULINGDLL) $(DRIVERDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(MMLIB) $(GRAPHLIB) $(DRIVERLIB) $(GISTLIB)
+	$(MMLIB) $(GRAPHLIB) $(SCHEDULINGLIB) $(DRIVERLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(DRIVERSTATICLIB) \
-	$(GISTSTATICLIB)
+	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(SCHEDULINGSTATICLIB) \
+	$(DRIVERSTATICLIB) $(GISTSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(DRIVERSTATICLIB) \
-	$(GISTSTATICLIB)
+	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(SCHEDULINGSTATICLIB) \
+	$(DRIVERSTATICLIB) $(GISTSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -742,6 +796,7 @@ BUILDDIRS = \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
 	$(GRAPHBUILDDIRS:%=gecode/%)  \
+	$(SCHEDULINGBUILDDIRS:%=gecode/%)  \
 	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
 	$(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
@@ -913,6 +968,13 @@ gecode/graph/%$(SBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_GRAPH \
 	-c -Fa$@ -Tp$<
 
+gecode/scheduling/%$(OBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SCHEDULING \
+	-c -Fo$@ -Tp$<
+gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SCHEDULING \
+	-c -Fa$@ -Tp$<
+
 gecode/driver/%$(OBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
@@ -967,8 +1029,8 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
-	$(LINKDRIVER) $(LINKGIST) $(LINKSEARCH) $(LINKGRAPH) $(LINKMM) \
-	$(LINKSET) $(LINKINT) \
+	$(LINKDRIVER) $(LINKGIST) $(LINKSEARCH) $(LINKSCHEDULING) \
+	$(LINKGRAPH) $(LINKMM) $(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) $(SUPPORTSONAME) \
@@ -1011,6 +1073,12 @@ $(GRAPHDLL): $(GRAPHOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(GRAPHDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(SCHEDULINGDLL): $(SCHEDULINGOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) $(SCHEDULINGSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(SCHEDULINGDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(DRIVERDLL): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL) 
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) $(DRIVERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKGIST) \
@@ -1046,6 +1114,10 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 $(GRAPHDLL) $(GRAPHLIB): $(GRAPHOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(GRAPHDLL) $(GLDFLAGS)
+$(SCHEDULINGDLL) $(SCHEDULINGLIB): $(SCHEDULINGOBJ) \
+	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) \
+		@DLLPATH@ @LINKOUTPUT@$(SCHEDULINGDLL) $(GLDFLAGS)
 $(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) \
 	$(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL)
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) \
@@ -1080,6 +1152,9 @@ $(MMSTATICLIB): $(MMOBJ)
 	$(RANLIB) $@
 $(GRAPHSTATICLIB): $(GRAPHOBJ)
 	$(AR) $(ARFLAGS) $@ $(GRAPHOBJ)
+	$(RANLIB) $@
+$(SCHEDULINGSTATICLIB): $(SCHEDULINGOBJ)
+	$(AR) $(ARFLAGS) $@ $(SCHEDULINGOBJ)
 	$(RANLIB) $@
 $(DRIVERSTATICLIB): $(DRIVEROBJ)
 	$(AR) $(ARFLAGS) $@ $(DRIVEROBJ)

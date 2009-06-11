@@ -39,6 +39,7 @@
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
+#include <gecode/scheduling.hh>
 
 #include <vector>
 #include <algorithm>

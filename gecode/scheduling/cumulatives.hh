@@ -35,17 +35,14 @@
  *
  */
 
-/*
- */
+#ifndef __GECODE_SCHEDULING_CUMULATIVES_HH__
+#define __GECODE_SCHEDULING_CUMULATIVES_HH__
 
-#ifndef __GECODE_INT_CUMULATIVES_HH__
-#define __GECODE_INT_CUMULATIVES_HH__
+#include <gecode/scheduling.hh>
 
-#include <gecode/int.hh>
+namespace Gecode { namespace Scheduling { namespace Cumulatives {
 
-namespace Gecode { namespace Int { namespace Cumulatives {
-
-  /** \namespace Gecode::Int::Cumulatives
+  /** \namespace Gecode::Scheduling::Cumulatives
    *  \brief %Cumulatives propagators
    *
    * This namespace contains a propagator for the
@@ -86,8 +83,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
    * This class implements Beldiceanu's and Carlsson's sweep-line
    * propagation algorithm for the cumulatives constraint.
    *
-   * Requires \code #include <gecode/int/cumulatives.hh> \endcode
-   * \ingroup FuncIntProp
+   * Requires \code #include <gecode/scheduling/cumulatives.hh> \endcode
+   * \ingroup FuncSchedulingProp
    */
   template <class ViewM, class ViewD, class ViewH, class View>
   class Val : public Propagator {
@@ -128,9 +125,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
 }}}
 
-#include <gecode/int/cumulatives/val.hpp>
+#include <gecode/scheduling/cumulatives/val.hpp>
 
 #endif
 
-// STATISTICS: int-prop
+// STATISTICS: scheduling-prop
 
