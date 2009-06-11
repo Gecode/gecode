@@ -73,6 +73,22 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Moved circuit to the new graph library.
+
+[ENTRY]
+Module: graph
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a new module for graph constraints. To use graph
+constraints, you have to include <gecode/graph.hh> and link
+against the graph library.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

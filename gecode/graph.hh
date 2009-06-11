@@ -75,7 +75,32 @@
  *
  */
 
+#include <gecode/graph/exception.hpp>
+
 namespace Gecode {
+
+  /**
+   * \defgroup TaskModelGraph Graph constraints
+   * \ingroup TaskModel
+   */
+  //@{
+  /** \brief Post propagator such that \a x forms a circuit
+   *
+   * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
+   * \f$x_i=j\f$ has a single cycle covering all nodes.
+   *
+   * Supports domain (\a icl = ICL_DOM) and value propagation (all
+   * other values for \a icl), where this refers to whether value or
+   * domain consistent distinct in enforced on \a x.
+   *
+   * Throws an exception of type Graph::ArgumentSame, if \a x
+   * contains the same unassigned variable multiply.
+   */
+  GECODE_GRAPH_EXPORT void
+  circuit(Space& home, const IntVarArgs& x,
+          IntConLevel icl=ICL_DEF);
+  //@}
+
 }
 
 #endif

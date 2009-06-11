@@ -103,11 +103,6 @@
  */
 
 /**
- * \defgroup TaskModelGraph Graph constraints
- * \ingroup TaskModel
- */
-
-/**
  * \defgroup TaskModelScheduling Scheduling constraints and branchings
  * \ingroup TaskModel
  */
@@ -262,6 +257,14 @@
  * This module contains a description of all predefined integer 
  * propagators. They can be reused, for example, for rewriting
  * newly defined integer propagators into already available
+ * propagators.
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup FuncGraphProp Graph propagators
+ *
+ * This module contains a description of all predefined graph
  * propagators.
  * \ingroup Other
  */

@@ -258,7 +258,7 @@ INTSRC0 = \
 	distinct.cpp cumulatives.cpp \
 	sorted.cpp gcc.cpp \
 	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
-	circuit.cpp unshare.cpp
+	unshare.cpp
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
 	exec.hh exec/when.hpp \
@@ -300,8 +300,7 @@ INTHDR0 = \
 	propagator.hpp extensional.hh rel.hh \
 	sorted.hh var-imp.hpp view.hpp \
 	channel.hh channel/dom.hpp channel/val.hpp \
-	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
-	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp
+	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
@@ -398,6 +397,42 @@ SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
 	set/element set/sequence set/var set/var-imp set/view \
 	set/branch
+
+#
+# GRAPH COMPONENTS
+#
+
+GRAPHSRC0 = \
+	circuit.cpp
+GRAPHHDR0 = \
+	exception.hpp \
+	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp
+
+GRAPHSRC	= $(GRAPHSRC0:%=gecode/graph/%)
+GRAPHHDR	= gecode/graph.hh $(GRAPHHDR0:%=gecode/graph/%)
+GRAPHOBJ0	= $(GRAPHSRC:%.cpp=%$(OBJSUFFIX))
+GRAPHOBJ	= $(subst $(top_srcdir)/,,$(GRAPHOBJ0))
+
+ifeq "@enable_graph@" "yes"
+export GRAPHDLL		= $(LIBPREFIX)@GRAPH@$(DLLSUFFIX)
+export GRAPHSTATICLIB	= $(LIBPREFIX)@GRAPH@$(STATICLIBSUFFIX)
+export GRAPHLIB		= $(LIBPREFIX)@GRAPH@$(LIBSUFFIX)
+export LINKGRAPH      	= $(LINKPREFIX)@GRAPH@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export GRAPHSONAME	= \
+	@WLSONAME@$(LIBPREFIX)@GRAPH@$(SOSUFFIX)
+else
+export GRAPHSONAME	= 
+endif
+else
+export GRAPHDLL		=
+export GRAPHSTATICLIB	=
+export GRAPHLIB		=
+export LINKGRAPH      	=
+endif
+GRAPHBUILDDIRS	= \
+	graph
+
 
 #
 # MINIMODEL COMPONENTS
@@ -593,12 +628,12 @@ EXAMPLEEXE = \
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
+        $(INTSRC) $(SETSRC) $(MMSRC) $(GRAPHSRC) $(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(GISTSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(MMHDR) $(DRIVERHDR) \
+        $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(DRIVERHDR) \
 	$(ITERHDR) $(GISTHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
@@ -609,16 +644,16 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(MMDLL) $(DRIVERDLL) $(GISTDLL)
+	$(MMDLL) $(GRAPHDLL) $(DRIVERDLL) $(GISTDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(MMLIB) $(DRIVERLIB) $(GISTLIB)
+	$(MMLIB) $(GRAPHLIB) $(DRIVERLIB) $(GISTLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(DRIVERSTATICLIB) \
+	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(DRIVERSTATICLIB) \
 	$(GISTSTATICLIB)
 endif
 
@@ -626,7 +661,7 @@ ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(DRIVERSTATICLIB) \
+	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(DRIVERSTATICLIB) \
 	$(GISTSTATICLIB)
 else
 STATICTARGETS=
@@ -706,6 +741,7 @@ BUILDDIRS = \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
+	$(GRAPHBUILDDIRS:%=gecode/%)  \
 	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
 	$(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
@@ -870,6 +906,13 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
+gecode/graph/%$(OBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_GRAPH \
+	-c -Fo$@ -Tp$<
+gecode/graph/%$(SBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_GRAPH \
+	-c -Fa$@ -Tp$<
+
 gecode/driver/%$(OBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
@@ -924,7 +967,7 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 export LINKALL = \
-	$(LINKDRIVER) $(LINKGIST) $(LINKSEARCH) $(LINKMM) \
+	$(LINKDRIVER) $(LINKGIST) $(LINKSEARCH) $(LINKGRAPH) $(LINKMM) \
 	$(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 $(SUPPORTDLL): $(SUPPORTOBJ)
@@ -962,6 +1005,12 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(GRAPHDLL): $(GRAPHOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) $(GRAPHSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(GRAPHDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(DRIVERDLL): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL) 
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) $(DRIVERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKGIST) \
@@ -994,6 +1043,9 @@ $(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
+$(GRAPHDLL) $(GRAPHLIB): $(GRAPHOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) \
+		@DLLPATH@ @LINKOUTPUT@$(GRAPHDLL) $(GLDFLAGS)
 $(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) \
 	$(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL)
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) \
@@ -1025,6 +1077,9 @@ $(SETSTATICLIB): $(SETOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)
+	$(RANLIB) $@
+$(GRAPHSTATICLIB): $(GRAPHOBJ)
+	$(AR) $(ARFLAGS) $@ $(GRAPHOBJ)
 	$(RANLIB) $@
 $(DRIVERSTATICLIB): $(DRIVEROBJ)
 	$(AR) $(ARFLAGS) $@ $(DRIVEROBJ)

@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Circuit {
+namespace Gecode { namespace Graph { namespace Circuit {
 
   /*
    * The actual propagator
@@ -43,45 +43,68 @@ namespace Gecode { namespace Int { namespace Circuit {
    */
   template <class View>
   forceinline
-  Val<View>::Val(Space& home, ViewArray<View>& x)
+  Dom<View>::Dom(Space& home, ViewArray<View>& x)
     : Base<View>(home,x) {}
 
   template <class View>
   forceinline
-  Val<View>::Val(Space& home, bool share, Val<View>& p)
+  Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
     : Base<View>(home,share,p) {}
 
   template <class View>
   Actor*
-  Val<View>::copy(Space& home, bool share) {
-    return new (home) Val<View>(home,share,*this);
+  Dom<View>::copy(Space& home, bool share) {
+    return new (home) Dom<View>(home,share,*this);
   }
 
   template <class View>
   PropCost
-  Val<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI, x.size());
+  Dom<View>::cost(const Space&, const ModEventDelta& med) const {
+    if (View::me(med) == Int::ME_INT_VAL)
+      return PropCost::linear(PropCost::LO, x.size());
+    else
+      return PropCost::quadratic(PropCost::HI, x.size());
   }
 
   template <class View>
   ExecStatus
-  Val<View>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));
+  Dom<View>::propagate(Space& home, const ModEventDelta& med) {
+    if (View::me(med) == Int::ME_INT_VAL) {
+      GECODE_ES_CHECK((Int::Distinct::prop_val<View,true>(home,y)));
+      ExecStatus escv = connected(home);
+      if (escv != ES_FIX)
+        return escv;
+      if (y.size() < 2)
+        return ES_SUBSUMED(*this,home);
+      return ES_FIX_PARTIAL(*this,View::med(Int::ME_INT_DOM));
+    }
+
+    if (dc.available()) {
+      GECODE_ES_CHECK(dc.sync(home));
+    } else {
+      GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
+    }
+    bool assigned;
+    GECODE_ES_CHECK(dc.propagate(home,assigned));
+
     ExecStatus esc = connected(home);
     if (esc != ES_FIX)
       return esc;
-    /*
-     * One cannot have a single unassigned view as the views constitute
-     * a permutation.
-     */
-    if (y.size() < 2)
-      return ES_SUBSUMED(*this,home);
+
+    // Elminiate assigned views from y, as they have been assigned
+    // and propagated by domain consistent propagation. This is required
+    // as we need to know how many assigned views actually exist.
+    if (assigned)
+      for (int i=y.size(); i--; )
+        if (y[i].assigned())
+          y.move_lst(i);
+
     return path(home);
   }
 
   template <class View>
   ExecStatus
-  Val<View>::post(Space& home, ViewArray<View>& x) {
+  Dom<View>::post(Space& home, ViewArray<View>& x) {
     int n = x.size();
     if (n == 1) {
       GECODE_ME_CHECK(x[0].eq(home,0));
@@ -94,12 +117,12 @@ namespace Gecode { namespace Int { namespace Circuit {
         GECODE_ME_CHECK(x[i].le(home,n));
         GECODE_ME_CHECK(x[i].nq(home,i));
       }
-      (void) new (home) Val<View>(home,x);
+      (void) new (home) Dom<View>(home,x);
     }
     return ES_OK;
   }
 
 }}}
 
-// STATISTICS: int-prop
+// STATISTICS: graph-prop
 

@@ -38,6 +38,7 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+#include <gecode/graph.hh>
 
 #include <algorithm>
 

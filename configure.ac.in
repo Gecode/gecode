@@ -253,7 +253,6 @@ AC_GECODE_ENABLE_MODULE(driver, yes,
 AC_GECODE_ENABLE_MODULE(graph, yes,
 	[build graph library],
 	[enable_int="yes";
-	 enable_set="yes";
 	])
 
 AC_GECODE_ENABLE_MODULE(scheduling, yes,

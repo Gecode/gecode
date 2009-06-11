@@ -35,18 +35,18 @@
  *
  */
 
-#ifndef __GECODE_INT_CIRCUIT_HH__
-#define __GECODE_INT_CIRCUIT_HH__
+#ifndef __GECODE_GRAPH_CIRCUIT_HH__
+#define __GECODE_GRAPH_CIRCUIT_HH__
 
-#include <gecode/int.hh>
+#include <gecode/graph.hh>
 #include <gecode/int/distinct.hh>
 
 /**
- * \namespace Gecode::Int::Circuit
+ * \namespace Gecode::Graph::Circuit
  * \brief %Circuit propagators
  */
 
-namespace Gecode { namespace Int { namespace Circuit {
+namespace Gecode { namespace Graph { namespace Circuit {
 
   /**
    * \brief Base-class for circuit propagator
@@ -56,9 +56,9 @@ namespace Gecode { namespace Int { namespace Circuit {
    *
    */
   template <class View>
-  class Base : public NaryPropagator<View,PC_INT_DOM> {
+  class Base : public NaryPropagator<View,Int::PC_INT_DOM> {
   protected:
-    using NaryPropagator<View,PC_INT_DOM>::x;
+    using NaryPropagator<View,Int::PC_INT_DOM>::x;
     /// Array for performing value propagation for distinct
     ViewArray<View> y;
     /// Constructor for cloning \a p
@@ -81,8 +81,8 @@ namespace Gecode { namespace Int { namespace Circuit {
    * the induced variable value graph is stronlgy connected, and
    * prunes too short cycles.
    *
-   * Requires \code #include <gecode/int/circuit.hh> \endcode
-   * \ingroup FuncIntProp
+   * Requires \code #include <gecode/graph/circuit.hh> \endcode
+   * \ingroup FuncGraphProp
    */
   template <class View>
   class Val : public Base<View> {
@@ -113,8 +113,8 @@ namespace Gecode { namespace Int { namespace Circuit {
    * the induced variable value graph is stronlgy connected, and
    * prunes too shot cycles.
    *
-   * Requires \code #include <gecode/int/circuit.hh> \endcode
-   * \ingroup FuncIntProp
+   * Requires \code #include <gecode/graph/circuit.hh> \endcode
+   * \ingroup FuncGraphProp
    */
   template <class View>
   class Dom : public Base<View> {
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     using Base<View>::connected;
     using Base<View>::path;
     /// Propagation controller for propagating distinct
-    Distinct::DomCtrl<View> dc;
+    Int::Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Dom(Space& home, bool share, Dom& p);
     /// Constructor for posting
@@ -147,10 +147,10 @@ namespace Gecode { namespace Int { namespace Circuit {
 
 }}}
 
-#include <gecode/int/circuit/base.hpp>
-#include <gecode/int/circuit/val.hpp>
-#include <gecode/int/circuit/dom.hpp>
+#include <gecode/graph/circuit/base.hpp>
+#include <gecode/graph/circuit/val.hpp>
+#include <gecode/graph/circuit/dom.hpp>
 
 #endif
 
-// STATISTICS: int-prop
+// STATISTICS: graph-prop

@@ -36,6 +36,7 @@
  */
 
 #include "test/int.hh"
+#include <gecode/graph.hh>
 
 namespace Test { namespace Int {
 
@@ -97,4 +98,4 @@ namespace Test { namespace Int {
    }
 }}
 
-// STATISTICS: test-int
+// STATISTICS: test-graph

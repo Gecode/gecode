@@ -35,19 +35,19 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Circuit {
+namespace Gecode { namespace Graph { namespace Circuit {
 
   template <class View>
   forceinline
   Base<View>::Base(Space& home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x), y(home,x) {
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,x), y(home,x) {
     home.notice(*this,AP_WEAKLY);
   }
 
   template <class View>
   forceinline
   Base<View>::Base(Space& home, bool share, Base<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,share,p) {
     y.update(home,share,p.y);
   }
 
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   class SsccInfo {
   public:
     int min, low, pre;
-    ViewValues<View> v;
+    Int::ViewValues<View> v;
   };
 
   /// Information for performing a recorded tell
@@ -219,7 +219,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     for (int i=y.size(); i--; ) {
       assert(!y[i].assigned());
       // Non-assigned views serve as starting points for assigned paths
-      ViewValues<View> v(y[i]);
+      Int::ViewValues<View> v(y[i]);
       // Try all connected values
       do {
         int j0=v.val();
@@ -255,11 +255,11 @@ namespace Gecode { namespace Int { namespace Circuit {
   forceinline size_t
   Base<View>::dispose(Space& home) {
     home.ignore(*this,AP_WEAKLY);
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    (void) NaryPropagator<View,Int::PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
 
 }}}
 
-// STATISTICS: int-prop
+// STATISTICS: graph-prop
 

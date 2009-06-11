@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,26 +35,35 @@
  *
  */
 
-#include <gecode/int/circuit.hh>
+namespace Gecode { namespace Graph {
 
-namespace Gecode {
+  /**
+   * \defgroup FuncThrowGraph Graph exceptions
+   * \ingroup FuncThrow
+   */
 
-  void
-  circuit(Space& home, const IntVarArgs& x, IntConLevel icl) {
-    using namespace Int;
-    if (x.same(home))
-      throw ArgumentSame("Int::circuit");
-    if (home.failed()) return;
-    if (x.size() == 0)
-      return;
-    ViewArray<IntView> xv(home,x);
-    if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Circuit::Dom<IntView>::post(home,xv));
-    } else {
-      GECODE_ES_FAIL(home,Circuit::Val<IntView>::post(home,xv));
-    }
-  }
+  //@{
+  /// %Exception: Arguments contain same variable multiply
+  class GECODE_VTABLE_EXPORT ArgumentSame : public Exception  {
+  public:
+    /// Initialize with location \a l
+    ArgumentSame(const char* l);
+  };
+  //@}
 
-}
 
-// STATISTICS: int-post
+
+
+
+  /*
+   * Classes for exceptions raised by graph module
+   *
+   */
+  inline
+  ArgumentSame::ArgumentSame(const char* l)
+    : Exception(l,"Argument array contains same variable multiply") {}
+
+}}
+
+// STATISTICS: graph-other
+
