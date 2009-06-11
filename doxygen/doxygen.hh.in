@@ -103,6 +103,16 @@
  */
 
 /**
+ * \defgroup TaskModelGraph Graph constraints
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelScheduling Scheduling constraints and branchings
+ * \ingroup TaskModel
+ */
+
+/**
  * \defgroup TaskDriver Script commandline driver
  * \ingroup TaskModel
  */
@@ -631,6 +641,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    (see for example \ref TaskModelSet and \ref TaskActorSet).
  *  - gecode/minimodel.hh must be included, if direct modelling support
  *    is used (see for example \ref TaskModelMiniModel).
+ *  - gecode/graph.hh must be included, if graph constraints
+ *    are used (see for example \ref TaskModelGraph).
+ *  - gecode/scheduling.hh must be included, if scheduling constraints
+ *    are used (see for example \ref TaskModelScheduling).
  *  - gecode/driver.hh must be included, if the script commandline driver
  *    is used (see for example \ref TaskDriver).
  *
@@ -655,6 +669,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - If gecode/set.hh is included, linking against the set library is
  *    required.
  *  - If gecode/minimodel.hh is included, linking against the minimodel
+ *    library is required.
+ *  - If gecode/graph.hh is included, linking against the graph
+ *    library is required.
+ *  - If gecode/scheduling.hh is included, linking against the scheduling
  *    library is required.
  *  - If gecode/driver.hh is included, linking against the driver
  *    library is required.
@@ -705,6 +723,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - Integer library: libgecodeint.&lt;EXT&gt;
  *  - Set library: libgecodeset.&lt;EXT&gt;
  *  - Minimodel library: libgecodeminimodel.&lt;EXT&gt;
+ *  - Graph library: libgecodegraph.&lt;EXT&gt;
+ *  - Scheduling library: libgecodescheduling.&lt;EXT&gt;
  *  - Driver library: libgecodedriver.&lt;EXT&gt;
  *
  * where &lt;EXT&gt; depends on the library type and platform:
