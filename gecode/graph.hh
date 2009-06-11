@@ -75,8 +75,6 @@
  *
  */
 
-#include <gecode/graph/exception.hpp>
-
 namespace Gecode {
 
   /**
@@ -93,7 +91,7 @@ namespace Gecode {
    * other values for \a icl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x.
    *
-   * Throws an exception of type Graph::ArgumentSame, if \a x
+   * Throws an exception of type Int::ArgumentSame, if \a x
    * contains the same unassigned variable multiply.
    */
   GECODE_GRAPH_EXPORT void

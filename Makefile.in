@@ -404,7 +404,6 @@ SETBUILDDIRS	=						\
 GRAPHSRC0 = \
 	circuit.cpp
 GRAPHHDR0 = \
-	exception.hpp \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp
 
 GRAPHSRC	= $(GRAPHSRC0:%=gecode/graph/%)
@@ -440,7 +439,6 @@ GRAPHBUILDDIRS	= \
 SCHEDULINGSRC0 = \
 	cumulatives.cpp
 SCHEDULINGHDR0 = \
-	exception.hpp \
 	cumulatives.hh cumulatives/val.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)

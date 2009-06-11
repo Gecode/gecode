@@ -1,9 +1,11 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
+ *     Mikael Lagerkvist, 2005
  *     Christian Schulte, 2009
  *
  *  Last modified:
@@ -75,8 +77,6 @@
  *
  */
 
-#include <gecode/scheduling/exception.hpp>
-
 namespace Gecode {
 
   /**
@@ -116,9 +116,9 @@ namespace Gecode {
    *                = true) or greater than the limit (\a at_most = false)
    * \param icl Supports value-consistency only (\a icl = ICL_VAL, default).
    *
-   * \exception Scheduling::ArgumentSizeMismatch thrown if the sizes 
+   * \exception Int::ArgumentSizeMismatch thrown if the sizes 
    *            of the arguments representing tasks does not match.
-   * \exception Scheduling::OutOfLimits thrown if any numerical argument is
+   * \exception Int::OutOfLimits thrown if any numerical argument is
    *            larger than Int::Limits::max or less than
    *            Int::Limits::min.
    */

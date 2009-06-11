@@ -101,7 +101,7 @@ namespace Gecode {
           start.size() != duration.size() ||
           duration.size() != end.size()   ||
           end.size() != height.size())
-        throw ArgumentSizeMismatch("Scheduling::cumulatives");
+        throw Int::ArgumentSizeMismatch("Scheduling::cumulatives");
       if (home.failed()) return;
 
       ViewArray<typename ViewType<Machine>::Result>
