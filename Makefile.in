@@ -329,7 +329,8 @@ export LINKINT      	=
 endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
-	int/channel int/linear int/bool int/branch int/exec
+	int/channel int/linear int/bool int/branch int/exec \
+	int/element
 
 #
 # SET COMPONENTS
