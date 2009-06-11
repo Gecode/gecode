@@ -579,7 +579,7 @@ SETEXAMPLEEXE  =
 endif
 
 
-EXAMPLEBUILDDIRS = examples examples/support
+EXAMPLEBUILDDIRS = examples
 
 EXAMPLEEXE = \
   $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
