@@ -960,17 +960,17 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 
 gecode/graph/%$(OBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_GRAPH \
-	-c -Fo$@ -Tp$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/graph/%$(SBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_GRAPH \
-	-c -Fa$@ -Tp$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/scheduling/%$(OBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SCHEDULING \
-	-c -Fo$@ -Tp$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SCHEDULING \
-	-c -Fa$@ -Tp$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/driver/%$(OBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \

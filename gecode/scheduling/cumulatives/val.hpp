@@ -61,11 +61,11 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     end(_end), height(_height), limit(_limit), at_most(_at_most) {
     home.notice(*this,AP_DISPOSE);
 
-    machine.subscribe(home,*this,PC_INT_DOM);
-    start.subscribe(home,*this,PC_INT_BND);
-    duration.subscribe(home,*this,PC_INT_BND);
-    end.subscribe(home,*this,PC_INT_BND);
-    height.subscribe(home,*this,PC_INT_BND);
+    machine.subscribe(home,*this,Int::PC_INT_DOM);
+    start.subscribe(home,*this,Int::PC_INT_BND);
+    duration.subscribe(home,*this,Int::PC_INT_BND);
+    end.subscribe(home,*this,Int::PC_INT_BND);
+    height.subscribe(home,*this,Int::PC_INT_BND);
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
@@ -99,11 +99,11 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
   Val<ViewM,ViewD,ViewH,View>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
-      machine.cancel(home,*this,PC_INT_DOM);
-      start.cancel(home,*this,PC_INT_BND);
-      duration.cancel(home,*this,PC_INT_BND);
-      end.cancel(home,*this,PC_INT_BND);
-      height.cancel(home,*this,PC_INT_BND);
+      machine.cancel(home,*this,Int::PC_INT_DOM);
+      start.cancel(home,*this,Int::PC_INT_BND);
+      duration.cancel(home,*this,Int::PC_INT_BND);
+      end.cancel(home,*this,Int::PC_INT_BND);
+      height.cancel(home,*this,Int::PC_INT_BND);
     }
     limit.~SharedArray();
     (void) Propagator::dispose(home);
