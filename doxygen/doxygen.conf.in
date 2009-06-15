@@ -423,7 +423,7 @@ SHOW_DIRECTORIES       = YES
 # provided by doxygen. Whatever the progam writes to standard output 
 # is used as the file version. See the manual for examples.
 
-FILE_VERSION_FILTER    = @top_srcdir@/misc/getrevision.perl
+FILE_VERSION_FILTER    = "perl @top_srcdir@/misc/getrevision.perl"
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
