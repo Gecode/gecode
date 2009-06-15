@@ -1456,7 +1456,7 @@ distdoc: doc
 	cp -r doc/html . && mv html gecode-doc-$(DOCSUFFIX) && \
 	$(TAR) cf - gecode-doc-$(DOCSUFFIX) | \
 		gzip -9 > gecode-doc-$(DOCSUFFIX).tar.gz && \
-	zip -q -9 -r gecode-doc-$(DOCSUFFIX).zip gecode-doc-$(DOCSUFFIX) && \
+	7z a -mx9 gecode-doc-$(DOCSUFFIX).7z gecode-doc-$(DOCSUFFIX) && \
 	$(RMF) gecode-doc-$(DOCSUFFIX) && \
 	if test -f doc/gecode-doc.tag; then \
 		mv doc/gecode-doc.tag gecode-doc-$(DOCSUFFIX).tag && \
