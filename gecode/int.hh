@@ -1908,23 +1908,30 @@ namespace Gecode {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    */
-  //@{
-  /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
+   * \ingroup TaskModelIntLinearInt
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
+   * \ingroup TaskModelIntLinearInt
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
+   * \ingroup TaskModelIntLinearInt
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
+   * \ingroup TaskModelIntLinearInt
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
@@ -1933,6 +1940,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearInt
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
@@ -1942,6 +1950,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearInt
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
@@ -1951,6 +1960,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearInt
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
@@ -1960,12 +1970,12 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearInt
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  //@}
 
 
   /**
@@ -1992,23 +2002,30 @@ namespace Gecode {
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    */
-  //@{
-  /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
+   * \ingroup TaskModelIntLinearBool
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
+   * \ingroup TaskModelIntLinearBool
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
+   * \ingroup TaskModelIntLinearBool
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
+   * \ingroup TaskModelIntLinearBool
+   */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
@@ -2017,6 +2034,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearBool
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
@@ -2026,6 +2044,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearBool
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
@@ -2035,6 +2054,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearBool
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
@@ -2044,12 +2064,12 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
+   * \ingroup TaskModelIntLinearBool
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  //@}
 
 
   /**
