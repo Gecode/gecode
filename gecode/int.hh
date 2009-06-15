@@ -747,7 +747,6 @@ namespace Gecode {
   };
 
 
-
   /**
    * \defgroup TaskModelIntDomain Domain constraints
    * \ingroup TaskModelInt
@@ -801,11 +800,11 @@ namespace Gecode {
    * \defgroup TaskModelIntRelInt Simple relation constraints over integer variables
    * \ingroup TaskModelInt
    */
-  //@{
   /** \brief Post propagator for \f$ x_0 \sim_r x_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
+   * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x0, IntRelType r, IntVar x1,
@@ -814,15 +813,20 @@ namespace Gecode {
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
+   * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r, IntVar y,
       IntConLevel icl=ICL_DEF);
-  /// Propagates \f$ x \sim_r c\f$
+  /** \brief Propagates \f$ x \sim_r c\f$
+   * \ingroup TaskModelIntRelInt
+   */
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x, IntRelType r, int c,
       IntConLevel icl=ICL_DEF);
-  /// Propagates \f$ x_i \sim_r c \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Propagates \f$ x_i \sim_r c \f$ for all \f$0\leq i<|x|\f$
+   * \ingroup TaskModelIntRelInt
+   */
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r, int c,
       IntConLevel icl=ICL_DEF);
@@ -830,6 +834,7 @@ namespace Gecode {
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
+   * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
@@ -838,6 +843,7 @@ namespace Gecode {
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
+   * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Space& home, IntVar x, IntRelType r, int c, BoolVar b,
@@ -858,6 +864,7 @@ namespace Gecode {
    *    Throws an exception of type Int::ArgumentSame, if \a x contains
    *    the same unassigned variable multiply.
    *
+   * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r,
@@ -872,27 +879,31 @@ namespace Gecode {
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    * \a x and \a y are of different size.
+   * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF);
-  //@}
-
 
   /**
    * \defgroup TaskModelIntRelBool Simple relation constraints over Boolean variables
    * \ingroup TaskModelInt
    */
-  //@{
-  /// Post propagator for \f$ x_0 \sim_r x_1\f$
+  /** \brief Post propagator for \f$ x_0 \sim_r x_1\f$
+   * \ingroup TaskModelIntRelBool
+   */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1,
       IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
+   * \ingroup TaskModelIntRelBool
+   */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
       IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+   * \ingroup TaskModelIntRelBool
+   */
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r, BoolVar y,
       IntConLevel icl=ICL_DEF);
@@ -901,6 +912,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x, IntRelType r, int n,
@@ -910,6 +922,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x, IntRelType r, int n, BoolVar b,
@@ -919,6 +932,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r, int n,
@@ -930,6 +944,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    * \a x and \a y are of different size.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
@@ -943,6 +958,7 @@ namespace Gecode {
    *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise
    *    distinct (corresponds to the distinct constraint).
    *
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, const BoolVarArgs& x, IntRelType r,
@@ -950,6 +966,7 @@ namespace Gecode {
   /** \brief Post propagator for Boolean operation on \a x0 and \a x1
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = x_2\f$
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
@@ -960,6 +977,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
@@ -971,6 +989,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::TooFewArguments, if \f$|x|<2\f$
    * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
@@ -985,6 +1004,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::TooFewArguments, if \f$|x|<2\f$
    * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Space& home, BoolOpType o, const BoolVarArgs& x, int n,
@@ -997,6 +1017,7 @@ namespace Gecode {
    *
    * Throws an exception of type Int::IllegalOperation, if \a o is different
    * from BOT_AND or BOT_OR.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
@@ -1012,11 +1033,11 @@ namespace Gecode {
    *
    * Throws an exception of type Int::IllegalOperation, if \a o is different
    * from BOT_AND or BOT_OR.
+   * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
          int n, IntConLevel icl=ICL_DEF);
-  //@}
 
 
   /**
