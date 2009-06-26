@@ -171,8 +171,8 @@ protected:
 public:
   /// Branching variants
   enum {
-    BRANCHING_NAIVE,   ///< Simple branching
-    BRANCHING_SYMMETRY ///< Breaking symmetries with branching
+    SYMMETRY_NONE,   ///< Simple symmetry
+    SYMMETRY_BRANCHING ///< Breaking symmetries with symmetry
   };
 
   /// Actual model
@@ -252,10 +252,10 @@ public:
     linear(*this, slabcost, IRT_EQ, total_cost);
 
     // Add branching
-    if (opt.branching() == BRANCHING_SYMMETRY) {
+    if (opt.symmetry() == SYMMETRY_BRANCHING) {
       // Install custom branching
       SteelMillBranch::post(*this);
-    } else { // opt.branching() == BRANCHING_NAIVE
+    } else { // opt.symmetry() == SYMMETRY_NONE
       branch(*this, slab, INT_VAR_MAX_MIN, INT_VAL_MIN);
     }
   }
@@ -417,9 +417,9 @@ public:
 int
 main(int argc, char* argv[]) {
   SteelMillOptions opt("Steel Mill Slab design");
-  opt.branching(SteelMill::BRANCHING_SYMMETRY);
-  opt.branching(SteelMill::BRANCHING_NAIVE,"naive");
-  opt.branching(SteelMill::BRANCHING_SYMMETRY,"symmetry");
+  opt.symmetry(SteelMill::SYMMETRY_BRANCHING);
+  opt.symmetry(SteelMill::SYMMETRY_NONE,"none");
+  opt.symmetry(SteelMill::SYMMETRY_BRANCHING,"branching");
   opt.solutions(0);
   if (!opt.parse(argc,argv))
     return 1;

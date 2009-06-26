@@ -53,7 +53,6 @@ private:
   Driver::UnsignedIntOption _l;   ///< Parameter lambda.
   Driver::UnsignedIntOption _d;   ///< Parameter d.
   Driver::StringOption _permutation; ///< Use permutation constraints if d=4
-  Driver::StringOption _symmetry; ///< Use symmetry breaking
 
 public:
   /// Initialize options for example with name \a s
@@ -65,9 +64,7 @@ public:
       _l("-l", "sets of symbols per sequence (lambda)",      lambda0),
       _d("-d", "Hamming distance between sequences",         d0     ),
       _permutation("-permutation", "use permutation constraints if d=4", 
-                   false),
-      _symmetry("-symmetry", "use symmetry breaking",
-                true)
+                   false)
   {
     // Add options
     add(_d);
@@ -78,8 +75,8 @@ public:
     add(_symmetry);
 
     // Add permutation options
-    _permutation.add(true,  "true" );
-    _permutation.add(false, "false");
+    _permutation.add(true,  "full" );
+    _permutation.add(false, "none");
     // Add symmetry options
     _symmetry.add(true,  "true" );
     _symmetry.add(false, "false");

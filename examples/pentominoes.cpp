@@ -269,8 +269,8 @@ public:
   };
   /// Choice of symmetry breaking
   enum {
-    MODEL_NONE, ///< Do not remove symmetric solutions
-    MODEL_SYMMETRY, ///< Remove symmetric solutions
+    SYMMETRY_NONE, ///< Do not remove symmetric solutions
+    SYMMETRY_FULL, ///< Remove symmetric solutions
   };
 private:
   /// Specification of the tiles to place.
@@ -417,7 +417,7 @@ public:
       }
     }
 
-    if (opt.model() == MODEL_SYMMETRY) {
+    if (opt.symmetry() == SYMMETRY_FULL) {
       // Remove symmetrical boards
       IntVarArgs orig(board.size()-height), symm(board.size()-height);
       int pos = 0;
@@ -477,11 +477,11 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("Pentominoes");
   opt.size(1);
-  opt.model(Pentominoes::MODEL_SYMMETRY);
-  opt.model(Pentominoes::MODEL_NONE,
+  opt.symmetry(Pentominoes::SYMMETRY_FULL);
+  opt.symmetry(Pentominoes::SYMMETRY_NONE,
             "none", "do not remove symmetric solutions");
-  opt.model(Pentominoes::MODEL_SYMMETRY,
-            "sym", "remove symmetric solutions");
+  opt.symmetry(Pentominoes::SYMMETRY_FULL,
+            "full", "remove symmetric solutions");
 
   opt.propagation(Pentominoes::PROPAGATION_BOOLEAN);
   opt.propagation(Pentominoes::PROPAGATION_INT,

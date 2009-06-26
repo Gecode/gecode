@@ -285,6 +285,7 @@ namespace Gecode {
     /// \name Model options
     //@{
     Driver::StringOption _model;       ///< General model options
+    Driver::StringOption _symmetry;    ///< General symmetry options
     Driver::StringOption _propagation; ///< Propagation options
     Driver::StringOption _icl;         ///< Integer consistency level
     Driver::StringOption _branching;   ///< Branching options
@@ -321,6 +322,13 @@ namespace Gecode {
     void model(int v, const char* o, const char* h = NULL);
     /// Return model value
     int model(void) const;
+    
+    /// Set default symmetry value
+    void symmetry(int v);
+    /// Add symmetry option value for value \a v, string \a o, and help \a h
+    void symmetry(int v, const char* o, const char* h = NULL);
+    /// Return symmetry value
+    int symmetry(void) const;
     
     /// Set default propagation value
     void propagation(int v);

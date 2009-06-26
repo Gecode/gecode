@@ -165,6 +165,19 @@ namespace Gecode {
   }
   
   inline void
+  Options::symmetry(int v) {
+    _symmetry.value(v);
+  }
+  inline void
+  Options::symmetry(int v, const char* o, const char* h) {
+    _symmetry.add(v,o,h);
+  }
+  inline int
+  Options::symmetry(void) const {
+    return _symmetry.value();
+  }
+  
+  inline void
   Options::propagation(int v) {
     _propagation.value(v);
   }

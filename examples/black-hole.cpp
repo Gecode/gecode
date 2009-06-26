@@ -206,10 +206,10 @@ protected:
   }
 
 public:
-  /// Model variants
+  /// Symmetry variants
   enum {
-    MODEL_NONE,    ///< No symmetry breaking
-    MODEL_SYMMETRY ///< Breaking conditional symmetries
+    SYMMETRY_NONE,    ///< No symmetry breaking
+    SYMMETRY_CONDITIONAL ///< Breaking conditional symmetries
   };
   /// Propagation of placement-rules
   enum {
@@ -293,7 +293,7 @@ public:
 
     // Compute and break the conditional symmetries that are dependent
     // on the current layout.
-    if (opt.model() == MODEL_SYMMETRY) {
+    if (opt.symmetry() == SYMMETRY_CONDITIONAL) {
       // For all ranks
       for (int r = 13; r--; ) {
         // For all pairs of suits
@@ -383,9 +383,11 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Black Hole patience");
-  opt.model(BlackHole::MODEL_SYMMETRY);
-  opt.model(BlackHole::MODEL_NONE,"none");
-  opt.model(BlackHole::MODEL_SYMMETRY,"symmetry");
+  opt.symmetry(BlackHole::SYMMETRY_CONDITIONAL);
+  opt.symmetry(BlackHole::SYMMETRY_NONE,"none",
+               "no symmetry breaking");
+  opt.symmetry(BlackHole::SYMMETRY_CONDITIONAL,"conditional",
+               "break conditional symmetries");
   opt.propagation(BlackHole::PROPAGATION_DFA);
   opt.propagation(BlackHole::PROPAGATION_REIFIED,
                   "reified", "use reified propagation");

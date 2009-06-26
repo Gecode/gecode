@@ -309,6 +309,7 @@ namespace Gecode {
     : BaseOptions(n),
       
       _model("-model","model variants"),
+      _symmetry("-symmetry","symmetry variants"),
       _propagation("-propagation","propagation variants"),
       _icl("-icl","integer consistency level",ICL_DEF),
       _branching("-branching","branching variants"),
@@ -336,7 +337,8 @@ namespace Gecode {
     _mode.add(SM_STAT, "stat");
     _mode.add(SM_GIST, "gist");
     
-    add(_model); add(_propagation); add(_icl); add(_branching);
+    add(_model); add(_symmetry); add(_propagation); add(_icl); 
+    add(_branching);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
     add(_node); add(_fail); add(_time);
     add(_mode); add(_iterations); add(_samples);

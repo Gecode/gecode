@@ -53,7 +53,7 @@
 #   [ENTRY]
 #   Module: 
 #     kernel|search|int|set|cpltset|example|minimodel|iter|support|
-#     test|gist|other
+#     driver|test|gist|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
 #   Bug:    <optional, for number from bugzilla>
@@ -71,6 +71,26 @@ Version: 3.1.1
 Date: ?
 [DESCRIPTION]
 The next release.
+
+[ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Examples now use the symmetry-option for symmetry-breaking.
+[MORE]
+The affected examples are:
+  - BlackHole
+  - EFPA
+  - Pentominoes
+  - SteelMill
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added new standard option for options called symmetry.
 
 [ENTRY]
 Module: int
