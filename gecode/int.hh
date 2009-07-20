@@ -405,6 +405,10 @@ namespace Gecode {
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
     unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
     //@}
 
     /// \name Domain tests
@@ -543,6 +547,10 @@ namespace Gecode {
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
     unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
     //@}
 
     /// \name Domain tests

@@ -85,6 +85,14 @@ namespace Gecode {
   BoolVar::size(void) const {
     return varimp->size();
   }
+  forceinline unsigned int
+  BoolVar::regret_min(void) const {
+    return varimp->regret_min();
+  }
+  forceinline unsigned int
+  BoolVar::regret_max(void) const {
+    return varimp->regret_max();
+  }
 
 
 

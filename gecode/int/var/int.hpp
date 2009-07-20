@@ -84,6 +84,14 @@ namespace Gecode {
   IntVar::size(void) const {
     return varimp->size();
   }
+  forceinline unsigned int
+  IntVar::regret_min(void) const {
+    return varimp->regret_min();
+  }
+  forceinline unsigned int
+  IntVar::regret_max(void) const {
+    return varimp->regret_max();
+  }
 
 
 

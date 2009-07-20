@@ -94,6 +94,15 @@ Added new standard option for options called symmetry.
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   minor
+Thanks:	Kish Shen
+[DESCRIPTION]
+Added regret_min and regret_max for IntVar and BoolVar (they were
+only available for IntView).
+
+[ENTRY]
+Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
