@@ -44,6 +44,8 @@ namespace Gecode {
   void
   element(Space& home, const IntArgs& c, IntVar x0, IntVar x1,
           IntConLevel) {
+    if (c.size() == 0)
+      throw TooFewArguments("Int::element");
     if (home.failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; ) {
@@ -56,6 +58,8 @@ namespace Gecode {
   void
   element(Space& home, const IntArgs& c, IntVar x0, BoolVar x1,
           IntConLevel) {
+    if (c.size() == 0)
+      throw TooFewArguments("Int::element");
     if (home.failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; ) {
@@ -68,6 +72,8 @@ namespace Gecode {
   void
   element(Space& home, const IntArgs& c, IntVar x0, int x1,
           IntConLevel) {
+    if (c.size() == 0)
+      throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
     Element::IntSharedArray cs(c.size());
@@ -83,6 +89,8 @@ namespace Gecode {
   void
   element(Space& home, const IntVarArgs& c, IntVar x0, IntVar x1,
           IntConLevel icl) {
+    if (c.size() == 0)
+      throw TooFewArguments("Int::element");
     if (home.failed()) return;
     Element::IdxViewArray<IntView> iv(home,c);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
@@ -97,6 +105,8 @@ namespace Gecode {
   void
   element(Space& home, const IntVarArgs& c, IntVar x0, int x1,
           IntConLevel icl) {
+    if (c.size() == 0)
+      throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
     Element::IdxViewArray<IntView> iv(home,c);
@@ -113,6 +123,8 @@ namespace Gecode {
   void
   element(Space& home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
           IntConLevel) {
+    if (c.size() == 0)
+      throw TooFewArguments("Int::element");
     if (home.failed()) return;
     Element::IdxViewArray<BoolView> iv(home,c);
     GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,BoolView>
@@ -122,6 +134,8 @@ namespace Gecode {
   void
   element(Space& home, const BoolVarArgs& c, IntVar x0, int x1,
           IntConLevel) {
+    if (c.size() == 0)
+      throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
     Element::IdxViewArray<BoolView> iv(home,c);

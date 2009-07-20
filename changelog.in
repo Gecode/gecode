@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The element constraint now throws an exception if used with an
+empty array.
+
+[ENTRY]
 Module: example
 What:   bug
 Rank:   minor
