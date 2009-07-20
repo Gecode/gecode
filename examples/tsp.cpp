@@ -178,6 +178,8 @@ namespace {
     int size(void) const;
     /// Return distance between node \a i and \a j
     int d(int i, int j) const;
+    /// Return distances
+    const int* d(void) const;
     /// Return estimate for maximal cost of a path
     int max(void) const;
   };
@@ -192,6 +194,10 @@ namespace {
   inline int
   Problem::d(int i, int j) const {
     return _d[i*_n+j];
+  }
+  inline const int*
+  Problem::d(void) const {
+    return _d;
   }
   inline int
   Problem::max(void) const {
@@ -234,31 +240,25 @@ public:
     : p(ps[opt.size()]),
       succ(*this, p.size(), 0, p.size()-1),
       total(*this, 0, p.max()) {
+    int n = p.size();
+
+    // Cost matrix
+    IntArgs c(n*n, p.d());
+
+    for (int i=n; i--; )
+      for (int j=n; j--; )
+        if (p.d(i,j) == 0)
+          rel(*this, succ[i], IRT_NQ, j);
 
     // Cost of each edge
-    IntVarArgs costs(p.size());
-    // Distances
-    IntArgs d(p.size());
+    IntVarArgs costs(n);
 
-    // Setup costs for edges
-    for (int i=p.size(); i--; ) {
-      int m=0;
-      for (int j=p.size(); j--; ) {
-        d[j] = p.d(i,j);
-        m = std::max(m, d[j]);
-        if (d[j] == 0)
-          rel(*this, succ[i], IRT_NQ, j);
-      }
-      costs[i].init(*this,0,m);
-      // Propagate cost for chosen edge
-      element(*this, d, succ[i], costs[i]);
-    }
+    // Initialize cost variables for edges
+    for (int i=n; i--; )
+      costs[i].init(*this, Int::Limits::min, Int::Limits::max);
 
-    // Cost ist sume of all costs
-    linear(*this, costs, IRT_EQ, total);
-
-    // Enforce that the succesors yield a tour
-    circuit(*this, succ, opt.icl());
+    // Enforce that the succesors yield a tour with appropriate costs
+    circuit(*this, c, succ, costs, total, opt.icl());
 
     // Just assume that the circle starts forwards
     rel(*this, succ[0], IRT_LE, succ[1]);

@@ -43,15 +43,44 @@ namespace Gecode {
   circuit(Space& home, const IntVarArgs& x, IntConLevel icl) {
     if (x.same(home))
       throw Int::ArgumentSame("Graph::circuit");
-    if (home.failed()) return;
     if (x.size() == 0)
-      return;
+      throw Int::TooFewArguments("Graph::circuit");
+    if (home.failed()) return;
     ViewArray<Int::IntView> xv(home,x);
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(home,Graph::Circuit::Dom<Int::IntView>::post(home,xv));
     } else {
       GECODE_ES_FAIL(home,Graph::Circuit::Val<Int::IntView>::post(home,xv));
     }
+  }
+
+  void
+  circuit(Space& home, const IntArgs& c, 
+          const IntVarArgs& x, const IntVarArgs& y, IntVar z, 
+          IntConLevel icl) {
+    int n = x.size();
+    if ((y.size() != n) || (c.size() != n*n))
+      throw Int::ArgumentSizeMismatch("Graph::circuit");
+    circuit(home, x, icl);
+    if (home.failed()) return;
+    IntArgs cx(n);
+    for (int i=n; i--; ) {
+      for (int j=0; j<n; j++)
+        cx[j] = c[i*n+j];
+      element(home, cx, x[i], y[i]);
+    }
+    linear(home, y, IRT_EQ, z);
+  }
+
+  void
+  circuit(Space& home, const IntArgs& c, 
+          const IntVarArgs& x, IntVar z, 
+          IntConLevel icl) {
+    if (home.failed()) return;
+    IntVarArgs y(x.size());
+    for (int i=x.size(); i--; )
+      y[i].init(home, Int::Limits::min, Int::Limits::max);
+    circuit(home, c, x, y, z);
   }
 
 }

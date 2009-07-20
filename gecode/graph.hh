@@ -91,11 +91,61 @@ namespace Gecode {
    * other values for \a icl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x.
    *
-   * Throws an exception of type Int::ArgumentSame, if \a x
-   * contains the same unassigned variable multiply.
+   * Throws the following exceptions:
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *    multiply.
+   *  - Int::TooFewArguments, if \a x has no elements.
    */
   GECODE_GRAPH_EXPORT void
   circuit(Space& home, const IntVarArgs& x,
+          IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator such that \a x forms a circuit with costs \a y and \a z
+   *
+   * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
+   * \f$x_i=j\f$ has a single cycle covering all nodes. The integer array
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * the entire circuit. The variables \a y define the cost
+   * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
+   *
+   * Supports domain (\a icl = ICL_DOM) and value propagation (all
+   * other values for \a icl), where this refers to whether value or
+   * domain consistent distinct in enforced on \a x for circuit.
+   *
+   * Throws the following exceptions:
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *    multiply.
+   *  - Int::TooFewArguments, if \a x has no elements.
+   *  - Int::ArgumentSizeMismacth, if \a x and \a y do not have the same
+   *    size or if \f$|x|\times|x|\neq|c|\f$.
+   */
+  GECODE_GRAPH_EXPORT void
+  circuit(Space& home, 
+          const IntArgs& c,
+          const IntVarArgs& x, const IntVarArgs& y, IntVar z,
+          IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator such that \a x forms a circuit with cost \a z
+   *
+   * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
+   * \f$x_i=j\f$ has a single cycle covering all nodes. The integer array
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * the entire circuit.
+   *
+   * Supports domain (\a icl = ICL_DOM) and value propagation (all
+   * other values for \a icl), where this refers to whether value or
+   * domain consistent distinct in enforced on \a x for circuit.
+   *
+   * Throws the following exceptions:
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *    multiply.
+   *  - Int::TooFewArguments, if \a x has no elements.
+   *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
+   */
+  GECODE_GRAPH_EXPORT void
+  circuit(Space& home, 
+          const IntArgs& c,
+          const IntVarArgs& x, IntVar z,
           IntConLevel icl=ICL_DEF);
   //@}
 

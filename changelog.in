@@ -73,12 +73,19 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: graph
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Cost-based variants for circuit added.
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The element constraint with an integer index variable now throws an exception 
-if used with an empty array.
+The element constraint with an integer index variable now throws
+an exception if used with an empty array.
 
 [ENTRY]
 Module: int
