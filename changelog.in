@@ -77,6 +77,14 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
+The element constraint now computes more accurate variable bounds
+when being posted (to avoid arithmetic overflow in naive models).
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
 The element constraint now throws an exception if used with an
 empty array.
 

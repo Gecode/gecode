@@ -148,8 +148,6 @@ namespace Gecode { namespace Int { namespace Element {
   template <class V0, class V1, class Idx, class Val>
   ExecStatus
   Int<V0,V1,Idx,Val>::post(Space& home, IntSharedArray& c, V0 x0, V1 x1) {
-    GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x0.le(home,c.size()));
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,c[x0.val()]));
     } else {
@@ -275,14 +273,17 @@ namespace Gecode { namespace Int { namespace Element {
   template <class V0, class V1>
   forceinline ExecStatus
   post_int(Space& home, IntSharedArray& c, V0 x0, V1 x1) {
+    assert(c.size() > 0);
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,c.size()));
     Support::IntType idx_type = Support::s_type(c.size());
-    int min = x1.min();
-    int max = x1.max();
-    for (int i=c.size(); i--; ) {
+    int min = c[0];
+    int max = c[0];
+    for (int i=1; i<c.size(); i++) {
       min = std::min(c[i],min); max = std::max(c[i],max);
     }
+    GECODE_ME_CHECK(x1.gq(home,min));
+    GECODE_ME_CHECK(x1.lq(home,max));
     Support::IntType val_type = 
       std::max(Support::s_type(min),Support::s_type(max));
     switch (idx_type) {
