@@ -140,6 +140,8 @@ namespace Gecode {
 
   void
   element(Space& home, const SetVarArgs& x, IntVar y, SetVar z) {
+    if (x.size() == 0)
+      throw Set::TooFewArguments("Set::element");
     if (home.failed()) return;
     Set::Element::ElementUnion<SetView,SingletonView>::IdxViewArray iv(home, x);
     SetView zv(z);
@@ -152,6 +154,8 @@ namespace Gecode {
 
   void
   element(Space& home, const IntSetArgs& s, IntVar y, SetVar z) {
+    if (s.size() == 0)
+      throw Set::TooFewArguments("Set::element");
     for (int i=s.size(); i--;)
       Set::Limits::check(s[i], "Set::element");
     if (home.failed()) return;
@@ -178,6 +182,8 @@ namespace Gecode {
   void
   element(Space& home, const IntSetArgs& a, 
           IntVar x, int w, IntVar y, int h, SetVar z) {
+    if (a.size() == 0)
+      throw Set::TooFewArguments("Set::element");
     if (a.size() != w*h)
       throw Set::ArgumentSizeMismatch("Set::element");
     if (home.failed()) return;
@@ -187,6 +193,8 @@ namespace Gecode {
   void
   element(Space& home, const SetVarArgs& a, 
           IntVar x, int w, IntVar y, int h, SetVar z) {
+    if (a.size() == 0)
+      throw Set::TooFewArguments("Set::element");
     if (a.size() != w*h)
       throw Set::ArgumentSizeMismatch("Set::element");
     if (home.failed()) return;

@@ -60,10 +60,10 @@ namespace Gecode { namespace Set {
   };
 
   /// %Exception: No arguments available in argument array
-  class GECODE_VTABLE_EXPORT ArgumentEmpty : public Exception {
+  class GECODE_VTABLE_EXPORT TooFewArguments : public Exception {
   public:
     /// Initialize with location \a l
-    ArgumentEmpty(const char* l);
+    TooFewArguments(const char* l);
   };
 
   /// %Exception: Arguments are of different size
@@ -117,8 +117,8 @@ namespace Gecode { namespace Set {
     : Exception(l,"Attempt to create variable with empty domain") {}
 
   inline
-  ArgumentEmpty::ArgumentEmpty(const char* l)
-    : Exception(l,"Passed argument array has no elements") {}
+  TooFewArguments::TooFewArguments(const char* l)
+    : Exception(l,"Passed argument array has too few elements") {}
 
   inline
   ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
