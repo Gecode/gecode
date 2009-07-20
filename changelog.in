@@ -74,6 +74,13 @@ The next release.
 
 [ENTRY]
 Module: example
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed zero cost edges in TSP examples.
+
+[ENTRY]
+Module: example
 What:   change
 Rank:   minor
 [DESCRIPTION]

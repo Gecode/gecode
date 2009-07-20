@@ -244,8 +244,10 @@ public:
     for (int i=p.size(); i--; ) {
       int m=0;
       for (int j=p.size(); j--; ) {
-        m = std::max(m,p.d(i,j));
-        d[j]=p.d(i,j);
+        d[j] = p.d(i,j);
+        m = std::max(m, d[j]);
+        if (d[j] == 0)
+          rel(*this, succ[i], IRT_NQ, j);
       }
       costs[i].init(*this,0,m);
       // Propagate cost for chosen edge
