@@ -367,7 +367,7 @@ namespace {
     &k5[0], &k6[0], &k7[0], &k8[0], &k9[0]
   };
   /// Number of examples
-  const unsigned int n_examples = sizeof(examples)/sizeof(char*);
+  const unsigned int n_examples = sizeof(examples)/sizeof(const int*);
 
 
   /** \brief Class for solutions of a distinct-linear constraint problem.
