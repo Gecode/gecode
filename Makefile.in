@@ -440,7 +440,8 @@ SCHEDULINGSRC0 = \
 	unary.cpp unary/mandatory.cpp
 SCHEDULINGHDR0 = \
 	cumulatives.hh cumulatives/val.hpp \
-	unary.hh unary/task.hpp unary/task-array.hpp unary/sort.hpp \
+	unary.hh unary/task.hpp unary/task-mapper.hpp unary/task-view.hpp \
+	unary/task-array.hpp unary/sort.hpp \
 	unary/task-iterator.hpp \
 	unary/task-tree.hpp unary/omega-tree.hpp unary/omega-lambda-tree.hpp \
 	unary/overload.hpp unary/detectable.hpp \

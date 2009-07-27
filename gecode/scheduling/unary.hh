@@ -186,30 +186,16 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptTask& t);
 
+}}}
 
-  /**
-   * \brief Traits class for mapping task views to tasks
-   *
-   * Each task view must specialize this traits class and add a \code
-   * typedef \endcode for the task corresponding to this task view.
-   */
+#include <gecode/scheduling/unary/task.hpp>
+
+namespace Gecode { namespace Scheduling { namespace Unary {
+
+  /// Task mapper: turns a task view into its dual
   template<class TaskView>
-  class TaskViewTraits {};
-
-
-
-  /// Forward task view
-  typedef Task TaskFwd;
-
-  /// Task view traits for forward task views
-  template<>
-  class TaskViewTraits<TaskFwd> {
-  public:
-    typedef Task TaskType;
-  };
-
   /// Backward (dual) task view
-  class TaskBwd : public Task {
+  class FwdToBwd : public TaskView {
   public:
     /// \name Value access
     //@{
@@ -236,6 +222,35 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     //@}
   };
 
+}}}
+
+#include <gecode/scheduling/unary/task-mapper.hpp>
+
+namespace Gecode { namespace Scheduling { namespace Unary {
+
+  /**
+   * \brief Traits class for mapping task views to tasks
+   *
+   * Each task view must specialize this traits class and add a \code
+   * typedef \endcode for the task corresponding to this task view.
+   */
+  template<class TaskView>
+  class TaskViewTraits {};
+
+
+  /// Forward task view
+  typedef Task TaskFwd;
+
+  /// Task view traits for forward task views
+  template<>
+  class TaskViewTraits<TaskFwd> {
+  public:
+    typedef Task TaskType;
+  };
+
+  /// Backward (dual) task view
+  typedef FwdToBwd<TaskFwd> TaskBwd;
+
   /// Task view traits for backward task views
   template<>
   class TaskViewTraits<TaskBwd> {
@@ -251,10 +266,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t);
 
-
 }}}
 
-#include <gecode/scheduling/unary/task.hpp>
+#include <gecode/scheduling/unary/task-view.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 

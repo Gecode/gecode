@@ -178,53 +178,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return os << s.str();
   }
     
-
-  /*
-   * Backward task view
-   */
-  forceinline int 
-  TaskBwd::est(void) const {
-    return -Task::lct();
-  }
-  forceinline int
-  TaskBwd::ect(void) const {
-    return -Task::lst();
-  }
-  forceinline int
-  TaskBwd::lst(void) const {
-    return -Task::ect();
-  }
-  forceinline int
-  TaskBwd::lct(void) const {
-    return -Task::est();
-  }
-
-  forceinline ModEvent 
-  TaskBwd::est(Space& home, int n) {
-    return Task::lct(home,-n);
-  }
-  forceinline ModEvent
-  TaskBwd::ect(Space& home, int n) {
-    return Task::lst(home,-n);
-  }
-  forceinline ModEvent
-  TaskBwd::lst(Space& home, int n) {
-    return Task::ect(home,-n);
-  }
-  forceinline ModEvent
-  TaskBwd::lct(Space& home, int n) {
-    return Task::est(home,-n);
-  }
-
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct();
-    return os << s.str();
-  }
-    
 }}}
 
 // STATISTICS: scheduling-var

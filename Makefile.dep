@@ -2863,14 +2863,14 @@ gecode/scheduling/unary$(OBJSUFFIX) gecode/scheduling/unary$(SBJSUFFIX): \
 	./gecode/scheduling/unary/detectable.hpp ./gecode/scheduling/unary/edge-finding.hpp ./gecode/scheduling/unary/mandatory.hpp \
 	./gecode/scheduling/unary/not-first-not-last.hpp ./gecode/scheduling/unary/omega-lambda-tree.hpp ./gecode/scheduling/unary/omega-tree.hpp \
 	./gecode/scheduling/unary/overload.hpp ./gecode/scheduling/unary/sort.hpp ./gecode/scheduling/unary/subsumption.hpp \
-	./gecode/scheduling/unary/task-array.hpp ./gecode/scheduling/unary/task-iterator.hpp ./gecode/scheduling/unary/task-propagator.hpp \
-	./gecode/scheduling/unary/task-tree.hpp ./gecode/scheduling/unary/task.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/scheduling/unary/task-array.hpp ./gecode/scheduling/unary/task-iterator.hpp ./gecode/scheduling/unary/task-mapper.hpp \
+	./gecode/scheduling/unary/task-propagator.hpp ./gecode/scheduling/unary/task-tree.hpp ./gecode/scheduling/unary/task-view.hpp \
+	./gecode/scheduling/unary/task.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 gecode/scheduling/unary/mandatory$(OBJSUFFIX) gecode/scheduling/unary/mandatory$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array.hpp ./gecode/int/exception.hpp \
 	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
@@ -2906,14 +2906,14 @@ gecode/scheduling/unary/mandatory$(OBJSUFFIX) gecode/scheduling/unary/mandatory$
 	./gecode/scheduling/unary/detectable.hpp ./gecode/scheduling/unary/edge-finding.hpp ./gecode/scheduling/unary/mandatory.hpp \
 	./gecode/scheduling/unary/not-first-not-last.hpp ./gecode/scheduling/unary/omega-lambda-tree.hpp ./gecode/scheduling/unary/omega-tree.hpp \
 	./gecode/scheduling/unary/overload.hpp ./gecode/scheduling/unary/sort.hpp ./gecode/scheduling/unary/subsumption.hpp \
-	./gecode/scheduling/unary/task-array.hpp ./gecode/scheduling/unary/task-iterator.hpp ./gecode/scheduling/unary/task-propagator.hpp \
-	./gecode/scheduling/unary/task-tree.hpp ./gecode/scheduling/unary/task.hpp ./gecode/support.hh \
-	./gecode/support/auto-link.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
-	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
-	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
-	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
-	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
-	./gecode/support/static-stack.hpp 
+	./gecode/scheduling/unary/task-array.hpp ./gecode/scheduling/unary/task-iterator.hpp ./gecode/scheduling/unary/task-mapper.hpp \
+	./gecode/scheduling/unary/task-propagator.hpp ./gecode/scheduling/unary/task-tree.hpp ./gecode/scheduling/unary/task-view.hpp \
+	./gecode/scheduling/unary/task.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
+	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
+	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
+	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
+	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp 
 gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
