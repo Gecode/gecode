@@ -617,10 +617,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Check tasks \a t for overload
-  bool overloaded(Space& home, TaskArray<Task>& t);
+  ExecStatus overloaded(Space& home, TaskArray<Task>& t);
 
   /// Check tasks \a t for subsumption
-  bool subsumed(Space& home, TaskArray<Task>& t);
+  ExecStatus subsumed(Space& home, Propagator& p, TaskArray<Task>& t);
 
   /// Propagate detectable precedences
   ExecStatus detectable(Space& home, TaskArray<Task>& t);

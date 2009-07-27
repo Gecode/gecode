@@ -46,14 +46,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   ExecStatus 
   Mandatory::propagate(Space& home, const ModEventDelta&) {
-    if (overloaded(home,t))
-      return ES_FAILED;
-
+    GECODE_ES_CHECK(overloaded(home,t));
     GECODE_ES_CHECK(detectable(home,t));
     GECODE_ES_CHECK(notfirstnotlast(home,t));
     GECODE_ES_CHECK(edgefinding(home,t));
-
-    return subsumed(home,t) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
+    GECODE_ES_CHECK(subsumed(home,*this,t));
+    return ES_NOFIX;
   }
 
 }}}

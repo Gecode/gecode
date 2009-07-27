@@ -37,16 +37,16 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  forceinline bool
-  subsumed(Space&, TaskArray<Task>& t) {
+  forceinline ExecStatus
+  subsumed(Space& home, Propagator& p, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
     sort<TaskFwd,STO_EST,true>(f);
 
     for (int i=f.size()-1; i--; )
       if (f[i].lct() > f[i+1].est())
-        return false;
+        return ES_OK;
 
-    return true;
+    return ES_SUBSUMED(p,home);
   }
   
 }}}

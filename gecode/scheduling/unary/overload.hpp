@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  forceinline bool
+  forceinline ExecStatus
   overloaded(Space& home, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
     sort<TaskFwd,STO_LCT,true>(f);
@@ -48,9 +48,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     for (int i=0; i<f.size(); i++) {
       o.insert(i);
       if (o.ect() > f[i].lct())
-        return true;
+        return ES_FAILED;
     }
-    return false;
+    return ES_OK;
   }
   
 }}}
