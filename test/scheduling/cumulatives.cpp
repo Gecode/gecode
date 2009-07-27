@@ -49,11 +49,11 @@
 namespace Test { namespace Int {
 
    /// Tests for scheduling constraints
-   namespace Scheduling {
+   namespace Cumulatives {
 
      /**
-      * \defgroup TaskTestIntScheduling Scheduling constraints
-      * \ingroup TaskTestInt
+      * \defgroup TaskTestCumulatives Cumnulatives scheduling constraint
+      * \ingroup TaskTestScheduling
       */
      //@{
      /**
@@ -196,7 +196,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Cumulatives(const std::string& s, int nt, bool am, int l)
-         : Test("Cumulatives::"+s,nt*4,-1,2), ntasks(nt), at_most(am), limit(l) {
+         : Test("Scheduling::Cumulatives::"+s,nt*4,-1,2), ntasks(nt), at_most(am), limit(l) {
          testsearch = false;
        }
        /// Create first assignment

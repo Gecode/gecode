@@ -198,9 +198,23 @@ namespace Gecode {
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
               IntConLevel icl=ICL_DEF);
+
+
+  /** \brief Post propagators for scheduling tasks on unary resources
+   *
+   * Schedule tasks with start times \a s and processing time \a p
+   * on unary resource.
+   * 
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *    and \a p are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLImits, if \a p contains
+   *    an integer that is not strictly positive.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  unary(Space& home, const IntVarArgs& s, const IntArgs& p);
   //@}
-
-
 
 }
 

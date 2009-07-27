@@ -143,6 +143,11 @@
  */
 
 /**
+ * \defgroup TaskTestScheduling Testing scheduling constraints
+ * \ingroup TaskTest
+ */
+
+/**
  * \defgroup Func Common functionality
  */
 

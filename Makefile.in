@@ -436,9 +436,17 @@ GRAPHBUILDDIRS	= \
 #
 
 SCHEDULINGSRC0 = \
-	cumulatives.cpp
+	cumulatives.cpp \
+	unary.cpp unary/scheduler.cpp
 SCHEDULINGHDR0 = \
-	cumulatives.hh cumulatives/val.hpp
+	cumulatives.hh cumulatives/val.hpp \
+	unary.hh unary/task.hpp unary/task-array.hpp unary/sort.hpp \
+	unary/task-iterator.hpp \
+	unary/task-tree.hpp unary/omega-tree.hpp unary/omega-lambda-tree.hpp \
+	unary/overload.hpp unary/detectable.hpp \
+	unary/not-first-not-last.hpp \
+	unary/edge-finding.hpp unary/subsumption.hpp \
+	unary/scheduler.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
 SCHEDULINGHDR	= gecode/scheduling.hh $(SCHEDULINGHDR0:%=gecode/scheduling/%)
@@ -463,7 +471,7 @@ export SCHEDULINGLIB		=
 export LINKSCHEDULING      	=
 endif
 SCHEDULINGBUILDDIRS	= \
-	scheduling
+	scheduling unary
 
 
 #
@@ -648,7 +656,7 @@ GRAPHEXAMPLEEXE  =
 endif
 
 SCHEDULINGEXAMPLESRC0 = \
-	perfect-square
+	job-shop perfect-square
 SCHEDULINGEXAMPLESRC  = $(SCHEDULINGEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_scheduling@" "yes"
 SCHEDULINGEXAMPLEEXE  = $(SCHEDULINGEXAMPLESRC:%.cpp=%$(EXESUFFIX))
@@ -737,10 +745,11 @@ endif
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear scheduling gcc sorted circuit unshare exec \
+	rel linear gcc sorted circuit unshare exec \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
+
 SETTESTSRC00 = \
 	construct dom rel rel-op rel-op-const convex sequence int element \
 	distinct exec
@@ -751,6 +760,17 @@ SETTESTOBJ = $(SETTESTSRC0:%.cpp=%$(OBJSUFFIX))
 else
 SETTESTOBJ=
 endif
+
+SCHEDULINGTESTSRC00 = \
+	cumulatives unary
+SCHEDULINGTESTSRC0 = $(SCHEDULINGTESTSRC00:%=test/scheduling/%.cpp)
+
+ifeq "@enable_scheduling@" "yes"
+SCHEDULINGTESTOBJ = $(SCHEDULINGTESTSRC0:%.cpp=%$(OBJSUFFIX))
+else
+SCHEDULINGTESTOBJ =
+endif
+
 
 BRANCHTESTSRC0 = \
 	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
@@ -764,21 +784,21 @@ SEARCHTESTSRC0 = \
 TESTSRC0 = test/test.cpp
 
 TESTSRC = \
-	$(TESTSRC0) $(INTTESTSRC0) \
-	$(SETTESTSRC0) \
+	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) \
+	$(SCHEDULINGTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0)
 
 TESTHDR0 = \
 	test.hh test.hpp int.hh int.hpp set.hh set.hpp \
 	branch.hh assign.hh
 TESTHDR = $(TESTHDR0:%=test/%)
-TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) \
+TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(SCHEDULINGTESTOBJ) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
-TESTBUILDDIRS = test test/int test/set test/branch test/assign
+TESTBUILDDIRS = test test/int test/set test/branch test/assign test/scheduling
 
 BUILDDIRS = \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \
