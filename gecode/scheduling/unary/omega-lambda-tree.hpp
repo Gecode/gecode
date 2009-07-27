@@ -98,7 +98,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     } else {
       // Enter no tasks into tree (omega = empty, lambda = empty)
       for (int i=nodes(); i--; ) {
-        int l = left(i), r = right(i);
         node[i].p = node[i].lp = 0;
         node[i].ect = node[i].lect = -infty;
         node[i].r = undef;
@@ -120,16 +119,16 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::oinsert(int i) {
-    node[leave[i]].p = t[i].p(); 
-    node[leave[i]].ect = t[i].ect();
+    node[leave[i]].p = tasks[i].p(); 
+    node[leave[i]].ect = tasks[i].ect();
     update(leave[i]);
   }
 
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::linsert(int i) {
-    node[leave[i]].lp = t[i].p(); 
-    node[leave[i]].lect = t[i].ect();
+    node[leave[i]].lp = tasks[i].p(); 
+    node[leave[i]].lect = tasks[i].ect();
     node[leave[i]].r = i;
     update(leave[i]);
   }
