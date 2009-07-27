@@ -151,7 +151,7 @@ namespace Test { namespace Int {
 
      Gecode::IntArgs p1(4, 2,2,2,2);
      Unary u1(p1);
-     //     OptUnary ou1(p1);
+     OptUnary ou1(p1);
 
      Gecode::IntArgs p2(4, 4,3,3,5);
      Unary u2(p2);

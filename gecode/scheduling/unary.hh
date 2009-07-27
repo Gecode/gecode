@@ -471,6 +471,28 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     //@}
   };
 
+  /// Allows to iterate over tasks according to a specified order
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  class MandatoryTaskIterator : public TaskIterator<TaskView,sto,inc> {
+  protected:
+    /// The tasks
+    const TaskViewArray<TaskView>& tasks;
+    /// The number of mandatory tasks left
+    int m;
+  public:
+    /// Initialize iterator
+    MandatoryTaskIterator(Region& r, const TaskViewArray<TaskView>& t);
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a task
+    bool operator ()(void) const;
+    /// How many tasks are left to be iterated
+    int left(void) const;
+    /// Move iterator to next task
+    void operator ++(void);
+    //@}
+  };
+
 }}}
 
 #include <gecode/scheduling/unary/task-iterator.hpp>
@@ -631,9 +653,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Propagate detectable precedences
   ExecStatus detectable(Space& home, TaskArray<Task>& t);
+  /// Propagate detectable precedences
+  ExecStatus detectable(Space& home, TaskArray<OptTask>& t);
 
   /// Propagate not-first and not-last
   ExecStatus notfirstnotlast(Space& home, TaskArray<Task>& t);
+  /// Propagate not-first and not-last
+  ExecStatus notfirstnotlast(Space& home, TaskArray<OptTask>& t);
 
   /// Propagate by edge finding
   ExecStatus edgefinding(Space& home, TaskArray<Task>& t);

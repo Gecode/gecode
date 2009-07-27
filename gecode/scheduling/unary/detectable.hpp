@@ -37,7 +37,8 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  template<class TaskView>
+  template<class TaskView,
+           template<class,SortTaskOrder,bool> class TaskIterator>
   forceinline ExecStatus
   detectable(Space& home, TaskViewArray<TaskView>& t) {
     sort<TaskView,STO_ECT,true>(t);
@@ -64,9 +65,17 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline ExecStatus
   detectable(Space& home, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
-    GECODE_ES_CHECK(detectable(home,f));
+    GECODE_ES_CHECK((detectable<TaskFwd,TaskIterator>(home,f)));
     TaskViewArray<TaskBwd> b(t);
-    return detectable(home,b);
+    return detectable<TaskBwd,TaskIterator>(home,b);
+  }
+
+  forceinline ExecStatus
+  detectable(Space& home, TaskArray<OptTask>& t) {
+    TaskViewArray<OptTaskFwd> f(t);
+    GECODE_ES_CHECK((detectable<OptTaskFwd,MandatoryTaskIterator>(home,f)));
+    TaskViewArray<OptTaskBwd> b(t);
+    return detectable<OptTaskBwd,MandatoryTaskIterator>(home,b);
   }
   
 }}}

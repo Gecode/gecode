@@ -53,17 +53,20 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       GECODE_ES_CHECK(purge(home, *this, t, true));
       std::cout << "\tpurge(" << t << ");" << std::endl;
       //    }
-    GECODE_ES_CHECK(overloaded(home,t));
+      ExecStatus es = overloaded(home,t);
+      if (es == ES_FAILED) {
+        std::cout <<  "FAILED FAILED FAILED" << std::endl;
+        return ES_FAILED;
+      }
+
     std::cout << "\toverloaded(" << t << ");" << std::endl;
+
+    GECODE_ES_CHECK(detectable(home,t));
+    //    GECODE_ES_CHECK(notfirstnotlast(home,t));
+
     GECODE_ES_CHECK(subsumed(home,*this,t));
     std::cout << "\tsubsumed(" << t << ");" << std::endl;
     return ES_NOFIX;
-    /*
-    GECODE_ES_CHECK(detectable(home,t));
-    GECODE_ES_CHECK(notfirstnotlast(home,t));
-
-    return subsumed(home,t) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
-    */
   }
 
 }}}
