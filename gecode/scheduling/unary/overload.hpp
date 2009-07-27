@@ -57,23 +57,33 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   // Overload checking for mandatory optional tasks
   forceinline ExecStatus
   overloaded(Space& home, TaskArray<OptTask>& t) {
+    std::cout << "\toverloaded(" << t << std::endl;
     TaskViewArray<OptTaskFwd> f(t);
     sort<OptTaskFwd,STO_LCT,true>(f);
 
     Region r(home);
     OmegaLambdaTree<OptTaskFwd> ol(r,f,false);
 
+    std::cout << "\t\t";
     for (int i=0; i<f.size(); i++) {
-      if (t[i].optional()) {
+      std::cout << "f[" << i << "] = " << f[i] << ": "; 
+      if (f[i].optional()) {
+        std::cout << "optional ";
         ol.linsert(i);
-      } else if (t[i].mandatory()) {
+      } else if (f[i].mandatory()) {
+        std::cout << "mandatory ";
         ol.oinsert(i);
-        if (ol.ect() > f[i].lct())
+        if (ol.ect() > f[i].lct()) {
+          std::cout << "FAILED " << std::endl;
           return ES_FAILED;
+        }
       }
-      while (!ol.lempty() && (ol.lect() > t[i].lct())) {
+      std::cout << std::endl;
+      std::cout << "\t\t";
+      while (!ol.lempty() && (ol.lect() > f[i].lct())) {
         int j = ol.responsible();
-        GECODE_ME_CHECK(t[j].excluded(home));
+        std::cout << "exclude f[" << j << "] = " << j << std::endl;
+        GECODE_ME_CHECK(f[j].excluded(home));
         ol.lremove(j);
       }
     }

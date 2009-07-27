@@ -615,14 +615,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Purge optional tasks that are excluded
-  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
+  /// Purge optional tasks that are excluded and possibly rewrite propagator
+  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t,
+                   bool rewrite);
 
   /// Check tasks \a t for overload
   ExecStatus overloaded(Space& home, TaskArray<Task>& t);
+  /// Check tasks \a t for overload
+  ExecStatus overloaded(Space& home, TaskArray<OptTask>& t);
 
   /// Check tasks \a t for subsumption
   ExecStatus subsumed(Space& home, Propagator& p, TaskArray<Task>& t);
+  /// Check tasks \a t for subsumption
+  ExecStatus subsumed(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Propagate detectable precedences
   ExecStatus detectable(Space& home, TaskArray<Task>& t);
