@@ -37,26 +37,25 @@
 
 #include <gecode/scheduling/unary.hh>
 
-namespace Gecode {
+namespace Gecode { namespace Scheduling { namespace Unary {
 
-  void
-  unary(Space& home, const IntVarArgs& s, const IntArgs& p) {
-    using namespace Gecode::Scheduling;
-    using namespace Gecode::Scheduling::Unary;
-    if (s.same(home))
-      throw Int::ArgumentSame("Scheduling::unary");
-    if (s.size() != p.size())
-      throw Int::ArgumentSizeMismatch("Scheduling::unary");
-    for (int i=p.size(); i--; )
-      if (p[i] <= 0)
-        throw Int::OutOfLimits("Scheduling::unary");
-    if (home.failed()) return;
-    TaskArray<Task> t(home,s.size());
-    for (int i=s.size(); i--; )
-      t[i].init(s[i],p[i]);
-    GECODE_ES_FAIL(home,Mandatory::post(home,t));
+  Actor* 
+  Mandatory::copy(Space& home, bool share) {
+    return new (home) Mandatory(home,share,*this);
   }
 
-}
+  ExecStatus 
+  Mandatory::propagate(Space& home, const ModEventDelta&) {
+    if (overloaded(home,t))
+      return ES_FAILED;
 
-// STATISTICS: scheduling-post
+    GECODE_ES_CHECK(detectable(home,t));
+    GECODE_ES_CHECK(notfirstnotlast(home,t));
+    GECODE_ES_CHECK(edgefinding(home,t));
+
+    return subsumed(home,t) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
+  }
+
+}}}
+
+// STATISTICS: scheduling-prop

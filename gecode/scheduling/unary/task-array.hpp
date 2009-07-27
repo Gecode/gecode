@@ -41,64 +41,73 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * Task array
    */
 
+  template<class Task>
   forceinline
-  TaskArray::TaskArray(void) 
+  TaskArray<Task>::TaskArray(void) 
     : n(0), t(NULL) {}
+  template<class Task>
   forceinline
-  TaskArray::TaskArray(Space& home, const IntVarArgs& s, const IntArgs& p)
-    : n(s.size()), t(home.alloc<Task>(n)) {
-    assert((n > 0) && (n == p.size()));
-    for (int i=n; i--; )
-      t[i].init(s[i],p[i]);
+  TaskArray<Task>::TaskArray(Space& home, int n0)
+    : n(n0), t(home.alloc<Task>(n)) {
+    assert(n > 1);
   }
+  template<class Task>
   forceinline
-  TaskArray::TaskArray(const TaskArray& a)
+  TaskArray<Task>::TaskArray(const TaskArray<Task>& a)
     : n(a.n), t(a.t) {}
-  forceinline const TaskArray& 
-  TaskArray::operator =(const TaskArray& a) {
+  template<class Task>
+  forceinline const TaskArray<Task>& 
+  TaskArray<Task>::operator =(const TaskArray<Task>& a) {
     n=a.n; t=a.t;
     return *this;
   }
 
+  template<class Task>
   forceinline int 
-  TaskArray::size(void) const {
+  TaskArray<Task>::size(void) const {
     return n;
   }
 
+  template<class Task>
   forceinline Task& 
-  TaskArray::operator [](int i) {
+  TaskArray<Task>::operator [](int i) {
     assert((i >= 0) && (i < n));
     return t[i];
   }
+  template<class Task>
   forceinline const Task& 
-  TaskArray::operator [](int i) const {
+  TaskArray<Task>::operator [](int i) const {
     assert((i >= 0) && (i < n));
     return t[i];
   }
 
+  template<class Task>
   inline void 
-  TaskArray::subscribe(Space& home, Propagator& p) {
+  TaskArray<Task>::subscribe(Space& home, Propagator& p) {
     for (int i=n; i--; )
       t[i].subscribe(home,p);
   }
 
+  template<class Task>
   inline void 
-  TaskArray::cancel(Space& home, Propagator& p) {
+  TaskArray<Task>::cancel(Space& home, Propagator& p) {
     for (int i=n; i--; )
       t[i].cancel(home,p);
   }
 
+  template<class Task>
   forceinline void 
-  TaskArray::update(Space& home, bool share, TaskArray& a) {
+  TaskArray<Task>::update(Space& home, bool share, TaskArray& a) {
     n=a.n; t=home.alloc<Task>(n);
     for (int i=n; i--; )
       t[i].update(home,share,a.t[i]);
   }
 
 
-  template<class Char, class Traits>
+  template<class Char, class Traits, class Task>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const TaskArray& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, 
+              const TaskArray<Task>& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << '{';
@@ -117,7 +126,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
   template<class TaskView>
   forceinline
-  TaskViewArray<TaskView>::TaskViewArray(TaskArray& t0)
+  TaskViewArray<TaskView>::TaskViewArray(TaskArray<TaskType>& t0)
     : t(t0) {}
 
   template<class TaskView>

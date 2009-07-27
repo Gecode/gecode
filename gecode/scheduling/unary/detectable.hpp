@@ -62,7 +62,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
   
   forceinline ExecStatus
-  detectable(Space& home, TaskArray& t) {
+  detectable(Space& home, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
     GECODE_ES_CHECK(detectable(home,f));
     TaskViewArray<TaskBwd> b(t);

@@ -38,7 +38,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline bool
-  overloaded(Space& home, TaskArray& t) {
+  overloaded(Space& home, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
     sort<TaskFwd,STO_LCT,true>(f);
 

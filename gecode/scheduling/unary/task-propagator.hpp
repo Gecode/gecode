@@ -36,24 +36,34 @@
  */
 
 namespace Gecode { namespace Scheduling { namespace Unary {
-  
+
+  template<class Task>  
   forceinline
-  Scheduler::Scheduler(Space& home, TaskArray& t0)
+  TaskPropagator<Task>::TaskPropagator(Space& home, TaskArray<Task>& t0)
     : Propagator(home), t(t0) {
     t.subscribe(home,*this);
   }
 
+  template<class Task>  
   forceinline
-  Scheduler::Scheduler(Space& home, bool shared, Scheduler& p) 
+  TaskPropagator<Task>::TaskPropagator(Space& home, 
+                                       bool shared, TaskPropagator<Task>& p) 
     : Propagator(home,shared,p) {
     t.update(home,shared,p.t);
   }
 
-  forceinline ExecStatus 
-  Scheduler::post(Space& home, TaskArray& t) {
-    if (t.size() > 1)
-      (void) new (home) Scheduler(home,t);
-    return ES_OK;
+  template<class Task>  
+  PropCost 
+  TaskPropagator<Task>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::HI,t.size());
+  }
+
+  template<class Task>  
+  size_t 
+  TaskPropagator<Task>::dispose(Space& home) {
+    t.cancel(home,*this);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 }}}

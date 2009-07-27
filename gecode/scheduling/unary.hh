@@ -127,8 +127,26 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const Task& t);
 
 
+  /**
+   * \brief Traits class for mapping task views to tasks
+   *
+   * Each task view must specialize this traits class and add a \code
+   * typedef \endcode for the task corresponding to this task view.
+   */
+  template<class TaskView>
+  class TaskViewTraits {};
+
+
+
   /// Forward task view
   typedef Task TaskFwd;
+
+  /// Task view traits for forward task views
+  template<>
+  class TaskViewTraits<TaskFwd> {
+  public:
+    typedef Task TaskType;
+  };
 
   /// Backward (dual) task view
   class TaskBwd : public Task {
@@ -158,6 +176,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     //@}
   };
 
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<TaskBwd> {
+  public:
+    typedef Task TaskType;
+  };
+
   /**
    * \brief Print backward task view in format est:p:lct
    * \relates TaskBwd
@@ -166,6 +191,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t);
 
+
 }}}
 
 #include <gecode/scheduling/unary/task.hpp>
@@ -173,6 +199,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Task array
+  template<class Task>
   class TaskArray {
   private:
     /// Number of tasks (size)
@@ -184,12 +211,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     //@{
     /// Default constructor (array of size 0)
     TaskArray(void);
-    /// Initialize array with start times \a s and processing times \a p
-    TaskArray(Space& home, const IntVarArgs& s, const IntArgs& p);
+    /// Allocate memory for \a n tasks (no initialization)
+    TaskArray(Space& home, int n);
     /// Initialize from task array \a a (share elements)
-    TaskArray(const TaskArray& a);
+    TaskArray(const TaskArray<Task>& a);
     /// Initialize from task array \a a (share elements)
-    const TaskArray& operator =(const TaskArray& a);
+    const TaskArray<Task>& operator =(const TaskArray<Task>& a);
     //@}
 
     /// \name Array size
@@ -229,22 +256,25 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * \brief Print array elements enclosed in curly brackets
    * \relates TaskArray
    */
-  template<class Char, class Traits>
+  template<class Char, class Traits, class Task>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const TaskArray& t);
+  operator <<(std::basic_ostream<Char,Traits>& os, 
+              const TaskArray<Task>& t);
 
 
   /// Task view array
   template<class TaskView>
   class TaskViewArray {
-  private:
+  protected:
+    /// The underlying task type
+    typedef typename TaskViewTraits<TaskView>::TaskType TaskType;
     /// Access to task array
-    TaskArray& t;
+    TaskArray<TaskType>& t;
   public:
     /// \name Constructors and initialization
     //@{
     /// Initialize from task array \a a
-    TaskViewArray(TaskArray& t);
+    TaskViewArray(TaskArray<TaskType>& t);
     //@}
 
     /// \name Array information
@@ -470,19 +500,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Check tasks \a t for overload
-  bool overloaded(Space& home, TaskArray& t);
+  bool overloaded(Space& home, TaskArray<Task>& t);
 
   /// Check tasks \a t for subsumption
-  bool subsumed(Space& home, TaskArray& t);
+  bool subsumed(Space& home, TaskArray<Task>& t);
 
   /// Propagate detectable precedences
-  ExecStatus detectable(Space& home, TaskArray& t);
+  ExecStatus detectable(Space& home, TaskArray<Task>& t);
 
   /// Propagate not-first and not-last
-  ExecStatus notfirstnotlast(Space& home, TaskArray& t);
+  ExecStatus notfirstnotlast(Space& home, TaskArray<Task>& t);
 
   /// Propagate by edge finding
-  ExecStatus edgefinding(Space& home, TaskArray& t);
+  ExecStatus edgefinding(Space& home, TaskArray<Task>& t);
 
 }}}
 
@@ -492,6 +522,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 #include <gecode/scheduling/unary/not-first-not-last.hpp>
 #include <gecode/scheduling/unary/edge-finding.hpp>
 
+
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /**
@@ -500,34 +531,50 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * Requires \code #include <gecode/scheduling/unary.hh> \endcode
    * \ingroup FuncSchedulingProp
    */
-  class Scheduler : public Propagator {
+  template<class Task>
+  class TaskPropagator : public Propagator {
   protected:
     /// Tasks
-    TaskArray t;
+    TaskArray<Task> t;
     /// Constructor for creation
-    Scheduler(Space& home, TaskArray& t);
+    TaskPropagator(Space& home, TaskArray<Task>& t);
     /// Constructor for cloning \a p
-    Scheduler(Space& home, bool shared, Scheduler& p);
+    TaskPropagator(Space& home, bool shared, TaskPropagator<Task>& p);
+  public:
+    /// Cost function (defined as high linear)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+  /**
+   * \brief Scheduling propagator for unary resource with mandatory tasks
+   *
+   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
+   * \ingroup FuncSchedulingProp
+   */
+  class Mandatory : public TaskPropagator<Task> {
+  protected:
+    using TaskPropagator<Task>::t;
+    /// Constructor for creation
+    Mandatory(Space& home, TaskArray<Task>& t);
+    /// Constructor for cloning \a p
+    Mandatory(Space& home, bool shared, Mandatory& p);
   public:
     /// Perform copying during cloning
     GECODE_SCHEDULING_EXPORT
     virtual Actor* copy(Space& home, bool share);
-    /// Cost function (defined as high linear)
-    GECODE_SCHEDULING_EXPORT 
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     GECODE_SCHEDULING_EXPORT 
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on unary resource
-    static ExecStatus post(Space& home, TaskArray& t);
-    /// Delete propagator and return its size
-    GECODE_SCHEDULING_EXPORT 
-    virtual size_t dispose(Space& home);
+    static ExecStatus post(Space& home, TaskArray<Task>& t);
   };
 
 }}}
 
-#include <gecode/scheduling/unary/scheduler.hpp>
+#include <gecode/scheduling/unary/task-propagator.hpp>
+#include <gecode/scheduling/unary/mandatory.hpp>
 
 #endif
 

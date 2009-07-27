@@ -38,7 +38,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline bool
-  subsumed(Space&, TaskArray& t) {
+  subsumed(Space&, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
     sort<TaskFwd,STO_EST,true>(f);
 

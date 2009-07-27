@@ -35,37 +35,21 @@
  *
  */
 
-#include <gecode/scheduling/unary.hh>
-
 namespace Gecode { namespace Scheduling { namespace Unary {
+  
+  forceinline
+  Mandatory::Mandatory(Space& home, TaskArray<Task>& t)
+    : TaskPropagator<Task>(home,t) {}
 
-  Actor* 
-  Scheduler::copy(Space& home, bool share) {
-    return new (home) Scheduler(home,share,*this);
-  }
+  forceinline
+  Mandatory::Mandatory(Space& home, bool shared, Mandatory& p) 
+    : TaskPropagator<Task>(home,shared,p) {}
 
-  PropCost 
-  Scheduler::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,t.size());
-  }
-
-  ExecStatus 
-  Scheduler::propagate(Space& home, const ModEventDelta&) {
-    if (overloaded(home,t))
-      return ES_FAILED;
-
-    GECODE_ES_CHECK(detectable(home,t));
-    GECODE_ES_CHECK(notfirstnotlast(home,t));
-    GECODE_ES_CHECK(edgefinding(home,t));
-
-    return subsumed(home,t) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
-  }
-
-  size_t 
-  Scheduler::dispose(Space& home) {
-    t.cancel(home,*this);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
+  forceinline ExecStatus 
+  Mandatory::post(Space& home, TaskArray<Task>& t) {
+    if (t.size() > 1)
+      (void) new (home) Mandatory(home,t);
+    return ES_OK;
   }
 
 }}}
