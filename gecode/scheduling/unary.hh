@@ -631,17 +631,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   /// Propagate by edge finding
   ExecStatus edgefinding(Space& home, TaskArray<Task>& t);
 
-}}}
-
-#include <gecode/scheduling/unary/purge.hpp>
-#include <gecode/scheduling/unary/overload.hpp>
-#include <gecode/scheduling/unary/subsumption.hpp>
-#include <gecode/scheduling/unary/detectable.hpp>
-#include <gecode/scheduling/unary/not-first-not-last.hpp>
-#include <gecode/scheduling/unary/edge-finding.hpp>
-
-
-namespace Gecode { namespace Scheduling { namespace Unary {
 
   /**
    * \brief Scheduling propagator for unary resource
@@ -715,8 +704,15 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 }}}
 
+#include <gecode/scheduling/unary/overload.hpp>
+#include <gecode/scheduling/unary/subsumption.hpp>
+#include <gecode/scheduling/unary/detectable.hpp>
+#include <gecode/scheduling/unary/not-first-not-last.hpp>
+#include <gecode/scheduling/unary/edge-finding.hpp>
+
 #include <gecode/scheduling/unary/task-propagator.hpp>
 #include <gecode/scheduling/unary/mandatory.hpp>
+#include <gecode/scheduling/unary/purge.hpp>
 #include <gecode/scheduling/unary/optional.hpp>
 
 #endif
