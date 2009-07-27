@@ -745,7 +745,7 @@ endif
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear gcc sorted circuit unshare exec \
+	rel linear gcc sorted unshare exec \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
@@ -771,6 +771,16 @@ else
 SCHEDULINGTESTOBJ =
 endif
 
+GRAPHTESTSRC00 = \
+	circuit
+GRAPHTESTSRC0 = $(GRAPHTESTSRC00:%=test/graph/%.cpp)
+
+ifeq "@enable_graph@" "yes"
+GRAPHTESTOBJ = $(GRAPHTESTSRC0:%.cpp=%$(OBJSUFFIX))
+else
+GRAPHTESTOBJ =
+endif
+
 
 BRANCHTESTSRC0 = \
 	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
@@ -785,20 +795,22 @@ TESTSRC0 = test/test.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) \
-	$(SCHEDULINGTESTSRC0) \
+	$(SCHEDULINGTESTSRC0) $(GRAPHTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0)
 
 TESTHDR0 = \
 	test.hh test.hpp int.hh int.hpp set.hh set.hpp \
 	branch.hh assign.hh
 TESTHDR = $(TESTHDR0:%=test/%)
-TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(SCHEDULINGTESTOBJ) \
+TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) \
+	$(SCHEDULINGTESTOBJ) $(GRAPHTESTOBJ) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
-TESTBUILDDIRS = test test/int test/set test/branch test/assign test/scheduling
+TESTBUILDDIRS = test test/int test/set test/branch test/assign \
+	test/scheduling test/graph
 
 BUILDDIRS = \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \

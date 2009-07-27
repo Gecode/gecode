@@ -148,6 +148,11 @@
  */
 
 /**
+ * \defgroup TaskTestGraph Testing graph constraints
+ * \ingroup TaskTest
+ */
+
+/**
  * \defgroup Func Common functionality
  */
 

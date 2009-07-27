@@ -44,8 +44,8 @@ namespace Test { namespace Int {
    namespace Circuit {
 
      /**
-      * \defgroup TaskTestIntCircuit Circuit constraints
-      * \ingroup TaskTestInt
+      * \defgroup TaskTestGraphCircuit Circuit constraints
+      * \ingroup TaskTestGraph
       */
      //@{
      /// Simple test for circuit constraint
