@@ -141,6 +141,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return _m.one();
   }
   forceinline bool
+  OptTask::excluded(void) const {
+    return _m.zero();
+  }
+  forceinline bool
   OptTask::optional(void) const {
     return _m.none();
   }

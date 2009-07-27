@@ -78,28 +78,58 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   forceinline
   OmegaLambdaTree<TaskView>::OmegaLambdaTree(Region& r, 
-                                             const TaskViewArray<TaskView>& t)
+                                             const TaskViewArray<TaskView>& t,
+                                             bool inc)
     : TaskTree<TaskView>(r,t), node(r.alloc<Node>(nodes())) {
-    // Enter all tasks into tree
-    for (int i=tasks.size(); i--; ) {
-      node[leave[i]].p = node[leave[i]].lp = t[i].p();
-      node[leave[i]].ect = node[leave[i]].lect = t[i].ect();
-      node[leave[i]].r = undef;
-    }
-    for (int i=inner(); i--; ) {
-      int l = left(i), r = right(i);
-      node[i].p = node[i].lp = node[l].p + node[r].p;
-      node[i].ect = node[i].lect = std::max(node[l].ect + node[r].p, 
-                                            node[r].ect);
-      node[leave[i]].r = undef;
-    }
+    if (inc) {
+      // Enter all tasks into tree (omega = all tasks, lambda = empty)
+      for (int i=tasks.size(); i--; ) {
+        node[leave[i]].p = node[leave[i]].lp = t[i].p();
+        node[leave[i]].ect = node[leave[i]].lect = t[i].ect();
+        node[leave[i]].r = undef;
+      }
+      for (int i=inner(); i--; ) {
+        int l = left(i), r = right(i);
+        node[i].p = node[i].lp = node[l].p + node[r].p;
+        node[i].ect = node[i].lect = std::max(node[l].ect + node[r].p, 
+                                              node[r].ect);
+        node[leave[i]].r = undef;
+      }
+    } else {
+      // Enter no tasks into tree (omega = empty, lambda = empty)
+      for (int i=nodes(); i--; ) {
+        int l = left(i), r = right(i);
+        node[i].p = node[i].lp = 0;
+        node[i].ect = node[i].lect = -infty;
+        node[i].r = undef;
+      }
+     }
   }
 
   template<class TaskView>
   forceinline void 
   OmegaLambdaTree<TaskView>::shift(int i) {
+    // That means that i is in omega
+    assert(node[leave[i]].p > 0);
     node[leave[i]].p = 0;
     node[leave[i]].ect = -infty;
+    node[leave[i]].r = i;
+    update(leave[i]);
+  }
+
+  template<class TaskView>
+  forceinline void
+  OmegaLambdaTree<TaskView>::oinsert(int i) {
+    node[leave[i]].p = t[i].p(); 
+    node[leave[i]].ect = t[i].ect();
+    update(leave[i]);
+  }
+
+  template<class TaskView>
+  forceinline void
+  OmegaLambdaTree<TaskView>::linsert(int i) {
+    node[leave[i]].lp = t[i].p(); 
+    node[leave[i]].lect = t[i].ect();
     node[leave[i]].r = i;
     update(leave[i]);
   }

@@ -58,10 +58,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       for (int i=m; i--; )
         mt[i].init(t[i].start(),t[i].p());
       return Mandatory::post(home,mt);
-    } else if (o > 1) {
-      (void) new (home) Optional(home,t);
-      return ES_OK;
     }
+    if (o > 1)
+      (void) new (home) Optional(home,t);
+    return ES_OK;
   }
 
 }}}

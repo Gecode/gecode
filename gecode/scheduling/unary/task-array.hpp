@@ -67,6 +67,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   TaskArray<Task>::size(void) const {
     return n;
   }
+  template<class Task>
+  forceinline void
+  TaskArray<Task>::size(int n0) {
+    assert(n0 <= n);
+    n = n0;
+  }
 
   template<class Task>
   forceinline Task& 

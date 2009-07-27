@@ -35,34 +35,22 @@
  *
  */
 
-#include <gecode/scheduling/unary.hh>
-
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  Actor* 
-  Optional::copy(Space& home, bool share) {
-    return new (home) Optional(home,share,*this);
+  forceinline ExecStatus
+  purge(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+    int j=0;
+    for (int i=0; i < t.size(); i++)
+      if (t[i].excluded())
+        t[i].cancel(home,p);
+      else
+        t[j++]=t[i];
+    t.size(j);
+    if (t.size() < 2)
+      return ES_SUBSUMED(p,home);
+    return ES_OK;
   }
-
-  ExecStatus 
-  Optional::propagate(Space& home, const ModEventDelta& med) {
-    // Did one of the Boolean views change?
-    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK(purge(home, *this, t));
-
-    return ES_FAILED;
-    /*
-    if (overloaded(home,t))
-      return ES_FAILED;
-
-    GECODE_ES_CHECK(detectable(home,t));
-    GECODE_ES_CHECK(notfirstnotlast(home,t));
-    GECODE_ES_CHECK(edgefinding(home,t));
-
-    return subsumed(home,t) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
-    */
-  }
-
+  
 }}}
 
 // STATISTICS: scheduling-prop

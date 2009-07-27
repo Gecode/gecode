@@ -149,6 +149,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     //@{
     /// Whether task is mandatory
     bool mandatory(void) const;
+    /// Whether task is excluded
+    bool excluded(void) const;
     /// Whether task can still be optional
     bool optional(void) const;
     //@}
@@ -328,6 +330,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     //@{
     /// Return size of array (number of elements)
     int size(void) const;
+    /// Set size of array (number of elements) to \a n, must not be larger
+    void size(int n);
     //@}
 
     /// \name Array elements
@@ -582,10 +586,15 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Update tree from \a i up to root
     void update(int i);
   public:
-    /// Initialize tree for tasks \a t with all tasks included
-    OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t);
+    /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
+    OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t, 
+                    bool inc=true);
     /// Shift task with index \a i from omega to lambda
     void shift(int i);
+    /// Insert task with index \a i to omega
+    void oinsert(int i);
+    /// Insert task with index \a i to lambda
+    void linsert(int i);
     /// Remove task with index \a i from lambda
     void lremove(int i);
     /// Whether has responsible task
@@ -604,6 +613,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  /// Purge optional tasks that are excluded
+  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
+
   /// Check tasks \a t for overload
   bool overloaded(Space& home, TaskArray<Task>& t);
 
@@ -621,6 +633,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 }}}
 
+#include <gecode/scheduling/unary/purge.hpp>
 #include <gecode/scheduling/unary/overload.hpp>
 #include <gecode/scheduling/unary/subsumption.hpp>
 #include <gecode/scheduling/unary/detectable.hpp>
