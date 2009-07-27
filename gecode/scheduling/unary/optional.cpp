@@ -35,27 +35,30 @@
  *
  */
 
+#include <gecode/scheduling/unary.hh>
+
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct();
-    return os << s.str();
+  Actor* 
+  Optional::copy(Space& home, bool share) {
+    return new (home) Optional(home,share,*this);
   }
-    
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptTaskBwd& t) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct()
-      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
-    return os << s.str();
+
+  ExecStatus 
+  Optional::propagate(Space& home, const ModEventDelta&) {
+    return ES_FAILED;
+    /*
+    if (overloaded(home,t))
+      return ES_FAILED;
+
+    GECODE_ES_CHECK(detectable(home,t));
+    GECODE_ES_CHECK(notfirstnotlast(home,t));
+    GECODE_ES_CHECK(edgefinding(home,t));
+
+    return subsumed(home,t) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
+    */
   }
-    
+
 }}}
 
-// STATISTICS: scheduling-var
+// STATISTICS: scheduling-prop

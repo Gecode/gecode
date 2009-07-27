@@ -203,10 +203,37 @@ namespace Gecode {
   /** \brief Post propagators for scheduling tasks on unary resources
    *
    * Schedule tasks with start times \a s and processing time \a p
-   * on unary resource.
+   * on a unary resource. The propagator uses the algorithms from:
+   * Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   * Charles University, Prague, Czech Republic, 2007.
    * 
+   * The propagator performs overload checking, detectable precendence
+   * propagation, not-first-not-last propagation, and edge finding.
+   *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
    *    and \a p are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLImits, if \a p contains
+   *    an integer that is not strictly positive.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  unary(Space& home, const IntVarArgs& s, const IntArgs& p);
+
+  /** \brief Post propagators for scheduling optional tasks on unary resources
+   *
+   * Schedule optional tasks with start times \a s, processing time \a p,
+   * and whether a task is mandatory \a m (a task is mandatory if the
+   * Boolean variable is 1) on a unary resource. The propagator uses the 
+   * algorithms from:
+   * Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   * Charles University, Prague, Czech Republic, 2007.
+   * 
+   * The propagator performs overload checking, detectable precendence
+   * propagation, and not-first-not-last propagation.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   *    \a p, or \a m are of different size.
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
    *    the same unassigned variable multiply.
    *  - Throws an exception of type Int::OutOfLImits, if \a p contains

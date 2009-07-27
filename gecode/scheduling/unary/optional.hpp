@@ -36,26 +36,34 @@
  */
 
 namespace Gecode { namespace Scheduling { namespace Unary {
+  
+  forceinline
+  Optional::Optional(Space& home, TaskArray<OptTask>& t)
+    : TaskPropagator<OptTask>(home,t) {}
 
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct();
-    return os << s.str();
+  forceinline
+  Optional::Optional(Space& home, bool shared, Optional& p) 
+    : TaskPropagator<OptTask>(home,shared,p) {}
+
+  forceinline ExecStatus 
+  Optional::post(Space& home, TaskArray<OptTask>& t) {
+    int m=0, o=0;
+    for (int i=t.size(); i--; )
+      if (t[i].mandatory())
+        m++;
+      else if (t[i].optional())
+        o++;
+    if (m == t.size()) {
+      TaskArray<Task> mt(home,m);
+      for (int i=m; i--; )
+        mt[i].init(t[i].start(),t[i].p());
+      return Mandatory::post(home,mt);
+    } else if (o > 1) {
+      (void) new (home) Optional(home,t);
+      return ES_OK;
+    }
   }
-    
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptTaskBwd& t) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct()
-      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
-    return os << s.str();
-  }
-    
+
 }}}
 
-// STATISTICS: scheduling-var
+// STATISTICS: scheduling-prop

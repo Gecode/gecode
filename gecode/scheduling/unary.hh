@@ -44,8 +44,8 @@
  * \namespace Gecode::Scheduling::Unary
  *
  * The algorithms and data structures follow (mostly):
- *   Petr Vilím, Global Constraints in Scheduling, Charles University,
- *   Prague, Czech Republic, 2007.
+ *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+ *   Charles University, Prague, Czech Republic, 2007.
  *
  * \brief Scheduling for unary resources
  */
@@ -80,6 +80,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     int lst(void) const;
     /// Return latest completion time
     int lct(void) const;
+    /// Return start time
+    IntVar start(void) const;
     /// Return processing time
     int p(void) const;
     //@}
@@ -265,6 +267,35 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t);
+
+
+  /// Forward optional task view
+  typedef OptTask OptTaskFwd;
+
+  /// Task view traits for forward optional task views
+  template<>
+  class TaskViewTraits<OptTaskFwd> {
+  public:
+    typedef OptTask TaskType;
+  };
+
+  /// Backward (dual) optional task view
+  typedef FwdToBwd<OptTaskFwd> OptTaskBwd;
+
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<OptTaskBwd> {
+  public:
+    typedef OptTask TaskType;
+  };
+
+  /**
+   * \brief Print backward task view in format est:p:lct
+   * \relates TaskBwd
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptTaskBwd& t);
 
 }}}
 
@@ -645,10 +676,35 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     static ExecStatus post(Space& home, TaskArray<Task>& t);
   };
 
+  /**
+   * \brief Scheduling propagator for unary resource with optional tasks
+   *
+   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
+   * \ingroup FuncSchedulingProp
+   */
+  class Optional : public TaskPropagator<OptTask> {
+  protected:
+    using TaskPropagator<OptTask>::t;
+    /// Constructor for creation
+    Optional(Space& home, TaskArray<OptTask>& t);
+    /// Constructor for cloning \a p
+    Optional(Space& home, bool shared, Optional& p);
+  public:
+    /// Perform copying during cloning
+    GECODE_SCHEDULING_EXPORT
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    GECODE_SCHEDULING_EXPORT 
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator that schedules tasks on unary resource
+    static ExecStatus post(Space& home, TaskArray<OptTask>& t);
+  };
+
 }}}
 
 #include <gecode/scheduling/unary/task-propagator.hpp>
 #include <gecode/scheduling/unary/mandatory.hpp>
+#include <gecode/scheduling/unary/optional.hpp>
 
 #endif
 

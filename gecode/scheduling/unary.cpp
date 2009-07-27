@@ -57,6 +57,25 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Mandatory::post(home,t));
   }
 
+  void
+  unary(Space& home, const IntVarArgs& s, const IntArgs& p, 
+        const BoolVarArgs& m) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Unary;
+    if (s.same(home))
+      throw Int::ArgumentSame("Scheduling::unary");
+    if ((s.size() != p.size()) || (s.size() != m.size()))
+      throw Int::ArgumentSizeMismatch("Scheduling::unary");
+    for (int i=p.size(); i--; )
+      if (p[i] <= 0)
+        throw Int::OutOfLimits("Scheduling::unary");
+    if (home.failed()) return;
+    TaskArray<OptTask> t(home,s.size());
+    for (int i=s.size(); i--; )
+      t[i].init(s[i],p[i],m[i]);
+    GECODE_ES_FAIL(home,Optional::post(home,t));
+  }
+
 }
 
 // STATISTICS: scheduling-post

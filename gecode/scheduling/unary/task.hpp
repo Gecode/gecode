@@ -66,6 +66,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   Task::lct(void) const {
     return _s.max()+_p;
   }
+  forceinline IntVar
+  Task::start(void) const {
+    return _s;
+  }
   forceinline int
   Task::p(void) const {
     return _p;
