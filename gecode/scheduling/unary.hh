@@ -52,7 +52,7 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Unary task with fixed processing time
+  /// Unary (mandatory) task with fixed processing time
   class Task {
   protected:
     /// Start time
@@ -125,6 +125,66 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Task& t);
+
+
+  /// Unary optional task with fixed processing time
+  class OptTask : public Task {
+  protected:
+    /// Boolean view whether task is mandatory (= 1) or not
+    Int::BoolView _m;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    OptTask(void);
+    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+    OptTask(IntVar s, int p, BoolVar m);
+    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+    void init(IntVar s, int p, BoolVar m);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Whether task is mandatory
+    bool mandatory(void) const;
+    /// Whether task can still be optional
+    bool optional(void) const;
+    //@}
+
+    //@{
+    /// Test whether task is assigned
+    bool assigned(void) const;
+    //@}
+
+    /// \name Value update
+    //@{
+    /// Mark task as mandatory, if \a m is true
+    ModEvent mandatory(Space& home, bool m);
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this task to be a clone of task \a t
+    void update(Space& home, bool share, OptTask& t);
+    //@}
+
+    /// \name Dependencies
+    //@{
+    /// Subscribe propagator \a p to task
+    void subscribe(Space& home, Propagator& p);
+    /// Cancel subscription of propagator \a p for task
+    void cancel(Space& home, Propagator& p);
+    //@}
+
+  };
+
+  /**
+   * \brief Print task in format est:p:lct
+   * \relates Task
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptTask& t);
 
 
   /**

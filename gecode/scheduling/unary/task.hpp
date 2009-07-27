@@ -38,7 +38,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /*
-   * Task
+   * Mandatory task
    */
 
   forceinline
@@ -113,6 +113,68 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.p() << ':' << t.lct();
+    return os << s.str();
+  }
+    
+
+
+  /*
+   * Optional task
+   */
+
+  forceinline
+  OptTask::OptTask(void) {}
+  forceinline
+  OptTask::OptTask(IntVar s, int p, BoolVar m) 
+    : Task(s,p), _m(m) {}
+  forceinline void
+  OptTask::init(IntVar s, int p, BoolVar m) {
+    Task::init(s,p); _m=m;
+  }
+
+  forceinline bool
+  OptTask::mandatory(void) const {
+    return _m.one();
+  }
+  forceinline bool
+  OptTask::optional(void) const {
+    return _m.none();
+  }
+
+  forceinline bool
+  OptTask::assigned(void) const {
+    return Task::assigned() && _m.assigned();
+  }
+
+  forceinline ModEvent 
+  OptTask::mandatory(Space& home, bool m) {
+    return m ? _m.one(home) : _m.zero(home);
+  }
+
+  forceinline void
+  OptTask::update(Space& home, bool share, OptTask& t) {
+    Task::update(home, share, t);
+    _m.update(home,share,t._m);
+  }
+
+  forceinline void
+  OptTask::subscribe(Space& home, Propagator& p) {
+    Task::subscribe(home, p);
+    _m.subscribe(home, p, Int::PC_BOOL_VAL);
+  }
+  forceinline void
+  OptTask::cancel(Space& home, Propagator& p) {
+    _m.cancel(home, p, Int::PC_BOOL_VAL);
+    Task::cancel(home, p);
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptTask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.p() << ':' << t.lct() << ':'
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
     
