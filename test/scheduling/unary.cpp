@@ -94,8 +94,64 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Test for unary constraint with optional tasks
+     class OptUnary : public Test {
+     protected:
+       /// The processing times
+       Gecode::IntArgs p;
+       /// Get a reasonable maximal start time
+       static int st(const Gecode::IntArgs& p) {
+         int t = 0;
+         for (int i=p.size(); i--; )
+           t += p[i];
+         return t;
+       }
+       /// Get string for processing times
+       static std::string pt(const Gecode::IntArgs& p) {
+         std::string s = "";
+         for (int i=0; i<p.size()-1; i++)
+           s += str(p[i]) + ",";
+         return "[" + s + str(p[p.size()-1]) + "]";
+       }
+     public:
+       /// Create and register test
+       OptUnary(const Gecode::IntArgs& p0)
+         : Test("Scheduling::Unary::Optional::"+pt(p0),
+                2*p0.size(),0,st(p0)), p(p0) {
+         testsearch = false;
+         contest = CTL_NONE;
+       }
+       /// Create and register initial assignment
+       virtual Assignment* assignment(void) const {
+         return new RandomAssignment(arity,dom,100);
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size() / 2;
+         for (int i=0; i<n; i++)
+           if (x[n+i] != 0)
+             for (int j=i+1; j<n; j++)
+               if(x[n+j] != 0)
+                 if ((x[i]+p[i] > x[j]) && (x[j]+p[j] > x[i]))
+                   return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size() / 2;
+         Gecode::IntVarArgs s(n);
+         Gecode::BoolVarArgs m(n);
+         for (int i=0; i<n; i++) {
+           s[i]=x[i];
+           m[i]=Gecode::post(home, ~(x[n+i] != 0));
+         }
+         Gecode::unary(home, s, p, m);
+       }
+     };
+
      Gecode::IntArgs p1(4, 2,2,2,2);
      Unary u1(p1);
+     //     OptUnary ou1(p1);
 
      Gecode::IntArgs p2(4, 4,3,3,5);
      Unary u2(p2);

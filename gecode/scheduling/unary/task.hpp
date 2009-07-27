@@ -155,8 +155,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
   forceinline ModEvent 
-  OptTask::mandatory(Space& home, bool m) {
-    return m ? _m.one(home) : _m.zero(home);
+  OptTask::mandatory(Space& home) {
+    return _m.one(home);
+  }
+  forceinline ModEvent 
+  OptTask::excluded(Space& home) {
+    return _m.zero(home);
   }
 
   forceinline void

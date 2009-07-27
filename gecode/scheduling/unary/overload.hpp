@@ -37,6 +37,7 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  // Overload checking for mandatory tasks
   forceinline ExecStatus
   overloaded(Space& home, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
@@ -49,6 +50,32 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       o.insert(i);
       if (o.ect() > f[i].lct())
         return ES_FAILED;
+    }
+    return ES_OK;
+  }
+  
+  // Overload checking for mandatory optional tasks
+  forceinline ExecStatus
+  overloaded(Space& home, TaskArray<OptTask>& t) {
+    TaskViewArray<OptTaskFwd> f(t);
+    sort<OptTaskFwd,STO_LCT,true>(f);
+
+    Region r(home);
+    OmegaLambdaTree<OptTaskFwd> ol(r,f,false);
+
+    for (int i=0; i<f.size(); i++) {
+      if (t[i].optional()) {
+        ol.linsert(i);
+      } else if (t[i].mandatory()) {
+        ol.oinsert(i);
+        if (ol.ect() > f[i].lct())
+          return ES_FAILED;
+      }
+      while (!ol.lempty() && (ol.lect() > t[i].lct())) {
+        int j = ol.responsible();
+        GECODE_ME_CHECK(t[j].excluded(home));
+        ol.lremove(j);
+      }
     }
     return ES_OK;
   }

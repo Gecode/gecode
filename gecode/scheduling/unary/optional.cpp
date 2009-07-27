@@ -50,14 +50,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
       GECODE_ES_CHECK(purge(home, *this, t));
 
-    return ES_FAILED;
-    /*
-    if (overloaded(home,t))
-      return ES_FAILED;
+    GECODE_ES_CHECK(overloaded(home,t));
 
+    return ES_NOFIX;
+    /*
     GECODE_ES_CHECK(detectable(home,t));
     GECODE_ES_CHECK(notfirstnotlast(home,t));
-    GECODE_ES_CHECK(edgefinding(home,t));
 
     return subsumed(home,t) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
     */

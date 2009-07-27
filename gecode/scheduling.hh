@@ -240,7 +240,8 @@ namespace Gecode {
    *    an integer that is not strictly positive.
    */
   GECODE_SCHEDULING_EXPORT void
-  unary(Space& home, const IntVarArgs& s, const IntArgs& p);
+  unary(Space& home, const IntVarArgs& s, const IntArgs& p, 
+        const BoolVarArgs& m);
   //@}
 
 }

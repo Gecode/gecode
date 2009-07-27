@@ -162,8 +162,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
     /// \name Value update
     //@{
-    /// Mark task as mandatory, if \a m is true
-    ModEvent mandatory(Space& home, bool m);
+    /// Mark task as mandatory
+    ModEvent mandatory(Space& home);
+    /// Mark task as excluded
+    ModEvent excluded(Space& home);
     //@}
 
     /// \name Cloning
