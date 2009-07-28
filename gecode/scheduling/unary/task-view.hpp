@@ -51,7 +51,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const OptTaskBwd& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct()
+    s << t.est() << ':' << t.p() << ':' << t.lct() << ":"
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }

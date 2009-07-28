@@ -78,11 +78,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
                           const TaskViewArray<TaskView>& t)
     : TaskIterator<TaskView,sto,inc>(r,t), tasks(t), m(0) {
     for (int j=tasks.size(); j--; )
-      if (tasks[i].mandatory())
+      if (tasks[j].mandatory())
         m++;
-    while (TaskIterator<TaskView,sto,inc>::operator ()() &&
-           !tasks[map[i]].mandatory())
-      TaskIterator<TaskView,sto,inc>::operator ++();
+    while ((i>=0) && !tasks[map[i]].mandatory())
+      i--;
   }
 
   template<class TaskView, SortTaskOrder sto, bool inc>
@@ -99,9 +98,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline void
   MandatoryTaskIterator<TaskView,sto,inc>::operator ++(void) {
     m--;
-    while (TaskIterator<TaskView,sto,inc>::operator ()() &&
-           !tasks[map[i]].mandatory())
-      TaskIterator<TaskView,sto,inc>::operator ++();
+    while ((i>=0) && !tasks[map[i]].mandatory())
+      i--;
   }
 
 }}}

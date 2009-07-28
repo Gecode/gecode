@@ -99,7 +99,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       // Enter no tasks into tree (omega = empty, lambda = empty)
       for (int i=nodes(); i--; ) {
         node[i].p = node[i].lp = 0;
-        node[i].ect = node[i].lect = -infty;
+        node[i].ect = node[i].lect = -Int::Limits::infinity;
         node[i].r = undef;
       }
      }
@@ -111,7 +111,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     // That means that i is in omega
     assert(node[leave[i]].p > 0);
     node[leave[i]].p = 0;
-    node[leave[i]].ect = -infty;
+    node[leave[i]].ect = -Int::Limits::infinity;
     node[leave[i]].r = i;
     update(leave[i]);
   }
@@ -137,7 +137,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline void
   OmegaLambdaTree<TaskView>::lremove(int i) {
     node[leave[i]].lp = 0; 
-    node[leave[i]].lect = -infty;
+    node[leave[i]].lect = -Int::Limits::infinity;
     node[leave[i]].r = undef;
     update(leave[i]);
   }

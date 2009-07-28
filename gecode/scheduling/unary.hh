@@ -185,8 +185,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   };
 
   /**
-   * \brief Print task in format est:p:lct
-   * \relates Task
+   * \brief Print optional task in format est:p:lct:m
+   * \relates OptTask
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
@@ -294,8 +294,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   };
 
   /**
-   * \brief Print backward task view in format est:p:lct
-   * \relates TaskBwd
+   * \brief Print optional backward task view in format est:p:lct:m
+   * \relates OptTaskBwd
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
@@ -503,8 +503,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   class TaskTree {
   protected:
-    /// Positive infinity
-    static const int infty = Int::Limits::max+1;
     /// The tasks from which the tree is computed
     const TaskViewArray<TaskView>& tasks;
     /// Map task number to leave node number in right order
@@ -536,7 +534,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   class OmegaTree : public TaskTree<TaskView> {
   protected:
-    using TaskTree<TaskView>::infty;
     using TaskTree<TaskView>::tasks;
     using TaskTree<TaskView>::leave;
     using TaskTree<TaskView>::root;
@@ -582,7 +579,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   class OmegaLambdaTree : public TaskTree<TaskView> {
   protected:
-    using TaskTree<TaskView>::infty;
     using TaskTree<TaskView>::tasks;
     using TaskTree<TaskView>::leave;
     using TaskTree<TaskView>::root;

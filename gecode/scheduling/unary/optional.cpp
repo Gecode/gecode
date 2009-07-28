@@ -51,11 +51,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       GECODE_ES_CHECK(purge(home,*this,t,false));
 
     GECODE_ES_CHECK(overloaded(home,t));
-    //    GECODE_ES_CHECK(detectable(home,t));
+    GECODE_ES_CHECK(purge(home,*this,t,true));
+    GECODE_ES_CHECK(detectable(home,t));
     //    GECODE_ES_CHECK(notfirstnotlast(home,t));
 
 
-    GECODE_ES_CHECK(purge(home,*this,t,true));
+    //    GECODE_ES_CHECK(purge(home,*this,t,false));
     GECODE_ES_CHECK(subsumed(home,*this,t));
 
     return ES_NOFIX;

@@ -41,7 +41,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class TaskView>
   forceinline
-  OmegaTree<TaskView>::Node::Node(void) : p(0), ect(-infty) {}
+  OmegaTree<TaskView>::Node::Node(void) 
+    : p(0), ect(-Int::Limits::infinity) {}
 
 
   template<class TaskView>
@@ -73,7 +74,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
     node[leave[i]].p = 0; 
-    node[leave[i]].ect = -infty;
+    node[leave[i]].ect = -Int::Limits::infinity;
     update(leave[i]);
   }
 
