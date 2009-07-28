@@ -42,6 +42,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline ExecStatus
   detectable(Space& home, TaskViewArray<TaskView>& t) {
     sort<TaskView,STO_ECT,true>(t);
+    //    std::cout << "detectable(" << t << std::endl;
 
     Region r(home);
 
@@ -50,11 +51,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     int* est = r.alloc<int>(t.size());
 
     for (int i=0; i<t.size(); i++) {
+      //      std::cout << "t[" << i << "] = " << t[i] << ", ";
       while (q() && (t[i].ect() > t[q.task()].lst())) {
+        //        std::cout << "q = " << t[q.task()] << ", ";
         o.insert(q.task()); ++q;
       }
       est[i] = o.ect(i);
     }
+    //    std::cout << std::endl;
 
     for (int i=t.size(); i--; )
       GECODE_ME_CHECK(t[i].est(home,est[i]));

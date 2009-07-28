@@ -48,18 +48,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline ExecStatus 
   Optional::post(Space& home, TaskArray<OptTask>& t) {
     int m=0, o=0;
-    for (int i=t.size(); i--; )
+    for (int i=t.size(); i--; ) {
       if (t[i].mandatory())
         m++;
       else if (t[i].optional())
         o++;
+    }
     if (m == t.size()) {
       TaskArray<Task> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i].start(),t[i].p());
       return Mandatory::post(home,mt);
     }
-    if (o > 1)
+    if (o+m > 1)
       (void) new (home) Optional(home,t);
     return ES_OK;
   }

@@ -39,28 +39,23 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline ExecStatus
   purge(Space& home, Propagator& p, TaskArray<OptTask>& t, bool rewrite) {
-    int j=0, m=0;
-    for (int i=0; i < t.size(); i++)
+    int m=0, n=t.size();
+    for (int i=n; i--; )
       if (t[i].excluded()) {
-        t[i].cancel(home,p);
-      } else {
-        if (t[i].mandatory())
-          m++;
-        t[j++]=t[i];
+        t[i].cancel(home,p); t[i]=t[--n];
+      } else if (t[i].mandatory()) {
+        m++;
       }
-    t.size(j);
+    t.size(n);
     if (t.size() < 2)
       return ES_SUBSUMED(p,home);
-    /*
     if (rewrite && (t.size() == m)) {
+      // All tasks are mandatory, rewrite
       TaskArray<Task> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i].start(),t[i].p());
-      // All tasks are mandatory, rewrite
-      std::cout << "\trewrite" << mt << std::endl;
       GECODE_REWRITE(p,Mandatory::post(home,mt));
     }
-    */
     return ES_OK;
   }
   

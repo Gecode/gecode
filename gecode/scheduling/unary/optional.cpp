@@ -46,26 +46,18 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   ExecStatus 
   Optional::propagate(Space& home, const ModEventDelta& med) {
-    std::cout << std::endl 
-              << "Optional::propagate(" << t << ");" << std::endl;
     // Did one of the Boolean views change?
-    //    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL) {
-      GECODE_ES_CHECK(purge(home, *this, t, true));
-      std::cout << "\tpurge(" << t << ");" << std::endl;
-      //    }
-      ExecStatus es = overloaded(home,t);
-      if (es == ES_FAILED) {
-        std::cout <<  "FAILED FAILED FAILED" << std::endl;
-        return ES_FAILED;
-      }
+    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
+      GECODE_ES_CHECK(purge(home,*this,t,false));
 
-    std::cout << "\toverloaded(" << t << ");" << std::endl;
-
-    GECODE_ES_CHECK(detectable(home,t));
+    GECODE_ES_CHECK(overloaded(home,t));
+    //    GECODE_ES_CHECK(detectable(home,t));
     //    GECODE_ES_CHECK(notfirstnotlast(home,t));
 
+
+    GECODE_ES_CHECK(purge(home,*this,t,true));
     GECODE_ES_CHECK(subsumed(home,*this,t));
-    std::cout << "\tsubsumed(" << t << ");" << std::endl;
+
     return ES_NOFIX;
   }
 

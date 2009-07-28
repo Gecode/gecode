@@ -51,8 +51,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   
   forceinline ExecStatus
   subsumed(Space& home, Propagator& p, TaskArray<OptTask>& t) {
-    GECODE_ES_CHECK(purge(home,p,t,false));
-
     TaskViewArray<OptTaskFwd> f(t);
     sort<OptTaskFwd,STO_EST,true>(f);
 
