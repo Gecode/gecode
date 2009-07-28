@@ -40,8 +40,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline ExecStatus
   subsumed(Space& home, Propagator& p, TaskArray<Task>& t) {
-    TaskViewArray<TaskTraits<Task>::TaskFwd> f(t);
-    sort<TaskTraits<Task>::TaskFwd,STO_EST,true>(f);
+    TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
+    sort<typename TaskTraits<Task>::TaskViewFwd,STO_EST,true>(f);
 
     for (int i=f.size()-1; i--; )
       if (f[i].lct() > f[i+1].est())

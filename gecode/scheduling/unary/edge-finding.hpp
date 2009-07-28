@@ -67,9 +67,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline ExecStatus
   edgefinding(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<TaskTraits<Task>::TaskFwd> f(t);
+    TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
     GECODE_ES_CHECK(edgefinding(home,f));
-    TaskViewArray<TaskTraits<Task>::TaskBwd> b(t);
+    TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
     return edgefinding(home,b);
   }
     

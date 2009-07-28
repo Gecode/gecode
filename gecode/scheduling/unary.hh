@@ -319,9 +319,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class TaskTraits<ManTask> {
   public:
     /// The forward task view type
-    typedef ManTaskFwd TaskFwd;
+    typedef ManTaskFwd TaskViewFwd;
     /// The backward task view type
-    typedef ManTaskBwd TaskBwd;
+    typedef ManTaskBwd TaskViewBwd;
   };
 
   /// Task traits for optional tasks
@@ -329,9 +329,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class TaskTraits<OptTask> {
   public:
     /// The forward task view type
-    typedef OptTaskFwd TaskFwd;
+    typedef OptTaskFwd TaskViewFwd;
     /// The backward task view type
-    typedef OptTaskBwd TaskBwd;
+    typedef OptTaskBwd TaskViewBwd;
   };
 
 }}}
