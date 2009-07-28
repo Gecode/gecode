@@ -234,35 +234,18 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /**
-   * \brief Traits class for mapping task views to tasks
-   *
-   * Each task view must specialize this traits class and add a \code
-   * typedef \endcode for the task corresponding to this task view.
-   */
-  template<class TaskView>
-  class TaskViewTraits {};
-
-
   /// Forward task view
   typedef Task TaskFwd;
-
-  /// Task view traits for forward task views
-  template<>
-  class TaskViewTraits<TaskFwd> {
-  public:
-    typedef Task TaskType;
-  };
 
   /// Backward (dual) task view
   typedef FwdToBwd<TaskFwd> TaskBwd;
 
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<TaskBwd> {
-  public:
-    typedef Task TaskType;
-  };
+  /// Forward optional task view
+  typedef OptTask OptTaskFwd;
+
+  /// Backward (dual) optional task view
+  typedef FwdToBwd<OptTaskFwd> OptTaskBwd;
+
 
   /**
    * \brief Print backward task view in format est:p:lct
@@ -272,27 +255,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t);
 
-
-  /// Forward optional task view
-  typedef OptTask OptTaskFwd;
-
-  /// Task view traits for forward optional task views
-  template<>
-  class TaskViewTraits<OptTaskFwd> {
-  public:
-    typedef OptTask TaskType;
-  };
-
-  /// Backward (dual) optional task view
-  typedef FwdToBwd<OptTaskFwd> OptTaskBwd;
-
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<OptTaskBwd> {
-  public:
-    typedef OptTask TaskType;
-  };
-
   /**
    * \brief Print optional backward task view in format est:p:lct:m
    * \relates OptTaskBwd
@@ -300,6 +262,78 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptTaskBwd& t);
+
+
+
+  /**
+   * \brief Traits class for mapping task views to tasks
+   *
+   * Each task view must specialize this traits class and add a \code
+   * typedef \endcode for the task corresponding to this task view.
+   */
+  template<class TaskView>
+  class TaskViewTraits {};
+
+  /// Task view traits for forward task views
+  template<>
+  class TaskViewTraits<TaskFwd> {
+  public:
+    /// The task type
+    typedef Task TaskType;
+  };
+
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<TaskBwd> {
+  public:
+    /// The task type
+    typedef Task TaskType;
+  };
+
+  /// Task view traits for forward optional task views
+  template<>
+  class TaskViewTraits<OptTaskFwd> {
+  public:
+    /// The task type
+    typedef OptTask TaskType;
+  };
+
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<OptTaskBwd> {
+  public:
+    /// The task type
+    typedef OptTask TaskType;
+  };
+
+  /**
+   * \brief Traits class for mapping tasks to task views
+   *
+   * Each task must specialize this traits class and add \code
+   * typedef \endcode for the task views corresponding to this task.
+   */
+  template<class Task>
+  class TaskTraits {};
+
+  /// Task traits for (mandatory) tasks
+  template<>
+  class TaskTraits<Task> {
+  public:
+    /// The forward task view type
+    typedef TaskFwd TaskTypeFwd;
+    /// The backward task view type
+    typedef TaskBwd TaskTypeBwd;
+  };
+
+  /// Task traits for optional tasks
+  template<>
+  class TaskTraits<OptTask> {
+  public:
+    /// The forward task view type
+    typedef OptTaskFwd TaskTypeFwd;
+    /// The backward task view type
+    typedef OptTaskBwd TaskTypeBwd;
+  };
 
 }}}
 
@@ -620,21 +654,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ExecStatus overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Check tasks \a t for subsumption
+  template<class Task>
   ExecStatus subsumed(Space& home, Propagator& p, TaskArray<Task>& t);
-  /// Check tasks \a t for subsumption
-  ExecStatus subsumed(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Propagate detectable precedences
+  template<class Task>
   ExecStatus detectable(Space& home, TaskArray<Task>& t);
-  /// Propagate detectable precedences
-  ExecStatus detectable(Space& home, TaskArray<OptTask>& t);
 
   /// Propagate not-first and not-last
+  template<class Task>
   ExecStatus notfirstnotlast(Space& home, TaskArray<Task>& t);
-  /// Propagate not-first and not-last
-  ExecStatus notfirstnotlast(Space& home, TaskArray<OptTask>& t);
 
   /// Propagate by edge finding
+  template<class Task>
   ExecStatus edgefinding(Space& home, TaskArray<Task>& t);
 
 

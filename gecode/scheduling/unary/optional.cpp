@@ -77,6 +77,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
     GECODE_ES_CHECK(detectable(home,t));
     GECODE_ES_CHECK(notfirstnotlast(home,t));
+    GECODE_ES_CHECK(edgefinding(home,t));
 
     t.size(n);
 

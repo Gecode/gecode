@@ -37,28 +37,15 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  template<class Task>
   forceinline ExecStatus
   subsumed(Space& home, Propagator& p, TaskArray<Task>& t) {
-    TaskViewArray<TaskFwd> f(t);
-    sort<TaskFwd,STO_EST,true>(f);
+    TaskViewArray<TaskTraits<Task>::TaskTypeFwd> f(t);
+    sort<TaskTraits<Task>::TaskTypeFwd,STO_EST,true>(f);
 
     for (int i=f.size()-1; i--; )
       if (f[i].lct() > f[i+1].est())
         return ES_OK;
-
-    return ES_SUBSUMED(p,home);
-  }
-  
-  forceinline ExecStatus
-  subsumed(Space& home, Propagator& p, TaskArray<OptTask>& t) {
-    TaskViewArray<OptTaskFwd> f(t);
-    sort<OptTaskFwd,STO_EST,true>(f);
-
-    for (int i=f.size()-1; i--; ) {
-      assert(!f[i].excluded());
-      if (f[i].lct() > f[i+1].est())
-        return ES_OK;
-    }
 
     return ES_SUBSUMED(p,home);
   }

@@ -61,22 +61,15 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return ES_OK;
   }
   
+  template<class Task>
   forceinline ExecStatus
   detectable(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<TaskFwd> f(t);
+    TaskViewArray<TaskTraits<Task>::TaskTypeFwd> f(t);
     GECODE_ES_CHECK(detectable(home,f));
-    TaskViewArray<TaskBwd> b(t);
+    TaskViewArray<TaskTraits<Task>::TaskTypeBwd> b(t);
     return detectable(home,b);
   }
 
-  forceinline ExecStatus
-  detectable(Space& home, TaskArray<OptTask>& t) {
-    TaskViewArray<OptTaskFwd> f(t);
-    GECODE_ES_CHECK(detectable(home,f));
-    TaskViewArray<OptTaskBwd> b(t);
-    return detectable(home,b);
-  }
-  
 }}}
 
 // STATISTICS: scheduling-prop
