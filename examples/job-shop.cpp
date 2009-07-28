@@ -1133,20 +1133,6 @@ protected:
   IntVarArray start;
   /// Total makespan
   IntVar makespan;
-  /// Pair of machine and load
-  class MachineLoad {
-  public:
-    int m; ///< Number of machine
-    int l; ///< Machine load
-  };
-  /// Sorting order
-  class DecMachineLoad {
-  public:
-    /// Order by decreasing machine load
-    bool operator ()(const MachineLoad& a, const MachineLoad& b) {
-      return a.l > b.l;
-    }
-  };
 public:
   /// Return number of jobs
   int jobs(void) const {
@@ -1197,7 +1183,7 @@ public:
 
     // Order jobs and compute makespan
     for (int j=0; j<jobs(); j++) {
-      last[j] = js(j,machines()-1);
+      last[j] = post(*this, js(j,machines()-1) + time(j,machines()-1));
       for (int s=0; s<machines()-1; s++)
         post(*this, js(j,s)+time(j,s) <= js(j,s+1));
     }
@@ -1205,27 +1191,10 @@ public:
     // Constrain makespan
     max(*this, last, makespan);
 
-    Region r(*this);
-
-    // Find load for each machine
-    MachineLoad* ml = r.alloc<MachineLoad>(machines());
-    
-    for (int m=0; m<machines(); m++) {
-      ml[m].m=m; ml[m].l=0; 
-    }
-    for (int j=0; j<jobs(); j++)
-      for (int s=0; s<machines(); s++)
-        ml[machine(j,s)].l += time(j,s);
-
-    // Sort in decreasing order of load
-    DecMachineLoad dml;
-    Support::quicksort(ml,machines(),dml);
-
-    //    branch(*this, makespan, INT_VAL_SPLIT_MIN);
+    branch(*this, makespan, INT_VAL_SPLIT_MIN);
 
     // Order job steps on machines
-    for (int mi=0; mi<machines(); mi++) {
-      int m = ml[mi].m;
+    for (int m=0; m<machines(); m++) {
       IntVarArgs s_m(jobs());
       IntArgs t_m(jobs());
 
@@ -1233,32 +1202,14 @@ public:
       for (int j=0; j<jobs(); j++)
         for (int s=0; s<machines(); s++)
           if (machine(j,s) == m) {
-            s_m[n] = js(j,s);
-            t_m[n] = time(j,s);
+            s_m[n] = js(j,s); t_m[n] = time(j,s);
             n++;
           }
-      assert(n == jobs());
 
       unary(*this, s_m, t_m);
-
-      /*
-      BoolVarArgs b(jobs()*(jobs()-1)/2);
-      int k=0;
-      for (int i=0; i<jobs(); i++)
-        for (int j=i+1; j<jobs(); j++) {
-          BoolVar b_ij = post(*this, ~(s_m[i] + t_m[i] <= s_m[j]));
-          post(*this, eqv(b_ij,~(s_m[j] + t_m[j] > s_m[i])));
-          //          post(*this, tt(b_ij || b_ji));
-          b[k++] = b_ij;
-        }
-      assert(k == b.size());
-      branch(*this, b, INT_VAR_NONE, INT_VAL_MIN);
-      */
     }
 
-    branch(*this, start, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
-    // Assign start times
-    // assign(*this, start, INT_ASSIGN_MIN);
+    branch(*this, start, INT_VAR_MIN_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
