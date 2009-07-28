@@ -53,7 +53,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Unary (mandatory) task with fixed processing time
-  class Task {
+  class ManTask {
   protected:
     /// Start time
     Int::IntView _s;
@@ -63,9 +63,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    Task(void);
+    ManTask(void);
     /// Initialize with start time \a s and processing time \a p
-    Task(IntVar s, int p);
+    ManTask(IntVar s, int p);
     /// Initialize with start time \a s and processing time \a p
     void init(IntVar s, int p);
     //@}
@@ -107,7 +107,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Cloning
     //@{
     /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, Task& t);
+    void update(Space& home, bool share, ManTask& t);
     //@}
 
     /// \name Dependencies
@@ -126,11 +126,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const Task& t);
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManTask& t);
 
 
   /// Unary optional task with fixed processing time
-  class OptTask : public Task {
+  class OptTask : public ManTask {
   protected:
     /// Boolean view whether task is mandatory (= 1) or not
     Int::BoolView _m;
@@ -200,7 +200,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Task mapper: turns a task view into its dual
   template<class TaskView>
-  /// Backward (dual) task view
   class FwdToBwd : public TaskView {
   public:
     /// \name Value access
@@ -234,11 +233,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Forward task view
-  typedef Task TaskFwd;
+  /// Forward mandatory task view
+  typedef ManTask ManTaskFwd;
 
-  /// Backward (dual) task view
-  typedef FwdToBwd<TaskFwd> TaskBwd;
+  /// Backward (dual) mandatory task view
+  typedef FwdToBwd<ManTaskFwd> ManTaskBwd;
 
   /// Forward optional task view
   typedef OptTask OptTaskFwd;
@@ -249,11 +248,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /**
    * \brief Print backward task view in format est:p:lct
-   * \relates TaskBwd
+   * \relates ManTaskBwd
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const TaskBwd& t);
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManTaskBwd& t);
 
   /**
    * \brief Print optional backward task view in format est:p:lct:m
@@ -276,18 +275,18 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Task view traits for forward task views
   template<>
-  class TaskViewTraits<TaskFwd> {
+  class TaskViewTraits<ManTaskFwd> {
   public:
     /// The task type
-    typedef Task TaskType;
+    typedef ManTask Task;
   };
 
   /// Task view traits for backward task views
   template<>
-  class TaskViewTraits<TaskBwd> {
+  class TaskViewTraits<ManTaskBwd> {
   public:
     /// The task type
-    typedef Task TaskType;
+    typedef ManTask Task;
   };
 
   /// Task view traits for forward optional task views
@@ -295,7 +294,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class TaskViewTraits<OptTaskFwd> {
   public:
     /// The task type
-    typedef OptTask TaskType;
+    typedef OptTask Task;
   };
 
   /// Task view traits for backward task views
@@ -303,7 +302,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class TaskViewTraits<OptTaskBwd> {
   public:
     /// The task type
-    typedef OptTask TaskType;
+    typedef OptTask Task;
   };
 
   /**
@@ -315,14 +314,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   class TaskTraits {};
 
-  /// Task traits for (mandatory) tasks
+  /// Task traits for mandatory tasks
   template<>
-  class TaskTraits<Task> {
+  class TaskTraits<ManTask> {
   public:
     /// The forward task view type
-    typedef TaskFwd TaskTypeFwd;
+    typedef ManTaskFwd TaskFwd;
     /// The backward task view type
-    typedef TaskBwd TaskTypeBwd;
+    typedef ManTaskBwd TaskBwd;
   };
 
   /// Task traits for optional tasks
@@ -330,9 +329,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class TaskTraits<OptTask> {
   public:
     /// The forward task view type
-    typedef OptTaskFwd TaskTypeFwd;
+    typedef OptTaskFwd TaskFwd;
     /// The backward task view type
-    typedef OptTaskBwd TaskTypeBwd;
+    typedef OptTaskBwd TaskBwd;
   };
 
 }}}
@@ -412,14 +411,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class TaskViewArray {
   protected:
     /// The underlying task type
-    typedef typename TaskViewTraits<TaskView>::TaskType TaskType;
+    typedef typename TaskViewTraits<TaskView>::Task Task;
     /// Access to task array
-    TaskArray<TaskType>& t;
+    TaskArray<Task>& t;
   public:
     /// \name Constructors and initialization
     //@{
     /// Initialize from task array \a a
-    TaskViewArray(TaskArray<TaskType>& t);
+    TaskViewArray(TaskArray<Task>& t);
     //@}
 
     /// \name Array information
@@ -477,9 +476,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Allows to iterate over tasks according to a specified order
+  /// Allows to iterate over task views according to a specified order
   template<class TaskView, SortTaskOrder sto, bool inc>
-  class TaskIterator {
+  class TaskViewIterator {
   protected:
     /// Map for iteration order
     int* map;
@@ -487,7 +486,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     int i;
   public:
     /// Initialize iterator
-    TaskIterator(Region& r, const TaskViewArray<TaskView>& t);
+    TaskViewIterator(Region& r, const TaskViewArray<TaskView>& t);
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a task
@@ -649,7 +648,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Check tasks \a t for overload
-  ExecStatus overloaded(Space& home, TaskArray<Task>& t);
+  ExecStatus overloaded(Space& home, TaskArray<ManTask>& t);
   /// Check tasks \a t for overload
   ExecStatus overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
@@ -698,11 +697,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * Requires \code #include <gecode/scheduling/unary.hh> \endcode
    * \ingroup FuncSchedulingProp
    */
-  class Mandatory : public TaskPropagator<Task> {
+  class Mandatory : public TaskPropagator<ManTask> {
   protected:
-    using TaskPropagator<Task>::t;
+    using TaskPropagator<ManTask>::t;
     /// Constructor for creation
-    Mandatory(Space& home, TaskArray<Task>& t);
+    Mandatory(Space& home, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
     Mandatory(Space& home, bool shared, Mandatory& p);
   public:
@@ -713,7 +712,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     GECODE_SCHEDULING_EXPORT 
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on unary resource
-    static ExecStatus post(Space& home, TaskArray<Task>& t);
+    static ExecStatus post(Space& home, TaskArray<ManTask>& t);
   };
 
   /**

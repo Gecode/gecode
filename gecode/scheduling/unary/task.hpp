@@ -42,78 +42,78 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
 
   forceinline
-  Task::Task(void) {}
+  ManTask::ManTask(void) {}
   forceinline
-  Task::Task(IntVar s, int p) : _s(s), _p(p) {}
+  ManTask::ManTask(IntVar s, int p) : _s(s), _p(p) {}
   forceinline void
-  Task::init(IntVar s, int p) {
+  ManTask::init(IntVar s, int p) {
     _s=s; _p=p;
   }
 
   forceinline int 
-  Task::est(void) const {
+  ManTask::est(void) const {
     return _s.min();
   }
   forceinline int
-  Task::ect(void) const {
+  ManTask::ect(void) const {
     return _s.min()+_p;
   }
   forceinline int
-  Task::lst(void) const {
+  ManTask::lst(void) const {
     return _s.max();
   }
   forceinline int
-  Task::lct(void) const {
+  ManTask::lct(void) const {
     return _s.max()+_p;
   }
   forceinline IntVar
-  Task::start(void) const {
+  ManTask::start(void) const {
     return _s;
   }
   forceinline int
-  Task::p(void) const {
+  ManTask::p(void) const {
     return _p;
   }
 
   forceinline bool
-  Task::assigned(void) const {
+  ManTask::assigned(void) const {
     return _s.assigned();
   }
 
   forceinline ModEvent 
-  Task::est(Space& home, int n) {
+  ManTask::est(Space& home, int n) {
     return _s.gq(home,n);
   }
   forceinline ModEvent
-  Task::ect(Space& home, int n) {
+  ManTask::ect(Space& home, int n) {
     return _s.gq(home,n-_p);
   }
   forceinline ModEvent
-  Task::lst(Space& home, int n) {
+  ManTask::lst(Space& home, int n) {
     return _s.lq(home,n);
   }
   forceinline ModEvent
-  Task::lct(Space& home, int n) {
+  ManTask::lct(Space& home, int n) {
     return _s.lq(home,n-_p);
   }
 
   forceinline void
-  Task::update(Space& home, bool share, Task& t) {
+  ManTask::update(Space& home, bool share, ManTask& t) {
     _s.update(home,share,t._s); _p=t._p;
   }
 
   forceinline void
-  Task::subscribe(Space& home, Propagator& p) {
+  ManTask::subscribe(Space& home, Propagator& p) {
     _s.subscribe(home, p, Int::PC_INT_BND);
   }
   forceinline void
-  Task::cancel(Space& home, Propagator& p) {
+  ManTask::cancel(Space& home, Propagator& p) {
     _s.cancel(home, p, Int::PC_INT_BND);
   }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const Task& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManTask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.p() << ':' << t.lct();
@@ -130,10 +130,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OptTask::OptTask(void) {}
   forceinline
   OptTask::OptTask(IntVar s, int p, BoolVar m) 
-    : Task(s,p), _m(m) {}
+    : ManTask(s,p), _m(m) {}
   forceinline void
   OptTask::init(IntVar s, int p, BoolVar m) {
-    Task::init(s,p); _m=m;
+    ManTask::init(s,p); _m=m;
   }
 
   forceinline bool
@@ -151,7 +151,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline bool
   OptTask::assigned(void) const {
-    return Task::assigned() && _m.assigned();
+    return ManTask::assigned() && _m.assigned();
   }
 
   forceinline ModEvent 
@@ -165,19 +165,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline void
   OptTask::update(Space& home, bool share, OptTask& t) {
-    Task::update(home, share, t);
+    ManTask::update(home, share, t);
     _m.update(home,share,t._m);
   }
 
   forceinline void
   OptTask::subscribe(Space& home, Propagator& p) {
-    Task::subscribe(home, p);
+    ManTask::subscribe(home, p);
     _m.subscribe(home, p, Int::PC_BOOL_VAL);
   }
   forceinline void
   OptTask::cancel(Space& home, Propagator& p) {
     _m.cancel(home, p, Int::PC_BOOL_VAL);
-    Task::cancel(home, p);
+    ManTask::cancel(home, p);
   }
 
   template<class Char, class Traits>

@@ -37,6 +37,8 @@
 
 #include <gecode/scheduling/unary.hh>
 
+#include <algorithm>
+
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   Actor* 
@@ -67,7 +69,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     // All tasks are mandatory: rewrite
     if (i == n) {
       // All tasks are mandatory, rewrite
-      TaskArray<Task> mt(home,n);
+      TaskArray<ManTask> mt(home,n);
       for (int i=n; i--; )
         mt[i].init(t[i].start(),t[i].p());
       GECODE_REWRITE(*this,Mandatory::post(home,mt));

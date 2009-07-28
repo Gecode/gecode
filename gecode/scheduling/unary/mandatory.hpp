@@ -38,15 +38,15 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
   
   forceinline
-  Mandatory::Mandatory(Space& home, TaskArray<Task>& t)
-    : TaskPropagator<Task>(home,t) {}
+  Mandatory::Mandatory(Space& home, TaskArray<ManTask>& t)
+    : TaskPropagator<ManTask>(home,t) {}
 
   forceinline
   Mandatory::Mandatory(Space& home, bool shared, Mandatory& p) 
-    : TaskPropagator<Task>(home,shared,p) {}
+    : TaskPropagator<ManTask>(home,shared,p) {}
 
   forceinline ExecStatus 
-  Mandatory::post(Space& home, TaskArray<Task>& t) {
+  Mandatory::post(Space& home, TaskArray<ManTask>& t) {
     if (t.size() > 1)
       (void) new (home) Mandatory(home,t);
     return ES_OK;

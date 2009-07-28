@@ -47,7 +47,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Region r(home);
 
     OmegaTree<TaskView> o(r,t);
-    TaskIterator<TaskView,STO_LST,true> q(r,t);
+    TaskViewIterator<TaskView,STO_LST,true> q(r,t);
     int* lct = r.alloc<int>(t.size());
 
     for (int i=t.size(); i--; )
@@ -74,9 +74,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline ExecStatus
   notfirstnotlast(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<TaskTraits<Task>::TaskTypeFwd> f(t);
+    TaskViewArray<TaskTraits<Task>::TaskFwd> f(t);
     GECODE_ES_CHECK(notlast(home,f));
-    TaskViewArray<TaskTraits<Task>::TaskTypeBwd> b(t);
+    TaskViewArray<TaskTraits<Task>::TaskBwd> b(t);
     return notlast(home,b);
   }
   

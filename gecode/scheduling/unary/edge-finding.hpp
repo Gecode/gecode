@@ -45,7 +45,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Region r(home);
 
     OmegaLambdaTree<TaskView> ol(r,t);
-    TaskIterator<TaskView,STO_LCT,false> q(r,t);
+    TaskViewIterator<TaskView,STO_LCT,false> q(r,t);
 
     int j = q.task();
     while (q.left() > 1) {
@@ -67,9 +67,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline ExecStatus
   edgefinding(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<TaskTraits<Task>::TaskTypeFwd> f(t);
+    TaskViewArray<TaskTraits<Task>::TaskFwd> f(t);
     GECODE_ES_CHECK(edgefinding(home,f));
-    TaskViewArray<TaskTraits<Task>::TaskTypeBwd> b(t);
+    TaskViewArray<TaskTraits<Task>::TaskBwd> b(t);
     return edgefinding(home,b);
   }
     

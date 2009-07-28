@@ -51,7 +51,7 @@ namespace Gecode {
       if (p[i] <= 0)
         throw Int::OutOfLimits("Scheduling::unary");
     if (home.failed()) return;
-    TaskArray<Task> t(home,s.size());
+    TaskArray<ManTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i]);
     GECODE_ES_FAIL(home,Mandatory::post(home,t));

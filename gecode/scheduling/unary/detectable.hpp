@@ -45,7 +45,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Region r(home);
 
     OmegaTree<TaskView> o(r,t);
-    TaskIterator<TaskView,STO_LST,true> q(r,t);
+    TaskViewIterator<TaskView,STO_LST,true> q(r,t);
     int* est = r.alloc<int>(t.size());
 
     for (int i=0; i<t.size(); i++) {
@@ -64,9 +64,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline ExecStatus
   detectable(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<TaskTraits<Task>::TaskTypeFwd> f(t);
+    TaskViewArray<TaskTraits<Task>::TaskFwd> f(t);
     GECODE_ES_CHECK(detectable(home,f));
-    TaskViewArray<TaskTraits<Task>::TaskTypeBwd> b(t);
+    TaskViewArray<TaskTraits<Task>::TaskBwd> b(t);
     return detectable(home,b);
   }
 

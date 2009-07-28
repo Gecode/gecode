@@ -55,7 +55,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
         o++;
     }
     if (m == t.size()) {
-      TaskArray<Task> mt(home,m);
+      TaskArray<ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i].start(),t[i].p());
       return Mandatory::post(home,mt);

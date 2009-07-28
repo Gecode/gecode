@@ -39,12 +39,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   // Overload checking for mandatory tasks
   forceinline ExecStatus
-  overloaded(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<TaskFwd> f(t);
-    sort<TaskFwd,STO_LCT,true>(f);
+  overloaded(Space& home, TaskArray<ManTask>& t) {
+    TaskViewArray<ManTaskFwd> f(t);
+    sort<ManTaskFwd,STO_LCT,true>(f);
 
     Region r(home);
-    OmegaTree<TaskFwd> o(r,f);
+    OmegaTree<ManTaskFwd> o(r,f);
 
     for (int i=0; i<f.size(); i++) {
       o.insert(i);

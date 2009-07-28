@@ -230,7 +230,11 @@ namespace Gecode {
    * Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
-   * propagation, and not-first-not-last propagation.
+   * propagation, not-first-not-last propagation, and edge finding.
+   *
+   * However, it does not follow Vilim's method for propagating start times
+   * of still optional tasks as it is not sound (after all, they could
+   * be still excluded, so no change of start time is allowed).
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    *    \a p, or \a m are of different size.

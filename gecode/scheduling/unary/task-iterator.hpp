@@ -41,32 +41,32 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline
-  TaskIterator<TaskView,sto,inc>
-  ::TaskIterator(Region& r, 
-                 const TaskViewArray<TaskView>& t)
+  TaskViewIterator<TaskView,sto,inc>
+  ::TaskViewIterator(Region& r, 
+                     const TaskViewArray<TaskView>& t)
     : map(r.alloc<int>(t.size())), i(t.size()-1) {
     sort<TaskView,sto,!inc>(map,t);
   }
 
   template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline bool
-  TaskIterator<TaskView,sto,inc>::operator ()(void) const {
+  TaskViewIterator<TaskView,sto,inc>::operator ()(void) const {
     return i>=0;
   }
   template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline int
-  TaskIterator<TaskView,sto,inc>::left(void) const {
+  TaskViewIterator<TaskView,sto,inc>::left(void) const {
     return i+1;
   }
   template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline void
-  TaskIterator<TaskView,sto,inc>::operator ++(void) {
+  TaskViewIterator<TaskView,sto,inc>::operator ++(void) {
     i--;
   }
 
   template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline int
-  TaskIterator<TaskView,sto,inc>::task(void) const {
+  TaskViewIterator<TaskView,sto,inc>::task(void) const {
     return map[i];
   }
 

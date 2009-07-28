@@ -131,7 +131,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
   template<class TaskView>
   forceinline
-  TaskViewArray<TaskView>::TaskViewArray(TaskArray<TaskType>& t0)
+  TaskViewArray<TaskView>::TaskViewArray(TaskArray<Task>& t0)
     : t(t0) {}
 
   template<class TaskView>
