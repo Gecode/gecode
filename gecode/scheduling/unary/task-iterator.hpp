@@ -70,38 +70,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return map[i];
   }
 
-
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline
-  MandatoryTaskIterator<TaskView,sto,inc>
-  ::MandatoryTaskIterator(Region& r, 
-                          const TaskViewArray<TaskView>& t)
-    : TaskIterator<TaskView,sto,inc>(r,t), tasks(t), m(0) {
-    for (int j=tasks.size(); j--; )
-      if (tasks[j].mandatory())
-        m++;
-    while ((i>=0) && !tasks[map[i]].mandatory())
-      i--;
-  }
-
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline bool
-  MandatoryTaskIterator<TaskView,sto,inc>::operator ()(void) const {
-    return m>0;
-  }
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline int
-  MandatoryTaskIterator<TaskView,sto,inc>::left(void) const {
-    return m;
-  }
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline void
-  MandatoryTaskIterator<TaskView,sto,inc>::operator ++(void) {
-    m--;
-    while ((i>=0) && !tasks[map[i]].mandatory())
-      i--;
-  }
-
 }}}
 
 // STATISTICS: scheduling-prop

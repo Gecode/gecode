@@ -38,24 +38,15 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline ExecStatus
-  purge(Space& home, Propagator& p, TaskArray<OptTask>& t, bool rewrite) {
-    int m=0, n=t.size();
+  purge(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+    int n=t.size();
     for (int i=n; i--; )
       if (t[i].excluded()) {
         t[i].cancel(home,p); t[i]=t[--n];
-      } else if (t[i].mandatory()) {
-        m++;
       }
     t.size(n);
     if (t.size() < 2)
       return ES_SUBSUMED(p,home);
-    if (rewrite && (t.size() == m)) {
-      // All tasks are mandatory, rewrite
-      TaskArray<Task> mt(home,m);
-      for (int i=m; i--; )
-        mt[i].init(t[i].start(),t[i].p());
-      GECODE_REWRITE(p,Mandatory::post(home,mt));
-    }
     return ES_OK;
   }
   

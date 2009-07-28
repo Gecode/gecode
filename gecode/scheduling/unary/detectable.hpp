@@ -37,12 +37,10 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  template<class TaskView,
-           template<class,SortTaskOrder,bool> class TaskIterator>
+  template<class TaskView>
   forceinline ExecStatus
   detectable(Space& home, TaskViewArray<TaskView>& t) {
     sort<TaskView,STO_ECT,true>(t);
-    //    std::cout << "detectable(" << t << std::endl;
 
     Region r(home);
 
@@ -51,14 +49,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     int* est = r.alloc<int>(t.size());
 
     for (int i=0; i<t.size(); i++) {
-      //      std::cout << "t[" << i << "] = " << t[i] << ", ";
       while (q() && (t[i].ect() > t[q.task()].lst())) {
-        //        std::cout << "q = " << t[q.task()] << ", ";
         o.insert(q.task()); ++q;
       }
       est[i] = o.ect(i);
     }
-    //    std::cout << std::endl;
 
     for (int i=t.size(); i--; )
       GECODE_ME_CHECK(t[i].est(home,est[i]));
@@ -69,44 +64,17 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline ExecStatus
   detectable(Space& home, TaskArray<Task>& t) {
     TaskViewArray<TaskFwd> f(t);
-    GECODE_ES_CHECK((detectable<TaskFwd,TaskIterator>(home,f)));
+    GECODE_ES_CHECK(detectable(home,f));
     TaskViewArray<TaskBwd> b(t);
-    return detectable<TaskBwd,TaskIterator>(home,b);
+    return detectable(home,b);
   }
 
-  template<class TaskView,
-           template<class,SortTaskOrder,bool> class TaskIterator>
-  forceinline ExecStatus
-  optdetectable(Space& home, TaskViewArray<TaskView>& t) {
-    sort<TaskView,STO_ECT,true>(t);
-
-    Region r(home);
-
-    OmegaTree<TaskView> o(r,t);
-    TaskIterator<TaskView,STO_LST,true> q(r,t);
-    int* est = r.alloc<int>(t.size());
-
-    for (int i=0; i<t.size(); i++) 
-      if (t[i].mandatory()) {
-        while (q() && (t[i].ect() > t[q.task()].lst())) {
-          o.insert(q.task()); ++q;
-        }
-        est[i] = o.ect(i);
-      }
-
-    for (int i=t.size(); i--; )
-      if (t[i].mandatory())
-        GECODE_ME_CHECK(t[i].est(home,est[i]));
-      
-    return ES_OK;
-  }
-  
   forceinline ExecStatus
   detectable(Space& home, TaskArray<OptTask>& t) {
     TaskViewArray<OptTaskFwd> f(t);
-    GECODE_ES_CHECK((optdetectable<OptTaskFwd,MandatoryTaskIterator>(home,f)));
+    GECODE_ES_CHECK(detectable(home,f));
     TaskViewArray<OptTaskBwd> b(t);
-    return optdetectable<OptTaskBwd,MandatoryTaskIterator>(home,b);
+    return detectable(home,b);
   }
   
 }}}

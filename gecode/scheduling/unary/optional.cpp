@@ -48,15 +48,38 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   Optional::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK(purge(home,*this,t,false));
+      GECODE_ES_CHECK(purge(home,*this,t));
 
-    GECODE_ES_CHECK(overloaded(home,t));
-    GECODE_ES_CHECK(purge(home,*this,t,true));
+    GECODE_ES_CHECK(overloaded(home,*this,t));
+
+    // Partition into mandatory and optional activities
+    int n = t.size();
+    int i=0, j=n-1;
+    while (true) {
+      while ((i < n) && t[i].mandatory()) i++;
+      while ((j >= 0) && !t[j].mandatory()) j--;
+      if (i >= j) break;
+      std::swap(t[i],t[j]);
+    }
+    // No propagation possible
+    if (i < 2)
+      return ES_NOFIX;
+    // All tasks are mandatory: rewrite
+    if (i == n) {
+      // All tasks are mandatory, rewrite
+      TaskArray<Task> mt(home,n);
+      for (int i=n; i--; )
+        mt[i].init(t[i].start(),t[i].p());
+      GECODE_REWRITE(*this,Mandatory::post(home,mt));
+    }
+    // Truncate array to only contain mandatory tasks
+    t.size(i);
+
     GECODE_ES_CHECK(detectable(home,t));
-    //    GECODE_ES_CHECK(notfirstnotlast(home,t));
+    GECODE_ES_CHECK(notfirstnotlast(home,t));
 
+    t.size(n);
 
-    //    GECODE_ES_CHECK(purge(home,*this,t,false));
     GECODE_ES_CHECK(subsumed(home,*this,t));
 
     return ES_NOFIX;

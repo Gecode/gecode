@@ -70,7 +70,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline void
   TaskArray<Task>::size(int n0) {
-    assert(n0 <= n);
     n = n0;
   }
 
