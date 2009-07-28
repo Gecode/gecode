@@ -56,26 +56,22 @@ done
 
 svn propset svn:ignore -F misc/svn-ignore-root.txt '.'
 
-IGNORESUPPORT=`mktemp -t fixproperties`
+IGNORESUPPORT=`mktemp`
 (echo config.hpp; svn propget svn:ignore './gecode/support') \
   > ${IGNORESUPPORT}
 svn propset svn:ignore -F ${IGNORESUPPORT} './gecode/support'
 rm -f ${IGNORESUPPORT}
 
 # Create list of executable examples, append it to svn-ignore.txt
-IGNOREEXAMPLES=`mktemp -t fixproperties` || exit 1
+IGNOREEXAMPLES=`mktemp` || exit 1
 (cat misc/svn-ignore.txt; \
   find "./examples" -name "*.cpp" | sed -e 's/\.cpp//g' | xargs -n1 basename) \
   > ${IGNOREEXAMPLES}
 svn propset svn:ignore -F ${IGNOREEXAMPLES} './examples'
 rm -f ${IGNOREEXAMPLES}
 
-find . -type d -path "./examples/*" \
-    ! -path '*.svn*' \
-    -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
-
 # Append the test executable to svn-ignore.txt
-IGNORETEST=`mktemp -t fixproperties` || exit 1
+IGNORETEST=`mktemp` || exit 1
 (cat misc/svn-ignore.txt; echo "test") > ${IGNORETEST}
 svn propset svn:ignore -F ${IGNORETEST} './test'
 rm -f ${IGNORETEST}
