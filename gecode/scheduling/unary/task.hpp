@@ -67,7 +67,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return _s.max()+_p;
   }
   forceinline IntVar
-  ManFixTask::start(void) const {
+  ManFixTask::st(void) const {
     return _s;
   }
   forceinline int

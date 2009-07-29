@@ -81,7 +81,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Return latest completion time
     int lct(void) const;
     /// Return start time
-    IntVar start(void) const;
+    IntVar st(void) const;
     /// Return processing time
     int p(void) const;
     //@}
@@ -646,6 +646,56 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  /**
+   * \brief Propagator for unary resource
+   *
+   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
+   * \ingroup FuncSchedulingProp
+   */
+  template<class Task>
+  class TaskPropagator : public Propagator {
+  protected:
+    /// Tasks
+    TaskArray<Task> t;
+    /// Constructor for creation
+    TaskPropagator(Space& home, TaskArray<Task>& t);
+    /// Constructor for cloning \a p
+    TaskPropagator(Space& home, bool shared, TaskPropagator<Task>& p);
+  public:
+    /// Cost function (defined as high linear)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+  /**
+   * \brief Propagator for unary resource
+   *
+   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
+   * \ingroup FuncSchedulingProp
+   */
+  template<class Task>
+  class TaskOnePropagator : public TaskPropagator<Task> {
+  protected:
+    /// Single additional task
+    Task u;
+    /// Constructor for creation
+    TaskOnePropagator(Space& home, TaskArray<Task>& t, Task& u);
+    /// Constructor for cloning \a p
+    TaskOnePropagator(Space& home, bool shared, TaskOnePropagator<Task>& p);
+  public:
+    /// Cost function (defined as low linear)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+}}}
+
+#include <gecode/scheduling/unary/task-propagator.hpp>
+
+namespace Gecode { namespace Scheduling { namespace Unary {
+
   /// Purge optional tasks that are excluded and possibly rewrite propagator
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptFixTask>& t);
 
@@ -672,28 +722,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 
   /**
-   * \brief Scheduling propagator for unary resource
-   *
-   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
-   * \ingroup FuncSchedulingProp
-   */
-  template<class Task>
-  class TaskPropagator : public Propagator {
-  protected:
-    /// Tasks
-    TaskArray<Task> t;
-    /// Constructor for creation
-    TaskPropagator(Space& home, TaskArray<Task>& t);
-    /// Constructor for cloning \a p
-    TaskPropagator(Space& home, bool shared, TaskPropagator<Task>& p);
-  public:
-    /// Cost function (defined as high linear)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-  /**
    * \brief Scheduling propagator for unary resource with mandatory tasks
    *
    * Requires \code #include <gecode/scheduling/unary.hh> \endcode
@@ -709,10 +737,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Mandatory(Space& home, bool shared, Mandatory& p);
   public:
     /// Perform copying during cloning
-    GECODE_SCHEDULING_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    GECODE_SCHEDULING_EXPORT 
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on unary resource
     static ExecStatus post(Space& home, TaskArray<ManTask>& t);
@@ -734,10 +760,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Optional(Space& home, bool shared, Optional& p);
   public:
     /// Perform copying during cloning
-    GECODE_SCHEDULING_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    GECODE_SCHEDULING_EXPORT 
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on unary resource
     static ExecStatus post(Space& home, TaskArray<OptTask>& t);
@@ -751,10 +775,69 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 #include <gecode/scheduling/unary/not-first-not-last.hpp>
 #include <gecode/scheduling/unary/edge-finding.hpp>
 
-#include <gecode/scheduling/unary/task-propagator.hpp>
 #include <gecode/scheduling/unary/mandatory.hpp>
 #include <gecode/scheduling/unary/purge.hpp>
 #include <gecode/scheduling/unary/optional.hpp>
+
+namespace Gecode { namespace Scheduling { namespace Unary {
+
+  /// Post that mandatory task \a t1 must be before mandatory task \a t2
+  template<class ManTask>
+  ExecStatus manbefore(Space& home, ManTask& t1, ManTask& t2);
+
+  /**
+   * \brief Propagate that one mandatory task must be first
+   *
+   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
+   * \ingroup FuncSchedulingProp
+   */
+  template<class ManTask>
+  class ManFirst : public TaskOnePropagator<ManTask> {
+  protected:
+    using TaskOnePropagator<ManTask>::t;
+    using TaskOnePropagator<ManTask>::u;
+    /// Constructor for creation
+    ManFirst(Space& home, TaskArray<ManTask>& t, ManTask& u);
+    /// Constructor for cloning \a p
+    ManFirst(Space& home, bool shared, ManFirst& p);
+  public:
+    /// Perform copying during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator
+    static ExecStatus post(Space& home, TaskArray<ManTask>& t, ManTask& u);
+  };
+
+  
+  /**
+   * \brief Propagate that one mandatory task must not be first
+   *
+   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
+   * \ingroup FuncSchedulingProp
+   */
+  template<class ManTask>
+  class ManNotFirst : public TaskOnePropagator<ManTask> {
+  protected:
+    using TaskOnePropagator<ManTask>::t;
+    using TaskOnePropagator<ManTask>::u;
+    /// Constructor for creation
+    ManNotFirst(Space& home, TaskArray<ManTask>& t, ManTask& u);
+    /// Constructor for cloning \a p
+    ManNotFirst(Space& home, bool shared, ManNotFirst& p);
+  public:
+    /// Perform copying during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator
+    static ExecStatus post(Space& home, TaskArray<ManTask>& t, ManTask& u);
+  };
+
+}}}
+
+#include <gecode/scheduling/unary/man-before.hpp>
+#include <gecode/scheduling/unary/man-first-not-first.hpp>
 
 #endif
 
