@@ -39,78 +39,46 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Sort by non-decreasing earliest start times
-  template<class TaskView>
-  class IncEst {
+  /// Sort by earliest start times
+  template<class TaskView, bool inc>
+  class StoEst {
   public:
     /// Sort order
     bool operator ()(const TaskView& t1, const TaskView& t2) const;
   };
 
-  /// Sort by non-increasing earliest start times
-  template<class TaskView>
-  class DecEst {
+  /// Sort by earliest completion times
+  template<class TaskView, bool inc>
+  class StoEct {
   public:
     /// Sort order
     bool operator ()(const TaskView& t1, const TaskView& t2) const;
   };
 
-  /// Sort by non-decreasing earliest completion times
-  template<class TaskView>
-  class IncEct {
+  /// Sort by latest start times
+  template<class TaskView, bool inc>
+  class StoLst {
   public:
     /// Sort order
     bool operator ()(const TaskView& t1, const TaskView& t2) const;
   };
 
-  /// Sort by non-increasing earliest completion times
-  template<class TaskView>
-  class DecEct {
-  public:
-    /// Sort order
-    bool operator ()(const TaskView& t1, const TaskView& t2) const;
-  };
-
-  /// Sort by non-decreasing latest start times
-  template<class TaskView>
-  class IncLst {
-  public:
-    /// Sort order
-    bool operator ()(const TaskView& t1, const TaskView& t2) const;
-  };
-
-  /// Sort by non-increasing latest start times
-  template<class TaskView>
-  class DecLst {
-  public:
-    /// Sort order
-    bool operator ()(const TaskView& t1, const TaskView& t2) const;
-  };
-
-  /// Sort by non-decreasing latest completion times
-  template<class TaskView>
-  class IncLct {
-  public:
-    /// Sort order
-    bool operator ()(const TaskView& t1, const TaskView& t2) const;
-  };
-
-  /// Sort by non-increasing latest completion times
-  template<class TaskView>
-  class DecLct {
+  /// Sort by latest completion times
+  template<class TaskView, bool inc>
+  class StoLct {
   public:
     /// Sort order
     bool operator ()(const TaskView& t1, const TaskView& t2) const;
   };
 
   /// Sorting maps rather than tasks
-  template<class TaskView, template<class> class STO>
+  template<class TaskView, template<class,bool> class STO, bool inc>
   class SortMap {
   private:
     /// The tasks
     const TaskViewArray<TaskView>& tasks;
     /// The sorting order for tasks
-    STO<TaskView> sto;
+    STO<TaskView,inc> sto;
   public:
     /// Initialize
     SortMap(const TaskViewArray<TaskView>& t);
@@ -118,62 +86,42 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     bool operator ()(int& i, int& j) const;
   };
 
-  template<class TaskView>
+  template<class TaskView, bool inc>
   forceinline bool
-  IncEst<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.est() < t2.est();
+  StoEst<TaskView,inc>::operator ()
+    (const TaskView& t1, const TaskView& t2) const {
+    return inc ? (t1.est() < t2.est()) : (t2.est() < t1.est());
   }
 
-  template<class TaskView>
+  template<class TaskView, bool inc>
   forceinline bool
-  DecEst<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.est() > t2.est();
+  StoEct<TaskView,inc>::operator ()
+    (const TaskView& t1, const TaskView& t2) const {
+    return inc ? (t1.ect() < t2.ect()) : (t2.ect() < t1.ect());
   }
 
-  template<class TaskView>
+  template<class TaskView, bool inc>
   forceinline bool
-  IncEct<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.ect() < t2.ect();
+  StoLst<TaskView,inc>::operator ()
+    (const TaskView& t1, const TaskView& t2) const {
+    return inc ? (t1.lst() < t2.lst()) : (t2.lst() < t1.lst());
   }
 
-  template<class TaskView>
+  template<class TaskView, bool inc>
   forceinline bool
-  DecEct<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.ect() > t2.ect();
-  }
-
-  template<class TaskView>
-  forceinline bool
-  IncLst<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.lst() < t2.lst();
-  }
-
-  template<class TaskView>
-  forceinline bool
-  DecLst<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.lst() > t2.lst();
-  }
-
-  template<class TaskView>
-  forceinline bool
-  IncLct<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.lct() < t2.lct();
-  }
-
-  template<class TaskView>
-  forceinline bool
-  DecLct<TaskView>::operator ()(const TaskView& t1, const TaskView& t2) const {
-    return t1.lct() > t2.lct();
+  StoLct<TaskView,inc>::operator ()
+    (const TaskView& t1, const TaskView& t2) const {
+    return inc ? (t1.lct() < t2.lct()) : (t2.lct() < t1.lct());
   }
 
 
-  template<class TaskView, template<class> class STO>
+  template<class TaskView, template<class,bool> class STO, bool inc>
   forceinline
-  SortMap<TaskView,STO>::SortMap(const TaskViewArray<TaskView>& t) 
+  SortMap<TaskView,STO,inc>::SortMap(const TaskViewArray<TaskView>& t) 
     : tasks(t) {}
-  template<class TaskView, template<class> class STO>
+  template<class TaskView, template<class,bool> class STO, bool inc>
   forceinline bool 
-  SortMap<TaskView,STO>::operator ()(int& i, int& j) const {
+  SortMap<TaskView,STO,inc>::operator ()(int& i, int& j) const {
     return sto(tasks[i],tasks[j]);
   }
 
@@ -182,31 +130,23 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   sort(TaskViewArray<TaskView>& t) {
     switch (sto) {
     case STO_EST:
-      if (inc) {
-        IncEst<TaskView> o; Support::quicksort(&t[0], t.size(), o);
-      } else {
-        DecEst<TaskView> o; Support::quicksort(&t[0], t.size(), o);
+      {
+        StoEst<TaskView,inc> o; Support::quicksort(&t[0], t.size(), o);
       }
       break;
     case STO_ECT:
-      if (inc) {
-        IncEct<TaskView> o; Support::quicksort(&t[0], t.size(), o);
-      } else {
-        DecEct<TaskView> o; Support::quicksort(&t[0], t.size(), o);
+      {
+        StoEct<TaskView,inc> o; Support::quicksort(&t[0], t.size(), o);
       }
       break;
     case STO_LST:
-      if (inc) {
-        IncLst<TaskView> o; Support::quicksort(&t[0], t.size(), o);
-      } else {
-        DecLst<TaskView> o; Support::quicksort(&t[0], t.size(), o);
+      {
+        StoLst<TaskView,inc> o; Support::quicksort(&t[0], t.size(), o);
       }
       break;
     case STO_LCT:
-      if (inc) {
-        IncLct<TaskView> o; Support::quicksort(&t[0], t.size(), o);
-      } else {
-        DecLct<TaskView> o; Support::quicksort(&t[0], t.size(), o);
+      {
+        StoLct<TaskView,inc> o; Support::quicksort(&t[0], t.size(), o);
       }
       break;
     default:
@@ -221,31 +161,27 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       map[i]=i;
     switch (sto) {
     case STO_EST:
-      if (inc) {
-        SortMap<TaskView,IncEst> o(t); Support::quicksort(map, t.size(), o);
-      } else {
-        SortMap<TaskView,DecEst> o(t); Support::quicksort(map, t.size(), o);
+      {
+        SortMap<TaskView,StoEst,inc> o(t); 
+        Support::quicksort(map, t.size(), o);
       }
       break;
     case STO_ECT:
-      if (inc) {
-        SortMap<TaskView,IncEct> o(t); Support::quicksort(map, t.size(), o);
-      } else {
-        SortMap<TaskView,DecEct> o(t); Support::quicksort(map, t.size(), o);
+      {
+        SortMap<TaskView,StoEct,inc> o(t); 
+        Support::quicksort(map, t.size(), o);
       }
       break;
     case STO_LST:
-      if (inc) {
-        SortMap<TaskView,IncLst> o(t); Support::quicksort(map, t.size(), o);
-      } else {
-        SortMap<TaskView,DecLst> o(t); Support::quicksort(map, t.size(), o);
+      {
+        SortMap<TaskView,StoLst,inc> o(t); 
+        Support::quicksort(map, t.size(), o);
       }
       break;
     case STO_LCT:
-      if (inc) {
-        SortMap<TaskView,IncLct> o(t); Support::quicksort(map, t.size(), o);
-      } else {
-        SortMap<TaskView,DecLct> o(t); Support::quicksort(map, t.size(), o);
+      {
+        SortMap<TaskView,StoLct,inc> o(t); 
+        Support::quicksort(map, t.size(), o);
       }
       break;
     default:
