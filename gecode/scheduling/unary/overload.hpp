@@ -39,12 +39,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   // Overload checking for mandatory tasks
   forceinline ExecStatus
-  overloaded(Space& home, TaskArray<ManTask>& t) {
-    TaskViewArray<ManTaskFwd> f(t);
-    sort<ManTaskFwd,STO_LCT,true>(f);
+  overloaded(Space& home, TaskArray<ManFixTask>& t) {
+    TaskViewArray<ManFixTaskFwd> f(t);
+    sort<ManFixTaskFwd,STO_LCT,true>(f);
 
     Region r(home);
-    OmegaTree<ManTaskFwd> o(r,f);
+    OmegaTree<ManFixTaskFwd> o(r,f);
 
     for (int i=0; i<f.size(); i++) {
       o.insert(i);
@@ -56,12 +56,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   
   // Overload checking for mandatory optional tasks
   forceinline ExecStatus
-  overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t) {
-    TaskViewArray<OptTaskFwd> f(t);
-    sort<OptTaskFwd,STO_LCT,true>(f);
+  overloaded(Space& home, Propagator& p, TaskArray<OptFixTask>& t) {
+    TaskViewArray<OptFixTaskFwd> f(t);
+    sort<OptFixTaskFwd,STO_LCT,true>(f);
 
     Region r(home);
-    OmegaLambdaTree<OptTaskFwd> ol(r,f,false);
+    OmegaLambdaTree<OptFixTaskFwd> ol(r,f,false);
 
     bool to_purge = false;
 

@@ -37,19 +37,40 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
   
+  template<class ManTask>
   forceinline
-  Mandatory::Mandatory(Space& home, TaskArray<ManTask>& t)
+  Mandatory<ManTask>::Mandatory(Space& home, TaskArray<ManTask>& t)
     : TaskPropagator<ManTask>(home,t) {}
 
+  template<class ManTask>
   forceinline
-  Mandatory::Mandatory(Space& home, bool shared, Mandatory& p) 
+  Mandatory<ManTask>::Mandatory(Space& home, bool shared, 
+                                Mandatory<ManTask>& p) 
     : TaskPropagator<ManTask>(home,shared,p) {}
 
+  template<class ManTask>
   forceinline ExecStatus 
-  Mandatory::post(Space& home, TaskArray<ManTask>& t) {
+  Mandatory<ManTask>::post(Space& home, TaskArray<ManTask>& t) {
     if (t.size() > 1)
-      (void) new (home) Mandatory(home,t);
+      (void) new (home) Mandatory<ManTask>(home,t);
     return ES_OK;
+  }
+
+  template<class ManTask>
+  Actor* 
+  Mandatory<ManTask>::copy(Space& home, bool share) {
+    return new (home) Mandatory<ManTask>(home,share,*this);
+  }
+
+  template<class ManTask>
+  ExecStatus 
+  Mandatory<ManTask>::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(overloaded(home,t));
+    GECODE_ES_CHECK(detectable(home,t));
+    GECODE_ES_CHECK(notfirstnotlast(home,t));
+    GECODE_ES_CHECK(edgefinding(home,t));
+    GECODE_ES_CHECK(subsumed(home,*this,t));
+    return ES_NOFIX;
   }
 
 }}}

@@ -51,10 +51,10 @@ namespace Gecode {
       if (p[i] <= 0)
         throw Int::OutOfLimits("Scheduling::unary");
     if (home.failed()) return;
-    TaskArray<ManTask> t(home,s.size());
+    TaskArray<ManFixTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i]);
-    GECODE_ES_FAIL(home,Mandatory::post(home,t));
+    GECODE_ES_FAIL(home,Mandatory<ManFixTask>::post(home,t));
   }
 
   void
@@ -70,10 +70,10 @@ namespace Gecode {
       if (p[i] <= 0)
         throw Int::OutOfLimits("Scheduling::unary");
     if (home.failed()) return;
-    TaskArray<OptTask> t(home,s.size());
+    TaskArray<OptFixTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i],m[i]);
-    GECODE_ES_FAIL(home,Optional::post(home,t));
+    GECODE_ES_FAIL(home,Optional<OptFixTask>::post(home,t));
   }
 
 }

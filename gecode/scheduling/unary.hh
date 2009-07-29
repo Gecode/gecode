@@ -53,7 +53,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Unary (mandatory) task with fixed processing time
-  class ManTask {
+  class ManFixTask {
   protected:
     /// Start time
     Int::IntView _s;
@@ -63,9 +63,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    ManTask(void);
+    ManFixTask(void);
     /// Initialize with start time \a s and processing time \a p
-    ManTask(IntVar s, int p);
+    ManFixTask(IntVar s, int p);
     /// Initialize with start time \a s and processing time \a p
     void init(IntVar s, int p);
     //@}
@@ -107,7 +107,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Cloning
     //@{
     /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, ManTask& t);
+    void update(Space& home, bool share, ManFixTask& t);
     //@}
 
     /// \name Dependencies
@@ -126,11 +126,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManTask& t);
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTask& t);
 
 
   /// Unary optional task with fixed processing time
-  class OptTask : public ManTask {
+  class OptFixTask : public ManFixTask {
   protected:
     /// Boolean view whether task is mandatory (= 1) or not
     Int::BoolView _m;
@@ -138,9 +138,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    OptTask(void);
+    OptFixTask(void);
     /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
-    OptTask(IntVar s, int p, BoolVar m);
+    OptFixTask(IntVar s, int p, BoolVar m);
     /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
     void init(IntVar s, int p, BoolVar m);
     //@}
@@ -171,7 +171,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Cloning
     //@{
     /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, OptTask& t);
+    void update(Space& home, bool share, OptFixTask& t);
     //@}
 
     /// \name Dependencies
@@ -186,11 +186,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /**
    * \brief Print optional task in format est:p:lct:m
-   * \relates OptTask
+   * \relates OptFixTask
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptTask& t);
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTask& t);
 
 }}}
 
@@ -234,33 +234,33 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Forward mandatory task view
-  typedef ManTask ManTaskFwd;
+  typedef ManFixTask ManFixTaskFwd;
 
   /// Backward (dual) mandatory task view
-  typedef FwdToBwd<ManTaskFwd> ManTaskBwd;
+  typedef FwdToBwd<ManFixTaskFwd> ManFixTaskBwd;
 
   /// Forward optional task view
-  typedef OptTask OptTaskFwd;
+  typedef OptFixTask OptFixTaskFwd;
 
   /// Backward (dual) optional task view
-  typedef FwdToBwd<OptTaskFwd> OptTaskBwd;
+  typedef FwdToBwd<OptFixTaskFwd> OptFixTaskBwd;
 
 
   /**
    * \brief Print backward task view in format est:p:lct
-   * \relates ManTaskBwd
+   * \relates ManFixTaskBwd
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManTaskBwd& t);
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTaskBwd& t);
 
   /**
    * \brief Print optional backward task view in format est:p:lct:m
-   * \relates OptTaskBwd
+   * \relates OptFixTaskBwd
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptTaskBwd& t);
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTaskBwd& t);
 
 
 
@@ -275,34 +275,34 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Task view traits for forward task views
   template<>
-  class TaskViewTraits<ManTaskFwd> {
+  class TaskViewTraits<ManFixTaskFwd> {
   public:
     /// The task type
-    typedef ManTask Task;
+    typedef ManFixTask Task;
   };
 
   /// Task view traits for backward task views
   template<>
-  class TaskViewTraits<ManTaskBwd> {
+  class TaskViewTraits<ManFixTaskBwd> {
   public:
     /// The task type
-    typedef ManTask Task;
+    typedef ManFixTask Task;
   };
 
   /// Task view traits for forward optional task views
   template<>
-  class TaskViewTraits<OptTaskFwd> {
+  class TaskViewTraits<OptFixTaskFwd> {
   public:
     /// The task type
-    typedef OptTask Task;
+    typedef OptFixTask Task;
   };
 
   /// Task view traits for backward task views
   template<>
-  class TaskViewTraits<OptTaskBwd> {
+  class TaskViewTraits<OptFixTaskBwd> {
   public:
     /// The task type
-    typedef OptTask Task;
+    typedef OptFixTask Task;
   };
 
   /**
@@ -316,22 +316,24 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Task traits for mandatory tasks
   template<>
-  class TaskTraits<ManTask> {
+  class TaskTraits<ManFixTask> {
   public:
     /// The forward task view type
-    typedef ManTaskFwd TaskViewFwd;
+    typedef ManFixTaskFwd TaskViewFwd;
     /// The backward task view type
-    typedef ManTaskBwd TaskViewBwd;
+    typedef ManFixTaskBwd TaskViewBwd;
   };
 
   /// Task traits for optional tasks
   template<>
-  class TaskTraits<OptTask> {
+  class TaskTraits<OptFixTask> {
   public:
     /// The forward task view type
-    typedef OptTaskFwd TaskViewFwd;
+    typedef OptFixTaskFwd TaskViewFwd;
     /// The backward task view type
-    typedef OptTaskBwd TaskViewBwd;
+    typedef OptFixTaskBwd TaskViewBwd;
+    /// The corresponding mandatory task
+    typedef ManFixTask ManTask;
   };
 
 }}}
@@ -645,12 +647,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Purge optional tasks that are excluded and possibly rewrite propagator
-  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
+  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptFixTask>& t);
 
   /// Check tasks \a t for overload
-  ExecStatus overloaded(Space& home, TaskArray<ManTask>& t);
+  ExecStatus overloaded(Space& home, TaskArray<ManFixTask>& t);
   /// Check tasks \a t for overload
-  ExecStatus overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t);
+  ExecStatus overloaded(Space& home, Propagator& p, TaskArray<OptFixTask>& t);
 
   /// Check tasks \a t for subsumption
   template<class Task>
@@ -697,6 +699,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * Requires \code #include <gecode/scheduling/unary.hh> \endcode
    * \ingroup FuncSchedulingProp
    */
+  template<class ManTask>
   class Mandatory : public TaskPropagator<ManTask> {
   protected:
     using TaskPropagator<ManTask>::t;
@@ -721,6 +724,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * Requires \code #include <gecode/scheduling/unary.hh> \endcode
    * \ingroup FuncSchedulingProp
    */
+  template<class OptTask>
   class Optional : public TaskPropagator<OptTask> {
   protected:
     using TaskPropagator<OptTask>::t;

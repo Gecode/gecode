@@ -39,7 +39,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManTaskBwd& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTaskBwd& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.p() << ':' << t.lct();
@@ -48,7 +48,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptTaskBwd& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTaskBwd& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.p() << ':' << t.lct() << ":"

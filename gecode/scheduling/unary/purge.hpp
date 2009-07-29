@@ -38,7 +38,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline ExecStatus
-  purge(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+  purge(Space& home, Propagator& p, TaskArray<OptFixTask>& t) {
     int n=t.size();
     for (int i=n; i--; )
       if (t[i].excluded()) {

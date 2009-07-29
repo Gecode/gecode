@@ -51,7 +51,7 @@ namespace Test { namespace Int {
       */
      //@{
      /// Test for unary constraint
-     class Unary : public Test {
+     class ManFixUnary : public Test {
      protected:
        /// The processing times
        Gecode::IntArgs p;
@@ -71,8 +71,9 @@ namespace Test { namespace Int {
        }
      public:
        /// Create and register test
-       Unary(const Gecode::IntArgs& p0)
-         : Test("Scheduling::Unary::"+pt(p0),p0.size(),0,st(p0)), p(p0) {
+       ManFixUnary(const Gecode::IntArgs& p0)
+         : Test("Scheduling::Unary::Man::Fix::"+pt(p0),p0.size(),0,st(p0)), 
+           p(p0) {
          testsearch = false;
          contest = CTL_NONE;
        }
@@ -95,7 +96,7 @@ namespace Test { namespace Int {
      };
 
      /// Test for unary constraint with optional tasks
-     class OptUnary : public Test {
+     class OptFixUnary : public Test {
      protected:
        /// The processing times
        Gecode::IntArgs p;
@@ -117,8 +118,8 @@ namespace Test { namespace Int {
        }
      public:
        /// Create and register test
-       OptUnary(const Gecode::IntArgs& p0)
-         : Test("Scheduling::Unary::Optional::"+pt(p0),
+       OptFixUnary(const Gecode::IntArgs& p0)
+         : Test("Scheduling::Unary::Opt::Fix::"+pt(p0),
                 2*p0.size(),0,st(p0)), p(p0), l(st(p)/2) {
          testsearch = false;
          contest = CTL_NONE;
@@ -152,16 +153,16 @@ namespace Test { namespace Int {
      };
 
      Gecode::IntArgs p1(4, 2,2,2,2);
-     Unary u1(p1);
-     OptUnary ou1(p1);
+     ManFixUnary mfu1(p1);
+     OptFixUnary ofu1(p1);
 
      Gecode::IntArgs p2(4, 4,3,3,5);
-     Unary u2(p2);
-     OptUnary ou2(p2);
+     ManFixUnary mfu2(p2);
+     OptFixUnary ofu2(p2);
 
      Gecode::IntArgs p3(6, 4,2,9,3,7,5);
-     Unary u3(p3);
-     OptUnary ou3(p3);
+     ManFixUnary mfu3(p3);
+     OptFixUnary ofu3(p3);
      //@}
 
    }

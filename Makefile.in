@@ -436,8 +436,7 @@ GRAPHBUILDDIRS	= \
 #
 
 SCHEDULINGSRC0 = \
-	cumulatives.cpp \
-	unary.cpp unary/mandatory.cpp unary/optional.cpp
+	cumulatives.cpp unary.cpp
 SCHEDULINGHDR0 = \
 	cumulatives.hh cumulatives/val.hpp \
 	unary.hh unary/task.hpp unary/task-mapper.hpp unary/task-view.hpp \
