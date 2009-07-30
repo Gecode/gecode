@@ -148,11 +148,13 @@ namespace Gecode { namespace Gist {
   }
 
   void TextOutput::changeStayOnTop(void) {
+    QPoint p = pos();
     if (stayOnTop->isChecked()) {
       setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     } else {
       setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);      
     }
+    move(p);
     show();
   }
 
