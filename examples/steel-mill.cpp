@@ -317,6 +317,7 @@ public:
    * \relates SteelMill
    */
   class SteelMillBranch : Branching {
+  protected:
     /// Cache of first unassigned value
     mutable int start;
     /// Branching description
@@ -407,6 +408,10 @@ public:
     /// Post branching
     static void post(Space& home) {
       (void) new (home) SteelMillBranch(home);
+    }
+    /// Delete branching and return its size
+    virtual size_t dispose(Space& home) {
+      return sizeof(*this);
     }
   };
 };

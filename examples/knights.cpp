@@ -54,6 +54,7 @@ using namespace Gecode;
  * \relates Knights
  */
 class Warnsdorff : public Branching {
+protected:
   /// Views of the branching
   ViewArray<Int::IntView> x;
   /// Next variable to branch on
@@ -131,6 +132,10 @@ public:
   static void post(Space& home, const IntVarArgs& x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) Warnsdorff(home, xv);
+  }
+  /// Delete branching and return its size
+  virtual size_t dispose(Space& home) {
+    return sizeof(*this);
   }
 };
 

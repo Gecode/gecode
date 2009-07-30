@@ -240,6 +240,10 @@ public:
     static void post(QueenArmies& home) {
       (void) new (home) QueenBranch(home);
     }
+    /// Delete branching and return its size
+    virtual size_t dispose(Space& home) {
+      return sizeof(*this);
+    }
   };
 };
 

@@ -1207,6 +1207,7 @@ public:
           }
 
       unary(*this, s_m, t_m);
+      manbranch(*this, s_m, t_m);
     }
 
     branch(*this, start, INT_VAR_MIN_MIN, INT_VAL_SPLIT_MIN);

@@ -47,6 +47,7 @@ using namespace Gecode;
 
 /// Instance data for radio therapy problem
 class RadiotherapyData {
+private:
   /// Compute incremental sum
   int incr_sum(int row) {
     int sum = intensity[row*n];

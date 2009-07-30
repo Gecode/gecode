@@ -96,6 +96,7 @@ namespace {
  * \relates BlackHole
  */
 class BlackHoleBranch : Branching {
+protected:
   /// Views of the branching
   ViewArray<Int::IntView> x;
   /// Cache of last computed decision
@@ -171,6 +172,10 @@ public:
   static void post(Space& home, IntVarArgs x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) BlackHoleBranch(home, xv);
+  }
+  /// Delete branching and return its size
+  virtual size_t dispose(Space& home) {
+    return sizeof(*this);
   }
 };
 
