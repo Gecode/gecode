@@ -73,6 +73,16 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Gist console now has a toolbar that provides buttons to clear the text
+as well as to configure the console window to stay on top of Gist. 
+Furthermore, after adding output, the console now automatically scrolls to the 
+bottom.
+
+[ENTRY]
 Module: graph
 What:   new
 Rank:   minor
