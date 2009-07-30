@@ -48,68 +48,93 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     public:
       /// Number of resource
       int r;
-      /// Positions of tasks to be ordered
-      int* t;
-      /** Initialize description for branching \a b, number of
-       *  alternatives \a a, resource \a r0, and tasks \a t0.
+      /// Positions of task to be ordered
+      int t;
+      /** Initialize description for branching \a b, 
+       *  resource \a r0, and task \a t0.
        */
-      Description(const Branching& b, unsigned int a, int r0, int* t0)
-        : BranchingDesc(b,a), r(r0), t(t0) {}
+      Description(const Branching& b, int r0, int t0)
+        : BranchingDesc(b,2), r(r0), t(t0) {}
       /// Report size occupied
       virtual size_t size(void) const {
         return sizeof(Description);
-      }
-      /// Destructor
-      virtual ~Description(void) {
-        heap.free<int>(t,alternatives());
       }
     };
     /// The tasks
     TaskArray<Task> t;
     /// Whether a task has already been ordered
     bool* ordered;
-    /// The number of not yet ordered tasks
-    int n_unordered;
+    /// Whether a task is blocked until another task is ordered
+    bool* blocked;
+    /// The number of tasks that are available for branching
+    int n_available;
     /// Construct branching
     ManBranching(Space& home, TaskArray<Task>& t0) 
-      : Branching(home), 
-        t(t0), ordered(home.alloc<bool>(t.size())), n_unordered(t.size()) {
+      : Branching(home), t(t0), 
+        ordered(home.alloc<bool>(t.size())), 
+        blocked(home.alloc<bool>(t.size())), 
+        n_available(t.size()) {
       for (int i=t.size(); i--; )
-        ordered[i] = false;
+        ordered[i] = blocked[i] = false;
     }
     /// Copy constructor
     ManBranching(Space& home, bool share, ManBranching& b) 
       : Branching(home, share, b), 
-        ordered(home.alloc<bool>(b.t.size())), n_unordered(b.n_unordered) {
+        ordered(home.alloc<bool>(b.t.size())), 
+        blocked(home.alloc<bool>(b.t.size())), 
+        n_available(b.n_available) {
       t.update(home, share, b.t);
-      for (int i=t.size(); i--; )
+      for (int i=t.size(); i--; ) {
         ordered[i] = b.ordered[i];
+        blocked[i] = b.blocked[i];
+      }
     }
   public:
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space&) const {
-      return n_unordered >= 2;
+      return n_available >= 2;
     }
     /// Return branching description
     virtual BranchingDesc* description(Space&) {
-      int* ti = heap.alloc<int>(n_unordered);
-      int a = 0;
+      int j = -1;
+      int est = Int::Limits::infinity;
       for (int i=0; i<t.size(); i++)
-        if (!ordered[i])
-          ti[a++]=i;
-      assert(a == n_unordered);
-      return new Description(*this,static_cast<unsigned int>(n_unordered),
-                             0,ti);
+        if (!ordered[i] && !blocked[i] && (t[i].est() < est)) {
+          est=t[i].est(); j=i;
+        }
+      return new Description(*this,0,j);
     }
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space& home, const BranchingDesc& _d, 
                               unsigned int a) {
       const Description& d = static_cast<const Description&>(_d);
-      for (unsigned int i=0; i<d.alternatives(); i++) 
-        if (a != i)
-          GECODE_ES_CHECK(manbefore(home,t[d.t[a]],t[d.t[i]]));
-      ordered[d.t[a]] = true;
-      n_unordered--;
+      if (a == 0) {
+        for (int i=t.size(); i--; ) {
+          if ((i != d.t) && !ordered[i])
+            GECODE_ES_CHECK(manbefore(home,t[d.t],t[i]));
+          if (blocked[i]) {
+            blocked[i] = false;
+            n_available++;
+          }
+        }
+        ordered[d.t] = true;
+        n_available--;
+      } else {
+        n_available--;
+        blocked[d.t] = true;
+        if (n_available == 1) {
+          for (int i=t.size(); i--; )
+            if (!ordered[i] && !blocked[i]) {
+              GECODE_ES_CHECK(manbefore(home,t[i],t[d.t]));
+              return ES_OK;
+            }
+        } 
+        int ect = Int::Limits::infinity;
+        for (int i=t.size(); i--; )
+          if (!ordered[i] && !blocked[i])
+            ect = std::min(ect,t[i].ect());
+        GECODE_ME_CHECK(t[d.t].est(home,ect));
+      }
       return ES_OK;
     }
     /// Copy branching
@@ -118,7 +143,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     }
     /// Post branching
     static void post(Space& home, TaskArray<Task>& t) {
-      std::cout << "post(" << t << ")" << std::endl;
       (void) new (home) ManBranching<Task>(home,t);
     }
     /// Delete branching and return its size

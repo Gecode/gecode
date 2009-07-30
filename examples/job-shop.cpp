@@ -1191,7 +1191,7 @@ public:
     // Constrain makespan
     max(*this, last, makespan);
 
-    //    branch(*this, makespan, INT_VAL_SPLIT_MIN);
+    branch(*this, makespan, INT_VAL_SPLIT_MIN);
 
     // Order job steps on machines
     for (int m=0; m<machines(); m++) {

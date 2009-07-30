@@ -785,59 +785,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class ManTask>
   ExecStatus manbefore(Space& home, ManTask& t1, ManTask& t2);
 
-  /**
-   * \brief Propagate that one mandatory task must be first
-   *
-   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
-   * \ingroup FuncSchedulingProp
-   */
-  template<class ManTask>
-  class ManFirst : public TaskOnePropagator<ManTask> {
-  protected:
-    using TaskOnePropagator<ManTask>::t;
-    using TaskOnePropagator<ManTask>::u;
-    /// Constructor for creation
-    ManFirst(Space& home, TaskArray<ManTask>& t, ManTask& u);
-    /// Constructor for cloning \a p
-    ManFirst(Space& home, bool shared, ManFirst& p);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator
-    static ExecStatus post(Space& home, TaskArray<ManTask>& t, ManTask& u);
-  };
-
-  
-  /**
-   * \brief Propagate that one mandatory task must not be first
-   *
-   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
-   * \ingroup FuncSchedulingProp
-   */
-  template<class ManTask>
-  class ManNotFirst : public TaskOnePropagator<ManTask> {
-  protected:
-    using TaskOnePropagator<ManTask>::t;
-    using TaskOnePropagator<ManTask>::u;
-    /// Constructor for creation
-    ManNotFirst(Space& home, TaskArray<ManTask>& t, ManTask& u);
-    /// Constructor for cloning \a p
-    ManNotFirst(Space& home, bool shared, ManNotFirst& p);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator
-    static ExecStatus post(Space& home, TaskArray<ManTask>& t, ManTask& u);
-  };
-
 }}}
 
 #include <gecode/scheduling/unary/man-before.hpp>
-#include <gecode/scheduling/unary/man-first-not-first.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 

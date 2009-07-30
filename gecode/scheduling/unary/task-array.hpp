@@ -49,7 +49,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline
   TaskArray<Task>::TaskArray(Space& home, int n0)
     : n(n0), t(home.alloc<Task>(n)) {
-    assert(n > 1);
+    assert(n > 0);
   }
   template<class Task>
   forceinline
