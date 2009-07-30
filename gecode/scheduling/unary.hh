@@ -677,6 +677,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   class TaskOnePropagator : public TaskPropagator<Task> {
   protected:
+    using TaskPropagator<Task>::t;
     /// Single additional task
     Task u;
     /// Constructor for creation
