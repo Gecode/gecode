@@ -112,6 +112,8 @@ namespace Gecode { namespace Gist {
                          SLOT(close()));
 
     QToolBar* t = addToolBar("Tools");
+    t->setFloatable(false);
+    t->setMovable(false);
     t->addAction(clearText);
 
     stayOnTop = new QAction("Stay on top", this);
