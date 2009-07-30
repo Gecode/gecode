@@ -248,6 +248,9 @@ namespace Gecode {
         const BoolVarArgs& m);
   //@}
 
+  GECODE_SCHEDULING_EXPORT void 
+  manbranch(Space& home, const IntVarArgs& s, const IntArgs& p);
+
 }
 
 #endif

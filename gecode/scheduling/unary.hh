@@ -839,6 +839,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 #include <gecode/scheduling/unary/man-before.hpp>
 #include <gecode/scheduling/unary/man-first-not-first.hpp>
 
+namespace Gecode { namespace Scheduling { namespace Unary {
+
+}}}
+
 #endif
 
 // STATISTICS: scheduling-prop
