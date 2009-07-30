@@ -44,7 +44,10 @@
 namespace Gecode { namespace Gist {
   /// \brief Window with associated ostream, used for inspecting Gist nodes
   class TextOutput : public QMainWindow {
+    Q_OBJECT
   private:
+    /// Action used for toggling stay-on-top behavior
+    QAction* stayOnTop;
     /// The QTextEditor used for text display
     QTextEdit *editor;
     /// The ostream that prints to the editor
@@ -59,6 +62,8 @@ namespace Gecode { namespace Gist {
     std::ostream& getStream(void);
     /// Add html string \a s to the output
     void insertHtml(const QString& s);
+  protected Q_SLOTS:
+    void changeStayOnTop(void);
   };
 
 }}

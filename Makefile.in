@@ -586,7 +586,7 @@ GISTSRC0 = \
 	nodewidget.cpp mainwindow.cpp preferences.cpp
 
 GISTMOCSRC0 = \
-	moc_treecanvas.cpp moc_qtgist.cpp moc_mainwindow.cpp \
+	moc_treecanvas.cpp moc_qtgist.cpp moc_mainwindow.cpp moc_textoutput.cpp\
 	moc_preferences.cpp moc_nodestats.cpp
 
 GISTSRC = $(GISTSRC0:%=gecode/gist/%)

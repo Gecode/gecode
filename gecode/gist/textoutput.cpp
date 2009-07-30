@@ -90,6 +90,7 @@ namespace Gecode { namespace Gist {
     font.setFamily(fontFamily);
     font.setFixedPitch(true);
     font.setPointSize(12);
+    
 
     editor = new QTextEdit;
     editor->setFont(font);
@@ -110,6 +111,16 @@ namespace Gecode { namespace Gist {
     connect(closeWindow, SIGNAL(triggered()), this,
                          SLOT(close()));
 
+    QToolBar* t = addToolBar("Tools");
+    t->addAction(clearText);
+
+    stayOnTop = new QAction("Stay on top", this);
+    stayOnTop->setCheckable(true);
+    t->addAction(stayOnTop);
+    connect(stayOnTop, SIGNAL(changed()), this,
+                         SLOT(changeStayOnTop()));
+
+    changeStayOnTop();
     setCentralWidget(editor);
     setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
 
@@ -133,6 +144,15 @@ namespace Gecode { namespace Gist {
     bf.setBottomMargin(0);
     editor->textCursor().setBlockFormat(bf);
     editor->insertHtml(s);
+  }
+
+  void TextOutput::changeStayOnTop(void) {
+    if (stayOnTop->isChecked()) {
+      setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    } else {
+      setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);      
+    }
+    show();
   }
 
 }}
