@@ -144,6 +144,7 @@ namespace Gecode { namespace Gist {
     bf.setBottomMargin(0);
     editor->textCursor().setBlockFormat(bf);
     editor->insertHtml(s);
+    editor->ensureCursorVisible();
   }
 
   void TextOutput::changeStayOnTop(void) {
