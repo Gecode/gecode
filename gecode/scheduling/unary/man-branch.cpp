@@ -96,93 +96,32 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   public:
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space&) const {
-#ifdef MBT
-      std::cout << "status" << std::endl;
-      std::cout << "\tn_non_first=" << n_non_first
-                << ", n_non_notfirst=" << n_non_notfirst << std::endl;
-#endif
       return (n_non_first >= 2) && (n_non_notfirst >= 2);
     }
     /// Return branching description
     virtual BranchingDesc* description(Space&) {
-#ifdef MBT
-      std::cout << "description" << std::endl;
-#endif
       int j = -1;
       int est = Int::Limits::infinity;
       for (int i=0; i<t.size(); i++)
         if (!first[i] && !notfirst[i] && (t[i].est() < est)) {
           est=t[i].est(); j=i;
         }
-#ifdef MBT
-      for (int i=0; i<t.size(); i++)
-        std::cout << "\t[" << i << "] = " 
-                  << t[i] 
-                  << ", first: " << first[i]
-                  << ", notfirst: " << notfirst[i] << std::endl;
-      std::cout << "\tn_non_first=" << n_non_first
-                << ", n_non_notfirst=" << n_non_notfirst
-                << ", j=" << j << std::endl;
-#endif
       return new Description(*this,0,j);
     }
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space& home, const BranchingDesc& _d, 
                               unsigned int a) {
-      //      std::cout << "commit(" << &home << ", " << &_d 
-      //                << "," << a << ")" << std::endl;
       const Description& d = static_cast<const Description&>(_d);
       if (a == 0) {
-#ifdef MBT
-        std::cout << "\tbefore:" << std::endl;
-        for (int i=0; i<t.size(); i++)
-          std::cout << "\t[" << i << "] = " 
-                    << t[i] 
-                    << ", first: " << first[i]
-                    << ", notfirst: " << notfirst[i] << std::endl;
-        std::cout << "\tn_non_first=" << n_non_first
-                  << ", n_non_notfirst=" << n_non_notfirst;
-        std::cout << std::endl;
-#endif
-        first[d.t] = true;
-        n_non_first--;
+        // Simple case: make t[d.t] go first, reset all notfirst
+        first[d.t] = true; n_non_first--;
         for (int i=t.size(); i--; ) {
-          if (!first[i]) {
-            // #define MBP
-#ifdef MBP
-            std::cout << "\t post t[" 
-                      << d.t << "] = " << t[d.t] << " << "
-                      << t[i] << " = t[" << i << "]" << std::endl;
-#endif
-            GECODE_ES_CHECK(manbefore(home,t[d.t],t[i]));
-          }
+          if (!first[i])
+            GECODE_ES_CHECK(manbefore(home, t[d.t], t[i]));
           notfirst[i] = false;
         }
         n_non_notfirst = n_non_first;
-#ifdef MBT
-        std::cout << "\tafter:" << std::endl;
-        for (int i=0; i<t.size(); i++)
-          std::cout << "\t[" << i << "] = " 
-                    << t[i] 
-                    << ", first: " << first[i]
-                    << ", notfirst: " << notfirst[i] << std::endl;
-        std::cout << "\tn_non_first=" << n_non_first
-                  << ", n_non_notfirst=" << n_non_notfirst;
-        std::cout << std::endl;
-#endif
-      } else {
-#ifdef MBT
-        std::cout << "\tbefore:" << std::endl;
-        for (int i=0; i<t.size(); i++)
-          std::cout << "\t[" << i << "] = " 
-                    << t[i] 
-                    << ", first: " << first[i]
-                    << ", notfirst: " << notfirst[i] << std::endl;
-        std::cout << "\tn_non_first=" << n_non_first
-                  << ", n_non_notfirst=" << n_non_notfirst;
-        std::cout << std::endl;
-#endif
-        if (n_non_first == 2) {
+      } else if (n_non_first == 2) {
           /*
            * Special case: there are only two tasks left that still.
            * can go first. We have to find the other task (different
@@ -190,94 +129,46 @@ namespace Gecode { namespace Scheduling { namespace Unary {
            * not matter what we do as this is the last choice to be
            * made for the resource.
            */
-          first[d.t] = true;
-          n_non_first--;
+          first[d.t] = true; n_non_first--;
           for (int i=t.size(); i--; )
             if (!first[i] && !notfirst[i]) {
-#ifdef MBP
-              std::cout << "\t post t[" 
-                        << i << "] = " << t[i] << " << "
-                        << t[d.t] << " = t[" << d.t << "]" << std::endl;
-#endif
               GECODE_ES_CHECK(manbefore(home,t[i],t[d.t]));
-#ifdef MBT
-              std::cout << "\tafter (n_non_first == 2):" << std::endl;
-              for (int i=0; i<t.size(); i++)
-                std::cout << "\t[" << i << "] = " 
-                          << t[i] 
-                          << ", first: " << first[i]
-                          << ", notfirst: " << notfirst[i] << std::endl;
-              std::cout << "\tn_non_first=" << n_non_first
-                        << ", n_non_notfirst=" << n_non_notfirst;
-              std::cout << std::endl;
-#endif
               return ES_OK;
             }
           GECODE_NEVER;
-        }
-        if (n_non_notfirst == 2) {
+      } else if (n_non_notfirst == 2) {
           /*
-           * Special case: we are to propagate that all but one task
+           * Special case: we have to propagate that all but one task
            * cannot be first. That means we have to find that task
            * and make it go first. We have to be careful to properly
            * erase the notfirst information as branching may continue.
            */
-          notfirst[d.t] = true;
-          int j = -1;
+          notfirst[d.t] = true; // So that d.t is skipped
+          int f = -1;
           for (int i=t.size(); i--; ) {
             if (!first[i] && !notfirst[i]) {
-              first[i] = true;
-              n_non_first--;
-              j=i;
-#ifdef MBT
-              std::cout << "\tafter (n_non_notfirst == 2):" << std::endl;
-              for (int i=0; i<t.size(); i++)
-                std::cout << "\t[" << i << "] = " 
-                          << t[i] 
-                          << ", first: " << first[i]
-                          << ", notfirst: " << notfirst[i] << std::endl;
-              std::cout << "\tn_non_first=" << n_non_first
-                        << ", n_non_notfirst=" << n_non_notfirst;
-              std::cout << std::endl;
-#endif
+              assert(f == -1);
+              f = i;
             }
             notfirst[i] = false;
           }
+          first[f] = true; n_non_first--;
           n_non_notfirst = n_non_first;
           for (int i=t.size(); i--; ) 
-            if (!first[i]) {
-#ifdef MBP
-              std::cout << "\t post t[" 
-                        << i << "] = " << t[i] << " << "
-                        << t[d.t] << " = t[" << d.t << "]" << std::endl;
-#endif
-              GECODE_ES_CHECK(manbefore(home,t[j],t[i]));
-            }
-        } else {
-          n_non_notfirst--;
-          notfirst[d.t] = true;
-          int ect = Int::Limits::infinity;
-          for (int i=t.size(); i--; )
-            if (!first[i] && !notfirst[i])
-              ect = std::min(ect,t[i].ect());
-#ifdef MBT
-          std::cout << "\t tell t[" 
-                    << d.t << "] = " << t[d.t] << " < " << ect
-                    << std::endl;
-#endif
-          GECODE_ME_CHECK(t[d.t].est(home,ect));
-#ifdef MBT
-          std::cout << "\tafter (normal):" << std::endl;
-          for (int i=0; i<t.size(); i++)
-            std::cout << "\t[" << i << "] = " 
-                      << t[i] 
-                      << ", first: " << first[i]
-                      << ", notfirst: " << notfirst[i] << std::endl;
-          std::cout << "\tn_non_first=" << n_non_first
-                    << ", n_non_notfirst=" << n_non_notfirst;
-          std::cout << std::endl;
-#endif
-        }
+            if (!first[i])
+              GECODE_ES_CHECK(manbefore(home, t[f], t[i]));
+      } else {
+        /*
+         * The task d.t cannot be first. However we do not create a
+         * propagator to enforce that but just make t.d start after
+         * the task that can finish earliest.
+         */
+        notfirst[d.t] = true; n_non_notfirst--;
+        int ect = Int::Limits::infinity;
+        for (int i=t.size(); i--; )
+          if (!first[i] && !notfirst[i])
+            ect = std::min(ect,t[i].ect());
+        GECODE_ME_CHECK(t[d.t].est(home,ect));
       }
       return ES_OK;
     }
