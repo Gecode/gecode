@@ -251,7 +251,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
                         << i << "] = " << t[i] << " << "
                         << t[d.t] << " = t[" << d.t << "]" << std::endl;
 #endif
-              GECODE_ES_CHECK(manbefore(home,t[i],t[j]));
+              GECODE_ES_CHECK(manbefore(home,t[j],t[i]));
             }
         } else {
           n_non_notfirst--;
