@@ -41,17 +41,17 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   
   template<class OptTask>
   forceinline
-  Optional<OptTask>::Optional(Space& home, TaskArray<OptTask>& t)
-    : TaskPropagator<OptTask>(home,t) {}
+  OptProp<OptTask>::OptProp(Space& home, TaskArray<OptTask>& t)
+    : TaskProp<OptTask>(home,t) {}
 
   template<class OptTask>
   forceinline
-  Optional<OptTask>::Optional(Space& home, bool shared, Optional<OptTask>& p) 
-    : TaskPropagator<OptTask>(home,shared,p) {}
+  OptProp<OptTask>::OptProp(Space& home, bool shared, OptProp<OptTask>& p) 
+    : TaskProp<OptTask>(home,shared,p) {}
 
   template<class OptTask>
   forceinline ExecStatus 
-  Optional<OptTask>::post(Space& home, TaskArray<OptTask>& t) {
+  OptProp<OptTask>::post(Space& home, TaskArray<OptTask>& t) {
     int m=0, o=0;
     for (int i=t.size(); i--; ) {
       if (t[i].mandatory())
@@ -63,22 +63,22 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i].st(),t[i].p());
-      return Mandatory<typename TaskTraits<OptTask>::ManTask>::post(home,mt);
+      return ManProp<typename TaskTraits<OptTask>::ManTask>::post(home,mt);
     }
     if (o+m > 1)
-      (void) new (home) Optional<OptTask>(home,t);
+      (void) new (home) OptProp<OptTask>(home,t);
     return ES_OK;
   }
 
   template<class OptTask>
   Actor* 
-  Optional<OptTask>::copy(Space& home, bool share) {
-    return new (home) Optional<OptTask>(home,share,*this);
+  OptProp<OptTask>::copy(Space& home, bool share) {
+    return new (home) OptProp<OptTask>(home,share,*this);
   }
 
   template<class OptTask>
   ExecStatus 
-  Optional<OptTask>::propagate(Space& home, const ModEventDelta& med) {
+  OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
       GECODE_ES_CHECK(purge(home,*this,t));
@@ -104,7 +104,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       for (int i=n; i--; )
         mt[i].init(t[i].st(),t[i].p());
       GECODE_REWRITE(*this,
-                     (Mandatory<typename TaskTraits<OptTask>::ManTask>
+                     (ManProp<typename TaskTraits<OptTask>::ManTask>
                       ::post(home,mt)));
     }
     // Truncate array to only contain mandatory tasks

@@ -448,8 +448,7 @@ SCHEDULINGHDR0 = \
 	unary/purge.hpp unary/overload.hpp unary/detectable.hpp \
 	unary/not-first-not-last.hpp \
 	unary/edge-finding.hpp unary/subsumption.hpp \
-	unary/task-propagator.hpp unary/mandatory.hpp \
-	unary/optional.hpp
+	unary/task-prop.hpp unary/man-prop.hpp unary/opt-prop.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
 SCHEDULINGHDR	= gecode/scheduling.hh $(SCHEDULINGHDR0:%=gecode/scheduling/%)

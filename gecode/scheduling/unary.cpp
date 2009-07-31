@@ -54,7 +54,7 @@ namespace Gecode {
     TaskArray<ManFixTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i]);
-    GECODE_ES_FAIL(home,Mandatory<ManFixTask>::post(home,t));
+    GECODE_ES_FAIL(home,ManProp<ManFixTask>::post(home,t));
   }
 
   void
@@ -73,7 +73,7 @@ namespace Gecode {
     TaskArray<OptFixTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i],m[i]);
-    GECODE_ES_FAIL(home,Optional<OptFixTask>::post(home,t));
+    GECODE_ES_FAIL(home,OptProp<OptFixTask>::post(home,t));
   }
 
 }

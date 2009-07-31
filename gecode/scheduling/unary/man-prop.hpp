@@ -36,65 +36,41 @@
  */
 
 namespace Gecode { namespace Scheduling { namespace Unary {
-
-  template<class Task>  
+  
+  template<class ManTask>
   forceinline
-  TaskPropagator<Task>::TaskPropagator(Space& home, TaskArray<Task>& t0)
-    : Propagator(home), t(t0) {
-    t.subscribe(home,*this);
-  }
+  ManProp<ManTask>::ManProp(Space& home, TaskArray<ManTask>& t)
+    : TaskProp<ManTask>(home,t) {}
 
-  template<class Task>  
+  template<class ManTask>
   forceinline
-  TaskPropagator<Task>::TaskPropagator(Space& home, 
-                                       bool shared, TaskPropagator<Task>& p) 
-    : Propagator(home,shared,p) {
-    t.update(home,shared,p.t);
+  ManProp<ManTask>::ManProp(Space& home, bool shared, 
+                                ManProp<ManTask>& p) 
+    : TaskProp<ManTask>(home,shared,p) {}
+
+  template<class ManTask>
+  forceinline ExecStatus 
+  ManProp<ManTask>::post(Space& home, TaskArray<ManTask>& t) {
+    if (t.size() > 1)
+      (void) new (home) ManProp<ManTask>(home,t);
+    return ES_OK;
   }
 
-  template<class Task>  
-  PropCost 
-  TaskPropagator<Task>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,t.size());
+  template<class ManTask>
+  Actor* 
+  ManProp<ManTask>::copy(Space& home, bool share) {
+    return new (home) ManProp<ManTask>(home,share,*this);
   }
 
-  template<class Task>  
-  size_t 
-  TaskPropagator<Task>::dispose(Space& home) {
-    t.cancel(home,*this);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-
-  template<class Task>  
-  forceinline
-  TaskOnePropagator<Task>::TaskOnePropagator(Space& home, TaskArray<Task>& t,
-                                             Task& u0)
-    : TaskPropagator<Task>(home,t), u(u0) {
-    u.subscribe(home,*this);
-  }
-
-  template<class Task>  
-  forceinline
-  TaskOnePropagator<Task>::TaskOnePropagator(Space& home, bool shared, 
-                                             TaskOnePropagator<Task>& p) 
-    : TaskPropagator<Task>(home,shared,p) {
-    u.update(home,shared,p.u);
-  }
-
-  template<class Task>  
-  PropCost 
-  TaskOnePropagator<Task>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LO,t.size()+1);
-  }
-
-  template<class Task>  
-  size_t 
-  TaskOnePropagator<Task>::dispose(Space& home) {
-    u.cancel(home,*this);
-    (void) TaskPropagator<Task>::dispose(home);
-    return sizeof(*this);
+  template<class ManTask>
+  ExecStatus 
+  ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(overloaded(home,t));
+    GECODE_ES_CHECK(detectable(home,t));
+    GECODE_ES_CHECK(notfirstnotlast(home,t));
+    GECODE_ES_CHECK(edgefinding(home,t));
+    GECODE_ES_CHECK(subsumed(home,*this,t));
+    return ES_NOFIX;
   }
 
 }}}

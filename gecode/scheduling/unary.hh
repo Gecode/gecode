@@ -653,14 +653,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * \ingroup FuncSchedulingProp
    */
   template<class Task>
-  class TaskPropagator : public Propagator {
+  class TaskProp : public Propagator {
   protected:
     /// Tasks
     TaskArray<Task> t;
     /// Constructor for creation
-    TaskPropagator(Space& home, TaskArray<Task>& t);
+    TaskProp(Space& home, TaskArray<Task>& t);
     /// Constructor for cloning \a p
-    TaskPropagator(Space& home, bool shared, TaskPropagator<Task>& p);
+    TaskProp(Space& home, bool shared, TaskProp<Task>& p);
   public:
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -675,9 +675,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * \ingroup FuncSchedulingProp
    */
   template<class Task>
-  class TaskOnePropagator : public TaskPropagator<Task> {
+  class TaskOnePropagator : public TaskProp<Task> {
   protected:
-    using TaskPropagator<Task>::t;
+    using TaskProp<Task>::t;
     /// Single additional task
     Task u;
     /// Constructor for creation
@@ -693,7 +693,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 }}}
 
-#include <gecode/scheduling/unary/task-propagator.hpp>
+#include <gecode/scheduling/unary/task-prop.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
@@ -729,13 +729,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * \ingroup FuncSchedulingProp
    */
   template<class ManTask>
-  class Mandatory : public TaskPropagator<ManTask> {
+  class ManProp : public TaskProp<ManTask> {
   protected:
-    using TaskPropagator<ManTask>::t;
+    using TaskProp<ManTask>::t;
     /// Constructor for creation
-    Mandatory(Space& home, TaskArray<ManTask>& t);
+    ManProp(Space& home, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
-    Mandatory(Space& home, bool shared, Mandatory& p);
+    ManProp(Space& home, bool shared, ManProp& p);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -752,13 +752,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * \ingroup FuncSchedulingProp
    */
   template<class OptTask>
-  class Optional : public TaskPropagator<OptTask> {
+  class OptProp : public TaskProp<OptTask> {
   protected:
-    using TaskPropagator<OptTask>::t;
+    using TaskProp<OptTask>::t;
     /// Constructor for creation
-    Optional(Space& home, TaskArray<OptTask>& t);
+    OptProp(Space& home, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
-    Optional(Space& home, bool shared, Optional& p);
+    OptProp(Space& home, bool shared, OptProp& p);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -776,9 +776,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 #include <gecode/scheduling/unary/not-first-not-last.hpp>
 #include <gecode/scheduling/unary/edge-finding.hpp>
 
-#include <gecode/scheduling/unary/mandatory.hpp>
+#include <gecode/scheduling/unary/man-prop.hpp>
 #include <gecode/scheduling/unary/purge.hpp>
-#include <gecode/scheduling/unary/optional.hpp>
+#include <gecode/scheduling/unary/opt-prop.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
