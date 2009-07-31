@@ -76,6 +76,24 @@ namespace Gecode {
     GECODE_ES_FAIL(home,OptProp<OptFixTask>::post(home,t));
   }
 
+  void 
+  order(Space& home, const IntVarArgs& s, const IntArgs& p) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Unary;
+    if (s.same(home))
+      throw Int::ArgumentSame("Scheduling::order");
+    if (s.size() != p.size())
+      throw Int::ArgumentSizeMismatch("Scheduling::order");
+    for (int i=p.size(); i--; )
+      if (p[i] <= 0)
+        throw Int::OutOfLimits("Scheduling::order");
+    if (home.failed()) return;
+    TaskArray<TaskBranch<ManFixTask> > t(home,s.size());
+    for (int i=s.size(); i--; )
+      t[i].init(s[i],p[i]);
+    ManBranch<ManFixTask>::post(home,t);
+  }
+
 }
 
 // STATISTICS: scheduling-post

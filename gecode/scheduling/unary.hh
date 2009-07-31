@@ -782,7 +782,89 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  /// Add branching information to a task
+  template<class Task>
+  class TaskBranch : public Task {
+  protected:
+    /// \name Branching information flags
+    //@{
+    static const char BIF_NONE = 0;     ///< Task can both
+    static const char BIF_FIRST = 1;    ///< Task can go first if not set
+    static const char BIF_NOTFIRST = 2; ///< Task can go not first if not set
+    char bif;
+    //@}
+  public:
+    /// Initialize that task can go first and not first
+    TaskBranch(void);
+    /// Whether this task is first
+    bool first(void) const;
+    /// Set whether this task is first to \a b
+    void first(bool b);
+    /// Whether this task is not first
+    bool notfirst(void) const;
+    /// Set whether this task is not first to \a b
+    void notfirst(bool b);
+    /// Whether this task is available
+    bool available(void) const;
+    /// Also update information
+    void update(Space& home, bool share, TaskBranch<Task>& b);
+    /// Create propagator that this task is before task \a t
+    ExecStatus before(Space& home, TaskBranch<Task>& t);
+  };
+
 }}}
+
+#include <gecode/scheduling/unary/task-branch.hpp>
+
+namespace Gecode { namespace Scheduling { namespace Unary {
+
+  /// Branching for mandatory tasks
+  template<class Task>
+  class ManBranch : public Branching {
+  protected:
+    /// Branching description
+    class Description : public BranchingDesc {
+    public:
+      /// Number of resource
+      int r;
+      /// Positions of task to be ordered
+      int t;
+      /** Initialize description for branching \a b, 
+       *  resource \a r0, and task \a t0.
+       */
+      Description(const Branching& b, int r0, int t0);
+      /// Report size occupied
+      virtual size_t size(void) const;
+    };
+    /// The tasks
+    TaskArray<TaskBranch<Task> > t;
+    /// The number of tasks that are non first
+    int n_non_first;
+    /// The number of tasks that are non not first
+    int n_non_notfirst;
+    /// Construct branching
+    ManBranch(Space& home, TaskArray<TaskBranch<Task> >& t0);
+    /// Copy constructor
+    ManBranch(Space& home, bool share, ManBranch& b);
+  public:
+    /// Check status of branching, return true if alternatives left
+    virtual bool status(const Space& home) const;
+    /// Return branching description
+    virtual BranchingDesc* description(Space& home);
+    /// Perform commit for branching description \a d and alternative \a a
+    virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
+                              unsigned int a);
+    /// Copy branching
+    virtual Actor* copy(Space& home, bool share);
+    /// Post branching
+    static void post(Space& home, TaskArray<TaskBranch<Task> >& t);
+    /// Delete branching and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+}}}
+
+#include <gecode/scheduling/unary/man-branch.hpp>
 
 #endif
 

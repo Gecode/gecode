@@ -436,8 +436,7 @@ GRAPHBUILDDIRS	= \
 #
 
 SCHEDULINGSRC0 = \
-	cumulatives.cpp unary.cpp \
-	unary/man-branch.cpp
+	cumulatives.cpp unary.cpp
 
 SCHEDULINGHDR0 = \
 	cumulatives.hh cumulatives/val.hpp \
@@ -448,7 +447,8 @@ SCHEDULINGHDR0 = \
 	unary/purge.hpp unary/overload.hpp unary/detectable.hpp \
 	unary/not-first-not-last.hpp \
 	unary/edge-finding.hpp unary/subsumption.hpp \
-	unary/task-prop.hpp unary/man-prop.hpp unary/opt-prop.hpp
+	unary/task-prop.hpp unary/man-prop.hpp unary/opt-prop.hpp \
+	unary/task-branch.hpp unary/man-branch.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
 SCHEDULINGHDR	= gecode/scheduling.hh $(SCHEDULINGHDR0:%=gecode/scheduling/%)
