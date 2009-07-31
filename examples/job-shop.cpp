@@ -1222,7 +1222,7 @@ public:
       order(*this, r, s, p);
     }
 
-    branch(*this, start, INT_VAR_MIN_MIN, INT_VAL_SPLIT_MIN);
+    assign(*this, start, INT_ASSIGN_MIN);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {

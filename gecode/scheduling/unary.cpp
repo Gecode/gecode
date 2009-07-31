@@ -114,7 +114,10 @@ namespace Gecode {
       n_t[i]=0;
     for (int i=n; i--; )
       n_t[r[i]]++;
-    // Post branchings
+    // resource information data structure
+    ManResource<ManFixTask>* ri = 
+      home.alloc<ManResource<ManFixTask> >(n_r);
+    // Initialize information
     for (int i=n_r; i--; ) {
       TaskArray<TaskBranch<ManFixTask> > t(home,n_t[i]);
       int j=0;
@@ -122,8 +125,9 @@ namespace Gecode {
         if (r[k] == i)
           t[j++].init(s[k],p[k]);
       assert(j == n_t[i]);
-      ManBranch<ManFixTask>::post(home,t);
+      ri[i].init(t);
     }
+    ManBranch<ManFixTask>::post(home,ri,n_r);
   }
 
 }

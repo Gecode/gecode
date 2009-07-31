@@ -818,6 +818,32 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  /// Branching information for single resource
+  template<class Task>
+  class ManResource {
+  public:
+    /// The tasks
+    TaskArray<TaskBranch<Task> > t;
+    /// The number of tasks that are non first
+    int n_non_first;
+    /// The number of tasks that are non not first
+    int n_non_notfirst;
+    /// Default constructor
+    ManResource(void);
+    /// Initialize information
+    void init(TaskArray<TaskBranch<Task> >& t0);
+    /// Check status, return true if alternatives left
+    bool status(void) const;
+    /// Return next task to order
+    int task(void) const;
+    /// Return slack on resource
+    unsigned int slack(void) const;
+    /// Perform commit for task \a d_t and alternative \a a
+    ExecStatus commit(Space& home, int d_t, unsigned int a);
+    /// Update information
+    void update(Space& home, bool share, ManResource<Task>& m);
+  };
+
   /// Branching for mandatory tasks
   template<class Task>
   class ManBranch : public Branching {
@@ -836,14 +862,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       /// Report size occupied
       virtual size_t size(void) const;
     };
-    /// The tasks
-    TaskArray<TaskBranch<Task> > t;
-    /// The number of tasks that are non first
-    int n_non_first;
-    /// The number of tasks that are non not first
-    int n_non_notfirst;
+    /// Number of resources
+    int n;
+    /// Resource currently being ordered (-1 if none)
+    mutable int c;
+    /// Resource information
+    ManResource<Task>* r;
     /// Construct branching
-    ManBranch(Space& home, TaskArray<TaskBranch<Task> >& t0);
+    ManBranch(Space& home, ManResource<Task>* r0, int n);
     /// Copy constructor
     ManBranch(Space& home, bool share, ManBranch& b);
   public:
@@ -857,7 +883,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Copy branching
     virtual Actor* copy(Space& home, bool share);
     /// Post branching
-    static void post(Space& home, TaskArray<TaskBranch<Task> >& t);
+    static void post(Space& home, ManResource<Task>* r0, int n);
     /// Delete branching and return its size
     virtual size_t dispose(Space& home);
   };
