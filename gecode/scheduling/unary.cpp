@@ -47,9 +47,12 @@ namespace Gecode {
       throw Int::ArgumentSame("Scheduling::unary");
     if (s.size() != p.size())
       throw Int::ArgumentSizeMismatch("Scheduling::unary");
-    for (int i=p.size(); i--; )
+    for (int i=p.size(); i--; ) {
       if (p[i] <= 0)
         throw Int::OutOfLimits("Scheduling::unary");
+      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
+                         "Scheduling::unary");
+    }
     if (home.failed()) return;
     TaskArray<ManFixTask> t(home,s.size());
     for (int i=s.size(); i--; )
@@ -66,9 +69,12 @@ namespace Gecode {
       throw Int::ArgumentSame("Scheduling::unary");
     if ((s.size() != p.size()) || (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::unary");
-    for (int i=p.size(); i--; )
+    for (int i=p.size(); i--; ) {
       if (p[i] <= 0)
         throw Int::OutOfLimits("Scheduling::unary");
+      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
+                         "Scheduling::unary");
+    }
     if (home.failed()) return;
     TaskArray<OptFixTask> t(home,s.size());
     for (int i=s.size(); i--; )
@@ -84,9 +90,12 @@ namespace Gecode {
       throw Int::ArgumentSame("Scheduling::order");
     if (s.size() != p.size())
       throw Int::ArgumentSizeMismatch("Scheduling::order");
-    for (int i=p.size(); i--; )
+    for (int i=p.size(); i--; ) {
       if (p[i] <= 0)
         throw Int::OutOfLimits("Scheduling::order");
+      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
+                         "Scheduling::order");
+    }
     if (home.failed()) return;
     TaskArray<TaskBranch<ManFixTask> > t(home,s.size());
     for (int i=s.size(); i--; )
