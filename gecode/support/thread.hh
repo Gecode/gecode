@@ -41,11 +41,19 @@
 #include <gecode/support.hh>
 
 #ifdef GECODE_THREADS_WINDOWS
+
+#ifndef NOMIMMAX
+#define NOMINMAX
+#endif
+
 #include <windows.h>
+
 #endif
 
 #ifdef GECODE_THREADS_PTHREADS
+
 #include <pthread.h>
+
 #endif
 
 #ifdef GECODE_HAS_THREADS
@@ -240,16 +248,6 @@ namespace Gecode { namespace Support {
 #endif
 
 #include <gecode/support/thread/thread.hpp>
-
-// Workaround for broken windows headers
-#ifdef GECODE_THREADS_WINDOWS
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
-#endif
-#endif
 
 #endif
 
