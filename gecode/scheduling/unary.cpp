@@ -37,6 +37,8 @@
 
 #include <gecode/scheduling/unary.hh>
 
+#include <algorithm>
+
 namespace Gecode {
 
   void
@@ -83,12 +85,13 @@ namespace Gecode {
   }
 
   void 
-  order(Space& home, const IntVarArgs& s, const IntArgs& p) {
+  order(Space& home, const IntArgs& r, const IntVarArgs& s, const IntArgs& p) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Unary;
     if (s.same(home))
       throw Int::ArgumentSame("Scheduling::order");
-    if (s.size() != p.size())
+    int n=s.size();
+    if ((n != p.size()) || (n != r.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::order");
     for (int i=p.size(); i--; ) {
       if (p[i] <= 0)
@@ -96,11 +99,31 @@ namespace Gecode {
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
                          "Scheduling::order");
     }
+    if (n < 2)
+      return;
     if (home.failed()) return;
-    TaskArray<TaskBranch<ManFixTask> > t(home,s.size());
-    for (int i=s.size(); i--; )
-      t[i].init(s[i],p[i]);
-    ManBranch<ManFixTask>::post(home,t);
+    // Find largest resource number
+    int n_r = r[n-1];
+    for (int i=n-1; i--; )
+      n_r = std::max(n_r, r[i]);
+    n_r++;
+    Region re(home);
+    // The number of tasks for a given resource
+    int* n_t = re.alloc<int>(n_r);
+    for (int i=n_r; i--; )
+      n_t[i]=0;
+    for (int i=n; i--; )
+      n_t[r[i]]++;
+    // Post branchings
+    for (int i=n_r; i--; ) {
+      TaskArray<TaskBranch<ManFixTask> > t(home,n_t[i]);
+      int j=0;
+      for (int k=n; k--; )
+        if (r[k] == i)
+          t[j++].init(s[k],p[k]);
+      assert(j == n_t[i]);
+      ManBranch<ManFixTask>::post(home,t);
+    }
   }
 
 }

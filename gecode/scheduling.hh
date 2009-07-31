@@ -250,7 +250,8 @@ namespace Gecode {
   /** \brief Create branching to order tasks on unary resources
    *
    * Order tasks with start times \a s and processing time \a p
-   * on a unary resource.
+   * on a unary resource. \a r defines on which resource the task
+   * should run.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
    *    and \a p are of different size.
@@ -260,7 +261,7 @@ namespace Gecode {
    *    an integer that is not strictly positive.
    */
   GECODE_SCHEDULING_EXPORT void
-  order(Space& home, const IntVarArgs& s, const IntArgs& p);
+  order(Space& home, const IntArgs& r, const IntVarArgs& s, const IntArgs& p);
   //@}
 
 }
