@@ -782,16 +782,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Post that mandatory task \a t1 must be before mandatory task \a t2
-  template<class ManTask>
-  ExecStatus manbefore(Space& home, ManTask& t1, ManTask& t2);
-
-}}}
-
-#include <gecode/scheduling/unary/man-before.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
-
 }}}
 
 #endif

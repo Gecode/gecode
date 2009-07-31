@@ -36,12 +36,71 @@
  */
 
 #include <gecode/scheduling/unary.hh>
+#include <gecode/int/linear.hh>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  /// Add branching information to a task
+  template<class Task>
+  class Branch : public Task {
+  protected:
+    /// \name Branching information flags
+    //@{
+    static const char BIF_NONE = 0;     ///< Task can both
+    static const char BIF_FIRST = 1;    ///< Task can go first if not set
+    static const char BIF_NOTFIRST = 2; ///< Task can go not first if not set
+    char bif;
+    //@}
+  public:
+    /// Initialize that task can go first and not first
+    Branch(void) : bif(BIF_NONE) {}
+    /// Whether this task is first
+    bool first(void) const {
+      return (bif & BIF_FIRST) != BIF_NONE;
+    }
+    /// Set whether this task is first to \a b
+    void first(bool b) {
+      if (b) {
+        bif |= BIF_FIRST;
+      } else {
+        bif &= ~BIF_FIRST;
+      }
+    }
+    /// Whether this task is not first
+    bool notfirst(void) const {
+      return (bif & BIF_NOTFIRST) != BIF_NONE;
+    }
+    /// Set whether this task is not first to \a b
+    void notfirst(bool b) {
+      if (b) {
+        bif |= BIF_NOTFIRST;
+      } else {
+        bif &= ~BIF_NOTFIRST;
+      }
+    }
+    /// Whether this task is available
+    bool available(void) const {
+      return bif == BIF_NONE;
+    }
+    /// Also update information
+    void update(Space& home, bool share, Branch<Task>& b) {
+      Task::update(home,share,b);
+      bif = b.bif;
+    }
+    /// Create propagator that this task is before task \a t
+    forceinline ExecStatus
+    before(Space& home, Branch<Task>& t) {
+      Int::Linear::Term<Int::IntView> ax[2];
+      ax[0].a=1; ax[0].x=st(); ax[1].a=-1; ax[1].x=t.st();
+      Int::Linear::post(home, ax, 2, IRT_LQ, -p());
+      return home.failed() ? ES_FAILED : ES_OK;
+    }
+  };
+
+
   /// Branching for mandatory tasks
   template<class Task>
-  class ManBranching : public Branching {
+  class ManBranch : public Branching {
   protected:
     /// Branching description
     class Description : public BranchingDesc {
@@ -61,37 +120,21 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       }
     };
     /// The tasks
-    TaskArray<Task> t;
-    /// Whether a task has already been put first
-    bool* first;
+    TaskArray<Branch<Task> > t;
     /// The number of tasks that are non first
     int n_non_first;
-    /// Whether a task is notfirst until another task is put first
-    bool* notfirst;
     /// The number of tasks that are non not first
     int n_non_notfirst;
     /// Construct branching
-    ManBranching(Space& home, TaskArray<Task>& t0) 
+    ManBranch(Space& home, TaskArray<Branch<Task> >& t0) 
       : Branching(home), t(t0), 
-        first(home.alloc<bool>(t.size())),
-        n_non_first(t.size()),
-        notfirst(home.alloc<bool>(t.size())), 
-        n_non_notfirst(t.size()) {
-      for (int i=t.size(); i--; )
-        first[i] = notfirst[i] = false;
+        n_non_first(t.size()), n_non_notfirst(t.size()) {
     }
     /// Copy constructor
-    ManBranching(Space& home, bool share, ManBranching& b) 
+    ManBranch(Space& home, bool share, ManBranch& b) 
       : Branching(home, share, b), 
-        first(home.alloc<bool>(b.t.size())), 
-        n_non_first(b.n_non_first),
-        notfirst(home.alloc<bool>(b.t.size())), 
-        n_non_notfirst(b.n_non_notfirst) {
+        n_non_first(b.n_non_first), n_non_notfirst(b.n_non_notfirst) {
       t.update(home, share, b.t);
-      for (int i=t.size(); i--; ) {
-        first[i] = b.first[i];
-        notfirst[i] = b.notfirst[i];
-      }
     }
   public:
     /// Check status of branching, return true if alternatives left
@@ -103,7 +146,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       int j = -1;
       int est = Int::Limits::infinity;
       for (int i=0; i<t.size(); i++)
-        if (!first[i] && !notfirst[i] && (t[i].est() < est)) {
+        if (t[i].available() && (t[i].est() < est)) {
           est=t[i].est(); j=i;
         }
       return new Description(*this,0,j);
@@ -114,11 +157,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       const Description& d = static_cast<const Description&>(_d);
       if (a == 0) {
         // Simple case: make t[d.t] go first, reset all notfirst
-        first[d.t] = true; n_non_first--;
+        t[d.t].first(true); n_non_first--;
         for (int i=t.size(); i--; ) {
-          if (!first[i])
-            GECODE_ES_CHECK(manbefore(home, t[d.t], t[i]));
-          notfirst[i] = false;
+          if (!t[i].first())
+            GECODE_ES_CHECK(t[d.t].before(home, t[i]));
+          t[i].notfirst(false);
         }
         n_non_notfirst = n_non_first;
       } else if (n_non_first == 2) {
@@ -129,10 +172,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
            * not matter what we do as this is the last choice to be
            * made for the resource.
            */
-          first[d.t] = true; n_non_first--;
+        t[d.t].first(true); n_non_first--;
           for (int i=t.size(); i--; )
-            if (!first[i] && !notfirst[i]) {
-              GECODE_ES_CHECK(manbefore(home,t[i],t[d.t]));
+            if (t[i].available()) {
+              GECODE_ES_CHECK(t[i].before(home, t[d.t]));
               return ES_OK;
             }
           GECODE_NEVER;
@@ -143,30 +186,30 @@ namespace Gecode { namespace Scheduling { namespace Unary {
            * and make it go first. We have to be careful to properly
            * erase the notfirst information as branching may continue.
            */
-          notfirst[d.t] = true; // So that d.t is skipped
+          t[d.t].notfirst(true); // So that d.t is skipped
           int f = -1;
           for (int i=t.size(); i--; ) {
-            if (!first[i] && !notfirst[i]) {
+            if (t[i].available()) {
               assert(f == -1);
               f = i;
             }
-            notfirst[i] = false;
+            t[i].notfirst(false);
           }
-          first[f] = true; n_non_first--;
+          t[f].first(true); n_non_first--;
           n_non_notfirst = n_non_first;
           for (int i=t.size(); i--; ) 
-            if (!first[i])
-              GECODE_ES_CHECK(manbefore(home, t[f], t[i]));
+            if (!t[i].first())
+              GECODE_ES_CHECK(t[f].before(home, t[i]));
       } else {
         /*
          * The task d.t cannot be first. However we do not create a
          * propagator to enforce that but just make t.d start after
          * the task that can finish earliest.
          */
-        notfirst[d.t] = true; n_non_notfirst--;
+        t[d.t].notfirst(true); n_non_notfirst--;
         int ect = Int::Limits::infinity;
         for (int i=t.size(); i--; )
-          if (!first[i] && !notfirst[i])
+          if (t[i].available())
             ect = std::min(ect,t[i].ect());
         GECODE_ME_CHECK(t[d.t].est(home,ect));
       }
@@ -174,11 +217,11 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     }
     /// Copy branching
     virtual Actor* copy(Space& home, bool share) {
-      return new (home) ManBranching<Task>(home, share, *this);
+      return new (home) ManBranch<Task>(home, share, *this);
     }
     /// Post branching
-    static void post(Space& home, TaskArray<Task>& t) {
-      (void) new (home) ManBranching<Task>(home,t);
+    static void post(Space& home, TaskArray<Branch<Task> >& t) {
+      (void) new (home) ManBranch<Task>(home,t);
     }
     /// Delete branching and return its size
     virtual size_t dispose(Space& home) {
@@ -200,10 +243,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       if (p[i] <= 0)
         throw Int::OutOfLimits("Scheduling::manbranch");
     if (home.failed()) return;
-    TaskArray<ManFixTask> t(home,s.size());
+    TaskArray<Branch<ManFixTask> > t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i]);
-    ManBranching<ManFixTask>::post(home,t);
+    ManBranch<ManFixTask>::post(home,t);
   }
 
 }
