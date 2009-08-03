@@ -76,18 +76,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline Task& 
   TaskArray<Task>::operator [](int i) {
-    if (( i < 0) || (i >= n)) {
-      *reinterpret_cast<int*>(1)=4;
-    }
     assert((i >= 0) && (i < n));
     return t[i];
   }
   template<class Task>
   forceinline const Task& 
   TaskArray<Task>::operator [](int i) const {
-    if (( i < 0) || (i >= n)) {
-      *reinterpret_cast<int*>(1)=4;
-    }
     assert((i >= 0) && (i < n));
     return t[i];
   }
