@@ -60,9 +60,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ManResource<Task>::task(void) const {
     int j = -1;
     int est = Int::Limits::infinity;
+    int lct = Int::Limits::infinity;
     for (int i=0; i<t.size(); i++)
-      if (t[i].available() && (t[i].est() < est)) {
-        est=t[i].est(); j=i;
+      if (t[i].available() && 
+          ((t[i].est() < est) ||
+           ((t[i].est() == est) && (t[i].lct() < lct)))) {
+        est=t[i].est(); lct=t[i].lct(); j=i;
       }
     return j;
   }
@@ -72,11 +75,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ManResource<Task>::slack(void) const {
     int min_est = t[t.size()-1].est();
     int max_lst = t[t.size()-1].lst();
+    unsigned int p = static_cast<unsigned int>(t[t.size()-1].p());
     for (int i=t.size()-1; i--; ) {
       min_est = std::min(min_est,t[i].est());
       max_lst = std::max(max_lst,t[i].lst());
+      p += static_cast<unsigned int>(t[i].p());
     }
-    return static_cast<unsigned int>(max_lst-min_est);
+    return static_cast<unsigned int>(max_lst-min_est)-p;
   }
 
   template<class Task>
@@ -189,7 +194,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       // Find resource with least slack
       c=-1;
       int s = UINT_MAX;
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         if (r[i].status() && (r[i].slack() < s))
           c=i;
     }

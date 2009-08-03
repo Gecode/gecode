@@ -85,6 +85,35 @@ namespace Gecode {
   }
 
   void 
+  order(Space& home, const IntVarArgs& s, const IntArgs& p) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Unary;
+    if (s.same(home))
+      throw Int::ArgumentSame("Scheduling::order");
+    int n=s.size();
+    if (n != p.size())
+      throw Int::ArgumentSizeMismatch("Scheduling::order");
+    for (int i=p.size(); i--; ) {
+      if (p[i] <= 0)
+        throw Int::OutOfLimits("Scheduling::order");
+      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
+                         "Scheduling::order");
+    }
+    if (n < 2)
+      return;
+    if (home.failed()) return;
+    // resource information data structure
+    ManResource<ManFixTask>* ri = 
+      home.alloc<ManResource<ManFixTask> >(1);
+    // Initialize information
+    TaskArray<TaskBranch<ManFixTask> > t(home,n);
+    for (int i=n; i--; )
+      t[i].init(s[i],p[i]);
+    ri[0].init(t);
+    ManBranch<ManFixTask>::post(home,ri,1);
+  }
+
+  void 
   order(Space& home, const IntArgs& r, const IntVarArgs& s, const IntArgs& p) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Unary;

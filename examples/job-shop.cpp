@@ -1191,8 +1191,6 @@ public:
     // Constrain makespan
     max(*this, last, makespan);
 
-    //    branch(*this, makespan, INT_VAL_SPLIT_MIN);
-
     // Order job steps on machines
     for (int m=0; m<machines(); m++) {
       IntVarArgs s_m(jobs());
@@ -1211,15 +1209,14 @@ public:
 
     // Post resource ordering
     {
-      IntVarArgs s(machines()*jobs());
       IntArgs p(machines()*jobs());
       IntArgs r(machines()*jobs());
       int i=0;
-      for (int m=0; m<machines(); m++)
+      for (int s=0; s<machines(); s++)
         for (int j=0; j<jobs(); j++) {
-          s[i]=js(j,m); p[i]=time(j,m); r[i]=m; i++;
+          p[i]=time(j,s); r[i]=machine(j,s); i++;
         }
-      order(*this, r, s, p);
+      order(*this, r, start, p);
     }
 
     assign(*this, start, INT_ASSIGN_MIN);
