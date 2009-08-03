@@ -127,85 +127,85 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
 
   forceinline
-  ManFlxTask::ManFlxTask(void) {}
+  ManFlexTask::ManFlexTask(void) {}
   forceinline
-  ManFlxTask::ManFlxTask(IntVar s, IntVar p, IntVar e) 
+  ManFlexTask::ManFlexTask(IntVar s, IntVar p, IntVar e) 
     : _s(s), _p(p), _e(e) {}
   forceinline void
-  ManFlxTask::init(IntVar s, IntVar p, IntVar e) {
+  ManFlexTask::init(IntVar s, IntVar p, IntVar e) {
     _s=s; _p=p; _e=e;
   }
 
   forceinline int 
-  ManFlxTask::est(void) const {
+  ManFlexTask::est(void) const {
     return _s.min();
   }
   forceinline int
-  ManFlxTask::ect(void) const {
+  ManFlexTask::ect(void) const {
     return _e.min();
   }
   forceinline int
-  ManFlxTask::lst(void) const {
+  ManFlexTask::lst(void) const {
     return _s.max();
   }
   forceinline int
-  ManFlxTask::lct(void) const {
+  ManFlexTask::lct(void) const {
     return _e.max();
   }
   forceinline int
-  ManFlxTask::p(void) const {
+  ManFlexTask::p(void) const {
     return _p.min();
   }
   forceinline IntVar
-  ManFlxTask::st(void) const {
+  ManFlexTask::st(void) const {
     return _s;
   }
   forceinline IntVar
-  ManFlxTask::pt(void) const {
+  ManFlexTask::pt(void) const {
     return _p;
   }
   forceinline IntVar
-  ManFlxTask::et(void) const {
+  ManFlexTask::et(void) const {
     return _e;
   }
 
   forceinline bool
-  ManFlxTask::assigned(void) const {
+  ManFlexTask::assigned(void) const {
     return _s.assigned() && _p.assigned() && _e.assigned();
   }
 
   forceinline ModEvent 
-  ManFlxTask::est(Space& home, int n) {
+  ManFlexTask::est(Space& home, int n) {
     return _s.gq(home,n);
   }
   forceinline ModEvent
-  ManFlxTask::ect(Space& home, int n) {
+  ManFlexTask::ect(Space& home, int n) {
     return _e.gq(home,n);
   }
   forceinline ModEvent
-  ManFlxTask::lst(Space& home, int n) {
+  ManFlexTask::lst(Space& home, int n) {
     return _s.lq(home,n);
   }
   forceinline ModEvent
-  ManFlxTask::lct(Space& home, int n) {
+  ManFlexTask::lct(Space& home, int n) {
     return _e.lq(home,n);
   }
 
   forceinline void
-  ManFlxTask::update(Space& home, bool share, ManFlxTask& t) {
+  ManFlexTask::update(Space& home, bool share, ManFlexTask& t) {
     _s.update(home,share,t._s);
     _p.update(home,share,t._p);
     _e.update(home,share,t._e);
   }
 
   forceinline void
-  ManFlxTask::subscribe(Space& home, Propagator& p) {
+  ManFlexTask::subscribe(Space& home, Propagator& p) {
     _s.subscribe(home, p, Int::PC_INT_BND);
     _p.subscribe(home, p, Int::PC_INT_BND);
     _e.subscribe(home, p, Int::PC_INT_BND);
   }
   forceinline void
-  ManFlxTask::cancel(Space& home, Propagator& p) {
+  ManFlexTask::cancel(Space& home, Propagator& p) {
     _s.cancel(home, p, Int::PC_INT_BND);
     _p.cancel(home, p, Int::PC_INT_BND);
     _e.cancel(home, p, Int::PC_INT_BND);
@@ -213,7 +213,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlxTask& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.pt() << ':' << t.lct();
@@ -315,19 +315,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
 
   forceinline
-  OptFlxTask::OptFlxTask(void) {}
+  OptFlexTask::OptFlexTask(void) {}
   forceinline
-  OptFlxTask::OptFlxTask(IntVar s, IntVar p, IntVar e, BoolVar m) {
-    ManFlxTask::init(s,p,e); _m=m;
+  OptFlexTask::OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m) {
+    ManFlexTask::init(s,p,e); _m=m;
   }
   forceinline void
-  OptFlxTask::init(IntVar s, IntVar p, IntVar e, BoolVar m) {
-    ManFlxTask::init(s,p,e); _m=m;
+  OptFlexTask::init(IntVar s, IntVar p, IntVar e, BoolVar m) {
+    ManFlexTask::init(s,p,e); _m=m;
   }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlxTask& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.pt() << ':' << t.lct() << ':'

@@ -82,10 +82,10 @@ namespace Gecode {
       GECODE_ME_FAIL(home, static_cast<Int::IntView>(p[i]).gr(home,0));
       if (home.failed()) return;
     }
-    TaskArray<ManFlxTask> t(home,s.size());
+    TaskArray<ManFlexTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i],e[i]);
-    GECODE_ES_FAIL(home,ManProp<ManFlxTask>::post(home,t));
+    GECODE_ES_FAIL(home,ManProp<ManFlexTask>::post(home,t));
   }
 
   void
