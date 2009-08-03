@@ -874,29 +874,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     virtual size_t dispose(Space& home);
   };
 
-  /**
-   * \brief Propagator for unary resource
-   *
-   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
-   * \ingroup FuncSchedulingProp
-   */
-  template<class Task>
-  class TaskOnePropagator : public TaskProp<Task> {
-  protected:
-    using TaskProp<Task>::t;
-    /// Single additional task
-    Task u;
-    /// Constructor for creation
-    TaskOnePropagator(Space& home, TaskArray<Task>& t, Task& u);
-    /// Constructor for cloning \a p
-    TaskOnePropagator(Space& home, bool shared, TaskOnePropagator<Task>& p);
-  public:
-    /// Cost function (defined as low linear)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
 }}}
 
 #include <gecode/scheduling/unary/task-prop.hpp>
@@ -995,8 +972,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   class TaskBranch : public Task {
   protected:
-    using Task::st;
-    using Task::p;
     /// \name Branching information flags
     //@{
     static const char BIF_NONE = 0;     ///< Task can both
@@ -1005,6 +980,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     char bif;
     //@}
   public:
+    using Task::st;
+    using Task::p;
     /// Initialize that task can go first and not first
     TaskBranch(void);
     /// Whether this task is first

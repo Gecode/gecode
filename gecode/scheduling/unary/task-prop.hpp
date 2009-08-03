@@ -66,37 +66,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return sizeof(*this);
   }
 
-
-  template<class Task>  
-  forceinline
-  TaskOnePropagator<Task>::TaskOnePropagator(Space& home, TaskArray<Task>& t,
-                                             Task& u0)
-    : TaskProp<Task>(home,t), u(u0) {
-    u.subscribe(home,*this);
-  }
-
-  template<class Task>  
-  forceinline
-  TaskOnePropagator<Task>::TaskOnePropagator(Space& home, bool shared, 
-                                             TaskOnePropagator<Task>& p) 
-    : TaskProp<Task>(home,shared,p) {
-    u.update(home,shared,p.u);
-  }
-
-  template<class Task>  
-  PropCost 
-  TaskOnePropagator<Task>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LO,t.size()+1);
-  }
-
-  template<class Task>  
-  size_t 
-  TaskOnePropagator<Task>::dispose(Space& home) {
-    u.cancel(home,*this);
-    (void) TaskProp<Task>::dispose(home);
-    return sizeof(*this);
-  }
-
 }}}
 
 // STATISTICS: scheduling-prop

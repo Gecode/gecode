@@ -88,13 +88,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     bif = b.bif;
   }
 
-  template<class Task>
+  template<>
   forceinline ExecStatus
-  TaskBranch<Task>::before(Space& home, TaskBranch<Task>& t) {
-    Int::Linear::Term<Int::IntView> ax[2];
-    ax[0].a=1; ax[0].x=st(); ax[1].a=-1; ax[1].x=t.st();
-    Int::Linear::post(home, ax, 2, IRT_LQ, -p());
-    return home.failed() ? ES_FAILED : ES_OK;
+  TaskBranch<ManFixTask>::before(Space& home, TaskBranch<ManFixTask>& t) {
+    Int::IntView x(st());
+    Int::IntView y(t.st());
+    return Int::Linear::LqBin<int,Int::IntView,Int::MinusView>
+      ::post(home,x,y,-p());
   }
 
 }}}
