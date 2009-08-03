@@ -63,6 +63,46 @@ namespace Gecode {
   }
 
   void
+  unary(Space& home, const IntVarArgs& s, const IntVarArgs& p, 
+        const IntVarArgs& e) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Unary;
+    if (s.same(home) || p.same(home) || e.same(home))
+      throw Int::ArgumentSame("Scheduling::unary");
+    if ((s.size() != p.size()) || (s.size() != e.size()))
+      throw Int::ArgumentSizeMismatch("Scheduling::unary");
+    if (home.failed()) return;
+    for (int i=p.size(); i--; ) {
+      // Post constraints between s, p, and e
+      Int::Linear::Term<Int::IntView> t[3];
+      t[0].a= 1; t[0].x=s[i];
+      t[1].a= 1; t[1].x=p[i];
+      t[2].a=-1; t[2].x=e[i];
+      Int::Linear::post(home, t, 3, IRT_EQ, 0);
+      GECODE_ME_FAIL(home, static_cast<Int::IntView>(p[i]).gr(home,0));
+      if (home.failed()) return;
+    }
+    TaskArray<ManFlxTask> t(home,s.size());
+    for (int i=s.size(); i--; )
+      t[i].init(s[i],p[i],e[i]);
+    GECODE_ES_FAIL(home,ManProp<ManFlxTask>::post(home,t));
+  }
+
+  void
+  unary(Space& home, const IntVarArgs& s, const IntVarArgs& p) {
+    if (home.failed()) return;
+    IntVarArgs e(s.size());
+    for (int i=s.size(); i--; ) {
+      Int::Limits::check(static_cast<double>(s[i].min())+p[i].min(),
+                         "Scheduling::unary");
+      Int::Limits::check(static_cast<double>(s[i].max())+p[i].max(),
+                         "Scheduling::unary");
+      e[i].init(home,s[i].min()+p[i].min(),s[i].max()+p[i].max());
+    }
+    unary(home, s, p, e);
+  }
+
+  void
   unary(Space& home, const IntVarArgs& s, const IntArgs& p, 
         const BoolVarArgs& m) {
     using namespace Gecode::Scheduling;
