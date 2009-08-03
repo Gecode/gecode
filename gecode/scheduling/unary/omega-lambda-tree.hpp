@@ -139,7 +139,45 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     node[leave[i]].lp = 0; 
     node[leave[i]].lect = -Int::Limits::infinity;
     node[leave[i]].r = undef;
-    update(leave[i]);
+    int j=i;
+    i = leave[i];
+    assert(!root(i));
+    do {
+      i = parent(i);
+      int l = left(i), r = right(i);
+      node[i].p = node[l].p + node[r].p;
+      node[i].lp = std::max(node[l].lp + node[r].p,
+                            node[l].p + node[r].lp);
+      node[i].ect = std::max(node[l].ect + node[r].p, node[r].ect);
+      if (node[r].r == j) {
+        node[i].lect = node[l].lect + node[r].p;
+        node[i].r = node[l].r;
+      } else if (node[l].r == j) {
+        if ((node[r].lect >= node[l].ect + node[r].lp) &&
+            (node[r].lect >= node[l].lect + node[r].p)) {
+          node[i].lect = node[r].lect;
+          node[i].r = node[r].r;
+        } else {
+          node[i].lect = node[l].ect + node[r].lp;
+          node[i].r = node[r].r;
+        }
+      } else {
+        if ((node[r].lect >= node[l].ect + node[r].lp) &&
+            (node[r].lect >= node[l].lect + node[r].p)) {
+          node[i].lect = node[r].lect;
+          node[i].r = node[r].r;
+        } else if (node[l].ect + node[r].lp >= node[l].lect + node[r].p) {
+          assert(node[l].ect + node[r].lp > node[r].lect);
+          node[i].lect = node[l].ect + node[r].lp;
+          node[i].r = node[r].r;
+        } else {
+          assert(node[l].lect + node[r].p > node[r].lect);
+          assert(node[l].lect + node[r].p > node[l].ect + node[r].lp);
+          node[i].lect = node[l].lect + node[r].p;
+          node[i].r = node[l].r;
+        }
+      }
+    } while (!root(i));
   }
 
   template<class TaskView>
