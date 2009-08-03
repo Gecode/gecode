@@ -193,7 +193,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     if ((c < 0) || !r[c].status()) {
       // Find resource with least slack
       c=-1;
-      int s = UINT_MAX;
+      unsigned int s = UINT_MAX;
       for (int i=0; i<n; i++)
         if (r[i].status() && (r[i].slack() < s))
           c=i;
@@ -229,7 +229,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class Task>
   size_t
-  ManBranch<Task>::dispose(Space& home) {
+  ManBranch<Task>::dispose(Space&) {
     return sizeof(*this);
   }
 

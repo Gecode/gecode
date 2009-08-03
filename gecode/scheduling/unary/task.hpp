@@ -38,7 +38,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /*
-   * Mandatory task
+   * Mandatory fixed task
    */
 
   forceinline
@@ -123,61 +123,180 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 
   /*
-   * Optional task
+   * Mandatory flexible task
+   */
+
+  forceinline
+  ManFlxTask::ManFlxTask(void) {}
+  forceinline
+  ManFlxTask::ManFlxTask(IntVar s, IntVar p, IntVar e) 
+    : _s(s), _p(p), _e(e) {}
+  forceinline void
+  ManFlxTask::init(IntVar s, IntVar p, IntVar e) {
+    _s=s; _p=p; _e=e;
+  }
+
+  forceinline int 
+  ManFlxTask::est(void) const {
+    return _s.min();
+  }
+  forceinline int
+  ManFlxTask::ect(void) const {
+    return _e.min();
+  }
+  forceinline int
+  ManFlxTask::lst(void) const {
+    return _s.max();
+  }
+  forceinline int
+  ManFlxTask::lct(void) const {
+    return _e.max();
+  }
+  forceinline int
+  ManFlxTask::p(void) const {
+    return _p.min();
+  }
+  forceinline IntVar
+  ManFlxTask::st(void) const {
+    return _s;
+  }
+  forceinline IntVar
+  ManFlxTask::pt(void) const {
+    return _p;
+  }
+  forceinline IntVar
+  ManFlxTask::et(void) const {
+    return _e;
+  }
+
+  forceinline bool
+  ManFlxTask::assigned(void) const {
+    return _s.assigned() && _p.assigned() && _e.assigned();
+  }
+
+  forceinline ModEvent 
+  ManFlxTask::est(Space& home, int n) {
+    return _s.gq(home,n);
+  }
+  forceinline ModEvent
+  ManFlxTask::ect(Space& home, int n) {
+    return _e.gq(home,n);
+  }
+  forceinline ModEvent
+  ManFlxTask::lst(Space& home, int n) {
+    return _s.lq(home,n);
+  }
+  forceinline ModEvent
+  ManFlxTask::lct(Space& home, int n) {
+    return _e.lq(home,n);
+  }
+
+  forceinline void
+  ManFlxTask::update(Space& home, bool share, ManFlxTask& t) {
+    _s.update(home,share,t._s);
+    _p.update(home,share,t._p);
+    _e.update(home,share,t._e);
+  }
+
+  forceinline void
+  ManFlxTask::subscribe(Space& home, Propagator& p) {
+    _s.subscribe(home, p, Int::PC_INT_BND);
+    _p.subscribe(home, p, Int::PC_INT_BND);
+    _e.subscribe(home, p, Int::PC_INT_BND);
+  }
+  forceinline void
+  ManFlxTask::cancel(Space& home, Propagator& p) {
+    _s.cancel(home, p, Int::PC_INT_BND);
+    _p.cancel(home, p, Int::PC_INT_BND);
+    _e.cancel(home, p, Int::PC_INT_BND);
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlxTask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.pt() << ':' << t.lct();
+    return os << s.str();
+  }
+    
+
+
+  /*
+   * Turn mandatory into optional task
+   */
+  template<class ManTask>
+  forceinline
+  ManToOptTask<ManTask>::ManToOptTask(void) {}
+
+  template<class ManTask>
+  forceinline bool
+  ManToOptTask<ManTask>::mandatory(void) const {
+    return _m.one();
+  }
+  template<class ManTask>
+  forceinline bool
+  ManToOptTask<ManTask>::excluded(void) const {
+    return _m.zero();
+  }
+  template<class ManTask>
+  forceinline bool
+  ManToOptTask<ManTask>::optional(void) const {
+    return _m.none();
+  }
+
+  template<class ManTask>
+  forceinline bool
+  ManToOptTask<ManTask>::assigned(void) const {
+    return ManTask::assigned() && _m.assigned();
+  }
+
+  template<class ManTask>
+  forceinline ModEvent 
+  ManToOptTask<ManTask>::mandatory(Space& home) {
+    return _m.one(home);
+  }
+  template<class ManTask>
+  forceinline ModEvent 
+  ManToOptTask<ManTask>::excluded(Space& home) {
+    return _m.zero(home);
+  }
+
+  template<class ManTask>
+  forceinline void
+  ManToOptTask<ManTask>::update(Space& home, bool share, 
+                                ManToOptTask<ManTask>& t) {
+    ManTask::update(home, share, t);
+    _m.update(home,share,t._m);
+  }
+
+  template<class ManTask>
+  forceinline void
+  ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p) {
+    ManTask::subscribe(home, p);
+    _m.subscribe(home, p, Int::PC_BOOL_VAL);
+  }
+  template<class ManTask>
+  forceinline void
+  ManToOptTask<ManTask>::cancel(Space& home, Propagator& p) {
+    _m.cancel(home, p, Int::PC_BOOL_VAL);
+    ManTask::cancel(home, p);
+  }
+
+
+  /*
+   * Optional fixed task
    */
 
   forceinline
   OptFixTask::OptFixTask(void) {}
   forceinline
-  OptFixTask::OptFixTask(IntVar s, int p, BoolVar m) 
-    : ManFixTask(s,p), _m(m) {}
+  OptFixTask::OptFixTask(IntVar s, int p, BoolVar m) {
+    ManFixTask::init(s,p); _m=m;
+  }
   forceinline void
   OptFixTask::init(IntVar s, int p, BoolVar m) {
     ManFixTask::init(s,p); _m=m;
-  }
-
-  forceinline bool
-  OptFixTask::mandatory(void) const {
-    return _m.one();
-  }
-  forceinline bool
-  OptFixTask::excluded(void) const {
-    return _m.zero();
-  }
-  forceinline bool
-  OptFixTask::optional(void) const {
-    return _m.none();
-  }
-
-  forceinline bool
-  OptFixTask::assigned(void) const {
-    return ManFixTask::assigned() && _m.assigned();
-  }
-
-  forceinline ModEvent 
-  OptFixTask::mandatory(Space& home) {
-    return _m.one(home);
-  }
-  forceinline ModEvent 
-  OptFixTask::excluded(Space& home) {
-    return _m.zero(home);
-  }
-
-  forceinline void
-  OptFixTask::update(Space& home, bool share, OptFixTask& t) {
-    ManFixTask::update(home, share, t);
-    _m.update(home,share,t._m);
-  }
-
-  forceinline void
-  OptFixTask::subscribe(Space& home, Propagator& p) {
-    ManFixTask::subscribe(home, p);
-    _m.subscribe(home, p, Int::PC_BOOL_VAL);
-  }
-  forceinline void
-  OptFixTask::cancel(Space& home, Propagator& p) {
-    _m.cancel(home, p, Int::PC_BOOL_VAL);
-    ManFixTask::cancel(home, p);
   }
 
   template<class Char, class Traits>
@@ -186,6 +305,32 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.p() << ':' << t.lct() << ':'
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
+    return os << s.str();
+  }
+    
+
+  /*
+   * Optional flexible task
+   */
+
+  forceinline
+  OptFlxTask::OptFlxTask(void) {}
+  forceinline
+  OptFlxTask::OptFlxTask(IntVar s, IntVar p, IntVar e, BoolVar m) {
+    ManFlxTask::init(s,p,e); _m=m;
+  }
+  forceinline void
+  OptFlxTask::init(IntVar s, IntVar p, IntVar e, BoolVar m) {
+    ManFlxTask::init(s,p,e); _m=m;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlxTask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.pt() << ':' << t.lct() << ':'
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }

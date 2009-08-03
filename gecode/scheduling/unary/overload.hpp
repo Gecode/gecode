@@ -38,13 +38,14 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   // Overload checking for mandatory tasks
+  template<class ManTask>
   forceinline ExecStatus
-  overloaded(Space& home, TaskArray<ManFixTask>& t) {
-    TaskViewArray<ManFixTaskFwd> f(t);
-    sort<ManFixTaskFwd,STO_LCT,true>(f);
+  overloaded(Space& home, TaskArray<ManTask>& t) {
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
+    sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
 
     Region r(home);
-    OmegaTree<ManFixTaskFwd> o(r,f);
+    OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,f);
 
     for (int i=0; i<f.size(); i++) {
       o.insert(i);
@@ -55,13 +56,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
   
   // Overload checking for mandatory optional tasks
+  template<class OptTask>
   forceinline ExecStatus
-  overloaded(Space& home, Propagator& p, TaskArray<OptFixTask>& t) {
-    TaskViewArray<OptFixTaskFwd> f(t);
-    sort<OptFixTaskFwd,STO_LCT,true>(f);
+  overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+    TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
+    sort<typename TaskTraits<OptTask>::TaskViewFwd,STO_LCT,true>(f);
 
     Region r(home);
-    OmegaLambdaTree<OptFixTaskFwd> ol(r,f,false);
+    OmegaLambdaTree<typename TaskTraits<OptTask>::TaskViewFwd> ol(r,f,false);
 
     bool to_purge = false;
 

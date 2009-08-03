@@ -122,15 +122,99 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /**
    * \brief Print task in format est:p:lct
-   * \relates Task
+   * \relates ManFixTask
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTask& t);
 
 
-  /// Unary optional task with fixed processing time
-  class OptFixTask : public ManFixTask {
+  /// Unary (mandatory) task with flexible processing time
+  class ManFlxTask {
+  protected:
+    /// Start time
+    Int::IntView _s;
+    /// Processing time
+    Int::IntView _p;
+    /// End time
+    Int::IntView _e;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ManFlxTask(void);
+    /// Initialize with start time \a s, processing time \a p, and end time \a e
+    ManFlxTask(IntVar s, IntVar p, IntVar e);
+    /// Initialize with start time \a s, processing time \a p, and end time \a e
+    void init(IntVar s, IntVar p, IntVar e);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return earliest start time
+    int est(void) const;
+    /// Return earliest completion time
+    int ect(void) const;
+    /// Return latest start time
+    int lst(void) const;
+    /// Return latest completion time
+    int lct(void) const;
+    /// Return shortest processing time
+    int p(void) const;
+    /// Return start time
+    IntVar st(void) const;
+    /// Return processing time
+    IntVar pt(void) const;
+    /// Return end time
+    IntVar et(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether task is assigned
+    bool assigned(void) const;
+    //@}
+
+    /// \name Value update
+    //@{
+    /// Update earliest start time to \a n
+    ModEvent est(Space& home, int n);
+    /// Update earliest completion time to \a n
+    ModEvent ect(Space& home, int n);
+    /// Update latest start time to \a n
+    ModEvent lst(Space& home, int n);
+    /// Update latest completion time to \a n
+    ModEvent lct(Space& home, int n);
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this task to be a clone of task \a t
+    void update(Space& home, bool share, ManFlxTask& t);
+    //@}
+
+    /// \name Dependencies
+    //@{
+    /// Subscribe propagator \a p to task
+    void subscribe(Space& home, Propagator& p);
+    /// Cancel subscription of propagator \a p for task
+    void cancel(Space& home, Propagator& p);
+    //@}
+
+  };
+
+  /**
+   * \brief Print task in format est:p:lct
+   * \relates ManFlxTask
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlxTask& t);
+
+
+  /// Class to define an optional from a mandatory task
+  template<class ManTask>
+  class ManToOptTask : public ManTask {
   protected:
     /// Boolean view whether task is mandatory (= 1) or not
     Int::BoolView _m;
@@ -138,11 +222,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    OptFixTask(void);
-    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
-    OptFixTask(IntVar s, int p, BoolVar m);
-    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
-    void init(IntVar s, int p, BoolVar m);
+    ManToOptTask(void);
     //@}
 
     /// \name Value access
@@ -171,7 +251,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Cloning
     //@{
     /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, OptFixTask& t);
+    void update(Space& home, bool share, ManToOptTask& t);
     //@}
 
     /// \name Dependencies
@@ -181,7 +261,23 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Cancel subscription of propagator \a p for task
     void cancel(Space& home, Propagator& p);
     //@}
+  };
 
+
+  /// Unary optional task with fixed processing time
+  class OptFixTask : public ManToOptTask<ManFixTask> {
+  protected:
+    using ManToOptTask<ManFixTask>::_m;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    OptFixTask(void);
+    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+    OptFixTask(IntVar s, int p, BoolVar m);
+    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+    void init(IntVar s, int p, BoolVar m);
+    //@}
   };
 
   /**
@@ -191,6 +287,31 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTask& t);
+
+
+  /// Unary optional task with flexible processing time
+  class OptFlxTask : public ManToOptTask<ManFlxTask> {
+  protected:
+    using ManToOptTask<ManFlxTask>::_m;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    OptFlxTask(void);
+    /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
+    OptFlxTask(IntVar s, IntVar p, IntVar e, BoolVar m);
+    /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
+    void init(IntVar s, IntVar p, IntVar e, BoolVar m);
+    //@}
+  };
+
+  /**
+   * \brief Print optional task in format est:p:lct:m
+   * \relates OptFlxTask
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlxTask& t);
 
 }}}
 
@@ -233,17 +354,30 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Forward mandatory task view
+  /// Forward mandatory fixed task view
   typedef ManFixTask ManFixTaskFwd;
 
-  /// Backward (dual) mandatory task view
+  /// Backward (dual) mandatory fixed task view
   typedef FwdToBwd<ManFixTaskFwd> ManFixTaskBwd;
 
-  /// Forward optional task view
+  /// Forward optional fixed task view
   typedef OptFixTask OptFixTaskFwd;
 
-  /// Backward (dual) optional task view
+  /// Backward (dual) optional fixed task view
   typedef FwdToBwd<OptFixTaskFwd> OptFixTaskBwd;
+
+
+  /// Forward mandatory flexible task view
+  typedef ManFlxTask ManFlxTaskFwd;
+
+  /// Backward (dual) mandatory flexible task view
+  typedef FwdToBwd<ManFlxTaskFwd> ManFlxTaskBwd;
+
+  /// Forward optional task flexible view
+  typedef OptFlxTask OptFlxTaskFwd;
+
+  /// Backward (dual) optional flexible task view
+  typedef FwdToBwd<OptFlxTaskFwd> OptFlxTaskBwd;
 
 
   /**
@@ -261,6 +395,22 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTaskBwd& t);
+
+  /**
+   * \brief Print backward task view in format est:p:lct
+   * \relates ManFlxTaskBwd
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlxTaskBwd& t);
+
+  /**
+   * \brief Print optional backward task view in format est:p:lct:m
+   * \relates OptFlxTaskBwd
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlxTaskBwd& t);
 
 
 
@@ -305,6 +455,40 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     typedef OptFixTask Task;
   };
 
+
+  /// Task view traits for forward task views
+  template<>
+  class TaskViewTraits<ManFlxTaskFwd> {
+  public:
+    /// The task type
+    typedef ManFlxTask Task;
+  };
+
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<ManFlxTaskBwd> {
+  public:
+    /// The task type
+    typedef ManFlxTask Task;
+  };
+
+  /// Task view traits for forward optional task views
+  template<>
+  class TaskViewTraits<OptFlxTaskFwd> {
+  public:
+    /// The task type
+    typedef OptFlxTask Task;
+  };
+
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<OptFlxTaskBwd> {
+  public:
+    /// The task type
+    typedef OptFlxTask Task;
+  };
+
+
   /**
    * \brief Traits class for mapping tasks to task views
    *
@@ -314,7 +498,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   class TaskTraits {};
 
-  /// Task traits for mandatory tasks
+  /// Task traits for mandatory fixed tasks
   template<>
   class TaskTraits<ManFixTask> {
   public:
@@ -324,7 +508,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     typedef ManFixTaskBwd TaskViewBwd;
   };
 
-  /// Task traits for optional tasks
+  /// Task traits for optional fixed tasks
   template<>
   class TaskTraits<OptFixTask> {
   public:
@@ -332,6 +516,28 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     typedef OptFixTaskFwd TaskViewFwd;
     /// The backward task view type
     typedef OptFixTaskBwd TaskViewBwd;
+    /// The corresponding mandatory task
+    typedef ManFixTask ManTask;
+  };
+
+  /// Task traits for mandatory flexible tasks
+  template<>
+  class TaskTraits<ManFlxTask> {
+  public:
+    /// The forward task view type
+    typedef ManFlxTaskFwd TaskViewFwd;
+    /// The backward task view type
+    typedef ManFlxTaskBwd TaskViewBwd;
+  };
+
+  /// Task traits for optional flexible tasks
+  template<>
+  class TaskTraits<OptFlxTask> {
+  public:
+    /// The forward task view type
+    typedef OptFlxTaskFwd TaskViewFwd;
+    /// The backward task view type
+    typedef OptFlxTaskBwd TaskViewBwd;
     /// The corresponding mandatory task
     typedef ManFixTask ManTask;
   };
@@ -698,12 +904,15 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Purge optional tasks that are excluded and possibly rewrite propagator
-  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptFixTask>& t);
+  template<class OptTask>
+  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Check tasks \a t for overload
-  ExecStatus overloaded(Space& home, TaskArray<ManFixTask>& t);
-  /// Check tasks \a t for overload
-  ExecStatus overloaded(Space& home, Propagator& p, TaskArray<OptFixTask>& t);
+  /// Check mandatory tasks \a t for overload
+  template<class ManTask>
+  ExecStatus overloaded(Space& home, TaskArray<ManTask>& t);
+  /// Check optional tasks \a t for overload
+  template<class OptTask>
+  ExecStatus overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Check tasks \a t for subsumption
   template<class Task>
@@ -786,6 +995,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   class TaskBranch : public Task {
   protected:
+    using Task::st;
+    using Task::p;
     /// \name Branching information flags
     //@{
     static const char BIF_NONE = 0;     ///< Task can both
