@@ -54,7 +54,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t) {
     for (int i=tasks.size(); i--; ) {
-      node[leaf[i]].p = 0; node[leaf[i]].ect = -Int::Limits::infinity;
+      leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
     }
     init();
   }
@@ -62,37 +62,35 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
-    node[leaf[i]].p = tasks[i].p();
-    node[leaf[i]].ect = tasks[i].ect();
+    leaf(i).p = tasks[i].p(); leaf(i).ect = tasks[i].ect();
     update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
-    node[leaf[i]].p = 0; 
-    node[leaf[i]].ect = -Int::Limits::infinity;
+    leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
     update(i);
   }
 
   template<class TaskView>
   forceinline int 
   OmegaTree<TaskView>::ect(void) const {
-    return node[0].ect;
+    return root().ect;
   }
   
   template<class TaskView>
   forceinline int 
   OmegaTree<TaskView>::ect(int i) const {
-    // Check whether node i is in?
-    if (node[leaf[i]].p > 0) {
-      OmegaTree<TaskView>& o = const_cast<OmegaTree<TaskView>&>(*this);
+    // Check whether task i is in?
+    OmegaTree<TaskView>& o = const_cast<OmegaTree<TaskView>&>(*this);
+    if (o.leaf(i).p > 0) {
       o.remove(i);
-      int e = o.node[0].ect;
+      int ect = o.root().ect;
       o.insert(i);
-      return e;
+      return ect;
     } else {
-      return node[0].ect;
+      return root().ect;
     }
   }
   

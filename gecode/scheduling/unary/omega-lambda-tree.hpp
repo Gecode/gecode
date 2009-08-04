@@ -72,16 +72,16 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     if (inc) {
       // Enter all tasks into tree (omega = all tasks, lambda = empty)
       for (int i=tasks.size(); i--; ) {
-        node[leaf[i]].p = node[leaf[i]].lp = tasks[i].p();
-        node[leaf[i]].ect = node[leaf[i]].lect = tasks[i].ect();
-        node[leaf[i]].res = OmegaLambdaNode::undef;
+        leaf(i).p = leaf(i).lp = tasks[i].p();
+        leaf(i).ect = leaf(i).lect = tasks[i].ect();
+        leaf(i).res = OmegaLambdaNode::undef;
       }
     } else {
       // Enter no tasks into tree (omega = empty, lambda = empty)
       for (int i=tasks.size(); i--; ) {
-        node[leaf[i]].p = node[leaf[i]].lp = 0;
-        node[leaf[i]].ect = node[leaf[i]].lect = -Int::Limits::infinity;
-        node[leaf[i]].res = OmegaLambdaNode::undef;
+        leaf(i).p = leaf(i).lp = 0;
+        leaf(i).ect = leaf(i).lect = -Int::Limits::infinity;
+        leaf(i).res = OmegaLambdaNode::undef;
       }
      }
     init();
@@ -91,61 +91,61 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline void 
   OmegaLambdaTree<TaskView>::shift(int i) {
     // That means that i is in omega
-    assert(node[leaf[i]].p > 0);
-    node[leaf[i]].p = 0;
-    node[leaf[i]].ect = -Int::Limits::infinity;
-    node[leaf[i]].res = i;
+    assert(leaf(i).p > 0);
+    leaf(i).p = 0;
+    leaf(i).ect = -Int::Limits::infinity;
+    leaf(i).res = i;
     update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::oinsert(int i) {
-    node[leaf[i]].p = tasks[i].p(); 
-    node[leaf[i]].ect = tasks[i].ect();
+    leaf(i).p = tasks[i].p(); 
+    leaf(i).ect = tasks[i].ect();
     update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::linsert(int i) {
-    node[leaf[i]].lp = tasks[i].p(); 
-    node[leaf[i]].lect = tasks[i].ect();
-    node[leaf[i]].res = i;
+    leaf(i).lp = tasks[i].p(); 
+    leaf(i).lect = tasks[i].ect();
+    leaf(i).res = i;
     update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::lremove(int i) {
-    node[leaf[i]].lp = 0; 
-    node[leaf[i]].lect = -Int::Limits::infinity;
-    node[leaf[i]].res = OmegaLambdaNode::undef;
+    leaf(i).lp = 0; 
+    leaf(i).lect = -Int::Limits::infinity;
+    leaf(i).res = OmegaLambdaNode::undef;
     update(i);
   }
 
   template<class TaskView>
   forceinline bool
   OmegaLambdaTree<TaskView>::lempty(void) const {
-    return node[0].res < 0;
+    return root().res < 0;
   }
   
   template<class TaskView>
   forceinline int 
   OmegaLambdaTree<TaskView>::responsible(void) const {
-    return node[0].res;
+    return root().res;
   }
   
   template<class TaskView>
   forceinline int 
   OmegaLambdaTree<TaskView>::ect(void) const {
-    return node[0].ect;
+    return root().ect;
   }
   
   template<class TaskView>
   forceinline int 
   OmegaLambdaTree<TaskView>::lect(void) const {
-    return node[0].lect;
+    return root().lect;
   }
   
 }}}

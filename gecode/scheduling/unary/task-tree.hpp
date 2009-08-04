@@ -39,52 +39,64 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView,Node>::inner(void) const {
+  TaskTree<TaskView,Node>::_inner(void) const {
     return tasks.size()-1;
   }
   template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView,Node>::nodes(void) const {
+  TaskTree<TaskView,Node>::_nodes(void) const {
     return 2*tasks.size() - 1;
   }
 
   template<class TaskView, class Node>
   forceinline bool 
-  TaskTree<TaskView,Node>::root(int i) {
+  TaskTree<TaskView,Node>::_root(int i) {
     return i == 0;
   }
   template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView,Node>::left(int i) {
+  TaskTree<TaskView,Node>::_left(int i) {
     return 2*(i+1) - 1;
   }
   template<class TaskView, class Node>
   forceinline int
-  TaskTree<TaskView,Node>::right(int i) {
+  TaskTree<TaskView,Node>::_right(int i) {
     return 2*(i+1);
   }
   template<class TaskView, class Node>
   forceinline int
-  TaskTree<TaskView,Node>::parent(int i) {
+  TaskTree<TaskView,Node>::_parent(int i) {
     return (i+1)/2 - 1;
+  }
+
+  template<class TaskView, class Node>
+  forceinline Node&
+  TaskTree<TaskView,Node>::leaf(int i) {
+    return _node[_leaf[i]];
+  }
+
+  template<class TaskView, class Node>
+  forceinline const Node&
+  TaskTree<TaskView,Node>::root(void) const {
+    return _node[0];
   }
 
   template<class TaskView, class Node>
   forceinline void
   TaskTree<TaskView,Node>::init(void) {
-    for (int i=inner(); i--; )
-      node[i].update(node[left(i)],node[right(i)]);
+    for (int i=_inner(); i--; )
+      _node[i].update(_node[_left(i)],_node[_right(i)]);
   }
 
   template<class TaskView, class Node>
   forceinline void
   TaskTree<TaskView,Node>::update(int i) {
-    i = leaf[i];
-    assert(!root(i));
+    i = _leaf[i];
+    assert(!_root(i));
     do {
-      i = parent(i);
-      node[i].update(node[left(i)],node[right(i)]);
-    } while (!root(i));
+      i = _parent(i);
+      _node[i].update(_node[_left(i)],_node[_right(i)]);
+    } while (!_root(i));
   }
 
   template<class TaskView, class Node>
@@ -92,15 +104,15 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   TaskTree<TaskView,Node>::TaskTree(Region& r, 
                                     const TaskViewArray<TaskView>& t)
     : tasks(t), 
-      node(r.alloc<Node>(nodes())),
-      leaf(r.alloc<int>(tasks.size())) {
+      _node(r.alloc<Node>(_nodes())),
+      _leaf(r.alloc<int>(tasks.size())) {
     // Compute a sorting map to order by non decreasing est
-    int* map = r.alloc<int>(t.size());
-    sort<TaskView,STO_EST,true>(map, t);
+    int* map = r.alloc<int>(tasks.size());
+    sort<TaskView,STO_EST,true>(map, tasks);
     // Compute inverse of sorting map
-    for (int i=t.size(); i--; )
-      leaf[map[i]] = i;
-    r.free<int>(map,t.size());
+    for (int i=tasks.size(); i--; )
+      _leaf[map[i]] = i;
+    r.free<int>(map,tasks.size());
     // Compute index of first leaf in tree: the next larger power of two
     int fst = 1;
     while (fst < tasks.size())
@@ -108,10 +120,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     fst--;
     // Remap task indices to leaf indices
     for (int i=tasks.size(); i--; )
-      if (leaf[i] + fst >= nodes())
-        leaf[i] += fst - tasks.size();
+      if (_leaf[i] + fst >= _nodes())
+        _leaf[i] += fst - tasks.size();
       else
-        leaf[i] += fst;
+        _leaf[i] += fst;
   }
 
 }}}

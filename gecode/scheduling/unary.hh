@@ -724,28 +724,32 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   protected:
     /// The tasks from which the tree is computed
     const TaskViewArray<TaskView>& tasks;
+  private:
     /// Task nodes
-    Node* node;
+    Node* _node;
     /// Map task number to leaf node number in right order
-    int* leaf;
+    int* _leaf;
     /// Return number of inner nodes
-    int inner(void) const;
+    int _inner(void) const;
     /// Return number of nodes for balanced binary tree
-    int nodes(void) const;
+    int _nodes(void) const;
     /// Whether \a i is index of root
-    static bool root(int i);
+    static bool _root(int i);
     /// Return index of left child of \a i
-    static int left(int i);
+    static int _left(int i);
     /// Return index of right child of \a i
-    static int right(int i);
+    static int _right(int i);
     /// Return index of parent of \a i
-    static int parent(int i);
+    static int _parent(int i);
   protected:
+    /// Return leaf for task \a i
+    Node& leaf(int i);
+    /// Return root node
+    const Node& root(void) const;
     /// Update tree after leaf for task \a i has changed
     void update(int i);
     /// Initialize tree after leaves have been initialized
     void init(void);
-  public:
     /// Initialize tree for tasks \a t
     TaskTree(Region& r, const TaskViewArray<TaskView>& t);
   };
@@ -774,10 +778,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class OmegaTree : public TaskTree<TaskView,OmegaNode> {
   protected:
     using TaskTree<TaskView,OmegaNode>::tasks;
-    using TaskTree<TaskView,OmegaNode>::node;
-    using TaskTree<TaskView,OmegaNode>::leaf;
-    using TaskTree<TaskView,OmegaNode>::nodes;
-    using TaskTree<TaskView,OmegaNode>::inner;
   public:
     /// Initialize tree for tasks \a t
     OmegaTree(Region& r, const TaskViewArray<TaskView>& t);
@@ -819,12 +819,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class OmegaLambdaTree : public TaskTree<TaskView,OmegaLambdaNode> {
   protected:
     using TaskTree<TaskView,OmegaLambdaNode>::tasks;
-    using TaskTree<TaskView,OmegaLambdaNode>::node;
-    using TaskTree<TaskView,OmegaLambdaNode>::leaf;
-    using TaskTree<TaskView,OmegaLambdaNode>::nodes;
-    using TaskTree<TaskView,OmegaLambdaNode>::inner;
-    using TaskTree<TaskView,OmegaLambdaNode>::left;
-    using TaskTree<TaskView,OmegaLambdaNode>::right;
   public:
     /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
     OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t, 
