@@ -50,7 +50,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
   template<class TaskView>
-  forceinline
   OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t) {
     for (int i=tasks.size(); i--; ) {

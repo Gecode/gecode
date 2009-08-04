@@ -38,7 +38,7 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class Task>
-  forceinline ExecStatus
+  ExecStatus
   subsumed(Space& home, Propagator& p, TaskArray<Task>& t) {
     TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
     sort<typename TaskTraits<Task>::TaskViewFwd,STO_EST,true>(f);

@@ -39,7 +39,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   // Overload checking for mandatory tasks
   template<class ManTask>
-  forceinline ExecStatus
+  ExecStatus
   overloaded(Space& home, TaskArray<ManTask>& t) {
     TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
     sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
@@ -57,7 +57,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   
   // Overload checking for mandatory optional tasks
   template<class OptTask>
-  forceinline ExecStatus
+  ExecStatus
   overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t) {
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
     sort<typename TaskTraits<OptTask>::TaskViewFwd,STO_LCT,true>(f);

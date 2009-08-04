@@ -64,7 +64,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 
   template<class TaskView>
-  forceinline
   OmegaLambdaTree<TaskView>::OmegaLambdaTree(Region& r, 
                                              const TaskViewArray<TaskView>& t,
                                              bool inc)

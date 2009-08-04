@@ -72,7 +72,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
   template<class Task>
-  forceinline ExecStatus
+  ExecStatus
   notfirstnotlast(Space& home, TaskArray<Task>& t) {
     TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
     GECODE_ES_CHECK(notlast(home,f));
