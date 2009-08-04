@@ -144,13 +144,14 @@ namespace Gecode {
                          ::post(home,iv,x0,v1)));
   }
 
-
-  IntVar
-  pair(Space& home, IntVar x, int w, IntVar y, int h) {
-    IntVar xy(home,0,w*h-1);
-    if (Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
-      home.fail();
-    return xy;
+  namespace {
+    IntVar
+    pair(Space& home, IntVar x, int w, IntVar y, int h) {
+      IntVar xy(home,0,w*h-1);
+      if (Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
+        home.fail();
+      return xy;
+    }
   }
 
   void
