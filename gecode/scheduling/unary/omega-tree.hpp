@@ -39,43 +39,40 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  template<class TaskView>
-  forceinline
-  OmegaTree<TaskView>::Node::Node(void) 
-    : p(0), ect(-Int::Limits::infinity) {}
-
-
-  template<class TaskView>
   forceinline void
-  OmegaTree<TaskView>::update(int i) {
-    assert(!root(i));
-    do {
-      i = parent(i);
-      int l = left(i), r = right(i);
-      node[i].p = node[l].p + node[r].p;
-      node[i].ect = std::max(node[l].ect + node[r].p, node[r].ect);
-    } while (!root(i));
+  OmegaNode::init(const OmegaNode&, const OmegaNode&) {
+    p = 0; ect = -Int::Limits::infinity;
+  }
+
+  forceinline void
+  OmegaNode::update(const OmegaNode& l, const OmegaNode& r) {
+    p = l.p + r.p; ect = std::max(l.ect + r.p, r.ect);
   }
 
   template<class TaskView>
   forceinline
   OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
-    : TaskTree<TaskView>(r,t), node(r.alloc<Node>(nodes())) {}
+    : TaskTree<TaskView,OmegaNode>(r,t) {
+    for (int i=tasks.size(); i--; ) {
+      node[leaf[i]].p = 0; node[leaf[i]].ect = -Int::Limits::infinity;
+    }
+    init();
+  }
 
   template<class TaskView>
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
-    node[leave[i]].p = tasks[i].p();
-    node[leave[i]].ect = tasks[i].ect();
-    update(leave[i]);
+    node[leaf[i]].p = tasks[i].p();
+    node[leaf[i]].ect = tasks[i].ect();
+    update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
-    node[leave[i]].p = 0; 
-    node[leave[i]].ect = -Int::Limits::infinity;
-    update(leave[i]);
+    node[leaf[i]].p = 0; 
+    node[leaf[i]].ect = -Int::Limits::infinity;
+    update(i);
   }
 
   template<class TaskView>
@@ -88,7 +85,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline int 
   OmegaTree<TaskView>::ect(int i) const {
     // Check whether node i is in?
-    if (node[leave[i]].p > 0) {
+    if (node[leaf[i]].p > 0) {
       OmegaTree<TaskView>& o = const_cast<OmegaTree<TaskView>&>(*this);
       o.remove(i);
       int e = o.node[0].ect;

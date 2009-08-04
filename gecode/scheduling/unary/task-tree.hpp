@@ -37,60 +37,81 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  template<class TaskView>
+  template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView>::inner(void) const {
+  TaskTree<TaskView,Node>::inner(void) const {
     return tasks.size()-1;
   }
-  template<class TaskView>
+  template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView>::nodes(void) const {
+  TaskTree<TaskView,Node>::nodes(void) const {
     return 2*tasks.size() - 1;
   }
 
-  template<class TaskView>
+  template<class TaskView, class Node>
   forceinline bool 
-  TaskTree<TaskView>::root(int i) {
+  TaskTree<TaskView,Node>::root(int i) {
     return i == 0;
   }
-  template<class TaskView>
+  template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView>::left(int i) {
+  TaskTree<TaskView,Node>::left(int i) {
     return 2*(i+1) - 1;
   }
-  template<class TaskView>
+  template<class TaskView, class Node>
   forceinline int
-  TaskTree<TaskView>::right(int i) {
+  TaskTree<TaskView,Node>::right(int i) {
     return 2*(i+1);
   }
-  template<class TaskView>
+  template<class TaskView, class Node>
   forceinline int
-  TaskTree<TaskView>::parent(int i) {
+  TaskTree<TaskView,Node>::parent(int i) {
     return (i+1)/2 - 1;
   }
 
-  template<class TaskView>
+  template<class TaskView, class Node>
+  forceinline void
+  TaskTree<TaskView,Node>::init(void) {
+    for (int i=inner(); i--; )
+      node[i].update(node[left(i)],node[right(i)]);
+  }
+
+  template<class TaskView, class Node>
+  forceinline void
+  TaskTree<TaskView,Node>::update(int i) {
+    i = leaf[i];
+    assert(!root(i));
+    do {
+      i = parent(i);
+      node[i].update(node[left(i)],node[right(i)]);
+    } while (!root(i));
+  }
+
+  template<class TaskView, class Node>
   forceinline
-  TaskTree<TaskView>::TaskTree(Region& r, const TaskViewArray<TaskView>& t)
-    : tasks(t), leave(r.alloc<int>(tasks.size())) {
+  TaskTree<TaskView,Node>::TaskTree(Region& r, 
+                                    const TaskViewArray<TaskView>& t)
+    : tasks(t), 
+      node(r.alloc<Node>(nodes())),
+      leaf(r.alloc<int>(tasks.size())) {
     // Compute a sorting map to order by non decreasing est
     int* map = r.alloc<int>(t.size());
     sort<TaskView,STO_EST,true>(map, t);
     // Compute inverse of sorting map
     for (int i=t.size(); i--; )
-      leave[map[i]] = i;
+      leaf[map[i]] = i;
     r.free<int>(map,t.size());
-    // Compute index of first leave in tree: the next larger power of two
+    // Compute index of first leaf in tree: the next larger power of two
     int fst = 1;
     while (fst < tasks.size())
       fst <<= 1;
     fst--;
-    // Remap task indices to leave indices
+    // Remap task indices to leaf indices
     for (int i=tasks.size(); i--; )
-      if (leave[i] + fst >= nodes())
-        leave[i] += fst - tasks.size();
+      if (leaf[i] + fst >= nodes())
+        leaf[i] += fst - tasks.size();
       else
-        leave[i] += fst;
+        leaf[i] += fst;
   }
 
 }}}
