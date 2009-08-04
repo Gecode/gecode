@@ -319,7 +319,7 @@ namespace Gecode {
       _threads("-threads","number of threads (0 = #processing units)",
                Search::Config::threads),
       _c_d("-c-d","recomputation commit distance",Search::Config::c_d),
-      _a_d("-a-d","recomputation adaption distance",Search::Config::a_d),
+      _a_d("-a-d","recomputation adaptation distance",Search::Config::a_d),
       _node("-node","node cutoff (0 = none, solution mode)"),
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
