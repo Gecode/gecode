@@ -354,10 +354,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
-  ExecStatus overloaded(Space& home, TaskArray<ManTask>& t);
+  ExecStatus overload(Space& home, TaskArray<ManTask>& t);
   /// Check optional tasks \a t for overload
   template<class OptTask>
-  ExecStatus overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t);
+  ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Check tasks \a t for subsumption
   template<class Task>

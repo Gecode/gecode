@@ -45,7 +45,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Region r(home);
 
     OmegaLambdaTree<TaskView> ol(r,t);
-    TaskViewIterator<TaskView,STO_LCT,false> q(r,t);
+    TaskViewIter<TaskView,STO_LCT,false> q(r,t);
 
     int j = q.task();
     while (q.left() > 1) {

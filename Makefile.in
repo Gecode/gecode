@@ -441,7 +441,7 @@ SCHEDULINGSRC0 = \
 SCHEDULINGHDR0 = \
 	cumulatives.hh cumulatives/val.hpp \
 	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
-	task/iterator.hpp task/tree.hpp task/prop.hpp \
+	task/iter.hpp task/tree.hpp task/prop.hpp \
 	unary.hh unary/task.hpp unary/task-view.hpp \
 	unary/omega-tree.hpp unary/omega-lambda-tree.hpp \
 	unary/purge.hpp unary/overload.hpp unary/detectable.hpp \

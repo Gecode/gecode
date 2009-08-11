@@ -2864,7 +2864,7 @@ gecode/scheduling/unary$(OBJSUFFIX) gecode/scheduling/unary$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/scheduling.hh \
 	./gecode/scheduling/task.hh ./gecode/scheduling/task/array.hpp ./gecode/scheduling/task/fwd-to-bwd.hpp \
-	./gecode/scheduling/task/iterator.hpp ./gecode/scheduling/task/man-to-opt.hpp ./gecode/scheduling/task/prop.hpp \
+	./gecode/scheduling/task/iter.hpp ./gecode/scheduling/task/man-to-opt.hpp ./gecode/scheduling/task/prop.hpp \
 	./gecode/scheduling/task/sort.hpp ./gecode/scheduling/task/tree.hpp ./gecode/scheduling/unary.hh \
 	./gecode/scheduling/unary/detectable.hpp ./gecode/scheduling/unary/edge-finding.hpp ./gecode/scheduling/unary/man-branch.hpp \
 	./gecode/scheduling/unary/man-prop.hpp ./gecode/scheduling/unary/not-first-not-last.hpp ./gecode/scheduling/unary/omega-lambda-tree.hpp \
@@ -2915,7 +2915,7 @@ gecode/scheduling/cumulative$(OBJSUFFIX) gecode/scheduling/cumulative$(SBJSUFFIX
 	./gecode/scheduling/cumulative.hh ./gecode/scheduling/cumulative/man-prop.hpp ./gecode/scheduling/cumulative/omega-tree.hpp \
 	./gecode/scheduling/cumulative/opt-prop.hpp ./gecode/scheduling/cumulative/task-view.hpp ./gecode/scheduling/cumulative/task.hpp \
 	./gecode/scheduling/task.hh ./gecode/scheduling/task/array.hpp ./gecode/scheduling/task/fwd-to-bwd.hpp \
-	./gecode/scheduling/task/iterator.hpp ./gecode/scheduling/task/man-to-opt.hpp ./gecode/scheduling/task/prop.hpp \
+	./gecode/scheduling/task/iter.hpp ./gecode/scheduling/task/man-to-opt.hpp ./gecode/scheduling/task/prop.hpp \
 	./gecode/scheduling/task/sort.hpp ./gecode/scheduling/task/tree.hpp ./gecode/scheduling/unary.hh \
 	./gecode/scheduling/unary/detectable.hpp ./gecode/scheduling/unary/edge-finding.hpp ./gecode/scheduling/unary/man-branch.hpp \
 	./gecode/scheduling/unary/man-prop.hpp ./gecode/scheduling/unary/not-first-not-last.hpp ./gecode/scheduling/unary/omega-lambda-tree.hpp \

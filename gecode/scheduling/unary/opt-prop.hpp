@@ -83,7 +83,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
       GECODE_ES_CHECK(purge(home,*this,t));
 
-    GECODE_ES_CHECK(overloaded(home,*this,t));
+    GECODE_ES_CHECK(overload(home,*this,t));
 
     GECODE_ES_CHECK(detectable(home,*this,t));
     GECODE_ES_CHECK(notfirstnotlast(home,*this,t));

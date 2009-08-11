@@ -65,7 +65,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class ManTask>
   ExecStatus 
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ES_CHECK(overloaded(home,t));
+    GECODE_ES_CHECK(overload(home,t));
     GECODE_ES_CHECK(detectable(home,t));
     GECODE_ES_CHECK(notfirstnotlast(home,t));
     GECODE_ES_CHECK(edgefinding(home,t));

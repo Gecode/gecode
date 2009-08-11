@@ -300,17 +300,17 @@ namespace Gecode { namespace Scheduling {
 
   /// Allows to iterate over task views according to a specified order
   template<class TaskView, SortTaskOrder sto, bool inc>
-  class TaskViewIterator {
+  class TaskViewIter {
   protected:
     /// Map for iteration order
     int* map;
     /// Current position
     int i;
     /// Default constructor (no initialization)
-    TaskViewIterator(void);
+    TaskViewIter(void);
   public:
     /// Initialize iterator
-    TaskViewIterator(Region& r, const TaskViewArray<TaskView>& t);
+    TaskViewIter(Region& r, const TaskViewArray<TaskView>& t);
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a task
@@ -330,18 +330,18 @@ namespace Gecode { namespace Scheduling {
 
   /// Allows to iterate over mandatory task views according to a specified order
   template<class OptTaskView, SortTaskOrder sto, bool inc>
-  class ManTaskViewIterator : public TaskViewIterator<OptTaskView,sto,inc> {
+  class ManTaskViewIter : public TaskViewIter<OptTaskView,sto,inc> {
   protected:
-    using TaskViewIterator<OptTaskView,sto,inc>::map;
-    using TaskViewIterator<OptTaskView,sto,inc>::i;
+    using TaskViewIter<OptTaskView,sto,inc>::map;
+    using TaskViewIter<OptTaskView,sto,inc>::i;
   public:
     /// Initialize iterator with mandatory tasks
-    ManTaskViewIterator(Region& r, const TaskViewArray<OptTaskView>& t);
+    ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t);
   };
 
 }}
 
-#include <gecode/scheduling/task/iterator.hpp>
+#include <gecode/scheduling/task/iter.hpp>
 
 namespace Gecode { namespace Scheduling {
 

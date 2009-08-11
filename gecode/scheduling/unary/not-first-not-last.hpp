@@ -47,7 +47,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Region r(home);
 
     OmegaTree<ManTaskView> o(r,t);
-    TaskViewIterator<ManTaskView,STO_LST,true> q(r,t);
+    TaskViewIter<ManTaskView,STO_LST,true> q(r,t);
     int* lct = r.alloc<int>(t.size());
 
     for (int i=t.size(); i--; )
@@ -88,7 +88,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     Region r(home);
 
     OmegaTree<OptTaskView> o(r,t);
-    ManTaskViewIterator<OptTaskView,STO_LST,true> q(r,t);
+    ManTaskViewIter<OptTaskView,STO_LST,true> q(r,t);
     int* lct = r.alloc<int>(t.size());
 
     for (int i=t.size(); i--; )
