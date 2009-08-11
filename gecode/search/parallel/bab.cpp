@@ -35,6 +35,8 @@
  *
  */
 
+#include <gecode/support.hh>
+
 #ifdef GECODE_HAS_THREADS
 
 #include <gecode/search/parallel/bab.hh>
