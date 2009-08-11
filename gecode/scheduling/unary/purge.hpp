@@ -46,9 +46,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
         t[i].cancel(home,p); t[i]=t[--n];
       }
     t.size(n);
-    if (t.size() < 2)
-      return ES_SUBSUMED(p,home);
-    return ES_OK;
+
+    return (t.size() < 2) ? ES_SUBSUMED(p,home) : ES_OK;
   }
   
 }}}

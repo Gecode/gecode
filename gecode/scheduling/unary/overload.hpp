@@ -55,7 +55,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return ES_OK;
   }
   
-  // Overload checking for mandatory optional tasks
+  // Overload checking for optional tasks
   template<class OptTask>
   ExecStatus
   overloaded(Space& home, Propagator& p, TaskArray<OptTask>& t) {

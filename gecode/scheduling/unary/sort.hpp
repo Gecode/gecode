@@ -189,6 +189,39 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     }
   }
 
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  forceinline void
+  sort(int* map, int n, const TaskViewArray<TaskView>& t) {
+    switch (sto) {
+    case STO_EST:
+      {
+        SortMap<TaskView,StoEst,inc> o(t); 
+        Support::quicksort(map, n, o);
+      }
+      break;
+    case STO_ECT:
+      {
+        SortMap<TaskView,StoEct,inc> o(t); 
+        Support::quicksort(map, n, o);
+      }
+      break;
+    case STO_LST:
+      {
+        SortMap<TaskView,StoLst,inc> o(t); 
+        Support::quicksort(map, n, o);
+      }
+      break;
+    case STO_LCT:
+      {
+        SortMap<TaskView,StoLct,inc> o(t); 
+        Support::quicksort(map, n, o);
+      }
+      break;
+    default:
+      GECODE_NEVER;
+    }
+  }
+
 }}}
 
 // STATISTICS: scheduling-other

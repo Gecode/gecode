@@ -85,6 +85,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
     GECODE_ES_CHECK(overloaded(home,*this,t));
 
+    GECODE_ES_CHECK(detectable(home,*this,t));
+    GECODE_ES_CHECK(notfirstnotlast(home,*this,t));
+
     // Partition into mandatory and optional activities
     int n = t.size();
     int i=0, j=n-1;
@@ -110,10 +113,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     // Truncate array to only contain mandatory tasks
     t.size(i);
 
-    GECODE_ES_CHECK(detectable(home,t));
-    GECODE_ES_CHECK(notfirstnotlast(home,t));
     GECODE_ES_CHECK(edgefinding(home,t));
 
+    // Restore to also include optional tasks
     t.size(n);
 
     GECODE_ES_CHECK(subsumed(home,*this,t));

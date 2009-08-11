@@ -141,6 +141,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
   template<class TaskView>
+  forceinline void
+  TaskViewArray<TaskView>::size(int n) {
+    t.size(n);
+  }
+
+  template<class TaskView>
   forceinline TaskView&
   TaskViewArray<TaskView>::operator [](int i) {
     return static_cast<TaskView&>(t[i]);

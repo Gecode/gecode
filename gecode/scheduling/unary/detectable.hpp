@@ -37,15 +37,15 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  template<class TaskView>
+  template<class ManTaskView>
   forceinline ExecStatus
-  detectable(Space& home, TaskViewArray<TaskView>& t) {
-    sort<TaskView,STO_ECT,true>(t);
+  detectable(Space& home, TaskViewArray<ManTaskView>& t) {
+    sort<ManTaskView,STO_ECT,true>(t);
 
     Region r(home);
 
-    OmegaTree<TaskView> o(r,t);
-    TaskViewIterator<TaskView,STO_LST,true> q(r,t);
+    OmegaTree<ManTaskView> o(r,t);
+    TaskViewIterator<ManTaskView,STO_LST,true> q(r,t);
     int* est = r.alloc<int>(t.size());
 
     for (int i=0; i<t.size(); i++) {
@@ -61,13 +61,54 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return ES_OK;
   }
   
-  template<class Task>
+  template<class ManTask>
   ExecStatus
-  detectable(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
+  detectable(Space& home, TaskArray<ManTask>& t) {
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
     GECODE_ES_CHECK(detectable(home,f));
-    TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewBwd> b(t);
     return detectable(home,b);
+  }
+
+
+  template<class OptTaskView>
+  forceinline ExecStatus
+  detectable(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
+    sort<OptTaskView,STO_ECT,true>(t);
+
+    Region r(home);
+
+    OmegaTree<OptTaskView> o(r,t);
+    ManTaskViewIterator<OptTaskView,STO_LST,true> q(r,t);
+    int* est = r.alloc<int>(t.size());
+
+    for (int i=0; i<t.size(); i++) {
+      while (q() && (t[i].ect() > t[q.task()].lst())) {
+        o.insert(q.task()); ++q;
+      }
+      est[i] = o.ect(i);
+    }
+
+    int n = t.size();
+    for (int i=n; i--; )
+      if (t[i].mandatory()) {
+        GECODE_ME_CHECK(t[i].est(home,est[i]));
+      } else if (est[i] > t[i].lst()) {
+        GECODE_ME_CHECK(t[i].excluded(home));
+        t[i].cancel(home,p); t[i]=t[--n];
+      }
+    t.size(n);
+
+    return (t.size() < 2) ? ES_SUBSUMED(p,home) : ES_OK;
+  }
+  
+  template<class OptTask>
+  ExecStatus
+  detectable(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+    TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
+    GECODE_ES_CHECK(detectable(home,p,f));
+    TaskViewArray<typename TaskTraits<OptTask>::TaskViewBwd> b(t);
+    return detectable(home,p,b);
   }
 
 }}}

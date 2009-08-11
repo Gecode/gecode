@@ -39,15 +39,15 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  template<class TaskView>
+  template<class ManTaskView>
   forceinline ExecStatus
-  notlast(Space& home, TaskViewArray<TaskView>& t) {
-    sort<TaskView,STO_LCT,true>(t);
+  notlast(Space& home, TaskViewArray<ManTaskView>& t) {
+    sort<ManTaskView,STO_LCT,true>(t);
 
     Region r(home);
 
-    OmegaTree<TaskView> o(r,t);
-    TaskViewIterator<TaskView,STO_LST,true> q(r,t);
+    OmegaTree<ManTaskView> o(r,t);
+    TaskViewIterator<ManTaskView,STO_LST,true> q(r,t);
     int* lct = r.alloc<int>(t.size());
 
     for (int i=t.size(); i--; )
@@ -71,13 +71,61 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return ES_OK;
   }
 
-  template<class Task>
+  template<class ManTask>
   ExecStatus
-  notfirstnotlast(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
+  notfirstnotlast(Space& home, TaskArray<ManTask>& t) {
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
     GECODE_ES_CHECK(notlast(home,f));
-    TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewBwd> b(t);
     return notlast(home,b);
+  }
+  
+  template<class OptTaskView>
+  forceinline ExecStatus
+  notlast(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
+    sort<OptTaskView,STO_LCT,true>(t);
+
+    Region r(home);
+
+    OmegaTree<OptTaskView> o(r,t);
+    ManTaskViewIterator<OptTaskView,STO_LST,true> q(r,t);
+    int* lct = r.alloc<int>(t.size());
+
+    for (int i=t.size(); i--; )
+      lct[i] = t[i].lct();
+
+    for (int i=0; i<t.size(); i++) {
+      int j = -1;
+      while (q() && (t[i].lct() > t[q.task()].lst())) {
+        if ((j >= 0) && (o.ect() > t[q.task()].lst()))
+          lct[q.task()] = std::min(lct[q.task()],t[j].lst());
+        j = q.task();
+        o.insert(j); ++q;
+      }
+      if ((j >= 0) && (o.ect(i) > t[i].lst()))
+        lct[i] = std::min(lct[i],t[j].lst());
+    }
+
+    int n = t.size();
+    for (int i=n; i--; )
+      if (t[i].mandatory()) {
+        GECODE_ME_CHECK(t[i].lct(home,lct[i]));
+      } else if (lct[i] < t[i].ect()) {
+        //        GECODE_ME_CHECK(t[i].excluded(home));
+        //        t[i].cancel(home,p); t[i]=t[--n];
+      }
+    t.size(n);
+
+    return (t.size() < 2) ? ES_SUBSUMED(p,home) : ES_OK;
+  }
+
+  template<class OptTask>
+  ExecStatus
+  notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+    TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
+    GECODE_ES_CHECK(notlast(home,p,f));
+    TaskViewArray<typename TaskTraits<OptTask>::TaskViewBwd> b(t);
+    return notlast(home,p,b);
   }
   
 }}}

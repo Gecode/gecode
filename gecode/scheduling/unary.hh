@@ -442,6 +442,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     //@{
     /// Return size of array (number of elements)
     int size(void) const;
+    /// Set size of array (number of elements) to \a n, must not be larger
+    void size(int n);
     //@}
 
     /// \name Array elements
@@ -483,9 +485,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView, SortTaskOrder sto, bool inc>
   void sort(TaskViewArray<TaskView>& t);
 
-  /// Sort \a map for task view array \a t according to \a sto and \a inc (increasing or decreasing)
+  /// Initialize and sort \a map for task view array \a t according to \a sto and \a inc (increasing or decreasing)
   template<class TaskView, SortTaskOrder sto, bool inc>
   void sort(int* map, const TaskViewArray<TaskView>& t);
+
+  /// Sort \a map with size \a n for task view array \a t according to \a sto and \a inc (increasing or decreasing)
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  void sort(int* map, int n, const TaskViewArray<TaskView>& t);
 
 }}}
 
@@ -501,6 +507,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     int* map;
     /// Current position
     int i;
+    /// Default constructor (no initialization)
+    TaskViewIterator(void);
   public:
     /// Initialize iterator
     TaskViewIterator(Region& r, const TaskViewArray<TaskView>& t);
@@ -519,6 +527,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Return current task position
     int task(void) const;
     //@}
+  };
+
+  /// Allows to iterate over mandatory task views according to a specified order
+  template<class OptTaskView, SortTaskOrder sto, bool inc>
+  class ManTaskViewIterator : public TaskViewIterator<OptTaskView,sto,inc> {
+  public:
+    /// Initialize iterator with mandatory tasks
+    ManTaskViewIterator(Region& r, const TaskViewArray<OptTaskView>& t);
   };
 
 }}}
@@ -700,12 +716,18 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ExecStatus subsumed(Space& home, Propagator& p, TaskArray<Task>& t);
 
   /// Propagate detectable precedences
-  template<class Task>
-  ExecStatus detectable(Space& home, TaskArray<Task>& t);
+  template<class ManTask>
+  ExecStatus detectable(Space& home, TaskArray<ManTask>& t);
+  /// Propagate detectable precedences
+  template<class OptTask>
+  ExecStatus detectable(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Propagate not-first and not-last
-  template<class Task>
-  ExecStatus notfirstnotlast(Space& home, TaskArray<Task>& t);
+  template<class ManTask>
+  ExecStatus notfirstnotlast(Space& home, TaskArray<ManTask>& t);
+  /// Propagate not-first and not-last
+  template<class OptTask>
+  ExecStatus notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Propagate by edge finding
   template<class Task>

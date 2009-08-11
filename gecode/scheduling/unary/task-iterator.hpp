@@ -41,6 +41,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline
+  TaskViewIterator<TaskView,sto,inc>::TaskViewIterator(void) {}
+
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  forceinline
   TaskViewIterator<TaskView,sto,inc>
   ::TaskViewIterator(Region& r, 
                      const TaskViewArray<TaskView>& t)
@@ -69,6 +73,21 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   TaskViewIterator<TaskView,sto,inc>::task(void) const {
     return map[i];
   }
+
+
+  template<class OptTaskView, SortTaskOrder sto, bool inc>
+  forceinline
+  ManTaskViewIterator<OptTaskView,sto,inc>
+  ::ManTaskViewIterator(Region& r, 
+                        const TaskViewArray<OptTaskView>& t) {
+    map = r.alloc<int>(t.size()); i=0;
+    for (int j=t.size(); j--; )
+      if (t[j].mandatory())
+        map[i++]=j;
+    sort<OptTaskView,sto,!inc>(map,i,t); 
+    i--;
+  }
+
 
 }}}
 
