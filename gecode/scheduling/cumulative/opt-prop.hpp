@@ -79,7 +79,38 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class OptTask>
   ExecStatus 
   OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
-    (void) home; (void) med;
+    // Did one of the Boolean views change?
+    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
+      GECODE_ES_CHECK(purge(home,*this,t));
+
+    // Partition into mandatory and optional activities
+    int n = t.size();
+    int i=0, j=n-1;
+    while (true) {
+      while ((i < n) && t[i].mandatory()) i++;
+      while ((j >= 0) && !t[j].mandatory()) j--;
+      if (i >= j) break;
+      std::swap(t[i],t[j]);
+    }
+    // No propagation possible
+    if (i < 2)
+      return ES_NOFIX;
+    // All tasks are mandatory: rewrite
+    if (i == n) {
+      // All tasks are mandatory, rewrite
+      TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,n);
+      for (int i=n; i--; )
+        mt[i].init(t[i].st(),t[i].p(),t[i].c());
+      GECODE_REWRITE(*this,
+                     (ManProp<typename TaskTraits<OptTask>::ManTask>
+                      ::post(home,mt)));
+    }
+    // Truncate array to only contain mandatory tasks
+    t.size(i);
+
+    // Restore to also include optional tasks
+    t.size(n);
+
     return ES_FAILED;
   }
 
