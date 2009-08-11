@@ -121,69 +121,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
     
 
-
-  /*
-   * Turn mandatory into optional task
-   */
-  template<class ManTask>
-  forceinline
-  ManToOptTask<ManTask>::ManToOptTask(void) {}
-
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::mandatory(void) const {
-    return _m.one();
-  }
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::excluded(void) const {
-    return _m.zero();
-  }
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::optional(void) const {
-    return _m.none();
-  }
-
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::assigned(void) const {
-    return ManTask::assigned() && _m.assigned();
-  }
-
-  template<class ManTask>
-  forceinline ModEvent 
-  ManToOptTask<ManTask>::mandatory(Space& home) {
-    return _m.one(home);
-  }
-  template<class ManTask>
-  forceinline ModEvent 
-  ManToOptTask<ManTask>::excluded(Space& home) {
-    return _m.zero(home);
-  }
-
-  template<class ManTask>
-  forceinline void
-  ManToOptTask<ManTask>::update(Space& home, bool share, 
-                                ManToOptTask<ManTask>& t) {
-    ManTask::update(home, share, t);
-    _m.update(home,share,t._m);
-  }
-
-  template<class ManTask>
-  forceinline void
-  ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p) {
-    ManTask::subscribe(home, p);
-    _m.subscribe(home, p, Int::PC_BOOL_VAL);
-  }
-  template<class ManTask>
-  forceinline void
-  ManToOptTask<ManTask>::cancel(Space& home, Propagator& p) {
-    _m.cancel(home, p, Int::PC_BOOL_VAL);
-    ManTask::cancel(home, p);
-  }
-
-
   /*
    * Optional fixed task
    */

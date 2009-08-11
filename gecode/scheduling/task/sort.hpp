@@ -35,9 +35,7 @@
  *
  */
 
-#include <gecode/scheduling/unary.hh>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
+namespace Gecode { namespace Scheduling {
 
   /// Sort by earliest start times
   template<class TaskView, bool inc>
@@ -222,6 +220,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     }
   }
 
-}}}
+}}
 
 // STATISTICS: scheduling-other

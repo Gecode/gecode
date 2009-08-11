@@ -38,7 +38,7 @@
 #ifndef __GECODE_SCHEDULING_UNARY_HH__
 #define __GECODE_SCHEDULING_UNARY_HH__
 
-#include <gecode/scheduling.hh>
+#include <gecode/scheduling/task.hh>
 
 /**
  * \namespace Gecode::Scheduling::Unary
@@ -129,59 +129,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTask& t);
 
 
-
-  /// Class to define an optional from a mandatory task
-  template<class ManTask>
-  class ManToOptTask : public ManTask {
-  protected:
-    /// Boolean view whether task is mandatory (= 1) or not
-    Int::BoolView _m;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ManToOptTask(void);
-    //@}
-
-    /// \name Value access
-    //@{
-    /// Whether task is mandatory
-    bool mandatory(void) const;
-    /// Whether task is excluded
-    bool excluded(void) const;
-    /// Whether task can still be optional
-    bool optional(void) const;
-    //@}
-
-    //@{
-    /// Test whether task is assigned
-    bool assigned(void) const;
-    //@}
-
-    /// \name Value update
-    //@{
-    /// Mark task as mandatory
-    ModEvent mandatory(Space& home);
-    /// Mark task as excluded
-    ModEvent excluded(Space& home);
-    //@}
-
-    /// \name Cloning
-    //@{
-    /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, ManToOptTask& t);
-    //@}
-
-    /// \name Dependencies
-    //@{
-    /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p);
-    /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p);
-    //@}
-  };
-
-
   /// Unary optional task with fixed processing time
   class OptFixTask : public ManToOptTask<ManFixTask> {
   protected:
@@ -209,41 +156,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 }}}
 
 #include <gecode/scheduling/unary/task.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
-
-  /// Task mapper: turns a task view into its dual
-  template<class TaskView>
-  class FwdToBwd : public TaskView {
-  public:
-    /// \name Value access
-    //@{
-    /// Return earliest start time
-    int est(void) const;
-    /// Return earliest completion time
-    int ect(void) const;
-    /// Return latest start time
-    int lst(void) const;
-    /// Return latest completion time
-    int lct(void) const;
-    //@}
-
-    /// \name Value update
-    //@{
-    /// Update earliest start time to \a n
-    ModEvent est(Space& home, int n);
-    /// Update earliest completion time to \a n
-    ModEvent ect(Space& home, int n);
-    /// Update latest start time to \a n
-    ModEvent lst(Space& home, int n);
-    /// Update latest completion time to \a n
-    ModEvent lct(Space& home, int n);
-    //@}
-  };
-
-}}}
-
-#include <gecode/scheduling/unary/task-mapper.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
@@ -276,312 +188,68 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTaskBwd& t);
 
-
-
-  /**
-   * \brief Traits class for mapping task views to tasks
-   *
-   * Each task view must specialize this traits class and add a \code
-   * typedef \endcode for the task corresponding to this task view.
-   */
-  template<class TaskView>
-  class TaskViewTraits {};
-
-  /// Task view traits for forward task views
-  template<>
-  class TaskViewTraits<ManFixTaskFwd> {
-  public:
-    /// The task type
-    typedef ManFixTask Task;
-  };
-
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<ManFixTaskBwd> {
-  public:
-    /// The task type
-    typedef ManFixTask Task;
-  };
-
-  /// Task view traits for forward optional task views
-  template<>
-  class TaskViewTraits<OptFixTaskFwd> {
-  public:
-    /// The task type
-    typedef OptFixTask Task;
-  };
-
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<OptFixTaskBwd> {
-  public:
-    /// The task type
-    typedef OptFixTask Task;
-  };
-
-
-  /**
-   * \brief Traits class for mapping tasks to task views
-   *
-   * Each task must specialize this traits class and add \code
-   * typedef \endcode for the task views corresponding to this task.
-   */
-  template<class Task>
-  class TaskTraits {};
-
-  /// Task traits for mandatory fixed tasks
-  template<>
-  class TaskTraits<ManFixTask> {
-  public:
-    /// The forward task view type
-    typedef ManFixTaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef ManFixTaskBwd TaskViewBwd;
-  };
-
-  /// Task traits for optional fixed tasks
-  template<>
-  class TaskTraits<OptFixTask> {
-  public:
-    /// The forward task view type
-    typedef OptFixTaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef OptFixTaskBwd TaskViewBwd;
-    /// The corresponding mandatory task
-    typedef ManFixTask ManTask;
-  };
-
 }}}
 
 #include <gecode/scheduling/unary/task-view.hpp>
 
-namespace Gecode { namespace Scheduling { namespace Unary {
+namespace Gecode { namespace Scheduling {
 
-  /// Task array
-  template<class Task>
-  class TaskArray {
-  private:
-    /// Number of tasks (size)
-    int n;
-    /// Tasks
-    Task* t;
+  /// Task view traits for forward task views
+  template<>
+  class TaskViewTraits<Unary::ManFixTaskFwd> {
   public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor (array of size 0)
-    TaskArray(void);
-    /// Allocate memory for \a n tasks (no initialization)
-    TaskArray(Space& home, int n);
-    /// Initialize from task array \a a (share elements)
-    TaskArray(const TaskArray<Task>& a);
-    /// Initialize from task array \a a (share elements)
-    const TaskArray<Task>& operator =(const TaskArray<Task>& a);
-    //@}
-
-    /// \name Array size
-    //@{
-    /// Return size of array (number of elements)
-    int size(void) const;
-    /// Set size of array (number of elements) to \a n, must not be larger
-    void size(int n);
-    //@}
-
-    /// \name Array elements
-    //@{
-    /// Return task at position \a i
-    Task& operator [](int i);
-    /// Return task at position \a i
-    const Task& operator [](int i) const;
-    //@}
-
-    /// \name Dependencies
-    //@{
-    /// Subscribe propagator \a p to all tasks
-    void subscribe(Space& home, Propagator& p);
-    /// Cancel subscription of propagator \a p for all tasks
-    void cancel(Space& home, Propagator& p);
-    //@}
-
-    /// \name Cloning
-    //@{
-    /// Update array to be a clone of array \a a
-    void update(Space&, bool share, TaskArray& a);
-    //@}
-
-  private:
-    static void* operator new(size_t);
-    static void  operator delete(void*,size_t);
+    /// The task type
+    typedef Unary::ManFixTask Task;
   };
 
-  /**
-   * \brief Print array elements enclosed in curly brackets
-   * \relates TaskArray
-   */
-  template<class Char, class Traits, class Task>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
-              const TaskArray<Task>& t);
-
-
-  /// Task view array
-  template<class TaskView>
-  class TaskViewArray {
-  protected:
-    /// The underlying task type
-    typedef typename TaskViewTraits<TaskView>::Task Task;
-    /// Access to task array
-    TaskArray<Task>& t;
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<Unary::ManFixTaskBwd> {
   public:
-    /// \name Constructors and initialization
-    //@{
-    /// Initialize from task array \a a
-    TaskViewArray(TaskArray<Task>& t);
-    //@}
-
-    /// \name Array information
-    //@{
-    /// Return size of array (number of elements)
-    int size(void) const;
-    /// Set size of array (number of elements) to \a n, must not be larger
-    void size(int n);
-    //@}
-
-    /// \name Array elements
-    //@{
-    /// Return task view at position \a i
-    TaskView& operator [](int i);
-    /// Return task view at position \a i
-    const TaskView& operator [](int i) const;
-    //@}
-  private:
-    static void* operator new(size_t);
-    static void  operator delete(void*,size_t);
+    /// The task type
+    typedef Unary::ManFixTask Task;
   };
 
-  /**
-   * \brief Print array elements enclosed in curly brackets
-   * \relates TaskViewArray
-   */
-  template<class Char, class Traits, class TaskView>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
-              const TaskViewArray<TaskView>& t);
-
-}}}
-
-#include <gecode/scheduling/unary/task-array.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
-
-  /// How to sort tasks
-  enum SortTaskOrder {
-    STO_EST, ///< Sort by earliest start times
-    STO_ECT, ///< Sort by earliest completion times
-    STO_LST, ///< Sort by latest start times
-    STO_LCT  ///< Sort by latest completion times
-  };
-
-  /// Sort task view array \a t according to \a sto and \a inc (increasing or decreasing)
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  void sort(TaskViewArray<TaskView>& t);
-
-  /// Initialize and sort \a map for task view array \a t according to \a sto and \a inc (increasing or decreasing)
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  void sort(int* map, const TaskViewArray<TaskView>& t);
-
-  /// Sort \a map with size \a n for task view array \a t according to \a sto and \a inc (increasing or decreasing)
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  void sort(int* map, int n, const TaskViewArray<TaskView>& t);
-
-}}}
-
-#include <gecode/scheduling/unary/sort.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
-
-  /// Allows to iterate over task views according to a specified order
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  class TaskViewIterator {
-  protected:
-    /// Map for iteration order
-    int* map;
-    /// Current position
-    int i;
-    /// Default constructor (no initialization)
-    TaskViewIterator(void);
+  /// Task view traits for forward optional task views
+  template<>
+  class TaskViewTraits<Unary::OptFixTaskFwd> {
   public:
-    /// Initialize iterator
-    TaskViewIterator(Region& r, const TaskViewArray<TaskView>& t);
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a task
-    bool operator ()(void) const;
-    /// How many tasks are left to be iterated
-    int left(void) const;
-    /// Move iterator to next task
-    void operator ++(void);
-    //@}
-
-    /// \name %Task access
-    //@{
-    /// Return current task position
-    int task(void) const;
-    //@}
+    /// The task type
+    typedef Unary::OptFixTask Task;
   };
 
-  /// Allows to iterate over mandatory task views according to a specified order
-  template<class OptTaskView, SortTaskOrder sto, bool inc>
-  class ManTaskViewIterator : public TaskViewIterator<OptTaskView,sto,inc> {
+  /// Task view traits for backward task views
+  template<>
+  class TaskViewTraits<Unary::OptFixTaskBwd> {
   public:
-    /// Initialize iterator with mandatory tasks
-    ManTaskViewIterator(Region& r, const TaskViewArray<OptTaskView>& t);
+    /// The task type
+    typedef Unary::OptFixTask Task;
   };
 
-}}}
 
-#include <gecode/scheduling/unary/task-iterator.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
-
-  /// Task trees for task views with node type \a Node
-  template<class TaskView, class Node>
-  class TaskTree {
-  protected:
-    /// The tasks from which the tree is computed
-    const TaskViewArray<TaskView>& tasks;
-  private:
-    /// Task nodes
-    Node* _node;
-    /// Map task number to leaf node number in right order
-    int* _leaf;
-    /// Return number of inner nodes
-    int _inner(void) const;
-    /// Return number of nodes for balanced binary tree
-    int _nodes(void) const;
-    /// Whether \a i is index of root
-    static bool _root(int i);
-    /// Return index of left child of \a i
-    static int _left(int i);
-    /// Return index of right child of \a i
-    static int _right(int i);
-    /// Return index of parent of \a i
-    static int _parent(int i);
-  protected:
-    /// Return leaf for task \a i
-    Node& leaf(int i);
-    /// Return root node
-    const Node& root(void) const;
-    /// Update tree after leaf for task \a i has changed
-    void update(int i);
-    /// Initialize tree after leaves have been initialized
-    void init(void);
-    /// Initialize tree for tasks \a t
-    TaskTree(Region& r, const TaskViewArray<TaskView>& t);
+  /// Task traits for mandatory fixed tasks
+  template<>
+  class TaskTraits<Unary::ManFixTask> {
+  public:
+    /// The forward task view type
+    typedef Unary::ManFixTaskFwd TaskViewFwd;
+    /// The backward task view type
+    typedef Unary::ManFixTaskBwd TaskViewBwd;
   };
 
-}}}
+  /// Task traits for optional fixed tasks
+  template<>
+  class TaskTraits<Unary::OptFixTask> {
+  public:
+    /// The forward task view type
+    typedef Unary::OptFixTaskFwd TaskViewFwd;
+    /// The backward task view type
+    typedef Unary::OptFixTaskBwd TaskViewBwd;
+    /// The corresponding mandatory task
+    typedef Unary::ManFixTask ManTask;
+  };
 
-#include <gecode/scheduling/unary/task-tree.hpp>
+}}
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
@@ -669,34 +337,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 }}}
 
 #include <gecode/scheduling/unary/omega-lambda-tree.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
-
-  /**
-   * \brief Propagator for unary resource
-   *
-   * Requires \code #include <gecode/scheduling/unary.hh> \endcode
-   * \ingroup FuncSchedulingProp
-   */
-  template<class Task>
-  class TaskProp : public Propagator {
-  protected:
-    /// Tasks
-    TaskArray<Task> t;
-    /// Constructor for creation
-    TaskProp(Space& home, TaskArray<Task>& t);
-    /// Constructor for cloning \a p
-    TaskProp(Space& home, bool shared, TaskProp<Task>& p);
-  public:
-    /// Cost function (defined as high linear)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-}}}
-
-#include <gecode/scheduling/unary/task-prop.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 

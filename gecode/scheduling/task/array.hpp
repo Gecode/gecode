@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace Scheduling { namespace Unary {
+namespace Gecode { namespace Scheduling {
 
   /*
    * Task array
@@ -174,6 +174,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
 
-}}}
+}}
 
 // STATISTICS: scheduling-other

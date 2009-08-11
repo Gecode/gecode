@@ -440,14 +440,14 @@ SCHEDULINGSRC0 = \
 
 SCHEDULINGHDR0 = \
 	cumulatives.hh cumulatives/val.hpp \
-	unary.hh unary/task.hpp unary/task-mapper.hpp unary/task-view.hpp \
-	unary/task-array.hpp unary/sort.hpp \
-	unary/task-iterator.hpp \
-	unary/task-tree.hpp unary/omega-tree.hpp unary/omega-lambda-tree.hpp \
+	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
+	task/iterator.hpp task/tree.hpp unary/prop.hpp \
+	unary.hh unary/task.hpp unary/task-view.hpp \
+	unary/omega-tree.hpp unary/omega-lambda-tree.hpp \
 	unary/purge.hpp unary/overload.hpp unary/detectable.hpp \
 	unary/not-first-not-last.hpp \
 	unary/edge-finding.hpp unary/subsumption.hpp \
-	unary/task-prop.hpp unary/man-prop.hpp unary/opt-prop.hpp \
+	unary/man-prop.hpp unary/opt-prop.hpp \
 	unary/task-branch.hpp unary/man-branch.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
@@ -473,7 +473,7 @@ export SCHEDULINGLIB		=
 export LINKSCHEDULING      	=
 endif
 SCHEDULINGBUILDDIRS	= \
-	scheduling unary
+	scheduling task unary
 
 
 #

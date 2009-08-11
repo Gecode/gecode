@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace Scheduling { namespace Unary {
+namespace Gecode { namespace Scheduling {
 
   template<class TaskView, class Node>
   forceinline int 
@@ -126,6 +126,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
         _leaf[i] += fst;
   }
 
-}}}
+}}
 
 // STATISTICS: scheduling-prop

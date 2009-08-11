@@ -35,53 +35,60 @@
  *
  */
 
-namespace Gecode { namespace Scheduling { namespace Unary {
+#include <algorithm>
 
-  /*
-   * Task mapper: map forward task to view to backward task View
-   */
-  template<class TaskView>
-  forceinline int 
-  FwdToBwd<TaskView>::est(void) const {
-    return -TaskView::lct();
+namespace Gecode { namespace Scheduling {
+
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  forceinline
+  TaskViewIterator<TaskView,sto,inc>::TaskViewIterator(void) {}
+
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  forceinline
+  TaskViewIterator<TaskView,sto,inc>
+  ::TaskViewIterator(Region& r, 
+                     const TaskViewArray<TaskView>& t)
+    : map(r.alloc<int>(t.size())), i(t.size()-1) {
+    sort<TaskView,sto,!inc>(map,t);
   }
-  template<class TaskView>
+
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  forceinline bool
+  TaskViewIterator<TaskView,sto,inc>::operator ()(void) const {
+    return i>=0;
+  }
+  template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline int
-  FwdToBwd<TaskView>::ect(void) const {
-    return -TaskView::lst();
+  TaskViewIterator<TaskView,sto,inc>::left(void) const {
+    return i+1;
   }
-  template<class TaskView>
+  template<class TaskView, SortTaskOrder sto, bool inc>
+  forceinline void
+  TaskViewIterator<TaskView,sto,inc>::operator ++(void) {
+    i--;
+  }
+
+  template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline int
-  FwdToBwd<TaskView>::lst(void) const {
-    return -TaskView::ect();
-  }
-  template<class TaskView>
-  forceinline int
-  FwdToBwd<TaskView>::lct(void) const {
-    return -TaskView::est();
+  TaskViewIterator<TaskView,sto,inc>::task(void) const {
+    return map[i];
   }
 
-  template<class TaskView>
-  forceinline ModEvent 
-  FwdToBwd<TaskView>::est(Space& home, int n) {
-    return TaskView::lct(home,-n);
-  }
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::ect(Space& home, int n) {
-    return TaskView::lst(home,-n);
-  }
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::lst(Space& home, int n) {
-    return TaskView::ect(home,-n);
-  }
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::lct(Space& home, int n) {
-    return TaskView::est(home,-n);
+
+  template<class OptTaskView, SortTaskOrder sto, bool inc>
+  forceinline
+  ManTaskViewIterator<OptTaskView,sto,inc>
+  ::ManTaskViewIterator(Region& r, 
+                        const TaskViewArray<OptTaskView>& t) {
+    map = r.alloc<int>(t.size()); i=0;
+    for (int j=t.size(); j--; )
+      if (t[j].mandatory())
+        map[i++]=j;
+    sort<OptTaskView,sto,!inc>(map,i,t); 
+    i--;
   }
 
-}}}
 
-// STATISTICS: scheduling-var
+}}
+
+// STATISTICS: scheduling-prop

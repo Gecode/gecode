@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace Scheduling { namespace Unary {
+namespace Gecode { namespace Scheduling {
 
   template<class Task>  
   forceinline
@@ -66,6 +66,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return sizeof(*this);
   }
 
-}}}
+}}
 
 // STATISTICS: scheduling-prop
