@@ -73,6 +73,13 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Compiles again if no threads available.
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor

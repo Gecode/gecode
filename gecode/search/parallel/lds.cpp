@@ -35,10 +35,14 @@
  *
  */
 
+#ifdef GECODE_HAS_THREADS
+
 #include <gecode/search/parallel/lds.hh>
 
 namespace Gecode { namespace Search { namespace Parallel {
 
 }}}
+
+#endif
 
 // STATISTICS: search-parallel

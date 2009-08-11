@@ -35,6 +35,8 @@
  *
  */
 
+#ifdef GECODE_HAS_THREADS
+
 #include <gecode/search/parallel/dfs.hh>
 
 namespace Gecode { namespace Search { namespace Parallel {
@@ -166,5 +168,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
 }}}
+
+#endif
 
 // STATISTICS: search-parallel
