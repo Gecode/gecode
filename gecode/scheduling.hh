@@ -204,8 +204,8 @@ namespace Gecode {
    *
    * Schedule tasks with start times \a s and processing times \a p
    * on a unary resource. The propagator uses the algorithms from:
-   * Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
-   * Charles University, Prague, Czech Republic, 2007.
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
    * propagation, not-first-not-last propagation, and edge finding.
@@ -227,8 +227,8 @@ namespace Gecode {
    * and whether a task is mandatory \a m (a task is mandatory if the
    * Boolean variable is 1) on a unary resource. The propagator uses the 
    * algorithms from:
-   * Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
-   * Charles University, Prague, Czech Republic, 2007.
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
    * propagation, not-first-not-last propagation, and edge finding.
@@ -237,8 +237,9 @@ namespace Gecode {
    *    \a p, or \a m are of different size.
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
    *    the same unassigned variable multiply.
-   *  - Throws an exception of type Int::OutOfLImits, if \a p contains
-   *    an integer that is not strictly positive.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p contains
+   *    an integer that is not strictly positive or that could generate
+   *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   unary(Space& home, const IntVarArgs& s, const IntArgs& p, 
@@ -253,8 +254,9 @@ namespace Gecode {
    *    and \a p are of different size.
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
    *    the same unassigned variable multiply.
-   *  - Throws an exception of type Int::OutOfLImits, if \a p contains
-   *    an integer that is not strictly positive.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p contains
+   *    an integer that is not strictly positive or that could generate
+   *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   order(Space& home, const IntVarArgs& s, const IntArgs& p);
@@ -269,12 +271,63 @@ namespace Gecode {
    *    and \a p are of different size.
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
    *    the same unassigned variable multiply.
-   *  - Throws an exception of type Int::OutOfLImits, if \a p contains
-   *    an integer that is not strictly positive.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p contains
+   *    an integer that is not strictly positive or that could generate
+   *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   order(Space& home, const IntArgs& r, const IntVarArgs& s, const IntArgs& p);
   //@}
+
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   *
+   * Schedule tasks with start times \a s, processing times \a p, and
+   * required capacity \a c on a cumulative resource. The propagator uses
+   * the algorithms from:
+   *   Petr Vilím, Max Energy Filtering Algorithm for Discrete
+   *   Cumulative Resources, CP-AI-OR, 2009.
+   *   Petr Vilím, Edge Finding Filtering Algorithm for Discrete
+   *   Cumulative Resources in O(kn log n), CP, 2009.
+   * 
+   * The propagator does nothing yet.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *    \a p, or \a c are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p or \a c contain
+   *    an integer that is not strictly positive or that could generate
+   *    an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Space& home, const IntVarArgs& s, const IntArgs& p,
+             const IntArgs& c);
+
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   *
+   * Schedule optional tasks with start times \a s, processing times \a p,
+   * required capacity \a c, and whether a task is mandatory \a m (a task is 
+   * mandatory if the Boolean variable is 1) on a cumulative resource.
+   * The propagator uses the algorithms from:
+   *   Petr Vilím, Max Energy Filtering Algorithm for Discrete
+   *   Cumulative Resources, CP-AI-OR, 2009.
+   *   Petr Vilím, Edge Finding Filtering Algorithm for Discrete
+   *   Cumulative Resources in O(kn log n), CP, 2009.
+   * 
+   * The propagator does nothing yet.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   *    \a p, \a c, or \a m are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p or \a c contain
+   *    an integer that is not strictly positive or that could generate
+   *    an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Space& home, const IntVarArgs& s, const IntArgs& p, 
+             const IntArgs& c, const BoolVarArgs& m);
+
 
 }
 
