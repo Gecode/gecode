@@ -271,6 +271,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class OmegaTree : public TaskTree<TaskView,OmegaNode> {
   protected:
     using TaskTree<TaskView,OmegaNode>::tasks;
+    using TaskTree<TaskView,OmegaNode>::leaf;
+    using TaskTree<TaskView,OmegaNode>::root;
+    using TaskTree<TaskView,OmegaNode>::init;
+    using TaskTree<TaskView,OmegaNode>::update;
   public:
     /// Initialize tree for tasks \a t
     OmegaTree(Region& r, const TaskViewArray<TaskView>& t);
@@ -312,6 +316,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   class OmegaLambdaTree : public TaskTree<TaskView,OmegaLambdaNode> {
   protected:
     using TaskTree<TaskView,OmegaLambdaNode>::tasks;
+    using TaskTree<TaskView,OmegaLambdaNode>::leaf;
+    using TaskTree<TaskView,OmegaLambdaNode>::root;
+    using TaskTree<TaskView,OmegaLambdaNode>::init;
+    using TaskTree<TaskView,OmegaLambdaNode>::update;
   public:
     /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
     OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t, 

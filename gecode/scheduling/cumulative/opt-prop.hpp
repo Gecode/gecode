@@ -79,7 +79,8 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class OptTask>
   ExecStatus 
   OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
-    return ES_NOFIX;
+    (void) home; (void) med;
+    return ES_FAILED;
   }
 
 }}}

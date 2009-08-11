@@ -331,6 +331,9 @@ namespace Gecode { namespace Scheduling {
   /// Allows to iterate over mandatory task views according to a specified order
   template<class OptTaskView, SortTaskOrder sto, bool inc>
   class ManTaskViewIterator : public TaskViewIterator<OptTaskView,sto,inc> {
+  protected:
+    using TaskViewIterator<OptTaskView,sto,inc>::map;
+    using TaskViewIterator<OptTaskView,sto,inc>::i;
   public:
     /// Initialize iterator with mandatory tasks
     ManTaskViewIterator(Region& r, const TaskViewArray<OptTaskView>& t);
