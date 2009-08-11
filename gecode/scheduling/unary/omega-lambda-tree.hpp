@@ -41,16 +41,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline void
   OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
-    p = lp = l.p + r.p;
-    ect = lect = std::max(l.ect + r.p, r.ect);
-    res = undef;
+    OmegaNode::init(l,r);
+    lp = p; lect = ect; res = undef;
   }
 
   forceinline void
   OmegaLambdaNode::update(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
-    p = l.p + r.p;
+    OmegaNode::update(l,r);
     lp = std::max(l.lp + r.p, l.p + r.lp);
-    ect = std::max(l.ect + r.p, r.ect);
     if ((r.lect >= l.ect + r.lp) && (r.lect >= l.lect + r.p)) {
       lect = r.lect; res = r.res;
     } else if (l.ect + r.lp >= l.lect + r.p) {

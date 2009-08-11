@@ -295,14 +295,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Node for an omega lambda tree
-  class OmegaLambdaNode {
+  class OmegaLambdaNode : public OmegaNode {
   public:
     /// Undefined task
     static const int undef = -1;
     /// Processing times for subtree
-    int p, lp;
+    int lp;
     /// Earliest completion times for subtree
-    int ect, lect;
+    int lect;
     /// Node which is responsible for lect
     int res;
     /// Initialize node from left child \a l and right child \a r
