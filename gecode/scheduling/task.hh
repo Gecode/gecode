@@ -409,9 +409,14 @@ namespace Gecode { namespace Scheduling {
     virtual size_t dispose(Space& home);
   };
 
+  /// Purge optional tasks that are excluded and possibly rewrite propagator
+  template<class OptTask>
+  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
+
 }}
 
 #include <gecode/scheduling/task/prop.hpp>
+#include <gecode/scheduling/task/purge.hpp>
 
 #endif
 

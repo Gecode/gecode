@@ -348,10 +348,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask>
-  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
-
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
   ExecStatus overload(Space& home, TaskArray<ManTask>& t);
@@ -437,7 +433,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 #include <gecode/scheduling/unary/edge-finding.hpp>
 
 #include <gecode/scheduling/unary/man-prop.hpp>
-#include <gecode/scheduling/unary/purge.hpp>
 #include <gecode/scheduling/unary/opt-prop.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {

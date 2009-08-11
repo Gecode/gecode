@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace Scheduling { namespace Unary {
+namespace Gecode { namespace Scheduling {
 
   template<class OptTask>
   ExecStatus
@@ -50,6 +50,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return (t.size() < 2) ? ES_SUBSUMED(p,home) : ES_OK;
   }
   
-}}}
+}}
 
 // STATISTICS: scheduling-prop
