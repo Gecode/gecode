@@ -35,47 +35,24 @@
  *
  */
 
-#include <algorithm>
-
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 
-  forceinline void
-  OmegaNode::init(const OmegaNode&, const OmegaNode&) {
-    e = 0; env = -Int::Limits::infinity;
-  }
+  // Overload checking for mandatory tasks
+  template<class ManTask>
+  ExecStatus
+  coverload(Space& home, TaskArray<ManTask>& t) {
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
+    sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
 
-  forceinline void
-  OmegaNode::update(const OmegaNode& l, const OmegaNode& r) {
-    e = l.e + r.e; env = std::max(l.env + r.e, r.env);
-  }
+    Region r(home);
+    OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,f);
 
-  template<class TaskView>
-  OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
-    : TaskTree<TaskView,OmegaNode>(r,t) {
-    for (int i=tasks.size(); i--; ) {
-      leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
+    for (int i=0; i<f.size(); i++) {
+      o.insert(i);
+      if (o.env() > f[i].c()*f[i].lct())
+        return ES_FAILED;
     }
-    init();
-  }
-
-  template<class TaskView>
-  forceinline void 
-  OmegaTree<TaskView>::insert(int i) {
-    leaf(i).e = tasks[i].e(); leaf(i).env = tasks[i].env();
-    update(i);
-  }
-
-  template<class TaskView>
-  forceinline void
-  OmegaTree<TaskView>::remove(int i) {
-    leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
-    update(i);
-  }
-
-  template<class TaskView>
-  forceinline int 
-  OmegaTree<TaskView>::env(void) const {
-    return root().env;
+    return ES_OK;
   }
   
 }}}

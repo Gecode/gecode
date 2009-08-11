@@ -450,7 +450,7 @@ SCHEDULINGHDR0 = \
 	unary/man-prop.hpp unary/opt-prop.hpp \
 	unary/task-branch.hpp unary/man-branch.hpp \
 	cumulative.hh cumulative/task.hpp cumulative/task-view.hpp \
-	cumulative/omega-tree.hpp \
+	cumulative/omega-tree.hpp cumulative/overload.hpp \
 	cumulative/man-prop.hpp cumulative/opt-prop.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)

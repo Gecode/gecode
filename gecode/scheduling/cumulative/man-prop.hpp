@@ -65,7 +65,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>
   ExecStatus 
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
-    (void) home;
+    GECODE_ME_CHECK(coverload(home,t));
     return ES_FAILED;
   }
 

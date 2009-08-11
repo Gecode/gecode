@@ -77,6 +77,8 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     int c(void) const;
     /// Return required energy
     int e(void) const;
+    /// Return energy envelope
+    int env(void) const;
     //@}
 
     /// \name Cloning
@@ -223,10 +225,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   /// Node for an omega tree
   class OmegaNode {
   public:
-    /// Processing time for subtree
-    int p;
-    /// Earliest completion time for subtree
-    int ect;
+    /// Energy for subtree
+    int e;
+    /// Eneregy envelope for subtree
+    int env;
     /// Initialize node from left child \a l and right child \a r
     void init(const OmegaNode& l, const OmegaNode& r);
     /// Update node from left child \a l and right child \a r
@@ -249,10 +251,8 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     void insert(int i);
     /// Remove task with index \a i
     void remove(int i);
-    /// Return earliest completion time of all tasks
-    int ect(void) const;
-    /// Return earliest completion time of all tasks but \a i
-    int ect(int i) const;
+    /// Return energy envelope of all tasks
+    int env(void) const;
   };
 
 }}}
@@ -260,6 +260,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 #include <gecode/scheduling/cumulative/omega-tree.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
+
+  /// Check mandatory tasks \a t for overload
+  template<class ManTask>
+  ExecStatus coverload(Space& home, TaskArray<ManTask>& t);
 
   /**
    * \brief Scheduling propagator for cumulative resource with mandatory tasks
@@ -309,6 +313,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
 }}}
 
+#include <gecode/scheduling/cumulative/overload.hpp>
 #include <gecode/scheduling/cumulative/man-prop.hpp>
 #include <gecode/scheduling/cumulative/opt-prop.hpp>
 
