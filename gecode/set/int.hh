@@ -67,9 +67,9 @@ namespace Gecode { namespace Set { namespace Int {
     MinElement(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is the minimal element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
@@ -92,10 +92,9 @@ namespace Gecode { namespace Set { namespace Int {
     NotMinElement(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
-                                                   const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is not the minimal element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
@@ -120,10 +119,9 @@ namespace Gecode { namespace Set { namespace Int {
                  Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
-                                                   const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post reified propagator for \a b iff \a x is the minimal element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
                            Gecode::Int::BoolView b);
@@ -147,10 +145,9 @@ namespace Gecode { namespace Set { namespace Int {
     MaxElement(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
-                                                   const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is the largest element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
@@ -173,10 +170,9 @@ namespace Gecode { namespace Set { namespace Int {
     NotMaxElement(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
-                                                   const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is not the largest element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
@@ -200,10 +196,9 @@ namespace Gecode { namespace Set { namespace Int {
     ReMaxElement(Space& home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home,
-                                                   const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post reified propagator for \a b iff \a x is the largest element of \a s
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
                            Gecode::Int::BoolView b);
@@ -227,9 +222,9 @@ namespace Gecode { namespace Set { namespace Int {
     Card(Space& home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ |s|=x \f$
     static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
   };
@@ -255,13 +250,13 @@ namespace Gecode { namespace Set { namespace Int {
     Match(Space& home, View, ViewArray<Gecode::Int::IntView>&);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*   copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
-    GECODE_SET_EXPORT virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete Propagator
-    GECODE_SET_EXPORT virtual size_t dispose(Space& home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
     static ExecStatus post(Space& home, View s,
                            ViewArray<Gecode::Int::IntView>& x);
@@ -411,13 +406,13 @@ namespace Gecode { namespace Set { namespace Int {
             View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*   copy(Space& home,bool);
+    virtual Actor* copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
-    GECODE_SET_EXPORT virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
-    GECODE_SET_EXPORT virtual size_t dispose(Space& home);
+    virtual size_t dispose(Space& home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
     static ExecStatus post(Space& home,
                            const SharedArray<int>& elements,
