@@ -95,45 +95,6 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for unary constraint
-     class ManFlexUnary : public Test {
-     public:
-       /// Create and register test
-       ManFlexUnary(int n)
-         : Test("Scheduling::Unary::Man::Flex::"+str(n),2*n,0,n*n) {
-         testsearch = false;
-         contest = CTL_NONE;
-       }
-       /// Create and register initial assignment
-       virtual Assignment* assignment(void) const {
-         return new RandomAssignment(arity,dom,500);
-       }
-       /// Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int n = x.size() / 2;
-         Gecode::IntArgs s(n), p(n);
-         for (int i=n; i--; ) {
-           s[i]=x[i]; p[i]=x[n+i];
-           if (p[i] <= 0)
-             return false;
-         }
-         for (int i=0; i<n; i++)
-           for (int j=i+1; j<n; j++)
-             if ((s[i]+p[i] > s[j]) && (s[j]+p[j] > s[i]))
-               return false;
-         return true;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         int n = x.size() / 2;
-         Gecode::IntVarArgs s(n), p(n);
-         for (int i=n; i--; ) {
-           s[i]=x[i]; p[i]=x[n+i];
-         }
-         Gecode::unary(home, s, p);
-       }
-     };
-
      /// Test for unary constraint with optional tasks
      class OptFixUnary : public Test {
      protected:
@@ -202,11 +163,6 @@ namespace Test { namespace Int {
      Gecode::IntArgs p3(6, 4,2,9,3,7,5);
      ManFixUnary mfu3(p3);
      OptFixUnary ofu3(p3);
-
-     /*
-     ManFlexUnary mflu3(3);
-     ManFlexUnary mflu4(4);
-     */
 
      //@}
 

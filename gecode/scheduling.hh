@@ -221,46 +221,6 @@ namespace Gecode {
   GECODE_SCHEDULING_EXPORT void
   unary(Space& home, const IntVarArgs& s, const IntArgs& p);
 
-
-  /** \brief Post propagators for scheduling tasks on unary resources
-   *
-   * Schedule tasks with start times \a s and processing times \a p
-   * on a unary resource. The propagator uses the algorithms from:
-   * Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
-   * Charles University, Prague, Czech Republic, 2007.
-   * 
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
-   *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
-   *    and \a p are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if \a s or \a p contain
-   *    the same unassigned variable multiply.
-   */
-  GECODE_SCHEDULING_EXPORT void
-  unary(Space& home, const IntVarArgs& s, const IntVarArgs& p);
-
-  /** \brief Post propagators for scheduling tasks on unary resources
-   *
-   * Schedule tasks with start times \a s, processing times \a p, and
-   * end times \a e on a unary resource. The propagator uses 
-   * the algorithms from:
-   * Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
-   * Charles University, Prague, Czech Republic, 2007.
-   * 
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
-   *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
-   *    \a p, or \a e are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if \a s, \a p, or \a e 
-   *    contain the same unassigned variable multiply.
-   */
-  GECODE_SCHEDULING_EXPORT void
-  unary(Space& home, const IntVarArgs& s, const IntVarArgs& p,
-        const IntVarArgs& e);
-
-
   /** \brief Post propagators for scheduling optional tasks on unary resources
    *
    * Schedule optional tasks with start times \a s, processing times \a p,

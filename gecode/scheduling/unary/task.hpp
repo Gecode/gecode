@@ -123,106 +123,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 
   /*
-   * Mandatory flexible task
-   */
-
-  forceinline
-  ManFlexTask::ManFlexTask(void) {}
-  forceinline
-  ManFlexTask::ManFlexTask(IntVar s, IntVar p, IntVar e) 
-    : _s(s), _p(p), _e(e) {}
-  forceinline void
-  ManFlexTask::init(IntVar s, IntVar p, IntVar e) {
-    _s=s; _p=p; _e=e;
-  }
-
-  forceinline int 
-  ManFlexTask::est(void) const {
-    return _s.min();
-  }
-  forceinline int
-  ManFlexTask::ect(void) const {
-    return _e.min();
-  }
-  forceinline int
-  ManFlexTask::lst(void) const {
-    return _s.max();
-  }
-  forceinline int
-  ManFlexTask::lct(void) const {
-    return _e.max();
-  }
-  forceinline int
-  ManFlexTask::p(void) const {
-    return _p.min();
-  }
-  forceinline IntVar
-  ManFlexTask::st(void) const {
-    return _s;
-  }
-  forceinline IntVar
-  ManFlexTask::pt(void) const {
-    return _p;
-  }
-  forceinline IntVar
-  ManFlexTask::et(void) const {
-    return _e;
-  }
-
-  forceinline bool
-  ManFlexTask::assigned(void) const {
-    return _s.assigned() && _p.assigned() && _e.assigned();
-  }
-
-  forceinline ModEvent 
-  ManFlexTask::est(Space& home, int n) {
-    return _s.gq(home,n);
-  }
-  forceinline ModEvent
-  ManFlexTask::ect(Space& home, int n) {
-    return _e.gq(home,n);
-  }
-  forceinline ModEvent
-  ManFlexTask::lst(Space& home, int n) {
-    return _s.lq(home,n);
-  }
-  forceinline ModEvent
-  ManFlexTask::lct(Space& home, int n) {
-    return _e.lq(home,n);
-  }
-
-  forceinline void
-  ManFlexTask::update(Space& home, bool share, ManFlexTask& t) {
-    _s.update(home,share,t._s);
-    _p.update(home,share,t._p);
-    _e.update(home,share,t._e);
-  }
-
-  forceinline void
-  ManFlexTask::subscribe(Space& home, Propagator& p) {
-    _s.subscribe(home, p, Int::PC_INT_BND);
-    _p.subscribe(home, p, Int::PC_INT_BND);
-    _e.subscribe(home, p, Int::PC_INT_BND);
-  }
-  forceinline void
-  ManFlexTask::cancel(Space& home, Propagator& p) {
-    _s.cancel(home, p, Int::PC_INT_BND);
-    _p.cancel(home, p, Int::PC_INT_BND);
-    _e.cancel(home, p, Int::PC_INT_BND);
-  }
-
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTask& t) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.pt() << ':' << t.lct();
-    return os << s.str();
-  }
-    
-
-
-  /*
    * Turn mandatory into optional task
    */
   template<class ManTask>
@@ -305,32 +205,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.p() << ':' << t.lct() << ':'
-      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
-    return os << s.str();
-  }
-    
-
-  /*
-   * Optional flexible task
-   */
-
-  forceinline
-  OptFlexTask::OptFlexTask(void) {}
-  forceinline
-  OptFlexTask::OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m) {
-    ManFlexTask::init(s,p,e); _m=m;
-  }
-  forceinline void
-  OptFlexTask::init(IntVar s, IntVar p, IntVar e, BoolVar m) {
-    ManFlexTask::init(s,p,e); _m=m;
-  }
-
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTask& t) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.pt() << ':' << t.lct() << ':'
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
