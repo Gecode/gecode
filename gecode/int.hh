@@ -111,6 +111,10 @@ namespace Gecode { namespace Int {
     void check(int n, const char* l);
     /// Check whether double \a n is in integer range, otherwise throw out of limits exception with information \a l
     void check(double n, const char* l);
+    /// Check whether integer \a n is in range and strictly positive, otherwise throw out of limits with information \a l
+    void positive(int n, const char* l);
+    /// Check whether double \a n is in integer range and strictly postive, otherwise throw out of limits exception with information \a l
+    void positive(double n, const char* l);
   }
 
 }}

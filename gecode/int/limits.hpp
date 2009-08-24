@@ -49,6 +49,18 @@ namespace Gecode { namespace Int {
         throw OutOfLimits(l);
     }
 
+    inline void
+    Limits::positive(int n, const char* l) {
+      if ((n <= 0) || (n > max))
+        throw OutOfLimits(l);
+    }
+
+    inline void
+    Limits::positive(double n, const char* l) {
+      if ((n <= 0.0) || (n > max))
+        throw OutOfLimits(l);
+    }
+
 }}
 
 // STATISTICS: int-var

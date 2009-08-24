@@ -275,8 +275,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   class ManProp : public TaskProp<ManTask> {
   protected:
     using TaskProp<ManTask>::t;
+    /// Resource capacity
+    int c;
     /// Constructor for creation
-    ManProp(Space& home, TaskArray<ManTask>& t);
+    ManProp(Space& home, int c, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
     ManProp(Space& home, bool shared, ManProp& p);
   public:
@@ -285,7 +287,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on cumulative resource
-    static ExecStatus post(Space& home, TaskArray<ManTask>& t);
+    static ExecStatus post(Space& home, int c, TaskArray<ManTask>& t);
   };
 
   /**
@@ -298,8 +300,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   class OptProp : public TaskProp<OptTask> {
   protected:
     using TaskProp<OptTask>::t;
+    /// Resource capacity
+    int c;
     /// Constructor for creation
-    OptProp(Space& home, TaskArray<OptTask>& t);
+    OptProp(Space& home, int c, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
     OptProp(Space& home, bool shared, OptProp& p);
   public:
@@ -308,7 +312,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on cumulative resource
-    static ExecStatus post(Space& home, TaskArray<OptTask>& t);
+    static ExecStatus post(Space& home, int c, TaskArray<OptTask>& t);
   };
 
 }}}

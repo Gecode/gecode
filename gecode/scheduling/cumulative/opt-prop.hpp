@@ -41,17 +41,17 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   
   template<class OptTask>
   forceinline
-  OptProp<OptTask>::OptProp(Space& home, TaskArray<OptTask>& t)
-    : TaskProp<OptTask>(home,t) {}
+  OptProp<OptTask>::OptProp(Space& home, int c0, TaskArray<OptTask>& t)
+    : TaskProp<OptTask>(home,t), c(c0) {}
 
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Space& home, bool shared, OptProp<OptTask>& p) 
-    : TaskProp<OptTask>(home,shared,p) {}
+    : TaskProp<OptTask>(home,shared,p), c(p.c) {}
 
   template<class OptTask>
   forceinline ExecStatus 
-  OptProp<OptTask>::post(Space& home, TaskArray<OptTask>& t) {
+  OptProp<OptTask>::post(Space& home, int c, TaskArray<OptTask>& t) {
     int m=0, o=0;
     for (int i=t.size(); i--; ) {
       if (t[i].mandatory())
@@ -63,10 +63,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i].st(),t[i].p(),t[i].c());
-      return ManProp<typename TaskTraits<OptTask>::ManTask>::post(home,mt);
+      return ManProp<typename TaskTraits<OptTask>::ManTask>::post(home,c,mt);
     }
     if (o+m > 1)
-      (void) new (home) OptProp<OptTask>(home,t);
+      (void) new (home) OptProp<OptTask>(home,c,t);
     return ES_OK;
   }
 
@@ -103,7 +103,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
         mt[i].init(t[i].st(),t[i].p(),t[i].c());
       GECODE_REWRITE(*this,
                      (ManProp<typename TaskTraits<OptTask>::ManTask>
-                      ::post(home,mt)));
+                      ::post(home,c,mt)));
     }
     // Truncate array to only contain mandatory tasks
     t.size(i);
