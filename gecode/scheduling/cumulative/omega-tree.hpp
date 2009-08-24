@@ -61,7 +61,8 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class TaskView>
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
-    leaf(i).e = tasks[i].e(); leaf(i).env = tasks[i].env();
+    leaf(i).e = tasks[i].e(); 
+    // leaf(i).env = tasks[i].env();
     update(i);
   }
 

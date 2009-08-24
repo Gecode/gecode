@@ -59,10 +59,6 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   ManFixTask::e(void) const {
     return p()*c();
   }
-  forceinline int
-  ManFixTask::env(void) const {
-    return ect()*c();
-  }
 
   forceinline void
   ManFixTask::update(Space& home, bool share, ManFixTask& t) {

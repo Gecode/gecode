@@ -40,7 +40,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   // Overload checking for mandatory tasks
   template<class ManTask>
   ExecStatus
-  coverload(Space& home, TaskArray<ManTask>& t) {
+  overload(Space& home, int c, TaskArray<ManTask>& t) {
     TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
     sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
 
@@ -49,7 +49,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
     for (int i=0; i<f.size(); i++) {
       o.insert(i);
-      if (o.env() > f[i].c()*f[i].lct())
+      if (o.env() > c*f[i].lct())
         return ES_FAILED;
     }
     return ES_OK;

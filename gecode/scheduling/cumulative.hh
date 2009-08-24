@@ -77,8 +77,6 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     int c(void) const;
     /// Return required energy
     int e(void) const;
-    /// Return energy envelope
-    int env(void) const;
     //@}
 
     /// \name Cloning
@@ -263,7 +261,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
-  ExecStatus coverload(Space& home, TaskArray<ManTask>& t);
+  ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
 
   /**
    * \brief Scheduling propagator for cumulative resource with mandatory tasks
