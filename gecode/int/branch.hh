@@ -109,8 +109,8 @@ namespace Gecode { namespace Int { namespace Branch {
     typedef _View View;
     /// Value type
     typedef int Val;
-    /// Description type
-    typedef Support::RandomGenerator Desc;
+    /// Choice type
+    typedef Support::RandomGenerator Choice;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// Default constructor
@@ -121,10 +121,10 @@ namespace Gecode { namespace Int { namespace Branch {
     int val(Space& home, _View x);
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, _View x, int n);
-    /// Return description
-    Support::RandomGenerator description(Space& home);
-    /// Commit to description
-    void commit(Space& home, const Support::RandomGenerator& d, unsigned a);
+    /// Return choice
+    Support::RandomGenerator choice(Space& home);
+    /// Commit to choice
+    void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ValRnd& vs);
     /// Delete value selection
@@ -192,11 +192,10 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for creation
     ViewValuesBranching(Space& home, ViewArray<typename ViewSel::View>& x,
                         ViewSel& vi_s);
-    /// Return branching description (of type PosValuesDesc)
-    virtual const BranchingDesc* description(Space& home);
-    /// Perform commit for branching description \a d and alternative \a a
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
-                              unsigned int a);
+    /// Return choice
+    virtual const Choice* choice(Space& home);
+    /// Perform commit for choice \a c and alternative \a a
+    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
   };

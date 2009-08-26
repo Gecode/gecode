@@ -320,21 +320,21 @@ public:
   protected:
     /// Cache of first unassigned value
     mutable int start;
-    /// Branching description
-    class Description : public BranchingDesc {
+    /// Choice
+    class Choice : public Gecode::Choice {
     public:
       /// Position of variable
       int pos;
       /// Value of variable
       int val;
-      /** Initialize description for branching \a b, number of
+      /** Initialize choice for branching \a b, number of
        *  alternatives \a a, position \a pos0, and value \a val0.
        */
-      Description(const Branching& b, unsigned int a, int pos0, int val0)
-        : BranchingDesc(b,a), pos(pos0), val(val0) {}
+      Choice(const Branching& b, unsigned int a, int pos0, int val0)
+        : Gecode::Choice(b,a), pos(pos0), val(val0) {}
       /// Report size occupied
       virtual size_t size(void) const {
-        return sizeof(Description);
+        return sizeof(Choice);
       }
     };
 
@@ -358,8 +358,8 @@ public:
       // No non-assigned orders left
       return false;
     }
-    /// Return branching description
-    virtual BranchingDesc* description(Space& home) {
+    /// Return choice
+    virtual Gecode::Choice* choice(Space& home) {
       SteelMill& sm = static_cast<SteelMill&>(home);
       assert(!sm.slab[start].assigned());
       // Find order with a) minimum size, b) largest weight
@@ -386,19 +386,18 @@ public:
         ++firstzero;
       assert(pos < sm.nslabs &&
              val < sm.norders);
-      return new Description(*this, val<firstzero ? 2 : 1, pos, val);
+      return new Choice(*this, (val<firstzero) ? 2 : 1, pos, val);
     }
-    /// Perform commit for branching description \a d and alternative \a a.
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
+    /// Perform commit for choice \a _c and alternative \a a
+    virtual ExecStatus commit(Space& home, const Gecode::Choice& _c,
                               unsigned int a) {
       SteelMill& sm = static_cast<SteelMill&>(home);
-      const Description& desc =
-        static_cast<const Description&>(d);
+      const Choice& c = static_cast<const Choice&>(_c);
       if (a)
-        return me_failed(Int::IntView(sm.slab[desc.pos]).nq(home, desc.val))
+        return me_failed(Int::IntView(sm.slab[c.pos]).nq(home, c.val))
           ? ES_FAILED : ES_OK;
       else
-        return me_failed(Int::IntView(sm.slab[desc.pos]).eq(home, desc.val))
+        return me_failed(Int::IntView(sm.slab[c.pos]).eq(home, c.val))
           ? ES_FAILED : ES_OK;
     }
     /// Copy branching

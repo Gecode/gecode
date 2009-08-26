@@ -43,8 +43,8 @@ namespace Gecode {
    * \ingroup TaskBranchViewVal
    */
   //@{
-  /// Emty value selection description
-  class EmptyValSelDesc {
+  /// Emty value selection choice
+  class EmptyValSelChoice {
   public:
     /// Report size occupied
     size_t size(void) const;
@@ -62,18 +62,18 @@ namespace Gecode {
     typedef _View View;
     /// Value type
     typedef _Val Val;
-    /// Description type
-    typedef EmptyValSelDesc Desc;
+    /// Choice type
+    typedef EmptyValSelChoice Choice;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// Default constructor
     ValSelBase(void);
     /// Constructor for initialization
     ValSelBase(Space& home, const ValBranchOptions& vbo);
-    /// Return description
-    EmptyValSelDesc description(Space& home);
-    /// Commit to description
-    void commit(Space& home, const EmptyValSelDesc& d, unsigned a);
+    /// Return choice
+    EmptyValSelChoice choice(Space& home);
+    /// Commit to choice
+    void commit(Space& home, const EmptyValSelChoice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ValSelBase& vs);
     /// Delete value selection
@@ -82,10 +82,10 @@ namespace Gecode {
   //@}
 
 
-  // Empty value selection description
+  // Empty value selection choice
   forceinline size_t
-  EmptyValSelDesc::size(void) const {
-    return sizeof(EmptyValSelDesc);
+  EmptyValSelChoice::size(void) const {
+    return sizeof(EmptyValSelChoice);
   }
 
   // Value selection base class
@@ -96,13 +96,13 @@ namespace Gecode {
   forceinline
   ValSelBase<View,Val>::ValSelBase(Space&, const ValBranchOptions&) {}
   template<class View, class Val>
-  forceinline EmptyValSelDesc
-  ValSelBase<View,Val>::description(Space&) {
-    EmptyValSelDesc d; return d;
+  forceinline EmptyValSelChoice
+  ValSelBase<View,Val>::choice(Space&) {
+    EmptyValSelChoice c; return c;
   }
   template<class View, class Val>
   forceinline void
-  ValSelBase<View,Val>::commit(Space&, const EmptyValSelDesc&, unsigned int) {}
+  ValSelBase<View,Val>::commit(Space&, const EmptyValSelChoice&, unsigned int) {}
   template<class View, class Val>
   forceinline void
   ValSelBase<View,Val>::update(Space&, bool, ValSelBase<View,Val>&) {}

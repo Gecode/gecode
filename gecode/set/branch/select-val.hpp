@@ -143,14 +143,14 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   template<bool inc>
   forceinline Support::RandomGenerator
-  ValRnd<inc>::description(Space&) {
+  ValRnd<inc>::choice(Space&) {
     return r;
   }
   template<bool inc>
   forceinline void
-  ValRnd<inc>::commit(Space&, const Support::RandomGenerator& d,
+  ValRnd<inc>::commit(Space&, const Support::RandomGenerator& c,
                       unsigned int) {
-    r = d;
+    r = c;
   }
   template<bool inc>
   forceinline void

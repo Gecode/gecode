@@ -59,15 +59,16 @@ namespace Gecode { namespace Gist {
       /// Special branching description
       const SpecialDesc* special;
       /// Branching description
-      const BranchingDesc* branch;
+      const Choice* branch;
       /// Step description
       const StepDesc* step;
     } desc;
 
     /// Constructor
-    Branch(int a, const BranchingDesc* d, SpaceNode* best = NULL, BranchKind bk = BK_NORMAL)
+    Branch(int a, const Choice* c, 
+           SpaceNode* best = NULL, BranchKind bk = BK_NORMAL)
       : alternative(a), ownBest(best), branchKind(bk) {
-        desc.branch = d;
+        desc.branch = c;
       }
     Branch(int a, const SpecialDesc* d, BranchKind bk, SpaceNode* best = NULL)
       : alternative(a), ownBest(best), branchKind(bk) {
@@ -110,13 +111,13 @@ namespace Gecode { namespace Gist {
         SpaceNode* parent = curNode->getParent();
         int alternative = curNode->getAlternative();
 
-        if(curNode->getStatus() == STEP) {
+        if (curNode->getStatus() == STEP) {
           Branch b(alternative, curNode->desc.step, BK_STEP);
           stck.push(b);
-          if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
+          if (lastFixpoint == NULL && parent->getStatus() == BRANCH) {
              lastFixpoint = parent;
           }
-      } else if(curNode->getStatus() == SPECIAL) {
+      } else if (curNode->getStatus() == SPECIAL) {
           Branch b(alternative, curNode->desc.special, BK_SPECIAL_IN);
           stck.push(b);
           if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
@@ -124,7 +125,7 @@ namespace Gecode { namespace Gist {
           }
           specialNodeOnPath = true;
           // TODO nikopp: if the root node is failed, it neither has a copy nor a parent and we are not allowed to do the following
-        } else if(parent->getStatus() == SPECIAL || parent->getStatus() == STEP) {
+        } else if (parent->getStatus() == SPECIAL || parent->getStatus() == STEP) {
            Branch b(alternative, curNode->desc.special, BK_SPECIAL_OUT);
           stck.push(b);
         } else {
@@ -376,7 +377,7 @@ namespace Gecode { namespace Gist {
       case SS_SOLVED:
         {
           // Deletes all pending branchings
-          (void) workingSpace->description();
+          (void) workingSpace->choice();
           kids = 0;
           setStatus(SOLVED);
           setHasOpenChildren(false);
@@ -392,7 +393,7 @@ namespace Gecode { namespace Gist {
         }
         break;
       case SS_BRANCH:
-        desc.branch = workingSpace->description();
+        desc.branch = workingSpace->choice();
         kids = desc.branch->alternatives();
         setHasOpenChildren(true);
         setStatus(BRANCH);

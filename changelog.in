@@ -73,6 +73,17 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+A branching is now a brancher and a branching description is now a choice. 
+[MORE]
+Classes and member functions have been renamed accordingly. The
+change is necessary due to proper explanation in the forthcoming
+"Programming with Gecode".
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor

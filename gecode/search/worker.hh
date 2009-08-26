@@ -66,14 +66,14 @@ namespace Gecode { namespace Search {
     bool stop(const Options& o, size_t sz);
     /// Check whether engine has been stopped
     bool stopped(void) const;
-    /// New space \a s and branching description \a d get pushed on stack
-    void push(const Space* s, const BranchingDesc* d);
+    /// New space \a s and choice \a c get pushed on stack
+    void push(const Space* s, const Choice* c);
     /// Space \a s1 is replaced by space \a s2 due to constraining
     void constrained(const Space* s1, const Space* s2);
     /// New space \a s is added for adaptive recomputation
     void adapt(const Space* s);
-    /// Space \a s and branching description \a d get popped from stack
-    void pop(const Space* s, const BranchingDesc* d);
+    /// Space \a s and choice \a c get popped from stack
+    void pop(const Space* s, const Choice* c);
     /// Space \a s gets used for LAO (removed from stack)
     void lao(const Space* s);
     /// Space \a s becomes current space (\a s = NULL: current space deleted)
@@ -118,10 +118,10 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  Worker::push(const Space* s, const BranchingDesc* d) {
+  Worker::push(const Space* s, const Choice* c) {
     if (s != NULL)
       mem_total += mem_space + s->allocated();
-    mem_total += d->size();
+    mem_total += c->size();
     if (mem_total > memory)
       memory = mem_total;
   }
@@ -147,10 +147,10 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  Worker::pop(const Space* s, const BranchingDesc* d) {
+  Worker::pop(const Space* s, const Choice* c) {
     if (s != NULL)
       mem_total -= mem_space + s->allocated();
-    mem_total -= d->size();
+    mem_total -= c->size();
   }
 
   forceinline void

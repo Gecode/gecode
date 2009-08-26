@@ -524,16 +524,14 @@ class Gecode::Branching. A common abstraction for defining
 branchings based on view and value selection is provided by the
 class Gecode::ViewValBranching.
 
-\section GlossaryBranchingDesc Branching description
+\section GlossaryChoice Choice
 
-A branching description speeds up recomputation by providing
-batch recomputation. It is created by a branching (\ref
+A choice speeds up recomputation by providing
+path recomputation. It is created by a branching (\ref
 GlossaryBranching) and allows to replay the effect of that
 branching without the need to first perform constraint
-propagation. The base-class for branching descriptions is
-Gecode::BranchingDesc. An example for a branching description
-that works together with branchings based on view and value
-selection is Gecode::PosValDesc.
+propagation. The base-class for choices is
+Gecode::Choice.
 
 \section GlossarySpace Computation space
 

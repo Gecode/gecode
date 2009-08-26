@@ -1019,15 +1019,15 @@ namespace Gecode {
   class Branching;
 
   /**
-   * \brief Branch description for batch recomputation
+   * \brief Choice for path recomputation
    *
    * Must be refined by inheritance such that the information stored
-   * inside a branching description is sufficient to redo a tell
-   * performed by a particular branching.
+   * inside a choice is sufficient to redo a commit performed by a
+   * particular branching.
    *
    * \ingroup TaskActor
    */
-  class BranchingDesc {
+  class Choice {
     friend class Space;
   private:
     unsigned int _id;  ///< Identity to match creating branching
@@ -1037,13 +1037,13 @@ namespace Gecode {
     unsigned int id(void) const;
   protected:
     /// Initialize for particular branching \a b and alternatives \a a
-    BranchingDesc(const Branching& b, const unsigned int a);
+    Choice(const Branching& b, const unsigned int a);
   public:
     /// Return number of alternatives
     unsigned int alternatives(void) const;
     /// Destructor
-    GECODE_KERNEL_EXPORT virtual ~BranchingDesc(void);
-    /// Report size occupied by branching description
+    GECODE_KERNEL_EXPORT virtual ~Choice(void);
+    /// Report size occupied by choice
     virtual size_t size(void) const = 0;
     /// Allocate memory from heap
     static void* operator new(size_t);
@@ -1063,7 +1063,7 @@ namespace Gecode {
   class GECODE_VTABLE_EXPORT Branching : public Actor {
     friend class ActorLink;
     friend class Space;
-    friend class BranchingDesc;
+    friend class Choice;
   private:
     /// Unique identity
     unsigned int _id;
@@ -1089,21 +1089,20 @@ namespace Gecode {
      */
     virtual bool status(const Space& home) const = 0;
     /**
-     * \brief Return branching description
+     * \brief Return choice
      *
      * Note that this method relies on the fact that it is called
      * immediately after a previous call to status. Moreover, the
      * member function can only be called once.
      */
-    virtual const BranchingDesc* description(Space& home) = 0;
+    virtual const Choice* choice(Space& home) = 0;
     /**
-     * \brief Commit for branching description \a d and alternative \a a
+     * \brief Commit for choice \a c and alternative \a a
      *
      * The current branching in the space \a home performs a commit from
-     * the information provided by the branching description \a d
-     * and the alternative \a a.
+     * the information provided by the choice \a c and the alternative \a a.
      */
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
+    virtual ExecStatus commit(Space& home, const Choice& c, 
                               unsigned int a) = 0;
     /// Return unsigned branching id
     unsigned int id(void) const;
@@ -1207,7 +1206,7 @@ namespace Gecode {
      * Note that \a b_commit can point to an earlier branching
      * than \a b_status. This reflects the fact that the earlier
      * branching is already done (that is, status on that branching
-     * returns false) but there might be still branching descriptions
+     * returns false) but there might be still choices
      * referring to the earlier branching.
      *
      * If equal to &bl, no branching does exist.
@@ -1312,39 +1311,39 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT Space* _clone(bool share=true);
 
     /**
-     * \brief Commit branching description \a d and for alternative \a a
+     * \brief Commit choice \a c for alternative \a a
      *
      * The current branching in the space performs a commit from
-     * the information provided by the branching description \a d
+     * the information provided by the choice \a c
      * and the alternative \a a. The statistics information \a stat is
      * updated.
      *
-     * Note that no propagation is perfomed (to support batch
+     * Note that no propagation is perfomed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
      *
-     * Committing with branching descriptions must be carried
-     * out in the same order as the branch descriptions have been
-     * obtained by the member function Space::description().
+     * Committing with choices must be carried
+     * out in the same order as the choices have been
+     * obtained by the member function Space::choice().
      *
      * It is perfectly okay to add constraints interleaved with
-     * branching descriptions (provided they are in the right order).
+     * choices (provided they are in the right order).
      * However, if propagation is performed by calling the member
-     * function status and then new branching descriptions are
-     * computed, these branching descriptions are different.
+     * function status and then new choices are
+     * computed, these choices are different.
      *
-     * Only descriptions can be used that are up-to-date in the following
-     * sense: if a new description is created (via the description member
-     * function), no older descriptions can be used.
+     * Only choices can be used that are up-to-date in the following
+     * sense: if a new choice is created (via the choice member
+     * function), no older choices can be used.
      *
      * Committing throws the following exceptions:
      *  - SpaceNoBranching, if the space has no current branching (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
-     *    of alternatives supported by the branching description \a d.
+     *    of alternatives supported by the choice \a c.
      */
     GECODE_KERNEL_EXPORT
-    void _commit(const BranchingDesc& d, unsigned int a);
+    void _commit(const Choice& c, unsigned int a);
 
   public:
     /**
@@ -1419,14 +1418,14 @@ namespace Gecode {
     SpaceStatus status(StatusStatistics& stat=unused_status);
 
     /**
-     * \brief Create new branching description for current branching
+     * \brief Create new choice for current branching
      *
      * This member function can only be called after the member function
      * Space::status on the same space has been called and in between
      * no non-const member function has been called on this space.
      *
      * Moreover, the member function can only be called at most once
-     * (otherwise, it might generate conflicting descriptions).
+     * (otherwise, it might generate conflicting choices).
      *
      * Note that the above invariant only pertains to calls of member
      * functions of the same space. If the invariant is violated, the
@@ -1434,14 +1433,14 @@ namespace Gecode {
      * applied to a space with no current branching, the system will
      * crash.
      *
-     * After a new description has been created, no older descriptions
+     * After a new choice has been created, no older choices
      * can be used on the space.
      *
      * If the status() member function has returned that the space has
      * no more branchings (that is, the result was either SS_FAILED or
-     * SS_SOLVED), a call to description() will return NULL and purge
-     * all remaining branching inside the space. This is interesting
-     * for the case SS_SOLVED, where the call to description serves as
+     * SS_SOLVED), a call to choice() will return NULL and purge
+     * all remaining branchings inside the space. This is interesting
+     * for the case SS_SOLVED, where the call to choice can serve as
      * garbage collection.
      *
      * Throws an exception of type SpaceNotStable when applied to a not
@@ -1450,7 +1449,7 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    const BranchingDesc* description(void);
+    const Choice* choice(void);
 
     /**
      * \brief Clone space
@@ -1472,40 +1471,40 @@ namespace Gecode {
     Space* clone(bool share=true, CloneStatistics& stat=unused_clone) const;
 
     /**
-     * \brief Commit branching description \a d and for alternative \a a
+     * \brief Commit choice \a c for alternative \a a
      *
      * The current branching in the space performs a commit from
-     * the information provided by the branching description \a d
+     * the information provided by the choice \a c
      * and the alternative \a a. The statistics information \a stat is
      * updated.
      *
-     * Note that no propagation is perfomed (to support batch
+     * Note that no propagation is perfomed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
      *
-     * Committing with branching descriptions must be carried
-     * out in the same order as the branch descriptions have been
-     * obtained by the member function Space::description().
+     * Committing with choices must be carried
+     * out in the same order as the choices have been
+     * obtained by the member function Space::choice().
      *
      * It is perfectly okay to add constraints interleaved with
-     * branching descriptions (provided they are in the right order).
+     * choices (provided they are in the right order).
      * However, if propagation is performed by calling the member
-     * function status and then new branching descriptions are
-     * computed, these branching descriptions are different.
+     * function status and then new choices are
+     * computed, these choices are different.
      *
-     * Only descriptions can be used that are up-to-date in the following
-     * sense: if a new description is created (via the description member
-     * function), no older descriptions can be used.
+     * Only choices can be used that are up-to-date in the following
+     * sense: if a new choice is created (via the choice member
+     * function), no older choices can be used.
      *
      * Committing throws the following exceptions:
      *  - SpaceNoBranching, if the space has no current branching (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
-     *    of alternatives supported by the branching description \a d.
+     *    of alternatives supported by the choice \a c.
      *
      * \ingroup TaskSearch
      */
-    void commit(const BranchingDesc& d, unsigned int a,
+    void commit(const Choice& c, unsigned int a,
                 CommitStatistics& stat=unused_commit);
 
     /**
@@ -1882,11 +1881,11 @@ namespace Gecode {
   }
 
   forceinline void
-  BranchingDesc::operator delete(void* p) {
+  Choice::operator delete(void* p) {
     heap.rfree(p);
   }
   forceinline void*
-  BranchingDesc::operator new(size_t s) {
+  Choice::operator new(size_t s) {
     return heap.ralloc(s);
   }
 
@@ -2403,9 +2402,8 @@ namespace Gecode {
   }
 
   forceinline void
-  Space::commit(const BranchingDesc& d, unsigned int a,
-                CommitStatistics&) {
-    _commit(d,a);
+  Space::commit(const Choice& c, unsigned int a, CommitStatistics&) {
+    _commit(c,a);
   }
 
   forceinline size_t
@@ -2526,25 +2524,25 @@ namespace Gecode {
 
 
   /*
-   * Branching description
+   * Choices
    *
    */
   forceinline
-  BranchingDesc::BranchingDesc(const Branching& b, const unsigned int a)
+  Choice::Choice(const Branching& b, const unsigned int a)
     : _id(b.id()), _alt(a) {}
 
   forceinline unsigned int
-  BranchingDesc::alternatives(void) const {
+  Choice::alternatives(void) const {
     return _alt;
   }
 
   forceinline unsigned int
-  BranchingDesc::id(void) const {
+  Choice::id(void) const {
     return _id;
   }
 
   forceinline
-  BranchingDesc::~BranchingDesc(void) {}
+  Choice::~Choice(void) {}
 
 
 

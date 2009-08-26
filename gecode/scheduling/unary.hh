@@ -508,14 +508,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   class ManBranch : public Branching {
   protected:
-    /// Branching description
-    class Description : public BranchingDesc {
+    /// Choice
+    class Description : public Choice {
     public:
       /// Number of resource
       int r;
       /// Positions of task to be ordered
       int t;
-      /** Initialize description for branching \a b, 
+      /** Initialize choice for branching \a b, 
        *  resource \a r0, and task \a t0.
        */
       Description(const Branching& b, int r0, int t0);
@@ -535,11 +535,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   public:
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space& home) const;
-    /// Return branching description
-    virtual BranchingDesc* description(Space& home);
-    /// Perform commit for branching description \a d and alternative \a a
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
-                              unsigned int a);
+    /// Return choice
+    virtual Choice* choice(Space& home);
+    /// Perform commit for choice \a c and alternative \a a
+    virtual ExecStatus commit(Space& home, const Choice& d, unsigned int a);
     /// Copy branching
     virtual Actor* copy(Space& home, bool share);
     /// Post branching

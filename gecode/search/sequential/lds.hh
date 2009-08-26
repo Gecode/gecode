@@ -51,20 +51,20 @@ namespace Gecode { namespace Search { namespace Sequential {
     class Node {
     private:
       /// %Space of current node
-      Space*               _space;
-      /// Branching description
-      const BranchingDesc* _desc;
+      Space* _space;
+      /// Choice
+      const Choice* _choice;
       /// Next alternative to try
-      unsigned int         _alt;
+      unsigned int _alt;
     public:
       /// Default constructor
       Node(void);
-      /// Initialize with node \a s, description \a d, and alternative \a a
-      Node(Space* s, const BranchingDesc* d, unsigned int a);
+      /// Initialize with node \a s, choice \a c, and alternative \a a
+      Node(Space* s, const Choice* c, unsigned int a);
       /// Return space
       Space* space(void) const;
-      /// Return branching description
-      const BranchingDesc* desc(void) const;
+      /// Return choice
+      const Choice* choice(void) const;
       /// Return next alternative
       unsigned int alt(void) const;
       /// %Set next alternative
@@ -131,17 +131,17 @@ namespace Gecode { namespace Search { namespace Sequential {
   Probe::Node::Node(void) {}
 
   forceinline
-  Probe::Node::Node(Space* s, const BranchingDesc* d, unsigned int a)
-    : _space(s), _desc(d), _alt(a) {}
+  Probe::Node::Node(Space* s, const Choice* c, unsigned int a)
+    : _space(s), _choice(c), _alt(a) {}
 
   forceinline Space*
   Probe::Node::space(void) const {
     return _space;
   }
 
-  forceinline const BranchingDesc*
-  Probe::Node::desc(void) const {
-    return _desc;
+  forceinline const Choice*
+  Probe::Node::choice(void) const {
+    return _choice;
   }
 
   forceinline unsigned int
@@ -212,17 +212,17 @@ namespace Gecode { namespace Search { namespace Sequential {
           return NULL;
         if (stop(opt,ds.size()))
           return NULL;
-        unsigned int a            = ds.top().alt();
-        const BranchingDesc* desc = ds.top().desc();
+        unsigned int a = ds.top().alt();
+        const Choice* ch = ds.top().choice();
         if (a == 0) {
           cur = ds.pop().space();
-          Worker::pop(cur,desc);
-          cur->commit(*desc,0);
-          delete desc;
+          Worker::pop(cur,ch);
+          cur->commit(*ch,0);
+          delete ch;
         } else {
           ds.top().next();
           cur = ds.top().space()->clone();
-          cur->commit(*desc,a);
+          cur->commit(*ch,a);
         }
         Worker::current(cur);
         d++;
@@ -231,11 +231,11 @@ namespace Gecode { namespace Search { namespace Sequential {
       if (d == 0) {
         Space* s = cur;
         while (s->status(*this) == SS_BRANCH) {
-          const BranchingDesc* desc = s->description();
-          if (desc->alternatives() > 1)
+          const Choice* ch = s->choice();
+          if (ch->alternatives() > 1)
             exhausted = false;
-          s->commit(*desc,0);
-          delete desc;
+          s->commit(*ch,0);
+          delete ch;
         }
         cur = NULL;
         Worker::current(NULL);
@@ -244,7 +244,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           goto backtrack;
         }
         // Deletes all pending branchings
-        (void) s->description();
+        (void) s->choice();
         return s;
       }
       node++;
@@ -258,21 +258,21 @@ namespace Gecode { namespace Search { namespace Sequential {
         goto backtrack;
       case SS_BRANCH:
         {
-          const BranchingDesc* desc = cur->description();
-          unsigned int alt          = desc->alternatives();
+          const Choice* ch = cur->choice();
+          unsigned int alt = ch->alternatives();
           if (alt > 1) {
             if (d < alt-1)
               exhausted = false;
             unsigned int d_a = (d >= alt-1) ? alt-1 : d;
             Space* cc = cur->clone();
-            Worker::push(cc,desc);
-            Node sn(cc,desc,d_a-1);
+            Worker::push(cc,ch);
+            Node sn(cc,ch,d_a-1);
             ds.push(sn);
-            cur->commit(*desc,d_a);
+            cur->commit(*ch,d_a);
             d -= d_a;
           } else {
-            cur->commit(*desc,0);
-            delete desc;
+            cur->commit(*ch,0);
+            delete ch;
           }
           goto check_discrepancy;
         }

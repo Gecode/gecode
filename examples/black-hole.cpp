@@ -101,21 +101,21 @@ protected:
   ViewArray<Int::IntView> x;
   /// Cache of last computed decision
   mutable int pos, val;
-  /// Branching description
-  class Description : public BranchingDesc {
+  /// Choice
+  class Choice : public Gecode::Choice {
   public:
     /// Position of variable
     int pos;
     /// Value of variable
     int val;
-    /** Initialize description for branching \a b, number of
-     *  alternatives \a a, position \a pos0, and value \a val0.
+    /** Initialize description for branching \a b, position \a pos0, 
+     *  and value \a val0.
      */
-    Description(const Branching& b, unsigned int a, int pos0, int val0)
-      : BranchingDesc(b,a), pos(pos0), val(val0) {}
+    Choice(const Branching& b, int pos0, int val0)
+      : Gecode::Choice(b,2), pos(pos0), val(val0) {}
     /// Report size occupied
     virtual size_t size(void) const {
-      return sizeof(Description);
+      return sizeof(Choice);
     }
   };
 
@@ -131,38 +131,33 @@ protected:
 public:
   /// Check status of branching, return true if alternatives left.
   virtual bool status(const Space&) const {
-    for (pos = 0; pos < x.size(); ++pos) {
+    for (pos = 0; pos < x.size(); ++pos)
       if (!x[pos].assigned()) {
         int w = 4;
-        for (Int::ViewValues<Int::IntView> vals(x[pos]); vals(); ++vals) {
+        for (Int::ViewValues<Int::IntView> vals(x[pos]); vals(); ++vals)
           if (layer[vals.val()] < w) {
             val = vals.val();
             if ((w = layer[vals.val()]) == 0) break;
           }
-        }
         return true;
       }
-    }
     // No non-assigned variables left
     return false;
   }
-  /// Return branching description
-  virtual BranchingDesc* description(Space&) {
+  /// Return choice
+  virtual Choice* choice(Space&) {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
-    return new Description(*this, 2, pos, val);
+    return new Choice(*this, pos, val);
   }
-  /// Perform commit for branching description \a d and alternative \a a.
-  virtual ExecStatus commit(Space& home, const BranchingDesc& d,
+  /// Perform commit for choice \a _c and alternative \a a.
+  virtual ExecStatus commit(Space& home, const Gecode::Choice& _c,
                             unsigned int a) {
-    const Description& desc =
-      static_cast<const Description&>(d);
+    const Choice& c = static_cast<const Choice&>(_c);
     pos = val = -1;
     if (a)
-      return me_failed(x[desc.pos].nq(home, desc.val))
-        ? ES_FAILED : ES_OK;
+      return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
     else
-      return me_failed(x[desc.pos].eq(home, desc.val))
-        ? ES_FAILED : ES_OK;
+      return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
   }
   /// Copy branching
   virtual Actor* copy(Space& home, bool share) {

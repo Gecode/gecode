@@ -163,7 +163,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline
   ManBranch<Task>::Description::Description(const Branching& b, int r0, int t0)
-    : BranchingDesc(b,2), r(r0), t(t0) {}
+    : Choice(b,2), r(r0), t(t0) {}
 
   template<class Task>
   size_t
@@ -202,16 +202,16 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
   template<class Task>
-  BranchingDesc* 
-  ManBranch<Task>::description(Space&) {
+  Choice* 
+  ManBranch<Task>::choice(Space&) {
     return new Description(*this,c,r[c].task());
   }
 
   template<class Task>
   ExecStatus 
-  ManBranch<Task>::commit(Space& home, const BranchingDesc& _d, 
+  ManBranch<Task>::commit(Space& home, const Choice& c, 
                           unsigned int a) {
-    const Description& d = static_cast<const Description&>(_d);
+    const Description& d = static_cast<const Description&>(c);
     return r[d.r].commit(home,d.t,a);
   }
 

@@ -59,21 +59,21 @@ protected:
   ViewArray<Int::IntView> x;
   /// Next variable to branch on
   mutable int start;
-  /// Branching description
-  class Description : public BranchingDesc {
+  /// Choice
+  class Choice : public Gecode::Choice {
   public:
     /// Position of variable
     int pos;
     /// Value of variable
     int val;
-    /** Initialize description for branching \a b, number of
-     *  alternatives \a a, position \a pos0, and value \a val0.
+    /** Initialize choice for branching \a b, position \a pos0, 
+     *  and value \a val0.
      */
-    Description(const Branching& b, unsigned int a, int pos0, int val0)
-      : BranchingDesc(b,a), pos(pos0), val(val0) {}
+    Choice(const Branching& b, int pos0, int val0)
+      : Gecode::Choice(b,2), pos(pos0), val(val0) {}
     /// Report size occupied
     virtual size_t size(void) const {
-      return sizeof(Description);
+      return sizeof(Choice);
     }
   };
  
@@ -97,8 +97,8 @@ public:
         return false;
     }
   }
-  /// Return branching description
-  virtual BranchingDesc* description(Space&) {
+  /// Return choice
+  virtual Gecode::Choice* choice(Space&) {
     Int::ViewValues<Int::IntView> iv(x[start]);
     int n = iv.val();
     unsigned int min = x[n].size();
@@ -111,18 +111,16 @@ public:
       }
       ++iv;
     }
-    return new Description(*this, 2, start, n);
+    return new Choice(*this, start, n);
   }
-  /// Perform commit for branching description \a d and alternative \a a
-  virtual ExecStatus commit(Space& home, const BranchingDesc& d, 
+  /// Perform commit for choice \a _c and alternative \a a
+  virtual ExecStatus commit(Space& home, const Gecode::Choice& _c, 
                             unsigned int a) {
-    const Description& desc = static_cast<const Description&>(d);
+    const Choice& c = static_cast<const Choice&>(_c);
     if (a == 0)
-      return me_failed(x[desc.pos].eq(home, desc.val)) 
-        ? ES_FAILED : ES_OK;
+      return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
     else 
-      return me_failed(x[desc.pos].nq(home, desc.val)) 
-        ? ES_FAILED : ES_OK;
+      return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
   }
   /// Copy branching
   virtual Actor* copy(Space& home, bool share) {

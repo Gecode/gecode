@@ -115,7 +115,7 @@ namespace Gecode { namespace Search { namespace Sequential {
         case SS_SOLVED:
           {
             // Deletes all pending branchings
-            (void) cur->description();
+            (void) cur->choice();
             Space* s = cur;
             cur = NULL;
             Worker::current(NULL);
@@ -131,9 +131,9 @@ namespace Gecode { namespace Search { namespace Sequential {
               c = NULL;
               d++;
             }
-            const BranchingDesc* desc = path.push(*this,cur,c);
-            Worker::push(c,desc);
-            cur->commit(*desc,0);
+            const Choice* ch = path.push(*this,cur,c);
+            Worker::push(c,ch);
+            cur->commit(*ch,0);
             break;
           }
         default:

@@ -43,8 +43,8 @@ namespace Gecode {
    * \ingroup TaskBranchViewVal
    */
   //@{
-  /// Emty view selection description
-  class EmptyViewSelDesc {
+  /// Emty view selection choice
+  class EmptyViewSelChoice {
   public:
     /// Report size occupied
     size_t size(void) const;
@@ -58,16 +58,16 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
-    /// View selection description
-    typedef EmptyViewSelDesc Desc;
+    /// View selection choice
+    typedef EmptyViewSelChoice Choice;
     /// Default constructor
     ViewSelBase(void);
     /// Constructor for initialization
     ViewSelBase(Space& home, const VarBranchOptions& vbo);
-    /// Return description
-    EmptyViewSelDesc description(Space& home);
-    /// Commit to description
-    void commit(Space& home, const EmptyViewSelDesc& d, unsigned a);
+    /// Return choice
+    EmptyViewSelChoice choice(Space& home);
+    /// Commit to choice
+    void commit(Space& home, const EmptyViewSelChoice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelBase& vs);
     /// Delete view selection
@@ -141,8 +141,8 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
-    /// View selection description
-    typedef Support::RandomGenerator Desc;
+    /// View selection choice
+    typedef Support::RandomGenerator Choice;
     /// Default constructor
     ViewSelRnd(void);
     /// Constructor for initialization
@@ -151,10 +151,10 @@ namespace Gecode {
     ViewSelStatus init(Space& home, _View x);
     /// Possibly select better view \a x
     ViewSelStatus select(Space& home, _View x);
-    /// Return description
-    Support::RandomGenerator description(Space& home);
-    /// Commit to description
-    void commit(Space& home, const Support::RandomGenerator& d, unsigned a);
+    /// Return choice
+    Support::RandomGenerator choice(Space& home);
+    /// Commit to choice
+    void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelRnd& vs);
     /// Delete view selection
@@ -162,10 +162,10 @@ namespace Gecode {
   };
   //@}
 
-  // Empty view selection description
+  // Empty view selection choice
   forceinline size_t
-  EmptyViewSelDesc::size(void) const {
-    return sizeof(EmptyViewSelDesc);
+  EmptyViewSelChoice::size(void) const {
+    return sizeof(EmptyViewSelChoice);
   }
 
   // Selection base class
@@ -176,13 +176,13 @@ namespace Gecode {
   forceinline
   ViewSelBase<View>::ViewSelBase(Space&, const VarBranchOptions&) {}
   template<class View>
-  forceinline EmptyViewSelDesc
-  ViewSelBase<View>::description(Space&) {
-    EmptyViewSelDesc d; return d;
+  forceinline EmptyViewSelChoice
+  ViewSelBase<View>::choice(Space&) {
+    EmptyViewSelChoice c; return c;
   }
   template<class View>
   forceinline void
-  ViewSelBase<View>::commit(Space&, const EmptyViewSelDesc&, unsigned int) {}
+  ViewSelBase<View>::commit(Space&, const EmptyViewSelChoice&, unsigned int) {}
   template<class View>
   forceinline void
   ViewSelBase<View>::update(Space&, bool, ViewSelBase<View>&) {}
@@ -291,14 +291,14 @@ namespace Gecode {
   }
   template<class View>
   forceinline Support::RandomGenerator
-  ViewSelRnd<View>::description(Space&) {
+  ViewSelRnd<View>::choice(Space&) {
     return r;
   }
   template<class View>
   forceinline void
-  ViewSelRnd<View>::commit(Space&, const Support::RandomGenerator& d,
+  ViewSelRnd<View>::commit(Space&, const Support::RandomGenerator& c,
                            unsigned int) {
-    r = d;
+    r = c;
   }
   template<class View>
   forceinline void

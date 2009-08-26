@@ -256,13 +256,13 @@ namespace Gecode {
      *
      * It is important to note that branchings reporting to have no more
      * alternatives left cannot be deleted. They cannot be deleted
-     * as there might be branching descriptions to be used in commit
+     * as there might be choices to be used in commit
      * that refer to one of these branchings. This e.g. happens when
      * we combine branch-and-bound search with adaptive recomputation: during
      * recomputation, a copy is constrained to be better than the currently
-     * best solution, then the first half of the BranchingDescs is posted,
+     * best solution, then the first half of the choices are posted,
      * and a fixpoint computed (for storing in the middle of the path). Then
-     * the remaining BranchingDescs are posted, and because of the additional
+     * the remaining choices are posted, and because of the additional
      * constraints that the space must be better than the previous solution,
      * the corresponding Branchings may already have no alternatives left.
      *
@@ -270,9 +270,9 @@ namespace Gecode {
      *
      * A branching reporting that no more alternatives exist is exhausted.
      * All exhausted branchings will be left of the current pointer b_status.
-     * Only when it is known that no more branching descriptions
+     * Only when it is known that no more choices
      * can be used for commit an exhausted branching can actually be deleted.
-     * This becomes known when description is called.
+     * This becomes known when choice is called.
      */
     while (b_status != Branching::cast(&bl))
       if (b_status->status(*this)) {
@@ -291,12 +291,12 @@ namespace Gecode {
   }
 
 
-  const BranchingDesc*
-  Space::description(void) {
+  const Choice*
+  Space::choice(void) {
     if (!stable())
-      throw SpaceNotStable("Space::description");
+      throw SpaceNotStable("Space::choice");
     if (failed() || (b_status == Branching::cast(&bl))) {
-      // There are no more descriptions to be generated
+      // There are no more choices to be generated
       // Delete all branchings
       Branching* b = Branching::cast(bl.next()); 
       while (b != Branching::cast(&bl)) {
@@ -309,7 +309,7 @@ namespace Gecode {
       return NULL;
     }
     /*
-     * The call to description() says that no older branching descriptions 
+     * The call to choice() says that no older choices
      * can be used. Hence, all branchings that are exhausted can be deleted.
      */
     Branching* b = Branching::cast(bl.next());
@@ -321,33 +321,33 @@ namespace Gecode {
     }
     // Make sure that b_commit does not point to a deleted branching!
     b_commit = b_status;
-    return b_status->description(*this);
+    return b_status->choice(*this);
   }
 
   void
-  Space::_commit(const BranchingDesc& d, unsigned int a) {
-    if (a >= d.alternatives())
+  Space::_commit(const Choice& c, unsigned int a) {
+    if (a >= c.alternatives())
       throw SpaceIllegalAlternative();
     if (failed())
       return;
     /*
      * Due to weakly monotonic propagators the following scenario might
      * occur: a branching has been committed with all its available
-     * branching descriptions. Then, propagation determines less information
-     * than before and the branching now will create new branching 
-     * descriptions. Later, during recomputation, all of these branching 
-     * descriptions can be used together, possibly interleaved with 
-     * descriptions for other branchings. That means all branchings
-     * must be scanned to find the matching branching for the description.
+     * choices. Then, propagation determines less information
+     * than before and the branching now will create new choices.
+     * Later, during recomputation, all of these choices
+     * can be used together, possibly interleaved with 
+     * choices for other branchings. That means all branchings
+     * must be scanned to find the matching branching for the choice.
      *
      * b_commit tries to optimize scanning as it is most likely that
-     * recomputation does not generate new descriptions during recomputation
+     * recomputation does not generate new choices during recomputation
      * and hence b_commit is moved from newer to older branchings.
      */
     Branching* b_old = b_commit;
     // Try whether we are lucky
     while (b_commit != Branching::cast(&bl))
-      if (d._id != b_commit->id())
+      if (c._id != b_commit->id())
         b_commit = Branching::cast(b_commit->next());
       else
         goto found;
@@ -355,7 +355,7 @@ namespace Gecode {
       // We did not find the branching, start at the beginning
       b_commit = Branching::cast(bl.next());
       while (b_commit != b_old)
-        if (d._id != b_commit->id())
+        if (c._id != b_commit->id())
           b_commit = Branching::cast(b_commit->next());
         else
           goto found;
@@ -364,7 +364,7 @@ namespace Gecode {
     throw SpaceNoBranching();
   found:
     // There is a matching branching
-    if (b_commit->commit(*this,d,a) == ES_FAILED)
+    if (b_commit->commit(*this,c,a) == ES_FAILED)
       fail();
   }
 

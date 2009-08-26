@@ -66,8 +66,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       unsigned int _alt;
       /// Number of alternatives left
       unsigned int _alt_max;
-      /// Braching description
-      const BranchingDesc* _desc;
+      /// Choice
+      const Choice* _choice;
     public:
       /// Default constructor
       Node(void);
@@ -79,8 +79,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Set space to \a s
       void space(Space* s);
       
-      /// Return branching description
-      const BranchingDesc* desc(void) const;
+      /// Return choice
+      const Choice* choice(void) const;
       
       /// Return number for alternatives
       unsigned int alt(void) const;
@@ -105,7 +105,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// Initialize
     Path(void);
     /// Push space \a c (a clone of \a s or NULL)
-    const BranchingDesc* push(Worker& stat, Space* s, Space* c);
+    const Choice* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
     bool next(Worker& s);
     /// Provide access to topmost node
@@ -145,8 +145,8 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline
   Path::Node::Node(Space* s, Space* c)
-    : _space(c), _alt(0), _desc(s->description()) {
-    _alt_max = _desc->alternatives()-1;
+    : _space(c), _alt(0), _choice(s->choice()) {
+    _alt_max = _choice->alternatives()-1;
   }
 
   forceinline Space*
@@ -180,15 +180,15 @@ namespace Gecode { namespace Search { namespace Parallel {
     return _alt_max--;
   }
 
-  forceinline const BranchingDesc*
-  Path::Node::desc(void) const {
-    return _desc;
+  forceinline const Choice*
+  Path::Node::choice(void) const {
+    return _choice;
   }
 
   forceinline void
   Path::Node::dispose(void) {
     delete _space;
-    delete _desc;
+    delete _choice;
   }
 
 
@@ -201,14 +201,14 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline
   Path::Path(void) : ds(heap), n_work(0) {}
 
-  forceinline const BranchingDesc*
+  forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
     Node sn(s,c);
     if (sn.work())
       n_work++;
     ds.push(sn);
     stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
-    return sn.desc();
+    return sn.choice();
   }
 
   forceinline bool
@@ -216,7 +216,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
-        stat.pop(ds.top().space(),ds.top().desc());
+        stat.pop(ds.top().space(),ds.top().choice());
         ds.pop().dispose();
       } else {
         assert(ds.top().work());
@@ -242,7 +242,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline void
   Path::commit(Space* s, int i) const {
     const Node& n = ds[i];
-    s->commit(*n.desc(),n.alt());
+    s->commit(*n.choice(),n.alt());
   }
 
   forceinline int
@@ -305,7 +305,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         // Recompute, if necessary
         for (int i=l; i<n; i++)
           commit(c,i);
-        c->commit(*ds[n].desc(),ds[n].steal());
+        c->commit(*ds[n].choice(),ds[n].steal());
         if (!ds[n].work())
           n_work--;
         d = stat.steal_depth(static_cast<unsigned long int>(n+1));
@@ -325,7 +325,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
-      s->commit(*ds.top().desc(),ds.top().alt());
+      s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
       stat.lao(s);
@@ -389,7 +389,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
-      s->commit(*ds.top().desc(),ds.top().alt());
+      s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       if (mark > ds.entries()-1) {
         mark = ds.entries()-1;

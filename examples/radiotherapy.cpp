@@ -217,17 +217,17 @@ public:
     };
     /// Weighted ordering of rows
     SharedArray<Idx> index;
-    /// Description that only signals failure or success
-    class Description : public BranchingDesc {
+    /// Choice that only signals failure or success
+    class Choice : public Gecode::Choice {
     public:
       /// Whether branching should fail
       bool fail;
-      /// Initialize description for branching \a b
-      Description(const Branching& b, bool fail0)
-      : BranchingDesc(b,1), fail(fail0) {}
+      /// Initialize choice for branching \a b
+      Choice(const Branching& b, bool fail0)
+      : Gecode::Choice(b,1), fail(fail0) {}
       /// Report size occupied
       virtual size_t size(void) const {
-        return sizeof(Description);
+        return sizeof(Choice);
       }
     };
     /// Construct branching
@@ -270,7 +270,7 @@ public:
       return ri;
     }
 
-    virtual BranchingDesc* description(Space& home) {
+    virtual Gecode::Choice* choice(Space& home) {
       done = true;
       Radiotherapy& rt = static_cast<Radiotherapy&>(home);
 
@@ -300,10 +300,10 @@ public:
         }      
       }
 
-      return new Description(*this, fail);
+      return new Choice(*this, fail);
     }
-    virtual ExecStatus commit(Space&, const BranchingDesc& d, unsigned int) {
-      return static_cast<const Description&>(d).fail ? ES_FAILED : ES_OK;
+    virtual ExecStatus commit(Space&, const Gecode::Choice& _c, unsigned int) {
+      return static_cast<const Choice&>(_c).fail ? ES_FAILED : ES_OK;
     }
     /// Copy branching
     virtual Actor* copy(Space& home, bool share) {

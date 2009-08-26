@@ -136,8 +136,8 @@ namespace Gecode { namespace Set { namespace Branch {
     typedef SetView View;
     /// Value type
     typedef int Val;
-    /// Description type
-    typedef Support::RandomGenerator Desc;
+    /// Choice
+    typedef Support::RandomGenerator Choice;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// Default constructor
@@ -148,10 +148,10 @@ namespace Gecode { namespace Set { namespace Branch {
     int val(Space& home, SetView x);
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, SetView x, int n);
-    /// Return description
-    Support::RandomGenerator description(Space& home);
-    /// Commit to description
-    void commit(Space& home, const Support::RandomGenerator& d, unsigned a);
+    /// Return choice
+    Support::RandomGenerator choice(Space& home);
+    /// Commit to choice
+    void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ValRnd& vs);
     /// Delete value selection

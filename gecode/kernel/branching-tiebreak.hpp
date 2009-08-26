@@ -56,15 +56,15 @@ namespace Gecode {
   public:
     /// View type
     typedef typename A::View View;
-    /// View selection description
-    class Desc {
+    /// View selection choice
+    class Choice {
     public:
-      /// First description
-      typename A::Desc a;
-      /// Second description
-      typename B::Desc b;
+      /// First choice
+      typename A::Choice a;
+      /// Second choice
+      typename B::Choice b;
       /// Constructor
-      Desc(const typename A::Desc& a, const typename B::Desc& b);
+      Choice(const typename A::Choice& a, const typename B::Choice& b);
       /// Report size occupied
       size_t size(void) const;
     };
@@ -76,10 +76,10 @@ namespace Gecode {
     ViewSelStatus init(Space& home, typename A::View x);
     /// Possibly select better view \a x
     ViewSelStatus select(Space& home, typename A::View x);
-    /// Return description
-    Desc description(Space& home);
-    /// Commit to description
-    void commit(Space& home, const Desc& d, unsigned a);
+    /// Return choice
+    Choice choice(Space& home);
+    /// Commit to choice
+    void commit(Space& home, const Choice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelTieBreakStatic& vs);
     /// Delete view selection
@@ -87,16 +87,16 @@ namespace Gecode {
   };
 
   /**
-   * \brief Virtualized description baseclass
+   * \brief Virtualized choice baseclass
    */
-  class DescVirtualBase {
+  class ChoiceVirtualBase {
   public:
     /// Create copy
-    virtual DescVirtualBase* copy(void) const = 0;
+    virtual ChoiceVirtualBase* copy(void) const = 0;
     /// Report size required
     virtual size_t size(void) const = 0;
     /// Destructor
-    GECODE_KERNEL_EXPORT virtual ~DescVirtualBase(void);
+    GECODE_KERNEL_EXPORT virtual ~ChoiceVirtualBase(void);
     /// \name Memory management
     //@{
     /// Allocate memory
@@ -116,10 +116,11 @@ namespace Gecode {
     virtual ViewSelStatus init(Space& home, View x) = 0;
     /// Possibly select better view \a x
     virtual ViewSelStatus select(Space& home, View x) = 0;
-    /// Return description
-    virtual DescVirtualBase* description(Space& home) = 0;
-    /// Commit to description
-    virtual void commit(Space& home, const DescVirtualBase* d, unsigned a) = 0;
+    /// Return choice
+    virtual ChoiceVirtualBase* choice(Space& home) = 0;
+    /// Commit to choice
+    virtual void commit(Space& home, const ChoiceVirtualBase* c, 
+                        unsigned a) = 0;
     /// Create copy
     virtual ViewSelVirtualBase<View>* copy(Space& home, bool share) = 0;
     /// Delete view selection and return its size
@@ -136,21 +137,21 @@ namespace Gecode {
   };
 
   /**
-   * \brief Virtualized description
+   * \brief Virtualized choice
    */
-  template <class Desc>
-  class DescVirtual : public DescVirtualBase {
+  template <class Choice>
+  class ChoiceVirtual : public ChoiceVirtualBase {
   public:
-    /// Static description object
-    Desc desc;
+    /// Static choice object
+    Choice choice;
     /// Constructor for initialization
-    DescVirtual(const Desc& d);
+    ChoiceVirtual(const Choice& c);
     /// Create copy
-    virtual DescVirtualBase* copy(void) const;
+    virtual ChoiceVirtualBase* copy(void) const;
     /// Report size required
     virtual size_t size(void) const;
     /// Destructor
-    virtual ~DescVirtual(void);
+    virtual ~ChoiceVirtual(void);
   };
 
   /**
@@ -170,10 +171,10 @@ namespace Gecode {
     virtual ViewSelStatus init(Space& home, typename ViewSel::View x);
     /// Possibly select better view \a x
     virtual ViewSelStatus select(Space& home, typename ViewSel::View x);
-    /// Return description
-    virtual DescVirtualBase* description(Space& home);
-    /// Commit to description
-    virtual void commit(Space& home, const DescVirtualBase* d, unsigned a);
+    /// Return choice
+    virtual ChoiceVirtualBase* choice(Space& home);
+    /// Commit to choice
+    virtual void commit(Space& home, const ChoiceVirtualBase* d, unsigned a);
     /// Create copy during cloning
     virtual ViewSelVirtualBase<typename ViewSel::View>*
     copy(Space& home, bool share);
@@ -194,26 +195,26 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
-    /// Description for tie breakers
-    class Desc {
+    /// Choice for tie breakers
+    class Choice {
     public:
-      /// Number of descriptions
+      /// Number of choices
       int n;
-      /// Descriptions
-      DescVirtualBase** d;
+      /// Choices
+      ChoiceVirtualBase** c;
       /// Constructor
-      Desc(Space& home, ViewSelVirtualBase<_View>** tb, int n0);
+      Choice(Space& home, ViewSelVirtualBase<_View>** tb, int n0);
       /// Copy constructor
-      Desc(const Desc& de);
+      Choice(const Choice& ce);
       /// Assignment operator
-      const Desc& operator =(const Desc& de);
+      const Choice& operator =(const Choice& ce);
       /// Perform commit
       void commit(Space& home, unsigned int a,
                   ViewSelVirtualBase<_View>** tb)  const;
       /// Report size occupied
       size_t size(void) const;
       /// Destructor
-      ~Desc(void);
+      ~Choice(void);
     };
     /// Default constructor
     ViewSelTieBreakDynamic(void);
@@ -224,10 +225,10 @@ namespace Gecode {
     ViewSelStatus init(Space& home, _View x);
     /// Possibly select better view \a x
     ViewSelStatus select(Space& home, _View x);
-    /// Return description
-    Desc description(Space& home);
-    /// Commit to description
-    void commit(Space& home, const Desc& d, unsigned a);
+    /// Return choice
+    Choice choice(Space& home);
+    /// Commit to choice
+    void commit(Space& home, const Choice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelTieBreakDynamic& vs);
     /// Delete view selection
@@ -239,12 +240,12 @@ namespace Gecode {
   // Select variable with static tie breaking
   template<class A, class B>
   forceinline
-  ViewSelTieBreakStatic<A,B>::Desc::Desc(const typename A::Desc& a0,
-                                         const typename B::Desc& b0)
+  ViewSelTieBreakStatic<A,B>::Choice::Choice(const typename A::Choice& a0,
+                                             const typename B::Choice& b0)
     : a(a0), b(b0) {}
   template<class A, class B>
   forceinline size_t
-  ViewSelTieBreakStatic<A,B>::Desc::size(void) const {
+  ViewSelTieBreakStatic<A,B>::Choice::size(void) const {
     return a.size() + b.size();
   }
 
@@ -286,18 +287,18 @@ namespace Gecode {
     }
   }
   template<class A, class B>
-  forceinline typename ViewSelTieBreakStatic<A,B>::Desc
-  ViewSelTieBreakStatic<A,B>::description(Space& home) {
-    typename ViewSelTieBreakStatic<A,B>::Desc d(a.description(home),
-                                                b.description(home));
-    return d;
+  forceinline typename ViewSelTieBreakStatic<A,B>::Choice
+  ViewSelTieBreakStatic<A,B>::choice(Space& home) {
+    typename ViewSelTieBreakStatic<A,B>::Choice c(a.choice(home),
+                                                  b.choice(home));
+    return c;
   }
   template<class A, class B>
   forceinline void
-  ViewSelTieBreakStatic<A,B>::commit(Space& home, const Desc& d,
+  ViewSelTieBreakStatic<A,B>::commit(Space& home, const Choice& c,
                                      unsigned int al) {
-    a.commit(home, d.a, al);
-    b.commit(home, d.b, al);
+    a.commit(home, c.a, al);
+    b.commit(home, c.b, al);
   }
   template<class A, class B>
   forceinline void
@@ -327,36 +328,36 @@ namespace Gecode {
     return home.ralloc(s);
   }
 
-  // Virtualized description
+  // Virtualized choice
   forceinline void
-  DescVirtualBase::operator delete(void* p) {
+  ChoiceVirtualBase::operator delete(void* p) {
     heap.rfree(p);
   }
   forceinline void*
-  DescVirtualBase::operator new(size_t s) {
+  ChoiceVirtualBase::operator new(size_t s) {
     return heap.ralloc(s);
   }
   forceinline
-  DescVirtualBase::~DescVirtualBase(void) {
+  ChoiceVirtualBase::~ChoiceVirtualBase(void) {
   }
 
 
-  template <class Desc>
+  template <class Choice>
   forceinline
-  DescVirtual<Desc>::DescVirtual(const Desc& d)
-    : desc(d) {}
-  template <class Desc>
-  forceinline DescVirtualBase*
-  DescVirtual<Desc>::copy(void) const {
-    return new DescVirtual<Desc>(desc);
+  ChoiceVirtual<Choice>::ChoiceVirtual(const Choice& c)
+    : choice(c) {}
+  template <class Choice>
+  forceinline ChoiceVirtualBase*
+  ChoiceVirtual<Choice>::copy(void) const {
+    return new ChoiceVirtual<Choice>(choice);
   }
-  template <class Desc>
+  template <class Choice>
   forceinline size_t
-  DescVirtual<Desc>::size(void) const {
-    return sizeof(DescVirtual<Desc>);
+  ChoiceVirtual<Choice>::size(void) const {
+    return sizeof(ChoiceVirtual<Choice>);
   }
-  template <class Desc>
-  DescVirtual<Desc>::~DescVirtual(void) {}
+  template <class Choice>
+  ChoiceVirtual<Choice>::~ChoiceVirtual(void) {}
 
 
   template<class ViewSel>
@@ -381,17 +382,17 @@ namespace Gecode {
     return viewsel.select(home,x);
   }
   template <class ViewSel>
-  DescVirtualBase*
-  ViewSelVirtual<ViewSel>::description(Space& home) {
-    return new DescVirtual<typename ViewSel::Desc>(viewsel.description(home));
+  ChoiceVirtualBase*
+  ViewSelVirtual<ViewSel>::choice(Space& home) {
+    return new ChoiceVirtual<typename ViewSel::Choice>(viewsel.choice(home));
   }
   template <class ViewSel>
   void
-  ViewSelVirtual<ViewSel>::commit(Space& home, const DescVirtualBase* _d,
+  ViewSelVirtual<ViewSel>::commit(Space& home, const ChoiceVirtualBase* _c,
                                   unsigned int a) {
-    const DescVirtual<typename ViewSel::Desc>* d =
-      static_cast<const DescVirtual<typename ViewSel::Desc>*>(_d);
-    viewsel.commit(home, d->desc, a);
+    const ChoiceVirtual<typename ViewSel::Choice>* c =
+      static_cast<const ChoiceVirtual<typename ViewSel::Choice>*>(_c);
+    viewsel.commit(home, c->choice, a);
   }
   template <class ViewSel>
   ViewSelVirtualBase<typename ViewSel::View>*
@@ -406,55 +407,55 @@ namespace Gecode {
   }
 
 
-  // Description for dynamic tie breaking
+  // Choice for dynamic tie breaking
   template<class View>
   forceinline
-  ViewSelTieBreakDynamic<View>::Desc::Desc
+  ViewSelTieBreakDynamic<View>::Choice::Choice
   (Space& home, ViewSelVirtualBase<View>** tb, int n0)
-    : n(n0), d(heap.alloc<DescVirtualBase*>(n)) {
+    : n(n0), c(heap.alloc<ChoiceVirtualBase*>(n)) {
     for (int i=n; i--; )
-      d[i] = tb[i]->description(home);
+      c[i] = tb[i]->choice(home);
   }
   template<class View>
   forceinline
-  ViewSelTieBreakDynamic<View>::Desc::Desc(const Desc& de)
-    : n(de.n), d(heap.alloc<DescVirtualBase*>(n)) {
+  ViewSelTieBreakDynamic<View>::Choice::Choice(const Choice& ce)
+    : n(ce.n), c(heap.alloc<ChoiceVirtualBase*>(n)) {
     for (int i=n; i--; )
-      d[i] = de.d[i]->copy();
+      c[i] = ce.c[i]->copy();
   }
   template<class View>
-  forceinline const typename ViewSelTieBreakDynamic<View>::Desc&
-  ViewSelTieBreakDynamic<View>::Desc::operator =(const Desc& de) {
-    if (&de != this) {
-      assert(de.n == n);
+  forceinline const typename ViewSelTieBreakDynamic<View>::Choice&
+  ViewSelTieBreakDynamic<View>::Choice::operator =(const Choice& ce) {
+    if (&ce != this) {
+      assert(ce.n == n);
       for (int i=n; i--; ) {
-        delete d[i]; d[i] = de.d[i]->copy();
+        delete c[i]; c[i] = ce.c[i]->copy();
       }
     }
     return *this;
   }
   template<class View>
   forceinline void
-  ViewSelTieBreakDynamic<View>::Desc::commit
+  ViewSelTieBreakDynamic<View>::Choice::commit
   (Space& home, unsigned int a, ViewSelVirtualBase<View>** tb)  const {
     for (int i=n; i--; )
-      tb[i]->commit(home, d[i], a);
+      tb[i]->commit(home, c[i], a);
   }
   template<class View>
   forceinline size_t
-  ViewSelTieBreakDynamic<View>::Desc::size(void) const {
-    size_t s = (sizeof(typename ViewSelTieBreakDynamic<View>::Desc) +
-                n * sizeof(DescVirtualBase*));
+  ViewSelTieBreakDynamic<View>::Choice::size(void) const {
+    size_t s = (sizeof(typename ViewSelTieBreakDynamic<View>::Choice) +
+                n * sizeof(ChoiceVirtualBase*));
     for (int i=n; i--; )
-      s += d[i]->size();
+      s += c[i]->size();
     return s;
   }
   template<class View>
   forceinline
-  ViewSelTieBreakDynamic<View>::Desc::~Desc(void) {
+  ViewSelTieBreakDynamic<View>::Choice::~Choice(void) {
     for (int i=n; i--; )
-      delete d[i];
-    heap.free(d,n);
+      delete c[i];
+    heap.free(c,n);
   }
 
 
@@ -515,17 +516,17 @@ namespace Gecode {
     }
   }
   template<class View>
-  forceinline typename ViewSelTieBreakDynamic<View>::Desc
-  ViewSelTieBreakDynamic<View>::description(Space& home) {
-    Desc d(home,tb,n);
-    return d;
+  forceinline typename ViewSelTieBreakDynamic<View>::Choice
+  ViewSelTieBreakDynamic<View>::choice(Space& home) {
+    Choice c(home,tb,n);
+    return c;
   }
   template<class View>
   forceinline void
   ViewSelTieBreakDynamic<View>::commit
-  (Space& home, const typename ViewSelTieBreakDynamic<View>::Desc& d,
+  (Space& home, const typename ViewSelTieBreakDynamic<View>::Choice& c,
    unsigned int a) {
-    d.commit(home,a,tb);
+    c.commit(home,a,tb);
   }
   template<class View>
   forceinline void

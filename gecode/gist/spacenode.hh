@@ -116,8 +116,8 @@ namespace Gecode { namespace Gist {
     SpaceNode* ownBest;
   protected:
     union {
-      /// Branching description
-      const BranchingDesc* branch;
+      /// Choice
+      const Choice* branch;
       /// Special branching description
       const SpecialDesc* special;
       /// Step description

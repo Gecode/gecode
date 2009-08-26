@@ -56,10 +56,10 @@ namespace Gecode {
   class GECODE_KERNEL_EXPORT FunctionBranch : public Branching {
   protected:
     /// Minimal branching description storing no information
-    class GECODE_KERNEL_EXPORT Description : public BranchingDesc {
+    class GECODE_KERNEL_EXPORT Description : public Choice {
     public:
       /// Initialize description for branching \a b, number of alternatives \a a.
-      Description(const Branching& b, unsigned int a) : BranchingDesc(b,a) {}
+      Description(const Branching& b, unsigned int a) : Choice(b,a) {}
       /// Report size occupied
       virtual size_t size(void) const { return sizeof(Description); }
     };
@@ -78,14 +78,14 @@ namespace Gecode {
     virtual bool status(const Space&) const {
       return !done;
     }
-    /// Return branching description
-    virtual const BranchingDesc* description(Space&) {
+    /// Return choice
+    virtual const Choice* choice(Space&) {
       assert(!done);
       return new Description(*this,1);
     }
     /// Perform commit
     virtual ExecStatus 
-    commit(Space& home, const BranchingDesc&, unsigned int) {
+    commit(Space& home, const Choice&, unsigned int) {
       done = true;
       f(home);
       return home.failed() ? ES_FAILED : ES_OK;

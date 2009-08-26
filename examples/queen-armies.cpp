@@ -158,7 +158,7 @@ public:
     os << "Number of white queens: " << q << std::endl << std::endl;
   }
 
-  /** \brief Custom branching for Peacaeble queens.
+  /** \brief Custom branching for Peacable queens
    *
    *  Custom branching that tries to place white queens so that they
    *  maximise the amount of un-attacked squares that become attacked.
@@ -169,21 +169,21 @@ public:
   private:
     /// Cache of last computed decision
     mutable int pos;
-    /// Branching description
-    class Description : public BranchingDesc {
+    /// Choice
+    class Choice : public Gecode::Choice {
     public:
       /// Position of variable
       int pos;
       /// Value of variable
       bool val;
-      /** Initialize description for branching \a b, number of
-       *  alternatives \a a, position \a pos0, and value \a val0.
+      /** Initialize choice for branching \a b, position \a pos0, 
+       *  and value \a val0.
        */
-      Description(const Branching& b, unsigned int a, int pos0, bool val0)
-        : BranchingDesc(b,a), pos(pos0), val(val0) {}
+      Choice(const Branching& b, int pos0, bool val0)
+        : Gecode::Choice(b,2), pos(pos0), val(val0) {}
       /// Report size occupied
       virtual size_t size(void) const {
-        return sizeof(Description);
+        return sizeof(Choice);
       }
     };
 
@@ -215,20 +215,20 @@ public:
       if (pos == -1) return false;
       return true;
     }
-    /// Return branching description
-    virtual BranchingDesc* description(Space&) {
+    /// Return choice
+    virtual Gecode::Choice* choice(Space&) {
       assert(pos != -1);
-      return new Description(*this, 2, pos, true);
+      return new Choice(*this, pos, true);
     }
-    /** \brief Perform commit for branching description \a d and
+    /** \brief Perform commit for choice \a _c and
      * alternative \a a.
      */
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
+    virtual ExecStatus commit(Space& home, const Gecode::Choice& _c,
                               unsigned int a) {
       QueenArmies& q = static_cast<QueenArmies&>(home);
-      const Description& pvd = static_cast<const Description&>(d);
-      bool val = a == 0 ? pvd.val : !pvd.val;
-      return me_failed(Int::BoolView(q.w[pvd.pos]).eq(q, val))
+      const Choice& c = static_cast<const Choice&>(_c);
+      bool val = (a == 0) ? c.val : !c.val;
+      return me_failed(Int::BoolView(q.w[c.pos]).eq(q, val))
         ? ES_FAILED
         : ES_OK;
     }

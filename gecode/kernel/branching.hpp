@@ -120,11 +120,10 @@ namespace Gecode {
     /// Constructor for creation
     ViewValBranching(Space& home, ViewArray<typename ViewSel::View>& x,
                      ViewSel& vi_s, ValSel& va_s);
-    /// Return branching description (of type Gecode::PosValDesc)
-    virtual const BranchingDesc* description(Space& home);
-    /// Perform commit for branching description \a d and alternative \a a
-    virtual ExecStatus commit(Space& home, const BranchingDesc& d,
-                              unsigned int a);
+    /// Return choice
+    virtual const Choice* choice(Space& home);
+    /// Perform commit for choice \a c and alternative \a a
+    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Delete branching and return its size
@@ -132,42 +131,42 @@ namespace Gecode {
   };
 
 
-  /// %Branching descriptions storing position
+  /// %Choices storing position
   template <class ViewSel>
-  class GECODE_VTABLE_EXPORT PosDesc : public BranchingDesc {
+  class GECODE_VTABLE_EXPORT PosChoice : public Choice {
   private:
     /// Position information
     const Pos _pos;
-    /// View selection description to be stored
-    const typename ViewSel::Desc _viewdesc;
+    /// View selection choice to be stored
+    const typename ViewSel::Choice _viewchoice;
   public:
-    /// Initialize description for branching \a b, number of alternatives \a a, position \a p, view selection description \a viewd
-    PosDesc(const Branching& b, unsigned int a, const Pos& p,
-            const typename ViewSel::Desc& viewd);
+    /// Initialize choice for branching \a b, number of alternatives \a a, position \a p, view selection choice \a viewc
+    PosChoice(const Branching& b, unsigned int a, const Pos& p,
+              const typename ViewSel::Choice& viewc);
     /// Return position in array
     const Pos& pos(void) const;
-    /// Return view selection description
-    const typename ViewSel::Desc& viewdesc(void) const;
+    /// Return view selection choice
+    const typename ViewSel::Choice& viewchoice(void) const;
     /// Report size occupied
     virtual size_t size(void) const;
   };
 
-  /// %Branching descriptions storing position and value
+  /// %Choice storing position and value
   template <class ViewSel, class ValSel>
-  class GECODE_VTABLE_EXPORT PosValDesc : public PosDesc<ViewSel> {
+  class GECODE_VTABLE_EXPORT PosValChoice : public PosChoice<ViewSel> {
   private:
-    /// Value description to be stored
-    const typename ValSel::Desc _valdesc;
+    /// Value choice to be stored
+    const typename ValSel::Choice _valchoice;
     /// Value to assign to
     const typename ValSel::Val _val;
   public:
-    /// Initialize description for branching \a b, position \a p, view description \a viewd, value description \a vald, and value \a n
-    PosValDesc(const Branching& b, const Pos& p,
-               const typename ViewSel::Desc& viewd,
-               const typename ValSel::Desc& vald,
-               const typename ValSel::Val& n);
-    /// Return stored description
-    const typename ValSel::Desc& valdesc(void) const;
+    /// Initialize choice for branching \a b, position \a p, view choice \a viewc, value choice \a valc, and value \a n
+    PosValChoice(const Branching& b, const Pos& p,
+                 const typename ViewSel::Choice& viewc,
+                 const typename ValSel::Choice& valc,
+                 const typename ValSel::Val& n);
+    /// Return stored choice
+    const typename ValSel::Choice& valchoice(void) const;
     /// Return value to branch with
     const typename ValSel::Val& val(void) const;
     /// Report size occupied
@@ -187,60 +186,62 @@ namespace Gecode {
 
 
   /*
-   * Branching descriptions with position
+   * Choice with position
    *
    */
   template <class ViewSel>
   forceinline
-  PosDesc<ViewSel>::PosDesc(const Branching& b, unsigned int a, const Pos& p,
-                            const typename ViewSel::Desc& viewd)
-    : BranchingDesc(b,a), _pos(p), _viewdesc(viewd) {}
+  PosChoice<ViewSel>::PosChoice(const Branching& b, unsigned int a, 
+                                const Pos& p,
+                                const typename ViewSel::Choice& viewc)
+    : Choice(b,a), _pos(p), _viewchoice(viewc) {}
   template <class ViewSel>
   forceinline const Pos&
-  PosDesc<ViewSel>::pos(void) const {
+  PosChoice<ViewSel>::pos(void) const {
     return _pos;
   }
   template <class ViewSel>
-  forceinline const typename ViewSel::Desc&
-  PosDesc<ViewSel>::viewdesc(void) const {
-    return _viewdesc;
+  forceinline const typename ViewSel::Choice&
+  PosChoice<ViewSel>::viewchoice(void) const {
+    return _viewchoice;
   }
   template <class ViewSel>
   forceinline size_t
-  PosDesc<ViewSel>::size(void) const {
-    return sizeof(PosDesc<ViewSel>) + _viewdesc.size();
+  PosChoice<ViewSel>::size(void) const {
+    return sizeof(PosChoice<ViewSel>) + _viewchoice.size();
   }
 
 
   /*
-   * Branching descriptions with position and value
+   * %Choice with position and value
    *
    */
   template <class ViewSel, class ValSel>
   forceinline
-  PosValDesc<ViewSel,ValSel>::PosValDesc(const Branching& b, const Pos& p,
-                                         const typename ViewSel::Desc& viewd,
-                                         const typename ValSel::Desc& vald,
-                                         const typename ValSel::Val& n)
-    : PosDesc<ViewSel>(b,ValSel::alternatives,p,viewd),
-      _valdesc(vald), _val(n) {}
+  PosValChoice<ViewSel,ValSel>
+  ::PosValChoice(const Branching& b, const Pos& p,
+                 const typename ViewSel::Choice& viewc,
+                 const typename ValSel::Choice& valc,
+                 const typename ValSel::Val& n)
+    : PosChoice<ViewSel>(b,ValSel::alternatives,p,viewc),
+      _valchoice(valc), _val(n) {}
 
   template <class ViewSel, class ValSel>
-  forceinline const typename ValSel::Desc&
-  PosValDesc<ViewSel,ValSel>::valdesc(void) const {
-    return _valdesc;
+  forceinline const typename ValSel::Choice&
+  PosValChoice<ViewSel,ValSel>::valchoice(void) const {
+    return _valchoice;
   }
 
   template <class ViewSel, class ValSel>
   forceinline const typename ValSel::Val&
-  PosValDesc<ViewSel,ValSel>::val(void) const {
+  PosValChoice<ViewSel,ValSel>::val(void) const {
     return _val;
   }
 
   template <class ViewSel, class ValSel>
   forceinline size_t
-  PosValDesc<ViewSel, ValSel>::size(void) const {
-    return sizeof(PosValDesc<ViewSel,ValSel>) + _valdesc.size();
+  PosValChoice<ViewSel, ValSel>::size(void) const {
+    return sizeof(PosValChoice<ViewSel,ValSel>) + _valchoice.size();
   }
 
 
@@ -341,27 +342,27 @@ namespace Gecode {
   }
 
   template <class ViewSel, class ValSel>
-  const BranchingDesc*
-  ViewValBranching<ViewSel,ValSel>::description(Space& home) {
+  const Choice*
+  ViewValBranching<ViewSel,ValSel>::choice(Space& home) {
     Pos p = ViewBranching<ViewSel>::pos(home);
     typename ValSel::View v(ViewBranching<ViewSel>::view(p).var());
-    return new PosValDesc<ViewSel,ValSel>
+    return new PosValChoice<ViewSel,ValSel>
       (*this,p,
-       viewsel.description(home),
-       valsel.description(home),valsel.val(home,v));
+       viewsel.choice(home),
+       valsel.choice(home),valsel.val(home,v));
   }
 
   template <class ViewSel, class ValSel>
   ExecStatus
   ViewValBranching<ViewSel,ValSel>
-  ::commit(Space& home, const BranchingDesc& d, unsigned int a) {
-    const PosValDesc<ViewSel,ValSel>& pvd
-      = static_cast<const PosValDesc<ViewSel,ValSel>&>(d);
+  ::commit(Space& home, const Choice& c, unsigned int a) {
+    const PosValChoice<ViewSel,ValSel>& pvc
+      = static_cast<const PosValChoice<ViewSel,ValSel>&>(c);
     typename ValSel::View
-      v(ViewBranching<ViewSel>::view(pvd.pos()).var());
-    viewsel.commit(home, pvd.viewdesc(), a);
-    valsel.commit(home, pvd.valdesc(), a);
-    return me_failed(valsel.tell(home,a,v,pvd.val())) ? ES_FAILED : ES_OK;
+      v(ViewBranching<ViewSel>::view(pvc.pos()).var());
+    viewsel.commit(home, pvc.viewchoice(), a);
+    valsel.commit(home, pvc.valchoice(), a);
+    return me_failed(valsel.tell(home,a,v,pvc.val())) ? ES_FAILED : ES_OK;
   }
 
   template <class ViewSel, class ValSel>

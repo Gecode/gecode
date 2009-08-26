@@ -64,8 +64,8 @@ namespace Gecode { namespace Search { namespace Sequential {
       Space* _space;
       /// Current alternative
       unsigned int _alt;
-      /// Braching description
-      const BranchingDesc* _desc;
+      /// Choice
+      const Choice* _choice;
     public:
       /// Default constructor
       Node(void);
@@ -77,8 +77,8 @@ namespace Gecode { namespace Search { namespace Sequential {
       /// Set space to \a s
       void space(Space* s);
       
-      /// Return branching description
-      const BranchingDesc* desc(void) const;
+      /// Return choice
+      const Choice* choice(void) const;
       
       /// Return number for alternatives
       unsigned int alt(void) const;
@@ -97,7 +97,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Initialize
     Path(void);
     /// Push space \a c (a clone of \a s or NULL)
-    const BranchingDesc* push(Worker& stat, Space* s, Space* c);
+    const Choice* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
     bool next(Worker& s);
     /// Provide access to topmost node
@@ -133,7 +133,7 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline
   Path::Node::Node(Space* s, Space* c)
-    : _space(c), _alt(0), _desc(s->description()) {}
+    : _space(c), _alt(0), _choice(s->choice()) {}
 
   forceinline Space*
   Path::Node::space(void) const {
@@ -150,22 +150,22 @@ namespace Gecode { namespace Search { namespace Sequential {
   }
   forceinline bool
   Path::Node::rightmost(void) const {
-    return _alt+1 == _desc->alternatives();
+    return _alt+1 == _choice->alternatives();
   }
   forceinline void
   Path::Node::next(void) {
     _alt++;
   }
 
-  forceinline const BranchingDesc*
-  Path::Node::desc(void) const {
-    return _desc;
+  forceinline const Choice*
+  Path::Node::choice(void) const {
+    return _choice;
   }
 
   forceinline void
   Path::Node::dispose(void) {
     delete _space;
-    delete _desc;
+    delete _choice;
   }
 
 
@@ -178,12 +178,12 @@ namespace Gecode { namespace Search { namespace Sequential {
   forceinline
   Path::Path(void) : ds(heap) {}
 
-  forceinline const BranchingDesc*
+  forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
     Node sn(s,c);
     ds.push(sn);
     stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
-    return sn.desc();
+    return sn.choice();
   }
 
   forceinline bool
@@ -191,7 +191,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
-        stat.pop(ds.top().space(),ds.top().desc());
+        stat.pop(ds.top().space(),ds.top().choice());
         ds.pop().dispose();
       } else {
         ds.top().next();
@@ -214,7 +214,7 @@ namespace Gecode { namespace Search { namespace Sequential {
   forceinline void
   Path::commit(Space* s, int i) const {
     const Node& n = ds[i];
-    s->commit(*n.desc(),n.alt());
+    s->commit(*n.choice(),n.alt());
   }
 
   forceinline int
@@ -259,7 +259,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
-      s->commit(*ds.top().desc(),ds.top().alt());
+      s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
       stat.lao(s);
@@ -323,7 +323,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
-      s->commit(*ds.top().desc(),ds.top().alt());
+      s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       if (mark > ds.entries()-1) {
         mark = ds.entries()-1;

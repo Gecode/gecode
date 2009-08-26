@@ -100,14 +100,14 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template<class View>
   forceinline Support::RandomGenerator
-  ValRnd<View>::description(Space&) {
+  ValRnd<View>::choice(Space&) {
     return r;
   }
   template<class View>
   forceinline void
-  ValRnd<View>::commit(Space&, const Support::RandomGenerator& d,
+  ValRnd<View>::commit(Space&, const Support::RandomGenerator& c,
                        unsigned int) {
-    r = d;
+    r = c;
   }
   template<class View>
   forceinline void

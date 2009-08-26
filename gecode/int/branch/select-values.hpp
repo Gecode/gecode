@@ -38,12 +38,12 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   /**
-   * \brief %Branching descriptions storing position and values
+   * \brief Choice storing position and values
    *
    * The maximal number of alternatives is defined by \a alt.
    */
   template<class ViewSel, class View>
-  class PosValuesDesc : public PosDesc<ViewSel> {
+  class PosValuesChoice : public PosChoice<ViewSel> {
   private:
     /// Information about position and minimum
     class PosMin {
@@ -58,24 +58,24 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Values to assign to
     PosMin* pm;
   public:
-    /// Initialize description for branching \a b, position \a p, view description \a viewd, and view \a x
-    PosValuesDesc(const Branching& b, const Pos& p,
-                  const typename ViewSel::Desc& viewd, View x);
+    /// Initialize choice for branching \a b, position \a p, view choice \a viewc, and view \a x
+    PosValuesChoice(const Branching& b, const Pos& p,
+                    const typename ViewSel::Choice& viewc, View x);
     /// Return value to branch with for alternative \a a
     int val(unsigned int a) const;
     /// Report size occupied
     virtual size_t size(void) const;
     /// Deallocate
-    virtual ~PosValuesDesc(void);
+    virtual ~PosValuesChoice(void);
   };
 
 
   template<class ViewSel, class View>
   forceinline
-  PosValuesDesc<ViewSel,View>::
-  PosValuesDesc(const Branching& b, const Pos& p,
-                const typename ViewSel::Desc& viewd, View x)
-    : PosDesc<ViewSel>(b,x.size(),p,viewd), n(0) {
+  PosValuesChoice<ViewSel,View>::
+  PosValuesChoice(const Branching& b, const Pos& p,
+                const typename ViewSel::Choice& viewc, View x)
+    : PosChoice<ViewSel>(b,x.size(),p,viewc), n(0) {
     for (ViewRanges<View> r(x); r(); ++r)
       n++;
     pm = heap.alloc<PosMin>(n+1);
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class ViewSel, class View>
   forceinline int
-  PosValuesDesc<ViewSel,View>::val(unsigned int a) const {
+  PosValuesChoice<ViewSel,View>::val(unsigned int a) const {
     PosMin* l = &pm[0];
     PosMin* r = &pm[n-1];
     while (true) {
@@ -110,12 +110,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class ViewSel, class View>
   size_t
-  PosValuesDesc<ViewSel,View>::size(void) const {
-    return sizeof(PosValuesDesc<ViewSel,View>)+(n+1)*sizeof(PosMin);
+  PosValuesChoice<ViewSel,View>::size(void) const {
+    return sizeof(PosValuesChoice<ViewSel,View>)+(n+1)*sizeof(PosMin);
   }
 
   template<class ViewSel, class View>
-  PosValuesDesc<ViewSel,View>::~PosValuesDesc(void) {
+  PosValuesChoice<ViewSel,View>::~PosValuesChoice(void) {
     heap.free<PosMin>(pm,n+1);
   }
 
@@ -141,23 +141,23 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   template <class ViewSel, class View>
-  const BranchingDesc*
-  ViewValuesBranching<ViewSel,View>::description(Space& home) {
+  const Choice*
+  ViewValuesBranching<ViewSel,View>::choice(Space& home) {
     Pos p = ViewBranching<ViewSel>::pos(home);
     View v(ViewBranching<ViewSel>::view(p).var());
-    return new PosValuesDesc<ViewSel,View>
-      (*this,p,viewsel.description(home),v);
+    return new PosValuesChoice<ViewSel,View>
+      (*this,p,viewsel.choice(home),v);
   }
 
   template <class ViewSel, class View>
   ExecStatus
   ViewValuesBranching<ViewSel,View>
-  ::commit(Space& home, const BranchingDesc& d, unsigned int a) {
-    const PosValuesDesc<ViewSel,View>& pvd
-      = static_cast<const PosValuesDesc<ViewSel,View>&>(d);
-    View v(ViewBranching<ViewSel>::view(pvd.pos()).var());
-    viewsel.commit(home, pvd.viewdesc(), a);
-    return me_failed(v.eq(home,pvd.val(a))) ? ES_FAILED : ES_OK;
+  ::commit(Space& home, const Choice& c, unsigned int a) {
+    const PosValuesChoice<ViewSel,View>& pvc
+      = static_cast<const PosValuesChoice<ViewSel,View>&>(c);
+    View v(ViewBranching<ViewSel>::view(pvc.pos()).var());
+    viewsel.commit(home, pvc.viewchoice(), a);
+    return me_failed(v.eq(home,pvc.val(a))) ? ES_FAILED : ES_OK;
   }
 
 }}}

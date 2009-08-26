@@ -113,7 +113,7 @@ namespace Gecode { namespace Search { namespace Parallel {
               case SS_SOLVED:
                 {
                   // Deletes all pending branchings
-                  (void) cur->description();
+                  (void) cur->choice();
                   Space* s = cur->clone(false);
                   delete cur;
                   cur = NULL;
@@ -132,9 +132,9 @@ namespace Gecode { namespace Search { namespace Parallel {
                     c = NULL;
                     d++;
                   }
-                  const BranchingDesc* desc = path.push(*this,cur,c);
-                  Worker::push(c,desc);
-                  cur->commit(*desc,0);
+                  const Choice* ch = path.push(*this,cur,c);
+                  Worker::push(c,ch);
+                  cur->commit(*ch,0);
                   m.release();
                 }
                 break;
