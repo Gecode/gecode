@@ -30,8 +30,8 @@ gecode/support/thread/pthreads$(OBJSUFFIX) gecode/support/thread/pthreads$(SBJSU
 	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp 
 gecode/kernel/core$(OBJSUFFIX) gecode/kernel/core$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -45,8 +45,8 @@ gecode/kernel/core$(OBJSUFFIX) gecode/kernel/core$(SBJSUFFIX): \
 	./gecode/support/static-stack.hpp 
 gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -60,8 +60,8 @@ gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX
 	./gecode/support/static-stack.hpp 
 gecode/kernel/branch$(OBJSUFFIX) gecode/kernel/branch$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -75,8 +75,8 @@ gecode/kernel/branch$(OBJSUFFIX) gecode/kernel/branch$(SBJSUFFIX): \
 	./gecode/support/static-stack.hpp 
 gecode/kernel/region$(OBJSUFFIX) gecode/kernel/region$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -90,8 +90,8 @@ gecode/kernel/region$(OBJSUFFIX) gecode/kernel/region$(SBJSUFFIX): \
 	./gecode/support/static-stack.hpp 
 gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -108,8 +108,8 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/support/timer.hh 
 gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -127,8 +127,8 @@ gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
 gecode/search/parallel/engine$(OBJSUFFIX) gecode/search/parallel/engine$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -147,8 +147,8 @@ gecode/search/parallel/engine$(OBJSUFFIX) gecode/search/parallel/engine$(SBJSUFF
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
 gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -168,8 +168,8 @@ gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
 gecode/search/parallel/dfs$(OBJSUFFIX) gecode/search/parallel/dfs$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -189,8 +189,8 @@ gecode/search/parallel/dfs$(OBJSUFFIX) gecode/search/parallel/dfs$(SBJSUFFIX): \
 	./gecode/support/timer.hh 
 gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -210,8 +210,8 @@ gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
 gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -231,8 +231,8 @@ gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/support/timer.hh 
 gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -253,8 +253,8 @@ gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
 	./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
 gecode/search/parallel/restart$(OBJSUFFIX) gecode/search/parallel/restart$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -274,8 +274,8 @@ gecode/search/parallel/restart$(OBJSUFFIX) gecode/search/parallel/restart$(SBJSU
 	./gecode/support/thread/windows.hpp ./gecode/support/timer.hh 
 gecode/search/lds$(OBJSUFFIX) gecode/search/lds$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -295,8 +295,8 @@ gecode/search/lds$(OBJSUFFIX) gecode/search/lds$(SBJSUFFIX): \
 	./gecode/support/timer.hh 
 gecode/search/sequential/lds$(OBJSUFFIX) gecode/search/sequential/lds$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -314,8 +314,8 @@ gecode/search/sequential/lds$(OBJSUFFIX) gecode/search/sequential/lds$(SBJSUFFIX
 	./gecode/support/timer.hh 
 gecode/search/parallel/lds$(OBJSUFFIX) gecode/search/parallel/lds$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -357,8 +357,8 @@ gecode/int/int-set$(OBJSUFFIX) gecode/int/int-set$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -394,8 +394,8 @@ gecode/int/var-imp/int$(OBJSUFFIX) gecode/int/var-imp/int$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -431,8 +431,8 @@ gecode/int/var-imp/bool$(OBJSUFFIX) gecode/int/var-imp/bool$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -468,8 +468,8 @@ gecode/int/var/int$(OBJSUFFIX) gecode/int/var/int$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -505,8 +505,8 @@ gecode/int/var/bool$(OBJSUFFIX) gecode/int/var/bool$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -542,8 +542,8 @@ gecode/int/array$(OBJSUFFIX) gecode/int/array$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -583,8 +583,8 @@ gecode/int/bool$(OBJSUFFIX) gecode/int/bool$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -620,8 +620,8 @@ gecode/int/extensional/dfa$(OBJSUFFIX) gecode/int/extensional/dfa$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -657,8 +657,8 @@ gecode/int/extensional/tuple-set$(OBJSUFFIX) gecode/int/extensional/tuple-set$(S
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -698,8 +698,8 @@ gecode/int/extensional$(OBJSUFFIX) gecode/int/extensional$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -738,8 +738,8 @@ gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -779,8 +779,8 @@ gecode/int/rel$(OBJSUFFIX) gecode/int/rel$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -819,8 +819,8 @@ gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -859,8 +859,8 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -904,8 +904,8 @@ gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -942,8 +942,8 @@ gecode/int/exec$(OBJSUFFIX) gecode/int/exec$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -980,8 +980,8 @@ gecode/int/exec/when$(OBJSUFFIX) gecode/int/exec/when$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -1020,8 +1020,8 @@ gecode/int/element/pair$(OBJSUFFIX) gecode/int/element/pair$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1062,8 +1062,8 @@ gecode/int/linear/int-post$(OBJSUFFIX) gecode/int/linear/int-post$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1102,8 +1102,8 @@ gecode/int/linear-int$(OBJSUFFIX) gecode/int/linear-int$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -1143,8 +1143,8 @@ gecode/int/linear/bool-post$(OBJSUFFIX) gecode/int/linear/bool-post$(SBJSUFFIX):
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -1184,8 +1184,8 @@ gecode/int/linear-bool$(OBJSUFFIX) gecode/int/linear-bool$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -1224,8 +1224,8 @@ gecode/int/branch$(OBJSUFFIX) gecode/int/branch$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1266,8 +1266,8 @@ gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -1310,8 +1310,8 @@ gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -1355,8 +1355,8 @@ gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -1399,8 +1399,8 @@ gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -1443,8 +1443,8 @@ gecode/int/channel/link-single$(OBJSUFFIX) gecode/int/channel/link-single$(SBJSU
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -1487,8 +1487,8 @@ gecode/int/channel/link-multi$(OBJSUFFIX) gecode/int/channel/link-multi$(SBJSUFF
 	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
 	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -1528,8 +1528,8 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1567,8 +1567,8 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1606,8 +1606,8 @@ gecode/int/unshare$(OBJSUFFIX) gecode/int/unshare$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1643,8 +1643,8 @@ gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1688,8 +1688,8 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1737,8 +1737,8 @@ gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1782,8 +1782,8 @@ gecode/set/convex/conv$(OBJSUFFIX) gecode/set/convex/conv$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1827,8 +1827,8 @@ gecode/set/convex/hull$(OBJSUFFIX) gecode/set/convex/hull$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1872,8 +1872,8 @@ gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1918,8 +1918,8 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -1969,8 +1969,8 @@ gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2018,8 +2018,8 @@ gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2067,8 +2067,8 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2119,8 +2119,8 @@ gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2170,8 +2170,8 @@ gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2218,8 +2218,8 @@ gecode/set/distinct$(OBJSUFFIX) gecode/set/distinct$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2262,8 +2262,8 @@ gecode/set/distinct/atmostOne$(OBJSUFFIX) gecode/set/distinct/atmostOne$(SBJSUFF
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2306,8 +2306,8 @@ gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2354,8 +2354,8 @@ gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2402,8 +2402,8 @@ gecode/set/array$(OBJSUFFIX) gecode/set/array$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2446,8 +2446,8 @@ gecode/set/var-imp/set$(OBJSUFFIX) gecode/set/var-imp/set$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2490,8 +2490,8 @@ gecode/set/var-imp/integerset$(OBJSUFFIX) gecode/set/var-imp/integerset$(SBJSUFF
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2534,8 +2534,8 @@ gecode/set/var/set$(OBJSUFFIX) gecode/set/var/set$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2578,8 +2578,8 @@ gecode/set/exec$(OBJSUFFIX) gecode/set/exec$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2622,8 +2622,8 @@ gecode/set/exec$(OBJSUFFIX) gecode/set/exec$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -2670,8 +2670,8 @@ gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -2720,8 +2720,8 @@ gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -2773,8 +2773,8 @@ gecode/graph/circuit$(OBJSUFFIX) gecode/graph/circuit$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -2814,8 +2814,8 @@ gecode/scheduling/cumulatives$(OBJSUFFIX) gecode/scheduling/cumulatives$(SBJSUFF
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -2856,8 +2856,8 @@ gecode/scheduling/unary$(OBJSUFFIX) gecode/scheduling/unary$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -2905,8 +2905,8 @@ gecode/scheduling/cumulative$(OBJSUFFIX) gecode/scheduling/cumulative$(SBJSUFFIX
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -2958,8 +2958,8 @@ gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3014,8 +3014,8 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3069,8 +3069,8 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3124,8 +3124,8 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3179,8 +3179,8 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3234,8 +3234,8 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3289,8 +3289,8 @@ examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3344,8 +3344,8 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3399,8 +3399,8 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3454,8 +3454,8 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3509,8 +3509,8 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3564,8 +3564,8 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3619,8 +3619,8 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3674,8 +3674,8 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3729,8 +3729,8 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3784,8 +3784,8 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3839,8 +3839,8 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3894,8 +3894,8 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -3949,8 +3949,8 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4004,8 +4004,8 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4059,8 +4059,8 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4114,8 +4114,8 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4169,8 +4169,8 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4224,8 +4224,8 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4279,8 +4279,8 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4334,8 +4334,8 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4389,8 +4389,8 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4444,8 +4444,8 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4499,8 +4499,8 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4554,8 +4554,8 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4609,8 +4609,8 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4664,8 +4664,8 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4719,8 +4719,8 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4774,8 +4774,8 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4829,8 +4829,8 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4884,8 +4884,8 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4939,8 +4939,8 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -4994,8 +4994,8 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5049,8 +5049,8 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5104,8 +5104,8 @@ examples/stress-extensional$(OBJSUFFIX) examples/stress-extensional$(SBJSUFFIX):
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5159,8 +5159,8 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5214,8 +5214,8 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5269,8 +5269,8 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5324,8 +5324,8 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5379,8 +5379,8 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5434,8 +5434,8 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5489,8 +5489,8 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5544,8 +5544,8 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5599,8 +5599,8 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -5654,8 +5654,8 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -5709,8 +5709,8 @@ examples/job-shop$(OBJSUFFIX) examples/job-shop$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5764,8 +5764,8 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5795,8 +5795,8 @@ gecode/gist/drawingcursor$(OBJSUFFIX) gecode/gist/drawingcursor$(SBJSUFFIX): \
 	./gecode/gist/nodecursor.hh ./gecode/gist/nodecursor.hpp ./gecode/gist/spacenode.hh \
 	./gecode/gist/spacenode.hpp ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -5815,8 +5815,8 @@ gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/gist/textoutput.hh ./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh \
 	./gecode/gist/visualnode.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -5836,8 +5836,8 @@ gecode/gist/node$(OBJSUFFIX) gecode/gist/node$(SBJSUFFIX): \
 	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/spacenode.hh \
 	./gecode/gist/spacenode.hpp ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -5854,8 +5854,8 @@ gecode/gist/nodecursor$(OBJSUFFIX) gecode/gist/nodecursor$(SBJSUFFIX): \
 	./gecode/gist/nodecursor.hpp ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
 	./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5872,8 +5872,8 @@ gecode/gist/layoutcursor$(OBJSUFFIX) gecode/gist/layoutcursor$(SBJSUFFIX): \
 	./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp ./gecode/gist/visualnode.hh \
 	./gecode/gist/visualnode.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -5888,8 +5888,8 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/gist/node.hh ./gecode/gist/node.hpp ./gecode/gist/spacenode.hh \
 	./gecode/gist/spacenode.hpp ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -5914,8 +5914,8 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 	./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp ./gecode/gist/treecanvas.hh \
 	./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -5938,8 +5938,8 @@ gecode/gist/qtgist$(OBJSUFFIX) gecode/gist/qtgist$(SBJSUFFIX): \
 	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
 	./gecode/gist/zoomToFitIcon.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp \
-	./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
+	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
+	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
 	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
 	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
@@ -5959,8 +5959,8 @@ gecode/gist/visualnode$(OBJSUFFIX) gecode/gist/visualnode$(SBJSUFFIX): \
 	./gecode/gist/nodevisitor.hh ./gecode/gist/nodevisitor.hpp ./gecode/gist/spacenode.hh \
 	./gecode/gist/spacenode.hpp ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -5981,8 +5981,8 @@ gecode/gist/nodestats$(OBJSUFFIX) gecode/gist/nodestats$(SBJSUFFIX): \
 	./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp ./gecode/gist/treecanvas.hh \
 	./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6004,8 +6004,8 @@ gecode/gist/nodewidget$(OBJSUFFIX) gecode/gist/nodewidget$(SBJSUFFIX): \
 	./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
 	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6029,8 +6029,8 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/gist/qtgist.hh ./gecode/gist/spacenode.hh ./gecode/gist/spacenode.hpp \
 	./gecode/gist/treecanvas.hh ./gecode/gist/visualnode.hh ./gecode/gist/visualnode.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6048,8 +6048,8 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/gist/preferences.hh \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6066,8 +6066,8 @@ gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/support/timer.hh 
 test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6107,8 +6107,8 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6152,8 +6152,8 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6203,8 +6203,8 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6245,8 +6245,8 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6290,8 +6290,8 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6341,8 +6341,8 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6383,8 +6383,8 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6425,8 +6425,8 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6470,8 +6470,8 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6524,8 +6524,8 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6578,8 +6578,8 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6632,8 +6632,8 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6683,8 +6683,8 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6725,8 +6725,8 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -6770,8 +6770,8 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6824,8 +6824,8 @@ test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6878,8 +6878,8 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6932,8 +6932,8 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -6986,8 +6986,8 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7040,8 +7040,8 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7094,8 +7094,8 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7145,8 +7145,8 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7194,8 +7194,8 @@ test/set/construct$(OBJSUFFIX) test/set/construct$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7243,8 +7243,8 @@ test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7292,8 +7292,8 @@ test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7341,8 +7341,8 @@ test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7390,8 +7390,8 @@ test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7439,8 +7439,8 @@ test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7488,8 +7488,8 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7540,8 +7540,8 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7595,8 +7595,8 @@ test/set/element$(OBJSUFFIX) test/set/element$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7647,8 +7647,8 @@ test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7696,8 +7696,8 @@ test/set/exec$(OBJSUFFIX) test/set/exec$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -7748,8 +7748,8 @@ test/scheduling/cumulatives$(OBJSUFFIX) test/scheduling/cumulatives$(SBJSUFFIX):
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7803,8 +7803,8 @@ test/scheduling/unary$(OBJSUFFIX) test/scheduling/unary$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7858,8 +7858,8 @@ test/scheduling/cumulative$(OBJSUFFIX) test/scheduling/cumulative$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7910,8 +7910,8 @@ test/graph/circuit$(OBJSUFFIX) test/graph/circuit$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
@@ -7952,8 +7952,8 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8000,8 +8000,8 @@ test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8048,8 +8048,8 @@ test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8096,8 +8096,8 @@ test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8144,8 +8144,8 @@ test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8192,8 +8192,8 @@ test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8240,8 +8240,8 @@ test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8288,8 +8288,8 @@ test/assign/set$(OBJSUFFIX) test/assign/set$(SBJSUFFIX): \
 	./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp \
 	./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh \
 	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp \
-	./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp ./gecode/kernel/branching-val.hpp \
-	./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
 	./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp \
 	./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
@@ -8339,8 +8339,8 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/iter/virtual-ranges-compl.hpp \
 	./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp ./gecode/iter/virtual-ranges.hpp \
 	./gecode/kernel.hh ./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/branching-tiebreak.hpp \
-	./gecode/kernel/branching-val.hpp ./gecode/kernel/branching-view.hpp ./gecode/kernel/branching.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
 	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/macros.hpp \
 	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
 	./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \

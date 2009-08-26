@@ -283,11 +283,11 @@
  */
 
 /**
- * \defgroup FuncIntSelView Integer view selection for branching
+ * \defgroup FuncIntSelView Integer view selection for brancher
  *
  * Contains a description of view selection strategies on integer
  * views that can be used together with the generic view/value
- * branching class Gecode::ViewValBranching (argument \a ViewSel).
+ * brancher class Gecode::ViewValBrancher (argument \a ViewSel).
  *
  * All view selection classes require 
  * \code #include <gecode/int/branch.hh> \endcode
@@ -295,11 +295,11 @@
  */
 
 /**
- * \defgroup FuncIntSelVal Integer value selection for branching
+ * \defgroup FuncIntSelVal Integer value selection for brancher
  *
  * Contains a description of value selection strategies on integer
  * views that can be used together with the generic view/value
- * branching class Gecode::ViewValBranching (argument \a ValSel).
+ * brancher class Gecode::ViewValBrancher (argument \a ValSel).
  *
  * All value selection classes require 
  * \code #include <gecode/int/branch.hh> \endcode
@@ -317,11 +317,11 @@
  */
 
 /**
- * \defgroup FuncSetSelView Set view selection for branching
+ * \defgroup FuncSetSelView Set view selection for brancher
  *
  * Contains a description of view selection strategies on set
  * views that can be used together with the generic view/value
- * branching class Gecode::ViewValBranching (argument \a ViewSel).
+ * brancher class Gecode::ViewValBrancher (argument \a ViewSel).
  *
  * All view selection classes require 
  * \code #include <gecode/set/branch.hh> \endcode
@@ -329,11 +329,11 @@
  */
 
 /**
- * \defgroup FuncSetSelVal Set value selection for branching
+ * \defgroup FuncSetSelVal Set value selection for brancher
  *
  * Contains a description of value selection strategies on set
  * views that can be used together with the generic view/value
- * branching class Gecode::ViewValBranching (argument \a ValSel).
+ * brancher class Gecode::ViewValBrancher (argument \a ValSel).
  *
  * All value selection classes require 
  * \code #include <gecode/set/branch.hh> \endcode
@@ -412,7 +412,7 @@
  * Documentation is available for the following tasks:
  *  - \ref TaskModel
  *  - \ref TaskSearch
- *  - \ref TaskActor "Programming propagators and branchings"
+ *  - \ref TaskActor "Programming propagators and branchers"
  *  - \ref TaskVar
  *  - \ref TaskTest
  *
@@ -507,7 +507,7 @@ reference documentation.
 
 \section GlossaryActor Actor
 
-An actor is a branching (\ref GlossaryBranching), a propagator
+An actor is a brancher (\ref GlossaryBrancher), a propagator
 (\ref GlossaryPropagator), or an advisor (\ref
 GlossaryAdvisor). Actors provide common functionality such as
 member functions for copying during cloning, memory allocation,
@@ -515,21 +515,21 @@ and so on. Actors are implemented by the class
 Gecode::Actor. More on programming actors can be found in the
 module \ref TaskActor.
 
-\section GlossaryBranching Branching
+\section GlossaryBrancher Brancher
 
-A branching defines the shape of the search tree. Branchings are
-also known as labelings or distributors, and a branching creates
-a series of choice points. Branchings are implemented by the
-class Gecode::Branching. A common abstraction for defining
-branchings based on view and value selection is provided by the
-class Gecode::ViewValBranching.
+A brancher defines the shape of the search tree. Branchers are
+also known as labelings or distributors, and a brancher creates
+a series of choice points. Branchers are implemented by the
+class Gecode::Brancher. A common abstraction for defining
+branchers based on view and value selection is provided by the
+class Gecode::ViewValBrancher.
 
 \section GlossaryChoice Choice
 
 A choice speeds up recomputation by providing
-path recomputation. It is created by a branching (\ref
-GlossaryBranching) and allows to replay the effect of that
-branching without the need to first perform constraint
+path recomputation. It is created by a brancher (\ref
+GlossaryBrancher) and allows to replay the effect of that
+brancher without the need to first perform constraint
 propagation. The base-class for choices is
 Gecode::Choice.
 
@@ -539,7 +539,7 @@ A computation space (space for short) comprises all entities for
 a constraint problem to be solved, including all actors (\ref
 GlossaryActor) and variables (\ref GlossaryVariable). A space can
 be seen as corresponding to a node in the search tree. It
-organizes constraint propagation, the branching process,
+organizes constraint propagation, the brancher process,
 exploration, and memory management. Spaces are implemented by the
 class Gecode::Space. They provide functionality for \ref
 TaskModelScript, \ref TaskSearch, and \ref FuncMemSpace.

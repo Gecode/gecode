@@ -182,10 +182,10 @@
 #include <gecode/kernel/propagator.hpp>
 #include <gecode/kernel/advisor.hpp>
 #include <gecode/kernel/branch.hpp>
-#include <gecode/kernel/branching.hpp>
-#include <gecode/kernel/branching-view.hpp>
-#include <gecode/kernel/branching-tiebreak.hpp>
-#include <gecode/kernel/branching-val.hpp>
+#include <gecode/kernel/brancher.hpp>
+#include <gecode/kernel/brancher-view.hpp>
+#include <gecode/kernel/brancher-tiebreak.hpp>
+#include <gecode/kernel/brancher-val.hpp>
 
 
 /*

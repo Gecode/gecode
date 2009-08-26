@@ -173,8 +173,8 @@ KERNELHDR0 = \
 	array shared-array core exception \
 	macros memory-config memory-manager region modevent \
 	propagator advisor view var var-traits \
-	branch branching branching-view branching-tiebreak \
-	branching-val allocators
+	branch brancher brancher-view brancher-tiebreak \
+	brancher-val allocators
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
@@ -915,7 +915,7 @@ $(top_srcdir)/gecode/kernel/var-imp.hpp: $(top_srcdir)/variables.vsl $(ALLVIS)
 	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
 
 #
-# Generated branchings
+# Generated branchers
 #
 GENBRANCHSRC = \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
