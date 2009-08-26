@@ -192,6 +192,15 @@ namespace Test { namespace Int {
     return s.str();
   }
 
+  inline
+  std::string
+  Test::str(const Gecode::IntArgs& x) {
+    std::string s = "";
+    for (int i=0; i<x.size()-1; i++)
+      s += str(x[i]) + ",";
+    return "[" + s + str(x[x.size()-1]) + "]";
+  }
+
   template<class T>
   inline bool
   Test::cmp(T x, Gecode::IntRelType r, T y) {

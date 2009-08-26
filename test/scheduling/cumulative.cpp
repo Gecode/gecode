@@ -42,16 +42,16 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for unary scheduling constraints
-   namespace Unary {
+   /// Tests for cumulative scheduling constraints
+   namespace Cumulative {
 
      /**
-      * \defgroup TaskTestUnary Unary scheduling constraints
+      * \defgroup TaskTestCumulative Cumulative scheduling constraints
       * \ingroup TaskTestScheduling
       */
      //@{
      /// Test for unary constraint
-     class ManFixUnary : public Test {
+     class ManFixCumulative : public Test {
      protected:
        /// The processing times
        Gecode::IntArgs p;
@@ -64,8 +64,8 @@ namespace Test { namespace Int {
        }
      public:
        /// Create and register test
-       ManFixUnary(const Gecode::IntArgs& p0)
-         : Test("Scheduling::Unary::Man::Fix::"+str(p0),p0.size(),0,st(p0)), 
+       ManFixCumulative(const Gecode::IntArgs& p0)
+         : Test("Scheduling::Cumulative::Man::Fix::"+str(p0),p0.size(),0,st(p0)), 
            p(p0) {
          testsearch = false;
          contest = CTL_NONE;
@@ -89,7 +89,7 @@ namespace Test { namespace Int {
      };
 
      /// Test for unary constraint with optional tasks
-     class OptFixUnary : public Test {
+     class OptFixCumulative : public Test {
      protected:
        /// The processing times
        Gecode::IntArgs p;
@@ -104,8 +104,8 @@ namespace Test { namespace Int {
        }
      public:
        /// Create and register test
-       OptFixUnary(const Gecode::IntArgs& p0)
-         : Test("Scheduling::Unary::Opt::Fix::"+str(p0),
+       OptFixCumulative(const Gecode::IntArgs& p0)
+         : Test("Scheduling::Cumulative::Opt::Fix::"+str(p0),
                 2*p0.size(),0,st(p0)), p(p0), l(st(p)/2) {
          testsearch = false;
          contest = CTL_NONE;
@@ -139,16 +139,16 @@ namespace Test { namespace Int {
      };
 
      Gecode::IntArgs p1(4, 2,2,2,2);
-     ManFixUnary mfu1(p1);
-     OptFixUnary ofu1(p1);
+     ManFixCumulative mfu1(p1);
+     OptFixCumulative ofu1(p1);
 
      Gecode::IntArgs p2(4, 4,3,3,5);
-     ManFixUnary mfu2(p2);
-     OptFixUnary ofu2(p2);
+     ManFixCumulative mfu2(p2);
+     OptFixCumulative ofu2(p2);
 
      Gecode::IntArgs p3(6, 4,2,9,3,7,5);
-     ManFixUnary mfu3(p3);
-     OptFixUnary ofu3(p3);
+     ManFixCumulative mfu3(p3);
+     OptFixCumulative ofu3(p3);
 
      //@}
 

@@ -767,7 +767,7 @@ SETTESTOBJ=
 endif
 
 SCHEDULINGTESTSRC00 = \
-	cumulatives unary
+	cumulatives unary cumulative
 SCHEDULINGTESTSRC0 = $(SCHEDULINGTESTSRC00:%=test/scheduling/%.cpp)
 
 ifeq "@enable_scheduling@" "yes"
