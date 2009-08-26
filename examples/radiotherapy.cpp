@@ -204,9 +204,9 @@ public:
   }
 
   /// Nested search on the q variables
-  class NestedSearch : public Branching {
+  class NestedSearch : public Brancher {
   private:
-    /// Flag that the branching is done after one commit
+    /// Flag that the brancher is done after one commit
     bool done;
     /// Mapping of index to weight
     struct Idx { 
@@ -220,18 +220,18 @@ public:
     /// Choice that only signals failure or success
     class Choice : public Gecode::Choice {
     public:
-      /// Whether branching should fail
+      /// Whether brancher should fail
       bool fail;
-      /// Initialize choice for branching \a b
-      Choice(const Branching& b, bool fail0)
+      /// Initialize choice for brancher \a b
+      Choice(const Brancher& b, bool fail0)
       : Gecode::Choice(b,1), fail(fail0) {}
       /// Report size occupied
       virtual size_t size(void) const {
         return sizeof(Choice);
       }
     };
-    /// Construct branching
-    NestedSearch(Space& home) : Branching(home), done(false) {
+    /// Construct brancher
+    NestedSearch(Space& home) : Brancher(home), done(false) {
       Radiotherapy& rt = static_cast<Radiotherapy&>(home);
       // Set up ordering of rows.  As a heuristic, pre-order the rows
       // with the potentially cheapest ones first.
@@ -251,7 +251,7 @@ public:
     }
     /// Copy constructor
     NestedSearch(Space& home, bool share, NestedSearch& b)
-      : Branching(home, share, b), done(b.done) {
+      : Brancher(home, share, b), done(b.done) {
       index.update(home, share, b.index);
     }
   public:
@@ -305,11 +305,11 @@ public:
     virtual ExecStatus commit(Space&, const Gecode::Choice& _c, unsigned int) {
       return static_cast<const Choice&>(_c).fail ? ES_FAILED : ES_OK;
     }
-    /// Copy branching
+    /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {
       return new (home) NestedSearch(home, share, *this);
     }
-    /// Post branching
+    /// Post brancher
     static void post(Space& home) {
       (void) new (home) NestedSearch(home);
     }
@@ -322,7 +322,7 @@ public:
         for (int i = index.size()-1; i--; )
           index[i].weight *= 0.9;
       }
-      (void) Branching::dispose(home);
+      (void) Brancher::dispose(home);
       (void) index.~SharedArray<Idx>();
       return sizeof(*this);
     }

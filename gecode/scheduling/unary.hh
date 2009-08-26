@@ -504,9 +504,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     void update(Space& home, bool share, ManResource<Task>& m);
   };
 
-  /// Branching for mandatory tasks
+  /// Brancher for mandatory tasks
   template<class Task>
-  class ManBranch : public Branching {
+  class ManBranch : public Brancher {
   protected:
     /// Choice
     class Description : public Choice {
@@ -515,10 +515,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       int r;
       /// Positions of task to be ordered
       int t;
-      /** Initialize choice for branching \a b, 
+      /** Initialize choice for brancher \a b, 
        *  resource \a r0, and task \a t0.
        */
-      Description(const Branching& b, int r0, int t0);
+      Description(const Brancher& b, int r0, int t0);
       /// Report size occupied
       virtual size_t size(void) const;
     };
@@ -528,22 +528,22 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     mutable int c;
     /// Resource information
     ManResource<Task>* r;
-    /// Construct branching
+    /// Construct brancher
     ManBranch(Space& home, ManResource<Task>* r0, int n);
     /// Copy constructor
     ManBranch(Space& home, bool share, ManBranch& b);
   public:
-    /// Check status of branching, return true if alternatives left
+    /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
     /// Return choice
     virtual Choice* choice(Space& home);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& d, unsigned int a);
-    /// Copy branching
+    /// Copy brancher
     virtual Actor* copy(Space& home, bool share);
-    /// Post branching
+    /// Post brancher
     static void post(Space& home, ManResource<Task>* r0, int n);
-    /// Delete branching and return its size
+    /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
   };
 

@@ -657,7 +657,7 @@ namespace Gecode {
     friend class Actor;
     friend class Propagator;
     friend class Advisor;
-    friend class Branching;
+    friend class Brancher;
     friend class Space;
     template<class VIC> friend class VarImp;
   private:
@@ -688,7 +688,7 @@ namespace Gecode {
 
 
   /**
-   * \brief Base-class for both propagators and branchings
+   * \brief Base-class for both propagators and branchers
    * \ingroup TaskActor
    */
   class GECODE_VTABLE_EXPORT Actor : private ActorLink {
@@ -696,7 +696,7 @@ namespace Gecode {
     friend class Space;
     friend class Propagator;
     friend class Advisor;
-    friend class Branching;
+    friend class Brancher;
     template<class VIC> friend class VarImp;
     template<class A> friend class Council;
   private:
@@ -1016,28 +1016,28 @@ namespace Gecode {
   };
 
 
-  class Branching;
+  class Brancher;
 
   /**
    * \brief Choice for path recomputation
    *
    * Must be refined by inheritance such that the information stored
    * inside a choice is sufficient to redo a commit performed by a
-   * particular branching.
+   * particular brancher.
    *
    * \ingroup TaskActor
    */
   class Choice {
     friend class Space;
   private:
-    unsigned int _id;  ///< Identity to match creating branching
+    unsigned int _id;  ///< Identity to match creating brancher
     unsigned int _alt; ///< Number of alternatives
 
-    /// Return id of the creating branching
+    /// Return id of the creating brancher
     unsigned int id(void) const;
   protected:
-    /// Initialize for particular branching \a b and alternatives \a a
-    Choice(const Branching& b, const unsigned int a);
+    /// Initialize for particular brancher \a b and alternatives \a a
+    Choice(const Brancher& b, const unsigned int a);
   public:
     /// Return number of alternatives
     unsigned int alternatives(void) const;
@@ -1052,15 +1052,15 @@ namespace Gecode {
   };
 
   /**
-   * \brief Base-class for branchings
+   * \brief Base-class for branchers
    *
-   * Note that branchings cannot be created inside a propagator
+   * Note that branchers cannot be created inside a propagator
    * (no idea why one would like to do that anyway). If you do that
    * the system will explode in a truly interesting way.
    *
    * \ingroup TaskActor
    */
-  class GECODE_VTABLE_EXPORT Branching : public Actor {
+  class GECODE_VTABLE_EXPORT Brancher : public Actor {
     friend class ActorLink;
     friend class Space;
     friend class Choice;
@@ -1068,23 +1068,23 @@ namespace Gecode {
     /// Unique identity
     unsigned int _id;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
-    static Branching* cast(ActorLink* al);
+    static Brancher* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
-    static const Branching* cast(const ActorLink* al);
+    static const Brancher* cast(const ActorLink* al);
   protected:
     /// Constructor for creation
-    Branching(Space& home);
+    Brancher(Space& home);
     /// Constructor for cloning \a b
-    Branching(Space& home, bool share, Branching& b);
+    Brancher(Space& home, bool share, Brancher& b);
   public:
-    /// \name Branching
+    /// \name Brancher
     //@{
     /**
-     * \brief Check status of branching, return true if alternatives left
+     * \brief Check status of brancher, return true if alternatives left
      *
      * This method is called when Space::status is called, it determines
-     * whether to continue branching with this branching or move on to
-     * the (possibly) next branching.
+     * whether to continue branching with this brancher or move on to
+     * the (possibly) next brancher.
      *
      */
     virtual bool status(const Space& home) const = 0;
@@ -1099,12 +1099,12 @@ namespace Gecode {
     /**
      * \brief Commit for choice \a c and alternative \a a
      *
-     * The current branching in the space \a home performs a commit from
+     * The current brancher in the space \a home performs a commit from
      * the information provided by the choice \a c and the alternative \a a.
      */
     virtual ExecStatus commit(Space& home, const Choice& c, 
                               unsigned int a) = 0;
-    /// Return unsigned branching id
+    /// Return unsigned brancher id
     unsigned int id(void) const;
     //@}
   };
@@ -1117,8 +1117,8 @@ namespace Gecode {
    */
   enum SpaceStatus {
     SS_FAILED, ///< %Space is failed
-    SS_SOLVED, ///< %Space is solved (no branching left)
-    SS_BRANCH  ///< %Space must be branched (at least one branching left)
+    SS_SOLVED, ///< %Space is solved (no brancher left)
+    SS_BRANCH  ///< %Space must be branched (at least one brancher left)
   };
 
   /**
@@ -1179,7 +1179,7 @@ namespace Gecode {
   class GECODE_VTABLE_EXPORT Space {
     friend class Actor;
     friend class Propagator;
-    friend class Branching;
+    friend class Brancher;
     friend class Advisor;
     template<class VIC> friend class VarImp;
     template<class VarType> friend class VarDisposer;
@@ -1192,26 +1192,26 @@ namespace Gecode {
     MemoryManager mm;
     /// Doubly linked list of all propagators
     ActorLink pl;
-    /// Doubly linked list of all branchings
+    /// Doubly linked list of all branchers
     ActorLink bl;
     /**
-     * \brief Points to the first branching to be used for status
+     * \brief Points to the first brancher to be used for status
      *
-     * If equal to &bl, no branching does exist.
+     * If equal to &bl, no brancher does exist.
      */
-    Branching* b_status;
+    Brancher* b_status;
     /**
-     * \brief Points to the first branching to be used for commit
+     * \brief Points to the first brancher to be used for commit
      *
-     * Note that \a b_commit can point to an earlier branching
+     * Note that \a b_commit can point to an earlier brancher
      * than \a b_status. This reflects the fact that the earlier
-     * branching is already done (that is, status on that branching
+     * brancher is already done (that is, status on that brancher
      * returns false) but there might be still choices
-     * referring to the earlier branching.
+     * referring to the earlier brancher.
      *
-     * If equal to &bl, no branching does exist.
+     * If equal to &bl, no brancher does exist.
      */
-    Branching* b_commit;
+    Brancher* b_commit;
     union {
       /// Data only available during propagation
       struct {
@@ -1230,7 +1230,7 @@ namespace Gecode {
         ActorLink* active;
         /// Scheduled propagators according to cost
         ActorLink queue[PropCost::AC_MAX+1];
-        /// Id of next branching to be created
+        /// Id of next brancher to be created
         unsigned int branch_id;
         /// Number of subscriptions
         unsigned int n_sub;
@@ -1313,7 +1313,7 @@ namespace Gecode {
     /**
      * \brief Commit choice \a c for alternative \a a
      *
-     * The current branching in the space performs a commit from
+     * The current brancher in the space performs a commit from
      * the information provided by the choice \a c
      * and the alternative \a a. The statistics information \a stat is
      * updated.
@@ -1337,7 +1337,7 @@ namespace Gecode {
      * function), no older choices can be used.
      *
      * Committing throws the following exceptions:
-     *  - SpaceNoBranching, if the space has no current branching (it is
+     *  - SpaceNoBrancher, if the space has no current brancher (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
      *    of alternatives supported by the choice \a c.
@@ -1409,7 +1409,7 @@ namespace Gecode {
      * Propagates the space until fixpoint or failure;
      * updates the statistics information \a stat; and:
      *  - if the space is failed, SpaceStatus::SS_FAILED is returned.
-     *  - if the space is not failed but the space has no branching left,
+     *  - if the space is not failed but the space has no brancher left,
      *    SpaceStatus::SS_SOLVED is returned.
      *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      * \ingroup TaskSearch
@@ -1418,7 +1418,7 @@ namespace Gecode {
     SpaceStatus status(StatusStatistics& stat=unused_status);
 
     /**
-     * \brief Create new choice for current branching
+     * \brief Create new choice for current brancher
      *
      * This member function can only be called after the member function
      * Space::status on the same space has been called and in between
@@ -1430,16 +1430,16 @@ namespace Gecode {
      * Note that the above invariant only pertains to calls of member
      * functions of the same space. If the invariant is violated, the
      * system is likely to crash (hopefully it does). In particular, if
-     * applied to a space with no current branching, the system will
+     * applied to a space with no current brancher, the system will
      * crash.
      *
      * After a new choice has been created, no older choices
      * can be used on the space.
      *
      * If the status() member function has returned that the space has
-     * no more branchings (that is, the result was either SS_FAILED or
+     * no more branchers (that is, the result was either SS_FAILED or
      * SS_SOLVED), a call to choice() will return NULL and purge
-     * all remaining branchings inside the space. This is interesting
+     * all remaining branchers inside the space. This is interesting
      * for the case SS_SOLVED, where the call to choice can serve as
      * garbage collection.
      *
@@ -1473,7 +1473,7 @@ namespace Gecode {
     /**
      * \brief Commit choice \a c for alternative \a a
      *
-     * The current branching in the space performs a commit from
+     * The current brancher in the space performs a commit from
      * the information provided by the choice \a c
      * and the alternative \a a. The statistics information \a stat is
      * updated.
@@ -1497,7 +1497,7 @@ namespace Gecode {
      * function), no older choices can be used.
      *
      * Committing throws the following exceptions:
-     *  - SpaceNoBranching, if the space has no current branching (it is
+     *  - SpaceNoBrancher, if the space has no current brancher (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
      *    of alternatives supported by the choice \a c.
@@ -1554,12 +1554,12 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT unsigned int propagators(void) const;
     /**
-     * \brief Return number of branchings
+     * \brief Return number of branchers
      *
      * Note that this function takes linear time in the number of
-     * branchings.
+     * branchers.
      */
-    GECODE_KERNEL_EXPORT unsigned int branchings(void) const;
+    GECODE_KERNEL_EXPORT unsigned int branchers(void) const;
 
     /**
      * \defgroup FuncMemSpace Space-memory management
@@ -1831,25 +1831,25 @@ namespace Gecode {
     };
 
     /**
-     * \brief Class to iterate over branchings of a space
+     * \brief Class to iterate over branchers of a space
      * 
      * Note that the iterator cannot be used during cloning.
      */
-    class Branchings {
+    class Branchers {
     private:
-      /// current branching
+      /// current brancher
       const ActorLink* c;
       /// end mark
       const ActorLink* e;
     public:
       /// Initialize
-      Branchings(const Space& home);
-      /// Test whether there are branchings left
+      Branchers(const Space& home);
+      /// Test whether there are branchers left
       bool operator ()(void) const;
-      /// Move iterator to next branching
+      /// Move iterator to next brancher
       void operator ++(void);
       /// Return propagator
-      const Branching& branching(void) const;
+      const Brancher& brancher(void) const;
     };    
   };
 
@@ -2476,31 +2476,31 @@ namespace Gecode {
 
 
   /*
-   * Branching
+   * Brancher
    *
    */
-  forceinline Branching*
-  Branching::cast(ActorLink* al) {
+  forceinline Brancher*
+  Brancher::cast(ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
     ActorLink& t = *al;
-    return static_cast<Branching*>(&t);
+    return static_cast<Brancher*>(&t);
   }
 
-  forceinline const Branching*
-  Branching::cast(const ActorLink* al) {
+  forceinline const Brancher*
+  Brancher::cast(const ActorLink* al) {
     // Turning al into a reference is for gcc, assume is for MSVC
     GECODE_NOT_NULL(al);
     const ActorLink& t = *al;
-    return static_cast<const Branching*>(&t);
+    return static_cast<const Brancher*>(&t);
   }
 
   forceinline
-  Branching::Branching(Space& home) :
+  Brancher::Brancher(Space& home) :
     _id(home.pc.p.branch_id++) {
     if (home.pc.p.branch_id == 0U)
-      throw TooManyBranchings("Branching::Branching");
-    // If no branching available, make it the first one
+      throw TooManyBranchers("Brancher::Brancher");
+    // If no brancher available, make it the first one
     if (home.b_status == &home.bl) {
       home.b_status = this;
       if (home.b_commit == &home.bl)
@@ -2510,14 +2510,14 @@ namespace Gecode {
   }
 
   forceinline
-  Branching::Branching(Space&, bool, Branching& b)
+  Brancher::Brancher(Space&, bool, Brancher& b)
     : _id(b._id) {
     // Set forwarding pointer
     b.prev(this);
   }
 
   forceinline unsigned int
-  Branching::id(void) const {
+  Brancher::id(void) const {
     return _id;
   }
 
@@ -2528,7 +2528,7 @@ namespace Gecode {
    *
    */
   forceinline
-  Choice::Choice(const Branching& b, const unsigned int a)
+  Choice::Choice(const Brancher& b, const unsigned int a)
     : _id(b.id()), _alt(a) {}
 
   forceinline unsigned int
@@ -3336,7 +3336,7 @@ namespace Gecode {
   }
 
   /*
-   * Iterators for propagators and branchings of a space
+   * Iterators for propagators and branchers of a space
    *
    */
   forceinline
@@ -3391,19 +3391,19 @@ namespace Gecode {
   }
 
   forceinline
-  Space::Branchings::Branchings(const Space& home) 
-    : c(Branching::cast(home.bl.next())), e(&home.bl) {}
+  Space::Branchers::Branchers(const Space& home) 
+    : c(Brancher::cast(home.bl.next())), e(&home.bl) {}
   forceinline bool 
-  Space::Branchings::operator ()(void) const {
+  Space::Branchers::operator ()(void) const {
     return c != e;
   }
   forceinline void 
-  Space::Branchings::operator ++(void) {
+  Space::Branchers::operator ++(void) {
     c = c->next();
   }
-  forceinline const Branching& 
-  Space::Branchings::branching(void) const {
-    return *Branching::cast(c);
+  forceinline const Brancher& 
+  Space::Branchers::brancher(void) const {
+    return *Brancher::cast(c);
   }
 
   /*

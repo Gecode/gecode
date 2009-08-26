@@ -49,17 +49,17 @@ namespace Gecode {
 
 
   /*
-   * Function branching
+   * Function brancher
    */
 
-  /// Branching for calling a function
-  class GECODE_KERNEL_EXPORT FunctionBranch : public Branching {
+  /// Brancher for calling a function
+  class GECODE_KERNEL_EXPORT FunctionBranch : public Brancher {
   protected:
-    /// Minimal branching description storing no information
+    /// Minimal brancher description storing no information
     class GECODE_KERNEL_EXPORT Description : public Choice {
     public:
-      /// Initialize description for branching \a b, number of alternatives \a a.
-      Description(const Branching& b, unsigned int a) : Choice(b,a) {}
+      /// Initialize description for brancher \a b, number of alternatives \a a.
+      Description(const Brancher& b, unsigned int a) : Choice(b,a) {}
       /// Report size occupied
       virtual size_t size(void) const { return sizeof(Description); }
     };
@@ -67,14 +67,14 @@ namespace Gecode {
     void (*f)(Space&);
     /// Call function just once
     bool done;
-    /// Construct branching
+    /// Construct brancher
     FunctionBranch(Space& home, void (*f0)(Space&))
-      : Branching(home), f(f0), done(false) {}
+      : Brancher(home), f(f0), done(false) {}
     /// Copy constructor
     FunctionBranch(Space& home, bool share, FunctionBranch& b)
-      : Branching(home,share,b), f(b.f), done(b.done) {}
+      : Brancher(home,share,b), f(b.f), done(b.done) {}
   public:
-    /// Check status of branching, return true if alternatives left
+    /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space&) const {
       return !done;
     }
@@ -90,11 +90,11 @@ namespace Gecode {
       f(home);
       return home.failed() ? ES_FAILED : ES_OK;
     }
-    /// Copy branching
+    /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {
       return new (home) FunctionBranch(home,share,*this);
     }
-    /// Post branching
+    /// Post brancher
     static void post(Space& home, void (*f)(Space&)) {
       (void) new (home) FunctionBranch(home,f);
     }

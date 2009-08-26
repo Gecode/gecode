@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  /// Post branching according to \a v and \a vals
+  /// Post brancher according to \a v and \a vals
   template <class SelView>
   void
   post(Space& home, ViewArray<IntView>& x, SelView& v,
@@ -46,51 +46,51 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VAL_MIN:
       {
         ValMin<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMin<IntView> >
+        (void) new (home) ViewValBrancher<SelView,ValMin<IntView> >
           (home,x,v,a);
       }
       break;
     case INT_VAL_MED:
       {
         ValMed<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMed<IntView> >
+        (void) new (home) ViewValBrancher<SelView,ValMed<IntView> >
           (home,x,v,a);
       }
       break;
     case INT_VAL_MAX:
       {
         ValMin<MinusView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMin<MinusView> >
+        (void) new (home) ViewValBrancher<SelView,ValMin<MinusView> >
           (home,x,v,a);
       }
       break;
     case INT_VAL_RND:
       {
         ValRnd<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValRnd<IntView> >
+        (void) new (home) ViewValBrancher<SelView,ValRnd<IntView> >
           (home,x,v,a);
       }
       break;
     case INT_VAL_SPLIT_MIN:
       {
         ValSplitMin<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValSplitMin<IntView> >
+        (void) new (home) ViewValBrancher<SelView,ValSplitMin<IntView> >
           (home,x,v,a);
       }
       break;
     case INT_VAL_SPLIT_MAX:
       {
         ValSplitMin<MinusView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValSplitMin<MinusView> >
+        (void) new (home) ViewValBrancher<SelView,ValSplitMin<MinusView> >
           (home,x,v,a);
       }
       break;
     case INT_VALUES_MIN:
-      (void) new (home) ViewValuesBranching<SelView,IntView>
+      (void) new (home) ViewValuesBrancher<SelView,IntView>
         (home,x,v);
       break;
     case INT_VALUES_MAX:
-      (void) new (home) ViewValuesBranching<SelView,MinusView>
+      (void) new (home) ViewValuesBrancher<SelView,MinusView>
         (home,x,v);
       break;
     default:

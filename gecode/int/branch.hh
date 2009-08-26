@@ -42,7 +42,7 @@
 
 /**
  * \namespace Gecode::Int::Branch
- * \brief Integer branchings
+ * \brief Integer branchers
  */
 
 namespace Gecode { namespace Int { namespace Branch {
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
 
-  /// For Boolean branchings not needing a value
+  /// For Boolean branchers not needing a value
   class NoValue {};
 
   /**
@@ -178,19 +178,19 @@ namespace Gecode { namespace Int { namespace Branch {
 
 
   /**
-   * \brief Branching by view and values selection
+   * \brief Brancher by view and values selection
    *
    */
   template <class ViewSel, class View>
-  class ViewValuesBranching : public ViewBranching<ViewSel> {
+  class ViewValuesBrancher : public ViewBrancher<ViewSel> {
   protected:
-    using ViewBranching<ViewSel>::x;
-    using ViewBranching<ViewSel>::viewsel;
+    using ViewBrancher<ViewSel>::x;
+    using ViewBrancher<ViewSel>::viewsel;
     /// Constructor for cloning \a b
-    ViewValuesBranching(Space& home, bool share, ViewValuesBranching& b);
+    ViewValuesBrancher(Space& home, bool share, ViewValuesBrancher& b);
   public:
     /// Constructor for creation
-    ViewValuesBranching(Space& home, ViewArray<typename ViewSel::View>& x,
+    ViewValuesBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
                         ViewSel& vi_s);
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -508,12 +508,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewSelStatus select(Space& home, IntView x);
   };
 
-}}
-
-  template <class View>
-  class ViewValuesBranchingToString {};
-
-}
+}}}
 
 #include <gecode/int/branch/select-val.hpp>
 #include <gecode/int/branch/select-values.hpp>

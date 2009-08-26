@@ -61,7 +61,7 @@ IntSet* A;
  * Breaking for 'Peaceable Armies of Queens'", by Barbara M. Smith, Karen
  * E. Petrie, and Ian P. Gent.
  *
- * The smart version uses a custom branching implementing a heuristic
+ * The smart version uses a custom brancher implementing a heuristic
  * from the above paper, that helps speeding up the proof of
  * optimality.
  *
@@ -158,14 +158,14 @@ public:
     os << "Number of white queens: " << q << std::endl << std::endl;
   }
 
-  /** \brief Custom branching for Peacable queens
+  /** \brief Custom brancher for Peacable queens
    *
-   *  Custom branching that tries to place white queens so that they
+   *  Custom brancher that tries to place white queens so that they
    *  maximise the amount of un-attacked squares that become attacked.
    *
    * \relates QueenArmies
    */
-  class QueenBranch : Branching {
+  class QueenBranch : Brancher {
   private:
     /// Cache of last computed decision
     mutable int pos;
@@ -176,10 +176,10 @@ public:
       int pos;
       /// Value of variable
       bool val;
-      /** Initialize choice for branching \a b, position \a pos0, 
+      /** Initialize choice for brancher \a b, position \a pos0, 
        *  and value \a val0.
        */
-      Choice(const Branching& b, int pos0, bool val0)
+      Choice(const Brancher& b, int pos0, bool val0)
         : Gecode::Choice(b,2), pos(pos0), val(val0) {}
       /// Report size occupied
       virtual size_t size(void) const {
@@ -187,15 +187,15 @@ public:
       }
     };
 
-    /// Construct branching
+    /// Construct brancher
     QueenBranch(Space& home)
-      : Branching(home), pos(-1) {}
+      : Brancher(home), pos(-1) {}
     /// Constructor for cloning
     QueenBranch(Space& home, bool share, QueenBranch& b)
-      : Branching(home, share, b), pos(b.pos) {}
+      : Brancher(home, share, b), pos(b.pos) {}
 
   public:
-    /// Check status of branching, return true if alternatives left.
+    /// Check status of brancher, return true if alternatives left.
     virtual bool status(const Space& home) const {
       const QueenArmies& q = static_cast<const QueenArmies&>(home);
       int maxsize = -1;
@@ -232,15 +232,15 @@ public:
         ? ES_FAILED
         : ES_OK;
     }
-    /// Copy branching during cloning
+    /// Copy brancher during cloning
     virtual Actor* copy(Space& home, bool share) {
       return new (home) QueenBranch(home, share, *this);
     }
-    /// Post branching
+    /// Post brancher
     static void post(QueenArmies& home) {
       (void) new (home) QueenBranch(home);
     }
-    /// Delete branching and return its size
+    /// Delete brancher and return its size
     virtual size_t dispose(Space& home) {
       return sizeof(*this);
     }

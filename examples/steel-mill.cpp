@@ -308,15 +308,15 @@ public:
   }
 
 
-  /** \brief Custom branching for steel mill slab design
+  /** \brief Custom brancher for steel mill slab design
    *
-   * This class implements a custom branching for SteelMill that
+   * This class implements a custom brancher for SteelMill that
    * considers all slabs with no order assigned to it currently to be
    * symmetric.
    *
    * \relates SteelMill
    */
-  class SteelMillBranch : Branching {
+  class SteelMillBranch : Brancher {
   protected:
     /// Cache of first unassigned value
     mutable int start;
@@ -327,10 +327,10 @@ public:
       int pos;
       /// Value of variable
       int val;
-      /** Initialize choice for branching \a b, number of
+      /** Initialize choice for brancher \a b, number of
        *  alternatives \a a, position \a pos0, and value \a val0.
        */
-      Choice(const Branching& b, unsigned int a, int pos0, int val0)
+      Choice(const Brancher& b, unsigned int a, int pos0, int val0)
         : Gecode::Choice(b,a), pos(pos0), val(val0) {}
       /// Report size occupied
       virtual size_t size(void) const {
@@ -338,16 +338,16 @@ public:
       }
     };
 
-    /// Construct branching
+    /// Construct brancher
     SteelMillBranch(Space& home)
-      : Branching(home), start(0) {}
+      : Brancher(home), start(0) {}
     /// Copy constructor
     SteelMillBranch(Space& home, bool share, SteelMillBranch& b)
-      : Branching(home, share, b), start(b.start) {
+      : Brancher(home, share, b), start(b.start) {
     }
 
   public:
-    /// Check status of branching, return true if alternatives left.
+    /// Check status of brancher, return true if alternatives left.
     virtual bool status(const Space& home) const {
       const SteelMill& sm = static_cast<const SteelMill&>(home);
       for (unsigned int i = start; i < sm.norders; ++i)
@@ -400,15 +400,15 @@ public:
         return me_failed(Int::IntView(sm.slab[c.pos]).eq(home, c.val))
           ? ES_FAILED : ES_OK;
     }
-    /// Copy branching
+    /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {
       return new (home) SteelMillBranch(home, share, *this);
     }
-    /// Post branching
+    /// Post brancher
     static void post(Space& home) {
       (void) new (home) SteelMillBranch(home);
     }
-    /// Delete branching and return its size
+    /// Delete brancher and return its size
     virtual size_t dispose(Space& home) {
       return sizeof(*this);
     }

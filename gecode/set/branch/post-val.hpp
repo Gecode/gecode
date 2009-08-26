@@ -43,7 +43,7 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
-  /// Post branching according to \a v and \a vals
+  /// Post brancher according to \a v and \a vals
   template <class SelView>
   void
   post(Space& home, ViewArray<SetView>& x, SelView& v,
@@ -52,49 +52,49 @@ namespace Gecode { namespace Set { namespace Branch {
     case SET_VAL_MIN_INC:
       {
         ValMin<true> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMin<true> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValMin<true> >(home,x,v,a);
       }
       break;
     case SET_VAL_MIN_EXC:
       {
         ValMin<false> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMin<false> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValMin<false> >(home,x,v,a);
       }
       break;
     case SET_VAL_MED_INC:
       {
         ValMed<true> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMed<true> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValMed<true> >(home,x,v,a);
       }
       break;
     case SET_VAL_MED_EXC:
       {
         ValMed<false> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMed<false> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValMed<false> >(home,x,v,a);
       }
       break;
     case SET_VAL_MAX_INC:
       {
         ValMax<true> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMax<true> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValMax<true> >(home,x,v,a);
       }
       break;
     case SET_VAL_MAX_EXC:
       {
         ValMax<false> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValMax<false> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValMax<false> >(home,x,v,a);
       }
       break;
     case SET_VAL_RND_INC:
       {
         ValRnd<true> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValRnd<true> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValRnd<true> >(home,x,v,a);
       }
       break;
     case SET_VAL_RND_EXC:
       {
         ValRnd<false> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValRnd<false> >(home,x,v,a);
+        (void) new (home) ViewValBrancher<SelView,ValRnd<false> >(home,x,v,a);
       }
       break;
     default:

@@ -87,17 +87,17 @@ namespace {
 
 
 
-/** \brief Custom branching for black hole patience.
+/** \brief Custom brancher for black hole patience.
  *
- * This class implements a custom branching for BlackHole that
+ * This class implements a custom brancher for BlackHole that
  * instantiates the variables in lexical order, and chooses the value
  * with the most cards under it.
  *
  * \relates BlackHole
  */
-class BlackHoleBranch : Branching {
+class BlackHoleBranch : Brancher {
 protected:
-  /// Views of the branching
+  /// Views of the brancher
   ViewArray<Int::IntView> x;
   /// Cache of last computed decision
   mutable int pos, val;
@@ -108,10 +108,10 @@ protected:
     int pos;
     /// Value of variable
     int val;
-    /** Initialize description for branching \a b, position \a pos0, 
+    /** Initialize description for brancher \a b, position \a pos0, 
      *  and value \a val0.
      */
-    Choice(const Branching& b, int pos0, int val0)
+    Choice(const Brancher& b, int pos0, int val0)
       : Gecode::Choice(b,2), pos(pos0), val(val0) {}
     /// Report size occupied
     virtual size_t size(void) const {
@@ -119,17 +119,17 @@ protected:
     }
   };
 
-  /// Construct branching
+  /// Construct brancher
   BlackHoleBranch(Space& home, ViewArray<Int::IntView>& xv)
-    : Branching(home), x(xv), pos(-1), val(-1) {}
+    : Brancher(home), x(xv), pos(-1), val(-1) {}
   /// Copy constructor
   BlackHoleBranch(Space& home, bool share, BlackHoleBranch& b)
-    : Branching(home, share, b), pos(b.pos), val(b.val) {
+    : Brancher(home, share, b), pos(b.pos), val(b.val) {
     x.update(home, share, b.x);
   }
 
 public:
-  /// Check status of branching, return true if alternatives left.
+  /// Check status of brancher, return true if alternatives left.
   virtual bool status(const Space&) const {
     for (pos = 0; pos < x.size(); ++pos)
       if (!x[pos].assigned()) {
@@ -159,16 +159,16 @@ public:
     else
       return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
   }
-  /// Copy branching
+  /// Copy brancher
   virtual Actor* copy(Space& home, bool share) {
     return new (home) BlackHoleBranch(home, share, *this);
   }
-  /// Post branching
+  /// Post brancher
   static void post(Space& home, IntVarArgs x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) BlackHoleBranch(home, xv);
   }
-  /// Delete branching and return its size
+  /// Delete brancher and return its size
   virtual size_t dispose(Space& home) {
     return sizeof(*this);
   }
@@ -334,7 +334,7 @@ public:
       }
     }
 
-    // Install custom branching
+    // Install custom brancher
     BlackHoleBranch::post(*this, x);
   }
 

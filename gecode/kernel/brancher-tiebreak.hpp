@@ -38,7 +38,7 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskBranchTieBreak Generic view tie-breaking for branching based on view and value selection
+   * \defgroup TaskBranchTieBreak Generic view tie-breaking for brancher based on view and value selection
    *
    * \ingroup TaskBranchViewVal
    */

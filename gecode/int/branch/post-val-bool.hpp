@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  /// Post branching according to \a v and \a vals
+  /// Post brancher according to \a v and \a vals
   template <class SelView>
   void
   post(Space& home, ViewArray<BoolView>& x, SelView& v,
@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VALUES_MIN:
       {
         ValZeroOne<BoolView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValZeroOne<BoolView> >
+        (void) new (home) ViewValBrancher<SelView,ValZeroOne<BoolView> >
           (home,x,v,a);
       }
       break;
@@ -58,14 +58,14 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VALUES_MAX:
       {
         ValZeroOne<NegBoolView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValZeroOne<NegBoolView> >
+        (void) new (home) ViewValBrancher<SelView,ValZeroOne<NegBoolView> >
           (home,x,v,a);
       }
       break;
     case INT_VAL_RND:
       {
         ValRnd<BoolView> a(home,o_vals);
-        (void) new (home) ViewValBranching<SelView,ValRnd<BoolView> >
+        (void) new (home) ViewValBrancher<SelView,ValRnd<BoolView> >
           (home,x,v,a);
       }
       break;

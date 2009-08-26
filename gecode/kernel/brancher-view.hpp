@@ -38,7 +38,7 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskBranchViewSel Generic view selection for branching based on view and value selection
+   * \defgroup TaskBranchViewSel Generic view selection for brancher based on view and value selection
    *
    * \ingroup TaskBranchViewVal
    */

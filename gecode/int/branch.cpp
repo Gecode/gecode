@@ -50,7 +50,7 @@ namespace Gecode {
     case INT_ASSIGN_MIN:
       {
         Branch::AssignValMin<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValMin<IntView> >
           (home,xv,v,a);
       }
@@ -58,7 +58,7 @@ namespace Gecode {
     case INT_ASSIGN_MED:
       {
         Branch::AssignValMed<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValMed<IntView> >
           (home,xv,v,a);
       }
@@ -66,7 +66,7 @@ namespace Gecode {
     case INT_ASSIGN_MAX:
       {
         Branch::AssignValMin<MinusView> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValMin<MinusView> >
           (home,xv,v,a);
       }
@@ -74,7 +74,7 @@ namespace Gecode {
     case INT_ASSIGN_RND:
       {
         Branch::AssignValRnd<IntView> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValRnd<IntView> >
           (home,xv,v,a);
       }
@@ -95,21 +95,21 @@ namespace Gecode {
     case INT_ASSIGN_MIN:
     case INT_ASSIGN_MED: {
         Branch::AssignValZero<BoolView> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<BoolView>,Branch::AssignValZero<BoolView> >
           (home,xv,v,a);
       }
       break;
     case INT_ASSIGN_MAX: {
         Branch::AssignValZero<NegBoolView> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<BoolView>,Branch::AssignValZero<NegBoolView> >
           (home,xv,v,a);
       }
       break;
     case INT_ASSIGN_RND: {
         Branch::AssignValRnd<BoolView> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<BoolView>,Branch::AssignValRnd<BoolView> >
           (home,xv,v,a);
       }

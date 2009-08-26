@@ -45,7 +45,7 @@
 using namespace Gecode;
 
 
-/** \brief Custom branching for knights tours using Warnsdorff's rule
+/** \brief Custom brancher for knights tours using Warnsdorff's rule
  *
  * This class implements Warnsdorff's rule for finding Knights
  * tours. The next position is choosen by taking the jump that
@@ -53,9 +53,9 @@ using namespace Gecode;
  *
  * \relates Knights
  */
-class Warnsdorff : public Branching {
+class Warnsdorff : public Brancher {
 protected:
-  /// Views of the branching
+  /// Views of the brancher
   ViewArray<Int::IntView> x;
   /// Next variable to branch on
   mutable int start;
@@ -66,10 +66,10 @@ protected:
     int pos;
     /// Value of variable
     int val;
-    /** Initialize choice for branching \a b, position \a pos0, 
+    /** Initialize choice for brancher \a b, position \a pos0, 
      *  and value \a val0.
      */
-    Choice(const Branching& b, int pos0, int val0)
+    Choice(const Brancher& b, int pos0, int val0)
       : Gecode::Choice(b,2), pos(pos0), val(val0) {}
     /// Report size occupied
     virtual size_t size(void) const {
@@ -77,16 +77,16 @@ protected:
     }
   };
  
-  /// Construct branching
+  /// Construct brancher
   Warnsdorff(Space& home, ViewArray<Int::IntView>& xv) 
-    : Branching(home), x(xv), start(0) {}
+    : Brancher(home), x(xv), start(0) {}
   /// Copy constructor
   Warnsdorff(Space& home, bool share, Warnsdorff& b) 
-    : Branching(home, share, b), start(b.start) {
+    : Brancher(home, share, b), start(b.start) {
     x.update(home, share, b.x);
   }
 public:
-  /// Check status of branching, return true if alternatives left
+  /// Check status of brancher, return true if alternatives left
   virtual bool status(const Space&) const {
     // Follow path of assigned variables
     while (true) {
@@ -122,16 +122,16 @@ public:
     else 
       return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
   }
-  /// Copy branching
+  /// Copy brancher
   virtual Actor* copy(Space& home, bool share) {
     return new (home) Warnsdorff(home, share, *this);
   }
-  /// Post branching
+  /// Post brancher
   static void post(Space& home, const IntVarArgs& x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) Warnsdorff(home, xv);
   }
-  /// Delete branching and return its size
+  /// Delete brancher and return its size
   virtual size_t dispose(Space& home) {
     return sizeof(*this);
   }

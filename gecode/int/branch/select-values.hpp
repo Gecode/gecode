@@ -58,8 +58,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Values to assign to
     PosMin* pm;
   public:
-    /// Initialize choice for branching \a b, position \a p, view choice \a viewc, and view \a x
-    PosValuesChoice(const Branching& b, const Pos& p,
+    /// Initialize choice for brancher \a b, position \a p, view choice \a viewc, and view \a x
+    PosValuesChoice(const Brancher& b, const Pos& p,
                     const typename ViewSel::Choice& viewc, View x);
     /// Return value to branch with for alternative \a a
     int val(unsigned int a) const;
@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class ViewSel, class View>
   forceinline
   PosValuesChoice<ViewSel,View>::
-  PosValuesChoice(const Branching& b, const Pos& p,
+  PosValuesChoice(const Brancher& b, const Pos& p,
                 const typename ViewSel::Choice& viewc, View x)
     : PosChoice<ViewSel>(b,x.size(),p,viewc), n(0) {
     for (ViewRanges<View> r(x); r(); ++r)
@@ -122,40 +122,40 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template <class ViewSel, class View>
   forceinline
-  ViewValuesBranching<ViewSel,View>::
-  ViewValuesBranching(Space& home, ViewArray<typename ViewSel::View>& x,
+  ViewValuesBrancher<ViewSel,View>::
+  ViewValuesBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
                       ViewSel& vi_s)
-    : ViewBranching<ViewSel>(home,x,vi_s) {}
+    : ViewBrancher<ViewSel>(home,x,vi_s) {}
 
   template <class ViewSel, class View>
   forceinline
-  ViewValuesBranching<ViewSel,View>::
-  ViewValuesBranching(Space& home, bool share, ViewValuesBranching& b)
-    : ViewBranching<ViewSel>(home,share,b) {}
+  ViewValuesBrancher<ViewSel,View>::
+  ViewValuesBrancher(Space& home, bool share, ViewValuesBrancher& b)
+    : ViewBrancher<ViewSel>(home,share,b) {}
 
   template <class ViewSel, class View>
   Actor*
-  ViewValuesBranching<ViewSel,View>::copy(Space& home, bool share) {
+  ViewValuesBrancher<ViewSel,View>::copy(Space& home, bool share) {
     return new (home)
-      ViewValuesBranching<ViewSel,View>(home,share,*this);
+      ViewValuesBrancher<ViewSel,View>(home,share,*this);
   }
 
   template <class ViewSel, class View>
   const Choice*
-  ViewValuesBranching<ViewSel,View>::choice(Space& home) {
-    Pos p = ViewBranching<ViewSel>::pos(home);
-    View v(ViewBranching<ViewSel>::view(p).var());
+  ViewValuesBrancher<ViewSel,View>::choice(Space& home) {
+    Pos p = ViewBrancher<ViewSel>::pos(home);
+    View v(ViewBrancher<ViewSel>::view(p).var());
     return new PosValuesChoice<ViewSel,View>
       (*this,p,viewsel.choice(home),v);
   }
 
   template <class ViewSel, class View>
   ExecStatus
-  ViewValuesBranching<ViewSel,View>
+  ViewValuesBrancher<ViewSel,View>
   ::commit(Space& home, const Choice& c, unsigned int a) {
     const PosValuesChoice<ViewSel,View>& pvc
       = static_cast<const PosValuesChoice<ViewSel,View>&>(c);
-    View v(ViewBranching<ViewSel>::view(pvc.pos()).var());
+    View v(ViewBrancher<ViewSel>::view(pvc.pos()).var());
     viewsel.commit(home, pvc.viewchoice(), a);
     return me_failed(v.eq(home,pvc.val(a))) ? ES_FAILED : ES_OK;
   }

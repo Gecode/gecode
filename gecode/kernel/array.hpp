@@ -129,7 +129,7 @@ namespace Gecode {
    * \brief View arrays
    *
    * View arrays store views. They are typically used for storing the
-   * views with which propagators and branchings compute.
+   * views with which propagators and branchers compute.
    * \ingroup TaskActor
    */
 

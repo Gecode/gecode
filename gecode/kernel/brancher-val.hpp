@@ -38,7 +38,7 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskBranchValSel Generic value selection for branching based on view and value selection
+   * \defgroup TaskBranchValSel Generic value selection for brancher based on view and value selection
    *
    * \ingroup TaskBranchViewVal
    */
@@ -53,7 +53,7 @@ namespace Gecode {
   /**
    * \brief Base class for value selection
    *
-   * Defines the branching to be binary.
+   * Defines the brancher to be binary.
    */
   template <class _View, class _Val>
   class ValSelBase {

@@ -50,7 +50,7 @@ namespace Gecode {
     case SET_ASSIGN_MIN_INC:
       {
         Branch::AssignValMin<true> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValMin<true> >
           (home,xv,v,a);
       }
@@ -58,7 +58,7 @@ namespace Gecode {
     case SET_ASSIGN_MIN_EXC:
       {
         Branch::AssignValMin<false> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValMin<false> >
           (home,xv,v,a);
       }
@@ -66,7 +66,7 @@ namespace Gecode {
     case SET_ASSIGN_MED_INC:
       {
         Branch::AssignValMed<true> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValMed<true> >
           (home,xv,v,a);
       }
@@ -74,7 +74,7 @@ namespace Gecode {
     case SET_ASSIGN_MED_EXC:
       {
         Branch::AssignValMed<false> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValMed<false> >
           (home,xv,v,a);
       }
@@ -82,7 +82,7 @@ namespace Gecode {
     case SET_ASSIGN_MAX_INC:
       {
         Branch::AssignValMax<true> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValMax<true> >
           (home,xv,v,a);
       }
@@ -90,7 +90,7 @@ namespace Gecode {
     case SET_ASSIGN_MAX_EXC:
       {
         Branch::AssignValMax<false> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValMax<false> >
           (home,xv,v,a);
       }
@@ -98,7 +98,7 @@ namespace Gecode {
     case SET_ASSIGN_RND_INC:
       {
         Branch::AssignValRnd<true> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValRnd<true> >
           (home,xv,v,a);
       }
@@ -106,7 +106,7 @@ namespace Gecode {
     case SET_ASSIGN_RND_EXC:
       {
         Branch::AssignValRnd<false> a(home,o_vals);
-        (void) new (home) ViewValBranching
+        (void) new (home) ViewValBrancher
           <ViewSelNone<SetView>,Branch::AssignValRnd<false> >
           (home,xv,v,a);
       }

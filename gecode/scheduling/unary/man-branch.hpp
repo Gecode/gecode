@@ -162,7 +162,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class Task>
   forceinline
-  ManBranch<Task>::Description::Description(const Branching& b, int r0, int t0)
+  ManBranch<Task>::Description::Description(const Brancher& b, int r0, int t0)
     : Choice(b,2), r(r0), t(t0) {}
 
   template<class Task>
@@ -176,12 +176,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class Task>
   forceinline
   ManBranch<Task>::ManBranch(Space& home, ManResource<Task>* r0, int n0) 
-    : Branching(home), n(n0), c(-1), r(r0) {}
+    : Brancher(home), n(n0), c(-1), r(r0) {}
 
   template<class Task>
   forceinline
   ManBranch<Task>::ManBranch(Space& home, bool share, ManBranch& b) 
-    : Branching(home, share, b), n(b.n), c(b.c),
+    : Brancher(home, share, b), n(b.n), c(b.c),
       r(home.alloc<ManResource<Task> >(n)) {
     for (int i=n; i--; )
       r[i].update(home, share, b.r[i]);

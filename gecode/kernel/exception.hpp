@@ -58,11 +58,11 @@ namespace Gecode {
     SpaceNotStable(const char* l);
   };
 
-  /// %Exception: Commit when no branching present
-  class GECODE_VTABLE_EXPORT SpaceNoBranching : public Exception {
+  /// %Exception: Commit when no brancher present
+  class GECODE_VTABLE_EXPORT SpaceNoBrancher : public Exception {
   public:
     /// Initialize
-    SpaceNoBranching(void);
+    SpaceNoBrancher(void);
   };
 
   /// %Exception: Commit with illegal alternative
@@ -79,11 +79,11 @@ namespace Gecode {
     SpaceConstrainUndefined(void);
   };
 
-  /// %Exception: too many branchings
-  class GECODE_VTABLE_EXPORT TooManyBranchings : public Exception {
+  /// %Exception: too many branchers
+  class GECODE_VTABLE_EXPORT TooManyBranchers : public Exception {
   public:
     /// Initialize with location \a l
-    TooManyBranchings(const char* l);
+    TooManyBranchers(const char* l);
   };
 
   //@}
@@ -101,9 +101,9 @@ namespace Gecode {
     : Exception(l,"Attempt to invoke operation on not stable space") {}
 
   inline
-  SpaceNoBranching::SpaceNoBranching(void)
+  SpaceNoBrancher::SpaceNoBrancher(void)
     : Exception("Space::commit",
-                "Attempt to commit with no branching") {}
+                "Attempt to commit with no brancher") {}
 
   inline
   SpaceIllegalAlternative::SpaceIllegalAlternative(void)
@@ -116,8 +116,8 @@ namespace Gecode {
                 "Attempt to use undefined constrain function") {}
 
   inline
-  TooManyBranchings::TooManyBranchings(const char* l)
-    : Exception(l,"Too many branchings created") {}
+  TooManyBranchers::TooManyBranchers(const char* l)
+    : Exception(l,"Too many branchers created") {}
 
 }
 

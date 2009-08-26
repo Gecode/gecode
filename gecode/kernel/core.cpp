@@ -98,10 +98,10 @@ namespace Gecode {
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
 #endif
-    // Initialize propagator and branching links
+    // Initialize propagator and brancher links
     pl.init();
     bl.init();
-    b_status = b_commit = Branching::cast(&bl);
+    b_status = b_commit = Brancher::cast(&bl);
     // Initialize array for forced deletion to be empty
     d_fst = d_cur = d_lst = NULL;
     // Initialize propagator queues
@@ -138,9 +138,9 @@ namespace Gecode {
   }
 
   unsigned int
-  Space::branchings(void) const {
+  Space::branchers(void) const {
     unsigned int n = 0;
-    for (Branchings b(*this); b(); ++b)
+    for (Branchers b(*this); b(); ++b)
       n++;
     return n;
   }
@@ -252,37 +252,37 @@ namespace Gecode {
     }
   stable:
     /*
-     * Find the next branching that has still alternatives left
+     * Find the next brancher that has still alternatives left
      *
-     * It is important to note that branchings reporting to have no more
+     * It is important to note that branchers reporting to have no more
      * alternatives left cannot be deleted. They cannot be deleted
      * as there might be choices to be used in commit
-     * that refer to one of these branchings. This e.g. happens when
+     * that refer to one of these branchers. This e.g. happens when
      * we combine branch-and-bound search with adaptive recomputation: during
      * recomputation, a copy is constrained to be better than the currently
      * best solution, then the first half of the choices are posted,
      * and a fixpoint computed (for storing in the middle of the path). Then
      * the remaining choices are posted, and because of the additional
      * constraints that the space must be better than the previous solution,
-     * the corresponding Branchings may already have no alternatives left.
+     * the corresponding Branchers may already have no alternatives left.
      *
      * The same situation may arise due to weakly monotonic propagators.
      *
-     * A branching reporting that no more alternatives exist is exhausted.
-     * All exhausted branchings will be left of the current pointer b_status.
+     * A brancher reporting that no more alternatives exist is exhausted.
+     * All exhausted branchers will be left of the current pointer b_status.
      * Only when it is known that no more choices
-     * can be used for commit an exhausted branching can actually be deleted.
+     * can be used for commit an exhausted brancher can actually be deleted.
      * This becomes known when choice is called.
      */
-    while (b_status != Branching::cast(&bl))
+    while (b_status != Brancher::cast(&bl))
       if (b_status->status(*this)) {
-        // Branching still has choices to generate
+        // Brancher still has choices to generate
         s = SS_BRANCH; goto exit;
       } else {
-        // Branching is exhausted
-        b_status = Branching::cast(b_status->next());
+        // Brancher is exhausted
+        b_status = Brancher::cast(b_status->next());
       }
-    // No branching with alternatives left, space is solved
+    // No brancher with alternatives left, space is solved
     s = SS_SOLVED;
   exit:
     stat.wmp = (n_wmp > 0);
@@ -295,31 +295,31 @@ namespace Gecode {
   Space::choice(void) {
     if (!stable())
       throw SpaceNotStable("Space::choice");
-    if (failed() || (b_status == Branching::cast(&bl))) {
+    if (failed() || (b_status == Brancher::cast(&bl))) {
       // There are no more choices to be generated
-      // Delete all branchings
-      Branching* b = Branching::cast(bl.next()); 
-      while (b != Branching::cast(&bl)) {
-        Branching* d = b;
-        b = Branching::cast(b->next());
+      // Delete all branchers
+      Brancher* b = Brancher::cast(bl.next()); 
+      while (b != Brancher::cast(&bl)) {
+        Brancher* d = b;
+        b = Brancher::cast(b->next());
         rfree(d,d->dispose(*this));
       }
       bl.init();
-      b_status = b_commit = Branching::cast(&bl);
+      b_status = b_commit = Brancher::cast(&bl);
       return NULL;
     }
     /*
      * The call to choice() says that no older choices
-     * can be used. Hence, all branchings that are exhausted can be deleted.
+     * can be used. Hence, all branchers that are exhausted can be deleted.
      */
-    Branching* b = Branching::cast(bl.next());
+    Brancher* b = Brancher::cast(bl.next());
     while (b != b_status) {
-      Branching* d = b;
-      b = Branching::cast(b->next());
+      Brancher* d = b;
+      b = Brancher::cast(b->next());
       d->unlink();
       rfree(d,d->dispose(*this));
     }
-    // Make sure that b_commit does not point to a deleted branching!
+    // Make sure that b_commit does not point to a deleted brancher!
     b_commit = b_status;
     return b_status->choice(*this);
   }
@@ -332,38 +332,38 @@ namespace Gecode {
       return;
     /*
      * Due to weakly monotonic propagators the following scenario might
-     * occur: a branching has been committed with all its available
+     * occur: a brancher has been committed with all its available
      * choices. Then, propagation determines less information
-     * than before and the branching now will create new choices.
+     * than before and the brancher now will create new choices.
      * Later, during recomputation, all of these choices
      * can be used together, possibly interleaved with 
-     * choices for other branchings. That means all branchings
-     * must be scanned to find the matching branching for the choice.
+     * choices for other branchers. That means all branchers
+     * must be scanned to find the matching brancher for the choice.
      *
      * b_commit tries to optimize scanning as it is most likely that
      * recomputation does not generate new choices during recomputation
-     * and hence b_commit is moved from newer to older branchings.
+     * and hence b_commit is moved from newer to older branchers.
      */
-    Branching* b_old = b_commit;
+    Brancher* b_old = b_commit;
     // Try whether we are lucky
-    while (b_commit != Branching::cast(&bl))
+    while (b_commit != Brancher::cast(&bl))
       if (c._id != b_commit->id())
-        b_commit = Branching::cast(b_commit->next());
+        b_commit = Brancher::cast(b_commit->next());
       else
         goto found;
-    if (b_commit == Branching::cast(&bl)) {
-      // We did not find the branching, start at the beginning
-      b_commit = Branching::cast(bl.next());
+    if (b_commit == Brancher::cast(&bl)) {
+      // We did not find the brancher, start at the beginning
+      b_commit = Brancher::cast(bl.next());
       while (b_commit != b_old)
         if (c._id != b_commit->id())
-          b_commit = Branching::cast(b_commit->next());
+          b_commit = Brancher::cast(b_commit->next());
         else
           goto found;
     }
-    // There is no matching branching!
-    throw SpaceNoBranching();
+    // There is no matching brancher!
+    throw SpaceNoBrancher();
   found:
-    // There is a matching branching
+    // There is a matching brancher
     if (b_commit->commit(*this,c,a) == ES_FAILED)
       fail();
   }
@@ -375,7 +375,7 @@ namespace Gecode {
    *
    * Cloning is performed in two steps:
    *  - The space itself is copied by the copy constructor. This
-   *    also copies all propagators, branchings, and variables.
+   *    also copies all propagators, branchers, and variables.
    *    The copied variables are recorded.
    *  - In the second step the dependency information of the recorded
    *    variables is updated and their forwarding information is reset.
@@ -407,7 +407,7 @@ namespace Gecode {
       // Link last actor
       p->next(&pl); pl.prev(p);
     }
-    // Copy all branchings
+    // Copy all branchers
     {
       ActorLink* p = &bl;
       ActorLink* e = &s.bl;
@@ -438,16 +438,16 @@ namespace Gecode {
         } while (n != 0);
       }
     }
-    // Setup branching pointers
+    // Setup brancher pointers
     if (s.b_status == &s.bl) {
-      b_status = Branching::cast(&bl);
+      b_status = Brancher::cast(&bl);
     } else {
-      b_status = Branching::cast(s.b_status->prev());
+      b_status = Brancher::cast(s.b_status->prev());
     }
     if (s.b_commit == &s.bl) {
-      b_commit = Branching::cast(&bl);
+      b_commit = Brancher::cast(&bl);
     } else {
-      b_commit = Branching::cast(s.b_commit->prev());
+      b_commit = Brancher::cast(s.b_commit->prev());
     }
   }
 
@@ -492,7 +492,7 @@ namespace Gecode {
     {
       ActorLink* p_a = &bl;
       ActorLink* c_a = p_a->next();
-      // Update branchings
+      // Update branchers
       while (c_a != &bl) {
         c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
       }

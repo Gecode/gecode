@@ -39,7 +39,7 @@
  * \brief Check whether modification event \a me is failed, and forward failure.
  *
  * To be used inside the propagate member function of a propagator
- * or the commit member function of a branching.
+ * or the commit member function of a brancher.
  * \ingroup TaskActor
  */
 #define GECODE_ME_CHECK(me) do {                \
@@ -51,7 +51,7 @@
  * \brief Check whether \a me is failed or modified, and forward failure.
  *
  * To be used inside the propagate member function of a propagator
- * or the commit member function of a branching.
+ * or the commit member function of a brancher.
  * \ingroup TaskActor
  */
 #define GECODE_ME_CHECK_MODIFIED(modified, me) do {        \

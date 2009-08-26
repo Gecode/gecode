@@ -175,7 +175,7 @@ namespace Gecode { namespace Driver {
           t.start();
           Script* s = new Script(o);
           unsigned int n_p = s->propagators();
-          unsigned int n_b = s->branchings();
+          unsigned int n_b = s->branchers();
           Search::Options so;
           so.threads = o.threads();
           so.c_d     = o.c_d();
@@ -193,8 +193,8 @@ namespace Gecode { namespace Driver {
           Search::Statistics stat = e.statistics();
           cout << endl;
           cout << "Initial" << endl
-               << "\tpropagators:  " << n_p << endl
-               << "\tbranchings:   " << n_b << endl
+               << "\tpropagators: " << n_p << endl
+               << "\tbranchers:   " << n_b << endl
                << endl
                << "Summary" << endl
                << "\truntime:      ";
@@ -219,7 +219,7 @@ namespace Gecode { namespace Driver {
           t.start();
           Script* s = new Script(o);
           unsigned int n_p = s->propagators();
-          unsigned int n_b = s->branchings();
+          unsigned int n_b = s->branchers();
           Search::Options so;
           so.clone   = false;
           so.threads = o.threads();
@@ -235,8 +235,8 @@ namespace Gecode { namespace Driver {
           } while (--i != 0);
           Search::Statistics stat = e.statistics();
           cout << endl
-               << "\tpropagators:  " << n_p << endl
-               << "\tbranchings:   " << n_b << endl
+               << "\tpropagators: " << n_p << endl
+               << "\tbranchers:   " << n_b << endl
                << "\truntime:      ";
           stop(t, cout);
           cout << endl
