@@ -85,7 +85,7 @@ namespace Gecode { namespace Scheduling {
   forceinline void
   TaskTree<TaskView,Node,Info>::init(const Info& n) {
     for (int i=_inner(); i--; )
-      _node[i].update(_node[_left(i)],_node[_right(i)],n);
+      _node[i].init(_node[_left(i)],_node[_right(i)],n);
   }
 
   template<class TaskView, class Node, class Info>
