@@ -190,7 +190,6 @@ public:
       ps[2*i+1] = p2[i];
     }
 
-    // Install branchings
     branch(*this, ps, INT_VAR_NONE, INT_VAL_MIN);
   }
 

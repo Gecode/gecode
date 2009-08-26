@@ -117,14 +117,14 @@ namespace Test { namespace Branch {
   };
 #endif
 
-  /** \name Collection of possible arguments for integer branchings
+  /** \name Collection of possible arguments for integer branchers
    *
    * \relates IntTestSpace BoolTestSpace
    */
   //@{
   /// Integer variable selections
   const Gecode::IntVarBranch int_var_branch[] = {
-    Gecode::INT_VAR_NONE, // Use several single variable branchings
+    Gecode::INT_VAR_NONE, // Use several single variable branchers
     Gecode::INT_VAR_NONE,
     Gecode::INT_VAR_RND,
     Gecode::INT_VAR_DEGREE_MIN,
@@ -193,14 +193,14 @@ namespace Test { namespace Branch {
   //@}
 
 #ifdef GECODE_HAS_SET_VARS
-  /** \name Collection of possible arguments for set branchings
+  /** \name Collection of possible arguments for set branchers
    *
    * \relates SetTestSpace
    */
   //@{
   /// Set variable selections
   const Gecode::SetVarBranch set_var_branch[] = {
-    Gecode::SET_VAR_NONE, // Use several single variable branchings
+    Gecode::SET_VAR_NONE, // Use several single variable branchers
     Gecode::SET_VAR_NONE,
     Gecode::SET_VAR_RND,
     Gecode::SET_VAR_DEGREE_MIN,

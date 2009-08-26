@@ -39,7 +39,7 @@
 
 namespace Test { namespace Branch {
 
-  /// Test branching with distinct propagator
+  /// Test brancher with distinct propagator
   class Int : public IntTest {
   public:
     /// Create and register test

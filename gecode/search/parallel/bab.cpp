@@ -109,7 +109,7 @@ namespace Gecode { namespace Search { namespace Parallel {
                 break;
               case SS_SOLVED:
                 {
-                  // Deletes all pending branchings
+                  // Deletes all pending branchers
                   (void) cur->choice();
                   Space* s = cur->clone(false);
                   delete cur;

@@ -73,19 +73,19 @@
 
 /**
  * \namespace Gecode::Scheduling
- * \brief Scheduling constraints and branchings
+ * \brief Scheduling constraints and branchers
  *
  */
 
 namespace Gecode {
 
   /**
-   * \defgroup TaskModelScheduling Scheduling constraints and branchings
+   * \defgroup TaskModelScheduling Scheduling constraints and branchers
    * \ingroup TaskModel
    */
   //@{
   /**
-   * \brief Post propagators for the cumulatives constraint.
+   * \brief Post propagators for the cumulatives constraint
    *
    * This function creates propagators for the cumulatives constraint
    * presented in <em> "A new multi-resource cumulatives constraint
@@ -245,7 +245,7 @@ namespace Gecode {
   unary(Space& home, const IntVarArgs& s, const IntArgs& p, 
         const BoolVarArgs& m);
 
-  /** \brief Create branching to order tasks on unary resources
+  /** \brief Create brancher to order tasks on unary resources
    *
    * Order tasks with start times \a s and processing time \a p
    * on a single unary resource.
@@ -261,7 +261,7 @@ namespace Gecode {
   GECODE_SCHEDULING_EXPORT void
   order(Space& home, const IntVarArgs& s, const IntArgs& p);
 
-  /** \brief Create branching to order tasks on unary resources
+  /** \brief Create brancher to order tasks on unary resources
    *
    * Order tasks with start times \a s and processing time \a p
    * on a unary resource. \a r defines on which resource the task

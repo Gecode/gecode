@@ -337,7 +337,7 @@ public:
 
 
     // ***********************
-    // Branchings
+    // Branching
     // ***********************
     // Place each piece in turn
     branch(*this, s, INT_VAR_MIN_MIN, INT_VAL_MIN);

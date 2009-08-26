@@ -121,7 +121,7 @@ namespace Gecode {
     /**
      * \defgroup TaskActorIntView Integer views
      *
-     * Integer propagators and branchings compute with integer views.
+     * Integer propagators and branchers compute with integer views.
      * Integer views provide views on integer variable implementations,
      * integer constants, and also allow to scale, translate, and negate
      * variables. Additionally, a special Boolean view is provided that

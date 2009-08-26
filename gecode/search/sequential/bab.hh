@@ -112,7 +112,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           Worker::current(NULL);
           break;
         case SS_SOLVED:
-          // Deletes all pending branchings
+          // Deletes all pending branchers
           (void) cur->choice();
           delete best;
           best = cur;

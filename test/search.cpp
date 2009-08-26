@@ -48,7 +48,7 @@ namespace Test {
     using namespace Gecode;
     using namespace Gecode::Int;
 
-    /// Values for selecting branchings
+    /// Values for selecting branchers
     enum HowToBranch {
       HTB_NONE,   ///< Do not branch
       HTB_UNARY,  ///< Branch with single alternative

@@ -376,7 +376,7 @@ namespace Gecode { namespace Gist {
         break;
       case SS_SOLVED:
         {
-          // Deletes all pending branchings
+          // Deletes all pending branchers
           (void) workingSpace->choice();
           kids = 0;
           setStatus(SOLVED);

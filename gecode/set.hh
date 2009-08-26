@@ -83,8 +83,8 @@
  * \brief Finite integer sets
  *
  * The Gecode::Set namespace contains all functionality required
- * to program propagators and branchings for finite integer sets.
- * In addition, all propagators and branchings for finite integer
+ * to program propagators and branchers for finite integer sets.
+ * In addition, all propagators and branchers for finite integer
  * sets provided by %Gecode are contained as nested namespaces.
  *
  */

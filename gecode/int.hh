@@ -83,8 +83,8 @@
  * \brief Finite domain integers
  *
  * The Gecode::Int namespace contains all functionality required
- * to program propagators and branchings for finite domain integers.
- * In addition, all propagators and branchings for finite domain
+ * to program propagators and branchers for finite domain integers.
+ * In addition, all propagators and branchers for finite domain
  * integers provided by %Gecode are contained as nested namespaces.
  *
  */

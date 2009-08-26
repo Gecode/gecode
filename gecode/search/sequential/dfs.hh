@@ -114,7 +114,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           break;
         case SS_SOLVED:
           {
-            // Deletes all pending branchings
+            // Deletes all pending branchers
             (void) cur->choice();
             Space* s = cur;
             cur = NULL;
