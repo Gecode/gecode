@@ -345,8 +345,8 @@ namespace Gecode { namespace Scheduling {
 
 namespace Gecode { namespace Scheduling {
 
-  /// Task trees for task views with node type \a Node
-  template<class TaskView, class Node>
+  /// Task trees for task views with node type \a Node and information \a Info
+  template<class TaskView, class Node, class Info>
   class TaskTree {
   protected:
     /// The tasks from which the tree is computed
@@ -374,12 +374,15 @@ namespace Gecode { namespace Scheduling {
     /// Return root node
     const Node& root(void) const;
     /// Update tree after leaf for task \a i has changed
-    void update(int i);
+    void update(int i, const Info& n);
     /// Initialize tree after leaves have been initialized
-    void init(void);
+    void init(const Info& n);
     /// Initialize tree for tasks \a t
     TaskTree(Region& r, const TaskViewArray<TaskView>& t);
   };
+
+  /// Empty class for no info needed in task tree
+  class TaskNoInfo {};
 
 }}
 

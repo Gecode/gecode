@@ -40,14 +40,16 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline void
-  OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
-    OmegaNode::init(l,r);
+  OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r,
+                        const TaskNoInfo& n) {
+    OmegaNode::init(l,r,n);
     lp = p; lect = ect; res = undef;
   }
 
   forceinline void
-  OmegaLambdaNode::update(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
-    OmegaNode::update(l,r);
+  OmegaLambdaNode::update(const OmegaLambdaNode& l, const OmegaLambdaNode& r,
+                          const TaskNoInfo& n) {
+    OmegaNode::update(l,r,n);
     lp = std::max(l.lp + r.p, l.p + r.lp);
     if ((r.lect >= l.ect + r.lp) && (r.lect >= l.lect + r.p)) {
       lect = r.lect; res = r.res;
@@ -65,7 +67,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OmegaLambdaTree<TaskView>::OmegaLambdaTree(Region& r, 
                                              const TaskViewArray<TaskView>& t,
                                              bool inc)
-    : TaskTree<TaskView,OmegaLambdaNode>(r,t) {
+    : TaskTree<TaskView,OmegaLambdaNode,TaskNoInfo>(r,t) {
     if (inc) {
       // Enter all tasks into tree (omega = all tasks, lambda = empty)
       for (int i=tasks.size(); i--; ) {
@@ -81,7 +83,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
         leaf(i).res = OmegaLambdaNode::undef;
       }
      }
-    init();
+    TaskNoInfo n;
+    init(n);
   }
 
   template<class TaskView>
@@ -92,7 +95,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     leaf(i).p = 0;
     leaf(i).ect = -Int::Limits::infinity;
     leaf(i).res = i;
-    update(i);
+    TaskNoInfo n;
+    update(i,n);
   }
 
   template<class TaskView>
@@ -100,7 +104,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OmegaLambdaTree<TaskView>::oinsert(int i) {
     leaf(i).p = tasks[i].p(); 
     leaf(i).ect = tasks[i].ect();
-    update(i);
+    TaskNoInfo n;
+    update(i,n);
   }
 
   template<class TaskView>
@@ -109,7 +114,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     leaf(i).lp = tasks[i].p(); 
     leaf(i).lect = tasks[i].ect();
     leaf(i).res = i;
-    update(i);
+    TaskNoInfo n;
+    update(i,n);
   }
 
   template<class TaskView>
@@ -118,7 +124,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     leaf(i).lp = 0; 
     leaf(i).lect = -Int::Limits::infinity;
     leaf(i).res = OmegaLambdaNode::undef;
-    update(i);
+    TaskNoInfo n;
+    update(i,n);
   }
 
   template<class TaskView>

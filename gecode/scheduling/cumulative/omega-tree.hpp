@@ -40,37 +40,38 @@
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 
   forceinline void
-  OmegaNode::init(const OmegaNode&, const OmegaNode&) {
+  OmegaNode::init(const OmegaNode&, const OmegaNode&, int) {
     e = 0; env = -Int::Limits::infinity;
   }
 
   forceinline void
-  OmegaNode::update(const OmegaNode& l, const OmegaNode& r) {
+  OmegaNode::update(const OmegaNode& l, const OmegaNode& r, int c) {
     e = l.e + r.e; env = std::max(l.env + r.e, r.env);
   }
 
   template<class TaskView>
-  OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
-    : TaskTree<TaskView,OmegaNode>(r,t) {
+  OmegaTree<TaskView>::OmegaTree(Region& r, int c0,
+                                 const TaskViewArray<TaskView>& t)
+    : TaskTree<TaskView,OmegaNode,int>(r,t), c(c0) {
     for (int i=tasks.size(); i--; ) {
       leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
     }
-    init();
+    init(c);
   }
 
   template<class TaskView>
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
     leaf(i).e = tasks[i].e(); 
-    // leaf(i).env = tasks[i].env();
-    update(i);
+    leaf(i).env = c*tasks[i].est();
+    update(i,c);
   }
 
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
     leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
-    update(i);
+    update(i,c);
   }
 
   template<class TaskView>
