@@ -1800,7 +1800,7 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskModelIntLinearInt Linear constraints over integer variables
+   * \defgroup TaskModelIntLI Linear constraints over integer variables
    * \ingroup TaskModelInt
    *
    * All variants for linear constraints over integer variables share
@@ -1828,28 +1828,28 @@ namespace Gecode {
    *    is, they will not silently overflow during propagation).
    */
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntVarArgs& x,
@@ -1859,7 +1859,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
@@ -1869,7 +1869,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
@@ -1879,7 +1879,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
@@ -1889,7 +1889,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearInt
+   * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const IntVarArgs& x,
@@ -1898,7 +1898,7 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskModelIntLinearBool Linear constraints over Boolean variables
+   * \defgroup TaskModelIntLB Linear constraints over Boolean variables
    * \ingroup TaskModelInt
    *
    * All variants for linear constraints over Boolean variables share
@@ -1922,28 +1922,28 @@ namespace Gecode {
    *    is, they will not silently overflow during propagation).
    */
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const BoolVarArgs& x,
@@ -1953,7 +1953,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
@@ -1963,7 +1963,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
@@ -1973,7 +1973,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
@@ -1983,7 +1983,7 @@ namespace Gecode {
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
-   * \ingroup TaskModelIntLinearBool
+   * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Space& home, const IntArgs& a, const BoolVarArgs& x,

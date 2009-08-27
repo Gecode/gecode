@@ -63,7 +63,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
     leaf(i).e = tasks[i].e(); 
-    leaf(i).env = c*tasks[i].est();
+    leaf(i).env = c*tasks[i].est()+tasks[i].e();
     update(i,c);
   }
 

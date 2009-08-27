@@ -66,7 +66,32 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   ExecStatus 
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(overload(home,c,t));
-    return ES_FAILED;
+    for (int i=t.size(); i--; )
+      if (!t[i].assigned())
+        return ES_FIX;
+    // Perform definitive overload check
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
+    Region r(home);
+    TaskViewIter<typename TaskTraits<ManTask>::TaskViewFwd,STO_EST,true> 
+      est(r,f);
+    TaskViewIter<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true> 
+      lct(r,f);
+    int t;
+    int u=0;
+    while (est()) {
+      assert(lct());
+      t = std::min(f[est.task()].est(),f[lct.task()].lct());
+      while (est() && (f[est.task()].est() == t)) {
+        u += f[est.task()].c(); ++est;
+      }
+      while (lct() && (f[lct.task()].lct() == t)) {
+        u -= f[lct.task()].c(); ++lct;
+      }
+      if (u > c)
+        return ES_FAILED;
+    }
+    assert(lct());
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}
