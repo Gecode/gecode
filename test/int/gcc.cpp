@@ -56,17 +56,17 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntAllMinMax(Gecode::IntConLevel icl)
-         : Test("GCC::Int::All::MinMax::"+str(icl),4,1,4,false,icl) {}
+         : Test("GCC::Int::All::MinMax::"+str(icl),4,-1,3,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int n[4];
-         for (int i=4; i--; )
+         int n[5];
+         for (int i=5; i--; )
            n[i]=0;
          for (int i=x.size(); i--; )
-           n[x[i]-1]++;
+           n[x[i]+1]++;
          if (n[2] > 0)
-           return false;
-         for (int i=4; i--;)
+          return false;
+         for (int i=5; i--;)
            if (n[i]>2)
              return false;
          return true;
@@ -74,11 +74,11 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         IntArgs values(4);
+         IntArgs values(5);
          IntSet fixed(0,2);
-         IntSetArgs cards(4);
-         for (int i=0; i<4; i++) {
-           values[i] = i+1; cards[i] = fixed;
+         IntSetArgs cards(5);
+         for (int i=0; i<5; i++) {
+           values[i] = i-1; cards[i] = fixed;
          }
          cards[2] = IntSet(0,0);
          count(home, x, cards, values, icl);
