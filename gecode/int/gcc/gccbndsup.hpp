@@ -230,10 +230,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   class PartialSum {
   private:
-    /// memory allocation
-    char* mem;
-    /// How much memory is allocated
-    size_t _allocated;
+    // /// memory allocation
+    // char* mem;
     /// sum[i] contains the partial sum from 0 to i
     int* sum;
     /**
@@ -246,7 +244,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// \name Constructors and destructors
     //@{
-    PartialSum( int, int, ViewArray<Card>& , bool);
+    PartialSum( int, ViewArray<Card>& , bool);
     ~PartialSum(void);
     //@}
     /// \name Access
@@ -271,8 +269,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   forceinline
   PartialSum<Card>::~PartialSum(void){
-    assert(mem != NULL);
-    heap.rfree(mem);
+    assert(sum != NULL);
+    heap.free<int>(sum,size);
   }
 
   /// \brief Memory allocation for the partial sum structure
@@ -304,27 +302,16 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   inline
   PartialSum<Card>::PartialSum(int first,
-                               int count,
                                ViewArray<Card>& elements,
                                bool up) {
     int i = 0;
     int j = 0;
     // we add three elements at the beginning and two at the end
-    size  = count + 5;
+    size  = elements.size() + 5;
+
     // memory allocation
-    size_t sum_size = (size) * sizeof(int);
-    size_t ds_size  = (size) * sizeof(int);
-    size_t total    = sum_size + ds_size;
-    _allocated = total;
-
-    mem = static_cast<char*>(heap.ralloc(total));
-    sum = Support::ptr_cast<int*>(mem);
-    ds  = Support::ptr_cast<int*>(mem + sum_size);
-
-    for (int z = 0; z < size; z++) {
-      sum[z] = 0;
-      ds[z]  = 0;
-    }
+    sum = heap.alloc<int>(2*size);
+    ds  = &sum[size];
 
     /*
      * firstValue and lastValue are sentinels
@@ -332,7 +319,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
     firstValue = first - 3;
-    lastValue  = first + count + 1;
+    lastValue  = first + elements.size() + 1;
 
 
     // the first three elements
@@ -340,14 +327,12 @@ namespace Gecode { namespace Int { namespace GCC {
       sum[i] = i;
     }
 
-    int shift  = count + 2;
-
     /*
      * copy the bounds into sum
      * optimization only those values being indeed
      * variable bounds
      */
-    for (i = 2; i < shift; i++){
+    for (i = 2; i < elements.size() + 2; i++){
       if (up) {
         sum[i + 1] = sum[i] + elements[i - 2].max();
       } else {
@@ -359,7 +344,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
     // check for doublets
-    i = count + 3;
+    i = elements.size() + 3;
     j = i + 1;
     for ( ; i > 0; ){
       while(sum[i] == sum[i - 1]) {
@@ -489,7 +474,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   forceinline size_t
   PartialSum<Card>::allocated(void) const {
-    return sizeof(PartialSum<Card>) + _allocated;
+    return sizeof(PartialSum<Card>) + 2*size*sizeof(int);
   }
 
 

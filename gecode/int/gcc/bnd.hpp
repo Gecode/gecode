@@ -396,8 +396,8 @@ namespace Gecode { namespace Int { namespace GCC {
     int cur_minx = x[nu[0]].min();
     if (lps == NULL) {
       assert (ups == NULL);
-      lps = new PartialSum<Card>(cur_minx,  k.size(), k, false);
-      ups = new PartialSum<Card>(cur_minx,  k.size(), k, true);
+      lps = new PartialSum<Card>(cur_minx, k, false);
+      ups = new PartialSum<Card>(cur_minx, k, true);
     }
 
     if (isView) {
@@ -405,12 +405,12 @@ namespace Gecode { namespace Int { namespace GCC {
       // reconstruction of the partial sum structure is necessary
       if (lps->check_update_min(k)) {
         delete lps;
-        lps = new PartialSum<Card>(cur_minx,  k.size(), k, false);
+        lps = new PartialSum<Card>(cur_minx, k, false);
       }
 
       if (ups->check_update_max(k)) {
         delete ups;
-        ups = new PartialSum<Card>(cur_minx,  k.size(), k, true);
+        ups = new PartialSum<Card>(cur_minx, k, true);
       }
     }
 
@@ -423,9 +423,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (!minima_equal || !maxima_equal ) {
       delete lps;
-      lps = new PartialSum<Card>(cur_minx, k.size(), k, false);
+      lps = new PartialSum<Card>(cur_minx, k, false);
       delete ups;
-      ups = new PartialSum<Card>(cur_minx, k.size(), k, true);
+      ups = new PartialSum<Card>(cur_minx, k, true);
     }
 
     // assert that the minimal value of the partial sum structure for
@@ -493,9 +493,11 @@ namespace Gecode { namespace Int { namespace GCC {
     hall[rightmost].bounds = ups->lastValue + 1 ;
 
     skip_lbc = true;
-    for (int i = k.size(); i--; ) {
-      skip_lbc &= (k[i].min() == 0);
-    }
+    for (int i = k.size(); i--; )
+      if (k[i].min() != 0) {
+        skip_lbc = false;
+        break;
+      }
 
     if (!card_fixed && !skip_lbc) {
       es_lbc = lbc<View, Card, shared>(home, x, nb, hall, rank,lps, mu, nu);

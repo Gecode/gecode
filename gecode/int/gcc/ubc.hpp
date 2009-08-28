@@ -81,11 +81,9 @@ namespace Gecode { namespace Int { namespace GCC {
     hall[0].t = 0;
     hall[0].d = 0;
 
-    for (int i = 1; i < bsize; i++) {
-      int pred  = i - 1;
-      hall[i].h = pred;
-      hall[i].t = pred;
-      hall[i].d = ups->sumup(hall[pred].bounds, hall[i].bounds - 1);
+    for (int i = bsize; --i; ) {
+      hall[i].h = hall[i].t = i-1;
+      hall[i].d = ups->sumup(hall[i-1].bounds, hall[i].bounds - 1);
     }
     hall[bsize].h = bsize-1;
     hall[bsize].t = bsize-1;
@@ -191,12 +189,10 @@ namespace Gecode { namespace Int { namespace GCC {
      * symmetric to the narrowing of the lower bounds
      */
     for (int i = 0; i < rightmost; i++) {
-      int succ  = i + 1;
-      hall[i].h = succ;
-      hall[i].t = succ;
-      hall[i].d = ups->sumup(hall[i].bounds, hall[succ].bounds - 1);
+      hall[i].h = hall[i].t = i+1;
+      hall[i].d = ups->sumup(hall[i].bounds, hall[i+1].bounds - 1);
     }
-
+        
     for (int i = n; i--; ) {
       // visit intervals in decreasing min order
       int x0   = rank[nu[i]].max;
@@ -204,7 +200,7 @@ namespace Gecode { namespace Int { namespace GCC {
       int y    = rank[nu[i]].min;
       int z    = pathmin_t(hall, pred);
       int j    = hall[z].t;
-
+    
       // DOMINATION:
       if (--hall[z].d == 0){
         hall[z].t = z - 1;
@@ -212,12 +208,12 @@ namespace Gecode { namespace Int { namespace GCC {
         hall[z].t = j;
       }
       pathset_t(hall, pred, z, z);
-
+    
       // NEGATIVE CAPACITY:
       if (hall[z].d < ups->sumup(hall[z].bounds,hall[y].bounds-1)){
         return ES_FAILED;
       }
-
+    
       /* UPDATING UPPER BOUND:
        *   If the upper bound max_i lies inside a Hall interval [a,b]
        *   i.e. min_i <= a <= max_i < b
