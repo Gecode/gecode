@@ -261,6 +261,57 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 
+  /// Node for an omega lambda tree
+  class OmegaLambdaNode : public OmegaNode {
+  public:
+    /// Undefined task
+    static const int undef = -1;
+    /// Energy for subtree
+    int le;
+    /// Energy envelope for subtree
+    int lenv;
+    /// Node which is responsible for lect
+    int res;
+    /// Initialize node from left child \a l and right child \a r
+    void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
+    /// Update node from left child \a l and right child \a r
+    void update(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
+  };
+
+  /// Omega-lambda trees for computing ect of task sets
+  template<class TaskView>
+  class OmegaLambdaTree : public TaskTree<TaskView,OmegaLambdaNode> {
+  protected:
+    using TaskTree<TaskView,OmegaLambdaNode>::tasks;
+    using TaskTree<TaskView,OmegaLambdaNode>::leaf;
+    using TaskTree<TaskView,OmegaLambdaNode>::root;
+    using TaskTree<TaskView,OmegaLambdaNode>::init;
+    using TaskTree<TaskView,OmegaLambdaNode>::update;
+    /// Capacity
+    int c;
+  public:
+    /// Initialize tree for tasks \a t and capcity \a c with all tasks included in omega
+    OmegaLambdaTree(Region& r, int c, const TaskViewArray<TaskView>& t);
+    /// Shift task with index \a i from omega to lambda
+    void shift(int i);
+    /// Remove task with index \a i from lambda
+    void lremove(int i);
+    /// Whether has responsible task
+    bool lempty(void) const;
+    /// Return responsible task
+    int responsible(void) const;
+    /// Return energy envelope of all tasks
+    int env(void) const;
+    /// Return energy envelope of all tasks excluding lambda tasks
+    int lenv(void) const;
+  };
+
+}}}
+
+#include <gecode/scheduling/cumulative/omega-lambda-tree.hpp>
+
+namespace Gecode { namespace Scheduling { namespace Cumulative {
+
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);

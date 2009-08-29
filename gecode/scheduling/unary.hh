@@ -313,8 +313,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   /// Omega-lambda trees for computing ect of task sets
   template<class TaskView>
-  class OmegaLambdaTree 
-    : public TaskTree<TaskView,OmegaLambdaNode> {
+  class OmegaLambdaTree : public TaskTree<TaskView,OmegaLambdaNode> {
   protected:
     using TaskTree<TaskView,OmegaLambdaNode>::tasks;
     using TaskTree<TaskView,OmegaLambdaNode>::leaf;
