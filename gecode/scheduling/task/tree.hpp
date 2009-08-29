@@ -68,6 +68,18 @@ namespace Gecode { namespace Scheduling {
   TaskTree<TaskView,Node>::_parent(int i) {
     return (i+1)/2 - 1;
   }
+  template<class TaskView, class Node>
+  forceinline bool
+  TaskTree<TaskView,Node>::_leftmost(int i) {
+    // Check whether i+1 is a power of 2
+    return ((i+1) & i) == 0;
+  }
+  template<class TaskView, class Node>
+  forceinline bool
+  TaskTree<TaskView,Node>::_rightmost(int i) {
+    // Check whether i+2 is a power of 2
+    return ((i+2) & (i+1)) == 0;
+  }
 
   template<class TaskView, class Node>
   forceinline Node&

@@ -351,7 +351,6 @@ namespace Gecode { namespace Scheduling {
   protected:
     /// The tasks from which the tree is computed
     const TaskViewArray<TaskView>& tasks;
-  private:
     /// Task nodes
     Node* _node;
     /// Map task number to leaf node number in right order
@@ -368,6 +367,10 @@ namespace Gecode { namespace Scheduling {
     static int _right(int i);
     /// Return index of parent of \a i
     static int _parent(int i);
+    /// Check whether node is leftmost
+    static bool _leftmost(int i);
+    /// Check whether node is rightmost
+    static bool _rightmost(int i);
   protected:
     /// Return leaf for task \a i
     Node& leaf(int i);
