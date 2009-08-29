@@ -37,72 +37,72 @@
 
 namespace Gecode { namespace Scheduling {
 
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView,Node,Info>::_inner(void) const {
+  TaskTree<TaskView,Node>::_inner(void) const {
     return tasks.size()-1;
   }
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView,Node,Info>::_nodes(void) const {
+  TaskTree<TaskView,Node>::_nodes(void) const {
     return 2*tasks.size() - 1;
   }
 
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline bool 
-  TaskTree<TaskView,Node,Info>::_root(int i) {
+  TaskTree<TaskView,Node>::_root(int i) {
     return i == 0;
   }
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline int 
-  TaskTree<TaskView,Node,Info>::_left(int i) {
+  TaskTree<TaskView,Node>::_left(int i) {
     return 2*(i+1) - 1;
   }
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline int
-  TaskTree<TaskView,Node,Info>::_right(int i) {
+  TaskTree<TaskView,Node>::_right(int i) {
     return 2*(i+1);
   }
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline int
-  TaskTree<TaskView,Node,Info>::_parent(int i) {
+  TaskTree<TaskView,Node>::_parent(int i) {
     return (i+1)/2 - 1;
   }
 
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline Node&
-  TaskTree<TaskView,Node,Info>::leaf(int i) {
+  TaskTree<TaskView,Node>::leaf(int i) {
     return _node[_leaf[i]];
   }
 
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline const Node&
-  TaskTree<TaskView,Node,Info>::root(void) const {
+  TaskTree<TaskView,Node>::root(void) const {
     return _node[0];
   }
 
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline void
-  TaskTree<TaskView,Node,Info>::init(const Info& n) {
+  TaskTree<TaskView,Node>::init(void) {
     for (int i=_inner(); i--; )
-      _node[i].init(_node[_left(i)],_node[_right(i)],n);
+      _node[i].init(_node[_left(i)],_node[_right(i)]);
   }
 
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline void
-  TaskTree<TaskView,Node,Info>::update(int i, const Info& n) {
+  TaskTree<TaskView,Node>::update(int i) {
     i = _leaf[i];
     assert(!_root(i));
     do {
       i = _parent(i);
-      _node[i].update(_node[_left(i)],_node[_right(i)],n);
+      _node[i].update(_node[_left(i)],_node[_right(i)]);
     } while (!_root(i));
   }
 
-  template<class TaskView, class Node, class Info>
+  template<class TaskView, class Node>
   forceinline
-  TaskTree<TaskView,Node,Info>::TaskTree(Region& r, 
-                                         const TaskViewArray<TaskView>& t)
+  TaskTree<TaskView,Node>::TaskTree(Region& r, 
+                                    const TaskViewArray<TaskView>& t)
     : tasks(t), 
       _node(r.alloc<Node>(_nodes())),
       _leaf(r.alloc<int>(tasks.size())) {

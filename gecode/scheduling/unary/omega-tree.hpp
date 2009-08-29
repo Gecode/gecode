@@ -40,41 +40,36 @@
 namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline void
-  OmegaNode::init(const OmegaNode&, const OmegaNode&, 
-                  const TaskNoInfo&) {
+  OmegaNode::init(const OmegaNode&, const OmegaNode&) {
     p = 0; ect = -Int::Limits::infinity;
   }
 
   forceinline void
-  OmegaNode::update(const OmegaNode& l, const OmegaNode& r, 
-                    const TaskNoInfo&) {
+  OmegaNode::update(const OmegaNode& l, const OmegaNode& r) {
     p = l.p + r.p; ect = std::max(l.ect + r.p, r.ect);
   }
 
   template<class TaskView>
   OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
-    : TaskTree<TaskView,OmegaNode,TaskNoInfo>(r,t) {
+    : TaskTree<TaskView,OmegaNode>(r,t) {
     for (int i=tasks.size(); i--; ) {
       leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
     }
-    TaskNoInfo n;
-    init(n);
+    init();
   }
 
   template<class TaskView>
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
     leaf(i).p = tasks[i].p(); leaf(i).ect = tasks[i].ect();
-    TaskNoInfo n;
-    update(i,n);
+    update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
     leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
-    TaskNoInfo n;
-    update(i,n);
+    update(i);
   }
 
   template<class TaskView>

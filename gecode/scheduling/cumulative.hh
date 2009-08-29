@@ -228,20 +228,20 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /// Eneregy envelope for subtree
     int env;
     /// Initialize node from left child \a l and right child \a r
-    void init(const OmegaNode& l, const OmegaNode& r, int c);
+    void init(const OmegaNode& l, const OmegaNode& r);
     /// Update node from left child \a l and right child \a r
-    void update(const OmegaNode& l, const OmegaNode& r, int c);
+    void update(const OmegaNode& l, const OmegaNode& r);
   };
 
   /// Omega trees for computing ect of task sets
   template<class TaskView>
-  class OmegaTree : public TaskTree<TaskView,OmegaNode,int> {
+  class OmegaTree : public TaskTree<TaskView,OmegaNode> {
   protected:
-    using TaskTree<TaskView,OmegaNode,int>::tasks;
-    using TaskTree<TaskView,OmegaNode,int>::leaf;
-    using TaskTree<TaskView,OmegaNode,int>::root;
-    using TaskTree<TaskView,OmegaNode,int>::init;
-    using TaskTree<TaskView,OmegaNode,int>::update;
+    using TaskTree<TaskView,OmegaNode>::tasks;
+    using TaskTree<TaskView,OmegaNode>::leaf;
+    using TaskTree<TaskView,OmegaNode>::root;
+    using TaskTree<TaskView,OmegaNode>::init;
+    using TaskTree<TaskView,OmegaNode>::update;
     /// Capacity
     int c;
   public:

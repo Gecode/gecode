@@ -261,20 +261,20 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Earliest completion time for subtree
     int ect;
     /// Initialize node from left child \a l and right child \a r
-    void init(const OmegaNode& l, const OmegaNode& r, const TaskNoInfo& n);
+    void init(const OmegaNode& l, const OmegaNode& r);
     /// Update node from left child \a l and right child \a r
-    void update(const OmegaNode& l, const OmegaNode& r, const TaskNoInfo& n);
+    void update(const OmegaNode& l, const OmegaNode& r);
   };
 
   /// Omega trees for computing ect of task sets
   template<class TaskView>
-  class OmegaTree : public TaskTree<TaskView,OmegaNode,TaskNoInfo> {
+  class OmegaTree : public TaskTree<TaskView,OmegaNode> {
   protected:
-    using TaskTree<TaskView,OmegaNode,TaskNoInfo>::tasks;
-    using TaskTree<TaskView,OmegaNode,TaskNoInfo>::leaf;
-    using TaskTree<TaskView,OmegaNode,TaskNoInfo>::root;
-    using TaskTree<TaskView,OmegaNode,TaskNoInfo>::init;
-    using TaskTree<TaskView,OmegaNode,TaskNoInfo>::update;
+    using TaskTree<TaskView,OmegaNode>::tasks;
+    using TaskTree<TaskView,OmegaNode>::leaf;
+    using TaskTree<TaskView,OmegaNode>::root;
+    using TaskTree<TaskView,OmegaNode>::init;
+    using TaskTree<TaskView,OmegaNode>::update;
   public:
     /// Initialize tree for tasks \a t
     OmegaTree(Region& r, const TaskViewArray<TaskView>& t);
@@ -306,23 +306,21 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Node which is responsible for lect
     int res;
     /// Initialize node from left child \a l and right child \a r
-    void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r, 
-              const TaskNoInfo& n);
+    void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
     /// Update node from left child \a l and right child \a r
-    void update(const OmegaLambdaNode& l, const OmegaLambdaNode& r,
-                const TaskNoInfo& n);
+    void update(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
   };
 
   /// Omega-lambda trees for computing ect of task sets
   template<class TaskView>
   class OmegaLambdaTree 
-    : public TaskTree<TaskView,OmegaLambdaNode,TaskNoInfo> {
+    : public TaskTree<TaskView,OmegaLambdaNode> {
   protected:
-    using TaskTree<TaskView,OmegaLambdaNode,TaskNoInfo>::tasks;
-    using TaskTree<TaskView,OmegaLambdaNode,TaskNoInfo>::leaf;
-    using TaskTree<TaskView,OmegaLambdaNode,TaskNoInfo>::root;
-    using TaskTree<TaskView,OmegaLambdaNode,TaskNoInfo>::init;
-    using TaskTree<TaskView,OmegaLambdaNode,TaskNoInfo>::update;
+    using TaskTree<TaskView,OmegaLambdaNode>::tasks;
+    using TaskTree<TaskView,OmegaLambdaNode>::leaf;
+    using TaskTree<TaskView,OmegaLambdaNode>::root;
+    using TaskTree<TaskView,OmegaLambdaNode>::init;
+    using TaskTree<TaskView,OmegaLambdaNode>::update;
   public:
     /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
     OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t, 
