@@ -73,6 +73,13 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed serious bug in the bounds propagator for global cardinality.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
