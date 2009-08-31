@@ -307,6 +307,7 @@ namespace Gecode { namespace Int { namespace GCC {
       // all specified cardinalites are ranges
 
       ViewArray<OccurBndsView> cv(home, csize);
+
       // compute number of zero entries
       int z = 0;
 
@@ -315,20 +316,19 @@ namespace Gecode { namespace Int { namespace GCC {
         cv[i].counter(0);
         cv[i].min(c[i].min());
         cv[i].max(c[i].max());
-        if (cv[i].max() == 0){
+        if (cv[i].max() == 0) {
           z++;
+          // cv[i].max(1);
         }
       }
 
-      // if there are zero entries
-      if (z > 0) {
-        // reduce the occurences
+      if (z>0) {
+        // remove values with 0 max occurrence
         IntArgs rem(z);
         z = 0;
-        for (int j = cv.size(); j--;) {
-          if (cv[j].max() == 0){
-            rem[z++] = cv[j].card();
-          }
+        for (int j = csize; j--;) {
+          if (c[j].max() == 0)
+            rem[z++] = v[j];
         }
 
         IntSet remzero(&rem[0], z);
@@ -336,7 +336,6 @@ namespace Gecode { namespace Int { namespace GCC {
           IntSetRanges remzeror(remzero);
           GECODE_ME_FAIL(home, xv[i].minus_r(home, remzeror, false));
         }
-
         GCC::post_template<OccurBndsView,false>(home, xv, cv, icl);
       } else {
         GCC::post_template<OccurBndsView,false>(home, xv, cv, icl);

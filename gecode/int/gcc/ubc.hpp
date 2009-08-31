@@ -237,9 +237,8 @@ namespace Gecode { namespace Int { namespace GCC {
       // ZEROTEST
       if (hall[z].d == ups->sumup(hall[z].bounds, hall[y].bounds - 1)) {
         //mark hall interval [y,j]
-        int succj = j + 1;
-        pathset_h(hall, hall[y].h, succj, y);
-        hall[y].h = succj;
+        pathset_h(hall, hall[y].h, j+1, y);
+        hall[y].h = j+1;
       }
     }
     return es;

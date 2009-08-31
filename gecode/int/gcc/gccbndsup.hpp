@@ -221,6 +221,20 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   };
 
+  /**
+   * \brief Compares two cardinality views
+   * \a \f$ x_i \f$ \f$ x_j\f$ according to the index
+   *
+   */
+
+  template <class Card>
+  class MinIdx {
+  public:
+    forceinline bool
+    operator ()(const Card& x, const Card& y) {
+      return x.card() < y.card();
+    }
+  };
 
   /**
    * \brief Partial sum structure for constant
@@ -244,7 +258,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// \name Constructors and destructors
     //@{
-    PartialSum( int, ViewArray<Card>& , bool);
+    PartialSum(ViewArray<Card>& , bool);
     ~PartialSum(void);
     //@}
     /// \name Access
@@ -301,17 +315,25 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class Card>
   inline
-  PartialSum<Card>::PartialSum(int first,
-                               ViewArray<Card>& elements,
-                               bool up) {
+  PartialSum<Card>::PartialSum(ViewArray<Card>& elements, bool up) {
     int i = 0;
     int j = 0;
+
+    // Determine number of holes in the index set
+    int holes = 0;
+    for (i = 1; i < elements.size(); i++) {
+      if (elements[i].card() != elements[i-1].card() + 1)
+        holes += elements[i].card()-elements[i-1].card()-1;
+    }
+
     // we add three elements at the beginning and two at the end
-    size  = elements.size() + 5;
+    size  = elements.size() + holes + 5;
 
     // memory allocation
     sum = heap.alloc<int>(2*size);
     ds  = &sum[size];
+
+    int first = elements[0].card();
 
     /*
      * firstValue and lastValue are sentinels
@@ -319,32 +341,34 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
     firstValue = first - 3;
-    lastValue  = first + elements.size() + 1;
-
+    lastValue  = first + elements.size() + holes + 1;
 
     // the first three elements
-    for (i = 3; i--; ){
+    for (i = 3; i--; )
       sum[i] = i;
-    }
 
     /*
-     * copy the bounds into sum
-     * optimization only those values being indeed
-     * variable bounds
+     * copy the bounds into sum, filling up holes with zeroes
      */
-    for (i = 2; i < elements.size() + 2; i++){
-      if (up) {
-        sum[i + 1] = sum[i] + elements[i - 2].max();
+    int prevCard = elements[0].card()-1;
+    i = 2;
+    for (j = 2; j < elements.size() + holes + 2; j++){
+      if (elements[i-2].card() != prevCard + 1) {
+        sum[j + 1] = sum[j];
+      } else if (up) {
+        sum[j + 1] = sum[j] + elements[i - 2].max();
+        i++;
       } else {
-        sum[i + 1] = sum[i] + elements[i - 2].min();
+        sum[j + 1] = sum[j] + elements[i - 2].min();
+        i++;
       }
+      prevCard++;
     }
-    sum[i + 1] = sum[i] + 1;
-    sum[i + 2] = sum[i + 1] + 1;
+    sum[j + 1] = sum[j] + 1;
+    sum[j + 2] = sum[j + 1] + 1;
 
-
-    // check for doublets
-    i = elements.size() + 3;
+    // Compute distances, eliminating zeroes
+    i = elements.size() + holes + 3;
     j = i + 1;
     for ( ; i > 0; ){
       while(sum[i] == sum[i - 1]) {
@@ -356,7 +380,6 @@ namespace Gecode { namespace Int { namespace GCC {
       j = ds[j];
     }
     ds[j] = 0;
-    // for the sake of having no seg fault
     ds[0] = 0;
   }
 

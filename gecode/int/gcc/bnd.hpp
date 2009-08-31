@@ -387,17 +387,20 @@ namespace Gecode { namespace Int { namespace GCC {
     MinInc<View> min_inc(x);
     Support::quicksort<int, MinInc<View> >(nu, n, min_inc);
 
+    // Sort the cardinality bounds by index
+    MinIdx<Card> min_idx;
+    Support::quicksort<Card, MinIdx<Card> >(&k[0], k.size(), min_idx);
+
     if (isView) {
       // assert guaranteed bounds in the set of all values for variable case
       assert(k[0].card() == x[nu[0]].min());
     }
 
     // ensure that only values are considered lying in the variable domain
-    int cur_minx = x[nu[0]].min();
     if (lps == NULL) {
       assert (ups == NULL);
-      lps = new PartialSum<Card>(cur_minx, k, false);
-      ups = new PartialSum<Card>(cur_minx, k, true);
+      lps = new PartialSum<Card>(k, false);
+      ups = new PartialSum<Card>(k, true);
     }
 
     if (isView) {
@@ -405,12 +408,12 @@ namespace Gecode { namespace Int { namespace GCC {
       // reconstruction of the partial sum structure is necessary
       if (lps->check_update_min(k)) {
         delete lps;
-        lps = new PartialSum<Card>(cur_minx, k, false);
+        lps = new PartialSum<Card>(k, false);
       }
 
       if (ups->check_update_max(k)) {
         delete ups;
-        ups = new PartialSum<Card>(cur_minx, k, true);
+        ups = new PartialSum<Card>(k, true);
       }
     }
 
@@ -423,9 +426,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (!minima_equal || !maxima_equal ) {
       delete lps;
-      lps = new PartialSum<Card>(cur_minx, k, false);
+      lps = new PartialSum<Card>(k, false);
       delete ups;
-      ups = new PartialSum<Card>(cur_minx, k, true);
+      ups = new PartialSum<Card>(k, true);
     }
 
     // assert that the minimal value of the partial sum structure for
