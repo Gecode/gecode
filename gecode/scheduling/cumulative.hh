@@ -316,6 +316,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
 
+  /// Propagate by edge finding
+  template<class Task>
+  ExecStatus edgefinding(Space& home, int c, TaskArray<Task>& t);
+
   /**
    * \brief Scheduling propagator for cumulative resource with mandatory tasks
    *
@@ -369,6 +373,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 }}}
 
 #include <gecode/scheduling/cumulative/overload.hpp>
+#include <gecode/scheduling/cumulative/edge-finding.hpp>
 #include <gecode/scheduling/cumulative/man-prop.hpp>
 #include <gecode/scheduling/cumulative/opt-prop.hpp>
 

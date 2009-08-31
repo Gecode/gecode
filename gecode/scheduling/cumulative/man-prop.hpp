@@ -66,6 +66,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   ExecStatus 
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(overload(home,c,t));
+    GECODE_ME_CHECK(edgefinding(home,c,t));
     for (int i=t.size(); i--; )
       if (!t[i].assigned())
         return ES_FIX;
