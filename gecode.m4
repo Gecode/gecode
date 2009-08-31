@@ -995,7 +995,7 @@ AC_DEFUN([AC_GECODE_QT],
   [
   AC_ARG_ENABLE([qt],
     AC_HELP_STRING([--enable-qt],
-      [build with Qt support @<:@default=yes@:>@]))
+      [build with Qt support, requires at least Qt 4.3 @<:@default=yes@:>@]))
   AC_CHECK_PROG(QMAKE, qmake, [found])
   AC_MSG_CHECKING(whether to build with Qt support)
   if test "${enable_qt:-yes}" = "yes"; then
@@ -1008,7 +1008,7 @@ AC_DEFUN([AC_GECODE_QT],
       ac_gecode_qt_ok="yes"
       if test ${ac_gecode_qt_major} -lt 4; then ac_gecode_qt_ok="no";
       else if test ${ac_gecode_qt_major} -eq 4 \
-                -a ${ac_gecode_qt_minor} -lt 2; then ac_gecode_qt_ok="no";
+                -a ${ac_gecode_qt_minor} -lt 3; then ac_gecode_qt_ok="no";
            fi
       fi
       if test "${ac_gecode_qt_ok}" != "yes"; then

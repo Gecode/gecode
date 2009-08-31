@@ -264,11 +264,17 @@ AC_GECODE_ENABLE_MODULE(scheduling, yes,
 	[enable_int="yes";
 	])
 
+AC_GECODE_ENABLE_MODULE(driver, yes,
+	[build script commandline driver library],
+	[enable_search="yes";
+         enable_int="yes";
+	])
+
 AC_GECODE_ENABLE_MODULE(examples, yes,
 	[build examples for the enabled variable types],
 	[enable_search="yes";
          enable_driver="yes";
-	 enable_minimodel="yes";
+         enable_minimodel="yes";
 	])
 
 AC_GECODE_ENABLE_MODULE(minimodel, yes,

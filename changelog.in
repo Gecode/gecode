@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The configure script checked for Qt 4.2, although Gist requires at least
+Qt 4.3.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major
