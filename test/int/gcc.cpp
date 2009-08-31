@@ -232,28 +232,25 @@ namespace Test { namespace Int {
      class VarSome : public Test {
      protected:
        /// Number of non-cardinality variables
-       static const int n = 4;
+       static const int n = 2;
      public:
        /// Create and register test
        VarSome(Gecode::IntConLevel icl)
-         : Test("GCC::Var::Some::"+str(icl),6,0,2,false,icl) {}
+         : Test("GCC::Var::Some::"+str(icl),7,-1,3,false,icl) {}
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // Number of cardinality variables
          int m = x.size()-n;
-         for (int i=0; i<n; i++)
-           if ((x[i] < 0) || (x[i] > 1))
-             return false;
          int* card = new int[m];
          for (int i=0; i<m; i++) {
            card[i] = 0;
-           if ((x[n+i] < 0) || (x[n+i] > 2)) {
+           if ((x[n+i] < 0) || (x[n+i] > n)) {
              delete [] card;
              return false;
            }
          }
          for (int i=0; i<n; i++)
-           card[x[i]]++;
+           card[x[i]+1]++;
          for (int i=0; i<m; i++)
            if (card[i] != x[n+i]) {
              delete [] card;
@@ -272,7 +269,7 @@ namespace Test { namespace Int {
            x[i]=xy[i];
          for (int i=0; i<m; i++)
            y[i]=xy[n+i];
-         IntArgs values(2, 0,1);
+         IntArgs values(5, -1,0,1,2,3);
          count(home,x,y,values,icl);
        }
      };
