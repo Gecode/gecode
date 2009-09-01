@@ -288,12 +288,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     int ect(int i) const;
   };
 
-}}}
-
-#include <gecode/scheduling/unary/omega-tree.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Unary {
-
   /// Node for an omega lambda tree
   class OmegaLambdaNode : public OmegaNode {
   public:
@@ -344,7 +338,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 }}}
 
-#include <gecode/scheduling/unary/omega-lambda-tree.hpp>
+#include <gecode/scheduling/unary/tree.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 

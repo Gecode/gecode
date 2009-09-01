@@ -255,11 +255,6 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     int env(void) const;
   };
 
-}}}
-
-#include <gecode/scheduling/cumulative/omega-tree.hpp>
-
-namespace Gecode { namespace Scheduling { namespace Cumulative {
 
   /// Node for an omega lambda tree
   class OmegaLambdaNode : public OmegaNode {
@@ -308,7 +303,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
 }}}
 
-#include <gecode/scheduling/cumulative/omega-lambda-tree.hpp>
+#include <gecode/scheduling/cumulative/tree.hpp>
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 

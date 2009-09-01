@@ -39,6 +39,70 @@
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
+  /*
+   * Omega tree
+   */
+
+  forceinline void
+  OmegaNode::init(const OmegaNode&, const OmegaNode&) {
+    p = 0; ect = -Int::Limits::infinity;
+  }
+
+  forceinline void
+  OmegaNode::update(const OmegaNode& l, const OmegaNode& r) {
+    p = l.p + r.p; ect = std::max(l.ect + r.p, r.ect);
+  }
+
+  template<class TaskView>
+  OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
+    : TaskTree<TaskView,OmegaNode>(r,t) {
+    for (int i=tasks.size(); i--; ) {
+      leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
+    }
+    init();
+  }
+
+  template<class TaskView>
+  forceinline void 
+  OmegaTree<TaskView>::insert(int i) {
+    leaf(i).p = tasks[i].p(); leaf(i).ect = tasks[i].ect();
+    update(i);
+  }
+
+  template<class TaskView>
+  forceinline void
+  OmegaTree<TaskView>::remove(int i) {
+    leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
+    update(i);
+  }
+
+  template<class TaskView>
+  forceinline int 
+  OmegaTree<TaskView>::ect(void) const {
+    return root().ect;
+  }
+  
+  template<class TaskView>
+  forceinline int 
+  OmegaTree<TaskView>::ect(int i) const {
+    // Check whether task i is in?
+    OmegaTree<TaskView>& o = const_cast<OmegaTree<TaskView>&>(*this);
+    if (o.leaf(i).p > 0) {
+      o.remove(i);
+      int ect = o.root().ect;
+      o.insert(i);
+      return ect;
+    } else {
+      return root().ect;
+    }
+  }
+  
+
+
+  /*
+   * Ome lambda tree
+   */
+
   forceinline void
   OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
     OmegaNode::init(l,r);
