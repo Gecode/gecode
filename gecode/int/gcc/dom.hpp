@@ -209,9 +209,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
       GECODE_ES_CHECK((prop_card<View, Card, true>(home, y, k, card_mod)));
 
-      int smin = 0;
-      int smax = 0;
-      if (!card_consistent<View, Card>(smin, smax, y, k)) {
+      if (!card_consistent<View, Card>(y, k)) {
         return ES_FAILED;
       }
     }

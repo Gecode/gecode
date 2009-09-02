@@ -63,6 +63,7 @@ namespace Gecode { namespace Int { namespace GCC {
       HallInfo hall[], Rank rank[],
       PartialSum<Card>* ups,
       int mu[], int nu[]){
+
     ExecStatus es = ES_FIX;
 
     int rightmost = nb + 1; // rightmost accesible value in bounds
@@ -85,8 +86,6 @@ namespace Gecode { namespace Int { namespace GCC {
       hall[i].h = hall[i].t = i-1;
       hall[i].d = ups->sumup(hall[i-1].bounds, hall[i].bounds - 1);
     }
-    hall[bsize].h = bsize-1;
-    hall[bsize].t = bsize-1;
 
     int n          = x.size();
 
@@ -135,7 +134,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (hall[z].d < ups->sumup(hall[y].bounds, hall[z].bounds - 1)){
         return ES_FAILED;
       }
-
+      
       /* UPDATING LOWER BOUND:
        *   If the lower bound min_i lies inside a Hall interval [a,b]
        *   i.e. a <= min_i <=b <= max_i

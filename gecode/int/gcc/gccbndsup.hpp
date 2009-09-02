@@ -69,14 +69,13 @@ namespace Gecode { namespace Int { namespace GCC {
       rv[i].minb = rv[i].maxb = rv[i].le = rv[i].gr = rv[i].eq = 0;
 
     for (int i = n; i--; ) {
-      int b = x[i].assigned();
       int min_idx = 0;
       int max_idx = 0;
       min_idx = lookupValue(k,x[i].min());
       if (min_idx == -1) {
         return ES_FAILED;
       }
-      if (b) {
+      if (x[i].assigned()) {
         rv[min_idx].minb++;
         rv[min_idx].maxb++;
         rv[min_idx].eq++;
@@ -139,31 +138,17 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /** \brief Consistency check, whether the cardinality values are feasible.
    */
-
   template <class View, class Card>
   inline bool
-  card_consistent(int& smin, int& smax, ViewArray<View>& x,
-                  ViewArray<Card>& k) {
-
-    int m = k.size();
-    int n = x.size();
-    for (int i = m; i--; ) {
+  card_consistent(ViewArray<View>& x, ViewArray<Card>& k) {
+    int smin = 0;
+    int smax = 0;
+    for (int i = k.size(); i--; ) {
       smax += k[i].max();
       smin += k[i].min();
     }
-
-    // not enough variables to satifsy cardinality requirements
-    if (n < smin) {
-      return false;
-    }
-
-    // we are using ALL variables
-    // not all variables can be assigned
-    if (smax < n) {
-      return false;
-    }
-
-    return true;
+    // Consistent if number of variables within cardinality bounds
+    return (smin <= x.size()) && (x.size() <= smax);
   }
 
   /**
@@ -277,6 +262,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int getsize(void) const;
     size_t allocated(void) const;
     //@}
+    void print(void);
   };
 
   /// \brief Default destructor
@@ -351,15 +337,15 @@ namespace Gecode { namespace Int { namespace GCC {
      * copy the bounds into sum, filling up holes with zeroes
      */
     int prevCard = elements[0].card()-1;
-    i = 2;
+    i = 0;
     for (j = 2; j < elements.size() + holes + 2; j++){
-      if (elements[i-2].card() != prevCard + 1) {
+      if (elements[i].card() != prevCard + 1) {
         sum[j + 1] = sum[j];
       } else if (up) {
-        sum[j + 1] = sum[j] + elements[i - 2].max();
+        sum[j + 1] = sum[j] + elements[i].max();
         i++;
       } else {
-        sum[j + 1] = sum[j] + elements[i - 2].min();
+        sum[j + 1] = sum[j] + elements[i].min();
         i++;
       }
       prevCard++;
@@ -383,6 +369,15 @@ namespace Gecode { namespace Int { namespace GCC {
     ds[0] = 0;
   }
 
+  template <class Card>
+  void
+  PartialSum<Card>::print(void) {
+    for (int i=0; i < size; i++) {
+      std::cerr << "(" << firstValue+i << "-" << sum[i] << ") ";
+    }
+    std::cerr << std::endl;
+  }
+
   /**
    * \brief Compute the maximum capacity of an interval I
    */
@@ -392,6 +387,10 @@ namespace Gecode { namespace Int { namespace GCC {
     if (from <= to) {
       return sum[to - firstValue] - sum[from - firstValue - 1];
     } else {
+      assert(to - firstValue - 1 >= 0);
+      assert(to - firstValue - 1 < size);
+      assert(from - firstValue >= 0);
+      assert(from - firstValue < size);
       return sum[to - firstValue - 1] - sum[from - firstValue];
     }
   }
@@ -453,16 +452,17 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   inline bool
   PartialSum<Card>::check_update_max(ViewArray<Card>& k){
-    if (k.size() <= size - 5) {
-      return true;
-    } else {
-      for (int i = 3; i < size - 2; i++) {
-        if ((sum[i] - sum[i - 1]) != k[i - 3].max()) {
-          return true;
-        }
+    int j = 0;
+    for (int i = 3; i < size - 2; i++) {
+      int max = 0;
+      if (k[j].card() == i+firstValue) {
+        max = k[j++].max();
       }
-      return false;
+      if ((sum[i] - sum[i - 1]) != max) {
+        return true;
+      }
     }
+    return false;
   }
 
   /**
@@ -476,16 +476,17 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   inline bool
   PartialSum<Card>::check_update_min(ViewArray<Card>& k){
-    if (k.size() <= size - 5) {
-      return true;
-    } else {
-      for (int i = 3; i < size - 2; i++) {
-        if ((sum[i] - sum[i - 1]) != k[i - 3].min()) {
-          return true;
-        }
+    int j = 0;
+    for (int i = 3; i < size - 2; i++) {
+      int min = 0;
+      if (k[j].card() == i+firstValue) {
+        min = k[j++].min();
       }
-      return false;
+      if ((sum[i] - sum[i - 1]) != min) {
+        return true;
+      }
     }
+    return false;
   }
 
   /// \brief Return the size of the partial sum structure.

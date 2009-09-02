@@ -120,6 +120,7 @@ namespace Gecode { namespace Int { namespace GCC {
         // cannot satisfy requiremnts for k[i].card()
         return ES_FAILED;
       }
+      GECODE_ME_CHECK(k[i].gq(home, 0));
       if (!k[i].assigned()) {
         ModEvent me = k[i].lq(home, n);
         if (me_failed(me)) {
@@ -221,7 +222,6 @@ namespace Gecode { namespace Int { namespace GCC {
       IntSetRanges ir(valid);
       GECODE_ME_FAIL(home, xv[i].inter_r(home, ir));
     }
-
     linear(home, c, IRT_EQ, xv.size());
 
     ViewArray<CardView> cv(home, c);
