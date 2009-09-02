@@ -112,43 +112,49 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   ExecStatus
+  BndImp<View, Card, isView, shared>::pruneCards(Space& home) {
+    // Remove all values with 0 max occurrence
+    // and remove corresponding occurrence variables from k
+    
+    int noOfZeroes = 0;
+    for (int i=k.size(); i--;)
+      if (k[i].max() == 0)
+        noOfZeroes++;
+
+    if (noOfZeroes > 0) {
+      IntArgs zeroIdx(noOfZeroes);
+      noOfZeroes = 0;
+      int j = 0;
+      for (int i=0; i<k.size(); i++) {
+        if (k[i].max() == 0) {
+          zeroIdx[noOfZeroes++] = k[i].card();            
+        } else {
+          k[j++] = k[i];
+        }
+      }
+      k.size(j);
+      for (int i=x.size(); i--;) {
+        IntSet zeroesI(&zeroIdx[0], noOfZeroes);
+        IntSetRanges zeroesR(zeroesI);
+        GECODE_ME_CHECK(x[i].minus_r(home, zeroesR));
+      }
+      if (lps != NULL) {
+        delete lps; lps = NULL;
+        assert(ups != NULL);
+        delete ups; ups = NULL;
+      }
+    }
+    return ES_FIX;
+  }
+
+  template <class View, class Card, bool isView, bool shared>
+  ExecStatus
   BndImp<View, Card, isView, shared>::propagate(Space& home, const ModEventDelta&) {
     bool all_assigned = true;
     bool mod;
 
-    if (isView) {
-      // Remove all values with 0 max occurrence
-      // and remove corresponding occurrence variables from k
-      
-      int noOfZeroes = 0;
-      for (int i=k.size(); i--;)
-        if (k[i].max() == 0)
-          noOfZeroes++;
-
-      if (noOfZeroes > 0) {
-        IntArgs zeroIdx(noOfZeroes);
-        noOfZeroes = 0;
-        int j = 0;
-        for (int i=0; i<k.size(); i++) {
-          if (k[i].max() == 0) {
-            zeroIdx[noOfZeroes++] = k[i].card();            
-          } else {
-            k[j++] = k[i];
-          }
-        }
-        k.size(j);
-        for (int i=x.size(); i--;) {
-          IntSet zeroesI(&zeroIdx[0], noOfZeroes);
-          IntSetRanges zeroesR(zeroesI);
-          GECODE_ME_CHECK(x[i].minus_r(home, zeroesR));
-        }
-        if (lps != NULL) {
-          delete lps; lps = NULL;
-          assert(ups != NULL);
-          delete ups; ups = NULL;
-        }
-      }
-    }
+    if (isView)
+      GECODE_ES_CHECK(pruneCards(home));
 
     Region r(home);
     int* count = r.alloc<int>(k.size());
@@ -234,6 +240,9 @@ namespace Gecode { namespace Int { namespace GCC {
       if (all_assigned)
         return ES_SUBSUMED(*this,home);
     }
+
+    if (isView)
+      GECODE_ES_CHECK(pruneCards(home));
 
     int n = x.size();
 

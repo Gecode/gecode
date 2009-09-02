@@ -157,6 +157,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Constructor for cloning \a p
     BndImp(Space& home, bool share, BndImp<View, Card, isView, shared>& p);
 
+    /// Prune cardinality variables with 0 maximum occurrence
+    ExecStatus pruneCards(Space& home);
   public:
     /// Destructor
     virtual size_t dispose(Space& home);

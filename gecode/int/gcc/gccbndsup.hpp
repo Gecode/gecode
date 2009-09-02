@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     for (int i = m; i--; ) {
-      int reachable = (int) (x.size() - rv[i].le - rv[i].gr);
+      int reachable = x.size() - rv[i].le - rv[i].gr;
       if (!k[i].assigned()) {
         ModEvent me = k[i].lq(home, reachable);
         if (me_failed(me))
@@ -118,16 +118,17 @@ namespace Gecode { namespace Int { namespace GCC {
         mod |= shared && me_modified(me);
 
         if (rv[i].eq > 0) {
-          ModEvent me = k[i].gq(home, (int) rv[i].eq);
+          ModEvent me = k[i].gq(home, static_cast<int>(rv[i].eq));
           if (me_failed(me))
             return ES_FAILED;
-          mod |= (me_modified(me) && (k[i].min() != (int) rv[i].eq));
+          mod |= (me_modified(me) &&
+                  (k[i].min() != static_cast<int>(rv[i].eq)));
           mod |= shared && me_modified(me);
         }
       } else {
         // check validity of the cardinality value
         int v = k[i].max();
-        if ( !( (int) rv[i].eq <= v && v <= reachable) )
+        if ( !( static_cast<int>(rv[i].eq) <= v && v <= reachable) )
           return ES_FAILED;
       }
     }
@@ -601,6 +602,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int k, l;
     for (l=start; (k=l) != end; hall[k].h=to) {
       l = hall[k].h;
+      assert(l != k);
     }
   }
   //@}
