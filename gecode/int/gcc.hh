@@ -136,9 +136,9 @@ namespace Gecode { namespace Int { namespace GCC {
      * Necessary for reasoning about the interval capacities in the
      * propagation algorithm.
      */
-    PartialSum<Card>* lps;
+    PartialSum<Card> lps;
     /// Data structure storing the sum of the views upper bounds
-    PartialSum<Card>* ups;
+    PartialSum<Card> ups;
     /**
      * \brief Stores whether cardinalities are all assigned
      *
@@ -159,6 +159,52 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// Prune cardinality variables with 0 maximum occurrence
     ExecStatus pruneCards(Space& home);
+
+    /**
+     * \brief Lower Bounds constraint (LBC) stating
+     * \f$ \forall j \in \{0, \dots, |k|-1\}:
+     * \#\{i\in\{0, \dots, |x| - 1\} | x_i = card(k_j)\} \geq min(k_j)\f$
+     * Hence the lbc constraints the variables such that every value occurs
+     * at least as often as specified by its lower cardinality bound.
+     * \param home current space
+     * \param x  the problem variables
+     * \param nb denotes number of unique bounds
+     * \param hall contains information about the hall structure of the problem
+     *        (cf. HallInfo)
+     * \param rank ranking information about the variable bounds (cf. Rank)
+     * \param lps partial sum structure for the lower cardinality bounds (cf. PartialSum)
+     * \param mu permutation \f$ \mu \f$ such that
+     *        \f$ \forall i\in \{0, \dots, |x|-2\}:
+     *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
+     * \param nu permutation \f$ \nu \f$ such that
+     *        \f$ \forall i\in \{0, \dots, |x|-2\}:
+     *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
+     */
+    ExecStatus lbc(Space& home, int& nb, HallInfo hall[], Rank rank[],
+                   int mu[], int nu[]);
+
+    /**
+     * \brief Upper Bounds constraint (UBC) stating
+     * \f$ \forall j \in \{0, \dots, |k|-1\}:
+     * \#\{i\in\{0, \dots, |x| - 1\} | x_i = card(k_j)\} \leq max(k_j)\f$
+     * Hence the ubc constraints the variables such that no value occurs
+     * more often than specified by its upper cardinality bound.
+     * \param home current space
+     * \param x  the problem variables
+     * \param nb denotes number of unique bounds
+     * \param hall contains information about the hall structure of the problem
+     *        (cf. HallInfo)
+     * \param rank ranking information about the variable bounds (cf. Rank)
+     * \param ups partial sum structure for the upper cardinality bounds (cf. PartialSum)
+     * \param mu permutation \f$ \mu \f$ such that
+     *        \f$ \forall i\in \{0, \dots, |x|-2\}:
+     *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
+     * \param nu permutation \f$ \nu \f$ such that
+     *        \f$ \forall i\in \{0, \dots, |x|-2\}:
+     *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
+     */
+    ExecStatus ubc(Space& home, int& nb, HallInfo hall[], Rank rank[],
+                   int mu[], int nu[]);
   public:
     /// Destructor
     virtual size_t dispose(Space& home);

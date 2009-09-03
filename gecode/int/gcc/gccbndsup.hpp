@@ -230,25 +230,21 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   class PartialSum {
   private:
-    // /// memory allocation
-    // char* mem;
     /// sum[i] contains the partial sum from 0 to i
     int* sum;
-    /**
-     *  marks indices with 0 that can be skipped
-     *  and can be compared to doublet control
-     */
-    int* ds;
     /// the size of the sum
     int size;
   public:
-    /// \name Constructors and destructors
+    /// \name Constructor, initializer, and destructor
     //@{
-    PartialSum(ViewArray<Card>& , bool);
+    PartialSum(void);
+    void init(ViewArray<Card>&, bool);
+    void dispose(void);
     ~PartialSum(void);
     //@}
     /// \name Access
     //@{
+    bool initialized(void) const;
     int firstValue;
     int lastValue;
     int sumup(int, int);
@@ -266,26 +262,32 @@ namespace Gecode { namespace Int { namespace GCC {
     void print(void);
   };
 
-  /// \brief Default destructor
+  /// \brief Deallocate memory
+  template <class Card>
+  forceinline void
+  PartialSum<Card>::dispose(void){
+    if (sum != NULL)
+      heap.free<int>(sum,size);
+    sum = NULL;
+    size = 0;
+  }
+
+  /// \brief Destructor
   template <class Card>
   forceinline
   PartialSum<Card>::~PartialSum(void){
-    assert(sum != NULL);
-    heap.free<int>(sum,size);
+    dispose();
   }
 
-  /// \brief Memory allocation for the partial sum structure
+  /// \brief Constructor
   template <class Card>
-  forceinline void*
-  PartialSum<Card>::operator new(size_t t){
-    return heap.ralloc(t);
-  }
+  forceinline
+  PartialSum<Card>::PartialSum(void) : sum(NULL), size(0) {}
 
-  /// \brief Free memory used by partial sum structure
   template <class Card>
-  forceinline void
-  PartialSum<Card>::operator delete(void* p){
-      heap.rfree(p);
+  forceinline bool
+  PartialSum<Card>::initialized(void) const {
+    return sum != NULL;
   }
 
   /**
@@ -301,8 +303,8 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class Card>
-  inline
-  PartialSum<Card>::PartialSum(ViewArray<Card>& elements, bool up) {
+  inline void
+  PartialSum<Card>::init(ViewArray<Card>& elements, bool up) {
     int i = 0;
     int j = 0;
 
@@ -318,7 +320,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // memory allocation
     sum = heap.alloc<int>(2*size);
-    ds  = &sum[size];
+    int* ds  = &sum[size];
 
     int first = elements[0].card();
 
@@ -427,6 +429,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline int
   PartialSum<Card>::skipNonNullElementsRight(int value) {
     value -= firstValue;
+    int* ds  = &sum[size];
     return (ds[value] < value ? value : ds[value]) + firstValue;
   }
 
@@ -439,6 +442,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline int
   PartialSum<Card>::skipNonNullElementsLeft(int value) {
     value -= firstValue;
+    int* ds  = &sum[size];
     return (ds[value] > value ? ds[ds[value]] : value) + firstValue;
   }
 

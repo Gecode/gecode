@@ -36,36 +36,10 @@
  */
 namespace Gecode { namespace Int { namespace GCC {
 
-  /**
-   * \brief Upper Bounds constraint (UBC) stating
-   * \f$ \forall j \in \{0, \dots, |k|-1\}:
-   * \#\{i\in\{0, \dots, |x| - 1\} | x_i = card(k_j)\} \leq max(k_j)\f$
-   * Hence the ubc constraints the variables such that no value occurs
-   * more often than specified by its upper cardinality bound.
-   * \param home current space
-   * \param x  the problem variables
-   * \param nb denotes number of unique bounds
-   * \param hall contains information about the hall structure of the problem
-   *        (cf. HallInfo)
-   * \param rank ranking information about the variable bounds (cf. Rank)
-   * \param ups partial sum structure for the upper cardinality bounds (cf. PartialSum)
-   * \param mu permutation \f$ \mu \f$ such that
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
-   *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
-   * \param nu permutation \f$ \nu \f$ such that
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
-   *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
-   */
-
-  template <class View, class Card, bool shared>
-  inline ExecStatus
-  ubc(Space& home, ViewArray<View>& x, int& nb,
-      HallInfo hall[], Rank rank[],
-      PartialSum<Card>* ups,
-      int mu[], int nu[]){
-
-    ExecStatus es = ES_FIX;
-
+  template <class View, class Card, bool isView, bool shared>
+  ExecStatus
+  BndImp<View, Card, isView, shared>::ubc(Space& home, int& nb,
+    HallInfo hall[], Rank rank[], int mu[], int nu[]){
     int rightmost = nb + 1; // rightmost accesible value in bounds
     int bsize     = nb + 2; // number of unique bounds including sentinels
 
@@ -84,7 +58,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = bsize; --i; ) {
       hall[i].h = hall[i].t = i-1;
-      hall[i].d = ups->sumup(hall[i-1].bounds, hall[i].bounds - 1);
+      hall[i].d = ups.sumup(hall[i-1].bounds, hall[i].bounds - 1);
     }
 
     int n          = x.size();
@@ -131,7 +105,7 @@ namespace Gecode { namespace Int { namespace GCC {
        *     i.e. there are more variables than values to instantiate them
        */
 
-      if (hall[z].d < ups->sumup(hall[y].bounds, hall[z].bounds - 1)){
+      if (hall[z].d < ups.sumup(hall[y].bounds, hall[z].bounds - 1)){
         return ES_FAILED;
       }
       
@@ -144,16 +118,7 @@ namespace Gecode { namespace Int { namespace GCC {
         int w       = pathmax_h(hall, hall[x0].h);
         int m       = hall[w].bounds;
 
-        ModEvent me = x[mu[i]].gq(home, m);
-        if (me_failed(me)) {
-          return ES_FAILED;
-        }
-        if (me_modified(me) && (m != x[mu[i]].min())) {
-          es = ES_NOFIX;
-        }
-        if (shared && me_modified(me)) {
-          es = ES_NOFIX;
-        }
+        GECODE_ME_CHECK(x[mu[i]].gq(home, m));
         pathset_h(hall, x0, w, w); // path compression
       }
 
@@ -173,7 +138,7 @@ namespace Gecode { namespace Int { namespace GCC {
        *    if this equation holds the interval [j,z-1] is a hall intervall
        */
 
-      if (hall[z].d == ups->sumup(hall[y].bounds, hall[z].bounds - 1)) {
+      if (hall[z].d == ups.sumup(hall[y].bounds, hall[z].bounds - 1)) {
         /*
          *mark hall interval [j,z-1]
          * hall pointers form a path to the upper bound of the interval
@@ -189,7 +154,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     for (int i = 0; i < rightmost; i++) {
       hall[i].h = hall[i].t = i+1;
-      hall[i].d = ups->sumup(hall[i].bounds, hall[i+1].bounds - 1);
+      hall[i].d = ups.sumup(hall[i].bounds, hall[i+1].bounds - 1);
     }
         
     for (int i = n; i--; ) {
@@ -209,7 +174,7 @@ namespace Gecode { namespace Int { namespace GCC {
       pathset_t(hall, pred, z, z);
     
       // NEGATIVE CAPACITY:
-      if (hall[z].d < ups->sumup(hall[z].bounds,hall[y].bounds-1)){
+      if (hall[z].d < ups.sumup(hall[z].bounds,hall[y].bounds-1)){
         return ES_FAILED;
       }
     
@@ -221,26 +186,17 @@ namespace Gecode { namespace Int { namespace GCC {
       if (hall[x0].h < x0) {
         int w       = pathmin_h(hall, hall[x0].h);
         int m       = hall[w].bounds - 1;
-        ModEvent me = x[nu[i]].lq(home, m);
-        if (me_failed(me)) {
-          return ES_FAILED;
-        }
-        if (me_modified(me) && (m != x[nu[i]].max())) {
-          es = ES_NOFIX;
-        }
-        if (me_modified(me) && shared) {
-          es = ES_NOFIX;
-        }
+        GECODE_ME_CHECK(x[nu[i]].lq(home, m));
         pathset_h(hall, x0, w, w);
       }
       // ZEROTEST
-      if (hall[z].d == ups->sumup(hall[z].bounds, hall[y].bounds - 1)) {
+      if (hall[z].d == ups.sumup(hall[z].bounds, hall[y].bounds - 1)) {
         //mark hall interval [y,j]
         pathset_h(hall, hall[y].h, j+1, y);
         hall[y].h = j+1;
       }
     }
-    return es;
+    return ES_NOFIX;
   }
 
 }}}

@@ -37,35 +37,11 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  /**
-   * \brief Lower Bounds constraint (LBC) stating
-   * \f$ \forall j \in \{0, \dots, |k|-1\}:
-   * \#\{i\in\{0, \dots, |x| - 1\} | x_i = card(k_j)\} \geq min(k_j)\f$
-   * Hence the lbc constraints the variables such that every value occurs
-   * at least as often as specified by its lower cardinality bound.
-   * \param home current space
-   * \param x  the problem variables
-   * \param nb denotes number of unique bounds
-   * \param hall contains information about the hall structure of the problem
-   *        (cf. HallInfo)
-   * \param rank ranking information about the variable bounds (cf. Rank)
-   * \param lps partial sum structure for the lower cardinality bounds (cf. PartialSum)
-   * \param mu permutation \f$ \mu \f$ such that
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
-   *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
-   * \param nu permutation \f$ \nu \f$ such that
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
-   *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
-   */
+  template <class View, class Card, bool isView, bool shared>
+  ExecStatus
+  BndImp<View, Card, isView, shared>::lbc(Space& home, int& nb,
+    HallInfo hall[], Rank rank[], int mu[], int nu[]){
 
-  template <class View, class Card, bool shared>
-  inline ExecStatus
-  lbc(Space& home, ViewArray<View>& x, int& nb,
-      HallInfo hall[], Rank rank[],
-      PartialSum<Card>* lps,
-      int mu[], int nu[]){
-
-    ExecStatus es = ES_FIX;
     int n = x.size();
 
     /*
@@ -122,7 +98,7 @@ namespace Gecode { namespace Int { namespace GCC {
       int pred   = i - 1;
       hall[i].s  = pred;
       hall[i].ps = pred;
-      hall[i].d  = lps->sumup(hall[pred].bounds, hall[i].bounds - 1);
+      hall[i].d  = lps.sumup(hall[pred].bounds, hall[i].bounds - 1);
 
       /* Let [hall[i].bounds,hall[i-1].bounds]=:I
        * If the capacity is zero => min_cap(I) = 0
@@ -191,7 +167,7 @@ namespace Gecode { namespace Int { namespace GCC {
        *   [hall[j].bounds, hall[y].bounds-1].
        */
 
-      if (hall[z].d <= lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
+      if (hall[z].d <= lps.sumup(hall[y].bounds, hall[z].bounds - 1)) {
         w = pathmax_s(hall, hall[y].ps);
         pathset_s(hall, hall[y].ps, w, w);
         // Path compression
@@ -236,7 +212,7 @@ namespace Gecode { namespace Int { namespace GCC {
          * (see ZEROTEST in "gcc/ubc.hpp")
          */
         // CLEARLY THIS WAS NOT STABLE == UNSTABLE
-        if (hall[z].d == lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
+        if (hall[z].d == lps.sumup(hall[y].bounds, hall[z].bounds - 1)) {
           if (hall[y].h > y)
             /*
              * y is not the end of the potentially stable set
@@ -288,15 +264,8 @@ namespace Gecode { namespace Int { namespace GCC {
       // update only those variables that are not contained in a stable set
       if ((hall[x0].s <= x0) || (y > hall[x0].s)) {
         //still have to check this out, how skipping works (consider dominated indices)
-        int m = lps->skipNonNullElementsRight(hall[hall[i].newBound].bounds);
-        ModEvent me = x[mu[i]].gq(home, m);
-        GECODE_ME_CHECK(me);
-        if (me_modified(me) && m != x[mu[i]].min()) {
-          es = ES_NOFIX;
-        }
-        if (shared && me_modified(me)) {
-          es = ES_NOFIX;
-        }
+        int m = lps.skipNonNullElementsRight(hall[hall[i].newBound].bounds);
+        GECODE_ME_CHECK(x[mu[i]].gq(home, m));
       }
     }
 
@@ -304,7 +273,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     w = 0;
     for (i = 0; i <= nb; i++) {
-      hall[i].d = lps->sumup(hall[i].bounds, hall[i + 1].bounds - 1);
+      hall[i].d = lps.sumup(hall[i].bounds, hall[i + 1].bounds - 1);
       if (hall[i].d == 0) {
         hall[i].t = w;
       } else {
@@ -337,7 +306,7 @@ namespace Gecode { namespace Int { namespace GCC {
       /* If the variable is not in a discovered stable set
        * (see above condition for STABLE SET)
        */
-      if (hall[z].d > lps->sumup(hall[z].bounds, hall[y].bounds - 1)) {
+      if (hall[z].d > lps.sumup(hall[z].bounds, hall[y].bounds - 1)) {
         //FAILURE SET
         if (--hall[z].d == 0) {
           hall[z].t = z - 1;
@@ -353,7 +322,7 @@ namespace Gecode { namespace Int { namespace GCC {
           hall[i].newBound = x0;
         }
         //UNSTABLE SET
-        if (hall[z].d == lps->sumup(hall[z].bounds, hall[y].bounds - 1)) {
+        if (hall[z].d == lps.sumup(hall[z].bounds, hall[y].bounds - 1)) {
           if (hall[y].h < y) {
             y = hall[y].h;
           }
@@ -371,18 +340,11 @@ namespace Gecode { namespace Int { namespace GCC {
       int x0 =  rank[nu[i]].min;
       int y  =  rank[nu[i]].max;
       if ((hall[x0].s <= x0) || (y > hall[x0].s)){
-        int m = lps->skipNonNullElementsLeft(hall[hall[i].newBound].bounds - 1);
-        ModEvent me = x[nu[i]].lq(home, m);
-        GECODE_ME_CHECK(me);
-        if (me_modified(me) && m != x[nu[i]].max()) {
-          es = ES_NOFIX;
-        }
-        if (shared && me_modified(me)) {
-          es = ES_NOFIX;
-        }
+        int m = lps.skipNonNullElementsLeft(hall[hall[i].newBound].bounds - 1);
+        GECODE_ME_CHECK(x[nu[i]].lq(home, m));
       }
     }
-    return es;
+    return ES_NOFIX;
   }
 
 }}}
