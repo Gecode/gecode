@@ -1129,3 +1129,37 @@ AC_DEFUN([AC_GECODE_TIMER],[
   [AC_DEFINE(GECODE_USE_GETTIMEOFDAY,1,[Use gettimeofday for time-measurement])],
   [AC_DEFINE(GECODE_USE_CLOCK,1,[Use clock() for time-measurement])])
 ])
+
+dnl check whether we have suifficiently recent versions of flex/bison
+AC_DEFUN([AC_GECODE_FLEXBISON],
+  [AC_CHECK_TOOL(HAVEFLEX, flex)
+   AC_MSG_CHECKING(whether we have at least flex 2.5.33)
+   if test "${HAVEFLEX}x" = "x"; then
+      AC_MSG_RESULT(no)
+      AC_SUBST(HAVE_FLEXBISON, "no")
+   else
+      if flex --version | grep ' 2\.5\.3[[3-9]]$' >/dev/null 2>&1 ||
+         flex --version | grep ' 2\.5\.4[[0-9]]$' >/dev/null 2>&1 ||
+         flex --version | grep ' 2\.[[6-9]]\.[[0-9]]*$' >/dev/null 2>&1
+      then
+        AC_MSG_RESULT(yes)
+        AC_CHECK_TOOL(HAVEBISON, bison)
+        AC_MSG_CHECKING(whether we have at least bison 2.3)
+        if test "${HAVEBISON}x" = "x"; then
+          AC_MSG_RESULT(no)
+          AC_SUBST(HAVE_FLEXBISON, "no")
+        else
+          if bison --version | grep ' 2\.[[3-9]]$' >/dev/null 2>&1
+          then
+            AC_MSG_RESULT(yes)
+            AC_SUBST(HAVE_FLEXBISON, "yes")
+          else
+            AC_MSG_RESULT(no)
+            AC_SUBST(HAVE_FLEXBISON, "no")
+          fi
+        fi
+      else
+        AC_MSG_RESULT(no)
+        AC_SUBST(HAVE_FLEXBISON, "no")
+      fi
+   fi])

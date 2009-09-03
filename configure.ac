@@ -247,6 +247,8 @@ dnl ------------------------------------------------------------------
 
 AC_GECODE_QT
 AC_GECODE_GIST
+AC_GECODE_FLEXBISON
+AC_FUNC_MMAP
 
 AC_GECODE_ENABLE_MODULE(driver, yes,
 	[build script commandline driver library],
@@ -276,6 +278,10 @@ AC_GECODE_ENABLE_MODULE(examples, yes,
          enable_driver="yes";
          enable_minimodel="yes";
 	])
+
+AC_GECODE_ENABLE_MODULE(flatzinc, yes,
+  [build FlatZinc interpreter],
+  [enable_search="yes"; enable_driver="yes"; enable_minimodel="yes" ])
 
 AC_GECODE_ENABLE_MODULE(minimodel, yes,
 	[build modeling support library for the enabled variable types])
