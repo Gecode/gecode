@@ -74,6 +74,14 @@ The next release.
 
 [ENTRY]
 Module: other
+What:   change
+Rank:   minor
+Thanks:	David Rijsman
+[DESCRIPTION]
+Compiles with MSVC 2005 again.
+
+[ENTRY]
+Module: other
 What:   bug
 Rank:   minor
 [DESCRIPTION]

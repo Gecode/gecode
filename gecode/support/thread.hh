@@ -6,6 +6,9 @@
  *  Copyright:
  *     Christian Schulte, 2009
  *
+ *  Bugfixes provided by:
+ *     David Rijsman <david.rijsman@quintiq.com>
+ *
  *  Last modified:
  *     $Date$ by $Author$
  *     $Revision$
@@ -43,7 +46,11 @@
 #ifdef GECODE_THREADS_WINDOWS
 
 #ifndef NOMIMMAX
-#define NOMINMAX
+#  define NOMINMAX
+#endif
+
+#ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x400
 #endif
 
 #include <windows.h>
