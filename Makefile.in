@@ -621,6 +621,42 @@ export GISTSONAME	=
 endif
 
 #
+# FLATZINC
+#
+
+FLATZINCSRC0 = conexpr.cpp gecode.cpp registry.cpp
+FLATZINC_GENSRC0 = flatzinc.tab.cpp flatzinc.yy.cpp
+FLATZINCHDR0 = flatzinc.hh gecode.hh conexpr.hh ast.hh varspec.hh
+
+FLATZINCSRC = $(FLATZINCSRC0:%=gecode/flatzinc/%)
+FLATZINC_GENSRC = $(FLATZINC_GENSRC0:%=gecode/flatzinc/%)
+FLATZINCHDR = $(FLATZINCHDR0:%=gecode/flatzinc/%)
+
+FLATZINCOBJ = \
+	$(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)) \
+	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
+
+FLATZINCBUILDDIRS = flatzinc
+
+ifeq "@enable_flatzinc@" "yes"
+export FLATZINCDLL			= $(LIBPREFIX)@FLATZINC@$(DLLSUFFIX)
+export FLATZINCSTATICLIB	= $(LIBPREFIX)@FLATZINC@$(STATICLIBSUFFIX)
+export FLATZINCLIB			= $(LIBPREFIX)@FLATZINC@$(LIBSUFFIX)
+export LINKFLATZINC			= $(LINKPREFIX)@FLATZINC@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export FLATZINCSONAME = @WLSONAME@$(LIBPREFIX)@FLATZINC@$(SOSUFFIX)
+else
+export FLATZINCSONAME =
+endif
+else
+export FLATZINCDLL			=
+export FLATZINCSTATICLIB	=
+export FLATZINCLIB			=
+export LINKFLATZINC			=
+export FLATZINCSONAME		=
+endif
+
+#
 # EXAMPLES
 #
 
@@ -687,11 +723,11 @@ ALLSRC = \
 	$(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(GRAPHEXAMPLESRC) $(SCHEDULINGEXAMPLESRC) \
-	$(GISTSRC)
+	$(GISTSRC) $(FLATZINCSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(SCHEDULINGHDR) \
-	$(DRIVERHDR) $(ITERHDR) $(GISTHDR)
+	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
@@ -701,17 +737,19 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(MMDLL) $(GRAPHDLL) $(SCHEDULINGDLL) $(DRIVERDLL) $(GISTDLL)
+	$(MMDLL) $(GRAPHDLL) $(SCHEDULINGDLL) $(DRIVERDLL) $(GISTDLL) \
+	$(FLATZINCDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(MMLIB) $(GRAPHLIB) $(SCHEDULINGLIB) $(DRIVERLIB) $(GISTLIB)
+	$(MMLIB) $(GRAPHLIB) $(SCHEDULINGLIB) $(DRIVERLIB) $(GISTLIB) \
+	$(FLATZINCLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
 	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(SCHEDULINGSTATICLIB) \
-	$(DRIVERSTATICLIB) $(GISTSTATICLIB)
+	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
@@ -719,7 +757,7 @@ STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
 	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(SCHEDULINGSTATICLIB) \
-	$(DRIVERSTATICLIB) $(GISTSTATICLIB)
+	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -826,6 +864,7 @@ BUILDDIRS = \
 	$(SCHEDULINGBUILDDIRS:%=gecode/%)  \
 	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
+	$(FLATZINCBUILDDIRS:%=gecode/%) \
 	$(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
@@ -1049,6 +1088,29 @@ $(GISTMOCSRC:%.cpp=%$(SBJSUFFIX)): gecode/gist/moc_%$(SBJSUFFIX): gecode/gist/mo
 gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
+ifeq "@HAVE_FLEXBISON@" "yes"
+$(top_srcdir)/gecode/flatzinc/flatzinc.yy.cpp: \
+	$(top_srcdir)/gecode/flatzinc/flatzinc.lxx \
+	$(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh
+	flex -o$(top_srcdir)/gecode/flatzinc/flatzinc.yy.cpp \
+		$(top_srcdir)/gecode/flatzinc/flatzinc.lxx
+
+$(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh $(top_srcdir)/gecode/flatzinc/flatzinc.tab.cpp: \
+	$(top_srcdir)/gecode/flatzinc/flatzinc.yxx
+	bison -t -o $(<:%.yxx=%).tab.cpp -d $<
+	mv $(top_srcdir)/gecode/flatzinc/flatzinc.tab.hpp \
+		$(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh
+endif
+
+$(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
+	$(CXX) $(CXXFLAGS) \
+	@GECODE_BUILD_FLATZINC_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+
+$(FLATZINCSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
+	$(CXX) $(CXXFLAGS) \
+	@GECODE_BUILD_FLATZINC_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
 
 #
 # DLL Targets
@@ -1118,6 +1180,14 @@ $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 		@LINKOUTPUT@$(GISTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(FLATZINCDLL): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) \
+	$(INTDLL) $(SETDLL) $(GISTDLL) $(MMDLL) $(SCHEDULINGDLL) $(DRIVERDLL)
+	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
+		$(LINKSET) $(LINKMM) $(LINKSCHEDULING) $(LINKGIST) $(LINKDRIVER) \
+		@LINKOUTPUT@$(FLATZINCDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 else
 export LINKALL =
 $(SUPPORTDLL) $(SUPPORTLIB): $(SUPPORTOBJ)
@@ -1153,6 +1223,12 @@ $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTD
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
+$(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) \
+	$(SEARCHDLL) $(INTDLL) $(SETDLL) $(GISTDLL)
+	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
+		$(LINKSET) $(LINKMM) $(LINKSCHEDULING) $(LINKGIST) $(LINKDRIVER) \
+		@LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
 endif
 
 #
@@ -1188,6 +1264,9 @@ $(DRIVERSTATICLIB): $(DRIVEROBJ)
 	$(RANLIB) $@
 $(GISTSTATICLIB): $(GISTOBJ)
 	$(AR) $(ARFLAGS) $@ $(GISTOBJ)
+	$(RANLIB) $@
+$(FLATZINCSTATICLIB): $(FLATZINCOBJ)
+	$(AR) $(ARFLAGS) $@ $(FLATZINCOBJ)
 	$(RANLIB) $@
 
 #

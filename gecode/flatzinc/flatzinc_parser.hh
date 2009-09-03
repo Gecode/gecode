@@ -64,7 +64,7 @@ extern "C" int isatty(int);
 #include "varspec.hh"
 #include "conexpr.hh"
 #include "ast.hh"
-#include "flatzinc.tab.h"
+#include "flatzinc.tab.hh"
 #include "symboltable.hh"
 
 typedef std::pair<std::string,Option<std::vector<int>* > > intvartype;

@@ -1,6 +1,6 @@
-#line 2 "./flatzinc.yy.c"
+#line 2 "./gecode/flatzinc/flatzinc.yy.cpp"
 
-#line 4 "./flatzinc.yy.c"
+#line 4 "./gecode/flatzinc/flatzinc.yy.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -591,7 +591,7 @@ static yyconst flex_int32_t yy_rule_can_match_eol[56] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "./flatzinc.lxx"
+#line 1 "./gecode/flatzinc/flatzinc.lxx"
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
@@ -628,7 +628,7 @@ static yyconst flex_int32_t yy_rule_can_match_eol[56] =
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-#line 44 "./flatzinc.lxx"
+#line 44 "./gecode/flatzinc/flatzinc.lxx"
 
 void yyerror(void*, const char*);
 #define yyerror(s) yyerror(yyextra, s)
@@ -642,7 +642,7 @@ int stringbufpos;
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 #define YY_INPUT(buf, result, max_size) \
   result = yy_input_proc(buf, max_size, yyscanner);
-#line 646 "./flatzinc.yy.c"
+#line 646 "./gecode/flatzinc/flatzinc.yy.cpp"
 
 #define INITIAL 0
 
@@ -869,10 +869,10 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-#line 59 "./flatzinc.lxx"
+#line 59 "./gecode/flatzinc/flatzinc.lxx"
 
 
-#line 876 "./flatzinc.yy.c"
+#line 876 "./gecode/flatzinc/flatzinc.yy.cpp"
 
     yylval = yylval_param;
 
@@ -972,267 +972,267 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 61 "./flatzinc.lxx"
+#line 61 "./gecode/flatzinc/flatzinc.lxx"
 { /*yylineno++;*/ /* ignore EOL */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 62 "./flatzinc.lxx"
+#line 62 "./gecode/flatzinc/flatzinc.lxx"
 { /* ignore whitespace */ }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 63 "./flatzinc.lxx"
+#line 63 "./gecode/flatzinc/flatzinc.lxx"
 { /* ignore comments */ }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 65 "./flatzinc.lxx"
+#line 65 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->iValue = 1; return BOOL_LIT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 66 "./flatzinc.lxx"
+#line 66 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->iValue = 0; return BOOL_LIT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 67 "./flatzinc.lxx"
+#line 67 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->iValue = atoi(yytext); return INT_LIT; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 68 "./flatzinc.lxx"
+#line 68 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->iValue = atoi(yytext); return INT_LIT; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 69 "./flatzinc.lxx"
+#line 69 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->iValue = atoi(yytext); return INT_LIT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 70 "./flatzinc.lxx"
+#line 70 "./gecode/flatzinc/flatzinc.lxx"
 { return FLOAT_LIT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 71 "./flatzinc.lxx"
+#line 71 "./gecode/flatzinc/flatzinc.lxx"
 { return FLOAT_LIT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 72 "./flatzinc.lxx"
+#line 72 "./gecode/flatzinc/flatzinc.lxx"
 { return FLOAT_LIT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 73 "./flatzinc.lxx"
+#line 73 "./gecode/flatzinc/flatzinc.lxx"
 { return *yytext; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 74 "./flatzinc.lxx"
+#line 74 "./gecode/flatzinc/flatzinc.lxx"
 { return DOTDOT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 75 "./flatzinc.lxx"
+#line 75 "./gecode/flatzinc/flatzinc.lxx"
 { return COLONCOLON; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 76 "./flatzinc.lxx"
+#line 76 "./gecode/flatzinc/flatzinc.lxx"
 { return ANNOTATION; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 77 "./flatzinc.lxx"
+#line 77 "./gecode/flatzinc/flatzinc.lxx"
 { return ANY; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 78 "./flatzinc.lxx"
+#line 78 "./gecode/flatzinc/flatzinc.lxx"
 { return ARRAY; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 79 "./flatzinc.lxx"
+#line 79 "./gecode/flatzinc/flatzinc.lxx"
 { return BOOL; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 80 "./flatzinc.lxx"
+#line 80 "./gecode/flatzinc/flatzinc.lxx"
 { return CASE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 81 "./flatzinc.lxx"
+#line 81 "./gecode/flatzinc/flatzinc.lxx"
 { return CONSTRAINT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 82 "./flatzinc.lxx"
+#line 82 "./gecode/flatzinc/flatzinc.lxx"
 { return DEFAULT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 83 "./flatzinc.lxx"
+#line 83 "./gecode/flatzinc/flatzinc.lxx"
 { return ELSE; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 84 "./flatzinc.lxx"
+#line 84 "./gecode/flatzinc/flatzinc.lxx"
 { return ELSEIF; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 85 "./flatzinc.lxx"
+#line 85 "./gecode/flatzinc/flatzinc.lxx"
 { return ENDIF; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 86 "./flatzinc.lxx"
+#line 86 "./gecode/flatzinc/flatzinc.lxx"
 { return ENUM; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 87 "./flatzinc.lxx"
+#line 87 "./gecode/flatzinc/flatzinc.lxx"
 { return FLOAT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 88 "./flatzinc.lxx"
+#line 88 "./gecode/flatzinc/flatzinc.lxx"
 { return FUNCTION; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 89 "./flatzinc.lxx"
+#line 89 "./gecode/flatzinc/flatzinc.lxx"
 { return IF; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 90 "./flatzinc.lxx"
+#line 90 "./gecode/flatzinc/flatzinc.lxx"
 { return INCLUDE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 91 "./flatzinc.lxx"
+#line 91 "./gecode/flatzinc/flatzinc.lxx"
 { return INT; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 92 "./flatzinc.lxx"
+#line 92 "./gecode/flatzinc/flatzinc.lxx"
 { return LET; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 93 "./flatzinc.lxx"
+#line 93 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->bValue = false; return MAXIMIZE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 94 "./flatzinc.lxx"
+#line 94 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->bValue = true; return MINIMIZE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 95 "./flatzinc.lxx"
+#line 95 "./gecode/flatzinc/flatzinc.lxx"
 { return OF; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 96 "./flatzinc.lxx"
+#line 96 "./gecode/flatzinc/flatzinc.lxx"
 { return SATISFY; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 97 "./flatzinc.lxx"
+#line 97 "./gecode/flatzinc/flatzinc.lxx"
 { return OUTPUT; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 98 "./flatzinc.lxx"
+#line 98 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->bValue = false; return PAR; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 99 "./flatzinc.lxx"
+#line 99 "./gecode/flatzinc/flatzinc.lxx"
 { return PREDICATE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 100 "./flatzinc.lxx"
+#line 100 "./gecode/flatzinc/flatzinc.lxx"
 { return RECORD; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 101 "./flatzinc.lxx"
+#line 101 "./gecode/flatzinc/flatzinc.lxx"
 { return SET; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 102 "./flatzinc.lxx"
+#line 102 "./gecode/flatzinc/flatzinc.lxx"
 { return SHOWCOND; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 103 "./flatzinc.lxx"
+#line 103 "./gecode/flatzinc/flatzinc.lxx"
 { return SHOW; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 104 "./flatzinc.lxx"
+#line 104 "./gecode/flatzinc/flatzinc.lxx"
 { return SOLVE; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 105 "./flatzinc.lxx"
+#line 105 "./gecode/flatzinc/flatzinc.lxx"
 { return STRING; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 106 "./flatzinc.lxx"
+#line 106 "./gecode/flatzinc/flatzinc.lxx"
 { return TEST; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 107 "./flatzinc.lxx"
+#line 107 "./gecode/flatzinc/flatzinc.lxx"
 { return THEN; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 108 "./flatzinc.lxx"
+#line 108 "./gecode/flatzinc/flatzinc.lxx"
 { return TUPLE; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 109 "./flatzinc.lxx"
+#line 109 "./gecode/flatzinc/flatzinc.lxx"
 { return TYPE; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 110 "./flatzinc.lxx"
+#line 110 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->bValue = true; return VAR; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 111 "./flatzinc.lxx"
+#line 111 "./gecode/flatzinc/flatzinc.lxx"
 { return VARIANT_RECORD; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 112 "./flatzinc.lxx"
+#line 112 "./gecode/flatzinc/flatzinc.lxx"
 { return WHERE; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 113 "./flatzinc.lxx"
+#line 113 "./gecode/flatzinc/flatzinc.lxx"
 { yylval->sValue = strdup(yytext); return ID; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 114 "./flatzinc.lxx"
+#line 114 "./gecode/flatzinc/flatzinc.lxx"
 {
                     yylval->sValue = strdup(yytext+1);
                     yylval->sValue[strlen(yytext)-2] = 0; 
@@ -1240,15 +1240,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 118 "./flatzinc.lxx"
+#line 118 "./gecode/flatzinc/flatzinc.lxx"
 { yyerror("Unknown character"); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 119 "./flatzinc.lxx"
+#line 119 "./gecode/flatzinc/flatzinc.lxx"
 ECHO;
 	YY_BREAK
-#line 1252 "./flatzinc.yy.c"
+#line 1252 "./gecode/flatzinc/flatzinc.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2378,7 +2378,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 119 "./flatzinc.lxx"
+#line 119 "./gecode/flatzinc/flatzinc.lxx"
 
 
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {

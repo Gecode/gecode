@@ -38,11 +38,10 @@
 #ifndef __FLATZINC_GECODE_HH__
 #define __FLATZINC_GECODE_HH__
 
-#include "config.icc"
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
+#include <gecode/kernel.hh>
+#include <gecode/int.hh>
 #ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #endif
 
 /*
