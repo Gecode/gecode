@@ -633,7 +633,7 @@ static yyconst flex_int32_t yy_rule_can_match_eol[56] =
 void yyerror(void*, const char*);
 #define yyerror(s) yyerror(yyextra, s)
 
-#include "flatzinc_parser.hh"
+#include <gecode/flatzinc/flatzinc_parser.hh>
 
 const char* stringbuf;
 int stringbuflen;

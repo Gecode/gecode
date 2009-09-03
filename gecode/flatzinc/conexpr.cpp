@@ -35,7 +35,7 @@
  *
  */
 
-#include "conexpr.hh"
+#include <gecode/flatzinc/conexpr.hh>
 
 void
 ConExpr::print(void) const {

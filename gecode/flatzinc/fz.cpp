@@ -37,7 +37,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "flatzinc.hh"
+#include <gecode/flatzinc/flatzinc.hh>
 
 using namespace std;
 

@@ -35,9 +35,9 @@
  *
  */
 
-#include "gecode.hh"
-#include "flatzinc.hh"
-#include "registry.hh"
+#include <gecode/flatzinc/gecode.hh>
+#include <gecode/flatzinc/flatzinc.hh>
+#include <gecode/flatzinc/registry.hh>
 
 #include <gecode/search.hh>
 #include <gecode/support/timer.hh>

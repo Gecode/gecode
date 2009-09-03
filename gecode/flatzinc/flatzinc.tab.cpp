@@ -166,8 +166,8 @@
 
 #define YYPARSE_PARAM parm
 #define YYLEX_PARAM static_cast<FParseParm*>(parm)->yyscanner
-#include "flatzinc.hh"
-#include "flatzinc_parser.hh"
+#include <gecode/flatzinc/flatzinc.hh>
+#include <gecode/flatzinc/flatzinc_parser.hh>
 #include <iostream>
 #include <fstream>
 

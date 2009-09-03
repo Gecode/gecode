@@ -35,15 +35,15 @@
  *
  */
 
-#include "registry.hh"
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
-#include "gecode/scheduling.hh"
-#include "gecode/minimodel.hh"
+#include <gecode/flatzinc/registry.hh>
+#include <gecode/kernel.hh>
+#include <gecode/int.hh>
+#include <gecode/scheduling.hh>
+#include <gecode/minimodel.hh>
 #ifdef GECODE_HAS_SET_VARS
-#include "gecode/set.hh"
+#include <gecode/set.hh>
 #endif
-#include "flatzinc.hh"
+#include <gecode/flatzinc/flatzinc.hh>
 
 using namespace Gecode;
 

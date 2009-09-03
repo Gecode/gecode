@@ -38,7 +38,7 @@
 #ifndef __FLATZINC_PARSER_HH__
 #define __FLATZINC_PARSER_HH__
 
-#include "gecode.hh"
+#include <gecode/flatzinc/gecode.hh>
 
 // This is a workaround for a bug in flex that only shows up
 // with the Microsoft C++ compiler
@@ -60,12 +60,12 @@ extern "C" int isatty(int);
 #include <vector>
 #include <iostream>
 
-#include "option.hh"
-#include "varspec.hh"
-#include "conexpr.hh"
-#include "ast.hh"
-#include "flatzinc.tab.hh"
-#include "symboltable.hh"
+#include <gecode/flatzinc/option.hh>
+#include <gecode/flatzinc/varspec.hh>
+#include <gecode/flatzinc/conexpr.hh>
+#include <gecode/flatzinc/ast.hh>
+#include <gecode/flatzinc/flatzinc.tab.hh>
+#include <gecode/flatzinc/symboltable.hh>
 
 typedef std::pair<std::string,Option<std::vector<int>* > > intvartype;
 

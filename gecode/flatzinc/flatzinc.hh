@@ -38,7 +38,7 @@
 #ifndef __FLATZINC_FLATZINC_HH__
 #define __FLATZINC_FLATZINC_HH__
 
-#include "gecode.hh"
+#include <gecode/flatzinc/gecode.hh>
 #include <iostream>
 
 namespace FlatZinc {

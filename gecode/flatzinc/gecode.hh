@@ -71,9 +71,9 @@
 #endif
 #endif
 
-#include "conexpr.hh"
-#include "ast.hh"
-#include "varspec.hh"
+#include <gecode/flatzinc/conexpr.hh>
+#include <gecode/flatzinc/ast.hh>
+#include <gecode/flatzinc/varspec.hh>
 
 #include <gecode/driver.hh>
 

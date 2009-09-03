@@ -39,7 +39,7 @@
 #define __FLATZINC_CONEXPR_HH__
 
 #include <string>
-#include "ast.hh"
+#include <gecode/flatzinc/ast.hh>
 
 class ConExpr {
 public:
