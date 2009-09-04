@@ -60,7 +60,7 @@
 
 #else
 
-#ifdef GECODEF_GCC_HAS_CLASS_VISIBILITY
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 
 #define GECODE_FLATZINC_EXPORT __attribute__ ((visibility("default")))
 

@@ -636,9 +636,16 @@ FLATZINCOBJ = \
 	$(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
 
+FLATZINCEXESRC0 = fz.cpp
+FLATZINCEXESRC  = $(FLATZINCEXESRC0:%=gecode/flatzinc/%)
+FLATZINCEXEOBJ  = $(FLATZINCEXESRC:%.cpp=%$(OBJSUFFIX))
+
+FLATZINCALLSRC	= $(FLATZINCSRC) $(FLATZINCEXESRC)
+
 FLATZINCBUILDDIRS = flatzinc
 
 ifeq "@enable_flatzinc@" "yes"
+export FLATZINCEXE			= gecode/flatzinc/fz
 export FLATZINCDLL			= $(LIBPREFIX)@FLATZINC@$(DLLSUFFIX)
 export FLATZINCSTATICLIB	= $(LIBPREFIX)@FLATZINC@$(STATICLIBSUFFIX)
 export FLATZINCLIB			= $(LIBPREFIX)@FLATZINC@$(LIBSUFFIX)
@@ -649,6 +656,7 @@ else
 export FLATZINCSONAME =
 endif
 else
+export FLATZINCEXE			=
 export FLATZINCDLL			=
 export FLATZINCSTATICLIB	=
 export FLATZINCLIB			=
@@ -1088,26 +1096,43 @@ $(GISTMOCSRC:%.cpp=%$(SBJSUFFIX)): gecode/gist/moc_%$(SBJSUFFIX): gecode/gist/mo
 gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 	$(MOC) $(CPPFLAGS) -pgecode/gist $< -o $@
 
+.PRECIOUS: gecode/flatzinc/%.cpp gecode/flatzinc/%.hh
 ifeq "@HAVE_FLEXBISON@" "yes"
-$(top_srcdir)/gecode/flatzinc/flatzinc.yy.cpp: \
+gecode/flatzinc/flatzinc.yy.cpp: \
 	$(top_srcdir)/gecode/flatzinc/flatzinc.lxx \
 	$(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh
-	flex -o$(top_srcdir)/gecode/flatzinc/flatzinc.yy.cpp \
+	flex -ogecode/flatzinc/flatzinc.yy.cpp \
 		$(top_srcdir)/gecode/flatzinc/flatzinc.lxx
 
-$(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh $(top_srcdir)/gecode/flatzinc/flatzinc.tab.cpp: \
+gecode/flatzinc/flatzinc.tab.hh gecode/flatzinc/flatzinc.tab.cpp: \
 	$(top_srcdir)/gecode/flatzinc/flatzinc.yxx
-	bison -t -o $(<:%.yxx=%).tab.cpp -d $<
-	mv $(top_srcdir)/gecode/flatzinc/flatzinc.tab.hpp \
-		$(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh
+	bison -t -o gecode/flatzinc/flatzinc.tab.cpp -d $<
+	mv gecode/flatzinc/flatzinc.tab.hpp gecode/flatzinc/flatzinc.tab.hh
+else
+gecode/flatzinc/flatzinc.yy.cpp: $(top_srcdir)/gecode/flatzinc/flatzinc.yy.cpp
+	cp $(@:%=$(top_srcdir)/%) $@
+gecode/flatzinc/flatzinc.tab.hh: $(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh
+	cp $(@:%=$(top_srcdir)/%) $@
+gecode/flatzinc/flatzinc.tab.cpp: $(top_srcdir)/gecode/flatzinc/flatzinc.tab.cpp
+	cp $(@:%=$(top_srcdir)/%) $@
 endif
 
-$(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
+$(FLATZINCALLSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
 	$(CXX) $(CXXFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
-$(FLATZINCSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
+$(FLATZINCALLSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
+	$(CXX) $(CXXFLAGS) \
+	@GECODE_BUILD_FLATZINC_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
+
+$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): gecode/flatzinc/%.cpp
+	$(CXX) $(CXXFLAGS) \
+	@GECODE_BUILD_FLATZINC_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+
+$(FLATZINC_GENSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): gecode/flatzinc/%.cpp
 	$(CXX) $(CXXFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
@@ -1312,6 +1337,10 @@ $(TESTEXE): $(TESTOBJ) $(ALLLIB)
 	$(LINKALL) $(GLDFLAGS)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
+$(FLATZINCEXE): $(FLATZINCEXEOBJ) $(ALLLIB) 
+	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(DLLPATH) $(CXXFLAGS) \
+	$(LINKFLATZINC) $(LINKALL) $(GLDFLAGS)
+	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 
 #
