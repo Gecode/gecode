@@ -626,7 +626,8 @@ endif
 
 FLATZINCSRC0 = conexpr.cpp flatzinc.cpp registry.cpp
 FLATZINC_GENSRC0 = parser.tab.cpp lexer.yy.cpp
-FLATZINCHDR0 = flatzinc.hh conexpr.hh ast.hh varspec.hh
+FLATZINCHDR0 = ast.hh conexpr.hh flatzinc.hh option.hh parser.hh \
+	registry.hh symboltable.hh varspec.hh
 
 FLATZINCSRC = $(FLATZINCSRC0:%=gecode/flatzinc/%)
 FLATZINC_GENSRC = $(FLATZINC_GENSRC0:%=gecode/flatzinc/%)
@@ -731,7 +732,7 @@ ALLSRC = \
 	$(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(GRAPHEXAMPLESRC) $(SCHEDULINGEXAMPLESRC) \
-	$(GISTSRC) $(FLATZINCSRC)
+	$(GISTSRC) $(FLATZINCALLSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(SCHEDULINGHDR) \

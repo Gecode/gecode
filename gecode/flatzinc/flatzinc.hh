@@ -256,3 +256,5 @@ namespace Gecode { namespace FlatZinc {
 }}
 
 #endif
+
+// STATISTICS: flatzinc-any

@@ -43,7 +43,7 @@
 #include <iostream>
 #include <cstdlib>
 
-namespace AST {
+namespace Gecode { namespace FlatZinc { namespace AST {
   
   class Call;
   class Array;
@@ -415,6 +415,8 @@ namespace AST {
     return n;
   }
 
-}
+}}}
 
 #endif
+
+// STATISTICS: flatzinc-any

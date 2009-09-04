@@ -37,13 +37,19 @@
 
 #include <gecode/flatzinc/conexpr.hh>
 
-void
-ConExpr::print(void) const {
-  std::cout << id << "(";
-  for (unsigned int i=0; i<args->a.size(); i++) {
-    args->a[i]->print(std::cout);
-    if (i<args->a.size()-1)
-      std::cout << ", ";
+namespace Gecode { namespace FlatZinc {
+
+  void
+  ConExpr::print(void) const {
+    std::cout << id << "(";
+    for (unsigned int i=0; i<args->a.size(); i++) {
+      args->a[i]->print(std::cout);
+      if (i<args->a.size()-1)
+        std::cout << ", ";
+    }
+    std::cout << ")";
   }
-  std::cout << ")";
-}
+
+}}
+
+// STATISTICS: flatzinc-any

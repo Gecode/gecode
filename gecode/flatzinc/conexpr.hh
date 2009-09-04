@@ -41,18 +41,24 @@
 #include <string>
 #include <gecode/flatzinc/ast.hh>
 
-class ConExpr {
-public:
-  std::string id;
-  AST::Array* args;
-  ConExpr(const std::string& id0,
-          AST::Array* args0)
-  : id(id0), args(args0) {}
-  void print(void) const;
-  AST::Node* operator[](int i) const { return args->a[i]; }
-  ~ConExpr(void) {
-    delete args;
-  }
-};
+namespace Gecode { namespace FlatZinc {
+
+  class ConExpr {
+  public:
+    std::string id;
+    AST::Array* args;
+    ConExpr(const std::string& id0,
+            AST::Array* args0)
+    : id(id0), args(args0) {}
+    void print(void) const;
+    AST::Node* operator[](int i) const { return args->a[i]; }
+    ~ConExpr(void) {
+      delete args;
+    }
+  };
+
+}}
 
 #endif
+
+// STATISTICS: flatzinc-any

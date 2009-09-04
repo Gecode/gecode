@@ -67,89 +67,95 @@ extern "C" int isatty(int);
 #include <gecode/flatzinc/parser.tab.hh>
 #include <gecode/flatzinc/symboltable.hh>
 
-typedef std::pair<std::string,Option<std::vector<int>* > > intvartype;
+namespace Gecode { namespace FlatZinc {
 
-class VarSpec;
-typedef std::pair<std::string, VarSpec*> varspec;
+  typedef std::pair<std::string,Option<std::vector<int>* > > intvartype;
 
-class FParseParm {
-public:
-  FParseParm(const std::string& b, std::ostream& err0)
-  : buf(b.c_str()), pos(0), length(b.size()), fg(NULL),
-    hadError(false), err(err0) {}
+  class VarSpec;
+  typedef std::pair<std::string, VarSpec*> varspec;
 
-  FParseParm(char* buf0, int length0, std::ostream& err0)
-  : buf(buf0), pos(0), length(length0), fg(NULL),
-    hadError(false), err(err0) {}
-  
-  void* yyscanner;
-  const char* buf;
-  unsigned int pos, length;
-  Gecode::FlatZinc::FlatZincGecode* fg;
-  std::vector<std::pair<std::string,AST::Node*> > _output;
-
-  SymbolTable<int> intvarTable;
-  SymbolTable<int> boolvarTable;
-  SymbolTable<int> floatvarTable;
-  SymbolTable<int> setvarTable;
-  SymbolTable<std::vector<int> > intvararrays;
-  SymbolTable<std::vector<int> > boolvararrays;
-  SymbolTable<std::vector<int> > floatvararrays;
-  SymbolTable<std::vector<int> > setvararrays;
-  SymbolTable<std::vector<int> > intvalarrays;
-  SymbolTable<std::vector<int> > boolvalarrays;
-  SymbolTable<int> intvals;
-  SymbolTable<bool> boolvals;
-  SymbolTable<AST::SetLit> setvals;
-  SymbolTable<std::vector<AST::SetLit> > setvalarrays;
-
-  std::vector<varspec> intvars;
-  std::vector<varspec> boolvars;
-  std::vector<varspec> setvars;
-
-  std::vector<ConExpr*> domainConstraints;
-
-  bool hadError;
-  std::ostream& err;
-  
-  int fillBuffer(char* lexBuf, unsigned int lexBufSize) {
-    if (pos >= length)
-      return 0;
-    int num = std::min(length - pos, lexBufSize);
-    memcpy(lexBuf,buf+pos,num);
-    pos += num;
-    return num;    
-  }
-  
-  void output(std::string x, AST::Node* n) {
-    _output.push_back(std::pair<std::string,AST::Node*>(x,n));
-  }
-  
-  template <class A, class B>
-  class OutputLess {
+  class FParseParm {
   public:
-    bool operator()(std::pair<A,B> x, std::pair<A,B> y) { return x.first < y.first; }
-  };
+    FParseParm(const std::string& b, std::ostream& err0)
+    : buf(b.c_str()), pos(0), length(b.size()), fg(NULL),
+      hadError(false), err(err0) {}
+
+    FParseParm(char* buf0, int length0, std::ostream& err0)
+    : buf(buf0), pos(0), length(length0), fg(NULL),
+      hadError(false), err(err0) {}
   
-  AST::Array* getOutput(void) {
-    AST::Array* a = new AST::Array();
-    for (unsigned int i=0; i<_output.size(); i++) {
-      a->a.push_back(new AST::String(_output[i].first+" = "));
-      if (_output[i].second->isArray()) {
-        AST::Array* oa = _output[i].second->getArray();
-        for (unsigned int j=0; j<oa->a.size(); j++) {
-          a->a.push_back(oa->a[j]);
-          oa->a[j] = NULL;
-        }
-        delete _output[i].second;
-      } else {
-        a->a.push_back(_output[i].second);
-      }
-      a->a.push_back(new AST::String(";\n"));
+    void* yyscanner;
+    const char* buf;
+    unsigned int pos, length;
+    Gecode::FlatZinc::FlatZincGecode* fg;
+    std::vector<std::pair<std::string,AST::Node*> > _output;
+
+    SymbolTable<int> intvarTable;
+    SymbolTable<int> boolvarTable;
+    SymbolTable<int> floatvarTable;
+    SymbolTable<int> setvarTable;
+    SymbolTable<std::vector<int> > intvararrays;
+    SymbolTable<std::vector<int> > boolvararrays;
+    SymbolTable<std::vector<int> > floatvararrays;
+    SymbolTable<std::vector<int> > setvararrays;
+    SymbolTable<std::vector<int> > intvalarrays;
+    SymbolTable<std::vector<int> > boolvalarrays;
+    SymbolTable<int> intvals;
+    SymbolTable<bool> boolvals;
+    SymbolTable<AST::SetLit> setvals;
+    SymbolTable<std::vector<AST::SetLit> > setvalarrays;
+
+    std::vector<varspec> intvars;
+    std::vector<varspec> boolvars;
+    std::vector<varspec> setvars;
+
+    std::vector<ConExpr*> domainConstraints;
+
+    bool hadError;
+    std::ostream& err;
+  
+    int fillBuffer(char* lexBuf, unsigned int lexBufSize) {
+      if (pos >= length)
+        return 0;
+      int num = std::min(length - pos, lexBufSize);
+      memcpy(lexBuf,buf+pos,num);
+      pos += num;
+      return num;    
     }
-    return a;
-  }
   
-};
+    void output(std::string x, AST::Node* n) {
+      _output.push_back(std::pair<std::string,AST::Node*>(x,n));
+    }
+  
+    template <class A, class B>
+    class OutputLess {
+    public:
+      bool operator()(std::pair<A,B> x, std::pair<A,B> y) { return x.first < y.first; }
+    };
+  
+    AST::Array* getOutput(void) {
+      AST::Array* a = new AST::Array();
+      for (unsigned int i=0; i<_output.size(); i++) {
+        a->a.push_back(new AST::String(_output[i].first+" = "));
+        if (_output[i].second->isArray()) {
+          AST::Array* oa = _output[i].second->getArray();
+          for (unsigned int j=0; j<oa->a.size(); j++) {
+            a->a.push_back(oa->a[j]);
+            oa->a[j] = NULL;
+          }
+          delete _output[i].second;
+        } else {
+          a->a.push_back(_output[i].second);
+        }
+        a->a.push_back(new AST::String(";\n"));
+      }
+      return a;
+    }
+  
+  };
+
+}}
 
 #endif
+
+// STATISTICS: flatzinc-any

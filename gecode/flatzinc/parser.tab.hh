@@ -136,19 +136,19 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 320 "gecode/flatzinc/parser.yxx"
+#line 323 "gecode/flatzinc/parser.yxx"
 { int iValue; char* sValue; bool bValue; double dValue;
          std::vector<int>* setValue;
-         AST::SetLit* setLit;
+         Gecode::FlatZinc::AST::SetLit* setLit;
          std::vector<double>* floatSetValue;
-         std::vector<AST::SetLit>* setValueList;
-         Option<AST::SetLit* > oSet;
-         VarSpec* varSpec;
-         Option<AST::Node*> oArg;
-         std::vector<VarSpec*>* varSpecVec;
-         Option<std::vector<VarSpec*>* > oVarSpecVec;
-         AST::Node* arg;
-         AST::Array* argVec;
+         std::vector<Gecode::FlatZinc::AST::SetLit>* setValueList;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > oSet;
+         Gecode::FlatZinc::VarSpec* varSpec;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> oArg;
+         std::vector<Gecode::FlatZinc::VarSpec*>* varSpecVec;
+         Gecode::FlatZinc::Option<std::vector<Gecode::FlatZinc::VarSpec*>* > oVarSpecVec;
+         Gecode::FlatZinc::AST::Node* arg;
+         Gecode::FlatZinc::AST::Array* argVec;
        }
 /* Line 1529 of yacc.c.  */
 #line 155 "gecode/flatzinc/parser.tab.hpp"

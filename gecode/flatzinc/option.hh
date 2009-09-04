@@ -38,26 +38,32 @@
 #ifndef __FLATZINC_OPTION_HH__
 #define __FLATZINC_OPTION_HH__
 
-template <class Val>
-struct Option {
-private:
-  bool _some;
-  Val _v;
-public:
-  bool operator()(void) const { return _some; }
-  const Val& some(void) const { return _v; }
-  static Option<Val> none(void) {
-    Option<Val> o;
-    o._some = false;
-    new (&o._v) Val();
-    return o;
-  }
-  static Option<Val> some(const Val& v) {
-    Option<Val> o;
-    o._some = true;
-    o._v = v;
-    return o;
-  }
-};
+namespace Gecode { namespace FlatZinc {
+
+  template <class Val>
+  struct Option {
+  private:
+    bool _some;
+    Val _v;
+  public:
+    bool operator()(void) const { return _some; }
+    const Val& some(void) const { return _v; }
+    static Option<Val> none(void) {
+      Option<Val> o;
+      o._some = false;
+      new (&o._v) Val();
+      return o;
+    }
+    static Option<Val> some(const Val& v) {
+      Option<Val> o;
+      o._some = true;
+      o._v = v;
+      return o;
+    }
+  };
+
+}}
 
 #endif
+
+// STATISTICS: flatzinc-any

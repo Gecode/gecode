@@ -1300,3 +1300,5 @@ namespace Gecode { namespace FlatZinc {
 
   }
 }}
+
+// STATISTICS: flatzinc-any

@@ -41,48 +41,53 @@
 #include <map>
 #include <vector>
 
-template <class Val>
-class SymbolTable {
-private:
-  std::map<std::string,std::pair<Val,bool> > m;
-public:
-  void put(const std::string& key, const Val& val, bool ext=false);
-  bool get(const std::string& key, Val& val) const;
-  std::vector<std::pair<std::string, Val> > toVec(bool all) const;
-};
+namespace Gecode { namespace FlatZinc {
 
-template <class Val>
-void
-SymbolTable<Val>::put(const std::string& key, const Val& val, bool ext) {
-  m[key] = std::pair<Val,bool>(val,ext);
-}
+  template <class Val>
+  class SymbolTable {
+  private:
+    std::map<std::string,std::pair<Val,bool> > m;
+  public:
+    void put(const std::string& key, const Val& val, bool ext=false);
+    bool get(const std::string& key, Val& val) const;
+    std::vector<std::pair<std::string, Val> > toVec(bool all) const;
+  };
 
-template <class Val>
-bool
-SymbolTable<Val>::get(const std::string& key, Val& val) const {
-  typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 
-    m.find(key);
-  if (i == m.end())
-    return false;
-  val = i->second.first;
-  return true;
-}
-
-template <class Val>
-std::vector<std::pair<std::string, Val> >
-SymbolTable<Val>::toVec(bool all) const {
-  typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 
-    m.begin();
-  std::vector<std::pair<std::string, Val> > ret;
-  for (; i!=m.end(); i++) {
-    if (!all) {
-      if (i->second.second) {
-        ret.push_back(std::pair<std::string, Val>(i->first, i->second.first));
-      }
-    } else
-      ret.push_back(std::pair<std::string, Val>(i->first, i->second.first));
+  template <class Val>
+  void
+  SymbolTable<Val>::put(const std::string& key, const Val& val, bool ext) {
+    m[key] = std::pair<Val,bool>(val,ext);
   }
-  return ret;
-}
 
+  template <class Val>
+  bool
+  SymbolTable<Val>::get(const std::string& key, Val& val) const {
+    typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 
+      m.find(key);
+    if (i == m.end())
+      return false;
+    val = i->second.first;
+    return true;
+  }
+
+  template <class Val>
+  std::vector<std::pair<std::string, Val> >
+  SymbolTable<Val>::toVec(bool all) const {
+    typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 
+      m.begin();
+    std::vector<std::pair<std::string, Val> > ret;
+    for (; i!=m.end(); i++) {
+      if (!all) {
+        if (i->second.second) {
+          ret.push_back(std::pair<std::string, Val>(i->first, i->second.first));
+        }
+      } else
+        ret.push_back(std::pair<std::string, Val>(i->first, i->second.first));
+    }
+    return ret;
+  }
+
+}}
 #endif
+
+// STATISTICS: flatzinc-any

@@ -2382,7 +2382,8 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
-  FParseParm* parm = static_cast<FParseParm*>(yyget_extra(yyscanner));
-	return parm->fillBuffer(buf, size);
+  Gecode::FlatZinc::FParseParm* parm = 
+    static_cast<Gecode::FlatZinc::FParseParm*>(yyget_extra(yyscanner));
+  return parm->fillBuffer(buf, size);
 }
 

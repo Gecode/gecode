@@ -85,7 +85,7 @@ while ($file = @ARGV[$i++]) {
 
 @modorder = ("kernel","search","int","set","minimodel",
 	     "scheduling","graph","driver",
-	     "iter","support","example","test");
+	     "iter","support","example","test","flatzinc");
 
 @catorder = ("core","var","prop","branch","post",
 	     "int","set","minimodel","stress","any",
@@ -105,6 +105,7 @@ $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "\%Example scripts";
 $modclear{"test"} = "Systematic tests";
+$modclear{"flatzinc"} = "FlatZinc interpreter";
 
 
 $catclear{"core"} = "Core functionality";

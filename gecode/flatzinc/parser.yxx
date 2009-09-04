@@ -66,6 +66,9 @@ void yyset_extra (void* user_defined ,void* yyscanner );
 
 extern int yydebug;
 
+using namespace Gecode;
+using namespace Gecode::FlatZinc;
+
 void yyerror(void* parm, const char *str) {
   FParseParm* pp = static_cast<FParseParm*>(parm);
   pp->err << "Error: " << str
@@ -148,9 +151,9 @@ void addDomainConstraint(FParseParm* pp, std::string id, AST::Node* var,
 
 void initfg(FParseParm* pp) {
   if (!pp->hadError)
-    pp->fg = new Gecode::FlatZinc::FlatZincGecode(pp->intvars.size(),
-                                                  pp->boolvars.size(),
-                                                  pp->setvars.size());
+    pp->fg = new FlatZincGecode(pp->intvars.size(),
+                                pp->boolvars.size(),
+                                pp->setvars.size());
 
   for (unsigned int i=0; i<pp->intvars.size(); i++) {
     if (!pp->hadError) {
@@ -319,16 +322,16 @@ namespace Gecode { namespace FlatZinc {
 
 %union { int iValue; char* sValue; bool bValue; double dValue;
          std::vector<int>* setValue;
-         AST::SetLit* setLit;
+         Gecode::FlatZinc::AST::SetLit* setLit;
          std::vector<double>* floatSetValue;
-         std::vector<AST::SetLit>* setValueList;
-         Option<AST::SetLit* > oSet;
-         VarSpec* varSpec;
-         Option<AST::Node*> oArg;
-         std::vector<VarSpec*>* varSpecVec;
-         Option<std::vector<VarSpec*>* > oVarSpecVec;
-         AST::Node* arg;
-         AST::Array* argVec;
+         std::vector<Gecode::FlatZinc::AST::SetLit>* setValueList;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > oSet;
+         Gecode::FlatZinc::VarSpec* varSpec;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> oArg;
+         std::vector<Gecode::FlatZinc::VarSpec*>* varSpecVec;
+         Gecode::FlatZinc::Option<std::vector<Gecode::FlatZinc::VarSpec*>* > oVarSpecVec;
+         Gecode::FlatZinc::AST::Node* arg;
+         Gecode::FlatZinc::AST::Array* argVec;
        }
 
 %error-verbose
