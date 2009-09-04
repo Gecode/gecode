@@ -722,13 +722,13 @@ namespace {
   void p_array_int_lt(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann) {
     IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
     IntVarArgs iv1 = arg2intvarargs(s, ce[1]);
-    rel(s, iv0, IRT_LE, iv1);
+    rel(s, iv0, IRT_LE, iv1, ann2icl(ann));
   }
 
   void p_array_int_lq(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann) {
     IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
     IntVarArgs iv1 = arg2intvarargs(s, ce[1]);
-    rel(s, iv0, IRT_LQ, iv1);
+    rel(s, iv0, IRT_LQ, iv1, ann2icl(ann));
   }
   
   void p_count(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann) {
@@ -781,12 +781,12 @@ namespace {
 
   void p_minimum(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann) {
     IntVarArgs iv = arg2intvarargs(s, ce[1]);
-    min(s, iv, getIntVar(s, ce[0]));
+    min(s, iv, getIntVar(s, ce[0]), ann2icl(ann));
   }
 
   void p_maximum(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann) {
     IntVarArgs iv = arg2intvarargs(s, ce[1]);
-    max(s, iv, getIntVar(s, ce[0]));
+    max(s, iv, getIntVar(s, ce[0]), ann2icl(ann));
   }
 
   void p_regular(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann) {
@@ -926,7 +926,8 @@ namespace {
       IntArgs limit(1, bound.val());
       IntVarArgs end(n);
       for (int i = n; i--; ) end[i] = IntVar(s, 0, Int::Limits::max);
-      cumulatives(s, machine, start, duration, end, height, limit, true);
+      cumulatives(s, machine, start, duration, end, height, limit, true,
+                  ann2icl(ann));
     } else {
       int min = Gecode::Int::Limits::max;
       int max = Gecode::Int::Limits::min;
@@ -1050,7 +1051,7 @@ namespace {
 
 #ifdef GECODE_HAS_SET_VARS
   void p_set_OP(FlatZincGecode& s, SetOpType op,
-                const ConExpr& ce, AST::Node *ann) {
+                const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), op, getSetVar(s, ce[1]), 
         SRT_EQ, getSetVar(s, ce[2]));
   }
@@ -1064,7 +1065,7 @@ namespace {
     p_set_OP(s, SOT_MINUS, ce, ann);
   }
 
-  void p_set_symdiff(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann) {
+  void p_set_symdiff(FlatZincGecode& s, const ConExpr& ce, AST::Node*) {
     SetVar x = getSetVar(s, ce[0]);
     SetVar y = getSetVar(s, ce[1]);
 
@@ -1082,7 +1083,7 @@ namespace {
   }
 
   void p_array_set_OP(FlatZincGecode& s, SetOpType op,
-                      const ConExpr& ce, AST::Node *ann) {
+                      const ConExpr& ce, AST::Node *) {
     SetVarArgs xs = arg2setvarargs(s, ce[0]);
     rel(s, op, xs, getSetVar(s, ce[1]));
   }
@@ -1094,19 +1095,19 @@ namespace {
   }
 
 
-  void p_set_eq(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_eq(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_EQ, getSetVar(s, ce[1]));
   }
-  void p_set_ne(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_ne(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_NQ, getSetVar(s, ce[1]));
   }
-  void p_set_subset(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_subset(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_SUB, getSetVar(s, ce[1]));
   }
-  void p_set_superset(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_superset(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_SUP, getSetVar(s, ce[1]));
   }
-  void p_set_card(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_card(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     if (!ce[1]->isIntVar()) {
       cardinality(s, getSetVar(s, ce[0]), ce[1]->getInt(), 
                   ce[1]->getInt());
@@ -1114,7 +1115,7 @@ namespace {
       cardinality(s, getSetVar(s, ce[0]), getIntVar(s, ce[1]));
     }
   }
-  void p_set_in(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_in(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     if (!ce[1]->isSetVar()) {
       AST::SetLit* sl = ce[1]->getSet();
       IntSet d;
@@ -1142,25 +1143,25 @@ namespace {
       }
     }
   }
-  void p_set_eq_reif(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_eq_reif(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_EQ, getSetVar(s, ce[1]),
         getBoolVar(s, ce[2]));
   }
-  void p_set_ne_reif(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_ne_reif(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_NQ, getSetVar(s, ce[1]),
         getBoolVar(s, ce[2]));
   }
   void p_set_subset_reif(FlatZincGecode& s, const ConExpr& ce,
-                         AST::Node *ann) {
+                         AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_SUB, getSetVar(s, ce[1]),
         getBoolVar(s, ce[2]));
   }
   void p_set_superset_reif(FlatZincGecode& s, const ConExpr& ce,
-                           AST::Node *ann) {
+                           AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_SUP, getSetVar(s, ce[1]),
         getBoolVar(s, ce[2]));
   }
-  void p_set_in_reif(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_in_reif(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     if (!ce[1]->isSetVar()) {
       AST::SetLit* sl = ce[1]->getSet();
       IntSet d;
@@ -1190,7 +1191,7 @@ namespace {
       }
     }
   }
-  void p_set_disjoint(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_disjoint(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     rel(s, getSetVar(s, ce[0]), SRT_DISJ, getSetVar(s, ce[1]));
   }
 
@@ -1245,17 +1246,17 @@ namespace {
     element(s, SOT_UNION, sv, selector, getSetVar(s, ce[2]));
   }
 
-  void p_set_convex(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_set_convex(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     convex(s, getSetVar(s, ce[0]));
   }
 
-  void p_array_set_seq(FlatZincGecode& s, const ConExpr& ce, AST::Node *ann) {
+  void p_array_set_seq(FlatZincGecode& s, const ConExpr& ce, AST::Node *) {
     SetVarArgs sv = arg2setvarargs(s, ce[0]);
     sequence(s, sv);
   }
 
   void p_array_set_seq_union(FlatZincGecode& s, const ConExpr& ce,
-                             AST::Node *ann) {
+                             AST::Node *) {
     SetVarArgs sv = arg2setvarargs(s, ce[0]);
     sequence(s, sv, getSetVar(s, ce[1]));
   }
