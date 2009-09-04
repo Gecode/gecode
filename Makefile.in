@@ -624,9 +624,9 @@ endif
 # FLATZINC
 #
 
-FLATZINCSRC0 = conexpr.cpp gecode.cpp registry.cpp
-FLATZINC_GENSRC0 = flatzinc.tab.cpp flatzinc.yy.cpp
-FLATZINCHDR0 = flatzinc.hh gecode.hh conexpr.hh ast.hh varspec.hh
+FLATZINCSRC0 = conexpr.cpp flatzinc.cpp registry.cpp
+FLATZINC_GENSRC0 = parser.tab.cpp lexer.yy.cpp
+FLATZINCHDR0 = flatzinc.hh conexpr.hh ast.hh varspec.hh
 
 FLATZINCSRC = $(FLATZINCSRC0:%=gecode/flatzinc/%)
 FLATZINC_GENSRC = $(FLATZINC_GENSRC0:%=gecode/flatzinc/%)
@@ -884,7 +884,7 @@ all: compilelib
 	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs
-	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
+	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(LIBTARGETS) $(FLATZINCEXE)
 	@$(MAKE) compilesubdirs
 	@$(MAKE) framework
 
@@ -1098,16 +1098,16 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 
 .PRECIOUS: gecode/flatzinc/%.cpp gecode/flatzinc/%.hh
 ifeq "@HAVE_FLEXBISON@" "yes"
-gecode/flatzinc/flatzinc.yy.cpp: \
-	$(top_srcdir)/gecode/flatzinc/flatzinc.lxx \
-	$(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh
-	flex -ogecode/flatzinc/flatzinc.yy.cpp \
-		$(top_srcdir)/gecode/flatzinc/flatzinc.lxx
+gecode/flatzinc/lexer.yy.cpp: \
+	$(top_srcdir)/gecode/flatzinc/lexer.lxx \
+	$(top_srcdir)/gecode/flatzinc/parser.tab.hh
+	flex -ogecode/flatzinc/lexer.yy.cpp \
+		$(top_srcdir)/gecode/flatzinc/lexer.lxx
 
-gecode/flatzinc/flatzinc.tab.hh gecode/flatzinc/flatzinc.tab.cpp: \
-	$(top_srcdir)/gecode/flatzinc/flatzinc.yxx
-	bison -t -o gecode/flatzinc/flatzinc.tab.cpp -d $<
-	mv gecode/flatzinc/flatzinc.tab.hpp gecode/flatzinc/flatzinc.tab.hh
+gecode/flatzinc/parser.tab.hh gecode/flatzinc/parser.tab.cpp: \
+	$(top_srcdir)/gecode/flatzinc/parser.yxx
+	bison -t -o gecode/flatzinc/parser.tab.cpp -d $<
+	mv gecode/flatzinc/parser.tab.hpp gecode/flatzinc/parser.tab.hh
 else
 gecode/flatzinc/flatzinc.yy.cpp: $(top_srcdir)/gecode/flatzinc/flatzinc.yy.cpp
 	cp $(@:%=$(top_srcdir)/%) $@

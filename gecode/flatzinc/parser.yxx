@@ -148,15 +148,15 @@ void addDomainConstraint(FParseParm* pp, std::string id, AST::Node* var,
 
 void initfg(FParseParm* pp) {
   if (!pp->hadError)
-    pp->fg = new FlatZincGecode(pp->intvars.size(),
-                                pp->boolvars.size(),
-                                pp->setvars.size());
+    pp->fg = new Gecode::FlatZinc::FlatZincGecode(pp->intvars.size(),
+                                                  pp->boolvars.size(),
+                                                  pp->setvars.size());
 
   for (unsigned int i=0; i<pp->intvars.size(); i++) {
     if (!pp->hadError) {
       try {
         pp->fg->newIntVar(static_cast<IntVarSpec*>(pp->intvars[i].second));
-      } catch (FlatZinc::Error& e) {
+      } catch (Gecode::FlatZinc::Error& e) {
         yyerror(pp, e.toString().c_str());
       }
     }
@@ -170,7 +170,7 @@ void initfg(FParseParm* pp) {
       try {
         pp->fg->newBoolVar(
           static_cast<BoolVarSpec*>(pp->boolvars[i].second));
-      } catch (FlatZinc::Error& e) {
+      } catch (Gecode::FlatZinc::Error& e) {
         yyerror(pp, e.toString().c_str());
       }
     }
@@ -183,7 +183,7 @@ void initfg(FParseParm* pp) {
     if (!pp->hadError) {
       try {
         pp->fg->newSetVar(static_cast<SetVarSpec*>(pp->setvars[i].second));
-      } catch (FlatZinc::Error& e) {
+      } catch (Gecode::FlatZinc::Error& e) {
         yyerror(pp, e.toString().c_str());
       }
     }      
@@ -198,14 +198,14 @@ void initfg(FParseParm* pp) {
         assert(pp->domainConstraints[i]->args->a.size() == 2);
         pp->fg->postConstraint(*pp->domainConstraints[i], NULL);
         delete pp->domainConstraints[i];
-      } catch (FlatZinc::Error& e) {
+      } catch (Gecode::FlatZinc::Error& e) {
         yyerror(pp, e.toString().c_str());        
       }
     }
   }
 }
 
-void fillPrinter(FParseParm& pp, FZPrinter& p) {
+void fillPrinter(FParseParm& pp, Gecode::FlatZinc::FZPrinter& p) {
   p.init(pp.getOutput());
 }
 
@@ -250,7 +250,7 @@ AST::Node* arrayOutput(AST::Call* ann) {
  *
  */
 
-namespace FlatZinc {
+namespace Gecode { namespace FlatZinc {
 
   FlatZincGecode* solve(const std::string& filename, FZPrinter& p,
                         std::ostream& err) {
@@ -313,7 +313,7 @@ namespace FlatZinc {
     return pp.hadError ? NULL : pp.fg;
   }
 
-}
+}}
 
 %}
 
@@ -1098,7 +1098,7 @@ constraint_item :
         if (!pp->hadError) {
           try {
             pp->fg->postConstraint(c, $6);
-          } catch (FlatZinc::Error& e) {
+          } catch (Gecode::FlatZinc::Error& e) {
             yyerror(pp, e.toString().c_str());
           }
         }
@@ -1114,7 +1114,7 @@ constraint_item :
         if (!pp->hadError) {
           try {
             pp->fg->postConstraint(c, $3);
-          } catch (FlatZinc::Error& e) {
+          } catch (Gecode::FlatZinc::Error& e) {
             yyerror(pp, e.toString().c_str());
           }
         }
@@ -1130,7 +1130,7 @@ constraint_item :
           if (!pp->hadError) {
             try {
               pp->fg->postConstraint(c, $6);
-            } catch (FlatZinc::Error& e) {
+            } catch (Gecode::FlatZinc::Error& e) {
               yyerror(pp, e.toString().c_str());
             }
           }

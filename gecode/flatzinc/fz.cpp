@@ -40,12 +40,13 @@
 #include <gecode/flatzinc/flatzinc.hh>
 
 using namespace std;
+using namespace Gecode;
 
 int main(int argc, char** argv) {
   
-  Gecode::Support::Timer t_total;
+  Support::Timer t_total;
   t_total.start();
-  FlatZincOptions opt("Gecode/FlatZinc");
+  FlatZinc::FlatZincOptions opt("Gecode/FlatZinc");
   opt.parse(argc, argv);
   
   if (argc!=2) {
@@ -57,8 +58,8 @@ int main(int argc, char** argv) {
   const char* filename = argv[1];
   opt.name(filename);
   
-  FZPrinter p;
-  FlatZincGecode* fg = NULL;
+  FlatZinc::FZPrinter p;
+  FlatZinc::FlatZincGecode* fg = NULL;
   if (!strcmp(filename, "-")) {
     fg = FlatZinc::solve(cin, p);
   } else {

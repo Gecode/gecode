@@ -38,7 +38,7 @@
 #ifndef __FLATZINC_PARSER_HH__
 #define __FLATZINC_PARSER_HH__
 
-#include <gecode/flatzinc/gecode.hh>
+#include <gecode/flatzinc/flatzinc.hh>
 
 // This is a workaround for a bug in flex that only shows up
 // with the Microsoft C++ compiler
@@ -64,7 +64,7 @@ extern "C" int isatty(int);
 #include <gecode/flatzinc/varspec.hh>
 #include <gecode/flatzinc/conexpr.hh>
 #include <gecode/flatzinc/ast.hh>
-#include <gecode/flatzinc/flatzinc.tab.hh>
+#include <gecode/flatzinc/parser.tab.hh>
 #include <gecode/flatzinc/symboltable.hh>
 
 typedef std::pair<std::string,Option<std::vector<int>* > > intvartype;
@@ -85,7 +85,7 @@ public:
   void* yyscanner;
   const char* buf;
   unsigned int pos, length;
-  FlatZincGecode* fg;
+  Gecode::FlatZinc::FlatZincGecode* fg;
   std::vector<std::pair<std::string,AST::Node*> > _output;
 
   SymbolTable<int> intvarTable;

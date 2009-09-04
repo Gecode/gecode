@@ -38,24 +38,28 @@
 #ifndef __FLATZINC_REGISTRY_HH__
 #define __FLATZINC_REGISTRY_HH__
 
-#include <gecode/flatzinc/gecode.hh>
+#include <gecode/flatzinc/flatzinc.hh>
 #include <string>
 #include <map>
 
-class Registry {
-public:
-  typedef void (*poster) (FlatZincGecode&,
-                          const ConExpr&,
-                          AST::Node*);
-  
-  void add(const std::string& id, poster p);
-  
-  void post(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann);
+namespace Gecode { namespace FlatZinc {
 
-private:
-  std::map<std::string,poster> r;
-};
+  class Registry {
+  public:
+    typedef void (*poster) (FlatZincGecode&,
+                            const ConExpr&,
+                            AST::Node*);
+  
+    void add(const std::string& id, poster p);
+  
+    void post(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann);
 
-extern Registry registry;
+  private:
+    std::map<std::string,poster> r;
+  };
+
+  extern Registry registry;
+
+}}
 
 #endif
