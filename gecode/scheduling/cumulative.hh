@@ -225,7 +225,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   public:
     /// Energy for subtree
     int e;
-    /// Eneregy envelope for subtree
+    /// Energy envelope for subtree
     int env;
     /// Initialize node from left child \a l and right child \a r
     void init(const OmegaNode& l, const OmegaNode& r);
@@ -245,7 +245,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /// Capacity
     int c;
   public:
-    /// Initialize tree for tasks \a t and capcity \a c
+    /// Initialize tree for tasks \a t and capacity \a c
     OmegaTree(Region& r, int c, const TaskViewArray<TaskView>& t);
     /// Insert task with index \a i
     void insert(int i);
@@ -253,6 +253,36 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     void remove(int i);
     /// Return energy envelope of all tasks
     int env(void) const;
+  };
+
+
+  /// Node for an extended omega tree
+  class ExtOmegaNode : public OmegaNode {
+  public:
+    /// Energy envelope for subtree
+    int cenv;
+    /// Initialize node from left child \a l and right child \a r
+    void init(const ExtOmegaNode& l, const ExtOmegaNode& r);
+    /// Update node from left child \a l and right child \a r
+    void update(const ExtOmegaNode& l, const ExtOmegaNode& r);
+  };
+
+  /// Omega trees for computing ect of task sets
+  template<class TaskView>
+  class ExtOmegaTree : public TaskTree<TaskView,ExtOmegaNode> {
+  protected:
+    using TaskTree<TaskView,ExtOmegaNode>::tasks;
+    using TaskTree<TaskView,ExtOmegaNode>::leaf;
+    using TaskTree<TaskView,ExtOmegaNode>::root;
+    using TaskTree<TaskView,ExtOmegaNode>::init;
+    using TaskTree<TaskView,ExtOmegaNode>::update;
+    /// Capacity
+    int c, ci;
+  public:
+    /// Initialize tree for tasks \a t and capacities \a c, \a ci
+    ExtOmegaTree(Region& r, int c, const TaskViewArray<TaskView>& t, int ci);
+    /// Update task with index \a i
+    int diff(int i);
   };
 
 

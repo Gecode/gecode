@@ -64,7 +64,17 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     for (int i=t.size(); i--; )
       prec[i] = std::max(prec[i],t[i].ect());
 
-    // Propagation
+    // Propagation (very naive so far)
+    int* update = r.alloc<int>(t.size()*t.size());
+    for (int i=0; i<t.size(); i++) {
+      ExtOmegaTree<TaskView> eo(r,c,t,t[i].c());
+      int u = -Int::Limits::infinity;
+      for (int j=0; j<t.size(); j++) {
+        u = std::max(u,eo.diff(j));
+        update[i*t.size()+j]=u;
+      }
+    }
+        
     return ES_OK;
   }
 

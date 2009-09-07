@@ -36,6 +36,7 @@
  */
 
 #include <algorithm>
+#include <cmath>
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 
@@ -83,6 +84,99 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   OmegaTree<TaskView>::env(void) const {
     return root().env;
   }
+  
+
+  /*
+   * Extended Omega tree
+   */
+
+  forceinline void
+  ExtOmegaNode::init(const ExtOmegaNode& l, const ExtOmegaNode& r) {
+    OmegaNode::init(l,r);
+    cenv = -Int::Limits::infinity;
+  }
+
+  forceinline void
+  ExtOmegaNode::update(const ExtOmegaNode& l, const ExtOmegaNode& r) {
+    OmegaNode::update(l,r);
+    cenv = std::max(l.cenv + r.e, r.cenv);
+  }
+
+  template<class TaskView>
+  ExtOmegaTree<TaskView>::ExtOmegaTree(Region& r, int c0,
+                                       const TaskViewArray<TaskView>& t,
+                                       int ci0)
+    : TaskTree<TaskView,ExtOmegaNode>(r,t), c(c0), ci(ci0) {
+    for (int i=tasks.size(); i--; ) {
+      leaf(i).e = 0; leaf(i).env = leaf(i).cenv = -Int::Limits::infinity;
+    }
+    init();
+  }
+
+  template<class TaskView>
+  forceinline int
+  ExtOmegaTree<TaskView>::diff(int i) {
+    // Enter task i
+    leaf(i).e = tasks[i].e(); 
+    leaf(i).env = c*tasks[i].est()+tasks[i].e();
+    leaf(i).cenv = (c-ci)*tasks[i].est()+tasks[i].e();
+    TaskTree<TaskView,ExtOmegaNode>::update(i);
+    // Perform computation of node for task with minest
+    int met = 0;
+    {
+      int e = 0;
+      while (!n_leaf(met)) {
+        if (node[n_right(met)].cenv + e > (c-ci)*tasks[i].lct()) {
+          met = n_right(met);
+        } else {
+          e += node[n_right(met)].e; met = n_left(met);
+        }
+      }
+    }
+    // Now perform split from leaf met upwards
+    int aenv, be;
+    ExtOmegaNode eon;
+    eon.e = 0;
+    eon.env = eon.cenv = -Int::Limits::infinity;
+    {
+      int a = met;
+      while (!n_root(a)) {
+        int p = n_parent(a);
+        if (a == n_left(p)) {
+          // a belongs to alpha, n_right(p) not!
+          node[p].update(node[n_left(p)],eon);
+        } else {
+          // both belong to alpha
+          node[p].update(node[n_left(p)],node[n_right(p)]);
+        }
+        a = p;
+      }
+      aenv = node[0].env;
+      // Fix again
+      TaskTree<TaskView,ExtOmegaNode>::update(met,false);
+    }
+    {
+      int a = met;
+      while (!n_root(a)) {
+        int p = n_parent(a);
+        if (a == n_left(p)) {
+          // n_right(p) belongs to beta, b does not!
+          node[p].update(eon,node[n_right(p)]);
+        } else {
+          // both belong to alpha
+          node[p].update(node[n_left(p)],node[n_right(p)]);
+        }
+        a = p;
+      }
+      be = node[0].e;
+      // Fix again
+      TaskTree<TaskView,ExtOmegaNode>::update(met,false);
+    }
+    int env = aenv + be;
+    return
+      ceil(static_cast<double>(env + (c-ci)*tasks[i].lct()) / c);
+  }
+
   
 
   /*

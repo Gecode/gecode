@@ -352,32 +352,31 @@ namespace Gecode { namespace Scheduling {
     /// The tasks from which the tree is computed
     const TaskViewArray<TaskView>& tasks;
     /// Task nodes
-    Node* _node;
+    Node* node;
     /// Map task number to leaf node number in right order
     int* _leaf;
+
     /// Return number of inner nodes
-    int _inner(void) const;
+    int n_inner(void) const;
     /// Return number of nodes for balanced binary tree
-    int _nodes(void) const;
-    /// Whether \a i is index of root
-    static bool _root(int i);
-    /// Return index of left child of \a i
-    static int _left(int i);
-    /// Return index of right child of \a i
-    static int _right(int i);
-    /// Return index of parent of \a i
-    static int _parent(int i);
-    /// Check whether node is leftmost
-    static bool _leftmost(int i);
-    /// Check whether node is rightmost
-    static bool _rightmost(int i);
+    int n_nodes(void) const;
+    /// Whether node \a i is index of root
+    static bool n_root(int i);
+    /// Whether node \a i is leaf
+    bool n_leaf(int i) const;
+    /// Return index of left child of node \a i
+    static int n_left(int i);
+    /// Return index of right child of node \a i
+    static int n_right(int i);
+    /// Return index of parent of node \a i
+    static int n_parent(int i);
   protected:
     /// Return leaf for task \a i
     Node& leaf(int i);
     /// Return root node
     const Node& root(void) const;
-    /// Update tree after leaf for task \a i has changed
-    void update(int i);
+    /// Update tree after leaf for task \a i has changed (\a l whether i refers to a leaf)
+    void update(int i, bool l=true);
     /// Initialize tree after leaves have been initialized
     void init(void);
     /// Initialize tree for tasks \a t
