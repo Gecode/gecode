@@ -73,6 +73,15 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Optimized thread creation by thread pools, now the creation and
+deletion of arbitrarily many parallel search engines also works
+for platforms using pthreads (Linux and MacOS).
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor
