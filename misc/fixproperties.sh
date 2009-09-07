@@ -46,10 +46,16 @@ for ext in ${KEYWORDEXTS}; do
 done
 
 # List of normal directories to set ignore properties on
-NORMALDIRS="int iter kernel minimodel search set support gist driver graph scheduling"
+GECODEDIRS="int iter kernel minimodel search set support gist driver graph scheduling flatzinc"
+TOOLSDIRS="flatzinc"
 
-for dir in ${NORMALDIRS}; do
+for dir in ${GECODEDIRS}; do
     find . -type d -path "./gecode/$dir*" \
+    ! -path '*.svn*' \
+    -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
+done
+for dir in ${TOOLSDIRS}; do
+    find . -type d -path "./tools/$dir*" \
     ! -path '*.svn*' \
     -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
 done
