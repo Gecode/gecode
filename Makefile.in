@@ -638,15 +638,15 @@ FLATZINCOBJ = \
 	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
 
 FLATZINCEXESRC0 = fz.cpp
-FLATZINCEXESRC  = $(FLATZINCEXESRC0:%=gecode/flatzinc/%)
+FLATZINCEXESRC  = $(FLATZINCEXESRC0:%=tools/flatzinc/%)
 FLATZINCEXEOBJ  = $(FLATZINCEXESRC:%.cpp=%$(OBJSUFFIX))
 
-FLATZINCALLSRC	= $(FLATZINCSRC) $(FLATZINCEXESRC)
+FLATZINCALLSRC	= $(FLATZINCSRC) $(FLATZINCEXESRC) $(FLATZINC_GENSRC)
 
-FLATZINCBUILDDIRS = flatzinc
+FLATZINCBUILDDIRS = gecode/flatzinc tools/flatzinc
 
 ifeq "@enable_flatzinc@" "yes"
-export FLATZINCEXE			= gecode/flatzinc/fz$(EXESUFFIX)
+export FLATZINCEXE			= tools/flatzinc/fz$(EXESUFFIX)
 export FLATZINCDLL			= $(LIBPREFIX)@FLATZINC@$(DLLSUFFIX)
 export FLATZINCSTATICLIB	= $(LIBPREFIX)@FLATZINC@$(STATICLIBSUFFIX)
 export FLATZINCLIB			= $(LIBPREFIX)@FLATZINC@$(LIBSUFFIX)
@@ -732,7 +732,7 @@ ALLSRC = \
 	$(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(GRAPHEXAMPLESRC) $(SCHEDULINGEXAMPLESRC) \
-	$(GISTSRC) $(FLATZINCALLSRC) $(FLATZINC_GENSRC)
+	$(GISTSRC) $(FLATZINCALLSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(SCHEDULINGHDR) \
@@ -790,6 +790,8 @@ else
 LIBLIBTARGETS =
 PDBTARGETS =
 endif
+
+EXETARGETS = $(FLATZINCEXE)
 
 #
 # Testing
@@ -865,6 +867,7 @@ TESTBUILDDIRS = test test/int test/set test/branch test/assign \
 	test/scheduling test/graph
 
 BUILDDIRS = \
+	tools \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
@@ -873,7 +876,7 @@ BUILDDIRS = \
 	$(SCHEDULINGBUILDDIRS:%=gecode/%)  \
 	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
-	$(FLATZINCBUILDDIRS:%=gecode/%) \
+	$(FLATZINCBUILDDIRS) \
 	$(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
@@ -1073,6 +1076,13 @@ test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cpp
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
 		@COMPILESBJ@$@ @CXXIN@$<
 
+tools/%$(OBJSUFFIX): $(top_srcdir)/tools/%.cpp
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+		@COMPILEOBJ@$@ @CXXIN@$<
+tools/%$(SBJSUFFIX): $(top_srcdir)/tools/%.cpp
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+		@COMPILESBJ@$@ @CXXIN@$<
+
 $(GISTSRC:%.cpp=%$(OBJSUFFIX)): gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
 	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
@@ -1118,12 +1128,12 @@ gecode/flatzinc/flatzinc.tab.cpp: $(top_srcdir)/gecode/flatzinc/flatzinc.tab.cpp
 	cp $(@:%=$(top_srcdir)/%) $@
 endif
 
-$(FLATZINCALLSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
+$(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
 	$(CXX) $(CXXFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
-$(FLATZINCALLSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
+$(FLATZINCSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
 	$(CXX) $(CXXFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
@@ -1531,6 +1541,7 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 doinstalllib: 
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
 	mkdir -p $(DESTDIR)$(libdir) && \
+	mkdir -p $(DESTDIR)$(bindir) && \
 	for_libtargets="$(LIBTARGETS) $(PDBTARGETS)" && \
 	  for f in $$for_libtargets; do \
 	    cp $$f $(DESTDIR)$(sharedlibdir); done && \
@@ -1539,7 +1550,10 @@ doinstalllib:
 	    cp -pR $$f $(DESTDIR)$(sharedlibdir); done &&\
 	for_liblibtargets="$(LIBLIBTARGETS)" && \
 	  for f in $$for_liblibtargets; do \
-	    cp $$f $(DESTDIR)$(libdir); done
+	    cp $$f $(DESTDIR)$(libdir); done &&\
+	for_exetargets="$(EXETARGETS)" && \
+	  for f in $$for_exetargets; do \
+	    cp $$f $(DESTDIR)$(bindir); done
 
 ifeq "@BUILDSTATIC@" "yes"
 ranliblib:
@@ -1628,6 +1642,8 @@ veryclean: clean
 		$(EXAMPLEEXE:%=%.manifest)
 	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk) \
 		 $(TESTEXE:%=%.manifest)
+	$(RMF) $(FLATZINCEXE) $(FLATZINCEXE:%.exe=%.pdb) \ 
+		$(FLATZINCEXE:%.exe=%.ilk) $(FLATZINCEXE:%=%.manifest)
 	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
