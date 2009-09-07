@@ -62,22 +62,33 @@ done
 
 svn propset svn:ignore -F misc/svn-ignore-root.txt '.'
 
-IGNORESUPPORT=`mktemp`
+IGNORESUPPORT=`mktemp ignoresupportXXXX` || exit 1
 (echo config.hpp; svn propget svn:ignore './gecode/support') \
   > ${IGNORESUPPORT}
 svn propset svn:ignore -F ${IGNORESUPPORT} './gecode/support'
 rm -f ${IGNORESUPPORT}
 
 # Create list of executable examples, append it to svn-ignore.txt
-IGNOREEXAMPLES=`mktemp` || exit 1
+IGNOREEXAMPLES=`mktemp ignoreexamplesXXXX` || exit 1
 (cat misc/svn-ignore.txt; \
   find "./examples" -name "*.cpp" | sed -e 's/\.cpp//g' | xargs -n1 basename) \
   > ${IGNOREEXAMPLES}
 svn propset svn:ignore -F ${IGNOREEXAMPLES} './examples'
 rm -f ${IGNOREEXAMPLES}
 
+# Create list of executable tools, append it to svn-ignore.txt
+TOOLSDIRS=`find tools -type d -and -not -path '*.svn*' -and -not -path 'tools'`
+for t in $TOOLSDIRS; do
+IGNORETOOLS=`mktemp ignoretoolsXXXX` || exit 1
+(cat misc/svn-ignore.txt; \
+  find "$t" -name "*.cpp" | sed -e 's/\.cpp//g' | xargs -n1 basename) \
+  > ${IGNORETOOLS}
+svn propset svn:ignore -F ${IGNORETOOLS} $t
+rm -f ${IGNORETOOLS}
+done
+
 # Append the test executable to svn-ignore.txt
-IGNORETEST=`mktemp` || exit 1
+IGNORETEST=`mktemp ignoretest` || exit 1
 (cat misc/svn-ignore.txt; echo "test") > ${IGNORETEST}
 svn propset svn:ignore -F ${IGNORETEST} './test'
 rm -f ${IGNORETEST}
