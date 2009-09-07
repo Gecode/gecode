@@ -16,6 +16,8 @@
 *.sln
 *.exe
 *.manifest
+*.so
+*.dylib
 moc_*.cpp
 Makefile
 Makefile.dep
