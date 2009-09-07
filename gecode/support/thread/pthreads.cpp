@@ -49,7 +49,7 @@ namespace Gecode { namespace Support {
     return NULL;
   }
 
-  Thread::Run::run(Runnable* r0) {
+  Thread::Run::Run(Runnable* r0) {
     m.acquire();
     r = r0;
     m.release();
