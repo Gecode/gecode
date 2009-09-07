@@ -204,10 +204,9 @@ namespace Gecode { namespace Support {
   /**
    * \brief Simple threads
    *
-   * Threads are assumed to properly terminate, the destructor will
-   * only release the handle to a thread but will not terminate it.
-   * The thread ceases when the call to run terminates, then the
-   * runnable object passed will also be deleted.
+   * Threads cannot be created, only runnable objects can be submitted
+   * for execution by a thread. Threads are pooled to avoid
+   * creation/destruction of threads as much as possible.
    *
    * Requires \code #include <gecode/support/thread.hh> \endcode
    *
@@ -215,13 +214,40 @@ namespace Gecode { namespace Support {
    */
   class Thread {
   public:
+    /// A real thread
+    class Run {
+    public:
+      /// Next idle thread
+      Run* n;
+      /// Runnable object to execute
+      Runnable* r;
+      /// Event to wait for next runnable object to execute
+      Event e;
+      /// Mutex for synchronization
+      Mutex m;
+      /// Create a new thread
+      GECODE_SUPPORT_EXPORT Run(Runnable* r);
+      /// Infinite loop for execution
+      GECODE_SUPPORT_EXPORT void exec(void);
+      /// Run a runnable object
+      void run(Runnable* r);
+      /// Allocate memory from heap
+      static void* operator new(size_t s);
+      /// Free memory allocated from heap
+      static void  operator delete(void* p);
+    };
+    /// Mutex for synchronization
+    GECODE_SUPPORT_EXPORT static Mutex m;
+    /// Idle runners
+    GECODE_SUPPORT_EXPORT static Run* idle;
+  public:
     /**
      * \brief Construct a new thread and run \a r
      *
      * After \a r terminates, \a r is deleted. After that, the thread
      * terminates.
      */
-    GECODE_SUPPORT_EXPORT static void run(Runnable* r);
+    static void run(Runnable* r);
     /// Put current thread to sleep for \a ms milliseconds
     static void sleep(unsigned int ms);
     /// Return number of processing units (1 if information not available)

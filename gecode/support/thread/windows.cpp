@@ -44,16 +44,17 @@ namespace Gecode { namespace Support {
   /// Function to start execution
   DWORD WINAPI 
   bootstrap(LPVOID p) {
-    static_cast<Runnable*>(p)->run();
-    delete static_cast<Runnable*>(p);
+    static_cast<Thread::Run*>(p)->exec();
     return 0;
   }
 
-  void
-  Thread::run(Runnable* r) {
+  Thread::Run::Run(Runnable* r0) {
+    m.acquire();
+    r = r0;
+    m.release();
     // The Windows specific handle to a thread
     HANDLE w_h;
-    w_h = CreateThread(NULL, 0, bootstrap, r, 0, NULL);
+    w_h = CreateThread(NULL, 0, bootstrap, this, 0, NULL);
     if (w_h == NULL)
       throw OperatingSystemError("Thread::run[Windows::CreateThread]");
     if (CloseHandle(w_h) == 0)

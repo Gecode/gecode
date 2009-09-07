@@ -125,7 +125,7 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	exception heap thread/windows thread/pthreads
+	exception heap thread/thread thread/windows thread/pthreads
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
 	dynamic-stack exception heap \

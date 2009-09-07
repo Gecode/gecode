@@ -35,65 +35,42 @@
  *
  */
 
+#include <gecode/support/thread.hh>
+
+#ifdef GECODE_HAS_THREADS
+
 namespace Gecode { namespace Support {
-
-  /*
-   * Runnable objects
-   */
-  forceinline void
-  Runnable::operator delete(void* p) {
-    heap.rfree(p);
-  }
-  forceinline void*
-  Runnable::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-
-
-  /*
-   * Locks
-   */
-  forceinline
-  Lock::Lock(Mutex& m0) : m(m0) {
-    m.acquire();
-  }
-  forceinline
-  Lock::~Lock(void) {
-    m.release();
-  }
-
 
   /*
    * Threads
    */
-  inline void
-  Thread::Run::run(Runnable* r0) {
-    m.acquire();
-    r = r0;
-    m.release();
-    e.signal();
-  }
-  inline void
-  Thread::run(Runnable* r) {
-    m.acquire();
-    if (idle != NULL) {
-      idle->run(r);
-      idle = idle->n;
-      m.release();
-    } else {
-      m.release();
-      (void) new Run(r);
+  Mutex Thread::m;
+  Thread::Run* Thread::idle = NULL;
+
+  void
+  Thread::Run::exec(void) {
+    while (true) {
+      // Execute runnable
+      {
+        Runnable* e;
+        m.acquire();
+        e=r; r=NULL;
+        m.release();
+        assert(e != NULL);
+        e->run();
+        delete e;
+      }
+      // Put into idle stack
+      Thread::m.acquire();
+      n=Thread::idle; Thread::idle=this;
+      Thread::m.release();
+      // Wait for next runnable
+      e.wait();
     }
-  }
-  forceinline void
-  Thread::Run::operator delete(void* p) {
-    heap.rfree(p);
-  }
-  forceinline void*
-  Thread::Run::operator new(size_t s) {
-    return heap.ralloc(s);
   }
 
 }}
+
+#endif
 
 // STATISTICS: support-any

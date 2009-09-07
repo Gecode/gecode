@@ -44,17 +44,18 @@ namespace Gecode { namespace Support {
   /// Function to start execution
   void*
   bootstrap(void* p) {
-    static_cast<Runnable*>(p)->run();
-    delete static_cast<Runnable*>(p);
+    static_cast<Thread::Run*>(p)->exec();
     pthread_exit(NULL);
     return NULL;
   }
 
-  void
-  Thread::run(Runnable* r) {
+  Thread::Run::run(Runnable* r0) {
+    m.acquire();
+    r = r0;
+    m.release();
     // The Pthread specific thread datastructure
     pthread_t p_t;
-    if (pthread_create(&p_t, NULL, bootstrap, r) != 0)
+    if (pthread_create(&p_t, NULL, bootstrap, this) != 0)
       throw OperatingSystemError("Thread::run[pthread_create]");
   }
   
