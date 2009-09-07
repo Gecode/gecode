@@ -1642,7 +1642,7 @@ veryclean: clean
 		$(EXAMPLEEXE:%=%.manifest)
 	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk) \
 		 $(TESTEXE:%=%.manifest)
-	$(RMF) $(FLATZINCEXE) $(FLATZINCEXE:%.exe=%.pdb) \ 
+	$(RMF) $(FLATZINCEXE) $(FLATZINCEXE:%.exe=%.pdb) \
 		$(FLATZINCEXE:%.exe=%.ilk) $(FLATZINCEXE:%=%.manifest)
 	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
