@@ -42,35 +42,6 @@
 namespace Gecode { namespace Support {
 
   /*
-   * Thread
-   */
-  forceinline void
-  Thread::sleep(unsigned int ms) {
-#ifdef GECODE_HAS_UNISTD_H
-    unsigned int s = ms / 1000;
-    ms -= 1000 * s;
-    if (s > 0) {
-      // More than one million microseconds, use sleep
-      ::sleep(s);
-    }
-    usleep(ms * 1000);
-#endif
-  }
-  forceinline unsigned int
-  Thread::npu(void) {
-#ifdef GECODE_HAS_UNISTD_H
-    int n=sysconf(_SC_NPROCESSORS_ONLN);
-    return (n>1) ? n : 1;
-#else
-    return 1;
-#endif
-  }
-  forceinline
-  Thread::~Thread(void) {
-  }
-
-
-  /*
    * Mutex
    */
   forceinline
@@ -140,6 +111,31 @@ namespace Gecode { namespace Support {
       throw OperatingSystemError("Event::~Event[pthread_mutex_destroy]");
   }
 
+
+  /*
+   * Thread
+   */
+  forceinline void
+  Thread::sleep(unsigned int ms) {
+#ifdef GECODE_HAS_UNISTD_H
+    unsigned int s = ms / 1000;
+    ms -= 1000 * s;
+    if (s > 0) {
+      // More than one million microseconds, use sleep
+      ::sleep(s);
+    }
+    usleep(ms * 1000);
+#endif
+  }
+  forceinline unsigned int
+  Thread::npu(void) {
+#ifdef GECODE_HAS_UNISTD_H
+    int n=sysconf(_SC_NPROCESSORS_ONLN);
+    return (n>1) ? n : 1;
+#else
+    return 1;
+#endif
+  }
 
 }}
 

@@ -118,9 +118,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Block all workers
     block();
     // Create and start threads
-    for (unsigned int i=0; i<workers(); i++) {
-      Support::Thread t(_worker[i]);
-    }
+    for (unsigned int i=0; i<workers(); i++)
+      Support::Thread::run(_worker[i]);
   }
 
   /*

@@ -40,28 +40,6 @@
 namespace Gecode { namespace Support {
 
   /*
-   * Thread
-   */
-  forceinline void
-  Thread::sleep(unsigned int ms) {
-    Sleep(static_cast<DWORD>(ms));
-  }
-
-  forceinline unsigned int
-  Thread::npu(void) {
-    SYSTEM_INFO si;
-    GetSystemInfo(&si);
-    return static_cast<unsigned int>(si.dwNumberOfProcessors);
-  }
-
-  forceinline
-  Thread::~Thread(void) {
-    if (CloseHandle(w_h) == 0)
-      throw OperatingSystemError("Thread::~Thread[Windows::CloseHandle]");
-  }
-
-
-  /*
    * Mutex
    */
   forceinline
@@ -111,6 +89,21 @@ namespace Gecode { namespace Support {
       throw OperatingSystemError("Event::~Event[Windows::CloseHandle]");
   }
 
+
+  /*
+   * Thread
+   */
+  forceinline void
+  Thread::sleep(unsigned int ms) {
+    Sleep(static_cast<DWORD>(ms));
+  }
+
+  forceinline unsigned int
+  Thread::npu(void) {
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    return static_cast<unsigned int>(si.dwNumberOfProcessors);
+  }
 
 }}
 

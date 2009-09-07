@@ -81,69 +81,6 @@
 namespace Gecode { namespace Support {
 
   /**
-   * \brief An interface for objects that can be run by a thread
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
-   * \ingroup FuncSupportThread
-   */
-  class Runnable {
-  public:
-    /// The function that is executed when the thread starts
-    virtual void run(void) = 0;
-    /// Destructor
-    virtual ~Runnable(void) {}
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-  };
-
-  /**
-   * \brief Simple threads
-   *
-   * Threads are assumed to properly terminate, the destructor will
-   * only release the handle to a thread but will not terminate it.
-   * The thread ceases when the call to run terminates, then the
-   * runnable object passed will also be deleted.
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
-   * \ingroup FuncSupportThread
-   */
-  class Thread {
-  private:
-#ifdef GECODE_THREADS_WINDOWS
-    /// The Windows specific handle to a thread
-    HANDLE w_h;
-#endif
-#ifdef GECODE_THREADS_PTHREADS
-    /// The Pthread specific thread datastructure
-    pthread_t p_t;
-#endif
-  public:
-    /**
-     * \brief Construct a new thread and run \a r
-     *
-     * After \a r terminates, \a r is deleted. After that, the thread
-     * terminates.
-     */
-    GECODE_SUPPORT_EXPORT Thread(Runnable* r);
-    /// Destroy thread handle (does not terminate thread)
-    ~Thread(void);
-    /// Put current thread to sleep for \a ms milliseconds
-    static void sleep(unsigned int ms);
-    /// Return number of processing units (1 if information not available)
-    static unsigned int npu(void);
-  private:
-    /// A thread cannot be copied
-    Thread(const Thread&) {}
-    /// A thread cannot be assigned
-    void operator=(const Thread&) {}
-  };
-
-
-  /**
    * \brief A mutex for mutual exclausion among several threads
    * 
    * It is not specified whether the mutex is recursive or not.
@@ -243,6 +180,57 @@ namespace Gecode { namespace Support {
     Event(const Event&) {}
     /// An event cannot be assigned
     void operator=(const Event&) {}
+  };
+
+  /**
+   * \brief An interface for objects that can be run by a thread
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
+   */
+  class Runnable {
+  public:
+    /// The function that is executed when the thread starts
+    virtual void run(void) = 0;
+    /// Destructor
+    virtual ~Runnable(void) {}
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+  };
+
+  /**
+   * \brief Simple threads
+   *
+   * Threads are assumed to properly terminate, the destructor will
+   * only release the handle to a thread but will not terminate it.
+   * The thread ceases when the call to run terminates, then the
+   * runnable object passed will also be deleted.
+   *
+   * Requires \code #include <gecode/support/thread.hh> \endcode
+   *
+   * \ingroup FuncSupportThread
+   */
+  class Thread {
+  public:
+    /**
+     * \brief Construct a new thread and run \a r
+     *
+     * After \a r terminates, \a r is deleted. After that, the thread
+     * terminates.
+     */
+    GECODE_SUPPORT_EXPORT static void run(Runnable* r);
+    /// Put current thread to sleep for \a ms milliseconds
+    static void sleep(unsigned int ms);
+    /// Return number of processing units (1 if information not available)
+    static unsigned int npu(void);
+  private:
+    /// A thread cannot be copied
+    Thread(const Thread&) {}
+    /// A thread cannot be assigned
+    void operator=(const Thread&) {}
   };
 
 }}

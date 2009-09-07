@@ -49,10 +49,15 @@ namespace Gecode { namespace Support {
     return 0;
   }
 
-  Thread::Thread(Runnable* r)
-    : w_h(CreateThread(NULL, 0, bootstrap, r, 0, NULL)) {
+  void
+  Thread::run(Runnable* r) {
+    // The Windows specific handle to a thread
+    HANDLE w_h;
+    w_h = CreateThread(NULL, 0, bootstrap, r, 0, NULL);
     if (w_h == NULL)
-      throw OperatingSystemError("Thread::Thread[Windows::CreateThread]");
+      throw OperatingSystemError("Thread::run[Windows::CreateThread]");
+    if (CloseHandle(w_h) == 0)
+      throw OperatingSystemError("Thread::run[Windows::CloseHandle]");
   }
 
 }}

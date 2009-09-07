@@ -50,9 +50,12 @@ namespace Gecode { namespace Support {
     return NULL;
   }
 
-  Thread::Thread(Runnable* r) {
+  void
+  Thread::run(Runnable* r) {
+    // The Pthread specific thread datastructure
+    pthread_t p_t;
     if (pthread_create(&p_t, NULL, bootstrap, r) != 0)
-      throw OperatingSystemError("Thread::Thread[pthread_create]");
+      throw OperatingSystemError("Thread::run[pthread_create]");
   }
   
 }}
