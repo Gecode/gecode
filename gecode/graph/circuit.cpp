@@ -80,7 +80,7 @@ namespace Gecode {
     IntVarArgs y(x.size());
     for (int i=x.size(); i--; )
       y[i].init(home, Int::Limits::min, Int::Limits::max);
-    circuit(home, c, x, y, z);
+    circuit(home, c, x, y, z, icl);
   }
 
 }
