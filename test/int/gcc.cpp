@@ -232,11 +232,21 @@ namespace Test { namespace Int {
      class VarSome : public Test {
      protected:
        /// Number of non-cardinality variables
-       static const int n = 2;
+       int n;
+       /// Arity beyond which to use randomized tests
+       static const int randomArity = 7;
      public:
        /// Create and register test
-       VarSome(Gecode::IntConLevel icl)
-         : Test("GCC::Var::Some::"+str(icl),7,-1,3,false,icl) {}
+       VarSome(std::string s, int n0, int min, int max,
+               Gecode::IntConLevel icl)
+         : Test("GCC::Var::Some::"+s+"::"+str(icl),
+                n0+(max-min)+1,min,max,false,icl)
+         , n(n0)
+        {
+          contest = CTL_NONE;
+          if (arity>randomArity)
+            testsearch = false;
+        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // Number of cardinality variables
@@ -250,7 +260,7 @@ namespace Test { namespace Int {
            }
          }
          for (int i=0; i<n; i++)
-           card[x[i]+1]++;
+           card[x[i]-dom.min()]++;
          for (int i=0; i<m; i++)
            if (card[i] != x[n+i]) {
              delete [] card;
@@ -258,6 +268,13 @@ namespace Test { namespace Int {
            }
          delete [] card;
          return true;
+       }
+       /// Create and register initial assignment
+       virtual Assignment* assignment(void) const {
+         if (arity > randomArity)
+           return new RandomAssignment(arity,dom,4000);
+         else 
+           return new CpltAssignment(arity,dom);
        }
        /// Post constraint on \a xy
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& xy) {
@@ -269,7 +286,9 @@ namespace Test { namespace Int {
            x[i]=xy[i];
          for (int i=0; i<m; i++)
            y[i]=xy[n+i];
-         IntArgs values(5, -1,0,1,2,3);
+         IntArgs values(m);
+         for (int i=m; i--;)
+           values[i] = i+dom.min();
          count(home,x,y,values,icl);
        }
      };
@@ -286,7 +305,8 @@ namespace Test { namespace Int {
            (void) new IntSome<false>(icls.icl());
            (void) new IntSome<true>(icls.icl());
            (void) new VarAll(icls.icl());
-           (void) new VarSome(icls.icl());
+           (void) new VarSome("Small",2,-1,3,icls.icl());
+           (void) new VarSome("Large",3,-1,4,icls.icl());
          }
        }
      };
