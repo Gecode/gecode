@@ -276,6 +276,12 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     using TaskTree<TaskView,ExtOmegaNode>::root;
     using TaskTree<TaskView,ExtOmegaNode>::init;
     using TaskTree<TaskView,ExtOmegaNode>::update;
+    using TaskTree<TaskView,ExtOmegaNode>::node;
+    using TaskTree<TaskView,ExtOmegaNode>::n_leaf;
+    using TaskTree<TaskView,ExtOmegaNode>::n_left;
+    using TaskTree<TaskView,ExtOmegaNode>::n_right;
+    using TaskTree<TaskView,ExtOmegaNode>::n_root;
+    using TaskTree<TaskView,ExtOmegaNode>::n_parent;
     /// Capacity
     int c, ci;
   public:
