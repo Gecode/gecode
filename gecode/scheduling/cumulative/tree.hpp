@@ -174,7 +174,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     }
     int env = aenv + be;
     return
-      ceil(static_cast<double>(env + (c-ci)*tasks[i].lct()) / c);
+      static_cast<int>(ceil(static_cast<double>(env + (c-ci)*tasks[i].lct()) / c));
   }
 
   

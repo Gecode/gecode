@@ -207,7 +207,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
   forceinline unsigned int
   Engine::workers(void) const {
-    return opt().threads;
+    return static_cast<unsigned int>(opt().threads);
   }
 
 

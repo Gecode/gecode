@@ -103,7 +103,7 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   VisualNode::isHidden(void) {
-    return nstatus & (1<<(HIDDEN-1));
+    return (nstatus & (1<<(HIDDEN-1))) != 0;
   }
 
   forceinline void
@@ -122,7 +122,7 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   VisualNode::isDirty(void) {
-    return nstatus & (1<<(DIRTY-1));
+    return (nstatus & (1<<(DIRTY-1))) != 0;
   }
 
   forceinline void
@@ -135,7 +135,7 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   VisualNode::childrenLayoutIsDone(void) {
-    return nstatus & (1<<(CHILDRENLAYOUTDONE-1));
+    return (nstatus & (1<<(CHILDRENLAYOUTDONE-1))) != 0;
   }
 
   forceinline void
@@ -148,7 +148,7 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   VisualNode::isMarked(void) {
-    return nstatus & (1<<(MARKED-1));
+    return (nstatus & (1<<(MARKED-1))) != 0;
   }
 
   forceinline void
@@ -161,7 +161,7 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   VisualNode::isOnPath(void) {
-    return nstatus & (1<<(ONPATH-1));
+    return (nstatus & (1<<(ONPATH-1))) != 0;
   }
 
   forceinline void

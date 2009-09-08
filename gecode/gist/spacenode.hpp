@@ -145,23 +145,23 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   SpaceNode::isOpen(void) {
-    return getStatus() == UNDETERMINED
-           || (nstatus & (1<<(HASOPENCHILDREN-1)));
+    return ((getStatus() == UNDETERMINED) ||
+            ((nstatus & (1<<(HASOPENCHILDREN-1))) != 0));
   }
 
   forceinline bool
   SpaceNode::hasFailedChildren(void) {
-    return nstatus & (1<<(HASFAILEDCHILDREN-1));
+    return (nstatus & (1<<(HASFAILEDCHILDREN-1))) != 0;
   }
 
   forceinline bool
   SpaceNode::hasSolvedChildren(void) {
-    return nstatus & (1<<(HASSOLVEDCHILDREN-1));
+    return (nstatus & (1<<(HASSOLVEDCHILDREN-1))) != 0;
   }
 
   forceinline bool
   SpaceNode::hasOpenChildren(void) {
-    return nstatus & (1<<(HASOPENCHILDREN-1));
+    return (nstatus & (1<<(HASOPENCHILDREN-1))) != 0;
   }
 
   forceinline bool

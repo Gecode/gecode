@@ -66,28 +66,34 @@ namespace Gecode { namespace Support {
 #endif
   public:
     /// Start timer
-    void start(void) {
-#if   defined(GECODE_USE_GETTIMEOFDAY)
-      if (gettimeofday(&t0, NULL))
-	  throw OperatingSystemError("Timer::start[gettimeofday]");
-#elif defined(GECODE_USE_CLOCK)
-      t0 = clock();
-#endif
-    }
+    void start(void);
     /// Get time since start of timer
-    double stop(void) {
-#if   defined(GECODE_USE_GETTIMEOFDAY)
-      timeval t1, t;
-      if (gettimeofday(&t1, NULL))
-        throw OperatingSystemError("Timer::stop[gettimeofday]");
-      timersub(&t1, &t0, &t);
-      return (static_cast<double>(t.tv_sec) * 1000.0) + 
-        (static_cast<double>(t.tv_usec)/1000.0);
-#elif defined(GECODE_USE_CLOCK)
-      return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
-#endif
-    }
+    double stop(void);
   };
+
+  inline void
+  Timer::start(void) {
+#if   defined(GECODE_USE_GETTIMEOFDAY)
+    if (gettimeofday(&t0, NULL))
+      throw OperatingSystemError("Timer::start[gettimeofday]");
+#elif defined(GECODE_USE_CLOCK)
+    t0 = clock();
+#endif
+  }
+
+  inline double
+  Timer::stop(void) {
+#if   defined(GECODE_USE_GETTIMEOFDAY)
+    timeval t1, t;
+    if (gettimeofday(&t1, NULL))
+      throw OperatingSystemError("Timer::stop[gettimeofday]");
+    timersub(&t1, &t0, &t);
+    return (static_cast<double>(t.tv_sec) * 1000.0) + 
+      (static_cast<double>(t.tv_usec)/1000.0);
+#elif defined(GECODE_USE_CLOCK)
+    return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+#endif
+  }
 
 }}
 

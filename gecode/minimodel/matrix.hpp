@@ -103,7 +103,7 @@ namespace Gecode {
   forceinline int
   Matrix<A>::height(void) const { return _h; }
   template <class A>
-  forceinline typename Matrix<A>::args_type const
+  inline typename Matrix<A>::args_type const
   Matrix<A>::get_array(void) const {
     return args_type(_a);
   }

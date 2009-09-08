@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   forceinline void
   ScaleBoolArray::update(Space& home, bool share, ScaleBoolArray& sba) {
-    int n = sba._lst - sba._fst;
+    int n = static_cast<int>(sba._lst - sba._fst);
     if (n > 0) {
       _fst = home.alloc<ScaleBool>(n);
       _lst = _fst+n;

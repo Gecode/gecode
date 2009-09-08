@@ -287,7 +287,7 @@ namespace Gecode {
     }
   }
   template<class A, class B>
-  forceinline typename ViewSelTieBreakStatic<A,B>::Choice
+  inline typename ViewSelTieBreakStatic<A,B>::Choice
   ViewSelTieBreakStatic<A,B>::choice(Space& home) {
     typename ViewSelTieBreakStatic<A,B>::Choice c(a.choice(home),
                                                   b.choice(home));
@@ -516,7 +516,7 @@ namespace Gecode {
     }
   }
   template<class View>
-  forceinline typename ViewSelTieBreakDynamic<View>::Choice
+  inline typename ViewSelTieBreakDynamic<View>::Choice
   ViewSelTieBreakDynamic<View>::choice(Space& home) {
     Choice c(home,tb,n);
     return c;
