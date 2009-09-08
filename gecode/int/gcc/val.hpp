@@ -36,28 +36,28 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   inline
-  Val<View, Card, isView>::Val(Space& home, ViewArray<View>& x0,
-                               ViewArray<Card>& k0)
+  Val<Card, isView>::Val(Space& home, ViewArray<IntView>& x0,
+                         ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
     home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_INT_VAL);
     k.subscribe(home, *this, PC_INT_VAL);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline
-  Val<View, Card, isView>::Val(Space& home, bool share,
-                               Val<View, Card, isView>& p)
+  Val<Card, isView>::Val(Space& home, bool share,
+                         Val<Card, isView>& p)
     : Propagator(home,share,p) {
     x.update(home,share, p.x);
     k.update(home,share, p.k);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   size_t
-  Val<View, Card, isView>::dispose(Space& home) {
+  Val<Card, isView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     x.cancel(home,*this, PC_INT_VAL);
     k.cancel(home,*this, PC_INT_VAL);
@@ -65,18 +65,18 @@ namespace Gecode { namespace Int { namespace GCC {
     return sizeof(*this);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   Actor*
-  Val<View, Card, isView>::copy(Space& home, bool share) {
-    return new (home) Val<View, Card, isView>(home,share,*this);
+  Val<Card, isView>::copy(Space& home, bool share) {
+    return new (home) Val<Card, isView>(home,share,*this);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   ExecStatus
-  Val<View, Card, isView>::post(Space& home,
-                                ViewArray<View>& x0,
-                                ViewArray<Card>& k0) {
-    new (home) Val<View, Card, isView>(home, x0, k0);
+  Val<Card, isView>::post(Space& home,
+                          ViewArray<IntView>& x0,
+                          ViewArray<Card>& k0) {
+    new (home) Val<Card, isView>(home, x0, k0);
     return ES_OK;
   }
 
@@ -85,15 +85,15 @@ namespace Gecode { namespace Int { namespace GCC {
    * which is O(n log n).
    *
    */
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   PropCost
-  Val<View, Card, isView>::cost(const Space&, const ModEventDelta&) const {
+  Val<Card, isView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   ExecStatus
-  Val<View, Card, isView>::propagate(Space& home, const ModEventDelta&) {
+  Val<Card, isView>::propagate(Space& home, const ModEventDelta&) {
     assert(x.size() > 0);
 
     bool mod = false;

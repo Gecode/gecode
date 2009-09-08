@@ -439,7 +439,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Variable-value-graph used during propagation
    *
    */
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   class VarValGraph {
   private:
     /// failure flag
@@ -449,9 +449,9 @@ namespace Gecode { namespace Int { namespace GCC {
     /// How much memory is allocated
     size_t _allocated;
     /// Problem variables
-    ViewArray<View>& x;
+    ViewArray<IntView>& x;
     /// Copy keeping track of removed variables
-    ViewArray<View>& y;
+    ViewArray<IntView>& y;
     /// Occurences
     ViewArray<Card>& k;
     /// Variable partition representing the problem variables
@@ -493,7 +493,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// \name Constructors and Destructors
     //@{
-    VarValGraph(ViewArray<View>&, ViewArray<View>&, ViewArray<Card>&,
+    VarValGraph(ViewArray<IntView>&, ViewArray<IntView>&, ViewArray<Card>&,
                 int , int , int );
     /// Destructor
     ~VarValGraph(void);
@@ -1220,12 +1220,12 @@ namespace Gecode { namespace Int { namespace GCC {
    * of all values.
    **/
 
-  template <class View, class Card, bool isView>
-  VarValGraph<View, Card, isView>::VarValGraph(ViewArray<View>& xref,
-                                               ViewArray<View>& yref,
-                                               ViewArray<Card>& kref,
-                                               int noe,
-                                               int smin, int smax)
+  template <class Card, bool isView>
+  VarValGraph<Card, isView>::VarValGraph(ViewArray<IntView>& xref,
+                                         ViewArray<IntView>& yref,
+                                         ViewArray<Card>& kref,
+                                         int noe,
+                                         int smin, int smax)
     : fail(false),
       x(xref),
       y(yref),
@@ -1289,7 +1289,7 @@ namespace Gecode { namespace Int { namespace GCC {
       // get the space for the edges of the varnode
       Edge** xadjacent = vrn->adj();
 
-      ViewValues<View> xiter(x[i]);
+      ViewValues<IntView> xiter(x[i]);
       int j = 0;
       for (; xiter(); ++xiter){
         int v = xiter.val();
@@ -1328,29 +1328,29 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline size_t
-  VarValGraph<View, Card, isView>::allocated(void) const {
-    return _allocated + sizeof(VarValGraph<View, Card, isView>);
+  VarValGraph<Card, isView>::allocated(void) const {
+    return _allocated + sizeof(VarValGraph<Card, isView>);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline bool
-  VarValGraph<View, Card, isView>::failed(void) const {
+  VarValGraph<Card, isView>::failed(void) const {
     return fail;
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline void
-  VarValGraph<View, Card, isView>::failed(bool b){
+  VarValGraph<Card, isView>::failed(bool b){
     fail = b;
   }
 
 
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   inline bool
-  VarValGraph<View, Card, isView>::min_require(Space& home){
+  VarValGraph<Card, isView>::min_require(Space& home){
     bool modified = false;
     for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
@@ -1440,9 +1440,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return modified;
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   inline bool
-  VarValGraph<View, Card, isView>::sync(Space& home) {
+  VarValGraph<Card, isView>::sync(Space& home) {
     Region r(home);
     VVGNode** re = r.alloc<VVGNode*>(node_size);
     int n_re = 0;
@@ -1561,7 +1561,7 @@ namespace Gecode { namespace Int { namespace GCC {
         } else {
 
           // delete the edge
-          ViewValues<View> xiter(x[i]);
+          ViewValues<IntView> xiter(x[i]);
           Edge*  mub = vrn->template get_match<UBC>();
           Edge*  mlb = vrn->template get_match<LBC>();
           Edge** p   = vrn->adj();
@@ -1662,9 +1662,9 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class View, class Card, bool isView> template <BC direction>
+  template <class Card, bool isView> template <BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::narrow(Space& home) {
+  VarValGraph<Card, isView>::narrow(Space& home) {
     bool modified  = false;
     for (int i = n_var; i--; ) {
       VarNode* vrn = vars[i];
@@ -1818,9 +1818,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return modified;
   }
 
-  template <class View, class Card, bool isView>  template <BC direction>
+  template <class Card, bool isView>  template <BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::maximum_matching(Space& home) {
+  VarValGraph<Card, isView>::maximum_matching(Space& home) {
 
     int required_size = 0;
     int card_match    = 0;
@@ -1892,9 +1892,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return (card_match >= required_size);
   }
 
-  template <class View, class Card, bool isView> template<BC direction>
+  template <class Card, bool isView> template<BC direction>
   inline bool
-  VarValGraph<View, Card, isView>::augmenting_path(Space& home, VVGNode* v) {
+  VarValGraph<Card, isView>::augmenting_path(Space& home, VVGNode* v) {
     Region r(home);
     Support::StaticStack<VVGNode*,Region> ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
@@ -2000,9 +2000,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return pathfound;
   }
 
-  template <class View, class Card, bool isView> template<BC direction>
+  template <class Card, bool isView> template<BC direction>
   inline void
-  VarValGraph<View, Card, isView>::free_alternating_paths(Space& home) {
+  VarValGraph<Card, isView>::free_alternating_paths(Space& home) {
     Region r(home);
     Support::StaticStack<VVGNode*,Region> ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
@@ -2108,15 +2108,15 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class View, class Card, bool isView> template <BC direction>
+  template <class Card, bool isView> template <BC direction>
   inline void
-  VarValGraph<View, Card, isView>::dfs(VVGNode* v,
-                                       bool inscc[],
-                                       bool in_unfinished[],
-                                       int dfsnum[],
-                                       Support::StaticStack<VVGNode*,Region>& roots,
-                                       Support::StaticStack<VVGNode*,Region>& unfinished,
-                                       int& count){
+  VarValGraph<Card, isView>::dfs(VVGNode* v,
+                                 bool inscc[],
+                                 bool in_unfinished[],
+                                 int dfsnum[],
+                                 Support::StaticStack<VVGNode*,Region>& roots,
+                                 Support::StaticStack<VVGNode*,Region>& unfinished,
+                                 int& count){
     count++;
     int v_index            = v->get_info();
     dfsnum[v_index]        = count;
@@ -2186,9 +2186,9 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class View, class Card, bool isView> template <BC direction>
+  template <class Card, bool isView> template <BC direction>
   inline void
-  VarValGraph<View, Card, isView>::strongly_connected_components(Space& home) {
+  VarValGraph<Card, isView>::strongly_connected_components(Space& home) {
     Region r(home);
     bool* inscc = r.alloc<bool>(node_size);
     bool* in_unfinished = r.alloc<bool>(node_size);
@@ -2209,21 +2209,21 @@ namespace Gecode { namespace Int { namespace GCC {
                      roots, unfinished, count);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline
-  VarValGraph<View, Card, isView>::~VarValGraph(void){
+  VarValGraph<Card, isView>::~VarValGraph(void){
     heap.rfree(mem);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline void*
-  VarValGraph<View, Card, isView>::operator new(size_t t){
+  VarValGraph<Card, isView>::operator new(size_t t){
     return heap.ralloc(t);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline void
-  VarValGraph<View, Card, isView>::operator delete(void* p){
+  VarValGraph<Card, isView>::operator delete(void* p){
     heap.rfree(p);
   }
 

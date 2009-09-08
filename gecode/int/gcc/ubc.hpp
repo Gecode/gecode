@@ -36,9 +36,9 @@
  */
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   ExecStatus
-  BndImp<View, Card, isView, shared>::ubc(Space& home, int& nb,
+  BndImp<Card, isView, shared>::ubc(Space& home, int& nb,
     HallInfo hall[], Rank rank[], int mu[], int nu[]){
     int rightmost = nb + 1; // rightmost accesible value in bounds
     int bsize     = nb + 2; // number of unique bounds including sentinels

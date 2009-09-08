@@ -37,9 +37,9 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   ExecStatus
-  BndImp<View, Card, isView, shared>::lbc(Space& home, int& nb,
+  BndImp<Card, isView, shared>::lbc(Space& home, int& nb,
     HallInfo hall[], Rank rank[], int mu[], int nu[]){
 
     int n = x.size();

@@ -61,10 +61,10 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   inline
-  Dom<View, Card, isView>::Dom(Space& home, ViewArray<View>& x0,
-                               ViewArray<Card>& k0, bool cf)
+  Dom<Card, isView>::Dom(Space& home, ViewArray<IntView>& x0,
+                         ViewArray<Card>& k0, bool cf)
     : Propagator(home), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf){
     // y is used for bounds propagation since prop_bnd needs all variables
@@ -74,19 +74,18 @@ namespace Gecode { namespace Int { namespace GCC {
     k.subscribe(home, *this, PC_INT_DOM);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   forceinline
-  Dom<View, Card, isView>::Dom(Space& home, bool share,
-                               Dom<View, Card, isView>& p)
+  Dom<Card, isView>::Dom(Space& home, bool share, Dom<Card, isView>& p)
     : Propagator(home, share, p), vvg(NULL), card_fixed(p.card_fixed) {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   size_t
-  Dom<View, Card, isView>::dispose(Space& home) {
+  Dom<Card, isView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home,*this, PC_INT_DOM);
@@ -97,21 +96,21 @@ namespace Gecode { namespace Int { namespace GCC {
     return sizeof(*this);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   size_t
-  Dom<View, Card, isView>::allocated(void) const {
+  Dom<Card, isView>::allocated(void) const {
     return (vvg == NULL) ? 0 : vvg->allocated();
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   Actor*
-  Dom<View, Card, isView>::copy(Space& home, bool share) {
-    return new (home) Dom<View, Card, isView>(home, share, *this);
+  Dom<Card, isView>::copy(Space& home, bool share) {
+    return new (home) Dom<Card, isView>(home, share, *this);
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   PropCost
-  Dom<View, Card, isView>::cost(const Space&, const ModEventDelta&) const {
+  Dom<Card, isView>::cost(const Space&, const ModEventDelta&) const {
 
     unsigned int n = x.size();
     unsigned int d = x[n-1].size();
@@ -130,9 +129,9 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /// \brief Perform domain propagation.
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   ExecStatus
-  Dom<View, Card, isView>::propagate(Space& home, const ModEventDelta&) {
+  Dom<Card, isView>::propagate(Space& home, const ModEventDelta&) {
 
     ExecStatus es = ES_NOFIX;
     bool card_mod = false;
@@ -207,9 +206,9 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
 
-      GECODE_ES_CHECK((prop_card<View, Card, true>(home, y, k, card_mod)));
+      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k, card_mod)));
 
-      if (!card_consistent<View, Card>(y, k)) {
+      if (!card_consistent<Card>(y, k)) {
         return ES_FAILED;
       }
     }
@@ -283,7 +282,7 @@ namespace Gecode { namespace Int { namespace GCC {
       assert(noe > 0);
       assert(smin >= 0);
       assert(smax >= 0);
-      vvg = new VarValGraph<View, Card, isView> (x, y, k, noe, smin, smax);
+      vvg = new VarValGraph<Card, isView> (x, y, k, noe, smin, smax);
       min_req_mod = vvg->min_require(home);
       if (vvg->failed()) {
         return ES_FAILED;
@@ -329,7 +328,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     bool card_assigned = true;
     if (isView) {
-      es = prop_card<View, Card, true>(home, y, k, card_mod);
+      es = prop_card<Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
         return ES_FAILED;
       }
@@ -400,7 +399,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     if (isView) {
-      es = prop_card<View, Card, true>(home, y, k, card_mod);
+      es = prop_card<Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
         return es;
       }
@@ -469,16 +468,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
   }
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   inline ExecStatus
-  Dom<View, Card, isView>::post(Space& home, ViewArray<View>& x0,
-                                ViewArray<Card>& k0){
+  Dom<Card, isView>::post(Space& home, ViewArray<IntView>& x0,
+                          ViewArray<Card>& k0){
     bool cardfix = true;
     for (int i = k0.size(); i--; ) {
       cardfix &= k0[i].assigned();
     }
 
-    (void) new (home) Dom<View, Card, isView>(home, x0, k0, cardfix);
+    (void) new (home) Dom<Card, isView>(home, x0, k0, cardfix);
     return ES_OK;
   }
 

@@ -172,15 +172,15 @@ namespace Gecode { namespace Int { namespace GCC {
     } else {
       switch (icl) {
       case ICL_BND: {
-        GECODE_ES_FAIL(home, (GCC::Bnd<IntView, Card, isView>::post(home, x, k)));
+        GECODE_ES_FAIL(home, (GCC::Bnd<Card, isView>::post(home, x, k)));
         break;
       }
       case ICL_DOM: {
-        GECODE_ES_FAIL(home, (GCC::Dom<IntView, Card, isView>::post(home, x, k)));
+        GECODE_ES_FAIL(home, (GCC::Dom<Card, isView>::post(home, x, k)));
         break;
       }
       default: {
-        GECODE_ES_FAIL(home, (GCC::Val<IntView, Card, isView>::post(home, x, k)));
+        GECODE_ES_FAIL(home, (GCC::Val<Card, isView>::post(home, x, k)));
       }
       }
     }

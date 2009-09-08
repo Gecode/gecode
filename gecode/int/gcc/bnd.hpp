@@ -38,10 +38,10 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   // for posting
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   inline
-  BndImp<View, Card, isView, shared>::
-  BndImp(Space& home, ViewArray<View>& x0, ViewArray<Card>& k0,
+  BndImp<Card, isView, shared>::
+  BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
          bool cf,  bool nolbc) :
     Propagator(home), x(x0), k(k0),
     card_fixed(cf), skip_lbc(nolbc) {
@@ -51,19 +51,19 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   // for cloning
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   forceinline
-  BndImp<View, Card, isView, shared>::
-  BndImp(Space& home, bool share, BndImp<View, Card, isView, shared>& p)
+  BndImp<Card, isView, shared>::
+  BndImp(Space& home, bool share, BndImp<Card, isView, shared>& p)
     : Propagator(home, share, p),
       card_fixed(p.card_fixed), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
     k.update(home, share, p.k);
   }
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   size_t
-  BndImp<View, Card, isView, shared>::dispose(Space& home){
+  BndImp<Card, isView, shared>::dispose(Space& home){
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home,*this, PC_INT_BND);
@@ -75,22 +75,22 @@ namespace Gecode { namespace Int { namespace GCC {
     return sizeof(*this);
   }
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   size_t
-  BndImp<View, Card, isView, shared>::allocated(void) const {
+  BndImp<Card, isView, shared>::allocated(void) const {
     return lps.allocated() + ups.allocated();
   }
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   Actor*
-  BndImp<View, Card, isView, shared>::copy(Space& home, bool share){
-    return new (home) BndImp<View, Card, isView, shared>
+  BndImp<Card, isView, shared>::copy(Space& home, bool share){
+    return new (home) BndImp<Card, isView, shared>
       (home, share, *this);
   }
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   PropCost
-  BndImp<View, Card, isView, shared>::cost(const Space&, const ModEventDelta&) const {
+  BndImp<Card, isView, shared>::cost(const Space&, const ModEventDelta&) const {
     /*
      * The bounds consistent version of the Global Cardinality constraint
      * has a theoretical complexity of
@@ -101,9 +101,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   ExecStatus
-  BndImp<View, Card, isView, shared>::pruneCards(Space& home) {
+  BndImp<Card, isView, shared>::pruneCards(Space& home) {
     // Remove all values with 0 max occurrence
     // and remove corresponding occurrence variables from k
     
@@ -135,10 +135,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_FIX;
   }
 
-  template <class View, class Card, bool isView, bool shared>
+  template <class Card, bool isView, bool shared>
   ExecStatus
-  BndImp<View, Card, isView, shared>::propagate(Space& home, const ModEventDelta&) {
-
+  BndImp<Card, isView, shared>::propagate(Space& home, const ModEventDelta&) {
     if (isView)
       GECODE_ES_CHECK(pruneCards(home));
 
@@ -183,12 +182,12 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
 
-      if (!card_consistent<View, Card>(x, k))
+      if (!card_consistent<Card>(x, k))
         return ES_FAILED;
 
       {
         bool mod;
-        GECODE_ES_CHECK((prop_card<View, Card, shared>(home, x, k, mod)));
+        GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k, mod)));
       }
 
       // Cardinalities may have been modified, so recompute
@@ -234,12 +233,12 @@ namespace Gecode { namespace Int { namespace GCC {
       nu[i] = mu[i] = i;
 
     // Create sorting permutation mu according to the variables upper bounds
-    MaxInc<View> max_inc(x);
-    Support::quicksort<int, MaxInc<View> >(mu, n, max_inc);
+    MaxInc<IntView> max_inc(x);
+    Support::quicksort<int, MaxInc<IntView> >(mu, n, max_inc);
 
     // Create sorting permutation nu according to the variables lower bounds
-    MinInc<View> min_inc(x);
-    Support::quicksort<int, MinInc<View> >(nu, n, min_inc);
+    MinInc<IntView> min_inc(x);
+    Support::quicksort<int, MinInc<IntView> >(nu, n, min_inc);
 
     // Sort the cardinality bounds by index
     MinIdx<Card> min_idx;
@@ -344,7 +343,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (isView) {
       bool mod;
-      GECODE_ES_CHECK((prop_card<View, Card, shared>(home, x, k, mod)));
+      GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k, mod)));
     }
 
     for (int i = k.size(); i--; ) {
@@ -411,22 +410,22 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   };
 
-  template <class View, class Card, bool isView>
+  template <class Card, bool isView>
   ExecStatus
-  Bnd<View, Card, isView>::post(Space& home,
-                                ViewArray<View>& x0,
-                                ViewArray<Card>& k0) {
+  Bnd<Card, isView>::post(Space& home,
+                          ViewArray<IntView>& x0,
+                          ViewArray<Card>& k0) {
     bool cardfix = true;
     bool nolbc = true;
     for (int i = k0.size(); i--; ) {
       cardfix &= k0[i].assigned();
       nolbc &= (k0[i].min() == 0);
     }
-    if (SharingTest<View,Card>::shared(home,x0,k0)) {
-      new (home) BndImp<View, Card, isView, true>
+    if (SharingTest<IntView,Card>::shared(home,x0,k0)) {
+      new (home) BndImp<Card, isView, true>
         (home, x0, k0, cardfix, nolbc);
     } else {
-      new (home) BndImp<View, Card, isView, false>
+      new (home) BndImp<Card, isView, false>
         (home, x0, k0, cardfix, nolbc);
     }
     return ES_OK;

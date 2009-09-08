@@ -58,9 +58,9 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Bounds consistency check for cardinality variables.
    */
 
-  template <class View, class Card, bool shared>
+  template <class Card, bool shared>
   inline ExecStatus
-  prop_card(Space& home, ViewArray<View>& x, ViewArray<Card>& k, bool& mod) {
+  prop_card(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
     int m = k.size();
     Region r(home);
@@ -139,9 +139,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /** \brief Consistency check, whether the cardinality values are feasible.
    */
-  template <class View, class Card>
+  template <class Card>
   inline bool
-  card_consistent(ViewArray<View>& x, ViewArray<Card>& k) {
+  card_consistent(ViewArray<IntView>& x, ViewArray<Card>& k) {
     int smin = 0;
     int smax = 0;
     for (int i = k.size(); i--; ) {
