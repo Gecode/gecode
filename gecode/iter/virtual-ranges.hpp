@@ -76,7 +76,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
    *
    * \ingroup FuncIterRangesVirt
    */
-  template <class I>
+  template<class I>
   class RangesTemplate : public Iterator {
   private:
     /// Check that \a I is a range iterator;
@@ -111,30 +111,30 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     //@}
   };
 
-  template <class I>
+  template<class I>
   RangesTemplate<I>::RangesTemplate(I& i0) : i(i0) {}
 
-  template <class I>
+  template<class I>
   void
   RangesTemplate<I>::init(I& i0) { i=i0; }
 
-  template <class I>
+  template<class I>
   bool
   RangesTemplate<I>::operator ()(void) { return i(); }
 
-  template <class I>
+  template<class I>
   void
   RangesTemplate<I>::operator ++(void) { ++i; }
 
-  template <class I>
+  template<class I>
   int
   RangesTemplate<I>::min(void) const { return i.min(); }
 
-  template <class I>
+  template<class I>
   int
   RangesTemplate<I>::max(void) const { return i.max(); }
 
-  template <class I>
+  template<class I>
   unsigned int
   RangesTemplate<I>::width(void) const { return i.width(); }
 

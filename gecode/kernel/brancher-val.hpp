@@ -55,7 +55,7 @@ namespace Gecode {
    *
    * Defines the brancher to be binary.
    */
-  template <class _View, class _Val>
+  template<class _View, class _Val>
   class ValSelBase {
   public:
     /// View type

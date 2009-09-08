@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Base-class
    *
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   LinBoolView<XV,YV>::LinBoolView(Space& home,
                                   ViewArray<XV>& x0, YV y0, int c0)
     :  Propagator(home), x(x0), y(y0), c(c0) {
@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Linear {
     y.subscribe(home,*this,PC_INT_BND);
   }
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline size_t
   LinBoolView<XV,YV>::dispose(Space& home) {
     assert(!home.failed());
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline
   LinBoolView<XV,YV>::LinBoolView(Space& home, bool share, LinBoolView& p)
     : Propagator(home,share,p), c(p.c) {
@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Linear {
     y.update(home,share,p.y);
   }
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   PropCost
   LinBoolView<XV,YV>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
@@ -78,12 +78,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * Equality propagator
    *
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline
   EqBoolView<XV,YV>::EqBoolView(Space& home, ViewArray<XV>& x, YV y, int c)
     : LinBoolView<XV,YV>(home,x,y,c) {}
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   ExecStatus
   EqBoolView<XV,YV>::post(Space& home, ViewArray<XV>& x, YV y, int c) {
     if (y.assigned())
@@ -116,18 +116,18 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_OK;
   }
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline
   EqBoolView<XV,YV>::EqBoolView(Space& home, bool share, EqBoolView<XV,YV>& p)
     : LinBoolView<XV,YV>(home,share,p) {}
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   Actor*
   EqBoolView<XV,YV>::copy(Space& home, bool share) {
     return new (home) EqBoolView<XV,YV>(home,share,*this);
   }
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   ExecStatus
   EqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();
@@ -164,12 +164,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * Disequality propagator
    *
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline
   NqBoolView<XV,YV>::NqBoolView(Space& home, ViewArray<XV>& x, YV y, int c)
     : LinBoolView<XV,YV>(home,x,y,c) {}
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   ExecStatus
   NqBoolView<XV,YV>::post(Space& home, ViewArray<XV>& x, YV y, int c) {
     if (y.assigned())
@@ -202,18 +202,18 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline
   NqBoolView<XV,YV>::NqBoolView(Space& home, bool share, NqBoolView<XV,YV>& p)
     : LinBoolView<XV,YV>(home,share,p) {}
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   Actor*
   NqBoolView<XV,YV>::copy(Space& home, bool share) {
     return new (home) NqBoolView<XV,YV>(home,share,*this);
   }
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   ExecStatus
   NqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();
@@ -247,12 +247,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * Greater or equal propagator
    *
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline
   GqBoolView<XV,YV>::GqBoolView(Space& home, ViewArray<XV>& x, YV y, int c)
     : LinBoolView<XV,YV>(home,x,y,c) {}
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   ExecStatus
   GqBoolView<XV,YV>::post(Space& home, ViewArray<XV>& x, YV y, int c) {
     if (y.assigned())
@@ -279,18 +279,18 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   forceinline
   GqBoolView<XV,YV>::GqBoolView(Space& home, bool share, GqBoolView<XV,YV>& p)
     : LinBoolView<XV,YV>(home,share,p) {}
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   Actor*
   GqBoolView<XV,YV>::copy(Space& home, bool share) {
     return new (home) GqBoolView<XV,YV>(home,share,*this);
   }
 
-  template <class XV, class YV>
+  template<class XV, class YV>
   ExecStatus
   GqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();

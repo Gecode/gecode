@@ -42,7 +42,7 @@
 
 namespace Gecode {
 
-  template <class A>
+  template<class A>
   inline
   Matrix<A>::Slice::Slice(Matrix<A>& a,
                           int fc, int tc, int fr, int tr)
@@ -60,7 +60,7 @@ namespace Gecode {
         _r[i++] = a(w, h);
   }
 
-  template <class A>
+  template<class A>
   typename Matrix<A>::Slice&
   Matrix<A>::Slice::reverse(void) {
     for (int i = 0; i < _r.size()/2; i++)
@@ -68,19 +68,19 @@ namespace Gecode {
     return *this;
   }
 
-  template <class A>
+  template<class A>
   forceinline
   Matrix<A>::Slice::operator typename Matrix<A>::args_type(void) {
     return _r;
   }
-  template <class A>
+  template<class A>
   forceinline
   Matrix<A>::Slice::operator Matrix<typename Matrix<A>::args_type>(void) {
     return Matrix<args_type>(_r, _tc-_fc, _tr-_fr);
   }
 
 
-  template <class A>
+  template<class A>
   forceinline
   Matrix<A>::Matrix(A a, int w, int h)
     : _a(a), _w(w), _h(h) {
@@ -88,7 +88,7 @@ namespace Gecode {
       throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, w, h)");
   }
 
-  template <class A>
+  template<class A>
   forceinline
   Matrix<A>::Matrix(A a, int n)
     : _a(a), _w(n), _h(n) {
@@ -96,19 +96,19 @@ namespace Gecode {
       throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, n)");
   }
 
-  template <class A>
+  template<class A>
   forceinline int
   Matrix<A>::width(void) const  { return _w; }
-  template <class A>
+  template<class A>
   forceinline int
   Matrix<A>::height(void) const { return _h; }
-  template <class A>
+  template<class A>
   inline typename Matrix<A>::args_type const
   Matrix<A>::get_array(void) const {
     return args_type(_a);
   }
 
-  template <class A>
+  template<class A>
   forceinline typename Matrix<A>::value_type&
   Matrix<A>::operator ()(int c, int r) {
     if ((c >= _w) || (r >= _h))
@@ -116,19 +116,19 @@ namespace Gecode {
     return _a[r*_w + c];
   }
 
-  template <class A>
+  template<class A>
   forceinline typename Matrix<A>::Slice
   Matrix<A>::slice(int fc, int tc, int fr, int tr) {
     return Slice(*this, fc, tc, fr, tr);
   }
 
-  template <class A>
+  template<class A>
   forceinline typename Matrix<A>::Slice
   Matrix<A>::row(int r) {
     return slice(0, width(), r, r+1);
   }
 
-  template <class A>
+  template<class A>
   forceinline typename Matrix<A>::Slice
   Matrix<A>::col(int c) {
     return slice(c, c+1, 0, height());

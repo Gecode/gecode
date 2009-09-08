@@ -53,7 +53,7 @@ namespace Gecode {
   /**
    * \brief Base class for view selection
    */
-  template <class _View>
+  template<class _View>
   class ViewSelBase {
   public:
     /// View type
@@ -77,7 +77,7 @@ namespace Gecode {
   /**
    * \brief Select first not assigned view
    */
-  template <class View>
+  template<class View>
   class ViewSelNone : public ViewSelBase<View> {
   public:
     /// Default constructor

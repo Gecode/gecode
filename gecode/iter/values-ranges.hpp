@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Values {
    *
    * \ingroup FuncIterValues
    */
-  template <class I>
+  template<class I>
   class ToRanges : public Ranges::MinMax {
   private:
     /// Check that \a I is a value iterator;
@@ -72,11 +72,11 @@ namespace Gecode { namespace Iter { namespace Values {
     //@}
   };
 
-  template <class I>
+  template<class I>
   forceinline
   ToRanges<I>::ToRanges(void) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   ToRanges<I>::operator ++(void) {
     if (!i()) {
@@ -89,14 +89,14 @@ namespace Gecode { namespace Iter { namespace Values {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline
   ToRanges<I>::ToRanges(I& i0)
     : i(i0) {
     operator ++();
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   ToRanges<I>::init(I& i0) {
     i = i0;

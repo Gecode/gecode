@@ -201,12 +201,12 @@ namespace Gecode {
       }
     }
 
-    template <class I> ModEvent
+    template<class I> ModEvent
     SingletonView::excludeI(Space& home, I& iter) {
       return me_inttoset(view.minus_r(home,iter));
     }
 
-    template <class I> ModEvent
+    template<class I> ModEvent
     SingletonView::includeI(Space& home, I& iter) {
       Iter::Ranges::IsRangeIter<I>();
       if (!iter())
@@ -223,7 +223,7 @@ namespace Gecode {
       return me_inttoset(view.eq(home, val));
     }
 
-    template <class I> ModEvent
+    template<class I> ModEvent
     SingletonView::intersectI(Space& home, I& iter) {
       return me_inttoset(view.inter_r(home,iter));
     }
@@ -307,7 +307,7 @@ namespace Gecode {
      * \brief %Range iterator for least upper bound of singleton set view
      * \ingroup TaskActorSetView
      */
-    template <>
+    template<>
     class LubRanges<SingletonView> : public Gecode::Int::IntVarImpFwd {
     public:
       /// \name Constructors and initialization
@@ -337,7 +337,7 @@ namespace Gecode {
      * \brief %Range iterator for greatest lower bound of singleton set view
      * \ingroup TaskActorSetView
      */
-    template <>
+    template<>
     class GlbRanges<SingletonView> {
     private:
       int  val;

@@ -39,8 +39,8 @@
 
 namespace Gecode { namespace Set { namespace Int {
 
-  template <class View>
-  template <class A>
+  template<class View>
+  template<class A>
   forceinline
   ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home,
                                                 ChannelBool<View>& p,
@@ -53,20 +53,20 @@ namespace Gecode { namespace Set { namespace Int {
     }
   }
 
-  template <class View>
+  template<class View>
   forceinline
   ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, bool share,
                                                 IndexAdvisor& a)
     : Advisor(home,share,a), idx(a.idx) {}
 
-  template <class View>
+  template<class View>
   forceinline int
   ChannelBool<View>::IndexAdvisor::index(void) const {
     return idx;
   }
 
-  template <class View>
-  template <class A>
+  template<class View>
+  template<class A>
   forceinline void
   ChannelBool<View>::IndexAdvisor::dispose(Space& home, Council<A>& c) {
     ChannelBool<View>& p = static_cast<ChannelBool<View>&>(propagator());
@@ -78,7 +78,7 @@ namespace Gecode { namespace Set { namespace Int {
     Advisor::dispose(home,c);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   ChannelBool<View>::ChannelBool(Space& home,
                                  ViewArray<Gecode::Int::BoolView>& x0,
@@ -104,14 +104,14 @@ namespace Gecode { namespace Set { namespace Int {
       (void) new (home) IndexAdvisor(home,*this,co,-1);
     }
 
-  template <class View>
+  template<class View>
   forceinline
   ChannelBool<View>::ChannelBool(Space& home, bool share, ChannelBool& p)
     : Super(home,share,p), running(false) {
     co.update(home, share, p.co);
   }
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   ChannelBool<View>::post(Space& home, ViewArray<Gecode::Int::BoolView>& x,
                           View y) {
@@ -120,13 +120,13 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   PropCost
   ChannelBool<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, x.size()+1);
   }
 
-  template <class View>
+  template<class View>
   size_t
   ChannelBool<View>::dispose(Space& home) {
     assert(!home.failed());
@@ -135,13 +135,13 @@ namespace Gecode { namespace Set { namespace Int {
     return sizeof(*this);
   }
 
-  template <class View>
+  template<class View>
   Actor*
   ChannelBool<View>::copy(Space& home, bool share) {
     return new (home) ChannelBool(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ChannelBool<View>::propagate(Space& home, const ModEventDelta&) {
     running = true;
@@ -191,7 +191,7 @@ namespace Gecode { namespace Set { namespace Int {
     return y.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ChannelBool<View>::advise(Space& home, Advisor& _a, const Delta& _d) {
     IndexAdvisor& a = static_cast<IndexAdvisor&>(_a);

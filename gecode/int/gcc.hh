@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   class Bnd{
   public:
     /**
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Implementation of the bounds consistent
    * global cardinality propagator
    */
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   class BndImp : public Propagator {
     friend class Bnd<Card, isView>;
   protected:
@@ -243,7 +243,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   class Dom : public Propagator {
   protected:
     /// Views on which to perform domain-propagation
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   class Val : public Propagator {
   protected:
     /// Views on which to perform value-propagation

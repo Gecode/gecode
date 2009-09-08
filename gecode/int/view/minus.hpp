@@ -169,37 +169,37 @@ namespace Gecode {
      * Iterator-based domain update
      *
      */
-    template <class I>
+    template<class I>
     forceinline ModEvent
     MinusView::narrow_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i);
       return view.narrow_r(home,mi,false);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     MinusView::inter_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i);
       return view.inter_r(home,mi,false);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     MinusView::minus_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i);
       return view.minus_r(home,mi,false);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     MinusView::narrow_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i);
       return view.narrow_v(home,mi,false);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     MinusView::inter_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i);
       return view.inter_v(home,mi,false);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     MinusView::minus_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i);
@@ -286,7 +286,7 @@ namespace Gecode {
      * \brief %Range iterator for minus integer views
      * \ingroup TaskActorIntView
      */
-    template <>
+    template<>
     class ViewRanges<MinusView> : public IntVarImpBwd {
     public:
       /// \name Constructors and initialization

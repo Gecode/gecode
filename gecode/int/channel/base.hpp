@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Channel {
 
-  template <class Info, PropCond pc>
+  template<class Info, PropCond pc>
   forceinline
   Base<Info,pc>::Base(Space& home, int n0, Info* xy0)
     : Propagator(home), n(n0), n_na(2*n), xy(xy0) {
@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Channel {
       xy[i].view.subscribe(home,*this,pc);
   }
 
-  template <class Info, PropCond pc>
+  template<class Info, PropCond pc>
   forceinline
   Base<Info,pc>::Base(Space& home, bool share, Base<Info,pc>& p)
     : Propagator(home,share,p), n(p.n), n_na(p.n_na),
@@ -54,13 +54,13 @@ namespace Gecode { namespace Int { namespace Channel {
       xy[i].update(home,share,p.xy[i]);
   }
 
-  template <class Info, PropCond pc>
+  template<class Info, PropCond pc>
   PropCost
   Base<Info,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, 2*n);
   }
 
-  template <class Info, PropCond pc>
+  template<class Info, PropCond pc>
   forceinline size_t
   Base<Info,pc>::dispose(Space& home) {
     if (!home.failed())

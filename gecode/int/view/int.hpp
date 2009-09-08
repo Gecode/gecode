@@ -175,37 +175,37 @@ namespace Gecode { namespace Int {
    * Iterator-based domain update
    *
    */
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntView::narrow_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->narrow_r(home,i,depend);
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntView::inter_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->inter_r(home,i,depend);
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntView::minus_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->minus_r(home,i,depend);
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntView::narrow_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
     return varimp->narrow_v(home,i,depend);
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntView::inter_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
     return varimp->inter_v(home,i,depend);
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntView::minus_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int {
    * \brief %Range iterator for integer variable views
    * \ingroup TaskActorIntView
    */
-  template <>
+  template<>
   class ViewRanges<IntView> : public IntVarImpFwd {
   public:
     /// \name Constructors and initialization

@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the type of the node
     bool   get_type(void);
     /// access the matching flag of the node
-    template <BC>
+    template<BC>
     bool   get_match_flag(void);
     /// get the information on the node (either var-index or value)
     virtual int  get_info(void) = 0;
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// set the node type to \a t
     void   set_type(bool t);
     /// set the matching flag to \a f
-    template <BC>
+    template<BC>
     void   set_match_flag(bool f);
     /// set the node information to \a i
     virtual void set_info(int i) = 0;
@@ -142,14 +142,14 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Access
     //@{
     /// return the matching edge on the node
-    template <BC>
+    template<BC>
     Edge* get_match(void);
     /// return the variable index of the node
     int   get_info(void);
     /// returns whether the node is still matchable
     bool  is_matched(BC);
     /// tests whether the node is matched or not
-    template <BC>
+    template<BC>
     bool  matched(void);
 
     /// check for removal from graph
@@ -161,13 +161,13 @@ namespace Gecode { namespace Int { namespace GCC {
     /// set the node info to \a i
     void  set_info(int i);
     /// set the pointer of the matching edge to m
-    template <BC>
+    template<BC>
     void  set_match(Edge* m);
     /// match the node
-    template <BC>
+    template<BC>
     void  match(void);
     /// unmatch the node
-    template <BC>
+    template<BC>
     void  unmatch(void);
     //@}
   };
@@ -247,14 +247,14 @@ namespace Gecode { namespace Int { namespace GCC {
     /// returns the current number of occurences of the value
     int kcount(void);
     /// returns the number of incident matching edges on a value node
-    template <BC>
+    template<BC>
     int incid_match(void);
     /// returns the index in cardinality array k
     int kindex(void);
     /// return the node information
     int  get_info(void);
     /// returns \a true if the node is matched in BC, \a false otherwise
-    template <BC>
+    template<BC>
     bool matched(void);
     /// tests whether the node is a sink
     bool sink(void);
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the maximal node capacity as stored in \a k
     int  kmax(void);
     /// return minimal or maximal capacity
-    template <BC>
+    template<BC>
     int  kbound(void);
 
     /// returns whether the node is still matchable
@@ -278,22 +278,22 @@ namespace Gecode { namespace Int { namespace GCC {
     /// changes the index in the cardinality array k
     void kindex(int);
     /// decrease the node-capacity
-    template <BC>
+    template<BC>
     void dec(void);
     /// increase the node-capacity
-    template <BC>
+    template<BC>
     void inc(void);
     /// return the the node-capacity
-    template <BC>
+    template<BC>
     int  cap(void);
     /// set the node-capacity to \a c
-    template <BC>
+    template<BC>
     void set_cap(int c);
     /// match the node
-    template <BC>
+    template<BC>
     void match(void);
     /// unmatch the node
-    template <BC>
+    template<BC>
     void unmatch(void);
     /// node reset to original capacity values
     void reset(void);
@@ -361,10 +361,10 @@ namespace Gecode { namespace Int { namespace GCC {
      * a path on the graph or a cycle in the graph.
      *
      */
-    template <BC>
+    template<BC>
     bool used(void);
     /// return whether the edge is matched
-    template <BC>
+    template<BC>
     bool matched(void);
     /// return whether the edge has been deleted from the graph
     bool is_deleted(void);
@@ -396,26 +396,26 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Update
     //@{
     /// Mark the edge as used
-    template <BC>
+    template<BC>
     void use(void);
     /// Mark the edge as unused
-    template <BC>
+    template<BC>
     void free(void);
     /**
      * \brief Reset the edge ( free the edge, and unmatch
      * the edge including its end-nodes
      *
      */
-    template <BC>
+    template<BC>
     void reset(void);
     /// Match the edge
-    template <BC>
+    template<BC>
     void match(void);
     /// Unmatch the edge and the incident nodes
-    template <BC>
+    template<BC>
     void unmatch(void);
     /// Unmatch the edge and  ( \a x if t=false,  \a v otherwise )
-    template <BC>
+    template<BC>
     void unmatch(bool t);
     /// Unlink the edge from the linked list of edges
     void unlink(void);
@@ -439,7 +439,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Variable-value-graph used during propagation
    *
    */
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   class VarValGraph {
   private:
     /// failure flag
@@ -541,7 +541,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
 
-    template <BC>
+    template<BC>
     bool narrow(Space& home);
 
     /** \brief Compute a maximum matching M on the graph
@@ -550,21 +550,21 @@ namespace Gecode { namespace Int { namespace GCC {
      *  - If BC=LBC then \f$|M|= \sum_{i\in \{ 0, \dots, |X|-1\}}
      *    k[i].min()\f$
      */
-    template <BC>
+    template<BC>
     bool maximum_matching(Space& home);
 
     /// Compute possible free alternating paths in the graph
-    template <BC>
+    template<BC>
     void free_alternating_paths(Space& home);
     /// Compute possible strongly connected components of the graph
-    template <BC>
+    template<BC>
     void strongly_connected_components(Space& home);
     /**
      * \brief Test whether the current maximal matching on the graph
      * can be augmented by an alternating path starting and ending with
      * a free node.
      */
-    template <BC>
+    template<BC>
     bool augmenting_path(Space& home, VVGNode*);
 
   protected:
@@ -574,7 +574,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * Depth first search used to compute the
      * strongly connected components of the graph.
      */
-    template <BC>
+    template<BC>
     void dfs(VVGNode*,
              bool[], bool[], int[],
              Support::StaticStack<VVGNode*,Region>&,
@@ -637,7 +637,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ie = p;
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   VVGNode::set_match_flag(bool b){
     if (direction == UBC) {
@@ -647,7 +647,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline bool
   VVGNode::get_match_flag(void){
     if (direction == UBC) {
@@ -687,26 +687,26 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline bool
   VarNode::matched(void){
     return get_match_flag<direction>();
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   VarNode::match(void){
     set_match_flag<direction>(true);
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   VarNode::unmatch(void){
     set_match_flag<direction>(false);
     set_match<direction>(NULL);
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   VarNode::set_match(Edge* p){
     if (direction == UBC) {
@@ -716,7 +716,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline Edge*
   VarNode::get_match(void){
     if (direction == UBC) {
@@ -792,7 +792,7 @@ namespace Gecode { namespace Int { namespace GCC {
     noe = 0;
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline int
   ValNode::kbound(void){
     if (direction == UBC) {
@@ -822,7 +822,7 @@ namespace Gecode { namespace Int { namespace GCC {
     _kub = kub;
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline int
   ValNode::cap(void){
     if (direction == UBC) {
@@ -832,7 +832,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   ValNode::dec(void){
     if (direction == UBC) {
@@ -843,7 +843,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   ValNode::inc(void){
     if (direction == UBC) {
@@ -854,19 +854,19 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   ValNode::match(void){
     dec<direction>();
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   ValNode::unmatch(void){
     inc<direction>();
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline bool
   ValNode::matched(void){
     return ( cap<direction>() == 0);
@@ -934,7 +934,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /// Returs the number of incident matching edges on the node
-  template <BC direction>
+  template<BC direction>
   forceinline int
   ValNode::incid_match(void){
     if (direction == LBC) {
@@ -1029,7 +1029,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return p;
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   Edge::use(void){
     if (direction == UBC) {
@@ -1039,7 +1039,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   Edge::free(void){
     /// the failure is here, capacity is not increased for value nodes
@@ -1050,14 +1050,14 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   Edge::reset(void){
     this->free<direction>();
     this->unmatch<direction>();
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline bool
   Edge::used(void){
     if (direction == UBC){
@@ -1136,7 +1136,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   Edge::unmatch(void){
     if (direction == UBC) {
@@ -1148,7 +1148,7 @@ namespace Gecode { namespace Int { namespace GCC {
     v->unmatch<direction>();
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   Edge::unmatch(bool node){
     if (direction == UBC) {
@@ -1163,7 +1163,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline void
   Edge::match(void){
     if (direction == UBC) {
@@ -1181,7 +1181,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <BC direction>
+  template<BC direction>
   forceinline bool
   Edge::matched(void){
     if (direction == UBC) {
@@ -1220,7 +1220,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * of all values.
    **/
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   VarValGraph<Card, isView>::VarValGraph(ViewArray<IntView>& xref,
                                          ViewArray<IntView>& yref,
                                          ViewArray<Card>& kref,
@@ -1328,19 +1328,19 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline size_t
   VarValGraph<Card, isView>::allocated(void) const {
     return _allocated + sizeof(VarValGraph<Card, isView>);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline bool
   VarValGraph<Card, isView>::failed(void) const {
     return fail;
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline void
   VarValGraph<Card, isView>::failed(bool b){
     fail = b;
@@ -1348,7 +1348,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   inline bool
   VarValGraph<Card, isView>::min_require(Space& home){
     bool modified = false;
@@ -1440,7 +1440,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return modified;
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   inline bool
   VarValGraph<Card, isView>::sync(Space& home) {
     Region r(home);
@@ -1662,7 +1662,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class Card, bool isView> template <BC direction>
+  template<class Card, bool isView> template<BC direction>
   inline bool
   VarValGraph<Card, isView>::narrow(Space& home) {
     bool modified  = false;
@@ -1818,7 +1818,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return modified;
   }
 
-  template <class Card, bool isView>  template <BC direction>
+  template<class Card, bool isView>  template<BC direction>
   inline bool
   VarValGraph<Card, isView>::maximum_matching(Space& home) {
 
@@ -1892,7 +1892,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return (card_match >= required_size);
   }
 
-  template <class Card, bool isView> template<BC direction>
+  template<class Card, bool isView> template<BC direction>
   inline bool
   VarValGraph<Card, isView>::augmenting_path(Space& home, VVGNode* v) {
     Region r(home);
@@ -2000,7 +2000,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return pathfound;
   }
 
-  template <class Card, bool isView> template<BC direction>
+  template<class Card, bool isView> template<BC direction>
   inline void
   VarValGraph<Card, isView>::free_alternating_paths(Space& home) {
     Region r(home);
@@ -2108,7 +2108,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class Card, bool isView> template <BC direction>
+  template<class Card, bool isView> template<BC direction>
   inline void
   VarValGraph<Card, isView>::dfs(VVGNode* v,
                                  bool inscc[],
@@ -2186,7 +2186,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template <class Card, bool isView> template <BC direction>
+  template<class Card, bool isView> template<BC direction>
   inline void
   VarValGraph<Card, isView>::strongly_connected_components(Space& home) {
     Region r(home);
@@ -2209,19 +2209,19 @@ namespace Gecode { namespace Int { namespace GCC {
                      roots, unfinished, count);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline
   VarValGraph<Card, isView>::~VarValGraph(void){
     heap.rfree(mem);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline void*
   VarValGraph<Card, isView>::operator new(size_t t){
     return heap.ralloc(t);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline void
   VarValGraph<Card, isView>::operator delete(void* p){
     heap.rfree(p);

@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Base-class for support-based iterator
    *
    */
-  template <class Val>
+  template<class Val>
   class SupportIter {
   protected:
     /// Integer coefficient for view
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Support-based iterator for positive view
    *
    */
-  template <class Val>
+  template<class Val>
   class PosSupportIter : public SupportIter<Val> {
   private:
     /// Iterate ranges of integer view in increasing order
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Support-based iterator for negative view
    *
    */
-  template <class Val>
+  template<class Val>
   class NegSupportIter : public SupportIter<Val> {
   private:
     /// Iterate ranges of integer view in decreasing order
@@ -228,19 +228,19 @@ namespace Gecode { namespace Int { namespace Linear {
    * Base-class for support-based iterator
    *
    */
-  template <class Val>
+  template<class Val>
   forceinline void
   SupportIter<Val>::init(Region& r,
                          int a0, const IntView& x0, Val l0, Val u0) {
     a=a0; x=x0; l=l0; u=u0;
     s.init(r,x.size());
   }
-  template <class Val>
+  template<class Val>
   forceinline void
   SupportIter<Val>::support(void) {
     s.support(p);
   }
-  template <class Val>
+  template<class Val>
   forceinline ModEvent
   SupportIter<Val>::tell(Space& home) {
     return s.tell(home,x);
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Support-based iterator for positive view
    *
    */
-  template <class Val>
+  template<class Val>
   forceinline bool
   PosSupportIter<Val>::reset(Val& d) {
     // Way too small, no value can make it big enough
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Linear {
     d += static_cast<Val>(a) * c;
     return true;
   }
-  template <class Val>
+  template<class Val>
   forceinline bool
   PosSupportIter<Val>::adjust(Val& d) {
     // Current value
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Support-based iterator for negative view
    *
    */
-  template <class Val>
+  template<class Val>
   forceinline bool
   NegSupportIter<Val>::reset(Val& d) {
     // Way too small, no value can make it big enough
@@ -332,7 +332,7 @@ namespace Gecode { namespace Int { namespace Linear {
     d += static_cast<Val>(a) * c;
     return true;
   }
-  template <class Val>
+  template<class Val>
   forceinline bool
   NegSupportIter<Val>::adjust(Val& d) {
     // Current value
@@ -366,14 +366,14 @@ namespace Gecode { namespace Int { namespace Linear {
    * The domain consisten equality propagator
    *
    */
-  template <class Val, class View>
+  template<class Val, class View>
   forceinline
   DomEq<Val,View>::DomEq(Space& home,
                          ViewArray<View >& x, ViewArray<View >& y,
                          Val c)
     : Lin<Val,View,View,PC_INT_DOM>(home,x,y,c) {}
 
-  template <class Val, class View>
+  template<class Val, class View>
   ExecStatus
   DomEq<Val,View>::post(Space& home,
                         ViewArray<View>& x, ViewArray<View>& y,
@@ -382,18 +382,18 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_OK;
   }
 
-  template <class Val, class View>
+  template<class Val, class View>
   forceinline
   DomEq<Val,View>::DomEq(Space& home, bool share, DomEq<Val,View>& p)
     : Lin<Val,View,View,PC_INT_DOM>(home,share,p) {}
 
-  template <class Val, class View>
+  template<class Val, class View>
   Actor*
   DomEq<Val,View>::copy(Space& home, bool share) {
     return new (home) DomEq<Val,View>(home,share,*this);
   }
 
-  template <class Val, class View>
+  template<class Val, class View>
   PropCost
   DomEq<Val,View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) != ME_INT_DOM)
@@ -402,7 +402,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return PropCost::crazy(PropCost::HI, x.size()+y.size());
   }
 
-  template <class Val, class View>
+  template<class Val, class View>
   ExecStatus
   DomEq<Val,View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {

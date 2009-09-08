@@ -41,23 +41,23 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * The actual propagator
    *
    */
-  template <class View>
+  template<class View>
   forceinline
   Dom<View>::Dom(Space& home, ViewArray<View>& x)
     : Base<View>(home,x) {}
 
-  template <class View>
+  template<class View>
   forceinline
   Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
     : Base<View>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   Dom<View>::copy(Space& home, bool share) {
     return new (home) Dom<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   Dom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == Int::ME_INT_VAL)
@@ -66,7 +66,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
       return PropCost::quadratic(PropCost::HI, x.size());
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Dom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) == Int::ME_INT_VAL) {
@@ -102,7 +102,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     return path(home);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Dom<View>::post(Space& home, ViewArray<View>& x) {
     int n = x.size();

@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * \brief Combine view with information for value propagation
    *
    */
-  template <class View>
+  template<class View>
   class ValInfo {
   public:
     /// The view
@@ -68,47 +68,47 @@ namespace Gecode { namespace Int { namespace Channel {
     void done(void);
   };
 
-  template <class View>
+  template<class View>
   forceinline void
   ValInfo<View>::init(View x, int) {
     view = x; a = false;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ValInfo<View>::update(Space& home, bool share, ValInfo<View>& vi) {
     view.update(home,share,vi.view); a = vi.a;
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   ValInfo<View>::doval(void) const {
     return !a && view.assigned();
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   ValInfo<View>::dodom(void) const {
     return false;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ValInfo<View>::assigned(void) {
     a = true;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ValInfo<View>::removed(int) {}
 
-  template <class View>
+  template<class View>
   forceinline void
   ValInfo<View>::done(void) {}
 
 
   // Propagate assigned views for x
-  template <class View, class Info>
+  template<class View, class Info>
   ExecStatus
   doprop_val(Space& home, int n, Info* x, Info* y,
              int& n_na, ProcessStack& xa, ProcessStack& ya) {
@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   // Just do a test whether a call to the routine is necessary
-  template <class View, class Info>
+  template<class View, class Info>
   forceinline ExecStatus
   prop_val(Space& home, int n, Info* x, Info* y,
            int& n_na, ProcessStack& xa, ProcessStack& ya) {
@@ -177,23 +177,23 @@ namespace Gecode { namespace Int { namespace Channel {
    * The actual propagator
    *
    */
-  template <class View, bool shared>
+  template<class View, bool shared>
   forceinline
   Val<View,shared>::Val(Space& home, int n, ValInfo<View>* xy)
     : Base<ValInfo<View>,PC_INT_VAL>(home,n,xy) {}
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   forceinline
   Val<View,shared>::Val(Space& home, bool share, Val<View,shared>& p)
     : Base<ValInfo<View>,PC_INT_VAL>(home,share,p) {}
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   Actor*
   Val<View,shared>::copy(Space& home, bool share) {
     return new (home) Val<View,shared>(home,share,*this);
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   ExecStatus
   Val<View,shared>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
@@ -222,7 +222,7 @@ namespace Gecode { namespace Int { namespace Channel {
     return shared ? ES_NOFIX : ES_FIX;
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   ExecStatus
   Val<View,shared>::post(Space& home, int n, ValInfo<View>* xy) {
     assert(n > 0);

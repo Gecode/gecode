@@ -59,38 +59,38 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
-  template <class BV>
+  template<class BV>
   forceinline
   OrTrueSubsumed<BV>::OrTrueSubsumed
   (Space& home, BV b0, BV b1)
     : BoolBinary<BV,BV>(home,b0,b1) {}
 
-  template <class BV>
+  template<class BV>
   forceinline ExecStatus
   OrTrueSubsumed<BV>::post(Space& home, BV b0, BV b1) {
     (void) new (home) OrTrueSubsumed(home,b0,b1);
     return ES_OK;
   }
 
-  template <class BV>
+  template<class BV>
   forceinline
   OrTrueSubsumed<BV>::OrTrueSubsumed
   (Space& home, bool share, OrTrueSubsumed<BV>& p)
     : BoolBinary<BV,BV>(home,share,p) {}
 
-  template <class BV>
+  template<class BV>
   forceinline
   OrTrueSubsumed<BV>::OrTrueSubsumed(Space& home, bool share, Propagator& p,
                                      BV b0, BV b1)
     : BoolBinary<BV,BV>(home,share,p,b0,b1) {}
 
-  template <class BV>
+  template<class BV>
   Actor*
   OrTrueSubsumed<BV>::copy(Space& home, bool share) {
     return new (home) OrTrueSubsumed<BV>(home,share,*this);
   }
 
-  template <class BV>
+  template<class BV>
   ExecStatus
   OrTrueSubsumed<BV>::propagate(Space& home, const ModEventDelta&) {
     return ES_SUBSUMED(*this,home);
@@ -102,29 +102,29 @@ namespace Gecode { namespace Int { namespace Bool {
    *
    */
 
-  template <class BVA, class BVB>
+  template<class BVA, class BVB>
   forceinline
   BinOrTrue<BVA,BVB>::BinOrTrue(Space& home, BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,b0,b1) {}
 
-  template <class BVA, class BVB>
+  template<class BVA, class BVB>
   forceinline
   BinOrTrue<BVA,BVB>::BinOrTrue(Space& home, bool share, BinOrTrue<BVA,BVB>& p)
     : BoolBinary<BVA,BVB>(home,share,p) {}
 
-  template <class BVA, class BVB>
+  template<class BVA, class BVB>
   forceinline
   BinOrTrue<BVA,BVB>::BinOrTrue(Space& home, bool share, Propagator& p,
                               BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
 
-  template <class BVA, class BVB>
+  template<class BVA, class BVB>
   Actor*
   BinOrTrue<BVA,BVB>::copy(Space& home, bool share) {
     return new (home) BinOrTrue<BVA,BVB>(home,share,*this);
   }
 
-  template <class BVA, class BVB>
+  template<class BVA, class BVB>
   inline ExecStatus
   BinOrTrue<BVA,BVB>::post(Space& home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_OK;
   }
 
-  template <class BVA, class BVB>
+  template<class BVA, class BVB>
   ExecStatus
   BinOrTrue<BVA,BVB>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1) \
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Bool {
    *
    */
 
-  template <class BV>
+  template<class BV>
   forceinline
   TerOrTrue<BV>::TerOrTrue(Space& home, BV b0, BV b1, BV b2)
     : BoolBinary<BV,BV>(home,b0,b1), x2(b2) {}
@@ -195,14 +195,14 @@ namespace Gecode { namespace Int { namespace Bool {
     return sizeof(*this);
   }
 
-  template <class BV>
+  template<class BV>
   forceinline
   TerOrTrue<BV>::TerOrTrue(Space& home, bool share, TerOrTrue<BV>& p)
     : BoolBinary<BV,BV>(home,share,p) {
     x2.update(home,share,p.x2);
   }
 
-  template <class BV>
+  template<class BV>
   forceinline
   TerOrTrue<BV>::TerOrTrue(Space& home, bool share, Propagator& p,
                            BV b0, BV b1, BV b2)
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace Bool {
     x2.update(home,share,b2);
   }
 
-  template <class BV>
+  template<class BV>
   Actor*
   TerOrTrue<BV>::copy(Space& home, bool share) {
     assert(x0.none() && x1.none());
@@ -222,14 +222,14 @@ namespace Gecode { namespace Int { namespace Bool {
       return new (home) TerOrTrue<BV>(home,share,*this);
   }
 
-  template <class BV>
+  template<class BV>
   forceinline ExecStatus
   TerOrTrue<BV>::post(Space& home, BV b0, BV b1, BV b2) {
     (void) new (home) TerOrTrue<BV>(home,b0,b1,b2);
     return ES_OK;
   }
 
-  template <class BV>
+  template<class BV>
   ExecStatus
   TerOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1,S2) \
@@ -289,7 +289,7 @@ namespace Gecode { namespace Int { namespace Bool {
    *
    */
 
-  template <class BV>
+  template<class BV>
   forceinline
   QuadOrTrue<BV>::QuadOrTrue(Space& home, BV b0, BV b1, BV b2, BV b3)
     : BoolBinary<BV,BV>(home,b0,b1), x2(b2), x3(b3) {}
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Bool {
     return sizeof(*this);
   }
 
-  template <class BV>
+  template<class BV>
   forceinline
   QuadOrTrue<BV>::QuadOrTrue(Space& home, bool share, QuadOrTrue<BV>& p)
     : BoolBinary<BV,BV>(home,share,p) {
@@ -309,7 +309,7 @@ namespace Gecode { namespace Int { namespace Bool {
     x3.update(home,share,p.x3);
   }
 
-  template <class BV>
+  template<class BV>
   forceinline
   QuadOrTrue<BV>::QuadOrTrue(Space& home, bool share, Propagator& p,
                              BV b0, BV b1, BV b2, BV b3)
@@ -318,7 +318,7 @@ namespace Gecode { namespace Int { namespace Bool {
     x3.update(home,share,b3);
   }
 
-  template <class BV>
+  template<class BV>
   Actor*
   QuadOrTrue<BV>::copy(Space& home, bool share) {
     assert(x0.none() && x1.none());
@@ -334,14 +334,14 @@ namespace Gecode { namespace Int { namespace Bool {
       return new (home) QuadOrTrue<BV>(home,share,*this);
   }
 
-  template <class BV>
+  template<class BV>
   forceinline ExecStatus
   QuadOrTrue<BV>::post(Space& home, BV b0, BV b1, BV b2, BV b3) {
     (void) new (home) QuadOrTrue<BV>(home,b0,b1,b2,b3);
     return ES_OK;
   }
 
-  template <class BV>
+  template<class BV>
   ExecStatus
   QuadOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1,S2,S3)                        \
@@ -468,23 +468,23 @@ namespace Gecode { namespace Int { namespace Bool {
    *
    */
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   forceinline
   Or<BVA,BVB,BVC>::Or(Space& home, BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,b0,b1,b2) {}
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   forceinline
   Or<BVA,BVB,BVC>::Or(Space& home, bool share, Or<BVA,BVB,BVC>& p)
     : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   forceinline
   Or<BVA,BVB,BVC>::Or(Space& home, bool share, Propagator& p,
                         BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,share,p,b0,b1,b2) {}
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   Actor*
   Or<BVA,BVB,BVC>::copy(Space& home, bool share) {
     if (x2.one()) {
@@ -501,7 +501,7 @@ namespace Gecode { namespace Int { namespace Bool {
     }
   }
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   inline ExecStatus
   Or<BVA,BVB,BVC>::post(Space& home, BVA b0, BVB b1, BVC b2) {
     if (b2.zero()) {
@@ -533,7 +533,7 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_OK;
   }
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   ExecStatus
   Or<BVA,BVB,BVC>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1,S2) \

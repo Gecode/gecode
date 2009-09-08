@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Values {
    * \ingroup FuncIterValues
    */
 
-  template <class I, class J>
+  template<class I, class J>
   class Inter  {
   private:
     /// First iterator
@@ -81,11 +81,11 @@ namespace Gecode { namespace Iter { namespace Values {
   };
 
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Inter<I,J>::Inter(void) {}
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Inter<I,J>::next(void) {
     do {
@@ -96,31 +96,31 @@ namespace Gecode { namespace Iter { namespace Values {
     } while (i() && j() && (i.val() != j.val()));
   }
 
-  template <class I, class J>
+  template<class I, class J>
   inline void
   Inter<I,J>::init(I& i0, J& j0) {
     i=i0; j=j0; next();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Inter<I,J>::Inter(I& i0, J& j0) : i(i0), j(j0) {
     next();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Inter<I,J>::operator ++(void) {
     ++i; ++j; next();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline bool
   Inter<I,J>::operator ()(void) const {
     return i() && j();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline int
   Inter<I,J>::val(void) const {
     assert(i.val() == j.val());

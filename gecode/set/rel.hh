@@ -60,7 +60,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * \ingroup FuncSetProp
    */
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   class Subset :
     public MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB> {
   protected:
@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * \ingroup FuncSetProp
    */
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   class NoSubset :
     public MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB> {
   protected:
@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View0, class View1>
+  template<class View0, class View1>
   class ReSubset : public Propagator {
   protected:
     View0 x0;
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * \ingroup FuncSetProp
    */
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   class Eq : public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
   protected:
     using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
@@ -167,7 +167,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View0, class View1>
+  template<class View0, class View1>
   class ReEq : public Propagator {
   protected:
     View0 x0;
@@ -199,7 +199,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * \ingroup FuncSetProp
    */
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   class Distinct :
     public MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL> {
   protected:
@@ -228,7 +228,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View0>
+  template<class View0>
   class DistinctDoit : public UnaryPropagator<View0,PC_SET_ANY> {
   protected:
     using UnaryPropagator<View0,PC_SET_ANY>::x0;

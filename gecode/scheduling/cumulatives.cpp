@@ -90,7 +90,7 @@ namespace Gecode {
       Int::Linear::post(home, t, 2, IRT_EQ, -d);
     }
 
-    template <class Machine, class Duration, class Height>
+    template<class Machine, class Duration, class Height>
     void
     post_cumulatives(Space& home, const Machine& machine,
                      const IntVarArgs& start, const Duration& duration,

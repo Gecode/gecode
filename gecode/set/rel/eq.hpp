@@ -43,30 +43,30 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   Eq<View0,View1>::Eq(Space& home, View0 x, View1 y)
     : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {}
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   Eq<View0,View1>::Eq(Space& home, bool share, Eq& p)
     : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p) {}
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   Eq<View0,View1>::post(Space& home, View0 x, View1 y) {
     (void) new (home) Eq(home,x,y);
     return ES_OK;
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   Actor*
   Eq<View0,View1>::copy(Space& home, bool share) {
     return new (home) Eq(home,share,*this);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   Eq<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
 

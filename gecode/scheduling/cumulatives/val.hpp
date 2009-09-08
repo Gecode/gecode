@@ -46,7 +46,7 @@
 
 namespace Gecode { namespace Scheduling { namespace Cumulatives {
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   forceinline
   Val<ViewM,ViewD,ViewH,View>::Val(Space& home,
                                    const ViewArray<ViewM>& _machine,
@@ -68,7 +68,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     height.subscribe(home,*this,Int::PC_INT_BND);
   }
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>
   ::post(Space& home, const ViewArray<ViewM>& machine,
@@ -81,7 +81,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     return ES_OK;
   }
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   forceinline
   Val<ViewM,ViewD,ViewH,View>::Val(Space& home, bool share,
                                    Val<ViewM,ViewD,ViewH,View>& p)
@@ -94,7 +94,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     limit.update(home, share, p.limit);
   }
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   size_t
   Val<ViewM,ViewD,ViewH,View>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -110,13 +110,13 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     return sizeof(*this);
   }
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   PropCost
   Val<ViewM,ViewD,ViewH,View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, start.size());
   }
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   Actor*
   Val<ViewM,ViewD,ViewH,View>::copy(Space& home, bool share) {
     return new (home) Val<ViewM,ViewD,ViewH,View>(home,share,*this);
@@ -161,7 +161,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     }
   };
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>::prune(Space& home, int low, int up, int r,
                                      int ntask, int sheight,
@@ -259,7 +259,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
   }
 
   namespace {
-    template <class C>
+    template<class C>
     class Less {
     public:
       bool operator ()(const C& lhs, const C& rhs) {
@@ -268,7 +268,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     };
   }
 
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>::propagate(Space& home, const ModEventDelta&) {
     // Check for subsumption

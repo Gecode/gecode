@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    *
    */
 
-  template <class T>
+  template<class T>
   class CombPtrFlag {
   private:
     /// Store pointer and flag
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     bool empty(void) const;
   };
 
-  template <class View> class Edge;
+  template<class View> class Edge;
 
   /**
    * \brief Base-class for nodes (both view and value nodes)
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * with some C++ compilers). Duh!
    *
    */
-  template <class View>
+  template<class View>
   class Node : public BiLink {
   public:
     unsigned int low, min, comp;
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * \brief Value nodes in view-value graph
    *
    */
-  template <class View>
+  template<class View>
   class ValNode : public Node<View> {
   protected:
     /// The value of the node
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * \brief View nodes in view-value graph
    *
    */
-  template <class View>
+  template<class View>
   class ViewNode : public Node<View> {
   protected:
     /// The node's view
@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * \brief Edges in view-value graph
    *
    */
-  template <class View>
+  template<class View>
   class Edge : public BiLink {
   protected:
     /// Next edge in chain of value edges
@@ -217,18 +217,18 @@ namespace Gecode { namespace Int { namespace Distinct {
 namespace Gecode { namespace Int { namespace Distinct {
 
 
-  template <class View>
+  template<class View>
   forceinline
   DomCtrl<View>::ViewValGraph::ViewValGraph(void)
     : view(NULL), val(NULL), count(1) {}
 
-  template <class View>
+  template<class View>
   forceinline bool
   DomCtrl<View>::ViewValGraph::initialized(void) const {
     return view != NULL;
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   DomCtrl<View>::ViewValGraph::match(ViewNodeStack& m, ViewNode<View>* x) {
     count++;
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return false;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   DomCtrl<View>::ViewValGraph::init(Space& home, ViewNode<View>* x) {
     Edge<View>** edge_p = x->val_edges_ref();
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     *edge_p = NULL;
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   DomCtrl<View>::ViewValGraph::init(Space& home, int n, View* x) {
     n_view = n;
@@ -374,7 +374,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   DomCtrl<View>::ViewValGraph::mark(Space& home) {
     Region r(home);
@@ -470,7 +470,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   /// Prunes the values read from a view node
-  template <class View>
+  template<class View>
   class PruneVal {
   protected:
     /// View node
@@ -499,33 +499,33 @@ namespace Gecode { namespace Int { namespace Distinct {
     //@}
   };
 
-  template <class View>
+  template<class View>
   forceinline
   PruneVal<View>::PruneVal(ViewNode<View>* y)
     : x(y), e(y->val_edges()) {
     while ((e != NULL) && e->used(x))
       e = e->next_edge();
   }
-  template <class View>
+  template<class View>
   forceinline bool
   PruneVal<View>::operator ()(void) const {
     return e != NULL;
   }
-  template <class View>
+  template<class View>
   forceinline void
   PruneVal<View>::operator ++(void) {
     do {
       e = e->next_edge();
     } while ((e != NULL) && e->used(x));
   }
-  template <class View>
+  template<class View>
   forceinline int
   PruneVal<View>::val(void) const {
     assert(!e->used(x));
     return e->val(x)->val();
   }
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   DomCtrl<View>::ViewValGraph::tell(Space& home, bool& assigned) {
     assigned = false;
@@ -547,7 +547,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   DomCtrl<View>::ViewValGraph::purge(void) {
     if (count > (UINT_MAX >> 1)) {
@@ -559,7 +559,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
   }
 
-  template <class View>
+  template<class View>
   bool
   DomCtrl<View>::ViewValGraph::sync(Space& home) {
     Region r(home);
@@ -620,30 +620,30 @@ namespace Gecode { namespace Int { namespace Distinct {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   DomCtrl<View>::DomCtrl(void) {}
 
-  template <class View>
+  template<class View>
   forceinline bool
   DomCtrl<View>::available(void) {
     return vvg.initialized();
   }
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   DomCtrl<View>::init(Space& home, int n, View* x) {
     return vvg.init(home,n,x);
   }
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   DomCtrl<View>::sync(Space& home) {
     vvg.purge();
     return vvg.sync(home) ? ES_OK : ES_FAILED;
   }
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   DomCtrl<View>::propagate(Space& home, bool& assigned) {
     vvg.mark(home);
@@ -656,12 +656,12 @@ namespace Gecode { namespace Int { namespace Distinct {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   Dom<View>::Dom(Space& home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_DOM>(home,x) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   Dom<View>::post(Space& home, ViewArray<View>& x) {
     if (x.size() == 2)
@@ -676,12 +676,12 @@ namespace Gecode { namespace Int { namespace Distinct {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   PropCost
   Dom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -690,13 +690,13 @@ namespace Gecode { namespace Int { namespace Distinct {
       return PropCost::quadratic(PropCost::HI, x.size());
   }
 
-  template <class View>
+  template<class View>
   Actor*
   Dom<View>::copy(Space& home, bool share) {
     return new (home) Dom<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Dom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) == ME_INT_VAL) {

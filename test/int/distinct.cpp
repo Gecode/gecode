@@ -50,7 +50,7 @@ namespace Test { namespace Int {
       */
      //@{
      /// Simple test for distinct constraint
-     template <bool useCount>
+     template<bool useCount>
      class Distinct : public Test {
      private:
        Gecode::IntSet d;

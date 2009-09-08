@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I>
+  template<class I>
   class Cache {
   private:
     /// Check that \a I is a range iterator;
@@ -94,11 +94,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template <class I>
+  template<class I>
   forceinline
   Cache<I>::Cache(void) {}
 
-  template <class I>
+  template<class I>
   inline void
   Cache<I>::init(I& i) {
     Support::DynamicArray<Range,Heap> d(heap);
@@ -113,40 +113,40 @@ namespace Gecode { namespace Iter { namespace Ranges {
     c = 0;
   }
 
-  template <class I>
+  template<class I>
   inline
   Cache<I>::Cache(I& i) {
     init(i);
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   Cache<I>::operator ++(void) {
     c++;
   }
-  template <class I>
+  template<class I>
   forceinline bool
   Cache<I>::operator ()(void) const {
     return c < r.size();
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   Cache<I>::reset(void) {
     c = 0;
   }
 
-  template <class I>
+  template<class I>
   forceinline int
   Cache<I>::min(void) const {
     return r[c].min;
   }
-  template <class I>
+  template<class I>
   forceinline int
   Cache<I>::max(void) const {
     return r[c].max;
   }
-  template <class I>
+  template<class I>
   forceinline unsigned int
   Cache<I>::width(void) const {
     return static_cast<unsigned int>(r[c].max-r[c].min+1);

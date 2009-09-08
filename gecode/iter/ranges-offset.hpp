@@ -42,7 +42,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I>
+  template<class I>
   class Offset {
   private:
     /// Check that \a I is a range iterator;
@@ -83,42 +83,42 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template <class I>
+  template<class I>
   forceinline
   Offset<I>::Offset(void) {}
 
-  template <class I>
+  template<class I>
   inline void
   Offset<I>::init(I& i0, int c0) {
     i = i0; c = c0;
   }
 
-  template <class I>
+  template<class I>
   inline
   Offset<I>::Offset(I& i0, int c0) : i(i0), c(c0) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   Offset<I>::operator ++(void) {
     ++i;
   }
-  template <class I>
+  template<class I>
   forceinline bool
   Offset<I>::operator ()(void) const {
     return i();
   }
 
-  template <class I>
+  template<class I>
   forceinline int
   Offset<I>::min(void) const {
     return i.min()+c;
   }
-  template <class I>
+  template<class I>
   forceinline int
   Offset<I>::max(void) const {
     return i.max()+c;
   }
-  template <class I>
+  template<class I>
   forceinline unsigned int
   Offset<I>::width(void) const {
     return i.width();

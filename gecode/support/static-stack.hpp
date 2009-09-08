@@ -42,7 +42,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T, class A>
+  template<class T, class A>
   class StaticStack {
   private:
     /// Allocator
@@ -86,57 +86,57 @@ namespace Gecode { namespace Support {
     const StaticStack& operator =(const StaticStack&) { return *this; }
   };
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   StaticStack<T,A>::StaticStack(A& a0, int n0)
     : a(a0), n(n0), tos(0), stack(a.template alloc<T>(n)) {}
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   StaticStack<T,A>::~StaticStack(void) {
     a.free(stack,n);
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline bool
   StaticStack<T,A>::empty(void) const {
     return tos==0;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline int
   StaticStack<T,A>::entries(void) const {
     return tos;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline void
   StaticStack<T,A>::reset(void) {
     tos = 0;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T
   StaticStack<T,A>::pop(void) {
     assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
     return stack[--tos];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T&
   StaticStack<T,A>::top(void) const {
     assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
     return stack[tos-1];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T&
   StaticStack<T,A>::last(void) const {
     assert((tos >= 0) && (tos < static_cast<unsigned int>(n)));
     return stack[tos];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline void
   StaticStack<T,A>::push(const T& x) {
     assert(tos < static_cast<unsigned int>(n));

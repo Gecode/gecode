@@ -133,7 +133,7 @@ namespace Gecode {
     };
     
     /// An inspector for printing simple text output
-    template <class S>
+    template<class S>
     class Print : public TextInspector {
     public:
       /// Constructor

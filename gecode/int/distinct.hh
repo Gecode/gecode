@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class Val : public NaryPropagator<View,PC_INT_VAL> {
   protected:
     using NaryPropagator<View,PC_INT_VAL>::x;
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * bounds or domain propagation to protect from pathological cases
    * which can be handled more efficiently with bounds propagation.
    */
-  template <class View, bool complete>
+  template<class View, bool complete>
   ExecStatus prop_val(Space& home, ViewArray<View>&);
 
 
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class Bnd : public Propagator {
   protected:
     /// Views on which to perform bounds-propagation
@@ -161,11 +161,11 @@ namespace Gecode { namespace Int { namespace Distinct {
    * both bounds consistent and domain consistent distinct
    * propagators.
    */
-  template <class View>
+  template<class View>
   ExecStatus prop_bnd(Space& home, ViewArray<View>& x, int m);
 
-  template <class View> class ViewNode;
-  template <class View> class ValNode;
+  template<class View> class ViewNode;
+  template<class View> class ValNode;
 
   /**
    * \brief Propagation controller for domain consistent distinct
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class DomCtrl {
   protected:
     /// View-value graph for propagation
@@ -246,7 +246,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class Dom : public NaryPropagator<View,PC_INT_DOM> {
   protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
@@ -278,7 +278,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Requires \code #include <gecode/int/distinct.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class TerDom : public TernaryPropagator<View,PC_INT_DOM> {
   protected:
     using TernaryPropagator<View,PC_INT_DOM>::x0;

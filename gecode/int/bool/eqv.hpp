@@ -37,17 +37,17 @@
 
 namespace Gecode { namespace Int { namespace Bool {
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   forceinline
   Eqv<BVA,BVB,BVC>::Eqv(Space& home, BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,b0,b1,b2) {}
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   forceinline
   Eqv<BVA,BVB,BVC>::Eqv(Space& home, bool share, Eqv<BVA,BVB,BVC>& p)
     : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   inline ExecStatus
   Eqv<BVA,BVB,BVC>::post(Space& home, BVA b0, BVB b1, BVC b2){
     switch (bool_test(b0,b1)) {
@@ -80,13 +80,13 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_OK;
   }
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   Actor*
   Eqv<BVA,BVB,BVC>::copy(Space& home, bool share) {
     return new (home) Eqv<BVA,BVB,BVC>(home,share,*this);
   }
 
-  template <class BVA, class BVB, class BVC>
+  template<class BVA, class BVB, class BVC>
   ExecStatus
   Eqv<BVA,BVB,BVC>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0,S1,S2) \

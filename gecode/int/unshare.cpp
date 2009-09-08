@@ -104,7 +104,7 @@ namespace Gecode {
     }
 
     /// Replace unassigned shared variables by fresh, yet equal variables
-    template <class Var>
+    template<class Var>
     forceinline ExecStatus
     unshare(Space& home, VarArgArray<Var>& x, IntConLevel icl) {
       int n=x.size();

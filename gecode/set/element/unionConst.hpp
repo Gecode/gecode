@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace Set { namespace Element {
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   forceinline
   ElementUnionConst<SView,RView>::
   ElementUnionConst(Space& home, SView y0,
@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace Element {
     x1.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   forceinline
   ElementUnionConst<SView,RView>::
   ElementUnionConst(Space& home, bool share,
@@ -62,13 +62,13 @@ namespace Gecode { namespace Set { namespace Element {
     iv.update(home,share,p.iv);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   PropCost
   ElementUnionConst<SView,RView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI, iv.size()+2);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   size_t
   ElementUnionConst<SView,RView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -81,7 +81,7 @@ namespace Gecode { namespace Set { namespace Element {
     return sizeof(*this);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   ExecStatus
   ElementUnionConst<SView,RView>::
   post(Space& home, SView x0, SharedArray<IntSet>& xs,
@@ -96,13 +96,13 @@ namespace Gecode { namespace Set { namespace Element {
     return ES_OK;
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   Actor*
   ElementUnionConst<SView,RView>::copy(Space& home, bool share) {
     return new (home) ElementUnionConst<SView,RView>(home,share,*this);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   ExecStatus
   ElementUnionConst<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);

@@ -55,7 +55,7 @@ namespace Gecode {
    * subscriptions are created.
    *
    */
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   class UnaryPropagator : public Propagator {
   protected:
     /// Single view
@@ -83,7 +83,7 @@ namespace Gecode {
    * subscriptions are created.
    *
    */
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   class BinaryPropagator : public Propagator {
   protected:
     /// Two views
@@ -111,7 +111,7 @@ namespace Gecode {
    * subscriptions are created.
    *
    */
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   class TernaryPropagator : public Propagator {
   protected:
     /// Three views
@@ -139,7 +139,7 @@ namespace Gecode {
    * subscriptions are created.
    *
    */
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   class NaryPropagator : public Propagator {
   protected:
     /// Array of views
@@ -168,7 +168,7 @@ namespace Gecode {
    * subscriptions are created.
    *
    */
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   class NaryOnePropagator : public Propagator {
   protected:
     /// Array of views
@@ -199,7 +199,7 @@ namespace Gecode {
    * PC_GEN_NONE, no subscriptions are created.
    *
    */
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   class MixBinaryPropagator : public Propagator {
   protected:
     /// View of type \a View0
@@ -230,7 +230,7 @@ namespace Gecode {
    * PC_GEN_NONE, no subscriptions are created.
    *
    */
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   class MixTernaryPropagator : public Propagator {
   protected:
@@ -264,7 +264,7 @@ namespace Gecode {
    * PC_GEN_NONE, no subscriptions are created.
    *
    */
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   class MixNaryOnePropagator : public Propagator {
   protected:
     /// Array of views
@@ -292,14 +292,14 @@ namespace Gecode {
    *
    */
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   UnaryPropagator<View,pc>::UnaryPropagator(Space& home, View y0)
     : Propagator(home), x0(y0) {
     if (pc != PC_GEN_NONE)
       x0.subscribe(home,*this,pc);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   UnaryPropagator<View,pc>::UnaryPropagator
   (Space& home, bool share, UnaryPropagator<View,pc>& p)
@@ -307,7 +307,7 @@ namespace Gecode {
     x0.update(home,share,p.x0);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   UnaryPropagator<View,pc>::UnaryPropagator
   (Space& home, bool share, Propagator& p, View y0)
@@ -315,13 +315,13 @@ namespace Gecode {
     x0.update(home,share,y0);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   PropCost
   UnaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::LO);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline size_t
   UnaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
@@ -336,7 +336,7 @@ namespace Gecode {
    *
    */
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   BinaryPropagator<View,pc>::BinaryPropagator(Space& home, View y0, View y1)
     : Propagator(home), x0(y0), x1(y1) {
     if (pc != PC_GEN_NONE) {
@@ -345,7 +345,7 @@ namespace Gecode {
     }
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   BinaryPropagator<View,pc>::BinaryPropagator
   (Space& home, bool share, BinaryPropagator<View,pc>& p)
@@ -354,7 +354,7 @@ namespace Gecode {
     x1.update(home,share,p.x1);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   BinaryPropagator<View,pc>::BinaryPropagator
   (Space& home, bool share, Propagator& p, View y0, View y1)
@@ -363,13 +363,13 @@ namespace Gecode {
     x1.update(home,share,y1);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   PropCost
   BinaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline size_t
   BinaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
@@ -385,7 +385,7 @@ namespace Gecode {
    *
    */
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   TernaryPropagator<View,pc>::TernaryPropagator
   (Space& home, View y0, View y1, View y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
@@ -396,7 +396,7 @@ namespace Gecode {
     }
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   TernaryPropagator<View,pc>::TernaryPropagator
   (Space& home, bool share, TernaryPropagator<View,pc>& p)
@@ -406,7 +406,7 @@ namespace Gecode {
     x2.update(home,share,p.x2);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   TernaryPropagator<View,pc>::TernaryPropagator
   (Space& home, bool share, Propagator& p, View y0, View y1, View y2)
@@ -416,13 +416,13 @@ namespace Gecode {
     x2.update(home,share,y2);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   PropCost
   TernaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);;
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline size_t
   TernaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
@@ -439,7 +439,7 @@ namespace Gecode {
    *
    */
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   NaryPropagator<View,pc>::NaryPropagator
   (Space& home, ViewArray<View>& y)
     : Propagator(home), x(y) {
@@ -447,7 +447,7 @@ namespace Gecode {
       x.subscribe(home,*this,pc);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   NaryPropagator<View,pc>::NaryPropagator
   (Space& home, bool share, NaryPropagator<View,pc>& p)
@@ -455,7 +455,7 @@ namespace Gecode {
     x.update(home,share,p.x);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   NaryPropagator<View,pc>::NaryPropagator
   (Space& home, bool share, Propagator& p, ViewArray<View>& x0)
@@ -463,13 +463,13 @@ namespace Gecode {
     x.update(home,share,x0);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   PropCost
   NaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size());
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline size_t
   NaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
@@ -483,7 +483,7 @@ namespace Gecode {
    *
    */
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   NaryOnePropagator<View,pc>::NaryOnePropagator
   (Space& home, ViewArray<View>& x0, View y0)
     : Propagator(home), x(x0), y(y0) {
@@ -493,7 +493,7 @@ namespace Gecode {
     }
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   NaryOnePropagator<View,pc>::NaryOnePropagator
   (Space& home, bool share, NaryOnePropagator<View,pc>& p)
@@ -502,7 +502,7 @@ namespace Gecode {
     y.update(home,share,p.y);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline
   NaryOnePropagator<View,pc>::NaryOnePropagator
   (Space& home, bool share, Propagator& p, ViewArray<View>& x0, View y0)
@@ -511,13 +511,13 @@ namespace Gecode {
     y.update(home,share,y0);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   PropCost
   NaryOnePropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size()+1);
   }
 
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   forceinline size_t
   NaryOnePropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
@@ -533,7 +533,7 @@ namespace Gecode {
    *
    */
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
   (Space& home, View0 y0, View1 y1)
     : Propagator(home), x0(y0), x1(y1) {
@@ -543,7 +543,7 @@ namespace Gecode {
       x1.subscribe(home,*this,pc1);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
   (Space& home, bool share, MixBinaryPropagator<View0,pc0,View1,pc1>& p)
@@ -552,7 +552,7 @@ namespace Gecode {
     x1.update(home,share,p.x1);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
   (Space& home, bool share, Propagator& p, View0 y0, View1 y1)
@@ -561,14 +561,14 @@ namespace Gecode {
     x1.update(home,share,y1);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
   MixBinaryPropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                  const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline size_t
   MixBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
@@ -584,7 +584,7 @@ namespace Gecode {
    *
    */
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   MixTernaryPropagator(Space& home, View0 y0, View1 y1, View2 y2)
@@ -597,7 +597,7 @@ namespace Gecode {
       x2.subscribe(home,*this,pc2);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
@@ -610,7 +610,7 @@ namespace Gecode {
     x2.update(home,share,p.x2);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::MixTernaryPropagator
@@ -621,7 +621,7 @@ namespace Gecode {
     x2.update(home,share,y2);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   PropCost
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
@@ -629,7 +629,7 @@ namespace Gecode {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline size_t
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::dispose(Space& home) {
@@ -648,7 +648,7 @@ namespace Gecode {
    *
    */
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
   (Space& home, ViewArray<View0>& x0, View1 y0)
     : Propagator(home), x(x0), y(y0) {
@@ -658,7 +658,7 @@ namespace Gecode {
       y.subscribe(home,*this,pc1);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
   (Space& home, bool share, MixNaryOnePropagator<View0,pc0,View1,pc1>& p)
@@ -667,7 +667,7 @@ namespace Gecode {
     y.update(home,share,p.y);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
   (Space& home, bool share, Propagator& p, ViewArray<View0>& x0, View1 y0)
@@ -676,14 +676,14 @@ namespace Gecode {
     y.update(home,share,y0);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
   MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                   const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size()+1);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline size_t
   MixNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)

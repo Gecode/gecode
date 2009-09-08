@@ -54,7 +54,7 @@ namespace Gecode {
    * Stores single view of type \a View with propagation condition \a pcs
    * and an integer variable with propagation condition \a pci.
    */
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   class IntSetPropagator : public Propagator {
   protected:
     View x0;
@@ -76,7 +76,7 @@ namespace Gecode {
    * Stores a single view of type \a View with propagation condition \a pcs
    * and an integer variable with propagation condition \a pci.
    */
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   class IntSetRePropagator : public Propagator {
   protected:
     View x0;
@@ -96,7 +96,7 @@ namespace Gecode {
 
   //@}
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   IntSetPropagator<View,pcs,pci>::IntSetPropagator
   (Space& home, View y0, Gecode::Int::IntView y1)
     : Propagator(home), x0(y0), x1(y1) {
@@ -104,7 +104,7 @@ namespace Gecode {
     x1.subscribe(home,*this,pci);
   }
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   forceinline
   IntSetPropagator<View,pcs,pci>::IntSetPropagator
   (Space& home, bool share, IntSetPropagator<View,pcs,pci>& p)
@@ -113,14 +113,14 @@ namespace Gecode {
     x1.update(home,share,p.x1);
   }
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   PropCost
   IntSetPropagator<View,pcs,pci>::cost(const Space&,
                                        const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
   }
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   size_t
   IntSetPropagator<View,pcs,pci>::dispose(Space& home) {
     if (!home.failed()) {
@@ -131,7 +131,7 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   IntSetRePropagator<View,pcs,pci>::IntSetRePropagator
   (Space& home, View y0, Gecode::Int::IntView y1, Gecode::Int::BoolView b2)
     : Propagator(home), x0(y0), x1(y1), b(b2) {
@@ -140,7 +140,7 @@ namespace Gecode {
     b.subscribe(home,*this,Gecode::Int::PC_INT_VAL);
   }
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   forceinline
   IntSetRePropagator<View,pcs,pci>::IntSetRePropagator
   (Space& home, bool share, IntSetRePropagator<View,pcs,pci>& p)
@@ -150,14 +150,14 @@ namespace Gecode {
     b.update(home,share,p.b);
   }
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   PropCost
   IntSetRePropagator<View,pcs,pci>
   ::cost(const Space&, const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template <class View, PropCond pcs, PropCond pci>
+  template<class View, PropCond pcs, PropCond pci>
   size_t
   IntSetRePropagator<View,pcs,pci>::dispose(Space& home) {
     if (!home.failed()) {

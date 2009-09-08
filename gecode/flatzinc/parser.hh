@@ -127,7 +127,7 @@ namespace Gecode { namespace FlatZinc {
       _output.push_back(std::pair<std::string,AST::Node*>(x,n));
     }
   
-    template <class A, class B>
+    template<class A, class B>
     class OutputLess {
     public:
       bool operator()(std::pair<A,B> x, std::pair<A,B> y) { return x.first < y.first; }

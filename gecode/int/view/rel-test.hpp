@@ -42,14 +42,14 @@ namespace Gecode { namespace Int {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_eq_bnd(View x, View y) {
     if ((x.min() > y.max()) || (x.max() < y.min())) return RT_FALSE;
     return (x.assigned() && y.assigned()) ? RT_TRUE : RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   RelTest
   rtest_eq_dom_check(View x, View y) {
     ViewRanges<View> rx(x), ry(y);
@@ -63,7 +63,7 @@ namespace Gecode { namespace Int {
     return RT_FALSE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_eq_dom(View x, View y) {
     RelTest rt = rtest_eq_bnd(x,y);
@@ -72,14 +72,14 @@ namespace Gecode { namespace Int {
   }
 
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_eq_bnd(View x, int n) {
     if ((n > x.max()) || (n < x.min())) return RT_FALSE;
     return x.assigned() ? RT_TRUE : RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   RelTest
   rtest_eq_dom_check(View x, int n) {
     ViewRanges<View> rx(x);
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int {
     return (n >= rx.min()) ? RT_MAYBE : RT_FALSE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_eq_dom(View x, int n) {
     RelTest rt = rtest_eq_bnd(x,n);
@@ -102,14 +102,14 @@ namespace Gecode { namespace Int {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_nq_bnd(View x, View y) {
     if ((x.min() > y.max()) || (x.max() < y.min())) return RT_TRUE;
     return (x.assigned() && y.assigned()) ? RT_FALSE : RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_nq_dom_check(View x, View y) {
     ViewRanges<View> rx(x), ry(y);
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int {
     return RT_TRUE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_nq_dom(View x, View y) {
     RelTest rt = rtest_nq_bnd(x,y);
@@ -132,14 +132,14 @@ namespace Gecode { namespace Int {
   }
 
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_nq_bnd(View x, int n) {
     if ((n > x.max()) || (n < x.min())) return RT_TRUE;
     return (x.assigned()) ? RT_FALSE : RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_nq_dom_check(View x, int n) {
     ViewRanges<View> rx(x);
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int {
     return (n >= rx.min()) ? RT_MAYBE : RT_TRUE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_nq_dom(View x, int n) {
     RelTest rt = rtest_nq_bnd(x,n);
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_lq(View x, int n) {
     if (x.max() <= n) return RT_TRUE;
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int {
     return RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_lq(View x, View y) {
     if (x.max() <= y.min()) return RT_TRUE;
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int {
     return RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_le(View x, int n) {
     if (x.max() <  n) return RT_TRUE;
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int {
     return RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_le(View x, View y) {
     if (x.max() <  y.min()) return RT_TRUE;
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int {
     return RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_gq(View x, int n) {
     if (x.max() <  n) return RT_FALSE;
@@ -201,7 +201,7 @@ namespace Gecode { namespace Int {
     return RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_gq(View x, View y) {
     if (x.max() <  y.min()) return RT_FALSE;
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int {
     return RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_gr(View x, int n) {
     if (x.max() <= n) return RT_FALSE;
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int {
     return RT_MAYBE;
   }
 
-  template <class View>
+  template<class View>
   forceinline RelTest
   rtest_gr(View x, View y) {
     if (x.max() <= y.min()) return RT_FALSE;

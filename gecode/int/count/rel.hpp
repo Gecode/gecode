@@ -44,32 +44,32 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
-  template <class VX>
+  template<class VX>
   forceinline RelTest
   holds(VX x, ConstIntView y) {
     return rtest_eq_dom(x,y.val());
   }
-  template <class VX>
+  template<class VX>
   forceinline RelTest
   holds(VX x, ZeroIntView) {
     return rtest_eq_dom(x,0);
   }
-  template <class VX>
+  template<class VX>
   forceinline RelTest
   holds(VX x, VX y) {
     return rtest_eq_dom(x,y);
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_true(Space& home, VX x, ConstIntView y) {
     return me_failed(x.eq(home,y.val()));
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_true(Space& home, VX x, ZeroIntView) {
     return me_failed(x.eq(home,0));
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_true(Space& home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Count {
         return true;
     return false;
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_true(Space& home, ViewArray<VX>& x, ZeroIntView) {
     for (int i = x.size(); i--; )
@@ -85,17 +85,17 @@ namespace Gecode { namespace Int { namespace Count {
         return true;
     return false;
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_false(Space& home, VX x, ConstIntView y) {
     return me_failed(x.nq(home,y.val()));
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_false(Space& home, VX x, ZeroIntView) {
     return me_failed(x.nq(home,0));
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_false(Space& home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Count {
         return true;
     return false;;
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_false(Space& home, ViewArray<VX>& x, ZeroIntView) {
     for (int i = x.size(); i--; )
@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace Count {
         return true;
     return false;;
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_true(Space& home, ViewArray<VX>& x, VX y) {
     ViewArray<VX> z(home,x.size()+1);
@@ -120,12 +120,12 @@ namespace Gecode { namespace Int { namespace Count {
       z[i] = x[i];
     return Rel::NaryEqDom<VX>::post(home,z) == ES_FAILED;
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_true(Space& home, VX x, VX y) {
     return Rel::EqDom<VX,VX>::post(home,x,y) == ES_FAILED;
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_false(Space& home, ViewArray<VX>& x, VX y) {
     for (int i = x.size(); i--; )
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Count {
         return true;
     return false;
   }
-  template <class VX>
+  template<class VX>
   forceinline bool
   post_false(Space& home, VX x, VX y) {
     return Rel::Nq<VX>::post(home,x,y) == ES_FAILED;

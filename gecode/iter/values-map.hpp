@@ -45,7 +45,7 @@ namespace Gecode { namespace Iter { namespace Values {
    *
    * \ingroup FuncIterValues
    */
-  template <class I, class M, bool strict=false>
+  template<class I, class M, bool strict=false>
   class Map {
   private:
     /// Check that \a I is a value iterator;
@@ -86,31 +86,31 @@ namespace Gecode { namespace Iter { namespace Values {
   };
 
 
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline
   Map<I,M,strict>::Map(void) {}
 
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline
   Map<I,M,strict>::Map(I& i0) : i(i0) {}
 
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline
   Map<I,M,strict>::Map(I& i0, const M& m0) : i(i0), m(m0) {}
 
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline void
   Map<I,M,strict>::init(I& i0) {
     i=i0;
   }
 
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline void
   Map<I,M,strict>::init(I& i0, const M& m0) {
     i=i0; m=m0;
   }
 
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline void
   Map<I,M,strict>::operator ++(void) {
     if (strict) {
@@ -122,13 +122,13 @@ namespace Gecode { namespace Iter { namespace Values {
       } while (i() && (n == m.val(i.val())));
     }
   }
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline bool
   Map<I,M,strict>::operator ()(void) const {
     return i();
   }
 
-  template <class I, class M, bool strict>
+  template<class I, class M, bool strict>
   forceinline int
   Map<I,M,strict>::val(void) const {
     return m.val(i.val());

@@ -41,7 +41,7 @@ namespace Gecode {
    * \brief Base-class for variables
    * \ingroup TaskVarView
    */
-  template <class VarImp>
+  template<class VarImp>
   class VarBase {
   protected:
     /// Pointer to variable implementation
@@ -66,10 +66,10 @@ namespace Gecode {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  template <class VarImp>
+  template<class VarImp>
   bool same(const VarBase<VarImp>& x, const VarBase<VarImp>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  template <class VarImp>
+  template<class VarImp>
   bool before(const VarBase<VarImp>& x, const VarBase<VarImp>& y);
   //@}
 
@@ -79,32 +79,32 @@ namespace Gecode {
    * Variable: contains a pointer to a variable implementation
    *
    */
-  template <class VarImp>
+  template<class VarImp>
   forceinline
   VarBase<VarImp>::VarBase(void)
     : varimp(NULL) {}
-  template <class VarImp>
+  template<class VarImp>
   forceinline
   VarBase<VarImp>::VarBase(VarImp* x)
     : varimp(x) {}
-  template <class VarImp>
+  template<class VarImp>
   forceinline VarImp*
   VarBase<VarImp>::var(void) const {
     return varimp;
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline unsigned int
   VarBase<VarImp>::degree(void) const {
     return varimp->degree();
   }
 
 
-  template <class VarImp>
+  template<class VarImp>
   forceinline bool
   same(const VarBase<VarImp>& x, const VarBase<VarImp>& y) {
     return x.var() == y.var();
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline bool
   before(const VarBase<VarImp>& x, const VarBase<VarImp>& y) {
     return x.var() < y.var();

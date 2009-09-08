@@ -184,7 +184,7 @@ namespace Gecode {
      */
     IntSet(const int r[][2], int n);
     /// Initialize with range iterator \a i
-    template <class I>
+    template<class I>
     explicit IntSet(I& i);
 #ifdef __INTEL_COMPILER
     /// Initialize with integer set \a s

@@ -45,16 +45,16 @@ namespace Gecode {
 
   namespace Set {
 
-    template <class View>
+    template<class View>
     forceinline
     ComplementView<View>::ComplementView(void) {}
 
-    template <class View>
+    template<class View>
     forceinline
     ComplementView<View>::ComplementView(View& s0)
       : DerivedViewBase<View>(s0) {}
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::me_negateset(ModEvent me) {
       switch(me) {
@@ -66,7 +66,7 @@ namespace Gecode {
       }
     }
 
-    template <class View>
+    template<class View>
     forceinline PropCond
     ComplementView<View>::pc_negateset(PropCond pc) {
       switch(pc) {
@@ -76,49 +76,49 @@ namespace Gecode {
       }
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     ComplementView<View>::assigned(void) const { return view.assigned(); }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     ComplementView<View>::glbSize(void) const {
       return Limits::card - view.lubSize();
     }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     ComplementView<View>::lubSize(void) const {
       return Limits::card - view.glbSize();
     }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     ComplementView<View>::unknownSize(void) const {
       return lubSize() - glbSize();
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     ComplementView<View>::contains(int n) const { return view.notContains(n); }
 
-    template <class View>
+    template<class View>
     forceinline bool
     ComplementView<View>::notContains(int n) const { return view.contains(n); }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     ComplementView<View>::cardMin() const {
       return Limits::card - view.cardMax();
     }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     ComplementView<View>::cardMax() const {
       return Limits::card - view.cardMin();
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::lubMin() const {
       GlbRanges<View> lb(view);
@@ -130,7 +130,7 @@ namespace Gecode {
       }
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::lubMax() const {
       GlbRanges<View> lb(view);
@@ -143,7 +143,7 @@ namespace Gecode {
       }
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::glbMin() const {
       LubRanges<View> ub(view);
@@ -155,7 +155,7 @@ namespace Gecode {
       }
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::glbMax() const {
       LubRanges<View> ub(view);
@@ -168,7 +168,7 @@ namespace Gecode {
       }
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::cardMin(Space& home, unsigned int c) {
       if (c < Limits::card)
@@ -176,7 +176,7 @@ namespace Gecode {
       return ME_SET_NONE;
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::cardMax(Space& home, unsigned int c) {
       if (c < Limits::card)
@@ -184,19 +184,19 @@ namespace Gecode {
       return ME_SET_NONE;
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::include(Space& home, int c) {
       return me_negateset((view.exclude(home, c)));
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::exclude(Space& home, int c) {
       return me_negateset((view.include(home, c)));
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::intersect(Space& home, int c) {
       Iter::Ranges::Singleton si(c,c);
@@ -204,7 +204,7 @@ namespace Gecode {
       return me_negateset((view.includeI(home, csi)));
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::intersect(Space& home, int i, int j) {
       Iter::Ranges::Singleton si(i,j);
@@ -212,80 +212,80 @@ namespace Gecode {
       return me_negateset((view.includeI(home, csi)));
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::include(Space& home, int j, int k) {
       return me_negateset(view.exclude(home,j,k));
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::exclude(Space& home, int j, int k) {
       return me_negateset(view.include(home,j,k));
     }
 
-    template <class View>
-    template <class I> ModEvent
+    template<class View>
+    template<class I> ModEvent
     ComplementView<View>::excludeI(Space& home,I& iter) {
       return me_negateset(view.includeI(home,iter));
     }
 
-    template <class View>
-    template <class I> ModEvent
+    template<class View>
+    template<class I> ModEvent
     ComplementView<View>::includeI(Space& home,I& iter) {
       return me_negateset(view.excludeI(home,iter));
     }
 
-    template <class View>
-    template <class I> ModEvent
+    template<class View>
+    template<class I> ModEvent
     ComplementView<View>::intersectI(Space& home,I& iter) {
       RangesCompl<I> c(iter);
       return me_negateset(view.includeI(home,c));
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     ComplementView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                     bool process) {
       view.subscribe(home,p, pc_negateset(pc),process);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     ComplementView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
       view.cancel(home,p, pc_negateset(pc));
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     ComplementView<View>::subscribe(Space& home, Advisor& a) {
       view.subscribe(home,a);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     ComplementView<View>::cancel(Space& home, Advisor& a) {
       view.cancel(home,a);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     ComplementView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
       return View::schedule(home,p,me_negateset(me));
     }
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::me(const ModEventDelta& med) {
       return me_negateset(View::me(med));
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEventDelta
     ComplementView<View>::med(ModEvent me) {
       return me_negateset(View::med(me));
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     ComplementView<View>::update(Space& home, bool share,
                                  ComplementView& y) {
@@ -298,43 +298,43 @@ namespace Gecode {
      *
      */
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     ComplementView<View>::modevent(const Delta& d) {
       return me_negateset(View::modevent(d));
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::glbMin(const Delta& d) const {
       return view.lubMin(d);
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::glbMax(const Delta& d) const {
       return view.lubMax(d);
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     ComplementView<View>::glbAny(const Delta& d) const {
       return view.lubAny(d);
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::lubMin(const Delta& d) const {
       return view.glbMin(d);
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     ComplementView<View>::lubMax(const Delta& d) const {
       return view.glbMax(d);
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     ComplementView<View>::lubAny(const Delta& d) const {
       return view.glbAny(d);
@@ -345,7 +345,7 @@ namespace Gecode {
      * \brief %Range iterator for least upper bound of complement set views
      * \ingroup TaskActorSetView
      */
-    template <class View>
+    template<class View>
     class LubRanges<ComplementView<View> > {
     private:
       GlbRanges<View> lb;
@@ -379,35 +379,35 @@ namespace Gecode {
       //@}
     };
 
-    template <class View>
+    template<class View>
     forceinline
     LubRanges<ComplementView<View> >::LubRanges(const ComplementView<View>& s)
       : lb(s.base()), lbc(lb) {}
 
-    template <class View>
+    template<class View>
     forceinline void
     LubRanges<ComplementView<View> >::init(const ComplementView<View>& s) {
       lb.init(s.base());
       lbc.init(lb);
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     LubRanges<ComplementView<View> >::operator ()(void) const { return lbc(); }
 
-    template <class View>
+    template<class View>
     forceinline void
     LubRanges<ComplementView<View> >::operator ++(void) { return ++lbc; }
 
-    template <class View>
+    template<class View>
     forceinline int
     LubRanges<ComplementView<View> >::min(void) const { return lbc.min(); }
 
-    template <class View>
+    template<class View>
     forceinline int
     LubRanges<ComplementView<View> >::max(void) const { return lbc.max(); }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     LubRanges<ComplementView<View> >::width(void) const { return lbc.width(); }
 
@@ -419,7 +419,7 @@ namespace Gecode {
      *
      * \ingroup TaskActorSet
      */
-    template <class View>
+    template<class View>
     class LubRanges<ComplementView<ComplementView<View> > > :
       public LubRanges<View> {
     public:
@@ -434,13 +434,13 @@ namespace Gecode {
       //@}
     };
 
-    template <class View>
+    template<class View>
     forceinline
     LubRanges<ComplementView<ComplementView<View> > >::
     LubRanges(const ComplementView<ComplementView<View> >& x) :
       LubRanges<View>(x) {}
 
-    template <class View>
+    template<class View>
     forceinline void
     LubRanges<ComplementView<ComplementView<View> > >::
     init(const ComplementView<ComplementView<View> >& x) {
@@ -451,7 +451,7 @@ namespace Gecode {
      * \brief %Range iterator for greatest lower bound of complement set views
      * \ingroup TaskActorSetView
      */
-    template <class View>
+    template<class View>
     class GlbRanges<ComplementView<View> > {
     private:
       LubRanges<View> ub;
@@ -485,35 +485,35 @@ namespace Gecode {
       //@}
     };
 
-    template <class View>
+    template<class View>
     forceinline
     GlbRanges<ComplementView<View> >::GlbRanges(const ComplementView<View> & s)
       : ub(s.base()), ubc(ub) {}
 
-    template <class View>
+    template<class View>
     forceinline void
     GlbRanges<ComplementView<View> >::init(const ComplementView<View> & s) {
       ub.init(s.base());
       ubc.init(ub);
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     GlbRanges<ComplementView<View> >::operator ()(void) const { return ubc(); }
 
-    template <class View>
+    template<class View>
     forceinline void
     GlbRanges<ComplementView<View> >::operator ++(void) { return ++ubc; }
 
-    template <class View>
+    template<class View>
     forceinline int
     GlbRanges<ComplementView<View> >::min(void) const { return ubc.min(); }
 
-    template <class View>
+    template<class View>
     forceinline int
     GlbRanges<ComplementView<View> >::max(void) const { return ubc.max(); }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     GlbRanges<ComplementView<View> >::width(void) const { return ubc.width(); }
 
@@ -525,7 +525,7 @@ namespace Gecode {
      *
      * \ingroup TaskActorSet
      */
-    template <class View>
+    template<class View>
     class GlbRanges<ComplementView<ComplementView<View> > > :
       public GlbRanges<View> {
     public:
@@ -540,13 +540,13 @@ namespace Gecode {
       //@}
     };
 
-    template <class View>
+    template<class View>
     forceinline
     GlbRanges<ComplementView<ComplementView<View> > >::
     GlbRanges(const ComplementView<ComplementView<View> >& x) :
       GlbRanges<View>(x) {}
 
-    template <class View>
+    template<class View>
     forceinline void
     GlbRanges<ComplementView<ComplementView<View> > >::
     init(const ComplementView<ComplementView<View> >& x) {
@@ -570,25 +570,25 @@ namespace Gecode {
    * Testing
    *
    */
-  template <class View>
+  template<class View>
   forceinline bool
   same(const Set::ComplementView<View>& x,
        const Set::ComplementView<View>& y) {
     return same(x.base(),y.base());
   }
-  template <class View>
+  template<class View>
   forceinline bool
   before(const Set::ComplementView<View>& x,
          const Set::ComplementView<View>& y) {
     return before(x.base(),y.base());
   }
-  template <class View>
+  template<class View>
   forceinline bool
   same(const Set::ComplementView<Set::ComplementView<View> >& x,
        const Set::ComplementView<Set::ComplementView<View> >& y) {
     return same(x,y);
   }
-  template <class View>
+  template<class View>
   forceinline bool
   before(const Set::ComplementView<Set::ComplementView<View> >& x,
          const Set::ComplementView<Set::ComplementView<View> >& y) {

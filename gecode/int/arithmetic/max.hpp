@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   prop_max_bnd(Space& home, View x0, View x1, View x2) {
     bool mod = false;
@@ -74,12 +74,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   MaxBnd<View>::MaxBnd(Space& home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   MaxBnd<View>::post(Space& home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
@@ -94,24 +94,24 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   MaxBnd<View>::MaxBnd(Space& home, bool share, MaxBnd<View>& p)
     : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   forceinline
   MaxBnd<View>::MaxBnd(Space& home, bool share, Propagator& p,
                  View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_BND>(home,share,p,x0,x1,x2) {}
 
-  template <class View>
+  template<class View>
   Actor*
   MaxBnd<View>::copy(Space& home, bool share) {
     return new (home) MaxBnd<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   MaxBnd<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
@@ -128,12 +128,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   NaryMaxBnd<View>::NaryMaxBnd(Space& home, ViewArray<View>& x, View y)
     : NaryOnePropagator<View,PC_INT_BND>(home,x,y) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   NaryMaxBnd<View>::post(Space& home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
@@ -160,12 +160,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   NaryMaxBnd<View>::NaryMaxBnd(Space& home, bool share, NaryMaxBnd<View>& p)
     : NaryOnePropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   NaryMaxBnd<View>::copy(Space& home, bool share) {
     if (x.size() == 1)
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MPS_NEW_BOUND = 1<<2  ///< Telling has found a new upper bound
   };
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   prop_nary_max_bnd(Space& home, Propagator& p,
                     ViewArray<View>& x, View y, PropCond pc) {
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ((status & MPS_NEW_BOUND) != 0) ? ES_NOFIX : ES_FIX;
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   NaryMaxBnd<View>::propagate(Space& home, const ModEventDelta&) {
     return prop_nary_max_bnd(home,*this,x,y,PC_INT_BND);
@@ -232,12 +232,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   MaxDom<View>::MaxDom(Space& home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   MaxDom<View>::post(Space& home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
@@ -252,31 +252,31 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   MaxDom<View>::MaxDom(Space& home, bool share, MaxDom<View>& p)
     : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   forceinline
   MaxDom<View>::MaxDom(Space& home, bool share, Propagator& p,
                        View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_DOM>(home,share,p,x0,x1,x2) {}
 
-  template <class View>
+  template<class View>
   Actor*
   MaxDom<View>::copy(Space& home, bool share) {
     return new (home) MaxDom<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   MaxDom<View>::cost(const Space&, const ModEventDelta& med) const {
     return PropCost::ternary((View::me(med) == ME_INT_DOM) ?
                              PropCost::HI : PropCost::LO);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   MaxDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
@@ -308,12 +308,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   NaryMaxDom<View>::NaryMaxDom(Space& home, ViewArray<View>& x, View y)
     : NaryOnePropagator<View,PC_INT_DOM>(home,x,y) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   NaryMaxDom<View>::post(Space& home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
@@ -340,12 +340,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   NaryMaxDom<View>::NaryMaxDom(Space& home, bool share, NaryMaxDom<View>& p)
     : NaryOnePropagator<View,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   NaryMaxDom<View>::copy(Space& home, bool share) {
     if (x.size() == 1)
@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return new (home) NaryMaxDom<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   NaryMaxDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_DOM)
@@ -364,7 +364,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return PropCost::linear(PropCost::LO, x.size());
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   NaryMaxDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {

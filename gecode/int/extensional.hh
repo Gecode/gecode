@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   class LayeredGraph : public Propagator {
   protected:
     /// States are described by number of incoming and outgoing edges
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 
   /// Select small types for the layered graph propagator
-  template <class View>
+  template<class View>
   ExecStatus post_lgp(Space& home, ViewArray<View>& x, DFA dfa);
 
 }}}
@@ -219,7 +219,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, bool subscribe = true>
+  template<class View, bool subscribe = true>
   class Base : public Propagator {
   protected:
     ViewArray<View> x; ///< Variables
@@ -269,7 +269,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, bool shared>
+  template<class View, bool shared>
   class Basic : public Base<View> {
   protected:
     using Base<View>::x;
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class Incremental : public Base<View, false> {
   protected:
     using Base<View, false>::x;

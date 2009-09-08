@@ -103,12 +103,12 @@ namespace Gecode { namespace Driver {
   /**
    * \brief Traits class for search engines
    */
-  template <class Engine>
+  template<class Engine>
   class GistEngine {
   };
   
   /// Specialization for DFS
-  template <typename S>
+  template<typename S>
   class GistEngine<DFS<S> > {
   public:
     static void explore(S* root, const Gist::Options& opt) {
@@ -117,7 +117,7 @@ namespace Gecode { namespace Driver {
   };
   
   /// Specialization for LDS
-  template <typename S>
+  template<typename S>
   class GistEngine<LDS<S> > {
   public:
     static void explore(S* root, const Gist::Options& opt) {
@@ -126,7 +126,7 @@ namespace Gecode { namespace Driver {
   };
   
   /// Specialization for BAB
-  template <typename S>
+  template<typename S>
   class GistEngine<BAB<S> > {
   public:
     static void explore(S* root, const Gist::Options& opt) {
@@ -135,7 +135,7 @@ namespace Gecode { namespace Driver {
   };
   
   /// Specialization for Restart
-  template <typename S>
+  template<typename S>
   class GistEngine<Restart<S> > {
   public:
     static void explore(S* root, const Gist::Options& opt) {
@@ -145,8 +145,8 @@ namespace Gecode { namespace Driver {
   
 #endif
 
-  template <class Space>
-  template <class Script, template<class> class Engine, class Options>
+  template<class Space>
+  template<class Script, template<class> class Engine, class Options>
   void
   ScriptBase<Space>::run(const Options& o) {
     using namespace std;

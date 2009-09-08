@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View0,class View1>
+  template<class View0,class View1>
   class EqDom :
     public MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM> {
   protected:
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View0, class View1>
+  template<class View0, class View1>
   class EqBnd :
     public MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND> {
   protected:
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class NaryEqDom : public NaryPropagator<View,PC_INT_DOM> {
   protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class NaryEqBnd : public NaryPropagator<View,PC_INT_BND> {
   protected:
     using NaryPropagator<View,PC_INT_BND>::x;
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   class ReEqDom : public ReBinaryPropagator<View,PC_INT_DOM,CtrlView> {
   protected:
     using ReBinaryPropagator<View,PC_INT_DOM,CtrlView>::x0;
@@ -223,7 +223,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   class ReEqBnd : public ReBinaryPropagator<View,PC_INT_BND,CtrlView> {
   protected:
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::x0;
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   class ReEqDomInt : public ReUnaryPropagator<View,PC_INT_DOM,CtrlView> {
   protected:
     using ReUnaryPropagator<View,PC_INT_DOM,CtrlView>::x0;
@@ -276,7 +276,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   class ReEqBndInt : public ReUnaryPropagator<View,PC_INT_BND,CtrlView> {
   protected:
     using ReUnaryPropagator<View,PC_INT_BND,CtrlView>::x0;
@@ -311,7 +311,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class Nq : public BinaryPropagator<View,PC_INT_VAL> {
   protected:
     using BinaryPropagator<View,PC_INT_VAL>::x0;
@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
 
-  template <class View>
+  template<class View>
   class Lq : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
@@ -369,7 +369,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class Le : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   class ReLq : public ReBinaryPropagator<View,PC_INT_BND,CtrlView> {
   protected:
     using ReBinaryPropagator<View,PC_INT_BND,CtrlView>::x0;
@@ -428,7 +428,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   class ReLqInt : public ReUnaryPropagator<View,PC_INT_BND,CtrlView> {
   protected:
     using ReUnaryPropagator<View,PC_INT_BND,CtrlView>::x0;
@@ -476,7 +476,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class Lex : public Propagator {
   protected:
     /// View arrays

@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <class I, class J>
+  template<class I, class J>
   class Diff : public MinMax {
   protected:
     /// Iterator from which to subtract
@@ -72,7 +72,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Diff<I,J>::operator ++(void) {
     // Precondition: mi <= ma
@@ -110,11 +110,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     finish();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Diff<I,J>::Diff(void) {}
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Diff<I,J>::Diff(I& i0, J& j0)
     : i(i0), j(j0) {
@@ -126,7 +126,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Diff<I,J>::init(I& i0, J& j0) {
     i = i0; j = j0;

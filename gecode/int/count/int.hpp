@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   BaseInt<VX,VY>::BaseInt(Space& home,
                           ViewArray<VX>& x0, int n_s0, VY y0, int c0)
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Count {
     y.subscribe(home,*this,PC_INT_DOM);
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline size_t
   BaseInt<VX,VY>::dispose(Space& home) {
     for (int i=n_s; i--; )
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Count {
     return sizeof(*this);
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   BaseInt<VX,VY>::BaseInt(Space& home, bool share, BaseInt<VX,VY>& p)
     : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Count {
     y.update(home,share,p.y);
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   PropCost
   BaseInt<VX,VY>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size());
@@ -80,12 +80,12 @@ namespace Gecode { namespace Int { namespace Count {
    * Equal propagator (integer rhs)
    *
    */
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   EqInt<VX,VY>::EqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   ExecStatus
   EqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
@@ -118,18 +118,18 @@ namespace Gecode { namespace Int { namespace Count {
     return ES_OK;
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   EqInt<VX,VY>::EqInt(Space& home, bool share, EqInt<VX,VY>& p)
     : BaseInt<VX,VY>(home,share,p) {}
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   Actor*
   EqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) EqInt<VX,VY>(home,share,*this);
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   ExecStatus
   EqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
@@ -181,12 +181,12 @@ namespace Gecode { namespace Int { namespace Count {
    * Greater or equal propagator (integer rhs)
    *
    */
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   GqInt<VX,VY>::GqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   ExecStatus
   GqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
@@ -216,18 +216,18 @@ namespace Gecode { namespace Int { namespace Count {
     return ES_OK;
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   GqInt<VX,VY>::GqInt(Space& home, bool share, GqInt<VX,VY>& p)
     : BaseInt<VX,VY>(home,share,p) {}
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   Actor*
   GqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) GqInt<VX,VY>(home,share,*this);
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   ExecStatus
   GqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
@@ -278,12 +278,12 @@ namespace Gecode { namespace Int { namespace Count {
    * Less or equal propagator (integer rhs)
    *
    */
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   LqInt<VX,VY>::LqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   ExecStatus
   LqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
@@ -311,18 +311,18 @@ namespace Gecode { namespace Int { namespace Count {
     return ES_OK;
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline
   LqInt<VX,VY>::LqInt(Space& home, bool share, LqInt<VX,VY>& p)
     : BaseInt<VX,VY>(home,share,p) {}
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   Actor*
   LqInt<VX,VY>::copy(Space& home, bool share) {
     return new (home) LqInt<VX,VY>(home,share,*this);
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   ExecStatus
   LqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     // Eliminate decided views from subscribed views
@@ -385,7 +385,7 @@ namespace Gecode { namespace Int { namespace Count {
     y.subscribe(home,*this,PC_INT_DOM);
   }
 
-  template <class VX, class VY>
+  template<class VX, class VY>
   forceinline size_t
   NqInt<VX,VY>::dispose(Space& home) {
     y.cancel(home,*this,PC_INT_DOM);

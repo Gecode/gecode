@@ -43,18 +43,18 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   Distinct<View0,View1>::Distinct(Space& home, View0 x, View1 y)
     : MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>(home,x,y) {}
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   Distinct<View0,View1>::Distinct(Space& home, bool share, Distinct& p)
     : MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>
         (home,share,p) {}
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   Distinct<View0,View1>::post(Space& home, View0 x, View1 y) {
     if (x.assigned()) {
@@ -73,13 +73,13 @@ namespace Gecode { namespace Set { namespace Rel {
     return ES_OK;
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   Actor*
   Distinct<View0,View1>::copy(Space& home, bool share) {
     return new (home) Distinct<View0,View1>(home,share,*this);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   Distinct<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     assert(x0.assigned()||x1.assigned());
@@ -96,20 +96,20 @@ namespace Gecode { namespace Set { namespace Rel {
     }
   }
 
-  template <class View0>
+  template<class View0>
   ExecStatus
   DistinctDoit<View0>::post(Space& home, View0 x, ConstantView y) {
     (void) new (home) DistinctDoit<View0>(home,x,y);
     return ES_OK;
   }
 
-  template <class View0>
+  template<class View0>
   Actor*
   DistinctDoit<View0>::copy(Space& home, bool share) {
     return new (home) DistinctDoit<View0>(home,share,*this);
   }
 
-  template <class View0>
+  template<class View0>
   ExecStatus
   DistinctDoit<View0>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
@@ -142,12 +142,12 @@ namespace Gecode { namespace Set { namespace Rel {
     return ES_FIX;
   }
 
-  template <class View0>
+  template<class View0>
   forceinline
   DistinctDoit<View0>::DistinctDoit(Space& home, View0 _x, ConstantView _y)
     : UnaryPropagator<View0, PC_SET_ANY>(home,_x), y(_y)  {}
 
-  template <class View0>
+  template<class View0>
   forceinline
   DistinctDoit<View0>::DistinctDoit(Space& home, bool share,
                                     DistinctDoit<View0>& p)

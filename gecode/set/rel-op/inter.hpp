@@ -48,20 +48,20 @@ namespace Gecode { namespace Set { namespace RelOp {
    *
    */
 
-  template <class View0, class View1, class View2> ExecStatus
+  template<class View0, class View1, class View2> ExecStatus
   Intersection<View0,View1,View2>::post(Space& home,
                                         View0 x0,View1 x1,View2 x2) {
     (void) new (home) Intersection<View0,View1,View2>(home,x0,x1,x2);
     return ES_OK;
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   Actor*
   Intersection<View0,View1,View2>::copy(Space& home, bool share) {
     return new (home) Intersection(home,share,*this);
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   ExecStatus
   Intersection<View0,View1,View2>::propagate(Space& home, const ModEventDelta& med) {
     // This propagator implements the constraint
@@ -185,14 +185,14 @@ namespace Gecode { namespace Set { namespace RelOp {
     }
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   forceinline
   Intersection<View0,View1,View2>::Intersection(Space& home,
                                              View0 y0,View1 y1,View2 y2)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,y0,y1,y2) {}
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   forceinline
   Intersection<View0,View1,View2>::Intersection(Space& home, bool share,
                                              Intersection<View0,View1,View2>& p)
@@ -204,7 +204,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    *
    */
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   IntersectionN<View0,View1>::IntersectionN(Space& home, ViewArray<View0>& x,
                                             View1 y)
@@ -213,7 +213,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     shared = x.shared(home) || viewarrayshared(home,x,y);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   IntersectionN<View0,View1>::IntersectionN(Space& home, ViewArray<View0>& x,
                                             const IntSet& z, View1 y)
@@ -224,7 +224,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     intOfDets.intersectI(home, rz);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   IntersectionN<View0,View1>::IntersectionN(Space& home, bool share,
                                             IntersectionN& p)
@@ -234,7 +234,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     intOfDets.update(home, p.intOfDets);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   IntersectionN<View0,View1>::post(Space& home,
                                    ViewArray<View0>& x, View1 y) {
@@ -252,7 +252,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     }
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   IntersectionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
                                    const IntSet& z, View1 y) {
@@ -260,19 +260,19 @@ namespace Gecode { namespace Set { namespace RelOp {
     return ES_OK;
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   Actor*
   IntersectionN<View0,View1>::copy(Space& home, bool share) {
     return new (home) IntersectionN<View0,View1>(home,share,*this);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   PropCost
   IntersectionN<View0,View1>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI, x.size()+1);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   IntersectionN<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);

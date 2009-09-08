@@ -37,14 +37,14 @@
 
 namespace Gecode { namespace Graph { namespace Circuit {
 
-  template <class View>
+  template<class View>
   forceinline
   Base<View>::Base(Space& home, ViewArray<View>& x)
     : NaryPropagator<View,Int::PC_INT_DOM>(home,x), y(home,x) {
     home.notice(*this,AP_WEAKLY);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Base<View>::Base(Space& home, bool share, Base<View>& p)
     : NaryPropagator<View,Int::PC_INT_DOM>(home,share,p) {
@@ -52,7 +52,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
   }
 
   /// Information required for non-recursive checking for a single scc
-  template <class View>
+  template<class View>
   class SsccInfo {
   public:
     int min, low, pre;
@@ -66,7 +66,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     View x; int n;
   };
 
-  template <class View>
+  template<class View>
   ExecStatus
   Base<View>::connected(Space& home) {
     int n = x.size();
@@ -198,7 +198,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     return es;
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Base<View>::path(Space& home) {
     // Prunes that partial assigned paths are not completed to cycles
@@ -251,7 +251,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     return ES_NOFIX;
   }
 
-  template <class View>
+  template<class View>
   forceinline size_t
   Base<View>::dispose(Space& home) {
     home.ignore(*this,AP_WEAKLY);

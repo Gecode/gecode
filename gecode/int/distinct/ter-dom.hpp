@@ -43,24 +43,24 @@ namespace Gecode { namespace Int { namespace Distinct {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   TerDom<View>::TerDom(Space& home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   TerDom<View>::post(Space& home, View x0, View x1, View x2) {
     (void) new (home) TerDom<View>(home,x0,x1,x2);
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   TerDom<View>::TerDom(Space& home, bool share, TerDom<View>& p)
     : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   TerDom<View>::copy(Space& home, bool share) {
     return new (home) TerDom<View>(home,share,*this);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return ES_FIX;                                              \
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   TerDom<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_INT_HALL_ONE(x0,x1,x2);

@@ -42,7 +42,7 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   ReEq<View0,View1>::ReEq(Space& home, View0 y0, View1 y1,
                           Gecode::Int::BoolView y2)
@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Rel {
     x1.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   ReEq<View0,View1>::ReEq(Space& home, bool share, ReEq& p)
     : Propagator(home,share,p) {
@@ -61,13 +61,13 @@ namespace Gecode { namespace Set { namespace Rel {
     b.update(home,share,p.b);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   PropCost
   ReEq<View0,View1>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   size_t
   ReEq<View0,View1>::dispose(Space& home) {
     assert(!home.failed());
@@ -78,7 +78,7 @@ namespace Gecode { namespace Set { namespace Rel {
     return sizeof(*this);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   ReEq<View0,View1>::post(Space& home, View0 x0, View1 x1,
                             Gecode::Int::BoolView b) {
@@ -86,13 +86,13 @@ namespace Gecode { namespace Set { namespace Rel {
     return ES_OK;
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   Actor*
   ReEq<View0,View1>::copy(Space& home, bool share) {
     return new (home) ReEq<View0,View1>(home,share,*this);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   ReEq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())

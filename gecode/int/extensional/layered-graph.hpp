@@ -40,21 +40,21 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::Edge::Edge(StateIdx i, StateIdx o, Edge* n)
     : i_state(i), o_state(o), next(n) {}
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Degree,StateIdx>::Edge::operator delete(void* p, size_t s) {
     (void) p; (void) s;
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Degree,StateIdx>::Edge::operator delete(void* p, Space& home) {
     (void) p; (void) home;
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void*
   LayeredGraph<View,Degree,StateIdx>::Edge::operator new(size_t s, Space& home) {
     return home.ralloc(s);
@@ -62,29 +62,29 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::LayerValues::LayerValues(void) {}
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::LayerValues::LayerValues(const Layer& l)
     : s1(l.support), s2(l.support+l.size) {}
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Degree,StateIdx>::LayerValues::init(const Layer& l) {
     s1=l.support; s2=l.support+l.size;
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline bool
   LayeredGraph<View,Degree,StateIdx>::LayerValues::operator ()(void) const {
     return s1<s2;
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Degree,StateIdx>::LayerValues::operator ++(void) {
     s1++;
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline int
   LayeredGraph<View,Degree,StateIdx>::LayerValues::val(void) const {
     return s1->val;
@@ -95,14 +95,14 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Index advisors
    *
    */
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::Index::Index(Space& home, Propagator& p,
                                                    Council<Index>& c,
                                                    StateIdx i0)
     : Advisor(home,p,c), i(i0) {}
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::Index::Index(Space& home, bool share,
                                                    Index& a)
@@ -113,26 +113,26 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Index ranges
    *
    */
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::IndexRange::IndexRange(void)
     : _fst(INT_MAX), _lst(INT_MIN) {}
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Degree,StateIdx>::IndexRange::reset(void) {
     _fst=INT_MAX; _lst=INT_MIN;
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Degree,StateIdx>::IndexRange::add(int i) {
     _fst=std::min(_fst,i); _lst=std::max(_lst,i);
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline int
   LayeredGraph<View,Degree,StateIdx>::IndexRange::fst(void) const {
     return _fst;
   }
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline int
   LayeredGraph<View,Degree,StateIdx>::IndexRange::lst(void) const {
     return _lst;
@@ -145,13 +145,13 @@ namespace Gecode { namespace Int { namespace Extensional {
    *
    */
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline bool
   LayeredGraph<View,Degree,StateIdx>::constructed(void) const {
     return layers != NULL;
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Degree,StateIdx>::eliminate(void) {
     if (!constructed() || (layers[0].size > 1))
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       as.advisor().i -= i;
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline ExecStatus
   LayeredGraph<View,Degree,StateIdx>::construct(Space& home) {
     int n = x.size();
@@ -254,7 +254,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_FIX;
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline ExecStatus
   LayeredGraph<View,Degree,StateIdx>::prune(Space& home) {
     // Forward pass
@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_FIX;
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   ExecStatus
   LayeredGraph<View,Degree,StateIdx>::advise(Space& home,
                                              Advisor& _a, const Delta& d) {
@@ -449,7 +449,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   ExecStatus
   LayeredGraph<View,Degree,StateIdx>::propagate(Space& home,
                                                 const ModEventDelta&) {
@@ -457,7 +457,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     return es;
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
                                                    ViewArray<View>& x0, DFA& d)
@@ -473,7 +473,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     home.notice(*this,AP_DISPOSE);
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline size_t
   LayeredGraph<View,Degree,StateIdx>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -483,7 +483,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     return sizeof(*this);
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline ExecStatus
   LayeredGraph<View,Degree,StateIdx>::post(Space& home, ViewArray<View>& x,
                                            DFA& d) {
@@ -502,7 +502,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_OK;
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
@@ -516,21 +516,21 @@ namespace Gecode { namespace Int { namespace Extensional {
     start = p.start;
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   PropCost
   LayeredGraph<View,Degree,StateIdx>::cost(const Space&,
                                            const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template <class View, class Degree, class StateIdx>
+  template<class View, class Degree, class StateIdx>
   Actor*
   LayeredGraph<View,Degree,StateIdx>::copy(Space& home, bool share) {
     return new (home) LayeredGraph<View,Degree,StateIdx>(home,share,*this);
   }
 
   /// Select small types for the layered graph propagator
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   post_lgp(Space& home, ViewArray<View>& x, DFA dfa) {
     Gecode::Support::IntType t_state_idx =

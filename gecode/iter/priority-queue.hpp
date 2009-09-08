@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter {
    *
    * \ingroup FuncSupport
    */
-  template <class T, class Less>
+  template<class T, class Less>
   class PriorityQueue  {
   private:
     /// The class holding the shared queue (organized as heap)
@@ -107,7 +107,7 @@ namespace Gecode { namespace Iter {
     void update(const PriorityQueue<T,Less>& p, bool share);
   };
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline typename PriorityQueue<T,Less>::SharedPriorityQueue*
   PriorityQueue<T,Less>::SharedPriorityQueue::allocate(int n, const Less& l) {
     SharedPriorityQueue* spq
@@ -120,7 +120,7 @@ namespace Gecode { namespace Iter {
     return spq;
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline void
   PriorityQueue<T,Less>::SharedPriorityQueue::fixdown(void) {
     int k = 0;
@@ -135,7 +135,7 @@ namespace Gecode { namespace Iter {
     }
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline void
   PriorityQueue<T,Less>::SharedPriorityQueue::fixup(int k) {
     while (k > 0 && l(pq[k >> 1],pq[k])) {
@@ -144,23 +144,23 @@ namespace Gecode { namespace Iter {
     }
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline
   PriorityQueue<T,Less>::PriorityQueue(void)
     : spq(NULL) {}
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline
   PriorityQueue<T,Less>::PriorityQueue(int n, const Less& l)
     : spq(SharedPriorityQueue::allocate(n,l)) {}
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline void
   PriorityQueue<T,Less>::init(int n, const Less& l) {
     spq = SharedPriorityQueue::allocate(n,l);
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline
   PriorityQueue<T,Less>::PriorityQueue(const PriorityQueue<T,Less>& p)
     : spq(p.spq) {
@@ -168,7 +168,7 @@ namespace Gecode { namespace Iter {
       spq->ref++;
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline const PriorityQueue<T,Less>&
   PriorityQueue<T,Less>::operator =(const PriorityQueue<T,Less>& p) {
     if (this != &p) {
@@ -181,7 +181,7 @@ namespace Gecode { namespace Iter {
     return *this;
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline void
   PriorityQueue<T,Less>::update(const PriorityQueue<T,Less>& p, bool share) {
     if (share) {
@@ -197,41 +197,41 @@ namespace Gecode { namespace Iter {
     }
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline
   PriorityQueue<T,Less>::~PriorityQueue(void) {
     if ((spq != NULL) && (--spq->ref == 0))
       heap.rfree(spq);
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline bool
   PriorityQueue<T,Less>::empty(void) const {
     return (spq == NULL) || (spq->n == 0);
   }
 
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline void
   PriorityQueue<T,Less>::insert(const T& x) {
     spq->pq[spq->n++] = x;
     spq->fixup(spq->n-1);
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline void
   PriorityQueue<T,Less>::remove(void) {
     spq->pq[0] = spq->pq[--spq->n];
     spq->fixdown();
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline T&
   PriorityQueue<T,Less>::top(void) {
     return spq->pq[0];
   }
 
-  template <class T, class Less>
+  template<class T, class Less>
   forceinline void
   PriorityQueue<T,Less>::fix(void) {
     spq->fixdown();

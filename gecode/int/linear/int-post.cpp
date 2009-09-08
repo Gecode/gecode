@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Posting n-ary propagators
    *
    */
-  template <class Val, class View>
+  template<class Val, class View>
   forceinline void
   post_nary(Space& home,
             ViewArray<View>& x, ViewArray<View>& y, IntRelType r, Val c) {
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Posting reified n-ary propagators
    *
    */
-  template <class Val, class View>
+  template<class Val, class View>
   forceinline void
   post_nary(Space& home,
             ViewArray<View>& x, ViewArray<View>& y,

@@ -44,7 +44,7 @@
 
 namespace Gecode { namespace Set { namespace RelOp {
 
-  template <class View0, class View1, class Res>
+  template<class View0, class View1, class Res>
   forceinline void
   rel_eq(Space& home, View0 x0, SetOpType op, View1 x1, Res x2) {
     switch(op) {
@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     }
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   forceinline void
   rel_sub(Space& home, View0 x0, SetOpType op, View1 x1, View2 x2) {
     switch(op) {
@@ -121,7 +121,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   forceinline void
   rel_sup(Space& home, View0 x0, SetOpType op, View1 x1, View2 x2) {
     switch(op) {
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   forceinline void
   rel_op_post_nocompl(Space& home, View0 x, SetOpType op, View1 y,
            SetRelType r, View2 z) {
@@ -205,7 +205,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   forceinline void
   rel_op_post(Space& home, View0 x, SetOpType op, View1 y,
            SetRelType r, View2 z) {

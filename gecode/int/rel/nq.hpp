@@ -41,12 +41,12 @@ namespace Gecode { namespace Int { namespace Rel {
    * Disequality
    *
    */
-  template <class View>
+  template<class View>
   forceinline
   Nq<View>::Nq(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_VAL>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   Nq<View>::post(Space& home, View x0, View x1){
     if (x0.assigned()) {
@@ -61,24 +61,24 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Nq<View>::Nq(Space& home, bool share, Nq<View>& p)
     : BinaryPropagator<View,PC_INT_VAL>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   Nq<View>::copy(Space& home, bool share) {
     return new (home) Nq<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   Nq<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::LO);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Nq<View>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {

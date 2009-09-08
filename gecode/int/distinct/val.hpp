@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Eliminating singleton variables
    *
    */
-  template <class View, bool complete>
+  template<class View, bool complete>
   ExecStatus
   prop_val(Space& home, ViewArray<View>& x) {
     assert(x.size() > 1);
@@ -146,30 +146,30 @@ namespace Gecode { namespace Int { namespace Distinct {
    * The propagator proper
    *
    */
-  template <class View>
+  template<class View>
   forceinline
   Val<View>::Val(Space& home, ViewArray<View>& x)
   : NaryPropagator<View,PC_INT_VAL>(home,x) {}
 
-  template <class View>
+  template<class View>
   forceinline
   Val<View>::Val(Space& home, bool share, Val<View>& p)
     : NaryPropagator<View,PC_INT_VAL>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   Val<View>::copy(Space& home, bool share) {
     return new (home) Val<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Val<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK((prop_val<View,true>(home,x)));
     return (x.size() < 2) ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Val<View>::post(Space& home, ViewArray<View>& x) {
     if (x.size() == 2)

@@ -37,11 +37,11 @@
 
 namespace Gecode { namespace Gist {
 
-  template <class S>
+  template<class S>
   Print<S>::Print(const std::string& name)
     : TextInspector(name) {}
 
-  template <class S>
+  template<class S>
   void
   Print<S>::inspect(const Space& node) {
     init();

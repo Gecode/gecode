@@ -505,7 +505,7 @@ namespace Gecode { namespace Int {
    * Iterator-based domain operations
    *
    */
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntVarImp::narrow_r(Space& home, I& ri, bool depends) {
     Iter::Ranges::IsRangeIter<I>();
@@ -673,7 +673,7 @@ namespace Gecode { namespace Int {
     return notify(home,me,d);
   }
 
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntVarImp::inter_r(Space& home, I& i, bool) {
     Iter::Ranges::IsRangeIter<I>();
@@ -682,7 +682,7 @@ namespace Gecode { namespace Int {
     return narrow_r(home,ij,true);
   }
 
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntVarImp::minus_r(Space& home, I& i, bool depends) {
     Iter::Ranges::IsRangeIter<I>();
@@ -840,7 +840,7 @@ namespace Gecode { namespace Int {
     return notify(home,me,d);
   }
 
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntVarImp::narrow_v(Space& home, I& i, bool depends) {
     Iter::Values::IsValueIter<I>();
@@ -848,7 +848,7 @@ namespace Gecode { namespace Int {
     return narrow_r(home,r,depends);
   }
 
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntVarImp::inter_v(Space& home, I& i, bool depends) {
     Iter::Values::IsValueIter<I>();
@@ -856,7 +856,7 @@ namespace Gecode { namespace Int {
     return inter_r(home,r,depends);
   }
 
-  template <class I>
+  template<class I>
   forceinline ModEvent
   IntVarImp::minus_v(Space& home, I& i, bool depends) {
     Iter::Values::IsValueIter<I>();

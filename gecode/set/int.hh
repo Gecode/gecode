@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class MinElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
   protected:
@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class NotMinElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
   protected:
@@ -105,7 +105,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class ReMinElement :
     public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
   protected:
@@ -133,7 +133,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class MaxElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
   protected:
@@ -158,7 +158,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class NotMaxElement :
     public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
   protected:
@@ -183,7 +183,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class ReMaxElement :
     public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
   protected:
@@ -210,7 +210,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class Card :
     public IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND> {
   protected:
@@ -236,7 +236,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class Match : public Propagator {
   protected:
     /// SetView for the match
@@ -279,7 +279,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class ChannelInt : public Propagator {
   protected:
     /// IntViews, \f$x_i\f$ reflects which set contains element \f$i\f$
@@ -317,7 +317,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class ChannelBool
     : public MixNaryOnePropagator<Gecode::Int::BoolView,
                                   Gecode::Int::PC_BOOL_VAL,
@@ -342,7 +342,7 @@ namespace Gecode { namespace Set { namespace Int {
       int idx;
     public:
       /// Constructor for creation
-      template <class A>
+      template<class A>
       IndexAdvisor(Space& home, ChannelBool<View>& p, Council<A>& c,
                    int index);
       /// Constructor for cloning \a a
@@ -350,7 +350,7 @@ namespace Gecode { namespace Set { namespace Int {
       /// Access index
       int index(void) const;
       /// Delete advisor
-      template <class A>
+      template<class A>
       void dispose(Space& home, Council<A>& c);
     };
 
@@ -386,7 +386,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View>
+  template<class View>
   class Weights : public Propagator {
   protected:
     /// List of elements in the upper bound

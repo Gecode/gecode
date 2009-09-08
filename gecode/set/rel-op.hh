@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    * \ingroup FuncSetProp
    */
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   class SuperOfInter :
     public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                 View2,PC_SET_CLUB> {
@@ -91,7 +91,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   class SubOfUnion :
     public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                 View2,PC_SET_ANY> {
@@ -122,7 +122,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     * Requires \code #include <gecode/set/rel-op.hh> \endcode
     * \ingroup FuncSetProp
     */
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   class Intersection:
     public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                 View2,PC_SET_ANY> {
@@ -152,7 +152,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   class Union:
     public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                 View2,PC_SET_ANY> {
@@ -182,7 +182,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     * Requires \code #include <gecode/set/rel-op.hh> \endcode
     * \ingroup FuncSetProp
     */
-  template <class View0, class View1>
+  template<class View0, class View1>
   class IntersectionN : 
     public MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
   protected:
@@ -217,7 +217,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View0, class View1>
+  template<class View0, class View1>
   class UnionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
                                              View1,PC_SET_ANY> {
   protected:
@@ -253,7 +253,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    * Requires \code #include <gecode/set/rel-op.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class View0, class View1>
+  template<class View0, class View1>
   class PartitionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
                                                  View1,PC_SET_ANY> {
   protected:

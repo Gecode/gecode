@@ -261,7 +261,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  is larger than the upper domain bound of \f$x_i\f$
    *
    */
-  template <class View>
+  template<class View>
   class TupleMaxInc {
   protected:
     ViewArray<View> x;
@@ -286,7 +286,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  is larger than the upper domain bound of \f$x_i\f$
    *
    */
-  template <class View>
+  template<class View>
   class TupleMaxIncExt {
   protected:
     ViewArray<View> x;
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    * first component of \a y
    */
 
-  template <class View>
+  template<class View>
   class TupleMinInc {
   public:
     bool operator ()(const View& x, const View& y) {
@@ -343,14 +343,14 @@ namespace Gecode { namespace Int { namespace Sorted {
    * equal we sort the views by the permutation variables.
    */
 
-  template <class View>
+  template<class View>
   class ViewPair {
   public:
     View x;
     View z;
   };
 
-  template <class View>
+  template<class View>
   class TupleMinIncExt {
   public:
     bool operator ()(const ViewPair<View>& x, const ViewPair<View>& y) {

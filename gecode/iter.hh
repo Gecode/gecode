@@ -44,7 +44,7 @@ namespace Gecode {
     /// Range iterators
     namespace Ranges {
       /// Check that template argument is a range iterator
-      template <class I> struct IsRangeIter {
+      template<class I> struct IsRangeIter {
         /// Checking function
         static void constraints(I* p) {
           bool b = p->operator ()(); (void) b;
@@ -63,7 +63,7 @@ namespace Gecode {
     /// Value iterators
     namespace Values {
       /// Check that template argument is a value iterator
-      template <class I> struct IsValueIter {
+      template<class I> struct IsValueIter {
         /// Checking function
         static void constraints(I* p) {
           bool b = p->operator ()(); (void) b;

@@ -399,12 +399,12 @@ namespace {
    *
    * \relates Kakuro
    */
-  template <class C> C generate(int n, int c);
+  template<class C> C generate(int n, int c);
 
   /** \brief Generate DFA for \a n distinct variables with sum \a c
    * \relates Kakuro
    */
-  template <>
+  template<>
   DFA generate<DFA>(int n, int c) {
     // Setup search engine that enumerates all solutions
     DistinctLinear* e = new DistinctLinear(n,c);
@@ -444,7 +444,7 @@ namespace {
   /** \brief Generate tuple set for \a n distinct variables with sum \a c
    * \relates Kakuro
    */
-  template <>
+  template<>
   TupleSet generate<TupleSet>(int n, int c) {
     // Setup search engine that enumerates all solutions
     DistinctLinear* e = new DistinctLinear(n,c);
@@ -464,7 +464,7 @@ namespace {
   /** \brief Class to remember already computed specifications of type Data
    * \relates Kakuro
    */
-  template <class Data>
+  template<class Data>
   class Cache {
   private:
     class Entry {
@@ -544,7 +544,7 @@ public:
       b(x,y).init(*this,1,9);
   }
   /// Post a distinct-linear constraint on variables \a x with sum \a c
-  template <class Data>
+  template<class Data>
   void distinctlinear(Cache<Data>& dc, const IntVarArgs& x, int c,
                       const SizeOptions& opt) {
     if (opt.model() == MODEL_DECOMPOSE) {

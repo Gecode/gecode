@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace Element {
    * Requires \code #include <gecode/int/element.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   class Int : public Propagator {
   protected:
     /**
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Element {
   };
 
   /// Post propagator with apropriate index and value types
-  template <class V0, class V1>
+  template<class V0, class V1>
   ExecStatus post_int(Space& home, IntSharedArray& c, V0 x0, V1 x1);
 
 
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Class for index-view map
    *
    */
-  template <class ViewB> class IdxView;
+  template<class ViewB> class IdxView;
 
   /// Class to get VarArg type for view
   template<class View>
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief An array of IndexView pairs
    *
    */
-  template <class View>
+  template<class View>
   class IdxViewArray {
   private:
     /// The actual array
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Base-class for element propagator for array of views
    *
    */
-  template <class VA, class VB, class VC, PropCond pc_ac>
+  template<class VA, class VB, class VC, PropCond pc_ac>
   class View : public Propagator {
   protected:
     /// Current index-view map
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Element {
    * Requires \code #include <gecode/int/element.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   class ViewBnd : public View<VA,VB,VC,PC_INT_BND> {
   protected:
     using View<VA,VB,VC,PC_INT_BND>::iv;
@@ -283,7 +283,7 @@ namespace Gecode { namespace Int { namespace Element {
    * Requires \code #include <gecode/int/element.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   class ViewDom : public View<VA,VB,VC,PC_INT_DOM> {
   protected:
     using View<VA,VB,VC,PC_INT_DOM>::iv;

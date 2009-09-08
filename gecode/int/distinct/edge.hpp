@@ -37,76 +37,76 @@
 
 namespace Gecode { namespace Int { namespace Distinct {
 
-  template <class View>
+  template<class View>
   forceinline
   Edge<View>::Edge(ValNode<View>* s, ViewNode<View>* d)
     : sd(s,d) {
     s->add(this);
   }
 
-  template <class View>
+  template<class View>
   forceinline Node<View>*
   Edge<View>::dst(Node<View>* s) const {
     return sd.ptr(s);
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   Edge<View>::revert(Node<View>* d) {
     unlink();
     d->add(this);
   }
 
-  template <class View>
+  template<class View>
   forceinline ViewNode<View>*
   Edge<View>::view(ValNode<View>* n) const {
     return static_cast<ViewNode<View>*>(sd.ptr(n));
   }
-  template <class View>
+  template<class View>
   forceinline ValNode<View>*
   Edge<View>::val(ViewNode<View>* x) const {
     return static_cast<ValNode<View>*>(sd.ptr(x));
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   Edge<View>::used(Node<View>* v) const {
     return sd.is_set() || (v->comp == sd.ptr(v)->comp);
   }
-  template <class View>
+  template<class View>
   forceinline void
   Edge<View>::use(void) {
     sd.set();
   }
-  template <class View>
+  template<class View>
   forceinline void
   Edge<View>::free(void) {
     sd.unset();
   }
 
-  template <class View>
+  template<class View>
   forceinline Edge<View>*
   Edge<View>::next_edge(void) const {
     return _next_edge;
   }
-  template <class View>
+  template<class View>
   forceinline Edge<View>**
   Edge<View>::next_edge_ref(void) {
     return &_next_edge;
   }
-  template <class View>
+  template<class View>
   forceinline Edge<View>*
   Edge<View>::next(void) const {
     return static_cast<Edge<View>*>(BiLink::next());
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   Edge<View>::operator delete(void*, size_t) {}
-  template <class View>
+  template<class View>
   forceinline void
   Edge<View>::operator delete(void*,Space&) {}
-  template <class View>
+  template<class View>
   forceinline void*
   Edge<View>::operator new(size_t s, Space& home) {
     return home.ralloc(s);

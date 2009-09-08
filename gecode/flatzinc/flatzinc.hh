@@ -198,7 +198,7 @@ namespace Gecode { namespace FlatZinc {
 
     FlatZincGecode(bool share, FlatZincGecode&);
   private:
-    template <template<class> class Engine>
+    template<template<class> class Engine>
     void
     runEngine(std::ostream& out, const FZPrinter& p, 
               const FlatZincOptions& opt, Gecode::Support::Timer& t_total);

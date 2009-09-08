@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class AbsBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class AbsDom : public BinaryPropagator<View,PC_INT_DOM> {
   protected:
     using BinaryPropagator<View,PC_INT_DOM>::x0;
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class MaxBnd : public TernaryPropagator<View,PC_INT_BND> {
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
@@ -154,7 +154,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class NaryMaxBnd : public NaryOnePropagator<View,PC_INT_BND> {
   protected:
     using NaryOnePropagator<View,PC_INT_BND>::x;
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class MaxDom : public TernaryPropagator<View,PC_INT_DOM> {
   protected:
     using TernaryPropagator<View,PC_INT_DOM>::x0;
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class NaryMaxDom : public NaryOnePropagator<View,PC_INT_DOM> {
   protected:
     using NaryOnePropagator<View,PC_INT_DOM>::x;
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides multiplication for positive views only.
    */
-  template <class VA, class VB>
+  template<class VA, class VB>
   class SqrPlusBnd : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
   protected:
     using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x0;
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class SqrBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
@@ -298,7 +298,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides multiplication for positive views only.
    */
-  template <class VA, class VB>
+  template<class VA, class VB>
   class SqrPlusDom : public MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM> {
   protected:
     using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x0;
@@ -330,7 +330,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class SqrDom : public BinaryPropagator<View,PC_INT_DOM> {
   protected:
     using BinaryPropagator<View,PC_INT_DOM>::x0;
@@ -365,7 +365,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class SqrtBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
@@ -390,7 +390,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class SqrtDom : public BinaryPropagator<View,PC_INT_DOM> {
   protected:
     using BinaryPropagator<View,PC_INT_DOM>::x0;
@@ -425,7 +425,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, PropCond pc>
+  template<class View, PropCond pc>
   class MultZeroOne : public BinaryPropagator<View,pc> {
   protected:
     using BinaryPropagator<View,pc>::x0;
@@ -453,7 +453,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides multiplication for positive views only.
    */
-  template <class Val, class VA, class VB, class VC>
+  template<class Val, class VA, class VB, class VC>
   class MultPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
@@ -480,7 +480,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class MultBnd : public TernaryPropagator<View,PC_INT_BND> {
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
@@ -507,7 +507,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides multiplication for positive views only.
    */
-  template <class Val, class VA, class VB, class VC>
+  template<class Val, class VA, class VB, class VC>
   class MultPlusDom :
     public MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM> {
   protected:
@@ -541,7 +541,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class MultDom : public TernaryPropagator<View,PC_INT_DOM> {
   protected:
     using TernaryPropagator<View,PC_INT_DOM>::x0;
@@ -573,7 +573,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides division for positive views only.
    */
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf=true>
+  template<class Val, class VA, class VB, class VC, bool towardsMinInf=true>
   class DivPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
@@ -601,7 +601,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class DivBnd : public TernaryPropagator<View,PC_INT_BND> {
   protected:
     using TernaryPropagator<View,PC_INT_BND>::x0;
@@ -631,7 +631,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template<class View>
   class DivMod : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;

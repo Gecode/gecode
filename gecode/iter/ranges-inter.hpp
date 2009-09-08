@@ -44,7 +44,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I, class J>
+  template<class I, class J>
   class Inter : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -80,7 +80,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I>
+  template<class I>
   class NaryInter : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -114,7 +114,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template <class I, class J>
+  template<class I, class J>
   inline void
   Inter<I,J>::operator ++(void) {
     if (!i() || !j()) goto done;
@@ -133,18 +133,18 @@ namespace Gecode { namespace Iter { namespace Ranges {
     finish();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Inter<I,J>::Inter(void) {}
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Inter<I,J>::Inter(I& i0, J& j0)
     : i(i0), j(j0) {
     operator ++();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Inter<I,J>::init(I& i0, J& j0) {
     i = i0; j = j0;
@@ -157,7 +157,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template <class I>
+  template<class I>
   inline void
   NaryInter<I>::operator ++(void) {
     // The next interval to be returned must have a hole
@@ -190,11 +190,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     finish();
   }
 
-  template <class I>
+  template<class I>
   forceinline
   NaryInter<I>::NaryInter(void) {}
 
-  template <class I>
+  template<class I>
   inline
   NaryInter<I>::NaryInter(I* is0, int n0)
     : is(is0), n(n0) {
@@ -206,7 +206,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   inline void
   NaryInter<I>::init(I* is0, int n0) {
     is = is0; n = n0;

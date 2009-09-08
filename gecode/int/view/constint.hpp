@@ -179,13 +179,13 @@ namespace Gecode {
      * Iterator-based domain update
      *
      */
-    template <class I>
+    template<class I>
     forceinline ModEvent
     ConstIntView::narrow_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     ConstIntView::inter_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
@@ -193,7 +193,7 @@ namespace Gecode {
         ++i;
       return (i() && (i.min() <= x)) ? ME_INT_NONE : ME_INT_FAILED;
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     ConstIntView::minus_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
@@ -201,13 +201,13 @@ namespace Gecode {
         ++i;
       return (i() && (i.min() <= x)) ? ME_INT_FAILED : ME_INT_NONE;
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     ConstIntView::narrow_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     ConstIntView::inter_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
@@ -215,7 +215,7 @@ namespace Gecode {
         ++i;
       return (i() && (i.val() == x)) ? ME_INT_NONE : ME_INT_FAILED;
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     ConstIntView::minus_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
@@ -298,7 +298,7 @@ namespace Gecode {
      * \brief %Range iterator for constant integer views
      * \ingroup TaskActorIntView
      */
-    template <>
+    template<>
     class ViewRanges<ConstIntView> {
     private:
       /// The single integer to iterate

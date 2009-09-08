@@ -214,7 +214,7 @@ namespace Gecode {
    * \brief View array for no view (empty)
    *
    */
-  template <>
+  template<>
   class ViewArray<Int::Linear::NoView> {
   public:
     /// \name Constructors and initialization

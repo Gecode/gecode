@@ -48,14 +48,14 @@ namespace Gecode { namespace Set { namespace RelOp {
    *
    */
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   PartitionN<View0,View1>::PartitionN(Space& home, ViewArray<View0>& x, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
     shared = x.shared(home) || viewarrayshared(home,x,y);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   PartitionN<View0,View1>::PartitionN(Space& home, ViewArray<View0>& x,
                                       const IntSet& z, View1 y)
@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     unionOfDets.includeI(home, rz);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   PartitionN<View0,View1>::PartitionN(Space& home, bool share, PartitionN& p)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
@@ -73,13 +73,13 @@ namespace Gecode { namespace Set { namespace RelOp {
     unionOfDets.update(home,p.unionOfDets);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   Actor*
   PartitionN<View0,View1>::copy(Space& home, bool share) {
     return new (home) PartitionN(home,share,*this);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus PartitionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
                                            View1 y) {
     switch (x.size()) {
@@ -94,19 +94,19 @@ namespace Gecode { namespace Set { namespace RelOp {
     }
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus PartitionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
                                            const IntSet& z, View1 y) {
     (void) new (home) PartitionN<View0,View1>(home,x,z,y);
     return ES_OK;
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   PropCost PartitionN<View0,View1>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, x.size()+1);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   PartitionN<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
 

@@ -43,19 +43,19 @@ namespace Gecode {
      * Support functions for division
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline int
     ScaleView<Val,UnsVal>::floor_div(double x) const {
       return static_cast<int>(floor(x / a));
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline int
     ScaleView<Val,UnsVal>::ceil_div(double x) const {
       return static_cast<int>(ceil(x / a));
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline int
     ScaleView<Val,UnsVal>::exact_div(double x, bool& exact) const {
       double xa = x / a;
@@ -68,19 +68,19 @@ namespace Gecode {
 
 #if GECODE_INT_RND_TWDS_ZERO
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline int
     ScaleView<Val,UnsVal>::floor_div(int x) const {
       return ((x >= 0) ? x : (x-a+1))/a;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline int
     ScaleView<Val,UnsVal>::ceil_div(int x) const {
       return ((x >= 0) ? (x+a-1) : x)/a;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline int
     ScaleView<Val,UnsVal>::exact_div(int x, bool& exact) const {
       int xa = x / a;
@@ -98,22 +98,22 @@ namespace Gecode {
      * Constructors and initialization
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline
     ScaleView<Val,UnsVal>::ScaleView(void) {}
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline
     ScaleView<Val,UnsVal>::ScaleView(int b, const IntView& x)
       : DerivedViewBase<IntView>(x), a(b) {}
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::init(int b, const IntView& x) {
       view=x; a=b;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline int
     ScaleView<Val,UnsVal>::scale(void) const {
       return a;
@@ -125,49 +125,49 @@ namespace Gecode {
      * Value access
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::min(void) const {
       Val c = view.min(); c *= a; return c;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::max(void) const {
       Val c = view.max(); c *= a; return c;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::med(void) const {
       Val c = view.med(); c *= a; return c;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::val(void) const {
       Val c = view.val(); c *= a; return c;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline UnsVal
     ScaleView<Val,UnsVal>::size(void) const {
       return static_cast<UnsVal>(view.size());
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline UnsVal
     ScaleView<Val,UnsVal>::width(void) const {
       UnsVal c = view.width(); c *= a; return c;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline UnsVal
     ScaleView<Val,UnsVal>::regret_min(void) const {
       UnsVal c = view.regret_min(); c *= a; return c;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline UnsVal
     ScaleView<Val,UnsVal>::regret_max(void) const {
       UnsVal c = view.regret_max(); c *= a; return c;
@@ -178,19 +178,19 @@ namespace Gecode {
      * Domain tests
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline bool
     ScaleView<Val,UnsVal>::range(void) const {
       return view.range();
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline bool
     ScaleView<Val,UnsVal>::assigned(void) const {
       return view.assigned();
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline bool
     ScaleView<Val,UnsVal>::in(Val n) const {
       bool exact;
@@ -205,30 +205,30 @@ namespace Gecode {
      * Domain update by value
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::lq(Space& home, Val n) {
       return (n >= max()) ? ME_INT_NONE : view.lq(home,floor_div(n));
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::le(Space& home, Val n) {
       return (n > max()) ? ME_INT_NONE : view.le(home,floor_div(n));
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::gq(Space& home, Val n) {
       return (n <= min()) ? ME_INT_NONE : view.gq(home,ceil_div(n));
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::gr(Space& home, Val n) {
       return (n < min()) ? ME_INT_NONE : view.gr(home,ceil_div(n));
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::nq(Space& home, Val n) {
       bool exact;
@@ -236,7 +236,7 @@ namespace Gecode {
       return exact ? view.nq(home,nda) :  ME_INT_NONE;
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::eq(Space& home, Val n) {
       bool exact;
@@ -249,18 +249,18 @@ namespace Gecode {
      * Propagator modification events
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::schedule(Space& home, Propagator& p, ModEvent me) {
       return IntView::schedule(home,p,me);
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::me(const ModEventDelta& med) {
       return IntView::me(med);
     }
 
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEventDelta
     ScaleView<Val,UnsVal>::med(ModEvent me) {
       return IntView::med(me);
@@ -272,23 +272,23 @@ namespace Gecode {
      * Dependencies
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::subscribe(Space& home, Propagator& p, PropCond pc,
                                      bool process) {
       view.subscribe(home,p,pc,process);
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::cancel(Space& home, Propagator& p, PropCond pc) {
       view.cancel(home,p,pc);
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::subscribe(Space& home, Advisor& a) {
       view.subscribe(home,a);
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::cancel(Space& home, Advisor& a) {
       view.cancel(home,a);
@@ -299,22 +299,22 @@ namespace Gecode {
      * Delta information for advisors
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::modevent(const Delta& d) {
       return IntView::modevent(d);
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::min(const Delta& d) const {
       Val c = view.min(d); c *= a; return c;
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::max(const Delta& d) const {
       Val c = view.max(d); c *= a; return c;
     }
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline bool
     ScaleView<Val,UnsVal>::any(const Delta& d) const {
       return view.any(d);
@@ -326,7 +326,7 @@ namespace Gecode {
      * Cloning
      *
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::update(Space& home, bool share,
                                   ScaleView<Val,UnsVal>& x) {
@@ -339,7 +339,7 @@ namespace Gecode {
      * \brief %Range iterator for integer-precision scale integer views
      * \ingroup TaskActorIntView
      */
-    template <>
+    template<>
     class ViewRanges<IntScaleView>
       : public Iter::Ranges::ScaleUp<int,unsigned int,ViewRanges<IntView> > {
     public:
@@ -374,7 +374,7 @@ namespace Gecode {
      * \brief %Range iterator for double-precision scale integer views
      * \ingroup TaskActorIntView
      */
-    template <>
+    template<>
     class ViewRanges<DoubleScaleView>
       : public Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> > {
     public:
@@ -412,13 +412,13 @@ namespace Gecode {
    * View comparison
    *
    */
-  template <class Val, class UnsVal>
+  template<class Val, class UnsVal>
   forceinline bool
   same(const Int::ScaleView<Val,UnsVal>& x,
        const Int::ScaleView<Val,UnsVal>& y) {
     return same(x.base(),y.base()) && (x.scale() == y.scale());
   }
-  template <class Val, class UnsVal>
+  template<class Val, class UnsVal>
   forceinline bool
   before(const Int::ScaleView<Val,UnsVal>& x,
          const Int::ScaleView<Val,UnsVal>& y) {

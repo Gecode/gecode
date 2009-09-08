@@ -68,7 +68,7 @@ namespace Gecode {
     Tuple* nullpointer;
 
     /// Add Tuple. Assumes that arity matches.
-    template <class T>
+    template<class T>
     void add(T t);
     /// Finalize datastructure (disallows additions of more Tuples)
     GECODE_INT_EXPORT void finalize(void);
@@ -107,7 +107,7 @@ namespace Gecode {
   {}
 
 
-  template <class T>
+  template<class T>
   void
   TupleSet::TupleSetI::add(T t) {
     assert(arity  != -1); // Arity has been set

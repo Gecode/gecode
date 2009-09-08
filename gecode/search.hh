@@ -339,7 +339,7 @@ namespace Gecode {
    * Space.
    * \ingroup TaskModelSearch
    */
-  template <class T>
+  template<class T>
   class DFS {
   private:
     /// The actual search engine
@@ -358,7 +358,7 @@ namespace Gecode {
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
-  template <class T>
+  template<class T>
   T* dfs(T* s, const Search::Options& o=Search::Options::def);
 
 
@@ -374,7 +374,7 @@ namespace Gecode {
    * best solution.
    * \ingroup TaskModelSearch
    */
-  template <class T>
+  template<class T>
   class BAB {
   private:
     /// The actual search engine
@@ -404,7 +404,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSearch
    */
-  template <class T>
+  template<class T>
   T* bab(T* s, const Search::Options& o=Search::Options::def);
 
 
@@ -420,7 +420,7 @@ namespace Gecode {
    * best solution.
    * \ingroup TaskModelSearch
    */
-  template <class T>
+  template<class T>
   class Restart {
   private:
     /// The actual search engine
@@ -449,7 +449,7 @@ namespace Gecode {
    * best solution.
    * \ingroup TaskModelSearch
    */
-  template <class T>
+  template<class T>
   T* restart(T* s, const Search::Options& o=Search::Options::def);
 
 
@@ -458,7 +458,7 @@ namespace Gecode {
    * \brief Limited discrepancy search engine
    * \ingroup TaskModelSearch
    */
-  template <class T>
+  template<class T>
   class LDS {
   private:
     /// The actual search engine
@@ -480,7 +480,7 @@ namespace Gecode {
    * \brief Invoke limited-discrepancy search for \a s as root node and options\a o
    * \ingroup TaskModelSearch
    */
-  template <class T>
+  template<class T>
   T* lds(T* s, const Search::Options& o=Search::Options::def);
 
 }

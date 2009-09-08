@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Values {
    *
    * \ingroup FuncIterValues
    */
-  template <class I>
+  template<class I>
   class Unique {
   private:
     /// Check that \a I is a value iterator;
@@ -80,22 +80,22 @@ namespace Gecode { namespace Iter { namespace Values {
     //@}
   };
 
-  template <class I>
+  template<class I>
   forceinline
   Unique<I>::Unique(void) {}
 
-  template <class I>
+  template<class I>
   forceinline
   Unique<I>::Unique(I& i0)
     : i(i0) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   Unique<I>::init(I& i0) {
     i = i0;
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   Unique<I>::operator ++(void) {
     int n=i;
@@ -103,13 +103,13 @@ namespace Gecode { namespace Iter { namespace Values {
       ++i;
     } while (i() && (i.val() == n));
   }
-  template <class I>
+  template<class I>
   forceinline bool
   Unique<I>::operator ()(void) const {
     return i();
   }
 
-  template <class I>
+  template<class I>
   forceinline int
   Unique<I>::val(void) const {
     return i.val();

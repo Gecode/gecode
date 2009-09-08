@@ -46,36 +46,36 @@ namespace Gecode {
     GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
   }
 
-  template <class T>
+  template<class T>
   forceinline
   BAB<T>::BAB(T* s, const Search::Options& o)
     : e(Search::bab(s,sizeof(T),o)) {}
 
-  template <class T>
+  template<class T>
   forceinline T*
   BAB<T>::next(void) {
     return dynamic_cast<T*>(e->next());
   }
 
-  template <class T>
+  template<class T>
   forceinline Search::Statistics
   BAB<T>::statistics(void) const {
     return e->statistics();
   }
 
-  template <class T>
+  template<class T>
   forceinline bool
   BAB<T>::stopped(void) const {
     return e->stopped();
   }
 
-  template <class T>
+  template<class T>
   forceinline
   BAB<T>::~BAB(void) {
     delete e;
   }
 
-  template <class T>
+  template<class T>
   T*
   bab(T* s, const Search::Options& o) {
     BAB<T> b(s,o);

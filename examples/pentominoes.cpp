@@ -98,28 +98,28 @@ namespace {
   /// Type for board symmetry functions
   typedef void (*bsymmfunc)(const IntVarArgs, int, int, IntVarArgs&, int&, int&);
   /// Identity symmetry
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void id(CArray t1, int w1, int h1, Array t2, int& w2, int&h2);
   /// Rotate 90 degrees
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void rot90(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Rotate 180 degrees
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void rot180(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Rotate 270 degrees
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void rot270(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip x-wise
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipx(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip y-wise
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipy(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip diagonal 1
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipd1(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip diagonal 2
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipd2(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   //@}
 }
@@ -891,56 +891,56 @@ namespace {
     }
     return h * w1 + w;
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void id(CArray t1, int w1, int h1, Array t2, int& w2, int&h2) {
     w2 = w1; h2 = h1;
     for (int h = 0; h < h1; ++h)
       for (int w = 0; w < w1; ++w)
 	t2[pos(h, w, h2, w2)] = t1[pos(h, w, h1, w1)];
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void rot90(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
     w2 = h1; h2 = w1;
     for (int h = 0; h < h1; ++h)
       for (int w = 0; w < w1; ++w)
 	t2[pos(w, w2-h-1, h2, w2)] = t1[pos(h, w, h1, w1)];
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void rot180(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
     w2 = w1; h2 = h1;
     for (int h = 0; h < h1; ++h)
       for (int w = 0; w < w1; ++w)
 	t2[pos(h2-h-1, w2-w-1, h2, w2)] = t1[pos(h, w, h1, w1)];
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void rot270(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
     w2 = h1; h2 = w1;
     for (int h = 0; h < h1; ++h)
       for (int w = 0; w < w1; ++w)
 	t2[pos(h2-w-1, h, h2, w2)] = t1[pos(h, w, h1, w1)];
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipx(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
     w2 = w1; h2 = h1;
     for (int h = 0; h < h1; ++h)
       for (int w = 0; w < w1; ++w)
 	t2[pos(h, w2-w-1, h2, w2)] = t1[pos(h, w, h1, w1)];
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipy(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
     w2 = w1; h2 = h1;
     for (int h = 0; h < h1; ++h)
       for (int w = 0; w < w1; ++w)
 	t2[pos(h2-h-1, w, h2, w2)] = t1[pos(h, w, h1, w1)];
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipd1(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
     w2 = h1; h2 = w1;
     for (int h = 0; h < h1; ++h)
       for (int w = 0; w < w1; ++w)
 	t2[pos(w, h, h2, w2)] = t1[pos(h, w, h1, w1)];
   }
-  template <class CArray, class Array>
+  template<class CArray, class Array>
   void flipd2(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
     w2 = h1; h2 = w1;
     for (int h = 0; h < h1; ++h)

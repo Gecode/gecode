@@ -41,24 +41,24 @@ namespace Gecode {
    * Operations for nodes
    *
    */
-  template <class Var>
+  template<class Var>
   forceinline
   LinExpr<Var>::Node::Node(void) : use(1) {
   }
 
-  template <class Var>
+  template<class Var>
   forceinline void*
   LinExpr<Var>::Node::operator new(size_t size) {
     return heap.ralloc(size);
   }
 
-  template <class Var>
+  template<class Var>
   forceinline void
   LinExpr<Var>::Node::operator delete(void* p, size_t) {
     heap.rfree(p);
   }
 
-  template <class Var>
+  template<class Var>
   bool
   LinExpr<Var>::Node::decrement(void) {
     if (--use == 0) {
@@ -71,7 +71,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class Var>
+  template<class Var>
   int
   LinExpr<Var>::Node::fill(Int::Linear::Term<View> t[],
                            int i, int m, int c_i, int& c_o) const {
@@ -115,7 +115,7 @@ namespace Gecode {
    *
    */
 
-  template <class Var>
+  template<class Var>
   inline
   LinExpr<Var>::LinExpr(void) :
     n(new Node) {
@@ -125,7 +125,7 @@ namespace Gecode {
     n->a = 0;
   }
 
-  template <class Var>
+  template<class Var>
   inline
   LinExpr<Var>::LinExpr(const Var& x, int a) :
     n(new Node) {
@@ -136,7 +136,7 @@ namespace Gecode {
     n->x = x;
   }
 
-  template <class Var>
+  template<class Var>
   inline
   LinExpr<Var>::LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1) :
     n(new Node) {
@@ -146,7 +146,7 @@ namespace Gecode {
     n->r = e1.n; n->r->use++;
   }
 
-  template <class Var>
+  template<class Var>
   inline
   LinExpr<Var>::LinExpr(const LinExpr& e, NodeType t, int c) :
     n(new Node) {
@@ -157,7 +157,7 @@ namespace Gecode {
     n->c = c;
   }
 
-  template <class Var>
+  template<class Var>
   inline
   LinExpr<Var>::LinExpr(int a, const LinExpr& e) :
     n(new Node) {
@@ -168,14 +168,14 @@ namespace Gecode {
     n->a = a;
   }
 
-  template <class Var>
+  template<class Var>
   inline
   LinExpr<Var>::LinExpr(const LinExpr<Var>& e)
     : n(e.n) {
     n->use++;
   }
 
-  template <class Var>
+  template<class Var>
   inline const LinExpr<Var>&
   LinExpr<Var>::operator =(const LinExpr<Var>& e) {
     if (this != &e) {
@@ -186,14 +186,14 @@ namespace Gecode {
     return *this;
   }
 
-  template <class Var>
+  template<class Var>
   forceinline
   LinExpr<Var>::~LinExpr(void) {
     if (n->decrement())
       delete n;
   }
 
-  template <class Var>
+  template<class Var>
   inline void
   LinExpr<Var>::post(Space& home, IntRelType irt, IntConLevel icl) const {
     Region r(home);
@@ -204,7 +204,7 @@ namespace Gecode {
     Int::Linear::post(home, ts, i, irt, -c_o, icl);
   }
 
-  template <class Var>
+  template<class Var>
   inline void
   LinExpr<Var>::post(Space& home, IntRelType irt, const BoolVar& b,
                      IntConLevel icl) const {
@@ -216,7 +216,7 @@ namespace Gecode {
     Int::Linear::post(home, ts, i, irt, -c_o, b, icl);
   }
 
-  template <>
+  template<>
   inline IntVar
   LinExpr<IntVar>::post(Space& home, IntConLevel icl) const {
     Region r(home);
@@ -232,7 +232,7 @@ namespace Gecode {
     return x;
   }
 
-  template <>
+  template<>
   inline IntVar
   LinExpr<BoolVar>::post(Space& home, IntConLevel icl) const {
     Region r(home);
@@ -442,7 +442,7 @@ namespace Gecode {
     return x;
   }
 
-  template <class Var>
+  template<class Var>
   inline IntVar
   post(Space& home, const LinExpr<Var>& e, IntConLevel icl) {
     if (!home.failed())

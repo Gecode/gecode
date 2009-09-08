@@ -39,13 +39,13 @@
 
 namespace Gecode { namespace Int { namespace Dom {
 
-  template <class View>
+  template<class View>
   forceinline
   ReRange<View>::ReRange(Space& home, View x, int min0, int max0, BoolView b)
     : ReUnaryPropagator<View,PC_INT_BND,BoolView>(home,x,b),
       min(min0), max(max0) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   ReRange<View>::post(Space& home, View x, int min, int max, BoolView b) {
     if (min > max) {
@@ -63,19 +63,19 @@ namespace Gecode { namespace Int { namespace Dom {
   }
 
 
-  template <class View>
+  template<class View>
   forceinline
   ReRange<View>::ReRange(Space& home, bool share, ReRange& p)
     : ReUnaryPropagator<View,PC_INT_BND,BoolView>(home,share,p),
       min(p.min), max(p.max) {}
 
-  template <class View>
+  template<class View>
   Actor*
   ReRange<View>::copy(Space& home, bool share) {
     return new (home) ReRange<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ReRange<View>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {

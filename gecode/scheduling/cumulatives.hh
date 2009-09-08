@@ -86,7 +86,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
    * Requires \code #include <gecode/scheduling/cumulatives.hh> \endcode
    * \ingroup FuncSchedulingProp
    */
-  template <class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewD, class ViewH, class View>
   class Val : public Propagator {
   protected:
     ViewArray<ViewM>  machine;

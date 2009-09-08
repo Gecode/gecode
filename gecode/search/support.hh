@@ -49,7 +49,7 @@ namespace Gecode { namespace Search {
   }
 
   /// Virtualize a worker to an engine
-  template <class Worker>
+  template<class Worker>
   class WorkerToEngine : public Engine {
   protected:
     Worker w;
@@ -64,21 +64,21 @@ namespace Gecode { namespace Search {
     virtual bool stopped(void) const;
   };
 
-  template <class Worker>
+  template<class Worker>
   WorkerToEngine<Worker>::WorkerToEngine(Space* s, size_t sz, 
                                          const Options& o) 
     : w(s,sz,o) {}
-  template <class Worker>
+  template<class Worker>
   Space* 
   WorkerToEngine<Worker>::next(void) {
     return w.next();
   }
-  template <class Worker>
+  template<class Worker>
   Search::Statistics 
   WorkerToEngine<Worker>::statistics(void) const {
     return w.statistics();
   }
-  template <class Worker>
+  template<class Worker>
   bool 
   WorkerToEngine<Worker>::stopped(void) const {
     return w.stopped();

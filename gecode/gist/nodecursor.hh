@@ -43,7 +43,7 @@
 namespace Gecode { namespace Gist {
 
   /// \brief A cursor that can be run over a tree
-  template <class Node>
+  template<class Node>
   class NodeCursor {
   private:
     /// The node where the iteration starts

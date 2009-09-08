@@ -232,7 +232,7 @@ namespace Gecode { namespace Set {
 
   protected:
     /// Overwrite the ranges with those represented by \a i
-    template <class I> bool overwrite(Space& home,I& i);
+    template<class I> bool overwrite(Space& home,I& i);
 
   public:
     /// \name Cloning
@@ -314,7 +314,7 @@ namespace Gecode { namespace Set {
     /// Include the set \f$\{i,\dots,j\}\f$ in this set
     bool include(Space& home,int i,int j,SetDelta& d);
     /// Include the set represented by \a i in this set
-    template <class I> bool includeI(Space& home,I& i);
+    template<class I> bool includeI(Space& home,I& i);
     //@}
   private:
     GLBndSet(const GLBndSet&);
@@ -354,9 +354,9 @@ namespace Gecode { namespace Set {
     /// Intersect this set with the set \f$\{i,\dots,j\}\f$
     bool intersect(Space& home, int i, int j);
     /// Exclude all elements not in the set represented by \a i from this set
-    template <class I> bool intersectI(Space& home, I& i);
+    template<class I> bool intersectI(Space& home, I& i);
     /// Exclude all elements in the set represented by \a i from this set
-    template <class I> bool excludeI(Space& home, I& i);
+    template<class I> bool excludeI(Space& home, I& i);
     /// Exclude all elements from this set
     void excludeAll(Space& home);
     //@}
@@ -376,7 +376,7 @@ namespace Gecode { namespace Set {
    *
    * \ingroup TaskActorSet
    */
-  template <class I>
+  template<class I>
   class RangesCompl :
     public Iter::Ranges::Compl<Limits::min, Limits::max, I> {
   public:
@@ -402,7 +402,7 @@ namespace Gecode { namespace Set {
    *
    * \ingroup TaskActorSet
    */
-  template <class T> class LubRanges {
+  template<class T> class LubRanges {
   public:
     /// \name Constructors and initialization
     //@{
@@ -444,7 +444,7 @@ namespace Gecode { namespace Set {
    *
    * \ingroup TaskActorSet
    */
-  template <class T> class GlbRanges {
+  template<class T> class GlbRanges {
   public:
     /// \name Constructors and initialization
     //@{
@@ -486,7 +486,7 @@ namespace Gecode { namespace Set {
    *
    * \ingroup TaskActorSet
    */
-  template <class T>
+  template<class T>
   class UnknownRanges : public Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T> >{
   private:
     LubRanges<T> i1;
@@ -611,11 +611,11 @@ namespace Gecode { namespace Set {
     /// \name Domain update by range iterator, implementations
     //@{
     /// Include set described by \a i in the greatest lower bound
-    template <class I> ModEvent includeI_full(Space& home,int mi, int ma, I& i);
+    template<class I> ModEvent includeI_full(Space& home,int mi, int ma, I& i);
     /// Exclude set described by \a i from the least upper bound
-    template <class I> ModEvent excludeI_full(Space& home,int mi, int ma, I& i);
+    template<class I> ModEvent excludeI_full(Space& home,int mi, int ma, I& i);
     /// Exclude everything but set described by \a i from the least upper bound
-    template <class I> ModEvent intersectI_full(Space& home,int mi, int ma, I& i);
+    template<class I> ModEvent intersectI_full(Space& home,int mi, int ma, I& i);
     //@}
 
     GECODE_SET_EXPORT ModEvent processLubChange(Space& home, SetDelta& d);
@@ -654,11 +654,11 @@ namespace Gecode { namespace Set {
     /// \name Domain update by range iterator
     //@{
     /// Include set described by \a i in the greatest lower bound
-    template <class I> ModEvent includeI(Space& home,I& i);
+    template<class I> ModEvent includeI(Space& home,I& i);
     /// Exclude set described by \a i from the least upper bound
-    template <class I> ModEvent excludeI(Space& home,I& i);
+    template<class I> ModEvent excludeI(Space& home,I& i);
     /// Exclude everything but set described by \a i from the least upper bound
-    template <class I> ModEvent intersectI(Space& home,I& i);
+    template<class I> ModEvent intersectI(Space& home,I& i);
     //@}
 
   public:
@@ -722,7 +722,7 @@ namespace Gecode {
   class SetVar;
 
   /** \brief Traits class for variable implementations and variables */
-  template <>
+  template<>
   class VarImpVarTraits<Set::SetVarImp> {
   public:
     typedef SetVar Var;

@@ -177,37 +177,37 @@ namespace Gecode {
      * Iterator-based domain update
      *
      */
-    template <class I>
+    template<class I>
     forceinline ModEvent
     OffsetView::narrow_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c);
       return view.narrow_r(home,oi,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     OffsetView::inter_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c);
       return view.inter_r(home,oi,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     OffsetView::minus_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c);
       return view.minus_r(home,oi,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     OffsetView::narrow_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c);
       return view.narrow_v(home,oi,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     OffsetView::inter_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c);
       return view.inter_v(home,oi,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     OffsetView::minus_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c);
@@ -294,7 +294,7 @@ namespace Gecode {
      * \brief %Range iterator for offset integer views
      * \ingroup TaskActorIntView
      */
-    template <>
+    template<>
     class ViewRanges<OffsetView>
       : public Iter::Ranges::Offset<ViewRanges<IntView> > {
     public:

@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Distinct {
 
-  template <class View>
+  template<class View>
   forceinline
   Bnd<View>::Bnd(Space& home, ViewArray<View>& x0)
     : Propagator(home), x(x0), y(home,x0) {
@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     y.subscribe(home,*this,PC_INT_BND);
   }
 
-  template <class View>
+  template<class View>
   forceinline size_t
   Bnd<View>::dispose(Space& home) {
     y.cancel(home,*this,PC_INT_BND);
@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return sizeof(*this);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Bnd<View>::Bnd(Space& home, bool share, Bnd<View>& p)
     : Propagator(home,share,p) {
@@ -65,13 +65,13 @@ namespace Gecode { namespace Int { namespace Distinct {
       y.update(home,share,p.y);
   }
 
-  template <class View>
+  template<class View>
   Actor*
   Bnd<View>::copy(Space& home, bool share) {
     return new (home) Bnd<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   Bnd<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   };
 
   /// Sort-order by increasing maximum
-  template <class View>
+  template<class View>
   class MaxInc {
   protected:
     ViewArray<View> x;
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   };
 
   /// Sort-order by increasing minimum
-  template <class View>
+  template<class View>
   class MinInc {
   public:
     forceinline bool
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 #define GECODE_INT_MINSORTED(i) (i)
 #define GECODE_INT_MAXSORTED(i) (_maxsorted[i])
 
-  template <class View>
+  template<class View>
   ExecStatus
   prop_bnd(Space& home, ViewArray<View>& x) {
     const int n = x.size();
@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 #undef GECODE_INT_MINSORTED
 #undef GECODE_INT_MAXSORTED
 
-  template <class View>
+  template<class View>
   ExecStatus
   Bnd<View>::propagate(Space& home, const ModEventDelta& med) {
     assert(x.size() > 1);
@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return es;
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Bnd<View>::post(Space& home, ViewArray<View>& x){
     if (x.size() == 2)

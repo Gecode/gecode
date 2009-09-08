@@ -92,7 +92,7 @@ namespace Gecode {
   namespace MiniModel {}
 
   /// Linear expressions
-  template <class Var>
+  template<class Var>
   class LinExpr {
   public:
     /// Type of linear expression
@@ -809,7 +809,7 @@ namespace Gecode {
   BoolExpr
   operator ^(const BoolExpr&, const BoolExpr&);
   /// Reification of linear relations
-  template <class Var>
+  template<class Var>
   BoolExpr
   operator ~(const LinRel<Var>&);
 
@@ -836,7 +836,7 @@ namespace Gecode {
    */
   //@{
   /// Post linear expression and return its value
-  template <class Var>
+  template<class Var>
   IntVar post(Space& home, const LinExpr<Var>& e,
               IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for integer variable) and return its value
@@ -847,7 +847,7 @@ namespace Gecode {
               IntConLevel icl=ICL_DEF);
 
   /// Post linear relation
-  template <class Var>
+  template<class Var>
   void post(Space& home, const LinRel<Var>& r,
             IntConLevel icl=ICL_DEF);
   /// Make it work for special integer only-case
@@ -1303,7 +1303,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelMiniModel
    */
-  template <class A>
+  template<class A>
   class Matrix {
   public:
     /// The type of elements of this array
@@ -1474,7 +1474,7 @@ namespace Gecode {
   namespace MiniModel {
 
     /// Baseclass for cost-based optimization
-    template <IntRelType irt>
+    template<IntRelType irt>
     class OptimizeSpace : public Space {
     public:
       /// Default constructor

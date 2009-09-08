@@ -144,7 +144,7 @@ namespace Test { namespace Int {
 
 
      /// Test for integer cardinality for some variables
-     template <bool hole>
+     template<bool hole>
      class IntSome : public Test {
      public:
        /// Create and register test

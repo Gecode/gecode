@@ -215,7 +215,7 @@ namespace Gecode { namespace Set {
     return intersect(home, i, i);
   }
 
-  template <class I>
+  template<class I>
   inline ModEvent
   SetVarImp::intersectI(Space& home, I& iterator) {
     Iter::Ranges::IsRangeIter<I>();
@@ -243,7 +243,7 @@ namespace Gecode { namespace Set {
       return intersect(home, mi, ma);
   }
 
-  template <class I>
+  template<class I>
   ModEvent
   SetVarImp::intersectI_full(Space& home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
@@ -295,7 +295,7 @@ namespace Gecode { namespace Set {
     return include(home, i, i);
   }
 
-  template <class I> forceinline ModEvent
+  template<class I> forceinline ModEvent
   SetVarImp::includeI(Space& home, I& iterator) {
     Iter::Ranges::IsRangeIter<I>();
     if (!iterator()) {
@@ -316,7 +316,7 @@ namespace Gecode { namespace Set {
       return include(home, mi, ma);
   }
 
-  template <class I>
+  template<class I>
   ModEvent
   SetVarImp::includeI_full(Space& home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
@@ -368,7 +368,7 @@ namespace Gecode { namespace Set {
     return exclude(home, i, i);
   }
 
-  template <class I>
+  template<class I>
   inline ModEvent
   SetVarImp::excludeI(Space& home, I& iterator) {
     Iter::Ranges::IsRangeIter<I>();
@@ -388,7 +388,7 @@ namespace Gecode { namespace Set {
       return exclude(home, mi, ma);
   }
 
-  template <class I>
+  template<class I>
   ModEvent
   SetVarImp::excludeI_full(Space& home, int mi, int ma, I& iterator) {
     Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
@@ -447,7 +447,7 @@ namespace Gecode { namespace Set {
    *
    * \ingroup TaskActorSet
    */
-  template <>
+  template<>
   class LubRanges<SetVarImp*> : public BndSetRanges {
   public:
     /// \name Constructors and initialization
@@ -481,7 +481,7 @@ namespace Gecode { namespace Set {
    *
    * \ingroup TaskActorSet
    */
-  template <>
+  template<>
   class GlbRanges<SetVarImp*> : public BndSetRanges {
   public:
     /// \name Constructors and initialization

@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    *
    */
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline
   Base<View,subscribe>::Base(Space& home, ViewArray<View>& x0,
                              const TupleSet& t)
@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     home.notice(*this,AP_DISPOSE);
   }
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline
   Base<View,subscribe>::Base(Space& home, bool share, Base<View,subscribe>& p)
     : Propagator(home,share,p), last_data(NULL) {
@@ -68,7 +68,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     init_last(home, p.last_data);
   }
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline void
   Base<View,subscribe>::init_last(Space& home, Tuple** source) {
     if (last_data == NULL) {
@@ -79,13 +79,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
   }
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline TupleSet::TupleSetI*
   Base<View,subscribe>::ts(void) {
     return tupleSet.implementation();
   }
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   PropCost
   Base<View,subscribe>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI,x.size());
@@ -93,13 +93,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 #define GECODE_LAST_TUPLE(l) (*(l))
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline Tuple
   Base<View,subscribe>::last(int i, int n) {
     return GECODE_LAST_TUPLE(last_data[(i*ts()->domsize) + n]);
   }
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline Tuple
   Base<View,subscribe>::last_next(int i, int n) {
     assert(last(i,n) != NULL);
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline void
   Base<View,subscribe>::init_dom(Space& home, Domain dom) {
     int domsize = ts()->domsize;
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
   }
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline bool
   Base<View,subscribe>::valid(Tuple t, Domain dom) {
     for (int i = x.size(); i--; )
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     return true;
   }
 #undef GECODE_LAST_TUPLE
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   forceinline Tuple
   Base<View,subscribe>::find_support(Domain dom, int i, int n) {
     Tuple l = last(i,n);
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
 
-  template <class View, bool subscribe>
+  template<class View, bool subscribe>
   size_t
   Base<View,subscribe>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

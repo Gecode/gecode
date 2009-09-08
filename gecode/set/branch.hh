@@ -66,7 +66,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelVal
    */
-  template <bool inc>
+  template<bool inc>
   class ValMin : public ValSelBase<SetView,int> {
   public:
     /// Default constructor
@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelVal
    */
-  template <bool inc>
+  template<bool inc>
   class ValMed : public ValSelBase<SetView,int> {
   public:
     /// Default constructor
@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetSelVal
    */
-  template <bool inc>
+  template<bool inc>
   class ValMax : public ValSelBase<SetView,int> {
   public:
     /// Default constructor

@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I, bool strict=false>
+  template<class I, bool strict=false>
   class Positive {
   private:
     /// Check that \a I is a range iterator;
@@ -85,11 +85,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline
   Positive<I,strict>::Positive(void) {}
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline void
   Positive<I,strict>::init(I& i0) {
     i=i0;
@@ -100,24 +100,24 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline
   Positive<I,strict>::Positive(I& i) {
     init(i);
   }
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline void
   Positive<I,strict>::operator ++(void) {
     ++i;
   }
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline bool
   Positive<I,strict>::operator ()(void) const {
     return i();
   }
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline int
   Positive<I,strict>::min(void) const {
     if (strict) {
@@ -126,12 +126,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
       return std::max(i.min(),0);
     }
   }
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline int
   Positive<I,strict>::max(void) const {
     return i.max();
   }
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline unsigned int
   Positive<I,strict>::width(void) const {
     return static_cast<unsigned int>(max()-min()+1);

@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <class I, class J>
+  template<class I, class J>
   class Append : public MinMax {
   protected:
     /// First iterator
@@ -83,7 +83,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <class I>
+  template<class I>
   class NaryAppend  :  public MinMax {
     /// Check that \a I is a range iterator;
     IsRangeIter<I> _checkI;
@@ -118,7 +118,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template <class I, class J>
+  template<class I, class J>
   inline void
   Append<I,J>::operator ++(void) {
     if (i()) {
@@ -137,11 +137,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Append<I,J>::Append(void) {}
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Append<I,J>::Append(I& i0, J& j0)
     : i(i0), j(j0) {
@@ -151,7 +151,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       finish();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Append<I,J>::init(I& i0, J& j0) {
     i = i0; j = j0;
@@ -167,7 +167,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template <class I>
+  template<class I>
   inline void
   NaryAppend<I>::operator ++(void) {
     mi = r[active].min();
@@ -190,11 +190,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline
   NaryAppend<I>::NaryAppend(void) {}
 
-  template <class I>
+  template<class I>
   inline
   NaryAppend<I>::NaryAppend(I* r0, unsigned int n0)
     : r(r0), n(n0), active(0) {
@@ -207,7 +207,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   inline void
   NaryAppend<I>::init(I* r0, unsigned int n0) {
     r = r0; n = n0; active = 0;

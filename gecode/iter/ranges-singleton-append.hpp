@@ -47,7 +47,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <class J>
+  template<class J>
   class SingletonAppend : public MinMax {
   private:
     /// Check that \a J is a range iterator;
@@ -79,7 +79,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template <class J>
+  template<class J>
   inline void
   SingletonAppend<J>::operator ++(void) {
     if (j()) {
@@ -91,18 +91,18 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
 
-  template <class J>
+  template<class J>
   forceinline
   SingletonAppend<J>::SingletonAppend(void) {}
 
-  template <class J>
+  template<class J>
   forceinline
   SingletonAppend<J>::SingletonAppend(int i0, int i1, J& j0)
     : j(j0) {
     mi=i0; ma=i1;
   }
 
-  template <class J>
+  template<class J>
   forceinline void
   SingletonAppend<J>::init(int i0, int i1, J& j0) {
     mi=i0; ma=i1; j=j0;

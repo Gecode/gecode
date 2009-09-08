@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
    * \ingroup FuncIterRangesVirt
    */
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   class Compl : public MinMax, public Iterator {
   protected:
     /// Iterator to compute complement for
@@ -136,7 +136,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   };
 
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline void
   Compl<UMIN,UMAX>::start(void) {
     if ((*i)()) {
@@ -157,20 +157,20 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     }
   }
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline
   Compl<UMIN,UMAX>::Compl(void) {}
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline
   Compl<UMIN,UMAX>::Compl(Iterator* i0) : i(i0) {
     start();
   }
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   Compl<UMIN,UMAX>::~Compl(void) { delete i; }
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline void
   Compl<UMIN,UMAX>::operator ++(void) {
     assert(!(*i)() || (i->max() <= UMAX));
@@ -183,19 +183,19 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     }
   }
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline bool
   Compl<UMIN,UMAX>::operator ()(void) { return MinMax::operator ()(); }
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline int
   Compl<UMIN,UMAX>::min(void) const { return MinMax::min(); }
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline int
   Compl<UMIN,UMAX>::max(void) const { return MinMax::max(); }
 
-  template <int UMIN, int UMAX>
+  template<int UMIN, int UMAX>
   forceinline unsigned int
   Compl<UMIN,UMAX>::width(void) const { return MinMax::width(); }
 

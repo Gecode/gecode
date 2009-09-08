@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief Brancher by view and values selection
    *
    */
-  template <class ViewSel, class View>
+  template<class ViewSel, class View>
   class ViewValuesBrancher : public ViewBrancher<ViewSel> {
   protected:
     using ViewBrancher<ViewSel>::x;

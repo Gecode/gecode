@@ -55,7 +55,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * is strongly connected and for pruning short cycles.
    *
    */
-  template <class View>
+  template<class View>
   class Base : public NaryPropagator<View,Int::PC_INT_DOM> {
   protected:
     using NaryPropagator<View,Int::PC_INT_DOM>::x;
@@ -84,7 +84,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * Requires \code #include <gecode/graph/circuit.hh> \endcode
    * \ingroup FuncGraphProp
    */
-  template <class View>
+  template<class View>
   class Val : public Base<View> {
   protected:
     using Base<View>::x;
@@ -116,7 +116,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * Requires \code #include <gecode/graph/circuit.hh> \endcode
    * \ingroup FuncGraphProp
    */
-  template <class View>
+  template<class View>
   class Dom : public Base<View> {
   protected:
     using Base<View>::x;

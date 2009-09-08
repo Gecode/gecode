@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace Set { namespace Element {
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   forceinline
   ElementDisjoint<SView,RView>::ElementDisjoint(Space& home,
                                                 IdxViewArray& iv0,
@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Element {
     iv.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   forceinline
   ElementDisjoint<SView,RView>::ElementDisjoint(Space& home, bool share,  
                                                 ElementDisjoint& p)
@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace Element {
     iv.update(home,share,p.iv);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   forceinline ExecStatus
   ElementDisjoint<SView,RView>::post(Space& home, IdxViewArray& xs,
                                      RView x1) {
@@ -73,13 +73,13 @@ namespace Gecode { namespace Set { namespace Element {
     return ES_OK;
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   PropCost
   ElementDisjoint<SView,RView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, iv.size()+2);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   size_t
   ElementDisjoint<SView,RView>::dispose(Space& home) {
     assert(!home.failed());
@@ -89,13 +89,13 @@ namespace Gecode { namespace Set { namespace Element {
     return sizeof(*this);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   Actor*
   ElementDisjoint<SView,RView>::copy(Space& home, bool share) {
     return new (home) ElementDisjoint(home,share,*this);
   }
 
-  template <class SView, class RView>
+  template<class SView, class RView>
   ExecStatus
   ElementDisjoint<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     int n = iv.size();

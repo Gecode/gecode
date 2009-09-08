@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Compute the cardinality of the union of all variable domains in \a x.
    *
    */
-  template <class View>
+  template<class View>
   forceinline unsigned int
   x_card(Space& home, ViewArray<View>& x) {
     int n = x.size();

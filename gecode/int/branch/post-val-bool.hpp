@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   /// Post brancher according to \a v and \a vals
-  template <class SelView>
+  template<class SelView>
   void
   post(Space& home, ViewArray<BoolView>& x, SelView& v,
        IntValBranch vals, const ValBranchOptions& o_vals) {

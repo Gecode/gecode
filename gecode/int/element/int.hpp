@@ -39,19 +39,19 @@ namespace Gecode { namespace Int { namespace Element {
 
 
   // Index value pairs
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline void
   Int<V0,V1,Idx,Val>::IdxVal::mark(void) {
     idx = -1;
   }
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline bool
   Int<V0,V1,Idx,Val>::IdxVal::marked(void) const {
     return idx<0;
   }
 
   // Index iterator
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::IterIdx::IterIdx(IdxVal* iv0)
     : iv(iv0) {
@@ -61,12 +61,12 @@ namespace Gecode { namespace Int { namespace Element {
       i=iv[i].idx_next;
     iv[p].idx_next=i;
   }
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline bool
   Int<V0,V1,Idx,Val>::IterIdx::operator ()(void) const {
     return i != 0;
   }
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline void
   Int<V0,V1,Idx,Val>::IterIdx::operator ++(void) {
     int p=i;
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Element {
       i=iv[i].idx_next;
     iv[p].idx_next=i;
   }
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline Idx
   Int<V0,V1,Idx,Val>::IterIdx::val(void) const {
     assert(!iv[i].marked());
@@ -84,21 +84,21 @@ namespace Gecode { namespace Int { namespace Element {
 
 
 
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::IterVal::IterVal(IdxVal* iv0)
     : iv(iv0), i(iv[0].val_next) {}
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline bool
   Int<V0,V1,Idx,Val>::IterVal::operator ()(void) const {
     return i != 0;
   }
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline void
   Int<V0,V1,Idx,Val>::IterVal::operator ++(void) {
     i=iv[i].val_next;
   }
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline Val
   Int<V0,V1,Idx,Val>::IterVal::val(void) const {
     assert(!iv[i].marked());
@@ -108,11 +108,11 @@ namespace Gecode { namespace Int { namespace Element {
 
 
   // Sort function
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::ByVal::ByVal(const IdxVal* iv0)
     : iv(iv0) {}
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline bool
   Int<V0,V1,Idx,Val>::ByVal::operator ()(Idx& i, Idx& j) {
     return iv[i].val < iv[j].val;
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Element {
    * Element propagator proper
    *
    */
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::Int(Space& home, IntSharedArray& c0, V0 y0, V1 y1)
     : Propagator(home), x0(y0), x1(y1), c(c0), iv(NULL) {
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Element {
     x1.subscribe(home,*this,PC_INT_DOM);
   }
 
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline size_t
   Int<V0,V1,Idx,Val>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Element {
     return sizeof(*this);
   }
 
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   ExecStatus
   Int<V0,V1,Idx,Val>::post(Space& home, IntSharedArray& c, V0 x0, V1 x1) {
     if (x0.assigned()) {
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Element {
     return ES_OK;
   }
 
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::Int(Space& home, bool share, Int& p)
     : Propagator(home,share,p), iv(NULL) {
@@ -165,19 +165,19 @@ namespace Gecode { namespace Int { namespace Element {
     x1.update(home,share,p.x1);
   }
 
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   Actor*
   Int<V0,V1,Idx,Val>::copy(Space& home, bool share) {
     return new (home) Int<V0,V1,Idx,Val>(home,share,*this);
   }
 
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   PropCost
   Int<V0,V1,Idx,Val>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::HI);
   }
 
-  template <class V0, class V1, class Idx, class Val>
+  template<class V0, class V1, class Idx, class Val>
   ExecStatus
   Int<V0,V1,Idx,Val>::propagate(Space& home, const ModEventDelta&) {
     bool assigned = x0.assigned() && x1.assigned();
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Element {
     }
   }
 
-  template <class V0, class V1>
+  template<class V0, class V1>
   forceinline ExecStatus
   post_int(Space& home, IntSharedArray& c, V0 x0, V1 x1) {
     assert(c.size() > 0);

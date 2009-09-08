@@ -47,7 +47,7 @@ namespace Gecode {
   using namespace Set::Rel;
   using namespace Set::RelOp;
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   void
   rel_post(Space& home, View0 x0, SetRelType r, View1 x1) {
     if (home.failed()) return;
@@ -96,7 +96,7 @@ namespace Gecode {
     }
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   void
   rel_re(Space& home, View0 x, SetRelType r, View1 y, BoolVar b) {
     if (home.failed()) return;

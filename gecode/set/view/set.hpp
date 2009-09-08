@@ -143,7 +143,7 @@ namespace Gecode { namespace Set {
     return (varimp->intersect(home,n));
   }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   SetView::includeI (Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
     return (varimp->includeI(home, iter));
@@ -153,13 +153,13 @@ namespace Gecode { namespace Set {
   SetView::exclude (Space& home,int from, int to)
   { return (varimp->exclude(home,from,to)); }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   SetView::excludeI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->excludeI(home, iter);
   }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   SetView::intersectI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
     return varimp->intersectI(home, iter);
@@ -209,7 +209,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for least upper bound of set variable views
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class LubRanges<SetView> : public LubRanges<SetVarImp*> {
   public:
     /// \name Constructors and initialization
@@ -240,7 +240,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for greatest lower bound of set variable views
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class GlbRanges<SetView> : public GlbRanges<SetVarImp*> {
   public:
     /// \name Constructors and initialization

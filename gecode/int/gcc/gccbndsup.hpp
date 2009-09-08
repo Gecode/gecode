@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Bounds consistency check for cardinality variables.
    */
 
-  template <class Card, bool shared>
+  template<class Card, bool shared>
   inline ExecStatus
   prop_card(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /** \brief Consistency check, whether the cardinality values are feasible.
    */
-  template <class Card>
+  template<class Card>
   inline bool
   card_consistent(ViewArray<IntView>& x, ViewArray<Card>& k) {
     int smin = 0;
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  template <class View>
+  template<class View>
   class MaxInc {
   protected:
     ViewArray<View> x;
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  template <class View>
+  template<class View>
   class MinInc {
   protected:
     ViewArray<View> x;
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  template <class Card>
+  template<class Card>
   class MinIdx {
   public:
     forceinline bool
@@ -227,7 +227,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *  time computation of the maximal capacity of an interval.
    *
    */
-  template <class Card>
+  template<class Card>
   class PartialSum {
   private:
     /// sum[i] contains the partial sum from 0 to i
@@ -263,7 +263,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /// \brief Deallocate memory
-  template <class Card>
+  template<class Card>
   forceinline void
   PartialSum<Card>::dispose(void){
     if (sum != NULL)
@@ -273,18 +273,18 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /// \brief Destructor
-  template <class Card>
+  template<class Card>
   forceinline
   PartialSum<Card>::~PartialSum(void){
     dispose();
   }
 
   /// \brief Constructor
-  template <class Card>
+  template<class Card>
   forceinline
   PartialSum<Card>::PartialSum(void) : sum(NULL), size(0) {}
 
-  template <class Card>
+  template<class Card>
   forceinline bool
   PartialSum<Card>::initialized(void) const {
     return sum != NULL;
@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *        If \a up is true we sumup the upper bounds, otherwise the lower bounds.
    *
    */
-  template <class Card>
+  template<class Card>
   inline void
   PartialSum<Card>::init(ViewArray<Card>& elements, bool up) {
     int i = 0;
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ds[0] = 0;
   }
 
-  template <class Card>
+  template<class Card>
   void
   PartialSum<Card>::print(void) {
     for (int i=0; i < size; i++) {
@@ -384,7 +384,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /**
    * \brief Compute the maximum capacity of an interval I
    */
-  template <class Card>
+  template<class Card>
   forceinline int
   PartialSum<Card>::sumup(int from, int to){
     if (from <= to) {
@@ -402,7 +402,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Returns the smallest bound of the variables in \a x
    *
    */
-  template <class Card>
+  template<class Card>
   forceinline int
   PartialSum<Card>::minValue(void){
     return firstValue + 3;
@@ -413,7 +413,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  template <class Card>
+  template<class Card>
   forceinline int
   PartialSum<Card>::maxValue(void){
     return lastValue - 2;
@@ -425,7 +425,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *        not differ.
    *
    */
-  template <class Card>
+  template<class Card>
   forceinline int
   PartialSum<Card>::skipNonNullElementsRight(int value) {
     value -= firstValue;
@@ -438,7 +438,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *        not differ.
    *
    */
-  template <class Card>
+  template<class Card>
   forceinline int
   PartialSum<Card>::skipNonNullElementsLeft(int value) {
     value -= firstValue;
@@ -454,7 +454,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *        cardinalities.
    */
 
-  template <class Card>
+  template<class Card>
   inline bool
   PartialSum<Card>::check_update_max(ViewArray<Card>& k){
     int j = 0;
@@ -478,7 +478,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *        cardinalities.
    */
 
-  template <class Card>
+  template<class Card>
   inline bool
   PartialSum<Card>::check_update_min(ViewArray<Card>& k){
     int j = 0;
@@ -495,12 +495,12 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /// \brief Return the size of the partial sum structure.
-  template <class Card>
+  template<class Card>
   forceinline int
   PartialSum<Card>::getsize(void) const {
     return size;
   }
-  template <class Card>
+  template<class Card>
   forceinline size_t
   PartialSum<Card>::allocated(void) const {
     return sizeof(PartialSum<Card>) + 2*size*sizeof(int);
@@ -685,7 +685,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *         than the greatest value of all variable domains.
    */
 
-  template <class Card>
+  template<class Card>
   void
   reduce_card(Space& home, int cmin, int cmax, ViewArray<Card>& k) {
     if (cmin == cmax) {

@@ -45,19 +45,19 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   //@{
   /// Size of all ranges of range iterator \a i
-  template <class I>
+  template<class I>
   unsigned int size(I& i);
 
   /// Check whether range iterators \a i and \a j are equal
-  template <class I, class J>
+  template<class I, class J>
   bool equal(I& i, J& j);
 
   /// Check whether range iterator \a i is subset of range iterator \a j
-  template <class I, class J>
+  template<class I, class J>
   bool subset(I& i, J& j);
 
   /// Check whether range iterators \a i and \a j are disjoint
-  template <class I, class J>
+  template<class I, class J>
   bool disjoint(I& i, J& j);
 
   /// Is one iterator subsumed by another, or is the intersection empty?
@@ -68,12 +68,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
   /// Check whether range iterator \a i subsumes \a j, or whether intersection is empty
-  template <class I, class J>
+  template<class I, class J>
   SubsumptionStatus subsumes(I& i, J& j);
   //@}
 
 
-  template <class I>
+  template<class I>
   inline unsigned int
   size(I& i) {
     IsRangeIter<I>();
@@ -84,7 +84,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     return s;
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline bool
   equal(I& i, J& j) {
     IsRangeIter<I>();
@@ -99,7 +99,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     return !i() && !j();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline bool
   subset(I& i, J& j) {
     IsRangeIter<I>();
@@ -116,7 +116,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     return !i();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline bool
   disjoint(I& i, J& j) {
     IsRangeIter<I>();
@@ -133,7 +133,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     return true;
   }
 
-  template <class I, class J>
+  template<class I, class J>
   inline SubsumptionStatus
   subsumes(I& i, J& j) {
     IsRangeIter<I>();

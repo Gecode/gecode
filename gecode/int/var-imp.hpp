@@ -313,22 +313,22 @@ namespace Gecode { namespace Int {
      */
     //@{
     /// Replace domain by ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
-    template <class I>
+    template<class I>
     ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
-    template <class I>
+    template<class I>
     ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
-    template <class I>
+    template<class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
@@ -474,7 +474,7 @@ namespace Gecode {
   class IntVar;
 
   /** \brief Traits class for variable implementations and variables */
-  template <>
+  template<>
   class VarImpVarTraits<Int::IntVarImp> {
   public:
     typedef IntVar Var;
@@ -616,22 +616,22 @@ namespace Gecode { namespace Int {
      */
     //@{
     /// Replace domain by ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
-    template <class I>
+    template<class I>
     ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
-    template <class I>
+    template<class I>
     ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
-    template <class I>
+    template<class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
@@ -718,7 +718,7 @@ namespace Gecode { namespace Int {
 
 namespace Gecode {
   /** \brief Traits class for variable implementations and variables */
-  template <>
+  template<>
   class VarImpVarTraits<Int::BoolVarImp> {
   public:
     typedef BoolVar Var;

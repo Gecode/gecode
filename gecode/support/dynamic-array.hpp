@@ -44,7 +44,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T, class A>
+  template<class T, class A>
   class DynamicArray {
   private:
     /// Memory allocator
@@ -76,25 +76,25 @@ namespace Gecode { namespace Support {
   };
 
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicArray<T,A>::DynamicArray(A& a0, int n0)
     : a(a0), n(n0), x(a.template alloc<T>(n)) {}
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicArray<T,A>::DynamicArray(const DynamicArray<T,A>& da)
     : a(da.a), n(da.n), x(a.template alloc<T>(n)) {
     (void) heap.copy<T>(x,da.x,n);
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicArray<T,A>::~DynamicArray(void) {
     a.free(x,n);
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline const DynamicArray<T,A>&
   DynamicArray<T,A>::operator =(const DynamicArray<T,A>& da) {
     if (this != &da) {
@@ -106,7 +106,7 @@ namespace Gecode { namespace Support {
     return *this;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   void
   DynamicArray<T,A>::resize(int i) {
     int m = std::max(i+1, (3*n)/2);
@@ -114,7 +114,7 @@ namespace Gecode { namespace Support {
     n = m;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T&
   DynamicArray<T,A>::operator [](int i) {
     if (i >= n) resize(i);
@@ -122,14 +122,14 @@ namespace Gecode { namespace Support {
     return x[i];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline const T&
   DynamicArray<T,A>::operator [](int i) const {
     assert(n > i);
     return x[i];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicArray<T,A>::operator T*(void) {
     return x;

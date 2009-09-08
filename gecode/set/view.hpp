@@ -143,11 +143,11 @@ namespace Gecode {
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space& home, I& i);
+      template<class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);
+      template<class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space& home, I& iter);
+      template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name Cloning
@@ -316,11 +316,11 @@ namespace Gecode {
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space& home, I& i);
+      template<class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);
+      template<class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space& home, I& iter);
+      template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
@@ -496,11 +496,11 @@ namespace Gecode {
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space& home, I& i);
+      template<class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);
+      template<class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space& home, I& iter);
+      template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
@@ -679,11 +679,11 @@ namespace Gecode {
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space& home, I& i);
+      template<class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);
+      template<class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space& home, I& iter);
+      template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
@@ -876,11 +876,11 @@ namespace Gecode {
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space& home, I& i);
+      template<class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);
+      template<class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space& home, I& iter);
+      template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
@@ -983,7 +983,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    template <class View>
+    template<class View>
     class ComplementView
       : public DerivedViewBase<View> {
     protected:
@@ -1073,11 +1073,11 @@ namespace Gecode {
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space& home, I& i);
+      template<class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);
+      template<class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space& home, I& iter);
+      template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
@@ -1150,11 +1150,11 @@ namespace Gecode {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  template <class View>
+  template<class View>
   bool same(const Set::ComplementView<View>& x,
             const Set::ComplementView<View>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  template <class View>
+  template<class View>
   bool before(const Set::ComplementView<View>& x,
               const Set::ComplementView<View>& y);
   //@}
@@ -1166,7 +1166,7 @@ namespace Gecode {
    * This class specializes the ViewVarImpTraits for ComplementView.
    * \ingroup TaskActorSetView
    */
-  template <class View>
+  template<class View>
   class ViewVarImpTraits<Set::ComplementView<View> > {
   public:
     /// The variable type of a ComplementView
@@ -1185,7 +1185,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    template <class View>
+    template<class View>
     class OffsetSetView : public DerivedViewBase<View> {
     protected:
       using DerivedViewBase<View>::view;
@@ -1271,11 +1271,11 @@ namespace Gecode {
       //@{
 
       /// Remove range sequence described by \a i from least upper bound
-      template <class I> ModEvent excludeI(Space& home, I& i);
+      template<class I> ModEvent excludeI(Space& home, I& i);
       /// Include range sequence described by \a i in greatest lower bound
-      template <class I> ModEvent includeI(Space& home, I& i);
+      template<class I> ModEvent includeI(Space& home, I& i);
       /// Intersect least upper bound with range sequence described by \a i
-      template <class I> ModEvent intersectI(Space& home, I& iter);
+      template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
       /// \name View-dependent propagator support
@@ -1348,11 +1348,11 @@ namespace Gecode {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  template <class View>
+  template<class View>
   bool same(const Set::OffsetSetView<View>& x,
             const Set::OffsetSetView<View>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  template <class View>
+  template<class View>
   bool before(const Set::OffsetSetView<View>& x,
               const Set::OffsetSetView<View>& y);
   //@}
@@ -1364,7 +1364,7 @@ namespace Gecode {
    * This class specializes the ViewVarImpTraits for ComplementView.
    * \ingroup TaskActorSetView
    */
-  template <class View>
+  template<class View>
   class ViewVarImpTraits<Set::OffsetSetView<View> > {
   public:
     /// The variable type of a ComplementView

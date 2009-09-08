@@ -54,7 +54,7 @@ namespace Gecode {
    * subscriptions are created for \a View.
    *
    */
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   class ReUnaryPropagator : public Propagator {
   protected:
     /// Single view
@@ -85,7 +85,7 @@ namespace Gecode {
    * subscriptions are created for \a View.
    *
    */
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   class ReBinaryPropagator : public Propagator {
   protected:
     /// Two views
@@ -119,7 +119,7 @@ namespace Gecode {
    * PC_GEN_NONE, no subscriptions are created.
    *
    */
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class CtrlView>
   class ReMixBinaryPropagator : public Propagator {
   protected:
@@ -148,7 +148,7 @@ namespace Gecode {
    * Reified unary propagators
    *
    */
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
   (Space& home, View y0, CtrlView b0)
     : Propagator(home), x0(y0), b(b0) {
@@ -157,7 +157,7 @@ namespace Gecode {
     b.subscribe(home,*this,Int::PC_INT_VAL);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   forceinline
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
   (Space& home, bool share, ReUnaryPropagator<View,pc,CtrlView>& p)
@@ -166,7 +166,7 @@ namespace Gecode {
     b.update(home,share,p.b);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   forceinline
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
   (Space& home, bool share, Propagator& p, View y0, CtrlView b0)
@@ -175,13 +175,13 @@ namespace Gecode {
     b.update(home,share,b0);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   PropCost
   ReUnaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::LO);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   forceinline size_t
   ReUnaryPropagator<View,pc,CtrlView>::dispose(Space& home) {
     if (pc != PC_GEN_NONE)
@@ -195,7 +195,7 @@ namespace Gecode {
    * Reified binary propagators
    *
    */
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
   (Space& home, View y0, View y1, CtrlView b1)
     : Propagator(home), x0(y0), x1(y1), b(b1) {
@@ -206,7 +206,7 @@ namespace Gecode {
     b.subscribe(home,*this,Int::PC_INT_VAL);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   forceinline
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
   (Space& home, bool share, ReBinaryPropagator<View,pc,CtrlView>& p)
@@ -216,7 +216,7 @@ namespace Gecode {
     b.update(home,share,p.b);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   forceinline
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
   (Space& home, bool share, Propagator& p, View y0, View y1, CtrlView b0)
@@ -226,13 +226,13 @@ namespace Gecode {
     b.update(home,share,b0);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   PropCost
   ReBinaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
   }
 
-  template <class View, PropCond pc, class CtrlView>
+  template<class View, PropCond pc, class CtrlView>
   forceinline size_t
   ReBinaryPropagator<View,pc,CtrlView>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
@@ -248,7 +248,7 @@ namespace Gecode {
    * Reified mixed binary propagator
    *
    */
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class CtrlView>
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
   ::ReMixBinaryPropagator(Space& home, View0 y0, View1 y1, CtrlView b1)
@@ -260,7 +260,7 @@ namespace Gecode {
     b.subscribe(home,*this,Int::PC_INT_VAL);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class CtrlView>
   forceinline
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::ReMixBinaryPropagator
@@ -272,7 +272,7 @@ namespace Gecode {
     b.update(home,share,p.b);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class CtrlView>
   forceinline
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
@@ -284,7 +284,7 @@ namespace Gecode {
     b.update(home,share,b0);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class CtrlView>
   PropCost
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
@@ -292,7 +292,7 @@ namespace Gecode {
     return PropCost::binary(PropCost::LO);
   }
 
-  template <class View0, PropCond pc0, class View1, PropCond pc1,
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
             class CtrlView>
   forceinline size_t
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::dispose(Space& home) {

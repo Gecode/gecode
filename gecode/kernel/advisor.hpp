@@ -43,14 +43,14 @@ namespace Gecode {
    * \brief Advisor storing a single view
    *
    */
-  template <class View>
+  template<class View>
   class ViewAdvisor : public Advisor {
   protected:
     /// The single view
     View x;
   public:
     /// Constructor for creation
-    template <class A>
+    template<class A>
     ViewAdvisor(Space& home, Propagator& p, Council<A>& c, View x0);
     /// Constructor for cloning \a a
     ViewAdvisor(Space& home, bool share, ViewAdvisor<View>& a);
@@ -59,38 +59,38 @@ namespace Gecode {
     /// Replace view (also replaces subscription to view)
     void view(Space& home, View y);
     /// Delete advisor
-    template <class A>
+    template<class A>
     void dispose(Space& home, Council<A>& c);
   };
 
 
-  template <class View>
-  template <class A>
+  template<class View>
+  template<class A>
   forceinline
   ViewAdvisor<View>::ViewAdvisor(Space& home, Propagator& p,
                                  Council<A>& c, View x0)
     : Advisor(home,p,c), x(x0) {
     x.subscribe(home,*this);
   }
-  template <class View>
+  template<class View>
   forceinline
   ViewAdvisor<View>::ViewAdvisor(Space& home, bool share,
                                  ViewAdvisor<View>& a)
     : Advisor(home,share,a) {
     x.update(home,share,a.x);
   }
-  template <class View>
+  template<class View>
   forceinline View
   ViewAdvisor<View>::view(void) const {
     return x;
   }
-  template <class View>
+  template<class View>
   forceinline void
   ViewAdvisor<View>::view(Space& home, View y) {
     x.cancel(home,*this); x=y; x.subscribe(home,*this);
   }
-  template <class View>
-  template <class A>
+  template<class View>
+  template<class A>
   forceinline void
   ViewAdvisor<View>::dispose(Space& home, Council<A>& c) {
     x.cancel(home,*this);

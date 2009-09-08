@@ -43,7 +43,7 @@
 
 namespace Gecode { namespace FlatZinc {
 
-  template <class Val>
+  template<class Val>
   class SymbolTable {
   private:
     std::map<std::string,std::pair<Val,bool> > m;
@@ -53,13 +53,13 @@ namespace Gecode { namespace FlatZinc {
     std::vector<std::pair<std::string, Val> > toVec(bool all) const;
   };
 
-  template <class Val>
+  template<class Val>
   void
   SymbolTable<Val>::put(const std::string& key, const Val& val, bool ext) {
     m[key] = std::pair<Val,bool>(val,ext);
   }
 
-  template <class Val>
+  template<class Val>
   bool
   SymbolTable<Val>::get(const std::string& key, Val& val) const {
     typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 
@@ -70,7 +70,7 @@ namespace Gecode { namespace FlatZinc {
     return true;
   }
 
-  template <class Val>
+  template<class Val>
   std::vector<std::pair<std::string, Val> >
   SymbolTable<Val>::toVec(bool all) const {
     typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 

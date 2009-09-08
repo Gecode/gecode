@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   prop_sqrt_bnd(Space& home, View x0, View x1) {
     bool mod;
@@ -77,12 +77,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   SqrtBnd<View>::SqrtBnd(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   SqrtBnd<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
@@ -96,18 +96,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   SqrtBnd<View>::SqrtBnd(Space& home, bool share, SqrtBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   SqrtBnd<View>::copy(Space& home, bool share) {
     return new (home) SqrtBnd<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   SqrtBnd<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
@@ -145,12 +145,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
  };
 
-  template <class View>
+  template<class View>
   forceinline
   SqrtDom<View>::SqrtDom(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   SqrtDom<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
@@ -164,18 +164,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   SqrtDom<View>::SqrtDom(Space& home, bool share, SqrtDom<View>& p)
     : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   SqrtDom<View>::copy(Space& home, bool share) {
     return new (home) SqrtDom<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   SqrtDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return PropCost::binary(PropCost::LO);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   SqrtDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {

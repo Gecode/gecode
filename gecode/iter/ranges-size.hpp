@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I>
+  template<class I>
   class Size {
   private:
     /// Check that \a I is a range iterator;
@@ -93,51 +93,51 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template <class I>
+  template<class I>
   forceinline
   Size<I>::Size(void)
     : _size(0) {}
 
-  template <class I>
+  template<class I>
   inline void
   Size<I>::init(I& i0) {
     i.init(i0);
     _size = 0;
   }
 
-  template <class I>
+  template<class I>
   inline
   Size<I>::Size(I& i0) : i(i0), _size(0) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   Size<I>::operator ++(void) {
     _size += i.width();
     ++i;
   }
-  template <class I>
+  template<class I>
   forceinline bool
   Size<I>::operator ()(void) {
     return i();
   }
 
-  template <class I>
+  template<class I>
   forceinline int
   Size<I>::min(void) const {
     return i.min();
   }
-  template <class I>
+  template<class I>
   forceinline int
   Size<I>::max(void) const {
     return i.max();
   }
-  template <class I>
+  template<class I>
   forceinline unsigned int
   Size<I>::width(void) const {
     return i.width();
   }
 
-  template <class I>
+  template<class I>
   forceinline unsigned int
   Size<I>::size(void) const {
     return _size;

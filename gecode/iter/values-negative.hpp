@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Values {
    * If \a strict is true, zero is excluded.
    * \ingroup FuncIterValues
    */
-  template <class I, bool strict=false>
+  template<class I, bool strict=false>
   class Negative {
   private:
     /// Check that \a I is a value iterator;
@@ -78,26 +78,26 @@ namespace Gecode { namespace Iter { namespace Values {
   };
 
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline
   Negative<I,strict>::Negative(void) {}
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline void
   Negative<I,strict>::init(I& i0) {
     i=i0;
   }
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline
   Negative<I,strict>::Negative(I& i0) : i(i0) {}
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline void
   Negative<I,strict>::operator ++(void) {
     ++i;
   }
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline bool
   Negative<I,strict>::operator ()(void) const {
     if (strict) {
@@ -107,7 +107,7 @@ namespace Gecode { namespace Iter { namespace Values {
     }
   }
 
-  template <class I, bool strict>
+  template<class I, bool strict>
   forceinline int
   Negative<I,strict>::val(void) const {
     return i.val();

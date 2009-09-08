@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  views in \a x according to their lower bounds
    */
 
-  template <class View, bool Perm>
+  template<class View, bool Perm>
   inline void
   sort_sigma(Space& home, ViewArray<View>& x, ViewArray<View>& z) {
     if (Perm) {
@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *  of the views in \a x
    */
 
-  template <class View, bool Perm>
+  template<class View, bool Perm>
   inline void
   sort_tau(ViewArray<View>& x, ViewArray<View>& z, int tau[]) {
     if (Perm) {
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    * \f$\forall i\in\{0,\dots, n-1\}: min(y_0) \leq \dots \leq min(y_{n-1}) \wedge
    *  max(y_0) \leq \dots \leq max(y_{n-1})\f$ holds.
    */
-  template <class View>
+  template<class View>
   inline bool
   normalize(Space& home,
             ViewArray<View>& y,

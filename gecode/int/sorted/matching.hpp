@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *
    */
 
-  template <class View>
+  template<class View>
   inline bool
   glover(ViewArray<View>& x, ViewArray<View>& y,
          int tau[], int phi[], OfflineMinItem sequence[], int vertices[]) {
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    * \brief Symmetric glover function for the upper domain bounds
    *
    */
-  template <class View>
+  template<class View>
   inline bool
   revglover(ViewArray<View>& x, ViewArray<View>& y,
             int tau[], int phiprime[], OfflineMinItem sequence[],

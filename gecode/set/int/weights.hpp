@@ -45,7 +45,7 @@
 namespace Gecode { namespace Set { namespace Int {
 
   /// Value Iterator for values above a certain weight
-  template <class I>
+  template<class I>
   class OverweightValues : public Iter::Values::IsValueIter<I> {
   private:
     /// The threshold above which values should be iterated
@@ -91,7 +91,7 @@ namespace Gecode { namespace Set { namespace Int {
     //@}
   };
 
-  template <class I>
+  template<class I>
   forceinline void
   OverweightValues<I>::next(void) {
     while (iter()) {
@@ -104,11 +104,11 @@ namespace Gecode { namespace Set { namespace Int {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline
   OverweightValues<I>::OverweightValues(void) {}
 
-  template <class I>
+  template<class I>
   forceinline
   OverweightValues<I>::OverweightValues(int t,
                                         SharedArray<int>& elements0,
@@ -121,7 +121,7 @@ namespace Gecode { namespace Set { namespace Int {
     next();
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   OverweightValues<I>::init(int t,
                             SharedArray<int>& elements0,
@@ -133,19 +133,19 @@ namespace Gecode { namespace Set { namespace Int {
     next();
   }
 
-  template <class I>
+  template<class I>
   forceinline bool
   OverweightValues<I>::operator ()(void) const { return iter(); }
 
-  template <class I>
+  template<class I>
   forceinline void
   OverweightValues<I>::operator ++(void) { ++iter; next(); }
 
-  template <class I>
+  template<class I>
   forceinline int
   OverweightValues<I>::val(void) const { return elements[index]; }
 
-  template <class View>
+  template<class View>
   forceinline
   Weights<View>::Weights(Space& home,
                    const SharedArray<int>& elements0,
@@ -157,7 +157,7 @@ namespace Gecode { namespace Set { namespace Int {
     y.subscribe(home,*this, Gecode::Int::PC_INT_BND);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Weights<View>::Weights(Space& home, bool share, Weights& p)
     : Propagator(home,share,p) {
@@ -167,7 +167,7 @@ namespace Gecode { namespace Set { namespace Int {
     weights.update(home,share,p.weights);
   }
 
-  template <class View>
+  template<class View>
   inline ExecStatus
   Weights<View>::post(Space& home, const SharedArray<int>& elements,
                       const SharedArray<int>& weights,
@@ -185,13 +185,13 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   PropCost
   Weights<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, y.size()+1);
   }
 
-  template <class View>
+  template<class View>
   size_t
   Weights<View>::dispose(Space& home) {
     assert(!home.failed());
@@ -201,14 +201,14 @@ namespace Gecode { namespace Set { namespace Int {
     return sizeof(*this);
   }
 
-  template <class View>
+  template<class View>
   Actor*
   Weights<View>::copy(Space& home, bool share) {
     return new (home) Weights(home,share,*this);
   }
 
   /// Compute the weight of the elements in the iterator \a I
-  template <class I>
+  template<class I>
   forceinline
   int weightI(SharedArray<int>& elements,
               SharedArray<int>& weights,
@@ -238,7 +238,7 @@ namespace Gecode { namespace Set { namespace Int {
     return x < y;
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Weights<View>::propagate(Space& home, const ModEventDelta&) {
 

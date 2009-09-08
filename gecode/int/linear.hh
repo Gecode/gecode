@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    */
-  template <class Val, class A, class B, PropCond pc>
+  template<class Val, class A, class B, PropCond pc>
   class LinBin : public Propagator {
   protected:
     /// View of type \a A
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to both views.
    */
-  template <class Val, class A, class B, PropCond pc, class Ctrl>
+  template<class Val, class A, class B, PropCond pc, class Ctrl>
   class ReLinBin : public Propagator {
   protected:
     /// View of type \a A
@@ -130,7 +130,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   class EqBin : public LinBin<Val,A,B,PC_INT_BND> {
   protected:
     using LinBin<Val,A,B,PC_INT_BND>::x0;
@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B, class Ctrl>
+  template<class Val, class A, class B, class Ctrl>
   class ReEqBin : public ReLinBin<Val,A,B,PC_INT_BND,Ctrl> {
   protected:
     using ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::x0;
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   class NqBin : public LinBin<Val,A,B,PC_INT_VAL> {
   protected:
     using LinBin<Val,A,B,PC_INT_VAL>::x0;
@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   class LqBin : public LinBin<Val,A,B,PC_INT_BND> {
   protected:
     using LinBin<Val,A,B,PC_INT_BND>::x0;
@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   class GqBin : public LinBin<Val,A,B,PC_INT_BND> {
   protected:
     using LinBin<Val,A,B,PC_INT_BND>::x0;
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   class ReLqBin : public ReLinBin<Val,A,B,PC_INT_BND,BoolView> {
   protected:
     using ReLinBin<Val,A,B,PC_INT_BND,BoolView>::x0;
@@ -342,7 +342,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to all three views.
    */
-  template <class Val, class A, class B, class C, PropCond pc>
+  template<class Val, class A, class B, class C, PropCond pc>
   class LinTer : public Propagator {
   protected:
     /// View of type \a A
@@ -378,7 +378,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B, class C>
+  template<class Val, class A, class B, class C>
   class EqTer : public LinTer<Val,A,B,C,PC_INT_BND> {
   protected:
     using LinTer<Val,A,B,C,PC_INT_BND>::x0;
@@ -413,7 +413,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B, class C>
+  template<class Val, class A, class B, class C>
   class NqTer : public LinTer<Val,A,B,C,PC_INT_VAL> {
   protected:
     using LinTer<Val,A,B,C,PC_INT_VAL>::x0;
@@ -448,7 +448,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class A, class B, class C>
+  template<class Val, class A, class B, class C>
   class LqTer : public LinTer<Val,A,B,C,PC_INT_BND> {
   protected:
     using LinTer<Val,A,B,C,PC_INT_BND>::x0;
@@ -491,7 +491,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to all views.
    */
-  template <class Val, class P, class N, PropCond pc>
+  template<class Val, class P, class N, PropCond pc>
   class Lin : public Propagator {
   protected:
     /// Array of positive views
@@ -521,7 +521,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * The propagation condition \a pc refers to all views.
    */
-  template <class Val, class P, class N, PropCond pc, class Ctrl>
+  template<class Val, class P, class N, PropCond pc, class Ctrl>
   class ReLin : public Lin<Val,P,N,pc> {
   protected:
     /// Control view for reification
@@ -540,7 +540,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * \relates Lin
    */
-  template <class Val, class View>
+  template<class Val, class View>
   void bounds_p(ModEventDelta med, ViewArray<View>& x,
                 Val& c, Val& sl, Val& su);
 
@@ -549,7 +549,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * \relates Lin
    */
-  template <class Val, class View>
+  template<class Val, class View>
   void bounds_n(ModEventDelta med, ViewArray<View>& y,
                 Val& c, Val& sl, Val& su);
 
@@ -565,7 +565,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class P, class N>
+  template<class Val, class P, class N>
   class Eq : public Lin<Val,P,N,PC_INT_BND> {
   protected:
     using Lin<Val,P,N,PC_INT_BND>::x;
@@ -596,7 +596,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class View>
+  template<class Val, class View>
   class DomEq
     : public Lin<Val,View,View,PC_INT_DOM> {
   protected:
@@ -637,7 +637,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class P, class N, class Ctrl>
+  template<class Val, class P, class N, class Ctrl>
   class ReEq : public ReLin<Val,P,N,PC_INT_BND,Ctrl> {
   protected:
     using ReLin<Val,P,N,PC_INT_BND,Ctrl>::x;
@@ -671,7 +671,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class P, class N>
+  template<class Val, class P, class N>
   class Nq : public Lin<Val,P,N,PC_INT_VAL> {
   protected:
     using Lin<Val,P,N,PC_INT_VAL>::x;
@@ -704,7 +704,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class P, class N>
+  template<class Val, class P, class N>
   class Lq : public Lin<Val,P,N,PC_INT_BND> {
   protected:
     using Lin<Val,P,N,PC_INT_BND>::x;
@@ -737,7 +737,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class Val, class P, class N>
+  template<class Val, class P, class N>
   class ReLq : public ReLin<Val,P,N,PC_INT_BND,BoolView> {
   protected:
     using ReLin<Val,P,N,PC_INT_BND,BoolView>::x;
@@ -775,7 +775,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Baseclass for integer Boolean sum using dependencies
    *
    */
-  template <class VX>
+  template<class VX>
   class SmallLinBoolInt : public Propagator {
   protected:
     /// Boolean views
@@ -799,7 +799,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Baseclass for integer Boolean sum using advisors
    *
    */
-  template <class VX>
+  template<class VX>
   class LargeLinBoolInt : public Propagator {
   protected:
     /// Boolean views
@@ -827,7 +827,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX>
+  template<class VX>
   class EqBoolInt {
   public:
     /// Threshold of whether to prefer speed or memory
@@ -879,7 +879,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX>
+  template<class VX>
   class GqBoolInt {
   public:
     /// Threshold of whether to prefer speed or memory
@@ -966,7 +966,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Baseclass for reified integer Boolean sum using dependencies
    *
    */
-  template <class VX, class VB>
+  template<class VX, class VB>
   class SmallReLinBoolInt : public SmallLinBoolInt<VX> {
   protected:
     using SmallLinBoolInt<VX>::x;
@@ -987,7 +987,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Baseclass for reified integer Boolean sum using advisors
    *
    */
-  template <class VX, class VB>
+  template<class VX, class VB>
   class LargeReLinBoolInt : public Propagator {
   protected:
     /// How many Boolean views (all advised)
@@ -1018,7 +1018,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VB>
+  template<class VX, class VB>
   class ReGqBoolInt {
   public:
     /// Threshold of whether to prefer speed or memory
@@ -1078,7 +1078,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VB>
+  template<class VX, class VB>
   class ReEqBoolInt {
   public:
     /// Threshold of whether to prefer speed or memory
@@ -1133,7 +1133,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Base-class for Boolean linear propagators
    *
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   class LinBoolView : public Propagator {
   protected:
     /// Boolean views
@@ -1158,7 +1158,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Base-class for reified Boolean linear propagators
    *
    */
-  template <class XV, class YV, class BV>
+  template<class XV, class YV, class BV>
   class ReLinBoolView : public LinBoolView<XV,YV> {
   protected:
     using LinBoolView<XV,YV>::x;
@@ -1182,7 +1182,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   class EqBoolView : public LinBoolView<XV,YV> {
   protected:
     using LinBoolView<XV,YV>::x;
@@ -1208,7 +1208,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   class NqBoolView : public LinBoolView<XV,YV> {
   protected:
     using LinBoolView<XV,YV>::x;
@@ -1234,7 +1234,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class XV, class YV>
+  template<class XV, class YV>
   class GqBoolView : public LinBoolView<XV,YV> {
   protected:
     using LinBoolView<XV,YV>::x;
@@ -1260,7 +1260,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class XV, class YV, class BV>
+  template<class XV, class YV, class BV>
   class ReEqBoolView : public ReLinBoolView<XV,YV,BV> {
   protected:
     using ReLinBoolView<XV,YV,BV>::x;
@@ -1287,7 +1287,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class XV, class YV, class BV>
+  template<class XV, class YV, class BV>
   class ReGqBoolView : public ReLinBoolView<XV,YV,BV> {
   protected:
     using ReLinBoolView<XV,YV,BV>::x;
@@ -1400,7 +1400,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Base class for linear Boolean constraints with coefficients
    *
    */
-  template <class SBAP, class SBAN, class VX, PropCond pcx>
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
   class LinBoolScale : public Propagator {
   protected:
     /// Positive Boolean views with coefficients on left-hand side
@@ -1429,7 +1429,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX>
   class EqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_BND> {
   protected:
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::p;
@@ -1456,7 +1456,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX>
   class LqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_BND> {
   protected:
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::p;
@@ -1483,7 +1483,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX>
   class NqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL> {
   protected:
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::p;

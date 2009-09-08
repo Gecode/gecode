@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Rel {
 
-  template <class View>
+  template<class View>
   inline
   Lex<View>::Lex(Space& home,
                  ViewArray<View>& x0, ViewArray<View>& y0, bool s)
@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Rel {
     y.subscribe(home, *this, PC_INT_BND);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Lex<View>::Lex(Space& home, bool share, Lex<View>& p)
     : Propagator(home,share,p), strict(p.strict) {
@@ -54,19 +54,19 @@ namespace Gecode { namespace Int { namespace Rel {
     y.update(home,share,p.y);
   }
 
-  template <class View>
+  template<class View>
   Actor*
   Lex<View>::copy(Space& home, bool share) {
     return new (home) Lex<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   Lex<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Lex<View>::propagate(Space& home, const ModEventDelta&) {
     /*
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Rel {
     GECODE_REWRITE(*this,Lq<View>::post(home,x[0],y[0]));
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Lex<View>::post(Space& home,
                   ViewArray<View>& x, ViewArray<View>& y, bool strict){
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   size_t
   Lex<View>::dispose(Space& home) {
     assert(!home.failed());

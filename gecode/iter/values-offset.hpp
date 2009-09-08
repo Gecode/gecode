@@ -42,7 +42,7 @@ namespace Gecode { namespace Iter { namespace Values {
    *
    * \ingroup FuncIterValues
    */
-  template <class I>
+  template<class I>
   class Offset {
   private:
     /// Check that \a I is a value iterator;
@@ -79,32 +79,32 @@ namespace Gecode { namespace Iter { namespace Values {
   };
 
 
-  template <class I>
+  template<class I>
   forceinline
   Offset<I>::Offset(void) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   Offset<I>::init(I& i0, int c0) {
     i = i0; c = c0;
   }
 
-  template <class I>
+  template<class I>
   forceinline
   Offset<I>::Offset(I& i0, int c0) : i(i0), c(c0) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   Offset<I>::operator ++(void) {
     ++i;
   }
-  template <class I>
+  template<class I>
   forceinline bool
   Offset<I>::operator ()(void) const {
     return i();
   }
 
-  template <class I>
+  template<class I>
   forceinline int
   Offset<I>::val(void) const {
     return i.val()+c;

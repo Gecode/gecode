@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    *  Complexity is \f$O(log(|k|))\f$
    */
-  template <class T>
+  template<class T>
   forceinline int
   lookupValue(T& a, int v){
     int idx = -1;
@@ -346,22 +346,22 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     //@{
     /// Replace domain by ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent narrow_r(Space& home, I& i, bool depends=true);
     /// Intersect domain with ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent inter_r(Space& home, I& i, bool depends=true);
     /// Remove from domain the ranges described by \a i
-    template <class I>
+    template<class I>
     ModEvent minus_r(Space& home, I& i, bool depends=true);
     /// Replace domain by values described by \a i
-    template <class I>
+    template<class I>
     ModEvent narrow_v(Space& home, I& i, bool depends=true);
     /// Intersect domain with values described by \a i
-    template <class I>
+    template<class I>
     ModEvent inter_v(Space& home, I& i, bool depends=true);
     /// Remove from domain the values described by \a i
-    template <class I>
+    template<class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
 
@@ -607,32 +607,32 @@ namespace Gecode { namespace Int { namespace GCC {
    * Domain update by iterator
    *
    */
-  template <class I>
+  template<class I>
   ModEvent
   CardView::narrow_r(Space& home, I& i, bool depends) {
     return view.narrow_r(home,i,depends);
   }
-  template <class I>
+  template<class I>
   ModEvent
   CardView::inter_r(Space& home, I& i, bool depends) {
     return view.inter_r(home,i,depends);
   }
-  template <class I>
+  template<class I>
   ModEvent
   CardView::minus_r(Space& home, I& i, bool depends) {
     return view.minus_r(home,i,depends);
   }
-  template <class I>
+  template<class I>
   ModEvent
   CardView::narrow_v(Space& home, I& i, bool depends) {
     return view.narrow_v(home,i,depends);
   }
-  template <class I>
+  template<class I>
   ModEvent
   CardView::inter_v(Space& home, I& i, bool depends) {
     return view.inter_v(home,i,depends);
   }
-  template <class I>
+  template<class I>
   ModEvent
   CardView::minus_v(Space& home, I& i, bool depends) {
     return view.minus_v(home,i,depends);
@@ -697,7 +697,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /**
    * \brief %Range iterator for indexed problem variables
    */
-  template <>
+  template<>
   class ViewRanges<GCC::CardView>
     : public Gecode::Int::ViewRanges<IntView> {
   public:

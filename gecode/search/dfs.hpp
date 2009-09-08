@@ -42,37 +42,37 @@ namespace Gecode {
     GECODE_SEARCH_EXPORT Engine* dfs(Space* s, size_t sz, const Options& o);
   }
 
-  template <class T>
+  template<class T>
   forceinline
   DFS<T>::DFS(T* s, const Search::Options& o)
     : e(Search::dfs(s,sizeof(T),o)) {}
 
-  template <class T>
+  template<class T>
   forceinline T*
   DFS<T>::next(void) {
     return dynamic_cast<T*>(e->next());
   }
 
-  template <class T>
+  template<class T>
   forceinline Search::Statistics
   DFS<T>::statistics(void) const {
     return e->statistics();
   }
 
-  template <class T>
+  template<class T>
   forceinline bool
   DFS<T>::stopped(void) const {
     return e->stopped();
   }
 
-  template <class T>
+  template<class T>
   forceinline
   DFS<T>::~DFS(void) {
     delete e;
   }
 
 
-  template <class T>
+  template<class T>
   forceinline T*
   dfs(T* s, const Search::Options& o) {
     DFS<T> d(s,o);

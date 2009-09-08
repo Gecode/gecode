@@ -208,21 +208,21 @@ namespace Gecode { namespace Set {
       ME_SET_FAILED : ME_SET_NONE;
   }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   ConstantView::excludeI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return (i() && Iter::Ranges::subset(i, ar)) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   ConstantView::includeI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return Iter::Ranges::subset(i, ar) ? ME_SET_NONE : ME_SET_FAILED;
   }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   ConstantView::intersectI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
@@ -395,19 +395,19 @@ namespace Gecode { namespace Set {
   forceinline ModEvent
   EmptyView::exclude(Space&,int,int) { return ME_SET_NONE; }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   EmptyView::excludeI(Space&,I&) {
     Iter::Ranges::IsRangeIter<I>();
     return ME_SET_NONE;
   }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   EmptyView::includeI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     return i() ? ME_SET_FAILED : ME_SET_NONE;
   }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   EmptyView::intersectI(Space&,I&) {
     Iter::Ranges::IsRangeIter<I>();
     return ME_SET_NONE;
@@ -558,13 +558,13 @@ namespace Gecode { namespace Set {
   forceinline ModEvent
   UniverseView::exclude(Space&,int,int) { return ME_SET_FAILED; }
 
-  template <class I> ModEvent
+  template<class I> ModEvent
   UniverseView::excludeI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     return i() ? ME_SET_FAILED : ME_SET_NONE;
   }
 
-  template <class I> forceinline ModEvent
+  template<class I> forceinline ModEvent
   UniverseView::includeI(Space&,I&) {
     Iter::Ranges::IsRangeIter<I>();
     return ME_SET_NONE;
@@ -576,7 +576,7 @@ namespace Gecode { namespace Set {
             j<Limits::max) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
-  template <class I> forceinline ModEvent
+  template<class I> forceinline ModEvent
   UniverseView::intersectI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     return (i() &&
@@ -670,7 +670,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for least upper bound of constantly empty set view
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class LubRanges<EmptyView> : public Iter::Ranges::Empty {
   public:
     /// \name Constructors and initialization
@@ -688,7 +688,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for greatest lower bound of constantly empty set view
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class GlbRanges<EmptyView> : public Iter::Ranges::Empty {
   public:
     /// \name Constructors and initialization
@@ -706,7 +706,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for least upper bound of constant universe set view
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class LubRanges<UniverseView> : public Iter::Ranges::Singleton {
   public:
     /// \name Constructors and initialization
@@ -730,7 +730,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for greatest lower bound of constant universe set view
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class GlbRanges<UniverseView> : public Iter::Ranges::Singleton {
   public:
     /// \name Constructors and initialization
@@ -755,7 +755,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for least upper bound of constant set view
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class LubRanges<ConstantView> {
   private:
     ArrayRanges ar;
@@ -795,7 +795,7 @@ namespace Gecode { namespace Set {
    * \brief %Range iterator for greatest lower bound of constant set view
    * \ingroup TaskActorSetView
    */
-  template <>
+  template<>
   class GlbRanges<ConstantView> : public LubRanges<ConstantView> {
   public:
     /// \name Constructors and initialization

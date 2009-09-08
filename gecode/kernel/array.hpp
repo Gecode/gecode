@@ -43,8 +43,8 @@
 
 namespace Gecode {
 
-  template <class Var> class VarArray;
-  template <class Var> class VarArgArray;
+  template<class Var> class VarArray;
+  template<class Var> class VarArgArray;
 
   /**
    * \brief %Variable arrays
@@ -61,7 +61,7 @@ namespace Gecode {
    *
    * \ingroup TaskVar
    */
-  template <class Var>
+  template<class Var>
   class VarArray {
   protected:
     /// Number of variables (size)
@@ -133,7 +133,7 @@ namespace Gecode {
    * \ingroup TaskActor
    */
 
-  template <class View>
+  template<class View>
   class ViewArray {
   private:
     /// Number of views (size)
@@ -141,7 +141,7 @@ namespace Gecode {
     /// Views
     View* x;
     /// Sort order for views
-    template <class X>
+    template<class X>
     class ViewLess {
     public:
       bool operator ()(const X&, const X&);
@@ -167,7 +167,7 @@ namespace Gecode {
      * Note that the view type \a View must provide a constructor
      * for the associated \a Var type.
      */
-    template <class Var>
+    template<class Var>
     ViewArray(Space& home, const VarArgArray<Var>& a)
       : n(a.size()) {
       // This may not be in the hpp file (to satisfy the MS compiler)
@@ -324,14 +324,14 @@ namespace Gecode {
      *
      * Note that assigned views are ignored.
      */
-    template <class ViewY>
+    template<class ViewY>
     bool shared(const Space& home, const ViewY& y) const;
     /**
      * \brief Test whether array together with array \a y contains shared views
      *
      * Note that assigned views are ignored.
      */
-    template <class ViewY>
+    template<class ViewY>
     bool shared(const Space& home, const ViewArray<ViewY>& y) const;
     //@}
 
@@ -353,7 +353,7 @@ namespace Gecode {
    * argument arrays of primitive types and VarArgArray for argument
    * arrays storing variables.
    */
-  template <class T>
+  template<class T>
   class ArgArrayBase {
   protected:
     /// Number of elements
@@ -413,7 +413,7 @@ namespace Gecode {
    *
    * \ingroup TaskVar
    */
-  template <class T>
+  template<class T>
   class PrimArgArray : public ArgArrayBase<T> {
   protected:
     using ArgArrayBase<T>::a;
@@ -443,7 +443,7 @@ namespace Gecode {
    *
    * \ingroup TaskVar
    */
-  template <class T>
+  template<class T>
   class ArgArray : public ArgArrayBase<T> {
   protected:
     using ArgArrayBase<T>::a;
@@ -471,7 +471,7 @@ namespace Gecode {
    *
    * \ingroup TaskVar
    */
-  template <class Var>
+  template<class Var>
   class VarArgArray : public ArgArrayBase<Var> {
   protected:
     using ArgArrayBase<Var>::a;
@@ -554,7 +554,7 @@ namespace Gecode {
    *       of the appropriate Args-array type (e.g., \c BoolVarArgs if \c A is
    *       \c BoolVarArray).
    */
-  template <class A>
+  template<class A>
   class ArrayTraits {};
 
   /*
@@ -572,11 +572,11 @@ namespace Gecode {
    *
    */
 
-  template <class Var>
+  template<class Var>
   forceinline
   VarArray<Var>::VarArray(void) : n(0), capacity(0), x(NULL) {}
 
-  template <class Var>
+  template<class Var>
   forceinline
   VarArray<Var>::VarArray(Space& home, int n0)
     : n(n0), capacity(n0) {
@@ -584,13 +584,13 @@ namespace Gecode {
     x = (n>0) ? home.alloc<Var>(n) : NULL;
   }
 
-  template <class Var>
+  template<class Var>
   forceinline
   VarArray<Var>::VarArray(const VarArray<Var>& a) {
     n = a.n; capacity = a.capacity; x = a.x;
   }
 
-  template <class Var>
+  template<class Var>
   forceinline
   VarArray<Var>::~VarArray(void) {
     if (n != capacity) {
@@ -599,20 +599,20 @@ namespace Gecode {
     }
   }
 
-  template <class Var>
+  template<class Var>
   forceinline const VarArray<Var>&
   VarArray<Var>::operator =(const VarArray<Var>& a) {
     n = a.n; capacity = a.capacity; x = a.x;
     return *this;
   }
 
-  template <class Var>
+  template<class Var>
   forceinline int
   VarArray<Var>::size(void) const {
     return n;
   }
 
-  template <class Var>
+  template<class Var>
   forceinline void
   VarArray<Var>::resize(Space& home, int m) {
     int newsize;
@@ -642,28 +642,28 @@ namespace Gecode {
     assert(capacity != n);
   }
 
-  template <class Var>
+  template<class Var>
   forceinline Var&
   VarArray<Var>::operator [](int i) {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
 
-  template <class Var>
+  template<class Var>
   forceinline const Var&
   VarArray<Var>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
 
-  template <class Var>
+  template<class Var>
   forceinline void
   VarArray<Var>::add(Space& home, const Var& v) {
     resize(home, n+1);
     new (&(*this)[n-1]) Var(v);
   }
 
-  template <class Var>
+  template<class Var>
   forceinline void
   VarArray<Var>::update(Space& home, bool share, VarArray<Var>& a) {
     capacity = a.n;
@@ -677,13 +677,13 @@ namespace Gecode {
     }
   }
 
-  template <class Var>
+  template<class Var>
   void*
   VarArray<Var>::operator new(size_t) {
     return NULL;
   }
 
-  template <class Var>
+  template<class Var>
   void
   VarArray<Var>::operator delete(void*,size_t) {
   }
@@ -693,18 +693,18 @@ namespace Gecode {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   ViewArray<View>::ViewArray(void) : n(0), x(NULL) {}
 
-  template <class View>
+  template<class View>
   forceinline
   ViewArray<View>::ViewArray(Space& home, int n0)
     : n(n0) {
     x = (n>0) ? home.alloc<View>(n) : NULL;
   }
 
-  template <class View>
+  template<class View>
   ViewArray<View>::ViewArray(Space& home, const ViewArray<View>& a)
     : n(a.size()) {
     if (n>0) {
@@ -716,45 +716,45 @@ namespace Gecode {
     }
   }
 
-  template <class View>
+  template<class View>
   forceinline
   ViewArray<View>::ViewArray(const ViewArray<View>& a)
     : n(a.n), x(a.x) {}
 
-  template <class View>
+  template<class View>
   forceinline const ViewArray<View>&
   ViewArray<View>::operator =(const ViewArray<View>& a) {
     n = a.n; x = a.x;
     return *this;
   }
 
-  template <class View>
+  template<class View>
   forceinline int
   ViewArray<View>::size(void) const {
     return n;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::size(int n0) {
     n = n0;
   }
 
-  template <class View>
+  template<class View>
   forceinline View&
   ViewArray<View>::operator [](int i) {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
 
-  template <class View>
+  template<class View>
   forceinline const View&
   ViewArray<View>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return x[i];
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::move_fst(int i) {
     // move x[0] to x[i]
@@ -762,7 +762,7 @@ namespace Gecode {
     x[i]=x[0]; x++; n--;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::move_lst(int i) {
     // move x[n-1] to x[i]
@@ -770,7 +770,7 @@ namespace Gecode {
     n--; x[i]=x[n];
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::drop_fst(int i) {
     // Drop elements from 0..i-1
@@ -778,7 +778,7 @@ namespace Gecode {
     x += i; n -= i;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::drop_lst(int i) {
     // Drop elements from i+1..n-1
@@ -786,7 +786,7 @@ namespace Gecode {
     n = i+1;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::move_fst(int i, Space& home, Propagator& p, PropCond pc) {
     // Move x[0] to x[i]
@@ -794,7 +794,7 @@ namespace Gecode {
     x[i]=x[0]; x++; n--;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::move_lst(int i, Space& home, Propagator& p, PropCond pc) {
     // Move x[n-1] to x[i]
@@ -802,7 +802,7 @@ namespace Gecode {
     n--; x[i]=x[n];
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::drop_fst(int i, Space& home, Propagator& p, PropCond pc) {
     // Drop elements from 0..i-1
@@ -812,7 +812,7 @@ namespace Gecode {
     x += i; n -= i;
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::drop_lst(int i, Space& home, Propagator& p, PropCond pc) {
     // Drop elements from i+1..n-1
@@ -822,7 +822,7 @@ namespace Gecode {
     n = i+1;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::move_fst(int i, Space& home, Advisor& a) {
     // Move x[0] to x[i]
@@ -830,7 +830,7 @@ namespace Gecode {
     x[i]=x[0]; x++; n--;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   ViewArray<View>::move_lst(int i, Space& home, Advisor& a) {
     // Move x[n-1] to x[i]
@@ -838,7 +838,7 @@ namespace Gecode {
     n--; x[i]=x[n];
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::drop_fst(int i, Space& home, Advisor& a) {
     // Drop elements from 0..i-1
@@ -848,7 +848,7 @@ namespace Gecode {
     x += i; n -= i;
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::drop_lst(int i, Space& home, Advisor& a) {
     // Drop elements from i+1..n-1
@@ -858,7 +858,7 @@ namespace Gecode {
     n = i+1;
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::update(Space& home, bool share, ViewArray<View>& y) {
     n = y.n;
@@ -871,7 +871,7 @@ namespace Gecode {
     }
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                              bool process) {
@@ -879,58 +879,58 @@ namespace Gecode {
       x[i].subscribe(home,p,pc,process);
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
     for (int i = n; i--; )
       x[i].cancel(home,p,pc);
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::subscribe(Space& home, Advisor& a) {
     for (int i = n; i--; )
       x[i].subscribe(home,a);
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::cancel(Space& home, Advisor& a) {
     for (int i = n; i--; )
       x[i].cancel(home,a);
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   __before(const View& x, const View& y) {
     return before(x,y);
   }
 
-  template <class View> template <class X>
+  template<class View> template<class X>
   forceinline bool
   ViewArray<View>::ViewLess<X>::operator ()(const X& a, const X& b) {
     return __before(a,b);
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::sort(View* y, int m) {
     ViewLess<View> vl;
     Support::quicksort<View,ViewLess<View> >(y,m,vl);
   }
 
-  template <class X, class Y>
+  template<class X, class Y>
   forceinline bool
   __same(const X& x, const Y& y) {
     return same(x,y);
   }
-  template <class X, class Y>
+  template<class X, class Y>
   forceinline bool
   __shared(const X& x, const Y& y) {
     return shared(x,y);
   }
 
-  template <class View>
+  template<class View>
   bool
   ViewArray<View>::same(const Space& home) const {
     if (n < 2)
@@ -949,7 +949,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class View>
+  template<class View>
   bool
   ViewArray<View>::same(const Space&, const View& y) const {
     if (y.assigned())
@@ -960,7 +960,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::unique(const Space&) {
     if (n < 2)
@@ -973,7 +973,7 @@ namespace Gecode {
     n = j+1;
   }
 
-  template <class View>
+  template<class View>
   bool
   ViewArray<View>::shared(const Space& home) const {
     if (n < 2)
@@ -992,7 +992,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class View> template <class ViewY>
+  template<class View> template<class ViewY>
   bool
   ViewArray<View>::shared(const Space&, const ViewY& y) const {
     if (y.assigned())
@@ -1003,7 +1003,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class View> template <class ViewY>
+  template<class View> template<class ViewY>
   bool
   ViewArray<View>::shared(const Space& home, const ViewArray<ViewY>& y) const {
     if ((size() < 1) || (y.size() < 1))
@@ -1037,13 +1037,13 @@ namespace Gecode {
     return false;
   }
 
-  template <class View>
+  template<class View>
   void*
   ViewArray<View>::operator new(size_t) {
     return NULL;
   }
 
-  template <class View>
+  template<class View>
   void
   ViewArray<View>::operator delete(void*,size_t) {
   }
@@ -1054,33 +1054,33 @@ namespace Gecode {
    *
    */
 
-  template <class T>
+  template<class T>
   forceinline T*
   ArgArrayBase<T>::allocate(int n) {
     return (n > onstack_size) ?
       heap.alloc<T>(static_cast<unsigned int>(n)) : &onstack[0];
   }
 
-  template <class T>
+  template<class T>
   forceinline
   ArgArrayBase<T>::ArgArrayBase(int n0)
     : n(n0), a(allocate(n)) {}
 
-  template <class T>
+  template<class T>
   inline
   ArgArrayBase<T>::ArgArrayBase(const ArgArrayBase<T>& aa)
     : n(aa.n), a(allocate(n)) {
     heap.copy<T>(a,aa.a,n);
   }
 
-  template <class T>
+  template<class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
     if (n > onstack_size)
       heap.free(a,n);
   }
 
-  template <class T>
+  template<class T>
   forceinline const ArgArrayBase<T>&
   ArgArrayBase<T>::operator =(const ArgArrayBase<T>& aa) {
     if (&aa != this) {
@@ -1093,20 +1093,20 @@ namespace Gecode {
     return *this;
   }
 
-  template <class T>
+  template<class T>
   forceinline int
   ArgArrayBase<T>::size(void) const {
     return n;
   }
 
-  template <class T>
+  template<class T>
   forceinline T&
   ArgArrayBase<T>::operator [](int i) {
     assert((i>=0) && (i < n));
     return a[i];
   }
 
-  template <class T>
+  template<class T>
   forceinline const T&
   ArgArrayBase<T>::operator [](int i) const {
     assert((i>=0) && (i < n));
@@ -1119,12 +1119,12 @@ namespace Gecode {
    *
    */
 
-  template <class T>
+  template<class T>
   forceinline
   PrimArgArray<T>::PrimArgArray(int n)
     : ArgArrayBase<T>(n) {}
 
-  template <class T>
+  template<class T>
   PrimArgArray<T>::PrimArgArray(int n, T a0, ...)
     : ArgArrayBase<T>(n) {
     va_list args;
@@ -1135,14 +1135,14 @@ namespace Gecode {
     va_end(args);
   }
 
-  template <class T>
+  template<class T>
   PrimArgArray<T>::PrimArgArray(int n, const T* a0)
     : ArgArrayBase<T>(n) {
     for (int i=n; i--; )
       a[i] = a0[i];
   }
 
-  template <class T>
+  template<class T>
   forceinline
   PrimArgArray<T>::PrimArgArray(const PrimArgArray<T>& aa)
     : ArgArrayBase<T>(aa) {}
@@ -1153,19 +1153,19 @@ namespace Gecode {
    *
    */
 
-  template <class T>
+  template<class T>
   forceinline
   ArgArray<T>::ArgArray(int n)
     : ArgArrayBase<T>(n) {}
 
-  template <class T>
+  template<class T>
   ArgArray<T>::ArgArray(int n, const T* a0)
     : ArgArrayBase<T>(n) {
     for (int i=n; i--; )
       a[i] = a0[i];
   }
 
-  template <class T>
+  template<class T>
   forceinline
   ArgArray<T>::ArgArray(const ArgArray<T>& aa)
     : ArgArrayBase<T>(aa) {}
@@ -1177,17 +1177,17 @@ namespace Gecode {
    *
    */
 
-  template <class T>
+  template<class T>
   forceinline
   VarArgArray<T>::VarArgArray(int n)
     : ArgArrayBase<T>(n) {}
 
-  template <class T>
+  template<class T>
   forceinline
   VarArgArray<T>::VarArgArray(const VarArgArray<T>& aa)
     : ArgArrayBase<T>(aa) {}
 
-  template <class T>
+  template<class T>
   inline
   VarArgArray<T>::VarArgArray(const VarArray<T>& x)
     : ArgArrayBase<T>(x.size()) {
@@ -1195,13 +1195,13 @@ namespace Gecode {
       a[i]=x[i];
   }
 
-  template <class Var>
+  template<class Var>
   forceinline bool
   VarArgArray<Var>::VarLess::operator ()(const Var& a, const Var& b) {
     return a.var() < b.var();
   }
 
-  template <class Var>
+  template<class Var>
   bool
   VarArgArray<Var>::same(const Space& home) const {
     if (n < 2)
@@ -1221,7 +1221,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class Var>
+  template<class Var>
   bool
   VarArgArray<Var>::same(const Space& home, const VarArgArray<Var>& y) const {
     int m = n + y.n;
@@ -1244,7 +1244,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class Var>
+  template<class Var>
   bool
   VarArgArray<Var>::same(const Space&, const Var& y) const {
     if (y.assigned())
@@ -1265,7 +1265,7 @@ namespace Gecode {
    *
    */
 
-  template <class Var>
+  template<class Var>
   inline
   VarArray<Var>::VarArray(Space& home, const VarArgArray<Var>& a)
     : n(a.size()), capacity(a.size()) {

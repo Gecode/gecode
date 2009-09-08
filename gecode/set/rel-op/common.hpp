@@ -46,21 +46,21 @@
 
 namespace Gecode {
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline bool
   viewarrayshared(const Space& home,
                   const ViewArray<View0>& va, const View1& y) {
     return va.shared(home,y);
   }
 
-  template <>
+  template<>
   forceinline bool
   viewarrayshared<Set::SingletonView,Set::SetView>
   (const Space&, const ViewArray<Set::SingletonView>&, const Set::SetView&) {
     return false;
   }
 
-  template <>
+  template<>
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,Set::SetView>
   (const Space&, const ViewArray<Set::ComplementView<Set::SingletonView> >&,
@@ -68,7 +68,7 @@ namespace Gecode {
     return false;
   }
 
-  template <>
+  template<>
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,
                        Set::ComplementView<Set::SetView> >
@@ -84,13 +84,13 @@ namespace Set { namespace RelOp {
    * Detect sharing between 3 variables
    *
    */
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   forceinline bool
   shared(View0 v0, View1 v1, View2 v2) {
     return shared(v0,v1) || shared(v0,v2) || shared(v1,v2);
   }
 
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   ExecStatus interCard(Space& home,
                        bool& retmodified, View0& x0, View1& x1, View2& x2) {
     bool modified = false;
@@ -146,7 +146,7 @@ namespace Set { namespace RelOp {
     } while(modified);
     return ES_FIX;
   }
-  template <class View0, class View1, class View2>
+  template<class View0, class View1, class View2>
   ExecStatus unionCard(Space& home,
                        bool& retmodified, View0& x0, View1& x1, View2& x2) {
     bool modified = false;
@@ -193,7 +193,7 @@ namespace Set { namespace RelOp {
     return ES_FIX;
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   unionNCard(Space& home, bool& modified, ViewArray<View0>& x,
              View1& y, GLBndSet& unionOfDets) {
@@ -294,7 +294,7 @@ namespace Set { namespace RelOp {
    * Xi UB is subset of YUB
    * Subscribes to Y UB
    */
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   unionNXiUB(Space& home,
              bool& modified, ViewArray<View0>& x, View1& y,
@@ -308,7 +308,7 @@ namespace Set { namespace RelOp {
   }
 
   // cardinality rules for PartitionN constraint
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   partitionNCard(Space& home,
                  bool& modified, ViewArray<View0>& x, View1& y,
@@ -397,7 +397,7 @@ namespace Set { namespace RelOp {
 
   // Xi LB includes YLB minus union Xj UB
   // Xi UB is subset of YUB minus union of Xj LBs
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   partitionNXi(Space& home,
                bool& modified, ViewArray<View0>& x, View1& y) {
@@ -467,7 +467,7 @@ namespace Set { namespace RelOp {
   }
 
   // Xi UB is subset of YUB minus union of Xj LBs
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   partitionNXiUB(Space& home,
                  bool& modified, ViewArray<View0>& x, View1& y,
@@ -513,7 +513,7 @@ namespace Set { namespace RelOp {
   }
 
   // Xi LB includes YLB minus union Xj UB
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   partitionNXiLB(Space& home,
                  bool& modified, ViewArray<View0>& x, View1& y,
@@ -560,7 +560,7 @@ namespace Set { namespace RelOp {
   }
 
   // Y LB contains union of X LBs
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   partitionNYLB(Space& home,
                 bool& modified, ViewArray<View0>& x, View1& y,
@@ -590,7 +590,7 @@ namespace Set { namespace RelOp {
   }
 
   // Y UB is subset of union of X UBs
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   partitionNYUB(Space& home,
                 bool& modified, ViewArray<View0>& x, View1& y,

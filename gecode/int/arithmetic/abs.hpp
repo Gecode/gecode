@@ -41,7 +41,7 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  template <class View, template <class View0,class View1> class Eq>
+  template<class View, template<class View0,class View1> class Eq>
   ExecStatus
   prop_abs_bnd(Space& home, Propagator& p, View x0, View x1) {
     if (x0.assigned()) {
@@ -79,12 +79,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_NOFIX;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   AbsBnd<View>::AbsBnd(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   AbsBnd<View>::post(Space& home, View x0, View x1) {
     if (x0.min() >= 0) {
@@ -106,18 +106,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   AbsBnd<View>::AbsBnd(Space& home, bool share, AbsBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   AbsBnd<View>::copy(Space& home,bool share) {
     return new (home) AbsBnd<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   AbsBnd<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -126,18 +126,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return PropCost::binary(PropCost::LO);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   AbsBnd<View>::propagate(Space& home, const ModEventDelta&) {
     return prop_abs_bnd<View,Rel::EqBnd>(home, *this, x0, x1);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   AbsDom<View>::AbsDom(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   AbsDom<View>::post(Space& home, View x0, View x1) {
     if (x0.min() >= 0) {
@@ -159,18 +159,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   AbsDom<View>::AbsDom(Space& home, bool share, AbsDom<View>& p)
     : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   AbsDom<View>::copy(Space& home,bool share) {
     return new (home) AbsDom<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   AbsDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                               PropCost::HI : PropCost::LO);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   AbsDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {

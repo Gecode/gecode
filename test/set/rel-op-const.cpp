@@ -64,7 +64,7 @@ namespace Test { namespace Set {
       Gecode::SetRelType srt;
       bool inverse;
 
-      template <class I, class J>
+      template<class I, class J>
       bool
       sol(I& i, J& j) const {
         Iter::Ranges::IsRangeIter<I>();
@@ -161,7 +161,7 @@ namespace Test { namespace Set {
       Gecode::SetOpType sot;
       Gecode::SetRelType srt;
 
-      template <class I, class J>
+      template<class I, class J>
       bool
       sol(I& i, J& j) const {
         Iter::Ranges::IsRangeIter<I>();
@@ -250,7 +250,7 @@ namespace Test { namespace Set {
       Gecode::SetRelType srt;
       bool inverse;
 
-      template <class I, class J>
+      template<class I, class J>
       bool
       sol(I& i, J& j) const {
         Iter::Ranges::IsRangeIter<I>();

@@ -37,16 +37,16 @@
 
 namespace Gecode { namespace MiniModel {
 
-  template <IntRelType irt>
+  template<IntRelType irt>
   forceinline
   OptimizeSpace<irt>::OptimizeSpace(void) {}
 
-  template <IntRelType irt>
+  template<IntRelType irt>
   forceinline
   OptimizeSpace<irt>::OptimizeSpace(bool share, OptimizeSpace& s)
     : Space(share,s) {}
 
-  template <IntRelType irt>
+  template<IntRelType irt>
   void
   OptimizeSpace<irt>::constrain(const Space& _best) {
     const OptimizeSpace<irt>* best =

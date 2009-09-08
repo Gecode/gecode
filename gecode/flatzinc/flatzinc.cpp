@@ -429,12 +429,12 @@ namespace Gecode { namespace FlatZinc {
   /**
    * \brief Traits class for search engines
    */
-  template <class Engine>
+  template<class Engine>
   class GistEngine {
   };
 
   /// Specialization for DFS
-  template <typename S>
+  template<typename S>
   class GistEngine<DFS<S> > {
   public:
     static void explore(S* root, Gist::Inspector* i) {
@@ -444,7 +444,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
   /// Specialization for LDS
-  template <typename S>
+  template<typename S>
   class GistEngine<LDS<S> > {
   public:
     static void explore(S* root, Gist::Inspector* i) {
@@ -454,7 +454,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
   /// Specialization for BAB
-  template <typename S>
+  template<typename S>
   class GistEngine<BAB<S> > {
   public:
     static void explore(S* root, Gist::Inspector* i) {
@@ -464,7 +464,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
   /// Specialization for Restart
-  template <typename S>
+  template<typename S>
   class GistEngine<Restart<S> > {
   public:
     static void explore(S* root, Gist::Inspector* i) {
@@ -474,7 +474,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
   /// \brief An inspector for printing simple text output
-  template <class S>
+  template<class S>
   class FZPrintingInspector : public Gecode::Gist::TextInspector {
   private:
     const FZPrinter& p;
@@ -485,11 +485,11 @@ namespace Gecode { namespace FlatZinc {
     virtual void inspect(const Space& node);
   };
 
-  template <class S>
+  template<class S>
   FZPrintingInspector<S>::FZPrintingInspector(const FZPrinter& p0)
   : TextInspector("Gecode/FlatZinc"), p(p0) {}
 
-  template <class S>
+  template<class S>
   void
   FZPrintingInspector<S>::inspect(const Space& node) {
     init();
@@ -499,7 +499,7 @@ namespace Gecode { namespace FlatZinc {
 
   #endif
 
-  template <template<class> class Engine>
+  template<template<class> class Engine>
   void
   FlatZincGecode::runEngine(std::ostream& out, const FZPrinter& p,
                             const FlatZincOptions& opt, Support::Timer& t_total) {
@@ -606,7 +606,7 @@ namespace Gecode { namespace FlatZinc {
     _output = output;
   }
 
-  template <class Var>
+  template<class Var>
   class MyVarArray : public Gecode::VarArray<Var> {
   public:
     void size(int n0) {

@@ -357,7 +357,7 @@ namespace Test { namespace Set {
     IntRel _intrel_lqi(Gecode::IRT_LQ,true);
 
 
-    template <class I>
+    template<class I>
     int weightI(const IntArgs& elements,
                 const IntArgs& weights,
                 I& iter) {

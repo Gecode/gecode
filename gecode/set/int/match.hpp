@@ -47,7 +47,7 @@
 
 namespace Gecode { namespace Set { namespace Int {
 
-  template <class View>
+  template<class View>
   forceinline
   Match<View>::Match(Space& home, View y0, ViewArray< Gecode::Int::IntView >& ys)
     : Propagator(home), x0(y0), xs(ys) {
@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Int {
     xs.subscribe(home,*this, Gecode::Int::PC_INT_BND);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Match<View>::Match(Space& home, bool share, Match& p)
     : Propagator(home,share,p) {
@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Int {
     xs.update(home,share,p.xs);
   }
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   Match<View>::post(Space& home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
     unsigned int xs_size = xs.size();
@@ -81,13 +81,13 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   PropCost
   Match<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, xs.size()+1);
   }
 
-  template <class View>
+  template<class View>
   size_t
   Match<View>::dispose(Space& home) {
     assert(!home.failed());
@@ -97,13 +97,13 @@ namespace Gecode { namespace Set { namespace Int {
     return sizeof(*this);
   }
 
-  template <class View>
+  template<class View>
   Actor*
   Match<View>::copy(Space& home, bool share) {
     return new (home) Match(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Match<View>::propagate(Space& home, const ModEventDelta&) {
 

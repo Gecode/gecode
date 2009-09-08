@@ -46,20 +46,20 @@ namespace Gecode { namespace Set { namespace Rel {
    *
    */
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   NoSubset<View0,View1>::NoSubset(Space& home, View0 y0, View1 y1)
     : MixBinaryPropagator<View0,PC_SET_CLUB,
                             View1,PC_SET_CGLB>(home,y0,y1) {}
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   forceinline
   NoSubset<View0,View1>::NoSubset(Space& home, bool share,
                                   NoSubset<View0,View1>& p)
     : MixBinaryPropagator<View0,PC_SET_CLUB,
                             View1,PC_SET_CGLB>(home,share,p) {}
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   NoSubset<View0,View1>::post(Space& home, View0 x, View1 y) {
     if (me_failed(x.cardMin(home,1)))
@@ -68,13 +68,13 @@ namespace Gecode { namespace Set { namespace Rel {
     return ES_OK;
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   Actor*
   NoSubset<View0,View1>::copy(Space& home, bool share) {
     return new (home) NoSubset<View0,View1>(home,share,*this);
   }
 
-  template <class View0, class View1>
+  template<class View0, class View1>
   ExecStatus
   NoSubset<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     GlbRanges<View0> x0lb(x0);

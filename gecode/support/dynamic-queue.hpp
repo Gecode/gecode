@@ -42,7 +42,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T, class A>
+  template<class T, class A>
   class DynamicQueue {
   private:
     /// Memory allocator
@@ -87,13 +87,13 @@ namespace Gecode { namespace Support {
   };
 
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline void
   DynamicQueue<T,A>::move(int& i) {
     i = (i+1) & (limit - 1);
   }
 
-  template <class T, class A>
+  template<class T, class A>
   void
   DynamicQueue<T,A>::resize(void) {
     assert(fst == lst);
@@ -110,30 +110,30 @@ namespace Gecode { namespace Support {
     limit <<= 1;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicQueue<T,A>::DynamicQueue(A& a0)
     : a(a0), limit(8), fst(0), lst(0), q(a.template alloc<T>(limit)) {}
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicQueue<T,A>::~DynamicQueue(void) {
     a.free(q,limit);
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline bool
   DynamicQueue<T,A>::empty(void) const {
     return fst == lst;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline void
   DynamicQueue<T,A>::reset(void) {
     fst = lst = 0;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T
   DynamicQueue<T,A>::pop(void) {
     assert(!empty());
@@ -142,7 +142,7 @@ namespace Gecode { namespace Support {
     return t;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline void
   DynamicQueue<T,A>::push(const T& x) {
     q[lst] = x;

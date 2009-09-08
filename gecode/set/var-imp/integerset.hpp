@@ -242,7 +242,7 @@ namespace Gecode { namespace Set {
     r[n-1].next(NULL);
   }
 
-  template <class I> forceinline bool
+  template<class I> forceinline bool
   BndSet::overwrite(Space& home, I& ri) {
     Iter::Ranges::IsRangeIter<I>();
     // Is new domain empty?
@@ -386,7 +386,7 @@ namespace Gecode { namespace Set {
     return ret;
   }
 
-  template <class I> bool
+  template<class I> bool
   GLBndSet::includeI(Space& home, I& i) {
     Iter::Ranges::IsRangeIter<I>();
     if (!i())
@@ -461,7 +461,7 @@ namespace Gecode { namespace Set {
     return ret;
   }
 
-  template <class I> bool
+  template<class I> bool
   LUBndSet::intersectI(Space& home, I& i) {
     Iter::Ranges::IsRangeIter<I>();
     if (fst()==NULL) { return false; }
@@ -477,7 +477,7 @@ namespace Gecode { namespace Set {
     return ret;
   }
 
-  template <class I> bool
+  template<class I> bool
   LUBndSet::excludeI(Space& home, I& i) {
     Iter::Ranges::IsRangeIter<I>();
     if (!i()) { return false; }
@@ -498,16 +498,16 @@ namespace Gecode { namespace Set {
    * A complement iterator spezialized for the BndSet limits
    *
    */
-  template <class I>
+  template<class I>
   RangesCompl<I>::RangesCompl(void) {}
 
-  template <class I>
+  template<class I>
   RangesCompl<I>::RangesCompl(I& i)
     : Iter::Ranges::Compl<Limits::min,
                           Limits::max,
                           I>(i) {}
 
-  template <class I> void
+  template<class I> void
   RangesCompl<I>::init(I& i) {
     Iter::Ranges::Compl<Limits::min,
       Limits::max,I>::init(i);

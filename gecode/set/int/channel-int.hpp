@@ -43,7 +43,7 @@
 
 namespace Gecode { namespace Set { namespace Int {
 
-  template <class View>
+  template<class View>
   forceinline
   ChannelInt<View>::ChannelInt(Space& home,
                              ViewArray<Gecode::Int::IntView>& xs0,
@@ -53,7 +53,7 @@ namespace Gecode { namespace Set { namespace Int {
     ys.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template <class View>
+  template<class View>
   forceinline
   ChannelInt<View>::ChannelInt(Space& home, bool share, ChannelInt& p)
     : Propagator(home,share,p) {
@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Int {
     ys.update(home,share,p.ys);
   }
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   ChannelInt<View>::post(Space& home, ViewArray<Gecode::Int::IntView>& xs,
                           ViewArray<View>& ys) {
@@ -85,13 +85,13 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   PropCost
   ChannelInt<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, xs.size()+ys.size());
   }
 
-  template <class View>
+  template<class View>
   size_t
   ChannelInt<View>::dispose(Space& home) {
     assert(!home.failed());
@@ -101,13 +101,13 @@ namespace Gecode { namespace Set { namespace Int {
     return sizeof(*this);
   }
 
-  template <class View>
+  template<class View>
   Actor*
   ChannelInt<View>::copy(Space& home, bool share) {
     return new (home) ChannelInt(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ChannelInt<View>::propagate(Space& home, const ModEventDelta&) {
     int assigned = 0;

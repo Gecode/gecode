@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <class I, class J>
+  template<class I, class J>
   class Union : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -79,7 +79,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <class I>
+  template<class I>
   class NaryUnion : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -119,7 +119,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template <class I, class J>
+  template<class I, class J>
   inline void
   Union<I,J>::operator ++(void) {
     if (!i() && !j()) {
@@ -149,18 +149,18 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Union<I,J>::Union(void) {}
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Union<I,J>::Union(I& i0, J& j0)
     : i(i0), j(j0) {
     operator ++();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Union<I,J>::init(I& i0, J& j0) {
     i = i0; j = j0;
@@ -174,13 +174,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template <class I>
+  template<class I>
   forceinline bool
   NaryUnion<I>::RangeUnionOrder::operator ()(const I& a, const I& b) const {
     return a.min() > b.min();
   }
 
-  template <class I>
+  template<class I>
   inline void
   NaryUnion<I>::operator ++(void) {
     if (r.empty()) {
@@ -203,11 +203,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
 
-  template <class I>
+  template<class I>
   forceinline
   NaryUnion<I>::NaryUnion(void) {}
 
-  template <class I>
+  template<class I>
   inline
   NaryUnion<I>::NaryUnion(I* r0, int n)
     : order(), r(n,order) {
@@ -217,7 +217,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     operator ++();
   }
 
-  template <class I>
+  template<class I>
   inline void
   NaryUnion<I>::init(I* r0, int n) {
     r.init(n,order);

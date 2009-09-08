@@ -44,12 +44,12 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   Lq<View>::Lq(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   Lq<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
@@ -59,18 +59,18 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Lq<View>::Lq(Space& home, bool share, Lq<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   Lq<View>::copy(Space& home, bool share) {
     return new (home) Lq<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Lq<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
@@ -85,12 +85,12 @@ namespace Gecode { namespace Int { namespace Rel {
    * Less propagator
    *
    */
-  template <class View>
+  template<class View>
   forceinline
   Le<View>::Le(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   Le<View>::post(Space& home, View x0, View x1) {
     if (same(x0,x1))
@@ -102,18 +102,18 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Le<View>::Le(Space& home, bool share, Le<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   Le<View>::copy(Space& home, bool share) {
     return new (home) Le<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Le<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.le(home,x1.max()));
@@ -128,12 +128,12 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   forceinline
   ReLq<View,CtrlView>::ReLq(Space& home, View x0, View x1, CtrlView b)
     : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,x0,x1,b) {}
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   ExecStatus
   ReLq<View,CtrlView>::post(Space& home, View x0, View x1, CtrlView b) {
     if (b.one())
@@ -156,18 +156,18 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_OK;
   }
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   forceinline
   ReLq<View,CtrlView>::ReLq(Space& home, bool share, ReLq& p)
     : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,share,p) {}
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   Actor*
   ReLq<View,CtrlView>::copy(Space& home, bool share) {
     return new (home) ReLq<View,CtrlView>(home,share,*this);
   }
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   ExecStatus
   ReLq<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
@@ -191,12 +191,12 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   forceinline
   ReLqInt<View,CtrlView>::ReLqInt(Space& home, View x, int c0, CtrlView b)
     : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,x,b), c(c0) {}
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   ExecStatus
   ReLqInt<View,CtrlView>::post(Space& home, View x, int c, CtrlView b) {
     if (b.one()) {
@@ -218,18 +218,18 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   forceinline
   ReLqInt<View,CtrlView>::ReLqInt(Space& home, bool share, ReLqInt& p)
     : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,share,p), c(p.c) {}
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   Actor*
   ReLqInt<View,CtrlView>::copy(Space& home, bool share) {
     return new (home) ReLqInt<View,CtrlView>(home,share,*this);
   }
 
-  template <class View, class CtrlView>
+  template<class View, class CtrlView>
   ExecStatus
   ReLqInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {

@@ -60,7 +60,7 @@ namespace Gecode {
    * \brief Base-class for variable views
    * \ingroup TaskVarView
    */
-  template <class VarImp>
+  template<class VarImp>
   class VarViewBase {
   protected:
     /// Pointer to variable implementation
@@ -116,10 +116,10 @@ namespace Gecode {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  template <class VarImp>
+  template<class VarImp>
   bool same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  template <class VarImp>
+  template<class VarImp>
   bool before(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y);
   //@}
 
@@ -128,7 +128,7 @@ namespace Gecode {
    * \brief Base-class for derived views
    * \ingroup TaskVarView
    */
-  template <class View>
+  template<class View>
   class DerivedViewBase {
   protected:
     /// View from which this view is derived
@@ -165,49 +165,49 @@ namespace Gecode {
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class VarImp>
+  template<class VarImp>
   bool shared(const VarViewBase<VarImp>&, const ConstViewBase&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class ViewA>
+  template<class ViewA>
   bool shared(const DerivedViewBase<ViewA>&, const ConstViewBase&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class VarImp>
+  template<class VarImp>
   bool shared(const ConstViewBase&, const VarViewBase<VarImp>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class ViewA>
+  template<class ViewA>
   bool shared(const ConstViewBase&, const DerivedViewBase<ViewA>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class VarImpA, class VarImpB>
+  template<class VarImpA, class VarImpB>
   bool shared(const VarViewBase<VarImpA>&, const VarViewBase<VarImpB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class VarImpA, class ViewB>
+  template<class VarImpA, class ViewB>
   bool shared(const VarViewBase<VarImpA>&, const DerivedViewBase<ViewB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class ViewA, class VarImpB>
+  template<class ViewA, class VarImpB>
   bool shared(const DerivedViewBase<ViewA>&, const VarViewBase<VarImpB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template <class ViewA, class ViewB>
+  template<class ViewA, class ViewB>
   bool shared(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&);
 
 
@@ -232,77 +232,77 @@ namespace Gecode {
    * Variable view: contains a pointer to a variable implementation
    *
    */
-  template <class VarImp>
+  template<class VarImp>
   forceinline
   VarViewBase<VarImp>::VarViewBase(void)
     : varimp(NULL) {}
-  template <class VarImp>
+  template<class VarImp>
   forceinline
   VarViewBase<VarImp>::VarViewBase(VarImp* x)
     : varimp(x) {}
-  template <class VarImp>
+  template<class VarImp>
   forceinline bool
   VarViewBase<VarImp>::varderived(void) {
     return true;
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline VarImp*
   VarViewBase<VarImp>::var(void) const {
     return varimp;
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline unsigned int
   VarViewBase<VarImp>::degree(void) const {
     return varimp->degree();
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::subscribe(Space& home, Propagator& p, PropCond pc,
                                  bool process) {
     varimp->subscribe(home,p,pc,process);
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::cancel(Space& home, Propagator& p, PropCond pc) {
     varimp->cancel(home,p,pc);
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::subscribe(Space& home, Advisor& a) {
     varimp->subscribe(home,a);
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::cancel(Space& home, Advisor& a) {
     varimp->cancel(home,a);
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::schedule(Space& home, Propagator& p, ModEvent me) {
     return VarImp::schedule(home,p,me);
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline ModEvent
   VarViewBase<VarImp>::me(const ModEventDelta& med) {
     return VarImp::me(med);
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline ModEventDelta
   VarViewBase<VarImp>::med(ModEvent me) {
     return VarImp::med(me);
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline ModEvent
   VarViewBase<VarImp>::me_combine(ModEvent me1, ModEvent me2) {
     return VarImp::me_combine(me1,me2);
   }
 
-  template <class VarImp>
+  template<class VarImp>
   forceinline bool
   same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
     return x.var() == y.var();
   }
-  template <class VarImp>
+  template<class VarImp>
   forceinline bool
   before(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
     return x.var() < y.var();
@@ -313,34 +313,34 @@ namespace Gecode {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   DerivedViewBase<View>::DerivedViewBase(void) {}
 
-  template <class View>
+  template<class View>
   forceinline
   DerivedViewBase<View>::DerivedViewBase(const View& x)
     : view(x) {}
 
-  template <class View>
+  template<class View>
   forceinline bool
   DerivedViewBase<View>::varderived(void) {
     return View::varderived();
   }
 
-  template <class View>
+  template<class View>
   forceinline typename ViewVarImpTraits<View>::VarImp*
   DerivedViewBase<View>::var(void) const {
     return view.var();
   }
 
-  template <class View>
+  template<class View>
   forceinline View
   DerivedViewBase<View>::base(void) const {
     return view;
   }
 
-  template <class View>
+  template<class View>
   forceinline unsigned int
   DerivedViewBase<View>::degree(void) const {
     return view.degree();
@@ -357,51 +357,51 @@ namespace Gecode {
     return false;
   }
 
-  template <class VarImp>
+  template<class VarImp>
   forceinline bool
   shared(const VarViewBase<VarImp>&, const ConstViewBase&) {
     return false;
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   shared(const DerivedViewBase<View>&, const ConstViewBase&) {
     return false;
   }
 
-  template <class VarImp>
+  template<class VarImp>
   forceinline bool
   shared(const ConstViewBase&, const VarViewBase<VarImp>&) {
     return false;
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   shared(const ConstViewBase&, const DerivedViewBase<View>&) {
     return false;
   }
 
-  template <class VarImpA, class VarImpB>
+  template<class VarImpA, class VarImpB>
   forceinline bool
   shared(const VarViewBase<VarImpA>& x, const VarViewBase<VarImpB>& y) {
     return (static_cast<VarImpBase*>(x.var()) ==
             static_cast<VarImpBase*>(y.var()));
   }
-  template <class VarImpA, class ViewB>
+  template<class VarImpA, class ViewB>
   forceinline bool
   shared(const VarViewBase<VarImpA>& x, const DerivedViewBase<ViewB>& y) {
     return (ViewB::varderived() &&
             static_cast<VarImpBase*>(x.var()) ==
             static_cast<VarImpBase*>(y.var()));
   }
-  template <class ViewA, class VarImpB>
+  template<class ViewA, class VarImpB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x, const VarViewBase<VarImpB>& y) {
     return (ViewA::varderived() &&
             static_cast<VarImpBase*>(x.var()) ==
             static_cast<VarImpBase*>(y.var()));
   }
-  template <class ViewA, class ViewB>
+  template<class ViewA, class ViewB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x, const DerivedViewBase<ViewB>& y) {
     return (ViewA::varderived() && ViewB::varderived() &&

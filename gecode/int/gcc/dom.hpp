@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   inline
   Dom<Card, isView>::Dom(Space& home, ViewArray<IntView>& x0,
                          ViewArray<Card>& k0, bool cf)
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace GCC {
     k.subscribe(home, *this, PC_INT_DOM);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline
   Dom<Card, isView>::Dom(Space& home, bool share, Dom<Card, isView>& p)
     : Propagator(home, share, p), vvg(NULL), card_fixed(p.card_fixed) {
@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace GCC {
     k.update(home, share, p.k);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   size_t
   Dom<Card, isView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -96,19 +96,19 @@ namespace Gecode { namespace Int { namespace GCC {
     return sizeof(*this);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   size_t
   Dom<Card, isView>::allocated(void) const {
     return (vvg == NULL) ? 0 : vvg->allocated();
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   Actor*
   Dom<Card, isView>::copy(Space& home, bool share) {
     return new (home) Dom<Card, isView>(home, share, *this);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   PropCost
   Dom<Card, isView>::cost(const Space&, const ModEventDelta&) const {
 
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /// \brief Perform domain propagation.
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   ExecStatus
   Dom<Card, isView>::propagate(Space& home, const ModEventDelta&) {
 
@@ -468,7 +468,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   inline ExecStatus
   Dom<Card, isView>::post(Space& home, ViewArray<IntView>& x0,
                           ViewArray<Card>& k0){

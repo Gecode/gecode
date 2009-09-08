@@ -38,10 +38,10 @@
 namespace Gecode { namespace Support {
 
   /// Cast \a p into pointer of type \a T
-  template <class T>
+  template<class T>
   T ptr_cast(void* p);
 
-  template <class T>
+  template<class T>
   forceinline T
   ptr_cast(void* p) {
     return static_cast<T>(p);

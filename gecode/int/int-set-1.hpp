@@ -46,7 +46,7 @@ namespace Gecode {
   forceinline
   IntSet::IntSet(void) {}
 
-  template <class I>
+  template<class I>
   IntSet::IntSet(I& i) {
     Iter::Ranges::IsRangeIter<I>();
     Support::DynamicArray<Range,Heap> d(heap);
@@ -66,14 +66,14 @@ namespace Gecode {
   }
 
 #ifndef __INTEL_COMPILER
-  template <>
+  template<>
 #endif
   forceinline
   IntSet::IntSet(const IntSet& s)
     : SharedHandle(s) {}
 
 #ifndef __INTEL_COMPILER
-  template <>
+  template<>
 #endif
   forceinline
   IntSet::IntSet(IntSet& s)

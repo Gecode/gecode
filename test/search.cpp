@@ -293,7 +293,7 @@ namespace Test {
     };
 
     /// Test for depth-first search
-    template <class Model>
+    template<class Model>
     class DFS : public Test {
     private:
       /// Minimal recomputation distance
@@ -336,7 +336,7 @@ namespace Test {
     };
 
     /// Test for limited discrepancy search
-    template <class Model>
+    template<class Model>
     class LDS : public Test {
     private:
       /// Number of threads
@@ -373,7 +373,7 @@ namespace Test {
     };
 
     /// Test for best solution search
-    template <class Model, template<class> class Engine>
+    template<class Model, template<class> class Engine>
     class Best : public Test {
     private:
       /// Minimal recomputation distance

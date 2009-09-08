@@ -287,7 +287,7 @@ operator<<(std::ostream& os, const Test::Branch::RunInfo& ri) {
 namespace Test { namespace Branch {
 
   /// Find number of solutions
-  template <class TestSpace>
+  template<class TestSpace>
   int solutions(TestSpace* c, Gecode::Search::Options& o) {
     o.a_d = Base::rand(10);
     o.c_d = Base::rand(10);

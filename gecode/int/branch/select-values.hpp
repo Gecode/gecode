@@ -120,27 +120,27 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
 
-  template <class ViewSel, class View>
+  template<class ViewSel, class View>
   forceinline
   ViewValuesBrancher<ViewSel,View>::
   ViewValuesBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
                       ViewSel& vi_s)
     : ViewBrancher<ViewSel>(home,x,vi_s) {}
 
-  template <class ViewSel, class View>
+  template<class ViewSel, class View>
   forceinline
   ViewValuesBrancher<ViewSel,View>::
   ViewValuesBrancher(Space& home, bool share, ViewValuesBrancher& b)
     : ViewBrancher<ViewSel>(home,share,b) {}
 
-  template <class ViewSel, class View>
+  template<class ViewSel, class View>
   Actor*
   ViewValuesBrancher<ViewSel,View>::copy(Space& home, bool share) {
     return new (home)
       ViewValuesBrancher<ViewSel,View>(home,share,*this);
   }
 
-  template <class ViewSel, class View>
+  template<class ViewSel, class View>
   const Choice*
   ViewValuesBrancher<ViewSel,View>::choice(Space& home) {
     Pos p = ViewBrancher<ViewSel>::pos(home);
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Branch {
       (*this,p,viewsel.choice(home),v);
   }
 
-  template <class ViewSel, class View>
+  template<class ViewSel, class View>
   ExecStatus
   ViewValuesBrancher<ViewSel,View>
   ::commit(Space& home, const Choice& c, unsigned int a) {

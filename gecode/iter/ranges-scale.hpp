@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   class ScaleUp {
   private:
     /// Check that \a I is a range iterator;
@@ -98,7 +98,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I>
+  template<class I>
   class ScaleDown : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -128,11 +128,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
 
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   forceinline
   ScaleUp<Val,UnsVal,I>::ScaleUp(void) {}
 
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   inline void
   ScaleUp<Val,UnsVal,I>::init(I& i0, int a0) {
     i = i0; a = a0;
@@ -145,7 +145,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   inline
   ScaleUp<Val,UnsVal,I>::ScaleUp(I& i0, int a0) : i(i0), a(a0) {
     if (i()) {
@@ -157,7 +157,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   forceinline void
   ScaleUp<Val,UnsVal,I>::operator ++(void) {
     if (a == 1) {
@@ -173,23 +173,23 @@ namespace Gecode { namespace Iter { namespace Ranges {
       }
     }
   }
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   forceinline bool
   ScaleUp<Val,UnsVal,I>::operator ()(void) const {
     return (a == 1) ? i() : (cur <= end);
   }
 
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   forceinline Val
   ScaleUp<Val,UnsVal,I>::min(void) const {
     return (a == 1) ? static_cast<Val>(i.min()) : cur;
   }
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   forceinline Val
   ScaleUp<Val,UnsVal,I>::max(void) const {
     return (a == 1) ? static_cast<Val>(i.max()) : cur;
   }
-  template <class Val, class UnsVal, class I>
+  template<class Val, class UnsVal, class I>
   forceinline UnsVal
   ScaleUp<Val,UnsVal,I>::width(void) const {
     return (a == 1) ?
@@ -199,7 +199,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
 
-  template <class I>
+  template<class I>
   forceinline void
   ScaleDown<I>::operator ++(void) {
     finish();
@@ -220,18 +220,18 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline
   ScaleDown<I>::ScaleDown(void) {}
 
-  template <class I>
+  template<class I>
   inline void
   ScaleDown<I>::init(I& i0, int a0) {
     i = i0; a = a0;
     operator ++();
   }
 
-  template <class I>
+  template<class I>
   inline
   ScaleDown<I>::ScaleDown(I& i0, int a0) : i(i0), a(a0) {
     i = i0; a = a0;

@@ -42,37 +42,37 @@ namespace Gecode {
     GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);
   }
 
-  template <class T>
+  template<class T>
   forceinline
   Restart<T>::Restart(T* s, const Search::Options& o)
     : e(Search::restart(s,sizeof(T),o)) {}
 
-  template <class T>
+  template<class T>
   forceinline T*
   Restart<T>::next(void) {
     return dynamic_cast<T*>(e->next());
   }
 
-  template <class T>
+  template<class T>
   forceinline Search::Statistics
   Restart<T>::statistics(void) const {
     return e->statistics();
   }
 
-  template <class T>
+  template<class T>
   forceinline bool
   Restart<T>::stopped(void) const {
     return e->stopped();
   }
 
-  template <class T>
+  template<class T>
   forceinline
   Restart<T>::~Restart(void) {
     delete e;
   }
 
 
-  template <class T>
+  template<class T>
   T*
   restart(T* s, const Search::Options& o) {
     Restart<T> b(s,o);

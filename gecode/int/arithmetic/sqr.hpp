@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Positive bounds consistent squaring
    *
    */
-  template <class VA, class VB>
+  template<class VA, class VB>
   forceinline ExecStatus
   prop_sqr_plus_bnd(Space& home, VA x0, VB x1) {
     bool mod;
@@ -73,12 +73,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   forceinline
   SqrPlusBnd<VA,VB>::SqrPlusBnd(Space& home, VA x0, VB x1)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,x0,x1) {}
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   forceinline ExecStatus
   SqrPlusBnd<VA,VB>::post(Space& home, VA x0, VB x1) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
@@ -86,18 +86,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   forceinline
   SqrPlusBnd<VA,VB>::SqrPlusBnd(Space& home, bool share, SqrPlusBnd<VA,VB>& p)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,share,p) {}
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   Actor*
   SqrPlusBnd<VA,VB>::copy(Space& home, bool share) {
     return new (home) SqrPlusBnd<VA,VB>(home,share,*this);
   }
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   ExecStatus
   SqrPlusBnd<VA,VB>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
@@ -111,12 +111,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   SqrBnd<View>::SqrBnd(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   SqrBnd<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
@@ -138,18 +138,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   SqrBnd<View>::SqrBnd(Space& home, bool share, SqrBnd<View>& p)
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   SqrBnd<View>::copy(Space& home, bool share) {
     return new (home) SqrBnd<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   SqrBnd<View>::propagate(Space& home, const ModEventDelta&) {
     assert(x1.min() >= 0);
@@ -201,12 +201,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Positive domain consistent squaring
    *
    */
-  template <class VA, class VB>
+  template<class VA, class VB>
   forceinline
   SqrPlusDom<VA,VB>::SqrPlusDom(Space& home, VA x0, VB x1)
     : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,x0,x1) {}
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   forceinline ExecStatus
   SqrPlusDom<VA,VB>::post(Space& home, VA x0, VB x1) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
@@ -214,18 +214,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   forceinline
   SqrPlusDom<VA,VB>::SqrPlusDom(Space& home, bool share, SqrPlusDom<VA,VB>& p)
     : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,share,p) {}
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   Actor*
   SqrPlusDom<VA,VB>::copy(Space& home, bool share) {
     return new (home) SqrPlusDom<VA,VB>(home,share,*this);
   }
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   PropCost
   SqrPlusDom<VA,VB>::cost(const Space&, const ModEventDelta& med) const {
     if (VA::me(med) == ME_INT_VAL)
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return PropCost::binary(PropCost::LO);
   }
 
-  template <class VA, class VB>
+  template<class VA, class VB>
   ExecStatus
   SqrPlusDom<VA,VB>::propagate(Space& home, const ModEventDelta& med) {
     if (VA::me(med) != ME_INT_DOM) {
@@ -267,12 +267,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   SqrDom<View>::SqrDom(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   SqrDom<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
@@ -294,18 +294,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   SqrDom<View>::SqrDom(Space& home, bool share, SqrDom<View>& p)
     : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   SqrDom<View>::copy(Space& home, bool share) {
     return new (home) SqrDom<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   PropCost
   SqrDom<View>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return PropCost::binary(PropCost::LO);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   SqrDom<View>::propagate(Space& home, const ModEventDelta& med) {
     assert(x1.min() >= 0);

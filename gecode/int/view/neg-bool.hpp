@@ -217,7 +217,7 @@ namespace Gecode {
      * \brief %Range iterator for negated Boolean variable views
      * \ingroup TaskActorIntView
      */
-    template <>
+    template<>
     class ViewRanges<NegBoolView> : public Iter::Ranges::Singleton {
     public:
       /// \name Constructors and initialization

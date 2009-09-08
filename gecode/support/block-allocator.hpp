@@ -45,7 +45,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T, int blocksize = 512>
+  template<class T, int blocksize = 512>
   class BlockAllocator {
   private:
     /// One block of memory
@@ -80,7 +80,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T, int blocksize = 512>
+  template<class T, int blocksize = 512>
   class BlockClient {
   public:
     /// Allocate memory from block allocator \a ba
@@ -93,7 +93,7 @@ namespace Gecode { namespace Support {
 
 
 
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   forceinline
   BlockAllocator<T,blocksize>::BlockAllocator(void) {
     b = static_cast<Block*>(heap.ralloc(sizeof(Block)));
@@ -102,7 +102,7 @@ namespace Gecode { namespace Support {
     _size = sizeof(Block);
   }
 
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   forceinline
   BlockAllocator<T,blocksize>::~BlockAllocator(void) {
     while (b != NULL) {
@@ -111,7 +111,7 @@ namespace Gecode { namespace Support {
     }
   }
 
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   forceinline T*
   BlockAllocator<T,blocksize>::operator ()(void) {
     T* t = --n;
@@ -120,7 +120,7 @@ namespace Gecode { namespace Support {
     return t;
   }
 
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   void
   BlockAllocator<T,blocksize>::allocate(void) {
     // Allocate another block
@@ -130,7 +130,7 @@ namespace Gecode { namespace Support {
     _size += sizeof(Block);
   }
 
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   forceinline size_t
   BlockAllocator<T,blocksize>::size(void) const {
     return _size;
@@ -138,16 +138,16 @@ namespace Gecode { namespace Support {
 
 
 
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   forceinline void
   BlockClient<T,blocksize>::operator delete(void*,
                                             BlockAllocator<T,blocksize>&) {
   }
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   forceinline void
   BlockClient<T,blocksize>::operator delete(void*) {
   }
-  template <class T, int blocksize>
+  template<class T, int blocksize>
   forceinline void*
   BlockClient<T,blocksize>::operator new(size_t,
                                          BlockAllocator<T,blocksize>& ba) {

@@ -440,7 +440,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   post_all(Space& home,
            Term<BoolView>* t, int n,

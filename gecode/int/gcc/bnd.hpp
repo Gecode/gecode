@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   // for posting
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   inline
   BndImp<Card, isView, shared>::
   BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   // for cloning
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   forceinline
   BndImp<Card, isView, shared>::
   BndImp(Space& home, bool share, BndImp<Card, isView, shared>& p)
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace GCC {
     k.update(home, share, p.k);
   }
 
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   size_t
   BndImp<Card, isView, shared>::dispose(Space& home){
     home.ignore(*this,AP_DISPOSE);
@@ -75,20 +75,20 @@ namespace Gecode { namespace Int { namespace GCC {
     return sizeof(*this);
   }
 
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   size_t
   BndImp<Card, isView, shared>::allocated(void) const {
     return lps.allocated() + ups.allocated();
   }
 
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   Actor*
   BndImp<Card, isView, shared>::copy(Space& home, bool share){
     return new (home) BndImp<Card, isView, shared>
       (home, share, *this);
   }
 
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   PropCost
   BndImp<Card, isView, shared>::cost(const Space&, const ModEventDelta&) const {
     /*
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   ExecStatus
   BndImp<Card, isView, shared>::pruneCards(Space& home) {
     // Remove all values with 0 max occurrence
@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_FIX;
   }
 
-  template <class Card, bool isView, bool shared>
+  template<class Card, bool isView, bool shared>
   ExecStatus
   BndImp<Card, isView, shared>::propagate(Space& home, const ModEventDelta&) {
     if (isView)
@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * cardinality views, \a View2 the test can be applied for both cases
    * of fixed cardinalities and cardinality variables.
    */
-  template <class View1, class View2>
+  template<class View1, class View2>
   class SharingTest {
   public:
     /**
@@ -400,7 +400,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Specialization of class SharingTest for the case of fixed
    * cardinalities using IntView as \a View1 and OccurBndsView as \a View2
    */
-  template <>
+  template<>
   class SharingTest<IntView,OccurBndsView> {
   public:
     /// Test whether the problem views in \a x0 contain shared views.
@@ -410,7 +410,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   };
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   ExecStatus
   Bnd<Card, isView>::post(Space& home,
                           ViewArray<IntView>& x0,

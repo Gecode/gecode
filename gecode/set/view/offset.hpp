@@ -45,68 +45,68 @@ namespace Gecode {
 
   namespace Set {
 
-    template <class View>
+    template<class View>
     forceinline
     OffsetSetView<View>::OffsetSetView(void) {}
 
-    template <class View>
+    template<class View>
     forceinline
     OffsetSetView<View>::OffsetSetView(View& s0, int k0)
       : DerivedViewBase<View>(s0), k(k0) {}
 
-    template <class View>
+    template<class View>
     forceinline bool
     OffsetSetView<View>::assigned(void) const { return view.assigned(); }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     OffsetSetView<View>::glbSize(void) const {
       return view.glbSize();
     }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     OffsetSetView<View>::lubSize(void) const {
       return view.lubSize();
     }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     OffsetSetView<View>::unknownSize(void) const {
       return view.unknownSize();
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::offset(void) const {
       return k;
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     OffsetSetView<View>::contains(int n) const {
       return view.contains(n-k);
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     OffsetSetView<View>::notContains(int n) const {
       return view.notContains(n-k);
     }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     OffsetSetView<View>::cardMin() const {
       return view.cardMin();
     }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     OffsetSetView<View>::cardMax() const {
       return view.cardMax();
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::lubMin() const {
       if (view.cardMax() == 0)
@@ -114,7 +114,7 @@ namespace Gecode {
       return view.lubMin() + k;
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::lubMax() const {
       if (view.cardMax() == 0)
@@ -122,7 +122,7 @@ namespace Gecode {
       return view.lubMax() + k;
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::glbMin() const {
       if (view.cardMax() == 0)
@@ -130,7 +130,7 @@ namespace Gecode {
       return view.glbMin() + k;
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::glbMax() const {
       if (view.cardMax() == 0)
@@ -138,118 +138,118 @@ namespace Gecode {
       return view.glbMax() + k;
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::cardMin(Space& home, unsigned int c) {
       return view.cardMin(home, c);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::cardMax(Space& home, unsigned int c) {
       return view.cardMax(home, c);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::include(Space& home, int c) {
       return view.include(home, c-k);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::exclude(Space& home, int c) {
       return view.exclude(home, c-k);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::intersect(Space& home, int c) {
       return view.intersect(home, c-k);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::intersect(Space& home, int i, int j) {
       return view.intersect(home, i-k, j-k);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::include(Space& home, int i, int j) {
       return view.include(home, i-k, j-k);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::exclude(Space& home, int i, int j) {
       return view.exclude(home, i-k, j-k);
     }
 
-    template <class View>
-    template <class I> ModEvent
+    template<class View>
+    template<class I> ModEvent
     OffsetSetView<View>::excludeI(Space& home,I& iter) {
       Iter::Ranges::Offset<I> off(iter, -k);
       return view.excludeI(home, off);
     }
 
-    template <class View>
-    template <class I> ModEvent
+    template<class View>
+    template<class I> ModEvent
     OffsetSetView<View>::includeI(Space& home,I& iter) {
       Iter::Ranges::Offset<I> off(iter, -k);
       return view.includeI(home, off);
     }
 
-    template <class View>
-    template <class I> ModEvent
+    template<class View>
+    template<class I> ModEvent
     OffsetSetView<View>::intersectI(Space& home,I& iter) {
       Iter::Ranges::Offset<I> off(iter, -k);
       return view.intersectI(home, off);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     OffsetSetView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                    bool process) {
       view.subscribe(home,p, pc,process);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     OffsetSetView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
       view.cancel(home,p, pc);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     OffsetSetView<View>::subscribe(Space& home, Advisor& a) {
       view.subscribe(home,a);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     OffsetSetView<View>::cancel(Space& home, Advisor& a) {
       view.cancel(home,a);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     OffsetSetView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
       return View::schedule(home,p,me);
     }
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::me(const ModEventDelta& med) {
       return View::me(med);
     }
 
-    template <class View>
+    template<class View>
     forceinline ModEventDelta
     OffsetSetView<View>::med(ModEvent me) {
       return View::med(me);
     }
 
-    template <class View>
+    template<class View>
     forceinline void
     OffsetSetView<View>::update(Space& home, bool share, OffsetSetView& y) {
       k = y.k;
@@ -262,43 +262,43 @@ namespace Gecode {
      *
      */
 
-    template <class View>
+    template<class View>
     forceinline ModEvent
     OffsetSetView<View>::modevent(const Delta& d) {
       return View::modevent(d);
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::glbMin(const Delta& d) const {
       return view.glbMin(d)+k;
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::glbMax(const Delta& d) const {
       return view.glbMax(d)+k;
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     OffsetSetView<View>::glbAny(const Delta& d) const {
       return view.glbAny(d);
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::lubMin(const Delta& d) const {
       return view.lubMin(d)+k;
     }
 
-    template <class View>
+    template<class View>
     forceinline int
     OffsetSetView<View>::lubMax(const Delta& d) const {
       return view.lubMax(d)+k;
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     OffsetSetView<View>::lubAny(const Delta& d) const {
       return view.lubAny(d);
@@ -308,7 +308,7 @@ namespace Gecode {
      * \brief %Range iterator for least upper bound of offset set views
      * \ingroup TaskActorSetView
      */
-    template <class View>
+    template<class View>
     class LubRanges<OffsetSetView<View> > : public Iter::Ranges::Offset<LubRanges<View> > {
     private:
       LubRanges<View> ub;
@@ -342,35 +342,35 @@ namespace Gecode {
       //@}
     };
 
-    template <class View>
+    template<class View>
     forceinline
     LubRanges<OffsetSetView<View> >::LubRanges(const OffsetSetView<View>& s)
       : ub(s.base()), ubo(ub, s.offset()) {}
 
-    template <class View>
+    template<class View>
     forceinline void
     LubRanges<OffsetSetView<View> >::init(const OffsetSetView<View>& s) {
       ub.init(s.base());
       ubo.init(ub, s.offset());
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     LubRanges<OffsetSetView<View> >::operator ()(void) const { return ubo(); }
 
-    template <class View>
+    template<class View>
     forceinline void
     LubRanges<OffsetSetView<View> >::operator ++(void) { return ++ubo; }
 
-    template <class View>
+    template<class View>
     forceinline int
     LubRanges<OffsetSetView<View> >::min(void) const { return ubo.min(); }
 
-    template <class View>
+    template<class View>
     forceinline int
     LubRanges<OffsetSetView<View> >::max(void) const { return ubo.max(); }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     LubRanges<OffsetSetView<View> >::width(void) const { return ubo.width(); }
 
@@ -379,7 +379,7 @@ namespace Gecode {
      * \brief %Range iterator for greatest lower bound of offset set views
      * \ingroup TaskActorSetView
      */
-    template <class View>
+    template<class View>
     class GlbRanges<OffsetSetView<View> > {
     private:
       GlbRanges<View> lb;
@@ -413,35 +413,35 @@ namespace Gecode {
       //@}
     };
 
-    template <class View>
+    template<class View>
     forceinline
     GlbRanges<OffsetSetView<View> >::GlbRanges(const OffsetSetView<View> & s)
       : lb(s.base()), lbo(lb, s.offset()) {}
 
-    template <class View>
+    template<class View>
     forceinline void
     GlbRanges<OffsetSetView<View> >::init(const OffsetSetView<View> & s) {
       lb.init(s.base());
       lbo.init(lb, s.offset());
     }
 
-    template <class View>
+    template<class View>
     forceinline bool
     GlbRanges<OffsetSetView<View> >::operator ()(void) const { return lbo(); }
 
-    template <class View>
+    template<class View>
     forceinline void
     GlbRanges<OffsetSetView<View> >::operator ++(void) { return ++lbo; }
 
-    template <class View>
+    template<class View>
     forceinline int
     GlbRanges<OffsetSetView<View> >::min(void) const { return lbo.min(); }
 
-    template <class View>
+    template<class View>
     forceinline int
     GlbRanges<OffsetSetView<View> >::max(void) const { return lbo.max(); }
 
-    template <class View>
+    template<class View>
     forceinline unsigned int
     GlbRanges<OffsetSetView<View> >::width(void) const { return lbo.width(); }
 
@@ -462,13 +462,13 @@ namespace Gecode {
    * Testing
    *
    */
-  template <class View>
+  template<class View>
   forceinline bool
   same(const Set::OffsetSetView<View>& x,
        const Set::OffsetSetView<View>& y) {
     return same(x.base(),y.base());
   }
-  template <class View>
+  template<class View>
   forceinline bool
   before(const Set::OffsetSetView<View>& x,
          const Set::OffsetSetView<View>& y) {

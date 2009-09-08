@@ -68,7 +68,7 @@ namespace Gecode { namespace Set { namespace Element {
    * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class SView, class RView>
+  template<class SView, class RView>
   class ElementIntersection : public Propagator {
   public:
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace Element {
    * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class SView, class RView>
+  template<class SView, class RView>
   class ElementUnion : public Propagator {
   public:
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;
@@ -142,7 +142,7 @@ namespace Gecode { namespace Set { namespace Element {
    * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class SView, class RView>
+  template<class SView, class RView>
   class ElementUnionConst : public Propagator {
   protected:
     SView x0;
@@ -176,7 +176,7 @@ namespace Gecode { namespace Set { namespace Element {
    * Requires \code #include <gecode/set/element.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template <class SView, class RView>
+  template<class SView, class RView>
   class ElementDisjoint : public Propagator {
   public:
     typedef Gecode::Int::Element::IdxViewArray<SView> IdxViewArray;

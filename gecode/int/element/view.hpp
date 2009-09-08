@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Class for pair of index and view
    *
    */
-  template <class View>
+  template<class View>
   class IdxView {
   public:
     int idx; View view;
@@ -68,21 +68,21 @@ namespace Gecode { namespace Int { namespace Element {
     static IdxView* allocate(Space&, int);
   };
 
-  template <class View>
+  template<class View>
   forceinline IdxView<View>*
   IdxView<View>::allocate(Space& home, int n) {
     return home.alloc<IdxView<View> >(n);
   }
 
-  template <class View>
+  template<class View>
   IdxViewArray<View>::IdxViewArray(void) : xs(NULL), n(0) {}
 
-  template <class View>
+  template<class View>
   IdxViewArray<View>::IdxViewArray(const IdxViewArray<View>& a) {
     n = a.n; xs = a.xs;
   }
 
-  template <class View>
+  template<class View>
   IdxViewArray<View>::IdxViewArray(Space& home,
     const typename ViewToVarArg<View>::argtype& xa) : xs(NULL) {
     n = xa.size();
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Element {
     }
   }
 
-  template <class View>
+  template<class View>
   IdxViewArray<View>::IdxViewArray(Space& home, int n0) : xs(NULL) {
     n = n0;
     if (n>0) {
@@ -102,33 +102,33 @@ namespace Gecode { namespace Int { namespace Element {
     }
   }
 
-  template <class View>
+  template<class View>
   forceinline int
   IdxViewArray<View>::size(void) const {
     return n;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   IdxViewArray<View>::size(int n0) {
     n = n0;
   }
 
-  template <class View>
+  template<class View>
   forceinline IdxView<View>&
   IdxViewArray<View>::operator [](int i) {
     assert((i >= 0) && (i < size()));
     return xs[i];
   }
 
-  template <class View>
+  template<class View>
   forceinline const IdxView<View>&
   IdxViewArray<View>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return xs[i];
   }
 
-  template <class View>
+  template<class View>
   void
   IdxViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                 bool process) {
@@ -136,14 +136,14 @@ namespace Gecode { namespace Int { namespace Element {
       xs[i].view.subscribe(home,p,pc,process);
   }
 
-  template <class View>
+  template<class View>
   void
   IdxViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
     for (int i = n; i--; )
       xs[i].view.cancel(home,p,pc);
   }
 
-  template <class View>
+  template<class View>
   void
   IdxViewArray<View>::update(Space& home, bool share, IdxViewArray<View>& a) {
     n = a.size();
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Class for bounds-equality test
    *
    */
-  template <class VA, class VC>
+  template<class VA, class VC>
   class RelTestBnd {
   public:
     RelTest operator ()(VA,VC);
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Class for bounds-equality test (specialized)
    *
    */
-  template <class VA>
+  template<class VA>
   class RelTestBnd<VA,ConstIntView> {
   public:
     RelTest operator ()(VA,ConstIntView);
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Class for domain-equality test
    *
    */
-  template <class VA, class VC>
+  template<class VA, class VC>
   class RelTestDom {
   public:
     RelTest operator ()(VA,VC);
@@ -189,30 +189,30 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Class for domain-equality test (specialized)
    *
    */
-  template <class VA>
+  template<class VA>
   class RelTestDom<VA,ConstIntView> {
   public:
     RelTest operator ()(VA,ConstIntView);
   };
 
 
-  template <class VA, class VC>
+  template<class VA, class VC>
   forceinline RelTest
   RelTestBnd<VA,VC>::operator ()(VA x, VC y) {
     return rtest_eq_bnd(x,y);
   }
-  template <class VA>
+  template<class VA>
   forceinline RelTest
   RelTestBnd<VA,ConstIntView>::operator ()(VA x, ConstIntView y) {
     return rtest_eq_bnd(x,y.val());
   }
 
-  template <class VA, class VC>
+  template<class VA, class VC>
   forceinline RelTest
   RelTestDom<VA,VC>::operator ()(VA x, VC y) {
     return rtest_eq_dom(x,y);
   }
-  template <class VA>
+  template<class VA>
   forceinline RelTest
   RelTestDom<VA,ConstIntView>::operator ()(VA x, ConstIntView y) {
     return rtest_eq_dom(x,y.val());
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Element {
    *
    */
 
-  template <class VA, class VB, class VC, PropCond pc_ac>
+  template<class VA, class VB, class VC, PropCond pc_ac>
   View<VA,VB,VC,pc_ac>::View(Space& home, IdxViewArray<VA>& iv0,
                              VB y0, VC y1)
     : Propagator(home), iv(iv0), x0(y0), x1(y1) {
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace Element {
     iv.subscribe(home,*this,pc_ac);
   }
 
-  template <class VA, class VB, class VC, PropCond pc_ac>
+  template<class VA, class VB, class VC, PropCond pc_ac>
   forceinline
   View<VA,VB,VC,pc_ac>::View(Space& home, bool share, View& p)
     : Propagator(home,share,p) {
@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace Element {
     iv.update(home,share,p.iv);
   }
 
-  template <class VA, class VB, class VC, PropCond pc_ac>
+  template<class VA, class VB, class VC, PropCond pc_ac>
   PropCost
   View<VA,VB,VC,pc_ac>::cost(const Space&, const ModEventDelta&) const {
     // This is required for subscribing to variables in the
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Element {
     return PropCost::linear(PropCost::LO,iv.size()+2);
   }
 
-  template <class VA, class VB, class VC, PropCond pc_ac>
+  template<class VA, class VB, class VC, PropCond pc_ac>
   forceinline size_t
   View<VA,VB,VC,pc_ac>::dispose(Space& home) {
     x0.cancel(home,*this,PC_INT_DOM);
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Value iterator for indices in index-view map
    *
    */
-  template <class View>
+  template<class View>
   class IterIdxView {
   private:
     const IdxView<View> *cur, *end;
@@ -283,31 +283,31 @@ namespace Gecode { namespace Int { namespace Element {
     int  val(void) const;
   };
 
-  template <class View>
+  template<class View>
   forceinline
   IterIdxView<View>::IterIdxView(void) {}
-  template <class View>
+  template<class View>
   forceinline
   IterIdxView<View>::IterIdxView(const IdxView<View>* b,
                                  const IdxView<View>* e)
     : cur(b), end(e) {}
-  template <class View>
+  template<class View>
   forceinline void
   IterIdxView<View>::init(const IdxView<View>* b,
                           const IdxView<View>* e) {
     cur=b; end=e;
   }
-  template <class View>
+  template<class View>
   forceinline bool
   IterIdxView<View>::operator ()(void) const {
     return cur < end;
   }
-  template <class View>
+  template<class View>
   forceinline void
   IterIdxView<View>::operator ++(void) {
     cur++;
   }
-  template <class View>
+  template<class View>
   forceinline int
   IterIdxView<View>::val(void) const {
     return cur->idx;
@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace Element {
    *
    */
 
-  template <class VA, class VB, class VC, PropCond pc_ac, class RelTest>
+  template<class VA, class VB, class VC, PropCond pc_ac, class RelTest>
   ExecStatus
   scan(Space& home, IdxViewArray<VA>& iv,
        VB x0, VC x1, Propagator& p, RelTest rt) {
@@ -383,13 +383,13 @@ namespace Gecode { namespace Int { namespace Element {
    *
    */
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   forceinline
   ViewBnd<VA,VB,VC>::ViewBnd(Space& home,
                              IdxViewArray<VA>& iv, VB x0, VC x1)
     : View<VA,VB,VC,PC_INT_BND>(home,iv,x0,x1) {}
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   ExecStatus
   ViewBnd<VA,VB,VC>::post(Space& home,
                           IdxViewArray<VA>& iv, VB x0, VC x1) {
@@ -406,18 +406,18 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   forceinline
   ViewBnd<VA,VB,VC>::ViewBnd(Space& home, bool share, ViewBnd& p)
     : View<VA,VB,VC,PC_INT_BND>(home,share,p) {}
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   Actor*
   ViewBnd<VA,VB,VC>::copy(Space& home, bool share) {
     return new (home) ViewBnd<VA,VB,VC>(home,share,*this);
   }
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   ExecStatus
   ViewBnd<VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
     assert(iv.size() > 1);
@@ -465,13 +465,13 @@ namespace Gecode { namespace Int { namespace Element {
    *
    */
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   forceinline
   ViewDom<VA,VB,VC>::ViewDom(Space& home,
                              IdxViewArray<VA>& iv, VB x0, VC x1)
     : View<VA,VB,VC,PC_INT_DOM>(home,iv,x0,x1) {}
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   ExecStatus
   ViewDom<VA,VB,VC>::post(Space& home,
                           IdxViewArray<VA>& iv, VB x0, VC x1){
@@ -488,26 +488,26 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   forceinline
   ViewDom<VA,VB,VC>::ViewDom(Space& home, bool share, ViewDom& p)
     : View<VA,VB,VC,PC_INT_DOM>(home,share,p) {}
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   Actor*
   ViewDom<VA,VB,VC>::copy(Space& home, bool share) {
     return new (home) ViewDom<VA,VB,VC>(home,share,*this);
   }
 
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   PropCost
   ViewDom<VA,VB,VC>::cost(const Space&, const ModEventDelta& med) const {
     return PropCost::linear((VA::me(med) != ME_INT_DOM) ?
                             PropCost::LO : PropCost::HI, iv.size()+2);
   }
 
-  template <class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   ExecStatus
   ViewDom<VA,VB,VC>::propagate(Space& home, const ModEventDelta& med) {
     assert(iv.size() > 1);

@@ -109,7 +109,7 @@ namespace Gecode {
   /**
    * \brief Virtualized view selection base class
    */
-  template <class View>
+  template<class View>
   class ViewSelVirtualBase {
   public:
     /// Intialize with view \a x
@@ -139,7 +139,7 @@ namespace Gecode {
   /**
    * \brief Virtualized choice
    */
-  template <class Choice>
+  template<class Choice>
   class ChoiceVirtual : public ChoiceVirtualBase {
   public:
     /// Static choice object
@@ -157,7 +157,7 @@ namespace Gecode {
   /**
    * \brief Virtualized view selection
    */
-  template <class ViewSel>
+  template<class ViewSel>
   class ViewSelVirtual : public ViewSelVirtualBase<typename ViewSel::View> {
   protected:
     /// Static view selection object
@@ -316,13 +316,13 @@ namespace Gecode {
 
 
   // Virtualized view selection
-  template <class View>
+  template<class View>
   forceinline void
   ViewSelVirtualBase<View>::operator delete(void*) {}
-  template <class View>
+  template<class View>
   forceinline void
   ViewSelVirtualBase<View>::operator delete(void*, Space&) {}
-  template <class View>
+  template<class View>
   forceinline void*
   ViewSelVirtualBase<View>::operator new(size_t s, Space& home) {
     return home.ralloc(s);
@@ -342,21 +342,21 @@ namespace Gecode {
   }
 
 
-  template <class Choice>
+  template<class Choice>
   forceinline
   ChoiceVirtual<Choice>::ChoiceVirtual(const Choice& c)
     : choice(c) {}
-  template <class Choice>
+  template<class Choice>
   forceinline ChoiceVirtualBase*
   ChoiceVirtual<Choice>::copy(void) const {
     return new ChoiceVirtual<Choice>(choice);
   }
-  template <class Choice>
+  template<class Choice>
   forceinline size_t
   ChoiceVirtual<Choice>::size(void) const {
     return sizeof(ChoiceVirtual<Choice>);
   }
-  template <class Choice>
+  template<class Choice>
   ChoiceVirtual<Choice>::~ChoiceVirtual(void) {}
 
 
@@ -365,28 +365,28 @@ namespace Gecode {
   ViewSelVirtual<ViewSel>::ViewSelVirtual(Space& home,
                                           const VarBranchOptions& vbo)
     : viewsel(home,vbo) {}
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline
   ViewSelVirtual<ViewSel>::ViewSelVirtual(Space& home, bool share,
                                           ViewSelVirtual<ViewSel>& vsv) {
     viewsel.update(home,share,vsv.viewsel);
   }
-  template <class ViewSel>
+  template<class ViewSel>
   ViewSelStatus
   ViewSelVirtual<ViewSel>::init(Space& home, typename ViewSel::View x) {
     return viewsel.init(home,x);
   }
-  template <class ViewSel>
+  template<class ViewSel>
   ViewSelStatus
   ViewSelVirtual<ViewSel>::select(Space& home, typename ViewSel::View x) {
     return viewsel.select(home,x);
   }
-  template <class ViewSel>
+  template<class ViewSel>
   ChoiceVirtualBase*
   ViewSelVirtual<ViewSel>::choice(Space& home) {
     return new ChoiceVirtual<typename ViewSel::Choice>(viewsel.choice(home));
   }
-  template <class ViewSel>
+  template<class ViewSel>
   void
   ViewSelVirtual<ViewSel>::commit(Space& home, const ChoiceVirtualBase* _c,
                                   unsigned int a) {
@@ -394,12 +394,12 @@ namespace Gecode {
       static_cast<const ChoiceVirtual<typename ViewSel::Choice>*>(_c);
     viewsel.commit(home, c->choice, a);
   }
-  template <class ViewSel>
+  template<class ViewSel>
   ViewSelVirtualBase<typename ViewSel::View>*
   ViewSelVirtual<ViewSel>::copy(Space& home, bool share) {
     return new (home) ViewSelVirtual<ViewSel>(home,share,*this);
   }
-  template <class ViewSel>
+  template<class ViewSel>
   size_t
   ViewSelVirtual<ViewSel>::dispose(Space& home) {
     viewsel.dispose(home);

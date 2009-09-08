@@ -67,7 +67,7 @@ namespace Test { namespace Int {
      };
 
      /// Evaluate linear instructions
-     template <class Expr>
+     template<class Expr>
      Expr
      eval(const LinInstr* pc, Expr reg[]) {
        while (true) {

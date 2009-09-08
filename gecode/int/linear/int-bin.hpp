@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Binary linear propagators
    *
    */
-  template <class Val, class A, class B, PropCond pc>
+  template<class Val, class A, class B, PropCond pc>
   forceinline
   LinBin<Val,A,B,pc>::LinBin(Space& home, A y0, B y1, Val c0)
     : Propagator(home), x0(y0), x1(y1), c(c0) {
@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Linear {
     x1.subscribe(home,*this,pc);
   }
 
-  template <class Val, class A, class B, PropCond pc>
+  template<class Val, class A, class B, PropCond pc>
   forceinline
   LinBin<Val,A,B,pc>::LinBin(Space& home, bool share, LinBin<Val,A,B,pc>& p)
     : Propagator(home,share,p), c(p.c) {
@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Linear {
     x1.update(home,share,p.x1);
   }
 
-  template <class Val, class A, class B, PropCond pc>
+  template<class Val, class A, class B, PropCond pc>
   forceinline
   LinBin<Val,A,B,pc>::LinBin(Space& home, bool share, Propagator& p,
                              A y0, B y1, Val c0)
@@ -66,13 +66,13 @@ namespace Gecode { namespace Int { namespace Linear {
     x1.update(home,share,y1);
   }
 
-  template <class Val, class A, class B, PropCond pc>
+  template<class Val, class A, class B, PropCond pc>
   PropCost
   LinBin<Val,A,B,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
   }
 
-  template <class Val, class A, class B, PropCond pc>
+  template<class Val, class A, class B, PropCond pc>
   forceinline size_t
   LinBin<Val,A,B,pc>::dispose(Space& home) {
     assert(!home.failed());
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Binary reified linear propagators
    *
    */
-  template <class Val, class A, class B, PropCond pc, class Ctrl>
+  template<class Val, class A, class B, PropCond pc, class Ctrl>
   forceinline
   ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Space& home, A y0, B y1, Val c0, Ctrl b0)
     : Propagator(home), x0(y0), x1(y1), c(c0), b(b0) {
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Linear {
     b.subscribe(home,*this,PC_INT_VAL);
   }
 
-  template <class Val, class A, class B, PropCond pc, class Ctrl>
+  template<class Val, class A, class B, PropCond pc, class Ctrl>
   forceinline
   ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Space& home, bool share,
                                       ReLinBin<Val,A,B,pc,Ctrl>& p)
@@ -106,13 +106,13 @@ namespace Gecode { namespace Int { namespace Linear {
     b.update(home,share,p.b);
   }
 
-  template <class Val, class A, class B, PropCond pc, class Ctrl>
+  template<class Val, class A, class B, PropCond pc, class Ctrl>
   PropCost
   ReLinBin<Val,A,B,pc,Ctrl>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
   }
 
-  template <class Val, class A, class B, PropCond pc, class Ctrl>
+  template<class Val, class A, class B, PropCond pc, class Ctrl>
   forceinline size_t
   ReLinBin<Val,A,B,pc,Ctrl>::dispose(Space& home) {
     assert(!home.failed());
@@ -128,12 +128,12 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   EqBin<Val,A,B>::EqBin(Space& home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,x0,x1,c) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   EqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
     (void) new (home) EqBin<Val,A,B>(home,x0,x1,c);
@@ -141,18 +141,18 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   EqBin<Val,A,B>::EqBin(Space& home, bool share, EqBin<Val,A,B>& p)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   EqBin<Val,A,B>::EqBin(Space& home, bool share, Propagator& p,
                         A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   Actor*
   EqBin<Val,A,B>::copy(Space& home, bool share) {
     return new (home) EqBin<Val,A,B>(home,share,*this);
@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (me_modified(me)) bm |= (UPDATE);        \
   }
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   EqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     int bm = BM_ALL;
@@ -198,12 +198,12 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template <class Val, class A, class B, class Ctrl>
+  template<class Val, class A, class B, class Ctrl>
   forceinline
   ReEqBin<Val,A,B,Ctrl>::ReEqBin(Space& home, A x0, B x1, Val c, Ctrl b)
     : ReLinBin<Val,A,B,PC_INT_BND,Ctrl>(home,x0,x1,c,b) {}
 
-  template <class Val, class A, class B, class Ctrl>
+  template<class Val, class A, class B, class Ctrl>
   ExecStatus
   ReEqBin<Val,A,B,Ctrl>::post(Space& home, A x0, B x1, Val c, Ctrl b) {
     (void) new (home) ReEqBin<Val,A,B,Ctrl>(home,x0,x1,c,b);
@@ -211,19 +211,19 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class Val, class A, class B, class Ctrl>
+  template<class Val, class A, class B, class Ctrl>
   forceinline
   ReEqBin<Val,A,B,Ctrl>::ReEqBin(Space& home, bool share,
                                  ReEqBin<Val,A,B,Ctrl>& p)
     : ReLinBin<Val,A,B,PC_INT_BND,Ctrl>(home,share,p) {}
 
-  template <class Val, class A, class B, class Ctrl>
+  template<class Val, class A, class B, class Ctrl>
   Actor*
   ReEqBin<Val,A,B,Ctrl>::copy(Space& home, bool share) {
     return new (home) ReEqBin<Val,A,B,Ctrl>(home,share,*this);
   }
 
-  template <class Val, class A, class B, class Ctrl>
+  template<class Val, class A, class B, class Ctrl>
   ExecStatus
   ReEqBin<Val,A,B,Ctrl>::propagate(Space& home, const ModEventDelta&) {
     if (b.zero())
@@ -247,12 +247,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * Binary domain consistent linear disequality
    *
    */
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   NqBin<Val,A,B>::NqBin(Space& home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_VAL>(home,x0,x1,c) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   NqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
     (void) new (home) NqBin<Val,A,B>(home,x0,x1,c);
@@ -260,18 +260,18 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   NqBin<Val,A,B>::NqBin(Space& home, bool share, NqBin<Val,A,B>& p)
     : LinBin<Val,A,B,PC_INT_VAL>(home,share,p) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   Actor*
   NqBin<Val,A,B>::copy(Space& home, bool share) {
     return new (home) NqBin<Val,A,B>(home,share,*this);
   }
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   NqBin<Val,A,B>::NqBin(Space& home, bool share, Propagator& p,
                         A x0, B x1, Val c)
@@ -279,13 +279,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   PropCost
   NqBin<Val,A,B>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::LO);
   }
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   NqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
@@ -303,12 +303,12 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   LqBin<Val,A,B>::LqBin(Space& home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,x0,x1,c) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   LqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
     (void) new (home) LqBin<Val,A,B>(home,x0,x1,c);
@@ -316,24 +316,24 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   LqBin<Val,A,B>::LqBin(Space& home, bool share, LqBin<Val,A,B>& p)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   Actor*
   LqBin<Val,A,B>::copy(Space& home, bool share) {
     return new (home) LqBin<Val,A,B>(home,share,*this);
   }
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   LqBin<Val,A,B>::LqBin(Space& home, bool share, Propagator& p,
                         A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   LqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,c-x1.min()));
@@ -349,12 +349,12 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   GqBin<Val,A,B>::GqBin(Space& home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,x0,x1,c) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   GqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
     (void) new (home) GqBin<Val,A,B>(home,x0,x1,c);
@@ -362,24 +362,24 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   GqBin<Val,A,B>::GqBin(Space& home, bool share, GqBin<Val,A,B>& p)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   Actor*
   GqBin<Val,A,B>::copy(Space& home, bool share) {
     return new (home) GqBin<Val,A,B>(home,share,*this);
   }
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   GqBin<Val,A,B>::GqBin(Space& home, bool share, Propagator& p,
                         A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   GqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.gq(home,c-x1.max()));
@@ -395,12 +395,12 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   ReLqBin<Val,A,B>::ReLqBin(Space& home, A x0, B x1, Val c, BoolView b)
     : ReLinBin<Val,A,B,PC_INT_BND,BoolView>(home,x0,x1,c,b) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   ReLqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c, BoolView b) {
     (void) new (home) ReLqBin<Val,A,B>(home,x0,x1,c,b);
@@ -408,18 +408,18 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   forceinline
   ReLqBin<Val,A,B>::ReLqBin(Space& home, bool share, ReLqBin<Val,A,B>& p)
     : ReLinBin<Val,A,B,PC_INT_BND,BoolView>(home,share,p) {}
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   Actor*
   ReLqBin<Val,A,B>::copy(Space& home, bool share) {
     return new (home) ReLqBin<Val,A,B>(home,share,*this);
   }
 
-  template <class Val, class A, class B>
+  template<class Val, class A, class B>
   ExecStatus
   ReLqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())

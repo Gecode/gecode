@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Values {
    * \ingroup FuncIterValues
    */
 
-  template <class I>
+  template<class I>
   class Minus {
   private:
     /// Check that \a I is a value iterator;
@@ -86,11 +86,11 @@ namespace Gecode { namespace Iter { namespace Values {
   };
 
 
-  template <class I>
+  template<class I>
   forceinline
   Minus<I>::Minus(void) {}
 
-  template <class I>
+  template<class I>
   inline void
   Minus<I>::init(I& i) {
     Support::DynamicArray<int,Heap> d(heap);
@@ -105,24 +105,24 @@ namespace Gecode { namespace Iter { namespace Values {
     c = n-1;
   }
 
-  template <class I>
+  template<class I>
   forceinline
   Minus<I>::Minus(I& i) {
     init(i);
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   Minus<I>::operator ++(void) {
     c--;
   }
-  template <class I>
+  template<class I>
   forceinline bool
   Minus<I>::operator ()(void) const {
     return c >= 0;
   }
 
-  template <class I>
+  template<class I>
   forceinline int
   Minus<I>::val(void) const {
     return v[c];

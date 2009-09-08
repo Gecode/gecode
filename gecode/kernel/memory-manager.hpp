@@ -170,7 +170,7 @@ namespace Gecode {
     /// Start of free lists
     FreeList* fl[MemoryConfig::fl_size_max-MemoryConfig::fl_size_min+1];
     /// Refill free list
-    template <size_t> void fl_refill(SharedMemory* sm);
+    template<size_t> void fl_refill(SharedMemory* sm);
     /// Translate size to index in free list
     static size_t sz2i(size_t);
     /// Translate index in free list to size
@@ -178,10 +178,10 @@ namespace Gecode {
 
   public:
     /// Allocate free list element of size \a s
-    template <size_t s>
+    template<size_t s>
     void* fl_alloc(SharedMemory* sm);
     /// Release all free list elements of size \a s between f and l (inclusive)
-    template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
+    template<size_t> void  fl_dispose(FreeList* f, FreeList* l);
 
   private:
     /// Slack memory chunks
@@ -451,7 +451,7 @@ namespace Gecode {
    *
    */
 
-  template <size_t s>
+  template<size_t s>
   forceinline void*
   MemoryManager::fl_alloc(SharedMemory* sm) {
     size_t i = sz2i(s);
@@ -464,14 +464,14 @@ namespace Gecode {
     return f;
   }
 
-  template <size_t s>
+  template<size_t s>
   forceinline void
   MemoryManager::fl_dispose(FreeList* f, FreeList* l) {
     size_t i = sz2i(s);
     l->next(fl[i]); fl[i] = f;
   }
 
-  template <size_t sz>
+  template<size_t sz>
   void
   MemoryManager::fl_refill(SharedMemory* sm) {
     // Try to acquire memory from slack

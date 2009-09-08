@@ -43,7 +43,7 @@ namespace Gecode {
    * Each variable must specialize this traits class and add a \code
    * typedef \endcode for the view corresponding to this variable.
    */
-  template <class Var>
+  template<class Var>
   class VarViewTraits {};
 
   /**
@@ -52,7 +52,7 @@ namespace Gecode {
    * Each variable implementation must specialize this traits class and add
    * a \code typedef \endcode for the corresponding variable.
    */
-  template <class VarImp>
+  template<class VarImp>
   class VarImpVarTraits {};
 
   /**
@@ -64,7 +64,7 @@ namespace Gecode {
    *
    * \ingroup TaskVarView
    */
-  template <class View>
+  template<class View>
   class ViewVarImpTraits {};
 
 }

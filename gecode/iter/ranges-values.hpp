@@ -42,7 +42,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterValues
    */
-  template <class I>
+  template<class I>
   class ToValues {
   private:
     /// Check that \a I is a range iterator;
@@ -84,11 +84,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
 
-  template <class I>
+  template<class I>
   forceinline
   ToValues<I>::ToValues(void) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   ToValues<I>::start(void) {
     if (i()) {
@@ -98,14 +98,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline
   ToValues<I>::ToValues(I& i0)
     : i(i0) {
     start();
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   ToValues<I>::init(I& i0) {
     i = i0;
@@ -113,13 +113,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
 
-  template <class I>
+  template<class I>
   forceinline bool
   ToValues<I>::operator ()(void) const {
     return (cur <= max);
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   ToValues<I>::operator ++(void) {
     ++cur;
@@ -131,7 +131,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline int
   ToValues<I>::val(void) const {
     return cur;

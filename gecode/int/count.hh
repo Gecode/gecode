@@ -55,22 +55,22 @@ namespace Gecode { namespace Int { namespace Count {
    */
   //@{
   /// Test whether \a x and \a y are equal
-  template <class VX>
+  template<class VX>
   RelTest holds(VX x, VX y);
   /// Test whether \a x and \a y are equal
-  template <class VX>
+  template<class VX>
   RelTest holds(VX x, ConstIntView y);
   /// Post that all views in \a x are equal to \a y
-  template <class VX>
+  template<class VX>
   bool post_true(Space& home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are equal to \a y
-  template <class VX>
+  template<class VX>
   bool post_true(Space& home, ViewArray<VX>& x, ConstIntView y);
   /// Post that all views in \a x are not equal to \a y
-  template <class VX>
+  template<class VX>
   bool post_false(Space& home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are not equal to \a y
-  template <class VX>
+  template<class VX>
   bool post_false(Space& home, ViewArray<VX>& x, ConstIntView y);
   //@}
 
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief Baseclass for count propagators (integer)
    *
    */
-  template <class VX, class VY>
+  template<class VX, class VY>
   class BaseInt : public Propagator {
   protected:
     /// Views still to count
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY>
+  template<class VX, class VY>
   class EqInt : public BaseInt<VX,VY> {
   protected:
     using BaseInt<VX,VY>::x;
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY>
+  template<class VX, class VY>
   class GqInt : public BaseInt<VX,VY> {
   protected:
     using BaseInt<VX,VY>::x;
@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY>
+  template<class VX, class VY>
   class LqInt : public BaseInt<VX,VY> {
   protected:
     using BaseInt<VX,VY>::x;
@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief Base-class for count propagators (view)
    *
    */
-  template <class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr>
   class BaseView : public Propagator {
   protected:
     /// Views still to count
@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr>
   class EqView : public BaseView<VX,VY,VZ,shr> {
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr>
   class NqView : public BaseView<VX,VY,VZ,shr> {
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
@@ -350,7 +350,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr>
   class LqView : public BaseView<VX,VY,VZ,shr> {
   protected:
     using BaseView<VX,VY,VZ,shr>::x;
@@ -383,7 +383,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr>
   class GqView : public BaseView<VX,VY,VZ,shr> {
   protected:
     using BaseView<VX,VY,VZ,shr>::x;

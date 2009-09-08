@@ -72,7 +72,7 @@ namespace Gecode {
    * defined by the class \a ViewSel (which view is selected for branching).
    *
    */
-  template <class ViewSel>
+  template<class ViewSel>
   class ViewBrancher : public Brancher {
   protected:
     /// Views to branch on
@@ -107,7 +107,7 @@ namespace Gecode {
    * and the class \a ValSel (which value is selected for branching).
    *
    */
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   class ViewValBrancher : public ViewBrancher<ViewSel> {
   protected:
     using ViewBrancher<ViewSel>::viewsel;
@@ -132,7 +132,7 @@ namespace Gecode {
 
 
   /// %Choices storing position
-  template <class ViewSel>
+  template<class ViewSel>
   class GECODE_VTABLE_EXPORT PosChoice : public Choice {
   private:
     /// Position information
@@ -152,7 +152,7 @@ namespace Gecode {
   };
 
   /// %Choice storing position and value
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   class GECODE_VTABLE_EXPORT PosValChoice : public PosChoice<ViewSel> {
   private:
     /// Value choice to be stored
@@ -189,23 +189,23 @@ namespace Gecode {
    * Choice with position
    *
    */
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline
   PosChoice<ViewSel>::PosChoice(const Brancher& b, unsigned int a, 
                                 const Pos& p,
                                 const typename ViewSel::Choice& viewc)
     : Choice(b,a), _pos(p), _viewchoice(viewc) {}
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline const Pos&
   PosChoice<ViewSel>::pos(void) const {
     return _pos;
   }
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline const typename ViewSel::Choice&
   PosChoice<ViewSel>::viewchoice(void) const {
     return _viewchoice;
   }
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline size_t
   PosChoice<ViewSel>::size(void) const {
     return sizeof(PosChoice<ViewSel>) + _viewchoice.size();
@@ -216,7 +216,7 @@ namespace Gecode {
    * %Choice with position and value
    *
    */
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   forceinline
   PosValChoice<ViewSel,ValSel>
   ::PosValChoice(const Brancher& b, const Pos& p,
@@ -226,19 +226,19 @@ namespace Gecode {
     : PosChoice<ViewSel>(b,ValSel::alternatives,p,viewc),
       _valchoice(valc), _val(n) {}
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   forceinline const typename ValSel::Choice&
   PosValChoice<ViewSel,ValSel>::valchoice(void) const {
     return _valchoice;
   }
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   forceinline const typename ValSel::Val&
   PosValChoice<ViewSel,ValSel>::val(void) const {
     return _val;
   }
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   forceinline size_t
   PosValChoice<ViewSel, ValSel>::size(void) const {
     return sizeof(PosValChoice<ViewSel,ValSel>) + _valchoice.size();
@@ -250,7 +250,7 @@ namespace Gecode {
    *
    */
 
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline
   ViewBrancher<ViewSel>::ViewBrancher(Space& home,
                                       ViewArray<typename ViewSel::View>& x0,
@@ -258,7 +258,7 @@ namespace Gecode {
     : Brancher(home), x(x0), start(0), viewsel(vi_s) {}
 
 
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline
   ViewBrancher<ViewSel>::ViewBrancher(Space& home, bool share,
                                       ViewBrancher& b)
@@ -267,7 +267,7 @@ namespace Gecode {
     viewsel.update(home,share,b.viewsel);
   }
 
-  template <class ViewSel>
+  template<class ViewSel>
   bool
   ViewBrancher<ViewSel>::status(const Space&) const {
     for (int i=start; i < x.size(); i++)
@@ -278,7 +278,7 @@ namespace Gecode {
     return false;
   }
 
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline Pos
   ViewBrancher<ViewSel>::pos(Space& home) {
     assert(!x[start].assigned());
@@ -298,13 +298,13 @@ namespace Gecode {
     return p;
   }
 
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline typename ViewSel::View
   ViewBrancher<ViewSel>::view(const Pos& p) const {
     return x[p.pos];
   }
 
-  template <class ViewSel>
+  template<class ViewSel>
   forceinline size_t
   ViewBrancher<ViewSel>::dispose(Space& home) {
     viewsel.dispose(home);
@@ -319,14 +319,14 @@ namespace Gecode {
    *
    */
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   forceinline
   ViewValBrancher<ViewSel,ValSel>::
   ViewValBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
                   ViewSel& vi_s, ValSel& va_s)
     : ViewBrancher<ViewSel>(home,x,vi_s), valsel(va_s) {}
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   forceinline
   ViewValBrancher<ViewSel,ValSel>::
   ViewValBrancher(Space& home, bool share, ViewValBrancher& b)
@@ -334,14 +334,14 @@ namespace Gecode {
     valsel.update(home,share,b.valsel);
   }
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   Actor*
   ViewValBrancher<ViewSel,ValSel>::copy(Space& home, bool share) {
     return new (home)
       ViewValBrancher<ViewSel,ValSel>(home,share,*this);
   }
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   const Choice*
   ViewValBrancher<ViewSel,ValSel>::choice(Space& home) {
     Pos p = ViewBrancher<ViewSel>::pos(home);
@@ -352,7 +352,7 @@ namespace Gecode {
        valsel.choice(home),valsel.val(home,v));
   }
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   ExecStatus
   ViewValBrancher<ViewSel,ValSel>
   ::commit(Space& home, const Choice& c, unsigned int a) {
@@ -365,7 +365,7 @@ namespace Gecode {
     return me_failed(valsel.tell(home,a,v,pvc.val())) ? ES_FAILED : ES_OK;
   }
 
-  template <class ViewSel, class ValSel>
+  template<class ViewSel, class ValSel>
   forceinline size_t
   ViewValBrancher<ViewSel,ValSel>::dispose(Space& home) {
     valsel.dispose(home);

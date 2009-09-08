@@ -42,7 +42,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class T, class A>
+  template<class T, class A>
   class DynamicStack {
   private:
     /// Memory allocator
@@ -105,7 +105,7 @@ namespace Gecode { namespace Support {
   };
 
 
-  template <class T, class A>
+  template<class T, class A>
   void
   DynamicStack<T,A>::resize(void) {
     int nl = (limit * 3) / 2;
@@ -113,36 +113,36 @@ namespace Gecode { namespace Support {
     limit = nl;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicStack<T,A>::DynamicStack(A& a0, int n)
     : a(a0), limit(n), tos(0), stack(a.template alloc<T>(n)) {}
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline
   DynamicStack<T,A>::~DynamicStack(void) {
     a.free(stack,limit);
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T
   DynamicStack<T,A>::pop(void) {
     return stack[--tos];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T&
   DynamicStack<T,A>::top(void) const {
     return stack[tos-1];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T&
   DynamicStack<T,A>::last(void) const {
     return stack[tos];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline void
   DynamicStack<T,A>::push(const T& x) {
     stack[tos++] = x;
@@ -150,31 +150,31 @@ namespace Gecode { namespace Support {
       resize();
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline bool
   DynamicStack<T,A>::empty(void) const {
     return tos==0;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline int
   DynamicStack<T,A>::entries(void) const {
     return tos;
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline T&
   DynamicStack<T,A>::operator [](int i) {
     return stack[i];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline const T&
   DynamicStack<T,A>::operator [](int i) const {
     return stack[i];
   }
 
-  template <class T, class A>
+  template<class T, class A>
   forceinline size_t
   DynamicStack<T,A>::size(void) const {
     return (static_cast<size_t>(limit) * sizeof(T)) +

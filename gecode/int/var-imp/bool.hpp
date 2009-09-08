@@ -274,7 +274,7 @@ namespace Gecode { namespace Int {
    * Iterator-based domain operations
    *
    */
-  template <class I>
+  template<class I>
   forceinline ModEvent
   BoolVarImp::narrow_r(Space& home, I& i, bool) {
     Iter::Ranges::IsRangeIter<I>();
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int {
     assert(none());
     return ME_INT_NONE;
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   BoolVarImp::inter_r(Space& home, I& i, bool) {
     Iter::Ranges::IsRangeIter<I>();
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int {
     assert((i.min() <= 0) && (i.max() >= 1));
     return ME_INT_NONE;
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   BoolVarImp::minus_r(Space& home, I& i, bool) {
     Iter::Ranges::IsRangeIter<I>();
@@ -333,7 +333,7 @@ namespace Gecode { namespace Int {
     return ME_INT_FAILED;
   }
 
-  template <class I>
+  template<class I>
   forceinline ModEvent
   BoolVarImp::narrow_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int {
       return one_none(home);
     }
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   BoolVarImp::inter_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();
@@ -373,7 +373,7 @@ namespace Gecode { namespace Int {
       return one(home);
     }
   }
-  template <class I>
+  template<class I>
   forceinline ModEvent
   BoolVarImp::minus_v(Space& home, I& i, bool) {
     Iter::Values::IsValueIter<I>();

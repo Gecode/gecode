@@ -42,36 +42,36 @@ namespace Gecode {
     GECODE_SEARCH_EXPORT Engine* lds(Space* s, size_t sz, const Options& o);
   }
 
-  template <class T>
+  template<class T>
   forceinline
   LDS<T>::LDS(T* s, const Search::Options& o)
     : e(Search::lds(s,sizeof(T),o)) {}
 
-  template <class T>
+  template<class T>
   forceinline T*
   LDS<T>::next(void) {
     return dynamic_cast<T*>(e->next());
   }
 
-  template <class T>
+  template<class T>
   forceinline Search::Statistics
   LDS<T>::statistics(void) const {
     return e->statistics();
   }
 
-  template <class T>
+  template<class T>
   forceinline bool
   LDS<T>::stopped(void) const {
     return e->stopped();
   }
 
-  template <class T>
+  template<class T>
   forceinline
   LDS<T>::~LDS(void) {
     delete e;
   }
 
-  template <class T>
+  template<class T>
   T*
   lds(T* s, const Search::Options& o) {
     LDS<T> lds(s,o);

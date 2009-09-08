@@ -47,13 +47,13 @@
 
 namespace Gecode { namespace Set { namespace Int {
 
-  template <class View>
+  template<class View>
   forceinline
   MinElement<View>::MinElement(Space& home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   MinElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x0.cardMin(home,1));
@@ -61,19 +61,19 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   MinElement<View>::MinElement(Space& home, bool share, MinElement& p)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, share, p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   MinElement<View>::copy(Space& home, bool share) {
    return new (home) MinElement(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   MinElement<View>::propagate(Space& home, const ModEventDelta&) {
     //x1 is an element of x0.ub
@@ -133,34 +133,34 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
 
-  template <class View>
+  template<class View>
   forceinline
   NotMinElement<View>::NotMinElement(Space& home, View y0,
                                      Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   NotMinElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
     (void) new (home) NotMinElement(home,x0,x1);
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   NotMinElement<View>::NotMinElement(Space& home, bool share,
                                      NotMinElement& p)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   NotMinElement<View>::copy(Space& home, bool share) {
     return new (home) NotMinElement(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   NotMinElement<View>::propagate(Space& home, const ModEventDelta&) {
     // cheap tests for entailment:
@@ -258,14 +258,14 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_FIX;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   ReMinElement<View>::ReMinElement(Space& home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
     : IntSetRePropagator<View,PC_SET_ANY,
                          Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   ReMinElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1,
                            Gecode::Int::BoolView b2) {
@@ -273,19 +273,19 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   ReMinElement<View>::ReMinElement(Space& home, bool share, ReMinElement& p)
     : IntSetRePropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   ReMinElement<View>::copy(Space& home, bool share) {
    return new (home) ReMinElement(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ReMinElement<View>::propagate(Space& home, const ModEventDelta&) {
     // check if b is determined
@@ -381,19 +381,19 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_FIX;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   MaxElement<View>::MaxElement(Space& home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
-  template <class View>
+  template<class View>
   forceinline
   MaxElement<View>::MaxElement(Space& home, bool share, MaxElement& p)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, share, p) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   MaxElement<View>::post(Space& home, View x0,
                               Gecode::Int::IntView x1) {
@@ -402,13 +402,13 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   Actor*
   MaxElement<View>::copy(Space& home, bool share) {
     return new (home) MaxElement(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   MaxElement<View>::propagate(Space& home, const ModEventDelta&) {
     LubRanges<View> ub(x0);
@@ -429,34 +429,34 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_FIX;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   NotMaxElement<View>::NotMaxElement(Space& home, View y0,
                                      Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
 
-  template <class View>
+  template<class View>
   forceinline
   NotMaxElement<View>::NotMaxElement(Space& home, bool share,
                                      NotMaxElement& p)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   NotMaxElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
     (void) new (home) NotMaxElement(home,x0,x1);
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   Actor*
   NotMaxElement<View>::copy(Space& home, bool share) {
     return new (home) NotMaxElement(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   NotMaxElement<View>::propagate(Space& home, const ModEventDelta&) {
     // cheap tests for entailment:
@@ -535,20 +535,20 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_FIX;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   ReMaxElement<View>::ReMaxElement(Space& home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
     : IntSetRePropagator<View,PC_SET_ANY,
                          Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
 
-  template <class View>
+  template<class View>
   forceinline
   ReMaxElement<View>::ReMaxElement(Space& home, bool share, ReMaxElement& p)
     : IntSetRePropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
-  template <class View>
+  template<class View>
   ExecStatus
   ReMaxElement<View>::post(Space& home, View x0,
                            Gecode::Int::IntView x1,
@@ -557,13 +557,13 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   Actor*
   ReMaxElement<View>::copy(Space& home, bool share) {
     return new (home) ReMaxElement(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ReMaxElement<View>::propagate(Space& home, const ModEventDelta&) {
     // check if b is determined

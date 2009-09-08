@@ -181,37 +181,37 @@ namespace Gecode {
      * Iterator-based domain update
      *
      */
-    template <class I>
+    template<class I>
     forceinline ModEvent
     BoolView::narrow_r(Space& home, I& i, bool depend) {
       Iter::Ranges::IsRangeIter<I>();
       return varimp->narrow_r(home,i,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     BoolView::inter_r(Space& home, I& i, bool depend) {
       Iter::Ranges::IsRangeIter<I>();
       return varimp->inter_r(home,i,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     BoolView::minus_r(Space& home, I& i, bool depend) {
       Iter::Ranges::IsRangeIter<I>();
       return varimp->minus_r(home,i,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     BoolView::narrow_v(Space& home, I& i, bool depend) {
       Iter::Values::IsValueIter<I>();
       return varimp->narrow_v(home,i,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     BoolView::inter_v(Space& home, I& i, bool depend) {
       Iter::Values::IsValueIter<I>();
       return varimp->inter_v(home,i,depend);
     }
-    template <class I>
+    template<class I>
     forceinline ModEvent
     BoolView::minus_v(Space& home, I& i, bool depend) {
       Iter::Values::IsValueIter<I>();
@@ -310,7 +310,7 @@ namespace Gecode {
      * \brief %Range iterator for Boolean variable views
      * \ingroup TaskActorIntView
      */
-    template <>
+    template<>
     class ViewRanges<BoolView> : public Iter::Ranges::Singleton {
     public:
       /// \name Constructors and initialization

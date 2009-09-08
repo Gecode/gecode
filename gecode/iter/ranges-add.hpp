@@ -42,7 +42,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I>
+  template<class I>
   class AddRange : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -78,7 +78,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I>
+  template<class I>
   class SubRange : public AddRange<I> {
   public:
     /// \name Constructors and initialization
@@ -92,11 +92,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     //@}
   };
 
-  template <class I>
+  template<class I>
   forceinline
   AddRange<I>::AddRange(void) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   AddRange<I>::operator ++(void) {
     if (i()) {
@@ -111,14 +111,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline
   AddRange<I>::AddRange(I& i0, int r_min0, int r_max0)
     : i(i0), r_min(r_min0), r_max(r_max0) {
     operator ++();
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   AddRange<I>::init(I& i0, int r_min0, int r_max0) {
     i = i0; r_min = r_min0; r_max = r_max0;
@@ -126,16 +126,16 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
 
-  template <class I>
+  template<class I>
   forceinline
   SubRange<I>::SubRange(void) {}
 
-  template <class I>
+  template<class I>
   forceinline
   SubRange<I>::SubRange(I& i, int r_min, int r_max)
     : AddRange<I>(i,-r_max,-r_min) {}
 
-  template <class I>
+  template<class I>
   forceinline void
   SubRange<I>::init(I& i, int r_min, int r_max) {
     AddRange<I>::init(i,-r_max,-r_min);

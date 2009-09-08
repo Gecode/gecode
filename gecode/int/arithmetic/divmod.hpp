@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Positive bounds consistent division
    *
    */
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline ExecStatus
   prop_div_plus_bnd(Space& home, Propagator& p, VA x0, VB x1, VC x2) {
     assert(pos(x0) && pos(x1) && !neg(x2));
@@ -121,14 +121,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       ES_SUBSUMED(p,sizeof(p)) : ES_FIX;
   }
 
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
   ::DivPlusBnd(Space& home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,x0,x1,x2) {}
 
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
   ::DivPlusBnd(Space& home, bool share,
@@ -136,21 +136,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,share,p) {}
 
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   Actor*
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>::copy(Space& home, bool share) {
     return new (home) DivPlusBnd<Val,VA,VB,VC,towardsMinInf>(home,
                                                              share,*this);
   }
 
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   ExecStatus
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
   ::propagate(Space& home, const ModEventDelta&) {
     return prop_div_plus_bnd<Val,VA,VB,VC,towardsMinInf>(home,*this,x0,x1,x2);
   }
 
-  template <class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline ExecStatus
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
   ::post(Space& home, VA x0, VB x1, VC x2) {
@@ -173,23 +173,23 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Bounds consistent multiplication
    *
    */
-  template <class View>
+  template<class View>
   forceinline
   DivBnd<View>::DivBnd(Space& home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
 
-  template <class View>
+  template<class View>
   forceinline
   DivBnd<View>::DivBnd(Space& home, bool share, DivBnd<View>& p)
     : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   DivBnd<View>::copy(Space& home, bool share) {
     return new (home) DivBnd<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   DivBnd<View>::propagate(Space& home, const ModEventDelta&) {
     if (pos(x1)) {
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                          ::post(home,x0,x1,x2)));
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   DivBnd<View>::post(Space& home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x1.nq(home, 0));
@@ -346,12 +346,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template <class View>
+  template<class View>
   forceinline
   DivMod<View>::DivMod(Space& home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   DivMod<View>::post(Space& home, View x0, View x1) {
     GECODE_ME_CHECK(x0.nq(home,0));
@@ -359,19 +359,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   DivMod<View>::DivMod(Space& home, bool share,
                              DivMod<View>& p)
   : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   DivMod<View>::copy(Space& home, bool share) {
     return new (home) DivMod<View>(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   DivMod<View>::propagate(Space& home, const ModEventDelta&) {
     bool signIsSame;

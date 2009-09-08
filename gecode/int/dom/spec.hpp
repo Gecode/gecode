@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Dom {
 
-  template <class View>
+  template<class View>
   forceinline
   ReIntSet<View>::ReIntSet
   (Space& home, View x, const IntSet& s, BoolView b)
@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Dom {
     home.notice(*this,AP_DISPOSE);
   }
 
-  template <class View>
+  template<class View>
   forceinline size_t
   ReIntSet<View>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Dom {
     return sizeof(*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ReIntSet<View>::post(Space& home, View x, const IntSet& s, BoolView b) {
     if (s.ranges() == 0) {
@@ -68,20 +68,20 @@ namespace Gecode { namespace Int { namespace Dom {
   }
 
 
-  template <class View>
+  template<class View>
   forceinline
   ReIntSet<View>::ReIntSet(Space& home, bool share, ReIntSet& p)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p) {
     is.update(home,share,p.is);
   }
 
-  template <class View>
+  template<class View>
   Actor*
   ReIntSet<View>::copy(Space& home, bool share) {
     return new (home) ReIntSet(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   ReIntSet<View>::propagate(Space& home, const ModEventDelta&) {
     IntSetRanges i_is(is);

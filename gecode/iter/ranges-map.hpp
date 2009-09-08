@@ -45,7 +45,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template <class I, class M, bool strict=true>
+  template<class I, class M, bool strict=true>
   class Map {
   private:
     /// Check that \a I is a range iterator;
@@ -85,7 +85,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
   /// Specialized mapping of ranges for non-strict maps
-  template <class I, class M>
+  template<class I, class M>
   class Map<I,M,false> : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -120,7 +120,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
   /// Specialized mapping of ranges for strict maps
-  template <class I, class M>
+  template<class I, class M>
   class Map<I,M,true> {
   private:
     /// Check that \a I is a range iterator;
@@ -165,11 +165,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline
   Map<I,M,false>::Map(void) {}
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline void
   Map<I,M,false>::next(void) {
     if (i()) {
@@ -184,29 +184,29 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline void
   Map<I,M,false>::init(I& i0) {
     i=i0; next();
   }
-  template <class I, class M>
+  template<class I, class M>
   forceinline void
   Map<I,M,false>::init(I& i0, const M& m0) {
     i=i0; m=m0; next();
   }
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline
   Map<I,M,false>::Map(I& i0) : i(i0) {
     next();
   }
-  template <class I, class M>
+  template<class I, class M>
   forceinline
   Map<I,M,false>::Map(I& i0, const M& m0) : i(i0), m(m0) {
     next();
   }
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline void
   Map<I,M,false>::operator ++(void) {
     next();
@@ -214,50 +214,50 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline
   Map<I,M,true>::Map(void) {}
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline void
   Map<I,M,true>::init(I& i0) {
     i=i0;
   }
-  template <class I, class M>
+  template<class I, class M>
   forceinline void
   Map<I,M,true>::init(I& i0, const M& m0) {
     i=i0; m=m0;
   }
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline
   Map<I,M,true>::Map(I& i0) : i(i0) {}
-  template <class I, class M>
+  template<class I, class M>
   forceinline
   Map<I,M,true>::Map(I& i0, const M& m0) : i(i0), m(m0) {}
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline bool
   Map<I,M,true>::operator ()(void) const {
     return i();
   }
-  template <class I, class M>
+  template<class I, class M>
   forceinline void
   Map<I,M,true>::operator ++(void) {
     ++i;
   }
 
-  template <class I, class M>
+  template<class I, class M>
   forceinline int
   Map<I,M,true>::min(void) const {
     return m.min(i.min());
   }
-  template <class I, class M>
+  template<class I, class M>
   forceinline int
   Map<I,M,true>::max(void) const {
     return m.max(i.max());
   }
-  template <class I, class M>
+  template<class I, class M>
   forceinline unsigned int
   Map<I,M,true>::width(void) const {
     return static_cast<unsigned int>(max()-min())+1;

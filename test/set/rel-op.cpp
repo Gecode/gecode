@@ -60,7 +60,7 @@ namespace Test { namespace Set {
       Gecode::SetRelType srt;
       int share;
 
-      template <class I, class J>
+      template<class I, class J>
       bool
       sol(I& i, J& j) const {
         Iter::Ranges::IsRangeIter<I>();

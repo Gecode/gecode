@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <int UMIN, int UMAX, class I>
+  template<int UMIN, int UMAX, class I>
   class Compl : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -88,7 +88,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
 
-  template <class I>
+  template<class I>
   class ComplVal : public MinMax {
   private:
     /// Check that \a I is a range iterator;
@@ -119,7 +119,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template <int UMIN, int UMAX, class I>
+  template<int UMIN, int UMAX, class I>
   forceinline void
   Compl<UMIN,UMAX,I>::start(void) {
     if (i()) {
@@ -140,23 +140,23 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <int UMIN, int UMAX, class I>
+  template<int UMIN, int UMAX, class I>
   forceinline
   Compl<UMIN,UMAX,I>::Compl(void) {}
 
-  template <int UMIN, int UMAX, class I>
+  template<int UMIN, int UMAX, class I>
   forceinline
   Compl<UMIN,UMAX,I>::Compl(I& i0) : i(i0) {
     start();
   }
 
-  template <int UMIN, int UMAX, class I>
+  template<int UMIN, int UMAX, class I>
   forceinline void
   Compl<UMIN,UMAX,I>::init(I& i0) {
     i=i0; start();
   }
 
-  template <int UMIN, int UMAX, class I>
+  template<int UMIN, int UMAX, class I>
   forceinline void
   Compl<UMIN,UMAX,I>::operator ++(void) {
     assert(!i() || (i.max() <= UMAX));
@@ -169,7 +169,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   ComplVal<I>::start(void) {
     if (i()) {
@@ -190,24 +190,24 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   }
 
-  template <class I>
+  template<class I>
   forceinline
   ComplVal<I>::ComplVal(void) {}
 
-  template <class I>
+  template<class I>
   forceinline
   ComplVal<I>::ComplVal(int umin, int umax, I& i0)
     : UMIN(umin), UMAX(umax), i(i0) {
     start();
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   ComplVal<I>::init(int umin, int umax, I& i0) {
     UMIN=umin; UMAX=umax; i=i0; start();
   }
 
-  template <class I>
+  template<class I>
   forceinline void
   ComplVal<I>::operator ++(void) {
     assert(!i() || (i.max() <= UMAX));

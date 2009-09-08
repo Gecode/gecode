@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Values {
    * \ingroup FuncIterValues
    */
 
-  template <class I, class J>
+  template<class I, class J>
   class Union  {
   private:
     /// First iterator
@@ -83,11 +83,11 @@ namespace Gecode { namespace Iter { namespace Values {
   };
 
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Union<I,J>::Union(void) {}
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline void
   Union<I,J>::operator ++(void) {
     if (i()) {
@@ -109,26 +109,26 @@ namespace Gecode { namespace Iter { namespace Values {
     }
   }
 
-  template <class I, class J>
+  template<class I, class J>
   inline void
   Union<I,J>::init(I& i0, J& j0) {
     i=i0; j=j0; done=false;
     operator ++();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline
   Union<I,J>::Union(I& i0, J& j0) : i(i0), j(j0), done(false) {
     operator ++();
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline bool
   Union<I,J>::operator ()(void) const {
     return !done;
   }
 
-  template <class I, class J>
+  template<class I, class J>
   forceinline int
   Union<I,J>::val(void) const {
     return v;

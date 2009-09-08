@@ -56,7 +56,7 @@ namespace Gecode { namespace Int {
    *
    * \ingroup TaskActorInt
    */
-  template <class View>
+  template<class View>
   class ViewRanges {
   public:
     /// \name Constructors and initialization
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int {
    *
    * \ingroup TaskActorInt
    */
-  template <class View>
+  template<class View>
   class ViewValues : public Iter::Ranges::ToValues<ViewRanges<View> > {
   public:
     /// \name Constructors and initialization
@@ -230,22 +230,22 @@ namespace Gecode {
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -410,22 +410,22 @@ namespace Gecode {
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -616,22 +616,22 @@ namespace Gecode {
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -744,7 +744,7 @@ namespace Gecode {
      *
      * \ingroup TaskActorIntView
      */
-    template <class Val, class UnsVal>
+    template<class Val, class UnsVal>
     class ScaleView : public DerivedViewBase<IntView> {
     protected:
       /// Scale factor
@@ -912,11 +912,11 @@ namespace Gecode {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  template <class Val, class UnsVal>
+  template<class Val, class UnsVal>
   bool same(const Int::ScaleView<Val,UnsVal>& x,
             const Int::ScaleView<Val,UnsVal>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  template <class Val, class UnsVal>
+  template<class Val, class UnsVal>
   bool before(const Int::ScaleView<Val,UnsVal>& x,
               const Int::ScaleView<Val,UnsVal>& y);
   //@}
@@ -928,7 +928,7 @@ namespace Gecode {
    * This class specializes the ViewVarImpTraits for ScaleView.
    * \ingroup TaskActorIntView
    */
-  template <class Val, class UnsVal>
+  template<class Val, class UnsVal>
   class ViewVarImpTraits<Int::ScaleView<Val,UnsVal> > {
   public:
     /// The variable type of a ScaleView
@@ -1038,22 +1038,22 @@ namespace Gecode {
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -1235,22 +1235,22 @@ namespace Gecode {
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -1476,22 +1476,22 @@ namespace Gecode {
        */
       //@{
       /// Replace domain by ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_r(Space& home, I& i, bool depends=true);
       /// Intersect domain with ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_r(Space& home, I& i, bool depends=true);
       /// Remove from domain the ranges described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_r(Space& home, I& i, bool depends=true);
       /// Replace domain by values described by \a i
-      template <class I>
+      template<class I>
       ModEvent narrow_v(Space& home, I& i, bool depends=true);
       /// Intersect domain with values described by \a i
-      template <class I>
+      template<class I>
       ModEvent inter_v(Space& home, I& i, bool depends=true);
       /// Remove from domain the values described by \a i
-      template <class I>
+      template<class I>
       ModEvent minus_v(Space& home, I& i, bool depends=true);
       //@}
 
@@ -1758,42 +1758,42 @@ namespace Gecode {
     };
 
     /// Test whether views \a x and \a y are equal (use bounds information)
-    template <class View> RelTest rtest_eq_bnd(View x, View y);
+    template<class View> RelTest rtest_eq_bnd(View x, View y);
     /// Test whether views \a x and \a y are equal (use full domain information)
-    template <class View> RelTest rtest_eq_dom(View x, View y);
+    template<class View> RelTest rtest_eq_dom(View x, View y);
     /// Test whether view \a x and integer \a n are equal (use bounds information)
-    template <class View> RelTest rtest_eq_bnd(View x, int n);
+    template<class View> RelTest rtest_eq_bnd(View x, int n);
     /// Test whether view \a x and integer \a n are equal (use full domain information)
-    template <class View> RelTest rtest_eq_dom(View x, int n);
+    template<class View> RelTest rtest_eq_dom(View x, int n);
 
     /// Test whether views \a x and \a y are different (use bounds information)
-    template <class View> RelTest rtest_nq_bnd(View x, View y);
+    template<class View> RelTest rtest_nq_bnd(View x, View y);
     /// Test whether views \a x and \a y are different (use full domain information)
-    template <class View> RelTest rtest_nq_dom(View x, View y);
+    template<class View> RelTest rtest_nq_dom(View x, View y);
     /// Test whether view \a x and integer \a n are different (use bounds information)
-    template <class View> RelTest rtest_nq_bnd(View x, int n);
+    template<class View> RelTest rtest_nq_bnd(View x, int n);
     /// Test whether view \a x and integer \a n are different (use full domain information)
-    template <class View> RelTest rtest_nq_dom(View x, int n);
+    template<class View> RelTest rtest_nq_dom(View x, int n);
 
     /// Test whether view \a x is less or equal than view \a y
-    template <class View> RelTest rtest_lq(View x, View y);
+    template<class View> RelTest rtest_lq(View x, View y);
     /// Test whether view \a x is less or equal than integer \a n
-    template <class View> RelTest rtest_lq(View x, int n);
+    template<class View> RelTest rtest_lq(View x, int n);
 
     /// Test whether view \a x is less than view \a y
-    template <class View> RelTest rtest_le(View x, View y);
+    template<class View> RelTest rtest_le(View x, View y);
     /// Test whether view \a x is less than integer \a n
-    template <class View> RelTest rtest_le(View x, int n);
+    template<class View> RelTest rtest_le(View x, int n);
 
     /// Test whether view \a x is greater or equal than view \a y
-    template <class View> RelTest rtest_gq(View x, View y);
+    template<class View> RelTest rtest_gq(View x, View y);
     /// Test whether view \a x is greater or equal than integer \a n
-    template <class View> RelTest rtest_gq(View x, int n);
+    template<class View> RelTest rtest_gq(View x, int n);
 
     /// Test whether view \a x is greater than view \a y
-    template <class View> RelTest rtest_gr(View x, View y);
+    template<class View> RelTest rtest_gr(View x, View y);
     /// Test whether view \a x is greater than integer \a n
-    template <class View> RelTest rtest_gr(View x, int n);
+    template<class View> RelTest rtest_gr(View x, int n);
     //@}
 
 

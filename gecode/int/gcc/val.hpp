@@ -36,7 +36,7 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   inline
   Val<Card, isView>::Val(Space& home, ViewArray<IntView>& x0,
                          ViewArray<Card>& k0)
@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace GCC {
     k.subscribe(home, *this, PC_INT_VAL);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   forceinline
   Val<Card, isView>::Val(Space& home, bool share,
                          Val<Card, isView>& p)
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace GCC {
     k.update(home,share, p.k);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   size_t
   Val<Card, isView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -65,13 +65,13 @@ namespace Gecode { namespace Int { namespace GCC {
     return sizeof(*this);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   Actor*
   Val<Card, isView>::copy(Space& home, bool share) {
     return new (home) Val<Card, isView>(home,share,*this);
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   ExecStatus
   Val<Card, isView>::post(Space& home,
                           ViewArray<IntView>& x0,
@@ -85,13 +85,13 @@ namespace Gecode { namespace Int { namespace GCC {
    * which is O(n log n).
    *
    */
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   PropCost
   Val<Card, isView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template <class Card, bool isView>
+  template<class Card, bool isView>
   ExecStatus
   Val<Card, isView>::propagate(Space& home, const ModEventDelta&) {
     assert(x.size() > 0);

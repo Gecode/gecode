@@ -37,37 +37,37 @@
 
 namespace Gecode { namespace Gist {
 
-  template <class Node>
+  template<class Node>
   forceinline
   NodeCursor<Node>::NodeCursor(Node* theNode) : _startNode(theNode), _node(theNode), _alternative(theNode->getAlternative()) {}
 
-  template <class Node>
+  template<class Node>
   forceinline Node*
   NodeCursor<Node>::node(void) { return _node; }
 
-  template <class Node>
+  template<class Node>
   forceinline unsigned int
   NodeCursor<Node>::alternative(void) { return _alternative; }
 
-  template <class Node>
+  template<class Node>
   forceinline void
   NodeCursor<Node>::alternative(unsigned int a) { _alternative=a; }
 
-  template <class Node>
+  template<class Node>
   forceinline Node*
   NodeCursor<Node>::startNode(void) { return _startNode; }
 
-  template <class Node>
+  template<class Node>
   forceinline void
   NodeCursor<Node>::node(Node* n) { _node = n; }
 
-  template <class Node>
+  template<class Node>
   forceinline bool
   NodeCursor<Node>::mayMoveUpwards(void) {
     return _node != _startNode && !_node->isRoot();
   }
 
-  template <class Node>
+  template<class Node>
   forceinline void
   NodeCursor<Node>::moveUpwards(void) {
     _node = static_cast<Node*>(_node->getParent());
@@ -84,27 +84,27 @@ namespace Gecode { namespace Gist {
     }
   }
 
-  template <class Node>
+  template<class Node>
   forceinline bool
   NodeCursor<Node>::mayMoveDownwards(void) {
     return _node->getNumberOfChildren() > 0;
   }
 
-  template <class Node>
+  template<class Node>
   forceinline void
   NodeCursor<Node>::moveDownwards(void) {
     _alternative = 0;
     _node = _node->getChild(0);
   }
 
-  template <class Node>
+  template<class Node>
   forceinline bool
   NodeCursor<Node>::mayMoveSidewards(void) {
     return (!_node->isRoot()) && (_node != _startNode) &&
       (_alternative < _node->getParent()->getNumberOfChildren() - 1);
   }
 
-  template <class Node>
+  template<class Node>
   forceinline void
   NodeCursor<Node>::moveSidewards(void) {
     _node = static_cast<Node*>(_node->getParent()->getChild(++_alternative));

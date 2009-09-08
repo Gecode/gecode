@@ -44,13 +44,13 @@
 
 namespace Gecode { namespace Set { namespace Int {
 
-  template <class View>
+  template<class View>
   forceinline
   Card<View>::Card(Space& home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_CARD,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
-  template <class View>
+  template<class View>
   forceinline ExecStatus
   Card<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
@@ -59,19 +59,19 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View>
+  template<class View>
   forceinline
   Card<View>::Card(Space& home, bool share, Card& p)
     : IntSetPropagator<View,PC_SET_CARD,
                        Gecode::Int::PC_INT_BND> (home, share, p) {}
 
-  template <class View>
+  template<class View>
   Actor*
   Card<View>::copy(Space& home, bool share) {
    return new (home) Card(home,share,*this);
   }
 
-  template <class View>
+  template<class View>
   ExecStatus
   Card<View>::propagate(Space& home, const ModEventDelta&) {
    int x1min, x1max;

@@ -80,7 +80,7 @@ namespace Gecode {
 
 
   /// Combine variable selection criteria for tie-breaking
-  template <class VarBranch>
+  template<class VarBranch>
   class TieBreakVarBranch {
   public:
     /// Branching criteria to try in order
@@ -117,15 +117,15 @@ namespace Gecode {
    */
   //@{
   /// Combine variable selection criteria \a a and \a b for tie-breaking
-  template <class VarBranch>
+  template<class VarBranch>
   TieBreakVarBranch<VarBranch>
   tiebreak(VarBranch a, VarBranch b);
   /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
-  template <class VarBranch>
+  template<class VarBranch>
   TieBreakVarBranch<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c);
   /// Combine variable selection criteria \a a, \a b, \a c, and \a d for tie-breaking
-  template <class VarBranch>
+  template<class VarBranch>
   TieBreakVarBranch<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
   /// Combine variable branch options \a a and \a b for tie-breaking
@@ -179,7 +179,7 @@ namespace Gecode {
   /*
    * Combine variable selection criteria for tie-breaking
    */
-  template <class VarBranch>
+  template<class VarBranch>
   forceinline
   TieBreakVarBranch<VarBranch>::TieBreakVarBranch(VarBranch a0,
                                                   VarBranch b0,
@@ -187,21 +187,21 @@ namespace Gecode {
                                                   VarBranch d0)
     : a(a0), b(b0), c(c0), d(d0) {}
 
-  template <class VarBranch>
+  template<class VarBranch>
   forceinline TieBreakVarBranch<VarBranch>
   tiebreak(VarBranch a, VarBranch b) {
     TieBreakVarBranch<VarBranch> ab(a,b);
     return ab;
   }
 
-  template <class VarBranch>
+  template<class VarBranch>
   forceinline TieBreakVarBranch<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c) {
     TieBreakVarBranch<VarBranch> abc(a,b,c);
     return abc;
   }
 
-  template <class VarBranch>
+  template<class VarBranch>
   forceinline TieBreakVarBranch<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
     TieBreakVarBranch<VarBranch> abcd(a,b,c,d);

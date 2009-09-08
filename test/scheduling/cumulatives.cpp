@@ -167,7 +167,7 @@ namespace Test { namespace Int {
      };
 
      /// Check whether event \a e is valid
-     template <class C>
+     template<class C>
      bool valid(std::vector<Event> e, C comp) {
        std::sort(e.begin(), e.end());
        unsigned int i = 0;

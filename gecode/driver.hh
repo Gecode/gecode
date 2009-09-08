@@ -449,7 +449,7 @@ namespace Gecode {
      *  - adds printing to scripts
      *  - run allows to execute scripts
      */
-    template <class BaseSpace>
+    template<class BaseSpace>
     class ScriptBase : public BaseSpace {
     public:
       /// Default constructor
@@ -459,7 +459,7 @@ namespace Gecode {
       /// Print a solution to \a os
       virtual void print(std::ostream& os) const { (void) os; }
       /// Run script with search engine \a Engine and options \a opt
-      template <class Script, template<class> class Engine, class Options>
+      template<class Script, template<class> class Engine, class Options>
       static void run(const Options& opt);
     private:
       /// Catch wrong definitions of copy constructor

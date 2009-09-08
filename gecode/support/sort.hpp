@@ -41,7 +41,7 @@
 namespace Gecode { namespace Support {
 
   /// Exchange elements according to order
-  template <class Type, class Less>
+  template<class Type, class Less>
   forceinline void
   exchange(Type &a, Type &b, Less &less) {
     if (less(b,a)) std::swap(a,b);
@@ -51,7 +51,7 @@ namespace Gecode { namespace Support {
   int const QuickSortCutoff = 20;
 
   /// Static stack for quicksort
-  template <class Type>
+  template<class Type>
   class QuickSortStack {
   private:
     /// Maximal stacksize quicksort ever needs
@@ -71,32 +71,32 @@ namespace Gecode { namespace Support {
     void pop(Type*& l, Type*& r);
   };
 
-  template <class Type>
+  template<class Type>
   forceinline
   QuickSortStack<Type>::QuickSortStack(void) : tos(&stack[0]) {
     *(tos++) = NULL;
   }
 
-  template <class Type>
+  template<class Type>
   forceinline bool
   QuickSortStack<Type>::empty(void) const {
     return *(tos-1) == NULL;
   }
 
-  template <class Type>
+  template<class Type>
   forceinline void
   QuickSortStack<Type>::push(Type* l, Type* r) {
     *(tos++) = l; *(tos++) = r;
   }
 
-  template <class Type>
+  template<class Type>
   forceinline void
   QuickSortStack<Type>::pop(Type*& l, Type*& r) {
     r = *(--tos); l = *(--tos);
   }
 
   /// Standard insertion sort
-  template <class Type, class Less>
+  template<class Type, class Less>
   forceinline void
   insertion(Type* l, Type* r, Less &less) {
     for (Type* i = r; i > l; i--)
@@ -112,7 +112,7 @@ namespace Gecode { namespace Support {
   }
 
   /// Standard partioning
-  template <class Type, class Less>
+  template<class Type, class Less>
   forceinline Type*
   partition(Type* l, Type* r, Less &less) {
     Type* i = l-1;
@@ -129,7 +129,7 @@ namespace Gecode { namespace Support {
   }
 
   /// Standard quick sort
-  template <class Type, class Less>
+  template<class Type, class Less>
   inline void
   quicksort(Type* l, Type* r, Less &less) {
     QuickSortStack<Type> s;
@@ -161,7 +161,7 @@ namespace Gecode { namespace Support {
   }
 
   /// Comparison class for sorting using \a <
-  template <class Type>
+  template<class Type>
   class Less {
   public:
     bool operator ()(const Type& lhs, const Type& rhs) {
@@ -184,7 +184,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class Type, class Less>
+  template<class Type, class Less>
   forceinline void
   insertion(Type* x, int n, Less &l) {
     if (n < 2)
@@ -204,7 +204,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class Type>
+  template<class Type>
   forceinline void
   insertion(Type* x, int n) {
     if (n < 2)
@@ -229,7 +229,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class Type, class Less>
+  template<class Type, class Less>
   forceinline void
   quicksort(Type* x, int n, Less &l) {
     if (n < 2)
@@ -251,7 +251,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  template <class Type>
+  template<class Type>
   forceinline void
   quicksort(Type* x, int n) {
     if (n < 2)

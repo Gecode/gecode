@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * \brief Combine view with information for domain propagation
    *
    */
-  template <class View>
+  template<class View>
   class DomInfo {
   public:
     /// The view
@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Channel {
     void done(void);
   };
 
-  template <class View>
+  template<class View>
   forceinline void
   DomInfo<View>::init(View x, int n) {
     view = x;
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Channel {
     max  = n-1;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   DomInfo<View>::update(Space& home, bool share, DomInfo<View>& di) {
     view.update(home,share,di.view);
@@ -90,25 +90,25 @@ namespace Gecode { namespace Int { namespace Channel {
     max  = di.max;
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   DomInfo<View>::doval(void) const {
     return (size != 1) && view.assigned();
   }
 
-  template <class View>
+  template<class View>
   forceinline bool
   DomInfo<View>::dodom(void) const {
     return size != view.size();
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   DomInfo<View>::assigned(void) {
     size = 1;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   DomInfo<View>::removed(int i) {
     size--;
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Channel {
       max--;
   }
 
-  template <class View>
+  template<class View>
   forceinline void
   DomInfo<View>::done(void) {
     size = view.size();
@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   // Propagate domain information from x to y
-  template <class View>
+  template<class View>
   ExecStatus
   prop_dom(Space& home, int n, DomInfo<View>* x, DomInfo<View>* y,
            ProcessStack& ya) {
@@ -168,23 +168,23 @@ namespace Gecode { namespace Int { namespace Channel {
    * The actual propagator
    *
    */
-  template <class View, bool shared>
+  template<class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space& home, int n, DomInfo<View>* xy)
     : Base<DomInfo<View>,PC_INT_DOM>(home,n,xy) {}
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space& home, bool share, Dom<View,shared>& p)
     : Base<DomInfo<View>,PC_INT_DOM>(home,share,p) {}
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   Actor*
   Dom<View,shared>::copy(Space& home, bool share) {
     return new (home) Dom<View,shared>(home,share,*this);
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   PropCost
   Dom<View,shared>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Channel {
       return PropCost::quadratic(PropCost::HI, 2*n);
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space& home, const ModEventDelta& med) {
     Region r(home);
@@ -299,7 +299,7 @@ namespace Gecode { namespace Int { namespace Channel {
     }
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   ExecStatus
   Dom<View,shared>::post(Space& home, int n, DomInfo<View>* xy) {
     assert(n > 0);

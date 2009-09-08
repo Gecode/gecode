@@ -250,7 +250,7 @@ namespace Test {
       /// \name General support
       //@{
       /// Compare \a x and \a y with respect to \a r
-      template <class T> static bool cmp(T x, Gecode::IntRelType r, T y);
+      template<class T> static bool cmp(T x, Gecode::IntRelType r, T y);
       //@}
     };
     //@}

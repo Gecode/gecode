@@ -43,34 +43,34 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
-  template <bool inc>
+  template<bool inc>
   forceinline
   ValMin<inc>::ValMin(void) {}
-  template <bool inc>
+  template<bool inc>
   forceinline
   ValMin<inc>::ValMin(Space& home, const ValBranchOptions& vbo)
     : ValSelBase<SetView,int>(home,vbo) {}
-  template <bool inc>
+  template<bool inc>
   forceinline int
   ValMin<inc>::val(Space&, SetView x) const {
     UnknownRanges<SetView> u(x);
     return u.min();
   }
-  template <bool inc>
+  template<bool inc>
   forceinline ModEvent
   ValMin<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
 
 
-  template <bool inc>
+  template<bool inc>
   forceinline
   ValMed<inc>::ValMed(void) {}
-  template <bool inc>
+  template<bool inc>
   forceinline
   ValMed<inc>::ValMed(Space& home, const ValBranchOptions& vbo)
     : ValSelBase<SetView,int>(home,vbo) {}
-  template <bool inc>
+  template<bool inc>
   forceinline int
   ValMed<inc>::val(Space&, SetView x) const {
     UnknownRanges<SetView> u1(x);
@@ -88,20 +88,20 @@ namespace Gecode { namespace Set { namespace Branch {
     }
     return u3.min() + static_cast<int>(i);
   }
-  template <bool inc>
+  template<bool inc>
   forceinline ModEvent
   ValMed<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
 
-  template <bool inc>
+  template<bool inc>
   forceinline
   ValMax<inc>::ValMax(void) {}
-  template <bool inc>
+  template<bool inc>
   forceinline
   ValMax<inc>::ValMax(Space& home, const ValBranchOptions& vbo)
     : ValSelBase<SetView,int>(home,vbo) {}
-  template <bool inc>
+  template<bool inc>
   forceinline int
   ValMax<inc>::val(Space&, SetView x) const {
     int max = 0;
@@ -109,7 +109,7 @@ namespace Gecode { namespace Set { namespace Branch {
       max = u.max();
     return max;
   }
-  template <bool inc>
+  template<bool inc>
   forceinline ModEvent
   ValMax<inc>::tell(Space& home, unsigned int a, SetView x, int v) {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);

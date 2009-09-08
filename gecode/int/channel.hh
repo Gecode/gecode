@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * \brief Base-class for channel propagators
    *
    */
-  template <class Info, PropCond pc>
+  template<class Info, PropCond pc>
   class Base : public Propagator {
   protected:
     /// Number of views (actually twice as many for both x and y)
@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * \brief Combine view with information for value propagation
    *
    */
-  template <class View> class ValInfo;
+  template<class View> class ValInfo;
 
   /**
    * \brief Naive channel propagator
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, bool shared>
+  template<class View, bool shared>
   class Val : public Base<ValInfo<View>,PC_INT_VAL> {
  protected:
     using Base<ValInfo<View>,PC_INT_VAL>::n;
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * \brief Combine view with information for domain propagation
    *
    */
-  template <class View> class DomInfo;
+  template<class View> class DomInfo;
 
   /**
    * \brief Domain consistent channel propagator
@@ -125,7 +125,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, bool shared>
+  template<class View, bool shared>
   class Dom : public Base<DomInfo<View>,PC_INT_DOM> {
   protected:
     using Base<DomInfo<View>,PC_INT_DOM>::n;

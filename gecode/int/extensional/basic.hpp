@@ -46,14 +46,14 @@ namespace Gecode { namespace Int { namespace Extensional {
    *
    */
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   forceinline
   Basic<View,shared>::Basic(Space& home, ViewArray<View>& x,
                             const TupleSet& t)
     : Base<View>(home,x,t) {
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   forceinline ExecStatus
   Basic<View,shared>::post(Space& home, ViewArray<View>& x,
                            const TupleSet& t) {
@@ -66,13 +66,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_OK;
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   forceinline
   Basic<View,shared>::Basic(Space& home, bool share, Basic<View,shared>& p)
     : Base<View>(home,share,p) {
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   PropCost
   Basic<View,shared>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
@@ -81,13 +81,13 @@ namespace Gecode { namespace Int { namespace Extensional {
       return PropCost::cubic(PropCost::HI,x.size());
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   Actor*
   Basic<View,shared>::copy(Space& home, bool share) {
     return new (home) Basic<View,shared>(home,share,*this);
   }
 
-  template <class View, bool shared>
+  template<class View, bool shared>
   ExecStatus
   Basic<View,shared>::propagate(Space& home, const ModEventDelta&) {
     // Set up datastructures
