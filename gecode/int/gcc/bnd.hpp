@@ -421,17 +421,22 @@ namespace Gecode { namespace Int { namespace GCC {
       cardfix &= k0[i].assigned();
       nolbc &= (k0[i].min() == 0);
     }
-    if (SharingTest<IntView,Card>::shared(home,x0,k0)) {
-      new (home) BndImp<Card, isView, true>
-        (home, x0, k0, cardfix, nolbc);
+
+    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home, x0, k0)));
+    if (isDistinct<Card,isView>(home, x0, k0)) {
+      return Distinct::Bnd<IntView>::post(home,x0);
     } else {
-      new (home) BndImp<Card, isView, false>
-        (home, x0, k0, cardfix, nolbc);
+      if (SharingTest<IntView,Card>::shared(home,x0,k0)) {
+        new (home) BndImp<Card, isView, true>
+          (home, x0, k0, cardfix, nolbc);
+      } else {
+        new (home) BndImp<Card, isView, false>
+          (home, x0, k0, cardfix, nolbc);
+      }
+      return ES_OK;
     }
-    return ES_OK;
   }
 
 }}}
 
 // STATISTICS: int-prop
-

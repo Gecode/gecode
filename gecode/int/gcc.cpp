@@ -38,156 +38,8 @@
  */
 
 #include <gecode/int/gcc.hh>
-#include <gecode/int/distinct.hh>
 
-namespace Gecode { namespace Int { namespace GCC {
-
-  /**
-   * \brief Check whether gcc can be rewritten to distinct
-   *
-   * If the number of available values equals \f$ |x| \f$,
-   * we can rewrite gcc to distinct if every value occurs exactly once.
-   * If the number of available values is greater than \f$ |x| \f$,
-   * we can rewrite gcc to distinct if every value occurs at least zero times
-   * and atmost once, otherwise, there is no rewriting possible.
-   */
-
-  template<class Card, bool isView>
-  inline bool
-  check_alldiff(int n, ViewArray<Card>& k){
-    if (isView) {
-      if (k.size() == n) {
-        for (int i=k.size(); i--;)
-          if (k[i].min() != 1 || k[i].max() != 1)
-            return false;
-        return true;
-      }
-      return false;
-    } else {
-      for (int i=k.size(); i--;)
-        if (k[i].min() != 0 || k[i].max() != 1)
-          return false;
-      return true;
-    }
-  }
-
-  /**
-   * \brief Compute the cardinality of the union of all variable domains in \a x.
-   *
-   */
-  template<class View>
-  forceinline unsigned int
-  x_card(Space& home, ViewArray<View>& x) {
-    int n = x.size();
-    Region r(home);
-    ViewRanges<View>* xrange = r.alloc<ViewRanges<View> >(n);
-    for (int i = n; i--; ){
-      ViewRanges<View> iter(x[i]);
-      xrange[i] = iter;
-    }
-
-    Iter::Ranges::NaryUnion<ViewRanges<View> > drl(&xrange[0], x.size());
-    return Iter::Ranges::size(drl);
-  }
-
-
-  /**
-   * \brief Check whether the cardinalities are consistent
-   *
-   * -# \f$\forall i\in\{0, \dots, |k| - 1\}: max(k_i) \leq |x|\f$
-   * -# \f$\neg\exists i\in\{0, \dots, |k| - 1\}: min(k_i) > |x|\f$
-   */
-
-  template<class Card, bool isView>
-  inline ExecStatus
-  card_cons(Space& home, ViewArray<Card>& k, int n) {
-    // this should be the required min and allowed max
-    int smin = 0;
-    int smax = 0;
-    int m    = k.size();
-    for (int i = m; i--; ) {
-      int ci = k[i].counter();
-      if (ci > k[i].max() ) {
-        // more occurrences of k[i].card() than allowed
-        return ES_FAILED;
-      } else {
-        smax += (k[i].max() - ci);
-        if (ci < k[i].min()) {
-          smin += (k[i].min() - ci);
-        }
-      }
-      if (k[i].min() > n) {
-        // cannot satisfy requiremnts for k[i].card()
-        return ES_FAILED;
-      }
-      GECODE_ME_CHECK(k[i].gq(home, 0));
-      if (!k[i].assigned()) {
-        ModEvent me = k[i].lq(home, n);
-        if (me_failed(me)) {
-          return ES_FAILED;
-        }
-      }
-    }
-
-    if (n < smin) {
-      // not enough variables to satisfy min req
-      return ES_FAILED;
-    }
-
-    // since we always reduce the variables to the allowed values we always use all values
-    if (smax < n) {
-      // maximal occurrence for the cardinalities cannot be satisfied
-      return ES_FAILED;
-    }
-    return ES_OK;
-  }
-
-  /**
-   * \brief Template to post the global cardinality constraint
-   *  for the different interfaces.
-   *
-   */
-  template<class Card, bool isView>
-  inline void
-  post_template(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k,
-                IntConLevel& icl){
-    int n = static_cast<int>(x_card(home, x));
-    bool rewrite  = false;
-    rewrite = check_alldiff<Card,isView>(n, k);
-    GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size())));
-    if (rewrite) {
-      if (x.same(home))
-        throw ArgumentSame("Int::distinct");
-      if (home.failed()) return;
-      switch (icl) {
-      case ICL_BND:
-        GECODE_ES_FAIL(home,Distinct::Bnd<IntView>::post(home,x));
-        break;
-      case ICL_DOM:
-        GECODE_ES_FAIL(home,Distinct::Dom<IntView>::post(home,x));
-        break;
-      default:
-        GECODE_ES_FAIL(home,Distinct::Val<IntView>::post(home,x));
-      }
-    } else {
-      switch (icl) {
-      case ICL_BND: {
-        GECODE_ES_FAIL(home, (GCC::Bnd<Card, isView>::post(home, x, k)));
-        break;
-      }
-      case ICL_DOM: {
-        GECODE_ES_FAIL(home, (GCC::Dom<Card, isView>::post(home, x, k)));
-        break;
-      }
-      default: {
-        GECODE_ES_FAIL(home, (GCC::Val<Card, isView>::post(home, x, k)));
-      }
-      }
-    }
-  }
-
-}}
-
+namespace Gecode {
   using namespace Int;
   using namespace Int::GCC;
   using namespace Support;
@@ -197,13 +49,7 @@ namespace Gecode { namespace Int { namespace GCC {
   void count(Space& home, const  IntVarArgs& x,
              const  IntVarArgs& c, const  IntArgs& v,
              IntConLevel icl) {
-
-    // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
-
-    // |cards| = |values|
-    int vsize = v.size();
-    int csize = c.size();
-    if (vsize != csize)
+    if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
       throw ArgumentSame("Int::count");
@@ -212,26 +58,22 @@ namespace Gecode { namespace Int { namespace GCC {
       return;
 
     ViewArray<IntView> xv(home, x);
-
-    // valid values for the variables in vars
-    IntSet valid(&v[0], vsize);
-
-    // \forall v \not\in values:  \#(v) = 0
-    // remove all values from the domains of the variables in vars that are not mentionned in the array \a values
-    for (int i = xv.size(); i--; ) {
-      IntSetRanges ir(valid);
-      GECODE_ME_FAIL(home, xv[i].inter_r(home, ir));
-    }
-    linear(home, c, IRT_EQ, xv.size());
-
     ViewArray<CardView> cv(home, c);
-
     // set the cardinality
-    for (int i = vsize; i--; ) {
+    for (int i = v.size(); i--; ) {
       cv[i].card(v[i]);
       cv[i].counter(0);
     }
-    GCC::post_template<CardView, true>(home, xv, cv, icl);
+    switch (icl) {
+    case ICL_BND:
+      GECODE_ES_FAIL(home, (GCC::Bnd<CardView, true>::post(home, xv, cv)));
+      break;
+    case ICL_DOM:
+      GECODE_ES_FAIL(home, (GCC::Dom<CardView, true>::post(home, xv, cv)));
+      break;
+    default:
+      GECODE_ES_FAIL(home, (GCC::Val<CardView, true>::post(home, xv, cv)));
+    }
   }
 
   // domain is 0..|cards|- 1
@@ -247,9 +89,7 @@ namespace Gecode { namespace Int { namespace GCC {
   void count(Space& home, const IntVarArgs& x,
              const IntSetArgs& c, const IntArgs& v,
              IntConLevel icl) {
-    int vsize = v.size();
-    int csize = c.size();
-    if (vsize != csize)
+    if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
       throw ArgumentSame("Int::count");
@@ -262,84 +102,52 @@ namespace Gecode { namespace Int { namespace GCC {
     if (home.failed())
       return;
 
-    // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
-
-    // |cards| = |values|
     ViewArray<IntView> xv(home, x);
 
-    // valid values for the variables in vars
-    IntSet valid(&v[0], vsize);
-
-    // \forall v \not\in values:  \#(v) = 0
-    // remove all values from the domains of the variables in vars that are not mentionned in the array \a values
-    for (int i = xv.size(); i--; ) {
-      IntSetRanges ir(valid);
-      GECODE_ME_FAIL(home, xv[i].inter_r(home, ir));
-    }
-
-    bool hole_found = false;
-    for (int i = vsize; i--; )
+    for (int i = v.size(); i--; ) {
       if (c[i].ranges() > 1) {
-        hole_found = true; break;
-      }
-
-    if (hole_found) {
-      // create temporary variables
-      ViewArray<CardView> cv(home, vsize);
-      IntVarArgs cvargs(vsize);
-      for (int i = vsize; i--; ) {
-        IntVar card(home, c[i]);
-        cvargs[i] = card;
-        IntView viewc(card);
-        cv[i] = viewc;
-      }
-
-      // set the cardinality
-      for (int i = vsize; i--; ) {
-        cv[i].card(v[i]);
-        cv[i].counter(0);
-      }
-
-      linear(home, cvargs, IRT_EQ, xv.size());
-
-      GCC::post_template<CardView, true>(home, xv, cv, icl);
-    } else {
-      // all specified cardinalites are ranges
-
-      ViewArray<OccurBndsView> cv(home, csize);
-
-      // compute number of zero entries
-      int z = 0;
-
-      for (int i = csize; i--; ) {
-        cv[i].card(v[i]);
-        cv[i].counter(0);
-        cv[i].min(c[i].min());
-        cv[i].max(c[i].max());
-        if (cv[i].max() == 0) {
-          z++;
-          // cv[i].max(1);
+        // Found hole, so create temporary variables
+        ViewArray<CardView> cv(home, v.size());
+        for (int j = v.size(); j--; ) {
+          IntVar card(home, c[j]);
+          cv[j] = IntView(card);
+          cv[j].card(v[j]);
+          cv[j].counter(0);
         }
-      }
-
-      if (z>0) {
-        // remove values with 0 max occurrence
-        IntArgs rem(z);
-        z = 0;
-        for (int j = csize; j--;) {
-          if (c[j].max() == 0)
-            rem[z++] = v[j];
+        switch (icl) {
+        case ICL_BND:
+          GECODE_ES_FAIL(home, (GCC::Bnd<CardView, true>::post(home, xv, cv)));
+          break;
+        case ICL_DOM:
+          GECODE_ES_FAIL(home, (GCC::Dom<CardView, true>::post(home, xv, cv)));
+          break;
+        default:
+          GECODE_ES_FAIL(home, (GCC::Val<CardView, true>::post(home, xv, cv)));
         }
-
-        IntSet remzero(&rem[0], z);
-        for (int i = xv.size(); i--; ) {
-          IntSetRanges remzeror(remzero);
-          GECODE_ME_FAIL(home, xv[i].minus_r(home, remzeror, false));
-        }
-        GCC::post_template<OccurBndsView,false>(home, xv, cv, icl);
-      } else {
-        GCC::post_template<OccurBndsView,false>(home, xv, cv, icl);
+        return;
       }
+    }
+    
+    // No holes: create OccurBndsViews
+    ViewArray<OccurBndsView> cv(home, c.size());
+    for (int i = c.size(  ); i--; ) {
+      cv[i].card(v[i]);
+      cv[i].counter(0);
+      cv[i].min(c[i].min());
+      cv[i].max(c[i].max());
+    }
+    switch (icl) {
+    case ICL_BND:
+      GECODE_ES_FAIL(home,
+        (GCC::Bnd<OccurBndsView, false>::post(home, xv, cv)));
+      break;
+    case ICL_DOM:
+      GECODE_ES_FAIL(home,
+        (GCC::Dom<OccurBndsView, false>::post(home, xv, cv)));
+      break;
+    default:
+      GECODE_ES_FAIL(home,
+        (GCC::Val<OccurBndsView, false>::post(home, xv, cv)));
     }
   }
 

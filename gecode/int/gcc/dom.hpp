@@ -472,13 +472,17 @@ namespace Gecode { namespace Int { namespace GCC {
   inline ExecStatus
   Dom<Card, isView>::post(Space& home, ViewArray<IntView>& x0,
                           ViewArray<Card>& k0){
-    bool cardfix = true;
-    for (int i = k0.size(); i--; ) {
-      cardfix &= k0[i].assigned();
+    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home, x0, k0)));
+    if (isDistinct<Card,isView>(home, x0, k0)) {
+      return Distinct::Dom<IntView>::post(home,x0);
+    } else {
+      bool cardfix = true;
+      for (int i = k0.size(); i--; ) {
+        cardfix &= k0[i].assigned();
+      }
+      (void) new (home) Dom<Card, isView>(home, x0, k0, cardfix);
+      return ES_OK;
     }
-
-    (void) new (home) Dom<Card, isView>(home, x0, k0, cardfix);
-    return ES_OK;
   }
 
 }}}

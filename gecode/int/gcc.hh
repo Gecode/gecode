@@ -340,6 +340,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 }}}
 
+#include <gecode/int/gcc/post.hpp>
 #include <gecode/int/gcc/ubc.hpp>
 #include <gecode/int/gcc/lbc.hpp>
 #include <gecode/int/gcc/val.hpp>

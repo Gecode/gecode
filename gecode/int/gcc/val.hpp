@@ -76,8 +76,13 @@ namespace Gecode { namespace Int { namespace GCC {
   Val<Card, isView>::post(Space& home,
                           ViewArray<IntView>& x0,
                           ViewArray<Card>& k0) {
-    new (home) Val<Card, isView>(home, x0, k0);
-    return ES_OK;
+    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home, x0, k0)));
+    if (isDistinct<Card,isView>(home, x0, k0)) {
+      return Distinct::Val<IntView>::post(home,x0);
+    } else {
+      new (home) Val<Card, isView>(home, x0, k0);
+      return ES_OK;
+    }
   }
 
   /**

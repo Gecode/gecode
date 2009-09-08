@@ -58,6 +58,9 @@ namespace Gecode { namespace Int { namespace GCC {
     void card(int c);
     void counter(int c);
 
+    /// Return used IntView (throws exception)
+    IntView intview(void);
+
     void init(Space& home, int min, int max, int c);
     ModEvent lq(Space& home, int n);
     ModEvent gq(Space& home, int n);
@@ -180,6 +183,12 @@ namespace Gecode { namespace Int { namespace GCC {
     _max = oc._max;
     c = oc.c;
     count = oc.count;
+  }
+
+  forceinline IntView
+  OccurBndsView::intview(void) {
+    throw Exception("OccurBndsView","Not implemented");
+    return IntView();
   }
 
 
