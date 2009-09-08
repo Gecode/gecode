@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class VX>
   forceinline
-  MemoryLinBoolInt<VX>::MemoryLinBoolInt(Space& home, ViewArray<VX>& x0,
+  SmallLinBoolInt<VX>::SmallLinBoolInt(Space& home, ViewArray<VX>& x0,
                                          int n_s0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), c(c0) {
     for (int i=n_s; i--; )
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline size_t
-  MemoryLinBoolInt<VX>::dispose(Space& home) {
+  SmallLinBoolInt<VX>::dispose(Space& home) {
     assert(!home.failed());
     for (int i=n_s; i--; )
       x[i].cancel(home,*this,PC_INT_VAL);
@@ -66,8 +66,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  MemoryLinBoolInt<VX>::MemoryLinBoolInt(Space& home, bool share,
-                                         MemoryLinBoolInt<VX>& p)
+  SmallLinBoolInt<VX>::SmallLinBoolInt(Space& home, bool share,
+                                         SmallLinBoolInt<VX>& p)
     : Propagator(home,share,p), x(home,p.x.size()), n_s(p.n_s) {
     // Update views not assigned and subscribed to
     for (int i=n_s; i--; )
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   PropCost
-  MemoryLinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
+  SmallLinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
   }
 
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class VX>
   forceinline
-  SpeedLinBoolInt<VX>::SpeedLinBoolInt(Space& home, ViewArray<VX>& x0,
+  LargeLinBoolInt<VX>::LargeLinBoolInt(Space& home, ViewArray<VX>& x0,
                                        int n_s0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), c(c0), co(home) {
     int n_x = x.size() - n_s;
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline size_t
-  SpeedLinBoolInt<VX>::dispose(Space& home) {
+  LargeLinBoolInt<VX>::dispose(Space& home) {
     co.dispose(home);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -121,8 +121,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  SpeedLinBoolInt<VX>::SpeedLinBoolInt(Space& home, bool share,
-                                       SpeedLinBoolInt<VX>& p)
+  LargeLinBoolInt<VX>::LargeLinBoolInt(Space& home, bool share,
+                                       LargeLinBoolInt<VX>& p)
     : Propagator(home,share,p), x(home,p.x.size()), n_s(p.n_s) {
     // Eliminate assigned views in original and update remaining ones
     int n_x = p.x.size();
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   PropCost
-  SpeedLinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
+  LargeLinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::HI);
   }
 
@@ -155,24 +155,24 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  GqBoolInt<VX>::Memory::Memory(Space& home, ViewArray<VX>& x, int c)
-    : MemoryLinBoolInt<VX>(home,x,c+1,c) {}
+  GqBoolInt<VX>::Small::Small(Space& home, ViewArray<VX>& x, int c)
+    : SmallLinBoolInt<VX>(home,x,c+1,c) {}
 
   template <class VX>
   forceinline
-  GqBoolInt<VX>::Memory::Memory(Space& home, bool share,
-                                typename GqBoolInt<VX>::Memory& p)
-    : MemoryLinBoolInt<VX>(home,share,p) {}
+  GqBoolInt<VX>::Small::Small(Space& home, bool share,
+                                typename GqBoolInt<VX>::Small& p)
+    : SmallLinBoolInt<VX>(home,share,p) {}
 
   template <class VX>
   Actor*
-  GqBoolInt<VX>::Memory::copy(Space& home, bool share) {
-    return new (home) Memory(home,share,*this);
+  GqBoolInt<VX>::Small::copy(Space& home, bool share) {
+    return new (home) Small(home,share,*this);
   }
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::Memory::propagate(Space& home, const ModEventDelta&) {
+  GqBoolInt<VX>::Small::propagate(Space& home, const ModEventDelta&) {
     // Eliminate assigned views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -217,24 +217,24 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  GqBoolInt<VX>::Speed::Speed(Space& home, ViewArray<VX>& x, int c)
-    : SpeedLinBoolInt<VX>(home,x,c+1,c) {}
+  GqBoolInt<VX>::Large::Large(Space& home, ViewArray<VX>& x, int c)
+    : LargeLinBoolInt<VX>(home,x,c+1,c) {}
 
   template <class VX>
   forceinline
-  GqBoolInt<VX>::Speed::Speed(Space& home, bool share,
-                              typename GqBoolInt<VX>::Speed& p)
-    : SpeedLinBoolInt<VX>(home,share,p) {}
+  GqBoolInt<VX>::Large::Large(Space& home, bool share,
+                              typename GqBoolInt<VX>::Large& p)
+    : LargeLinBoolInt<VX>(home,share,p) {}
 
   template <class VX>
   Actor*
-  GqBoolInt<VX>::Speed::copy(Space& home, bool share) {
-    return new (home) Speed(home,share,*this);
+  GqBoolInt<VX>::Large::copy(Space& home, bool share) {
+    return new (home) Large(home,share,*this);
   }
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
+  GqBoolInt<VX>::Large::advise(Space& home, Advisor& _a, const Delta&) {
     ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
     if (n_s == 0)
       return ES_SUBSUMED_FIX(a,home,co);
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  GqBoolInt<VX>::Speed::propagate(Space& home, const ModEventDelta&) {
+  GqBoolInt<VX>::Large::propagate(Space& home, const ModEventDelta&) {
     if (c > 0) {
       assert((n_s == c) && (x.size() == 0));
       // Signal to advisors that propagator runs
@@ -312,9 +312,9 @@ namespace Gecode { namespace Int { namespace Linear {
     assert(n_x > c);
     x.size(n_x);
     if (x.size() >= threshold)
-      (void) new (home) Speed(home,x,c);
+      (void) new (home) Large(home,x,c);
     else
-      (void) new (home) Memory(home,x,c);
+      (void) new (home) Small(home,x,c);
     return ES_OK;
   }
 
@@ -326,25 +326,25 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class VX>
   forceinline
-  EqBoolInt<VX>::Memory::Memory(Space& home, ViewArray<VX>& x,
+  EqBoolInt<VX>::Small::Small(Space& home, ViewArray<VX>& x,
                                 int c)
-    : MemoryLinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
+    : SmallLinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
 
   template <class VX>
   forceinline
-  EqBoolInt<VX>::Memory::Memory(Space& home, bool share,
-                                typename EqBoolInt<VX>::Memory& p)
-    : MemoryLinBoolInt<VX>(home,share,p) {}
+  EqBoolInt<VX>::Small::Small(Space& home, bool share,
+                                typename EqBoolInt<VX>::Small& p)
+    : SmallLinBoolInt<VX>(home,share,p) {}
 
   template <class VX>
   Actor*
-  EqBoolInt<VX>::Memory::copy(Space& home, bool share) {
-    return new (home) Memory(home,share,*this);
+  EqBoolInt<VX>::Small::copy(Space& home, bool share) {
+    return new (home) Small(home,share,*this);
   }
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::Memory::propagate(Space& home, const ModEventDelta&) {
+  EqBoolInt<VX>::Small::propagate(Space& home, const ModEventDelta&) {
     // Eliminate assigned views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -397,24 +397,24 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  EqBoolInt<VX>::Speed::Speed(Space& home, ViewArray<VX>& x, int c)
-    : SpeedLinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
+  EqBoolInt<VX>::Large::Large(Space& home, ViewArray<VX>& x, int c)
+    : LargeLinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
 
   template <class VX>
   forceinline
-  EqBoolInt<VX>::Speed::Speed(Space& home, bool share,
-                              typename EqBoolInt<VX>::Speed& p)
-    : SpeedLinBoolInt<VX>(home,share,p) {}
+  EqBoolInt<VX>::Large::Large(Space& home, bool share,
+                              typename EqBoolInt<VX>::Large& p)
+    : LargeLinBoolInt<VX>(home,share,p) {}
 
   template <class VX>
   Actor*
-  EqBoolInt<VX>::Speed::copy(Space& home, bool share) {
-    return new (home) Speed(home,share,*this);
+  EqBoolInt<VX>::Large::copy(Space& home, bool share) {
+    return new (home) Large(home,share,*this);
   }
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
+  EqBoolInt<VX>::Large::advise(Space& home, Advisor& _a, const Delta&) {
     ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
     if (n_s == 0)
       return ES_SUBSUMED_FIX(a,home,co);
@@ -449,7 +449,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::Speed::propagate(Space& home, const ModEventDelta&) {
+  EqBoolInt<VX>::Large::propagate(Space& home, const ModEventDelta&) {
     // Signal to advisors that propagator runs
     assert(x.size() == 0);
     n_s = 0;
@@ -493,15 +493,15 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     x.size(n_x);
     if (x.size() >= threshold)
-      (void) new (home) Speed(home,x,c);
+      (void) new (home) Large(home,x,c);
     else
-      (void) new (home) Memory(home,x,c);
+      (void) new (home) Small(home,x,c);
     return ES_OK;
   }
 
   template <class VX>
   ExecStatus
-  EqBoolInt<VX>::Memory::post(Space& home, ViewArray<VX>& x, int c) {
+  EqBoolInt<VX>::Small::post(Space& home, ViewArray<VX>& x, int c) {
     return EqBoolInt<VX>::post(home,x,c);
   }
 
@@ -646,26 +646,26 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class VX, class VB>
   forceinline
-  MemoryReLinBoolInt<VX,VB>::MemoryReLinBoolInt(Space& home, ViewArray<VX>& x0,
+  SmallReLinBoolInt<VX,VB>::SmallReLinBoolInt(Space& home, ViewArray<VX>& x0,
                                          int n_s0, int c0, VB b0)
-    : MemoryLinBoolInt<VX>(home,x0,n_s0,c0), b(b0) {
+    : SmallLinBoolInt<VX>(home,x0,n_s0,c0), b(b0) {
     b.subscribe(home,*this,PC_BOOL_VAL);
   }
 
   template <class VX, class VB>
   forceinline size_t
-  MemoryReLinBoolInt<VX,VB>::dispose(Space& home) {
+  SmallReLinBoolInt<VX,VB>::dispose(Space& home) {
     assert(!home.failed());
     b.cancel(home,*this,PC_BOOL_VAL);
-    (void) MemoryLinBoolInt<VX>::dispose(home);
+    (void) SmallLinBoolInt<VX>::dispose(home);
     return sizeof(*this);
   }
 
   template <class VX, class VB>
   forceinline
-  MemoryReLinBoolInt<VX,VB>::MemoryReLinBoolInt(Space& home, bool share, 
-                                         MemoryReLinBoolInt<VX,VB>& p)
-    : MemoryLinBoolInt<VX>(home,share,p) {
+  SmallReLinBoolInt<VX,VB>::SmallReLinBoolInt(Space& home, bool share, 
+                                         SmallReLinBoolInt<VX,VB>& p)
+    : SmallLinBoolInt<VX>(home,share,p) {
     b.update(home,share,p.b);
   }
 
@@ -676,7 +676,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class VX, class VB>
   forceinline
-  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, ViewArray<VX>& x,
+  LargeReLinBoolInt<VX,VB>::LargeReLinBoolInt(Space& home, ViewArray<VX>& x,
                                               int c0, VB b0)
     : Propagator(home), n(x.size()), c(c0), co(home), b(b0) {
     for (int i=n; i--; )
@@ -686,8 +686,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   forceinline
-  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, bool share, 
-                                              SpeedReLinBoolInt<VX,VB>& p)
+  LargeReLinBoolInt<VX,VB>::LargeReLinBoolInt(Space& home, bool share, 
+                                              LargeReLinBoolInt<VX,VB>& p)
     : Propagator(home,share,p), n(p.n), c(p.c) {
     co.update(home,share,p.co);
     b.update(home,share,p.b);
@@ -695,7 +695,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   forceinline size_t
-  SpeedReLinBoolInt<VX,VB>::dispose(Space& home) {
+  LargeReLinBoolInt<VX,VB>::dispose(Space& home) {
     assert(!home.failed());
     co.dispose(home);
     b.cancel(home,*this,PC_BOOL_VAL);
@@ -705,7 +705,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   PropCost
-  SpeedReLinBoolInt<VX,VB>::cost(const Space&, const ModEventDelta&) const {
+  LargeReLinBoolInt<VX,VB>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::HI);
   }
 
@@ -717,27 +717,27 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   forceinline
-  ReGqBoolInt<VX,VB>::Memory::Memory(Space& home, ViewArray<VX>& x, int c, VB b)
+  ReGqBoolInt<VX,VB>::Small::Small(Space& home, ViewArray<VX>& x, int c, VB b)
   // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
-    : MemoryReLinBoolInt<VX,VB>
+    : SmallReLinBoolInt<VX,VB>
         (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
 
 
   template <class VX, class VB>
   forceinline
-  ReGqBoolInt<VX,VB>::Memory::Memory(Space& home, bool share, 
-                                typename ReGqBoolInt<VX,VB>::Memory& p)
-    : MemoryReLinBoolInt<VX,VB>(home,share,p) {}
+  ReGqBoolInt<VX,VB>::Small::Small(Space& home, bool share, 
+                                typename ReGqBoolInt<VX,VB>::Small& p)
+    : SmallReLinBoolInt<VX,VB>(home,share,p) {}
 
   template <class VX, class VB>
   Actor*
-  ReGqBoolInt<VX,VB>::Memory::copy(Space& home, bool share) {
-    return new (home) Memory(home,share,*this);
+  ReGqBoolInt<VX,VB>::Small::copy(Space& home, bool share) {
+    return new (home) Small(home,share,*this);
   }
 
   template <class VX, class VB>
   inline ExecStatus
-  ReGqBoolInt<VX,VB>::Memory::rewrite_inverse(Space& home, 
+  ReGqBoolInt<VX,VB>::Small::rewrite_inverse(Space& home, 
                                               ViewArray<BoolView>& x, int c) {
     ViewArray<NegBoolView> y(home,x.size());
     for (int i=x.size(); i--; )
@@ -747,7 +747,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   inline ExecStatus
-  ReGqBoolInt<VX,VB>::Memory::rewrite_inverse(Space& home, 
+  ReGqBoolInt<VX,VB>::Small::rewrite_inverse(Space& home, 
                                               ViewArray<NegBoolView>& x, int c) {
     ViewArray<BoolView> y(home,x.size());
     for (int i=x.size(); i--; )
@@ -757,7 +757,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   ExecStatus
-  ReGqBoolInt<VX,VB>::Memory::propagate(Space& home, const ModEventDelta&) {
+  ReGqBoolInt<VX,VB>::Small::propagate(Space& home, const ModEventDelta&) {
     // Eliminate assigned views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -809,25 +809,25 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   forceinline
-  ReGqBoolInt<VX,VB>::Speed::Speed(Space& home, ViewArray<VX>& x, int c, VB b)
-    : SpeedReLinBoolInt<VX,VB>(home,x,c,b) {}
+  ReGqBoolInt<VX,VB>::Large::Large(Space& home, ViewArray<VX>& x, int c, VB b)
+    : LargeReLinBoolInt<VX,VB>(home,x,c,b) {}
 
   template <class VX, class VB>
   forceinline
-  ReGqBoolInt<VX,VB>::Speed::Speed(Space& home, bool share, 
-                                   typename ReGqBoolInt<VX,VB>::Speed& p)
-    : SpeedReLinBoolInt<VX,VB>(home,share,p) {}
+  ReGqBoolInt<VX,VB>::Large::Large(Space& home, bool share, 
+                                   typename ReGqBoolInt<VX,VB>::Large& p)
+    : LargeReLinBoolInt<VX,VB>(home,share,p) {}
 
   template <class VX, class VB>
   Actor*
-  ReGqBoolInt<VX,VB>::Speed::copy(Space& home, bool share) {
-    return new (home) Speed(home,share,*this);
+  ReGqBoolInt<VX,VB>::Large::copy(Space& home, bool share) {
+    return new (home) Large(home,share,*this);
   }
 
 
   template <class VX, class VB>
   inline ExecStatus
-  ReGqBoolInt<VX,VB>::Speed::rewrite_inverse(Space& home, 
+  ReGqBoolInt<VX,VB>::Large::rewrite_inverse(Space& home, 
                                              ViewArray<BoolView>& x, int c) {
     ViewArray<NegBoolView> y(home,x.size());
     for (int i=x.size(); i--; )
@@ -837,7 +837,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   inline ExecStatus
-  ReGqBoolInt<VX,VB>::Speed::rewrite_inverse(Space& home, 
+  ReGqBoolInt<VX,VB>::Large::rewrite_inverse(Space& home, 
                                              ViewArray<NegBoolView>& x, int c) {
     ViewArray<BoolView> y(home,x.size());
     for (int i=x.size(); i--; )
@@ -848,7 +848,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   ExecStatus
-  ReGqBoolInt<VX,VB>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
+  ReGqBoolInt<VX,VB>::Large::advise(Space& home, Advisor& _a, const Delta&) {
     ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
 
     // eliminate view
@@ -865,7 +865,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   ExecStatus
-  ReGqBoolInt<VX,VB>::Speed::propagate(Space& home, const ModEventDelta&) {
+  ReGqBoolInt<VX,VB>::Large::propagate(Space& home, const ModEventDelta&) {
     if (b.none()) {
       if (c <= 0) {
         GECODE_ME_CHECK(b.one_none(home));
@@ -917,9 +917,9 @@ namespace Gecode { namespace Int { namespace Linear {
     x.size(n_x);
 
     if (x.size() >= threshold)
-      (void) new (home) Speed(home,x,c,b);
+      (void) new (home) Large(home,x,c,b);
     else
-      (void) new (home) Memory(home,x,c,b);
+      (void) new (home) Small(home,x,c,b);
     return ES_OK;
   }
 
@@ -931,26 +931,26 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   forceinline
-  ReEqBoolInt<VX,VB>::Memory::Memory(Space& home, ViewArray<VX>& x, int c, VB b)
+  ReEqBoolInt<VX,VB>::Small::Small(Space& home, ViewArray<VX>& x, int c, VB b)
   // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
-    : MemoryReLinBoolInt<VX,VB>
+    : SmallReLinBoolInt<VX,VB>
         (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
 
   template <class VX, class VB>
   forceinline
-  ReEqBoolInt<VX,VB>::Memory::Memory(Space& home, bool share, 
-                                typename ReEqBoolInt<VX,VB>::Memory& p)
-    : MemoryReLinBoolInt<VX,VB>(home,share,p) {}
+  ReEqBoolInt<VX,VB>::Small::Small(Space& home, bool share, 
+                                typename ReEqBoolInt<VX,VB>::Small& p)
+    : SmallReLinBoolInt<VX,VB>(home,share,p) {}
 
   template <class VX, class VB>
   Actor*
-  ReEqBoolInt<VX,VB>::Memory::copy(Space& home, bool share) {
-    return new (home) Memory(home,share,*this);
+  ReEqBoolInt<VX,VB>::Small::copy(Space& home, bool share) {
+    return new (home) Small(home,share,*this);
   }
 
   template <class VX, class VB>
   ExecStatus
-  ReEqBoolInt<VX,VB>::Memory::propagate(Space& home, const ModEventDelta&) {
+  ReEqBoolInt<VX,VB>::Small::propagate(Space& home, const ModEventDelta&) {
     // Eliminate assigned views from subscribed views
     int n_x = x.size();
     for (int i=n_s; i--; )
@@ -1000,24 +1000,24 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   forceinline
-  ReEqBoolInt<VX,VB>::Speed::Speed(Space& home, ViewArray<VX>& x, int c, VB b)
-    : SpeedReLinBoolInt<VX,VB>(home,x,c,b) {}
+  ReEqBoolInt<VX,VB>::Large::Large(Space& home, ViewArray<VX>& x, int c, VB b)
+    : LargeReLinBoolInt<VX,VB>(home,x,c,b) {}
 
   template <class VX, class VB>
   forceinline
-  ReEqBoolInt<VX,VB>::Speed::Speed(Space& home, bool share, 
-                                   typename ReEqBoolInt<VX,VB>::Speed& p)
-    : SpeedReLinBoolInt<VX,VB>(home,share,p) {}
+  ReEqBoolInt<VX,VB>::Large::Large(Space& home, bool share, 
+                                   typename ReEqBoolInt<VX,VB>::Large& p)
+    : LargeReLinBoolInt<VX,VB>(home,share,p) {}
 
   template <class VX, class VB>
   Actor*
-  ReEqBoolInt<VX,VB>::Speed::copy(Space& home, bool share) {
-    return new (home) Speed(home,share,*this);
+  ReEqBoolInt<VX,VB>::Large::copy(Space& home, bool share) {
+    return new (home) Large(home,share,*this);
   }
 
   template <class VX, class VB>
   ExecStatus
-  ReEqBoolInt<VX,VB>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
+  ReEqBoolInt<VX,VB>::Large::advise(Space& home, Advisor& _a, const Delta&) {
     ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
 
     // Eliminate view
@@ -1034,7 +1034,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX, class VB>
   ExecStatus
-  ReEqBoolInt<VX,VB>::Speed::propagate(Space& home, const ModEventDelta&) {
+  ReEqBoolInt<VX,VB>::Large::propagate(Space& home, const ModEventDelta&) {
     if (b.none()) {
       if ((c == 0) && (n == 0)) {
         GECODE_ME_CHECK(b.one_none(home));
@@ -1085,9 +1085,9 @@ namespace Gecode { namespace Int { namespace Linear {
     x.size(n_x);
 
     if (x.size() >= threshold)
-      (void) new (home) Speed(home,x,c,b);
+      (void) new (home) Large(home,x,c,b);
     else
-      (void) new (home) Memory(home,x,c,b);
+      (void) new (home) Small(home,x,c,b);
     return ES_OK;
   }
 

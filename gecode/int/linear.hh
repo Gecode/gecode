@@ -776,7 +776,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class VX>
-  class MemoryLinBoolInt : public Propagator {
+  class SmallLinBoolInt : public Propagator {
   protected:
     /// Boolean views
     ViewArray<VX> x;
@@ -785,9 +785,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Righthandside
     int c;
     /// Constructor for cloning \a p
-    MemoryLinBoolInt(Space& home, bool share, MemoryLinBoolInt& p);
+    SmallLinBoolInt(Space& home, bool share, SmallLinBoolInt& p);
     /// Constructor for creation
-    MemoryLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
+    SmallLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -800,7 +800,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class VX>
-  class SpeedLinBoolInt : public Propagator {
+  class LargeLinBoolInt : public Propagator {
   protected:
     /// Boolean views
     ViewArray<VX> x;
@@ -811,9 +811,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Council for managing advisors
     Council<ViewAdvisor<VX> > co;
     /// Constructor for cloning \a p
-    SpeedLinBoolInt(Space& home, bool share, SpeedLinBoolInt& p);
+    LargeLinBoolInt(Space& home, bool share, LargeLinBoolInt& p);
     /// Constructor for creation
-    SpeedLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
+    LargeLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
   public:
     /// Cost function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -833,16 +833,16 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Threshold of whether to prefer speed or memory
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
-    class Memory : public MemoryLinBoolInt<VX> {
+    class Small : public SmallLinBoolInt<VX> {
     protected:
-      using MemoryLinBoolInt<VX>::x;
-      using MemoryLinBoolInt<VX>::n_s;
-      using MemoryLinBoolInt<VX>::c;
+      using SmallLinBoolInt<VX>::x;
+      using SmallLinBoolInt<VX>::n_s;
+      using SmallLinBoolInt<VX>::c;
     public:
       /// Constructor for cloning \a p
-      Memory(Space& home, bool share, Memory& p);
+      Small(Space& home, bool share, Small& p);
       /// Constructor for creation
-      Memory(Space& home, ViewArray<VX>& x, int c);
+      Small(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Perform propagation
@@ -851,17 +851,17 @@ namespace Gecode { namespace Int { namespace Linear {
       static ExecStatus post(Space& home, ViewArray<VX>& x, int c);
     };
     /// Propagator using more memory but with constant runtime
-    class Speed : public SpeedLinBoolInt<VX> {
+    class Large : public LargeLinBoolInt<VX> {
     protected:
-      using SpeedLinBoolInt<VX>::x;
-      using SpeedLinBoolInt<VX>::n_s;
-      using SpeedLinBoolInt<VX>::c;
-      using SpeedLinBoolInt<VX>::co;
+      using LargeLinBoolInt<VX>::x;
+      using LargeLinBoolInt<VX>::n_s;
+      using LargeLinBoolInt<VX>::c;
+      using LargeLinBoolInt<VX>::co;
     public:
       /// Constructor for cloning \a p
-      Speed(Space& home, bool share, Speed& p);
+      Large(Space& home, bool share, Large& p);
       /// Constructor for creation
-      Speed(Space& home, ViewArray<VX>& x, int c);
+      Large(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Give advice to propagator
@@ -885,33 +885,33 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Threshold of whether to prefer speed or memory
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
-    class Memory : public MemoryLinBoolInt<VX> {
+    class Small : public SmallLinBoolInt<VX> {
     protected:
-      using MemoryLinBoolInt<VX>::x;
-      using MemoryLinBoolInt<VX>::n_s;
-      using MemoryLinBoolInt<VX>::c;
+      using SmallLinBoolInt<VX>::x;
+      using SmallLinBoolInt<VX>::n_s;
+      using SmallLinBoolInt<VX>::c;
     public:
       /// Constructor for cloning \a p
-      Memory(Space& home, bool share, Memory& p);
+      Small(Space& home, bool share, Small& p);
       /// Constructor for creation
-      Memory(Space& home, ViewArray<VX>& x, int c);
+      Small(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Perform propagation
       virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     };
     /// Propagator using more memory but with constant runtime
-    class Speed : public SpeedLinBoolInt<VX> {
+    class Large : public LargeLinBoolInt<VX> {
     protected:
-      using SpeedLinBoolInt<VX>::x;
-      using SpeedLinBoolInt<VX>::n_s;
-      using SpeedLinBoolInt<VX>::c;
-      using SpeedLinBoolInt<VX>::co;
+      using LargeLinBoolInt<VX>::x;
+      using LargeLinBoolInt<VX>::n_s;
+      using LargeLinBoolInt<VX>::c;
+      using LargeLinBoolInt<VX>::co;
     public:
       /// Constructor for cloning \a p
-      Speed(Space& home, bool share, Speed& p);
+      Large(Space& home, bool share, Large& p);
       /// Constructor for creation
-      Speed(Space& home, ViewArray<VX>& x, int c);
+      Large(Space& home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Give advice to propagator
@@ -967,17 +967,17 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class VX, class VB>
-  class MemoryReLinBoolInt : public MemoryLinBoolInt<VX> {
+  class SmallReLinBoolInt : public SmallLinBoolInt<VX> {
   protected:
-    using MemoryLinBoolInt<VX>::x;
-    using MemoryLinBoolInt<VX>::n_s;
-    using MemoryLinBoolInt<VX>::c;
+    using SmallLinBoolInt<VX>::x;
+    using SmallLinBoolInt<VX>::n_s;
+    using SmallLinBoolInt<VX>::c;
     /// Boolean view
     VB b;
     /// Constructor for cloning \a p
-    MemoryReLinBoolInt(Space& home, bool share, MemoryReLinBoolInt& p);
+    SmallReLinBoolInt(Space& home, bool share, SmallReLinBoolInt& p);
     /// Constructor for creation
-    MemoryReLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c, VB b);
+    SmallReLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c, VB b);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -988,7 +988,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class VX, class VB>
-  class SpeedReLinBoolInt : public Propagator {
+  class LargeReLinBoolInt : public Propagator {
   protected:
     /// How many Boolean views (all advised)
     int n;
@@ -999,9 +999,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Control variable
     VB b;
     /// Constructor for cloning \a p
-    SpeedReLinBoolInt(Space& home, bool share, SpeedReLinBoolInt& p);
+    LargeReLinBoolInt(Space& home, bool share, LargeReLinBoolInt& p);
     /// Constructor for creation
-    SpeedReLinBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
+    LargeReLinBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
   public:
     /// Cost function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -1024,17 +1024,17 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Threshold of whether to prefer speed or memory
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
-    class Memory : public MemoryReLinBoolInt<VX,VB> {
+    class Small : public SmallReLinBoolInt<VX,VB> {
     protected:
-      using MemoryReLinBoolInt<VX,VB>::x;
-      using MemoryReLinBoolInt<VX,VB>::n_s;
-      using MemoryReLinBoolInt<VX,VB>::c;
-      using MemoryReLinBoolInt<VX,VB>::b;
+      using SmallReLinBoolInt<VX,VB>::x;
+      using SmallReLinBoolInt<VX,VB>::n_s;
+      using SmallReLinBoolInt<VX,VB>::c;
+      using SmallReLinBoolInt<VX,VB>::b;
     public:
       /// Constructor for cloning \a p
-      Memory(Space& home, bool share, Memory& p);
+      Small(Space& home, bool share, Small& p);
       /// Constructor for creation
-      Memory(Space& home, ViewArray<VX>& x, int c, VB b);
+      Small(Space& home, ViewArray<VX>& x, int c, VB b);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Perform propagation
@@ -1045,17 +1045,17 @@ namespace Gecode { namespace Int { namespace Linear {
       ExecStatus rewrite_inverse(Space& home, ViewArray<NegBoolView>& x, int c);
     };
     /// Propagator using more memory but with constant runtime
-    class Speed : public SpeedReLinBoolInt<VX,VB> {
+    class Large : public LargeReLinBoolInt<VX,VB> {
     protected:
-      using SpeedReLinBoolInt<VX,VB>::n;
-      using SpeedReLinBoolInt<VX,VB>::c;
-      using SpeedReLinBoolInt<VX,VB>::co;
-      using SpeedReLinBoolInt<VX,VB>::b;
+      using LargeReLinBoolInt<VX,VB>::n;
+      using LargeReLinBoolInt<VX,VB>::c;
+      using LargeReLinBoolInt<VX,VB>::co;
+      using LargeReLinBoolInt<VX,VB>::b;
     public:
       /// Constructor for cloning \a p
-      Speed(Space& home, bool share, Speed& p);
+      Large(Space& home, bool share, Large& p);
       /// Constructor for creation
-      Speed(Space& home, ViewArray<VX>& x, int c, VB b);
+      Large(Space& home, ViewArray<VX>& x, int c, VB b);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Give advice to propagator
@@ -1084,34 +1084,34 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Threshold of whether to prefer speed or memory
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
-    class Memory : public MemoryReLinBoolInt<VX,VB> {
+    class Small : public SmallReLinBoolInt<VX,VB> {
     protected:
-      using MemoryReLinBoolInt<VX,VB>::x;
-      using MemoryReLinBoolInt<VX,VB>::n_s;
-      using MemoryReLinBoolInt<VX,VB>::c;
-      using MemoryReLinBoolInt<VX,VB>::b;
+      using SmallReLinBoolInt<VX,VB>::x;
+      using SmallReLinBoolInt<VX,VB>::n_s;
+      using SmallReLinBoolInt<VX,VB>::c;
+      using SmallReLinBoolInt<VX,VB>::b;
     public:
       /// Constructor for cloning \a p
-      Memory(Space& home, bool share, Memory& p);
+      Small(Space& home, bool share, Small& p);
       /// Constructor for creation
-      Memory(Space& home, ViewArray<VX>& x, int c, VB b);
+      Small(Space& home, ViewArray<VX>& x, int c, VB b);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Perform propagation
       virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     };
     /// Propagator using more memory but with constant runtime
-    class Speed : public SpeedReLinBoolInt<VX,VB> {
+    class Large : public LargeReLinBoolInt<VX,VB> {
     protected:
-      using SpeedReLinBoolInt<VX,VB>::n;
-      using SpeedReLinBoolInt<VX,VB>::c;
-      using SpeedReLinBoolInt<VX,VB>::co;
-      using SpeedReLinBoolInt<VX,VB>::b;
+      using LargeReLinBoolInt<VX,VB>::n;
+      using LargeReLinBoolInt<VX,VB>::c;
+      using LargeReLinBoolInt<VX,VB>::co;
+      using LargeReLinBoolInt<VX,VB>::b;
     public:
       /// Constructor for cloning \a p
-      Speed(Space& home, bool share, Speed& p);
+      Large(Space& home, bool share, Large& p);
       /// Constructor for creation
-      Speed(Space& home, ViewArray<VX>& x, int c, VB b);
+      Large(Space& home, ViewArray<VX>& x, int c, VB b);
       /// Create copy during cloning
       virtual Actor* copy(Space& home, bool share);
       /// Give advice to propagator
