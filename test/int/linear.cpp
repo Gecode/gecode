@@ -348,31 +348,31 @@ namespace Test { namespace Int {
                }
            }
 
-           IntArgs a3(40, 
+           IntArgs a3(32, 
                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                      1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-           IntArgs a4(40,
+                      1, 1);
+           IntArgs a4(32,
                       -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                       -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                       -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-                      -1,-1,-1,-1,-1,-1,-1,-1,-1,-1);
+                      -1,-1);
            IntArgs a5(5, 1,2,3,4,5);
            IntArgs a6(5, -1,-2,-3,-4,-5);
            IntArgs a7(5, -1,-2,1,2,4);
 
            for (IntRelTypes irts; irts(); ++irts) {
-             for (int c=0; c<=16; c++) {
+             for (int c=0; c<=32; c += 4) {
                (void) new BoolInt("3",a3,irts.irt(),c);
                (void) new BoolInt("4",a4,irts.irt(),-c);
+             }
+             for (int c=0; c<=16; c++) {
                (void) new BoolInt("5",a5,irts.irt(),c);
                (void) new BoolInt("6",a6,irts.irt(),-c);
                (void) new BoolInt("7",a7,irts.irt(),c);
                (void) new BoolInt("8",a7,irts.irt(),-c);
              }
-             (void) new BoolInt("3",a3,irts.irt(),40);
-             (void) new BoolInt("4",a4,irts.irt(),-40);
            }
 
            for (int i=1; i<=5; i += 2) {

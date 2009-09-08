@@ -311,7 +311,7 @@ namespace Gecode { namespace Int { namespace Linear {
     // This is the needed invariant as c+1 subscriptions must be created
     assert(n_x > c);
     x.size(n_x);
-    if (x.size() > threshold)
+    if (x.size() >= threshold)
       (void) new (home) Speed(home,x,c);
     else
       (void) new (home) Memory(home,x,c);
@@ -492,7 +492,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_OK;
     }
     x.size(n_x);
-    if (x.size() > threshold)
+    if (x.size() >= threshold)
       (void) new (home) Speed(home,x,c);
     else
       (void) new (home) Memory(home,x,c);
@@ -669,33 +669,44 @@ namespace Gecode { namespace Int { namespace Linear {
     b.update(home,share,p.b);
   }
 
+
   /*
    * Baseclass for reified integer Boolean sum using advisors
    *
    */
   template <class VX, class VB>
   forceinline
-  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, ViewArray<VX>& x0,
-                                         int n_s0, int c0, VB b0)
-    : SpeedLinBoolInt<VX>(home,x0,n_s0,c0), b(b0) {
+  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, ViewArray<VX>& x,
+                                              int c0, VB b0)
+    : Propagator(home), n(x.size()), c(c0), co(home), b(b0) {
+    for (int i=n; i--; )
+      (void) new (home) ViewAdvisor<VX>(home,*this,co,x[i]);
     b.subscribe(home,*this,PC_BOOL_VAL);
+  }
+
+  template <class VX, class VB>
+  forceinline
+  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, bool share, 
+                                              SpeedReLinBoolInt<VX,VB>& p)
+    : Propagator(home,share,p), n(p.n), c(p.c) {
+    co.update(home,share,p.co);
+    b.update(home,share,p.b);
   }
 
   template <class VX, class VB>
   forceinline size_t
   SpeedReLinBoolInt<VX,VB>::dispose(Space& home) {
     assert(!home.failed());
+    co.dispose(home);
     b.cancel(home,*this,PC_BOOL_VAL);
-    (void) SpeedLinBoolInt<VX>::dispose(home);
+    (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
   template <class VX, class VB>
-  forceinline
-  SpeedReLinBoolInt<VX,VB>::SpeedReLinBoolInt(Space& home, bool share, 
-                                         SpeedReLinBoolInt<VX,VB>& p)
-    : SpeedLinBoolInt<VX>(home,share,p) {
-    b.update(home,share,p.b);
+  PropCost
+  SpeedReLinBoolInt<VX,VB>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::unary(PropCost::HI);
   }
 
 
@@ -796,18 +807,15 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_FIX;
   }
 
-
   template <class VX, class VB>
   forceinline
   ReGqBoolInt<VX,VB>::Speed::Speed(Space& home, ViewArray<VX>& x, int c, VB b)
-  // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
-    : SpeedReLinBoolInt<VX,VB>
-          (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
+    : SpeedReLinBoolInt<VX,VB>(home,x,c,b) {}
 
   template <class VX, class VB>
   forceinline
   ReGqBoolInt<VX,VB>::Speed::Speed(Space& home, bool share, 
-                              typename ReGqBoolInt<VX,VB>::Speed& p)
+                                   typename ReGqBoolInt<VX,VB>::Speed& p)
     : SpeedReLinBoolInt<VX,VB>(home,share,p) {}
 
   template <class VX, class VB>
@@ -842,78 +850,44 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   ReGqBoolInt<VX,VB>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
     ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
-    if (n_s == 0)
-      return ES_SUBSUMED_FIX(a,home,co);
 
-    // elminate view
+    // eliminate view
     assert(!a.view().none());
     if (a.view().one())
       c--;
-    n_s--;
-    if ((n_s+x.size() < c) || (c <= 0))
+    n--;
+    if ((n < c) || (c <= 0))
       return ES_SUBSUMED_NOFIX(a,home,co);
-
-    // Find a new subscription
-    int n_s0 = std::min(x.size(),std::max(c,x.size()-c)+1);
-    if (n_s < n_s0) {
-      assert(n_s == n_s0-1);
-      for (int i = x.size(); i--; ) {
-        // if (x[i].zero()) // continue
-        if (x[i].one()) {
-          c--;
-        } else if (x[i].none()) {
-          // view i is unassigned (offset 0)
-          if ((n_s+(i+1) < c) || (c < 0)) {
-            x.size(i+1);
-            return ES_SUBSUMED_NOFIX(a,home,co);
-          }
-          a.view(home,x[i]);
-          n_s++;
-          x.size(i);
-          return ES_FIX;
-        }
-      }
-      // No view left
-      x.size(0);
-      if ((n_s+x.size() < c) || (c <= 0))
-        return ES_SUBSUMED_NOFIX(a,home,co);
-    }
-    // This advisor is obsolete
-    return ES_SUBSUMED_FIX(a,home,co);
+    else
+      return ES_SUBSUMED_FIX(a,home,co);
   }
 
 
   template <class VX, class VB>
   ExecStatus
   ReGqBoolInt<VX,VB>::Speed::propagate(Space& home, const ModEventDelta&) {
-    // either b got assigned, or an advisor called ES_SUBSUMED_NOFIX
-    int real_n_s = n_s;
-    // Signal to advisors that propagator runs
-    n_s = 0;
     if (b.none()) {
       if (c <= 0) {
         GECODE_ME_CHECK(b.one_none(home));
       } else {
         GECODE_ME_CHECK(b.zero_none(home));
       }
-    } else {
-      // Problem: now we need to add all advised views back to x !
-      int real_n = x.size();
-      ViewArray<VX> real_x(home, real_n+real_n_s);
-      for (int i=real_n; i--; )
-        real_x[i] = x[i];
-      x.size(0);
-      for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
-        real_x[real_n++] = as.advisor().view();
-
-      if (b.one())
-        GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home,real_x,c)));
-      if (b.zero())
-        return rewrite_inverse(home, real_x, c);
+      return ES_SUBSUMED(*this,home);
     }
-    return ES_SUBSUMED(*this,home);
-  }
+    
+    ViewArray<VX> x(home, n);
+    int i=0;
+    for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
+      x[i++] = as.advisor().view();
+    assert(i == n);
 
+    if (b.one()) {
+      GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home,x,c)));
+    } else {
+      assert(b.zero());
+      return rewrite_inverse(home,x,c);
+    }      
+  }
 
   template <class VX, class VB>
   ExecStatus
@@ -941,11 +915,11 @@ namespace Gecode { namespace Int { namespace Linear {
     // This is the needed invariant as c subscriptions must be created (c+1 in non-reified)
     assert(n_x >= c);
     x.size(n_x);
-    // The code for Speed is broken, hence disabled
-    //    if (x.size() > threshold)
-    //      (void) new (home) Speed(home,x,c,b);
-      //    else
-    (void) new (home) Memory(home,x,c,b);
+
+    if (x.size() >= threshold)
+      (void) new (home) Speed(home,x,c,b);
+    else
+      (void) new (home) Memory(home,x,c,b);
     return ES_OK;
   }
 
@@ -1027,14 +1001,12 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX, class VB>
   forceinline
   ReEqBoolInt<VX,VB>::Speed::Speed(Space& home, ViewArray<VX>& x, int c, VB b)
-  // max(c,|x|-c)+1 because c might be a low number and we need to propagate to 'b' as fast as possible. min(|x|,val) to avoid overflow
-    : SpeedReLinBoolInt<VX,VB>
-          (home,x,std::min(x.size(),std::max(c,x.size()-c)+1),c,b) {}
+    : SpeedReLinBoolInt<VX,VB>(home,x,c,b) {}
 
   template <class VX, class VB>
   forceinline
   ReEqBoolInt<VX,VB>::Speed::Speed(Space& home, bool share, 
-                              typename ReEqBoolInt<VX,VB>::Speed& p)
+                                   typename ReEqBoolInt<VX,VB>::Speed& p)
     : SpeedReLinBoolInt<VX,VB>(home,share,p) {}
 
   template <class VX, class VB>
@@ -1047,77 +1019,43 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   ReEqBoolInt<VX,VB>::Speed::advise(Space& home, Advisor& _a, const Delta&) {
     ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
-    if (n_s == 0)
-      return ES_SUBSUMED_FIX(a,home,co);
 
-    // elminate view
+    // Eliminate view
     assert(!a.view().none());
     if (a.view().one())
       c--;
-    n_s--;
-    if ((c < 0) || (n_s+x.size() < c) || (n_s+x.size() == 0))
-    //if ((n_s+x.size() < c) || (c < 0))
-      return ES_SUBSUMED_NOFIX(a,home,co);
+    n--;
 
-    // Find a new subscription
-    int n_s0 = std::min(x.size(),std::max(c,x.size()-c)+1);
-    if (n_s < n_s0) {
-      assert(n_s == n_s0-1);
-      for (int i = x.size(); i--; ) {
-        // if (x[i].zero()) // continue
-        if (x[i].one()) {
-          c--;
-        } else if (x[i].none()) {
-          // view i is unassigned (offset 0)
-          if ((n_s+(i+1) < c) || (c < 0)) {
-            x.size(i+1);
-            return ES_SUBSUMED_NOFIX(a,home,co);
-          }
-          a.view(home,x[i]);
-          n_s++;
-          x.size(i);
-          return ES_FIX;
-        }
-      }
-      // No view left
-      x.size(0);
-      if ((c < 0) || (n_s < c) || (n_s == 0))
-        return ES_SUBSUMED_NOFIX(a,home,co);
-    }
-    // This advisor is obsolete
-    return ES_SUBSUMED_FIX(a,home,co);
+    if ((c < 0) || (c > n) || (n == 0))
+      return ES_SUBSUMED_NOFIX(a,home,co);
+    else
+      return ES_SUBSUMED_FIX(a,home,co);
   }
 
   template <class VX, class VB>
   ExecStatus
   ReEqBoolInt<VX,VB>::Speed::propagate(Space& home, const ModEventDelta&) {
-    // either b got assigned, or an advisor called ES_SUBSUMED_NOFIX
-    int real_n_s = n_s;
-    // Signal to advisors that propagator runs
-    n_s = 0;
-
     if (b.none()) {
-      if (c == 0 && real_n_s+x.size() == 0) {
+      if ((c == 0) && (n == 0)) {
         GECODE_ME_CHECK(b.one_none(home));
       } else {
         GECODE_ME_CHECK(b.zero_none(home));
       }
-    } else {
-      // Problem: now we need to add all advised views back to x !
-      int real_n = x.size();
-      ViewArray<VX> real_x(home, real_n+real_n_s);
-      for (int i=real_n; i--; )
-        real_x[i] = x[i];
-      x.size(0);
-      for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
-        real_x[real_n++] = as.advisor().view();
-
-      if (b.one())
-        GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home,real_x,c)));
-      if (b.zero())
-        GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home,real_x,c)));
+      return ES_SUBSUMED(*this,home);
     }
-    return ES_SUBSUMED(*this,home);
+     
+    ViewArray<VX> x(home, n);
+    int i = 0;
+    for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
+      x[i++] = as.advisor().view();
+    assert(i == n);
+    
+    if (b.one()) {
+      GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home,x,c)));
+    } else {
+      assert(b.zero());
+      GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home,x,c)));
+    }
   }
 
   template <class VX, class VB>
@@ -1133,7 +1071,7 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[i].one()) {
         x[i] = x[--n_x]; c--;
       }
-    // RHS too large || whatever the x[i] take for values, the equality is subsumed
+    // RHS too large
     if ((n_x < c) || (c < 0)) {
       GECODE_ME_CHECK(b.zero_none(home));
       return ES_OK;
@@ -1143,14 +1081,13 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_ME_CHECK(b.one_none(home));
       return ES_OK;
     }
-    // This is the needed invariant as c subscriptions must be created (c+1 in non-reified)
-    assert(n_x >= c);
+
     x.size(n_x);
 
-    //    if (x.size() > threshold)
-    //      (void) new (home) Speed(home,x,c,b);
-      //    else
-            (void) new (home) Memory(home,x,c,b);
+    if (x.size() >= threshold)
+      (void) new (home) Speed(home,x,c,b);
+    else
+      (void) new (home) Memory(home,x,c,b);
     return ES_OK;
   }
 

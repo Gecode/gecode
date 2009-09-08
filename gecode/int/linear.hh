@@ -988,19 +988,23 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class VX, class VB>
-  class SpeedReLinBoolInt : public SpeedLinBoolInt<VX> {
+  class SpeedReLinBoolInt : public Propagator {
   protected:
-    using SpeedLinBoolInt<VX>::x;
-    using SpeedLinBoolInt<VX>::n_s;
-    using SpeedLinBoolInt<VX>::c;
-    using SpeedLinBoolInt<VX>::co;
-    /// Boolean view
+    /// How many Boolean views (all advised)
+    int n;
+    /// Righthandside
+    int c;
+    /// Council for managing advisors
+    Council<ViewAdvisor<VX> > co;
+    /// Control variable
     VB b;
     /// Constructor for cloning \a p
     SpeedReLinBoolInt(Space& home, bool share, SpeedReLinBoolInt& p);
     /// Constructor for creation
-    SpeedReLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c, VB b);
+    SpeedReLinBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
   public:
+    /// Cost function (defined as high unary)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -1043,8 +1047,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedReLinBoolInt<VX,VB> {
     protected:
-      using SpeedReLinBoolInt<VX,VB>::x;
-      using SpeedReLinBoolInt<VX,VB>::n_s;
+      using SpeedReLinBoolInt<VX,VB>::n;
       using SpeedReLinBoolInt<VX,VB>::c;
       using SpeedReLinBoolInt<VX,VB>::co;
       using SpeedReLinBoolInt<VX,VB>::b;
@@ -1100,8 +1103,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedReLinBoolInt<VX,VB> {
     protected:
-      using SpeedReLinBoolInt<VX,VB>::x;
-      using SpeedReLinBoolInt<VX,VB>::n_s;
+      using SpeedReLinBoolInt<VX,VB>::n;
       using SpeedReLinBoolInt<VX,VB>::c;
       using SpeedReLinBoolInt<VX,VB>::co;
       using SpeedReLinBoolInt<VX,VB>::b;

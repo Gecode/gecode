@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Re-enabled an optimization in reified Boolean linear constraints
+after a bug fix.
+
+[ENTRY]
 Module: search
 What:   change
 Rank:   minor
