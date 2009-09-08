@@ -242,7 +242,7 @@ namespace Gecode { namespace Set { namespace Int {
   ExecStatus
   Weights<View>::propagate(Space& home, const ModEventDelta&) {
 
-    ModEvent me;
+    ModEvent me = ME_SET_NONE;
 
     if (!x.assigned()) {
       // Collect the weights of the elements in the unknown set in an array
