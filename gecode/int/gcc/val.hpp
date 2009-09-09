@@ -41,7 +41,6 @@ namespace Gecode { namespace Int { namespace GCC {
   Val<Card, isView>::Val(Space& home, ViewArray<IntView>& x0,
                          ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
-    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_INT_VAL);
     k.subscribe(home, *this, PC_INT_VAL);
   }
@@ -58,7 +57,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card, bool isView>
   size_t
   Val<Card, isView>::dispose(Space& home) {
-    home.ignore(*this,AP_DISPOSE);
     x.cancel(home,*this, PC_INT_VAL);
     k.cancel(home,*this, PC_INT_VAL);
     (void) Propagator::dispose(home);
@@ -98,7 +96,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool isView>
   ExecStatus
-  Val<Card, isView>::propagate(Space& home, const ModEventDelta&) {
+  prop_val(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
 
     bool mod = false;
@@ -176,7 +174,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED(*this,home);
+      return __ES_SUBSUMED;
     }
 
     // total number of unsatisfied miminum occurences
@@ -233,7 +231,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED(*this,home);
+      return __ES_SUBSUMED;
     }
 
     for (int i = m; i--; ) {
@@ -270,7 +268,7 @@ namespace Gecode { namespace Int { namespace GCC {
             ModEvent me = k[i].lq(home, mub);
             GECODE_ME_CHECK(me);
             mod |= k[i].assigned();
-            mod |= (me_failed(me) && k[i].max() != mub);
+            mod |= (me_modified(me) && k[i].max() != mub);
           }
         }
       }
@@ -280,17 +278,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // reduce the problem size
     for (int i = n; i--; ) {
-      bool b = x[i].assigned();
-      if (b) {
+      if (x[i].assigned()) {
         int idx = lookupValue(k,x[i].val());
         if (idx == -1)
           return ES_FAILED;
         if (onrem[idx]) {
           x[i] = x[--n];
-          x.size(n);
         }
       }
     }
+    x.size(n);
 
     // remove alredy satisfied values
     if (rs > 0) {
@@ -309,32 +306,24 @@ namespace Gecode { namespace Int { namespace GCC {
     all_assigned = true;
 
     for (int i = x.size(); i--; ) {
-      bool b = x[i].assigned();
-      all_assigned &= b;
-      if (b) {
+      if (x[i].assigned()) {
         int idx = lookupValue(k,x[i].val());
         if (idx == -1)
           return ES_FAILED;
         count[idx]++;
+      } else {
+        all_assigned = false;
       }
     }
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
-        int ci = count[i] + k[i].counter();
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
-          return ES_FAILED;
-        }
-        // the solution contains ci occurences of value k[i].card();
-        if (isView) {
-          if (!k[i].assigned()) {
-            ModEvent me = k[i].eq(home, ci);
-            GECODE_ME_CHECK(me);
-            mod |= k[i].assigned();
-          }
-        }
+        ModEvent me = k[i].eq(home, count[i] + k[i].counter());
+        GECODE_ME_CHECK(me);
+        if (isView)
+          mod |= me_modified(me);
       }
-      return ES_SUBSUMED(*this,home);
+      return __ES_SUBSUMED;
     }
 
     if (isView) {
@@ -357,24 +346,25 @@ namespace Gecode { namespace Int { namespace GCC {
           return ES_FAILED;
         }
         if (!k[i].assigned()) {
-          ModEvent me = k[i].lq(home, n);
-          if (me_failed(me)) {
-            return ES_FAILED;
-          }
+          GECODE_ME_CHECK((k[i].lq(home, n)));
         }
       }
 
-      if (n < reqmin) {
-        return ES_FAILED;
-      }
-
-      if (allmax < n) {
+      if (n < reqmin || allmax < n) {
         return ES_FAILED;
       }
     }
 
     return mod ? ES_NOFIX : ES_FIX;
   }
+
+  template<class Card, bool isView>
+  ExecStatus
+  Val<Card, isView>::propagate(Space& home, const ModEventDelta&) {
+    ExecStatus es = prop_val<Card,isView>(home, x, k);
+    return (es == __ES_SUBSUMED) ? ES_SUBSUMED(*this, home) : es;
+  }
+
 
 }}}
 

@@ -43,11 +43,11 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<Card, isView, shared>::
   BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
          bool cf,  bool nolbc) :
-    Propagator(home), x(x0), k(k0),
+    Propagator(home), x(x0), y(home, x0), k(k0), kk(home, k0),
     card_fixed(cf), skip_lbc(nolbc) {
     home.notice(*this,AP_DISPOSE);
-    x.subscribe(home, *this, PC_INT_BND);
-    k.subscribe(home, *this, PC_INT_BND);
+    y.subscribe(home, *this, PC_INT_BND);
+    kk.subscribe(home, *this, PC_INT_BND);
   }
 
   // for cloning
@@ -58,7 +58,9 @@ namespace Gecode { namespace Int { namespace GCC {
     : Propagator(home, share, p),
       card_fixed(p.card_fixed), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
+    y.update(home, share, p.y);
     k.update(home, share, p.k);
+    kk.update(home, share, p.kk);
   }
 
   template<class Card, bool isView, bool shared>
@@ -66,8 +68,8 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<Card, isView, shared>::dispose(Space& home){
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
-      x.cancel(home,*this, PC_INT_BND);
-      k.cancel(home,*this, PC_INT_BND);
+      y.cancel(home,*this, PC_INT_BND);
+      kk.cancel(home,*this, PC_INT_BND);
     }
     lps.dispose();
     ups.dispose();
@@ -137,7 +139,20 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool isView, bool shared>
   ExecStatus
-  BndImp<Card, isView, shared>::propagate(Space& home, const ModEventDelta&) {
+  BndImp<Card, isView, shared>::propagate(Space& home,
+                                          const ModEventDelta& med) {
+    if (IntView::me(med) == ME_INT_VAL) {
+      ExecStatus es = prop_val<Card,isView>(home,y,kk);
+      GECODE_ES_CHECK(es);
+      if (es == __ES_SUBSUMED) {
+        return ES_SUBSUMED(*this, home);
+      }
+      // if (y.size() < 2)
+      //   return ES_SUBSUMED(*this,home);
+      // if (es == ES_FIX)
+      //   return ES_FIX_PARTIAL(*this,View::med(ME_INT_BND));
+    }
+
     if (isView)
       GECODE_ES_CHECK(pruneCards(home));
 

@@ -129,8 +129,12 @@ namespace Gecode { namespace Int { namespace GCC {
   protected:
     /// Views on which to perform bounds-propagation
     ViewArray<IntView> x;
+    /// Views on which to perform value-propagation (subset of \c x)
+    ViewArray<IntView> y;
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
+    /// Array containing either fixed cardinalities or CardViews
+    ViewArray<Card> kk;
     /**
      * \brief  Data structure storing the sum of the views lower bounds
      * Necessary for reasoning about the interval capacities in the
