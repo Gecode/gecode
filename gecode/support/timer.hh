@@ -87,7 +87,15 @@ namespace Gecode { namespace Support {
     timeval t1, t;
     if (gettimeofday(&t1, NULL))
       throw OperatingSystemError("Timer::stop[gettimeofday]");
-    timersub(&t1, &t0, &t);
+    
+    // t = t1 - t2
+    t.tv_sec = t1.tv_sec - t0.tv_sec;
+    t.tv_usec = t1.tv_usec - t0.tv_usec;
+    if (t.tv_usec < 0) {
+      t.tv_sec--;
+      t.tv_usec += 1000000;
+    }
+    
     return (static_cast<double>(t.tv_sec) * 1000.0) + 
       (static_cast<double>(t.tv_usec)/1000.0);
 #elif defined(GECODE_USE_CLOCK)
