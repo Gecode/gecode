@@ -436,22 +436,10 @@ GRAPHBUILDDIRS	= \
 #
 
 SCHEDULINGSRC0 = \
-	cumulatives.cpp unary.cpp cumulative.cpp
+	cumulatives.cpp
 
 SCHEDULINGHDR0 = \
-	cumulatives.hh cumulatives/val.hpp \
-	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
-	task/iter.hpp task/tree.hpp task/purge.hpp task/prop.hpp \
-	unary.hh unary/task.hpp unary/task-view.hpp \
-	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
-	unary/not-first-not-last.hpp \
-	unary/edge-finding.hpp unary/subsumption.hpp \
-	unary/man-prop.hpp unary/opt-prop.hpp \
-	unary/task-branch.hpp unary/man-branch.hpp \
-	cumulative.hh cumulative/task.hpp cumulative/task-view.hpp \
-	cumulative/tree.hpp \
-	cumulative/overload.hpp cumulative/edge-finding.hpp \
-	cumulative/man-prop.hpp cumulative/opt-prop.hpp
+	cumulatives.hh cumulatives/val.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
 SCHEDULINGHDR	= gecode/scheduling.hh $(SCHEDULINGHDR0:%=gecode/scheduling/%)
@@ -476,7 +464,7 @@ export SCHEDULINGLIB		=
 export LINKSCHEDULING      	=
 endif
 SCHEDULINGBUILDDIRS	= \
-	scheduling task unary cumulative
+	scheduling
 
 
 #
@@ -706,7 +694,7 @@ GRAPHEXAMPLEEXE  =
 endif
 
 SCHEDULINGEXAMPLESRC0 = \
-	job-shop perfect-square
+	perfect-square
 SCHEDULINGEXAMPLESRC  = $(SCHEDULINGEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_scheduling@" "yes"
 SCHEDULINGEXAMPLEEXE  = $(SCHEDULINGEXAMPLESRC:%.cpp=%$(EXESUFFIX))
@@ -816,7 +804,7 @@ SETTESTOBJ=
 endif
 
 SCHEDULINGTESTSRC00 = \
-	cumulatives unary cumulative
+	cumulatives
 SCHEDULINGTESTSRC0 = $(SCHEDULINGTESTSRC00:%=test/scheduling/%.cpp)
 
 ifeq "@enable_scheduling@" "yes"
