@@ -955,8 +955,8 @@ AC_DEFUN([AC_GECODE_FRAMEWORK],
     if test "${enable_framework:-no}" = "yes"; then
       AC_MSG_RESULT(yes)
       AC_SUBST(BUILD_MACOS_FRAMEWORK, "yes")
-      AC_DEFINE(GECODE_STATIC_LIBS)
-      AC_SUBST(BUILDSTATIC, "yes")
+      enable_static="yes";
+      enable_shared="no";
     else
       AC_MSG_RESULT(no)
       AC_SUBST(BUILD_MACOS_FRAMEWORK, "no")
