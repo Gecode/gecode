@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gmail.com>
+ *
  *  Copyright:
  *     Guido Tack, 2007
+ *     Mikael Lagerkvist, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$

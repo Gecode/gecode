@@ -1,9 +1,11 @@
 %
 %  Main authors:
 %     Guido Tack <tack@gecode.org>
+%     Mikael lagerkvist <lagerkvist@gecode.org>
 %
 %  Copyright:
 %     Guido Tack, 2007
+%     Mikael Lagerkvist, 2009
 %
 %  Last modified:
 %     $Date$ by $Author$
@@ -47,5 +49,5 @@ predicate cumulative(array[int] of var int: s,
 
 % Specialized cumulatives propagator is only for fixed bounds
 predicate cumulatives(array[int] of var int: s,
-                     array[int] of var int: d,
-                     array[int] of var int: r, var int: b);
+                      array[int] of var int: d,
+                      array[int] of var int: r, var int: b);
