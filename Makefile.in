@@ -1331,7 +1331,7 @@ endif
 .PRECIOUS: examples/%$(OBJSUFFIX)
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(GLDFLAGS)
+	$(LINKALL) $(LINKQT) $(GLDFLAGS)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 $(TESTEXE): $(TESTOBJ) $(ALLLIB) 
@@ -1341,7 +1341,7 @@ $(TESTEXE): $(TESTOBJ) $(ALLLIB)
 
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(DLLPATH) $(CXXFLAGS) \
-	$(LINKFLATZINC) $(LINKALL) $(GLDFLAGS)
+	$(LINKFLATZINC) $(LINKALL) $(LINKQT) $(GLDFLAGS)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 
