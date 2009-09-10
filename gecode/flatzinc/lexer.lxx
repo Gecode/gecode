@@ -118,7 +118,7 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 .                 { yyerror("Unknown character"); }
 %%
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
-  Gecode::FlatZinc::FParseParm* parm = 
-    static_cast<Gecode::FlatZinc::FParseParm*>(yyget_extra(yyscanner));
+  Gecode::FlatZinc::ParserState* parm = 
+    static_cast<Gecode::FlatZinc::ParserState*>(yyget_extra(yyscanner));
   return parm->fillBuffer(buf, size);
 }

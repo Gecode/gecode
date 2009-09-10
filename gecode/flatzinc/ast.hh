@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __FLATZINC_ANNOTATION_HH__
-#define __FLATZINC_ANNOTATION_HH__
+#ifndef __GECODE_FLATZINC_AST_HH__
+#define __GECODE_FLATZINC_AST_HH__
 
 #include <vector>
 #include <string>
@@ -58,42 +58,70 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     std::string what(void) const { return _what; }
   };
   
+  /**
+   * \brief A node in a FlatZinc abstract syntax tree
+   */
   class Node {
   public:
+    /// Destructor
     virtual ~Node(void);
     
-    void append(Node*);
-    
+    /// Append \a n to an array node
+    void append(Node* n);
+
+    /// Test if node has atom with \a id
     bool hasAtom(const std::string& id);
+    /// Test if node is int, if yes set \a i to the value
     bool isInt(int& i);
+    /// Test if node is function call with \a id
     bool isCall(const std::string& id);
+    /// Return function call
     Call* getCall(void);
+    /// Test if node is function call or array containing function call \a id
     bool hasCall(const std::string& id);
-    
+    /// Return function call \a id
     Call* getCall(const std::string& id);
+    /// Cast this node to an array node
     Array* getArray(void);
+    /// Cast this node to an integer variable node
     int getIntVar(void);
+    /// Cast this node to a Boolean variable node
     int getBoolVar(void);
+    /// Cast this node to a set variable node
     int getSetVar(void);
     
+    /// Cast this node to an integer node
     int getInt(void);
+    /// Cast this node to a Boolean node
     bool getBool(void);
+    /// Cast this node to a set literal node
     SetLit *getSet(void);
     
+    /// Cast this node to a string node
     std::string getString(void);
     
+    /// Test if node is an integer variable node
     bool isIntVar(void);
+    /// Test if node is a Boolean variable node
     bool isBoolVar(void);
+    /// Test if node is a set variable node
     bool isSetVar(void);
+    /// Test if node is an integer node
     bool isInt(void);
+    /// Test if node is a Boolean node
     bool isBool(void);
+    /// Test if node is a string node
     bool isString(void);
+    /// Test if node is an array node
     bool isArray(void);
+    /// Test if node is a set literal node
     bool isSet(void);
     
+    /// Output string representation
     virtual void print(std::ostream&) = 0;
   };
-  
+
+  /// Boolean literal node
   class BoolLit : public Node {
   public:
     bool b;
@@ -102,6 +130,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "b(" << (b ? "true" : "false") << ")";
     }
   };
+  /// Integer literal node
   class IntLit : public Node {
   public:
     int i;
@@ -110,6 +139,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "i("<<i<<")";
     }
   };
+  /// Float literal node
   class FloatLit : public Node {
   public:
     double d;
@@ -118,6 +148,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "f("<<d<<")";
     }
   };
+  /// Set literal node
   class SetLit : public Node {
   public:
     bool interval;
@@ -134,11 +165,13 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   
+  /// Variable node base class
   class Var : public Node {
   public:
     int i;
     Var(int i0) : i(i0) {}
   };
+  /// Boolean variable node
   class BoolVar : public Var {
   public:
     BoolVar(int i0) : Var(i0) {}
@@ -146,6 +179,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "xb("<<i<<")";
     }
   };
+  /// Integer variable node
   class IntVar : public Var {
   public:
     IntVar(int i0) : Var(i0) {}
@@ -153,6 +187,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "xi("<<i<<")";
     }
   };
+  /// Float variable node
   class FloatVar : public Var {
   public:
     FloatVar(int i0) : Var(i0) {}
@@ -160,6 +195,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "xf("<<i<<")";
     }
   };
+  /// Set variable node
   class SetVar : public Var {
   public:
     SetVar(int i0) : Var(i0) {}
@@ -168,6 +204,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   
+  /// Array node
   class Array : public Node {
   public:
     std::vector<Node*> a;
@@ -191,6 +228,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
 
+  /// Node representing a function call
   class Call : public Node {
   public:
     std::string id;
@@ -209,7 +247,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
 
-
+  /// Node representing an array access
   class ArrayAccess : public Node {
   public:
     Node* a;
@@ -224,6 +262,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "]";
     }
   };
+
+  /// Node representing an atom
   class Atom : public Node {
   public:
     std::string id;
@@ -232,6 +272,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << id;
     }
   };
+
+  /// String node
   class String : public Node {
   public:
     std::string s;

@@ -43,48 +43,33 @@
 
 namespace Gecode { namespace FlatZinc {
 
+  /// Symbol table mapping identifiers (strings) to values
   template<class Val>
   class SymbolTable {
   private:
-    std::map<std::string,std::pair<Val,bool> > m;
+    std::map<std::string,Val> m;
   public:
-    void put(const std::string& key, const Val& val, bool ext=false);
+    /// Insert \a val with \a key
+    void put(const std::string& key, const Val& val);
+    /// Return whether \a key exists, and set \a val if it does exist
     bool get(const std::string& key, Val& val) const;
-    std::vector<std::pair<std::string, Val> > toVec(bool all) const;
   };
 
   template<class Val>
   void
-  SymbolTable<Val>::put(const std::string& key, const Val& val, bool ext) {
-    m[key] = std::pair<Val,bool>(val,ext);
+  SymbolTable<Val>::put(const std::string& key, const Val& val) {
+    m[key] = val;
   }
 
   template<class Val>
   bool
   SymbolTable<Val>::get(const std::string& key, Val& val) const {
-    typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 
+    typename std::map<std::string,Val>::const_iterator i = 
       m.find(key);
     if (i == m.end())
       return false;
-    val = i->second.first;
+    val = i->second;
     return true;
-  }
-
-  template<class Val>
-  std::vector<std::pair<std::string, Val> >
-  SymbolTable<Val>::toVec(bool all) const {
-    typename std::map<std::string,std::pair<Val,bool> >::const_iterator i = 
-      m.begin();
-    std::vector<std::pair<std::string, Val> > ret;
-    for (; i!=m.end(); i++) {
-      if (!all) {
-        if (i->second.second) {
-          ret.push_back(std::pair<std::string, Val>(i->first, i->second.first));
-        }
-      } else
-        ret.push_back(std::pair<std::string, Val>(i->first, i->second.first));
-    }
-    return ret;
   }
 
 }}

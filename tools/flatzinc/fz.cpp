@@ -37,7 +37,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <gecode/flatzinc/flatzinc.hh>
+#include <gecode/flatzinc.hh>
 
 using namespace std;
 using namespace Gecode;
@@ -58,8 +58,8 @@ int main(int argc, char** argv) {
   const char* filename = argv[1];
   opt.name(filename);
   
-  FlatZinc::FZPrinter p;
-  FlatZinc::FlatZincGecode* fg = NULL;
+  FlatZinc::Printer p;
+  FlatZinc::FlatZincSpace* fg = NULL;
   if (!strcmp(filename, "-")) {
     fg = FlatZinc::solve(cin, p);
   } else {

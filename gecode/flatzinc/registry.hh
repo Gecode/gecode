@@ -38,27 +38,31 @@
 #ifndef __FLATZINC_REGISTRY_HH__
 #define __FLATZINC_REGISTRY_HH__
 
-#include <gecode/flatzinc/flatzinc.hh>
+#include <gecode/flatzinc.hh>
 #include <string>
 #include <map>
 
 namespace Gecode { namespace FlatZinc {
 
+  /// Map from constraint identifier to constraint posting functions
   class Registry {
   public:
-    typedef void (*poster) (FlatZincGecode&,
+    /// Type of constraint posting function
+    typedef void (*poster) (FlatZincSpace&,
                             const ConExpr&,
                             AST::Node*);
-  
+    /// Add posting function \a p with identifier \a id
     void add(const std::string& id, poster p);
-  
-    void post(FlatZincGecode& s, const ConExpr& ce, AST::Node* ann);
+    /// Post constraint specified by \a ce
+    void post(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
 
   private:
+    /// The actual registry
     std::map<std::string,poster> r;
   };
-
-  extern Registry registry;
+  
+  /// Return global registry object
+  Registry& registry(void);
 
 }}
 

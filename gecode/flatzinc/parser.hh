@@ -38,7 +38,7 @@
 #ifndef __FLATZINC_PARSER_HH__
 #define __FLATZINC_PARSER_HH__
 
-#include <gecode/flatzinc/flatzinc.hh>
+#include <gecode/flatzinc.hh>
 
 // This is a workaround for a bug in flex that only shows up
 // with the Microsoft C++ compiler
@@ -74,20 +74,21 @@ namespace Gecode { namespace FlatZinc {
   class VarSpec;
   typedef std::pair<std::string, VarSpec*> varspec;
 
-  class FParseParm {
+  /// State of the FlatZinc parser
+  class ParserState {
   public:
-    FParseParm(const std::string& b, std::ostream& err0)
+    ParserState(const std::string& b, std::ostream& err0)
     : buf(b.c_str()), pos(0), length(b.size()), fg(NULL),
       hadError(false), err(err0) {}
 
-    FParseParm(char* buf0, int length0, std::ostream& err0)
+    ParserState(char* buf0, int length0, std::ostream& err0)
     : buf(buf0), pos(0), length(length0), fg(NULL),
       hadError(false), err(err0) {}
   
     void* yyscanner;
     const char* buf;
     unsigned int pos, length;
-    Gecode::FlatZinc::FlatZincGecode* fg;
+    Gecode::FlatZinc::FlatZincSpace* fg;
     std::vector<std::pair<std::string,AST::Node*> > _output;
 
     SymbolTable<int> intvarTable;
@@ -126,12 +127,6 @@ namespace Gecode { namespace FlatZinc {
     void output(std::string x, AST::Node* n) {
       _output.push_back(std::pair<std::string,AST::Node*>(x,n));
     }
-  
-    template<class A, class B>
-    class OutputLess {
-    public:
-      bool operator()(std::pair<A,B> x, std::pair<A,B> y) { return x.first < y.first; }
-    };
   
     AST::Array* getOutput(void) {
       AST::Array* a = new AST::Array();

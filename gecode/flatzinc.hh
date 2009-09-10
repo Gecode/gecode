@@ -81,7 +81,11 @@
 
 namespace Gecode { namespace FlatZinc {
 
-  class GECODE_FLATZINC_EXPORT FZPrinter {
+  /**
+   * \brief Output support class for FlatZinc interpreter
+   *
+   */
+  class GECODE_FLATZINC_EXPORT Printer {
   private:
     AST::Array* _output;
     void printElem(std::ostream& out,
@@ -94,7 +98,7 @@ namespace Gecode { namespace FlatZinc {
   #endif
                    ) const;
   public:
-    FZPrinter(void) : _output(NULL) {}
+    Printer(void) : _output(NULL) {}
     void init(AST::Array* output);
 
     void print(std::ostream& out,
@@ -106,12 +110,16 @@ namespace Gecode { namespace FlatZinc {
   #endif
                ) const;
   
-    ~FZPrinter(void);
+    ~Printer(void);
   private:
-    FZPrinter(const FZPrinter&);
-    FZPrinter& operator=(const FZPrinter&);
+    Printer(const Printer&);
+    Printer& operator=(const Printer&);
   };
 
+  /**
+   * \brief Options for running FlatZinc models
+   *
+   */
   class FlatZincOptions : public Gecode::BaseOptions {
   protected:
       /// \name Search options
@@ -133,6 +141,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::StringOption      _mode;       ///< Script mode to run
       //@}
   public:
+    /// Constructor
     FlatZincOptions(const char* s)
     : Gecode::BaseOptions(s),
       _solutions("-solutions","number of solutions (0 = all)",1),
@@ -180,62 +189,97 @@ namespace Gecode { namespace FlatZinc {
     }
   };
 
-  class GECODE_FLATZINC_EXPORT FlatZincGecode : public Gecode::Space {
+  /**
+   * \brief A Space that can be initialized with a FlatZinc model
+   *
+   */
+  class GECODE_FLATZINC_EXPORT FlatZincSpace : public Space {
   public:
-    enum Meth { SAT, MIN, MAX };
+    enum Meth {
+      SAT, //< Solve as satisfaction problem
+      MIN, //< Solve as minimization problem
+      MAX  //< Solve as maximization problem
+    };
   protected:
+    /// Number of integer variables
     int intVarCount;
+    /// Number of Boolean variables
     int boolVarCount;
+    /// Number of set variables
     int setVarCount;
 
+    /// Index of the integer variable to optimize
     int _optVar;
   
+    /// Number of solutions to search for
     int _noOfSols;
   
+    /// Whether to solve as satisfaction or optimization problem
     Meth _method;
 
+    /// Parse the solve annotations and create corresponding branchings
     void parseSolveAnn(AST::Array* ann);
 
-    FlatZincGecode(bool share, FlatZincGecode&);
+    /// Copy constructor
+    FlatZincSpace(bool share, FlatZincSpace&);
   private:
+    /// Run the search engine
     template<template<class> class Engine>
     void
-    runEngine(std::ostream& out, const FZPrinter& p, 
+    runEngine(std::ostream& out, const Printer& p, 
               const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
   public:
+    /// The integer variables
     Gecode::IntVarArray iv;
+    /// Indicates whether an integer variable is introduced by mzn2fzn
     std::vector<bool> iv_introduced;
+    /// The Boolean variables
     Gecode::BoolVarArray bv;
+    /// Indicates whether a Boolean variable is introduced by mzn2fzn
     std::vector<bool> bv_introduced;
   #ifdef GECODE_HAS_SET_VARS
+    /// The set variables
     Gecode::SetVarArray sv;
+    /// Indicates whether a set variable is introduced by mzn2fzn
     std::vector<bool> sv_introduced;
   #endif
-
-    FlatZincGecode(int intVars, int boolVars, int setVars);
+    /// Construct problem with given number of variables
+    FlatZincSpace(int intVars, int boolVars, int setVars);
   
+    /// Create new integer variable from specification
     void newIntVar(IntVarSpec* vs);
+    /// Create new Boolean variable from specification
     void newBoolVar(BoolVarSpec* vs);
+    /// Create new set variable from specification
     void newSetVar(SetVarSpec* vs);
   
+    /// Post a constraint specified by \a ce
     void postConstraint(const ConExpr& ce, AST::Node* annotation);
   
+    /// Post the solve item
     void solve(AST::Array* annotation);
+    /// Post that integer variable \a var should be minimized
     void minimize(int var, AST::Array* annotation);
+    /// Post that integer variable \a var should be maximized
     void maximize(int var, AST::Array* annotation);
-  
-    void run(std::ostream& out, const FZPrinter& p, 
+
+    /// Run the search
+    void run(std::ostream& out, const Printer& p, 
              const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
   
-    void print(std::ostream& out, const FZPrinter& p) const;
+    /// Produce output on \a out using \a p
+    void print(std::ostream& out, const Printer& p) const;
 
-    virtual void constrain(const Space& s);
-
+    /// Return whether to solve a satisfaction or optimization problem
     Meth method(void);
 
+    /// Implement optimization
+    virtual void constrain(const Space& s);
+    /// Copy function
     virtual Gecode::Space* copy(bool share);
   };
 
+  /// Exception class for FlatZinc errors
   class Error {
   private:
     const std::string msg;
@@ -244,14 +288,16 @@ namespace Gecode { namespace FlatZinc {
     : msg(where+": "+what) {}
     const std::string& toString(void) const { return msg; }
   };
-  
-  GECODE_FLATZINC_EXPORT
-  FlatZincGecode* solve(const std::string& fileName,
-                        FZPrinter& p, std::ostream& err = std::cerr);
 
+  /// Construct Space from FlatZinc file \a fileName
   GECODE_FLATZINC_EXPORT
-  FlatZincGecode* solve(std::istream& is,
-                        FZPrinter& p, std::ostream& err = std::cerr);
+  FlatZincSpace* solve(const std::string& fileName,
+                        Printer& p, std::ostream& err = std::cerr);
+
+  /// Construct Space from FlatZinc stream \a is
+  GECODE_FLATZINC_EXPORT
+  FlatZincSpace* solve(std::istream& is,
+                        Printer& p, std::ostream& err = std::cerr);
 
 }}
 

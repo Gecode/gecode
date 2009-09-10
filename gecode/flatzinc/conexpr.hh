@@ -43,19 +43,32 @@
 
 namespace Gecode { namespace FlatZinc {
 
+  /// Abstract representation of a constraint
   class ConExpr {
   public:
+    /// Identifier for the constraint
     std::string id;
+    /// Constraint arguments
     AST::Array* args;
-    ConExpr(const std::string& id0,
-            AST::Array* args0)
-    : id(id0), args(args0) {}
-    void print(void) const;
-    AST::Node* operator[](int i) const { return args->a[i]; }
-    ~ConExpr(void) {
-      delete args;
-    }
+    /// Constructor
+    ConExpr(const std::string& id0, AST::Array* args0);
+    /// Return argument \a i
+    AST::Node* operator[](int i) const;
+    /// Destructor
+    ~ConExpr(void);
   };
+
+  forceinline
+  ConExpr::ConExpr(const std::string& id0, AST::Array* args0)
+    : id(id0), args(args0) {}
+
+  forceinline AST::Node*
+  ConExpr::operator[](int i) const { return args->a[i]; }
+
+  forceinline
+  ConExpr::~ConExpr(void) {
+    delete args;
+  }
 
 }}
 

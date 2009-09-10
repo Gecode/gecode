@@ -40,6 +40,7 @@
 
 namespace Gecode { namespace FlatZinc {
 
+  /// Optional value
   template<class Val>
   struct Option {
   private:

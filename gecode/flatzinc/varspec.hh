@@ -45,132 +45,111 @@
 
 namespace Gecode { namespace FlatZinc {
 
-  class Equal {
+  /// Alias for a variable specification
+  class Alias {
   public:
     const int v;
-    Equal(int v0) : v(v0) {}
+    Alias(int v0) : v(v0) {}
   };
 
+  /// Base class for variable specifications
   class VarSpec {
   public:
+    /// Whether the variable was introduced in the mzn2fzn translation
     bool introduced;
-    VarSpec(bool introduced0) : introduced(introduced0) {}
+    /// Destructor
     virtual ~VarSpec(void) {}
-    virtual void print(void) = 0;
+    /// Variable index
+    int i;
+    /// Whether the variable aliases another variable
+    bool alias;
+    /// Whether the variable is assigned
+    bool assigned;
+    /// Constructor
+    VarSpec(bool introduced0) : introduced(introduced0) {}
   };
 
+  /// Specification for integer variables
   class IntVarSpec : public VarSpec {
   public:
-    bool alias;
-    bool singleton;
-    int i;
     Option<AST::SetLit* > domain;
     IntVarSpec(const Option<AST::SetLit* >& d, bool introduced)
-    : VarSpec(introduced), alias(false), singleton(false), domain(d) {}
-    IntVarSpec(int i0, bool introduced) : VarSpec(introduced),
-      alias(false), singleton(true), i(i0) {}
-    IntVarSpec(const Equal& eq, bool introduced) :
-      VarSpec(introduced), alias(true), i(eq.v) {}
-    virtual void print(void) {
-      std::cout << "i(";
-      if (alias) {
-        std::cout << "-> " << i;
-      } else if (singleton) {
-        std::cout << i;
-      }
-      else if (domain()) {
-        AST::SetLit* sl = domain.some();
-        if (sl->interval) {
-          std::cout << sl->min << ".." << sl->max;
-        } else {
-          for (unsigned int i=0; i<sl->s.size(); i++)
-            std::cout << sl->s[i] << ", ";
-        }
-      } else {
-        std::cout << "..";
-      }
-      std::cout << ")";
+    : VarSpec(introduced) {
+      alias = false;
+      assigned = false;
+      domain = d;
+    }
+    IntVarSpec(int i0, bool introduced) : VarSpec(introduced) {
+      alias = false; assigned = true; i = i0;
+    }
+    IntVarSpec(const Alias& eq, bool introduced) : VarSpec(introduced) {
+      alias = true; i = eq.v;
     }
     ~IntVarSpec(void) {
-      if (!alias && !singleton && domain())
+      if (!alias && !assigned && domain())
         delete domain.some();
     }
   };
 
+  /// Specification for Boolean variables
   class BoolVarSpec : public VarSpec {
   public:
-    bool alias;
-    bool singleton;
-    int i;
     Option<AST::SetLit* > domain;
     BoolVarSpec(Option<AST::SetLit* >& d, bool introduced)
-    : VarSpec(introduced), alias(false), singleton(false), domain(d) {}
-    BoolVarSpec(bool b, bool introduced)
-    : VarSpec(introduced), alias(false), singleton(true), i(b) {}
-    BoolVarSpec(const Equal& eq, bool introduced)
-    : VarSpec(introduced), alias(true), i(eq.v) {}
-    virtual void print(void) {
-      std::cout << "b(";
-      if (alias) {
-        std::cout << "-> " << i;
-      } else if (singleton) {
-        std::cout << (i ? "true" : "false");
-      }
-      else if (domain()) {
-        AST::SetLit* sl = domain.some();
-        if (sl->interval) {
-          std::cout << sl->min << ".." << sl->max;
-        } else {
-          for (unsigned int i=0; i<sl->s.size(); i++)
-            std::cout << (sl->s[i] ? "true" : "false") << ", ";
-        }
-      } else {
-        std::cout << "..";
-      }
-      std::cout << ")";
+    : VarSpec(introduced) {
+      alias = false; assigned = false; domain = d;
+    }
+    BoolVarSpec(bool b, bool introduced) : VarSpec(introduced) {
+      alias = false; assigned = true; i = b;
+    }
+    BoolVarSpec(const Alias& eq, bool introduced) : VarSpec(introduced) {
+      alias = true; i = eq.v;
     }
     ~BoolVarSpec(void) {
-      if (!alias && !singleton && domain())
+      if (!alias && !assigned && domain())
         delete domain.some();
     }
   };
 
+  /// Specification for floating point variables
   class FloatVarSpec : public VarSpec {
   public:
-    bool alias;
-    bool singleton;
-    double i;
     Option<std::vector<double>* > domain;
     FloatVarSpec(Option<std::vector<double>* >& d, bool introduced)
-    : VarSpec(introduced), alias(false), singleton(false), domain(d) {}
-    FloatVarSpec(bool b, bool introduced)
-    : VarSpec(introduced), alias(false), singleton(true), i(b) {}
-    FloatVarSpec(const Equal& eq, bool introduced)
-    : VarSpec(introduced), alias(true), i(eq.v) {}
-    virtual void print(void) {}
+    : VarSpec(introduced) {
+      alias = false; assigned = false; domain = d;
+    }
+    FloatVarSpec(bool b, bool introduced) : VarSpec(introduced) {
+      alias = false; assigned = true; i = b;
+    }
+    FloatVarSpec(const Alias& eq, bool introduced) : VarSpec(introduced) {
+      alias = true; i = eq.v;
+    }
     ~FloatVarSpec(void) {
-      if (!alias && !singleton && domain())
+      if (!alias && !assigned && domain())
         delete domain.some();
     }
   };
 
+  /// Specification for set variables
   class SetVarSpec : public VarSpec {
   public:
-    bool alias;
-    bool singleton;
-    int i;
     Option<AST::SetLit*> upperBound;
-    SetVarSpec(bool introduced)
-    : VarSpec(introduced),alias(false), singleton(false),
-      upperBound(Option<AST::SetLit* >::none()) {}
+    SetVarSpec(bool introduced) : VarSpec(introduced) {
+      alias = false; assigned = false;
+      upperBound = Option<AST::SetLit* >::none();
+    }
     SetVarSpec(const Option<AST::SetLit* >& v, bool introduced)
-    : VarSpec(introduced), alias(false), singleton(false), upperBound(v) {}
-    SetVarSpec(AST::SetLit* v, bool introduced)
-    : VarSpec(introduced), alias(false), singleton(true), 
-      upperBound(Option<AST::SetLit*>::some(v)) {}
-    SetVarSpec(const Equal& eq, bool introduced)
-    : VarSpec(introduced), alias(true), i(eq.v) {}
-    virtual void print(void) {}
+    : VarSpec(introduced) {
+      alias = false; assigned = false; upperBound = v;
+    }
+    SetVarSpec(AST::SetLit* v, bool introduced) : VarSpec(introduced) {
+      alias = false; assigned = true;
+      upperBound = Option<AST::SetLit*>::some(v);
+    }
+    SetVarSpec(const Alias& eq, bool introduced) : VarSpec(introduced) {
+      alias = true; i = eq.v;
+    }
     ~SetVarSpec(void) {
       if (!alias && upperBound())
         delete upperBound.some();
@@ -178,6 +157,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
 }}
+
 #endif
 
 // STATISTICS: flatzinc-any

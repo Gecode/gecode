@@ -35,7 +35,7 @@
  *
  */
 
-#include <gecode/flatzinc/flatzinc.hh>
+#include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/registry.hh>
 
 #include <gecode/search.hh>
@@ -48,7 +48,7 @@ using namespace std;
 namespace Gecode { namespace FlatZinc {
 
   IntSet vs2is(IntVarSpec* vs) {
-    if (vs->singleton) {
+    if (vs->assigned) {
       return IntSet(vs->i,vs->i);
     }
     if (vs->domain()) {
@@ -68,7 +68,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   int vs2bsl(BoolVarSpec* bs) {
-    if (bs->singleton) {
+    if (bs->assigned) {
       return bs->i;
     }
     if (bs->domain()) {
@@ -80,7 +80,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   int vs2bsh(BoolVarSpec* bs) {
-    if (bs->singleton) {
+    if (bs->assigned) {
       return bs->i;
     }
     if (bs->domain()) {
@@ -178,7 +178,7 @@ namespace Gecode { namespace FlatZinc {
   }
   #endif
 
-  FlatZincGecode::FlatZincGecode(bool share, FlatZincGecode& f)
+  FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
     : Space(share, f) {
       _optVar = f._optVar;
       _method = f._method;
@@ -190,7 +190,7 @@ namespace Gecode { namespace FlatZinc {
   #endif
     }
   
-  FlatZincGecode::FlatZincGecode(int intVars,
+  FlatZincSpace::FlatZincSpace(int intVars,
                                  int boolVars,
                                  int setVars)
   : intVarCount(0), boolVarCount(0), setVarCount(0),
@@ -203,7 +203,7 @@ namespace Gecode { namespace FlatZinc {
     {}
 
   void
-  FlatZincGecode::newIntVar(IntVarSpec* vs) {
+  FlatZincSpace::newIntVar(IntVarSpec* vs) {
     if (vs->alias) {
       iv[intVarCount++] = iv[vs->i];
     } else {
@@ -213,7 +213,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincGecode::newBoolVar(BoolVarSpec* vs) {
+  FlatZincSpace::newBoolVar(BoolVarSpec* vs) {
     if (vs->alias) {
       bv[boolVarCount++] = bv[vs->i];
     } else {
@@ -224,10 +224,10 @@ namespace Gecode { namespace FlatZinc {
 
   #ifdef GECODE_HAS_SET_VARS
   void
-  FlatZincGecode::newSetVar(SetVarSpec* vs) {
+  FlatZincSpace::newSetVar(SetVarSpec* vs) {
     if (vs->alias) {
       sv[setVarCount++] = sv[vs->i];
-    } else if (vs->singleton) {
+    } else if (vs->assigned) {
       assert(vs->upperBound());
       AST::SetLit* vsv = vs->upperBound.some();
       if (vsv->interval) {
@@ -263,15 +263,15 @@ namespace Gecode { namespace FlatZinc {
   }
   #else
   void
-  FlatZincGecode::newSetVar(SetVarSpec* vs) {
+  FlatZincSpace::newSetVar(SetVarSpec* vs) {
     throw FlatZinc::Error("Gecode", "set variables not supported");
   }
   #endif
 
   void
-  FlatZincGecode::postConstraint(const ConExpr& ce, AST::Node* ann) {
+  FlatZincSpace::postConstraint(const ConExpr& ce, AST::Node* ann) {
     try {
-      registry.post(*this, ce, ann);
+      registry().post(*this, ce, ann);
     } catch (Gecode::Exception& e) {
       throw FlatZinc::Error("Gecode", e.what());
     } catch (AST::Error& e) {
@@ -294,7 +294,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincGecode::parseSolveAnn(AST::Array* ann) {
+  FlatZincSpace::parseSolveAnn(AST::Array* ann) {
     bool hadSearchAnnotation = false;
     if (ann) {
       std::vector<AST::Node*> flatAnn;
@@ -396,14 +396,14 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincGecode::solve(AST::Array* ann) {
+  FlatZincSpace::solve(AST::Array* ann) {
     _method = SAT;
     _noOfSols = 1;
     parseSolveAnn(ann);
   }
 
   void
-  FlatZincGecode::minimize(int var, AST::Array* ann) {
+  FlatZincSpace::minimize(int var, AST::Array* ann) {
     _method = MIN;
     _optVar = var;
     parseSolveAnn(ann);
@@ -414,7 +414,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincGecode::maximize(int var, AST::Array* ann) {
+  FlatZincSpace::maximize(int var, AST::Array* ann) {
     _method = MAX;
     _optVar = var;
     parseSolveAnn(ann);
@@ -477,16 +477,16 @@ namespace Gecode { namespace FlatZinc {
   template<class S>
   class FZPrintingInspector : public Gecode::Gist::TextInspector {
   private:
-    const FZPrinter& p;
+    const Printer& p;
   public:
     /// Constructor
-    FZPrintingInspector(const FZPrinter& p0);
+    FZPrintingInspector(const Printer& p0);
     /// Use the print method of the template class S to print a space
     virtual void inspect(const Space& node);
   };
 
   template<class S>
-  FZPrintingInspector<S>::FZPrintingInspector(const FZPrinter& p0)
+  FZPrintingInspector<S>::FZPrintingInspector(const Printer& p0)
   : TextInspector("Gecode/FlatZinc"), p(p0) {}
 
   template<class S>
@@ -501,12 +501,12 @@ namespace Gecode { namespace FlatZinc {
 
   template<template<class> class Engine>
   void
-  FlatZincGecode::runEngine(std::ostream& out, const FZPrinter& p,
+  FlatZincSpace::runEngine(std::ostream& out, const Printer& p,
                             const FlatZincOptions& opt, Support::Timer& t_total) {
   #ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
-      FZPrintingInspector<FlatZincGecode> pi(p);
-      (void) GistEngine<Engine<FlatZincGecode> >::explore(this,&pi);
+      FZPrintingInspector<FlatZincSpace> pi(p);
+      (void) GistEngine<Engine<FlatZincSpace> >::explore(this,&pi);
       return;
     }
   #endif
@@ -522,9 +522,9 @@ namespace Gecode { namespace FlatZinc {
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
     o.threads = opt.threads();
-    Engine<FlatZincGecode> se(this,o);
+    Engine<FlatZincSpace> se(this,o);
     int findSol = _method == SAT ? opt.solutions() : 0;
-    while (FlatZincGecode* sol = se.next()) {
+    while (FlatZincSpace* sol = se.next()) {
       sol->print(out, p);
       out << "----------" << std::endl;
       delete sol;
@@ -559,7 +559,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincGecode::run(std::ostream& out, const FZPrinter& p,
+  FlatZincSpace::run(std::ostream& out, const Printer& p,
                       const FlatZincOptions& opt, Support::Timer& t_total) {
     switch (_method) {
     case MIN:
@@ -573,27 +573,27 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincGecode::constrain(const Space& s) {
+  FlatZincSpace::constrain(const Space& s) {
     if (_method == MIN)
       rel(*this, iv[_optVar], IRT_LE, 
-                 static_cast<const FlatZincGecode*>(&s)->iv[_optVar].val());
+                 static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
     else
       rel(*this, iv[_optVar], IRT_GR,
-                 static_cast<const FlatZincGecode*>(&s)->iv[_optVar].val());
+                 static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
   }
 
   Space*
-  FlatZincGecode::copy(bool share) {
-    return new FlatZincGecode(share, *this);
+  FlatZincSpace::copy(bool share) {
+    return new FlatZincSpace(share, *this);
   }
 
-  FlatZincGecode::Meth
-  FlatZincGecode::method(void) {
+  FlatZincSpace::Meth
+  FlatZincSpace::method(void) {
     return _method;
   }
 
   void
-  FlatZincGecode::print(std::ostream& out, const FZPrinter& p) const {
+  FlatZincSpace::print(std::ostream& out, const Printer& p) const {
     p.print(out, iv, bv
   #ifdef GECODE_HAS_SET_VARS
     , sv
@@ -602,21 +602,12 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FZPrinter::init(AST::Array* output) {
+  Printer::init(AST::Array* output) {
     _output = output;
   }
 
-  template<class Var>
-  class MyVarArray : public Gecode::VarArray<Var> {
-  public:
-    void size(int n0) {
-      Gecode::VarArray<Var>::n = n0;
-    }
-  };
-
-
   void
-  FZPrinter::printElem(ostream& out,
+  Printer::printElem(ostream& out,
                        AST::Node* ai,
                        const Gecode::IntVarArray& iv,
                        const Gecode::BoolVarArray& bv
@@ -694,7 +685,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FZPrinter::print(ostream& out,
+  Printer::print(ostream& out,
                    const Gecode::IntVarArray& iv,
                    const Gecode::BoolVarArray& bv
   #ifdef GECODE_HAS_SET_VARS
@@ -764,7 +755,7 @@ namespace Gecode { namespace FlatZinc {
     }
   }
 
-  FZPrinter::~FZPrinter(void) {
+  Printer::~Printer(void) {
     delete _output;
   }
 

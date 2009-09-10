@@ -5921,11 +5921,9 @@ gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/timer.hh 
-gecode/flatzinc/conexpr$(OBJSUFFIX) gecode/flatzinc/conexpr$(SBJSUFFIX): \
-	./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh 
 gecode/flatzinc/flatzinc$(OBJSUFFIX) gecode/flatzinc/flatzinc$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
-	./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh ./gecode/flatzinc/flatzinc.hh \
+	./gecode/flatzinc.hh ./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh \
 	./gecode/flatzinc/option.hh ./gecode/flatzinc/registry.hh ./gecode/flatzinc/varspec.hh \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
@@ -5982,7 +5980,7 @@ gecode/flatzinc/flatzinc$(OBJSUFFIX) gecode/flatzinc/flatzinc$(SBJSUFFIX): \
 	./gecode/support/timer.hh 
 gecode/flatzinc/registry$(OBJSUFFIX) gecode/flatzinc/registry$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
-	./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh ./gecode/flatzinc/flatzinc.hh \
+	./gecode/flatzinc.hh ./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh \
 	./gecode/flatzinc/option.hh ./gecode/flatzinc/registry.hh ./gecode/flatzinc/varspec.hh \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
@@ -6039,122 +6037,8 @@ gecode/flatzinc/registry$(OBJSUFFIX) gecode/flatzinc/registry$(SBJSUFFIX): \
 	./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
 tools/flatzinc/fz$(OBJSUFFIX) tools/flatzinc/fz$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
-	./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh ./gecode/flatzinc/flatzinc.hh \
+	./gecode/flatzinc.hh ./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh \
 	./gecode/flatzinc/option.hh ./gecode/flatzinc/varspec.hh ./gecode/gist.hh \
-	./gecode/gist/gist.hpp ./gecode/int.hh ./gecode/int/array.hpp \
-	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
-	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
-	./gecode/int/linear.hh ./gecode/int/linear/bool-int.hpp ./gecode/int/linear/bool-scale.hpp \
-	./gecode/int/linear/bool-view.hpp ./gecode/int/linear/int-bin.hpp ./gecode/int/linear/int-dom.hpp \
-	./gecode/int/linear/int-nary.hpp ./gecode/int/linear/int-noview.hpp ./gecode/int/linear/int-ter.hpp \
-	./gecode/int/linear/post.hpp ./gecode/int/propagator.hpp ./gecode/int/var-imp.hpp \
-	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
-	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
-	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
-	./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp \
-	./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp \
-	./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp \
-	./gecode/int/view/zero.hpp ./gecode/iter.hh ./gecode/iter/priority-queue.hpp \
-	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
-	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
-	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-map.hpp \
-	./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp \
-	./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
-	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
-	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
-	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
-	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
-	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
-	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
-	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/minimodel.hh ./gecode/minimodel/arithmetic.hpp ./gecode/minimodel/bool-expr.hpp \
-	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
-	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
-	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
-	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
-gecode/flatzinc/parser.tab$(OBJSUFFIX) gecode/flatzinc/parser.tab$(SBJSUFFIX): \
-	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
-	./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh ./gecode/flatzinc/flatzinc.hh \
-	./gecode/flatzinc/option.hh ./gecode/flatzinc/parser.hh ./gecode/flatzinc/parser.tab.hh \
-	./gecode/flatzinc/symboltable.hh ./gecode/flatzinc/varspec.hh ./gecode/gist.hh \
-	./gecode/gist/gist.hpp ./gecode/int.hh ./gecode/int/array.hpp \
-	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
-	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
-	./gecode/int/linear.hh ./gecode/int/linear/bool-int.hpp ./gecode/int/linear/bool-scale.hpp \
-	./gecode/int/linear/bool-view.hpp ./gecode/int/linear/int-bin.hpp ./gecode/int/linear/int-dom.hpp \
-	./gecode/int/linear/int-nary.hpp ./gecode/int/linear/int-noview.hpp ./gecode/int/linear/int-ter.hpp \
-	./gecode/int/linear/post.hpp ./gecode/int/propagator.hpp ./gecode/int/var-imp.hpp \
-	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
-	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
-	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
-	./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp \
-	./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp \
-	./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp \
-	./gecode/int/view/zero.hpp ./gecode/iter.hh ./gecode/iter/priority-queue.hpp \
-	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
-	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
-	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-map.hpp \
-	./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp \
-	./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
-	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
-	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
-	./gecode/iter/virtual-ranges-compl.hpp ./gecode/iter/virtual-ranges-inter.hpp ./gecode/iter/virtual-ranges-union.hpp \
-	./gecode/iter/virtual-ranges.hpp ./gecode/kernel.hh ./gecode/kernel/advisor.hpp \
-	./gecode/kernel/allocators.hpp ./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp \
-	./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp \
-	./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/region.hpp \
-	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-traits.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/minimodel.hh ./gecode/minimodel/arithmetic.hpp ./gecode/minimodel/bool-expr.hpp \
-	./gecode/minimodel/bool-rel.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-expr.hpp \
-	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/lds.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
-	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
-	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
-	./gecode/set/propagator.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/offset.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset.hpp \
-	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
-	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
-	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
-	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
-	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/timer.hh 
-gecode/flatzinc/lexer.yy$(OBJSUFFIX) gecode/flatzinc/lexer.yy$(SBJSUFFIX): \
-	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
-	./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh ./gecode/flatzinc/flatzinc.hh \
-	./gecode/flatzinc/option.hh ./gecode/flatzinc/parser.hh ./gecode/flatzinc/parser.tab.hh \
-	./gecode/flatzinc/symboltable.hh ./gecode/flatzinc/varspec.hh ./gecode/gist.hh \
 	./gecode/gist/gist.hpp ./gecode/int.hh ./gecode/int/array.hpp \
 	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
 	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \

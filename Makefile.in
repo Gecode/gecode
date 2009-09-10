@@ -612,14 +612,14 @@ endif
 # FLATZINC
 #
 
-FLATZINCSRC0 = conexpr.cpp flatzinc.cpp registry.cpp
+FLATZINCSRC0 = flatzinc.cpp registry.cpp
 FLATZINC_GENSRC0 = parser.tab.cpp lexer.yy.cpp
-FLATZINCHDR0 = ast.hh conexpr.hh flatzinc.hh option.hh parser.hh \
+FLATZINCHDR0 = ast.hh conexpr.hh option.hh parser.hh \
 	registry.hh symboltable.hh varspec.hh
 
 FLATZINCSRC = $(FLATZINCSRC0:%=gecode/flatzinc/%)
 FLATZINC_GENSRC = $(FLATZINC_GENSRC0:%=gecode/flatzinc/%)
-FLATZINCHDR = $(FLATZINCHDR0:%=gecode/flatzinc/%)
+FLATZINCHDR = $(FLATZINCHDR0:%=gecode/flatzinc/%) gecode/flatzinc.hh
 
 FLATZINCOBJ = \
 	$(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)) \
@@ -629,7 +629,7 @@ FLATZINCEXESRC0 = fz.cpp
 FLATZINCEXESRC  = $(FLATZINCEXESRC0:%=tools/flatzinc/%)
 FLATZINCEXEOBJ  = $(FLATZINCEXESRC:%.cpp=%$(OBJSUFFIX))
 
-FLATZINCALLSRC	= $(FLATZINCSRC) $(FLATZINCEXESRC) $(FLATZINC_GENSRC)
+FLATZINCALLSRC	= $(FLATZINCSRC) $(FLATZINCEXESRC)
 
 FLATZINCBUILDDIRS = gecode/flatzinc tools/flatzinc
 
@@ -726,7 +726,8 @@ ALLHDR = \
         $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(SCHEDULINGHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
-	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX))
+	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
+	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
 ALLSBJ0 = $(ALLSRC:%.cpp=%$(SBJSUFFIX))
 ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
