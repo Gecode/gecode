@@ -802,56 +802,6 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief Baseclass for integer Boolean sum using dependencies
-   *
-   */
-  template<class VX>
-  class SmallLinBoolInt : public Propagator {
-  protected:
-    /// Boolean views
-    ViewArray<VX> x;
-    /// Views from x[0] ... x[n_s-1] have subscriptions
-    int n_s;
-    /// Righthandside
-    int c;
-    /// Constructor for cloning \a p
-    SmallLinBoolInt(Space& home, bool share, SmallLinBoolInt& p);
-    /// Constructor for creation
-    SmallLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
-  public:
-    /// Cost function (defined as low linear)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-  /**
-   * \brief Baseclass for integer Boolean sum using advisors
-   *
-   */
-  template<class VX>
-  class LargeLinBoolInt : public Propagator {
-  protected:
-    /// Boolean views
-    ViewArray<VX> x;
-    /// How many views are attached to advisors
-    int n_s;
-    /// Righthandside
-    int c;
-    /// Council for managing advisors
-    Council<ViewAdvisor<VX> > co;
-    /// Constructor for cloning \a p
-    LargeLinBoolInt(Space& home, bool share, LargeLinBoolInt& p);
-    /// Constructor for creation
-    LargeLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
-  public:
-    /// Cost function (defined as high unary)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-  /**
    * \brief %Propagator for integer equal to Boolean sum (cardinality)
    *
    * Requires \code #include <gecode/int/linear.hh> \endcode
@@ -942,51 +892,29 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
 
-  /*
-   * Reified boolean linear propagators
-   *
-   */
-
   /**
-   * \brief Baseclass for reified integer Boolean sum using dependencies
+   * \brief Baseclass for reified integer Boolean sum
    *
    */
   template<class VX, class VB>
-  class SmallReLinBoolInt : public SmallLinBoolInt<VX> {
+  class ReLinBoolInt : public Propagator {
   protected:
-    using SmallLinBoolInt<VX>::x;
-    using SmallLinBoolInt<VX>::n_s;
-    using SmallLinBoolInt<VX>::c;
-    /// Boolean view
-    VB b;
-    /// Constructor for cloning \a p
-    SmallReLinBoolInt(Space& home, bool share, SmallReLinBoolInt& p);
-    /// Constructor for creation
-    SmallReLinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c, VB b);
-  public:
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-  /**
-   * \brief Baseclass for reified integer Boolean sum using advisors
-   *
-   */
-  template<class VX, class VB>
-  class LargeReLinBoolInt : public Propagator {
-  protected:
-    /// How many Boolean views (all advised)
-    int n;
+    /// Council for single advisor
+    Council<Advisor> co;
+    /// Views
+    ViewArray<VX> x;
+    /// Number of subscriptions
+    int n_s;
     /// Righthandside
     int c;
-    /// Council for managing advisors
-    Council<ViewAdvisor<VX> > co;
     /// Control variable
     VB b;
+    /// Normalize by removing unused views
+    void normalize(void);
     /// Constructor for cloning \a p
-    LargeReLinBoolInt(Space& home, bool share, LargeReLinBoolInt& p);
+    ReLinBoolInt(Space& home, bool share, ReLinBoolInt& p);
     /// Constructor for creation
-    LargeReLinBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
+    ReLinBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
   public:
     /// Cost function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -995,7 +923,11 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
 
-
+  /**
+   * \brief Traits for Boolean negation view
+   */
+  template<class BV>
+  class BoolNegTraits {};
 
   /**
    * \brief %Propagator for reified integer less or equal to Boolean sum (cardinality)
@@ -1004,56 +936,24 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template<class VX, class VB>
-  class ReGqBoolInt {
+  class ReGqBoolInt : public ReLinBoolInt<VX,VB> {
+  protected:
+    using ReLinBoolInt<VX,VB>::co;
+    using ReLinBoolInt<VX,VB>::x;
+    using ReLinBoolInt<VX,VB>::c;
+    using ReLinBoolInt<VX,VB>::b;
+    /// Constructor for cloning \a p
+    ReGqBoolInt(Space& home, bool share, ReGqBoolInt& p);
+    /// Constructor for creation
+    ReGqBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
   public:
-    /// Threshold of whether to prefer speed or memory
-    static const int threshold = 32;
-    /// Propagator using less memory but with linear runtime
-    class Small : public SmallReLinBoolInt<VX,VB> {
-    protected:
-      using SmallReLinBoolInt<VX,VB>::x;
-      using SmallReLinBoolInt<VX,VB>::n_s;
-      using SmallReLinBoolInt<VX,VB>::c;
-      using SmallReLinBoolInt<VX,VB>::b;
-    public:
-      /// Constructor for cloning \a p
-      Small(Space& home, bool share, Small& p);
-      /// Constructor for creation
-      Small(Space& home, ViewArray<VX>& x, int c, VB b);
-      /// Create copy during cloning
-      virtual Actor* copy(Space& home, bool share);
-      /// Perform propagation
-      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-      /// Rewrite when reif is false, BoolView
-      ExecStatus rewrite_inverse(Space& home, ViewArray<BoolView>& x, int c);
-      /// Rewrite when reif is false, NegBoolView
-      ExecStatus rewrite_inverse(Space& home, ViewArray<NegBoolView>& x, int c);
-    };
-    /// Propagator using more memory but with constant runtime
-    class Large : public LargeReLinBoolInt<VX,VB> {
-    protected:
-      using LargeReLinBoolInt<VX,VB>::n;
-      using LargeReLinBoolInt<VX,VB>::c;
-      using LargeReLinBoolInt<VX,VB>::co;
-      using LargeReLinBoolInt<VX,VB>::b;
-    public:
-      /// Constructor for cloning \a p
-      Large(Space& home, bool share, Large& p);
-      /// Constructor for creation
-      Large(Space& home, ViewArray<VX>& x, int c, VB b);
-      /// Create copy during cloning
-      virtual Actor* copy(Space& home, bool share);
-      /// Give advice to propagator
-      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-      /// Perform propagation
-      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-      /// Rewrite when reif is false, BoolView
-      ExecStatus rewrite_inverse(Space& home, ViewArray<BoolView>& x, int c);
-      /// Rewrite when reif is false, NegBoolView
-      ExecStatus rewrite_inverse(Space& home, ViewArray<NegBoolView>& x, int c);
-    };
-  public:
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c <=> b\f$
+    /// Create copy during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq\right) c \Leftrightarrow b\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, int c, VB b);
   };
 
@@ -1064,47 +964,24 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template<class VX, class VB>
-  class ReEqBoolInt {
+  class ReEqBoolInt : public ReLinBoolInt<VX,VB> {
+  protected:
+    using ReLinBoolInt<VX,VB>::co;
+    using ReLinBoolInt<VX,VB>::x;
+    using ReLinBoolInt<VX,VB>::c;
+    using ReLinBoolInt<VX,VB>::b;
+    /// Constructor for cloning \a p
+    ReEqBoolInt(Space& home, bool share, ReEqBoolInt& p);
+    /// Constructor for creation
+    ReEqBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
   public:
-    /// Threshold of whether to prefer speed or memory
-    static const int threshold = 32;
-    /// Propagator using less memory but with linear runtime
-    class Small : public SmallReLinBoolInt<VX,VB> {
-    protected:
-      using SmallReLinBoolInt<VX,VB>::x;
-      using SmallReLinBoolInt<VX,VB>::n_s;
-      using SmallReLinBoolInt<VX,VB>::c;
-      using SmallReLinBoolInt<VX,VB>::b;
-    public:
-      /// Constructor for cloning \a p
-      Small(Space& home, bool share, Small& p);
-      /// Constructor for creation
-      Small(Space& home, ViewArray<VX>& x, int c, VB b);
-      /// Create copy during cloning
-      virtual Actor* copy(Space& home, bool share);
-      /// Perform propagation
-      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    };
-    /// Propagator using more memory but with constant runtime
-    class Large : public LargeReLinBoolInt<VX,VB> {
-    protected:
-      using LargeReLinBoolInt<VX,VB>::n;
-      using LargeReLinBoolInt<VX,VB>::c;
-      using LargeReLinBoolInt<VX,VB>::co;
-      using LargeReLinBoolInt<VX,VB>::b;
-    public:
-      /// Constructor for cloning \a p
-      Large(Space& home, bool share, Large& p);
-      /// Constructor for creation
-      Large(Space& home, ViewArray<VX>& x, int c, VB b);
-      /// Create copy during cloning
-      virtual Actor* copy(Space& home, bool share);
-      /// Give advice to propagator
-      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-      /// Perform propagation
-      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    };
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
+    /// Create copy during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = c\right)\Leftrightarrow b\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, int c, VB b);
   };
 

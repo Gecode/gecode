@@ -162,15 +162,6 @@ namespace Test { namespace Int {
                 str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0),
                 a0.size(),0,1,true,Gecode::ICL_DEF),
            a(a0), irt(irt0), c(c0) {
-         if (arity > 10)
-           testsearch = false;
-       }
-       /// Create and register initial assignment
-       virtual Assignment* assignment(void) const {
-         if (arity > 10)
-           return new RandomAssignment(arity,dom,500);
-         else 
-           return new CpltAssignment(arity,dom);
        }
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -348,30 +339,16 @@ namespace Test { namespace Int {
                }
            }
 
-           IntArgs a3(32, 
-                      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                      1, 1);
-           IntArgs a4(32,
-                      -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-                      -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-                      -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-                      -1,-1);
-           IntArgs a5(5, 1,2,3,4,5);
-           IntArgs a6(5, -1,-2,-3,-4,-5);
-           IntArgs a7(5, -1,-2,1,2,4);
+           IntArgs a3(5, 1,2,3,4,5);
+           IntArgs a4(5, -1,-2,-3,-4,-5);
+           IntArgs a5(5, -1,-2,1,2,4);
 
            for (IntRelTypes irts; irts(); ++irts) {
-             for (int c=0; c<=32; c += 4) {
+             for (int c=0; c<=16; c++) {
                (void) new BoolInt("3",a3,irts.irt(),c);
                (void) new BoolInt("4",a4,irts.irt(),-c);
-             }
-             for (int c=0; c<=16; c++) {
                (void) new BoolInt("5",a5,irts.irt(),c);
-               (void) new BoolInt("6",a6,irts.irt(),-c);
-               (void) new BoolInt("7",a7,irts.irt(),c);
-               (void) new BoolInt("8",a7,irts.irt(),-c);
+               (void) new BoolInt("6",a5,irts.irt(),-c);
              }
            }
 
@@ -384,16 +361,16 @@ namespace Test { namespace Int {
              }
            }
 
-           IntArgs a8(4, 1,2,3,4);
-           IntArgs a9(4, -1,-2,-3,-4);
-           IntArgs a10(4, -1,-2,1,2);
-           IntArgs a11(6, -1,-2,1,2,-3,3);
+           IntArgs a6(4, 1,2,3,4);
+           IntArgs a7(4, -1,-2,-3,-4);
+           IntArgs a8(4, -1,-2,1,2);
+           IntArgs a9(6, -1,-2,1,2,-3,3);
 
            for (IntRelTypes irts; irts(); ++irts) {
-             (void) new BoolVar("8",0,10,a6,irts.irt());
-             (void) new BoolVar("9",-10,0,a7,irts.irt());
-             (void) new BoolVar("10",-3,3,a8,irts.irt());
-             (void) new BoolVar("11",-3,3,a9,irts.irt());
+             (void) new BoolVar("6",0,10,a6,irts.irt());
+             (void) new BoolVar("7",-10,0,a7,irts.irt());
+             (void) new BoolVar("8",-3,3,a8,irts.irt());
+             (void) new BoolVar("9",-3,3,a9,irts.irt());
            }
 
          }
