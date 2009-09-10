@@ -47,6 +47,48 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX>
   forceinline
+  LinBoolInt<VX>::LinBoolInt(Space& home, ViewArray<VX>& x0,
+                             int n_s, int c0)
+    : Propagator(home), co(home), x(x0), n_as(n_s), n_hs(n_s), c(c0) {
+    Advisor* a = new (home) Advisor(home,*this,co);
+    for (int i=n_as; i--; )
+      x[i].subscribe(home,*a);
+  }
+
+  template<class VX>
+  forceinline size_t
+  LinBoolInt<VX>::dispose(Space& home) {
+    assert(!home.failed());
+    Advisors<Advisor> as(co);
+    for (int i=n_hs; i--; )
+      if (x[i].none())
+        x[i].cancel(home,as.advisor());
+    co.dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class VX>
+  forceinline
+  LinBoolInt<VX>::LinBoolInt(Space& home, bool share, LinBoolInt<VX>& p)
+    : Propagator(home,share,p),
+      n_as(p.n_as), n_hs(p.n_hs), c(p.c) {
+    co.update(home,share,p.co);
+    x.update(home,share,p.x);
+  }
+
+  template<class VX>
+  PropCost
+  LinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::unary(PropCost::HI);
+  }
+
+  /*
+   * Baseclass for integer Boolean sum using dependencies
+   *
+   */
+  template<class VX>
+  forceinline
   SmallLinBoolInt<VX>::SmallLinBoolInt(Space& home, ViewArray<VX>& x0,
                                          int n_s0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), c(c0) {
@@ -155,134 +197,80 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   forceinline
-  GqBoolInt<VX>::Small::Small(Space& home, ViewArray<VX>& x, int c)
-    : SmallLinBoolInt<VX>(home,x,c+1,c) {}
+  GqBoolInt<VX>::GqBoolInt(Space& home, ViewArray<VX>& x, int c)
+    : LinBoolInt<VX>(home,x,c+1,c) {}
 
   template<class VX>
   forceinline
-  GqBoolInt<VX>::Small::Small(Space& home, bool share,
-                                typename GqBoolInt<VX>::Small& p)
-    : SmallLinBoolInt<VX>(home,share,p) {}
+  GqBoolInt<VX>::GqBoolInt(Space& home, bool share, GqBoolInt<VX>& p)
+    : LinBoolInt<VX>(home,share,p) {}
 
   template<class VX>
   Actor*
-  GqBoolInt<VX>::Small::copy(Space& home, bool share) {
-    return new (home) Small(home,share,*this);
+  GqBoolInt<VX>::copy(Space& home, bool share) {
+    return new (home) GqBoolInt<VX>(home,share,*this);
   }
 
   template<class VX>
   ExecStatus
-  GqBoolInt<VX>::Small::propagate(Space& home, const ModEventDelta&) {
-    // Eliminate assigned views from subscribed views
-    int n_x = x.size();
-    for (int i=n_s; i--; )
-      if (x[i].zero()) {
-        x[i]=x[--n_s]; x[n_s]=x[--n_x];
-      } else if (x[i].one()) {
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
-      }
-    x.size(n_x);
-    if (n_x < c)
-      return ES_FAILED;
-    if (c <= 0)
-      return ES_SUBSUMED(*this,home);
-    // Find unassigned variables to subscribe to
-    while ((n_s < n_x) && (n_s <= c))
-      if (x[n_s].zero()) {
-        x[n_s]=x[--n_x];
-      } else if (x[n_s].one()) {
-        x[n_s]=x[--n_x]; c--;
-      } else {
-        x[n_s++].subscribe(home,*this,PC_INT_VAL,false);
-      }
-    x.size(n_x);
-    if (n_x < c)
-      return ES_FAILED;
-    if (c <= 0)
-      return ES_SUBSUMED(*this,home);
-    if (c == n_x) {
-      // These are known to be not assigned
-      for (int i=n_s; i--; )
-        GECODE_ME_CHECK(x[i].one_none(home));
-      // These are not known to be assigned
-      for (int i=n_s+1; i<n_x; i++)
-        GECODE_ME_CHECK(x[i].one(home));
-      // Fix number of subscriptions such that cancelling subscriptions work
-      n_s = 0;
-      return ES_SUBSUMED(*this,sizeof(*this));
+  GqBoolInt<VX>::advise(Space& home, Advisor& a, const Delta& d) {
+    // Check whether propagator is running
+    if (n_as == 0)
+      return ES_FIX;
+
+    if (VX::one(d)) {
+      c--; goto check;
     }
-    return ES_FIX;
-  }
-
-
-  template<class VX>
-  forceinline
-  GqBoolInt<VX>::Large::Large(Space& home, ViewArray<VX>& x, int c)
-    : LargeLinBoolInt<VX>(home,x,c+1,c) {}
-
-  template<class VX>
-  forceinline
-  GqBoolInt<VX>::Large::Large(Space& home, bool share,
-                              typename GqBoolInt<VX>::Large& p)
-    : LargeLinBoolInt<VX>(home,share,p) {}
-
-  template<class VX>
-  Actor*
-  GqBoolInt<VX>::Large::copy(Space& home, bool share) {
-    return new (home) Large(home,share,*this);
-  }
-
-  template<class VX>
-  ExecStatus
-  GqBoolInt<VX>::Large::advise(Space& home, Advisor& _a, const Delta&) {
-    ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
-    if (n_s == 0)
-      return ES_SUBSUMED_FIX(a,home,co);
-    assert(!a.view().none());
-    if (a.view().one()) {
-      c--; goto subsume;
-    }
-    if (c+1 < n_s)
-      goto subsume;
+    if (c+1 < n_as)
+      goto check;
     // Find a new subscription
-    for (int i = x.size(); i--; )
+    for (int i = x.size()-1; i>=n_hs; i--)
       if (x[i].none()) {
-        a.view(home,x[i]);
-        x.size(i);
+        std::swap(x[i],x[n_hs]);
+        x[n_hs++].subscribe(home,a);
+        x.size(i+1);
         return ES_FIX;
       } else if (x[i].one()) {
         c--;
-        if (c+1 < n_s) {
+        if (c+1 < n_as) {
           x.size(i);
-          goto subsume;
+          assert(n_hs <= x.size());
+          goto check;
         }
       }
-    // No view left
-    x.size(0);
-  subsume:
+    // No view left for subscription
+    x.size(n_hs);
+  check:
     // Do not update subscription
-    n_s--;
-    int n = n_s+x.size();
+    n_as--;
+    int n = x.size()-n_hs+n_as;
     if (n < c)
       return ES_FAILED;
     if ((c <= 0) || (c == n))
-      return ES_SUBSUMED_NOFIX(a,home,co);
+      return ES_NOFIX;
     else
-      return ES_SUBSUMED_FIX(a,home,co);
+      return ES_FIX;
   }
 
   template<class VX>
   ExecStatus
-  GqBoolInt<VX>::Large::propagate(Space& home, const ModEventDelta&) {
+  GqBoolInt<VX>::propagate(Space& home, const ModEventDelta&) {
     if (c > 0) {
-      assert((n_s == c) && (x.size() == 0));
-      // Signal to advisors that propagator runs
-      n_s = 0;
+      assert((n_as == c) && (x.size() == n_hs));
+      // Signal that propagator is running
+      n_as = 0;
       // All views must be one to satisfy inequality
-      for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
-        GECODE_ME_CHECK(as.advisor().view().one_none(home));
+      for (int i=n_hs; i--; )
+        if (x[i].none())
+          GECODE_ME_CHECK(x[i].one_none(home));
+    } else {
+      Advisors<Advisor> as(co);
+      for (int i=n_hs; i--; )
+        if (x[i].none())
+          x[i].cancel(home,as.advisor());
     }
-    return ES_SUBSUMED(*this,home);
+    co.dispose(home);
+    return ES_SUBSUMED(*this,sizeof(*this));
   }
 
   template<class VX>
@@ -311,12 +299,10 @@ namespace Gecode { namespace Int { namespace Linear {
     // This is the needed invariant as c+1 subscriptions must be created
     assert(n_x > c);
     x.size(n_x);
-    if (x.size() >= threshold)
-      (void) new (home) Large(home,x,c);
-    else
-      (void) new (home) Small(home,x,c);
+    (void) new (home) GqBoolInt<VX>(home,x,c);
     return ES_OK;
   }
+
 
 
 
