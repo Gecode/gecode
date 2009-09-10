@@ -150,7 +150,7 @@ typedef union YYSTYPE
          Gecode::FlatZinc::AST::Node* arg;
          Gecode::FlatZinc::AST::Array* argVec;
        }
-/* Line 1529 of yacc.c.  */
+/* Line 1489 of yacc.c.  */
 #line 155 "gecode/flatzinc/parser.tab.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

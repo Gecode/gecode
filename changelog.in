@@ -227,7 +227,7 @@ Module: scheduling
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added a new module for graph scheduling. To use scheduling
+Added a new module for scheduling. To use scheduling
 constraints, you have to include <gecode/scheduling.hh> and link
 against the scheduling library.
 

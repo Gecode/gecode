@@ -56,6 +56,45 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
+  forceinline void
+  LinBoolInt<VX>::normalize(void) {
+    if (n_as != n_hs) {
+      // Remove views for which no more subscriptions exist
+      int n_x = x.size();
+      for (int i=n_hs; i--; )
+        if (!x[i].none()) {
+          x[i]=x[--n_hs]; x[n_hs]=x[--n_x];
+        }
+      n_hs = n_as; x.size(n_x);
+    }
+    // Remove assigned yet unsubscribed views
+    int n_x = x.size();
+    for (int i=n_x-1; i>=n_hs; i--)
+      if (x[i].one()) {
+        c--; x[i]=x[--n_x];
+      } else if (x[i].zero()) {
+        x[i]=x[--n_x];
+      }
+    x.size(n_x);
+  }
+
+  template<class VX>
+  forceinline
+  LinBoolInt<VX>::LinBoolInt(Space& home, bool share, LinBoolInt<VX>& p)
+    : Propagator(home,share,p), n_as(p.n_as), n_hs(n_as) {
+    p.normalize();
+    c=p.c;
+    co.update(home,share,p.co);
+    x.update(home,share,p.x);
+  }
+
+  template<class VX>
+  PropCost
+  LinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::unary(PropCost::HI);
+  }
+
+  template<class VX>
   forceinline size_t
   LinBoolInt<VX>::dispose(Space& home) {
     assert(!home.failed());
@@ -66,21 +105,6 @@ namespace Gecode { namespace Int { namespace Linear {
     co.dispose(home);
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template<class VX>
-  forceinline
-  LinBoolInt<VX>::LinBoolInt(Space& home, bool share, LinBoolInt<VX>& p)
-    : Propagator(home,share,p),
-      n_as(p.n_as), n_hs(p.n_hs), c(p.c) {
-    co.update(home,share,p.co);
-    x.update(home,share,p.x);
-  }
-
-  template<class VX>
-  PropCost
-  LinBoolInt<VX>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::HI);
   }
 
   /*

@@ -788,6 +788,8 @@ namespace Gecode { namespace Int { namespace Linear {
     int n_hs;
     /// Righthandside
     int c;
+    /// Normalize by removing unused views
+    void normalize(void);
     /// Constructor for cloning \a p
     LinBoolInt(Space& home, bool share, LinBoolInt& p);
     /// Constructor for creation
