@@ -160,20 +160,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // check for subsumption
     if (all_assigned) {
-
       for (int i = m; i--; ) {
-        int ci = count[i] + k[i].counter();
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
-          return ES_FAILED;
-        }
-        // the solution contains ci occurences of value k[i].card();
-        if (isView) {
-          if (!k[i].assigned()) {
-            ModEvent me = k[i].eq(home, ci);
-            GECODE_ME_CHECK(me);
-            mod |= k[i].assigned();
-          }
-        }
+        GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
       }
       return __ES_SUBSUMED;
     }
@@ -221,18 +209,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
 
       for (int i = m; i--; ) {
-        int ci = count[i] + k[i].counter();
-        // consistency check
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
-          return ES_FAILED;
-        }
-        // the solution contains ci occurences of value k[i].card();
-        if (isView) {
-          if (!k[i].assigned()) {
-            ModEvent me = k[i].eq(home, ci);
-            GECODE_ME_CHECK(me);
-          }
-        }
+        GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
       }
       return __ES_SUBSUMED;
     }
@@ -328,10 +305,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
-        ModEvent me = k[i].eq(home, count[i] + k[i].counter());
-        GECODE_ME_CHECK(me);
-        if (isView)
-          mod |= me_modified(me);
+        GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
       }
       return __ES_SUBSUMED;
     }

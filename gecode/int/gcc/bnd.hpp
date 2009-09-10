@@ -141,14 +141,16 @@ namespace Gecode { namespace Int { namespace GCC {
                                           const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
       ExecStatus es = prop_val<Card,isView>(home,y,k);
-      GECODE_ES_CHECK(es);
-      if (es == __ES_SUBSUMED) {
+      switch (es) {
+      case __ES_SUBSUMED:
         return ES_SUBSUMED(*this, home);
-      }
-      // if (y.size() < 2)
-      //   return ES_SUBSUMED(*this,home);
-      if (es == ES_FIX)
+      case ES_FAILED:
+        return ES_FAILED;
+      case ES_FIX:
         return ES_FIX_PARTIAL(*this,IntView::med(ME_INT_BND));
+      default:
+        break;
+      }
     }
 
     if (isView)
@@ -230,8 +232,9 @@ namespace Gecode { namespace Int { namespace GCC {
         GECODE_ME_CHECK(k[i].eq(home, count[i]));
         all_assigned &= (!isView) || k[i].assigned();
       }
-      if ( (!isView) || all_assigned)
+      if ( (!isView) || all_assigned) {
         return ES_SUBSUMED(*this,home);
+      }
     }
 
     if (isView)
@@ -376,6 +379,7 @@ namespace Gecode { namespace Int { namespace GCC {
       GECODE_ME_CHECK(k[i].eq(home, count[i]));
       all_assigned &= (!isView) || k[i].assigned();
     }
+
     return all_assigned ? ES_SUBSUMED(*this,home) : ES_NOFIX;
   }
 
