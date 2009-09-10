@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: support
+What:   change
+Rank:   minor
+Thanks: Alexandre Fayolle
+[DESCRIPTION]
+No longer depend on availability of timersub.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor
