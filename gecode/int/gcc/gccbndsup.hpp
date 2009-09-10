@@ -238,9 +238,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Constructor, initializer, and destructor
     //@{
     PartialSum(void);
-    void init(ViewArray<Card>&, bool);
+    void init(Space& home, ViewArray<Card>& k, bool up);
     void dispose(void);
-    ~PartialSum(void);
     //@}
     /// \name Access
     //@{
@@ -266,28 +265,18 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   forceinline void
   PartialSum<Card>::dispose(void){
-    if (sum != NULL)
-      heap.free<int>(sum,size);
-    sum = NULL;
-    size = 0;
-  }
-
-  /// \brief Destructor
-  template<class Card>
-  forceinline
-  PartialSum<Card>::~PartialSum(void){
-    dispose();
+    size = -1;
   }
 
   /// \brief Constructor
   template<class Card>
   forceinline
-  PartialSum<Card>::PartialSum(void) : sum(NULL), size(0) {}
+  PartialSum<Card>::PartialSum(void) : sum(NULL), size(-1) {}
 
   template<class Card>
   forceinline bool
   PartialSum<Card>::initialized(void) const {
-    return sum != NULL;
+    return size != -1;
   }
 
   /**
@@ -304,7 +293,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card>
   inline void
-  PartialSum<Card>::init(ViewArray<Card>& elements, bool up) {
+  PartialSum<Card>::init(Space& home, ViewArray<Card>& elements, bool up) {
     int i = 0;
     int j = 0;
 
@@ -319,7 +308,9 @@ namespace Gecode { namespace Int { namespace GCC {
     size  = elements.size() + holes + 5;
 
     // memory allocation
-    sum = heap.alloc<int>(2*size);
+    if (sum == NULL) {
+      sum = home.alloc<int>(2*size);
+    }
     int* ds  = &sum[size];
 
     int first = elements[0].card();
@@ -503,7 +494,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   forceinline size_t
   PartialSum<Card>::allocated(void) const {
-    return sizeof(PartialSum<Card>) + 2*size*sizeof(int);
+    return sizeof(PartialSum<Card>);
   }
 
 

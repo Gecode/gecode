@@ -43,11 +43,10 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<Card, isView, shared>::
   BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
          bool cf,  bool nolbc) :
-    Propagator(home), x(x0), y(home, x0), k(k0), kk(home, k0),
+    Propagator(home), x(x0), y(home, x0), k(k0),
     card_fixed(cf), skip_lbc(nolbc) {
-    home.notice(*this,AP_DISPOSE);
     y.subscribe(home, *this, PC_INT_BND);
-    kk.subscribe(home, *this, PC_INT_BND);
+    k.subscribe(home, *this, PC_INT_BND);
   }
 
   // for cloning
@@ -60,19 +59,13 @@ namespace Gecode { namespace Int { namespace GCC {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
-    kk.update(home, share, p.kk);
   }
 
   template<class Card, bool isView, bool shared>
   size_t
   BndImp<Card, isView, shared>::dispose(Space& home){
-    home.ignore(*this,AP_DISPOSE);
-    if (!home.failed()) {
-      y.cancel(home,*this, PC_INT_BND);
-      kk.cancel(home,*this, PC_INT_BND);
-    }
-    lps.dispose();
-    ups.dispose();
+    y.cancel(home,*this, PC_INT_BND);
+    k.cancel(home,*this, PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -92,7 +85,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool isView, bool shared>
   PropCost
-  BndImp<Card, isView, shared>::cost(const Space&, const ModEventDelta&) const {
+  BndImp<Card, isView, shared>::cost(const Space&,
+                                     const ModEventDelta& med) const {
     /*
      * The bounds consistent version of the Global Cardinality constraint
      * has a theoretical complexity of
@@ -100,7 +94,11 @@ namespace Gecode { namespace Int { namespace GCC {
      *   n = number of variables
      *   t = time needed to sort the domain bounds of the variables
      */
-    return PropCost::linear(PropCost::HI,x.size());
+    int ksize = isView ? k.size() : 0;
+    if (IntView::me(med) == ME_INT_VAL)
+      return PropCost::linear(PropCost::LO, y.size() + ksize);
+    else
+      return PropCost::quadratic(PropCost::LO, x.size() + ksize);
   }
 
   template<class Card, bool isView, bool shared>
@@ -142,15 +140,15 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<Card, isView, shared>::propagate(Space& home,
                                           const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
-      ExecStatus es = prop_val<Card,isView>(home,y,kk);
+      ExecStatus es = prop_val<Card,isView>(home,y,k);
       GECODE_ES_CHECK(es);
       if (es == __ES_SUBSUMED) {
         return ES_SUBSUMED(*this, home);
       }
       // if (y.size() < 2)
       //   return ES_SUBSUMED(*this,home);
-      // if (es == ES_FIX)
-      //   return ES_FIX_PARTIAL(*this,View::med(ME_INT_BND));
+      if (es == ES_FIX)
+        return ES_FIX_PARTIAL(*this,IntView::med(ME_INT_BND));
     }
 
     if (isView)
@@ -261,19 +259,17 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (!lps.initialized()) {
       assert (!ups.initialized());
-      lps.init(k, false);
-      ups.init(k, true);
+      lps.init(home, k, false);
+      ups.init(home, k, true);
     } else if (isView) {
       // if there has been a change to the cardinality variables
       // reconstruction of the partial sum structure is necessary
       if (lps.check_update_min(k)) {
-        lps.dispose();
-        lps.init(k, false);
+        lps.init(home, k, false);
       }
 
       if (ups.check_update_max(k)) {
-        ups.dispose();
-        ups.init(k, true);
+        ups.init(home, k, true);
       }
     }
 

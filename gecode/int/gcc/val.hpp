@@ -147,13 +147,14 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned &= b;
       if (b) {
         int idx = lookupValue(k,x[i].val());
-        if (idx == -1)
+        if (idx == -1) {
           return ES_FAILED;
+        }
+        assert(idx >= 0 && idx < m);
         count[idx]++;
         noa++;
       }
     }
-
     // number of unassigned views
     int  non = x.size() - noa;
 
@@ -208,10 +209,12 @@ namespace Gecode { namespace Int { namespace GCC {
         // try to assign it
         if (!x[i].assigned()) {
           ModEvent me = x[i].eq(home, k[single].card());
+          assert(single >= 0 && single < m);
           count[single]++;
           GECODE_ME_CHECK(me);
         }
       }
+      assert(single >= 0 && single < m);
       // this might happen in case of sharing
       if (x.shared(home) && count[single] < k[single].min()) {
         count[single] = k[single].min();
@@ -237,6 +240,7 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = m; i--; ) {
       int ci = count[i] + k[i].counter();
       if (ci == k[i].max() && !onrem[i]) {
+        assert(rs >= 0 && rs < m);
         rem[rs] = k[i].card();
         k[i].counter(ci);
         rs++;
@@ -250,8 +254,9 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       } else {
-        if (ci > k[i].max())
+        if (ci > k[i].max()) {
           return ES_FAILED;
+        }
 
         // in case of variable cardinalities
         if (isView) {
@@ -280,8 +285,10 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n; i--; ) {
       if (x[i].assigned()) {
         int idx = lookupValue(k,x[i].val());
-        if (idx == -1)
+        if (idx == -1) {
           return ES_FAILED;
+        }
+        assert(idx >= 0 && idx < m);
         if (onrem[idx]) {
           x[i] = x[--n];
         }
@@ -296,8 +303,9 @@ namespace Gecode { namespace Int { namespace GCC {
         IntSetRanges rr(remset);
         if (!x[i].assigned()) {
           ModEvent me = x[i].minus_r(home, rr);
-          if (me_failed(me))
+          if (me_failed(me)) {
             return ES_FAILED;
+          }
           mod |= x[i].assigned();
         }
       }
@@ -308,8 +316,10 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = x.size(); i--; ) {
       if (x[i].assigned()) {
         int idx = lookupValue(k,x[i].val());
-        if (idx == -1)
+        if (idx == -1) {
           return ES_FAILED;
+        }
+        assert(idx >= 0 && idx < m);
         count[idx]++;
       } else {
         all_assigned = false;
