@@ -274,7 +274,7 @@ namespace Gecode { namespace FlatZinc {
       registry().post(*this, ce, ann);
     } catch (Gecode::Exception& e) {
       throw FlatZinc::Error("Gecode", e.what());
-    } catch (AST::Error& e) {
+    } catch (AST::TypeError& e) {
       throw FlatZinc::Error("Type error", e.what());
     }
   }
@@ -314,7 +314,7 @@ namespace Gecode { namespace FlatZinc {
               _noOfSols = 0;
           }
           hadSearchAnnotation = true;
-        } catch (AST::Error& e) {
+        } catch (AST::TypeError& e) {
           (void) e;
           try {
             AST::Call *call = flatAnn[i]->getCall("bool_search");
@@ -330,7 +330,7 @@ namespace Gecode { namespace FlatZinc {
                   _noOfSols = 0;
             }
             hadSearchAnnotation = true;
-          } catch (AST::Error& e) {
+          } catch (AST::TypeError& e) {
             (void) e;
   #ifdef GECODE_HAS_SET_VARS
             try {
@@ -347,7 +347,7 @@ namespace Gecode { namespace FlatZinc {
                   _noOfSols = 0;
               }
               hadSearchAnnotation = true;
-            } catch (AST::Error& e) {
+            } catch (AST::TypeError& e) {
               (void) e;
               std::cerr << "Warning, ignored search annotation: ";
               flatAnn[i]->print(std::cerr);

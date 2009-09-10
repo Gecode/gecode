@@ -49,12 +49,13 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   class Array;
   class SetLit;
   
-  class Error {
+  /// Exception signaling type error
+  class TypeError {
   private:
     std::string _what;
   public:
-    Error() : _what("") {}
-    Error(std::string what) : _what(what) {}
+    TypeError() : _what("") {}
+    TypeError(std::string what) : _what(what) {}
     std::string what(void) const { return _what; }
   };
   
@@ -242,7 +243,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     Array* getArgs(unsigned int n) {
       Array *a = args->getArray();
       if (a->a.size() != n)
-        throw Error("arity mismatch");
+        throw TypeError("arity mismatch");
       return a;
     }
   };
@@ -322,7 +323,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   Node::getCall(void) {
     if (Call* a = dynamic_cast<Call*>(this))
       return a;
-    throw Error("call expected");
+    throw TypeError("call expected");
   }
 
   inline bool
@@ -359,57 +360,57 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       if (a->id == id)
         return a;
     }
-    throw Error("call expected");
+    throw TypeError("call expected");
   }
   
   inline Array*
   Node::getArray(void) {
     if (Array* a = dynamic_cast<Array*>(this))
       return a;
-    throw Error("array expected");
+    throw TypeError("array expected");
   }
   
   inline int
   Node::getIntVar(void) {
     if (IntVar* a = dynamic_cast<IntVar*>(this))
       return a->i;
-    throw Error("integer variable expected");
+    throw TypeError("integer variable expected");
   }
   inline int
   Node::getBoolVar(void) {
     if (BoolVar* a = dynamic_cast<BoolVar*>(this))
       return a->i;
-    throw Error("bool variable expected");
+    throw TypeError("bool variable expected");
   }
   inline int
   Node::getSetVar(void) {
     if (SetVar* a = dynamic_cast<SetVar*>(this))
       return a->i;
-    throw Error("set variable expected");
+    throw TypeError("set variable expected");
   }
   inline int
   Node::getInt(void) {
     if (IntLit* a = dynamic_cast<IntLit*>(this))
       return a->i;
-    throw Error("integer literal expected");
+    throw TypeError("integer literal expected");
   }
   inline bool
   Node::getBool(void) {
     if (BoolLit* a = dynamic_cast<BoolLit*>(this))
       return a->b;
-    throw Error("bool literal expected");
+    throw TypeError("bool literal expected");
   }
   inline SetLit*
   Node::getSet(void) {
     if (SetLit* a = dynamic_cast<SetLit*>(this))
       return a;
-    throw Error("set literal expected");
+    throw TypeError("set literal expected");
   }
   inline std::string
   Node::getString(void) {
     if (String* a = dynamic_cast<String*>(this))
       return a->s;
-    throw Error("string literal expected");
+    throw TypeError("string literal expected");
   }
   inline bool
   Node::isIntVar(void) {
