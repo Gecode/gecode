@@ -192,7 +192,11 @@ namespace Gecode { namespace FlatZinc {
   
   FlatZincSpace::FlatZincSpace(int intVars,
                                  int boolVars,
+#ifdef GECODE_HAS_SET_VARS
                                  int setVars)
+#else
+                                 int)
+#endif
   : intVarCount(0), boolVarCount(0), setVarCount(0),
     iv(*this, intVars), iv_introduced(intVars),
     bv(*this, boolVars), bv_introduced(boolVars)
@@ -263,7 +267,7 @@ namespace Gecode { namespace FlatZinc {
   }
   #else
   void
-  FlatZincSpace::newSetVar(SetVarSpec* vs) {
+  FlatZincSpace::newSetVar(SetVarSpec*) {
     throw FlatZinc::Error("Gecode", "set variables not supported");
   }
   #endif
