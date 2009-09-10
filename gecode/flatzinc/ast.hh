@@ -43,6 +43,11 @@
 #include <iostream>
 #include <cstdlib>
 
+/**
+ * \namespace Gecode::FlatZinc::AST
+ * \brief Abstract syntax trees for the %FlatZinc interpreter
+ */
+
 namespace Gecode { namespace FlatZinc { namespace AST {
   
   class Call;

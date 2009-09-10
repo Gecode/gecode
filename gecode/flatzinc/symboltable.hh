@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __FLATZINC_SYMBOL_TABLE_HH__
-#define __FLATZINC_SYMBOL_TABLE_HH__
+#ifndef __GECODE_FLATZINC_SYMBOLTABLE_HH__
+#define __GECODE_FLATZINC_SYMBOLTABLE_HH__
 
 #include <map>
 #include <vector>

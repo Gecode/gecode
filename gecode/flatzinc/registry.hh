@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __FLATZINC_REGISTRY_HH__
-#define __FLATZINC_REGISTRY_HH__
+#ifndef __GECODE_FLATZINC_REGISTRY_HH__
+#define __GECODE_FLATZINC_REGISTRY_HH__
 
 #include <gecode/flatzinc.hh>
 #include <string>

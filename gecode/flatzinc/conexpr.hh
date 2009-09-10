@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __FLATZINC_CONEXPR_HH__
-#define __FLATZINC_CONEXPR_HH__
+#ifndef __GECODE_FLATZINC_CONEXPR_HH__
+#define __GECODE_FLATZINC_CONEXPR_HH__
 
 #include <string>
 #include <gecode/flatzinc/ast.hh>

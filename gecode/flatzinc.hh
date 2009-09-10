@@ -79,6 +79,15 @@
 
 #include <gecode/driver.hh>
 
+/**
+ * \namespace Gecode::FlatZinc
+ * \brief Interpreter for the %FlatZinc language
+ *
+ * The Gecode::FlatZinc namespace contains all functionality required
+ * to parse and solve constraint models written in the %FlatZinc language.
+ *
+ */
+
 namespace Gecode { namespace FlatZinc {
 
   /**
