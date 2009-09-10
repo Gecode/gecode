@@ -218,7 +218,6 @@ namespace Gecode { namespace Int { namespace Linear {
    * Greater or equal propagator (integer rhs)
    *
    */
-
   template<class VX>
   forceinline
   GqBoolInt<VX>::GqBoolInt(Space& home, ViewArray<VX>& x, int c)
@@ -336,143 +335,74 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX>
   forceinline
-  EqBoolInt<VX>::Small::Small(Space& home, ViewArray<VX>& x,
-                                int c)
-    : SmallLinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
+  EqBoolInt<VX>::EqBoolInt(Space& home, ViewArray<VX>& x, int c)
+    : LinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
 
   template<class VX>
   forceinline
-  EqBoolInt<VX>::Small::Small(Space& home, bool share,
-                                typename EqBoolInt<VX>::Small& p)
-    : SmallLinBoolInt<VX>(home,share,p) {}
+  EqBoolInt<VX>::EqBoolInt(Space& home, bool share, EqBoolInt<VX>& p)
+    : LinBoolInt<VX>(home,share,p) {}
 
   template<class VX>
   Actor*
-  EqBoolInt<VX>::Small::copy(Space& home, bool share) {
-    return new (home) Small(home,share,*this);
+  EqBoolInt<VX>::copy(Space& home, bool share) {
+    return new (home) EqBoolInt<VX>(home,share,*this);
   }
 
   template<class VX>
   ExecStatus
-  EqBoolInt<VX>::Small::propagate(Space& home, const ModEventDelta&) {
-    // Eliminate assigned views from subscribed views
-    int n_x = x.size();
-    for (int i=n_s; i--; )
-      if (x[i].zero()) {
-        x[i]=x[--n_s]; x[n_s]=x[--n_x];
-      } else if (x[i].one()) {
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
-      }
-    x.size(n_x);
-    if ((c < 0) || (c > n_x))
-      return ES_FAILED;
-    // Find unassigned variables to subscribe to
-    while ((n_s < n_x) && ((n_s <= c) || (n_s <= n_x-c)))
-      if (x[n_s].zero()) {
-        x[n_s]=x[--n_x];
-      } else if (x[n_s].one()) {
-        x[n_s]=x[--n_x]; c--;
-      } else {
-        x[n_s++].subscribe(home,*this,PC_INT_VAL,false);
-      }
-    x.size(n_x);
-    if ((c < 0) || (c > n_x))
-      return ES_FAILED;
-    if (c == 0) {
-      // These are known to be not assigned
-      for (int i=n_s; i--; )
-        GECODE_ME_CHECK(x[i].zero_none(home));
-      // These are not known to be assigned
-      for (int i=n_s+1; i<n_x; i++)
-        GECODE_ME_CHECK(x[i].zero(home));
-      // Fix number of subscriptions such that cancelling subscriptions work
-      n_s = 0;
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
-    if (c == n_x) {
-      // These are known to be not assigned
-      for (int i=n_s; i--; )
-        GECODE_ME_CHECK(x[i].one_none(home));
-      // These are not known to be assigned
-      for (int i=n_s+1; i<n_x; i++)
-        GECODE_ME_CHECK(x[i].one(home));
-      // Fix number of subscriptions such that cancelling subscriptions work
-      n_s = 0;
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
-    return ES_FIX;
-  }
+  EqBoolInt<VX>::advise(Space& home, Advisor& a, const Delta& d) {
+    // Check whether propagator is running
+    if (n_as == 0)
+      return ES_FIX;
 
-
-
-  template<class VX>
-  forceinline
-  EqBoolInt<VX>::Large::Large(Space& home, ViewArray<VX>& x, int c)
-    : LargeLinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
-
-  template<class VX>
-  forceinline
-  EqBoolInt<VX>::Large::Large(Space& home, bool share,
-                              typename EqBoolInt<VX>::Large& p)
-    : LargeLinBoolInt<VX>(home,share,p) {}
-
-  template<class VX>
-  Actor*
-  EqBoolInt<VX>::Large::copy(Space& home, bool share) {
-    return new (home) Large(home,share,*this);
-  }
-
-  template<class VX>
-  ExecStatus
-  EqBoolInt<VX>::Large::advise(Space& home, Advisor& _a, const Delta&) {
-    ViewAdvisor<VX>& a = static_cast<ViewAdvisor<VX>&>(_a);
-    if (n_s == 0)
-      return ES_SUBSUMED_FIX(a,home,co);
-    assert(!a.view().none());
-    if (a.view().one())
+    if (VX::one(d))
       c--;
-    //    std::max(c,x.size()-c)+1;
-    if ((c+1 < n_s) && (x.size() < c))
-      goto subsume;
+    if ((c+1 < n_as) && (x.size()-n_hs < c))
+      goto check;
     // Find a new subscription
-    for (int i = x.size(); i--; )
+    for (int i = x.size()-1; i>=n_hs; i--)
       if (x[i].none()) {
-        a.view(home,x[i]);
-        x.size(i);
+        std::swap(x[i],x[n_hs]);
+        x[n_hs++].subscribe(home,a);
+        x.size(i+1);
         return ES_FIX;
       } else if (x[i].one()) {
         c--;
       }
-    // No view left
-    x.size(0);
-  subsume:
+    // No view left for subscription
+    x.size(n_hs);
+  check:
     // Do not update subscription
-    n_s--;
-    int n = n_s+x.size();
-    if ((c<0) || (c > n))
+    n_as--;
+    int n = x.size()-n_hs+n_as;
+    if ((c < 0) || (c > n))
       return ES_FAILED;
     if ((c == 0) || (c == n))
-      return ES_SUBSUMED_NOFIX(a,home,co);
+      return ES_NOFIX;
     else
-      return ES_SUBSUMED_FIX(a,home,co);
+      return ES_FIX;
   }
 
   template<class VX>
   ExecStatus
-  EqBoolInt<VX>::Large::propagate(Space& home, const ModEventDelta&) {
-    // Signal to advisors that propagator runs
-    assert(x.size() == 0);
-    n_s = 0;
+  EqBoolInt<VX>::propagate(Space& home, const ModEventDelta&) {
+    assert(x.size() == n_hs);
+    // Signal that propagator is running
+    n_as = 0;
     if (c == 0) {
       // All views must be zero to satisfy equality
-      for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
-        GECODE_ME_CHECK(as.advisor().view().zero_none(home));
+      for (int i=n_hs; i--; )
+        if (x[i].none())
+          GECODE_ME_CHECK(x[i].zero_none(home));
     } else {
       // All views must be one to satisfy equality
-      for (Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
-        GECODE_ME_CHECK(as.advisor().view().one_none(home));
+      for (int i=n_hs; i--; )
+        if (x[i].none())
+          GECODE_ME_CHECK(x[i].one_none(home));
     }
-    return ES_SUBSUMED(*this,home);
+    co.dispose(home);
+    return ES_SUBSUMED(*this,sizeof(*this));
   }
 
   template<class VX>
@@ -502,17 +432,8 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_OK;
     }
     x.size(n_x);
-    if (x.size() >= threshold)
-      (void) new (home) Large(home,x,c);
-    else
-      (void) new (home) Small(home,x,c);
+    (void) new (home) EqBoolInt<VX>(home,x,c);
     return ES_OK;
-  }
-
-  template<class VX>
-  ExecStatus
-  EqBoolInt<VX>::Small::post(Space& home, ViewArray<VX>& x, int c) {
-    return EqBoolInt<VX>::post(home,x,c);
   }
 
 

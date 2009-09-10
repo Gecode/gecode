@@ -858,47 +858,24 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template<class VX>
-  class EqBoolInt {
+  class EqBoolInt : public LinBoolInt<VX> {
+  protected:
+    using LinBoolInt<VX>::co;
+    using LinBoolInt<VX>::x;
+    using LinBoolInt<VX>::n_as;
+    using LinBoolInt<VX>::n_hs;
+    using LinBoolInt<VX>::c;
+    /// Constructor for cloning \a p
+    EqBoolInt(Space& home, bool share, EqBoolInt& p);
+    /// Constructor for creation
+    EqBoolInt(Space& home, ViewArray<VX>& x, int c);
   public:
-    /// Threshold of whether to prefer speed or memory
-    static const int threshold = 32;
-    /// Propagator using less memory but with linear runtime
-    class Small : public SmallLinBoolInt<VX> {
-    protected:
-      using SmallLinBoolInt<VX>::x;
-      using SmallLinBoolInt<VX>::n_s;
-      using SmallLinBoolInt<VX>::c;
-    public:
-      /// Constructor for cloning \a p
-      Small(Space& home, bool share, Small& p);
-      /// Constructor for creation
-      Small(Space& home, ViewArray<VX>& x, int c);
-      /// Create copy during cloning
-      virtual Actor* copy(Space& home, bool share);
-      /// Perform propagation
-      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-      /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
-      static ExecStatus post(Space& home, ViewArray<VX>& x, int c);
-    };
-    /// Propagator using more memory but with constant runtime
-    class Large : public LargeLinBoolInt<VX> {
-    protected:
-      using LargeLinBoolInt<VX>::x;
-      using LargeLinBoolInt<VX>::n_s;
-      using LargeLinBoolInt<VX>::c;
-      using LargeLinBoolInt<VX>::co;
-    public:
-      /// Constructor for cloning \a p
-      Large(Space& home, bool share, Large& p);
-      /// Constructor for creation
-      Large(Space& home, ViewArray<VX>& x, int c);
-      /// Create copy during cloning
-      virtual Actor* copy(Space& home, bool share);
-      /// Give advice to propagator
-      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-      /// Perform propagation
-      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    };
+    /// Create copy during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
     static ExecStatus post(Space& home, ViewArray<VX>& x, int c);
   };
