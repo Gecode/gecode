@@ -332,7 +332,7 @@ namespace Test { namespace Int {
            for (int i=1; i<=10; i += 3) {
              IntArgs a1(i, av1);
              IntArgs a2(i, av2);
-             for (int c=0; c<=6; c += 3)
+             for (int c=0; c<=6; c++)
                for (IntRelTypes irts; irts(); ++irts) {
                  (void) new BoolInt("1",a1,irts.irt(),c);
                  (void) new BoolInt("2",a2,irts.irt(),-c);

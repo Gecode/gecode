@@ -172,10 +172,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post_pos_unit_reif(Space& home,
-                     Term<BoolView>* t_p, int n_p,
-                     IntRelType r, int c, BoolView b,
-                     IntConLevel) {
+  post_pos_unit(Space& home,
+                Term<BoolView>* t_p, int n_p,
+                IntRelType r, int c, BoolView b,
+                IntConLevel) {
     switch (r) {
     case IRT_EQ:
       {
@@ -304,10 +304,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post_neg_unit_reif(Space& home,
-                     Term<BoolView>* t_n, int n_n,
-                     IntRelType r, int c, BoolView b,
-                     IntConLevel) {
+  post_neg_unit(Space& home,
+                Term<BoolView>* t_n, int n_n,
+                IntRelType r, int c, BoolView b,
+                IntConLevel) {
     switch (r) {
     case IRT_EQ:
       {
@@ -574,10 +574,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (unit && (n_n == 0)) {
       /// All coefficients are 1
-      post_pos_unit_reif(home,t_p,n_p,r,c,b,icl);
+      post_pos_unit(home,t_p,n_p,r,c,b,icl);
     } else if (unit && (n_p == 0)) {
       // All coefficients are -1
-      post_neg_unit_reif(home,t_n,n_n,r,c,b,icl);
+      post_neg_unit(home,t_n,n_n,r,c,b,icl);
     } else {
       // Mixed coefficients
       /*

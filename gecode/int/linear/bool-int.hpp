@@ -39,6 +39,8 @@
 
 #include <algorithm>
 
+#include <gecode/int/bool.hh>
+
 namespace Gecode { namespace Int { namespace Linear {
 
   /*
@@ -65,17 +67,20 @@ namespace Gecode { namespace Int { namespace Linear {
         if (!x[i].none()) {
           x[i]=x[--n_hs]; x[n_hs]=x[--n_x];
         }
-      n_hs = n_as; x.size(n_x);
+      x.size(n_x);
     }
+    assert(n_as == n_hs);
     // Remove assigned yet unsubscribed views
-    int n_x = x.size();
-    for (int i=n_x-1; i>=n_hs; i--)
-      if (x[i].one()) {
-        c--; x[i]=x[--n_x];
-      } else if (x[i].zero()) {
-        x[i]=x[--n_x];
-      }
-    x.size(n_x);
+    {
+      int n_x = x.size();
+      for (int i=n_x-1; i>=n_hs; i--)
+        if (x[i].one()) {
+          c--; x[i]=x[--n_x];
+        } else if (x[i].zero()) {
+          x[i]=x[--n_x];
+        }
+      x.size(n_x);
+    }
   }
 
   template<class VX>
@@ -198,12 +203,16 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[i].one()) {
         x[i] = x[--n_x]; c--;
       }
+    x.size(n_x);
     // RHS too large
     if (n_x < c)
       return ES_FAILED;
     // Whatever the x[i] take for values, the inequality is subsumed
     if (c <= 0)
       return ES_OK;
+    // Use Boolean disjunction for this special case
+    if (c == 1)
+      return Bool::NaryOrTrue<VX>::post(home,x);
     // All views must be one to satisfy inequality
     if (c == n_x) {
       for (int i=n_x; i--; )
@@ -212,7 +221,6 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     // This is the needed invariant as c+1 subscriptions must be created
     assert(n_x > c);
-    x.size(n_x);
     (void) new (home) GqBoolInt<VX>(home,x,c);
     return ES_OK;
   }
@@ -307,6 +315,7 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[i].one()) {
         x[i] = x[--n_x]; c--;
       }
+    x.size(n_x);
     // RHS too small or too large
     if ((c < 0) || (c > n_x))
       return ES_FAILED;
@@ -322,7 +331,6 @@ namespace Gecode { namespace Int { namespace Linear {
         GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
-    x.size(n_x);
     (void) new (home) EqBoolInt<VX>(home,x,c);
     return ES_OK;
   }
@@ -612,14 +620,26 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[i].one()) {
         x[i] = x[--n_x]; c--;
       }
+    x.size(n_x);
     if (n_x < c) {
       // RHS too large
       GECODE_ME_CHECK(b.zero_none(home));
     } else if (c <= 0) {
       // Whatever the x[i] take for values, the inequality is subsumed
       GECODE_ME_CHECK(b.one_none(home));
+    } else if (c == 1) {
+      // Equivalent to Boolean disjunction
+      return Bool::NaryOr<VX,VB>::post(home,x,b);
+    } else if (c == n_x) {
+      // Equivalent to Boolean conjunction, transform to Boolean disjunction
+      ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,n_x);
+      for (int i=n_x; i--; )
+        nx[i]=BoolNegTraits<VX>::neg(x[i]);
+      return Bool::NaryOr
+        <typename BoolNegTraits<VX>::NegView,
+         typename BoolNegTraits<VB>::NegView>
+        ::post(home,nx,BoolNegTraits<VB>::neg(b));
     } else {
-      x.size(n_x);
       (void) new (home) ReGqBoolInt<VX,VB>(home,x,c,b);
     }
     return ES_OK;
@@ -692,14 +712,27 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[i].one()) {
         x[i] = x[--n_x]; c--;
       }
+    x.size(n_x);
     if ((n_x < c) || (c < 0)) {
       // RHS too large
       GECODE_ME_CHECK(b.zero_none(home));
     } else if ((c == 0) && (n_x == 0)) {
       // all variables set, and c == 0: equality
       GECODE_ME_CHECK(b.one_none(home));
+    } else if (c == 0) {
+      // Equivalent to Boolean disjunction
+      return Bool::NaryOr<VX,typename BoolNegTraits<VB>::NegView>
+        ::post(home,x,BoolNegTraits<VB>::neg(b));
+    } else if (c == n_x) {
+      // Equivalent to Boolean conjunction, transform to Boolean disjunction
+      ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,n_x);
+      for (int i=n_x; i--; )
+        nx[i]=BoolNegTraits<VX>::neg(x[i]);
+      return Bool::NaryOr
+        <typename BoolNegTraits<VX>::NegView,
+         typename BoolNegTraits<VB>::NegView>
+        ::post(home,nx,BoolNegTraits<VB>::neg(b));
     } else {
-      x.size(n_x);
       (void) new (home) ReEqBoolInt<VX,VB>(home,x,c,b);
     }
     return ES_OK;
