@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual size_t allocated(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Cost funtion returning dynamic low linear
+    /// Cost funtion
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

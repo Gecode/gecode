@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     unsigned int n = x.size();
     unsigned int d = x[n-1].size();
-    for (int i = n; i--; )
+    for (int i=n-1; i--; )
       if (x[i].size() > d)
         d = x[i].size();
 
@@ -128,7 +128,6 @@ namespace Gecode { namespace Int { namespace GCC {
       return PropCost::cubic(PropCost::LO,x.size());
   }
 
-  /// \brief Perform domain propagation.
   template<class Card, bool isView>
   ExecStatus
   Dom<Card, isView>::propagate(Space& home, const ModEventDelta&) {

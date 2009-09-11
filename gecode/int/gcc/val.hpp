@@ -83,20 +83,20 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  /**
-   * \brief Complexity depends on the time needed for value lookup in \a k
-   * which is O(n log n).
-   *
-   */
   template<class Card, bool isView>
   PropCost
   Val<Card, isView>::cost(const Space&, const ModEventDelta&) const {
+    /*
+     * Complexity depends on the time needed for value lookup in \a k
+     * which is O(n log n).
+     */
     return PropCost::linear(PropCost::HI,x.size());
   }
 
   template<class Card, bool isView>
   ExecStatus
-  prop_val(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+  prop_val(Space& home, Propagator&p, 
+           ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
 
     bool mod = false;
@@ -160,18 +160,15 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // check for subsumption
     if (all_assigned) {
-      for (int i = m; i--; ) {
+      for (int i = m; i--; )
         GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
-      }
-      return __ES_SUBSUMED;
+      return ES_SUBSUMED(p,home);
     }
 
     // total number of unsatisfied miminum occurences
     int req = 0;
-
     // number of values whose min requirements are not yet met
     int n_r = 0;
-
     // if only one value is unsatisified single holds the index of that value
     int single = 0;
 
@@ -186,9 +183,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
       // number of unassigned views cannot satisfy
       // the required minimum occurence
-      if (req > non) {
+      if (req > non)
         return ES_FAILED;
-      }
     }
 
     // if only one unsatisfied occurences is left
@@ -208,10 +204,9 @@ namespace Gecode { namespace Int { namespace GCC {
         count[single] = k[single].min();
       }
 
-      for (int i = m; i--; ) {
-        GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
-      }
-      return __ES_SUBSUMED;
+      for (int i = m; i--; )
+        GECODE_ME_CHECK(k[i].eq(home, count[i] + k[i].counter()));
+      return ES_SUBSUMED(p,home);
     }
 
     for (int i = m; i--; ) {
@@ -304,10 +299,9 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     if (all_assigned) {
-      for (int i = k.size(); i--; ) {
+      for (int i = k.size(); i--; )
         GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
-      }
-      return __ES_SUBSUMED;
+      return ES_SUBSUMED(p,home);
     }
 
     if (isView) {
@@ -345,10 +339,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card, bool isView>
   ExecStatus
   Val<Card, isView>::propagate(Space& home, const ModEventDelta&) {
-    ExecStatus es = prop_val<Card,isView>(home, x, k);
-    return (es == __ES_SUBSUMED) ? ES_SUBSUMED(*this, home) : es;
+    return prop_val<Card,isView>(home, *this, x, k);
   }
-
 
 }}}
 

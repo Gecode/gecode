@@ -87,13 +87,6 @@ namespace Gecode { namespace Int { namespace GCC {
   PropCost
   BndImp<Card, isView, shared>::cost(const Space&,
                                      const ModEventDelta& med) const {
-    /*
-     * The bounds consistent version of the Global Cardinality constraint
-     * has a theoretical complexity of
-     *   O(t + n\cdot log(n)) with
-     *   n = number of variables
-     *   t = time needed to sort the domain bounds of the variables
-     */
     int ksize = isView ? k.size() : 0;
     if (IntView::me(med) == ME_INT_VAL)
       return PropCost::linear(PropCost::LO, y.size() + ksize);
@@ -140,17 +133,10 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<Card, isView, shared>::propagate(Space& home,
                                           const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
-      ExecStatus es = prop_val<Card,isView>(home,y,k);
-      switch (es) {
-      case __ES_SUBSUMED:
-        return ES_SUBSUMED(*this, home);
-      case ES_FAILED:
-        return ES_FAILED;
-      case ES_FIX:
+      ExecStatus es = prop_val<Card,isView>(home,*this,y,k);
+      GECODE_ES_CHECK(es);
+      if (es == ES_FIX)
         return ES_FIX_PARTIAL(*this,IntView::med(ME_INT_BND));
-      default:
-        break;
-      }
     }
 
     if (isView)
@@ -183,26 +169,19 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (isView) {
       // before propagation performs inferences on cardinality variables:
-      if (noa > 0) {
-        int n  = x.size();
-        int ks = k.size();
-
-        for (int i = ks; i--; ) {
+      if (noa > 0)
+        for (int i = k.size(); i--; )
           if (!k[i].assigned()) {
-            int ub = n - (noa - count[i]);
-            int lb = count[i];
-            GECODE_ME_CHECK(k[i].lq(home, ub));
-            GECODE_ME_CHECK(k[i].gq(home, lb));
+            GECODE_ME_CHECK(k[i].lq(home, x.size() - (noa - count[i])));
+            GECODE_ME_CHECK(k[i].gq(home, count[i]));
           }
-        }
-      }
 
       if (!card_consistent<Card>(x, k))
         return ES_FAILED;
 
       {
         bool mod;
-        GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k, mod)));
+        GECODE_ES_CHECK((prop_card<Card,shared>(home, x, k, mod)));
       }
 
       // Cardinalities may have been modified, so recompute
@@ -228,13 +207,9 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     if (all_assigned) {
-      for (int i = k.size(); i--; ) {
+      for (int i = k.size(); i--; )
         GECODE_ME_CHECK(k[i].eq(home, count[i]));
-        all_assigned &= (!isView) || k[i].assigned();
-      }
-      if ( (!isView) || all_assigned) {
-        return ES_SUBSUMED(*this,home);
-      }
+      return ES_SUBSUMED(*this,home);
     }
 
     if (isView)
@@ -267,13 +242,10 @@ namespace Gecode { namespace Int { namespace GCC {
     } else if (isView) {
       // if there has been a change to the cardinality variables
       // reconstruction of the partial sum structure is necessary
-      if (lps.check_update_min(k)) {
+      if (lps.check_update_min(k))
         lps.init(home, k, false);
-      }
-
-      if (ups.check_update_max(k)) {
+      if (ups.check_update_max(k))
         ups.init(home, k, true);
-      }
     }
 
     // assert that the minimal value of the partial sum structure for
@@ -281,8 +253,6 @@ namespace Gecode { namespace Int { namespace GCC {
     assert(lps.minValue() <= x[nu[0]].min());
     // assert that the maximal value of the partial sum structure for
     // UBC is consistent with the largest value a variable can take
-    //std::cerr << x[mu[x.size() - 1]].max() <<"<="<< ups->maxValue() << "\n";
-    //assert(x[mu[x.size() - 1]].max() <= ups->maxValue());
 
     /*
      *  Setup rank and bounds info
@@ -320,18 +290,16 @@ namespace Gecode { namespace Int { namespace GCC {
             hall[++nb].bounds = last;
           }
           rank[nu[i]].min = nb;
-          if (++i < n) {
+          if (++i < n)
             min = x[nu[i]].min();
-          }
         } else {
           if (max != last) {
             last = max;
             hall[++nb].bounds = last;
           }
           rank[mu[j]].max = nb;
-          if (++j == n) {
+          if (++j == n)
             break;
-          }
           max = x[mu[j]].max() + 1;
         }
       }
@@ -349,9 +317,8 @@ namespace Gecode { namespace Int { namespace GCC {
         }
     }
 
-    if (!card_fixed && !skip_lbc) {
+    if (!card_fixed && !skip_lbc)
       GECODE_ES_CHECK((lbc(home, nb, hall, rank, mu, nu)));
-    }
 
     GECODE_ES_CHECK((ubc(home, nb, hall, rank, mu, nu)));
 
@@ -360,27 +327,21 @@ namespace Gecode { namespace Int { namespace GCC {
       GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k, mod)));
     }
 
-    for (int i = k.size(); i--; ) {
+    for (int i = k.size(); i--; )
       count[i] = 0;
-    }
-    for (int i = x.size(); i--; ) {
+    for (int i = x.size(); i--; )
       if (x[i].assigned()) {
-        int idx = lookupValue(k,x[i].val());
-        count[idx]++;
+        count[lookupValue(k,x[i].val())]++;
       } else {
         // We won't need the remaining counts, they're only used when
         // all x are assigned
         return ES_NOFIX;
       }
-    }
 
-    all_assigned = true;
-    for (int i = k.size(); i--; ) {
+    for (int i = k.size(); i--; )
       GECODE_ME_CHECK(k[i].eq(home, count[i]));
-      all_assigned &= (!isView) || k[i].assigned();
-    }
 
-    return all_assigned ? ES_SUBSUMED(*this,home) : ES_NOFIX;
+    return ES_SUBSUMED(*this,home);
   }
 
   /**
