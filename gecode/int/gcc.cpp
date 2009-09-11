@@ -40,25 +40,20 @@
 #include <gecode/int/gcc.hh>
 
 namespace Gecode {
-  using namespace Int;
-  using namespace Int::GCC;
-  using namespace Support;
 
-  // variable cardinality
-
-  void count(Space& home, const  IntVarArgs& x,
-             const  IntVarArgs& c, const  IntArgs& v,
+  void count(Space& home, const IntVarArgs& x,
+             const IntVarArgs& c, const IntArgs& v,
              IntConLevel icl) {
+    using namespace Int;
     if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
       throw ArgumentSame("Int::count");
-
     if (home.failed())
       return;
 
     ViewArray<IntView> xv(home, x);
-    ViewArray<CardView> cv(home, c);
+    ViewArray<GCC::CardView> cv(home, c);
     // set the cardinality
     for (int i = v.size(); i--; ) {
       cv[i].card(v[i]);
@@ -66,13 +61,16 @@ namespace Gecode {
     }
     switch (icl) {
     case ICL_BND:
-      GECODE_ES_FAIL(home, (GCC::Bnd<CardView, true>::post(home, xv, cv)));
+      GECODE_ES_FAIL(home, 
+                     (GCC::Bnd<GCC::CardView, true>::post(home, xv, cv)));
       break;
     case ICL_DOM:
-      GECODE_ES_FAIL(home, (GCC::Dom<CardView, true>::post(home, xv, cv)));
+      GECODE_ES_FAIL(home, 
+                     (GCC::Dom<GCC::CardView, true>::post(home, xv, cv)));
       break;
     default:
-      GECODE_ES_FAIL(home, (GCC::Val<CardView, true>::post(home, xv, cv)));
+      GECODE_ES_FAIL(home, 
+                     (GCC::Val<GCC::CardView, true>::post(home, xv, cv)));
     }
   }
 
@@ -89,6 +87,7 @@ namespace Gecode {
   void count(Space& home, const IntVarArgs& x,
              const IntSetArgs& c, const IntArgs& v,
              IntConLevel icl) {
+    using namespace Int;
     if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
@@ -107,7 +106,7 @@ namespace Gecode {
     for (int i = v.size(); i--; ) {
       if (c[i].ranges() > 1) {
         // Found hole, so create temporary variables
-        ViewArray<CardView> cv(home, v.size());
+        ViewArray<GCC::CardView> cv(home, v.size());
         for (int j = v.size(); j--; ) {
           IntVar card(home, c[j]);
           cv[j] = IntView(card);
@@ -116,20 +115,23 @@ namespace Gecode {
         }
         switch (icl) {
         case ICL_BND:
-          GECODE_ES_FAIL(home, (GCC::Bnd<CardView, true>::post(home, xv, cv)));
+          GECODE_ES_FAIL(home, 
+                         (GCC::Bnd<GCC::CardView, true>::post(home, xv, cv)));
           break;
         case ICL_DOM:
-          GECODE_ES_FAIL(home, (GCC::Dom<CardView, true>::post(home, xv, cv)));
+          GECODE_ES_FAIL(home, 
+                         (GCC::Dom<GCC::CardView, true>::post(home, xv, cv)));
           break;
         default:
-          GECODE_ES_FAIL(home, (GCC::Val<CardView, true>::post(home, xv, cv)));
+          GECODE_ES_FAIL(home, 
+                         (GCC::Val<GCC::CardView, true>::post(home, xv, cv)));
         }
         return;
       }
     }
     
     // No holes: create OccurBndsViews
-    ViewArray<OccurBndsView> cv(home, c.size());
+    ViewArray<GCC::OccurBndsView> cv(home, c.size());
     for (int i = c.size(  ); i--; ) {
       cv[i].card(v[i]);
       cv[i].counter(0);
@@ -139,15 +141,15 @@ namespace Gecode {
     switch (icl) {
     case ICL_BND:
       GECODE_ES_FAIL(home,
-        (GCC::Bnd<OccurBndsView, false>::post(home, xv, cv)));
+        (GCC::Bnd<GCC::OccurBndsView, false>::post(home, xv, cv)));
       break;
     case ICL_DOM:
       GECODE_ES_FAIL(home,
-        (GCC::Dom<OccurBndsView, false>::post(home, xv, cv)));
+        (GCC::Dom<GCC::OccurBndsView, false>::post(home, xv, cv)));
       break;
     default:
       GECODE_ES_FAIL(home,
-        (GCC::Val<OccurBndsView, false>::post(home, xv, cv)));
+        (GCC::Val<GCC::OccurBndsView, false>::post(home, xv, cv)));
     }
   }
 
