@@ -99,8 +99,8 @@ class BlackHoleBranch : Brancher {
 protected:
   /// Views of the brancher
   ViewArray<Int::IntView> x;
-  /// Cache of last computed decision
-  mutable int pos, val;
+  /// Cache of first unassigned variable
+  mutable int start;
   /// Choice
   class Choice : public Gecode::Choice {
   public:
@@ -121,39 +121,41 @@ protected:
 
   /// Construct brancher
   BlackHoleBranch(Space& home, ViewArray<Int::IntView>& xv)
-    : Brancher(home), x(xv), pos(-1), val(-1) {}
+    : Brancher(home), x(xv), start(0) {}
   /// Copy constructor
   BlackHoleBranch(Space& home, bool share, BlackHoleBranch& b)
-    : Brancher(home, share, b), pos(b.pos), val(b.val) {
+    : Brancher(home, share, b), start(b.start) {
     x.update(home, share, b.x);
   }
 
 public:
   /// Check status of brancher, return true if alternatives left.
   virtual bool status(const Space&) const {
-    for (pos = 0; pos < x.size(); ++pos)
-      if (!x[pos].assigned()) {
-        int w = 4;
-        for (Int::ViewValues<Int::IntView> vals(x[pos]); vals(); ++vals)
-          if (layer[vals.val()] < w) {
-            val = vals.val();
-            if ((w = layer[vals.val()]) == 0) break;
-          }
+    for (int i = start; i < x.size(); ++i)
+      if (!x[i].assigned()) {
+        start = i;
         return true;
       }
-    // No non-assigned variables left
+    // No non-assigned orders left
     return false;
   }
   /// Return choice
   virtual Choice* choice(Space&) {
-    assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
-    return new Choice(*this, pos, val);
+    int val = -1;
+    int w = 4;
+    for (Int::ViewValues<Int::IntView> vals(x[start]); vals(); ++vals)
+      if (layer[vals.val()] < w) {
+        val = vals.val();
+        if ((w = layer[vals.val()]) == 0) break;
+      }
+
+    assert(val >= 1 && val < 52);
+    return new Choice(*this, start, val);
   }
   /// Perform commit for choice \a _c and alternative \a a.
   virtual ExecStatus commit(Space& home, const Gecode::Choice& _c,
                             unsigned int a) {
     const Choice& c = static_cast<const Choice&>(_c);
-    pos = val = -1;
     if (a)
       return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
     else
@@ -169,7 +171,7 @@ public:
     (void) new (home) BlackHoleBranch(home, xv);
   }
   /// Delete brancher and return its size
-  virtual size_t dispose(Space& home) {
+  virtual size_t dispose(Space&) {
     return sizeof(*this);
   }
 };

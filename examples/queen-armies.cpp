@@ -168,7 +168,7 @@ public:
   class QueenBranch : Brancher {
   private:
     /// Cache of last computed decision
-    mutable int pos;
+    mutable int start;
     /// Choice
     class Choice : public Gecode::Choice {
     public:
@@ -189,19 +189,30 @@ public:
 
     /// Construct brancher
     QueenBranch(Space& home)
-      : Brancher(home), pos(-1) {}
+      : Brancher(home), start(0) {}
     /// Constructor for cloning
     QueenBranch(Space& home, bool share, QueenBranch& b)
-      : Brancher(home, share, b), pos(b.pos) {}
+      : Brancher(home, share, b), start(b.start) {}
 
   public:
     /// Check status of brancher, return true if alternatives left.
     virtual bool status(const Space& home) const {
       const QueenArmies& q = static_cast<const QueenArmies&>(home);
+      for (int i = start; i < q.n*q.n; ++i)
+        if (!q.w[i].assigned()) {
+          start = i;
+          return true;
+        }
+      // No non-assigned orders left
+      return false;
+    }
+    /// Return choice
+    virtual Gecode::Choice* choice(Space& home) {
+      const QueenArmies& q = static_cast<const QueenArmies&>(home);
       int maxsize = -1;
-      pos = -1;
+      int pos = -1;
 
-      for (int i = q.n*q.n; i--; ) {
+      for (int i = start; i < q.n*q.n; ++i) {
         if (q.w[i].assigned()) continue;
         IntSetRanges ai(A[i]);
         SetVarUnknownRanges qU(q.U);
@@ -212,11 +223,7 @@ public:
           pos = i;
         }
       }
-      if (pos == -1) return false;
-      return true;
-    }
-    /// Return choice
-    virtual Gecode::Choice* choice(Space&) {
+
       assert(pos != -1);
       return new Choice(*this, pos, true);
     }
@@ -241,7 +248,7 @@ public:
       (void) new (home) QueenBranch(home);
     }
     /// Delete brancher and return its size
-    virtual size_t dispose(Space& home) {
+    virtual size_t dispose(Space&) {
       return sizeof(*this);
     }
   };
