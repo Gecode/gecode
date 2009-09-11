@@ -942,6 +942,8 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLinBoolInt<VX,VB>::x;
     using ReLinBoolInt<VX,VB>::c;
     using ReLinBoolInt<VX,VB>::b;
+    using ReLinBoolInt<VX,VB>::n_s;
+    using ReLinBoolInt<VX,VB>::normalize;
     /// Constructor for cloning \a p
     ReGqBoolInt(Space& home, bool share, ReGqBoolInt& p);
     /// Constructor for creation
@@ -970,6 +972,8 @@ namespace Gecode { namespace Int { namespace Linear {
     using ReLinBoolInt<VX,VB>::x;
     using ReLinBoolInt<VX,VB>::c;
     using ReLinBoolInt<VX,VB>::b;
+    using ReLinBoolInt<VX,VB>::n_s;
+    using ReLinBoolInt<VX,VB>::normalize;
     /// Constructor for cloning \a p
     ReEqBoolInt(Space& home, bool share, ReEqBoolInt& p);
     /// Constructor for creation
