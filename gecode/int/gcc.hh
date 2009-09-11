@@ -47,7 +47,7 @@
 /**
  * \namespace Gecode::Int::GCC
  * \brief Global cardinality propagators
- * \note The global cardinality propagator with fixed cardinalities does not
+ * \note The global cardinality propagator with fixed cardinalities does
  *       not support sharing!
  *
  */
@@ -56,43 +56,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Bounds consistent global cardinality propagator
-   * \par [Reference]
-   *  The algorithm is taken from: \n
-     \verbatim
-     @PROCEEDINGS{quimper-efficient,
-     title     = {An Efficient Bounds Consistency Algorithm
-                  for the Global Cardinality Constraint},
-     year      = {2003},
-     volume    = {2833},
-     address   = {Kinsale, Ireland},
-     month     = {September},
-     author    = {Claude-Guy Quimper and Peter van Beek
-                  and Alejandro López-Ortiz
-                  and Alexander Golynski and Sayyed Bashir Sadjad},
-     booktitle = {Proceedings of the 9th International Conference
-                  on Principles and Practice of
-                  Constraint Programming},
-     pages     = {600--614},
-     url       = {http://ai.uwaterloo.ca/~vanbeek/publications},
-     }
-     @TECHREPORT{quimper-efficientTR,
-     author      = {Claude-Guy Quimper and Peter van Beek
-                    and Alejandro López-Ortiz
-                    and Alexander Golynski and
-                    Sayyed Bashir Sadjad},
-     title       = {An Efficient Bounds Consistency Algorithm
-                    for the Global Cardinality Constraint,
-                    Technical Report},
-     institution = {School of Computer Science,
-                    University of Waterloo, Waterloo, Canada},
-     year        = {2003},
-     url         = {http://ai.uwaterloo.ca/~vanbeek/publications},
-     }
-     \endverbatim
+   * 
+   * The algorithm is taken from:
+   *    Claude-Guy Quimper, Peter van Beek, Alejandro López-Ortiz,
+   *    Alexander Golynski, and Sayyed Bashir Sadjad. An Efficient 
+   *    Bounds Consistency Algorithm for the Global Cardinality 
+   *    Constraint, CP 2003, pages 600-614.
    *
    * This implementation uses the code that is provided
-   * by Peter Van Beek:\n
-   * http://ai.uwaterloo.ca/~vanbeek/software/software.html
+   * by Peter Van Beek:
+   *   http://ai.uwaterloo.ca/~vanbeek/software/software.html
    * The code here has only been slightly modified to fit Gecode
    * (taking idempotent/non-idempotent propagation into account)
    * and uses a more efficient layout of datastructures (keeping the
@@ -105,18 +78,11 @@ namespace Gecode { namespace Int { namespace GCC {
    * \ingroup FuncIntProp
    */
   template<class Card, bool isView>
-  class Bnd{
+  class Bnd {
   public:
-    /**
-     * \brief Post propagator for views \a x and cardinalities \a k
-     *
-     * \a all denotes whether the propagator uses all values occuring
-     * in the domains of the problem views specified in \a x. Also
-     * checks whether \a x and \a k contain shared views.
-     */
-    static  ExecStatus  post(Space& home,
-                             ViewArray<IntView>& x,
-                             ViewArray<Card>& k);
+    /// Post propagator for views \a x and cardinalities \a k
+    static ExecStatus post(Space& home,
+                           ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
   /**
@@ -208,8 +174,6 @@ namespace Gecode { namespace Int { namespace GCC {
     ExecStatus ubc(Space& home, int& nb, HallInfo hall[], Rank rank[],
                    int mu[], int nu[]);
   public:
-    /// Destructor
-    virtual size_t dispose(Space& home);
     /// Return how much extra memory is allocated by the propagator
     virtual size_t allocated(void) const;
     /// Copy propagator during cloning
@@ -217,30 +181,18 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Cost funtion returning dynamic low linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Destructor
+    virtual size_t dispose(Space& home);
   };
 
   /**
    * \brief Domain consistent global cardinality propagator
-   * \par [Reference]
-   *  The algorithm is taken from: \n
-   * \anchor CardVarNPCompl
-   \verbatim
-     @PROCEEDINGS{improvedgcc,
-     title     = {Improved Algorithms for the
-                  Global Cardinality Constraint},
-     year      = {2004},
-     volume    = {3528},
-     address   = {Toronto, Canada},
-     month     = {September},
-     author    = {Claude-Guy Quimper and Peter van Beek and
-                  Alejandro López-Ortiz and Alexander Golynski},
-     booktitle = {Proceedings of the 10th International
-                  Conference on Principles and Practice of
-                  Constraint Programming},
-     url       = {http://ai.uwaterloo.ca/~vanbeek/publications},
-     }
-     \endverbatim
+   * 
+   * The algorithm is taken from:
+   *   Claude-Guy Quimper, Peter van Beek, Alejandro López-Ortiz,
+   *   and Alexander Golynski. Improved Algorithms for the
+   *   Global Cardinality Constraint, CP 2004, pages 542-556.
    *
    * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
@@ -293,14 +245,9 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /**
-     * \brief Post propagator for views \a x and cardinalities \a k
-     *
-     * \a all denotes whether the propagator uses all values occuring
-     * in the domains of the problem views specified in \a x.
-     */
-    static  ExecStatus  post(Space& home,
-                             ViewArray<IntView>& x, ViewArray<Card>& k);
+    /// Post propagator for views \a x and cardinalities \a k
+    static ExecStatus post(Space& home,
+                           ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
   /**
@@ -320,7 +267,6 @@ namespace Gecode { namespace Int { namespace GCC {
     Val(Space& home, bool share, Val<Card, isView>& p );
     /// Constructor for posting
     Val(Space& home, ViewArray<IntView>&, ViewArray<Card>&);
-
   public:
     /// Destructor
     virtual size_t dispose(Space& home);
@@ -329,15 +275,10 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Cost funtion returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /**
-     * \brief Post propagator for views \a x and cardinalities \a k
-     *
-     * \a all denotes whether the propagator uses all values occuring
-     * in the domains of the problem views specified in \a x.
-     */
-    static  ExecStatus  post(Space& home,
-                             ViewArray<IntView>& x, ViewArray<Card>& k);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator for views \a x and cardinalities \a k
+    static ExecStatus post(Space& home,
+                           ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
 }}}
