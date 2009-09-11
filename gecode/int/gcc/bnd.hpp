@@ -37,9 +37,8 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  // for posting
   template<class Card, bool isView, bool shared>
-  inline
+  forceinline
   BndImp<Card, isView, shared>::
   BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
          bool cf,  bool nolbc) :
@@ -49,7 +48,6 @@ namespace Gecode { namespace Int { namespace GCC {
     k.subscribe(home, *this, PC_INT_BND);
   }
 
-  // for cloning
   template<class Card, bool isView, bool shared>
   forceinline
   BndImp<Card, isView, shared>::
@@ -344,73 +342,61 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_SUBSUMED(*this,home);
   }
 
-  /**
-   * \brief Sharing test for the bounds consistent global cardinality
-   * propagator.
-   *
-   * Due to parametrization on the problem views, \a View1 and the
-   * cardinality views, \a View2 the test can be applied for both cases
-   * of fixed cardinalities and cardinality variables.
-   */
-  template<class View1, class View2>
-  class SharingTest {
-  public:
-    /**
-     * \brief Test whether the problem views in \a x0 or the
-     *  cardinality views in \a k0 contain shared views.
-     */
-    static bool shared(Space& home, ViewArray<View1>& x0,
-                       ViewArray<View2>& k0) {
-      ViewArray<View1> xc(home, x0.size()+k0.size());
-      for (int i = 0; i < x0.size(); i++) {
-        xc[i] = x0[i];
-      }
-      for (int i = x0.size(); i < x0.size()+k0.size(); i++) {
-        xc[i] = k0[i - x0.size()].intview();
-      }
-      return xc.shared(home);
-    }
-  };
+  /// Before relation for sharing test
+  forceinline bool
+  before(const IntView& x, const CardView& y) {
+    return before(x,y.base());
+  }
+  /// Before relation for sharing test
+  forceinline bool
+  before(const CardView& x, const IntView& y) {
+    return before(x.base(),y);
+  }
+  /// Before relation for sharing test
+  forceinline bool
+  before(const CardView& x, const CardView& y) {
+    return before(x.base(),y.base());
+  }
 
-  /**
-   * \brief Specialization of class SharingTest for the case of fixed
-   * cardinalities using IntView as \a View1 and OccurBndsView as \a View2
-   */
-  template<>
-  class SharingTest<IntView,OccurBndsView> {
-  public:
-    /// Test whether the problem views in \a x0 contain shared views.
-    static bool shared(Space& home,
-                       ViewArray<IntView>& xs, ViewArray<OccurBndsView>&) {
-      return xs.shared(home);
-    }
-  };
+  /// Sharing test for the bounds consistent global cardinality propagator
+  forceinline bool 
+  shared(Space& home, ViewArray<IntView>& x, const ViewArray<CardView>& k) {
+    return x.shared(home,k);
+  }
+
+  /// Sharing test for fixed cardinalities
+  forceinline bool
+  shared(Space& home, ViewArray<IntView>& x, const ViewArray<OccurBndsView>&) {
+    return x.shared(home);
+  }
+
 
   template<class Card, bool isView>
   ExecStatus
-  Bnd<Card, isView>::post(Space& home,
-                          ViewArray<IntView>& x0,
-                          ViewArray<Card>& k0) {
+  Bnd<Card,isView>::post(Space& home,
+                         ViewArray<IntView>& x, ViewArray<Card>& k) {
     bool cardfix = true;
-    bool nolbc = true;
-    for (int i = k0.size(); i--; ) {
-      cardfix &= k0[i].assigned();
-      nolbc &= (k0[i].min() == 0);
-    }
-
-    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home, x0, k0)));
-    if (isDistinct<Card,isView>(home, x0, k0)) {
-      return Distinct::Bnd<IntView>::post(home,x0);
-    } else {
-      if (SharingTest<IntView,Card>::shared(home,x0,k0)) {
-        new (home) BndImp<Card, isView, true>
-          (home, x0, k0, cardfix, nolbc);
-      } else {
-        new (home) BndImp<Card, isView, false>
-          (home, x0, k0, cardfix, nolbc);
+    for (int i=k.size(); i--; )
+      if (!k[i].assigned()) {
+        cardfix = false; break;
       }
-      return ES_OK;
+    bool nolbc = true;
+    for (int i=k.size(); i--; )
+      if (k[i].min() != 0) {
+        nolbc = false; break;
+      }
+
+    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home, x, k)));
+
+    if (isDistinct<Card,isView>(home,x,k))
+      return Distinct::Bnd<IntView>::post(home,x);
+
+    if (shared(home,x,k)) {
+      (void) new (home) BndImp<Card,isView,true>(home,x,k,cardfix,nolbc);
+    } else {
+      (void) new (home) BndImp<Card,isView,false>(home,x,k,cardfix,nolbc);
     }
+      return ES_OK;
   }
 
 }}}

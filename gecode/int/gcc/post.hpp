@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace GCC {
       Region re(home);
       Linear::Term<IntView>* t = re.alloc<Linear::Term<IntView> >(k.size());
       for (int i = k.size(); i--; ) {
-        t[i].a=1; t[i].x=k[i].intview();
+        t[i].a=1; t[i].x=k[i].base();
       }
       Linear::post(home,t,k.size(),IRT_EQ,x.size(),ICL_BND);
     }

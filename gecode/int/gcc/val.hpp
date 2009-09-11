@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool isView>
   ExecStatus
-  prop_val(Space& home, Propagator&p, 
+  prop_val(Space& home, Propagator& p, 
            ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
 

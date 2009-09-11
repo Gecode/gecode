@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void counter(int c);
 
     /// Return used IntView (throws exception)
-    IntView intview(void);
+    IntView base(void);
 
     void init(Space& home, int min, int max, int c);
     ModEvent lq(Space& home, int n);
@@ -186,8 +186,8 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline IntView
-  OccurBndsView::intview(void) {
-    throw Exception("OccurBndsView","Not implemented");
+  OccurBndsView::base(void) {
+    assert(false);
     return IntView();
   }
 
@@ -254,6 +254,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int count;
     using DerivedViewBase<IntView>::view;
   public:
+    /// Default constructor
     CardView(void);
     /// Initialize with integer view \a x and value \a c
     CardView(const IntView& x, int c);
@@ -263,6 +264,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// Return value
     int card(void) const;
+    /// Set value
     void card(int ca);
 
     /// Increment counter
@@ -286,8 +288,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    /// Return used IntView
-    IntView intview(void);
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -511,12 +511,6 @@ namespace Gecode { namespace Int { namespace GCC {
   CardView::val(void) const {
     return view.val();
   }
-
-  forceinline IntView
-  CardView::intview(void){
-    return view;
-  }
-
 
   forceinline unsigned int
   CardView::width(void) const {
