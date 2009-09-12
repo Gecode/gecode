@@ -4,8 +4,12 @@
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
  *     Patrick Pekczynski, 2004
+ *     Christian Schulte, 2009
  *     Guido Tack, 2006
  *
  *  Last modified:

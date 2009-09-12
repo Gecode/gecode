@@ -8,6 +8,7 @@
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
+ *     Mikael Lagerkvist, 2006
  *     Christian Schulte, 2002
  *     Guido Tack, 2004
  *
