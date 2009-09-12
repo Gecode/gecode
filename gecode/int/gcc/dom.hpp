@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   inline
   Dom<Card>::Dom(Space& home, ViewArray<IntView>& x0,
-                         ViewArray<Card>& k0, bool cf)
+                 ViewArray<Card>& k0, bool cf)
     : Propagator(home), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf){
     // y is used for bounds propagation since prop_bnd needs all variables
@@ -469,19 +469,23 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline ExecStatus
-  Dom<Card>::post(Space& home, ViewArray<IntView>& x0,
-                          ViewArray<Card>& k0){
-    GECODE_ES_CHECK((postSideConstraints<Card>(home, x0, k0)));
-    if (isDistinct<Card>(home, x0, k0)) {
-      return Distinct::Dom<IntView>::post(home,x0);
-    } else {
-      bool cardfix = true;
-      for (int i = k0.size(); i--; ) {
-        cardfix &= k0[i].assigned();
+  Dom<Card>::post(Space& home, 
+                  ViewArray<IntView>& x, ViewArray<Card>& k) {
+    GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
+
+    bool s = shared(home,x,k);
+
+    if (!s && isDistinct<Card>(home, x, k))
+      return Distinct::Dom<IntView>::post(home,x);
+
+    bool cardfix = true;
+    for (int i = k.size(); i--; )
+      if (!k[i].assigned()) {
+        cardfix = false; break;
       }
-      (void) new (home) Dom<Card>(home, x0, k0, cardfix);
-      return ES_OK;
-    }
+
+    (void) new (home) Dom<Card>(home, x, k, cardfix);
+    return ES_OK;
   }
 
 }}}

@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     bool shared = x.shared(home);
 
-    if (isDistinct<Card>(home,x,k) && !shared)
+    if (!shared && isDistinct<Card>(home,x,k))
       return Distinct::Val<IntView>::post(home,x);
    
     if (shared)
