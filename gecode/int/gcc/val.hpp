@@ -36,54 +36,41 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template<class Card>
+  template<class Card, bool shared>
   forceinline
-  Val<Card>::Val(Space& home, 
-                 ViewArray<IntView>& x0, ViewArray<Card>& k0)
+  ValImp<Card,shared>::ValImp(Space& home, 
+                              ViewArray<IntView>& x0, ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
     x.subscribe(home, *this, PC_INT_VAL);
     k.subscribe(home, *this, PC_INT_VAL);
   }
 
-  template<class Card>
+  template<class Card, bool shared>
   forceinline
-  Val<Card>::Val(Space& home, bool share, Val<Card>& p)
+  ValImp<Card,shared>::ValImp(Space& home, bool share, ValImp<Card,shared>& p)
     : Propagator(home,share,p) {
     x.update(home,share, p.x);
     k.update(home,share, p.k);
   }
 
-  template<class Card>
+  template<class Card, bool shared>
   size_t
-  Val<Card>::dispose(Space& home) {
+  ValImp<Card,shared>::dispose(Space& home) {
     x.cancel(home,*this, PC_INT_VAL);
     k.cancel(home,*this, PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class Card>
+  template<class Card, bool shared>
   Actor*
-  Val<Card>::copy(Space& home, bool share) {
-    return new (home) Val<Card>(home,share,*this);
+  ValImp<Card,shared>::copy(Space& home, bool share) {
+    return new (home) ValImp<Card,shared>(home,share,*this);
   }
 
-  template<class Card>
-  ExecStatus
-  Val<Card>::post(Space& home,
-                  ViewArray<IntView>& x, ViewArray<Card>& k) {
-    GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
-
-    if (isDistinct<Card>(home,x,k))
-      return Distinct::Val<IntView>::post(home,x);
-   
-    (void) new (home) Val<Card>(home,x,k);
-    return ES_OK;
-  }
-
-  template<class Card>
+  template<class Card, bool shared>
   PropCost
-  Val<Card>::cost(const Space&, const ModEventDelta&) const {
+  ValImp<Card,shared>::cost(const Space&, const ModEventDelta&) const {
     /*
      * Complexity depends on the time needed for value lookup in \a k
      * which is O(n log n).
@@ -91,7 +78,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template<class Card>
+  template<class Card, bool shared>
   ExecStatus
   prop_val(Space& home, Propagator& p, 
            ViewArray<IntView>& x, ViewArray<Card>& k) {
@@ -191,7 +178,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
       assert(single >= 0 && single < m);
       // this might happen in case of sharing
-      if (x.shared(home) && count[single] < k[single].min())
+      if (shared && count[single] < k[single].min())
         count[single] = k[single].min();
 
       for (int i = m; i--; )
@@ -303,11 +290,30 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_NOFIX;
   }
 
+  template<class Card, bool shared>
+  ExecStatus
+  ValImp<Card,shared>::propagate(Space& home, const ModEventDelta&) {
+    return prop_val<Card,shared>(home, *this, x, k);
+  }
+
   template<class Card>
   ExecStatus
-  Val<Card>::propagate(Space& home, const ModEventDelta&) {
-    return prop_val<Card>(home, *this, x, k);
+  Val<Card>::post(Space& home,
+                  ViewArray<IntView>& x, ViewArray<Card>& k) {
+    GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
+
+    bool shared = x.shared(home);
+
+    if (isDistinct<Card>(home,x,k) && !shared)
+      return Distinct::Val<IntView>::post(home,x);
+   
+    if (shared)
+      (void) new (home) ValImp<Card,true>(home,x,k);
+    else
+      (void) new (home) ValImp<Card,false>(home,x,k);
+    return ES_OK;
   }
+
 
 }}}
 

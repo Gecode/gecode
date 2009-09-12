@@ -129,9 +129,9 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card, bool shared>
   ExecStatus
   BndImp<Card,shared>::propagate(Space& home,
-                                          const ModEventDelta& med) {
+                                 const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
-      ExecStatus es = prop_val<Card>(home,*this,y,k);
+      ExecStatus es = prop_val<Card,shared>(home,*this,y,k);
       GECODE_ES_CHECK(es);
       if (es == ES_FIX)
         return ES_FIX_PARTIAL(*this,IntView::med(ME_INT_BND));
