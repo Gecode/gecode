@@ -62,15 +62,15 @@ namespace Gecode {
     switch (icl) {
     case ICL_BND:
       GECODE_ES_FAIL(home, 
-                     (GCC::Bnd<GCC::CardView, true>::post(home, xv, cv)));
+                     (GCC::Bnd<GCC::CardView>::post(home, xv, cv)));
       break;
     case ICL_DOM:
       GECODE_ES_FAIL(home, 
-                     (GCC::Dom<GCC::CardView, true>::post(home, xv, cv)));
+                     (GCC::Dom<GCC::CardView>::post(home, xv, cv)));
       break;
     default:
       GECODE_ES_FAIL(home, 
-                     (GCC::Val<GCC::CardView, true>::post(home, xv, cv)));
+                     (GCC::Val<GCC::CardView>::post(home, xv, cv)));
     }
   }
 
@@ -116,15 +116,15 @@ namespace Gecode {
         switch (icl) {
         case ICL_BND:
           GECODE_ES_FAIL(home, 
-                         (GCC::Bnd<GCC::CardView, true>::post(home, xv, cv)));
+                         (GCC::Bnd<GCC::CardView>::post(home, xv, cv)));
           break;
         case ICL_DOM:
           GECODE_ES_FAIL(home, 
-                         (GCC::Dom<GCC::CardView, true>::post(home, xv, cv)));
+                         (GCC::Dom<GCC::CardView>::post(home, xv, cv)));
           break;
         default:
           GECODE_ES_FAIL(home, 
-                         (GCC::Val<GCC::CardView, true>::post(home, xv, cv)));
+                         (GCC::Val<GCC::CardView>::post(home, xv, cv)));
         }
         return;
       }
@@ -132,7 +132,7 @@ namespace Gecode {
     
     // No holes: create OccurBndsViews
     ViewArray<GCC::OccurBndsView> cv(home, c.size());
-    for (int i = c.size(  ); i--; ) {
+    for (int i = c.size(); i--; ) {
       cv[i].card(v[i]);
       cv[i].counter(0);
       cv[i].min(c[i].min());
@@ -141,15 +141,15 @@ namespace Gecode {
     switch (icl) {
     case ICL_BND:
       GECODE_ES_FAIL(home,
-        (GCC::Bnd<GCC::OccurBndsView, false>::post(home, xv, cv)));
+                     (GCC::Bnd<GCC::OccurBndsView>::post(home, xv, cv)));
       break;
     case ICL_DOM:
       GECODE_ES_FAIL(home,
-        (GCC::Dom<GCC::OccurBndsView, false>::post(home, xv, cv)));
+                     (GCC::Dom<GCC::OccurBndsView>::post(home, xv, cv)));
       break;
     default:
       GECODE_ES_FAIL(home,
-        (GCC::Val<GCC::OccurBndsView, false>::post(home, xv, cv)));
+                     (GCC::Val<GCC::OccurBndsView>::post(home, xv, cv)));
     }
   }
 

@@ -60,7 +60,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool shared>
   inline ExecStatus
-  prop_card(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k, bool& mod) {
+  prop_card(Space& home, 
+            ViewArray<IntView>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
     int m = k.size();
     Region r(home);

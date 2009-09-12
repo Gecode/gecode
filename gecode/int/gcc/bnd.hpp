@@ -37,9 +37,9 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   forceinline
-  BndImp<Card, isView, shared>::
+  BndImp<Card,shared>::
   BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
          bool cf,  bool nolbc) :
     Propagator(home), x(x0), y(home, x0), k(k0),
@@ -48,10 +48,10 @@ namespace Gecode { namespace Int { namespace GCC {
     k.subscribe(home, *this, PC_INT_BND);
   }
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   forceinline
-  BndImp<Card, isView, shared>::
-  BndImp(Space& home, bool share, BndImp<Card, isView, shared>& p)
+  BndImp<Card,shared>::
+  BndImp(Space& home, bool share, BndImp<Card,shared>& p)
     : Propagator(home, share, p),
       card_fixed(p.card_fixed), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
@@ -59,42 +59,42 @@ namespace Gecode { namespace Int { namespace GCC {
     k.update(home, share, p.k);
   }
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   size_t
-  BndImp<Card, isView, shared>::dispose(Space& home){
+  BndImp<Card,shared>::dispose(Space& home){
     y.cancel(home,*this, PC_INT_BND);
     k.cancel(home,*this, PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   size_t
-  BndImp<Card, isView, shared>::allocated(void) const {
+  BndImp<Card,shared>::allocated(void) const {
     return lps.allocated() + ups.allocated();
   }
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   Actor*
-  BndImp<Card, isView, shared>::copy(Space& home, bool share){
-    return new (home) BndImp<Card, isView, shared>
+  BndImp<Card,shared>::copy(Space& home, bool share){
+    return new (home) BndImp<Card,shared>
       (home, share, *this);
   }
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   PropCost
-  BndImp<Card, isView, shared>::cost(const Space&,
-                                     const ModEventDelta& med) const {
-    int ksize = isView ? k.size() : 0;
+  BndImp<Card,shared>::cost(const Space&,
+                            const ModEventDelta& med) const {
+    int ksize = Card::propagate ? k.size() : 0;
     if (IntView::me(med) == ME_INT_VAL)
       return PropCost::linear(PropCost::LO, y.size() + ksize);
     else
       return PropCost::quadratic(PropCost::LO, x.size() + ksize);
   }
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   ExecStatus
-  BndImp<Card, isView, shared>::pruneCards(Space& home) {
+  BndImp<Card,shared>::pruneCards(Space& home) {
     // Remove all values with 0 max occurrence
     // and remove corresponding occurrence variables from k
     
@@ -126,18 +126,18 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_FIX;
   }
 
-  template<class Card, bool isView, bool shared>
+  template<class Card, bool shared>
   ExecStatus
-  BndImp<Card, isView, shared>::propagate(Space& home,
+  BndImp<Card,shared>::propagate(Space& home,
                                           const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
-      ExecStatus es = prop_val<Card,isView>(home,*this,y,k);
+      ExecStatus es = prop_val<Card>(home,*this,y,k);
       GECODE_ES_CHECK(es);
       if (es == ES_FIX)
         return ES_FIX_PARTIAL(*this,IntView::med(ME_INT_BND));
     }
 
-    if (isView)
+    if (Card::propagate)
       GECODE_ES_CHECK(pruneCards(home));
 
     Region r(home);
@@ -158,14 +158,14 @@ namespace Gecode { namespace Int { namespace GCC {
         count[idx]++;
       } else {
         all_assigned = false;
-        // We only need the counts in the isView case or when all
+        // We only need the counts in the view case or when all
         // x are assigned
-        if (!isView)
+        if (!Card::propagate)
           break;
       }
     }
 
-    if (isView) {
+    if (Card::propagate) {
       // before propagation performs inferences on cardinality variables:
       if (noa > 0)
         for (int i = k.size(); i--; )
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace GCC {
       return ES_SUBSUMED(*this,home);
     }
 
-    if (isView)
+    if (Card::propagate)
       GECODE_ES_CHECK(pruneCards(home));
 
     int n = x.size();
@@ -237,7 +237,7 @@ namespace Gecode { namespace Int { namespace GCC {
       assert (!ups.initialized());
       lps.init(home, k, false);
       ups.init(home, k, true);
-    } else if (isView) {
+    } else if (Card::propagate) {
       // if there has been a change to the cardinality variables
       // reconstruction of the partial sum structure is necessary
       if (lps.check_update_min(k))
@@ -306,7 +306,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int rightmost = nb + 1; // rightmost accesible value in bounds
     hall[rightmost].bounds = ups.lastValue + 1 ;
 
-    if (isView) {
+    if (Card::propagate) {
       skip_lbc = true;
       for (int i = k.size(); i--; )
         if (k[i].min() != 0) {
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     GECODE_ES_CHECK((ubc(home, nb, hall, rank, mu, nu)));
 
-    if (isView) {
+    if (Card::propagate) {
       bool mod;
       GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k, mod)));
     }
@@ -371,10 +371,10 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
 
-  template<class Card, bool isView>
+  template<class Card>
   ExecStatus
-  Bnd<Card,isView>::post(Space& home,
-                         ViewArray<IntView>& x, ViewArray<Card>& k) {
+  Bnd<Card>::post(Space& home,
+                  ViewArray<IntView>& x, ViewArray<Card>& k) {
     bool cardfix = true;
     for (int i=k.size(); i--; )
       if (!k[i].assigned()) {
@@ -386,15 +386,15 @@ namespace Gecode { namespace Int { namespace GCC {
         nolbc = false; break;
       }
 
-    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home, x, k)));
+    GECODE_ES_CHECK((postSideConstraints<Card>(home, x, k)));
 
-    if (isDistinct<Card,isView>(home,x,k))
+    if (isDistinct<Card>(home,x,k))
       return Distinct::Bnd<IntView>::post(home,x);
 
     if (shared(home,x,k)) {
-      (void) new (home) BndImp<Card,isView,true>(home,x,k,cardfix,nolbc);
+      (void) new (home) BndImp<Card,true>(home,x,k,cardfix,nolbc);
     } else {
-      (void) new (home) BndImp<Card,isView,false>(home,x,k,cardfix,nolbc);
+      (void) new (home) BndImp<Card,false>(home,x,k,cardfix,nolbc);
     }
       return ES_OK;
   }

@@ -61,9 +61,9 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  template<class Card, bool isView>
+  template<class Card>
   inline
-  Dom<Card, isView>::Dom(Space& home, ViewArray<IntView>& x0,
+  Dom<Card>::Dom(Space& home, ViewArray<IntView>& x0,
                          ViewArray<Card>& k0, bool cf)
     : Propagator(home), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf){
@@ -74,18 +74,18 @@ namespace Gecode { namespace Int { namespace GCC {
     k.subscribe(home, *this, PC_INT_DOM);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   forceinline
-  Dom<Card, isView>::Dom(Space& home, bool share, Dom<Card, isView>& p)
+  Dom<Card>::Dom(Space& home, bool share, Dom<Card>& p)
     : Propagator(home, share, p), vvg(NULL), card_fixed(p.card_fixed) {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   size_t
-  Dom<Card, isView>::dispose(Space& home) {
+  Dom<Card>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x.cancel(home,*this, PC_INT_DOM);
@@ -96,21 +96,21 @@ namespace Gecode { namespace Int { namespace GCC {
     return sizeof(*this);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   size_t
-  Dom<Card, isView>::allocated(void) const {
+  Dom<Card>::allocated(void) const {
     return (vvg == NULL) ? 0 : vvg->allocated();
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   Actor*
-  Dom<Card, isView>::copy(Space& home, bool share) {
-    return new (home) Dom<Card, isView>(home, share, *this);
+  Dom<Card>::copy(Space& home, bool share) {
+    return new (home) Dom<Card>(home, share, *this);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   PropCost
-  Dom<Card, isView>::cost(const Space&, const ModEventDelta&) const {
+  Dom<Card>::cost(const Space&, const ModEventDelta&) const {
 
     unsigned int n = x.size();
     unsigned int d = x[n-1].size();
@@ -128,9 +128,9 @@ namespace Gecode { namespace Int { namespace GCC {
       return PropCost::cubic(PropCost::LO,x.size());
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   ExecStatus
-  Dom<Card, isView>::propagate(Space& home, const ModEventDelta&) {
+  Dom<Card>::propagate(Space& home, const ModEventDelta&) {
 
     ExecStatus es = ES_NOFIX;
     bool card_mod = false;
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace GCC {
           return ES_FAILED;
         }
         count[idx]++;
-        if (isView) {
+        if (Card::propagate) {
           if (k[idx].max() == 0) {
             return ES_FAILED;
           }
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace GCC {
           return ES_FAILED;
         }
         // the solution contains ci occurences of value k[i].card();
-        if (isView) {
+        if (Card::propagate) {
           if (!k[i].assigned()) {
             ModEvent me = k[i].eq(home, ci);
             if (me_failed(me))
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     // before propagation performs inferences on cardinality variables:
-    if (isView) {
+    if (Card::propagate) {
       if (noa > 0) {
         int n  = y.size();
         int ks = k.size();
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace GCC {
       assert(noe > 0);
       assert(smin >= 0);
       assert(smax >= 0);
-      vvg = new VarValGraph<Card, isView> (x, y, k, noe, smin, smax);
+      vvg = new VarValGraph<Card> (x, y, k, noe, smin, smax);
       min_req_mod = vvg->min_require(home);
       if (vvg->failed()) {
         return ES_FAILED;
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace GCC {
       return ES_FAILED;
     }
     if (!card_fixed) {
-      if (isView && !vvg->sync(home))
+      if (Card::propagate && !vvg->sync(home))
         return ES_FAILED;
 
       vvg->template free_alternating_paths<LBC>(home);
@@ -326,7 +326,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     bool card_assigned = true;
-    if (isView) {
+    if (Card::propagate) {
       es = prop_card<Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
         return ES_FAILED;
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace GCC {
           return ES_FAILED;
         }
         count[idx]++;
-        if (isView) {
+        if (Card::propagate) {
           if (k[idx].max() == 0) {
             return ES_FAILED;
           }
@@ -397,7 +397,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    if (isView) {
+    if (Card::propagate) {
       es = prop_card<Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
         return es;
@@ -411,7 +411,7 @@ namespace Gecode { namespace Int { namespace GCC {
           return ES_FAILED;
         }
         // the solution contains ci occurences of value k[i].card();
-        if (isView) {
+        if (Card::propagate) {
           if (!k[i].assigned()) {
             ModEvent me = k[i].eq(home, ci);
             if (me_failed(me))
@@ -426,7 +426,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    if (isView) {
+    if (Card::propagate) {
       int smax = 0;
       int smin = 0;
       for (int i = k.size(); i--; ) {
@@ -467,19 +467,19 @@ namespace Gecode { namespace Int { namespace GCC {
 
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   inline ExecStatus
-  Dom<Card, isView>::post(Space& home, ViewArray<IntView>& x0,
+  Dom<Card>::post(Space& home, ViewArray<IntView>& x0,
                           ViewArray<Card>& k0){
-    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home, x0, k0)));
-    if (isDistinct<Card,isView>(home, x0, k0)) {
+    GECODE_ES_CHECK((postSideConstraints<Card>(home, x0, k0)));
+    if (isDistinct<Card>(home, x0, k0)) {
       return Distinct::Dom<IntView>::post(home,x0);
     } else {
       bool cardfix = true;
       for (int i = k0.size(); i--; ) {
         cardfix &= k0[i].assigned();
       }
-      (void) new (home) Dom<Card, isView>(home, x0, k0, cardfix);
+      (void) new (home) Dom<Card>(home, x0, k0, cardfix);
       return ES_OK;
     }
   }

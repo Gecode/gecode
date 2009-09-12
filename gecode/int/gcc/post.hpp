@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Post side constraints for the GCC
    *
    */
-  template<class Card, bool isView>
+  template<class Card>
   inline ExecStatus
   postSideConstraints(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
     int n = x.size();
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    if (isView) {
+    if (Card::propagate) {
       Region re(home);
       Linear::Term<IntView>* t = re.alloc<Linear::Term<IntView> >(k.size());
       for (int i = k.size(); i--; ) {
@@ -116,10 +116,10 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Check if GCC is equivalent to distinct
    *
    */
-  template<class Card, bool isView>
+  template<class Card>
   inline bool
   isDistinct(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
-    if (isView) {
+    if (Card::propagate) {
       Region r(home);
       ViewRanges<IntView>* xrange = r.alloc<ViewRanges<IntView> >(x.size());
       for (int i = x.size(); i--; ){

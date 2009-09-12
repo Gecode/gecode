@@ -36,54 +36,54 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template<class Card, bool isView>
+  template<class Card>
   forceinline
-  Val<Card,isView>::Val(Space& home, 
-                        ViewArray<IntView>& x0, ViewArray<Card>& k0)
+  Val<Card>::Val(Space& home, 
+                 ViewArray<IntView>& x0, ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
     x.subscribe(home, *this, PC_INT_VAL);
     k.subscribe(home, *this, PC_INT_VAL);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   forceinline
-  Val<Card,isView>::Val(Space& home, bool share, Val<Card,isView>& p)
+  Val<Card>::Val(Space& home, bool share, Val<Card>& p)
     : Propagator(home,share,p) {
     x.update(home,share, p.x);
     k.update(home,share, p.k);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   size_t
-  Val<Card,isView>::dispose(Space& home) {
+  Val<Card>::dispose(Space& home) {
     x.cancel(home,*this, PC_INT_VAL);
     k.cancel(home,*this, PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   Actor*
-  Val<Card,isView>::copy(Space& home, bool share) {
-    return new (home) Val<Card,isView>(home,share,*this);
+  Val<Card>::copy(Space& home, bool share) {
+    return new (home) Val<Card>(home,share,*this);
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   ExecStatus
-  Val<Card,isView>::post(Space& home,
-                         ViewArray<IntView>& x, ViewArray<Card>& k) {
-    GECODE_ES_CHECK((postSideConstraints<Card,isView>(home,x,k)));
+  Val<Card>::post(Space& home,
+                  ViewArray<IntView>& x, ViewArray<Card>& k) {
+    GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 
-    if (isDistinct<Card,isView>(home,x,k))
+    if (isDistinct<Card>(home,x,k))
       return Distinct::Val<IntView>::post(home,x);
    
-    (void) new (home) Val<Card,isView>(home,x,k);
+    (void) new (home) Val<Card>(home,x,k);
     return ES_OK;
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   PropCost
-  Val<Card,isView>::cost(const Space&, const ModEventDelta&) const {
+  Val<Card>::cost(const Space&, const ModEventDelta&) const {
     /*
      * Complexity depends on the time needed for value lookup in \a k
      * which is O(n log n).
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   ExecStatus
   prop_val(Space& home, Propagator& p, 
            ViewArray<IntView>& x, ViewArray<Card>& k) {
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace GCC {
         k[i].counter(ci);
         rs++;
         onrem[i] = true;
-        if (isView && !k[i].assigned()) {
+        if (Card::propagate && !k[i].assigned()) {
           // the solution contains ci occurences of value k[i].card();
           GECODE_ME_CHECK(k[i].eq(home, ci));
         }
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace GCC {
           return ES_FAILED;
         
         // in case of variable cardinalities
-        if (isView && !k[i].assigned()) {
+        if (Card::propagate && !k[i].assigned()) {
           if (ci > k[i].min())
             GECODE_ME_CHECK(k[i].gq(home, ci));
           int occupied = t_noa - ci;
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace GCC {
       return ES_SUBSUMED(p,home);
     }
 
-    if (isView) {
+    if (Card::propagate) {
       // check again consistnecy of cardinalities
       int reqmin = 0;
       int allmax = 0;
@@ -303,10 +303,10 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_NOFIX;
   }
 
-  template<class Card, bool isView>
+  template<class Card>
   ExecStatus
-  Val<Card,isView>::propagate(Space& home, const ModEventDelta&) {
-    return prop_val<Card,isView>(home, *this, x, k);
+  Val<Card>::propagate(Space& home, const ModEventDelta&) {
+    return prop_val<Card>(home, *this, x, k);
   }
 
 }}}

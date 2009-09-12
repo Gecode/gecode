@@ -47,6 +47,8 @@ namespace Gecode { namespace Int { namespace GCC {
     int c;
     int count;
   public:
+    /// This view does not require propagation
+    static const bool propagate = false;
     OccurBndsView(void);
     int min(void) const;
     int max(void) const;
@@ -254,6 +256,8 @@ namespace Gecode { namespace Int { namespace GCC {
     int count;
     using DerivedViewBase<IntView>::view;
   public:
+    /// This view does require propagation
+    static const bool propagate = true;
     /// Default constructor
     CardView(void);
     /// Initialize with integer view \a x and value \a c

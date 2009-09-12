@@ -55,6 +55,37 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   /**
+   * \brief Value consistent global cardinality propagator
+   *
+   * Requires \code #include <gecode/int/gcc.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class Card>
+  class Val : public Propagator {
+  protected:
+    /// Views on which to perform value-propagation
+    ViewArray<IntView> x;
+    /// Array containing either fixed cardinalities or CardViews
+    ViewArray<Card> k;
+    /// Constructor for cloning \a p
+    Val(Space& home, bool share, Val<Card>& p );
+    /// Constructor for posting
+    Val(Space& home, ViewArray<IntView>&, ViewArray<Card>&);
+  public:
+    /// Destructor
+    virtual size_t dispose(Space& home);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost funtion returning high linear
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator for views \a x and cardinalities \a k
+    static ExecStatus post(Space& home,
+                           ViewArray<IntView>& x, ViewArray<Card>& k);
+  };
+
+  /**
    * \brief Bounds consistent global cardinality propagator
    * 
    * The algorithm is taken from:
@@ -77,7 +108,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Card, bool isView>
+  template<class Card>
   class Bnd {
   public:
     /// Post propagator for views \a x and cardinalities \a k
@@ -85,13 +116,9 @@ namespace Gecode { namespace Int { namespace GCC {
                            ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
-  /**
-   * \brief Implementation of the bounds consistent
-   * global cardinality propagator
-   */
-  template<class Card, bool isView, bool shared>
+  /// Implementation of bounds consistent global cardinality propagator
+  template<class Card, bool shared>
   class BndImp : public Propagator {
-    friend class Bnd<Card, isView>;
   protected:
     /// Views on which to perform bounds-propagation
     ViewArray<IntView> x;
@@ -120,10 +147,8 @@ namespace Gecode { namespace Int { namespace GCC {
      *        to perform lower bounds propagation.
      */
     bool skip_lbc;
-    /// Constructor for posting
-    BndImp(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
     /// Constructor for cloning \a p
-    BndImp(Space& home, bool share, BndImp<Card, isView, shared>& p);
+    BndImp(Space& home, bool share, BndImp<Card,shared>& p);
 
     /// Prune cardinality variables with 0 maximum occurrence
     ExecStatus pruneCards(Space& home);
@@ -174,6 +199,8 @@ namespace Gecode { namespace Int { namespace GCC {
     ExecStatus ubc(Space& home, int& nb, HallInfo hall[], Rank rank[],
                    int mu[], int nu[]);
   public:
+    /// Constructor for posting
+    BndImp(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
     /// Return how much extra memory is allocated by the propagator
     virtual size_t allocated(void) const;
     /// Copy propagator during cloning
@@ -197,7 +224,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * Requires \code #include <gecode/int/gcc.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Card, bool isView>
+  template<class Card>
   class Dom : public Propagator {
   protected:
     /// Views on which to perform domain-propagation
@@ -210,7 +237,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
     /// Propagation is performed on a variable-value graph (used as cache)
-    VarValGraph<Card, isView>* vvg;
+    VarValGraph<Card>* vvg;
     /**
      * \brief Stores whether cardinalities are all assigned
      *
@@ -219,7 +246,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool card_fixed;
     /// Constructor for cloning \a p
-    Dom(Space& home, bool share, Dom<Card, isView>& p);
+    Dom(Space& home, bool share, Dom<Card>& p);
     /// Constructor for posting
     Dom(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool);
 
@@ -245,37 +272,6 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for views \a x and cardinalities \a k
-    static ExecStatus post(Space& home,
-                           ViewArray<IntView>& x, ViewArray<Card>& k);
-  };
-
-  /**
-   * \brief Value consistent global cardinality propagator
-   *
-   * Requires \code #include <gecode/int/gcc.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class Card, bool isView>
-  class Val : public Propagator {
-  protected:
-    /// Views on which to perform value-propagation
-    ViewArray<IntView> x;
-    /// Array containing either fixed cardinalities or CardViews
-    ViewArray<Card> k;
-    /// Constructor for cloning \a p
-    Val(Space& home, bool share, Val<Card, isView>& p );
-    /// Constructor for posting
-    Val(Space& home, ViewArray<IntView>&, ViewArray<Card>&);
-  public:
-    /// Destructor
-    virtual size_t dispose(Space& home);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Cost funtion returning high linear
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for views \a x and cardinalities \a k
     static ExecStatus post(Space& home,
                            ViewArray<IntView>& x, ViewArray<Card>& k);
