@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   BndImp<Card,shared>::
   BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
-         bool cf,  bool nolbc) :
+         bool cf, bool nolbc) :
     Propagator(home), x(x0), y(home, x0), k(k0),
     card_fixed(cf), skip_lbc(nolbc) {
     y.subscribe(home, *this, PC_INT_BND);
@@ -77,8 +77,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card, bool shared>
   Actor*
   BndImp<Card,shared>::copy(Space& home, bool share){
-    return new (home) BndImp<Card,shared>
-      (home, share, *this);
+    return new (home) BndImp<Card,shared>(home,share,*this);
   }
 
   template<class Card, bool shared>
@@ -252,7 +251,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *  Setup rank and bounds info
      *  Since this implementation is based on the theory of Hall Intervals
      *  additional datastructures are needed in order to represent these
-     *  intervals and the "partial-sum" data structure (cf."gcc/gccbndsup.hpp")
+     *  intervals and the "partial-sum" data structure (cf."gcc/bnd-sup.hpp")
      *
      */
 

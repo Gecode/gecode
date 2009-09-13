@@ -227,17 +227,21 @@ namespace Gecode { namespace Int { namespace GCC {
     /// the size of the sum
     int size;
   public:
+    /// Sentinels indicating whether an end of sum is reached
+    int firstValue, lastValue;
     /// \name Constructor, initializer, and destructor
     //@{
+    /// Constructor
     PartialSum(void);
+    /// Initialization
     void init(Space& home, ViewArray<Card>& k, bool up);
+    /// Mark datstructure as disposed
     void dispose(void);
     //@}
     /// \name Access
     //@{
+    /// Test whether already initialized
     bool initialized(void) const;
-    int firstValue;
-    int lastValue;
     int sumup(int, int);
     int minValue(void);
     int maxValue(void);
@@ -251,14 +255,12 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   };
 
-  /// \brief Deallocate memory
   template<class Card>
   forceinline void
   PartialSum<Card>::dispose(void) {
     size = -1;
   }
 
-  /// \brief Constructor
   template<class Card>
   forceinline
   PartialSum<Card>::PartialSum(void) : sum(NULL), size(-1) {}
@@ -269,18 +271,6 @@ namespace Gecode { namespace Int { namespace GCC {
     return size != -1;
   }
 
-  /**
-   * \brief Default initialization
-   *
-   * \param first is the miminum value the variables can take
-   * \param count is equal to the size \f$ |k| \f$,
-   *        where \a k denotes the array of cardinalities used
-   *        in the global cardinality propagator
-   * \param elements contains the upper and lower cardinalities for every value
-   * \param up denotes the direction whether we sumup the lower or upper cardinality bounds
-   *        If \a up is true we sumup the upper bounds, otherwise the lower bounds.
-   *
-   */
   template<class Card>
   inline void
   PartialSum<Card>::init(Space& home, ViewArray<Card>& elements, bool up) {
@@ -305,11 +295,6 @@ namespace Gecode { namespace Int { namespace GCC {
 
     int first = elements[0].card();
 
-    /*
-     * firstValue and lastValue are sentinels
-     * indicating whether an end of the sum has been reached
-     *
-     */
     firstValue = first - 3;
     lastValue  = first + elements.size() + holes + 1;
 
