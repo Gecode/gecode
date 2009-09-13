@@ -249,7 +249,6 @@ namespace Gecode { namespace Int { namespace GCC {
     bool check_update_min(ViewArray<Card>& k);
     int getsize(void) const;
     //@}
-    void print(void);
   };
 
   /// \brief Deallocate memory
@@ -352,15 +351,6 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     ds[j] = 0;
     ds[0] = 0;
-  }
-
-  template<class Card>
-  void
-  PartialSum<Card>::print(void) {
-    for (int i=0; i < size; i++) {
-      std::cerr << "(" << firstValue+i << "-" << sum[i] << ") ";
-    }
-    std::cerr << std::endl;
   }
 
   /**

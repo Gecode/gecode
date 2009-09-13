@@ -124,8 +124,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   ExecStatus
   Dom<Card>::propagate(Space& home, const ModEventDelta&) {
-
     Region r(home);
+
     int* count = r.alloc<int>(k.size());
     for (int i = k.size(); i--; )
       count[i] = 0;
@@ -142,111 +142,67 @@ namespace Gecode { namespace Int { namespace GCC {
         if (Card::propagate && (k[idx].max() == 0))
           return ES_FAILED;
       }
-    bool all_assigned = (noa == y.size());
 
-    if (all_assigned) {
+    if (noa == y.size()) {
+      // All views are assigned
       for (int i = k.size(); i--; ) {
-        int ci = count[i];
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+        if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
           return ES_FAILED;
-        }
         // the solution contains ci occurences of value k[i].card();
-        if (Card::propagate) {
-          if (!k[i].assigned()) {
-            GECODE_ME_CHECK(k[i].eq(home, ci));
-          }
-          all_assigned &= k[i].assigned();
-        }
+        if (Card::propagate)
+          GECODE_ME_CHECK(k[i].eq(home, count[i]));
       }
-      if (all_assigned)
-        return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(*this,home);
     }
 
     // before propagation performs inferences on cardinality variables:
     if (Card::propagate) {
-      if (noa > 0) {
-        int n  = y.size();
-        int ks = k.size();
-
-        for (int i = ks; i--; ) {
+      if (noa > 0)
+        for (int i = k.size(); i--; )
           if (!k[i].assigned()) {
-            int ub = n - (noa - count[i]);
-            int lb = count[i];
-            GECODE_ME_CHECK(k[i].lq(home, ub));
-            GECODE_ME_CHECK(k[i].gq(home, lb));
+            GECODE_ME_CHECK(k[i].lq(home, y.size() - (noa - count[i])));
+            GECODE_ME_CHECK(k[i].gq(home, count[i]));
           }
-        }
-      }
 
-      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k)));
-
-      if (!card_consistent<Card>(y, k)) {
+      GECODE_ES_CHECK((prop_card<Card,true>(home,y,k)));
+      if (!card_consistent<Card>(y,k))
         return ES_FAILED;
-      }
     }
 
-    if (x.size() < 2) {
-      assert(x.size() >= 0);
-      if (x.size() == 0) {
-        for (int j = k.size(); j--; ) {
-          if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
-            return ES_FAILED;
-          }
-        }
-        return ES_SUBSUMED(*this,home);
-      } else {
-        if (x.size() == 1) {
-          if (x[0].assigned()) {
-            int idx;
-            if (!lookupValue(k,x[0].val(),idx))
-              return ES_FAILED;
-            GECODE_ME_CHECK(k[idx].inc());
-            for (int j = k.size(); j--; )
-              if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter())
-                return ES_FAILED;
-            return ES_SUBSUMED(*this,home);
-          }
-        }
-      }
-    }
-
-    assert(x.size() > 0);
-
-    int noe     = 0;
-    int smin    = 0;
-    int smax    = 0;
-    assert(noe >= 0);
-    for (int i = x.size(); i--; ) {
-      noe +=x[i].size();
-    }
-
-    assert(noe > 0);
-
-    for (int i = k.size(); i--; ) {
-      int ci = k[i].counter();
-      if (ci > k[i].max() ) {
+    if (x.size() == 0) {
+      for (int j = k.size(); j--; )
+        if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+          return ES_FAILED;
+      return ES_SUBSUMED(*this,home);
+    } else if ((x.size() == 1) && (x[0].assigned())) {
+      int idx;
+      if (!lookupValue(k,x[0].val(),idx))
         return ES_FAILED;
-      } else {
-        smax += (k[i].max() - ci);
-        if (ci < k[i].min()) {
-          smin += (k[i].min() - ci);
-        }
-      }
+      GECODE_ME_CHECK(k[idx].inc());
+      for (int j = k.size(); j--; )
+        if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+          return ES_FAILED;
+      return ES_SUBSUMED(*this,home);
     }
-
-    if (x.size() < smin) {
-      return ES_FAILED;
-    }
-
-    if (smax < x.size()) {
-      return ES_FAILED;
-    }
-
 
     if (vvg == NULL) {
-      assert(noe > 0);
-      assert(smin >= 0);
-      assert(smax >= 0);
+      int smin = 0;
+      int smax = 0;
+      for (int i=k.size(); i--; )
+        if (k[i].counter() > k[i].max() ) {
+          return ES_FAILED;
+        } else {
+          smax += (k[i].max() - k[i].counter());
+          if (k[i].counter() < k[i].min())
+            smin += (k[i].min() - k[i].counter());
+        }
+
+      if ((x.size() < smin) || (smax < x.size()))
+        return ES_FAILED;
+
+      int noe = 0;
+      for (int i=x.size(); i--; )
+        noe += static_cast<int>(x[i].size());
       vvg = new (home) VarValGraph<Card>(home, x, y, k, noe, smin, smax);
       GECODE_ES_CHECK(vvg->min_require(home));
       GECODE_ES_CHECK(vvg->template maximum_matching<UBC>(home));
@@ -271,44 +227,33 @@ namespace Gecode { namespace Int { namespace GCC {
       GECODE_ES_CHECK(vvg->template narrow<LBC>(home));
     }
 
-    bool card_assigned = true;
-    if (Card::propagate) {
-      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k)));
-
-      for (int i = k.size(); i--; )
-        if (!k[i].assigned()) {
-          card_assigned = false; break;
-        }
-    }
-
-    if (card_assigned) {
-      if (x.size() < 2) {
-        assert(x.size() >= 0);
+    {
+      bool card_assigned = true;
+      if (Card::propagate) {
+        GECODE_ES_CHECK((prop_card<Card,true>(home, y, k)));
+        
+        for (int i = k.size(); i--; )
+          if (!k[i].assigned()) {
+            card_assigned = false; break;
+          }
+      }
+      
+      if (card_assigned) {
         if (x.size() == 0) {
-          for (int j = k.size(); j--; ) {
-            if (k[j].min() > k[j].counter() ||
-                k[j].max() < k[j].counter()) {
+          for (int j=k.size(); j--; )
+            if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
               return ES_FAILED;
-            }
-          }
           return ES_SUBSUMED(*this,home);
-        } else {
-          if (x.size() == 1) {
-            if (x[0].assigned()) {
-              int idx;
-              if (!lookupValue(k,x[0].val(),idx))
-                return ES_FAILED;
-              GECODE_ME_CHECK(k[idx].inc());
-
-              for (int j = k.size(); j--; ) {
-                if (k[j].min() > k[j].counter() ||
-                    k[j].max() < k[j].counter()) {
-                  return ES_FAILED;
-                }
-              }
-              return ES_SUBSUMED(*this,home);
-            }
-          }
+        } else if ((x.size() == 1) && x[0].assigned()) {
+          int idx;
+          if (!lookupValue(k,x[0].val(),idx))
+            return ES_FAILED;
+          GECODE_ME_CHECK(k[idx].inc());
+          
+          for (int j = k.size(); j--; )
+            if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+              return ES_FAILED;
+          return ES_SUBSUMED(*this,home);
         }
       }
     }
@@ -316,7 +261,7 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = k.size(); i--; )
       count[i] = 0;
 
-    all_assigned = true;
+    bool all_assigned = true;
     // total number of assigned views
     for (int i = y.size(); i--; )
       if (y[i].assigned()) {
@@ -331,51 +276,34 @@ namespace Gecode { namespace Int { namespace GCC {
       }
 
     if (Card::propagate)
-      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k)));
+      GECODE_ES_CHECK((prop_card<Card,true>(home, y, k)));
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
-        int ci = count[i];
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+        if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
           return ES_FAILED;
-        }
-        // the solution contains ci occurences of value k[i].card();
-        if (Card::propagate) {
-          if (!k[i].assigned()) {
-            GECODE_ME_CHECK(k[i].eq(home, ci));
-          }
-          all_assigned &= k[i].assigned();
-        }
+        // the solution contains count[i] occurences of value k[i].card();
+        if (Card::propagate)
+          GECODE_ME_CHECK(k[i].eq(home,count[i]));
       }
-      if (all_assigned) {
-        return ES_SUBSUMED(*this,home);
-      }
+      return ES_SUBSUMED(*this,home);
     }
 
     if (Card::propagate) {
+      int ysmax = y.size();
+      for (int i=k.size(); i--; )
+        ysmax -= k[i].max();
       int smax = 0;
-      int smin = 0;
-      for (int i = k.size(); i--; ) {
-        smax += k[i].max();
-      }
-      int ysmax = y.size() - smax;
-      int ysmin = y.size() - smin;
-      smax = 0;
-      smin = 0;
       bool card_ass = true;
       for (int i = k.size(); i--; ) {
-        int lb = ysmax + k[i].max();
-        int ub = ysmin + k[i].min();
-        GECODE_ME_CHECK(k[i].gq(home, lb));
+        GECODE_ME_CHECK(k[i].gq(home, ysmax + k[i].max()));
         smax += k[i].max();
-        GECODE_ME_CHECK(k[i].lq(home, ub));
-        card_ass &= k[i].assigned();
+        GECODE_ME_CHECK(k[i].lq(home, y.size() + k[i].min()));
+        if (!k[i].assigned())
+          card_ass = false;
       }
-      if (card_ass) {
-        if (smax < y.size() || smax > y.size()) {
-          return ES_FAILED;
-        }
-      }
+      if (card_ass && (smax != y.size()))
+        return ES_FAILED;
     }
 
     return ES_NOFIX;
@@ -402,7 +330,4 @@ namespace Gecode { namespace Int { namespace GCC {
 
 }}}
 
-
-
 // STATISTICS: int-prop
-
