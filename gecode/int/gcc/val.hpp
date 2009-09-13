@@ -90,62 +90,39 @@ namespace Gecode { namespace Int { namespace GCC {
            ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
 
-    int n = x.size();
-    int m = k.size();
-
     Region r(home);
     // count[i] denotes how often value k[i].card() occurs in x
-    int* count = r.alloc<int>(m);
-    // stack of values having reached their maximum occurence
-    int* rem = r.alloc<int>(m);
-    // keep track whether a value is already on the stack
-    bool* onrem = r.alloc<bool>(m);
-    // stacksize
-    int rs = 0;
+    int* count = r.alloc<int>(k.size());
 
     // initialization
     int sum_min = 0;
     int removed = 0;
-    for (int i = m; i--; ) {
+    for (int i = k.size(); i--; ) {
       removed += k[i].counter();
       sum_min += k[i].min();
-
       count[i] = 0;
-      onrem[i] = false;
     }
 
-    for (int i = m; i--; ) {
-      // less than or equal than the total number of free variables
-      // to satisfy the required occurences
-      if (!k[i].assigned()) {
-        int mub = n + removed - (sum_min - k[i].min());
-        GECODE_ME_CHECK(k[i].lq(home, mub));
-      }
-    }
+    // less than or equal than the total number of free variables
+    // to satisfy the required occurences
+    for (int i = k.size(); i--; )
+      GECODE_ME_CHECK(k[i].lq(home, x.size()+removed-(sum_min - k[i].min())));
 
-    // Due to lookup operation counting requires O(n \cdot log(n)) time
-    bool all_assigned = true;
-    // number of assigned views with respect to the current problem size
-    int  noa   = 0;
-    // total number of assigned views wrt. the original probem size
-    int  t_noa = 0;
-    for (int i = n; i--; )
-      if (x[i].assigned()) {
-        int idx = lookupValue(k,x[i].val());
-        if (idx == -1)
-          return ES_FAILED;
-        assert(idx >= 0 && idx < m);
-        count[idx]++;
-        noa++;
-      } else {
-        all_assigned = false;
-      }
     // number of unassigned views
-    int  non = x.size() - noa;
+    int non = x.size();
+
+    for (int i = x.size(); i--; )
+      if (x[i].assigned()) {
+        int idx;
+        if (!lookupValue(k,x[i].val(),idx))
+          return ES_FAILED;
+        count[idx]++;
+        non--;
+      }
 
     // check for subsumption
-    if (all_assigned) {
-      for (int i = m; i--; )
+    if (non == 0) {
+      for (int i = k.size(); i--; )
         GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
       return ES_SUBSUMED(p,home);
     }
@@ -155,9 +132,11 @@ namespace Gecode { namespace Int { namespace GCC {
     // number of values whose min requirements are not yet met
     int n_r = 0;
     // if only one value is unsatisified single holds the index of that value
-    int single = 0;
+    int single = -1;
+    // total number of assigned views wrt. the original probem size
+    int t_noa = 0;
 
-    for (int i = m; i--; ) {
+    for (int i = k.size(); i--; ) {
       int ci = count[i] + k[i].counter();
       t_noa += ci;
       if (ci == 0) { // this works
@@ -173,49 +152,45 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     // if only one unsatisfied occurences is left
-    if (req == non && n_r == 1) {
-      for (int i = n; i--; ) {
+    if ((req == non) && (n_r == 1)) {
+      for (int i = x.size(); i--; ) {
         // try to assign it
         if (!x[i].assigned()) {
           GECODE_ME_CHECK(x[i].eq(home, k[single].card()));
-          assert((single >= 0) && (single < m));
+          assert((single >= 0) && (single < k.size()));
           count[single]++;
         }
       }
-      assert(single >= 0 && single < m);
+      assert((single >= 0) && (single < k.size()));
       // this might happen in case of sharing
-      if (shared && count[single] < k[single].min())
+      if (shared && (count[single] < k[single].min()))
         count[single] = k[single].min();
 
-      for (int i = m; i--; )
+      for (int i = k.size(); i--; )
         GECODE_ME_CHECK(k[i].eq(home, count[i] + k[i].counter()));
       return ES_SUBSUMED(p,home);
     }
 
-    for (int i = m; i--; ) {
+    // Bitset for indexes that can be removed
+    Support::BitSet<Region> rem(r,k.size());
+
+    for (int i = k.size(); i--; ) {
       int ci = count[i] + k[i].counter();
-      if ((ci == k[i].max()) && !onrem[i]) {
-        assert(rs >= 0 && rs < m);
-        rem[rs] = k[i].card();
+      if ((ci == k[i].max()) && !rem.get(i)) {
+        rem.set(i);
         k[i].counter(ci);
-        rs++;
-        onrem[i] = true;
-        if (Card::propagate && !k[i].assigned()) {
-          // the solution contains ci occurences of value k[i].card();
+        // the solution contains ci occurences of value k[i].card();
+        if (Card::propagate)
           GECODE_ME_CHECK(k[i].eq(home, ci));
-        }
       } else {
         if (ci > k[i].max())
           return ES_FAILED;
         
         // in case of variable cardinalities
-        if (Card::propagate && !k[i].assigned()) {
-          if (ci > k[i].min())
-            GECODE_ME_CHECK(k[i].gq(home, ci));
+        if (Card::propagate) {
+          GECODE_ME_CHECK(k[i].gq(home, ci));
           int occupied = t_noa - ci;
-          int mub = x.size() + removed - occupied;
-
-          GECODE_ME_CHECK(k[i].lq(home, mub));
+          GECODE_ME_CHECK(k[i].lq(home, x.size() + removed - occupied));
         }
       }
       // reset counter
@@ -223,73 +198,72 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     // reduce the problem size
-    for (int i = n; i--; ) {
-      if (x[i].assigned()) {
-        int idx = lookupValue(k,x[i].val());
-        if (idx == -1) {
-          return ES_FAILED;
-        }
-        assert(idx >= 0 && idx < m);
-        if (onrem[idx]) {
-          x[i] = x[--n];
+    {
+      int n_x = x.size();
+      for (int i = n_x; i--; ) {
+        if (x[i].assigned()) {
+          int idx;
+          if (!lookupValue(k,x[i].val(),idx))
+            return ES_FAILED;
+          if (rem.get(idx))
+            x[i]=x[--n_x];
         }
       }
+      x.size(n_x);
     }
-    x.size(n);
 
-    // remove alredy satisfied values
-    if (rs > 0) {
-      IntSet remset(&rem[0], rs);
+    // remove values
+    {
+      // Values to prune
+      int* p = r.alloc<int>(k.size());
+      // Number of values to prune
+      int n_p = 0;
+      for (Iter::Values::BitSet<Support::BitSet<Region> > i(rem); i(); ++i)
+        p[n_p++] = k[i.val()].card();
+      Support::quicksort(p,n_p);
       for (int i = x.size(); i--;) {
-        IntSetRanges rr(remset);
-        if (!x[i].assigned())
-          GECODE_ME_CHECK(x[i].minus_r(home, rr));
+        Iter::Values::Array pi(p,n_p);
+        GECODE_ME_CHECK(x[i].minus_v(home, pi, false));
       }
     }
 
-    all_assigned = true;
+    {
+      bool all_assigned = true;
 
-    for (int i = x.size(); i--; ) {
-      if (x[i].assigned()) {
-        int idx = lookupValue(k,x[i].val());
-        if (idx == -1)
-          return ES_FAILED;
-        assert(idx >= 0 && idx < m);
-        count[idx]++;
-      } else {
-        all_assigned = false;
+      for (int i = x.size(); i--; ) {
+        if (x[i].assigned()) {
+          int idx;
+          if (!lookupValue(k,x[i].val(),idx))
+            return ES_FAILED;
+          count[idx]++;
+        } else {
+          all_assigned = false;
+        }
       }
-    }
-
-    if (all_assigned) {
-      for (int i = k.size(); i--; )
-        GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
-      return ES_SUBSUMED(p,home);
+      
+      if (all_assigned) {
+        for (int i = k.size(); i--; )
+          GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
+        return ES_SUBSUMED(p,home);
+      }
     }
 
     if (Card::propagate) {
-      // check again consistnecy of cardinalities
+      // check again consistency of cardinalities
       int reqmin = 0;
       int allmax = 0;
-      m    = k.size();
-      n    = x.size();
-      for (int i = m; i--; ) {
-        int ci = k[i].counter();
-        if (ci > k[i].max()) {
+      for (int i = k.size(); i--; ) {
+        if (k[i].counter() > k[i].max())
           return ES_FAILED;
-        } else {
-          allmax += (k[i].max() - ci);
-          if (ci < k[i].min()) {
-            reqmin += (k[i].min() - ci);
-          }
-        }
-        if (k[i].min() > n)
+        allmax += k[i].max() - k[i].counter();
+        if (k[i].counter() < k[i].min())
+          reqmin += k[i].min() - k[i].counter();
+        if (k[i].min() > x.size())
           return ES_FAILED;
-        if (!k[i].assigned())
-          GECODE_ME_CHECK((k[i].lq(home, n)));
+        GECODE_ME_CHECK((k[i].lq(home, x.size())));
       }
 
-      if ((n < reqmin) || (allmax < n))
+      if ((x.size() < reqmin) || (allmax < x.size()))
         return ES_FAILED;
     }
 

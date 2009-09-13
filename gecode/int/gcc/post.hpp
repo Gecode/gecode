@@ -54,66 +54,71 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   inline ExecStatus
   postSideConstraints(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
-    int n = x.size();
-    int smin = 0;
-    int smax = 0;
-    for (int i = k.size(); i--; ) {
-      GECODE_ME_CHECK((k[i].gq(home, 0)));
-      GECODE_ME_CHECK((k[i].lq(home, n)));
-      smax += k[i].max();
-      smin += k[i].min();
-    }
+    Region r(home);
 
-    if (n < smin || smax < n) {
+    {
+      int smin = 0;
+      int smax = 0;
+      for (int i = k.size(); i--; ) {
+        GECODE_ME_CHECK((k[i].gq(home, 0)));
+        GECODE_ME_CHECK((k[i].lq(home, x.size())));
+        smin += k[i].min();
+        smax += k[i].max();
+      }
+
       // not enough variables to satisfy min req
-      return ES_FAILED;
+      if ((x.size() < smin) || (smax < x.size()))
+        return ES_FAILED;
     }
 
     // Remove all values from the x that are not in v
-    IntArgs v(k.size());
-    for (int i=k.size(); i--;)
-      v[i] = k[i].card();
-    IntSet valid(&v[0], v.size());
-    for (int i = n; i--; ) {
-      IntSetRanges ir(valid);
-      GECODE_ME_CHECK(x[i].inter_r(home, ir));
+    {
+      int* v = r.alloc<int>(k.size());
+      for (int i=k.size(); i--;)
+        v[i]=k[i].card();
+      Support::quicksort(v,k.size());
+      for (int i=x.size(); i--; ) {
+        Iter::Values::Array iv(v,k.size());
+        GECODE_ME_CHECK(x[i].inter_v(home, iv, false));
+      }
     }
 
     // Remove all values with 0 max occurrence
     // and remove corresponding occurrence variables from k
-    
-    int noOfZeroes = 0;
-    for (int i=k.size(); i--;)
-      if (k[i].max() == 0)
-        noOfZeroes++;
+    {
+      // The number of zeroes
+      int n_z = 0;
+      for (int i=k.size(); i--;)
+        if (k[i].max() == 0)
+          n_z++;
 
-    if (noOfZeroes > 0) {
-      IntArgs zeroIdx(noOfZeroes);
-      noOfZeroes = 0;
-      int j = 0;
-      for (int i=0; i<k.size(); i++) {
-        if (k[i].max() == 0) {
-          zeroIdx[noOfZeroes++] = k[i].card();            
-        } else {
-          k[j++] = k[i];
+      if (n_z > 0) {
+        int* z = r.alloc<int>(n_z);
+        n_z = 0;
+        int n_k = 0;
+        for (int i=0; i<k.size(); i++)
+          if (k[i].max() == 0) {
+            z[n_z++] = k[i].card();            
+          } else {
+            k[n_k++] = k[i];
+          }
+        k.size(n_k);
+        Support::quicksort(z,n_z);
+        for (int i=x.size(); i--;) {
+          Iter::Values::Array zi(z,n_z);
+          GECODE_ME_CHECK(x[i].minus_v(home,zi,false));
         }
-      }
-      k.size(j);
-      for (int i=x.size(); i--;) {
-        IntSet zeroesI(&zeroIdx[0], noOfZeroes);
-        IntSetRanges zeroesR(zeroesI);
-        GECODE_ME_CHECK((x[i].minus_r(home, zeroesR)));
       }
     }
 
     if (Card::propagate) {
-      Region re(home);
-      Linear::Term<IntView>* t = re.alloc<Linear::Term<IntView> >(k.size());
+      Linear::Term<IntView>* t = r.alloc<Linear::Term<IntView> >(k.size());
       for (int i = k.size(); i--; ) {
         t[i].a=1; t[i].x=k[i].base();
       }
       Linear::post(home,t,k.size(),IRT_EQ,x.size(),ICL_BND);
     }
+
     return ES_OK;
   }
 

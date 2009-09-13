@@ -213,8 +213,6 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Constructor for posting
     BndImp(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
-    /// Return how much extra memory is allocated by the propagator
-    virtual size_t allocated(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion

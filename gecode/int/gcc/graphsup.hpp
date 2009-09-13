@@ -523,7 +523,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * \brief Check whether minimum requirements shrink variable domains
      *
      */
-    bool min_require(Space& home);
+    void min_require(Space& home);
 
     /**
      * \brief Synchronization of the graph
@@ -548,7 +548,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
 
     template<BC>
-    bool narrow(Space& home);
+    void narrow(Space& home);
 
     /** \brief Compute a maximum matching M on the graph
      *
@@ -1354,9 +1354,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   template<class Card>
-  inline bool
+  inline void
   VarValGraph<Card>::min_require(Space& home) {
-    bool modified = false;
     for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
       if (vln->noe > 0) {
@@ -1379,8 +1378,6 @@ namespace Gecode { namespace Int { namespace GCC {
             ModEvent me = x[vi].eq(home, vln->val);
             if (me_failed(me))
               failed(true);
-            if (me_modified(me))
-              modified = true;
 
             vars[vi] = vars[--n_var];
             vars[vi]->set_info(vi);
@@ -1399,8 +1396,6 @@ namespace Gecode { namespace Int { namespace GCC {
             ModEvent me = k[vidx].eq(home, k[vidx].min());
             if (me_failed(me))
               failed(true);
-            if (me_modified(me))
-              modified = true;
           }
 
           k[vidx].counter(k[vidx].min());
@@ -1433,16 +1428,12 @@ namespace Gecode { namespace Int { namespace GCC {
           ModEvent me = k[i].lq(home, vals[i]->noe);
           if (me_failed(me))
             failed(true);
-          if (me_modified(me) && k[i].max() != vals[i]->noe)
-            modified = true;
         }
       }
     }
 
     for (int i = n_val; i--; )
       vals[i]->set_info(n_var + i);
-
-    return modified;
   }
 
   template<class Card>
@@ -1668,9 +1659,8 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card> template<BC direction>
-  inline bool
+  inline void
   VarValGraph<Card>::narrow(Space& home) {
-    bool modified  = false;
     for (int i = n_var; i--; ) {
       VarNode* vrn = vars[i];
       if (vrn->noe == 1) {
@@ -1680,10 +1670,8 @@ namespace Gecode { namespace Int { namespace GCC {
         ModEvent me = x[i].eq(home, v->val);
         if (me_failed(me)) {
           failed(true);
-          return false;
+          return;
         }
-        if (me_modified(me))
-          modified = true;
         v->inc();
       }
     }
@@ -1694,9 +1682,8 @@ namespace Gecode { namespace Int { namespace GCC {
           ModEvent me = k[i].lq(home, v->noe);
           if (me_failed(me)) {
             failed(true);
-            return false;
+            return;
           }
-          modified |= me_modified(me);
         }
 
       if (v->noe > 0) {
@@ -1705,9 +1692,8 @@ namespace Gecode { namespace Int { namespace GCC {
           ModEvent me = k[i].lq(home, v->noe);
           if (me_failed(me)) {
             failed(true);
-            return false;
+            return;
           }
-          modified |= me_modified(me);
         }
 
         // If the maximum number of occurences of a value is reached
@@ -1723,9 +1709,8 @@ namespace Gecode { namespace Int { namespace GCC {
               ModEvent me = k[i].eq(home, k[i].counter());
               if (me_failed(me)) {
                 failed(true);
-                return false;
+                return;
               }
-              modified |= me_modified(me);
             }
           }
 
@@ -1759,9 +1744,8 @@ namespace Gecode { namespace Int { namespace GCC {
                 ModEvent me = x[vrn->get_info()].nq(home, v->val);
                 if (me_failed(me)) {
                   failed(true);
-                  return false;
+                  return;
                 }
-                modified |= me_modified(me);
                 vrn->noe--;
                 v->noe--;
                 e->del_edge();
@@ -1813,14 +1797,12 @@ namespace Gecode { namespace Int { namespace GCC {
             ModEvent me = x[i].nq(home, v->val);
             if (me_failed(me)) {
               failed(true);
-              return false;
+              return;
             }
-            modified |= me_modified(me);
           } else {
             e->template free<direction>();
           }
         }
-    return modified;
   }
 
   template<class Card>  template<BC direction>

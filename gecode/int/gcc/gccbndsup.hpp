@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card, bool shared>
   inline ExecStatus
   prop_card(Space& home, 
-            ViewArray<IntView>& x, ViewArray<Card>& k, bool& mod) {
+            ViewArray<IntView>& x, ViewArray<Card>& k) {
     int n = x.size();
     int m = k.size();
     Region r(home);
@@ -76,25 +76,20 @@ namespace Gecode { namespace Int { namespace GCC {
       rv[i].minb = rv[i].maxb = rv[i].le = rv[i].gr = rv[i].eq = 0;
 
     for (int i = n; i--; ) {
-      int min_idx = 0;
-      int max_idx = 0;
-      min_idx = lookupValue(k,x[i].min());
-      if (min_idx == -1) {
+      int min_idx;
+      if (!lookupValue(k,x[i].min(),min_idx))
         return ES_FAILED;
-      }
       if (x[i].assigned()) {
         rv[min_idx].minb++;
         rv[min_idx].maxb++;
         rv[min_idx].eq++;
       } else {
-        max_idx = lookupValue(k,x[i].max());
-        if (max_idx == -1) {
+        int max_idx;
+        if (!lookupValue(k,x[i].max(),max_idx))
           return ES_FAILED;
-        }
         // count the number of variables
         // with lower bound k[min_idx].card()
         rv[min_idx].minb++;
-
         // count the number of variables
         // with upper bound k[max_idx].card()
         rv[max_idx].maxb++;
@@ -118,19 +113,9 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = m; i--; ) {
       int reachable = x.size() - rv[i].le - rv[i].gr;
       if (!k[i].assigned()) {
-        ModEvent me = k[i].lq(home, reachable);
-        if (me_failed(me))
-          return ES_FAILED;
-        mod |= (me_modified(me) && (k[i].max() != reachable));
-        mod |= shared && me_modified(me);
-
+        GECODE_ME_CHECK(k[i].lq(home, reachable));
         if (rv[i].eq > 0) {
-          ModEvent me = k[i].gq(home, static_cast<int>(rv[i].eq));
-          if (me_failed(me))
-            return ES_FAILED;
-          mod |= (me_modified(me) &&
-                  (k[i].min() != static_cast<int>(rv[i].eq)));
-          mod |= shared && me_modified(me);
+          GECODE_ME_CHECK(k[i].gq(home, static_cast<int>(rv[i].eq)));
         }
       } else {
         // check validity of the cardinality value
@@ -263,7 +248,6 @@ namespace Gecode { namespace Int { namespace GCC {
     bool check_update_max(ViewArray<Card>& k);
     bool check_update_min(ViewArray<Card>& k);
     int getsize(void) const;
-    size_t allocated(void) const;
     //@}
     void print(void);
   };
@@ -271,7 +255,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Deallocate memory
   template<class Card>
   forceinline void
-  PartialSum<Card>::dispose(void){
+  PartialSum<Card>::dispose(void) {
     size = -1;
   }
 
@@ -339,7 +323,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     int prevCard = elements[0].card()-1;
     i = 0;
-    for (j = 2; j < elements.size() + holes + 2; j++){
+    for (j = 2; j < elements.size() + holes + 2; j++) {
       if (elements[i].card() != prevCard + 1) {
         sum[j + 1] = sum[j];
       } else if (up) {
@@ -357,7 +341,7 @@ namespace Gecode { namespace Int { namespace GCC {
     // Compute distances, eliminating zeroes
     i = elements.size() + holes + 3;
     j = i + 1;
-    for ( ; i > 0; ){
+    for ( ; i > 0; ) {
       while(sum[i] == sum[i - 1]) {
         ds[i] = j;
         i--;
@@ -384,7 +368,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card>
   forceinline int
-  PartialSum<Card>::sumup(int from, int to){
+  PartialSum<Card>::sumup(int from, int to) {
     if (from <= to) {
       return sum[to - firstValue] - sum[from - firstValue - 1];
     } else {
@@ -402,7 +386,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card>
   forceinline int
-  PartialSum<Card>::minValue(void){
+  PartialSum<Card>::minValue(void) {
     return firstValue + 3;
   }
 
@@ -413,7 +397,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   forceinline int
-  PartialSum<Card>::maxValue(void){
+  PartialSum<Card>::maxValue(void) {
     return lastValue - 2;
   }
 
@@ -454,7 +438,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline bool
-  PartialSum<Card>::check_update_max(ViewArray<Card>& k){
+  PartialSum<Card>::check_update_max(ViewArray<Card>& k) {
     int j = 0;
     for (int i = 3; i < size - 2; i++) {
       int max = 0;
@@ -478,7 +462,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline bool
-  PartialSum<Card>::check_update_min(ViewArray<Card>& k){
+  PartialSum<Card>::check_update_min(ViewArray<Card>& k) {
     int j = 0;
     for (int i = 3; i < size - 2; i++) {
       int min = 0;
@@ -497,11 +481,6 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline int
   PartialSum<Card>::getsize(void) const {
     return size;
-  }
-  template<class Card>
-  forceinline size_t
-  PartialSum<Card>::allocated(void) const {
-    return sizeof(PartialSum<Card>);
   }
 
 

@@ -137,34 +137,24 @@ namespace Gecode { namespace Int { namespace GCC {
   ExecStatus
   Dom<Card>::propagate(Space& home, const ModEventDelta&) {
 
-    ExecStatus es = ES_NOFIX;
-    bool card_mod = false;
-
     Region r(home);
     int* count = r.alloc<int>(k.size());
     for (int i = k.size(); i--; )
       count[i] = 0;
 
-    bool all_assigned = true;
     // total number of assigned views
     int noa = 0;
-    for (int i = y.size(); i--; ) {
-      bool b = y[i].assigned();
-      all_assigned &= b;
-      if (b) {
+    for (int i = y.size(); i--; )
+      if (y[i].assigned()) {
         noa++;
-        int idx = lookupValue(k, y[i].val());
-        if (idx == -1) {
+        int idx;
+        if (!lookupValue(k,y[i].val(),idx))
           return ES_FAILED;
-        }
         count[idx]++;
-        if (Card::propagate) {
-          if (k[idx].max() == 0) {
-            return ES_FAILED;
-          }
-        }
+        if (Card::propagate && (k[idx].max() == 0))
+          return ES_FAILED;
       }
-    }
+    bool all_assigned = (noa == y.size());
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
@@ -175,10 +165,7 @@ namespace Gecode { namespace Int { namespace GCC {
         // the solution contains ci occurences of value k[i].card();
         if (Card::propagate) {
           if (!k[i].assigned()) {
-            ModEvent me = k[i].eq(home, ci);
-            if (me_failed(me))
-              return ES_FAILED;
-            card_mod |= me_modified(me);
+            GECODE_ME_CHECK(k[i].eq(home, ci));
           }
           all_assigned &= k[i].assigned();
         }
@@ -197,20 +184,13 @@ namespace Gecode { namespace Int { namespace GCC {
           if (!k[i].assigned()) {
             int ub = n - (noa - count[i]);
             int lb = count[i];
-            ModEvent melq = k[i].lq(home, ub);
-            if (me_failed(melq))
-              return ES_FAILED;
-            card_mod |= me_modified(melq);
-
-            ModEvent megq = k[i].gq(home, lb);
-            if (me_failed(megq))
-              return ES_FAILED;
-            card_mod |= me_modified(megq);
+            GECODE_ME_CHECK(k[i].lq(home, ub));
+            GECODE_ME_CHECK(k[i].gq(home, lb));
           }
         }
       }
 
-      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k, card_mod)));
+      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k)));
 
       if (!card_consistent<Card>(y, k)) {
         return ES_FAILED;
@@ -229,15 +209,10 @@ namespace Gecode { namespace Int { namespace GCC {
       } else {
         if (x.size() == 1) {
           if (x[0].assigned()) {
-            int v = x[0].val();
-            int idx = lookupValue(k,v);
-            if (idx == -1) {
+            int idx;
+            if (!lookupValue(k,x[0].val(),idx))
               return ES_FAILED;
-            }
-            ModEvent me = k[idx].inc();
-            if (me_failed(me))
-              return ES_FAILED;
-            card_mod |= me_modified(me);
+            GECODE_ME_CHECK(k[idx].inc());
             for (int j = k.size(); j--; )
               if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter())
                 return ES_FAILED;
@@ -249,8 +224,6 @@ namespace Gecode { namespace Int { namespace GCC {
 
     assert(x.size() > 0);
 
-    bool mod = false;
-    bool min_req_mod = false;
     int noe     = 0;
     int smin    = 0;
     int smax    = 0;
@@ -287,37 +260,25 @@ namespace Gecode { namespace Int { namespace GCC {
       assert(smin >= 0);
       assert(smax >= 0);
       vvg = new VarValGraph<Card> (x, y, k, noe, smin, smax);
-      min_req_mod = vvg->min_require(home);
-      if (vvg->failed()) {
+      vvg->min_require(home);
+      if (vvg->failed())
         return ES_FAILED;
-      }
 
-      bool init_ubm = vvg->template maximum_matching<UBC>(home);
-      if (!init_ubm) {
+      if (!vvg->template maximum_matching<UBC>(home))
         return ES_FAILED;
-      }
 
-      if (!card_fixed) {
-        bool init_lbm = vvg->template maximum_matching<LBC>(home);
-        if (!init_lbm) {
-          return ES_FAILED;
-        }
-      }
-    } else {
-      if (!vvg->sync(home))
+      if (!card_fixed && !vvg->template maximum_matching<LBC>(home))
         return ES_FAILED;
+    } else if (!vvg->sync(home)) {
+      return ES_FAILED;
     }
-
-    bool filter_ubc = false;
-    bool filter_lbc = false;
 
     vvg->template free_alternating_paths<UBC>(home);
     vvg->template strongly_connected_components<UBC>(home);
 
-    filter_ubc = vvg->template narrow<UBC>(home);
-    if (vvg->failed()) {
+    vvg->template narrow<UBC>(home);
+    if (vvg->failed())
       return ES_FAILED;
-    }
     if (!card_fixed) {
       if (Card::propagate && !vvg->sync(home))
         return ES_FAILED;
@@ -325,18 +286,14 @@ namespace Gecode { namespace Int { namespace GCC {
       vvg->template free_alternating_paths<LBC>(home);
       vvg->template strongly_connected_components<LBC>(home);
 
-      filter_lbc = vvg->template narrow<LBC>(home);
+      vvg->template narrow<LBC>(home);
       if (vvg->failed())
         return ES_FAILED;
     }
 
     bool card_assigned = true;
     if (Card::propagate) {
-      es = prop_card<Card, true>(home, y, k, card_mod);
-      if (es == ES_FAILED) {
-        return ES_FAILED;
-      }
-
+      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k)));
       for (int i = k.size(); i--; ) {
         card_assigned &= k[i].assigned();
       }
@@ -356,16 +313,10 @@ namespace Gecode { namespace Int { namespace GCC {
         } else {
           if (x.size() == 1) {
             if (x[0].assigned()) {
-              int v = x[0].val();
-              int idx = lookupValue(k,v);
-              if (idx == -1) {
+              int idx;
+              if (!lookupValue(k,x[0].val(),idx))
                 return ES_FAILED;
-              }
-              ModEvent me = k[idx].inc();
-              if (me_failed(me)) {
-                return ES_FAILED;
-              }
-              card_mod |= me_modified(me);
+              GECODE_ME_CHECK(k[idx].inc());
 
               for (int j = k.size(); j--; ) {
                 if (k[j].min() > k[j].counter() ||
@@ -380,34 +331,25 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    for (int i = k.size(); i--; ) {
+    for (int i = k.size(); i--; )
       count[i] = 0;
-    }
+
     all_assigned = true;
     // total number of assigned views
-    for (int i = y.size(); i--; ) {
-      bool b = y[i].assigned();
-      all_assigned &= b;
-      if (b) {
-        int idx = lookupValue(k,y[i].val());
-        if (idx == -1) {
+    for (int i = y.size(); i--; )
+      if (y[i].assigned()) {
+        int idx;
+        if (!lookupValue(k,y[i].val(),idx))
           return ES_FAILED;
-        }
         count[idx]++;
-        if (Card::propagate) {
-          if (k[idx].max() == 0) {
-            return ES_FAILED;
-          }
-        }
+        if (Card::propagate && (k[idx].max() == 0))
+          return ES_FAILED;
+      } else {
+        all_assigned = false;
       }
-    }
 
-    if (Card::propagate) {
-      es = prop_card<Card, true>(home, y, k, card_mod);
-      if (es == ES_FAILED) {
-        return es;
-      }
-    }
+    if (Card::propagate)
+      GECODE_ES_CHECK((prop_card<Card, true>(home, y, k)));
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
@@ -418,10 +360,7 @@ namespace Gecode { namespace Int { namespace GCC {
         // the solution contains ci occurences of value k[i].card();
         if (Card::propagate) {
           if (!k[i].assigned()) {
-            ModEvent me = k[i].eq(home, ci);
-            if (me_failed(me))
-              return ES_FAILED;
-            card_mod |= me_modified(me);
+            GECODE_ME_CHECK(k[i].eq(home, ci));
           }
           all_assigned &= k[i].assigned();
         }
@@ -445,18 +384,9 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = k.size(); i--; ) {
         int lb = ysmax + k[i].max();
         int ub = ysmin + k[i].min();
-        ModEvent me = k[i].gq(home, lb);
-        if (me_failed(me))
-          return ES_FAILED;
-
-        card_mod |= me_modified(me);
+        GECODE_ME_CHECK(k[i].gq(home, lb));
         smax += k[i].max();
-
-        me = k[i].lq(home, ub);
-        if (me_failed(me))
-          return ES_FAILED;
-
-        card_mod |= me_modified(me);
+        GECODE_ME_CHECK(k[i].lq(home, ub));
         card_ass &= k[i].assigned();
       }
       if (card_ass) {
@@ -466,10 +396,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    mod = (filter_ubc || filter_lbc || min_req_mod || card_mod);
-
-    return mod ? ES_NOFIX : ES_FIX;
-
+    return ES_NOFIX;
   }
 
   template<class Card>

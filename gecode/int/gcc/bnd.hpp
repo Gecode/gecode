@@ -75,12 +75,6 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card, bool shared>
-  size_t
-  BndImp<Card,shared>::allocated(void) const {
-    return lps.allocated() + ups.allocated();
-  }
-
-  template<class Card, bool shared>
   Actor*
   BndImp<Card,shared>::copy(Space& home, bool share){
     return new (home) BndImp<Card,shared>
@@ -91,11 +85,11 @@ namespace Gecode { namespace Int { namespace GCC {
   PropCost
   BndImp<Card,shared>::cost(const Space&,
                             const ModEventDelta& med) const {
-    int ksize = Card::propagate ? k.size() : 0;
+    int n_k = Card::propagate ? k.size() : 0;
     if (IntView::me(med) == ME_INT_VAL)
-      return PropCost::linear(PropCost::LO, y.size() + ksize);
+      return PropCost::linear(PropCost::LO, y.size() + n_k);
     else
-      return PropCost::quadratic(PropCost::LO, x.size() + ksize);
+      return PropCost::quadratic(PropCost::LO, x.size() + n_k);
   }
 
   template<class Card, bool shared>
@@ -104,32 +98,33 @@ namespace Gecode { namespace Int { namespace GCC {
     // Remove all values with 0 max occurrence
     // and remove corresponding occurrence variables from k
     
-    int noOfZeroes = 0;
+    // The number of zeroes
+    int n_z = 0;
     for (int i=k.size(); i--;)
       if (k[i].max() == 0)
-        noOfZeroes++;
+        n_z++;
 
-    if (noOfZeroes > 0) {
-      IntArgs zeroIdx(noOfZeroes);
-      noOfZeroes = 0;
-      int j = 0;
-      for (int i=0; i<k.size(); i++) {
+    if (n_z > 0) {
+      Region r(home);
+      int* z = r.alloc<int>(n_z);
+      n_z = 0;
+      int n_k = 0;
+      for (int i=0; i<k.size(); i++)
         if (k[i].max() == 0) {
-          zeroIdx[noOfZeroes++] = k[i].card();            
+          z[n_z++] = k[i].card();            
         } else {
-          k[j++] = k[i];
+          k[n_k++] = k[i];
         }
-      }
-      k.size(j);
+      k.size(n_k);
+      Support::quicksort(z,n_z);
       for (int i=x.size(); i--;) {
-        IntSet zeroesI(&zeroIdx[0], noOfZeroes);
-        IntSetRanges zeroesR(zeroesI);
-        GECODE_ME_CHECK(x[i].minus_r(home, zeroesR));
+        Iter::Values::Array zi(z,n_z);
+        GECODE_ME_CHECK(x[i].minus_v(home,zi,false));
       }
       lps.dispose();
       ups.dispose();
     }
-    return ES_FIX;
+    return ES_OK;
   }
 
   template<class Card, bool shared>
@@ -154,10 +149,10 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = x.size(); i--; ) {
       if (x[i].assigned()) {
         noa++;
-        int idx = lookupValue(k,x[i].val());
+        int idx;
         // reduction is essential for order on value nodes in dom
         // hence introduce test for failed lookup
-        if (idx == -1)
+        if (!lookupValue(k,x[i].val(),idx))
           return ES_FAILED;
         count[idx]++;
       } else {
@@ -181,10 +176,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (!card_consistent<Card>(x, k))
         return ES_FAILED;
 
-      {
-        bool mod;
-        GECODE_ES_CHECK((prop_card<Card,shared>(home, x, k, mod)));
-      }
+      GECODE_ES_CHECK((prop_card<Card,shared>(home, x, k)));
 
       // Cardinalities may have been modified, so recompute
       // count and all_assigned
@@ -193,10 +185,10 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned = true;
       for (int i = x.size(); i--; ) {
         if (x[i].assigned()) {
-          int idx = lookupValue(k,x[i].val());
+          int idx;
           // reduction is essential for order on value nodes in dom
           // hence introduce test for failed lookup
-          if (idx == -1)
+          if (!lookupValue(k,x[i].val(),idx))
             return ES_FAILED;
           count[idx]++;
         } else {
@@ -324,16 +316,17 @@ namespace Gecode { namespace Int { namespace GCC {
 
     GECODE_ES_CHECK((ubc(home, nb, hall, rank, mu, nu)));
 
-    if (Card::propagate) {
-      bool mod;
-      GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k, mod)));
-    }
+    if (Card::propagate)
+      GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k)));
 
     for (int i = k.size(); i--; )
       count[i] = 0;
     for (int i = x.size(); i--; )
       if (x[i].assigned()) {
-        count[lookupValue(k,x[i].val())]++;
+        int idx;
+        if (!lookupValue(k,x[i].val(),idx))
+          return ES_FAILED;
+        count[idx]++;
       } else {
         // We won't need the remaining counts, they're only used when
         // all x are assigned
