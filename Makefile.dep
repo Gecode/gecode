@@ -1350,8 +1350,8 @@ gecode/int/gcc$(OBJSUFFIX) gecode/int/gcc$(SBJSUFFIX): \
 	./gecode/int/distinct/combptr.hpp ./gecode/int/distinct/dom.hpp ./gecode/int/distinct/edge.hpp \
 	./gecode/int/distinct/node.hpp ./gecode/int/distinct/ter-dom.hpp ./gecode/int/distinct/val.hpp \
 	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
-	./gecode/int/gcc.hh ./gecode/int/gcc/bnd.hpp ./gecode/int/gcc/dom.hpp \
-	./gecode/int/gcc/gccbndsup.hpp ./gecode/int/gcc/graphsup.hpp ./gecode/int/gcc/lbc.hpp \
+	./gecode/int/gcc.hh ./gecode/int/gcc/bnd-sup.hpp ./gecode/int/gcc/bnd.hpp \
+	./gecode/int/gcc/dom-sup.hpp ./gecode/int/gcc/dom.hpp ./gecode/int/gcc/lbc.hpp \
 	./gecode/int/gcc/occur.hpp ./gecode/int/gcc/post.hpp ./gecode/int/gcc/ubc.hpp \
 	./gecode/int/gcc/val.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
 	./gecode/int/limits.hpp ./gecode/int/linear.hh ./gecode/int/linear/bool-int.hpp \

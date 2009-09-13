@@ -46,17 +46,14 @@
 
 #include <gecode/int.hh>
 
-#include <gecode/int/gcc/gccbndsup.hpp>
-#include <gecode/int/gcc/graphsup.hpp>
-#include <gecode/int/gcc/occur.hpp>
-
 /**
  * \namespace Gecode::Int::GCC
- * \brief Global cardinality propagators
- * \note The global cardinality propagator with fixed cardinalities does
- *       not support sharing!
- *
+ * \brief Global cardinality propagators (Counting)
  */
+
+#include <gecode/int/gcc/bnd-sup.hpp>
+#include <gecode/int/gcc/dom-sup.hpp>
+#include <gecode/int/gcc/occur.hpp>
 
 namespace Gecode { namespace Int { namespace GCC {
 
