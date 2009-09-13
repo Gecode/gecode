@@ -448,8 +448,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   class VarValGraph {
   private:
-    /// failure flag
-    bool fail;
     /// Allocated memory for nodes and edges
     char* mem;
     /// How much memory is allocated
@@ -507,23 +505,8 @@ namespace Gecode { namespace Int { namespace GCC {
     size_t allocated(void) const;
     /// \name Graph-interface
     //@{
-    /**
-     * \brief Check whether propagation failed
-     *  This is actually needed to cope with failures
-     *  occuring in functions returing only a boolean value
-     *  and not an ExecStatus.
-     */
-    bool failed(void) const;
-    /**
-     * \brief Set the failure flag of the graph
-     */
-    void failed(bool b);
-
-    /**
-     * \brief Check whether minimum requirements shrink variable domains
-     *
-     */
-    void min_require(Space& home);
+    /// Check whether minimum requirements shrink variable domains
+    ExecStatus min_require(Space& home);
 
     /**
      * \brief Synchronization of the graph
@@ -533,22 +516,11 @@ namespace Gecode { namespace Int { namespace GCC {
      * that do not longer belong to the graph associated with the current
      * variable domains.
      */
-    bool sync(Space& home);
+    ExecStatus sync(Space& home);
 
-    /// Allocate memory for the graph
-    void* operator new(size_t t);
-    /// Free the memory for the graph
-    void operator delete(void* p);
-
-    /**
-     * \brief Remove all those edges from the graph
-     *        that do not belong
-     *        to any possible maximum matching on the graph
-     *
-     */
-
+    /// Remove edges that do not belong to any maximal matching
     template<BC>
-    void narrow(Space& home);
+    ExecStatus narrow(Space& home);
 
     /** \brief Compute a maximum matching M on the graph
      *
@@ -557,7 +529,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *    k[i].min()\f$
      */
     template<BC>
-    bool maximum_matching(Space& home);
+    ExecStatus maximum_matching(Space& home);
 
     /// Compute possible free alternating paths in the graph
     template<BC>
@@ -588,6 +560,11 @@ namespace Gecode { namespace Int { namespace GCC {
              int&);
 
     //@}
+  public:
+    /// Allocate memory for the graph
+    void* operator new(size_t t);
+    /// Free the memory for the graph
+    void operator delete(void* p);
   };
 
   forceinline
@@ -1231,8 +1208,7 @@ namespace Gecode { namespace Int { namespace GCC {
                                  ViewArray<IntView>& yref,
                                  ViewArray<Card>& kref,
                                  int noe, int smin, int smax)
-    : fail(false),
-      x(xref),
+    : x(xref),
       y(yref),
       k(kref),
       n_var(x.size()),
@@ -1339,22 +1315,11 @@ namespace Gecode { namespace Int { namespace GCC {
     return _allocated + sizeof(VarValGraph<Card>);
   }
 
-  template<class Card>
-  forceinline bool
-  VarValGraph<Card>::failed(void) const {
-    return fail;
-  }
-
-  template<class Card>
-  forceinline void
-  VarValGraph<Card>::failed(bool b) {
-    fail = b;
-  }
 
 
 
   template<class Card>
-  inline void
+  inline ExecStatus
   VarValGraph<Card>::min_require(Space& home) {
     for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
@@ -1375,9 +1340,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
             assert(vrn->noe == 1);
 
-            ModEvent me = x[vi].eq(home, vln->val);
-            if (me_failed(me))
-              failed(true);
+            GECODE_ME_CHECK(x[vi].eq(home, vln->val));
 
             vars[vi] = vars[--n_var];
             vars[vi]->set_info(vi);
@@ -1392,11 +1355,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
           int vidx = vln->kindex();
-          if (Card::propagate) {
-            ModEvent me = k[vidx].eq(home, k[vidx].min());
-            if (me_failed(me))
-              failed(true);
-          }
+          if (Card::propagate)
+            GECODE_ME_CHECK(k[vidx].eq(home, k[vidx].min()));
 
           k[vidx].counter(k[vidx].min());
 
@@ -1404,14 +1364,12 @@ namespace Gecode { namespace Int { namespace GCC {
           vln->template set_cap<LBC>(0);
           vln->set_maxlow(0);
 
-          if (sum_min && sum_min >= k[vidx].min()) {
+          if (sum_min && sum_min >= k[vidx].min())
             sum_min -= k[vidx].min();
-          }
           assert(sum_min >=0);
 
-          if (sum_max && sum_max >= k[vidx].max()) {
+          if (sum_max && sum_max >= k[vidx].max())
             sum_max -= k[vidx].max();
-          }
           assert(sum_max >=0);
         }
       } else {
@@ -1420,24 +1378,20 @@ namespace Gecode { namespace Int { namespace GCC {
         vals[i]->set_maxlow(0);
         vals[i]->set_kmax(0);
         vals[i]->set_kmin(0);
-
       }
 
-      if (Card::propagate) {
-        if (k[i].counter() == 0) {
-          ModEvent me = k[i].lq(home, vals[i]->noe);
-          if (me_failed(me))
-            failed(true);
-        }
-      }
+      if (Card::propagate && (k[i].counter() == 0))
+        GECODE_ME_CHECK(k[i].lq(home, vals[i]->noe));
     }
 
     for (int i = n_val; i--; )
       vals[i]->set_info(n_var + i);
+
+    return ES_OK;
   }
 
   template<class Card>
-  inline bool
+  inline ExecStatus
   VarValGraph<Card>::sync(Space& home) {
     Region r(home);
     VVGNode** re = r.alloc<VVGNode*>(node_size);
@@ -1466,25 +1420,21 @@ namespace Gecode { namespace Int { namespace GCC {
               // adjust capacities
               v->template set_cap<UBC>(k[i].max() - (inc_ubc));
               v->set_maxlow(k[i].max() - (inc_lbc));
-              if (v->kmin() == v->kmax()) {
+              if (v->kmin() == v->kmax())
                 v->template set_cap<LBC>(k[i].max() - (inc_lbc));
-              }
             } else {
               // set cap to max and resolve conflicts on view side
               // set to full capacity for later rescheduling
-              if (v->template cap<UBC>()) {
+              if (v->template cap<UBC>())
                 v->template set_cap<UBC>(k[i].max());
-              }
               v->set_maxlow(k[i].max() - (inc_lbc));
-              if (v->kmin() == v->kmax()) {
+              if (v->kmin() == v->kmax())
                 v->template set_cap<LBC>(k[i].max() - (inc_lbc));
-              }
               v->card_conflict(rm);
             }
           }
         }
         if (inc_lbc < k[i].min() && v->noe > 0) {
-
           v->template set_cap<LBC>(k[i].min() - inc_lbc);
           re[n_re] = v;
           n_re++;
@@ -1512,7 +1462,7 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n_var; i--; ) {
 
       VarNode* vrn = vars[i];
-      if(static_cast<int>(x[i].size()) != vrn->noe) {
+      if (static_cast<int>(x[i].size()) != vrn->noe) {
         // if the variable is already assigned
         if (x[i].assigned()) {
           int  v = x[i].val();
@@ -1619,47 +1569,33 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     for (int i = n_val; i--; ) {
-      if (k[i].min() > vals[i]->noe && k[i].counter() == 0) {
-        failed(true);
-        return false;
-      }
+      if ((k[i].min() > vals[i]->noe) && (k[i].counter() == 0))
+        return ES_FAILED;
       vals[i]->set_info(n_var + i);
     }
 
-    if (n_re == 0) {
-      // no repair needed
-      return true;
-    } else {
-      // start repair
-
-      bool repaired = true;
-      while (n_re ) {
-        n_re--;
-        assert(re[n_re] != NULL);
-        if (!(re[n_re]->removed())) {
-          if (!(re[n_re]->get_type())) {
-            VarNode* vrn = static_cast<VarNode*>(re[n_re]);
-            if (!vrn->template matched<UBC>()) {
-              repaired &= augmenting_path<UBC>(home,vrn);
-            }
-          } else {
-            assert(re[n_re]->get_type());
-            ValNode* vln = static_cast<ValNode*>(re[n_re]);
-            while(!vln->template matched<LBC>()) {
-              repaired &= augmenting_path<LBC>(home,vln);
-              if (!repaired) {
-                break;
-              }
-            }
-          }
+    // start repair
+    while (n_re > 0) {
+      n_re--;
+      if (!re[n_re]->removed()) {
+        if (!re[n_re]->get_type()) {
+          VarNode* vrn = static_cast<VarNode*>(re[n_re]);
+          if (!vrn->template matched<UBC>() &&
+              !augmenting_path<UBC>(home,vrn))
+            return ES_FAILED;
+        } else {
+          ValNode* vln = static_cast<ValNode*>(re[n_re]);
+          while (!vln->template matched<LBC>())
+            if (!augmenting_path<LBC>(home,vln))
+              return ES_FAILED;
         }
       }
-      return repaired;
     }
+    return ES_OK;
   }
 
   template<class Card> template<BC direction>
-  inline void
+  inline ExecStatus
   VarValGraph<Card>::narrow(Space& home) {
     for (int i = n_var; i--; ) {
       VarNode* vrn = vars[i];
@@ -1667,34 +1603,17 @@ namespace Gecode { namespace Int { namespace GCC {
         Edge* e = vrn->first();
         ValNode* v = e->getVal();
         e->template free<direction>();
-        ModEvent me = x[i].eq(home, v->val);
-        if (me_failed(me)) {
-          failed(true);
-          return;
-        }
+        GECODE_ME_CHECK(x[i].eq(home, v->val));
         v->inc();
       }
     }
     for (int i = n_val; i--; ) {
       ValNode* v = vals[i];
-      if (Card::propagate)
-        if (k[i].counter() == 0) {
-          ModEvent me = k[i].lq(home, v->noe);
-          if (me_failed(me)) {
-            failed(true);
-            return;
-          }
-        }
-
+      if (Card::propagate && (k[i].counter() == 0))
+        GECODE_ME_CHECK(k[i].lq(home, v->noe));
       if (v->noe > 0) {
-
-        if (Card::propagate) {
-          ModEvent me = k[i].lq(home, v->noe);
-          if (me_failed(me)) {
-            failed(true);
-            return;
-          }
-        }
+        if (Card::propagate)
+          GECODE_ME_CHECK(k[i].lq(home, v->noe));
 
         // If the maximum number of occurences of a value is reached
         // it cannot be consumed by another view
@@ -1704,22 +1623,10 @@ namespace Gecode { namespace Int { namespace GCC {
 
           k[i].counter(v->kcount());
 
-          if (Card::propagate) {
-            if (!k[i].assigned()) {
-              ModEvent me = k[i].eq(home, k[i].counter());
-              if (me_failed(me)) {
-                failed(true);
-                return;
-              }
-            }
-          }
+          if (Card::propagate)
+            GECODE_ME_CHECK(k[i].eq(home, k[i].counter()));
 
-          bool delall = false;
-          if (v->card_conflict() &&
-              v->noe > v->kmax()) {
-            delall = true;
-
-          }
+          bool delall = v->card_conflict() && (v->noe > v->kmax());
 
           for (Edge* e = v->last(); e != NULL; e = e->vprev()) {
             VarNode* vrn = e->getVar();
@@ -1730,7 +1637,6 @@ namespace Gecode { namespace Int { namespace GCC {
 
               int n = x.size();
               x[vi] = x[--n];
-              //              x[vi].index(vi);
               x.size(n);
 
               vars[vi] = vars[--n_var];
@@ -1739,38 +1645,27 @@ namespace Gecode { namespace Int { namespace GCC {
               e->del_edge();
               e->unlink();
 
-            } else {
-              if (delall) {
-                ModEvent me = x[vrn->get_info()].nq(home, v->val);
-                if (me_failed(me)) {
-                  failed(true);
-                  return;
-                }
-                vrn->noe--;
-                v->noe--;
-                e->del_edge();
-                e->unlink();
-              }
+            } else if (delall) {
+              GECODE_ME_CHECK(x[vrn->get_info()].nq(home, v->val));
+              vrn->noe--;
+              v->noe--;
+              e->del_edge();
+              e->unlink();
             }
           }
           v->template set_cap<UBC>(0);
           v->template set_cap<LBC>(0);
           v->set_maxlow(0);
-          if (sum_min && sum_min >= k[vidx].min()) {
+          if (sum_min && sum_min >= k[vidx].min())
             sum_min -= k[vidx].min();
-          }
           assert(sum_min >=0);
 
-          if (sum_max && sum_max >= k[vidx].max()) {
+          if (sum_max && sum_max >= k[vidx].max())
             sum_max -= k[vidx].max();
-          }
           assert(sum_max >=0);
 
-        } else {
-          int cur = v->kcount();
-          if (cur > 0) {
-            v->kcount(0);
-          }
+        } else if (v->kcount() > 0) {
+          v->kcount(0);
         }
       }
     }
@@ -1788,27 +1683,20 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = n_var; i--; )
       if (vars[i]->noe > 1)
-        for (Edge* e = vars[i]->first(); e != NULL; e = e->next()) {
-          bool keepedge = false;
-          keepedge =  (e->template matched<direction>() ||
-                       e->template used<direction>());
-          if (!keepedge) {
-            ValNode* v = e->getVal();
-            ModEvent me = x[i].nq(home, v->val);
-            if (me_failed(me)) {
-              failed(true);
-              return;
-            }
+        for (Edge* e = vars[i]->first(); e != NULL; e = e->next())
+          if (!e->template matched<direction>() &&
+              !e->template used<direction>()) {
+            GECODE_ME_CHECK(x[i].nq(home, e->getVal()->val));
           } else {
             e->template free<direction>();
           }
-        }
+
+    return ES_OK;
   }
 
   template<class Card>  template<BC direction>
-  inline bool
+  inline ExecStatus
   VarValGraph<Card>::maximum_matching(Space& home) {
-
     int required_size = 0;
     int card_match    = 0;
 
@@ -1842,9 +1730,8 @@ namespace Gecode { namespace Int { namespace GCC {
         // find failed nodes
         for (int i = n_val; i--; ) {
           ValNode* vln = vals[i];
-          if (!vln->template matched<direction>()) {
+          if (!vln->template matched<direction>())
             free[f++] = vln;
-          }
         }
 
         for (int i = 0; i < f; i++) {
@@ -1862,9 +1749,8 @@ namespace Gecode { namespace Int { namespace GCC {
         // find failed nodes
         for (int i = n_var; i--; ) {
           VarNode* vrn = vars[i];
-          if (!vrn->template matched<direction>()) {
+          if (!vrn->template matched<direction>())
             free[f++] = vrn;
-          }
         }
 
         for (int i = 0; i < f; i++) {
@@ -1876,7 +1762,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
     }
-    return (card_match >= required_size);
+    return (card_match >= required_size) ? ES_OK : ES_FAILED;
   }
 
   template<class Card> template<BC direction>

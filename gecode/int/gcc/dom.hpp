@@ -260,43 +260,37 @@ namespace Gecode { namespace Int { namespace GCC {
       assert(smin >= 0);
       assert(smax >= 0);
       vvg = new VarValGraph<Card> (x, y, k, noe, smin, smax);
-      vvg->min_require(home);
-      if (vvg->failed())
-        return ES_FAILED;
-
-      if (!vvg->template maximum_matching<UBC>(home))
-        return ES_FAILED;
-
-      if (!card_fixed && !vvg->template maximum_matching<LBC>(home))
-        return ES_FAILED;
-    } else if (!vvg->sync(home)) {
-      return ES_FAILED;
+      GECODE_ES_CHECK(vvg->min_require(home));
+      GECODE_ES_CHECK(vvg->template maximum_matching<UBC>(home));
+      if (!card_fixed)
+        GECODE_ES_CHECK(vvg->template maximum_matching<LBC>(home));
+    } else {
+      GECODE_ES_CHECK(vvg->sync(home));
     }
 
     vvg->template free_alternating_paths<UBC>(home);
     vvg->template strongly_connected_components<UBC>(home);
 
-    vvg->template narrow<UBC>(home);
-    if (vvg->failed())
-      return ES_FAILED;
+    GECODE_ES_CHECK(vvg->template narrow<UBC>(home));
+
     if (!card_fixed) {
-      if (Card::propagate && !vvg->sync(home))
-        return ES_FAILED;
+      if (Card::propagate)
+        GECODE_ES_CHECK(vvg->sync(home));
 
       vvg->template free_alternating_paths<LBC>(home);
       vvg->template strongly_connected_components<LBC>(home);
 
-      vvg->template narrow<LBC>(home);
-      if (vvg->failed())
-        return ES_FAILED;
+      GECODE_ES_CHECK(vvg->template narrow<LBC>(home));
     }
 
     bool card_assigned = true;
     if (Card::propagate) {
       GECODE_ES_CHECK((prop_card<Card, true>(home, y, k)));
-      for (int i = k.size(); i--; ) {
-        card_assigned &= k[i].assigned();
-      }
+
+      for (int i = k.size(); i--; )
+        if (!k[i].assigned()) {
+          card_assigned = false; break;
+        }
     }
 
     if (card_assigned) {
