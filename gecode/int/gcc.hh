@@ -256,12 +256,9 @@ namespace Gecode { namespace Int { namespace GCC {
     Dom(Space& home, bool share, Dom<Card>& p);
     /// Constructor for posting
     Dom(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool);
-
   public:
     /// Destructor including deallocation of variable-value graph
     virtual size_t dispose(Space& home);
-    /// Return how much extra memory is allocated by the propagator
-    virtual size_t allocated(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /**
@@ -278,7 +275,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for views \a x and cardinalities \a k
     static ExecStatus post(Space& home,
                            ViewArray<IntView>& x, ViewArray<Card>& k);

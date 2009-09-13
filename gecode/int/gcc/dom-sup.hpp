@@ -77,8 +77,6 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
     /// Destructor
     virtual ~VVGNode(void) {};
-    /// Create a new node
-    void*  operator new(size_t, void*);
 
     /// \name Access
     //@{
@@ -94,9 +92,9 @@ namespace Gecode { namespace Int { namespace GCC {
     bool   get_type(void);
     /// access the matching flag of the node
     template<BC>
-    bool   get_match_flag(void);
+    bool get_match_flag(void);
     /// get the information on the node (either var-index or value)
-    virtual int  get_info(void) = 0;
+    virtual int get_info(void) = 0;
     /// test whether the node is matched
     virtual bool is_matched(BC) = 0;
 
@@ -120,6 +118,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /// set the node information to \a i
     virtual void set_info(int i) = 0;
     //@}
+    /// Create a new node (placement)
+    void* operator new(size_t, void* p);
   };
 
   /// %Variable Node
@@ -141,6 +141,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Constructors and initialization
     //@{
+    /// Default constructor
+    VarNode(void) {}
     /// Creates a variable node with index i
     VarNode(int i, int oidx);
     //@}
@@ -219,6 +221,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Constructors and destructors
     //@{
+    /// Default constructor
+    ValNode(void) {}
     /**
      * \brief Constructor for value node
      *
@@ -313,7 +317,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /// Class for edges \f$ e(x,v) \f$ in the variable-value-graph
-  class Edge{
+  class Edge {
   private:
     /// pointer to the variable node
     VarNode* x;
@@ -344,18 +348,18 @@ namespace Gecode { namespace Int { namespace GCC {
     /// stores whether the edge is matched in UBC matching
     bool  lm;
     /// stores whether the edge has been deleted during syncronization
-    bool  deleted;   // del
+    bool  deleted;
 
   public:
     /// \name Constructors
     //@{
+    /// Default constructor
+    Edge(void) {}
     /**
      * \brief Construct edge \f$e(x,v)\f$ from variable node \a x
      *  and value node \a y
      */
     Edge(VarNode* x, ValNode* v);
-    /// Create a new edge in memory
-    void* operator new(size_t, void*);
     //@}
 
     /// \name Access
@@ -438,6 +442,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the reference to the previous edge incident on \a v
     Edge**   vprev_ref(void);
     //@}
+    /// Create a new edge (placement)
+    void* operator new(size_t, void* p);
   };
 
 
@@ -448,10 +454,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   class VarValGraph {
   private:
-    /// Allocated memory for nodes and edges
-    char* mem;
-    /// How much memory is allocated
-    size_t _allocated;
     /// Problem variables
     ViewArray<IntView>& x;
     /// Copy keeping track of removed variables
@@ -467,9 +469,9 @@ namespace Gecode { namespace Int { namespace GCC {
      *  in the domains of the
      *  problem variables there is a node in the graph.
      */
-    ValNode** vals;           // value partition    De
-    /// the edges connecting the variable and the value partition
-    Edge* edges;              // edges e
+    ValNode** vals;
+    /// Edges connecting the variable and the value partition
+    Edge* edges;
     /// cardinality of the variable partition
     int n_var;
     /**
@@ -497,12 +499,10 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// \name Constructors and Destructors
     //@{
-    VarValGraph(ViewArray<IntView>&, ViewArray<IntView>&, ViewArray<Card>&,
+    VarValGraph(Space& home,
+                ViewArray<IntView>&, ViewArray<IntView>&, ViewArray<Card>&,
                 int , int , int );
-    /// Destructor
-    ~VarValGraph(void);
     //@}
-    size_t allocated(void) const;
     /// \name Graph-interface
     //@{
     /// Check whether minimum requirements shrink variable domains
@@ -562,9 +562,9 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   public:
     /// Allocate memory for the graph
-    void* operator new(size_t t);
-    /// Free the memory for the graph
-    void operator delete(void* p);
+    void* operator new(size_t t, Space& home);
+    /// Deallocation (void)
+    void operator delete(void*, Space&) {}
   };
 
   forceinline
@@ -1204,7 +1204,8 @@ namespace Gecode { namespace Int { namespace GCC {
    **/
 
   template<class Card>
-  VarValGraph<Card>::VarValGraph(ViewArray<IntView>& xref,
+  VarValGraph<Card>::VarValGraph(Space& home,
+                                 ViewArray<IntView>& xref,
                                  ViewArray<IntView>& yref,
                                  ViewArray<Card>& kref,
                                  int noe, int smin, int smax)
@@ -1218,29 +1219,11 @@ namespace Gecode { namespace Int { namespace GCC {
       sum_min(smin),
       sum_max(smax) {
 
-    //memory allocation
-    size_t  edge_size      = sizeof(Edge)     * n_edge;
-    size_t  var_size       = sizeof(VarNode)  * n_var;
-    size_t  var_ptr_size   = sizeof(VarNode*) * n_var;
-    size_t  val_size       = sizeof(ValNode)  * n_val;
-    size_t  val_ptr_size   = sizeof(ValNode*) * n_val;
-    size_t  size           = edge_size + var_size + var_ptr_size +
-      val_size + val_ptr_size;
-
-    _allocated = size;
-
-    mem      = static_cast<char*>
-      (heap.ralloc(size));
-    edges    = Support::ptr_cast<Edge*>
-      (mem);
-    VarNode* vars_ptr = Support::ptr_cast<VarNode*>
-      (mem + edge_size);
-    ValNode* vals_ptr = Support::ptr_cast<ValNode*>
-      (mem + edge_size + var_size);
-    vars     = Support::ptr_cast<VarNode**>
-      (mem + edge_size + var_size + val_size);
-    vals     = Support::ptr_cast<ValNode**>
-      (mem + edge_size + var_size + val_size + var_ptr_size);
+    edges = home.alloc<Edge>(n_edge);
+    VarNode* vars_ptr = home.alloc<VarNode>(n_var);
+    ValNode* vals_ptr = home.alloc<ValNode>(n_val);
+    vars = home.alloc<VarNode*>(n_var);
+    vals = home.alloc<ValNode*>(n_val);
 
     for (int i = n_val; i--; ) {
       int kmi = k[i].min();
@@ -1308,14 +1291,6 @@ namespace Gecode { namespace Int { namespace GCC {
       *xadjacent = NULL;
     }
   }
-
-  template<class Card>
-  forceinline size_t
-  VarValGraph<Card>::allocated(void) const {
-    return _allocated + sizeof(VarValGraph<Card>);
-  }
-
-
 
 
   template<class Card>
@@ -2081,23 +2056,10 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card>
-  forceinline
-  VarValGraph<Card>::~VarValGraph(void) {
-    heap.rfree(mem);
-  }
-
-  template<class Card>
   forceinline void*
-  VarValGraph<Card>::operator new(size_t t) {
-    return heap.ralloc(t);
+  VarValGraph<Card>::operator new(size_t t, Space& home) {
+    return home.ralloc(t);
   }
-
-  template<class Card>
-  forceinline void
-  VarValGraph<Card>::operator delete(void* p) {
-    heap.rfree(p);
-  }
-
 
 }}}
 

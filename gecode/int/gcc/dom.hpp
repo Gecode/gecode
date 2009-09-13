@@ -74,7 +74,6 @@ namespace Gecode { namespace Int { namespace GCC {
       k(k0), vvg(NULL), card_fixed(cf){
     // y is used for bounds propagation since prop_bnd needs all variables
     // values within the domain bounds
-    home.notice(*this,AP_DISPOSE);
     x.subscribe(home, *this, PC_INT_DOM);
     k.subscribe(home, *this, PC_INT_DOM);
   }
@@ -91,20 +90,10 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   size_t
   Dom<Card>::dispose(Space& home) {
-    home.ignore(*this,AP_DISPOSE);
-    if (!home.failed()) {
-      x.cancel(home,*this, PC_INT_DOM);
-      k.cancel(home,*this, PC_INT_DOM);
-    }
-    delete vvg;
+    x.cancel(home,*this, PC_INT_DOM);
+    k.cancel(home,*this, PC_INT_DOM);
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template<class Card>
-  size_t
-  Dom<Card>::allocated(void) const {
-    return (vvg == NULL) ? 0 : vvg->allocated();
   }
 
   template<class Card>
@@ -116,7 +105,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   PropCost
   Dom<Card>::cost(const Space&, const ModEventDelta&) const {
-
     unsigned int n = x.size();
     unsigned int d = x[n-1].size();
     for (int i=n-1; i--; )
@@ -259,7 +247,7 @@ namespace Gecode { namespace Int { namespace GCC {
       assert(noe > 0);
       assert(smin >= 0);
       assert(smax >= 0);
-      vvg = new VarValGraph<Card> (x, y, k, noe, smin, smax);
+      vvg = new (home) VarValGraph<Card>(home, x, y, k, noe, smin, smax);
       GECODE_ES_CHECK(vvg->min_require(home));
       GECODE_ES_CHECK(vvg->template maximum_matching<UBC>(home));
       if (!card_fixed)
@@ -399,9 +387,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 
-    bool s = shared(home,x,k);
-
-    if (!s && isDistinct<Card>(home, x, k))
+    if (!shared(home,x,k) && isDistinct<Card>(home, x, k))
       return Distinct::Dom<IntView>::post(home,x);
 
     bool cardfix = true;
@@ -410,7 +396,7 @@ namespace Gecode { namespace Int { namespace GCC {
         cardfix = false; break;
       }
 
-    (void) new (home) Dom<Card>(home, x, k, cardfix);
+    (void) new (home) Dom<Card>(home,x,k,cardfix);
     return ES_OK;
   }
 
