@@ -331,25 +331,23 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge* next_vedge;
     /// pointer to the previous edge on the same value node
     Edge* prev_vedge;
-    /**
-     * \brief stores whether the edge is used in LBC
-     * Flag storing whether the edge is used in any maximum LBC matching
-     * in the variable-value-graph
-     */
-    bool  mrklb;
-    /**
-     * \brief stores whether the edge is used in UBC
-     * Flag storing whether the edge is used in any maximum UBC matching
-     * in the variable-value-graph
-     */
-    bool  mrkub;
-    /// stores whether the edge is matched in LBC matching
-    bool  um;
-    /// stores whether the edge is matched in UBC matching
-    bool  lm;
-    /// stores whether the edge has been deleted during syncronization
-    bool  deleted;
-
+    /// Flags for edges
+    enum EdgeFlag {
+      /// No flags set
+      EF_NONE  = 0,
+      /// Whether edge is used in LBC
+      EF_MRKLB = 1 << 0,
+      /// Whether edge is used in UBC
+      EF_MRKUB = 1 << 1,
+      /// Whether edge is matched in LBC
+      EF_LM    = 1 << 2,
+      /// Whether edge is matched in UBC
+      EF_UM    = 1 << 3,
+      /// Whether edge has been deleted
+      EF_DEL   = 1 << 4
+    };
+    /// Flags for edges
+    unsigned char ef;
   public:
     /// \name Constructors
     //@{
@@ -1003,9 +1001,7 @@ namespace Gecode { namespace Int { namespace GCC {
   Edge::Edge(VarNode* var, ValNode* val) :
     x(var), v(val),
     next_edge(NULL), prev_edge(NULL),
-    next_vedge(NULL), prev_vedge(NULL),
-    mrklb(false), mrkub(false),
-    um(false), lm(false), deleted(false) {}
+    next_vedge(NULL), prev_vedge(NULL), ef(EF_NONE) {}
 
   forceinline void*
   Edge::operator new(size_t, void* p) { //why is there no argument?
@@ -1016,9 +1012,9 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   Edge::use(void) {
     if (direction == UBC) {
-      mrkub = true;
+      ef |= EF_MRKUB;
     } else {
-      mrklb = true;
+      ef |= EF_MRKLB;
     }
   }
 
@@ -1027,9 +1023,9 @@ namespace Gecode { namespace Int { namespace GCC {
   Edge::free(void) {
     /// the failure is here, capacity is not increased for value nodes
     if (direction == UBC) {
-      mrkub = false;
+      ef &= ~EF_MRKUB;
     } else {
-      mrklb = false;
+      ef &= ~EF_MRKLB;
     }
   }
 
@@ -1044,9 +1040,9 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline bool
   Edge::used(void) {
     if (direction == UBC) {
-      return mrkub;
+      return (ef & EF_MRKUB) != 0;
     } else {
-      return mrklb;
+      return (ef & EF_MRKLB) != 0;
     }
   }
 
@@ -1123,9 +1119,9 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   Edge::unmatch(void) {
     if (direction == UBC) {
-      um = false;
+      ef &= ~EF_UM;
     } else {
-      lm = false;
+      ef &= ~EF_LM;
     }
     x->unmatch<direction>();
     v->unmatch<direction>();
@@ -1135,9 +1131,9 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   Edge::unmatch(bool node) {
     if (direction == UBC) {
-      um = false;
+      ef &= ~EF_UM;
     } else {
-      lm = false;
+      ef &= ~EF_LM;
     }
     if (node) {
       v->template unmatch<direction>();
@@ -1150,12 +1146,12 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   Edge::match(void) {
     if (direction == UBC) {
-      um = true;
+      ef |= EF_UM;
       x->template match<direction>();
       x->template set_match<direction>(this);
       v->template match<direction>();
     } else {
-      lm = true;
+      ef |= EF_LM;
       x->template match<direction>();
       x->template set_match<direction>(this);
       assert(x->template matched<direction>());
@@ -1168,26 +1164,26 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline bool
   Edge::matched(void) {
     if (direction == UBC) {
-      return um;
+      return (ef & EF_UM) != 0;
     } else {
-      return lm;
+      return (ef & EF_LM) != 0;
     }
   }
 
   forceinline void
   Edge::del_edge(void) {
-    deleted = true;
+    ef |= EF_DEL;
   }
 
   forceinline void
   Edge::insert_edge(void) {
-    deleted = false;
+    ef &= ~EF_DEL;
   }
 
 
   forceinline bool
   Edge::is_deleted(void) {
-    return deleted;
+    return (ef & EF_DEL) != 0;
   }
 
   /**
