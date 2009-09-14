@@ -105,20 +105,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   PropCost
   Dom<Card>::cost(const Space&, const ModEventDelta&) const {
-    unsigned int n = x.size();
-    unsigned int d = x[n-1].size();
-    for (int i=n-1; i--; )
-      if (x[i].size() > d)
-        d = x[i].size();
-
-    if (d < 6)
-      return PropCost::linear(PropCost::LO,x.size());
-    else if ((6 <= d) && (d < n/2))
-      return PropCost::linear(PropCost::HI,x.size());
-    else if ((n/2 <= d) && (d < n*n))
-      return PropCost::quadratic(PropCost::LO,x.size());
-    else
-      return PropCost::cubic(PropCost::LO,x.size());
+    return PropCost::cubic(PropCost::LO, x.size());
   }
 
   template<class Card>

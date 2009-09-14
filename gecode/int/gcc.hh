@@ -259,18 +259,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
-    /**
-     * \brief Cost function
-     *
-     * As the propagation strongly depends on the domain size of the
-     * views on which propagation is performed, the propagation costs
-     * are computed as follows, where \c d denotes the size of the
-     * largest domain of a view in \c x:
-     * - low linear ( \f$ d < 6\f$ )
-     * - high linear ( \f$ 6 \leq d < \frac{n}{2} \f$ )
-     * - low quadratic ( \f$ \frac{n}{2} \leq d < n^2 \f$)
-     * - high cubic  ( \f$ n^2 \leq d \f$)
-     */
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
