@@ -57,24 +57,22 @@ namespace Gecode {
       return;
 
     ViewArray<IntView> xv(home, x);
-    ViewArray<GCC::CardView> cv(home, c);
+    ViewArray<GCC::CardView> cv(home, c.size());
     // set the cardinality
-    for (int i = v.size(); i--; ) {
-      cv[i].card(v[i]);
-      cv[i].counter(0);
-    }
+    for (int i = v.size(); i--; )
+      cv[i].init(c[i],v[i]);
     switch (icl) {
     case ICL_BND:
       GECODE_ES_FAIL(home, 
-                     (GCC::Bnd<GCC::CardView>::post(home, xv, cv)));
+                     (GCC::Bnd<GCC::CardView>::post(home,xv,cv)));
       break;
     case ICL_DOM:
       GECODE_ES_FAIL(home, 
-                     (GCC::Dom<GCC::CardView>::post(home, xv, cv)));
+                     (GCC::Dom<GCC::CardView>::post(home,xv,cv)));
       break;
     default:
       GECODE_ES_FAIL(home, 
-                     (GCC::Val<GCC::CardView>::post(home, xv, cv)));
+                     (GCC::Val<GCC::CardView>::post(home,xv,cv)));
     }
   }
 
@@ -111,12 +109,8 @@ namespace Gecode {
       if (c[i].ranges() > 1) {
         // Found hole, so create temporary variables
         ViewArray<GCC::CardView> cv(home, v.size());
-        for (int j = v.size(); j--; ) {
-          IntVar card(home, c[j]);
-          cv[j] = IntView(card);
-          cv[j].card(v[j]);
-          cv[j].counter(0);
-        }
+        for (int j = v.size(); j--; )
+          cv[j].init(home,c[j],v[j]);
         switch (icl) {
         case ICL_BND:
           GECODE_ES_FAIL(home, 
@@ -134,26 +128,24 @@ namespace Gecode {
       }
     }
     
-    // No holes: create OccurBndsViews
-    ViewArray<GCC::OccurBndsView> cv(home, c.size());
-    for (int i = c.size(); i--; ) {
-      cv[i].card(v[i]);
-      cv[i].counter(0);
-      cv[i].min(c[i].min());
-      cv[i].max(c[i].max());
-    }
+    // No holes: create CardConsts
+    ViewArray<GCC::CardConst> cv(home, c.size());
+
+    for (int i = c.size(); i--; )
+      cv[i].init(home,c[i].min(),c[i].max(),v[i]);
+
     switch (icl) {
     case ICL_BND:
       GECODE_ES_FAIL(home,
-                     (GCC::Bnd<GCC::OccurBndsView>::post(home, xv, cv)));
+                     (GCC::Bnd<GCC::CardConst>::post(home, xv, cv)));
       break;
     case ICL_DOM:
       GECODE_ES_FAIL(home,
-                     (GCC::Dom<GCC::OccurBndsView>::post(home, xv, cv)));
+                     (GCC::Dom<GCC::CardConst>::post(home, xv, cv)));
       break;
     default:
       GECODE_ES_FAIL(home,
-                     (GCC::Val<GCC::OccurBndsView>::post(home, xv, cv)));
+                     (GCC::Val<GCC::CardConst>::post(home, xv, cv)));
     }
   }
 

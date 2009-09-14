@@ -275,7 +275,7 @@ INTHDR0 = \
 	dom/range.hpp dom/spec.hpp \
 	element/int.hpp element/view.hpp element/pair.hpp \
 	gcc/bnd.hpp gcc/dom.hpp gcc/bnd-sup.hpp gcc/dom-sup.hpp \
-	gcc/val.hpp gcc/occur.hpp gcc/post.hpp \
+	gcc/val.hpp gcc/view.hpp gcc/post.hpp \
 	linear/post.hpp \
 	linear/int-noview.hpp linear/int-bin.hpp linear/int-ter.hpp \
 	linear/int-nary.hpp linear/int-dom.hpp \

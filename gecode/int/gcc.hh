@@ -51,9 +51,9 @@
  * \brief Global cardinality propagators (Counting)
  */
 
+#include <gecode/int/gcc/view.hpp>
 #include <gecode/int/gcc/bnd-sup.hpp>
 #include <gecode/int/gcc/dom-sup.hpp>
-#include <gecode/int/gcc/occur.hpp>
 
 namespace Gecode { namespace Int { namespace GCC {
 

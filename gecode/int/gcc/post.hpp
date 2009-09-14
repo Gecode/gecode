@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template<class Card>
-  inline ExecStatus
+  ExecStatus
   postSideConstraints(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
     Region r(home);
 
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /// Sharing test for fixed cardinalities
   forceinline bool
-  shared(Space& home, ViewArray<IntView>& x, const ViewArray<OccurBndsView>&) {
+  shared(Space& home, ViewArray<IntView>& x, const ViewArray<CardConst>&) {
     return x.shared(home);
   }
 
