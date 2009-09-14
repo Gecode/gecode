@@ -207,36 +207,22 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class T>
   forceinline bool
-  lookupValue(T& a, int v, int& i){
-    if (a.size() == 1)
-      if (a[0].card() == v) {
-        i=0; return true;
-      } else {
-        return false;
-      }
-
+  lookupValue(T& a, int v, int& i) {
     int l = 0;
     int r = a.size() - 1;
 
-    while (l < r) {
-      if (a[l].card() == v) {
-        i=l; return true;
-      }
-      if (a[r].card() == v) {
-        i=r; return true;
-      }
-      int p = (l + r) / 2;
-      if (v == a[p].card()) {
-        i=p; return true;
-      } else if (v < a[p].card()) {
-        r=p;
+    while (l <= r) {
+      int m = l + (r - l) / 2;
+      if (v == a[m].card()) {
+        i=m; return true;
+      } else if (l == r) {
+        return false;
+      } else if (v < a[m].card()) {
+        r=m-1;
       } else {
-        l=p;
+        l=m+1;
       }
-      if (l == r - 1)
-        break;
     }
-
     return false;
   }
 
