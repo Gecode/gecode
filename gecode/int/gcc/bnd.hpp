@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool shared>
   size_t
-  BndImp<Card,shared>::dispose(Space& home){
+  BndImp<Card,shared>::dispose(Space& home) {
     y.cancel(home,*this, PC_INT_BND);
     k.cancel(home,*this, PC_INT_BND);
     (void) Propagator::dispose(home);
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool shared>
   Actor*
-  BndImp<Card,shared>::copy(Space& home, bool share){
+  BndImp<Card,shared>::copy(Space& home, bool share) {
     return new (home) BndImp<Card,shared>(home,share,*this);
   }
 
@@ -89,6 +89,469 @@ namespace Gecode { namespace Int { namespace GCC {
       return PropCost::linear(PropCost::LO, y.size() + n_k);
     else
       return PropCost::quadratic(PropCost::LO, x.size() + n_k);
+  }
+
+
+  template<class Card, bool shared>
+  forceinline ExecStatus
+  BndImp<Card,shared>::lbc(Space& home, int& nb,
+                           HallInfo hall[], Rank rank[], int mu[], int nu[]) {
+    int n = x.size();
+
+    /*
+     *  Let I(S) denote the number of variables whose domain intersects
+     *  the set S and C(S) the number of variables whose domain is containded
+     *  in S. Let further  min_cap(S) be the minimal number of variables
+     *  that must be assigned to values, that is
+     *  min_cap(S) is the sum over all l[i] for a value v_i that is an
+     *  element of S.
+     *
+     *  A failure set is a set F if
+     *       I(F) < min_cap(F)
+     *  An unstable set is a set U if
+     *       I(U) = min_cap(U)
+     *  A stable set is a set S if
+     *      C(S) > min_cap(S) and S intersetcs nor
+     *      any failure set nor any unstable set
+     *      forall unstable and failure sets
+     *
+     *  failure sets determine the satisfiability of the LBC
+     *  unstable sets have to be pruned
+     *  stable set do not have to be pruned
+     *
+     * hall[].ps ~ stores the unstable
+     *             sets that have to be pruned
+     * hall[].s  ~ stores sets that must not be pruned
+     * hall[].h  ~ contains stable and unstable sets
+     * hall[].d  ~ contains the difference between interval bounds, i.e.
+     *             the minimal capacity of the interval
+     * hall[].t  ~ contains the critical capacity pointer, pointing to the
+     *             values
+     */
+
+    // LBC lower bounds
+
+    int i = 0;
+    int j = 0;
+    int w = 0;
+    int z = 0;
+    int v = 0;
+
+    //initialization of the tree structure
+    int rightmost = nb + 1; // rightmost accesible value in bounds
+    int bsize     = nb + 2;
+    w = rightmost;
+
+    // test
+    // unused but uninitialized
+    hall[0].d = 0;
+    hall[0].s = 0;
+    hall[0].ps = 0;
+
+    for (i = bsize; --i; ) { // i must not be zero
+      int pred = i - 1;
+      hall[i].s = pred;
+      hall[i].ps = pred;
+      hall[i].d = lps.sumup(hall[pred].bounds, hall[i].bounds - 1);
+
+      /* Let [hall[i].bounds,hall[i-1].bounds]=:I
+       * If the capacity is zero => min_cap(I) = 0
+       * => I cannot be a failure set
+       * => I is an unstable set
+       */
+      if (hall[i].d == 0) {
+        hall[pred].h = w;
+      } else {
+        hall[w].h = pred;
+        w = pred;
+      }
+    }
+
+    w = rightmost;
+    for (i = bsize; i--; ) { // i can be zero
+      hall[i].t = i - 1;
+      if (hall[i].d == 0) {
+        hall[i].t = w;
+      } else {
+        hall[w].t = i;
+        w = i;
+      }
+    }
+
+    /*
+     * The algorithm assigns to each value v in bounds
+     * empty buckets corresponding to the minimal capacity l[i] to be
+     * filled for v. (the buckets correspond to hall[].d containing the
+     * difference between the interval bounds) Processing it
+     * searches for the smallest value v in dom(x_i) that has an
+     * empty bucket, i.e. if all buckets are filled it is guaranteed
+     * that there are at least l[i] variables that will be
+     * instantiated to v. Since the buckets are initially empty,
+     * they are considered as FAILURE SETS
+     */
+
+    for (i = 0; i < n; i++) {
+      // visit intervals in increasing max order
+      int x0 = rank[mu[i]].min;
+      int y = rank[mu[i]].max;
+      int succ = x0 + 1;
+      z = pathmax_t(hall, succ);
+      j = hall[z].t;
+
+      /*
+       * POTENTIALLY STABLE SET:
+       *  z \neq succ \Leftrigharrow z>succ, i.e.
+       *  min(D_{\mu(i)}) is guaranteed to occur min(K_i) times
+       *  \Rightarrow [x0, min(y,z)] is potentially stable
+       */
+
+      if (z != succ) {
+        w = pathmax_ps(hall, succ);
+        v = hall[w].ps;
+        pathset_ps(hall, succ, w, w);
+        w = std::min(y, z);
+        pathset_ps(hall, hall[w].ps, v, w);
+        hall[w].ps = v;
+      }
+
+      /*
+       * STABLE SET:
+       *   being stable implies being potentially stable, i.e.
+       *   [hall[y].ps, hall[y].bounds-1] is the largest stable subset of
+       *   [hall[j].bounds, hall[y].bounds-1].
+       */
+
+      if (hall[z].d <= lps.sumup(hall[y].bounds, hall[z].bounds - 1)) {
+        w = pathmax_s(hall, hall[y].ps);
+        pathset_s(hall, hall[y].ps, w, w);
+        // Path compression
+        v = hall[w].s;
+        pathset_s(hall, hall[y].s, v, y);
+        hall[y].s = v;
+      } else {
+        /*
+         * FAILURE SET:
+         * If the considered interval [x0,y] is neither POTENTIALLY STABLE
+         * nor STABLE there are still buckets that can be filled,
+         * therefore d can be decreased. If d equals zero the intervals
+         * minimum capacity is met and thepath can be compressed to the
+         * next value having an empty bucket.
+         * see DOMINATION in "ubc"
+         */
+        if (--hall[z].d == 0) {
+          hall[z].t = z + 1;
+          z = pathmax_t(hall, hall[z].t);
+          hall[z].t = j;
+        }
+
+        /*
+         * FINDING NEW LOWER BOUND:
+         * If the lower bound belongs to an unstable or a stable set,
+         * remind the new value we might assigned to the lower bound
+         * in case the variable doesn't belong to a stable set.
+         */
+        if (hall[x0].h > x0) {
+          hall[i].newBound = pathmax_h(hall, x0);
+          w = hall[i].newBound;
+          pathset_h(hall, x0, w, w); // path compression
+        } else {
+          // Do not shrink the variable: take old min as new min
+          hall[i].newBound = x0;
+        }
+
+        /* UNSTABLE SET
+         * If an unstable set is discovered
+         * the difference between the interval bounds is equal to the
+         * number of variables whose domain intersect the interval
+         * (see ZEROTEST in "gcc")
+         */
+        // CLEARLY THIS WAS NOT STABLE == UNSTABLE
+        if (hall[z].d == lps.sumup(hall[y].bounds, hall[z].bounds - 1)) {
+          if (hall[y].h > y)
+            /*
+             * y is not the end of the potentially stable set
+             * thus ensure that the potentially stable superset is marked
+             */
+            y = hall[y].h;
+          // Equivalent to pathmax since the path is fully compressed
+          pathset_h(hall, hall[y].h, j-1, y);
+          // mark the new unstable set [j,y]
+          hall[y].h = j-1;
+        }
+      }
+      pathset_t(hall, succ, z, z); // path compression
+    }
+
+    /* If there is a FAILURE SET left the minimum occurences of the values
+     * are not guaranteed. In order to satisfy the LBC the last value
+     * in the stable and unstable datastructure hall[].h must point to
+     * the sentinel at the beginning of bounds.
+     */
+    if (hall[nb].h != 0)
+      return ES_FAILED;
+
+    // Perform path compression over all elements in
+    // the stable interval data structure. This data
+    // structure will no longer be modified and will be
+    // accessed n or 2n times. Therefore, we can afford
+    // a linear time compression.
+    for (i = bsize; --i;)
+      if (hall[i].s > i)
+        hall[i].s = w;
+      else
+        w = i;
+
+    /*
+     * UPDATING LOWER BOUND:
+     * For all variables that are not a subset of a stable set,
+     * shrink the lower bound, i.e. forall stable sets S we have:
+     * x0 < S_min <= y <=S_max  or S_min <= x0 <= S_max < y
+     * that is [x0,y] is NOT a proper subset of any stable set S
+     */
+    for (i = n; i--; ) {
+      int x0 = rank[mu[i]].min;
+      int y = rank[mu[i]].max;
+      // update only those variables that are not contained in a stable set
+      if ((hall[x0].s <= x0) || (y > hall[x0].s)) {
+        // still have to check this out, how skipping works (consider dominated indices)
+        int m = lps.skipNonNullElementsRight(hall[hall[i].newBound].bounds);
+        GECODE_ME_CHECK(x[mu[i]].gq(home, m));
+      }
+    }
+
+    // LBC narrow upper bounds
+    w = 0;
+    for (i = 0; i <= nb; i++) {
+      hall[i].d = lps.sumup(hall[i].bounds, hall[i + 1].bounds - 1);
+      if (hall[i].d == 0) {
+        hall[i].t = w;
+      } else {
+        hall[w].t = i;
+        w = i;
+      }
+    }
+    hall[w].t = i;
+
+    w = 0;
+    for (i = 1; i <= nb; i++)
+      if (hall[i - 1].d == 0) {
+        hall[i].h = w;
+      } else {
+        hall[w].h = i;
+        w = i;
+      }
+    hall[w].h = i;
+
+    for (i = n; i--; ) {
+      // visit intervals in decreasing min order
+      // i.e. minsorted from right to left
+      int x0 = rank[nu[i]].max;
+      int y = rank[nu[i]].min;
+      int pred = x0 - 1; // predecessor of x0 in the indices
+      z = pathmin_t(hall, pred);
+      j = hall[z].t;
+
+      /* If the variable is not in a discovered stable set
+       * (see above condition for STABLE SET)
+       */
+      if (hall[z].d > lps.sumup(hall[z].bounds, hall[y].bounds - 1)) {
+        // FAILURE SET
+        if (--hall[z].d == 0) {
+          hall[z].t = z - 1;
+          z = pathmin_t(hall, hall[z].t);
+          hall[z].t = j;
+        }
+        // FINDING NEW UPPER BOUND
+        if (hall[x0].h < x0) {
+          w = pathmin_h(hall, hall[x0].h);
+          hall[i].newBound = w;
+          pathset_h(hall, x0, w, w); // path compression
+        } else {
+          hall[i].newBound = x0;
+        }
+        // UNSTABLE SET
+        if (hall[z].d == lps.sumup(hall[z].bounds, hall[y].bounds - 1)) {
+          if (hall[y].h < y) {
+            y = hall[y].h;
+          }
+          int succj = j + 1;
+          // mark new unstable set [y,j]
+          pathset_h(hall, hall[y].h, succj, y);
+          hall[y].h = succj;
+        }
+      }
+      pathset_t(hall, pred, z, z);
+    }
+
+    // UPDATING UPPER BOUND
+    for (i = n; i--; ) {
+      int x0 =  rank[nu[i]].min;
+      int y  =  rank[nu[i]].max;
+      if ((hall[x0].s <= x0) || (y > hall[x0].s)) {
+        int m = lps.skipNonNullElementsLeft(hall[hall[i].newBound].bounds - 1);
+        GECODE_ME_CHECK(x[nu[i]].lq(home, m));
+      }
+    }
+    return ES_OK;
+  }
+
+
+  template<class Card, bool shared>
+  forceinline ExecStatus
+  BndImp<Card,shared>::ubc(Space& home, int& nb,
+                           HallInfo hall[], Rank rank[], int mu[], int nu[]) {
+    int rightmost = nb + 1; // rightmost accesible value in bounds
+    int bsize = nb + 2; // number of unique bounds including sentinels
+
+    //Narrow lower bounds (UBC)
+
+    /*
+     * Initializing tree structure with the values from bounds
+     * and the interval capacities of neighboured values
+     * from left to right
+     */
+
+
+    hall[0].h = 0;
+    hall[0].t = 0;
+    hall[0].d = 0;
+
+    for (int i = bsize; --i; ) {
+      hall[i].h = hall[i].t = i-1;
+      hall[i].d = ups.sumup(hall[i-1].bounds, hall[i].bounds - 1);
+    }
+
+    int n = x.size();
+
+    for (int i = 0; i < n; i++) {
+      // visit intervals in increasing max order
+      int x0   = rank[mu[i]].min;
+      int succ = x0 + 1;
+      int y    = rank[mu[i]].max;
+      int z    = pathmax_t(hall, succ);
+      int j    = hall[z].t;
+
+      /* DOMINATION:
+       *     v^i_j denotes
+       *     unused values in the current interval. If the difference d
+       *     between to critical capacities v^i_j and v^i_z
+       *     is equal to zero, j dominates z
+       *
+       *     i.e. [hall[l].bounds, hall[nb+1].bounds] is not left-maximal and
+       *     [hall[j].bounds, hall[l].bounds] is a Hall set iff
+       *     [hall[j].bounds, hall[l].bounds] processing a variable x_i uses up a value in the interval
+       *     [hall[z].bounds,hall[z+1].bounds] according to the intervals
+       *     capacity. Therefore, if d = 0
+       *     the considered value has already been used by processed variables
+       *     m-times, where m = u[i] for value v_i. Since this value must not
+       *     be reconsidered the path can be compressed
+       */
+      if (--hall[z].d == 0) {
+        hall[z].t = z + 1;
+        z = pathmax_t(hall, hall[z].t);
+        if (z >= bsize)
+          z--;
+        hall[z].t = j;
+      }
+      pathset_t(hall, succ, z, z); // path compression
+
+      /* NEGATIVE CAPACITY:
+       *     A negative capacity results in a failure.Since a
+       *     negative capacity signals that the number of variables
+       *     whose domain is contained in the set S is larger than
+       *     the maximum capacity of S => UBC is not satisfiable,
+       *     i.e. there are more variables than values to instantiate them
+       */
+      if (hall[z].d < ups.sumup(hall[y].bounds, hall[z].bounds - 1))
+        return ES_FAILED;
+      
+      /* UPDATING LOWER BOUND:
+       *   If the lower bound min_i lies inside a Hall interval [a,b]
+       *   i.e. a <= min_i <=b <= max_i
+       *   min_i is set to  min_i := b+1
+       */
+      if (hall[x0].h > x0) {
+        int w = pathmax_h(hall, hall[x0].h);
+        int m = hall[w].bounds;
+        GECODE_ME_CHECK(x[mu[i]].gq(home, m));
+        pathset_h(hall, x0, w, w); // path compression
+      }
+
+      /* ZEROTEST:
+       *     (using the difference between capacity pointers)
+       *     zero capacity => the difference between critical capacity
+       *     pointers is equal to the maximum capacity of the interval,i.e.
+       *     the number of variables whose domain is contained in the
+       *     interval is equal to the sum over all u[i] for a value v_i that
+       *     lies in the Hall-Intervall which can also be thought of as a
+       *     Hall-Set
+       *
+       *    ZeroTestLemma: Let k and l be succesive critical indices.
+       *          v^i_k=0  =>  v^i_k = max_i+1-l+d
+       *                   <=> v^i_k = y + 1 - z + d
+       *                   <=> d = z-1-y
+       *    if this equation holds the interval [j,z-1] is a hall intervall
+       */
+
+      if (hall[z].d == ups.sumup(hall[y].bounds, hall[z].bounds - 1)) {
+        /*
+         *mark hall interval [j,z-1]
+         * hall pointers form a path to the upper bound of the interval
+         */
+        int predj = j - 1;
+        pathset_h(hall, hall[y].h, predj, y);
+        hall[y].h = predj;
+      }
+    }
+
+    /* Narrow upper bounds (UBC)
+     * symmetric to the narrowing of the lower bounds
+     */
+    for (int i = 0; i < rightmost; i++) {
+      hall[i].h = hall[i].t = i+1;
+      hall[i].d = ups.sumup(hall[i].bounds, hall[i+1].bounds - 1);
+    }
+        
+    for (int i = n; i--; ) {
+      // visit intervals in decreasing min order
+      int x0 = rank[nu[i]].max;
+      int pred = x0 - 1;
+      int y = rank[nu[i]].min;
+      int z = pathmin_t(hall, pred);
+      int j = hall[z].t;
+    
+      // DOMINATION:
+      if (--hall[z].d == 0) {
+        hall[z].t = z - 1;
+        z = pathmin_t(hall, hall[z].t);
+        hall[z].t = j;
+      }
+      pathset_t(hall, pred, z, z);
+    
+      // NEGATIVE CAPACITY:
+      if (hall[z].d < ups.sumup(hall[z].bounds,hall[y].bounds-1))
+        return ES_FAILED;
+    
+      /* UPDATING UPPER BOUND:
+       *   If the upper bound max_i lies inside a Hall interval [a,b]
+       *   i.e. min_i <= a <= max_i < b
+       *   max_i is set to  max_i := a-1
+       */
+      if (hall[x0].h < x0) {
+        int w = pathmin_h(hall, hall[x0].h);
+        int m = hall[w].bounds - 1;
+        GECODE_ME_CHECK(x[nu[i]].lq(home, m));
+        pathset_h(hall, x0, w, w);
+      }
+
+      // ZEROTEST
+      if (hall[z].d == ups.sumup(hall[z].bounds, hall[y].bounds - 1)) {
+        //mark hall interval [y,j]
+        pathset_h(hall, hall[y].h, j+1, y);
+        hall[y].h = j+1;
+      }
+    }
+    return ES_OK;
   }
 
   template<class Card, bool shared>
