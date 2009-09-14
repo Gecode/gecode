@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks: Geoffrey Chu
+[DESCRIPTION]
+Fixed wrong symmetry breaking for TSP.
+
+[ENTRY]
 Module: support
 What:   change
 Rank:   minor

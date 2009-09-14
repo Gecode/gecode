@@ -6,6 +6,9 @@
  *  Copyright:
  *     Christian Schulte, 2007
  *
+ *  Bugfixes provided by:
+ *     Geoffrey Chu
+ *
  *  Last modified:
  *     $Date$ by $Author$
  *     $Revision$
@@ -261,7 +264,11 @@ public:
     circuit(*this, c, succ, costs, total, opt.icl());
 
     // Just assume that the circle starts forwards
-    rel(*this, succ[0], IRT_LE, succ[1]);
+    {
+      IntVar p0(*this, 0, n-1);
+      element(*this, succ, p0, 0);
+      rel(*this, p0, IRT_LE, succ[0]);
+    }
 
     // First enumerate cost values, prefer those that maximize cost reduction
     branch(*this, costs, INT_VAR_REGRET_MAX_MAX, INT_VAL_SPLIT_MIN);
