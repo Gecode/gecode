@@ -53,11 +53,16 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   class UnReachable {
   public:
-    unsigned int minb;
-    unsigned int maxb;
-    unsigned int eq;
-    unsigned int le;
-    unsigned int gr;
+    /// Number of variables with lower bound
+    int minb;
+    /// Number of variables with upper bound
+    int maxb;
+    /// Number of equal variables
+    int eq;
+    /// Number of smaller variables
+    int le;
+    /// Number of greater variables
+    int gr;
   };
 
   /**
@@ -65,7 +70,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template<class Card, bool shared>
-  inline ExecStatus
+  ExecStatus
   prop_card(Space& home, 
             ViewArray<IntView>& x, ViewArray<Card>& k) {
     int n = x.size();
@@ -73,7 +78,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Region r(home);
     UnReachable* rv = r.alloc<UnReachable>(m);
     for(int i = m; i--; )
-      rv[i].minb = rv[i].maxb = rv[i].le = rv[i].gr = rv[i].eq = 0;
+      rv[i].minb=rv[i].maxb=rv[i].le=rv[i].gr=rv[i].eq=0;
 
     for (int i = n; i--; ) {
       int min_idx;
@@ -84,12 +89,12 @@ namespace Gecode { namespace Int { namespace GCC {
         rv[min_idx].maxb++;
         rv[min_idx].eq++;
       } else {
-        int max_idx;
-        if (!lookupValue(k,x[i].max(),max_idx))
-          return ES_FAILED;
         // count the number of variables
         // with lower bound k[min_idx].card()
         rv[min_idx].minb++;
+        int max_idx;
+        if (!lookupValue(k,x[i].max(),max_idx))
+          return ES_FAILED;
         // count the number of variables
         // with upper bound k[max_idx].card()
         rv[max_idx].maxb++;
@@ -114,13 +119,10 @@ namespace Gecode { namespace Int { namespace GCC {
       int reachable = x.size() - rv[i].le - rv[i].gr;
       if (!k[i].assigned()) {
         GECODE_ME_CHECK(k[i].lq(home, reachable));
-        if (rv[i].eq > 0) {
-          GECODE_ME_CHECK(k[i].gq(home, static_cast<int>(rv[i].eq)));
-        }
+        GECODE_ME_CHECK(k[i].gq(home, rv[i].eq));
       } else {
         // check validity of the cardinality value
-        int v = k[i].max();
-        if ( !( static_cast<int>(rv[i].eq) <= v && v <= reachable) )
+        if ((rv[i].eq > k[i].max()) || (k[i].max() > reachable))
           return ES_FAILED;
       }
     }
@@ -132,7 +134,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /** \brief Consistency check, whether the cardinality values are feasible.
    */
   template<class Card>
-  inline bool
+  forceinline bool
   card_consistent(ViewArray<IntView>& x, ViewArray<Card>& k) {
     int smin = 0;
     int smax = 0;
@@ -167,18 +169,21 @@ namespace Gecode { namespace Int { namespace GCC {
    * ascending order of the views upper bounds
    *
    */
-
   template<class View>
   class MaxInc {
   protected:
+    /// View array for comparison
     ViewArray<View> x;
   public:
+    /// Constructor
     MaxInc(const ViewArray<View>& x0) : x(x0) {}
+    /// Order
     forceinline bool
     operator ()(const int i, const int j) {
       return x[i].max() < x[j].max();
     }
   };
+
 
   /**
    * \brief Compares two indices \a i, \a j of two views
@@ -186,28 +191,31 @@ namespace Gecode { namespace Int { namespace GCC {
    * ascending order of the views lower bounds
    *
    */
-
   template<class View>
   class MinInc {
   protected:
+    /// View array for comparison
     ViewArray<View> x;
   public:
+    /// Constructor
     MinInc(const ViewArray<View>& x0) : x(x0) {}
+    /// Comparison
     forceinline bool
     operator ()(const int i, const int j) {
       return x[i].min() < x[j].min();
     }
   };
 
+
   /**
    * \brief Compares two cardinality views
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the index
    *
    */
-
   template<class Card>
   class MinIdx {
   public:
+    /// Comparison
     forceinline bool
     operator ()(const Card& x, const Card& y) {
       return x.card() < y.card();
@@ -229,37 +237,51 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Sentinels indicating whether an end of sum is reached
     int firstValue, lastValue;
-    /// \name Constructor, initializer, and destructor
+    /// \name Initialization
     //@{
     /// Constructor
     PartialSum(void);
     /// Initialization
     void init(Space& home, ViewArray<Card>& k, bool up);
-    /// Mark datstructure as disposed
-    void dispose(void);
+    /// Mark datstructure as requiring reinitialization
+    void reinit(void);
+    /// Test whether already initialized
+    bool initialized(void) const;
     //@}
     /// \name Access
     //@{
-    /// Test whether already initialized
-    bool initialized(void) const;
-    int sumup(int, int);
-    int minValue(void);
-    int maxValue(void);
-    int skipNonNullElementsRight(int);
-    int skipNonNullElementsLeft(int);
-    void* operator new(size_t s);
-    void operator delete(void* p);
-    bool check_update_max(ViewArray<Card>& k);
+    /// Compute the maximum capacity of an interval
+    int sumup(int from, int to) const;
+    /// Return smallest bound of variables
+    int minValue(void) const;
+    /// Return largest bound of variables
+    int maxValue(void) const;
+    /// Skip neigbouring array entries if their values do not differ
+    int skipNonNullElementsRight(int v) const;
+    /// Skip neigbouring array entries if their values do not differ
+    int skipNonNullElementsLeft(int v) const;
+    //@}
+    /// \name Update
+    //@{
+    /**
+     * \brief Check whether the values in the
+     *        partial sum structure containting
+     *        the lower cardinality bounds differ
+     *        from the actual lower bounds of the
+     *        cardinalities.
+     */
     bool check_update_min(ViewArray<Card>& k);
-    int getsize(void) const;
+    /**
+     * \brief Check whether the values in the
+     *        partial sum structure containting
+     *        the upper cardinality bounds differ
+     *        from the actual upper bounds of the
+     *        cardinalities.
+     */
+    bool check_update_max(ViewArray<Card>& k);
     //@}
   };
 
-  template<class Card>
-  forceinline void
-  PartialSum<Card>::dispose(void) {
-    size = -1;
-  }
 
   template<class Card>
   forceinline
@@ -270,7 +292,6 @@ namespace Gecode { namespace Int { namespace GCC {
   PartialSum<Card>::initialized(void) const {
     return size != -1;
   }
-
   template<class Card>
   inline void
   PartialSum<Card>::init(Space& home, ViewArray<Card>& elements, bool up) {
@@ -338,12 +359,16 @@ namespace Gecode { namespace Int { namespace GCC {
     ds[0] = 0;
   }
 
-  /**
-   * \brief Compute the maximum capacity of an interval I
-   */
+  template<class Card>
+  forceinline void
+  PartialSum<Card>::reinit(void) {
+    size = -1;
+  }
+
+
   template<class Card>
   forceinline int
-  PartialSum<Card>::sumup(int from, int to) {
+  PartialSum<Card>::sumup(int from, int to) const {
     if (from <= to) {
       return sum[to - firstValue] - sum[from - firstValue - 1];
     } else {
@@ -355,61 +380,32 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  /**
-   * \brief Returns the smallest bound of the variables in \a x
-   *
-   */
   template<class Card>
   forceinline int
-  PartialSum<Card>::minValue(void) {
+  PartialSum<Card>::minValue(void) const {
     return firstValue + 3;
   }
-
-  /**
-   * \brief Returns the largest bound of the variables in \a x
-   *
-   */
-
   template<class Card>
   forceinline int
-  PartialSum<Card>::maxValue(void) {
+  PartialSum<Card>::maxValue(void) const {
     return lastValue - 2;
   }
 
 
-  /**
-   * \brief Skip neigboured array entries if their values do
-   *        not differ.
-   *
-   */
   template<class Card>
   forceinline int
-  PartialSum<Card>::skipNonNullElementsRight(int value) {
+  PartialSum<Card>::skipNonNullElementsRight(int value) const {
     value -= firstValue;
     int* ds  = &sum[size];
     return (ds[value] < value ? value : ds[value]) + firstValue;
   }
-
-  /**
-   * \brief Skip neigboured array entries if their values do
-   *        not differ.
-   *
-   */
   template<class Card>
   forceinline int
-  PartialSum<Card>::skipNonNullElementsLeft(int value) {
+  PartialSum<Card>::skipNonNullElementsLeft(int value) const {
     value -= firstValue;
     int* ds  = &sum[size];
     return (ds[value] > value ? ds[ds[value]] : value) + firstValue;
   }
-
-  /**
-   * \brief Check whether the values in the
-   *        partial sum structure containting
-   *        the upper cardinality bounds differ
-   *        from the actual upper bounds of the
-   *        cardinalities.
-   */
 
   template<class Card>
   inline bool
@@ -417,23 +413,13 @@ namespace Gecode { namespace Int { namespace GCC {
     int j = 0;
     for (int i = 3; i < size - 2; i++) {
       int max = 0;
-      if (k[j].card() == i+firstValue) {
+      if (k[j].card() == i+firstValue)
         max = k[j++].max();
-      }
-      if ((sum[i] - sum[i - 1]) != max) {
+      if ((sum[i] - sum[i - 1]) != max)
         return true;
-      }
     }
     return false;
   }
-
-  /**
-   * \brief Check whether the values in the
-   *        partial sum structure containting
-   *        the lower cardinality bounds differ
-   *        from the actual lower bounds of the
-   *        cardinalities.
-   */
 
   template<class Card>
   inline bool
@@ -441,21 +427,12 @@ namespace Gecode { namespace Int { namespace GCC {
     int j = 0;
     for (int i = 3; i < size - 2; i++) {
       int min = 0;
-      if (k[j].card() == i+firstValue) {
+      if (k[j].card() == i+firstValue)
         min = k[j++].min();
-      }
-      if ((sum[i] - sum[i - 1]) != min) {
+      if ((sum[i] - sum[i - 1]) != min)
         return true;
-      }
     }
     return false;
-  }
-
-  /// \brief Return the size of the partial sum structure.
-  template<class Card>
-  forceinline int
-  PartialSum<Card>::getsize(void) const {
-    return size;
   }
 
 
@@ -474,15 +451,15 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Represents the union of all lower and upper domain bounds
     int bounds;
     /**
-     * \brief critical capacity pointer
-     * t represents a predecessor function where \f$ t_i \f$ denotes the
+     * \brief Critical capacity pointer
+     * \a t represents a predecessor function where \f$ t_i \f$ denotes the
      * predecessor of i in bounds
      */
     int t;
     /**
-     * \brief difference between critical capacities
+     * \brief Difference between critical capacities
      *
-     * d_i is the difference between the capacities of hall[i].bounds
+     * \a d_i is the difference between the capacities of hall[i].bounds
      * and its predecessor in bounds hall[t[i]].bounds
      *
      */
@@ -496,15 +473,9 @@ namespace Gecode { namespace Int { namespace GCC {
      * Otherwise holds a pointer to the Hall intervall it belongs to.
      */
     int h;
-    /**
-     * \brief Stable Set pointer
-     *
-     */
+    /// Stable Set pointer
     int s;
-    /**
-     * \brief Potentially Stable Set pointer
-     *
-     */
+    /// Potentially Stable Set pointer
     int ps;
     /**
      * \brief Bound update
@@ -521,39 +492,34 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    * Each of the nodes on the path from \a start to \a end
    * becomes a direct child of \a to.
-   *
    */
-
   //@{
-  /// \brief Path compression for potentially stable set structure
-  inline void
+  /// Path compression for potentially stable set structure
+  forceinline void
   pathset_ps(HallInfo hall[], int start, int end, int to) {
     int k, l;
     for (l=start; (k=l) != end; hall[k].ps=to) {
       l = hall[k].ps;
     }
   }
-
-  /// \brief Path compression for stable set structure
-  inline void
+  /// Path compression for stable set structure
+  forceinline void
   pathset_s(HallInfo hall[], int start, int end, int to) {
     int k, l;
     for (l=start; (k=l) != end; hall[k].s=to) {
       l = hall[k].s;
     }
   }
-
-  /// \brief Path compression for capacity pointer structure
-  inline void
+  /// Path compression for capacity pointer structure
+  forceinline void
   pathset_t(HallInfo hall[], int start, int end, int to) {
     int k, l;
     for (l=start; (k=l) != end; hall[k].t=to) {
       l = hall[k].t;
     }
   }
-
-  /// \brief Path compression for hall pointer structure
-  inline void
+  /// Path compression for hall pointer structure
+  forceinline void
   pathset_h(HallInfo hall[], int start, int end, int to) {
     int k, l;
     for (l=start; (k=l) != end; hall[k].h=to) {
@@ -566,18 +532,17 @@ namespace Gecode { namespace Int { namespace GCC {
   /**
    *  \name Path minimum
    *
-   *  returns the smalles reachable index starting from i
-   *
+   *  Returns the smalles reachable index starting from \a i.
    */
   //@{
-  /// \brief Path minimum for hall pointer structure
+  /// Path minimum for hall pointer structure
   forceinline int
   pathmin_h(const HallInfo hall[], int i) {
     while (hall[i].h < i)
       i = hall[i].h;
     return i;
   }
-  /// \brief Path minimum for capacity pointer structure
+  /// Path minimum for capacity pointer structure
   forceinline int
   pathmin_t(const HallInfo hall[], int i) {
     while (hall[i].t < i)
@@ -589,19 +554,17 @@ namespace Gecode { namespace Int { namespace GCC {
   /**
    *  \name Path maximum
    *
-   *  returns the greatest reachable index starting from i
+   *  Returns the greatest reachable index starting from \a i.
    */
   //@{
-  /// \brief Path maximum for hall pointer structure
+  /// Path maximum for hall pointer structure
   forceinline int
   pathmax_h(const HallInfo hall[], int i) {
     while (hall[i].h > i)
       i = hall[i].h;
     return i;
   }
-
-
-  /// \brief Path maximum for capacity pointer structure
+  /// Path maximum for capacity pointer structure
   forceinline int
   pathmax_t(const HallInfo hall[], int i) {
     while (hall[i].t > i) {
@@ -609,16 +572,14 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     return i;
   }
-
-  /// \brief Path maximum for stable set pointer structure
+  /// Path maximum for stable set pointer structure
   forceinline int
   pathmax_s(const HallInfo hall[], int i) {
     while (hall[i].s > i)
       i = hall[i].s;
     return i;
   }
-
-  /// \brief Path maximum for potentially stable set pointer structure
+  /// Path maximum for potentially stable set pointer structure
   forceinline int
   pathmax_ps(const HallInfo hall[], int i) {
     while (hall[i].ps > i)
@@ -626,87 +587,6 @@ namespace Gecode { namespace Int { namespace GCC {
     return i;
   }
   //@}
-  //@}
-
-  /** \brief Assert consistency in the cardinality specification
-   *         for bounds propagation.
-   *
-   *         This is done by ensuring that only those values are specified with
-   *         cardinalities, which are not smaller
-   *         than the smallest value of all variable domains and not greater
-   *         than the greatest value of all variable domains.
-   */
-
-  template<class Card>
-  void
-  reduce_card(Space& home, int cmin, int cmax, ViewArray<Card>& k) {
-    if (cmin == cmax) {
-      int idx = 0;
-      while (k[idx].card() != cmax) {
-        idx++;
-      }
-      k[0] = k[idx];
-      k.size(1);
-    } else {
-      Region r(home);
-      bool* zero = r.alloc<bool>(k.size());
-      int ks = k.size();
-      int zc = 0;
-      for (int i = 0; i < ks; i++) {
-        bool impossible  = ( (k[i].counter() == 0) &&
-                             (k[i].card() < cmin ||
-                              k[i].card() > cmax));
-
-        if (impossible) {
-          zero[i] = true;
-          zc++;
-        } else {
-          zero[i] = false;
-        }
-      }
-
-
-      if (zero[ks - 1]) {
-        int m = ks;
-        while(zero[m - 1]) {
-          m--;
-          zc--;
-        }
-        k.size(m);
-      }
-
-      if (zc > 0) {
-        int ks = k.size();
-        // if there are still zero entries left
-        for (int i = 0; i < ks; i++) {
-          assert(0 <= i && i < ks);
-          if  (zero[i]) {
-            if (i == ks - 1) {
-              break;
-            }
-            // this cardinality does not occur
-            // remove it
-            // we need the next non-null entry
-            int j = i + 1;
-            assert(0 <= j && j < ks);
-            if (j < ks) {
-              while (zero[j]) {
-                j++;
-              }
-            }
-            if (j > ks - 1) {
-              break;
-            }
-            k[i] = k[j];
-            zero[j] = true;
-          }
-        }
-        k.size(ks - zc);
-      }
-
-    }
-
-  }
 
 }}}
 

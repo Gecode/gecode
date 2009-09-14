@@ -583,8 +583,7 @@ namespace Gecode { namespace Int { namespace GCC {
         Iter::Values::Array zi(z,n_z);
         GECODE_ME_CHECK(x[i].minus_v(home,zi,false));
       }
-      lps.dispose();
-      ups.dispose();
+      lps.reinit(); ups.reinit();
     }
     return ES_OK;
   }
