@@ -43,10 +43,10 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template<class Card, bool shared>
+  template<class Card>
   forceinline
-  BndImp<Card,shared>::
-  BndImp(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
+  Bnd<Card>::
+  Bnd(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
          bool cf, bool nolbc) :
     Propagator(home), x(x0), y(home, x0), k(k0),
     card_fixed(cf), skip_lbc(nolbc) {
@@ -54,10 +54,10 @@ namespace Gecode { namespace Int { namespace GCC {
     k.subscribe(home, *this, PC_INT_BND);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   forceinline
-  BndImp<Card,shared>::
-  BndImp(Space& home, bool share, BndImp<Card,shared>& p)
+  Bnd<Card>::
+  Bnd(Space& home, bool share, Bnd<Card>& p)
     : Propagator(home, share, p),
       card_fixed(p.card_fixed), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
@@ -65,24 +65,24 @@ namespace Gecode { namespace Int { namespace GCC {
     k.update(home, share, p.k);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   size_t
-  BndImp<Card,shared>::dispose(Space& home) {
+  Bnd<Card>::dispose(Space& home) {
     y.cancel(home,*this, PC_INT_BND);
     k.cancel(home,*this, PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   Actor*
-  BndImp<Card,shared>::copy(Space& home, bool share) {
-    return new (home) BndImp<Card,shared>(home,share,*this);
+  Bnd<Card>::copy(Space& home, bool share) {
+    return new (home) Bnd<Card>(home,share,*this);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   PropCost
-  BndImp<Card,shared>::cost(const Space&,
+  Bnd<Card>::cost(const Space&,
                             const ModEventDelta& med) const {
     int n_k = Card::propagate ? k.size() : 0;
     if (IntView::me(med) == ME_INT_VAL)
@@ -92,9 +92,9 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
 
-  template<class Card, bool shared>
+  template<class Card>
   forceinline ExecStatus
-  BndImp<Card,shared>::lbc(Space& home, int& nb,
+  Bnd<Card>::lbc(Space& home, int& nb,
                            HallInfo hall[], Rank rank[], int mu[], int nu[]) {
     int n = x.size();
 
@@ -396,9 +396,9 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
 
-  template<class Card, bool shared>
+  template<class Card>
   forceinline ExecStatus
-  BndImp<Card,shared>::ubc(Space& home, int& nb,
+  Bnd<Card>::ubc(Space& home, int& nb,
                            HallInfo hall[], Rank rank[], int mu[], int nu[]) {
     int rightmost = nb + 1; // rightmost accesible value in bounds
     int bsize = nb + 2; // number of unique bounds including sentinels
@@ -554,9 +554,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_OK;
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   ExecStatus
-  BndImp<Card,shared>::pruneCards(Space& home) {
+  Bnd<Card>::pruneCards(Space& home) {
     // Remove all values with 0 max occurrence
     // and remove corresponding occurrence variables from k
     
@@ -588,9 +588,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_OK;
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   ExecStatus
-  BndImp<Card,shared>::propagate(Space& home,
+  Bnd<Card>::propagate(Space& home,
                                  const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
       GECODE_ES_CHECK(prop_val<Card>(home,*this,y,k));
@@ -637,7 +637,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (!card_consistent<Card>(x, k))
         return ES_FAILED;
 
-      GECODE_ES_CHECK((prop_card<Card,shared>(home, x, k)));
+      GECODE_ES_CHECK(prop_card<Card>(home, x, k));
 
       // Cardinalities may have been modified, so recompute
       // count and all_assigned
@@ -778,7 +778,7 @@ namespace Gecode { namespace Int { namespace GCC {
     GECODE_ES_CHECK((ubc(home, nb, hall, rank, mu, nu)));
 
     if (Card::propagate)
-      GECODE_ES_CHECK((prop_card<Card, shared>(home, x, k)));
+      GECODE_ES_CHECK(prop_card<Card>(home, x, k));
 
     for (int i = k.size(); i--; )
       count[i] = 0;
@@ -821,11 +821,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (isDistinct<Card>(home,x,k))
       return Distinct::Bnd<IntView>::post(home,x);
 
-    if (shared(home,x,k)) {
-      (void) new (home) BndImp<Card,true>(home,x,k,cardfix,nolbc);
-    } else {
-      (void) new (home) BndImp<Card,false>(home,x,k,cardfix,nolbc);
-    }
+    (void) new (home) Bnd<Card>(home,x,k,cardfix,nolbc);
     return ES_OK;
   }
 

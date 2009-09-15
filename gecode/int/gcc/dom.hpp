@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace GCC {
             GECODE_ME_CHECK(k[i].gq(home, count[i]));
           }
 
-      GECODE_ES_CHECK((prop_card<Card,true>(home,y,k)));
+      GECODE_ES_CHECK(prop_card<Card>(home,y,k));
       if (!card_consistent<Card>(y,k))
         return ES_FAILED;
     }
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace GCC {
     {
       bool card_assigned = true;
       if (Card::propagate) {
-        GECODE_ES_CHECK((prop_card<Card,true>(home, y, k)));
+        GECODE_ES_CHECK(prop_card<Card>(home, y, k));
         
         for (int i = k.size(); i--; )
           if (!k[i].assigned()) {
@@ -263,7 +263,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
 
     if (Card::propagate)
-      GECODE_ES_CHECK((prop_card<Card,true>(home, y, k)));
+      GECODE_ES_CHECK(prop_card<Card>(home, y, k));
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace GCC {
         return ES_FAILED;
     }
 
-    return ES_NOFIX;
+    return Card::propagate ? ES_NOFIX : ES_FIX;
   }
 
   template<class Card>

@@ -154,34 +154,6 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  /// Before relation for sharing test
-  forceinline bool
-  before(const IntView& x, const CardView& y) {
-    return before(x,y.base());
-  }
-  /// Before relation for sharing test
-  forceinline bool
-  before(const CardView& x, const IntView& y) {
-    return before(x.base(),y);
-  }
-  /// Before relation for sharing test
-  forceinline bool
-  before(const CardView& x, const CardView& y) {
-    return before(x.base(),y.base());
-  }
-
-  /// Sharing test for view-based cardinalities
-  forceinline bool 
-  shared(Space& home, ViewArray<IntView>& x, const ViewArray<CardView>& k) {
-    return x.shared(home,k);
-  }
-
-  /// Sharing test for fixed cardinalities (no sharing)
-  forceinline bool
-  shared(Space& home, ViewArray<IntView>& x, const ViewArray<CardConst>&) {
-    return false;
-  }
-
 }}}
 
 // STATISTICS: int-prop

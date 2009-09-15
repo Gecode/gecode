@@ -112,16 +112,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \ingroup FuncIntProp
    */
   template<class Card>
-  class Bnd {
-  public:
-    /// Post propagator for views \a x and cardinalities \a k
-    static ExecStatus post(Space& home,
-                           ViewArray<IntView>& x, ViewArray<Card>& k);
-  };
-
-  /// Implementation of bounds consistent global cardinality propagator
-  template<class Card, bool shared>
-  class BndImp : public Propagator {
+  class Bnd : public Propagator {
   protected:
     /// Views on which to perform bounds-propagation
     ViewArray<IntView> x;
@@ -151,7 +142,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool skip_lbc;
     /// Constructor for cloning \a p
-    BndImp(Space& home, bool share, BndImp<Card,shared>& p);
+    Bnd(Space& home, bool share, Bnd<Card>& p);
 
     /// Prune cardinality variables with 0 maximum occurrence
     ExecStatus pruneCards(Space& home);
@@ -201,9 +192,9 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     ExecStatus ubc(Space& home, int& nb, HallInfo hall[], Rank rank[],
                    int mu[], int nu[]);
-  public:
     /// Constructor for posting
-    BndImp(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
+    Bnd(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
+  public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion
@@ -212,6 +203,9 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor
     virtual size_t dispose(Space& home);
+    /// Post propagator for views \a x and cardinalities \a k
+    static ExecStatus post(Space& home,
+                           ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
   /**

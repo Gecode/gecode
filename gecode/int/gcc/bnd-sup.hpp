@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Bounds consistency check for cardinality variables.
    */
 
-  template<class Card, bool shared>
+  template<class Card>
   ExecStatus
   prop_card(Space& home, 
             ViewArray<IntView>& x, ViewArray<Card>& k) {
