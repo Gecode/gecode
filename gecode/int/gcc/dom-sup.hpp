@@ -96,12 +96,11 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the type of the node
     bool get_type(void) const;
     /// access the matching flag of the node
-    template<BC>
-    bool get_match_flag(void) const;
+    bool get_match_flag(BC bc) const;
     /// get the information on the node (either var-index or value)
     virtual int get_info(void) const = 0;
     /// test whether the node is matched
-    virtual bool is_matched(BC) const = 0;
+    virtual bool is_matched(BC bc) const = 0;
     /// check whether a node has been removed from the graph
     bool removed(void) const;
     //@}
@@ -115,8 +114,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// set the inedge pointer to \a p
     void inedge(Edge* p);
     /// set the matching flag to \a f
-    template<BC>
-    void set_match_flag(bool f);
+    void set_match_flag(BC bc, bool f);
     /// set the node information to \a i
     virtual void set_info(int i) = 0;
     //@}
@@ -147,15 +145,13 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Access
     //@{
     /// return the matching edge on the node
-    template<BC>
-    Edge* get_match(void) const;
+    Edge* get_match(BC bc) const;
     /// return the variable index of the node
     int get_info(void) const;
     /// returns whether the node is still matchable
     bool is_matched(BC) const;
     /// tests whether the node is matched or not
-    template<BC>
-    bool matched(void) const;
+    bool matched(BC bc) const;
     //@}
 
     /// \name Update
@@ -163,14 +159,11 @@ namespace Gecode { namespace Int { namespace GCC {
     /// set the node info to \a i
     void set_info(int i);
     /// set the pointer of the matching edge to m
-    template<BC>
-    void set_match(Edge* m);
+    void set_match(BC bc, Edge* m);
     /// match the node
-    template<BC>
-    void match(void);
+    void match(BC bc);
     /// unmatch the node
-    template<BC>
-    void unmatch(void);
+    void unmatch(BC bc);
     //@}
   };
 
@@ -239,15 +232,13 @@ namespace Gecode { namespace Int { namespace GCC {
     /// returns the current number of occurences of the value
     int kcount(void) const;
     /// returns the number of incident matching edges on a value node
-    template<BC>
-    int incid_match(void) const;
+    int incid_match(BC bc) const;
     /// returns the index in cardinality array k
     int kindex(void) const;
     /// return the node information
     int get_info(void) const;
     /// returns \a true if the node is matched in BC, \a false otherwise
-    template<BC>
-    bool matched(void) const;
+    bool matched(BC bc) const;
     /// tests whether the node is a sink
     bool sink(void) const;
     /// tests whether the node is a source
@@ -257,10 +248,9 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the maximal node capacity as stored in \a k
     int kmax(void) const;
     /// return minimal or maximal capacity
-    template<BC>
-    int kbound(void) const;
+    int kbound(BC bc) const;
     /// returns whether the node is still matchable
-    bool is_matched(BC) const;
+    bool is_matched(BC bc) const;
     //@}
 
     /// \name Update
@@ -269,23 +259,17 @@ namespace Gecode { namespace Int { namespace GCC {
     /// changes the index in the cardinality array k
     void kindex(int);
     /// decrease the node-capacity
-    template<BC>
-    void dec(void);
+    void dec(BC bc);
     /// increase the node-capacity
-    template<BC>
-    void inc(void);
+    void inc(BC bc);
     /// return the the node-capacity
-    template<BC>
-    int cap(void) const;
+    int cap(BC bc) const;
     /// set the node-capacity to \a c
-    template<BC>
-    void set_cap(int c);
+    void set_cap(BC bc, int c);
     /// match the node
-    template<BC>
-    void match(void);
+    void match(BC bc);
     /// unmatch the node
-    template<BC>
-    void unmatch(void);
+    void unmatch(BC bc);
     /// node reset to original capacity values
     void reset(void);
     /// set the node infomration to \a i
@@ -343,18 +327,10 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Access
     //@{
-    /**
-     * \brief return whether the edge is used
-     *
-     * An edge can be used in a matching on the graph,
-     * a path on the graph or a cycle in the graph.
-     *
-     */
-    template<BC>
-    bool used(void) const;
+    /// Whether the edge is used
+    bool used(BC bc) const;
     /// return whether the edge is matched
-    template<BC>
-    bool matched(void) const;
+    bool matched(BC bc) const;
     /// return whether the edge has been deleted from the graph
     bool deleted(void) const;
     /**
@@ -385,27 +361,17 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Update
     //@{
     /// Mark the edge as used
-    template<BC>
-    void use(void);
+    void use(BC bc);
     /// Mark the edge as unused
-    template<BC>
-    void free(void);
-    /**
-     * \brief Reset the edge ( free the edge, and unmatch
-     * the edge including its end-nodes
-     *
-     */
-    template<BC>
-    void reset(void);
+    void free(BC bc);
+    /// Reset the edge (free the edge, and unmatch the edge)
+    void reset(BC bc);
     /// Match the edge
-    template<BC>
-    void match(void);
+    void match(BC bc);
     /// Unmatch the edge and the incident nodes
-    template<BC>
-    void unmatch(void);
+    void unmatch(BC bc);
     /// Unmatch the edge and  ( \a x if t=false,  \a v otherwise )
-    template<BC>
-    void unmatch(bool t);
+    void unmatch(BC bc, bool t);
     /// Unlink the edge from the linked list of edges
     void unlink(void);
     /// Mark the edge as deleted during synchronization
@@ -593,19 +559,17 @@ namespace Gecode { namespace Int { namespace GCC {
     ie = p;
   }
 
-  template<BC direction>
   forceinline void
-  Node::set_match_flag(bool b) {
-    if (direction == UBC) {
+  Node::set_match_flag(BC bc, bool b) {
+    if (bc == UBC) {
       um = b;
     } else {
       lm = b;
     }
   }
-  template<BC direction>
   forceinline bool
-  Node::get_match_flag(void) const {
-    if (direction == UBC) {
+  Node::get_match_flag(BC bc) const {
+    if (bc == UBC) {
       return um;
     } else {
       return lm;
@@ -629,52 +593,41 @@ namespace Gecode { namespace Int { namespace GCC {
   VarNode::VarNode(int x, int orig_idx) :
     Node(false), ubm(NULL), lbm(NULL), var(x), xindex(orig_idx) {}
 
-  template<BC direction>
   forceinline bool
-  VarNode::matched(void) const {
-    return get_match_flag<direction>();
+  VarNode::matched(BC bc) const {
+    return get_match_flag(bc);
   }
 
   forceinline bool
-  VarNode::is_matched(BC d) const {
-    if (d == UBC) {
-      return matched<UBC>();
-    } else {
-      return matched<LBC>();
-    }
+  VarNode::is_matched(BC bc) const {
+    return matched(bc);
   }
 
-  template<BC direction>
   forceinline void
-  VarNode::match(void) {
-    set_match_flag<direction>(true);
+  VarNode::match(BC bc) {
+    set_match_flag(bc,true);
   }
 
-  template<BC direction>
   forceinline void
-  VarNode::set_match(Edge* p) {
-    if (direction == UBC) {
+  VarNode::set_match(BC bc, Edge* p) {
+    if (bc == UBC)
       ubm = p;
-    } else {
+    else
       lbm = p;
-    }
   }
 
-  template<BC direction>
   forceinline void
-  VarNode::unmatch(void) {
-    set_match_flag<direction>(false);
-    set_match<direction>(NULL);
+  VarNode::unmatch(BC bc) {
+    set_match_flag(bc,false);
+    set_match(bc,NULL);
   }
 
-  template<BC direction>
   forceinline Edge*
-  VarNode::get_match(void) const {
-    if (direction == UBC) {
+  VarNode::get_match(BC bc) const {
+    if (bc == UBC)
       return ubm;
-    } else {
+    else
       return lbm;
-    }
   }
 
   forceinline void
@@ -738,7 +691,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline bool
   ValNode::is_matched(BC d) const {
     if (d == UBC) {
-      return matched<UBC>();
+      return matched(UBC);
     } else {
       return ublow == 0;
     }
@@ -752,10 +705,9 @@ namespace Gecode { namespace Int { namespace GCC {
     noe = 0;
   }
 
-  template<BC direction>
   forceinline int
-  ValNode::kbound(void) const {
-    if (direction == UBC) {
+  ValNode::kbound(BC bc) const {
+    if (bc == UBC) {
       return _kub;
     } else {
       return _klb;
@@ -782,60 +734,50 @@ namespace Gecode { namespace Int { namespace GCC {
     _kub = kub;
   }
 
-  template<BC direction>
   forceinline int
-  ValNode::cap(void) const {
-    if (direction == UBC) {
+  ValNode::cap(BC bc) const {
+    if (bc == UBC)
       return ub;
-    } else {
+    else
       return lb;
-    }
   }
 
-  template<BC direction>
   forceinline void
-  ValNode::dec(void) {
-    if (direction == UBC) {
+  ValNode::dec(BC bc) {
+    if (bc == UBC) {
       ub--;
     } else {
-      lb--;
-      ublow--;
+      lb--; ublow--;
     }
   }
 
-  template<BC direction>
   forceinline void
-  ValNode::inc(void) {
-    if (direction == UBC) {
+  ValNode::inc(BC bc) {
+    if (bc == UBC) {
       ub++;
     } else {
-      lb++;
-      ublow++;
+      lb++; ublow++;
     }
   }
 
-  template<BC direction>
   forceinline void
-  ValNode::match(void) {
-    dec<direction>();
+  ValNode::match(BC bc) {
+    dec(bc);
   }
 
-  template<BC direction>
   forceinline void
-  ValNode::unmatch(void) {
-    inc<direction>();
+  ValNode::unmatch(BC bc) {
+    inc(bc);
   }
 
-  template<BC direction>
   forceinline bool
-  ValNode::matched(void) const {
-    return cap<direction>() == 0;
+  ValNode::matched(BC bc) const {
+    return cap(bc) == 0;
   }
 
-  template<BC direction>
   forceinline void
-  ValNode::set_cap(int c) {
-    if (direction == UBC)
+  ValNode::set_cap(BC bc, int c) {
+    if (bc == UBC)
       ub = c;
     else
       lb = c;
@@ -877,10 +819,9 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /// Returs the number of incident matching edges on the node
-  template<BC direction>
   forceinline int
-  ValNode::incid_match(void) const {
-    if (direction == LBC)
+  ValNode::incid_match(BC bc) const {
+    if (bc == LBC)
       return _kub - ublow + _kcount;
     else
       return _kub - ub + _kcount;
@@ -950,49 +891,31 @@ namespace Gecode { namespace Int { namespace GCC {
     next_edge(NULL), prev_edge(NULL),
     next_vedge(NULL), prev_vedge(NULL), ef(EF_NONE) {}
 
-  template<BC direction>
   forceinline void
-  Edge::use(void) {
-    if (direction == UBC) {
+  Edge::use(BC bc) {
+    if (bc == UBC)
       ef |= EF_MRKUB;
-    } else {
+    else
       ef |= EF_MRKLB;
-    }
   }
-
-  template<BC direction>
   forceinline void
-  Edge::free(void) {
-    /// the failure is here, capacity is not increased for value nodes
-    if (direction == UBC) {
+  Edge::free(BC bc) {
+    if (bc == UBC)
       ef &= ~EF_MRKUB;
-    } else {
+    else
       ef &= ~EF_MRKLB;
-    }
   }
-
-  template<BC direction>
-  forceinline void
-  Edge::reset(void) {
-    this->free<direction>();
-    this->unmatch<direction>();
-  }
-
-  template<BC direction>
   forceinline bool
-  Edge::used(void) const {
-    if (direction == UBC) {
+  Edge::used(BC bc) const {
+    if (bc == UBC)
       return (ef & EF_MRKUB) != 0;
-    } else {
+    else
       return (ef & EF_MRKLB) != 0;
-    }
   }
-
   forceinline Edge*
   Edge::next(void) const {
     return next_edge;
   }
-
   forceinline Edge*
   Edge::next(bool t) const {
     if (t) {
@@ -1006,32 +929,26 @@ namespace Gecode { namespace Int { namespace GCC {
   Edge::vnext(void) const {
     return next_vedge;
   }
-
   forceinline Edge**
   Edge::vnext_ref(void) {
     return &next_vedge;
   }
-
   forceinline Edge*
   Edge::prev(void) const {
     return prev_edge;
   }
-
   forceinline Edge**
   Edge::prev_ref(void) {
     return &prev_edge;
   }
-
   forceinline Edge*
   Edge::vprev(void) const {
     return prev_vedge;
   }
-
   forceinline Edge**
   Edge::vprev_ref(void) {
     return &prev_vedge;
   }
-
   forceinline Edge**
   Edge::next_ref(void) {
     return &next_edge;
@@ -1056,58 +973,49 @@ namespace Gecode { namespace Int { namespace GCC {
       return v;
   }
 
-  template<BC direction>
   forceinline void
-  Edge::unmatch(void) {
-    if (direction == UBC) {
+  Edge::unmatch(BC bc) {
+    if (bc == UBC)
       ef &= ~EF_UM;
-    } else {
+    else
       ef &= ~EF_LM;
-    }
-    x->unmatch<direction>();
-    v->unmatch<direction>();
+    x->unmatch(bc); v->unmatch(bc);
   }
 
-  template<BC direction>
   forceinline void
-  Edge::unmatch(bool node) {
-    if (direction == UBC) {
+  Edge::unmatch(BC bc, bool node) {
+    if (bc == UBC)
       ef &= ~EF_UM;
-    } else {
+    else
       ef &= ~EF_LM;
-    }
-    if (node) {
-      v->template unmatch<direction>();
-    } else {
-      x->template unmatch<direction>();
-    }
+    if (node)
+      v->unmatch(bc);
+    else
+      x->unmatch(bc);
   }
 
-  template<BC direction>
   forceinline void
-  Edge::match(void) {
-    if (direction == UBC) {
+  Edge::reset(BC bc) {
+    free(bc); unmatch(bc);
+  }
+
+  forceinline void
+  Edge::match(BC bc) {
+    if (bc == UBC)
       ef |= EF_UM;
-      x->template match<direction>();
-      x->template set_match<direction>(this);
-      v->template match<direction>();
-    } else {
+    else
       ef |= EF_LM;
-      x->template match<direction>();
-      x->template set_match<direction>(this);
-      assert(x->template matched<direction>());
-      v->template match<direction>();
-    }
+    x->match(bc);
+    x->set_match(bc,this);
+    v->match(bc);
   }
 
-  template<BC direction>
   forceinline bool
-  Edge::matched(void) const {
-    if (direction == UBC) {
+  Edge::matched(BC bc) const {
+    if (bc == UBC)
       return (ef & EF_UM) != 0;
-    } else {
+    else
       return (ef & EF_LM) != 0;
-    }
   }
 
   forceinline void
@@ -1274,8 +1182,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
           k[vidx].counter(k[vidx].min());
 
-          vln->template set_cap<UBC>(0);
-          vln->template set_cap<LBC>(0);
+          vln->set_cap(UBC,0);
+          vln->set_cap(LBC,0);
           vln->set_maxlow(0);
 
           if (sum_min && sum_min >= k[vidx].min())
@@ -1287,8 +1195,8 @@ namespace Gecode { namespace Int { namespace GCC {
           assert(sum_max >=0);
         }
       } else {
-        vals[i]->template set_cap<UBC>(0);
-        vals[i]->template set_cap<LBC>(0);
+        vals[i]->set_cap(UBC,0);
+        vals[i]->set_cap(LBC,0);
         vals[i]->set_maxlow(0);
         vals[i]->set_kmax(0);
         vals[i]->set_kmin(0);
@@ -1314,8 +1222,8 @@ namespace Gecode { namespace Int { namespace GCC {
     if (Card::propagate) {
       for (int i = n_val; i--; ) {
         ValNode* v  = vals[i];
-        int inc_ubc = v->template incid_match<UBC>();
-        int inc_lbc = v->template incid_match<LBC>();
+        int inc_ubc = v->incid_match(UBC);
+        int inc_lbc = v->incid_match(LBC);
         if (v->noe == 0) {
           inc_ubc = 0;
           inc_lbc = 0;
@@ -1331,35 +1239,35 @@ namespace Gecode { namespace Int { namespace GCC {
             //everything is fine
             if (inc_ubc <= k[i].max()) {
               // adjust capacities
-              v->template set_cap<UBC>(k[i].max() - (inc_ubc));
-              v->set_maxlow(k[i].max() - (inc_lbc));
+              v->set_cap(UBC, k[i].max() - inc_ubc);
+              v->set_maxlow(k[i].max() - inc_lbc);
               if (v->kmin() == v->kmax())
-                v->template set_cap<LBC>(k[i].max() - (inc_lbc));
+                v->set_cap(LBC, k[i].max() - inc_lbc);
             } else {
               // set cap to max and resolve conflicts on view side
               // set to full capacity for later rescheduling
-              if (v->template cap<UBC>())
-                v->template set_cap<UBC>(k[i].max());
+              if (v->cap(UBC))
+                v->set_cap(UBC,k[i].max());
               v->set_maxlow(k[i].max() - (inc_lbc));
               if (v->kmin() == v->kmax())
-                v->template set_cap<LBC>(k[i].max() - (inc_lbc));
+                v->set_cap(LBC,k[i].max() - (inc_lbc));
               v->card_conflict(rm);
             }
           }
         }
         if (inc_lbc < k[i].min() && v->noe > 0) {
-          v->template set_cap<LBC>(k[i].min() - inc_lbc);
+          v->set_cap(LBC, k[i].min() - inc_lbc);
           re.push(v);
         }
       }
 
       for (int i = n_var; i--; ) {
-        Edge* mub = vars[i]->template get_match<UBC>();
+        Edge* mub = vars[i]->get_match(UBC);
         if (mub != NULL) {
           ValNode* vu = mub->getVal();
           if ((vars[i]->noe != 1) && vu->card_conflict()) {
             vu->red_conflict();
-            mub->template unmatch<UBC>(vars[i]->get_type());
+            mub->unmatch(UBC,vars[i]->get_type());
             re.push(vars[i]);
           }
         }
@@ -1377,18 +1285,18 @@ namespace Gecode { namespace Int { namespace GCC {
           int  v = x[i].val();
           ValNode* rv = NULL;
           int rv_idx  = 0;
-          Edge* mub = vrn->template get_match<UBC>();
+          Edge* mub = vrn->get_match(UBC);
           if ((mub != NULL) && (v != mub->getVal()->val)) {
-            mub->template unmatch<UBC>();
+            mub->unmatch(UBC);
             re.push(vars[i]);
           }
 
-          Edge* mlb = vrn->template get_match<LBC>();
+          Edge* mlb = vrn->get_match(LBC);
           if (mlb != NULL) {
             ValNode* vln = mlb->getVal();
             if (v != vln->val) {
-              mlb->template unmatch<LBC>();
-              if (vln->template incid_match<LBC>() < vln->kmin())
+              mlb->unmatch(LBC);
+              if (vln->incid_match(LBC) < vln->kmin())
                 re.push(vln);
             }
           }
@@ -1409,8 +1317,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
           // delete the edge
           ViewValues<IntView> xiter(x[i]);
-          Edge*  mub = vrn->template get_match<UBC>();
-          Edge*  mlb = vrn->template get_match<LBC>();
+          Edge*  mub = vrn->get_match(UBC);
+          Edge*  mlb = vrn->get_match(LBC);
           Edge** p   = vrn->adj();
           Edge*  e   = *p;
           do {
@@ -1428,8 +1336,8 @@ namespace Gecode { namespace Int { namespace GCC {
             assert(xiter.val() == e->getVal()->val);
 
             // This edge must be kept
-            e->template free<UBC>();
-            e->template free<LBC>();
+            e->free(UBC);
+            e->free(LBC);
             ++xiter;
             p = e->next_ref();
             e = e->next();
@@ -1444,15 +1352,15 @@ namespace Gecode { namespace Int { namespace GCC {
           }
 
           if ((mub != NULL) && mub->deleted()) {
-            mub->template unmatch<UBC>();
+            mub->unmatch(UBC);
             re.push(vars[i]);
           }
 
           //lower bound matching can be zero
           if ((mlb != NULL) && mlb->deleted()) {
             ValNode* vln = mlb->getVal();
-            mlb->template unmatch<LBC>();
-            if (vln->template incid_match<LBC>() < vln->kmin())
+            mlb->unmatch(LBC);
+            if (vln->incid_match(LBC) < vln->kmin())
               re.push(vln);
           }
         }
@@ -1472,12 +1380,11 @@ namespace Gecode { namespace Int { namespace GCC {
       if (!n->removed())
         if (!n->get_type()) {
           VarNode* vrn = static_cast<VarNode*>(n);
-          if (!vrn->template matched<UBC>() &&
-              !augmenting_path<UBC>(home,vrn))
+          if (!vrn->matched(UBC) && !augmenting_path<UBC>(home,vrn))
             return ES_FAILED;
         } else {
           ValNode* vln = static_cast<ValNode*>(n);
-          while (!vln->template matched<LBC>())
+          while (!vln->matched(LBC))
             if (!augmenting_path<LBC>(home,vln))
               return ES_FAILED;
         }
@@ -1486,7 +1393,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_OK;
   }
 
-  template<class Card> template<BC direction>
+  template<class Card> template<BC bc>
   inline ExecStatus
   VarValGraph<Card>::narrow(Space& home) {
     for (int i = n_var; i--; ) {
@@ -1494,7 +1401,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (vrn->noe == 1) {
         Edge* e = vrn->first();
         ValNode* v = e->getVal();
-        e->template free<direction>();
+        e->free(bc);
         GECODE_ME_CHECK(x[i].eq(home, v->val));
         v->inc();
       }
@@ -1545,8 +1452,8 @@ namespace Gecode { namespace Int { namespace GCC {
               e->unlink();
             }
           }
-          v->template set_cap<UBC>(0);
-          v->template set_cap<LBC>(0);
+          v->set_cap(UBC,0);
+          v->set_cap(LBC,0);
           v->set_maxlow(0);
           if (sum_min && sum_min >= k[vidx].min())
             sum_min -= k[vidx].min();
@@ -1566,8 +1473,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = n_val; i--; ) {
       if (vals[i]->noe == 0) {
-        vals[i]->template set_cap<UBC>(0);
-        vals[i]->template set_cap<LBC>(0);
+        vals[i]->set_cap(UBC,0);
+        vals[i]->set_cap(LBC,0);
         vals[i]->set_maxlow(0);
       }
       vals[i]->set_info(n_var + i);
@@ -1576,23 +1483,22 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n_var; i--; )
       if (vars[i]->noe > 1)
         for (Edge* e = vars[i]->first(); e != NULL; e = e->next())
-          if (!e->template matched<direction>() &&
-              !e->template used<direction>()) {
+          if (!e->matched(bc) && !e->used(bc)) {
             GECODE_ME_CHECK(x[i].nq(home, e->getVal()->val));
           } else {
-            e->template free<direction>();
+            e->free(bc);
           }
 
     return ES_OK;
   }
 
-  template<class Card>  template<BC direction>
+  template<class Card>  template<BC bc>
   inline ExecStatus
   VarValGraph<Card>::maximum_matching(Space& home) {
     int required_size = 0;
     int card_match    = 0;
 
-    if (direction == UBC)
+    if (bc == UBC)
       required_size = n_var;
     else
       required_size = sum_min;
@@ -1603,9 +1509,8 @@ namespace Gecode { namespace Int { namespace GCC {
       ValNode* vln = vals[i];
       for (Edge* e = vln->first(); e != NULL ; e = e->vnext()) {
         VarNode* vrn = e->getVar();
-        if (!vrn->template matched<direction>() &&
-            !vln->template matched<direction>()) {
-          e->template match<direction>();
+        if (!vrn->matched(bc) && !vln->matched(bc)) {
+          e->match(bc);
           card_match++;
         }
       }
@@ -1613,20 +1518,20 @@ namespace Gecode { namespace Int { namespace GCC {
 
     Region r(home);
     if (card_match < required_size) {
-      if (direction == LBC) {
+      if (bc == LBC) {
         // collect free value nodes
         ValNode** free = r.alloc<ValNode*>(n_val);
         int f = 0;
         // find failed nodes
         for (int i = n_val; i--; ) {
           ValNode* vln = vals[i];
-          if (!vln->template matched<direction>())
+          if (!vln->matched(bc))
             free[f++] = vln;
         }
 
         for (int i = 0; i < f; i++) {
-          while(!free[i]->template matched<direction>()) {
-            if (augmenting_path<direction>(home,free[i])) {
+          while(!free[i]->matched(bc)) {
+            if (augmenting_path<bc>(home,free[i])) {
               card_match++;
             } else {
               break;
@@ -1637,25 +1542,18 @@ namespace Gecode { namespace Int { namespace GCC {
         VarNode** free = r.alloc<VarNode*>(n_var);
         int f = 0;
         // find failed nodes
-        for (int i = n_var; i--; ) {
-          VarNode* vrn = vars[i];
-          if (!vrn->template matched<direction>())
-            free[f++] = vrn;
-        }
-
-        for (int i = 0; i < f; i++) {
-          if (!free[i]->template matched<direction>()) {
-            if (augmenting_path<direction>(home,free[i])) {
-              card_match++;
-            }
-          }
-        }
+        for (int i = n_var; i--; )
+          if (!vars[i]->matched(bc))
+            free[f++] = vars[i];
+        for (int i = 0; i < f; i++)
+          if (!free[i]->matched(bc) && augmenting_path<bc>(home,free[i]))
+            card_match++;
       }
     }
     return (card_match >= required_size) ? ES_OK : ES_FAILED;
   }
 
-  template<class Card> template<BC direction>
+  template<class Card> template<BC bc>
   inline bool
   VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
     Region r(home);
@@ -1664,7 +1562,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge** start = r.alloc<Edge*>(node_size);
 
     // augmenting path starting in a free var node
-    assert(!v->is_matched(direction));
+    assert(!v->is_matched(bc));
 
     // keep track of the nodes that have already been visited
     Node* sn = v;
@@ -1691,16 +1589,13 @@ namespace Gecode { namespace Int { namespace GCC {
       Node* v = ns.top();
       Edge* e = NULL;
       if (v->get_type() == sp) {
-        // follow next free edge
         e = start[v->get_info()];
-        while ((e != NULL) && e->template matched<direction>()) {
+        while ((e != NULL) && e->matched(bc))
           e = e->next(v->get_type());
-        }
       } else {
         e = start[v->get_info()];
-        while ((e != NULL) && !e->template matched<direction>()) {
+        while ((e != NULL) && !e->matched(bc))
           e = e->next(v->get_type());
-        }
         start[v->get_info()] = e;
       }
       if (e != NULL) {
@@ -1708,14 +1603,14 @@ namespace Gecode { namespace Int { namespace GCC {
         Node* w = e->getMate(v->get_type());
         if (!visited.get(w->get_info())) {
           // unexplored path
-          if (!w->is_matched(direction) && w->get_type() != sp) {
+          if (!w->is_matched(bc) && w->get_type() != sp) {
             if (v->inedge() != NULL) {
               // augmenting path of length l > 1
-              e->template match<direction>();
+              e->match(bc);
               break;
             } else {
               // augmenting path of length l = 1
-              e->template match<direction>();
+              e->match(bc);
               ns.pop();
               return true;
             }
@@ -1739,25 +1634,25 @@ namespace Gecode { namespace Int { namespace GCC {
       if (t != sn) {
         Edge* in = t->inedge();
         if (t->get_type() != sp) {
-          in->template match<direction>();
+          in->match(bc);
         } else if (!sp) {
-          in->template unmatch<direction>(!sp);
+          in->unmatch(bc,!sp);
         } else {
-          in->template unmatch<direction>();
+          in->unmatch(bc);
         }
       }
     }
     return pathfound;
   }
 
-  template<class Card> template<BC direction>
+  template<class Card> template<BC bc>
   inline void
   VarValGraph<Card>::free_alternating_paths(Space& home) {
     Region r(home);
     NodeStack ns(r,node_size);
     BitSet visited(r,node_size);
 
-    if (direction == LBC) {
+    if (bc == LBC) {
       // after a maximum matching on the value nodes there still can be
       // free value nodes, hence we have to consider ALL nodes whether
       // they are the starting point of an even alternating path in G
@@ -1788,19 +1683,19 @@ namespace Gecode { namespace Int { namespace GCC {
         for (Edge* cur = vln->first(); cur != NULL; cur = cur->vnext()) {
           VarNode* mate = cur->getVar();
           bool follow = false;
-          switch (direction) {
+          switch (bc) {
             // edges in M_l are directed from values to variables
           case LBC:
-            follow = cur->template matched<direction>();
+            follow = cur->matched(bc);
             break;
           case UBC:
-            follow = !cur->template matched<direction>();
+            follow = !cur->matched(bc);
             break;
           default: GECODE_NEVER;
           }
           if (follow) {
             // mark the edge
-            cur->template use<direction>();
+            cur->use(bc);
             if (!visited.get(mate->get_info())) {
               ns.push(mate); visited.set(mate->get_info());
             }
@@ -1809,13 +1704,13 @@ namespace Gecode { namespace Int { namespace GCC {
       } else {
         // VarNode
         VarNode* vrn = static_cast<VarNode*>(node);
-        switch (direction) {
+        switch (bc) {
         case LBC: 
           // after LBC-matching we can follow every unmatched edge
           for (Edge* cur = vrn->first(); cur != NULL; cur = cur->next()) {
             ValNode* mate = cur->getVal();
-            if (!cur->template matched<LBC>()) {
-              cur->template use<LBC>();
+            if (!cur->matched(LBC)) {
+              cur->use(LBC);
               if (!visited.get(mate->get_info())) {
                 ns.push(mate); visited.set(mate->get_info());
               }
@@ -1825,9 +1720,9 @@ namespace Gecode { namespace Int { namespace GCC {
         case UBC: 
           // after ub-matching we can only follow a matched edge
           {
-            Edge* cur = vrn->template get_match<UBC>();
+            Edge* cur = vrn->get_match(UBC);
             if (cur != NULL) {
-              cur->template use<UBC>();
+              cur->use(UBC);
               ValNode* mate = cur->getVal();
               if (!visited.get(mate->get_info())) {
                 ns.push(mate); visited.set(mate->get_info());
@@ -1842,7 +1737,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template<class Card> template<BC direction>
+  template<class Card> template<BC bc>
   inline void
   VarValGraph<Card>::dfs(Node* v,
                          BitSet& inscc, BitSet& in_unfinished, int dfsnum[],
@@ -1859,20 +1754,20 @@ namespace Gecode { namespace Int { namespace GCC {
     for (Edge* e = v->first(); e != NULL; e = e->next(v->get_type())) {
       bool condition = false;
       // LBC-matching
-      if (direction == LBC) {
+      if (bc == LBC) {
         // ValNode
         if (v->get_type()) {
-          condition = e->template matched<LBC>();
+          condition = e->matched(LBC);
         } else {
-          condition = !e->template matched<LBC>();
+          condition = !e->matched(LBC);
         }
         // UBC - matching
       } else {
         if (v->get_type()) {
           // in an upper bound matching a valnode only can follow unmatched edges
-          condition = !e->template matched<UBC>();
+          condition = !e->matched(UBC);
         } else {
-          condition = e->template matched<UBC>();
+          condition = e->matched(UBC);
         }
       }
       if (condition) {
@@ -1883,12 +1778,12 @@ namespace Gecode { namespace Int { namespace GCC {
         if (!inscc.get(w_index)) {
           // w is an uncompleted scc
           w->inedge(e);
-          dfs<direction>(w, inscc, in_unfinished, dfsnum,
-                         roots, unfinished, count);
+          dfs<bc>(w, inscc, in_unfinished, dfsnum,
+                  roots, unfinished, count);
         } else if (in_unfinished.get(w_index)) {
           // even alternating cycle found mark the edge closing the cycle,
           // completing the scc
-          e->template use<direction>();
+          e->use(bc);
           // if w belongs to an scc we detected earlier
           // merge components
           assert(roots.top()->get_info() < node_size);
@@ -1903,7 +1798,7 @@ namespace Gecode { namespace Int { namespace GCC {
       while (v != unfinished.top()) {
         // w belongs to the scc with root v
         Node* w = unfinished.top();
-        w->inedge()->template use<direction>();
+        w->inedge()->use(bc);
         in_unfinished.clear(w->get_info());
         unfinished.pop();
       }
@@ -1914,7 +1809,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  template<class Card> template<BC direction>
+  template<class Card> template<BC bc>
   inline void
   VarValGraph<Card>::strongly_connected_components(Space& home) {
     Region r(home);
@@ -1930,8 +1825,8 @@ namespace Gecode { namespace Int { namespace GCC {
     NodeStack unfinished(r,node_size);
 
     for (int i = n_var; i--; )
-      dfs<direction>(vars[i], inscc, in_unfinished, dfsnum,
-                     roots, unfinished, count);
+      dfs<bc>(vars[i], inscc, in_unfinished, dfsnum,
+              roots, unfinished, count);
   }
 
   template<class Card>
