@@ -677,6 +677,18 @@ namespace Gecode { namespace Int { namespace GCC {
     return noc;
   }
 
+  forceinline int
+  ValNode::cap(BC bc) const {
+    if (bc == UBC)
+      return ub;
+    else
+      return lb;
+  }
+  forceinline bool
+  ValNode::matched(BC bc) const {
+    return cap(bc) == 0;
+  }
+
   forceinline bool
   ValNode::is_matched(BC d) const {
     if (d == UBC) {
@@ -723,13 +735,6 @@ namespace Gecode { namespace Int { namespace GCC {
     _kub = kub;
   }
 
-  forceinline int
-  ValNode::cap(BC bc) const {
-    if (bc == UBC)
-      return ub;
-    else
-      return lb;
-  }
 
   forceinline void
   ValNode::dec(BC bc) {
@@ -757,11 +762,6 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   ValNode::unmatch(BC bc) {
     inc(bc);
-  }
-
-  forceinline bool
-  ValNode::matched(BC bc) const {
-    return cap(bc) == 0;
   }
 
   forceinline void
@@ -1540,9 +1540,6 @@ namespace Gecode { namespace Int { namespace GCC {
     BitSet visited(r,node_size);
     Edge** start = r.alloc<Edge*>(node_size);
 
-    // augmenting path starting in a free var node
-    assert(!v->is_matched(bc));
-
     // keep track of the nodes that have already been visited
     Node* sn = v;
 
@@ -1636,11 +1633,11 @@ namespace Gecode { namespace Int { namespace GCC {
       // free value nodes, hence we have to consider ALL nodes whether
       // they are the starting point of an even alternating path in G
       for (int i = n_var; i--; )
-        if (!vars[i]->is_matched(LBC)) {
+        if (!vars[i]->matched(LBC)) {
           ns.push(vars[i]); visited.set(vars[i]->index());
         }
       for (int i = n_val; i--; )
-        if (!vals[i]->is_matched(LBC)) {
+        if (!vals[i]->matched(LBC)) {
           ns.push(vals[i]); visited.set(vals[i]->index());
         }
 
@@ -1648,7 +1645,7 @@ namespace Gecode { namespace Int { namespace GCC {
       // clearly, after a maximum matching on the x variables
       // corresponding to a set cover on x there are NO free var nodes
       for (int i = n_val; i--; )
-        if (!vals[i]->is_matched(UBC)) {
+        if (!vals[i]->matched(UBC)) {
           ns.push(vals[i]); visited.set(vals[i]->index());
         }
     }
