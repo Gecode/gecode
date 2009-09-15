@@ -841,19 +841,20 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOr<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (y.one())
       GECODE_REWRITE(*this,NaryOrTrue<VX>::post(home,x));
-    Advisors<Advisor> as(c);
-    x.cancel(home,as.advisor());
-    c.dispose(home);
     if (y.zero()) {
+      // Note that this might trigger the advisor of this propagator!
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
     } else if (n_zero == x.size()) {
       // All views are zero
       GECODE_ME_CHECK(y.zero_none(home));
     } else {
+      Advisors<Advisor> as(c);
+      x.cancel(home,as.advisor());
       // There is exactly one view which is one
       GECODE_ME_CHECK(y.one_none(home));
     }
+    c.dispose(home);
     return ES_SUBSUMED(*this,sizeof(*this));
   }
 

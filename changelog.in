@@ -93,6 +93,13 @@ Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
+Optimized n-ary disjunction and conjunction and the clause constraint.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
 Linear constraints over Boolean variables with unit coefficients
 (aka Boolean cardinality constraints) have been
 reimplemented. Less memory (minus 30%) and more speed. For

@@ -311,7 +311,7 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   Clause<VX,VY>::advise(Space&, Advisor& _a, const Delta& d) {
     Tagged& a = static_cast<Tagged&>(_a);
-    // Decides whether the propagator must be run and also
+    // Decides whether the propagator must be run
     if ((a.x && VX::zero(d)) || (!a.x && VY::zero(d)))
       if (++n_zero < x.size() + y.size())
         return ES_FIX;
@@ -323,16 +323,18 @@ namespace Gecode { namespace Int { namespace Bool {
   Clause<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (z.one())
       GECODE_REWRITE(*this,(ClauseTrue<VX,VY>::post(home,x,y)));
-    cancel(home);
     if (z.zero()) {
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
       for (int i = y.size(); i--; )
         GECODE_ME_CHECK(y[i].zero(home));
+      c.dispose(home);
     } else if (n_zero == x.size() + y.size()) {
       GECODE_ME_CHECK(z.zero_none(home));
+      c.dispose(home);
     } else {
       // There is exactly one view which is one
+      cancel(home);
       GECODE_ME_CHECK(z.one_none(home));
     }
     return ES_SUBSUMED(*this,sizeof(*this));
