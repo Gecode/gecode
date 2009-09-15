@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
   /*
-   * Bounds consistent multiplication
+   * Bounds consistent division
    *
    */
   template<class View>
@@ -213,12 +213,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       goto prop_xxn;
     }
     assert(any(x1) && any(x2));
-
-    GECODE_ME_CHECK(x0.le(home,std::max(m<double>(x1.max(),x2.max()+1),
-                                        m<double>(x1.min(),x2.min()-1))));
+    GECODE_ME_CHECK(x0.lq(home,std::max(m<double>(x1.max(),x2.max()+1)-1,
+                                        m<double>(x1.min(),x2.min()))));
     GECODE_ME_CHECK(x0.gq(home,std::min(m<double>(x1.min(),x2.max()+1),
-                                        m<double>(x1.max(),x2.min()-1))));
-
+                                        m<double>(x1.max(),x2.min()))));
     return ES_NOFIX;
 
   prop_xxp:
@@ -233,17 +231,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x1.lq(home,f_d_p<double>(x0.max(),x2.min())));
     GECODE_ME_CHECK(x1.gq(home,c_d(x0.min(),x2.min())));
 
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
-
+    if (x0.assigned() && x1.assigned())
+      goto subsumed;
     return ES_NOFIX;
+
   prop_xpx:
     assert(any(x0) && pos(x1) && any(x2));
 
     GECODE_ME_CHECK(x0.le(home, m<double>(x1.max(),x2.max()+1)));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min())));
 
     if (pos(x0)) goto rewrite_ppp;
     if (neg(x0)) goto rewrite_npn;
@@ -251,18 +247,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x2.lq(home,f_d(x0.max(),x1.min())));
     GECODE_ME_CHECK(x2.gq(home,f_d(x0.min(),x1.min())));
 
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
-
+    if (x0.assigned() && x1.assigned())
+      goto subsumed;
     return ES_NOFIX;
 
   prop_xxn:
     assert(any(x0) && any(x1) && neg(x2));
 
-    GECODE_ME_CHECK(x0.le(home, m<double>(x1.min(),x2.min()-1)));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min())));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min())));
 
     if (pos(x0)) goto rewrite_pnn;
     if (neg(x0)) goto rewrite_npn;
@@ -272,16 +265,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (x2.max() != -1)
       GECODE_ME_CHECK(x1.gq(home,c_d(x0.max(),x2.max()+1)));
 
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
+    if (x0.assigned() && x1.assigned())
+      goto subsumed;
     return ES_NOFIX;
 
   prop_xnx:
     assert(any(x0) && neg(x1) && any(x2));
 
-    GECODE_ME_CHECK(x0.le(home, m<double>(x1.min(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min())));
     GECODE_ME_CHECK(x0.gq(home, m<double>(x1.min(),x2.max()+1)));
 
     if (pos(x0)) goto rewrite_pnn;
@@ -290,10 +281,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x2.lq(home,f_d(x0.min(),x1.max())));
     GECODE_ME_CHECK(x2.gq(home,f_d(x0.max(),x1.max())));
 
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
+    if (x0.assigned() && x1.assigned())
+      goto subsumed;
     return ES_NOFIX;
 
   rewrite_ppp:
@@ -308,6 +297,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   rewrite_npn:
     GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,IntView,MinusView,false>
                          ::post(home,x0,x1,x2)));
+  subsumed:
+    assert(x0.assigned() && x1.assigned());
+    GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
+    return ES_SUBSUMED(*this,sizeof(*this));
   }
 
   template<class View>

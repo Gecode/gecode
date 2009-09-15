@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Jan Kelbel
+[DESCRIPTION]
+Slightly improved strength of the division propagator.
+
+[ENTRY]
 Module: example
 What:   bug
 Rank:   minor
