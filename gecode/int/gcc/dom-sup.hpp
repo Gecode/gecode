@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   class Edge;
   /// Base class for nodes in the variable-value-graph
-  class VVGNode {
+  class Node {
   private:
     /// stores all incident edges on the node
     Edge* e;
@@ -73,48 +73,48 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    VVGNode(void);
+    Node(void);
     //@}
     /// Destructor
-    virtual ~VVGNode(void) {};
+    virtual ~Node(void) {};
 
     /// \name Access
     //@{
     /// return reference to the incident edges
     Edge** adj(void);
     /// return pointer to the first incident edge
-    Edge*  first(void);
+    Edge* first(void) const;
     /// return pointer to the last incident edge
-    Edge*  last(void);
+    Edge* last(void) const;
     /// return pointer to the node's inedge
-    Edge*  inedge(void);
+    Edge* inedge(void) const;
     /// return the type of the node
-    bool   get_type(void);
+    bool get_type(void) const;
     /// access the matching flag of the node
     template<BC>
-    bool get_match_flag(void);
+    bool get_match_flag(void) const;
     /// get the information on the node (either var-index or value)
-    virtual int get_info(void) = 0;
+    virtual int get_info(void) const = 0;
     /// test whether the node is matched
-    virtual bool is_matched(BC) = 0;
+    virtual bool is_matched(BC) const = 0;
 
     /// check whether a node has been removed from the graph
-    virtual bool removed(void) = 0;
+    virtual bool removed(void) const = 0;
     //@}
 
     /// \name Update
     //@{
     /// set the first edge pointer to \a p
-    void   first(Edge* p);
+    void first(Edge* p);
     /// set the last edge pointer to \a p
-    void   last(Edge* p);
+    void last(Edge* p);
     /// set the inedge pointer to \a p
-    void   inedge(Edge* p);
+    void inedge(Edge* p);
     /// set the node type to \a t
-    void   set_type(bool t);
+    void set_type(bool t);
     /// set the matching flag to \a f
     template<BC>
-    void   set_match_flag(bool f);
+    void set_match_flag(bool f);
     /// set the node information to \a i
     virtual void set_info(int i) = 0;
     //@}
@@ -123,13 +123,12 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /// %Variable Node
-  class VarNode : public VVGNode {
+  class VarNode : public Node {
   private:
     /// stores the matching edge on this node in the UBC
     Edge* ubm;
     /// stores the matching edge on this node in the LBC
     Edge* lbm;
-
   public:
     /// stores the variable index of the node
     int var;
@@ -142,7 +141,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    VarNode(void) {}
+    VarNode(void);
     /// Creates a variable node with index i
     VarNode(int i, int oidx);
     //@}
@@ -151,37 +150,37 @@ namespace Gecode { namespace Int { namespace GCC {
     //@{
     /// return the matching edge on the node
     template<BC>
-    Edge* get_match(void);
+    Edge* get_match(void) const;
     /// return the variable index of the node
-    int   get_info(void);
+    int get_info(void) const;
     /// returns whether the node is still matchable
-    bool  is_matched(BC);
+    bool is_matched(BC) const;
     /// tests whether the node is matched or not
     template<BC>
-    bool  matched(void);
+    bool matched(void) const;
 
     /// check for removal from graph
-    bool removed(void);
+    bool removed(void) const;
     //@}
 
     /// \name Update
     //@{
     /// set the node info to \a i
-    void  set_info(int i);
+    void set_info(int i);
     /// set the pointer of the matching edge to m
     template<BC>
-    void  set_match(Edge* m);
+    void set_match(Edge* m);
     /// match the node
     template<BC>
-    void  match(void);
+    void match(void);
     /// unmatch the node
     template<BC>
-    void  unmatch(void);
+    void unmatch(void);
     //@}
   };
 
   /// Value node
-  class ValNode : public VVGNode {
+  class ValNode : public Node {
   private:
     /// minimal required occurence of the value as stored in k
     int _klb;
@@ -191,8 +190,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int _kidx;
     /// stores the current number of occurences of the value
     int _kcount;
-
-
     /// store numbre of conflicting matching edges
     int noc;
 
@@ -208,7 +205,6 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      * Stores who often the value node can be matched in a UBC-matching
      */
-
     int ub;
 
   public:
@@ -222,7 +218,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Constructors and destructors
     //@{
     /// Default constructor
-    ValNode(void) {}
+    ValNode(void);
     /**
      * \brief Constructor for value node
      *
@@ -235,51 +231,45 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Access
     //@{
-
     /// set the max cap for LBC
     void set_maxlow(int i);
     /// get max cap for LBC
-    int  get_maxlow(void);
-
-
+    int get_maxlow(void) const;
     /// Mark the value node as conflicting in case of variable cardinalities
     void card_conflict(int c);
     /// Check whether the value node is conflicting
-    int card_conflict(void);
+    int card_conflict(void) const;
     /// Reduce the conflict counter
     void red_conflict(void);
-
     /// check for removal from graph
-    bool removed(void);
-
+    bool removed(void) const;
     /// increases the value counter
     void inc(void);
     /// returns the current number of occurences of the value
-    int kcount(void);
+    int kcount(void) const;
     /// returns the number of incident matching edges on a value node
     template<BC>
-    int incid_match(void);
+    int incid_match(void) const;
     /// returns the index in cardinality array k
-    int kindex(void);
+    int kindex(void) const;
     /// return the node information
-    int  get_info(void);
+    int get_info(void) const;
     /// returns \a true if the node is matched in BC, \a false otherwise
     template<BC>
-    bool matched(void);
+    bool matched(void) const;
     /// tests whether the node is a sink
-    bool sink(void);
+    bool sink(void) const;
     /// tests whether the node is a source
-    bool source(void);
+    bool source(void) const;
     /// return the minimal node capacity as stored in \a k
-    int  kmin(void);
+    int kmin(void) const;
     /// return the maximal node capacity as stored in \a k
-    int  kmax(void);
+    int kmax(void) const;
     /// return minimal or maximal capacity
     template<BC>
-    int  kbound(void);
-
+    int kbound(void) const;
     /// returns whether the node is still matchable
-    bool is_matched(BC);
+    bool is_matched(BC) const;
     //@}
 
     /// \name Update
@@ -295,7 +285,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void inc(void);
     /// return the the node-capacity
     template<BC>
-    int  cap(void);
+    int cap(void) const;
     /// set the node-capacity to \a c
     template<BC>
     void set_cap(int c);
@@ -370,35 +360,35 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
     template<BC>
-    bool used(void);
+    bool used(void) const;
     /// return whether the edge is matched
     template<BC>
-    bool matched(void);
+    bool matched(void) const;
     /// return whether the edge has been deleted from the graph
-    bool is_deleted(void);
+    bool is_deleted(void) const;
     /**
      * \brief return a pointer to the next edge
      *  If \a t is false the function returns the next edge incident on \a x
      *  otherwise it returns the next edge incident on \a v
      */
-    Edge*    next(bool t) const;
+    Edge* next(bool t) const;
     /// return the pointer to the next edge incident on \a x
-    Edge*    next(void) const;
+    Edge* next(void) const;
     /// return the pointer to the previous edge incident on \a x
-    Edge*    prev(void) const;
+    Edge* prev(void) const;
     /// return the pointer to the next edge incident on \a v
-    Edge*    vnext(void) const;
+    Edge* vnext(void) const;
     /// return the pointer to the previous edge incident on \a v
-    Edge*    vprev(void) const;
+    Edge* vprev(void) const;
     /// return the pointer to the variable node \a x of this edge
-    VarNode* getVar(void);
+    VarNode* getVar(void) const;
     /// return the pointer to the value node \a v of this edge
-    ValNode* getVal(void);
+    ValNode* getVal(void) const;
     /**
      * \brief return pointer to \a x if \a t = true otherwise return \a v
      *
      */
-    VVGNode* getMate(bool t);
+    Node* getMate(bool t) const;
     //@}
 
     /// Update
@@ -432,13 +422,13 @@ namespace Gecode { namespace Int { namespace GCC {
     ///        Insert the edge again
     void insert_edge(void);
     /// return the reference to the next edge incident on \a x
-    Edge**   next_ref(void);
+    Edge** next_ref(void);
     /// return the reference to the previous edge incident on \a x
-    Edge**   prev_ref(void);
+    Edge** prev_ref(void);
     /// return the reference to the next edge incident on \a v
-    Edge**   vnext_ref(void);
+    Edge** vnext_ref(void);
     /// return the reference to the previous edge incident on \a v
-    Edge**   vprev_ref(void);
+    Edge** vprev_ref(void);
     //@}
     /// Create a new edge (placement)
     void* operator new(size_t, void* p);
@@ -541,7 +531,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * a free node.
      */
     template<BC>
-    bool augmenting_path(Space& home, VVGNode*);
+    bool augmenting_path(Space& home, Node*);
 
   protected:
     /**
@@ -551,10 +541,10 @@ namespace Gecode { namespace Int { namespace GCC {
      * strongly connected components of the graph.
      */
     template<BC>
-    void dfs(VVGNode*,
+    void dfs(Node*,
              bool[], bool[], int[],
-             Support::StaticStack<VVGNode*,Region>&,
-             Support::StaticStack<VVGNode*,Region>&,
+             Support::StaticStack<Node*,Region>&,
+             Support::StaticStack<Node*,Region>&,
              int&);
 
     //@}
@@ -565,72 +555,70 @@ namespace Gecode { namespace Int { namespace GCC {
     void operator delete(void*, Space&) {}
   };
 
+
+
+  /*
+   * Nodes
+   *
+   */
   forceinline
-  VVGNode::VVGNode(void) {} //no-op
+  Node::Node(void) {}
 
   forceinline void*
-  VVGNode::operator new(size_t, void* p) {
+  Node::operator new(size_t, void* p) {
     return p;
   }
 
   forceinline Edge**
-  VVGNode::adj(void) {
+  Node::adj(void) {
     return &e;
   }
-
   forceinline  Edge*
-  VVGNode::first(void) {
+  Node::first(void) const {
     return fst;
   }
-
   forceinline Edge*
-  VVGNode::last(void) {
+  Node::last(void) const {
     return lst;
   }
-
   forceinline void
-  VVGNode::first(Edge* p) {
+  Node::first(Edge* p) {
     fst = p;
   }
-
   forceinline void
-  VVGNode::last(Edge* p) {
+  Node::last(Edge* p) {
     lst = p;
   }
 
   forceinline bool
-  VVGNode::get_type(void) {
+  Node::get_type(void) const {
     return type;
   }
-
   forceinline void
-  VVGNode::set_type(bool b) {
+  Node::set_type(bool b) {
     type = b;
   }
-
   forceinline Edge*
-  VVGNode::inedge(void) {
+  Node::inedge(void) const {
     return ie;
   }
-
   forceinline void
-  VVGNode::inedge(Edge* p) {
+  Node::inedge(Edge* p) {
     ie = p;
   }
 
   template<BC direction>
   forceinline void
-  VVGNode::set_match_flag(bool b) {
+  Node::set_match_flag(bool b) {
     if (direction == UBC) {
       um = b;
     } else {
       lm = b;
     }
   }
-
   template<BC direction>
   forceinline bool
-  VVGNode::get_match_flag(void) {
+  Node::get_match_flag(void) const {
     if (direction == UBC) {
       return um;
     } else {
@@ -639,14 +627,12 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
 
-  /// Variable Node
-
-  forceinline bool
-  VarNode::removed(void) {
-    return noe == 0;
-  }
-
-
+  /*
+   * Variable nodes
+   *
+   */
+  forceinline
+  VarNode::VarNode(void) {}
 
   forceinline
   VarNode::VarNode(int x, int orig_idx) :
@@ -660,18 +646,23 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline bool
-  VarNode::is_matched(BC d) {
+  VarNode::removed(void) const {
+    return noe == 0;
+  }
+
+  template<BC direction>
+  forceinline bool
+  VarNode::matched(void) const {
+    return get_match_flag<direction>();
+  }
+
+  forceinline bool
+  VarNode::is_matched(BC d) const {
     if (d == UBC) {
       return matched<UBC>();
     } else {
       return matched<LBC>();
     }
-  }
-
-  template<BC direction>
-  forceinline bool
-  VarNode::matched(void) {
-    return get_match_flag<direction>();
   }
 
   template<BC direction>
@@ -699,7 +690,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<BC direction>
   forceinline Edge*
-  VarNode::get_match(void) {
+  VarNode::get_match(void) const {
     if (direction == UBC) {
       return ubm;
     } else {
@@ -713,11 +704,33 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline int
-  VarNode::get_info(void) {
+  VarNode::get_info(void) const {
     return var;
   }
 
-  /// Value Node
+
+
+  /*
+   * Value nodes
+   *
+   */
+  forceinline
+  ValNode::ValNode(void) {}
+
+  forceinline
+  ValNode::ValNode(int min, int max, int value,
+                   int kidx, int kshift, int count) :
+    _klb(min), _kub(max), _kidx(kidx), _kcount(count),
+    noc(0),
+    lb(min), ublow(max), ub(max),
+    val(value), idx(kshift), noe(0) {
+    first(NULL);
+    last(NULL);
+    inedge(NULL);
+    Edge** vadjacent = adj();
+    *vadjacent = NULL;
+    set_type(true);
+  }
 
   forceinline void
   ValNode::set_maxlow(int i) {
@@ -726,11 +739,10 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline int
-  ValNode::get_maxlow(void) {
+  ValNode::get_maxlow(void) const {
     if (_klb == _kub) {
       assert(ublow == lb);
     }
-
     return ublow;
   }
 
@@ -747,17 +759,17 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline int
-  ValNode::card_conflict(void) {
+  ValNode::card_conflict(void) const {
     return noc;
   }
 
   forceinline bool
-  ValNode::removed(void) {
+  ValNode::removed(void) const {
     return noe == 0;
   }
 
   forceinline bool
-  ValNode::is_matched(BC d) {
+  ValNode::is_matched(BC d) const {
     if (d == UBC) {
       return matched<UBC>();
     } else {
@@ -775,7 +787,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<BC direction>
   forceinline int
-  ValNode::kbound(void) {
+  ValNode::kbound(void) const {
     if (direction == UBC) {
       return _kub;
     } else {
@@ -784,12 +796,12 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline int
-  ValNode::kmax(void) {
+  ValNode::kmax(void) const {
     return _kub;
   }
 
   forceinline int
-  ValNode::kmin(void) {
+  ValNode::kmin(void) const {
     return _klb;
   }
 
@@ -805,7 +817,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<BC direction>
   forceinline int
-  ValNode::cap(void) {
+  ValNode::cap(void) const {
     if (direction == UBC) {
       return ub;
     } else {
@@ -849,34 +861,17 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<BC direction>
   forceinline bool
-  ValNode::matched(void) {
-    return ( cap<direction>() == 0);
-  }
-
-  forceinline
-  ValNode::ValNode(int min, int max, int value,
-                   int kidx, int kshift, int count) :
-    _klb(min), _kub(max), _kidx(kidx), _kcount(count),
-    noc(0),
-    lb(min), ublow(max), ub(max),
-    val(value), idx(kshift), noe(0) {
-    first(NULL);
-    last(NULL);
-    inedge(NULL);
-    Edge** vadjacent = adj();
-    *vadjacent = NULL;
-    set_type(true);
+  ValNode::matched(void) const {
+    return cap<direction>() == 0;
   }
 
   template<BC direction>
   forceinline void
   ValNode::set_cap(int c) {
-    if (direction == UBC) {
+    if (direction == UBC)
       ub = c;
-    } else {
+    else
       lb = c;
-//       ublow = c;
-    }
   }
 
   forceinline void
@@ -885,7 +880,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline int
-  ValNode::get_info(void) {
+  ValNode::get_info(void) const {
     return idx;
   }
 
@@ -895,7 +890,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline int
-  ValNode::kcount(void) {
+  ValNode::kcount(void) const {
     return _kcount;
   }
 
@@ -910,57 +905,51 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline int
-  ValNode::kindex(void) {
+  ValNode::kindex(void) const {
     return _kidx;
   }
 
   /// Returs the number of incident matching edges on the node
   template<BC direction>
   forceinline int
-  ValNode::incid_match(void) {
-    if (direction == LBC) {
-      // std::cout << "LBC: "<< _kub <<"-"<<ublow <<"+"<<_kcount<<"\n";
+  ValNode::incid_match(void) const {
+    if (direction == LBC)
       return _kub - ublow + _kcount;
-    } else {
-      // std::cout << "UBC: "<< _kub <<"-"<<ub <<"+"<<_kcount<<"\n";
+    else
       return _kub - ub + _kcount;
-    }
   }
 
 
   forceinline bool
-  ValNode::sink(void) {
+  ValNode::sink(void) const {
     // there are only incoming edges
     // in case of the UBC-matching
-    bool is_sink = false;
-    is_sink = (_kub - ub == noe);
-    return is_sink;
+    return (_kub - ub == noe);
   }
 
   forceinline bool
-  ValNode::source(void) {
+  ValNode::source(void) const {
     // there are only incoming edges
     // in case of the UBC-matching
-    bool is_sink = false;
-    is_sink = (_klb - lb == noe);
-    return is_sink;
+    return (_klb - lb == noe);
   }
 
+
+
+  /*
+   * Edges
+   *
+   */
   forceinline void
   Edge::unlink(void) {
     // unlink from variable side
     Edge* p = prev_edge;
     Edge* n = next_edge;
 
-    if (p != NULL) {
-      Edge** pnext = p->next_ref();
-      *pnext = n;
-    }
-
-    if (n != NULL) {
-      Edge** nprev = n->prev_ref();
-      *nprev = p;
-    }
+    if (p != NULL)
+      *p->next_ref() = n;
+    if (n != NULL)
+      *n->prev_ref() = p;
 
     if (this == x->first()) {
       Edge** ref = x->adj();
@@ -968,33 +957,24 @@ namespace Gecode { namespace Int { namespace GCC {
       x->first(n);
     }
 
-    if (this == x->last()) {
+    if (this == x->last())
       x->last(p);
-    }
 
     // unlink from value side
     Edge* pv = prev_vedge;
     Edge* nv = next_vedge;
 
-    if (pv != NULL) {
-      Edge** pvnext = pv->vnext_ref();
-      *pvnext = nv;
-    }
-
-    if (nv != NULL) {
-      Edge** nvprev = nv->vprev_ref();
-      *nvprev = pv;
-    }
-
+    if (pv != NULL)
+      *pv->vnext_ref() = nv;
+    if (nv != NULL)
+      *nv->vprev_ref() = pv;
     if (this == v->first()) {
       Edge** ref = v->adj();
       *ref = nv;
       v->first(nv);
     }
-
-    if (this == v->last()) {
+    if (this == v->last())
       v->last(pv);
-    }
   }
 
   forceinline
@@ -1038,7 +1018,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<BC direction>
   forceinline bool
-  Edge::used(void) {
+  Edge::used(void) const {
     if (direction == UBC) {
       return (ef & EF_MRKUB) != 0;
     } else {
@@ -1095,24 +1075,23 @@ namespace Gecode { namespace Int { namespace GCC {
     return &next_edge;
   }
   forceinline VarNode*
-  Edge::getVar(void) {
+  Edge::getVar(void) const {
     assert(x != NULL);
     return x;
   }
 
   forceinline ValNode*
-  Edge::getVal(void) {
+  Edge::getVal(void) const {
     assert(v != NULL);
     return v;
   }
 
-  forceinline VVGNode*
-  Edge::getMate(bool type) {
-    if (type) {
+  forceinline Node*
+  Edge::getMate(bool type) const {
+    if (type)
       return x;
-    } else {
+    else
       return v;
-    }
   }
 
   template<BC direction>
@@ -1156,13 +1135,12 @@ namespace Gecode { namespace Int { namespace GCC {
       x->template set_match<direction>(this);
       assert(x->template matched<direction>());
       v->template match<direction>();
-//       assert(v->template matched<direction>());
     }
   }
 
   template<BC direction>
   forceinline bool
-  Edge::matched(void) {
+  Edge::matched(void) const {
     if (direction == UBC) {
       return (ef & EF_UM) != 0;
     } else {
@@ -1182,9 +1160,12 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   forceinline bool
-  Edge::is_deleted(void) {
+  Edge::is_deleted(void) const {
     return (ef & EF_DEL) != 0;
   }
+
+
+
 
   /**
    * \brief Constructor for the variable-value-graph
@@ -1365,7 +1346,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline ExecStatus
   VarValGraph<Card>::sync(Space& home) {
     Region r(home);
-    VVGNode** re = r.alloc<VVGNode*>(node_size);
+    Node** re = r.alloc<Node*>(node_size);
     int n_re = 0;
 
     // synchronize cardinality variables
@@ -1738,9 +1719,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card> template<BC direction>
   inline bool
-  VarValGraph<Card>::augmenting_path(Space& home, VVGNode* v) {
+  VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
     Region r(home);
-    Support::StaticStack<VVGNode*,Region> ns(r,node_size);
+    Support::StaticStack<Node*,Region> ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
     Edge** start = r.alloc<Edge*>(node_size);
 
@@ -1748,7 +1729,7 @@ namespace Gecode { namespace Int { namespace GCC {
     assert(!v->is_matched(direction));
 
     // keep track of the nodes that have already been visited
-    VVGNode* sn = v;
+    Node* sn = v;
 
     // mark the start partition
     bool sp = sn->get_type();
@@ -1772,7 +1753,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ns.push(v);
     visited[v->get_info()] = true;
     while (!ns.empty()) {
-      VVGNode* v = ns.top();
+      Node* v = ns.top();
       Edge* e = NULL;
       if (v->get_type() == sp) {
         // follow next free edge
@@ -1789,7 +1770,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
       if (e != NULL) {
         start[v->get_info()] = e->next(v->get_type());
-        VVGNode* w = e->getMate(v->get_type());
+        Node* w = e->getMate(v->get_type());
         if (!visited[w->get_info()]) {
           // unexplored path
           if (!w->is_matched(direction) && w->get_type() != sp) {
@@ -1822,7 +1803,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     while (!ns.empty()) {
-      VVGNode* t = ns.top();
+      Node* t = ns.top();
       if (t != sn) {
         Edge* in   = t->inedge();
         if (t->get_type() != sp) {
@@ -1848,7 +1829,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   VarValGraph<Card>::free_alternating_paths(Space& home) {
     Region r(home);
-    Support::StaticStack<VVGNode*,Region> ns(r,node_size);
+    Support::StaticStack<Node*,Region> ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
     // keep track of the nodes that have already been visited
     for (int i = node_size; i--; )
@@ -1888,7 +1869,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     while (!ns.empty()) {
-      VVGNode* node = ns.top();
+      Node* node = ns.top();
       ns.pop();
       if (node->get_type()) {
         // ValNode
@@ -1954,10 +1935,10 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card> template<BC direction>
   inline void
-  VarValGraph<Card>::dfs(VVGNode* v,
+  VarValGraph<Card>::dfs(Node* v,
                          bool inscc[], bool in_unfinished[], int dfsnum[],
-                         Support::StaticStack<VVGNode*,Region>& roots,
-                         Support::StaticStack<VVGNode*,Region>& unfinished,
+                         Support::StaticStack<Node*,Region>& roots,
+                         Support::StaticStack<Node*,Region>& unfinished,
                          int& count) {
     count++;
     int v_index            = v->get_info();
@@ -1987,7 +1968,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (condition) {
-        VVGNode* w = e->getMate(v->get_type());
+        Node* w = e->getMate(v->get_type());
         int w_index = w->get_info();
 
         assert(w_index < node_size);
@@ -2015,7 +1996,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (v == roots.top()) {
       while (v != unfinished.top()) {
         // w belongs to the scc with root v
-        VVGNode* w = unfinished.top();
+        Node* w = unfinished.top();
         Edge* ie = w->inedge();
         ie->template use<direction>();
         in_unfinished[w->get_info()] = false;
@@ -2043,8 +2024,8 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     int count = 0;
-    Support::StaticStack<VVGNode*,Region> roots(r,node_size);
-    Support::StaticStack<VVGNode*,Region> unfinished(r,node_size);
+    Support::StaticStack<Node*,Region> roots(r,node_size);
+    Support::StaticStack<Node*,Region> unfinished(r,node_size);
 
     for (int i = n_var; i--; )
       dfs<direction>(vars[i], inscc, in_unfinished, dfsnum,
