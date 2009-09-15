@@ -55,14 +55,16 @@ namespace Gecode { namespace Int { namespace GCC {
   /// Base class for nodes in the variable-value-graph
   class Node {
   private:
-    /// stores all incident edges on the node
+    /// Stores all incident edges on the node
     Edge* e;
-    /// returns the first edge
+    /// First edge
     Edge* fst;
-    /// returns the last edge
+    /// Last edge
     Edge* lst;
-    /// single incoming edge used for storing a path in the algorithms
+    /// Single incoming edge used for storing a path in the algorithms
     Edge* ie;
+    /// Index
+    int idx;
     /// Mark as matching edge in LBC
     bool  lm;
     /// Mark as matching edge in UBC
@@ -77,8 +79,8 @@ namespace Gecode { namespace Int { namespace GCC {
     //@{
     /// Default constructor
     Node(void);
-    /// Constructor that set type to \a t
-    Node(bool t);
+    /// Constructor for index \a i that sets type to \a t
+    Node(int i, bool t);
     //@}
     /// Destructor
     virtual ~Node(void) {};
@@ -97,8 +99,8 @@ namespace Gecode { namespace Int { namespace GCC {
     bool get_type(void) const;
     /// access the matching flag of the node
     bool get_match_flag(BC bc) const;
-    /// get the information on the node (either var-index or value)
-    virtual int get_info(void) const = 0;
+    /// Get index of either variable or value
+    int index(void) const;
     /// test whether the node is matched
     virtual bool is_matched(BC bc) const = 0;
     /// check whether a node has been removed from the graph
@@ -115,8 +117,8 @@ namespace Gecode { namespace Int { namespace GCC {
     void inedge(Edge* p);
     /// set the matching flag to \a f
     void set_match_flag(BC bc, bool f);
-    /// set the node information to \a i
-    virtual void set_info(int i) = 0;
+    /// Set index of either variable or value
+    void index(int i);
     //@}
   };
 
@@ -128,9 +130,6 @@ namespace Gecode { namespace Int { namespace GCC {
     /// stores the matching edge on this node in the LBC
     Edge* lbm;
   public:
-    /// stores the variable index of the node
-    int var;
-
     /// stores the variable index of the node
     int xindex;
 
@@ -146,8 +145,6 @@ namespace Gecode { namespace Int { namespace GCC {
     //@{
     /// return the matching edge on the node
     Edge* get_match(BC bc) const;
-    /// return the variable index of the node
-    int get_info(void) const;
     /// returns whether the node is still matchable
     bool is_matched(BC) const;
     /// tests whether the node is matched or not
@@ -156,8 +153,6 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Update
     //@{
-    /// set the node info to \a i
-    void set_info(int i);
     /// set the pointer of the matching edge to m
     void set_match(BC bc, Edge* m);
     /// match the node
@@ -198,8 +193,6 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// stores the value of the node
     int val;
-    /// stores the index of the node
-    int idx;
 
     /// \name Constructors and destructors
     //@{
@@ -235,8 +228,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int incid_match(BC bc) const;
     /// returns the index in cardinality array k
     int kindex(void) const;
-    /// return the node information
-    int get_info(void) const;
     /// returns \a true if the node is matched in BC, \a false otherwise
     bool matched(BC bc) const;
     /// tests whether the node is a sink
@@ -272,8 +263,6 @@ namespace Gecode { namespace Int { namespace GCC {
     void unmatch(BC bc);
     /// node reset to original capacity values
     void reset(void);
-    /// set the node infomration to \a i
-    void set_info(int i);
     /// set the minimal k-capacity to min
     void set_kmin(int min);
     /// set the maximal k-capacity to max
@@ -521,8 +510,8 @@ namespace Gecode { namespace Int { namespace GCC {
   Node::Node(void) {}
 
   forceinline
-  Node::Node(bool t) 
-    : e(NULL), fst(NULL), lst(NULL), ie(NULL), 
+  Node::Node(int i, bool t) 
+    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i),
       lm(false), um(false), type(t), noe(0) {}
 
   forceinline Edge**
@@ -579,6 +568,15 @@ namespace Gecode { namespace Int { namespace GCC {
   Node::removed(void) const {
     return noe == 0;
   }
+  forceinline void
+  Node::index(int i) {
+    idx = i;
+  }
+
+  forceinline int
+  Node::index(void) const {
+    return idx;
+  }
 
 
 
@@ -591,7 +589,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   forceinline
   VarNode::VarNode(int x, int orig_idx) :
-    Node(false), ubm(NULL), lbm(NULL), var(x), xindex(orig_idx) {}
+    Node(x,false), ubm(NULL), lbm(NULL), xindex(orig_idx) {}
 
   forceinline bool
   VarNode::matched(BC bc) const {
@@ -630,15 +628,6 @@ namespace Gecode { namespace Int { namespace GCC {
       return lbm;
   }
 
-  forceinline void
-  VarNode::set_info(int i) {
-    var = i;
-  }
-
-  forceinline int
-  VarNode::get_info(void) const {
-    return var;
-  }
 
 
 
@@ -652,10 +641,10 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   ValNode::ValNode(int min, int max, int value,
                    int kidx, int kshift, int count) :
-    Node(true), _klb(min), _kub(max), _kidx(kidx), _kcount(count),
+    Node(kshift,true), _klb(min), _kub(max), _kidx(kidx), _kcount(count),
     noc(0),
     lb(min), ublow(max), ub(max),
-    val(value), idx(kshift) {}
+    val(value) {}
 
   forceinline void
   ValNode::set_maxlow(int i) {
@@ -781,16 +770,6 @@ namespace Gecode { namespace Int { namespace GCC {
       ub = c;
     else
       lb = c;
-  }
-
-  forceinline void
-  ValNode::set_info(int i) {
-    idx = i;
-  }
-
-  forceinline int
-  ValNode::get_info(void) const {
-    return idx;
   }
 
   forceinline void
@@ -1150,7 +1129,7 @@ namespace Gecode { namespace Int { namespace GCC {
           // all variable nodes reachable from vln should be equal to vln->val
           for (Edge* e = vln->first(); e != NULL; e = e->vnext()) {
             VarNode* vrn = e->getVar();
-            int vi = vrn->get_info();
+            int vi = vrn->index();
             for (Edge* f = vrn->first(); f != NULL; f = f->next()) {
               if (f != e) {
                 ValNode* w = f->getVal();
@@ -1165,7 +1144,7 @@ namespace Gecode { namespace Int { namespace GCC {
             GECODE_ME_CHECK(x[vi].eq(home, vln->val));
 
             vars[vi] = vars[--n_var];
-            vars[vi]->set_info(vi);
+            vars[vi]->index(vi);
 
             int n = x.size();
             x[vi] = x[--n];
@@ -1207,7 +1186,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     for (int i = n_val; i--; )
-      vals[i]->set_info(n_var + i);
+      vals[i]->index(n_var + i);
 
     return ES_OK;
   }
@@ -1365,13 +1344,13 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      vars[i]->set_info(i);
+      vars[i]->index(i);
     }
 
     for (int i = n_val; i--; ) {
       if ((k[i].min() > vals[i]->noe) && (k[i].counter() == 0))
         return ES_FAILED;
-      vals[i]->set_info(n_var + i);
+      vals[i]->index(n_var + i);
     }
 
     // start repair
@@ -1432,20 +1411,20 @@ namespace Gecode { namespace Int { namespace GCC {
             if (vrn->noe == 1) {
               vrn->noe--;
               v->noe--;
-              int vi= vrn->get_info();
+              int vi= vrn->index();
 
               int n = x.size();
               x[vi] = x[--n];
               x.size(n);
 
               vars[vi] = vars[--n_var];
-              vars[vi]->set_info(vi);
+              vars[vi]->index(vi);
               node_size--;
               e->del_edge();
               e->unlink();
 
             } else if (delall) {
-              GECODE_ME_CHECK(x[vrn->get_info()].nq(home, v->val));
+              GECODE_ME_CHECK(x[vrn->index()].nq(home, v->val));
               vrn->noe--;
               v->noe--;
               e->del_edge();
@@ -1469,7 +1448,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
     for (int i = n_var; i--; )
-      vars[i]->set_info(i);
+      vars[i]->index(i);
 
     for (int i = n_val; i--; ) {
       if (vals[i]->noe == 0) {
@@ -1477,7 +1456,7 @@ namespace Gecode { namespace Int { namespace GCC {
         vals[i]->set_cap(LBC,0);
         vals[i]->set_maxlow(0);
       }
-      vals[i]->set_info(n_var + i);
+      vals[i]->index(n_var + i);
     }
 
     for (int i = n_var; i--; )
@@ -1584,24 +1563,24 @@ namespace Gecode { namespace Int { namespace GCC {
 
     v->inedge(NULL);
     ns.push(v);
-    visited.set(v->get_info());
+    visited.set(v->index());
     while (!ns.empty()) {
       Node* v = ns.top();
       Edge* e = NULL;
       if (v->get_type() == sp) {
-        e = start[v->get_info()];
+        e = start[v->index()];
         while ((e != NULL) && e->matched(bc))
           e = e->next(v->get_type());
       } else {
-        e = start[v->get_info()];
+        e = start[v->index()];
         while ((e != NULL) && !e->matched(bc))
           e = e->next(v->get_type());
-        start[v->get_info()] = e;
+        start[v->index()] = e;
       }
       if (e != NULL) {
-        start[v->get_info()] = e->next(v->get_type());
+        start[v->index()] = e->next(v->get_type());
         Node* w = e->getMate(v->get_type());
-        if (!visited.get(w->get_info())) {
+        if (!visited.get(w->index())) {
           // unexplored path
           if (!w->is_matched(bc) && w->get_type() != sp) {
             if (v->inedge() != NULL) {
@@ -1616,7 +1595,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
           } else {
             w->inedge(e);
-            visited.set(w->get_info());
+            visited.set(w->index());
             // find matching edge m incident with w
             ns.push(w);
           }
@@ -1658,11 +1637,11 @@ namespace Gecode { namespace Int { namespace GCC {
       // they are the starting point of an even alternating path in G
       for (int i = n_var; i--; )
         if (!vars[i]->is_matched(LBC)) {
-          ns.push(vars[i]); visited.set(vars[i]->get_info());
+          ns.push(vars[i]); visited.set(vars[i]->index());
         }
       for (int i = n_val; i--; )
         if (!vals[i]->is_matched(LBC)) {
-          ns.push(vals[i]); visited.set(vals[i]->get_info());
+          ns.push(vals[i]); visited.set(vals[i]->index());
         }
 
     } else {
@@ -1670,7 +1649,7 @@ namespace Gecode { namespace Int { namespace GCC {
       // corresponding to a set cover on x there are NO free var nodes
       for (int i = n_val; i--; )
         if (!vals[i]->is_matched(UBC)) {
-          ns.push(vals[i]); visited.set(vals[i]->get_info());
+          ns.push(vals[i]); visited.set(vals[i]->index());
         }
     }
 
@@ -1696,8 +1675,8 @@ namespace Gecode { namespace Int { namespace GCC {
           if (follow) {
             // mark the edge
             cur->use(bc);
-            if (!visited.get(mate->get_info())) {
-              ns.push(mate); visited.set(mate->get_info());
+            if (!visited.get(mate->index())) {
+              ns.push(mate); visited.set(mate->index());
             }
           }
         }
@@ -1711,8 +1690,8 @@ namespace Gecode { namespace Int { namespace GCC {
             ValNode* mate = cur->getVal();
             if (!cur->matched(LBC)) {
               cur->use(LBC);
-              if (!visited.get(mate->get_info())) {
-                ns.push(mate); visited.set(mate->get_info());
+              if (!visited.get(mate->index())) {
+                ns.push(mate); visited.set(mate->index());
               }
             }
           }
@@ -1724,8 +1703,8 @@ namespace Gecode { namespace Int { namespace GCC {
             if (cur != NULL) {
               cur->use(UBC);
               ValNode* mate = cur->getVal();
-              if (!visited.get(mate->get_info())) {
-                ns.push(mate); visited.set(mate->get_info());
+              if (!visited.get(mate->index())) {
+                ns.push(mate); visited.set(mate->index());
               }
             }
           }
@@ -1744,7 +1723,7 @@ namespace Gecode { namespace Int { namespace GCC {
                          NodeStack& roots, NodeStack& unfinished,
                          int& count) {
     count++;
-    int v_index            = v->get_info();
+    int v_index            = v->index();
     dfsnum[v_index]        = count;
     inscc.set(v_index);
     in_unfinished.set(v_index);
@@ -1772,7 +1751,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
       if (condition) {
         Node* w = e->getMate(v->get_type());
-        int w_index = w->get_info();
+        int w_index = w->index();
 
         assert(w_index < node_size);
         if (!inscc.get(w_index)) {
@@ -1786,8 +1765,8 @@ namespace Gecode { namespace Int { namespace GCC {
           e->use(bc);
           // if w belongs to an scc we detected earlier
           // merge components
-          assert(roots.top()->get_info() < node_size);
-          while (dfsnum[roots.top()->get_info()] > dfsnum[w_index]) {
+          assert(roots.top()->index() < node_size);
+          while (dfsnum[roots.top()->index()] > dfsnum[w_index]) {
             roots.pop();
           }
         }
@@ -1799,7 +1778,7 @@ namespace Gecode { namespace Int { namespace GCC {
         // w belongs to the scc with root v
         Node* w = unfinished.top();
         w->inedge()->use(bc);
-        in_unfinished.clear(w->get_info());
+        in_unfinished.clear(w->index());
         unfinished.pop();
       }
       assert(v == unfinished.top());
