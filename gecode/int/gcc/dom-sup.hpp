@@ -70,6 +70,9 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Explicit node type
     bool  type;
   public:
+    /// stores the number of incident edges on the node
+    int noe;
+
     /// \name Constructors and initialization
     //@{
     /// Default constructor
@@ -97,9 +100,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual int get_info(void) const = 0;
     /// test whether the node is matched
     virtual bool is_matched(BC) const = 0;
-
     /// check whether a node has been removed from the graph
-    virtual bool removed(void) const = 0;
+    bool removed(void) const;
     //@}
 
     /// \name Update
@@ -132,8 +134,6 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// stores the variable index of the node
     int var;
-    /// stores the number of incident edges on the node
-    int noe;
 
     /// stores the variable index of the node
     int xindex;
@@ -158,9 +158,6 @@ namespace Gecode { namespace Int { namespace GCC {
     /// tests whether the node is matched or not
     template<BC>
     bool matched(void) const;
-
-    /// check for removal from graph
-    bool removed(void) const;
     //@}
 
     /// \name Update
@@ -212,8 +209,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int val;
     /// stores the index of the node
     int idx;
-    /// stores the number of incident edges on the node
-    int noe;
 
     /// \name Constructors and destructors
     //@{
@@ -241,8 +236,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int card_conflict(void) const;
     /// Reduce the conflict counter
     void red_conflict(void);
-    /// check for removal from graph
-    bool removed(void) const;
     /// increases the value counter
     void inc(void);
     /// returns the current number of occurences of the value
@@ -365,7 +358,7 @@ namespace Gecode { namespace Int { namespace GCC {
     template<BC>
     bool matched(void) const;
     /// return whether the edge has been deleted from the graph
-    bool is_deleted(void) const;
+    bool deleted(void) const;
     /**
      * \brief return a pointer to the next edge
      *  If \a t is false the function returns the next edge incident on \a x
@@ -419,7 +412,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void unlink(void);
     /// Mark the edge as deleted during synchronization
     void del_edge(void);
-    ///        Insert the edge again
+    /// Insert the edge again
     void insert_edge(void);
     /// return the reference to the next edge incident on \a x
     Edge** next_ref(void);
@@ -442,6 +435,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   class VarValGraph {
   private:
+    /// Temporary stack for nodes
+    typedef Support::StaticStack<Node*,Region> NodeStack;
     /// Problem variables
     ViewArray<IntView>& x;
     /// Copy keeping track of removed variables
@@ -543,8 +538,7 @@ namespace Gecode { namespace Int { namespace GCC {
     template<BC>
     void dfs(Node*,
              bool[], bool[], int[],
-             Support::StaticStack<Node*,Region>&,
-             Support::StaticStack<Node*,Region>&,
+             NodeStack&, NodeStack&,
              int&);
 
     //@}
@@ -562,7 +556,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline
-  Node::Node(void) {}
+  Node::Node(void) : noe(0) {}
 
   forceinline void*
   Node::operator new(size_t, void* p) {
@@ -625,6 +619,11 @@ namespace Gecode { namespace Int { namespace GCC {
       return lm;
     }
   }
+  forceinline bool
+  Node::removed(void) const {
+    return noe == 0;
+  }
+
 
 
   /*
@@ -636,18 +635,13 @@ namespace Gecode { namespace Int { namespace GCC {
 
   forceinline
   VarNode::VarNode(int x, int orig_idx) :
-    ubm(NULL), lbm(NULL), var(x), noe(0), xindex(orig_idx) {
+    ubm(NULL), lbm(NULL), var(x), xindex(orig_idx) {
     first(NULL);
     last(NULL);
     inedge(NULL);
     unmatch<LBC>();
     unmatch<UBC>();
     set_type(false);
-  }
-
-  forceinline bool
-  VarNode::removed(void) const {
-    return noe == 0;
   }
 
   template<BC direction>
@@ -723,7 +717,7 @@ namespace Gecode { namespace Int { namespace GCC {
     _klb(min), _kub(max), _kidx(kidx), _kcount(count),
     noc(0),
     lb(min), ublow(max), ub(max),
-    val(value), idx(kshift), noe(0) {
+    val(value), idx(kshift) {
     first(NULL);
     last(NULL);
     inedge(NULL);
@@ -761,11 +755,6 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline int
   ValNode::card_conflict(void) const {
     return noc;
-  }
-
-  forceinline bool
-  ValNode::removed(void) const {
-    return noe == 0;
   }
 
   forceinline bool
@@ -1160,7 +1149,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   forceinline bool
-  Edge::is_deleted(void) const {
+  Edge::deleted(void) const {
     return (ef & EF_DEL) != 0;
   }
 
@@ -1346,8 +1335,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline ExecStatus
   VarValGraph<Card>::sync(Space& home) {
     Region r(home);
-    Node** re = r.alloc<Node*>(node_size);
-    int n_re = 0;
+    NodeStack re(r,node_size);
 
     // synchronize cardinality variables
     if (Card::propagate) {
@@ -1388,8 +1376,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
         if (inc_lbc < k[i].min() && v->noe > 0) {
           v->template set_cap<LBC>(k[i].min() - inc_lbc);
-          re[n_re] = v;
-          n_re++;
+          re.push(v);
         }
       }
 
@@ -1397,13 +1384,10 @@ namespace Gecode { namespace Int { namespace GCC {
         Edge* mub = vars[i]->template get_match<UBC>();
         if (mub != NULL) {
           ValNode* vu = mub->getVal();
-          if (! (vars[i]->noe == 1) ) {
-            if (vu->card_conflict()) {
-              vu->red_conflict();
-              mub->template unmatch<UBC>(vars[i]->get_type());
-              re[n_re] = vars[i];
-              n_re++;
-            }
+          if ((vars[i]->noe != 1) && vu->card_conflict()) {
+            vu->red_conflict();
+            mub->template unmatch<UBC>(vars[i]->get_type());
+            re.push(vars[i]);
           }
         }
       }
@@ -1421,12 +1405,9 @@ namespace Gecode { namespace Int { namespace GCC {
           ValNode* rv = NULL;
           int rv_idx  = 0;
           Edge* mub = vrn->template get_match<UBC>();
-          if (mub != NULL) {
-            if (v != mub->getVal()->val) {
-              mub->template unmatch<UBC>();
-              re[n_re] = vars[i];
-              n_re++;
-            }
+          if ((mub != NULL) && (v != mub->getVal()->val)) {
+            mub->template unmatch<UBC>();
+            re.push(vars[i]);
           }
 
           Edge* mlb = vrn->template get_match<LBC>();
@@ -1434,13 +1415,8 @@ namespace Gecode { namespace Int { namespace GCC {
             ValNode* vln = mlb->getVal();
             if (v != vln->val) {
               mlb->template unmatch<LBC>();
-              int nom = vln->template incid_match<LBC>();
-              // less values than required
-              bool cond = nom < vln->kmin();
-              if (cond) {
-                re[n_re] = vln;
-                n_re++;
-              }
+              if (vln->template incid_match<LBC>() < vln->kmin())
+                re.push(vln);
             }
           }
 
@@ -1466,7 +1442,7 @@ namespace Gecode { namespace Int { namespace GCC {
           Edge*  e   = *p;
           do {
             // search the edge that has to be deleted
-            while (e != NULL && e->getVal()->val < xiter.val()) {
+            while (e != NULL && (e->getVal()->val < xiter.val())) {
               // Skip edge
               e->getVal()->noe--;
               vrn->noe--;
@@ -1494,26 +1470,17 @@ namespace Gecode { namespace Int { namespace GCC {
             e = e->next();
           }
 
-          if (mub != NULL) {
-            if (mub->is_deleted()) {
-              mub->template unmatch<UBC>();
-              re[n_re] = vars[i];
-              n_re++;
-            }
+          if ((mub != NULL) && mub->deleted()) {
+            mub->template unmatch<UBC>();
+            re.push(vars[i]);
           }
 
           //lower bound matching can be zero
-          if (mlb != NULL) {
-            if (mlb->is_deleted()) {
-              ValNode* vln = mlb->getVal();
-              mlb->template unmatch<LBC>();
-              int nom   = vln->template incid_match<LBC>();
-              bool cond = nom < vln->kmin();
-              if (cond) {
-                re[n_re] = vln;
-                n_re++;
-              }
-            }
+          if ((mlb != NULL) && mlb->deleted()) {
+            ValNode* vln = mlb->getVal();
+            mlb->template unmatch<LBC>();
+            if (vln->template incid_match<LBC>() < vln->kmin())
+              re.push(vln);
           }
         }
       }
@@ -1527,22 +1494,22 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     // start repair
-    while (n_re > 0) {
-      n_re--;
-      if (!re[n_re]->removed()) {
-        if (!re[n_re]->get_type()) {
-          VarNode* vrn = static_cast<VarNode*>(re[n_re]);
+    while (!re.empty()) {
+      Node* n = re.pop();
+      if (!n->removed())
+        if (!n->get_type()) {
+          VarNode* vrn = static_cast<VarNode*>(n);
           if (!vrn->template matched<UBC>() &&
               !augmenting_path<UBC>(home,vrn))
             return ES_FAILED;
         } else {
-          ValNode* vln = static_cast<ValNode*>(re[n_re]);
+          ValNode* vln = static_cast<ValNode*>(n);
           while (!vln->template matched<LBC>())
             if (!augmenting_path<LBC>(home,vln))
               return ES_FAILED;
         }
-      }
     }
+
     return ES_OK;
   }
 
@@ -1652,15 +1619,13 @@ namespace Gecode { namespace Int { namespace GCC {
     int required_size = 0;
     int card_match    = 0;
 
-    if (direction == UBC) {
+    if (direction == UBC)
       required_size = n_var;
-    } else {
+    else
       required_size = sum_min;
-    }
 
     // find an intial matching in O(n*d)
     // greedy algorithm
-
     for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
       for (Edge* e = vln->first(); e != NULL ; e = e->vnext()) {
@@ -1721,7 +1686,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline bool
   VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
     Region r(home);
-    Support::StaticStack<Node*,Region> ns(r,node_size);
+    NodeStack ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
     Edge** start = r.alloc<Edge*>(node_size);
 
@@ -1797,10 +1762,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    bool pathfound = false;
-    if (!ns.empty()) {
-      pathfound = true;
-    }
+    bool pathfound = !ns.empty();
 
     while (!ns.empty()) {
       Node* t = ns.top();
@@ -1829,7 +1791,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   VarValGraph<Card>::free_alternating_paths(Space& home) {
     Region r(home);
-    Support::StaticStack<Node*,Region> ns(r,node_size);
+    NodeStack ns(r,node_size);
     bool* visited = r.alloc<bool>(node_size);
     // keep track of the nodes that have already been visited
     for (int i = node_size; i--; )
@@ -1937,8 +1899,8 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   VarValGraph<Card>::dfs(Node* v,
                          bool inscc[], bool in_unfinished[], int dfsnum[],
-                         Support::StaticStack<Node*,Region>& roots,
-                         Support::StaticStack<Node*,Region>& unfinished,
+                         NodeStack& roots,
+                         NodeStack& unfinished,
                          int& count) {
     count++;
     int v_index            = v->get_info();
@@ -2024,8 +1986,8 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     int count = 0;
-    Support::StaticStack<Node*,Region> roots(r,node_size);
-    Support::StaticStack<Node*,Region> unfinished(r,node_size);
+    NodeStack roots(r,node_size);
+    NodeStack unfinished(r,node_size);
 
     for (int i = n_var; i--; )
       dfs<direction>(vars[i], inscc, in_unfinished, dfsnum,
