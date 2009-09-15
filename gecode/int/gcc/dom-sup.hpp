@@ -77,6 +77,8 @@ namespace Gecode { namespace Int { namespace GCC {
     //@{
     /// Default constructor
     Node(void);
+    /// Constructor that set type to \a t
+    Node(bool t);
     //@}
     /// Destructor
     virtual ~Node(void) {};
@@ -112,8 +114,6 @@ namespace Gecode { namespace Int { namespace GCC {
     void last(Edge* p);
     /// set the inedge pointer to \a p
     void inedge(Edge* p);
-    /// set the node type to \a t
-    void set_type(bool t);
     /// set the matching flag to \a f
     template<BC>
     void set_match_flag(bool f);
@@ -552,7 +552,12 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline
-  Node::Node(void) : noe(0) {}
+  Node::Node(void) {}
+
+  forceinline
+  Node::Node(bool t) 
+    : e(NULL), fst(NULL), lst(NULL), ie(NULL), 
+      lm(false), um(false), type(t), noe(0) {}
 
   forceinline Edge**
   Node::adj(void) {
@@ -578,10 +583,6 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline bool
   Node::get_type(void) const {
     return type;
-  }
-  forceinline void
-  Node::set_type(bool b) {
-    type = b;
   }
   forceinline Edge*
   Node::inedge(void) const {
@@ -626,14 +627,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   forceinline
   VarNode::VarNode(int x, int orig_idx) :
-    ubm(NULL), lbm(NULL), var(x), xindex(orig_idx) {
-    first(NULL);
-    last(NULL);
-    inedge(NULL);
-    unmatch<LBC>();
-    unmatch<UBC>();
-    set_type(false);
-  }
+    Node(false), ubm(NULL), lbm(NULL), var(x), xindex(orig_idx) {}
 
   template<BC direction>
   forceinline bool
@@ -658,19 +652,19 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<BC direction>
   forceinline void
-  VarNode::unmatch(void) {
-    set_match_flag<direction>(false);
-    set_match<direction>(NULL);
-  }
-
-  template<BC direction>
-  forceinline void
   VarNode::set_match(Edge* p) {
     if (direction == UBC) {
       ubm = p;
     } else {
       lbm = p;
     }
+  }
+
+  template<BC direction>
+  forceinline void
+  VarNode::unmatch(void) {
+    set_match_flag<direction>(false);
+    set_match<direction>(NULL);
   }
 
   template<BC direction>
@@ -705,17 +699,10 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   ValNode::ValNode(int min, int max, int value,
                    int kidx, int kshift, int count) :
-    _klb(min), _kub(max), _kidx(kidx), _kcount(count),
+    Node(true), _klb(min), _kub(max), _kidx(kidx), _kcount(count),
     noc(0),
     lb(min), ublow(max), ub(max),
-    val(value), idx(kshift) {
-    first(NULL);
-    last(NULL);
-    inedge(NULL);
-    Edge** vadjacent = adj();
-    *vadjacent = NULL;
-    set_type(true);
-  }
+    val(value), idx(kshift) {}
 
   forceinline void
   ValNode::set_maxlow(int i) {
