@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 
-    if (!shared(home,x,k) && isDistinct<Card>(home, x, k))
+    if (isDistinct<Card>(home, x, k))
       return Distinct::Dom<IntView>::post(home,x);
 
     bool cardfix = true;

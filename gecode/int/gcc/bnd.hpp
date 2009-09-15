@@ -593,7 +593,7 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<Card,shared>::propagate(Space& home,
                                  const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
-      GECODE_ES_CHECK((prop_val<Card,shared>(home,*this,y,k)));
+      GECODE_ES_CHECK(prop_val<Card>(home,*this,y,k));
       return ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_BND));
     }
 
@@ -816,18 +816,17 @@ namespace Gecode { namespace Int { namespace GCC {
         nolbc = false; break;
       }
 
-    GECODE_ES_CHECK((postSideConstraints<Card>(home, x, k)));
+    GECODE_ES_CHECK(postSideConstraints<Card>(home, x, k));
 
-    bool s = shared(home,x,k);
-    if (!s && isDistinct<Card>(home,x,k))
+    if (isDistinct<Card>(home,x,k))
       return Distinct::Bnd<IntView>::post(home,x);
 
-    if (s) {
+    if (shared(home,x,k)) {
       (void) new (home) BndImp<Card,true>(home,x,k,cardfix,nolbc);
     } else {
       (void) new (home) BndImp<Card,false>(home,x,k,cardfix,nolbc);
     }
-      return ES_OK;
+    return ES_OK;
   }
 
 }}}

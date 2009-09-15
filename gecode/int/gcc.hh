@@ -64,34 +64,28 @@ namespace Gecode { namespace Int { namespace GCC {
    * \ingroup FuncIntProp
    */
   template<class Card>
-  class Val {
-  public:
-    /// Post propagator for views \a x and cardinalities \a k
-    static ExecStatus post(Space& home,
-                           ViewArray<IntView>& x, ViewArray<Card>& k);
-  };
-
-  /// Implementation of value consistent global cardinality propagator
-  template<class Card, bool shared>
-  class ValImp : public Propagator {
+  class Val : public Propagator {
   protected:
     /// Views on which to perform value-propagation
     ViewArray<IntView> x;
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
-    /// Constructor for cloning \a p
-    ValImp(Space& home, bool share, ValImp<Card,shared>& p );
-  public:
     /// Constructor for posting
-    ValImp(Space& home, ViewArray<IntView>&, ViewArray<Card>&);
-    /// Destructor
-    virtual size_t dispose(Space& home);
+    Val(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k);
+    /// Constructor for cloning \a p
+    Val(Space& home, bool share, Val<Card>& p);
+  public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Destructor
+    virtual size_t dispose(Space& home);
+    /// Post propagator for views \a x and cardinalities \a k
+    static ExecStatus post(Space& home,
+                           ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
   /**

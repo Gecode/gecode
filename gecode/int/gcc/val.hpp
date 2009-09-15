@@ -42,41 +42,41 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template<class Card, bool shared>
+  template<class Card>
   forceinline
-  ValImp<Card,shared>::ValImp(Space& home, 
-                              ViewArray<IntView>& x0, ViewArray<Card>& k0)
+  Val<Card>::Val(Space& home, 
+                 ViewArray<IntView>& x0, ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
     x.subscribe(home, *this, PC_INT_VAL);
     k.subscribe(home, *this, PC_INT_VAL);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   forceinline
-  ValImp<Card,shared>::ValImp(Space& home, bool share, ValImp<Card,shared>& p)
+  Val<Card>::Val(Space& home, bool share, Val<Card>& p)
     : Propagator(home,share,p) {
     x.update(home,share, p.x);
     k.update(home,share, p.k);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   size_t
-  ValImp<Card,shared>::dispose(Space& home) {
+  Val<Card>::dispose(Space& home) {
     x.cancel(home,*this, PC_INT_VAL);
     k.cancel(home,*this, PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   Actor*
-  ValImp<Card,shared>::copy(Space& home, bool share) {
-    return new (home) ValImp<Card,shared>(home,share,*this);
+  Val<Card>::copy(Space& home, bool share) {
+    return new (home) Val<Card>(home,share,*this);
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   PropCost
-  ValImp<Card,shared>::cost(const Space&, const ModEventDelta&) const {
+  Val<Card>::cost(const Space&, const ModEventDelta&) const {
     /*
      * Complexity depends on the time needed for value lookup in \a k
      * which is O(n log n).
@@ -84,12 +84,12 @@ namespace Gecode { namespace Int { namespace GCC {
     return PropCost::linear(PropCost::HI,x.size());
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   ExecStatus
   prop_val(Space& home, Propagator& p, 
            ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
-
+    
     Region r(home);
     // count[i] denotes how often value k[i].card() occurs in x
     int* count = r.alloc<int>(k.size());
@@ -153,6 +153,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // if only one unsatisfied occurences is left
     if ((req == non) && (n_r == 1)) {
+      // This works as the x are not shared!
       for (int i = x.size(); i--; ) {
         // try to assign it
         if (!x[i].assigned()) {
@@ -162,9 +163,6 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       assert((single >= 0) && (single < k.size()));
-      // this might happen in case of sharing
-      if (shared && (count[single] < k[single].min()))
-        count[single] = k[single].min();
 
       for (int i = k.size(); i--; )
         GECODE_ME_CHECK(k[i].eq(home, count[i] + k[i].counter()));
@@ -270,10 +268,10 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_NOFIX;
   }
 
-  template<class Card, bool shared>
+  template<class Card>
   ExecStatus
-  ValImp<Card,shared>::propagate(Space& home, const ModEventDelta&) {
-    return prop_val<Card,shared>(home, *this, x, k);
+  Val<Card>::propagate(Space& home, const ModEventDelta&) {
+    return prop_val<Card>(home, *this, x, k);
   }
 
   template<class Card>
@@ -282,15 +280,10 @@ namespace Gecode { namespace Int { namespace GCC {
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 
-    bool shared = x.shared(home);
-
-    if (!shared && isDistinct<Card>(home,x,k))
+    if (isDistinct<Card>(home,x,k))
       return Distinct::Val<IntView>::post(home,x);
    
-    if (shared)
-      (void) new (home) ValImp<Card,true>(home,x,k);
-    else
-      (void) new (home) ValImp<Card,false>(home,x,k);
+    (void) new (home) Val<Card>(home,x,k);
     return ES_OK;
   }
 

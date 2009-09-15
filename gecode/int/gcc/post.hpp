@@ -176,10 +176,10 @@ namespace Gecode { namespace Int { namespace GCC {
     return x.shared(home,k);
   }
 
-  /// Sharing test for fixed cardinalities
+  /// Sharing test for fixed cardinalities (no sharing)
   forceinline bool
   shared(Space& home, ViewArray<IntView>& x, const ViewArray<CardConst>&) {
-    return x.shared(home);
+    return false;
   }
 
 }}}
