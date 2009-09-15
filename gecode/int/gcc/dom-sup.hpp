@@ -120,8 +120,6 @@ namespace Gecode { namespace Int { namespace GCC {
     /// set the node information to \a i
     virtual void set_info(int i) = 0;
     //@}
-    /// Create a new node (placement)
-    void* operator new(size_t, void* p);
   };
 
   /// %Variable Node
@@ -423,8 +421,6 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the reference to the previous edge incident on \a v
     Edge** vprev_ref(void);
     //@}
-    /// Create a new edge (placement)
-    void* operator new(size_t, void* p);
   };
 
 
@@ -557,11 +553,6 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   forceinline
   Node::Node(void) : noe(0) {}
-
-  forceinline void*
-  Node::operator new(size_t, void* p) {
-    return p;
-  }
 
   forceinline Edge**
   Node::adj(void) {
@@ -971,11 +962,6 @@ namespace Gecode { namespace Int { namespace GCC {
     x(var), v(val),
     next_edge(NULL), prev_edge(NULL),
     next_vedge(NULL), prev_vedge(NULL), ef(EF_NONE) {}
-
-  forceinline void*
-  Edge::operator new(size_t, void* p) { //why is there no argument?
-    return p;
-  }
 
   template<BC direction>
   forceinline void
