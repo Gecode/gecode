@@ -66,6 +66,8 @@ namespace Gecode { namespace Support {
     bool get(int i) const;
     /// Set bit \a i
     void set(int i);
+    /// Clear bit \a i
+    void clear(int i);
     /// Return size of bitset (number of bits)
     int size(void) const;
   };
@@ -98,8 +100,8 @@ namespace Gecode { namespace Support {
   forceinline bool
   BitSet<A>::get(int i) const {
     assert(i < sz);
-    int pos = i / (sizeof(Base)*CHAR_BIT);
-    int bit = i % (sizeof(Base)*CHAR_BIT);
+    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
+    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
     return (data[pos] & ((Base)1 << bit)) != 0;
   }
 
@@ -107,9 +109,18 @@ namespace Gecode { namespace Support {
   forceinline void
   BitSet<A>::set(int i) {
     assert(i < sz);
-    int pos = i / (sizeof(Base)*CHAR_BIT);
-    int bit = i % (sizeof(Base)*CHAR_BIT);
+    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
+    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
     data[pos] |= 1 << bit;
+  }
+
+  template<class A>
+  forceinline void
+  BitSet<A>::clear(int i) {
+    assert(i < sz);
+    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
+    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
+    data[pos] &= ~(1 << bit);
   }
 
   template<class A>

@@ -433,6 +433,8 @@ namespace Gecode { namespace Int { namespace GCC {
   private:
     /// Temporary stack for nodes
     typedef Support::StaticStack<Node*,Region> NodeStack;
+    /// Bitset
+    typedef Support::BitSet<Region> BitSet;
     /// Problem variables
     ViewArray<IntView>& x;
     /// Copy keeping track of removed variables
@@ -532,10 +534,8 @@ namespace Gecode { namespace Int { namespace GCC {
      * strongly connected components of the graph.
      */
     template<BC>
-    void dfs(Node*,
-             bool[], bool[], int[],
-             NodeStack&, NodeStack&,
-             int&);
+    void dfs(Node*, BitSet&, BitSet&, int[],
+             NodeStack&, NodeStack&, int&);
 
     //@}
   public:
@@ -1673,7 +1673,7 @@ namespace Gecode { namespace Int { namespace GCC {
   VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
     Region r(home);
     NodeStack ns(r,node_size);
-    bool* visited = r.alloc<bool>(node_size);
+    BitSet visited(r,node_size);
     Edge** start = r.alloc<Edge*>(node_size);
 
     // augmenting path starting in a free var node
@@ -1689,32 +1689,29 @@ namespace Gecode { namespace Int { namespace GCC {
     // nodes in V - sp only follow matched edges
 
     for (int i = node_size; i--; )
-      visited[i] = false;
-
-    for (int i = node_size; i--; )
       if (i >= n_var) {
-        vals[i - n_var]->inedge(NULL);
-        start[i]   = vals[i - n_var]->first();
+        vals[i-n_var]->inedge(NULL);
+        start[i] = vals[i-n_var]->first();
       } else {
         vars[i]->inedge(NULL);
-        start[i]   = vars[i]->first();
+        start[i] = vars[i]->first();
       }
 
     v->inedge(NULL);
     ns.push(v);
-    visited[v->get_info()] = true;
+    visited.set(v->get_info());
     while (!ns.empty()) {
       Node* v = ns.top();
       Edge* e = NULL;
       if (v->get_type() == sp) {
         // follow next free edge
         e = start[v->get_info()];
-        while (e != NULL && e->template matched<direction>()) {
+        while ((e != NULL) && e->template matched<direction>()) {
           e = e->next(v->get_type());
         }
       } else {
         e = start[v->get_info()];
-        while (e != NULL && !e->template matched<direction>()) {
+        while ((e != NULL) && !e->template matched<direction>()) {
           e = e->next(v->get_type());
         }
         start[v->get_info()] = e;
@@ -1722,7 +1719,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (e != NULL) {
         start[v->get_info()] = e->next(v->get_type());
         Node* w = e->getMate(v->get_type());
-        if (!visited[w->get_info()]) {
+        if (!visited.get(w->get_info())) {
           // unexplored path
           if (!w->is_matched(direction) && w->get_type() != sp) {
             if (v->inedge() != NULL) {
@@ -1737,7 +1734,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
           } else {
             w->inedge(e);
-            visited[w->get_info()] = true;
+            visited.set(w->get_info());
             // find matching edge m incident with w
             ns.push(w);
           }
@@ -1751,23 +1748,16 @@ namespace Gecode { namespace Int { namespace GCC {
     bool pathfound = !ns.empty();
 
     while (!ns.empty()) {
-      Node* t = ns.top();
+      Node* t = ns.pop();
       if (t != sn) {
-        Edge* in   = t->inedge();
+        Edge* in = t->inedge();
         if (t->get_type() != sp) {
-          assert(in != NULL);
           in->template match<direction>();
+        } else if (!sp) {
+          in->template unmatch<direction>(!sp);
         } else {
-          // avoid defects
-          if (!sp) {
-            in->template unmatch<direction>(!sp);
-          } else {
-            in->template unmatch<direction>();
-          }
+          in->template unmatch<direction>();
         }
-        ns.pop();
-      } else {
-        ns.pop();
       }
     }
     return pathfound;
@@ -1778,42 +1768,28 @@ namespace Gecode { namespace Int { namespace GCC {
   VarValGraph<Card>::free_alternating_paths(Space& home) {
     Region r(home);
     NodeStack ns(r,node_size);
-    bool* visited = r.alloc<bool>(node_size);
-    // keep track of the nodes that have already been visited
-    for (int i = node_size; i--; )
-      visited[i] = false;
+    BitSet visited(r,node_size);
 
     if (direction == LBC) {
       // after a maximum matching on the value nodes there still can be
       // free value nodes, hence we have to consider ALL nodes whether
       // they are the starting point of an even alternating path in G
-      for (int i = n_var; i--; ) {
-        if(!vars[i]->is_matched(LBC)) {
-          // unmatched var-node
-          ns.push(vars[i]);
-          visited[vars[i]->get_info()] = true;
+      for (int i = n_var; i--; )
+        if (!vars[i]->is_matched(LBC)) {
+          ns.push(vars[i]); visited.set(vars[i]->get_info());
         }
-      }
-      for (int i = n_val; i--; ) {
-        if(!vals[i]->is_matched(LBC)) {
-          // unmatched val-node
-          ns.push(vals[i]);
-          visited[vals[i]->get_info()] = true;
+      for (int i = n_val; i--; )
+        if (!vals[i]->is_matched(LBC)) {
+          ns.push(vals[i]); visited.set(vals[i]->get_info());
         }
-      }
 
     } else {
       // clearly, after a maximum matching on the x variables
       // corresponding to a set cover on x there are NO free var nodes
-      //       std::cout << "alt_path for ubm: \n";
-      // after  max_match_ub there can only be free val-nodes
-      for (int i = n_val; i--; ) {
-        if(!vals[i]->is_matched(UBC)) {
-          // still capacities left
-          ns.push(vals[i]);
-          visited[vals[i]->get_info()] = true;
+      for (int i = n_val; i--; )
+        if (!vals[i]->is_matched(UBC)) {
+          ns.push(vals[i]); visited.set(vals[i]->get_info());
         }
-      }
     }
 
     while (!ns.empty()) {
@@ -1838,9 +1814,8 @@ namespace Gecode { namespace Int { namespace GCC {
           if (follow) {
             // mark the edge
             cur->template use<direction>();
-            if (!visited[mate->get_info()]) {
-              ns.push(mate);
-              visited[mate->get_info()] = true;
+            if (!visited.get(mate->get_info())) {
+              ns.push(mate); visited.set(mate->get_info());
             }
           }
         }
@@ -1848,34 +1823,33 @@ namespace Gecode { namespace Int { namespace GCC {
         // VarNode
         VarNode* vrn = static_cast<VarNode*>(node);
         switch (direction) {
+        case LBC: 
           // after LBC-matching we can follow every unmatched edge
-        case LBC: {
           for (Edge* cur = vrn->first(); cur != NULL; cur = cur->next()) {
             ValNode* mate = cur->getVal();
             if (!cur->template matched<LBC>()) {
               cur->template use<LBC>();
-              if (!visited[mate->get_info()]) {
-                ns.push(mate);
-                visited[mate->get_info()] = true;
+              if (!visited.get(mate->get_info())) {
+                ns.push(mate); visited.set(mate->get_info());
               }
             }
           }
           break;
-        }
+        case UBC: 
           // after ub-matching we can only follow a matched edge
-        case UBC: {
-          Edge* cur = vrn->template get_match<UBC>();
-          if (cur != NULL) {
-            cur->template use<UBC>();
-            ValNode* mate = cur->getVal();
-            if (!visited[mate->get_info()]) {
-              ns.push(mate);
-              visited[mate->get_info()] = true;
+          {
+            Edge* cur = vrn->template get_match<UBC>();
+            if (cur != NULL) {
+              cur->template use<UBC>();
+              ValNode* mate = cur->getVal();
+              if (!visited.get(mate->get_info())) {
+                ns.push(mate); visited.set(mate->get_info());
+              }
             }
           }
           break;
-        }
-        default: GECODE_NEVER;
+        default: 
+          GECODE_NEVER;
         }
       }
     }
@@ -1884,15 +1858,14 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card> template<BC direction>
   inline void
   VarValGraph<Card>::dfs(Node* v,
-                         bool inscc[], bool in_unfinished[], int dfsnum[],
-                         NodeStack& roots,
-                         NodeStack& unfinished,
+                         BitSet& inscc, BitSet& in_unfinished, int dfsnum[],
+                         NodeStack& roots, NodeStack& unfinished,
                          int& count) {
     count++;
     int v_index            = v->get_info();
     dfsnum[v_index]        = count;
-    inscc[v_index]         = true;
-    in_unfinished[v_index] = true;
+    inscc.set(v_index);
+    in_unfinished.set(v_index);
 
     unfinished.push(v);
     roots.push(v);
@@ -1920,22 +1893,20 @@ namespace Gecode { namespace Int { namespace GCC {
         int w_index = w->get_info();
 
         assert(w_index < node_size);
-        if (!inscc[w_index]) {
+        if (!inscc.get(w_index)) {
           // w is an uncompleted scc
           w->inedge(e);
           dfs<direction>(w, inscc, in_unfinished, dfsnum,
                          roots, unfinished, count);
-        } else {
-          if (in_unfinished[w_index]) {
-            // even alternating cycle found mark the edge closing the cycle,
-            // completing the scc
-            e->template use<direction>();
-            // if w belongs to an scc we detected earlier
-            // merge components
-            assert(roots.top()->get_info() < node_size);
-            while (dfsnum[roots.top()->get_info()] > dfsnum[w_index]) {
-              roots.pop();
-            }
+        } else if (in_unfinished.get(w_index)) {
+          // even alternating cycle found mark the edge closing the cycle,
+          // completing the scc
+          e->template use<direction>();
+          // if w belongs to an scc we detected earlier
+          // merge components
+          assert(roots.top()->get_info() < node_size);
+          while (dfsnum[roots.top()->get_info()] > dfsnum[w_index]) {
+            roots.pop();
           }
         }
       }
@@ -1945,13 +1916,12 @@ namespace Gecode { namespace Int { namespace GCC {
       while (v != unfinished.top()) {
         // w belongs to the scc with root v
         Node* w = unfinished.top();
-        Edge* ie = w->inedge();
-        ie->template use<direction>();
-        in_unfinished[w->get_info()] = false;
+        w->inedge()->template use<direction>();
+        in_unfinished.clear(w->get_info());
         unfinished.pop();
       }
       assert(v == unfinished.top());
-      in_unfinished[v_index] = false;
+      in_unfinished.clear(v_index);
       roots.pop();
       unfinished.pop();
     }
@@ -1961,15 +1931,12 @@ namespace Gecode { namespace Int { namespace GCC {
   inline void
   VarValGraph<Card>::strongly_connected_components(Space& home) {
     Region r(home);
-    bool* inscc = r.alloc<bool>(node_size);
-    bool* in_unfinished = r.alloc<bool>(node_size);
+    BitSet inscc(r,node_size);
+    BitSet in_unfinished(r,node_size);
     int* dfsnum = r.alloc<int>(node_size);
 
-    for (int i = node_size; i--; ) {
-      inscc[i]         = false;
-      in_unfinished[i] = false;
-      dfsnum[i]        = 0;
-    }
+    for (int i = node_size; i--; )
+      dfsnum[i]=0;
 
     int count = 0;
     NodeStack roots(r,node_size);
