@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace GCC {
   class Edge;
   /// Base class for nodes in the variable-value-graph
   class Node {
-  private:
+  protected:
     /// Stores all incident edges on the node
     Edge* e;
     /// First edge
@@ -65,12 +65,19 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge* ie;
     /// Index
     int idx;
-    /// Mark as matching edge in LBC
-    bool  lm;
-    /// Mark as matching edge in UBC
-    bool  um;
-    /// Explicit node type
-    bool  type;
+    /// Flags for nodes
+    enum NodeFlag {
+      /// No flags set
+      NF_NONE  = 0,
+      /// Whether node is a value node
+      NF_VAL   = 1 << 0,
+      /// Whether matched for LBC
+      NF_M_LBC = 1 << 1,
+      /// Whether matched for UBC
+      NF_M_UBC = 1 << 2
+    };
+    /// Flags for node
+    unsigned char nf;
   public:
     /// stores the number of incident edges on the node
     int noe;
@@ -80,43 +87,35 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Default constructor
     Node(void);
     /// Constructor for index \a i that sets type to \a t
-    Node(int i, bool t);
+    Node(NodeFlag nf, int i);
     //@}
-    /// Destructor
-    virtual ~Node(void) {};
 
     /// \name Access
     //@{
-    /// return reference to the incident edges
+    /// Return the type of the node (false for a variable node)
+    bool type(void) const;
+    /// Return reference to the incident edges
     Edge** adj(void);
-    /// return pointer to the first incident edge
+    /// Return pointer to the first incident edge
     Edge* first(void) const;
-    /// return pointer to the last incident edge
+    /// Return pointer to the last incident edge
     Edge* last(void) const;
-    /// return pointer to the node's inedge
+    /// Return pointer to the node's inedge
     Edge* inedge(void) const;
-    /// return the type of the node
-    bool get_type(void) const;
-    /// access the matching flag of the node
-    bool get_match_flag(BC bc) const;
     /// Get index of either variable or value
     int index(void) const;
-    /// test whether the node is matched
-    virtual bool is_matched(BC bc) const = 0;
     /// check whether a node has been removed from the graph
     bool removed(void) const;
     //@}
 
     /// \name Update
     //@{
-    /// set the first edge pointer to \a p
+    /// Set the first edge pointer to \a p
     void first(Edge* p);
-    /// set the last edge pointer to \a p
+    /// Set the last edge pointer to \a p
     void last(Edge* p);
-    /// set the inedge pointer to \a p
+    /// Set the inedge pointer to \a p
     void inedge(Edge* p);
-    /// set the matching flag to \a f
-    void set_match_flag(BC bc, bool f);
     /// Set index of either variable or value
     void index(int i);
     //@}
@@ -124,74 +123,60 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /// %Variable Node
   class VarNode : public Node {
-  private:
-    /// stores the matching edge on this node in the UBC
+  protected:
+    /// Stores the matching edge on this node in the UBC
     Edge* ubm;
-    /// stores the matching edge on this node in the LBC
+    /// Stores the matching edge on this node in the LBC
     Edge* lbm;
   public:
-    /// stores the variable index of the node
-    int xindex;
-
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     VarNode(void);
-    /// Creates a variable node with index i
-    VarNode(int i, int oidx);
+    /// Creates a variable node with index \a i
+    VarNode(int i);
     //@}
 
     /// \name Access
     //@{
-    /// return the matching edge on the node
+    /// Return the matching edge on the node
     Edge* get_match(BC bc) const;
-    /// returns whether the node is still matchable
-    bool is_matched(BC) const;
     /// tests whether the node is matched or not
     bool matched(BC bc) const;
     //@}
 
     /// \name Update
     //@{
-    /// set the pointer of the matching edge to m
+    /// Set the pointer of the matching edge to m
     void set_match(BC bc, Edge* m);
-    /// match the node
+    /// Set node to matched
     void match(BC bc);
-    /// unmatch the node
+    /// Unmatch the node
     void unmatch(BC bc);
     //@}
   };
 
   /// Value node
   class ValNode : public Node {
-  private:
-    /// minimal required occurence of the value as stored in k
+  protected:
+    /// Minimal required occurence of the value as stored in k
     int _klb;
-    /// maximal required occurence of the value as stored in k
+    /// Maximal required occurence of the value as stored in k
     int _kub;
-    /// index to acces the value via cardinality array k
+    /// Index to acces the value via cardinality array k
     int _kidx;
-    /// stores the current number of occurences of the value
+    /// Stores the current number of occurences of the value
     int _kcount;
-    /// store numbre of conflicting matching edges
+    /// Store numbre of conflicting matching edges
     int noc;
-
-    /**
-     * \brief Minimal capacity of the value node
-     *
-     * Stores who often the value node can be matched in a LBC-matching
-     */
+    /// Minimal capacity of the value node
     int lb;
+    /// Smallest maximal capacity of the value node
     int ublow;
-    /**
-     * \brief Maximal capacity of the value node
-     *
-     * Stores who often the value node can be matched in a UBC-matching
-     */
+    /// Maximal capacity of the value node
     int ub;
-
   public:
-    /// stores the value of the node
+    /// Stores the value of the node
     int val;
 
     /// \name Constructors and destructors
@@ -210,10 +195,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /// \name Access
     //@{
-    /// set the max cap for LBC
-    void set_maxlow(int i);
     /// get max cap for LBC
-    int get_maxlow(void) const;
+    int maxlow(void) const;
     /// Mark the value node as conflicting in case of variable cardinalities
     void card_conflict(int c);
     /// Check whether the value node is conflicting
@@ -240,12 +223,13 @@ namespace Gecode { namespace Int { namespace GCC {
     int kmax(void) const;
     /// return minimal or maximal capacity
     int kbound(BC bc) const;
-    /// returns whether the node is still matchable
-    bool is_matched(BC bc) const;
     //@}
 
     /// \name Update
     //@{
+    /// set the max cap for LBC
+    void maxlow(int i);
+    /// Set how often value occurs
     void kcount(int);
     /// changes the index in the cardinality array k
     void kindex(int);
@@ -256,7 +240,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the the node-capacity
     int cap(BC bc) const;
     /// set the node-capacity to \a c
-    void set_cap(BC bc, int c);
+    void cap(BC bc, int c);
     /// match the node
     void match(BC bc);
     /// unmatch the node
@@ -264,9 +248,9 @@ namespace Gecode { namespace Int { namespace GCC {
     /// node reset to original capacity values
     void reset(void);
     /// set the minimal k-capacity to min
-    void set_kmin(int min);
+    void kmin(int min);
     /// set the maximal k-capacity to max
-    void set_kmax(int max);
+    void kmax(int max);
     //@}
   };
 
@@ -508,11 +492,9 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   forceinline
   Node::Node(void) {}
-
   forceinline
-  Node::Node(int i, bool t) 
-    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i),
-      lm(false), um(false), type(t), noe(0) {}
+  Node::Node(NodeFlag nf0, int i) 
+    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i), nf(nf0), noe(0) {}
 
   forceinline Edge**
   Node::adj(void) {
@@ -534,10 +516,9 @@ namespace Gecode { namespace Int { namespace GCC {
   Node::last(Edge* p) {
     lst = p;
   }
-
   forceinline bool
-  Node::get_type(void) const {
-    return type;
+  Node::type(void) const {
+    return (nf & NF_VAL) != 0;
   }
   forceinline Edge*
   Node::inedge(void) const {
@@ -547,23 +528,6 @@ namespace Gecode { namespace Int { namespace GCC {
   Node::inedge(Edge* p) {
     ie = p;
   }
-
-  forceinline void
-  Node::set_match_flag(BC bc, bool b) {
-    if (bc == UBC) {
-      um = b;
-    } else {
-      lm = b;
-    }
-  }
-  forceinline bool
-  Node::get_match_flag(BC bc) const {
-    if (bc == UBC) {
-      return um;
-    } else {
-      return lm;
-    }
-  }
   forceinline bool
   Node::removed(void) const {
     return noe == 0;
@@ -572,7 +536,6 @@ namespace Gecode { namespace Int { namespace GCC {
   Node::index(int i) {
     idx = i;
   }
-
   forceinline int
   Node::index(void) const {
     return idx;
@@ -588,22 +551,23 @@ namespace Gecode { namespace Int { namespace GCC {
   VarNode::VarNode(void) {}
 
   forceinline
-  VarNode::VarNode(int x, int orig_idx) :
-    Node(x,false), ubm(NULL), lbm(NULL), xindex(orig_idx) {}
+  VarNode::VarNode(int x) :
+    Node(NF_NONE,x), ubm(NULL), lbm(NULL) {}
 
   forceinline bool
   VarNode::matched(BC bc) const {
-    return get_match_flag(bc);
-  }
-
-  forceinline bool
-  VarNode::is_matched(BC bc) const {
-    return matched(bc);
+    if (bc == UBC)
+      return (nf & NF_M_UBC) != 0;
+    else
+      return (nf & NF_M_LBC) != 0;
   }
 
   forceinline void
   VarNode::match(BC bc) {
-    set_match_flag(bc,true);
+    if (bc == UBC)
+      nf |= NF_M_UBC;
+    else
+      nf |= NF_M_LBC;
   }
 
   forceinline void
@@ -616,8 +580,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   forceinline void
   VarNode::unmatch(BC bc) {
-    set_match_flag(bc,false);
-    set_match(bc,NULL);
+    if (bc == UBC) {
+      nf &= ~NF_M_UBC; ubm = NULL;
+    } else {
+      nf &= ~NF_M_LBC; lbm = NULL;
+    }
   }
 
   forceinline Edge*
@@ -641,19 +608,19 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   ValNode::ValNode(int min, int max, int value,
                    int kidx, int kshift, int count) :
-    Node(kshift,true), _klb(min), _kub(max), _kidx(kidx), _kcount(count),
+    Node(NF_VAL,kshift), _klb(min), _kub(max), _kidx(kidx), _kcount(count),
     noc(0),
     lb(min), ublow(max), ub(max),
     val(value) {}
 
   forceinline void
-  ValNode::set_maxlow(int i) {
+  ValNode::maxlow(int i) {
     assert(i >= lb);
     ublow = i;
   }
 
   forceinline int
-  ValNode::get_maxlow(void) const {
+  ValNode::maxlow(void) const {
     if (_klb == _kub) {
       assert(ublow == lb);
     }
@@ -689,15 +656,6 @@ namespace Gecode { namespace Int { namespace GCC {
     return cap(bc) == 0;
   }
 
-  forceinline bool
-  ValNode::is_matched(BC d) const {
-    if (d == UBC) {
-      return matched(UBC);
-    } else {
-      return ublow == 0;
-    }
-  }
-
   forceinline void
   ValNode::reset(void) {
     lb = _klb;
@@ -726,12 +684,12 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline void
-  ValNode::set_kmin(int klb) {
+  ValNode::kmin(int klb) {
     _klb = klb;
   }
 
   forceinline void
-  ValNode::set_kmax(int kub) {
+  ValNode::kmax(int kub) {
     _kub = kub;
   }
 
@@ -765,7 +723,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   forceinline void
-  ValNode::set_cap(BC bc, int c) {
+  ValNode::cap(BC bc, int c) {
     if (bc == UBC)
       ub = c;
     else
@@ -1074,7 +1032,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = n_var; i--; ) {
 
-      vars[i]          = new (vars_ptr + i) VarNode(i, i);
+      vars[i]          = new (vars_ptr + i) VarNode(i);
       VarNode* vrn     = vars[i];
       // get the space for the edges of the varnode
       Edge** xadjacent = vrn->adj();
@@ -1161,9 +1119,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
           k[vidx].counter(k[vidx].min());
 
-          vln->set_cap(UBC,0);
-          vln->set_cap(LBC,0);
-          vln->set_maxlow(0);
+          vln->cap(UBC,0);
+          vln->cap(LBC,0);
+          vln->maxlow(0);
 
           if (sum_min && sum_min >= k[vidx].min())
             sum_min -= k[vidx].min();
@@ -1174,11 +1132,11 @@ namespace Gecode { namespace Int { namespace GCC {
           assert(sum_max >=0);
         }
       } else {
-        vals[i]->set_cap(UBC,0);
-        vals[i]->set_cap(LBC,0);
-        vals[i]->set_maxlow(0);
-        vals[i]->set_kmax(0);
-        vals[i]->set_kmin(0);
+        vals[i]->cap(UBC,0);
+        vals[i]->cap(LBC,0);
+        vals[i]->maxlow(0);
+        vals[i]->kmax(0);
+        vals[i]->kmin(0);
       }
 
       if (Card::propagate && (k[i].counter() == 0))
@@ -1212,30 +1170,30 @@ namespace Gecode { namespace Int { namespace GCC {
         if (k[i].max() < v->kmax() || k[i].min() > v->kmin()) {
           if (k[i].max() != k[i].counter() || k[i].max() == 0) {
             // update the bounds
-            v->set_kmax(k[i].max());
-            v->set_kmin(k[i].min());
+            v->kmax(k[i].max());
+            v->kmin(k[i].min());
 
             //everything is fine
             if (inc_ubc <= k[i].max()) {
               // adjust capacities
-              v->set_cap(UBC, k[i].max() - inc_ubc);
-              v->set_maxlow(k[i].max() - inc_lbc);
+              v->cap(UBC, k[i].max() - inc_ubc);
+              v->maxlow(k[i].max() - inc_lbc);
               if (v->kmin() == v->kmax())
-                v->set_cap(LBC, k[i].max() - inc_lbc);
+                v->cap(LBC, k[i].max() - inc_lbc);
             } else {
               // set cap to max and resolve conflicts on view side
               // set to full capacity for later rescheduling
               if (v->cap(UBC))
-                v->set_cap(UBC,k[i].max());
-              v->set_maxlow(k[i].max() - (inc_lbc));
+                v->cap(UBC,k[i].max());
+              v->maxlow(k[i].max() - (inc_lbc));
               if (v->kmin() == v->kmax())
-                v->set_cap(LBC,k[i].max() - (inc_lbc));
+                v->cap(LBC,k[i].max() - (inc_lbc));
               v->card_conflict(rm);
             }
           }
         }
         if (inc_lbc < k[i].min() && v->noe > 0) {
-          v->set_cap(LBC, k[i].min() - inc_lbc);
+          v->cap(LBC, k[i].min() - inc_lbc);
           re.push(v);
         }
       }
@@ -1246,7 +1204,7 @@ namespace Gecode { namespace Int { namespace GCC {
           ValNode* vu = mub->getVal();
           if ((vars[i]->noe != 1) && vu->card_conflict()) {
             vu->red_conflict();
-            mub->unmatch(UBC,vars[i]->get_type());
+            mub->unmatch(UBC,vars[i]->type());
             re.push(vars[i]);
           }
         }
@@ -1357,7 +1315,7 @@ namespace Gecode { namespace Int { namespace GCC {
     while (!re.empty()) {
       Node* n = re.pop();
       if (!n->removed())
-        if (!n->get_type()) {
+        if (!n->type()) {
           VarNode* vrn = static_cast<VarNode*>(n);
           if (!vrn->matched(UBC) && !augmenting_path<UBC>(home,vrn))
             return ES_FAILED;
@@ -1431,9 +1389,9 @@ namespace Gecode { namespace Int { namespace GCC {
               e->unlink();
             }
           }
-          v->set_cap(UBC,0);
-          v->set_cap(LBC,0);
-          v->set_maxlow(0);
+          v->cap(UBC,0);
+          v->cap(LBC,0);
+          v->maxlow(0);
           if (sum_min && sum_min >= k[vidx].min())
             sum_min -= k[vidx].min();
           assert(sum_min >=0);
@@ -1452,9 +1410,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = n_val; i--; ) {
       if (vals[i]->noe == 0) {
-        vals[i]->set_cap(UBC,0);
-        vals[i]->set_cap(LBC,0);
-        vals[i]->set_maxlow(0);
+        vals[i]->cap(UBC,0);
+        vals[i]->cap(LBC,0);
+        vals[i]->maxlow(0);
       }
       vals[i]->index(n_var + i);
     }
@@ -1544,7 +1502,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Node* sn = v;
 
     // mark the start partition
-    bool sp = sn->get_type();
+    bool sp = sn->type();
 
     // nodes in sp only follow free edges
     // nodes in V - sp only follow matched edges
@@ -1564,22 +1522,25 @@ namespace Gecode { namespace Int { namespace GCC {
     while (!ns.empty()) {
       Node* v = ns.top();
       Edge* e = NULL;
-      if (v->get_type() == sp) {
+      if (v->type() == sp) {
         e = start[v->index()];
         while ((e != NULL) && e->matched(bc))
-          e = e->next(v->get_type());
+          e = e->next(v->type());
       } else {
         e = start[v->index()];
         while ((e != NULL) && !e->matched(bc))
-          e = e->next(v->get_type());
+          e = e->next(v->type());
         start[v->index()] = e;
       }
       if (e != NULL) {
-        start[v->index()] = e->next(v->get_type());
-        Node* w = e->getMate(v->get_type());
+        start[v->index()] = e->next(v->type());
+        Node* w = e->getMate(v->type());
         if (!visited.get(w->index())) {
           // unexplored path
-          if (!w->is_matched(bc) && w->get_type() != sp) {
+          bool m = w->type() ? 
+            static_cast<ValNode*>(w)->matched(bc) :
+            static_cast<VarNode*>(w)->matched(bc);
+          if (!m && w->type() != sp) {
             if (v->inedge() != NULL) {
               // augmenting path of length l > 1
               e->match(bc);
@@ -1609,7 +1570,7 @@ namespace Gecode { namespace Int { namespace GCC {
       Node* t = ns.pop();
       if (t != sn) {
         Edge* in = t->inedge();
-        if (t->get_type() != sp) {
+        if (t->type() != sp) {
           in->match(bc);
         } else if (!sp) {
           in->unmatch(bc,!sp);
@@ -1653,7 +1614,7 @@ namespace Gecode { namespace Int { namespace GCC {
     while (!ns.empty()) {
       Node* node = ns.top();
       ns.pop();
-      if (node->get_type()) {
+      if (node->type()) {
         // ValNode
         ValNode* vln = static_cast<ValNode*>(node);
         for (Edge* cur = vln->first(); cur != NULL; cur = cur->vnext()) {
@@ -1727,19 +1688,19 @@ namespace Gecode { namespace Int { namespace GCC {
 
     unfinished.push(v);
     roots.push(v);
-    for (Edge* e = v->first(); e != NULL; e = e->next(v->get_type())) {
+    for (Edge* e = v->first(); e != NULL; e = e->next(v->type())) {
       bool condition = false;
       // LBC-matching
       if (bc == LBC) {
         // ValNode
-        if (v->get_type()) {
+        if (v->type()) {
           condition = e->matched(LBC);
         } else {
           condition = !e->matched(LBC);
         }
         // UBC - matching
       } else {
-        if (v->get_type()) {
+        if (v->type()) {
           // in an upper bound matching a valnode only can follow unmatched edges
           condition = !e->matched(UBC);
         } else {
@@ -1747,7 +1708,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (condition) {
-        Node* w = e->getMate(v->get_type());
+        Node* w = e->getMate(v->type());
         int w_index = w->index();
 
         assert(w_index < node_size);
