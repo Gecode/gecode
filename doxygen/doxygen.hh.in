@@ -793,6 +793,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - diff
  *  - tar
  *  - perl
+ *  - grep
  *
  * These are available in all standard installations of Linux. On MacOS X,
  * you need to install the Apple developer tools. For

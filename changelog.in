@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: other
+What:   documentation
+Rank:   minor
+Thanks: Vivian De Smedt
+[DESCRIPTION]
+Mention that also grep is needed for building Gecode.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
