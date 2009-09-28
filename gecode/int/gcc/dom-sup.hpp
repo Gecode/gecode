@@ -374,12 +374,6 @@ namespace Gecode { namespace Int { namespace GCC {
     typedef Support::StaticStack<Node*,Region> NodeStack;
     /// Bitset
     typedef Support::BitSet<Region> BitSet;
-    /// Problem variables
-    ViewArray<IntView>& x;
-    /// Copy keeping track of removed variables
-    ViewArray<IntView>& y;
-    /// Occurences
-    ViewArray<Card>& k;
     /// Variable partition representing the problem variables
     VarNode** vars;
     /**
@@ -390,20 +384,16 @@ namespace Gecode { namespace Int { namespace GCC {
      *  problem variables there is a node in the graph.
      */
     ValNode** vals;
-    /// Edges connecting the variable and the value partition
-    Edge* edges;
-    /// cardinality of the variable partition
+    /// Cardinality of the variable partition
     int n_var;
     /**
-     * \brief  cardinality of the value partition
+     * \brief  Cardinality of the value partition
      *
      * Computed as \f$ |V| = \left(\bigcup_\{0, \dots, |x|-1\}\right) D_i \f$
      */
     int n_val;
-    /// the number of edges in the graph
-    int n_edge;
-    /// total number of nodes in the graph
-    int node_size;
+    /// Total number of nodes in the graph
+    int n_node;
     /**
      * \brief The sum over the minimal capacities of all value nodes
      *
@@ -419,14 +409,21 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// \name Constructors and Destructors
     //@{
+    /**
+     * \brief Constructor for the variable-value-graph
+     *
+     * The variable parition is initialized with the variables from \a x,
+     * the value partition is initialized with the values from \a k.
+     **/
     VarValGraph(Space& home,
-                ViewArray<IntView>&, ViewArray<IntView>&, ViewArray<Card>&,
-                int , int , int );
+                ViewArray<IntView>& x, ViewArray<Card>& k,
+                int smin, int smax);
     //@}
     /// \name Graph-interface
     //@{
     /// Check whether minimum requirements shrink variable domains
-    ExecStatus min_require(Space& home);
+    ExecStatus min_require(Space& home, 
+                           ViewArray<IntView>& x, ViewArray<Card>& k);
 
     /**
      * \brief Synchronization of the graph
@@ -436,11 +433,12 @@ namespace Gecode { namespace Int { namespace GCC {
      * that do not longer belong to the graph associated with the current
      * variable domains.
      */
-    ExecStatus sync(Space& home);
-
+    ExecStatus sync(Space& home,
+                    ViewArray<IntView>& x, ViewArray<Card>& k);
     /// Remove edges that do not belong to any maximal matching
     template<BC>
-    ExecStatus narrow(Space& home);
+    ExecStatus narrow(Space& home,
+                      ViewArray<IntView>& x, ViewArray<Card>& k);
 
     /** \brief Compute a maximum matching M on the graph
      *
@@ -769,14 +767,14 @@ namespace Gecode { namespace Int { namespace GCC {
   ValNode::sink(void) const {
     // there are only incoming edges
     // in case of the UBC-matching
-    return (_kub - ub == noe);
+    return _kub - ub == noe;
   }
 
   forceinline bool
   ValNode::source(void) const {
     // there are only incoming edges
     // in case of the UBC-matching
-    return (_klb - lb == noe);
+    return _klb - lb == noe;
   }
 
 
@@ -974,36 +972,21 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
 
-  /**
-   * \brief Constructor for the variable-value-graph
-   *
-   * The variable parition is initialized with the variables from \a x,
-   * the value partition is initialized with the values from \a v,
-   * where \f$ \forall v_i\in V:\f$ \a val_idx[i] is the
-   * index of \f$ v_i\f$ in \f$ k \f$. \a nov denotes the cardinality of the
-   * value partition in the graph, \a noe the number of edges in the
-   * graph, \a min_occ the sum over the minimal occurences
-   * of all values and \a max_occ the sum over the maximal occurences
-   * of all values.
-   **/
-
   template<class Card>
   VarValGraph<Card>::VarValGraph(Space& home,
-                                 ViewArray<IntView>& xref,
-                                 ViewArray<IntView>& yref,
-                                 ViewArray<Card>& kref,
-                                 int noe, int smin, int smax)
-    : x(xref),
-      y(yref),
-      k(kref),
-      n_var(x.size()),
+                                 ViewArray<IntView>& x, ViewArray<Card>& k,
+                                 int smin, int smax)
+    : n_var(x.size()),
       n_val(k.size()),
-      n_edge(noe),
-      node_size(n_var + n_val),
+      n_node(n_var + n_val),
       sum_min(smin),
       sum_max(smax) {
 
-    edges = home.alloc<Edge>(n_edge);
+    unsigned int noe = 0;
+    for (int i=x.size(); i--; )
+      noe += x[i].size();
+
+    Edge* edges = home.alloc<Edge>(noe);
     VarNode* vars_ptr = home.alloc<VarNode>(n_var);
     ValNode* vals_ptr = home.alloc<ValNode>(n_val);
     vars = home.alloc<VarNode*>(n_var);
@@ -1031,44 +1014,33 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     for (int i = n_var; i--; ) {
-
-      vars[i]          = new (vars_ptr + i) VarNode(i);
-      VarNode* vrn     = vars[i];
+      vars[i] = new (vars_ptr + i) VarNode(i);
       // get the space for the edges of the varnode
-      Edge** xadjacent = vrn->adj();
+      Edge** xadjacent = vars[i]->adj();
 
-      ViewValues<IntView> xiter(x[i]);
       int j = 0;
-      for (; xiter(); ++xiter) {
-        int v = xiter.val();
+      for (ViewValues<IntView> xi(x[i]); xi(); ++xi) {
         // get the correct index for the value
-        while(vals[j]->val < v) {
+        while(vals[j]->val < xi.val())
           j++;
-        }
-        ValNode* vln = vals[j];
         *xadjacent = new (edges) Edge(vars_ptr + i, vals_ptr + j);
-        vrn->noe++;
-        if (vrn->first() == NULL) {
-          vrn->first(*xadjacent);
-        }
-        Edge* oldprev  = vrn->last();
-        vrn->last(*xadjacent);
-        Edge** newprev = vrn->last()->prev_ref();
-        *newprev       = oldprev;
+        vars[i]->noe++;
+        if (vars[i]->first() == NULL)
+          vars[i]->first(*xadjacent);
+        Edge* oldprev  = vars[i]->last();
+        vars[i]->last(*xadjacent);
+        *vars[i]->last()->prev_ref() = oldprev;
 
-        if (vln->first() == NULL) {
-          vln->first(*xadjacent);
-          vln->last(*xadjacent);
-          vln->noe++;
+        if (vals[j]->first() == NULL) {
+          vals[j]->first(*xadjacent);
+          vals[j]->last(*xadjacent);
         } else {
-          Edge* old      = vln->first();
-          vln->first(*xadjacent);
-          Edge** newnext = vln->first()->vnext_ref();
-          *newnext       = old;
-          Edge** setprev = old->vprev_ref();
-          *setprev       = vln->first();
-          vln->noe++;
+          Edge* old = vals[j]->first();
+          vals[j]->first(*xadjacent);
+          *vals[j]->first()->vnext_ref() = old;
+          *old->vprev_ref() = vals[j]->first();
         }
+        vals[j]->noe++;
         edges++;
         xadjacent = (*xadjacent)->next_ref();
       }
@@ -1079,7 +1051,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline ExecStatus
-  VarValGraph<Card>::min_require(Space& home) {
+  VarValGraph<Card>::min_require(Space& home, 
+                                 ViewArray<IntView>& x,
+                                 ViewArray<Card>& k) {
     for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
       if (vln->noe > 0) {
@@ -1087,8 +1061,7 @@ namespace Gecode { namespace Int { namespace GCC {
           // all variable nodes reachable from vln should be equal to vln->val
           for (Edge* e = vln->first(); e != NULL; e = e->vnext()) {
             VarNode* vrn = e->getVar();
-            int vi = vrn->index();
-            for (Edge* f = vrn->first(); f != NULL; f = f->next()) {
+            for (Edge* f = vrn->first(); f != NULL; f = f->next())
               if (f != e) {
                 ValNode* w = f->getVal();
                 w->noe--;
@@ -1096,19 +1069,15 @@ namespace Gecode { namespace Int { namespace GCC {
                 f->del_edge();
                 f->unlink();
               }
-            }
             assert(vrn->noe == 1);
 
+            int vi = vrn->index();
             GECODE_ME_CHECK(x[vi].eq(home, vln->val));
 
             vars[vi] = vars[--n_var];
             vars[vi]->index(vi);
-
-            int n = x.size();
-            x[vi] = x[--n];
-            x.size(n);
-
-            node_size--;
+            x.move_lst(vi);
+            n_node--;
             vln->noe--;
           }
 
@@ -1123,13 +1092,10 @@ namespace Gecode { namespace Int { namespace GCC {
           vln->cap(LBC,0);
           vln->maxlow(0);
 
-          if (sum_min && sum_min >= k[vidx].min())
+          if (sum_min >= k[vidx].min())
             sum_min -= k[vidx].min();
-          assert(sum_min >=0);
-
-          if (sum_max && sum_max >= k[vidx].max())
+          if (sum_max >= k[vidx].max())
             sum_max -= k[vidx].max();
-          assert(sum_max >=0);
         }
       } else {
         vals[i]->cap(UBC,0);
@@ -1151,14 +1117,15 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline ExecStatus
-  VarValGraph<Card>::sync(Space& home) {
+  VarValGraph<Card>::sync(Space& home,
+                          ViewArray<IntView>& x, ViewArray<Card>& k) {
     Region r(home);
-    NodeStack re(r,node_size);
+    NodeStack re(r,n_node);
 
     // synchronize cardinality variables
     if (Card::propagate) {
       for (int i = n_val; i--; ) {
-        ValNode* v  = vals[i];
+        ValNode* v = vals[i];
         int inc_ubc = v->incid_match(UBC);
         int inc_lbc = v->incid_match(LBC);
         if (v->noe == 0) {
@@ -1167,8 +1134,8 @@ namespace Gecode { namespace Int { namespace GCC {
         }
         int rm = v->kmax() - k[i].max();
         // the cardinality bounds have been modified
-        if (k[i].max() < v->kmax() || k[i].min() > v->kmin()) {
-          if (k[i].max() != k[i].counter() || k[i].max() == 0) {
+        if ((k[i].max() < v->kmax()) || (k[i].min() > v->kmin())) {
+          if ((k[i].max() != k[i].counter()) || (k[i].max() == 0)) {
             // update the bounds
             v->kmax(k[i].max());
             v->kmin(k[i].min());
@@ -1332,17 +1299,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card> template<BC bc>
   inline ExecStatus
-  VarValGraph<Card>::narrow(Space& home) {
-    for (int i = n_var; i--; ) {
-      VarNode* vrn = vars[i];
-      if (vrn->noe == 1) {
-        Edge* e = vrn->first();
-        ValNode* v = e->getVal();
-        e->free(bc);
+  VarValGraph<Card>::narrow(Space& home, 
+                            ViewArray<IntView>& x, ViewArray<Card>& k) {
+    for (int i = n_var; i--; )
+      if (vars[i]->noe == 1) {
+        ValNode* v = vars[i]->first()->getVal();
+        vars[i]->first()->free(bc);
         GECODE_ME_CHECK(x[i].eq(home, v->val));
         v->inc();
       }
-    }
+
     for (int i = n_val; i--; ) {
       ValNode* v = vals[i];
       if (Card::propagate && (k[i].counter() == 0))
@@ -1371,13 +1337,10 @@ namespace Gecode { namespace Int { namespace GCC {
               v->noe--;
               int vi= vrn->index();
 
-              int n = x.size();
-              x[vi] = x[--n];
-              x.size(n);
-
+              x.move_lst(vi);
               vars[vi] = vars[--n_var];
               vars[vi]->index(vi);
-              node_size--;
+              n_node--;
               e->del_edge();
               e->unlink();
 
@@ -1392,13 +1355,10 @@ namespace Gecode { namespace Int { namespace GCC {
           v->cap(UBC,0);
           v->cap(LBC,0);
           v->maxlow(0);
-          if (sum_min && sum_min >= k[vidx].min())
+          if (sum_min >= k[vidx].min())
             sum_min -= k[vidx].min();
-          assert(sum_min >=0);
-
-          if (sum_max && sum_max >= k[vidx].max())
+          if (sum_max >= k[vidx].max())
             sum_max -= k[vidx].max();
-          assert(sum_max >=0);
 
         } else if (v->kcount() > 0) {
           v->kcount(0);
@@ -1494,9 +1454,9 @@ namespace Gecode { namespace Int { namespace GCC {
   inline bool
   VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
     Region r(home);
-    NodeStack ns(r,node_size);
-    BitSet visited(r,node_size);
-    Edge** start = r.alloc<Edge*>(node_size);
+    NodeStack ns(r,n_node);
+    BitSet visited(r,n_node);
+    Edge** start = r.alloc<Edge*>(n_node);
 
     // keep track of the nodes that have already been visited
     Node* sn = v;
@@ -1507,7 +1467,7 @@ namespace Gecode { namespace Int { namespace GCC {
     // nodes in sp only follow free edges
     // nodes in V - sp only follow matched edges
 
-    for (int i = node_size; i--; )
+    for (int i = n_node; i--; )
       if (i >= n_var) {
         vals[i-n_var]->inedge(NULL);
         start[i] = vals[i-n_var]->first();
@@ -1583,11 +1543,11 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card> template<BC bc>
-  inline void
+  forceinline void
   VarValGraph<Card>::free_alternating_paths(Space& home) {
     Region r(home);
-    NodeStack ns(r,node_size);
-    BitSet visited(r,node_size);
+    NodeStack ns(r,n_node);
+    BitSet visited(r,n_node);
 
     if (bc == LBC) {
       // after a maximum matching on the value nodes there still can be
@@ -1612,8 +1572,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     while (!ns.empty()) {
-      Node* node = ns.top();
-      ns.pop();
+      Node* node = ns.pop();
       if (node->type()) {
         // ValNode
         ValNode* vln = static_cast<ValNode*>(node);
@@ -1675,7 +1634,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card> template<BC bc>
-  inline void
+  void
   VarValGraph<Card>::dfs(Node* v,
                          BitSet& inscc, BitSet& in_unfinished, int dfsnum[],
                          NodeStack& roots, NodeStack& unfinished,
@@ -1711,7 +1670,7 @@ namespace Gecode { namespace Int { namespace GCC {
         Node* w = e->getMate(v->type());
         int w_index = w->index();
 
-        assert(w_index < node_size);
+        assert(w_index < n_node);
         if (!inscc.get(w_index)) {
           // w is an uncompleted scc
           w->inedge(e);
@@ -1723,7 +1682,7 @@ namespace Gecode { namespace Int { namespace GCC {
           e->use(bc);
           // if w belongs to an scc we detected earlier
           // merge components
-          assert(roots.top()->index() < node_size);
+          assert(roots.top()->index() < n_node);
           while (dfsnum[roots.top()->index()] > dfsnum[w_index]) {
             roots.pop();
           }
@@ -1747,19 +1706,19 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card> template<BC bc>
-  inline void
+  forceinline void
   VarValGraph<Card>::strongly_connected_components(Space& home) {
     Region r(home);
-    BitSet inscc(r,node_size);
-    BitSet in_unfinished(r,node_size);
-    int* dfsnum = r.alloc<int>(node_size);
+    BitSet inscc(r,n_node);
+    BitSet in_unfinished(r,n_node);
+    int* dfsnum = r.alloc<int>(n_node);
 
-    for (int i = node_size; i--; )
+    for (int i = n_node; i--; )
       dfsnum[i]=0;
 
     int count = 0;
-    NodeStack roots(r,node_size);
-    NodeStack unfinished(r,node_size);
+    NodeStack roots(r,n_node);
+    NodeStack unfinished(r,n_node);
 
     for (int i = n_var; i--; )
       dfs<bc>(vars[i], inscc, in_unfinished, dfsnum,

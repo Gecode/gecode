@@ -187,31 +187,28 @@ namespace Gecode { namespace Int { namespace GCC {
       if ((x.size() < smin) || (smax < x.size()))
         return ES_FAILED;
 
-      int noe = 0;
-      for (int i=x.size(); i--; )
-        noe += static_cast<int>(x[i].size());
-      vvg = new (home) VarValGraph<Card>(home, x, y, k, noe, smin, smax);
-      GECODE_ES_CHECK(vvg->min_require(home));
+      vvg = new (home) VarValGraph<Card>(home, x, k, smin, smax);
+      GECODE_ES_CHECK(vvg->min_require(home,x,k));
       GECODE_ES_CHECK(vvg->template maximum_matching<UBC>(home));
       if (!card_fixed)
         GECODE_ES_CHECK(vvg->template maximum_matching<LBC>(home));
     } else {
-      GECODE_ES_CHECK(vvg->sync(home));
+      GECODE_ES_CHECK(vvg->sync(home,x,k));
     }
 
     vvg->template free_alternating_paths<UBC>(home);
     vvg->template strongly_connected_components<UBC>(home);
 
-    GECODE_ES_CHECK(vvg->template narrow<UBC>(home));
+    GECODE_ES_CHECK(vvg->template narrow<UBC>(home,x,k));
 
     if (!card_fixed) {
       if (Card::propagate)
-        GECODE_ES_CHECK(vvg->sync(home));
+        GECODE_ES_CHECK(vvg->sync(home,x,k));
 
       vvg->template free_alternating_paths<LBC>(home);
       vvg->template strongly_connected_components<LBC>(home);
 
-      GECODE_ES_CHECK(vvg->template narrow<LBC>(home));
+      GECODE_ES_CHECK(vvg->template narrow<LBC>(home,x,k));
     }
 
     {
@@ -228,7 +225,8 @@ namespace Gecode { namespace Int { namespace GCC {
       if (card_assigned) {
         if (x.size() == 0) {
           for (int j=k.size(); j--; )
-            if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+            if ((k[j].min() > k[j].counter()) || 
+                (k[j].max() < k[j].counter()))
               return ES_FAILED;
           return ES_SUBSUMED(*this,home);
         } else if ((x.size() == 1) && x[0].assigned()) {
@@ -238,7 +236,8 @@ namespace Gecode { namespace Int { namespace GCC {
           GECODE_ME_CHECK(k[idx].inc());
           
           for (int j = k.size(); j--; )
-            if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+            if ((k[j].min() > k[j].counter()) || 
+                (k[j].max() < k[j].counter()))
               return ES_FAILED;
           return ES_SUBSUMED(*this,home);
         }
