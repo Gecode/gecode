@@ -1389,69 +1389,8 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_OK;
   }
 
-  template<class Card>  template<BC bc>
-  inline ExecStatus
-  VarValGraph<Card>::maximum_matching(Space& home) {
-    int required_size = 0;
-    int card_match    = 0;
-
-    if (bc == UBC)
-      required_size = n_var;
-    else
-      required_size = sum_min;
-
-    // find an intial matching in O(n*d)
-    // greedy algorithm
-    for (int i = n_val; i--; ) {
-      ValNode* vln = vals[i];
-      for (Edge* e = vln->first(); e != NULL ; e = e->vnext()) {
-        VarNode* vrn = e->getVar();
-        if (!vrn->matched(bc) && !vln->matched(bc)) {
-          e->match(bc);
-          card_match++;
-        }
-      }
-    }
-
-    Region r(home);
-    if (card_match < required_size) {
-      if (bc == LBC) {
-        // collect free value nodes
-        ValNode** free = r.alloc<ValNode*>(n_val);
-        int f = 0;
-        // find failed nodes
-        for (int i = n_val; i--; ) {
-          ValNode* vln = vals[i];
-          if (!vln->matched(bc))
-            free[f++] = vln;
-        }
-
-        for (int i = 0; i < f; i++) {
-          while(!free[i]->matched(bc)) {
-            if (augmenting_path<bc>(home,free[i])) {
-              card_match++;
-            } else {
-              break;
-            }
-          }
-        }
-      } else {
-        VarNode** free = r.alloc<VarNode*>(n_var);
-        int f = 0;
-        // find failed nodes
-        for (int i = n_var; i--; )
-          if (!vars[i]->matched(bc))
-            free[f++] = vars[i];
-        for (int i = 0; i < f; i++)
-          if (!free[i]->matched(bc) && augmenting_path<bc>(home,free[i]))
-            card_match++;
-      }
-    }
-    return (card_match >= required_size) ? ES_OK : ES_FAILED;
-  }
-
   template<class Card> template<BC bc>
-  inline bool
+  forceinline bool
   VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
     Region r(home);
     NodeStack ns(r,n_node);
@@ -1542,6 +1481,70 @@ namespace Gecode { namespace Int { namespace GCC {
     return pathfound;
   }
 
+  template<class Card>  template<BC bc>
+  inline ExecStatus
+  VarValGraph<Card>::maximum_matching(Space& home) {
+    int card_match = 0;
+    // find an intial matching in O(n*d)
+    // greedy algorithm
+    for (int i = n_val; i--; )
+      for (Edge* e = vals[i]->first(); e != NULL ; e = e->vnext())
+        if (!e->getVar()->matched(bc) && !vals[i]->matched(bc)) {
+          e->match(bc); card_match++;
+        }
+
+    Region r(home);
+    switch (bc) {
+    case LBC: 
+      if (card_match < sum_min) {
+        Support::StaticStack<ValNode*,Region> free(r,n_val);
+
+        // find failed nodes
+        for (int i = n_val; i--; )
+          if (!vals[i]->matched(LBC))
+            free.push(vals[i]);
+        
+        while (!free.empty()) {
+          ValNode* v = free.pop();
+          while (!v->matched(LBC))
+            if (augmenting_path<LBC>(home,v))
+              card_match++;
+            else
+              break;
+        }
+
+        return (card_match >= sum_min) ? ES_OK : ES_FAILED;
+      } else {
+        return ES_OK;
+      }
+      break;
+    case UBC:
+      if (card_match < n_var) {
+        Support::StaticStack<VarNode*,Region> free(r,n_var);
+
+        // find failed nodes
+        for (int i = n_var; i--; )
+          if (!vars[i]->matched(UBC))
+            free.push(vars[i]);
+
+        while (!free.empty()) {
+          VarNode* v = free.pop();
+          if (!v->matched(UBC) && augmenting_path<UBC>(home,v))
+            card_match++;
+        }
+
+        return (card_match >= n_var) ? ES_OK : ES_FAILED;
+      } else {
+        return ES_OK;
+      }
+      break;
+    default: GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return ES_FAILED;
+  }
+
+
   template<class Card> template<BC bc>
   forceinline void
   VarValGraph<Card>::free_alternating_paths(Space& home) {
@@ -1549,7 +1552,8 @@ namespace Gecode { namespace Int { namespace GCC {
     NodeStack ns(r,n_node);
     BitSet visited(r,n_node);
 
-    if (bc == LBC) {
+    switch (bc) {
+    case LBC:
       // after a maximum matching on the value nodes there still can be
       // free value nodes, hence we have to consider ALL nodes whether
       // they are the starting point of an even alternating path in G
@@ -1561,14 +1565,16 @@ namespace Gecode { namespace Int { namespace GCC {
         if (!vals[i]->matched(LBC)) {
           ns.push(vals[i]); visited.set(vals[i]->index());
         }
-
-    } else {
+      break;
+    case UBC:
       // clearly, after a maximum matching on the x variables
       // corresponding to a set cover on x there are NO free var nodes
       for (int i = n_val; i--; )
         if (!vals[i]->matched(UBC)) {
           ns.push(vals[i]); visited.set(vals[i]->index());
         }
+      break;
+    default: GECODE_NEVER;
     }
 
     while (!ns.empty()) {
@@ -1576,30 +1582,36 @@ namespace Gecode { namespace Int { namespace GCC {
       if (node->type()) {
         // ValNode
         ValNode* vln = static_cast<ValNode*>(node);
+
         for (Edge* cur = vln->first(); cur != NULL; cur = cur->vnext()) {
           VarNode* mate = cur->getVar();
-          bool follow = false;
           switch (bc) {
-            // edges in M_l are directed from values to variables
           case LBC:
-            follow = cur->matched(bc);
+            if (cur->matched(LBC)) {
+              // mark the edge
+              cur->use(LBC);
+              if (!visited.get(mate->index())) {
+                ns.push(mate); visited.set(mate->index());
+              }
+            }
             break;
           case UBC:
-            follow = !cur->matched(bc);
+            if (!cur->matched(UBC)) {
+              // mark the edge
+              cur->use(UBC);
+              if (!visited.get(mate->index())) {
+                ns.push(mate); visited.set(mate->index());
+              }
+            }
             break;
           default: GECODE_NEVER;
           }
-          if (follow) {
-            // mark the edge
-            cur->use(bc);
-            if (!visited.get(mate->index())) {
-              ns.push(mate); visited.set(mate->index());
-            }
-          }
         }
+
       } else {
         // VarNode
         VarNode* vrn = static_cast<VarNode*>(node);
+
         switch (bc) {
         case LBC: 
           // after LBC-matching we can follow every unmatched edge
@@ -1614,7 +1626,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
           break;
         case UBC: 
-          // after ub-matching we can only follow a matched edge
+          // after UBC-matching we can only follow a matched edge
           {
             Edge* cur = vrn->get_match(UBC);
             if (cur != NULL) {
@@ -1626,8 +1638,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
           }
           break;
-        default: 
-          GECODE_NEVER;
+        default: GECODE_NEVER;
         }
       }
     }
@@ -1648,25 +1659,17 @@ namespace Gecode { namespace Int { namespace GCC {
     unfinished.push(v);
     roots.push(v);
     for (Edge* e = v->first(); e != NULL; e = e->next(v->type())) {
-      bool condition = false;
-      // LBC-matching
-      if (bc == LBC) {
-        // ValNode
-        if (v->type()) {
-          condition = e->matched(LBC);
-        } else {
-          condition = !e->matched(LBC);
-        }
-        // UBC - matching
-      } else {
-        if (v->type()) {
-          // in an upper bound matching a valnode only can follow unmatched edges
-          condition = !e->matched(UBC);
-        } else {
-          condition = e->matched(UBC);
-        }
+      bool m;
+      switch (bc) {
+      case LBC:
+        m = v->type() ? e->matched(LBC) : !e->matched(LBC);
+        break;
+      case UBC:
+        m = v->type() ? !e->matched(UBC) : e->matched(UBC);
+        break;
+      default: GECODE_NEVER;
       }
-      if (condition) {
+      if (m) {
         Node* w = e->getMate(v->type());
         int w_index = w->index();
 
