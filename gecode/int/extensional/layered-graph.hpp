@@ -539,6 +539,19 @@ namespace Gecode { namespace Int { namespace Extensional {
       Gecode::Support::u_type(dfa.max_degree());
     switch (t_state_idx) {
     case Gecode::Support::IT_CHAR:
+      switch (t_degree) {
+      case Gecode::Support::IT_CHAR:
+        return Extensional::LayeredGraph<View,unsigned char,signed char>
+          ::post(home,x,dfa);
+      case Gecode::Support::IT_SHRT:
+        return Extensional::LayeredGraph<View,unsigned short int,signed char>
+          ::post(home,x,dfa);
+      case Gecode::Support::IT_INT:
+        return Extensional::LayeredGraph<View,unsigned int,signed char>
+          ::post(home,x,dfa);
+      default: GECODE_NEVER;
+      }
+      break;
     case Gecode::Support::IT_SHRT:
       switch (t_degree) {
       case Gecode::Support::IT_CHAR:
