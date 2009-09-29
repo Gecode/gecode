@@ -462,8 +462,22 @@ namespace Gecode {
         max_degree = std::max(max_degree,deg[i]);
 
       heap.free<unsigned int>(deg,m_states);
+
+      // Compute transitions per symbol
+      {
+        int i=0;
+        while (i < m_trans) {
+          int j=i++;
+          while ((i < m_trans) && 
+                 (d->trans[j].symbol == d->trans[i].symbol))
+            i++;
+          max_degree = std::max(max_degree,static_cast<unsigned int>(i-j));
+        }
+      }
+
       d->max_degree = max_degree;
     }
+
     d->fill();
     object(d);
     heap.free<int>(re,n_states);

@@ -128,6 +128,29 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, class Degree, class StateIdx>
   forceinline bool
+  LayeredGraph<View,Degree,StateIdx>::eliminate(void) {
+    if (!constructed() || (layers[0].size > 1))
+      return false;
+    assert(layers[0].size == 1);
+    // Skip all layers corresponding to assigned views
+    StateIdx i = 1;
+    while (layers[i].size == 1)
+      i++;
+    // There is only a single edge
+    Edge& e = layers[i-1].support[0].edges[0];
+    assert((layers[i-1].support[0].n_edges == 1) &&
+           (states[e.o_state].i_deg == 1));
+    // New start state
+    start = e.o_state % dfa.n_states();
+    layers += i;
+    x.drop_fst(i);
+    for (Advisors<Index> as(c); as(); ++as)
+      as.advisor().i -= i;
+    return true;
+  }
+
+  template<class View, class Degree, class StateIdx>
+  forceinline bool
   LayeredGraph<View,Degree,StateIdx>::constructed(void) const {
     return layers != NULL;
   }
@@ -149,14 +172,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       states[i].i_deg = states[i].o_deg = 0;
 
     // Mark initial state as being reachable
-    states[0].i_deg = 1;
+    states[start].i_deg = 1;
 
     // Mark final states as reachable as well
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
       states[n*n_states + s].o_deg = 1;
 
     // Temporary memory for edges
-    Edge* edges = r.alloc<Edge>(dfa.n_transitions());
+    Edge* edges = r.alloc<Edge>(dfa.max_degree());
 
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
@@ -175,6 +198,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             edges[n_edges].o_state = o_s;
             n_edges++;
           }
+        assert(n_edges <= dfa.max_degree());
         // Found support for value
         if (n_edges > 0) {
           layers[i].support[j].val = nx.val();
@@ -411,7 +435,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
                                                    ViewArray<View>& x0, DFA& d)
-    : Propagator(home), c(home), x(x0), dfa(d), layers(NULL) {
+    : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
     ModEvent me = ME_INT_BND;
     for (StateIdx i=static_cast<StateIdx>(x.size()); i--; )
@@ -459,10 +483,12 @@ namespace Gecode { namespace Int { namespace Extensional {
                  LayeredGraph<View,Degree,StateIdx>& p)
     : Propagator(home,share,p) {
     assert(p.x.size() > 0);
+    bool e = p.eliminate();
+    start = p.start;
     c.update(home,share,p.c);
     x.update(home,share,p.x);
     dfa.update(home,share,p.dfa);
-    if (p.constructed()) {
+    if (p.constructed() && !e) {
       // Copy layered graph
       int n = x.size();
       layers = home.alloc<Layer>(n+2)+1;

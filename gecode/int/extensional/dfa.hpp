@@ -51,7 +51,7 @@ namespace Gecode {
     unsigned int n_symbols;
     /// Number of transitions
     int n_trans;
-    /// Return maximal degree (in-degree and out-degree) of any state
+    /// Maximal degree (in-degree and out-degree of any state) and maximal number of transitions per symbol
     unsigned int max_degree;
     /// First final state
     int final_fst;

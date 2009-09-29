@@ -145,6 +145,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     ViewArray<View> x;
     /// The %DFA describing the language
     DFA dfa;
+    /// The start state for graph construction
+    StateIdx start;
     /// The layers of the graph
     Layer* layers;
     /// The states used in the graph
@@ -154,6 +156,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Index range with out-degree modifications
     IndexRange o_ch;
 
+    /// Eliminate assigned prefix, return whether elimination performed
+    bool eliminate(void);
     /// Test whether layered graph has already been constructed
     bool constructed(void) const;
     /// Construct layered graph
