@@ -73,6 +73,13 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Gist now places clones also on the leftmost branch during search.
+
+[ENTRY]
 Module: other
 What:   documentation
 Rank:   minor
