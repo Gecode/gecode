@@ -250,6 +250,8 @@ namespace Gecode { namespace Gist {
       c->setRefresh(pd.refresh);
       c->setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
       c->setRecompDistances(pd.c_d,pd.a_d);
+      opt.c_d = pd.c_d;
+      opt.a_d = pd.a_d;
       c->setShowCopies(pd.copies);
     }
   }
