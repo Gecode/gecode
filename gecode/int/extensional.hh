@@ -79,20 +79,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
       StateIdx i_state; ///< Number of in-state
       StateIdx o_state; ///< Number of out-state
-      Edge* next; ///< Next edge in support list
-      /// Construct new edge
-      Edge(StateIdx i, StateIdx o, Edge* n);
-      /// No-op (for exceptions)
-      static void  operator delete(void* p, size_t s);
-      /// No-op (for exceptions)
-      static void  operator delete(void* p, Space& home);
-      /// Allocate from space
-      static void* operator new(size_t s, Space& home);
     };
     /// Support information for a value
     class Support {
     public:
       int val; ///< Supported value
+      Degree n_edges; ///< Number of supporting edges
       Edge* edges; ///< Supporting edges in layered graph
     };
     /// Layer for a view in the layered graph
@@ -166,7 +158,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     /// Test whether layered graph has already been constructed
     bool constructed(void) const;
-    /// Eliminate assigned prefix, return how many layers removed
+    /// Eliminate assigned prefix
     void eliminate(void);
     /// Construct layered graph
     ExecStatus construct(Space& home);
