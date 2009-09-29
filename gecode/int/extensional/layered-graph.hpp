@@ -411,14 +411,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       assert(k > 0);
     }
 
-    bool is_fix = true;
+    bool fix = true;
     if (o_mod && (a.i > 0)) {
-      o_ch.add(a.i-1); is_fix = false;
+      o_ch.add(a.i-1); fix = false;
      }
     if (i_mod && (a.i+1 < x.size())) {
-      i_ch.add(a.i+1); is_fix = false;
+      i_ch.add(a.i+1); fix = false;
     }
-    if (is_fix) {
+    if (fix) {
       if (View::modevent(d) == ME_INT_VAL) {
         a.dispose(home,c);
         return c.empty() ? ES_NOFIX : ES_FIX;
