@@ -323,20 +323,27 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Degree,StateIdx>::advise(Space& home,
                                              Advisor& _a, const Delta& d) {
     Index& a = static_cast<Index&>(_a);
-    int i = a.i;
+    Layer& l = layers[a.i];
+
+    // Run propagator if graph not yet constructed
+    if (!constructed())
+      return (View::modevent(d) == ME_INT_VAL)
+        ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
+
+    if (l.size <= x[a.i].size())
+      // Propagator has already done everything
+      if (View::modevent(d) == ME_INT_VAL) {
+        a.dispose(home,c);
+        return c.empty() ? ES_NOFIX : ES_FIX;
+      } else {
+        return ES_FIX;
+      }
+
     bool i_mod = false;
     bool o_mod = false;
-    bool is_fix = true;
-    Layer& l = layers[i];
-
-    if (!constructed())
-      goto nofix;
-
-    if (l.size == x[i].size())
-      goto fix;
 
     if (View::modevent(d) == ME_INT_VAL) {
-      int n = x[i].val();
+      int n = x[a.i].val();
       unsigned int j=0;
       for (; l.support[j].val < n; j++)
         // Supported value not any longer in view
@@ -355,11 +362,11 @@ namespace Gecode { namespace Int { namespace Extensional {
           o_mod |= ((--states[l.support[j].edges[d].i_state].o_deg) == 0);
           i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
         }
-    } else if (x[i].any(d)) {
+    } else if (x[a.i].any(d)) {
       unsigned int j=0;
       unsigned int k=0;
       unsigned int s=l.size;
-      for (ViewRanges<View> rx(x[i]); rx() && (j<s);)
+      for (ViewRanges<View> rx(x[a.i]); rx() && (j<s);)
         if (l.support[j].val < rx.min()) {
           // Supported value not any longer in view
           for (Degree d=l.support[j].n_edges; d--; ) {
@@ -383,11 +390,11 @@ namespace Gecode { namespace Int { namespace Extensional {
           i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
         }
     } else {
-      int min = x[i].min(d);
+      int min = x[a.i].min(d);
       unsigned int j=0;
       // Skip values smaller than min (to keep)
       for (; l.support[j].val < min; j++) {}
-      int max = x[i].max(d);
+      int max = x[a.i].max(d);
       unsigned int k=j;
       unsigned int s=l.size;
       // Remove pruned values
@@ -403,21 +410,21 @@ namespace Gecode { namespace Int { namespace Extensional {
       l.size =k;
       assert(k > 0);
     }
-    if (o_mod && (i > 0)) {
-      o_ch.add(i-1); is_fix = false;
+
+    bool is_fix = true;
+    if (o_mod && (a.i > 0)) {
+      o_ch.add(a.i-1); is_fix = false;
      }
-    if (i_mod && (i+1 < x.size())) {
-      i_ch.add(i+1); is_fix = false;
+    if (i_mod && (a.i+1 < x.size())) {
+      i_ch.add(a.i+1); is_fix = false;
     }
     if (is_fix) {
-    fix:
       if (View::modevent(d) == ME_INT_VAL) {
         a.dispose(home,c);
         return c.empty() ? ES_NOFIX : ES_FIX;
       }
       return ES_FIX;
     } else {
-    nofix:
       return (View::modevent(d) == ME_INT_VAL)
         ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
     }
