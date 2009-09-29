@@ -62,6 +62,7 @@ $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "\%Example scripts";
 $modclear{"test"} = "Systematic tests";
 $modclear{"gist"} = "Gist";
+$modclear{"flatzinc"} = "Gecode/FlatZinc";
 $modclear{"other"} = "General";
 
 $whatclear{"bug"} = "Bug fixes";
@@ -76,7 +77,7 @@ $rankclear{"major"} = "major";
 
 @modorder = ("kernel","search","int","set","cpltset","scheduling",
 	     "graph","minimodel","driver",
-	     "iter","support","example","test","gist","other");
+	     "iter","support","example","test","gist","flatzinc","other");
 
 @whatorder = ("new","removed","change","bug","performance","documentation");
 
