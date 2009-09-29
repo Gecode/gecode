@@ -81,6 +81,17 @@ The Gecode interpreter for the FlatZinc language is now part of the main
 Gecode source tree.
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+Thanks:	George Katsirelos, Nina Narodytska
+[DESCRIPTION]
+Extensional propagators using DFAs or REGs (aka regular) use a
+more compact state representation but create their state more
+eagerly. That can improve performance considerably at a slight
+increase in memory.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor
