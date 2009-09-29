@@ -48,43 +48,60 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline void
-  SpaceNode::setHasOpenChildren(bool b) {
-    if (b)
-      nstatus |= 1<<(HASOPENCHILDREN-1);
+  SpaceNode::setFlag(int flag, bool value) {
+    if (value)
+      nstatus |= 1<<(flag-1);
     else
-      nstatus &= ~(1<<(HASOPENCHILDREN-1));
+      nstatus &= ~(1<<(flag-1));
+  }
+
+  forceinline bool
+  SpaceNode::getFlag(int flag) const {
+    return (nstatus & (1<<(flag-1))) != 0;
+  }
+
+  forceinline void
+  SpaceNode::setHasOpenChildren(bool b) {
+    setFlag(HASOPENCHILDREN, b);
   }
 
   forceinline void
   SpaceNode::setHasFailedChildren(bool b) {
-    if (b)
-      nstatus |= 1<<(HASFAILEDCHILDREN-1);
-    else
-      nstatus &= ~(1<<(HASFAILEDCHILDREN-1));
+    setFlag(HASFAILEDCHILDREN, b);
   }
 
   forceinline void
   SpaceNode::setHasSolvedChildren(bool b) {
-    if (b)
-      nstatus |= 1<<(HASSOLVEDCHILDREN-1);
-    else
-      nstatus &= ~(1<<(HASSOLVEDCHILDREN-1));
+    setFlag(HASSOLVEDCHILDREN, b);
   }
 
   forceinline void
   SpaceNode::setStatus(NodeStatus s) {
     nstatus &= ~( STATUSMASK );
-    nstatus |= s;
+    nstatus |= s << 20;
   }
 
   forceinline NodeStatus
   SpaceNode::getStatus(void) const {
-    return static_cast<NodeStatus>(nstatus & STATUSMASK);
+    return static_cast<NodeStatus>((nstatus & STATUSMASK) >> 20);
+  }
+
+  forceinline void
+  SpaceNode::setDistance(unsigned int d) {
+    if (d > MAXDISTANCE)
+      d = MAXDISTANCE;
+    nstatus &= ~( DISTANCEMASK );
+    nstatus |= d;
+  }
+  
+  forceinline unsigned int
+  SpaceNode::getDistance(void) const {
+    return nstatus & DISTANCEMASK;
   }
 
   forceinline
   SpaceNode::SpaceNode(void)
-  : copy(NULL), workingSpace(NULL), ownBest(NULL) {
+  : copy(NULL), workingSpace(NULL), ownBest(NULL), nstatus(0) {
     desc.branch = NULL;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);
@@ -146,22 +163,22 @@ namespace Gecode { namespace Gist {
   forceinline bool
   SpaceNode::isOpen(void) {
     return ((getStatus() == UNDETERMINED) ||
-            ((nstatus & (1<<(HASOPENCHILDREN-1))) != 0));
+            getFlag(HASOPENCHILDREN));
   }
 
   forceinline bool
   SpaceNode::hasFailedChildren(void) {
-    return (nstatus & (1<<(HASFAILEDCHILDREN-1))) != 0;
+    return getFlag(HASFAILEDCHILDREN);
   }
 
   forceinline bool
   SpaceNode::hasSolvedChildren(void) {
-    return (nstatus & (1<<(HASSOLVEDCHILDREN-1))) != 0;
+    return getFlag(HASSOLVEDCHILDREN);
   }
 
   forceinline bool
   SpaceNode::hasOpenChildren(void) {
-    return (nstatus & (1<<(HASOPENCHILDREN-1))) != 0;
+    return getFlag(HASOPENCHILDREN);
   }
 
   forceinline bool

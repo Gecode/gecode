@@ -43,7 +43,8 @@
 
 namespace Gecode { namespace Gist {
 
-  /// \brief Status of nodes in the search tree
+  /** \brief Status of nodes in the search tree
+   */
   enum NodeStatus {
     SOLVED,       ///< Node representing a solution
     FAILED,       ///< Node representing failure
@@ -53,8 +54,10 @@ namespace Gecode { namespace Gist {
     STEP          ///< Node representing one propagation step
   };
 
-  static const unsigned int FIRSTBIT = 5; //< First free bit in status word
-  static const unsigned int STATUSMASK = (1<<(FIRSTBIT-1))-1; //< Mask for accessing status
+  static const unsigned int FIRSTBIT = 25; //< First free bit in status word
+  static const unsigned int STATUSMASK = 15<<20; //< Mask for accessing status
+  static const unsigned int MAXDISTANCE = (1<<20)-1; //< Maximum representable distance
+  static const unsigned int DISTANCEMASK = (1<<20)-1; //< Mask for accessing distance
 
   /// \brief Description for step nodes
   class StepDesc {
@@ -114,6 +117,13 @@ namespace Gecode { namespace Gist {
   private:
     /// Reference to best space when the node was created
     SpaceNode* ownBest;
+    /** \brief Status of the node
+     *
+     * If the node has a workingSpace, the first 20 bits encode the distance
+     * to the closest copy. The next 5 bits encode the NodeStatus, and the
+     * remaining bits are used by the VisualNode class for further flags.
+     */
+    unsigned int nstatus;
   protected:
     union {
       /// Choice
@@ -124,8 +134,17 @@ namespace Gecode { namespace Gist {
       StepDesc* step;
     } desc;
 
-    /// Status of the node
-    unsigned int nstatus;
+    /// Set distance from copy
+    void setDistance(unsigned int d);
+    
+    /// Return distance from copy
+    unsigned int getDistance(void) const;
+
+    /// Set status flag
+    void setFlag(int flag, bool value);
+
+    /// Return status flag
+    bool getFlag(int flag) const;
 
     /// Flags for SpaceNodes
     enum SpaceNodeFlags {

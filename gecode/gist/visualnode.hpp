@@ -103,15 +103,12 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   VisualNode::isHidden(void) {
-    return (nstatus & (1<<(HIDDEN-1))) != 0;
+    return getFlag(HIDDEN);
   }
 
   forceinline void
   VisualNode::setHidden(bool h) {
-    if (h)
-      nstatus |= 1<<(HIDDEN-1);
-    else
-      nstatus &= ~(1<<(HIDDEN-1));
+    setFlag(HIDDEN, h);
   }
 
   forceinline int
@@ -122,54 +119,42 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   VisualNode::isDirty(void) {
-    return (nstatus & (1<<(DIRTY-1))) != 0;
+    return getFlag(DIRTY);
   }
 
   forceinline void
   VisualNode::setDirty(bool d) {
-    if (d)
-      nstatus |= 1<<(DIRTY-1);
-    else
-      nstatus &= ~(1<<(DIRTY-1));
+    setFlag(DIRTY, d);
   }
 
   forceinline bool
   VisualNode::childrenLayoutIsDone(void) {
-    return (nstatus & (1<<(CHILDRENLAYOUTDONE-1))) != 0;
+    return getFlag(CHILDRENLAYOUTDONE);
   }
 
   forceinline void
   VisualNode::setChildrenLayoutDone(bool d) {
-    if (d)
-      nstatus |= 1<<(CHILDRENLAYOUTDONE-1);
-    else
-      nstatus &= ~(1<<(CHILDRENLAYOUTDONE-1));
+    setFlag(CHILDRENLAYOUTDONE, d);
   }
 
   forceinline bool
   VisualNode::isMarked(void) {
-    return (nstatus & (1<<(MARKED-1))) != 0;
+    return getFlag(MARKED);
   }
 
   forceinline void
   VisualNode::setMarked(bool m) {
-    if (m)
-      nstatus |= 1<<(MARKED-1);
-    else
-      nstatus &= ~(1<<(MARKED-1));
+    setFlag(MARKED, m);
   }
 
   forceinline bool
   VisualNode::isOnPath(void) {
-    return (nstatus & (1<<(ONPATH-1))) != 0;
+    return getFlag(ONPATH);
   }
 
   forceinline void
   VisualNode::setOnPath(bool b) {
-    if (b)
-      nstatus |= 1<<(ONPATH-1);
-    else
-      nstatus &= ~(1<<(ONPATH-1));
+    setFlag(ONPATH, b);
   }
 
   forceinline Shape*

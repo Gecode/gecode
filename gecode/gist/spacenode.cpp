@@ -138,6 +138,7 @@ namespace Gecode { namespace Gist {
         rdist++;
       }
       Space* curSpace = curNode->copy->clone();
+      curNode->setDistance(0);
 
       SpaceNode* lastBest = NULL;
       SpaceNode* middleNode = curNode;
@@ -195,6 +196,7 @@ namespace Gecode { namespace Gist {
         }
         curDist++;
         middleNode = middleNode->getChild(b.alternative);
+        middleNode->setDistance(curDist);
       }
       workingSpace = curSpace;
 
@@ -230,6 +232,14 @@ namespace Gecode { namespace Gist {
           }
           workingSpace->constrain(*ownBest->workingSpace);
         }
+        int d = p->getDistance()+1;
+        if (d > c_d && c_d >= 0 &&
+            getStatus() != SPECIAL && getStatus() != STEP &&
+            workingSpace->status() == SS_BRANCH) {
+          copy = workingSpace->clone();
+          d = 0;
+        }
+        setDistance(d);
       }
     }
 
@@ -238,6 +248,7 @@ namespace Gecode { namespace Gist {
           getStatus() != SPECIAL && getStatus() != STEP &&
           workingSpace->status() == SS_BRANCH) {
             copy = workingSpace->clone();
+            setDistance(0);
       }
     }
 
@@ -250,7 +261,9 @@ namespace Gecode { namespace Gist {
         // last alternative optimization
         copy = p->copy;
         p->copy = NULL;
-
+        setDistance(0);
+        p->setDistance(p->getParent()->getDistance()+1);
+        
         if(p->desc.branch != NULL)
           copy->commit(*p->desc.branch, getAlternative());
 
@@ -319,7 +332,7 @@ namespace Gecode { namespace Gist {
   }
 
   SpaceNode::SpaceNode(Space* root)
-  : workingSpace(root), ownBest(NULL) {
+  : workingSpace(root), ownBest(NULL), nstatus(0) {
     desc.branch = NULL;
     if (root == NULL) {
       setStatus(FAILED);
