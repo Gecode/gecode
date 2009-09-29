@@ -133,28 +133,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, class Degree, class StateIdx>
-  forceinline void
-  LayeredGraph<View,Degree,StateIdx>::eliminate(void) {
-    if (!constructed() || (layers[0].size > 1))
-      return;
-    assert(layers[0].size == 1);
-    // Skip all layers corresponding to assigned views
-    StateIdx i = 1;
-    while (layers[i].size == 1)
-      i++;
-    // There is only a single edge
-    Edge& e = layers[i-1].support[0].edges[0];
-    assert((layers[i-1].support[0].n_edges == 1) && 
-           (states[e.o_state].i_deg == 1));
-    // New start state
-    start = e.o_state % dfa.n_states();
-    layers += i;
-    x.drop_fst(i);
-    for (Advisors<Index> as(c); as(); ++as)
-      as.advisor().i -= i;
-  }
-
-  template<class View, class Degree, class StateIdx>
   forceinline ExecStatus
   LayeredGraph<View,Degree,StateIdx>::construct(Space& home) {
     Region r(home);
@@ -171,7 +149,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       states[i].i_deg = states[i].o_deg = 0;
 
     // Mark initial state as being reachable
-    states[start].i_deg = 1;
+    states[0].i_deg = 1;
 
     // Mark final states as reachable as well
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
@@ -433,7 +411,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
                                                    ViewArray<View>& x0, DFA& d)
-    : Propagator(home), c(home), x(x0), dfa(d), start(0), layers(NULL) {
+    : Propagator(home), c(home), x(x0), dfa(d), layers(NULL) {
     assert(x.size() > 0);
     ModEvent me = ME_INT_BND;
     for (StateIdx i=static_cast<StateIdx>(x.size()); i--; )
@@ -479,13 +457,38 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p)
-    : Propagator(home,share,p), layers(NULL) {
+    : Propagator(home,share,p) {
     assert(p.x.size() > 0);
-    p.eliminate();
     c.update(home,share,p.c);
     x.update(home,share,p.x);
     dfa.update(home,share,p.dfa);
-    start = p.start;
+    if (p.constructed()) {
+      // Copy layered graph
+      int n = x.size();
+      layers = home.alloc<Layer>(n+2)+1;
+      int n_states = dfa.n_states();
+      states = home.alloc<State>((n+1)*n_states);
+      // Copy states
+      for (int i = (n+1)*n_states; i--; )
+        states[i] = p.states[i];
+      // Copy layers
+      for (int i=n; i--; ) {
+        assert(x[i].size() == p.layers[i].size);
+        layers[i].size = p.layers[i].size;
+        layers[i].support = home.alloc<Support>(layers[i].size);
+        for (unsigned int j=layers[i].size; j--; ) {
+          layers[i].support[j].val = p.layers[i].support[j].val;
+          layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
+          assert(layers[i].support[j].n_edges > 0);
+          layers[i].support[j].edges = 
+            home.alloc<Edge>(layers[i].support[j].n_edges);
+          for (Degree d=layers[i].support[j].n_edges; d--; )
+            layers[i].support[j].edges[d] = p.layers[i].support[j].edges[d];
+        }
+      }
+    } else {
+      layers = NULL;
+    }
   }
 
   template<class View, class Degree, class StateIdx>
