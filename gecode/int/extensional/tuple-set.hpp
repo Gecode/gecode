@@ -39,51 +39,6 @@
 
 namespace Gecode {
 
-  /**
-   * \brief Data stored for a Table
-   *
-   */
-  class GECODE_VTABLE_EXPORT TupleSet::TupleSetI
-    : public SharedHandle::Object {
-  public:
-    /// Arity
-    int arity;
-    /// Number of Tuples
-    int size;
-    /// Tuples index
-    Tuple** tuples;
-    /// Tuple index data
-    Tuple* tuple_data;
-    /// Tuples data
-    int* data;
-    /// Excess storage
-    int excess;
-    /// Minimum and maximum in domain-values
-    int min, max;
-    /// Domain size
-    unsigned int domsize;
-    /// Initial last structure
-    Tuple** last;
-    /// Pointer to NULL-pointer
-    Tuple* nullpointer;
-
-    /// Add Tuple. Assumes that arity matches.
-    template<class T>
-    void add(T t);
-    /// Finalize datastructure (disallows additions of more Tuples)
-    GECODE_INT_EXPORT void finalize(void);
-    /// Resize data cache
-    GECODE_INT_EXPORT void resize(void);
-    /// Is datastructure finalized
-    bool finalized(void) const;
-    /// Initialize as empty tuple set
-    TupleSetI(void);
-    /// Delete  implementation
-    GECODE_INT_EXPORT virtual ~TupleSetI(void);
-    /// Create a copy
-    GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
-  };
-
   forceinline bool
   TupleSet::TupleSetI::finalized(void) const {
     assert(((excess == -1) && (domsize > 0)) ||
