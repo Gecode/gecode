@@ -54,7 +54,7 @@ $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
 $modclear{"cpltset"} = "Finite integer sets with complete representation";
 $modclear{"minimodel"} = "Minimal modeling support";
-$modclear{"graph"} = "Graph constraints";
+$modclear{"graph"} = "\%Graph constraints";
 $modclear{"scheduling"} = "Scheduling constraints";
 $modclear{"driver"} = "Script commandline driver";
 $modclear{"iter"} = "Range and value iterators";
@@ -169,7 +169,10 @@ while ($l = <>) {
     }
     $desc =~ s/^        //;
     $desc =~ s/[ \t\n\r]*$//;
-    $desc =~ s/\n([ \t]*)\n/\n\1<br\/>\n/g;
+    $desc =~ s/</\\</g;
+    $desc =~ s/>/\\>/g;
+    $desc =~ s/&/\\&/g;
+    $desc =~ s/\n([ \t]*)\n/\n\1<br>\n/g;
     if ($l =~ /^\[MORE\]/) {
 	while (($l = <>) && 
 	       !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
@@ -177,7 +180,11 @@ while ($l = <>) {
 	}
     }
     $more =~ s/[ \t\n\r]*$//;
-    $more =~ s/\n([ \t]*)\n/\n\1<br\/>\n/g;
+    $more =~ s/</\\</g;
+    $more =~ s/>/\\>/g;
+    $more =~ s/</\\</g;
+    $more =~ s/&/\\&/g;
+    $more =~ s/\n([ \t]*)\n/\n\1<br>\n/g;
     $hastext{$mod} = 1;
     $rb = $rankclear{$rank};
     if (!($bug eq "")) {
@@ -199,7 +206,7 @@ while ($l = <>) {
 	    "        <span id=morelink" . $moreinfocnt . " style=\"display: none\">\n" .
 	    "        <a href=\"javascript:showInfo(" . $moreinfocnt . ", false)\">Hide details</a></span>\n" . 
 	    "        <div id=moreinfo" . $moreinfocnt . " style=\"display: none\">\n" .
-	    "        ". $more . "</div>\n";
+	    "        ". $more . "\n</div>\n";
 	$moreinfocnt = $moreinfocnt + 1;
     }
     
