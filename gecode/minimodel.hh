@@ -1332,9 +1332,9 @@ namespace Gecode {
        */
       Slice& reverse(void);
       /// Cast to array type
-      operator args_type(void);
+      operator typename Matrix<A>::args_type(void);
       /// Cast to matrix type
-      operator Matrix<args_type>(void);
+      operator Matrix<typename Matrix<A>::args_type>(void);
     };
 
   private:
