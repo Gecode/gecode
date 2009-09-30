@@ -510,7 +510,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = gecode/flatzinc/parser.tab.* gecode/flatzinc/lexer.*
+EXCLUDE                =
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
@@ -525,7 +525,8 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = \
 	*.svn/* \
 	*moc_* \
-	*contribs/*
+	*contribs/* \
+	*gecode/flatzinc/parser.tab.* *gecode/flatzinc/lexer.*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
