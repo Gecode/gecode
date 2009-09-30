@@ -617,9 +617,31 @@ namespace Gecode {
   /// Passing integer arguments
   typedef PrimArgArray<int>    IntArgs;
   /// Passing integer variables
-  typedef VarArgArray<IntVar>  IntVarArgs;
+  class IntVarArgs : public VarArgArray<IntVar> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Allocate array with \a n elements
+    explicit IntVarArgs(int n) : VarArgArray<IntVar>(n) {}
+    /// Initialize from variable argument array \a a (copy elements)
+    IntVarArgs(const IntVarArgs& a) : VarArgArray<IntVar>(a) {}
+    /// Initialize from variable array \a a (copy elements)
+    IntVarArgs(const VarArray<IntVar>& a) : VarArgArray<IntVar>(a) {}
+    //@}
+  };
   /// Passing Boolean variables
-  typedef VarArgArray<BoolVar> BoolVarArgs;
+  class BoolVarArgs : public VarArgArray<BoolVar> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Allocate array with \a n elements
+    explicit BoolVarArgs(int n) : VarArgArray<BoolVar>(n) {}
+    /// Initialize from variable argument array \a a (copy elements)
+    BoolVarArgs(const BoolVarArgs& a) : VarArgArray<BoolVar>(a) {}
+    /// Initialize from variable array \a a (copy elements)
+    BoolVarArgs(const VarArray<BoolVar>& a) : VarArgArray<BoolVar>(a) {}
+    //@}
+  };
   /// Passing set arguments
   typedef ArgArray<IntSet> IntSetArgs;
   //@}

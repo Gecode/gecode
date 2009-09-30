@@ -528,7 +528,18 @@ namespace Gecode {
 
   //@{
   /// Passing set variables
-  typedef VarArgArray<SetVar>  SetVarArgs;
+  class SetVarArgs : public VarArgArray<SetVar> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Allocate array with \a n elements
+    explicit SetVarArgs(int n) : VarArgArray<SetVar>(n) {}
+    /// Initialize from variable argument array \a a (copy elements)
+    SetVarArgs(const SetVarArgs& a) : VarArgArray<SetVar>(a) {}
+    /// Initialize from variable array \a a (copy elements)
+    SetVarArgs(const VarArray<SetVar>& a) : VarArgArray<SetVar>(a) {}
+    //@}
+  };
   //@}
 
   /**
