@@ -158,7 +158,7 @@ namespace Gecode {
      * \f$1 \leq n\f$, \f$n\f$ threads are chosen (of course with rounding).
      * If \f$n \leq -1\f$, then \f$m + n\f$ threads are 
      * chosen (all but \f$-n\f$ processing units get a thread). If \f$n\f$
-     * is zero, \f$m\f$ threads are chosen. If \f$0<n<1\f$\a,
+     * is zero, \f$m\f$ threads are chosen. If \f$0<n<1\f$,
      * \f$n \times m\f$ threads are chosen. If \f$-1 <n<0\f$, 
      * \f$(1+n)\times m\f$ threads are chosen.
      * 
