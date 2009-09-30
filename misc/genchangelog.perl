@@ -187,10 +187,6 @@ while ($l = <>) {
     $more =~ s/\n([ \t]*)\n/\n\1<br>\n/g;
     $hastext{$mod} = 1;
     $rb = $rankclear{$rank};
-    if (!($bug eq "")) {
-      $rb = $rb . ", <a href=\"http://www.gecode.org/bugzilla/show_bug.cgi?id="
-	. $bug . "\">bugzilla entry</a>";
-    }
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
     }
