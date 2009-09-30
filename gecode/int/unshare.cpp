@@ -53,7 +53,7 @@ namespace Gecode {
     public:
       forceinline bool
       operator ()(const Var* a, const Var* b) {
-        return before(*a,*b);
+        return a->before(*b);
       }
     };
 
@@ -122,7 +122,7 @@ namespace Gecode {
       // Replace all shared variables with new and equal variables
       for (int i=0; i<n;) {
         int j=i++;
-        while ((i<n) && same(*y[j],*y[i]))
+        while ((i<n) && y[j]->same(*y[i]))
           i++;
         if (!y[j]->assigned())
           link(home,&y[j],i-j,icl);

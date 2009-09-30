@@ -58,21 +58,14 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     //@}
+    /// \name Variable comparison
+    //@{
+    /// Test whether view is the same as \a y
+    bool same(const VarBase<VarImp>& y) const;
+    /// Test whether view comes before \a y (arbitrary order)
+    bool before(const VarBase<VarImp>& y) const;
+    //@}
   };
-
-
-  /** \name Variable comparison
-   *  \relates VarBase
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  template<class VarImp>
-  bool same(const VarBase<VarImp>& x, const VarBase<VarImp>& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  template<class VarImp>
-  bool before(const VarBase<VarImp>& x, const VarBase<VarImp>& y);
-  //@}
-
 
 
   /*
@@ -97,17 +90,15 @@ namespace Gecode {
   VarBase<VarImp>::degree(void) const {
     return varimp->degree();
   }
-
-
   template<class VarImp>
   forceinline bool
-  same(const VarBase<VarImp>& x, const VarBase<VarImp>& y) {
-    return x.var() == y.var();
+  VarBase<VarImp>::same(const VarBase<VarImp>& y) const {
+    return var() == y.var();
   }
   template<class VarImp>
   forceinline bool
-  before(const VarBase<VarImp>& x, const VarBase<VarImp>& y) {
-    return x.var() < y.var();
+  VarBase<VarImp>::before(const VarBase<VarImp>& y) const {
+    return var() < y.var();
   }
 
 }
