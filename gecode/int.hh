@@ -1306,8 +1306,8 @@ namespace Gecode {
    *    the Global Cardinality Propagator is only obtained if they are bounds
    *    consistent, otherwise the problem of enforcing domain consistency
    *    on the cardinality variables is NP-complete as proved by
-   *    \ref CardVarNPCompl "Qumiper et. al. in
-   *    Improved Algorithms for the Global Cardinality Constraint"
+   *    Qumiper et. al. in
+   *    ''Improved Algorithms for the Global Cardinality Constraint''.
    */
 
   //@{

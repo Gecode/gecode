@@ -103,6 +103,7 @@ namespace Gecode {
    * any given time (\a at_most = true), or else the least amount to
    * be used (\a at_most = false).
    *
+   * \param home current space
    * \param machine \f$ machine_i \f$ is the machine assigned to task \f$ i \f$
    * \param start \f$ start_i \f$ is the start date assigned to task \f$ i \f$
    * \param duration \f$ duration_i \f$ is the duration of task \f$ i \f$

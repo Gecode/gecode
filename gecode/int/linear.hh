@@ -502,7 +502,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Val c;
 
     /// Constructor for cloning \a p
-    Lin(Space& home, bool share, Lin& p);
+    Lin(Space& home, bool share, Lin<Val,P,N,pc>& p);
     /// Constructor for creation
     Lin(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   public:
@@ -1436,6 +1436,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /**
    * \brief Post propagator for linear constraint over integers
+   * \param home current space
    * \param t array of linear terms over integers
    * \param n size of array
    * \param r type of relation
@@ -1466,6 +1467,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /**
    * \brief Post reified propagator for linear constraint
+   * \param home current space
    * \param t array of linear terms
    * \param n size of array
    * \param r type of relation
@@ -1498,6 +1500,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /**
    * \brief Post propagator for linear constraint over Booleans
+   * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
    * \param r type of relation
@@ -1528,6 +1531,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
+   * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
    * \param r type of relation
@@ -1559,6 +1563,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /**
    * \brief Post propagator for linear constraint over Booleans
+   * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
    * \param r type of relation
@@ -1590,6 +1595,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
+   * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
    * \param r type of relation

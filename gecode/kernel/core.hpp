@@ -180,7 +180,7 @@ namespace Gecode {
     /// Create shared handle with no object pointing to
     SharedHandle(void);
     /// Create shared handle that points to shared object \a so
-    SharedHandle(Object* so);
+    SharedHandle(SharedHandle::Object* so);
     /// Copy constructor maintaining reference count
     SharedHandle(const SharedHandle& sh);
     /// Assignment operator mainitaining reference count
@@ -193,7 +193,7 @@ namespace Gecode {
     /// Access to the shared object
     Object* object(void) const;
     /// Modify shared object
-    void object(Object* n);
+    void object(SharedHandle::Object* n);
   };
 
 

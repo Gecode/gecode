@@ -123,7 +123,7 @@ namespace {
 /**
    \brief %Example: Crowded chessboard
 
-   "You are given a chessboard together with 8 queens, 8 rooks, 14
+   You are given a chessboard together with 8 queens, 8 rooks, 14
    bishops, and 21 knights. The puzzle is to arrange the 51 pieces on
    the chessboard so that no queen shall attack another queen, no rook
    attack another rook, no bishop attack another bishop, and no knight
@@ -133,7 +133,7 @@ namespace {
    may be, say, a rook, a bishop, and a knight between them. It is not
    difficult to dispose of each type of piece separately; the
    difficulty comes in when you have to find room for all the
-   arrangements on the board simultaneously."
+   arrangements on the board simultaneously.
    <em>Dudeney, H.E., (1917), Amusements in Mathematics,
    Thomas Nelson and Sons.</em>
 

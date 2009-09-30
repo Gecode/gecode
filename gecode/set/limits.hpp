@@ -44,7 +44,7 @@ namespace Gecode { namespace Set {
     }
 
     inline void
-    Limits::check(unsigned n, const char* l) {
+    Limits::check(unsigned int n, const char* l) {
       if (n > card)
         throw OutOfLimits(l);
     }

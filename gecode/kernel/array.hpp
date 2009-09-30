@@ -1177,20 +1177,20 @@ namespace Gecode {
    *
    */
 
-  template<class T>
+  template<class Var>
   forceinline
-  VarArgArray<T>::VarArgArray(int n)
-    : ArgArrayBase<T>(n) {}
+  VarArgArray<Var>::VarArgArray(int n)
+    : ArgArrayBase<Var>(n) {}
 
-  template<class T>
+  template<class Var>
   forceinline
-  VarArgArray<T>::VarArgArray(const VarArgArray<T>& aa)
-    : ArgArrayBase<T>(aa) {}
+  VarArgArray<Var>::VarArgArray(const VarArgArray<Var>& aa)
+    : ArgArrayBase<Var>(aa) {}
 
-  template<class T>
+  template<class Var>
   inline
-  VarArgArray<T>::VarArgArray(const VarArray<T>& x)
-    : ArgArrayBase<T>(x.size()) {
+  VarArgArray<Var>::VarArgArray(const VarArray<Var>& x)
+    : ArgArrayBase<Var>(x.size()) {
     for (int i=x.size(); i--; )
       a[i]=x[i];
   }

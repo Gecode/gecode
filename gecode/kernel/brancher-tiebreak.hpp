@@ -79,7 +79,7 @@ namespace Gecode {
     /// Return choice
     Choice choice(Space& home);
     /// Commit to choice
-    void commit(Space& home, const Choice& c, unsigned a);
+    void commit(Space& home, const Choice& c, unsigned int a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelTieBreakStatic& vs);
     /// Delete view selection
@@ -120,7 +120,7 @@ namespace Gecode {
     virtual ChoiceVirtualBase* choice(Space& home) = 0;
     /// Commit to choice
     virtual void commit(Space& home, const ChoiceVirtualBase* c, 
-                        unsigned a) = 0;
+                        unsigned int a) = 0;
     /// Create copy
     virtual ViewSelVirtualBase<View>* copy(Space& home, bool share) = 0;
     /// Delete view selection and return its size
@@ -174,7 +174,8 @@ namespace Gecode {
     /// Return choice
     virtual ChoiceVirtualBase* choice(Space& home);
     /// Commit to choice
-    virtual void commit(Space& home, const ChoiceVirtualBase* d, unsigned a);
+    virtual void commit(Space& home, const ChoiceVirtualBase* d,
+                        unsigned int a);
     /// Create copy during cloning
     virtual ViewSelVirtualBase<typename ViewSel::View>*
     copy(Space& home, bool share);
@@ -228,7 +229,9 @@ namespace Gecode {
     /// Return choice
     Choice choice(Space& home);
     /// Commit to choice
-    void commit(Space& home, const Choice& c, unsigned a);
+    void commit(Space& home,
+                const typename ViewSelTieBreakDynamic<_View>::Choice& c,
+                unsigned int a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelTieBreakDynamic& vs);
     /// Delete view selection
@@ -515,34 +518,34 @@ namespace Gecode {
       return VSS_WORSE;
     }
   }
-  template<class View>
-  inline typename ViewSelTieBreakDynamic<View>::Choice
-  ViewSelTieBreakDynamic<View>::choice(Space& home) {
+  template<class _View>
+  inline typename ViewSelTieBreakDynamic<_View>::Choice
+  ViewSelTieBreakDynamic<_View>::choice(Space& home) {
     Choice c(home,tb,n);
     return c;
   }
-  template<class View>
+  template<class _View>
   forceinline void
-  ViewSelTieBreakDynamic<View>::commit
-  (Space& home, const typename ViewSelTieBreakDynamic<View>::Choice& c,
+  ViewSelTieBreakDynamic<_View>::commit
+  (Space& home, const typename ViewSelTieBreakDynamic<_View>::Choice& c,
    unsigned int a) {
     c.commit(home,a,tb);
   }
-  template<class View>
+  template<class _View>
   forceinline void
-  ViewSelTieBreakDynamic<View>::update(Space& home, bool share,
-                                       ViewSelTieBreakDynamic<View>& vstb) {
+  ViewSelTieBreakDynamic<_View>::update(Space& home, bool share,
+                                        ViewSelTieBreakDynamic<_View>& vstb) {
     n = vstb.n;
     tb = home.alloc<ViewSelVirtualBase<View>*>(n);
     for (int i=0; i<n; i++)
       tb[i] = vstb.tb[i]->copy(home,share);
   }
-  template<class View>
+  template<class _View>
   forceinline void
-  ViewSelTieBreakDynamic<View>::dispose(Space& home) {
+  ViewSelTieBreakDynamic<_View>::dispose(Space& home) {
     for (int i=0; i<n; i++)
       home.rfree(tb[i],tb[i]->dispose(home));
-    home.free<ViewSelVirtualBase<View>*>(tb,n);
+    home.free<ViewSelVirtualBase<_View>*>(tb,n);
   }
 
 }

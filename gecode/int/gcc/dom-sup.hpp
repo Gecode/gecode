@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * \brief Synchronization of the graph
      *
      * If the graph has already been constructed and some edges have
-     * been removed during propagation \fn sync removes those edges
+     * been removed during propagation, this function removes those edges
      * that do not longer belong to the graph associated with the current
      * variable domains.
      */

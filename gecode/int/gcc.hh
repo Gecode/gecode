@@ -154,12 +154,10 @@ namespace Gecode { namespace Int { namespace GCC {
      * Hence the lbc constraints the variables such that every value occurs
      * at least as often as specified by its lower cardinality bound.
      * \param home current space
-     * \param x  the problem variables
      * \param nb denotes number of unique bounds
      * \param hall contains information about the hall structure of the problem
      *        (cf. HallInfo)
      * \param rank ranking information about the variable bounds (cf. Rank)
-     * \param lps partial sum structure for the lower cardinality bounds (cf. PartialSum)
      * \param mu permutation \f$ \mu \f$ such that
      *        \f$ \forall i\in \{0, \dots, |x|-2\}:
      *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
@@ -177,12 +175,10 @@ namespace Gecode { namespace Int { namespace GCC {
      * Hence the ubc constraints the variables such that no value occurs
      * more often than specified by its upper cardinality bound.
      * \param home current space
-     * \param x  the problem variables
      * \param nb denotes number of unique bounds
      * \param hall contains information about the hall structure of the problem
      *        (cf. HallInfo)
      * \param rank ranking information about the variable bounds (cf. Rank)
-     * \param ups partial sum structure for the upper cardinality bounds (cf. PartialSum)
      * \param mu permutation \f$ \mu \f$ such that
      *        \f$ \forall i\in \{0, \dots, |x|-2\}:
      *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$

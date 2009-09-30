@@ -41,6 +41,7 @@
  * Doxygen-generated documentation
  */
 
+#define GECODE_DOXYGEN_WORKAROUNDS 1
 
 /**
  * \defgroup Task Functionality by programming task

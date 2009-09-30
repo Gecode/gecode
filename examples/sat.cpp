@@ -94,7 +94,7 @@ public:
  * starts with c). The number of variables and the
  * number of clauses is defined by the line
  *
- *    p cnf <variables> <clauses>
+ *    p cnf \<variables\> \<clauses\>
  *
  * Each of the subsequent lines specifies a clause.
  * A positive literal is denoted by a positive

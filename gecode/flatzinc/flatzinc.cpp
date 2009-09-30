@@ -611,7 +611,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  Printer::printElem(ostream& out,
+  Printer::printElem(std::ostream& out,
                        AST::Node* ai,
                        const Gecode::IntVarArray& iv,
                        const Gecode::BoolVarArray& bv
@@ -689,7 +689,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  Printer::print(ostream& out,
+  Printer::print(std::ostream& out,
                    const Gecode::IntVarArray& iv,
                    const Gecode::BoolVarArray& bv
   #ifdef GECODE_HAS_SET_VARS
