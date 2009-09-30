@@ -119,6 +119,16 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Set index of either variable or value
     void index(int i);
     //@}
+
+    /// \name Memory management
+    //@{
+    /// Allocate memory from space
+    static void* operator new(size_t s, Space& home);
+    /// Free memory (unused)
+    static void operator delete(void*, Space&) {};
+    /// Needed for exceptions
+    static void  operator delete(void*) {};
+    //@}
   };
 
   /// %Variable Node
@@ -360,6 +370,16 @@ namespace Gecode { namespace Int { namespace GCC {
     /// return the reference to the previous edge incident on \a v
     Edge** vprev_ref(void);
     //@}
+
+    /// \name Memory management
+    //@{
+    /// Allocate memory from space
+    static void* operator new(size_t s, Space& home);
+    /// Free memory (unused)
+    static void operator delete(void*, Space&) {};
+    /// Needed for exceptions
+    static void operator delete(void*) {};
+    //@}
   };
 
 
@@ -537,6 +557,11 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline int
   Node::index(void) const {
     return idx;
+  }
+
+  forceinline void*
+  Node::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
   }
 
 
@@ -969,9 +994,16 @@ namespace Gecode { namespace Int { namespace GCC {
     return (ef & EF_DEL) != 0;
   }
 
+  forceinline void*
+  Edge::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
+  }
 
 
-
+  /*
+   * Variable value graph
+   *
+   */
   template<class Card>
   VarValGraph<Card>::VarValGraph(Space& home,
                                  ViewArray<IntView>& x, ViewArray<Card>& k,
@@ -986,9 +1018,6 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i=x.size(); i--; )
       noe += x[i].size();
 
-    Edge* edges = home.alloc<Edge>(noe);
-    VarNode* vars_ptr = home.alloc<VarNode>(n_var);
-    ValNode* vals_ptr = home.alloc<ValNode>(n_val);
     vars = home.alloc<VarNode*>(n_var);
     vals = home.alloc<ValNode*>(n_val);
 
@@ -1005,16 +1034,16 @@ namespace Gecode { namespace Int { namespace GCC {
         }
         kma -= kc;
         assert (kma > 0);
-        vals[i] = new (vals_ptr + i)
+        vals[i] = new (home)
           ValNode(kmi, kma, k[i].card(), i, i + n_var, kc);
       } else {
-        vals[i] = new (vals_ptr + i)
+        vals[i] = new (home)
           ValNode(0, 0, k[i].card(), i, i + n_var, kc);
       }
     }
 
     for (int i = n_var; i--; ) {
-      vars[i] = new (vars_ptr + i) VarNode(i);
+      vars[i] = new (home) VarNode(i);
       // get the space for the edges of the varnode
       Edge** xadjacent = vars[i]->adj();
 
@@ -1023,7 +1052,7 @@ namespace Gecode { namespace Int { namespace GCC {
         // get the correct index for the value
         while(vals[j]->val < xi.val())
           j++;
-        *xadjacent = new (edges) Edge(vars_ptr + i, vals_ptr + j);
+        *xadjacent = new (home) Edge(vars[i],vals[j]);
         vars[i]->noe++;
         if (vars[i]->first() == NULL)
           vars[i]->first(*xadjacent);
@@ -1041,7 +1070,6 @@ namespace Gecode { namespace Int { namespace GCC {
           *old->vprev_ref() = vals[j]->first();
         }
         vals[j]->noe++;
-        edges++;
         xadjacent = (*xadjacent)->next_ref();
       }
       *xadjacent = NULL;
