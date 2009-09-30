@@ -2097,7 +2097,7 @@ a next solution.
 
 [ENTRY]
 Module: iter
-What:   fix
+What:   bug
 Rank:   minor
 Thanks: David Barton
 [DESCRIPTION]
@@ -2105,7 +2105,7 @@ Changed Ranges::Diff to make older versions of gcc happy.
 
 [ENTRY]
 Module: other
-What:   fix
+What:   bug
 Rank:   minor
 Thanks: David Barton
 [DESCRIPTION]
