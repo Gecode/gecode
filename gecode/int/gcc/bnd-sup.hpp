@@ -43,13 +43,17 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  /// \name GCC-Bnd-Support
-  //@{
+  /**
+   * \defgroup GCCBndSup Support for GCC bounds propagation
+   * 
+   * \ingroup FuncIntProp
+   */
 
   /**
    * \brief Class for computing unreachable values in the
    *  value GCC propagator
    *
+   * \ingroup GCCBndSup
    */
   class UnReachable {
   public:
@@ -67,6 +71,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Bounds consistency check for cardinality variables.
+   * \ingroup GCCBndSup
    */
 
   template<class Card>
@@ -132,6 +137,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   /** \brief Consistency check, whether the cardinality values are feasible.
+   * \ingroup GCCBndSup
    */
   template<class Card>
   forceinline bool
@@ -148,6 +154,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Maps domain bounds to their position in hall[].bounds.
+   * \ingroup GCCBndSup
    */
   class Rank {
   public:
@@ -168,6 +175,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the
    * ascending order of the views upper bounds
    *
+   * \ingroup GCCBndSup
    */
   template<class View>
   class MaxInc {
@@ -190,6 +198,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the
    * ascending order of the views lower bounds
    *
+   * \ingroup GCCBndSup
    */
   template<class View>
   class MinInc {
@@ -211,6 +220,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Compares two cardinality views
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the index
    *
+   * \ingroup GCCBndSup
    */
   template<class Card>
   class MinIdx {
@@ -226,6 +236,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Partial sum structure for constant
    *  time computation of the maximal capacity of an interval.
    *
+   * \ingroup GCCBndSup
    */
   template<class Card>
   class PartialSum {
@@ -445,6 +456,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *  an array of type %HallInfo replaces integer arrays for each
    *  of the class members.
    *
+   * \ingroup GCCBndSup
    */
   class HallInfo {
   public:
@@ -492,6 +504,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    * Each of the nodes on the path from \a start to \a end
    * becomes a direct child of \a to.
+   * \ingroup GCCBndSup
    */
   //@{
   /// Path compression for potentially stable set structure
@@ -533,6 +546,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *  \name Path minimum
    *
    *  Returns the smalles reachable index starting from \a i.
+   * \ingroup GCCBndSup
    */
   //@{
   /// Path minimum for hall pointer structure
@@ -555,6 +569,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *  \name Path maximum
    *
    *  Returns the greatest reachable index starting from \a i.
+   * \ingroup GCCBndSup
    */
   //@{
   /// Path maximum for hall pointer structure
