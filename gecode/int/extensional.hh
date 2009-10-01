@@ -90,6 +90,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Layer for a view in the layered graph
     class Layer {
     public:
+      View x; ///< Integer view
       unsigned int size; ///< Number of supported values
       Support* support; ///< Supported values
     };
@@ -141,8 +142,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     };
     /// The advisor council
     Council<Index> c;
-    /// The views
-    ViewArray<View> x;
+    /// Number of layers (and views)
+    int n;
     /// The %DFA describing the language
     DFA dfa;
     /// The start state for graph construction
@@ -170,7 +171,9 @@ namespace Gecode { namespace Int { namespace Extensional {
                  LayeredGraph<View,Degree,StateIdx>& p);
   public:
     /// Constructor for posting
-    LayeredGraph(Space& home, ViewArray<View>& x, DFA& d);
+    template<class Var>
+    LayeredGraph(Space& home, 
+                 const VarArgArray<Var>& x, DFA& d);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as high linear)
@@ -182,12 +185,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Post propagator on views \a x and DFA \a d
-    static ExecStatus post(Space& home, ViewArray<View>& x, DFA& d);
+    template<class Var>
+    static ExecStatus post(Space& home, const VarArgArray<Var>& x, DFA& d);
   };
 
   /// Select small types for the layered graph propagator
-  template<class View>
-  ExecStatus post_lgp(Space& home, ViewArray<View>& x, DFA dfa);
+  template<class Var>
+  ExecStatus post_lgp(Space& home, const VarArgArray<Var>& x, DFA dfa);
 
 }}}
 
