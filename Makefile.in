@@ -1537,7 +1537,8 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	for_mznlib="$(FLATZINCMZNLIB)" && \
 	  for f in $$for_mznlib; do \
 		mkdir -p $(DESTDIR)$(datadir)/gecode/mznlib; \
-		cp $$f/*.mzn $(DESTDIR)$(datadir)/gecode/mznlib; done
+		cp $(top_srcdir)/$$f/*.mzn \
+		  $(DESTDIR)$(datadir)/gecode/mznlib; done
 
 doinstalllib: 
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
