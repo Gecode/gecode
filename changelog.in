@@ -73,6 +73,16 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: other
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Cleaned up the generated reference documentation, and introduced a number
+of workarounds for issues in doxygen. In particular, the documentation for
+linear constraints over Boolean variables and for the thread abstractions
+is now generated properly.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   major
