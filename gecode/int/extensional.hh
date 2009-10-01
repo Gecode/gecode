@@ -144,8 +144,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     Council<Index> c;
     /// Number of layers (and views)
     int n;
-    /// The %DFA describing the language
-    DFA dfa;
+    /// Number of states of DFA
+    const int n_states;
     /// The start state for graph construction
     StateIdx start;
     /// The layers of the graph
@@ -157,15 +157,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Index range with out-degree modifications
     IndexRange o_ch;
 
-    /// Eliminate assigned prefix, return whether elimination performed
-    bool eliminate(void);
-    /// Test whether layered graph has already been constructed
-    bool constructed(void) const;
-    /// Construct layered graph
-    ExecStatus construct(Space& home);
-    /// Prune incrementally
-    ExecStatus prune(Space& home);
-
+    /// Eliminate assigned prefix
+    void eliminate(void);
+    /// Initialize layered graph
+    ExecStatus initialize(Space& home, const DFA& dfa);
     /// Constructor for cloning \a p
     LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p);
@@ -173,7 +168,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for posting
     template<class Var>
     LayeredGraph(Space& home, 
-                 const VarArgArray<Var>& x, DFA& d);
+                 const VarArgArray<Var>& x, const DFA& d);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as high linear)
@@ -186,12 +181,14 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual size_t dispose(Space& home);
     /// Post propagator on views \a x and DFA \a d
     template<class Var>
-    static ExecStatus post(Space& home, const VarArgArray<Var>& x, DFA& d);
+    static ExecStatus post(Space& home, 
+                           const VarArgArray<Var>& x, const DFA& d);
   };
 
   /// Select small types for the layered graph propagator
   template<class Var>
-  ExecStatus post_lgp(Space& home, const VarArgArray<Var>& x, DFA dfa);
+  ExecStatus post_lgp(Space& home, 
+                      const VarArgArray<Var>& x, const DFA& dfa);
 
 }}}
 

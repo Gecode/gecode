@@ -127,39 +127,41 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
 
   template<class View, class Degree, class StateIdx>
-  forceinline bool
+  forceinline void
   LayeredGraph<View,Degree,StateIdx>::eliminate(void) {
-    if (!constructed() || (layers[0].size > 1))
-      return false;
+    if (layers[0].size > 1)
+      return;
     assert(layers[0].size == 1);
     // Skip all layers corresponding to assigned views
-    StateIdx i = 1;
-    while (layers[i].size == 1)
-      i++;
+    StateIdx k = 1;
+    while (layers[k].size == 1)
+      k++;
     // There is only a single edge
-    Edge& e = layers[i-1].support[0].edges[0];
-    assert((layers[i-1].support[0].n_edges == 1) &&
+    Edge& e = layers[k-1].support[0].edges[0];
+    assert((layers[k-1].support[0].n_edges == 1) &&
            (states[e.o_state].i_deg == 1));
     // New start state
-    start = e.o_state % dfa.n_states();
-    n -= i; layers += i;
+    start = e.o_state % n_states;
+    // Eliminate assigned layers
+    n -= k; layers += k;
+    // Update advisor indices
     for (Advisors<Index> as(c); as(); ++as)
-      as.advisor().i -= i;
-    return true;
-  }
-
-  template<class View, class Degree, class StateIdx>
-  forceinline bool
-  LayeredGraph<View,Degree,StateIdx>::constructed(void) const {
-    return layers[0].support != NULL;
+      as.advisor().i -= k;
+    // Update states
+    states += k*n_states;
+    for (int i=n; i--; )
+      for (unsigned int j=layers[i].size; j--; )
+        for (Degree d=layers[i].support[j].n_edges; d--; ) {
+          layers[i].support[j].edges[d].i_state -= k*n_states;
+          layers[i].support[j].edges[d].o_state -= k*n_states;
+        }
   }
 
   template<class View, class Degree, class StateIdx>
   forceinline ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::construct(Space& home) {
+  LayeredGraph<View,Degree,StateIdx>::initialize(Space& home,
+                                                 const DFA& dfa) {
     Region r(home);
-
-    int n_states = dfa.n_states();
 
     // Allocate memory
     states = home.alloc<State>((n+1)*n_states);
@@ -232,87 +234,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       LayerValues lv(layers[i]);
       GECODE_ME_CHECK(layers[i].x.narrow_v(home,lv,false));
     }
-
-    if (c.empty())
-      return ES_SUBSUMED(*this,home);
-    return ES_FIX;
-  }
-
-  template<class View, class Degree, class StateIdx>
-  forceinline ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::prune(Space& home) {
-    // Forward pass
-    for (int i=i_ch.fst(); i<=i_ch.lst(); i++) {
-      bool i_mod = false;
-      bool o_mod = false;
-      unsigned int j=0;
-      unsigned int k=0;
-      unsigned int s=layers[i].size;
-      do {
-        for (Degree d=layers[i].support[j].n_edges; d--; )
-          if (states[layers[i].support[j].edges[d].i_state].i_deg == 0) {
-            // Adapt states
-            o_mod |= ((--states[layers[i].support[j].edges[d].i_state].o_deg)
-                      == 0);
-            i_mod |= ((--states[layers[i].support[j].edges[d].o_state].i_deg)
-                      == 0);
-            // Remove edge
-            layers[i].support[j].edges[d] = 
-              layers[i].support[j].edges[--layers[i].support[j].n_edges];
-          }
-        // Check whether value is still supported
-        if (layers[i].support[j].n_edges == 0) {
-          layers[i].size--;
-          GECODE_ME_CHECK(layers[i].x.nq(home,layers[i].support[j++].val));
-        } else {
-          layers[i].support[k++]=layers[i].support[j++];
-        }
-      } while (j<s);
-      assert(k > 0);
-      // Update modification information
-      if (o_mod && (i > 0))
-        o_ch.add(i-1);
-      if (i_mod && (i+1 < n))
-        i_ch.add(i+1);
-    }
-    i_ch.reset();
-
-    // Backward pass
-    for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
-      bool o_mod = false;
-      unsigned int j=0;
-      unsigned int k=0;
-      unsigned int s=layers[i].size;
-      do {
-        for (Degree d=layers[i].support[j].n_edges; d--; )
-          if (states[layers[i].support[j].edges[d].o_state].o_deg == 0) {
-            // Adapt states
-            o_mod |= ((--states[layers[i].support[j].edges[d].i_state].o_deg) 
-                      == 0);
-            --states[layers[i].support[j].edges[d].o_state].i_deg;
-            // Remove edge
-            layers[i].support[j].edges[d] = 
-              layers[i].support[j].edges[--layers[i].support[j].n_edges];
-          }
-        // Check whether value is still supported
-        if (layers[i].support[j].n_edges == 0) {
-          layers[i].size--;
-          GECODE_ME_CHECK(layers[i].x.nq(home,layers[i].support[j++].val));
-        } else {
-          layers[i].support[k++]=layers[i].support[j++];
-        }
-      } while (j<s);
-      assert(k > 0);
-      // Update modification information
-      if (o_mod && (i > 0))
-        o_ch.add(i-1);
-    }
-    o_ch.reset();
-
-    // Check subsumption
-    if (c.empty())
-      return ES_SUBSUMED(*this,home);
-    return ES_FIX;
+    return ES_OK;
   }
 
   template<class View, class Degree, class StateIdx>
@@ -321,11 +243,6 @@ namespace Gecode { namespace Int { namespace Extensional {
                                              Advisor& _a, const Delta& d) {
     Index& a = static_cast<Index&>(_a);
     Layer& l = layers[a.i];
-
-    // Run propagator if graph not yet constructed
-    if (!constructed())
-      return (View::modevent(d) == ME_INT_VAL)
-        ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
 
     if (l.size <= l.x.size())
       // Propagator has already done everything
@@ -431,8 +348,78 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   LayeredGraph<View,Degree,StateIdx>::propagate(Space& home,
                                                 const ModEventDelta&) {
-    ExecStatus es = constructed() ? prune(home) : construct(home);
-    return es;
+    // Forward pass
+    for (int i=i_ch.fst(); i<=i_ch.lst(); i++) {
+      bool i_mod = false;
+      bool o_mod = false;
+      unsigned int j=0;
+      unsigned int k=0;
+      unsigned int s=layers[i].size;
+      do {
+        for (Degree d=layers[i].support[j].n_edges; d--; )
+          if (states[layers[i].support[j].edges[d].i_state].i_deg == 0) {
+            // Adapt states
+            o_mod |= ((--states[layers[i].support[j].edges[d].i_state].o_deg)
+                      == 0);
+            i_mod |= ((--states[layers[i].support[j].edges[d].o_state].i_deg)
+                      == 0);
+            // Remove edge
+            layers[i].support[j].edges[d] = 
+              layers[i].support[j].edges[--layers[i].support[j].n_edges];
+          }
+        // Check whether value is still supported
+        if (layers[i].support[j].n_edges == 0) {
+          layers[i].size--;
+          GECODE_ME_CHECK(layers[i].x.nq(home,layers[i].support[j++].val));
+        } else {
+          layers[i].support[k++]=layers[i].support[j++];
+        }
+      } while (j<s);
+      assert(k > 0);
+      // Update modification information
+      if (o_mod && (i > 0))
+        o_ch.add(i-1);
+      if (i_mod && (i+1 < n))
+        i_ch.add(i+1);
+    }
+    i_ch.reset();
+
+    // Backward pass
+    for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
+      bool o_mod = false;
+      unsigned int j=0;
+      unsigned int k=0;
+      unsigned int s=layers[i].size;
+      do {
+        for (Degree d=layers[i].support[j].n_edges; d--; )
+          if (states[layers[i].support[j].edges[d].o_state].o_deg == 0) {
+            // Adapt states
+            o_mod |= ((--states[layers[i].support[j].edges[d].i_state].o_deg) 
+                      == 0);
+            --states[layers[i].support[j].edges[d].o_state].i_deg;
+            // Remove edge
+            layers[i].support[j].edges[d] = 
+              layers[i].support[j].edges[--layers[i].support[j].n_edges];
+          }
+        // Check whether value is still supported
+        if (layers[i].support[j].n_edges == 0) {
+          layers[i].size--;
+          GECODE_ME_CHECK(layers[i].x.nq(home,layers[i].support[j++].val));
+        } else {
+          layers[i].support[k++]=layers[i].support[j++];
+        }
+      } while (j<s);
+      assert(k > 0);
+      // Update modification information
+      if (o_mod && (i > 0))
+        o_ch.add(i-1);
+    }
+    o_ch.reset();
+
+    // Check subsumption
+    if (c.empty())
+      return ES_SUBSUMED(*this,home);
+    return ES_FIX;
   }
 
   template<class View, class Degree, class StateIdx>
@@ -440,11 +427,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
                                                    const VarArgArray<Var>& x, 
-                                                   DFA& d)
-    : Propagator(home), c(home), n(x.size()), dfa(d), start(0),
-      layers(home.alloc<Layer>(n+2)+1) {
-    // Mark as not yet constructed
-    layers[0].support = NULL;
+                                                   const DFA& d)
+    : Propagator(home), c(home), n(x.size()), n_states(d.n_states()), start(0),
+      layers(home.alloc<Layer>(n+2)+1), states(NULL) {
     assert(n > 0);
     ModEvent me = ME_INT_BND;
     for (StateIdx i=static_cast<StateIdx>(x.size()); i--; ) {
@@ -455,25 +440,22 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
     }
     View::schedule(home,*this,me);
-    home.notice(*this,AP_DISPOSE);
   }
 
   template<class View, class Degree, class StateIdx>
   forceinline size_t
   LayeredGraph<View,Degree,StateIdx>::dispose(Space& home) {
-    home.ignore(*this,AP_DISPOSE);
     c.dispose(home);
-    dfa.~DFA();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
   template<class View, class Degree, class StateIdx>
   template<class Var>
-  forceinline ExecStatus
+  ExecStatus
   LayeredGraph<View,Degree,StateIdx>::post(Space& home, 
                                            const VarArgArray<Var>& x,
-                                           DFA& d) {
+                                           const DFA& d) {
     if (x.size() == 0) {
       // Check whether the start state 0 is also a final state
       if ((d.final_fst() <= 0) && (d.final_lst() >= 0))
@@ -486,8 +468,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       VarViewTraits<Var>::View xi(x[i]);
       GECODE_ME_CHECK(xi.inter_v(home,s,false));
     }
-    (void) new (home) LayeredGraph<View,Degree,StateIdx>(home,x,d);
-    return ES_OK;
+    LayeredGraph<View,Degree,StateIdx>* p =
+      new (home) LayeredGraph<View,Degree,StateIdx>(home,x,d);
+    return p->initialize(home,d);
   }
 
   template<class View, class Degree, class StateIdx>
@@ -495,39 +478,28 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p)
-    : Propagator(home,share,p) {
-    bool e = p.eliminate();
-    n = p.n;
-    start = p.start;
+    : Propagator(home,share,p), n(p.n), n_states(p.n_states), start(p.start),
+      layers(home.alloc<Layer>(n+2)+1),
+      states(home.alloc<State>((n+1)*n_states)) {
     c.update(home,share,p.c);
-    dfa.update(home,share,p.dfa);
-    layers = home.alloc<Layer>(n+2)+1;
-    for (int i=n; i--; )
+    // Copy states
+    for (int i = (n+1)*n_states; i--; )
+      states[i] = p.states[i];
+    // Copy layers
+    for (int i=n; i--; ) {
       layers[i].x.update(home,share,p.layers[i].x);
-    if (p.constructed() && !e) {
-      // Copy layered graph
-      int n_states = dfa.n_states();
-      states = home.alloc<State>((n+1)*n_states);
-      // Copy states
-      for (int i = (n+1)*n_states; i--; )
-        states[i] = p.states[i];
-      // Copy layers
-      for (int i=n; i--; ) {
-        assert(layers[i].x.size() == p.layers[i].size);
-        layers[i].size = p.layers[i].size;
-        layers[i].support = home.alloc<Support>(layers[i].size);
-        for (unsigned int j=layers[i].size; j--; ) {
-          layers[i].support[j].val = p.layers[i].support[j].val;
-          layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
-          assert(layers[i].support[j].n_edges > 0);
-          layers[i].support[j].edges = 
-            home.alloc<Edge>(layers[i].support[j].n_edges);
-          for (Degree d=layers[i].support[j].n_edges; d--; )
-            layers[i].support[j].edges[d] = p.layers[i].support[j].edges[d];
-        }
+      assert(layers[i].x.size() == p.layers[i].size);
+      layers[i].size = p.layers[i].size;
+      layers[i].support = home.alloc<Support>(layers[i].size);
+      for (unsigned int j=layers[i].size; j--; ) {
+        layers[i].support[j].val = p.layers[i].support[j].val;
+        layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
+        assert(layers[i].support[j].n_edges > 0);
+        layers[i].support[j].edges = 
+          home.alloc<Edge>(layers[i].support[j].n_edges);
+        for (Degree d=layers[i].support[j].n_edges; d--; )
+          layers[i].support[j].edges[d] = p.layers[i].support[j].edges[d];
       }
-    } else {
-      layers[0].support = NULL;
     }
   }
 
@@ -541,13 +513,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Degree, class StateIdx>
   Actor*
   LayeredGraph<View,Degree,StateIdx>::copy(Space& home, bool share) {
+    eliminate();
     return new (home) LayeredGraph<View,Degree,StateIdx>(home,share,*this);
   }
 
   /// Select small types for the layered graph propagator
   template<class Var>
   forceinline ExecStatus
-  post_lgp(Space& home, const VarArgArray<Var>& x, DFA dfa) {
+  post_lgp(Space& home, const VarArgArray<Var>& x, const DFA& dfa) {
     Gecode::Support::IntType t_state_idx =
       Gecode::Support::s_type((x.size()+2)*dfa.n_states());
     Gecode::Support::IntType t_degree =
