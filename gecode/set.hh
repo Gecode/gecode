@@ -527,7 +527,14 @@ namespace Gecode {
    */
 
   //@{
-  /// Passing set variables
+  /** \brief Passing set variables
+   *
+   * We could have used a simple typedef instead, but doxygen cannot
+   * resolve some overloading then, leading to unusable documentation for
+   * important parts of the library. As long as there is no fix for this,
+   * we will keep this workaround.
+   *
+   */
   class SetVarArgs : public VarArgArray<SetVar> {
   public:
     /// \name Constructors and initialization

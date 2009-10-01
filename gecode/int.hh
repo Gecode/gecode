@@ -616,7 +616,14 @@ namespace Gecode {
   //@{
   /// Passing integer arguments
   typedef PrimArgArray<int>    IntArgs;
-  /// Passing integer variables
+  /** \brief Passing integer variables
+   *
+   * We could have used a simple typedef instead, but doxygen cannot
+   * resolve some overloading then, leading to unusable documentation for
+   * important parts of the library. As long as there is no fix for this,
+   * we will keep this workaround.
+   *
+   */
   class IntVarArgs : public VarArgArray<IntVar> {
   public:
     /// \name Constructors and initialization
@@ -629,7 +636,14 @@ namespace Gecode {
     IntVarArgs(const VarArray<IntVar>& a) : VarArgArray<IntVar>(a) {}
     //@}
   };
-  /// Passing Boolean variables
+  /** \brief Passing Boolean variables
+   *
+   * We could have used a simple typedef instead, but doxygen cannot
+   * resolve some overloading then, leading to unusable documentation for
+   * important parts of the library. As long as there is no fix for this,
+   * we will keep this workaround.
+   *
+   */
   class BoolVarArgs : public VarArgArray<BoolVar> {
   public:
     /// \name Constructors and initialization
