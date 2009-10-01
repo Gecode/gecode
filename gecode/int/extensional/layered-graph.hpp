@@ -502,14 +502,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     c.update(home,share,p.c);
     dfa.update(home,share,p.dfa);
     layers = home.alloc<Layer>(n+2)+1;
-    layers[0].support = NULL;
     for (int i=n; i--; )
       layers[i].x.update(home,share,p.layers[i].x);
-    /*
     if (p.constructed() && !e) {
       // Copy layered graph
-      int n = x.size();
-      layers = home.alloc<Layer>(n+2)+1;
       int n_states = dfa.n_states();
       states = home.alloc<State>((n+1)*n_states);
       // Copy states
@@ -517,7 +513,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         states[i] = p.states[i];
       // Copy layers
       for (int i=n; i--; ) {
-        assert(x[i].size() == p.layers[i].size);
+        assert(layers[i].x.size() == p.layers[i].size);
         layers[i].size = p.layers[i].size;
         layers[i].support = home.alloc<Support>(layers[i].size);
         for (unsigned int j=layers[i].size; j--; ) {
@@ -531,9 +527,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
       }
     } else {
-      layers = NULL;
+      layers[0].support = NULL;
     }
-    */
   }
 
   template<class View, class Degree, class StateIdx>
