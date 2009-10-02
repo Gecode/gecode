@@ -146,8 +146,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     int n;
     /// Number of states of DFA
     const int n_states;
-    /// The start state for graph construction
-    StateIdx start;
     /// The layers of the graph
     Layer* layers;
     /// The states used in the graph

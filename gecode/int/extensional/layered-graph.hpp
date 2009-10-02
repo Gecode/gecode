@@ -127,6 +127,26 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
 
   template<class View, class Degree, class StateIdx>
+  template<class Var>
+  forceinline
+  LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
+                                                   const VarArgArray<Var>& x, 
+                                                   const DFA& d)
+    : Propagator(home), c(home), n(x.size()), n_states(d.n_states()),
+      layers(home.alloc<Layer>(n+2)+1), states(NULL) {
+    assert(n > 0);
+    ModEvent me = ME_INT_BND;
+    for (StateIdx i=static_cast<StateIdx>(x.size()); i--; ) {
+      layers[i].x = x[i];
+      if (layers[i].x.assigned())
+        me = ME_INT_VAL;
+      else
+        layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
+    }
+    View::schedule(home,*this,me);
+  }
+
+  template<class View, class Degree, class StateIdx>
   forceinline ExecStatus
   LayeredGraph<View,Degree,StateIdx>::initialize(Space& home,
                                                  const DFA& dfa) {
@@ -140,7 +160,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       states[i].i_deg = states[i].o_deg = 0;
 
     // Mark initial state as being reachable
-    states[start].i_deg = 1;
+    states[0].i_deg = 1;
 
     // Mark final states as reachable as well
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
@@ -393,25 +413,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_FIX;
   }
 
-  template<class View, class Degree, class StateIdx>
-  template<class Var>
-  forceinline
-  LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
-                                                   const VarArgArray<Var>& x, 
-                                                   const DFA& d)
-    : Propagator(home), c(home), n(x.size()), n_states(d.n_states()), start(0),
-      layers(home.alloc<Layer>(n+2)+1), states(NULL) {
-    assert(n > 0);
-    ModEvent me = ME_INT_BND;
-    for (StateIdx i=static_cast<StateIdx>(x.size()); i--; ) {
-      layers[i].x = x[i];
-      if (layers[i].x.assigned())
-        me = ME_INT_VAL;
-      else
-        layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
-    }
-    View::schedule(home,*this,me);
-  }
 
   template<class View, class Degree, class StateIdx>
   forceinline size_t
@@ -449,7 +450,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p)
-    : Propagator(home,share,p), n(p.n), n_states(p.n_states), start(p.start),
+    : Propagator(home,share,p), n(p.n), n_states(p.n_states),
       layers(home.alloc<Layer>(n+2)+1),
       states(home.alloc<State>((n+1)*n_states)) {
     c.update(home,share,p.c);
@@ -491,11 +492,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       while (layers[k].size == 1)
         k++;
       // There is only a single edge
-      Edge& e = layers[k-1].support[0].edges[0];
       assert((layers[k-1].support[0].n_edges == 1) &&
-             (states[e.o_state].i_deg == 1));
-      // New start state
-      start = e.o_state % n_states;
+             (states[layers[k-1].support[0].edges[0].o_state].i_deg == 1));
       // Eliminate assigned layers
       n -= k; layers += k;
       // Update advisor indices
