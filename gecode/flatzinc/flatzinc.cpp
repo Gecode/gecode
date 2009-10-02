@@ -540,13 +540,13 @@ namespace Gecode { namespace FlatZinc {
     stopped:
     if (opt.mode() == SM_STAT) {
       Gecode::Search::Statistics stat = se.statistics();
-      cout << endl
+      out << endl
            << "%%  runtime:       ";
-      Driver::stop(t_total,cout);
-      cout << endl
+      Driver::stop(t_total,out);
+      out << endl
            << "%%  solvetime:     ";
-      Driver::stop(t_solve,cout);
-      cout << endl
+      Driver::stop(t_solve,out);
+      out << endl
            << "%%  solutions:     " 
            << std::abs(static_cast<int>(opt.solutions()) - findSol) << endl
            << "%%  variables:     " 
