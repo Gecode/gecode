@@ -73,6 +73,14 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The memory reported could be sometimes too low (that could only
+happen when an advisor allocates memory which they do only now).
+
+[ENTRY]
 Module: other
 What:   documentation
 Rank:   minor
