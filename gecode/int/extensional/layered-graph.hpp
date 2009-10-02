@@ -41,6 +41,15 @@
 namespace Gecode { namespace Int { namespace Extensional {
 
   /*
+   * States
+   */
+  template<class View, class Degree, class StateIdx>
+  forceinline
+  LayeredGraph<View,Degree,StateIdx>::State::State(void) 
+    : i_deg(0), o_deg(0) {}
+
+
+  /*
    * Value iterator
    */
   template<class View, class Degree, class StateIdx>
@@ -146,10 +155,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     layers = home.alloc<Layer>(n+2)+1;
     states = home.alloc<State>((n+1)*n_states);
 
-    // Initialize states (indegree and outdegree)
-    for (int i = (n+1)*n_states; i--; )
-      states[i].i_deg = states[i].o_deg = 0;
-
     // Mark initial state as being reachable
     states[0].i_deg = 1;
 
@@ -228,6 +233,17 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   LayeredGraph<View,Degree,StateIdx>::advise(Space& home,
                                              Advisor& _a, const Delta& d) {
+    // Check whether state information has already been created
+    if (states == NULL) {
+      states = home.alloc<State>((n+1)*n_states);
+      for (int i=n; i--; )
+        for (unsigned int j=layers[i].size; j--; )
+          for (Degree d=layers[i].support[j].n_edges; d--; ) {
+            states[layers[i].support[j].edges[d].i_state].o_deg++;
+            states[layers[i].support[j].edges[d].o_state].i_deg++;
+          }
+    }
+    
     Index& a = static_cast<Index&>(_a);
     Layer& l = layers[a.i];
 
@@ -449,12 +465,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p)
     : Propagator(home,share,p), n(p.n), n_states(p.n_states),
-      layers(home.alloc<Layer>(n+2)+1),
-      states(home.alloc<State>((n+1)*n_states)) {
+      layers(home.alloc<Layer>(n+2)+1), states(NULL) {
     c.update(home,share,p.c);
-    // Copy states
-    for (int i = (n+1)*n_states; i--; )
-      states[i] = p.states[i];
+    // The states are not copied but reconstructed when needed (advise)
     // Copy layers
     for (int i=n; i--; ) {
       layers[i].x.update(home,share,p.layers[i].x);
@@ -498,7 +511,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (Advisors<Index> as(c); as(); ++as)
         as.advisor().i -= k;
       // Update states
-      states += k*n_states;
+      if (states != NULL)
+        states += k*n_states;
       for (int i=n; i--; )
         for (unsigned int j=layers[i].size; j--; )
           for (Degree d=layers[i].support[j].n_edges; d--; ) {
