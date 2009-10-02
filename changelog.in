@@ -83,7 +83,7 @@ happen when an advisor allocates memory which they do only now).
 [ENTRY]
 Module: other
 What:   documentation
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 Cleaned up the generated reference documentation, and introduced a number
 of workarounds for issues in doxygen. In particular, the documentation for
@@ -106,7 +106,7 @@ Thanks:	George Katsirelos, Nina Narodytska
 [DESCRIPTION]
 Extensional propagators using DFAs or REGs (aka regular) use a
 more compact state representation but create their state more
-eagerly. That can improve performance considerably at a slight
+eagerly. That can improve performance considerably (twice as fast) at a slight
 increase in memory.
 
 [ENTRY]
