@@ -138,6 +138,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     ModEvent me = ME_INT_BND;
     for (StateIdx i=static_cast<StateIdx>(x.size()); i--; ) {
       layers[i].x = x[i];
+      layers[i].size = layers[i].x.size();
       if (layers[i].x.assigned())
         me = ME_INT_VAL;
       else
