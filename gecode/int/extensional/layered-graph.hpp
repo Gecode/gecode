@@ -131,29 +131,19 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
                                                    const VarArgArray<Var>& x, 
-                                                   const DFA& d)
-    : Propagator(home), c(home), n(x.size()), n_states(d.n_states()),
-      layers(home.alloc<Layer>(n+2)+1), states(NULL) {
+                                                   const DFA& dfa)
+    : Propagator(home), c(home), n(x.size()), n_states(dfa.n_states()) {
     assert(n > 0);
-    ModEvent me = ME_INT_BND;
-    for (StateIdx i=static_cast<StateIdx>(x.size()); i--; ) {
-      layers[i].x = x[i];
-      layers[i].size = layers[i].x.size();
-      if (layers[i].x.assigned())
-        me = ME_INT_VAL;
-      else
-        layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
-    }
-    View::schedule(home,*this,me);
   }
 
   template<class View, class Degree, class StateIdx>
+  template<class Var>
   forceinline ExecStatus
   LayeredGraph<View,Degree,StateIdx>::initialize(Space& home,
+                                                 const VarArgArray<Var>& x, 
                                                  const DFA& dfa) {
-    Region r(home);
-
     // Allocate memory
+    layers = home.alloc<Layer>(n+2)+1;
     states = home.alloc<State>((n+1)*n_states);
 
     // Initialize states (indegree and outdegree)
@@ -168,10 +158,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       states[n*n_states + s].o_deg = 1;
 
     // Temporary memory for edges
+    Region r(home);
     Edge* edges = r.alloc<Edge>(dfa.max_degree());
 
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
+      layers[i].x = x[i];
       layers[i].support = home.alloc<Support>(layers[i].x.size());
       unsigned int j=0;
       // Enter links leaving reachable states (indegree != 0)
@@ -223,7 +215,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_FAILED;
       LayerValues lv(layers[i]);
       GECODE_ME_CHECK(layers[i].x.narrow_v(home,lv,false));
+      if (!layers[i].x.assigned())
+        layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
     }
+    // Schedule if subsumption is needed
+    if (c.empty())
+      View::schedule(home,*this,ME_INT_VAL);
     return ES_OK;
   }
 
@@ -428,22 +425,22 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   LayeredGraph<View,Degree,StateIdx>::post(Space& home, 
                                            const VarArgArray<Var>& x,
-                                           const DFA& d) {
+                                           const DFA& dfa) {
     if (x.size() == 0) {
       // Check whether the start state 0 is also a final state
-      if ((d.final_fst() <= 0) && (d.final_lst() >= 0))
+      if ((dfa.final_fst() <= 0) && (dfa.final_lst() >= 0))
         return ES_OK;
       return ES_FAILED;
     }
     assert(x.size() > 0);
     for (int i=x.size(); i--; ) {
-      DFA::Symbols s(d);
+      DFA::Symbols s(dfa);
       VarViewTraits<Var>::View xi(x[i]);
       GECODE_ME_CHECK(xi.inter_v(home,s,false));
     }
     LayeredGraph<View,Degree,StateIdx>* p =
-      new (home) LayeredGraph<View,Degree,StateIdx>(home,x,d);
-    return p->initialize(home,d);
+      new (home) LayeredGraph<View,Degree,StateIdx>(home,x,dfa);
+    return p->initialize(home,x,dfa);
   }
 
   template<class View, class Degree, class StateIdx>

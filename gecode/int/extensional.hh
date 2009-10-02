@@ -156,7 +156,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     IndexRange o_ch;
 
     /// Initialize layered graph
-    ExecStatus initialize(Space& home, const DFA& dfa);
+    template<class Var>
+    ExecStatus initialize(Space& home, 
+                          const VarArgArray<Var>& x, const DFA& dfa);
     /// Constructor for cloning \a p
     LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Degree,StateIdx>& p);
@@ -164,7 +166,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for posting
     template<class Var>
     LayeredGraph(Space& home, 
-                 const VarArgArray<Var>& x, const DFA& d);
+                 const VarArgArray<Var>& x, const DFA& dfa);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as high linear)
@@ -175,10 +177,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Post propagator on views \a x and DFA \a d
+    /// Post propagator on views \a x and DFA \a dfa
     template<class Var>
     static ExecStatus post(Space& home, 
-                           const VarArgArray<Var>& x, const DFA& d);
+                           const VarArgArray<Var>& x, const DFA& dfa);
   };
 
   /// Select small types for the layered graph propagator
