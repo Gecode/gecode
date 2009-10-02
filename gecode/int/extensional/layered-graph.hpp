@@ -127,37 +127,6 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
 
   template<class View, class Degree, class StateIdx>
-  forceinline void
-  LayeredGraph<View,Degree,StateIdx>::eliminate(void) {
-    if (layers[0].size > 1)
-      return;
-    assert(layers[0].size == 1);
-    // Skip all layers corresponding to assigned views
-    StateIdx k = 1;
-    while (layers[k].size == 1)
-      k++;
-    // There is only a single edge
-    Edge& e = layers[k-1].support[0].edges[0];
-    assert((layers[k-1].support[0].n_edges == 1) &&
-           (states[e.o_state].i_deg == 1));
-    // New start state
-    start = e.o_state % n_states;
-    // Eliminate assigned layers
-    n -= k; layers += k;
-    // Update advisor indices
-    for (Advisors<Index> as(c); as(); ++as)
-      as.advisor().i -= k;
-    // Update states
-    states += k*n_states;
-    for (int i=n; i--; )
-      for (unsigned int j=layers[i].size; j--; )
-        for (Degree d=layers[i].support[j].n_edges; d--; ) {
-          layers[i].support[j].edges[d].i_state -= k*n_states;
-          layers[i].support[j].edges[d].o_state -= k*n_states;
-        }
-  }
-
-  template<class View, class Degree, class StateIdx>
   forceinline ExecStatus
   LayeredGraph<View,Degree,StateIdx>::initialize(Space& home,
                                                  const DFA& dfa) {
@@ -417,8 +386,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     o_ch.reset();
 
     // Check subsumption
-    if (c.empty())
-      return ES_SUBSUMED(*this,home);
+    if (c.empty()) {
+      c.dispose(home);
+      return ES_SUBSUMED(*this,sizeof(*this));
+    }
     return ES_FIX;
   }
 
@@ -513,7 +484,32 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Degree, class StateIdx>
   Actor*
   LayeredGraph<View,Degree,StateIdx>::copy(Space& home, bool share) {
-    eliminate();
+    // Eliminate an assigned prefix
+    if (layers[0].size == 1) {
+      // Skip all layers corresponding to assigned views
+      StateIdx k = 1;
+      while (layers[k].size == 1)
+        k++;
+      // There is only a single edge
+      Edge& e = layers[k-1].support[0].edges[0];
+      assert((layers[k-1].support[0].n_edges == 1) &&
+             (states[e.o_state].i_deg == 1));
+      // New start state
+      start = e.o_state % n_states;
+      // Eliminate assigned layers
+      n -= k; layers += k;
+      // Update advisor indices
+      for (Advisors<Index> as(c); as(); ++as)
+        as.advisor().i -= k;
+      // Update states
+      states += k*n_states;
+      for (int i=n; i--; )
+        for (unsigned int j=layers[i].size; j--; )
+          for (Degree d=layers[i].support[j].n_edges; d--; ) {
+            layers[i].support[j].edges[d].i_state -= k*n_states;
+            layers[i].support[j].edges[d].o_state -= k*n_states;
+          }
+    }
     return new (home) LayeredGraph<View,Degree,StateIdx>(home,share,*this);
   }
 

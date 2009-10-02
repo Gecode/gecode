@@ -157,8 +157,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Index range with out-degree modifications
     IndexRange o_ch;
 
-    /// Eliminate assigned prefix
-    void eliminate(void);
     /// Initialize layered graph
     ExecStatus initialize(Space& home, const DFA& dfa);
     /// Constructor for cloning \a p
