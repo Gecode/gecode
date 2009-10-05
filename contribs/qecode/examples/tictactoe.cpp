@@ -26,17 +26,20 @@ THE SOFTWARE.
 #include "gecode/minimodel.hh"
 #include "gecode/int/element.hh"
 #include "QCOPPlus.hh"
-#include "QCSPPlusUnblockable.hh"
-#include "UnblockableViewValBranching.hh"
 #include "qsolver_general.hh"
-#include "qsolver_unblockable.hh"
 #include <time.h>
 #define UNIVERSAL true
 #define EXISTENTIAL false
 
+//////////////////////////////////////////////////////////////////////////////
+// This examples models the standard game of Tic-Tac-Toe on a 3*3 board.    //
+// For each turn, the board is represented by nine Bi variables. Lined_i    //
+// represents wether a preceding move have been winning or not
+//////////////////////////////////////////////////////////////////////////////
 
 using namespace MiniModel;
 
+// Recursive function for strategy output. This version produces a graphviz script...
 void printStr(Strategy s,int depth) {
   cout<<"A"<<s.id()<<" [ label=\"";
     StrategyNode plop = s.getTag();
@@ -51,6 +54,8 @@ void printStr(Strategy s,int depth) {
       printStr(s.getChild(i),depth+1);
     }
 }
+
+
 
 int main (int argc, char * const argv[]) {
   clock_t start, finish;
@@ -81,11 +86,10 @@ int main (int argc, char * const argv[]) {
     }
     p.QIntVar(0*21 + 19 ,0,1); // Lined_0
     IntVar Lined0(p.var(19));
-    p.QIntVar(0*21 + 20 ,0,2); // Win_0
+    p.QIntVar(0*21 + 20 ,0,0); // Win_0
     IntVar Win0(p.var(20));
 
     post(*(p.space()),Lined0 == 0);
-    post(*(p.space()),Win0 == 0);
 
     element(*(p.space()),C0,X0,1,ICL_DOM);
     post(*(p.space()), C0[0] + C0[1] + C0[2] + C0[3] + C0[4] + C0[5] + C0[6] + C0[7] + C0[8] == 1); 
@@ -116,9 +120,7 @@ int main (int argc, char * const argv[]) {
       p.QIntVar(i*21 + 19 ,0,1); // Lined_0
       IntVar Lined_i(p.var(i*21+19));
       IntVar Lined_imi(p.var((i-1)*21+19));
-      p.QIntVar(i*21 + 20 ,0,2); // Win_0
-      IntVar Win_i(p.var(i*21 + 20));
-      IntVar Win_imi(p.var((i-1)*21 + 20));
+      p.QIntVar(i*21 + 20 ,0,0); // Win_0 - unused
 
       IntVarArgs X(i+1);
       for (int j=0;j<=i;j++) {
@@ -154,12 +156,6 @@ int main (int argc, char * const argv[]) {
 	   );
 
       int toadd = 1 + (i % 2);
-      post(*(p.space()),tt(
-                          (~(Win_imi != 0) && ~(Win_i == Win_imi)) ||
-                          (~(Win_imi == 0) && ~(Lined_i == 1) && ~(Win_i == toadd)) ||
-                          (~(Win_imi == 0) && ~(Lined_i == 0) && ~(Win_i == 0))
-                         )
-	   );
 	
       post(*(p.space()),Lined_imi == 0);
 
@@ -180,13 +176,11 @@ int main (int argc, char * const argv[]) {
     {
       start=clock();
       cout<<"General QCSP solver : "<<endl;
-    // So, we build a quantified solver for our problem p, using the heuristic we just created.
+
     QSolver solver(&p);
     
     unsigned long int nodes=0;
     
-    // then we solve the problem. Nodes and Steps will contain the number of nodes encountered and
-    // of propagation steps achieved during the solving.
     Strategy outcome = solver.solve(nodes);
     
     cout << "  outcome: " << ( outcome.isFalse()? "FALSE" : "TRUE") << endl;
@@ -195,6 +189,7 @@ int main (int argc, char * const argv[]) {
     cout<<"Time : "<<(finish-start)<<endl;
     }
 
+    // Uncomment the following to have graphviz output
     //    cout<<" graph G {"<<endl;
     //    printStr(outcome,0);
     //    cout<<"}"<<endl;
