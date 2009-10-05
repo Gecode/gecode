@@ -73,6 +73,16 @@ Date: ?
 The next release.
 
 [ENTRY]
+Module: scheduling
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added propagators for disjunctive scheduling (unary resource
+scheduling). This is still experimental as the propagators are
+not yet optimized and branching and modelling support is not yet
+available.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor
