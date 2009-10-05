@@ -1148,7 +1148,8 @@ namespace Gecode { namespace Int { namespace GCC {
   VarValGraph<Card>::sync(Space& home,
                           ViewArray<IntView>& x, ViewArray<Card>& k) {
     Region r(home);
-    NodeStack re(r,n_node);
+    // A node can be pushed twice (once when checking cardinality and later again)
+    NodeStack re(r,2*n_node);
 
     // synchronize cardinality variables
     if (Card::propagate) {
