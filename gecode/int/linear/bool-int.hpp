@@ -573,7 +573,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB>
   ExecStatus
-  ReGqBoolInt<VX,VB>::advise(Space& home, Advisor& a, const Delta& d) {
+  ReGqBoolInt<VX,VB>::advise(Space&, Advisor&, const Delta& d) {
     if (VX::one(d))
       c--;
     n_s--;
@@ -668,7 +668,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB>
   ExecStatus
-  ReEqBoolInt<VX,VB>::advise(Space& home, Advisor& a, const Delta& d) {
+  ReEqBoolInt<VX,VB>::advise(Space&, Advisor&, const Delta& d) {
     if (VX::one(d))
       c--;
     n_s--;
