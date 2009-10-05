@@ -67,10 +67,18 @@
 #
 
 [RELEASE]
-Version: 3.1.1
-Date: ?
+Version: 3.2.0
+Date: 2009-10-05
 [DESCRIPTION]
-The next release.
+This release has some important bug fixes (in particular for
+global cardinality aka count), the documentation has been
+improved (worked around some issues with generation by doxygen),
+integrates the FlatZinc interpreter into the Gecode source tree,
+provides propagators for disjunctive scheduling (experimental),
+and lots of small changes and fixes. For more consistent names,
+branchings are branchers now and branching descriptions are
+choices (this you might have to adapt to).
+
 
 [ENTRY]
 Module: scheduling
