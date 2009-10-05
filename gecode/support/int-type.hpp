@@ -41,9 +41,9 @@ namespace Gecode { namespace Support {
 
   /// Description of integer types
   enum IntType {
-    IT_CHAR, ///< char integer type
-    IT_SHRT, ///< short integer type
-    IT_INT   ///< integer type
+    IT_CHAR = 0, ///< char integer type
+    IT_SHRT = 1, ///< short integer type
+    IT_INT  = 2  ///< integer type
   };
 
   /// Return type required to represent \a n

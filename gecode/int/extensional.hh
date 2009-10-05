@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   class LayeredGraph : public Propagator {
   protected:
     /// States are described by number of incoming and outgoing edges
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Support information for a value
     class Support {
     public:
-      int val; ///< Supported value
+      Val val; ///< Supported value
       Degree n_edges; ///< Number of supporting edges
       Edge* edges; ///< Supporting edges in layered graph
     };
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                           const VarArgArray<Var>& x, const DFA& dfa);
     /// Constructor for cloning \a p
     LayeredGraph(Space& home, bool share,
-                 LayeredGraph<View,Degree,StateIdx>& p);
+                 LayeredGraph<View,Val,Degree,StateIdx>& p);
   public:
     /// Constructor for posting
     template<class Var>

@@ -43,40 +43,42 @@ namespace Gecode { namespace Int { namespace Extensional {
   /*
    * States
    */
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::State::State(void) 
+  LayeredGraph<View,Val,Degree,StateIdx>::State::State(void) 
     : i_deg(0), o_deg(0) {}
 
 
   /*
    * Value iterator
    */
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::LayerValues(void) {}
-  template<class View, class Degree, class StateIdx>
+  LayeredGraph<View,Val,Degree,StateIdx>::LayerValues::LayerValues(void) {}
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::LayerValues(const Layer& l)
+  LayeredGraph<View,Val,Degree,StateIdx>::LayerValues
+  ::LayerValues(const Layer& l)
     : s1(l.support), s2(l.support+l.size) {}
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline void
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::init(const Layer& l) {
+  LayeredGraph<View,Val,Degree,StateIdx>::LayerValues::init(const Layer& l) {
     s1=l.support; s2=l.support+l.size;
   }
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline bool
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::operator ()(void) const {
+  LayeredGraph<View,Val,Degree,StateIdx>::LayerValues
+  ::operator ()(void) const {
     return s1<s2;
   }
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline void
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::operator ++(void) {
+  LayeredGraph<View,Val,Degree,StateIdx>::LayerValues::operator ++(void) {
     s1++;
   }
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline int
-  LayeredGraph<View,Degree,StateIdx>::LayerValues::val(void) const {
+  LayeredGraph<View,Val,Degree,StateIdx>::LayerValues::val(void) const {
     return s1->val;
   }
 
@@ -85,17 +87,17 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Index advisors
    *
    */
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::Index::Index(Space& home, Propagator& p,
-                                                   Council<Index>& c,
-                                                   StateIdx i0)
+  LayeredGraph<View,Val,Degree,StateIdx>::Index::Index(Space& home, Propagator& p,
+                                                       Council<Index>& c,
+                                                       StateIdx i0)
     : Advisor(home,p,c), i(i0) {}
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::Index::Index(Space& home, bool share,
-                                                   Index& a)
+  LayeredGraph<View,Val,Degree,StateIdx>::Index::Index(Space& home, bool share,
+                                                       Index& a)
     : Advisor(home,share,a), i(a.i) {}
 
 
@@ -103,28 +105,28 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Index ranges
    *
    */
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::IndexRange::IndexRange(void)
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::IndexRange(void)
     : _fst(INT_MAX), _lst(INT_MIN) {}
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline void
-  LayeredGraph<View,Degree,StateIdx>::IndexRange::reset(void) {
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::reset(void) {
     _fst=INT_MAX; _lst=INT_MIN;
   }
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline void
-  LayeredGraph<View,Degree,StateIdx>::IndexRange::add(int i) {
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::add(int i) {
     _fst=std::min(_fst,i); _lst=std::max(_lst,i);
   }
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline int
-  LayeredGraph<View,Degree,StateIdx>::IndexRange::fst(void) const {
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::fst(void) const {
     return _fst;
   }
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline int
-  LayeredGraph<View,Degree,StateIdx>::IndexRange::lst(void) const {
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::lst(void) const {
     return _lst;
   }
 
@@ -135,22 +137,22 @@ namespace Gecode { namespace Int { namespace Extensional {
    *
    */
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   template<class Var>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>::LayeredGraph(Space& home,
-                                                   const VarArgArray<Var>& x, 
-                                                   const DFA& dfa)
+  LayeredGraph<View,Val,Degree,StateIdx>::LayeredGraph(Space& home,
+                                                       const VarArgArray<Var>& x, 
+                                                       const DFA& dfa)
     : Propagator(home), c(home), n(x.size()), n_states(dfa.n_states()) {
     assert(n > 0);
   }
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   template<class Var>
   forceinline ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::initialize(Space& home,
-                                                 const VarArgArray<Var>& x, 
-                                                 const DFA& dfa) {
+  LayeredGraph<View,Val,Degree,StateIdx>::initialize(Space& home,
+                                                     const VarArgArray<Var>& x, 
+                                                     const DFA& dfa) {
     // Allocate memory
     layers = home.alloc<Layer>(n+2)+1;
     states = home.alloc<State>((n+1)*n_states);
@@ -187,7 +189,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         assert(n_edges <= dfa.max_degree());
         // Found support for value
         if (n_edges > 0) {
-          layers[i].support[j].val = nx.val();
+          layers[i].support[j].val = static_cast<Val>(nx.val());
           layers[i].support[j].n_edges = n_edges;
           layers[i].support[j].edges = home.alloc<Edge>(n_edges);
           for (Degree d=n_edges; d--; )
@@ -229,9 +231,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_OK;
   }
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::advise(Space& home,
+  LayeredGraph<View,Val,Degree,StateIdx>::advise(Space& home,
                                              Advisor& _a, const Delta& d) {
     // Check whether state information has already been created
     if (states == NULL) {
@@ -260,7 +262,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     bool o_mod = false;
 
     if (View::modevent(d) == ME_INT_VAL) {
-      int n = l.x.val();
+      Val n = static_cast<Val>(l.x.val());
       unsigned int j=0;
       for (; l.support[j].val < n; j++)
         // Supported value not any longer in view
@@ -284,7 +286,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       unsigned int k=0;
       unsigned int s=l.size;
       for (ViewRanges<View> rx(l.x); rx() && (j<s);)
-        if (l.support[j].val < rx.min()) {
+        if (l.support[j].val < static_cast<Val>(rx.min())) {
           // Supported value not any longer in view
           for (Degree d=l.support[j].n_edges; d--; ) {
             // Adapt states
@@ -292,7 +294,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
           }
           ++j;
-        } else if (l.support[j].val > rx.max()) {
+        } else if (l.support[j].val > static_cast<Val>(rx.max())) {
           ++rx;
         } else {
           l.support[k++]=l.support[j++];
@@ -307,11 +309,11 @@ namespace Gecode { namespace Int { namespace Extensional {
           i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
         }
     } else {
-      int min = l.x.min(d);
+      Val min = static_cast<Val>(l.x.min(d));
       unsigned int j=0;
       // Skip values smaller than min (to keep)
       for (; l.support[j].val < min; j++) {}
-      int max = l.x.max(d);
+      Val max = static_cast<Val>(l.x.max(d));
       unsigned int k=j;
       unsigned int s=l.size;
       // Remove pruned values
@@ -347,10 +349,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
   }
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::propagate(Space& home,
-                                                const ModEventDelta&) {
+  LayeredGraph<View,Val,Degree,StateIdx>::propagate(Space& home,
+                                                    const ModEventDelta&) {
     // Forward pass
     for (int i=i_ch.fst(); i<=i_ch.lst(); i++) {
       bool i_mod = false;
@@ -428,20 +430,20 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline size_t
-  LayeredGraph<View,Degree,StateIdx>::dispose(Space& home) {
+  LayeredGraph<View,Val,Degree,StateIdx>::dispose(Space& home) {
     c.dispose(home);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   template<class Var>
   ExecStatus
-  LayeredGraph<View,Degree,StateIdx>::post(Space& home, 
-                                           const VarArgArray<Var>& x,
-                                           const DFA& dfa) {
+  LayeredGraph<View,Val,Degree,StateIdx>::post(Space& home, 
+                                               const VarArgArray<Var>& x,
+                                               const DFA& dfa) {
     if (x.size() == 0) {
       // Check whether the start state 0 is also a final state
       if ((dfa.final_fst() <= 0) && (dfa.final_lst() >= 0))
@@ -454,16 +456,16 @@ namespace Gecode { namespace Int { namespace Extensional {
       typename VarViewTraits<Var>::View xi(x[i]);
       GECODE_ME_CHECK(xi.inter_v(home,s,false));
     }
-    LayeredGraph<View,Degree,StateIdx>* p =
-      new (home) LayeredGraph<View,Degree,StateIdx>(home,x,dfa);
+    LayeredGraph<View,Val,Degree,StateIdx>* p =
+      new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,x,dfa);
     return p->initialize(home,x,dfa);
   }
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Degree,StateIdx>
+  LayeredGraph<View,Val,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
-                 LayeredGraph<View,Degree,StateIdx>& p)
+                 LayeredGraph<View,Val,Degree,StateIdx>& p)
     : Propagator(home,share,p), n(p.n), n_states(p.n_states),
       layers(home.alloc<Layer>(n+2)+1), states(NULL) {
     c.update(home,share,p.c);
@@ -486,18 +488,26 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
   }
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   PropCost
-  LayeredGraph<View,Degree,StateIdx>::cost(const Space&,
-                                           const ModEventDelta&) const {
+  LayeredGraph<View,Val,Degree,StateIdx>::cost(const Space&,
+                                               const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI,n);
   }
 
-  template<class View, class Degree, class StateIdx>
+  template<class View, class Val, class Degree, class StateIdx>
   Actor*
-  LayeredGraph<View,Degree,StateIdx>::copy(Space& home, bool share) {
+  LayeredGraph<View,Val,Degree,StateIdx>::copy(Space& home, bool share) {
     // Eliminate an assigned prefix
     if (layers[0].size == 1) {
+      /*
+       * The state information is always available: either the propagator
+       * has been created (hence, also the state information has been
+       * created), or the first variable become assigned and hence
+       * an advisor must have been run (which then has created the state
+       * information).
+       */
+      assert(states != NULL);
       // Skip all layers corresponding to assigned views
       StateIdx k = 1;
       while (layers[k].size == 1)
@@ -511,8 +521,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (Advisors<Index> as(c); as(); ++as)
         as.advisor().i -= k;
       // Update states
-      if (states != NULL)
-        states += k*n_states;
+      states += k*n_states;
       for (int i=n; i--; )
         for (unsigned int j=layers[i].size; j--; )
           for (Degree d=layers[i].support[j].n_edges; d--; ) {
@@ -520,7 +529,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             layers[i].support[j].edges[d].o_state -= k*n_states;
           }
     }
-    return new (home) LayeredGraph<View,Degree,StateIdx>(home,share,*this);
+    return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);
   }
 
   /// Select small types for the layered graph propagator
@@ -531,58 +540,123 @@ namespace Gecode { namespace Int { namespace Extensional {
       Gecode::Support::s_type((x.size()+2)*dfa.n_states());
     Gecode::Support::IntType t_degree =
       Gecode::Support::u_type(dfa.max_degree());
-    switch (t_state_idx) {
+    Gecode::Support::IntType t_val = 
+      std::max(Support::s_type(dfa.symbol_min()),
+               Support::s_type(dfa.symbol_max()));
+    switch (t_val) {
     case Gecode::Support::IT_CHAR:
-      switch (t_degree) {
-      case Gecode::Support::IT_CHAR:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned char,signed char>
-          ::post(home,x,dfa);
-      case Gecode::Support::IT_SHRT:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned short int,signed char>
-          ::post(home,x,dfa);
-      case Gecode::Support::IT_INT:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned int,signed char>
-          ::post(home,x,dfa);
-      default: GECODE_NEVER;
-      }
-      break;
     case Gecode::Support::IT_SHRT:
-      switch (t_degree) {
+      switch (t_state_idx) {
       case Gecode::Support::IT_CHAR:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned char,short int>
-          ::post(home,x,dfa);
+        switch (t_degree) {
+        case Gecode::Support::IT_CHAR:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned char,signed char>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_SHRT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned short int,signed char>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_INT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned int,signed char>
+            ::post(home,x,dfa);
+        default: GECODE_NEVER;
+        }
+        break;
       case Gecode::Support::IT_SHRT:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned short int,short int>
-          ::post(home,x,dfa);
+        switch (t_degree) {
+        case Gecode::Support::IT_CHAR:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned char,short int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_SHRT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned short int,short int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_INT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned int,short int>
+            ::post(home,x,dfa);
+        default: GECODE_NEVER;
+        }
+        break;
       case Gecode::Support::IT_INT:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned int,short int>
-          ::post(home,x,dfa);
+        switch (t_degree) {
+        case Gecode::Support::IT_CHAR:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned char,int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_SHRT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned short int,int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_INT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,short int,unsigned int,int>
+            ::post(home,x,dfa);
+        default: GECODE_NEVER;
+        }
+        break;
       default: GECODE_NEVER;
       }
-      break;
+
     case Gecode::Support::IT_INT:
-      switch (t_degree) {
+      switch (t_state_idx) {
       case Gecode::Support::IT_CHAR:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned char,int>
-          ::post(home,x,dfa);
+        switch (t_degree) {
+        case Gecode::Support::IT_CHAR:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned char,signed char>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_SHRT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned short int,signed char>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_INT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned int,signed char>
+            ::post(home,x,dfa);
+        default: GECODE_NEVER;
+        }
+        break;
       case Gecode::Support::IT_SHRT:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned short int,int>
-          ::post(home,x,dfa);
+        switch (t_degree) {
+        case Gecode::Support::IT_CHAR:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned char,short int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_SHRT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned short int,short int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_INT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned int,short int>
+            ::post(home,x,dfa);
+        default: GECODE_NEVER;
+        }
+        break;
       case Gecode::Support::IT_INT:
-        return Extensional::LayeredGraph
-          <typename VarViewTraits<Var>::View,unsigned int,int>
-          ::post(home,x,dfa);
+        switch (t_degree) {
+        case Gecode::Support::IT_CHAR:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned char,int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_SHRT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned short int,int>
+            ::post(home,x,dfa);
+        case Gecode::Support::IT_INT:
+          return Extensional::LayeredGraph
+            <typename VarViewTraits<Var>::View,int,unsigned int,int>
+            ::post(home,x,dfa);
+        default: GECODE_NEVER;
+        }
+        break;
       default: GECODE_NEVER;
       }
-      break;
+
     default: GECODE_NEVER;
     }
     return ES_OK;
