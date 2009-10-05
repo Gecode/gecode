@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   CardConst::subscribe(Space&, Propagator&, PropCond, bool) {}
   forceinline void
-  CardConst::cancel(Space& home, Propagator& p, PropCond pc) {}
+  CardConst::cancel(Space&, Propagator&, PropCond) {}
 
   forceinline void
   CardConst::update(Space&, bool, CardConst& x) {
