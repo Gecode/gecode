@@ -132,7 +132,7 @@ public:
     (void) new (home) Warnsdorff(home, xv);
   }
   /// Delete brancher and return its size
-  virtual size_t dispose(Space& home) {
+  virtual size_t dispose(Space&) {
     return sizeof(*this);
   }
 };
