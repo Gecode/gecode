@@ -758,11 +758,15 @@ export ALLLIB = \
 	$(FLATZINCLIB)
 else
 DLLTARGETS=
+ifeq "@BUILD_MACOS_FRAMEWORK@" "yes"
+export ALLLIB = gecode.framework/Versions/@GECODE_SOVERSION@/gecode
+else
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) \
 	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(SCHEDULINGSTATICLIB) \
 	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
+endif
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
@@ -892,9 +896,10 @@ all: compilelib
 	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs
-	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(LIBTARGETS) $(FLATZINCEXE)
+	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
 	@$(MAKE) compilesubdirs
 	@$(MAKE) framework
+	@$(MAKE) $(FLATZINCEXE)
 
 compileexamples: $(EXAMPLEEXE)
 
@@ -1044,17 +1049,17 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/graph/%$(OBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
-	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_GRAPH \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_GRAPH_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/graph/%$(SBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
-	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_GRAPH \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_GRAPH_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/scheduling/%$(OBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
-	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SCHEDULING \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
-	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SCHEDULING \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/driver/%$(OBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
@@ -1157,10 +1162,17 @@ $(FLATZINC_GENSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): gecode/fl
 #
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
+
+ifeq "@BUILD_MACOS_FRAMEWORK@" "yes"
+export LINKALL = -F. -framework gecode
+else
 export LINKALL = \
-	$(LINKDRIVER) $(LINKGIST) $(LINKSEARCH) $(LINKSCHEDULING) \
+	$(LINKFLATZINC) $(LINKDRIVER) $(LINKGIST) \
+	$(LINKSEARCH) $(LINKSCHEDULING) \
 	$(LINKGRAPH) $(LINKMM) $(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
+endif
+
 $(SUPPORTDLL): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) $(SUPPORTSONAME) \
 		@LINKOUTPUT@$(SUPPORTDLL)
@@ -1315,12 +1327,13 @@ $(FLATZINCSTATICLIB): $(FLATZINCOBJ)
 
 .PHONY: framework
 ifeq "@BUILD_MACOS_FRAMEWORK@" "yes"
-framework: $(STATICTARGETS)
+framework: gecode.framework/Versions/@GECODE_SOVERSION@/gecode
+
+gecode.framework/Versions/@GECODE_SOVERSION@/gecode: $(STATICTARGETS)
 	$(RMF) gecode.framework
 	mkdir -p gecode.framework/Versions/@GECODE_SOVERSION@
 	$(CXX) -all_load -compatibility_version @GECODE_SOVERSION@.0 \
 	  -current_version @GECODE_SOVERSION@.0 \
-	  -install_name /Library/Frameworks/gecode.framework/Versions/@GECODE_SOVERSION@/gecode \
 	  $(DLLFLAGS) $(LINKQT) \
 	  -o gecode.framework/Versions/@GECODE_SOVERSION@/gecode $^
 	$(MAKE) doinstallheaders \
@@ -1354,7 +1367,7 @@ $(TESTEXE): $(TESTOBJ) $(ALLLIB)
 
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(DLLPATH) $(CXXFLAGS) \
-	$(LINKFLATZINC) $(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
+	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 
