@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  ChannelInt<View>::ChannelInt(Space& home,
+  ChannelInt<View>::ChannelInt(Home home,
                              ViewArray<Gecode::Int::IntView>& xs0,
                              ViewArray<View>& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline ExecStatus
-  ChannelInt<View>::post(Space& home, ViewArray<Gecode::Int::IntView>& xs,
+  ChannelInt<View>::post(Home home, ViewArray<Gecode::Int::IntView>& xs,
                           ViewArray<View>& ys) {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables

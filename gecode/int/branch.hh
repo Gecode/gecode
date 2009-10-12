@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewValuesBrancher(Space& home, bool share, ViewValuesBrancher& b);
   public:
     /// Constructor for creation
-    ViewValuesBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
+    ViewValuesBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                         ViewSel& vi_s);
     /// Return choice
     virtual const Choice* choice(Space& home);

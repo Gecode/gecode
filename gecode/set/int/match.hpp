@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  Match<View>::Match(Space& home, View y0, ViewArray< Gecode::Int::IntView >& ys)
+  Match<View>::Match(Home home, View y0, ViewArray< Gecode::Int::IntView >& ys)
     : Propagator(home), x0(y0), xs(ys) {
     x0.subscribe(home,*this, PC_SET_ANY);
     xs.subscribe(home,*this, Gecode::Int::PC_INT_BND);
@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline ExecStatus
-  Match<View>::post(Space& home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
+  Match<View>::post(Home home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
     unsigned int xs_size = xs.size();
     GECODE_ME_CHECK(x0.cardMin(home,xs_size));
     GECODE_ME_CHECK(x0.cardMax(home,xs_size));

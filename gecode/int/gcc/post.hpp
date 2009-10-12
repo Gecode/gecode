@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card>
   ExecStatus
-  postSideConstraints(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+  postSideConstraints(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
     Region r(home);
 
     {
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card>
   inline bool
-  isDistinct(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+  isDistinct(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
     if (Card::propagate) {
       Region r(home);
       ViewRanges<IntView>* xrange = r.alloc<ViewRanges<IntView> >(x.size());

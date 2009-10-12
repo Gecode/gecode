@@ -75,12 +75,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB>
   forceinline
-  SqrPlusBnd<VA,VB>::SqrPlusBnd(Space& home, VA x0, VB x1)
+  SqrPlusBnd<VA,VB>::SqrPlusBnd(Home home, VA x0, VB x1)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,x0,x1) {}
 
   template<class VA, class VB>
   forceinline ExecStatus
-  SqrPlusBnd<VA,VB>::post(Space& home, VA x0, VB x1) {
+  SqrPlusBnd<VA,VB>::post(Home home, VA x0, VB x1) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     (void) new (home) SqrPlusBnd<VA,VB>(home,x0,x1);
     return ES_OK;
@@ -113,12 +113,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  SqrBnd<View>::SqrBnd(Space& home, View x0, View x1)
+  SqrBnd<View>::SqrBnd(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template<class View>
   forceinline ExecStatus
-  SqrBnd<View>::post(Space& home, View x0, View x1) {
+  SqrBnd<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
     if (same(x0,x1)) {
       GECODE_ME_CHECK(x1.lq(home,1));
@@ -203,12 +203,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template<class VA, class VB>
   forceinline
-  SqrPlusDom<VA,VB>::SqrPlusDom(Space& home, VA x0, VB x1)
+  SqrPlusDom<VA,VB>::SqrPlusDom(Home home, VA x0, VB x1)
     : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,x0,x1) {}
 
   template<class VA, class VB>
   forceinline ExecStatus
-  SqrPlusDom<VA,VB>::post(Space& home, VA x0, VB x1) {
+  SqrPlusDom<VA,VB>::post(Home home, VA x0, VB x1) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
     (void) new (home) SqrPlusDom<VA,VB>(home,x0,x1);
     return ES_OK;
@@ -269,12 +269,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  SqrDom<View>::SqrDom(Space& home, View x0, View x1)
+  SqrDom<View>::SqrDom(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
 
   template<class View>
   forceinline ExecStatus
-  SqrDom<View>::post(Space& home, View x0, View x1) {
+  SqrDom<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
     if (same(x0,x1)) {
       GECODE_ME_CHECK(x1.lq(home,1));

@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  ChannelBool<View>::ChannelBool(Space& home,
+  ChannelBool<View>::ChannelBool(Home home,
                                  ViewArray<Gecode::Int::BoolView>& x0,
                                  View y0)
     : Super(home,x0,y0), co(home), running(false) {
@@ -113,7 +113,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline ExecStatus
-  ChannelBool<View>::post(Space& home, ViewArray<Gecode::Int::BoolView>& x,
+  ChannelBool<View>::post(Home home, ViewArray<Gecode::Int::BoolView>& x,
                           View y) {
     GECODE_ME_CHECK(y.intersect(home, 0, x.size()-1));
     (void) new (home) ChannelBool(home,x,y);

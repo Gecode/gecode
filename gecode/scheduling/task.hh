@@ -404,7 +404,7 @@ namespace Gecode { namespace Scheduling {
     /// Tasks
     TaskArray<Task> t;
     /// Constructor for creation
-    TaskProp(Space& home, TaskArray<Task>& t);
+    TaskProp(Home home, TaskArray<Task>& t);
     /// Constructor for cloning \a p
     TaskProp(Space& home, bool shared, TaskProp<Task>& p);
   public:

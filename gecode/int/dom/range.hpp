@@ -41,13 +41,13 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template<class View>
   forceinline
-  ReRange<View>::ReRange(Space& home, View x, int min0, int max0, BoolView b)
+  ReRange<View>::ReRange(Home home, View x, int min0, int max0, BoolView b)
     : ReUnaryPropagator<View,PC_INT_BND,BoolView>(home,x,b),
       min(min0), max(max0) {}
 
   template<class View>
   ExecStatus
-  ReRange<View>::post(Space& home, View x, int min, int max, BoolView b) {
+  ReRange<View>::post(Home home, View x, int min, int max, BoolView b) {
     if (min > max) {
       return ES_FAILED;
     } else if (min == max) {

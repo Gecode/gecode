@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   /// Create virtual view selector for tie-breaking
   void
-  virtualize(Gecode::Space& home, IntVarBranch vars,
+  virtualize(Gecode::Home home, IntVarBranch vars,
              const Gecode::VarBranchOptions& o_vars,
              Gecode::ViewSelVirtualBase<BoolView>*& v) {
     switch (vars) {
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Branch {
 namespace Gecode {
 
   void
-  branch(Gecode::Space& home, const BoolVarArgs& x,
+  branch(Gecode::Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const Gecode::VarBranchOptions& o_vars,
          const Gecode::ValBranchOptions& o_vals) {
@@ -218,7 +218,7 @@ namespace Gecode {
   }
 
   void
-  branch(Gecode::Space& home, const BoolVarArgs& x,
+  branch(Gecode::Home home, const BoolVarArgs& x,
          const Gecode::TieBreakVarBranch<IntVarBranch>& vars,
          IntValBranch vals,
          const Gecode::TieBreakVarBranchOptions& o_vars,

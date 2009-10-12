@@ -69,14 +69,14 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Constructor for cloning \a p
     Subset(Space& home, bool share,Subset& p);
     /// Constructor for posting
-    Subset(Space& home,View0, View1);
+    Subset(Home home,View0, View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\subseteq y\f$
-    static  ExecStatus post(Space& home,View0 x,View1 y);
+    static  ExecStatus post(Home home,View0 x,View1 y);
   };
 
   /**
@@ -95,14 +95,14 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Constructor for cloning \a p
     NoSubset(Space& home, bool share,NoSubset& p);
     /// Constructor for posting
-    NoSubset(Space& home,View0,View1);
+    NoSubset(Home home,View0,View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\subseteq y\f$
-    static  ExecStatus post(Space& home,View0 x,View1 y);
+    static  ExecStatus post(Home home,View0 x,View1 y);
   };
 
   /**
@@ -121,7 +121,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Constructor for cloning \a p
     ReSubset(Space& home, bool share,ReSubset&);
     /// Constructor for posting
-    ReSubset(Space& home,View0, View1, Gecode::Int::BoolView);
+    ReSubset(Home home,View0, View1, Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
@@ -132,7 +132,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$
-    static ExecStatus post(Space& home,View0 x, View1 y,
+    static ExecStatus post(Home home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
   };
 
@@ -151,14 +151,14 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Constructor for cloning \a p
     Eq(Space& home, bool share,Eq& p);
     /// Constructor for posting
-    Eq(Space& home,View0, View1);
+    Eq(Home home,View0, View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x=y \f$
-    static  ExecStatus  post(Space& home,View0,View1);
+    static  ExecStatus  post(Home home,View0,View1);
   };
 
   /**
@@ -177,7 +177,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Constructor for cloning \a p
     ReEq(Space& home, bool share,ReEq&);
     /// Constructor for posting
-    ReEq(Space& home,View0, View1, Gecode::Int::BoolView);
+    ReEq(Home home,View0, View1, Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
@@ -188,7 +188,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$
-    static ExecStatus post(Space& home,View0 x, View1 y,
+    static ExecStatus post(Home home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
   };
 
@@ -208,14 +208,14 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Constructor for cloning \a p
     Distinct(Space& home, bool share,Distinct& p);
     /// Constructor for posting
-    Distinct(Space& home,View0,View1);
+    Distinct(Home home,View0,View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y \f$
-    static  ExecStatus  post(Space& home,View0,View1);
+    static  ExecStatus  post(Home home,View0,View1);
   };
 
   /**
@@ -237,14 +237,14 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Constructor for cloning \a p
     DistinctDoit(Space& home, bool share,DistinctDoit&);
     /// Constructor for posting
-    DistinctDoit(Space& home, View0, ConstantView);
+    DistinctDoit(Home home, View0, ConstantView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y \f$
-    static ExecStatus post(Space& home, View0, ConstantView);
+    static ExecStatus post(Home home, View0, ConstantView);
   };
 
 }}}

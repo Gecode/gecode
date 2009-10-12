@@ -42,12 +42,12 @@ namespace Gecode { namespace Set { namespace Element {
   template<class SView, class RView>
   forceinline
   ElementIntersection<SView,RView>::
-  ElementIntersection(Space& home, RView y0,
+  ElementIntersection(Home home, RView y0,
                      IdxViewArray& iv0,
                      RView y1,
                      const IntSet& theUniverse)
     : Propagator(home), universe(theUniverse), x0(y0), iv(iv0), x1(y1) {
-    home.notice(*this,AP_DISPOSE);
+    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
     iv.subscribe(home,*this, PC_SET_ANY);
@@ -89,7 +89,7 @@ namespace Gecode { namespace Set { namespace Element {
   template<class SView, class RView>
   ExecStatus
   ElementIntersection<SView,RView>::
-  post(Space& home, RView x0, IdxViewArray& xs,
+  post(Home home, RView x0, IdxViewArray& xs,
        RView x1, const IntSet& universe) {
     int n = xs.size();
 

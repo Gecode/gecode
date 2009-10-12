@@ -48,7 +48,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
 
   template<class ViewM, class ViewD, class ViewH, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space& home,
+  Val<ViewM,ViewD,ViewH,View>::Val(Home home,
                                    const ViewArray<ViewM>& _machine,
                                    const ViewArray<View>& _start,
                                    const ViewArray<ViewD>& _duration,
@@ -59,7 +59,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     Propagator(home),
     machine(_machine), start(_start), duration(_duration),
     end(_end), height(_height), limit(_limit), at_most(_at_most) {
-    home.notice(*this,AP_DISPOSE);
+    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
 
     machine.subscribe(home,*this,Int::PC_INT_DOM);
     start.subscribe(home,*this,Int::PC_INT_BND);
@@ -71,7 +71,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
   template<class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>
-  ::post(Space& home, const ViewArray<ViewM>& machine,
+  ::post(Home home, const ViewArray<ViewM>& machine,
          const ViewArray<View>& start, const ViewArray<ViewD>& duration,
          const ViewArray<View>& end, const ViewArray<ViewH>& height,
          const SharedArray<int>& limit, bool at_most) {

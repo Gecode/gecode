@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class View>
   forceinline void
-  post_nary(Space& home,
+  post_nary(Home home,
             ViewArray<View>& x, ViewArray<View>& y, IntRelType r, Val c) {
     switch (r) {
     case IRT_EQ:
@@ -192,7 +192,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c,
+  post(Home home, Term<IntView>* t, int n, IntRelType r, int c,
        IntConLevel icl) {
 
     Limits::check(c,"Int::linear");
@@ -306,7 +306,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class View>
   forceinline void
-  post_nary(Space& home,
+  post_nary(Home home,
             ViewArray<View>& x, ViewArray<View>& y,
             IntRelType r, Val c, BoolView b) {
     switch (r) {
@@ -328,7 +328,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post(Space& home,
+  post(Home home,
        Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel) {
 

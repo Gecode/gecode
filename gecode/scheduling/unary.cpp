@@ -42,7 +42,7 @@
 namespace Gecode {
 
   void
-  unary(Space& home, const IntVarArgs& s, const IntArgs& p) {
+  unary(Home home, const IntVarArgs& s, const IntArgs& p) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Unary;
     if (s.same(home))
@@ -62,7 +62,7 @@ namespace Gecode {
   }
 
   void
-  unary(Space& home, const IntVarArgs& s, const IntArgs& p, 
+  unary(Home home, const IntVarArgs& s, const IntArgs& p, 
         const BoolVarArgs& m) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Unary;

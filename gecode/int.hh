@@ -807,42 +807,42 @@ namespace Gecode {
   //@{
   /// Propagates \f$ x=n\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, IntVar x, int n,
+  dom(Home home, IntVar x, int n,
       IntConLevel icl=ICL_DEF);
   /// Propagates \f$ x_i=n\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, const IntVarArgs& x, int n,
+  dom(Home home, const IntVarArgs& x, int n,
       IntConLevel icl=ICL_DEF);
 
   /// Propagates \f$ l\leq x\leq m\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, IntVar x, int l, int m,
+  dom(Home home, IntVar x, int l, int m,
       IntConLevel icl=ICL_DEF);
   /// Propagates \f$ l\leq x_i\leq m\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, const IntVarArgs& x, int l, int m,
+  dom(Home home, const IntVarArgs& x, int l, int m,
       IntConLevel icl=ICL_DEF);
 
   /// Propagates \f$ x\in s \f$
   GECODE_INT_EXPORT void
-  dom(Space& home, IntVar x, const IntSet& s,
+  dom(Home home, IntVar x, const IntSet& s,
       IntConLevel icl=ICL_DEF);
   /// Propagates \f$ x_i\in s\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, const IntVarArgs& x, const IntSet& s,
+  dom(Home home, const IntVarArgs& x, const IntSet& s,
       IntConLevel icl=ICL_DEF);
 
   /// Post propagator for \f$ (x=n) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, IntVar x, int n, BoolVar b,
+  dom(Home home, IntVar x, int n, BoolVar b,
       IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, IntVar x, int l, int m, BoolVar b,
+  dom(Home home, IntVar x, int l, int m, BoolVar b,
       IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ (x \in s) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
-  dom(Space& home, IntVar x, const IntSet& s, BoolVar b,
+  dom(Home home, IntVar x, const IntSet& s, BoolVar b,
       IntConLevel icl=ICL_DEF);
   //@}
 
@@ -858,7 +858,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, IntVar x0, IntRelType r, IntVar x1,
+  rel(Home home, IntVar x0, IntRelType r, IntVar x1,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
    *
@@ -867,19 +867,19 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const IntVarArgs& x, IntRelType r, IntVar y,
+  rel(Home home, const IntVarArgs& x, IntRelType r, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Propagates \f$ x \sim_r c\f$
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, IntVar x, IntRelType r, int c,
+  rel(Home home, IntVar x, IntRelType r, int c,
       IntConLevel icl=ICL_DEF);
   /** \brief Propagates \f$ x_i \sim_r c \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const IntVarArgs& x, IntRelType r, int c,
+  rel(Home home, const IntVarArgs& x, IntRelType r, int c,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ (x_0 \sim_r x_1)\Leftrightarrow b\f$
    *
@@ -888,7 +888,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
+  rel(Home home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$(x \sim_r c)\Leftrightarrow b\f$
    *
@@ -897,7 +897,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, IntVar x, IntRelType r, int c, BoolVar b,
+  rel(Home home, IntVar x, IntRelType r, int c, BoolVar b,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for pairwise relation on \a x.
    *
@@ -918,7 +918,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const IntVarArgs& x, IntRelType r,
+  rel(Home home, const IntVarArgs& x, IntRelType r,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
@@ -933,7 +933,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+  rel(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF);
 
   /**
@@ -944,19 +944,19 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1,
+  rel(Home home, BoolVar x0, IntRelType r, BoolVar x1,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
+  rel(Home home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const BoolVarArgs& x, IntRelType r, BoolVar y,
+  rel(Home home, const BoolVarArgs& x, IntRelType r, BoolVar y,
       IntConLevel icl=ICL_DEF);
   /**
    * \brief Propagates \f$ x \sim_r n\f$
@@ -966,7 +966,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x, IntRelType r, int n,
+  rel(Home home, BoolVar x, IntRelType r, int n,
       IntConLevel icl=ICL_DEF);
   /**
    * \brief Propagates \f$(x \sim_r n)\Leftrightarrow b\f$
@@ -976,7 +976,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x, IntRelType r, int n, BoolVar b,
+  rel(Home home, BoolVar x, IntRelType r, int n, BoolVar b,
       IntConLevel icl=ICL_DEF);
   /**
    * \brief Propagates \f$ x_i \sim_r n \f$ for all \f$0\leq i<|x|\f$
@@ -986,7 +986,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const BoolVarArgs& x, IntRelType r, int n,
+  rel(Home home, const BoolVarArgs& x, IntRelType r, int n,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
@@ -998,7 +998,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
+  rel(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for pairwise relation on \a x.
    *
@@ -1012,7 +1012,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, const BoolVarArgs& x, IntRelType r,
+  rel(Home home, const BoolVarArgs& x, IntRelType r,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x0 and \a x1
    *
@@ -1020,7 +1020,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
+  rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x0 and \a x1
    *
@@ -1031,7 +1031,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
+  rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
@@ -1043,7 +1043,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
+  rel(Home home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
@@ -1058,7 +1058,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Space& home, BoolOpType o, const BoolVarArgs& x, int n,
+  rel(Home home, BoolOpType o, const BoolVarArgs& x, int n,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
@@ -1071,7 +1071,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
+  clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
          BoolVar z, IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
@@ -1087,7 +1087,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  clause(Space& home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
+  clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
          int n, IntConLevel icl=ICL_DEF);
 
 
@@ -1103,7 +1103,7 @@ namespace Gecode {
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntArgs& n, IntVar x0, IntVar x1,
+  element(Home home, const IntArgs& n, IntVar x0, IntVar x1,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
@@ -1111,7 +1111,7 @@ namespace Gecode {
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntArgs& n, IntVar x0, BoolVar x1,
+  element(Home home, const IntArgs& n, IntVar x0, BoolVar x1,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
@@ -1119,7 +1119,7 @@ namespace Gecode {
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntArgs& n, IntVar x0, int x1,
+  element(Home home, const IntArgs& n, IntVar x0, int x1,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
@@ -1127,7 +1127,7 @@ namespace Gecode {
    * domain consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntVarArgs& x, IntVar y0, IntVar y1,
+  element(Home home, const IntVarArgs& x, IntVar y0, IntVar y1,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
@@ -1135,15 +1135,15 @@ namespace Gecode {
    * domain consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntVarArgs& x, IntVar y0, int y1,
+  element(Home home, const IntVarArgs& x, IntVar y0, int y1,
           IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
-  element(Space& home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
+  element(Home home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
           IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
-  element(Space& home, const BoolVarArgs& x, IntVar y0, int y1,
+  element(Home home, const BoolVarArgs& x, IntVar y0, int y1,
           IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1155,7 +1155,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntArgs& a, 
+  element(Home home, const IntArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1167,7 +1167,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntArgs& a, 
+  element(Home home, const IntArgs& a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1182,7 +1182,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const IntVarArgs& a, 
+  element(Home home, const IntVarArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1194,7 +1194,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Space& home, const BoolVarArgs& a, 
+  element(Home home, const BoolVarArgs& a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl=ICL_DEF);
   //@}
@@ -1215,7 +1215,7 @@ namespace Gecode {
    * the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
-  distinct(Space& home, const IntVarArgs& x,
+  distinct(Home home, const IntVarArgs& x,
            IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_i+n_i\neq x_j+n_j\f$ for all \f$0\leq i\neq j<|x|\f$
    *
@@ -1230,7 +1230,7 @@ namespace Gecode {
    *     the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
-  distinct(Space& home, const IntArgs& n, const IntVarArgs& x,
+  distinct(Home home, const IntArgs& n, const IntVarArgs& x,
            IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1253,7 +1253,7 @@ namespace Gecode {
    *     once in either \a x or \a y.
    */
   GECODE_INT_EXPORT void
-  channel(Space& home, const IntVarArgs& x, const IntVarArgs& y,
+  channel(Home home, const IntVarArgs& x, const IntVarArgs& y,
           IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$ x_i - \mathit{xoff} = j\leftrightarrow y_j - \mathit{yoff} = i\f$ for all \f$0\leq i<|x|\f$
@@ -1270,17 +1270,17 @@ namespace Gecode {
    *     \a yoff are negative.
    */
   GECODE_INT_EXPORT void
-  channel(Space& home, const IntVarArgs& x, int xoff,
+  channel(Home home, const IntVarArgs& x, int xoff,
           const IntVarArgs& y, int yoff,
           IntConLevel icl=ICL_DEF);
 
   /// Post propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
   GECODE_INT_EXPORT void
-  channel(Space& home, BoolVar x0, IntVar x1,
+  channel(Home home, BoolVar x0, IntVar x1,
           IntConLevel icl=ICL_DEF);
   /// Post propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
   forceinline void
-  channel(Space& home, IntVar x0, BoolVar x1,
+  channel(Home home, IntVar x0, BoolVar x1,
           IntConLevel icl=ICL_DEF) {
     channel(home,x1,x0,icl);
   }
@@ -1290,7 +1290,7 @@ namespace Gecode {
    * contains the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
-  channel(Space& home, const BoolVarArgs& x, IntVar y, int o=0,
+  channel(Home home, const BoolVarArgs& x, IntVar y, int o=0,
           IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1312,7 +1312,7 @@ namespace Gecode {
    *             shared unassigned variables.
    */
   GECODE_INT_EXPORT void
-  sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y,
+  sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
          IntConLevel icl=ICL_DEF);
 
   /**
@@ -1352,14 +1352,14 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, int n, IntRelType r, int m,
+  count(Home home, const IntVarArgs& x, int n, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
    *
    * Supports domain consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
+  count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r m\f$
    *
@@ -1369,21 +1369,21 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, const IntArgs& y, IntRelType r, int m,
+  count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
    *
    * Supports domain consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
+  count(Home home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
    *
    * Supports domain consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
+  count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r z\f$
    *
@@ -1393,7 +1393,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, const IntArgs& y, IntRelType r, IntVar z,
+  count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
@@ -1410,7 +1410,7 @@ namespace Gecode {
     * the same unassigned variable multiply.
     */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, const IntVarArgs& c,
+  count(Home home, const IntVarArgs& x, const IntVarArgs& c,
         IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
@@ -1427,7 +1427,7 @@ namespace Gecode {
     * the same unassigned variable multiply.
     */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x, const IntSetArgs& c,
+  count(Home home, const IntVarArgs& x, const IntSetArgs& c,
         IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
@@ -1447,7 +1447,7 @@ namespace Gecode {
     *  \a c and \a v are of different size.
     */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x,
+  count(Home home, const IntVarArgs& x,
         const IntVarArgs& c, const IntArgs& v,
         IntConLevel icl=ICL_DEF);
 
@@ -1468,7 +1468,7 @@ namespace Gecode {
     *  \a c and \a v are of different size.
     */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x,
+  count(Home home, const IntVarArgs& x,
         const IntSetArgs& c, const IntArgs& v,
         IntConLevel icl=ICL_DEF);
 
@@ -1489,7 +1489,7 @@ namespace Gecode {
     *  \a c and \a v are of different size.
     */
   GECODE_INT_EXPORT void
-  count(Space& home, const IntVarArgs& x,
+  count(Home home, const IntVarArgs& x,
         const IntSet& c, const IntArgs& v,
         IntConLevel icl=ICL_DEF);
 
@@ -1629,7 +1629,7 @@ namespace Gecode {
    * are required, unshare should be used.
    */
   GECODE_INT_EXPORT void
-  extensional(Space& home, const IntVarArgs& x, DFA d,
+  extensional(Home home, const IntVarArgs& x, DFA d,
               IntConLevel icl=ICL_DEF);
 
   /**
@@ -1643,7 +1643,7 @@ namespace Gecode {
    * are required, unshare should be used.
    */
   GECODE_INT_EXPORT void
-  extensional(Space& home, const BoolVarArgs& x, DFA d,
+  extensional(Home home, const BoolVarArgs& x, DFA d,
               IntConLevel icl=ICL_DEF);
 
   /** \brief Class represeting a set of tuples.
@@ -1750,7 +1750,7 @@ namespace Gecode {
    * for the incremental algorithm (\a epk = \a EPK_SPEED).
    */
   GECODE_INT_EXPORT void
-  extensional(Space& home, const IntVarArgs& x, const TupleSet& t,
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
@@ -1764,7 +1764,7 @@ namespace Gecode {
    *     set \a t has not been finalized.
    */
   GECODE_INT_EXPORT void
-  extensional(Space& home, const BoolVarArgs& x, const TupleSet& t,
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
               ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1787,7 +1787,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
-  min(Space& home, IntVar x0, IntVar x1, IntVar x2,
+  min(Home home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ \min x=y\f$
    *
@@ -1797,7 +1797,7 @@ namespace Gecode {
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
-  min(Space& home, const IntVarArgs& x, IntVar y,
+  min(Home home, const IntVarArgs& x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$
    *
@@ -1805,7 +1805,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
-  max(Space& home, IntVar x0, IntVar x1, IntVar x2,
+  max(Home home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ \max x=y\f$
    *
@@ -1815,7 +1815,7 @@ namespace Gecode {
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
-  max(Space& home, const IntVarArgs& x, IntVar y,
+  max(Home home, const IntVarArgs& x, IntVar y,
       IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
@@ -1824,7 +1824,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
-  abs(Space& home, IntVar x0, IntVar x1,
+  abs(Home home, IntVar x0, IntVar x1,
       IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$
@@ -1833,7 +1833,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
-  mult(Space& home, IntVar x0, IntVar x1, IntVar x2,
+  mult(Home home, IntVar x0, IntVar x1, IntVar x2,
        IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\cdot x_0=x_1\f$
@@ -1842,7 +1842,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
-  sqr(Space& home, IntVar x0, IntVar x1,
+  sqr(Home home, IntVar x0, IntVar x1,
       IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
@@ -1851,7 +1851,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   GECODE_INT_EXPORT void
-  sqrt(Space& home, IntVar x0, IntVar x1,
+  sqrt(Home home, IntVar x0, IntVar x1,
        IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
@@ -1859,7 +1859,7 @@ namespace Gecode {
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
   GECODE_INT_EXPORT void
-  divmod(Space& home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
+  divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
          IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2\f$
@@ -1867,7 +1867,7 @@ namespace Gecode {
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
   GECODE_INT_EXPORT void
-  div(Space& home, IntVar x0, IntVar x1, IntVar x2,
+  div(Home home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{mod}\ x_1=x_2\f$
@@ -1875,7 +1875,7 @@ namespace Gecode {
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
   GECODE_INT_EXPORT void
-  mod(Space& home, IntVar x0, IntVar x1, IntVar x2,
+  mod(Home home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1911,28 +1911,28 @@ namespace Gecode {
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntVarArgs& x,
+  linear(Home home, const IntVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntVarArgs& x,
+  linear(Home home, const IntVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntVarArgs& x,
+  linear(Home home, const IntVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntVarArgs& x,
+  linear(Home home, const IntVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
@@ -1942,7 +1942,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const IntVarArgs& x,
+  linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
@@ -1952,7 +1952,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const IntVarArgs& x,
+  linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
@@ -1962,7 +1962,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const IntVarArgs& x,
+  linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
@@ -1972,7 +1972,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const IntVarArgs& x,
+  linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
 
@@ -2005,28 +2005,28 @@ namespace Gecode {
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const BoolVarArgs& x,
+  linear(Home home, const BoolVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const BoolVarArgs& x,
+  linear(Home home, const BoolVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const BoolVarArgs& x,
+  linear(Home home, const BoolVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const BoolVarArgs& x,
+  linear(Home home, const BoolVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
@@ -2036,7 +2036,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
+  linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, int c,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
@@ -2046,7 +2046,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
+  linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
@@ -2056,7 +2056,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
+  linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
@@ -2066,7 +2066,7 @@ namespace Gecode {
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
-  linear(Space& home, const IntArgs& a, const BoolVarArgs& x,
+  linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
 
@@ -2082,23 +2082,23 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_INT_EXPORT void
-  wait(Space& home, IntVar x, void (*c)(Space& home),
+  wait(Home home, IntVar x, void (*c)(Space& home),
        IntConLevel icl=ICL_DEF);
   /// Execute \a c when \a x becomes assigned
   GECODE_INT_EXPORT void
-  wait(Space& home, BoolVar x, void (*c)(Space& home),
+  wait(Home home, BoolVar x, void (*c)(Space& home),
        IntConLevel icl=ICL_DEF);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_INT_EXPORT void
-  wait(Space& home, const IntVarArgs& x, void (*c)(Space& home),
+  wait(Home home, const IntVarArgs& x, void (*c)(Space& home),
        IntConLevel icl=ICL_DEF);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_INT_EXPORT void
-  wait(Space& home, const BoolVarArgs& x, void (*c)(Space& home),
+  wait(Home home, const BoolVarArgs& x, void (*c)(Space& home),
        IntConLevel icl=ICL_DEF);
   /// Execute \a t (then) when \a x is assigned one, and \a e (else) otherwise
   GECODE_INT_EXPORT void
-  when(Space& home, BoolVar x, 
+  when(Home home, BoolVar x, 
        void (*t)(Space& home), void (*e)(Space& home)= NULL,
        IntConLevel icl=ICL_DEF);
   //@}
@@ -2129,11 +2129,11 @@ namespace Gecode {
    *
    */
   GECODE_INT_EXPORT void
-  unshare(Space& home, IntVarArgs& x,
+  unshare(Home home, IntVarArgs& x,
           IntConLevel icl=ICL_DEF);
   /// Replace multiple variable occurences in \a x by fresh variables
   GECODE_INT_EXPORT void
-  unshare(Space& home, BoolVarArgs& x,
+  unshare(Home home, BoolVarArgs& x,
           IntConLevel icl=ICL_DEF);
   //@}
 
@@ -2197,35 +2197,35 @@ namespace Gecode {
 
   /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, const IntVarArgs& x,
+  branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const VarBranchOptions& o_vars = VarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, const IntVarArgs& x,
+  branch(Home home, const IntVarArgs& x,
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, IntVar x, IntValBranch vals,
+  branch(Home home, IntVar x, IntValBranch vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, const BoolVarArgs& x,
+  branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const VarBranchOptions& o_vars = VarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, const BoolVarArgs& x,
+  branch(Home home, const BoolVarArgs& x,
          const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
          const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Branch over \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space& home, BoolVar x, IntValBranch vals,
+  branch(Home home, BoolVar x, IntValBranch vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}
 
@@ -2244,19 +2244,19 @@ namespace Gecode {
 
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space& home, const IntVarArgs& x, IntAssign vals,
+  assign(Home home, const IntVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Assign \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space& home, IntVar x, IntAssign vals,
+  assign(Home home, IntVar x, IntAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space& home, const BoolVarArgs& x, IntAssign vals,
+  assign(Home home, const BoolVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Assign \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space& home, BoolVar x, IntAssign vals,
+  assign(Home home, BoolVar x, IntAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
 
   //@}

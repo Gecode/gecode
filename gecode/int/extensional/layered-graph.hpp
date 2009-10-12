@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   template<class Var>
   forceinline
-  LayeredGraph<View,Val,Degree,StateIdx>::LayeredGraph(Space& home,
+  LayeredGraph<View,Val,Degree,StateIdx>::LayeredGraph(Home home,
                                                        const VarArgArray<Var>& x, 
                                                        const DFA& dfa)
     : Propagator(home), c(home), n(x.size()), n_states(dfa.n_states()) {
@@ -441,7 +441,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   template<class Var>
   ExecStatus
-  LayeredGraph<View,Val,Degree,StateIdx>::post(Space& home, 
+  LayeredGraph<View,Val,Degree,StateIdx>::post(Home home, 
                                                const VarArgArray<Var>& x,
                                                const DFA& dfa) {
     if (x.size() == 0) {
@@ -535,7 +535,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   /// Select small types for the layered graph propagator
   template<class Var>
   forceinline ExecStatus
-  post_lgp(Space& home, const VarArgArray<Var>& x, const DFA& dfa) {
+  post_lgp(Home home, const VarArgArray<Var>& x, const DFA& dfa) {
     Gecode::Support::IntType t_state_idx =
       Gecode::Support::s_type((x.size()+2)*dfa.n_states());
     Gecode::Support::IntType t_degree =

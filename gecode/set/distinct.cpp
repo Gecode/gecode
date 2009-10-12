@@ -42,7 +42,7 @@ using namespace Gecode::Set;
 namespace Gecode {
 
   void
-  atmostOne(Space& home, const SetVarArgs& xa, unsigned int c) {
+  atmostOne(Home home, const SetVarArgs& xa, unsigned int c) {
     Set::Limits::check(c, "Set::atmostOne");
     if (home.failed()) return;
     if (xa.size() < 2)

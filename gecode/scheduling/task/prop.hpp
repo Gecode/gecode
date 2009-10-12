@@ -39,15 +39,14 @@ namespace Gecode { namespace Scheduling {
 
   template<class Task>  
   forceinline
-  TaskProp<Task>::TaskProp(Space& home, TaskArray<Task>& t0)
+  TaskProp<Task>::TaskProp(Home home, TaskArray<Task>& t0)
     : Propagator(home), t(t0) {
     t.subscribe(home,*this);
   }
 
   template<class Task>  
   forceinline
-  TaskProp<Task>::TaskProp(Space& home, 
-                                       bool shared, TaskProp<Task>& p) 
+  TaskProp<Task>::TaskProp(Space& home, bool shared, TaskProp<Task>& p) 
     : Propagator(home,shared,p) {
     t.update(home,shared,p.t);
   }

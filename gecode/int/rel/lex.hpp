@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   inline
-  Lex<View>::Lex(Space& home,
+  Lex<View>::Lex(Home home,
                  ViewArray<View>& x0, ViewArray<View>& y0, bool s)
     : Propagator(home), x(x0), y(y0), strict(s) {
     x.subscribe(home, *this, PC_INT_BND);
@@ -222,7 +222,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   ExecStatus
-  Lex<View>::post(Space& home,
+  Lex<View>::post(Home home,
                   ViewArray<View>& x, ViewArray<View>& y, bool strict){
     if (x.size() == 0)
       return strict ? ES_FAILED : ES_OK;

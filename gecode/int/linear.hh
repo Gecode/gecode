@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for rewriting \a p during cloning
     LinBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Constructor for creation
-    LinBin(Space& home, A x0, B x1, Val c);
+    LinBin(Home home, A x0, B x1, Val c);
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReLinBin(Space& home, bool share, ReLinBin& p);
     /// Constructor for creation
-    ReLinBin(Space& home, A x0, B x1, Val c, Ctrl b);
+    ReLinBin(Home home, A x0, B x1, Val c, Ctrl b);
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     EqBin(Space& home, bool share, EqBin& p);
     /// Constructor for creation
-    EqBin(Space& home, A x0, B x1, Val c);
+    EqBin(Home home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
     EqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0+x_1 = c\f$
-    static ExecStatus post(Space& home, A x0, B x1, Val c);
+    static ExecStatus post(Home home, A x0, B x1, Val c);
   };
 
   /**
@@ -175,14 +175,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReEqBin(Space& home, bool share, ReEqBin& p);
     /// Constructor for creation
-    ReEqBin(Space& home,A,B,Val,Ctrl);
+    ReEqBin(Home home,A,B,Val,Ctrl);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$(x_0+x_1 = c)\Leftrightarrow b\f$
-    static ExecStatus post(Space& home, A x0, B x1, Val c, Ctrl b);
+    static ExecStatus post(Home home, A x0, B x1, Val c, Ctrl b);
   };
 
   /**
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     NqBin(Space& home, bool share, NqBin& p);
     /// Constructor for creation
-    NqBin(Space& home, A x0, B x1, Val c);
+    NqBin(Home home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
     NqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator for \f$x_0+x_1 \neq c\f$
-    static ExecStatus post(Space& home, A x0, B x1, Val c);
+    static ExecStatus post(Home home, A x0, B x1, Val c);
   };
 
   /**
@@ -243,7 +243,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     LqBin(Space& home, bool share, LqBin& p);
     /// Constructor for creation
-    LqBin(Space& home, A x0, B x1, Val c);
+    LqBin(Home home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
     LqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
@@ -252,7 +252,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0+x_1 \leq c\f$
-    static ExecStatus post(Space& home, A x0, B x1, Val c);
+    static ExecStatus post(Home home, A x0, B x1, Val c);
   };
 
   /**
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     GqBin(Space& home, bool share, GqBin& p);
     /// Constructor for creation
-    GqBin(Space& home, A x0, B x1, Val c);
+    GqBin(Home home, A x0, B x1, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
     GqBin(Space& home, bool share, Propagator& p, A x0, B x1, Val c);
@@ -286,7 +286,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0+x_1 \geq c\f$
-    static ExecStatus post(Space& home, A x0, B x1, Val c);
+    static ExecStatus post(Home home, A x0, B x1, Val c);
   };
 
   /**
@@ -312,14 +312,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReLqBin(Space& home, bool share, ReLqBin& p);
     /// Constructor for creation
-    ReLqBin(Space& home, A x0, B x1, Val c, BoolView b);
+    ReLqBin(Home home, A x0, B x1, Val c, BoolView b);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$(x_0+x_1 \leq c)\Leftrightarrow b\f$
-    static ExecStatus post(Space& home, A x0, B x1, Val c, BoolView b);
+    static ExecStatus post(Home home, A x0, B x1, Val c, BoolView b);
   };
 
 }}}
@@ -356,7 +356,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     LinTer(Space& home, bool share, LinTer& p);
     /// Constructor for creation
-    LinTer(Space& home, A x0, B x1, C x2, Val c);
+    LinTer(Home home, A x0, B x1, C x2, Val c);
     /// Constructor for rewriting \a p during cloning
     LinTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
   public:
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     EqTer(Space& home, bool share, EqTer& p);
     /// Constructor for creation
-    EqTer(Space& home, A x0, B x1, C x2, Val c);
+    EqTer(Home home, A x0, B x1, C x2, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
     EqTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
@@ -398,7 +398,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0+x_1+x_2 = c\f$
-    static ExecStatus post(Space& home, A x0, B x1, C x2, Val c);
+    static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
   };
 
   /**
@@ -424,7 +424,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     NqTer(Space& home, bool share, NqTer& p);
     /// Constructor for creation
-    NqTer(Space& home, A x0, B x1, C x2, Val c);
+    NqTer(Home home, A x0, B x1, C x2, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
     NqTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
@@ -433,7 +433,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0+x_1+x_2 \neq c\f$
-    static ExecStatus post(Space& home, A x0, B x1, C x2, Val c);
+    static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
   };
 
   /**
@@ -459,7 +459,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     LqTer(Space& home, bool share, LqTer& p);
     /// Constructor for creation
-    LqTer(Space& home, A x0, B x1, C x2, Val c);
+    LqTer(Home home, A x0, B x1, C x2, Val c);
   public:
     /// Constructor for rewriting \a p during cloning
     LqTer(Space& home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
@@ -468,7 +468,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0+x_1+x_2 \leq c\f$
-    static ExecStatus post(Space& home, A x0, B x1, C x2, Val c);
+    static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
   };
 
 }}}
@@ -504,7 +504,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     Lin(Space& home, bool share, Lin<Val,P,N,pc>& p);
     /// Constructor for creation
-    Lin(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Lin(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -529,7 +529,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReLin(Space& home, bool share, ReLin& p);
     /// Constructor for creation
-    ReLin(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
+    ReLin(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -576,14 +576,14 @@ namespace Gecode { namespace Int { namespace Linear {
     Eq(Space& home, bool share, Eq& p);
   public:
     /// Constructor for creation
-    Eq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
-    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
   /**
@@ -608,7 +608,7 @@ namespace Gecode { namespace Int { namespace Linear {
     DomEq(Space& home, bool share, DomEq& p);
   public:
     /// Constructor for creation
-    DomEq(Space& home, ViewArray<View>& x, ViewArray<View>& y, Val c);
+    DomEq(Home home, ViewArray<View>& x, ViewArray<View>& y, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /**
@@ -622,7 +622,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
-    post(Space& home, ViewArray<View>& x, ViewArray<View>& y, Val c);
+    post(Home home, ViewArray<View>& x, ViewArray<View>& y, Val c);
   };
 
   /**
@@ -649,14 +649,14 @@ namespace Gecode { namespace Int { namespace Linear {
     ReEq(Space& home, bool share, ReEq& p);
   public:
     /// Constructor for creation
-    ReEq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
+    ReEq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\Leftrightarrow b\f$
     static ExecStatus
-    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
+    post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   };
 
   /**
@@ -682,14 +682,14 @@ namespace Gecode { namespace Int { namespace Linear {
     Nq(Space& home, bool share, Nq& p);
   public:
     /// Constructor for creation
-    Nq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Nq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\neq c\f$
     static ExecStatus
-    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
   /**
@@ -715,14 +715,14 @@ namespace Gecode { namespace Int { namespace Linear {
     Lq(Space& home, bool share, Lq& p);
   public:
     /// Constructor for creation
-    Lq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$
     static ExecStatus
-    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
   /**
@@ -749,14 +749,14 @@ namespace Gecode { namespace Int { namespace Linear {
     ReLq(Space& home, bool share, ReLq& p);
   public:
     /// Constructor for creation
-    ReLq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
+    ReLq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\Leftrightarrow b\f$
     static ExecStatus
-    post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
+    post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
   };
 
 }}}
@@ -793,7 +793,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     LinBoolInt(Space& home, bool share, LinBoolInt& p);
     /// Constructor for creation
-    LinBoolInt(Space& home, ViewArray<VX>& x, int n_s, int c);
+    LinBoolInt(Home home, ViewArray<VX>& x, int n_s, int c);
   public:
     /// Cost function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -818,7 +818,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     EqBoolInt(Space& home, bool share, EqBoolInt& p);
     /// Constructor for creation
-    EqBoolInt(Space& home, ViewArray<VX>& x, int c);
+    EqBoolInt(Home home, ViewArray<VX>& x, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -827,7 +827,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, int c);
   };
 
   /**
@@ -847,7 +847,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     GqBoolInt(Space& home, bool share, GqBoolInt& p);
     /// Constructor for creation
-    GqBoolInt(Space& home, ViewArray<VX>& x, int c);
+    GqBoolInt(Home home, ViewArray<VX>& x, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -856,7 +856,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, int c);
   };
 
   /**
@@ -877,7 +877,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Update subscription
     bool resubscribe(Space& home, VX& y);
     /// Constructor for posting
-    NqBoolInt(Space& home,  ViewArray<VX>& b, int c);
+    NqBoolInt(Home home,  ViewArray<VX>& b, int c);
     /// Constructor for cloning \a p
     NqBoolInt(Space& home, bool share, NqBoolInt<VX>& p);
   public:
@@ -888,7 +888,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
-    static  ExecStatus post(Space& home, ViewArray<VX>& b, int c);
+    static  ExecStatus post(Home home, ViewArray<VX>& b, int c);
   };
 
 
@@ -914,7 +914,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReLinBoolInt(Space& home, bool share, ReLinBoolInt& p);
     /// Constructor for creation
-    ReLinBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
+    ReLinBoolInt(Home home, ViewArray<VX>& x, int c, VB b);
   public:
     /// Cost function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -947,7 +947,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReGqBoolInt(Space& home, bool share, ReGqBoolInt& p);
     /// Constructor for creation
-    ReGqBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
+    ReGqBoolInt(Home home, ViewArray<VX>& x, int c, VB b);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -956,7 +956,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq\right) c \Leftrightarrow b\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, int c, VB b);
+    static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
   };
 
   /**
@@ -977,7 +977,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReEqBoolInt(Space& home, bool share, ReEqBoolInt& p);
     /// Constructor for creation
-    ReEqBoolInt(Space& home, ViewArray<VX>& x, int c, VB b);
+    ReEqBoolInt(Home home, ViewArray<VX>& x, int c, VB b);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -986,7 +986,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = c\right)\Leftrightarrow b\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, int c, VB b);
+    static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
   };
 
 }}}
@@ -1011,7 +1011,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     LinBoolView(Space& home, bool share, LinBoolView& p);
     /// Constructor for creation
-    LinBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
+    LinBoolView(Home home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -1035,7 +1035,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReLinBoolView(Space& home, bool share, ReLinBoolView& p);
     /// Constructor for creation
-    ReLinBoolView(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
+    ReLinBoolView(Home home, ViewArray<XV>& x, YV y, int c, BV b);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -1058,14 +1058,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     EqBoolView(Space& home, bool share, EqBoolView& p);
     /// Constructor for creation
-    EqBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
+    EqBoolView(Home home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = y+c\f$
-    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c);
+    static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -1084,14 +1084,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     NqBoolView(Space& home, bool share, NqBoolView& p);
     /// Constructor for creation
-    NqBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
+    NqBoolView(Home home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq y+c\f$
-    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c);
+    static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -1110,14 +1110,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     GqBoolView(Space& home, bool share, GqBoolView& p);
     /// Constructor for creation
-    GqBoolView(Space& home, ViewArray<XV>& x, YV y, int c);
+    GqBoolView(Home home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq y+c\f$
-    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c);
+    static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -1137,14 +1137,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReEqBoolView(Space& home, bool share, ReEqBoolView& p);
     /// Constructor for creation
-    ReEqBoolView(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
+    ReEqBoolView(Home home, ViewArray<XV>& x, YV y, int c, BV b);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = y+c\right)\Leftrightarrow b\f$
-    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
+    static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c, BV b);
   };
 
   /**
@@ -1164,14 +1164,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     ReGqBoolView(Space& home, bool share, ReGqBoolView& p);
     /// Constructor for creation
-    ReGqBoolView(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
+    ReGqBoolView(Home home, ViewArray<XV>& x, YV y, int c, BV b);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq y+c\right)\Leftrightarrow b\f$
-    static ExecStatus post(Space& home, ViewArray<XV>& x, YV y, int c, BV b);
+    static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c, BV b);
   };
 
 }}}
@@ -1279,7 +1279,7 @@ namespace Gecode { namespace Int { namespace Linear {
     int  c;
   public:
     /// Constructor for creation
-    LinBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
+    LinBoolScale(Home home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
     LinBoolScale(Space& home, bool share, Propagator& pr,
                  SBAP& p, SBAN& n, VX x, int c);
@@ -1304,7 +1304,7 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::c;
   public:
     /// Constructor for creation
-    EqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
+    EqBoolScale(Home home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
     EqBoolScale(Space& home, bool share, Propagator& pr,
                 SBAP& p, SBAN& n, VX x, int c);
@@ -1313,7 +1313,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    static ExecStatus post(Space& home, SBAP& p, SBAN& n, VX x, int c);
+    static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
   };
 
   /**
@@ -1331,7 +1331,7 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::c;
   public:
     /// Constructor for creation
-    LqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
+    LqBoolScale(Home home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
     LqBoolScale(Space& home, bool share, Propagator& pr,
                 SBAP& p, SBAN& n, VX x, int c);
@@ -1340,7 +1340,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    static ExecStatus post(Space& home, SBAP& p, SBAN& n, VX x, int c);
+    static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
   };
 
   /**
@@ -1358,7 +1358,7 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::c;
   public:
     /// Constructor for creation
-    NqBoolScale(Space& home, SBAP& p, SBAN& n, VX x, int c);
+    NqBoolScale(Home home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
     NqBoolScale(Space& home, bool share, Propagator& pr,
                 SBAP& p, SBAN& n, VX x, int c);
@@ -1367,7 +1367,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    static ExecStatus post(Space& home, SBAP& p, SBAN& n, VX x, int c);
+    static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
   };
 
 }}}
@@ -1462,7 +1462,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c,
+  post(Home home, Term<IntView>* t, int n, IntRelType r, int c,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1495,7 +1495,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
+  post(Home home, Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1526,7 +1526,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<BoolView>* t, int n, IntRelType r, int c,
+  post(Home home, Term<BoolView>* t, int n, IntRelType r, int c,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1558,7 +1558,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
+  post(Home home, Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1590,7 +1590,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
+  post(Home home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1622,7 +1622,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space& home, Term<BoolView>* t, int n, IntRelType r, IntView y,
+  post(Home home, Term<BoolView>* t, int n, IntRelType r, IntView y,
        BoolView b, IntConLevel=ICL_DEF);
 
 }}}

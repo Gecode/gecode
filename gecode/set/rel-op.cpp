@@ -46,12 +46,12 @@ namespace Gecode {
   using namespace Gecode::Set::RelOp;
 
   void
-  rel(Space& home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z) {
+  rel(Home home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z) {
     rel_op_post<SetView,SetView,SetView>(home, x, op, y, r, z);
   }
 
   void
-  rel(Space& home, SetOpType op, const SetVarArgs& x, SetVar y) {
+  rel(Home home, SetOpType op, const SetVarArgs& x, SetVar y) {
     if (home.failed()) return;
     ViewArray<SetView> xa(home,x);
     switch (op) {
@@ -78,7 +78,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
+  rel(Home home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
     if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");
     ViewArray<SetView> xa(home,x);
@@ -106,7 +106,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, SetOpType op, const IntVarArgs& x, SetVar y) {
+  rel(Home home, SetOpType op, const IntVarArgs& x, SetVar y) {
     if (home.failed()) return;
     ViewArray<SingletonView> xa(home,x.size());
     for (int i=x.size(); i--;) {
@@ -138,7 +138,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, SetOpType op, const IntVarArgs& x, const IntSet& z, 
+  rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z, 
       SetVar y) {
     if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");

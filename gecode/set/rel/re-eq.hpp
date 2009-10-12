@@ -44,7 +44,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  ReEq<View0,View1>::ReEq(Space& home, View0 y0, View1 y1,
+  ReEq<View0,View1>::ReEq(Home home, View0 y0, View1 y1,
                           Gecode::Int::BoolView y2)
     : Propagator(home), x0(y0), x1(y1), b(y2) {
     b.subscribe(home,*this, Gecode::Int::PC_INT_VAL);
@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   ExecStatus
-  ReEq<View0,View1>::post(Space& home, View0 x0, View1 x1,
+  ReEq<View0,View1>::post(Home home, View0 x0, View1 x1,
                             Gecode::Int::BoolView b) {
     (void) new (home) ReEq<View0,View1>(home,x0,x1,b);
     return ES_OK;

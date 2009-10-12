@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class P, class N, PropCond pc>
   forceinline
-  Lin<Val,P,N,pc>::Lin(Space& home, ViewArray<P>& x0, ViewArray<N>& y0, Val c0)
+  Lin<Val,P,N,pc>::Lin(Home home, ViewArray<P>& x0, ViewArray<N>& y0, Val c0)
     : Propagator(home), x(x0), y(y0), c(c0) {
     x.subscribe(home,*this,pc);
     y.subscribe(home,*this,pc);
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N, PropCond pc, class Ctrl>
   forceinline
   ReLin<Val,P,N,pc,Ctrl>::ReLin
-  (Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b0)
+  (Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b0)
     : Lin<Val,P,N,pc>(home,x,y,c), b(b0) {
     b.subscribe(home,*this,PC_INT_VAL);
   }
@@ -263,12 +263,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class P, class N>
   forceinline
-  Eq<Val,P,N>::Eq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c)
+  Eq<Val,P,N>::Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c)
     : Lin<Val,P,N,PC_INT_BND>(home,x,y,c) {}
 
   template<class Val, class P, class N>
   ExecStatus
-  Eq<Val,P,N>::post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
+  Eq<Val,P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Eq<Val,P,NoView>(home,x,nva,c);
@@ -393,13 +393,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class P, class N, class Ctrl>
   forceinline
-  ReEq<Val,P,N,Ctrl>::ReEq(Space& home,
+  ReEq<Val,P,N,Ctrl>::ReEq(Home home,
                            ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,x,y,c,b) {}
 
   template<class Val, class P, class N, class Ctrl>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::post(Space& home,
+  ReEq<Val,P,N,Ctrl>::post(Home home,
                            ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
@@ -457,12 +457,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class P, class N>
   forceinline
-  Nq<Val,P,N>::Nq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c)
+  Nq<Val,P,N>::Nq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c)
     : Lin<Val,P,N,PC_INT_VAL>(home,x,y,c) {}
 
   template<class Val, class P, class N>
   ExecStatus
-  Nq<Val,P,N>::post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
+  Nq<Val,P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Nq<Val,P,NoView>(home,x,nva,c);
@@ -606,12 +606,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class P, class N>
   forceinline
-  Lq<Val,P,N>::Lq(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c)
+  Lq<Val,P,N>::Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c)
     : Lin<Val,P,N,PC_INT_BND>(home,x,y,c) {}
 
   template<class Val, class P, class N>
   ExecStatus
-  Lq<Val,P,N>::post(Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
+  Lq<Val,P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Lq<Val,P,NoView>(home,x,nva,c);
@@ -803,13 +803,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   forceinline
   ReLq<Val,P,N>::ReLq
-  (Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b)
+  (Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b)
     : ReLin<Val,P,N,PC_INT_BND,BoolView>(home,x,y,c,b) {}
 
   template<class Val, class P, class N>
   ExecStatus
   ReLq<Val,P,N>::post
-  (Space& home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b) {
+  (Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) ReLq<Val,P,NoView>(home,x,nva,c,b);

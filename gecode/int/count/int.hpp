@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   forceinline
-  BaseInt<VX,VY>::BaseInt(Space& home,
+  BaseInt<VX,VY>::BaseInt(Home home,
                           ViewArray<VX>& x0, int n_s0, VY y0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
     for (int i=n_s; i--; )
@@ -82,12 +82,12 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template<class VX, class VY>
   forceinline
-  EqInt<VX,VY>::EqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
+  EqInt<VX,VY>::EqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
   template<class VX, class VY>
   ExecStatus
-  EqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
+  EqInt<VX,VY>::post(Home home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -183,12 +183,12 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template<class VX, class VY>
   forceinline
-  GqInt<VX,VY>::GqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
+  GqInt<VX,VY>::GqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
   template<class VX, class VY>
   ExecStatus
-  GqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
+  GqInt<VX,VY>::post(Home home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -280,12 +280,12 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template<class VX, class VY>
   forceinline
-  LqInt<VX,VY>::LqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c)
+  LqInt<VX,VY>::LqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c)
     : BaseInt<VX,VY>(home,x,n_s,y,c) {}
 
   template<class VX, class VY>
   ExecStatus
-  LqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
+  LqInt<VX,VY>::post(Home home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace Count {
    */
   template<class VX, class VY>
   forceinline
-  NqInt<VX,VY>::NqInt(Space& home, ViewArray<VX>& x0, VY y0, int c0)
+  NqInt<VX,VY>::NqInt(Home home, ViewArray<VX>& x0, VY y0, int c0)
     : BinaryPropagator<VX,PC_INT_DOM>(home,
                                       x0[x0.size()-2],
                                       x0[x0.size()-1]), x(x0), y(y0), c(c0) {
@@ -403,7 +403,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   forceinline ExecStatus
-  NqInt<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y, int c) {
+  NqInt<VX,VY>::post(Home home, ViewArray<VX>& x, VY y, int c) {
     int n = x.size();
     for (int i=n; i--; )
       switch (holds(x[i],y)) {

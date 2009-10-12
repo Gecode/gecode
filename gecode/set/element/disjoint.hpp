@@ -41,7 +41,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   forceinline
-  ElementDisjoint<SView,RView>::ElementDisjoint(Space& home,
+  ElementDisjoint<SView,RView>::ElementDisjoint(Home home,
                                                 IdxViewArray& iv0,
                                                 RView y1)
     : Propagator(home), iv(iv0), x1(y1) {
@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   forceinline ExecStatus
-  ElementDisjoint<SView,RView>::post(Space& home, IdxViewArray& xs,
+  ElementDisjoint<SView,RView>::post(Home home, IdxViewArray& xs,
                                      RView x1) {
     int n = xs.size();
 

@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     using NaryPropagator<View,PC_INT_VAL>::x;
 
     /// Constructor for posting
-    Val(Space& home, ViewArray<View>& x);
+    Val(Home home, ViewArray<View>& x);
     /// Constructor for cloning \a p
     Val(Space& home, bool share, Val<View>& p);
   public:
@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for view array \a x
-    static ExecStatus post(Space& home, ViewArray<View>& x);
+    static ExecStatus post(Home home, ViewArray<View>& x);
   };
 
   /**
@@ -132,12 +132,12 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Views on which to perform value-propagation (subset of \c x)
     ViewArray<View> y;
     /// Constructor for posting
-    Bnd(Space& home, ViewArray<View>& x);
+    Bnd(Home home, ViewArray<View>& x);
     /// Constructor for cloning \a p
     Bnd(Space& home, bool share, Bnd<View>& p);
   public:
     /// Post propagator for view array \a x
-    static ExecStatus post(Space& home, ViewArray<View>& x);
+    static ExecStatus post(Home home, ViewArray<View>& x);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for cloning \a p
     Dom(Space& home, bool share, Dom<View>& p);
     /// Constructor for posting
-    Dom(Space& home, ViewArray<View>& x);
+    Dom(Home home, ViewArray<View>& x);
   public:
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -269,7 +269,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
-    static  ExecStatus post(Space& home, ViewArray<View>& x);
+    static  ExecStatus post(Home home, ViewArray<View>& x);
   };
 
   /**
@@ -288,14 +288,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for cloning \a p
     TerDom(Space& home, bool share, TerDom<View>& p);
     /// Constructor for posting
-    TerDom(Space& home, View x0, View x1, View x2);
+    TerDom(Home home, View x0, View x1, View x2);
   public:
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
-    static  ExecStatus post(Space& home, View x0, View x1, View x2);
+    static  ExecStatus post(Home home, View x0, View x1, View x2);
   };
 
 }}}

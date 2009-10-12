@@ -49,7 +49,7 @@ namespace Gecode {
 
   template<class View0, class View1>
   void
-  rel_post(Space& home, View0 x0, SetRelType r, View1 x1) {
+  rel_post(Home home, View0 x0, SetRelType r, View1 x1) {
     if (home.failed()) return;
     switch (r) {
     case SRT_EQ:
@@ -98,7 +98,7 @@ namespace Gecode {
 
   template<class View0, class View1>
   void
-  rel_re(Space& home, View0 x, SetRelType r, View1 y, BoolVar b) {
+  rel_re(Home home, View0 x, SetRelType r, View1 y, BoolVar b) {
     if (home.failed()) return;
     switch (r) {
     case SRT_EQ:
@@ -152,19 +152,19 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, SetVar x, SetRelType r, SetVar y) {
+  rel(Home home, SetVar x, SetRelType r, SetVar y) {
     rel_post<SetView,SetView>(home,x,r,y);
   }
 
   void
-  rel(Space& home, SetVar s, SetRelType r, IntVar x) {
+  rel(Home home, SetVar s, SetRelType r, IntVar x) {
     Gecode::Int::IntView xv(x);
     SingletonView xsingle(xv);
     rel_post<SetView,SingletonView>(home,s,r,xv);
   }
 
   void
-  rel(Space& home, IntVar x, SetRelType r, SetVar s) {
+  rel(Home home, IntVar x, SetRelType r, SetVar s) {
     switch (r) {
     case SRT_SUB:
       rel(home, s, SRT_SUP, x);
@@ -178,19 +178,19 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, SetVar x, SetRelType r, SetVar y, BoolVar b) {
+  rel(Home home, SetVar x, SetRelType r, SetVar y, BoolVar b) {
     rel_re<SetView,SetView>(home,x,r,y,b);
   }
 
   void
-  rel(Space& home, SetVar s, SetRelType r, IntVar x, BoolVar b) {
+  rel(Home home, SetVar s, SetRelType r, IntVar x, BoolVar b) {
     Gecode::Int::IntView xv(x);
     SingletonView xsingle(xv);
     rel_re<SetView,SingletonView>(home,s,r,xsingle,b);
   }
 
   void
-  rel(Space& home, IntVar x, SetRelType r, SetVar s, BoolVar b) {
+  rel(Home home, IntVar x, SetRelType r, SetVar s, BoolVar b) {
     switch (r) {
     case SRT_SUB:
       rel(home, s, SRT_SUP, x, b);

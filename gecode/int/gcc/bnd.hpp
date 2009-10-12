@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   forceinline
   Bnd<Card>::
-  Bnd(Space& home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
+  Bnd(Home home, ViewArray<IntView>& x0, ViewArray<Card>& k0,
          bool cf, bool nolbc) :
     Propagator(home), x(x0), y(home, x0), k(k0),
     card_fixed(cf), skip_lbc(nolbc) {
@@ -803,7 +803,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   ExecStatus
-  Bnd<Card>::post(Space& home,
+  Bnd<Card>::post(Home home,
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     bool cardfix = true;
     for (int i=k.size(); i--; )

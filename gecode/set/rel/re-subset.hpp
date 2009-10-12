@@ -41,7 +41,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  ReSubset<View0,View1>::ReSubset(Space& home, View0 y0,
+  ReSubset<View0,View1>::ReSubset(Home home, View0 y0,
                                   View1 y1, Gecode::Int::BoolView y2)
     : Propagator(home), x0(y0), x1(y1), b(y2) {
     b.subscribe(home,*this, Gecode::Int::PC_INT_VAL);
@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   ExecStatus
-  ReSubset<View0,View1>::post(Space& home, View0 x0, View1 x1,
+  ReSubset<View0,View1>::post(Home home, View0 x0, View1 x1,
                               Gecode::Int::BoolView b) {
     (void) new (home) ReSubset<View0,View1>(home,x0,x1,b);
     return ES_OK;

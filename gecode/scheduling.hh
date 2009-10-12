@@ -124,7 +124,7 @@ namespace Gecode {
    *            Int::Limits::min.
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -134,7 +134,7 @@ namespace Gecode {
    * \copydoc cumulatives()
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -144,7 +144,7 @@ namespace Gecode {
    * \copydoc cumulatives()
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -154,7 +154,7 @@ namespace Gecode {
    * \copydoc cumulatives()
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -164,7 +164,7 @@ namespace Gecode {
    * \copydoc cumulatives()
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
@@ -174,7 +174,7 @@ namespace Gecode {
    * \copydoc cumulatives()
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
@@ -184,7 +184,7 @@ namespace Gecode {
    * \copydoc cumulatives()
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
@@ -194,7 +194,7 @@ namespace Gecode {
    * \copydoc cumulatives()
    */
   GECODE_SCHEDULING_EXPORT void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
@@ -219,7 +219,7 @@ namespace Gecode {
    *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
-  unary(Space& home, const IntVarArgs& s, const IntArgs& p);
+  unary(Home home, const IntVarArgs& s, const IntArgs& p);
 
   /** \brief Post propagators for scheduling optional tasks on unary resources
    *
@@ -242,7 +242,7 @@ namespace Gecode {
    *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
-  unary(Space& home, const IntVarArgs& s, const IntArgs& p, 
+  unary(Home home, const IntVarArgs& s, const IntArgs& p, 
         const BoolVarArgs& m);
   //@}
 }

@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ, bool shr>
   forceinline
-  BaseView<VX,VY,VZ,shr>::BaseView(Space& home,
+  BaseView<VX,VY,VZ,shr>::BaseView(Home home,
                                    ViewArray<VX>& x0, VY y0, VZ z0, int c0)
     : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
     x.subscribe(home,*this,PC_INT_DOM);
@@ -131,13 +131,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ, bool shr>
   forceinline
-  EqView<VX,VY,VZ,shr>::EqView(Space& home,
+  EqView<VX,VY,VZ,shr>::EqView(Home home,
                                ViewArray<VX>& x, VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template<class VX, class VY, class VZ, bool shr>
   ExecStatus
-  EqView<VX,VY,VZ,shr>::post(Space& home,
+  EqView<VX,VY,VZ,shr>::post(Home home,
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     if (z.assigned())
       return EqInt<VX,VY>::post(home,x,y,z.val()+c);
@@ -188,13 +188,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ, bool shr>
   forceinline
-  NqView<VX,VY,VZ,shr>::NqView(Space& home,
+  NqView<VX,VY,VZ,shr>::NqView(Home home,
                                ViewArray<VX>& x, VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template<class VX, class VY, class VZ, bool shr>
   ExecStatus
-  NqView<VX,VY,VZ,shr>::post(Space& home,
+  NqView<VX,VY,VZ,shr>::post(Home home,
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     if (z.assigned())
       return NqInt<VX,VY>::post(home,x,y,z.val()+c);
@@ -240,13 +240,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ, bool shr>
   forceinline
-  LqView<VX,VY,VZ,shr>::LqView(Space& home, ViewArray<VX>& x,
+  LqView<VX,VY,VZ,shr>::LqView(Home home, ViewArray<VX>& x,
                                VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template<class VX, class VY, class VZ, bool shr>
   ExecStatus
-  LqView<VX,VY,VZ,shr>::post(Space& home, ViewArray<VX>& x,
+  LqView<VX,VY,VZ,shr>::post(Home home, ViewArray<VX>& x,
                              VY y, VZ z, int c) {
     if (z.assigned())
       return LqInt<VX,VY>::post(home,x,y,z.val()+c);
@@ -292,12 +292,12 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ, bool shr>
   forceinline
-  GqView<VX,VY,VZ,shr>::GqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c)
+  GqView<VX,VY,VZ,shr>::GqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c)
     : BaseView<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template<class VX, class VY, class VZ, bool shr>
   ExecStatus
-  GqView<VX,VY,VZ,shr>::post(Space& home,
+  GqView<VX,VY,VZ,shr>::post(Home home,
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     if (z.assigned())
       return GqInt<VX,VY>::post(home,x,y,z.val()+c);

@@ -68,14 +68,14 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Constructor for cloning \a p
     ReRange(Space& home, bool share, ReRange& p);
     /// Constructor for creation
-    ReRange(Space& home, View x, int min, int max, BoolView b);
+    ReRange(Home home, View x, int min, int max, BoolView b);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
-    static ExecStatus post(Space& home, View x, int min, int max, BoolView b);
+    static ExecStatus post(Home home, View x, int min, int max, BoolView b);
   };
 
   /**
@@ -95,14 +95,14 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Constructor for cloning \a p
     ReIntSet(Space& home, bool share, ReIntSet& p);
     /// Constructor for creation
-    ReIntSet(Space& home, View x, const IntSet& s, BoolView b);
+    ReIntSet(Home home, View x, const IntSet& s, BoolView b);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
-    static ExecStatus post(Space& home, View x, const IntSet& s, BoolView b);
+    static ExecStatus post(Home home, View x, const IntSet& s, BoolView b);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Exec {
 
   ExecStatus
-  When::post(Space& home, BoolView x, void (*t)(Space&), void (*e)(Space&)) {
+  When::post(Home home, BoolView x, void (*t)(Space&), void (*e)(Space&)) {
     if (x.zero() && (e != NULL)) {
       e(home);
       return home.failed() ? ES_FAILED : ES_OK;

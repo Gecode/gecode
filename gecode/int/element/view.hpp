@@ -227,7 +227,7 @@ namespace Gecode { namespace Int { namespace Element {
    */
 
   template<class VA, class VB, class VC, PropCond pc_ac>
-  View<VA,VB,VC,pc_ac>::View(Space& home, IdxViewArray<VA>& iv0,
+  View<VA,VB,VC,pc_ac>::View(Home home, IdxViewArray<VA>& iv0,
                              VB y0, VC y1)
     : Propagator(home), iv(iv0), x0(y0), x1(y1) {
     x0.subscribe(home,*this,PC_INT_DOM);
@@ -385,13 +385,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class VA, class VB, class VC>
   forceinline
-  ViewBnd<VA,VB,VC>::ViewBnd(Space& home,
+  ViewBnd<VA,VB,VC>::ViewBnd(Home home,
                              IdxViewArray<VA>& iv, VB x0, VC x1)
     : View<VA,VB,VC,PC_INT_BND>(home,iv,x0,x1) {}
 
   template<class VA, class VB, class VC>
   ExecStatus
-  ViewBnd<VA,VB,VC>::post(Space& home,
+  ViewBnd<VA,VB,VC>::post(Home home,
                           IdxViewArray<VA>& iv, VB x0, VC x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,iv.size()));
@@ -467,13 +467,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class VA, class VB, class VC>
   forceinline
-  ViewDom<VA,VB,VC>::ViewDom(Space& home,
+  ViewDom<VA,VB,VC>::ViewDom(Home home,
                              IdxViewArray<VA>& iv, VB x0, VC x1)
     : View<VA,VB,VC,PC_INT_DOM>(home,iv,x0,x1) {}
 
   template<class VA, class VB, class VC>
   ExecStatus
-  ViewDom<VA,VB,VC>::post(Space& home,
+  ViewDom<VA,VB,VC>::post(Home home,
                           IdxViewArray<VA>& iv, VB x0, VC x1){
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,iv.size()));

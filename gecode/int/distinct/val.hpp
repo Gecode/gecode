@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   template<class View>
   forceinline
-  Val<View>::Val(Space& home, ViewArray<View>& x)
+  Val<View>::Val(Home home, ViewArray<View>& x)
   : NaryPropagator<View,PC_INT_VAL>(home,x) {}
 
   template<class View>
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   ExecStatus
-  Val<View>::post(Space& home, ViewArray<View>& x) {
+  Val<View>::post(Home home, ViewArray<View>& x) {
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() > 2)

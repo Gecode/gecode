@@ -49,13 +49,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  MinElement<View>::MinElement(Space& home, View y0, Gecode::Int::IntView y1)
+  MinElement<View>::MinElement(Home home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
   template<class View>
   forceinline ExecStatus
-  MinElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
+  MinElement<View>::post(Home home, View x0, Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x0.cardMin(home,1));
     (void) new (home) MinElement(home,x0,x1);
     return ES_OK;
@@ -135,14 +135,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  NotMinElement<View>::NotMinElement(Space& home, View y0,
+  NotMinElement<View>::NotMinElement(Home home, View y0,
                                      Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
 
   template<class View>
   forceinline ExecStatus
-  NotMinElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
+  NotMinElement<View>::post(Home home, View x0, Gecode::Int::IntView x1) {
     (void) new (home) NotMinElement(home,x0,x1);
     return ES_OK;
   }
@@ -260,14 +260,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  ReMinElement<View>::ReMinElement(Space& home, View y0, Gecode::Int::IntView y1,
+  ReMinElement<View>::ReMinElement(Home home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
     : IntSetRePropagator<View,PC_SET_ANY,
                          Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
 
   template<class View>
   forceinline ExecStatus
-  ReMinElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1,
+  ReMinElement<View>::post(Home home, View x0, Gecode::Int::IntView x1,
                            Gecode::Int::BoolView b2) {
     (void) new (home) ReMinElement(home,x0,x1,b2);
     return ES_OK;
@@ -383,7 +383,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  MaxElement<View>::MaxElement(Space& home, View y0, Gecode::Int::IntView y1)
+  MaxElement<View>::MaxElement(Home home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
@@ -395,7 +395,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   ExecStatus
-  MaxElement<View>::post(Space& home, View x0,
+  MaxElement<View>::post(Home home, View x0,
                               Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x0.cardMin(home,1));
     (void) new (home) MaxElement(home,x0,x1);
@@ -431,7 +431,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  NotMaxElement<View>::NotMaxElement(Space& home, View y0,
+  NotMaxElement<View>::NotMaxElement(Home home, View y0,
                                      Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
@@ -445,7 +445,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   ExecStatus
-  NotMaxElement<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
+  NotMaxElement<View>::post(Home home, View x0, Gecode::Int::IntView x1) {
     (void) new (home) NotMaxElement(home,x0,x1);
     return ES_OK;
   }
@@ -537,7 +537,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  ReMaxElement<View>::ReMaxElement(Space& home, View y0, Gecode::Int::IntView y1,
+  ReMaxElement<View>::ReMaxElement(Home home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
     : IntSetRePropagator<View,PC_SET_ANY,
                          Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
@@ -550,7 +550,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   ExecStatus
-  ReMaxElement<View>::post(Space& home, View x0,
+  ReMaxElement<View>::post(Home home, View x0,
                            Gecode::Int::IntView x1,
                            Gecode::Int::BoolView b2) {
     (void) new (home) ReMaxElement(home,x0,x1,b2);

@@ -40,9 +40,9 @@ namespace Gecode { namespace Int { namespace Dom {
   template<class View>
   forceinline
   ReIntSet<View>::ReIntSet
-  (Space& home, View x, const IntSet& s, BoolView b)
+  (Home home, View x, const IntSet& s, BoolView b)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b), is(s) {
-    home.notice(*this,AP_DISPOSE);
+    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
   }
 
   template<class View>
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template<class View>
   ExecStatus
-  ReIntSet<View>::post(Space& home, View x, const IntSet& s, BoolView b) {
+  ReIntSet<View>::post(Home home, View x, const IntSet& s, BoolView b) {
     if (s.ranges() == 0) {
       GECODE_ME_CHECK(b.zero(home));
     } else if (s.ranges() == 1) {

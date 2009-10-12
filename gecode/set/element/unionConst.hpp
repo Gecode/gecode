@@ -42,11 +42,11 @@ namespace Gecode { namespace Set { namespace Element {
   template<class SView, class RView>
   forceinline
   ElementUnionConst<SView,RView>::
-  ElementUnionConst(Space& home, SView y0,
+  ElementUnionConst(Home home, SView y0,
                      SharedArray<IntSet>& iv0,
                      RView y1)
     : Propagator(home), x0(y0), iv(iv0), x1(y1) {
-    home.notice(*this,AP_DISPOSE);
+    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
   }
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace Element {
   template<class SView, class RView>
   ExecStatus
   ElementUnionConst<SView,RView>::
-  post(Space& home, SView x0, SharedArray<IntSet>& xs,
+  post(Home home, SView x0, SharedArray<IntSet>& xs,
        RView x1) {
     int n = xs.size();
 

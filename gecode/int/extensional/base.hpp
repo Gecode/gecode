@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, bool subscribe>
   forceinline
-  Base<View,subscribe>::Base(Space& home, ViewArray<View>& x0,
+  Base<View,subscribe>::Base(Home home, ViewArray<View>& x0,
                              const TupleSet& t)
     : Propagator(home), x(x0), tupleSet(t), last_data(NULL) {
     if (subscribe)
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (!ts()->finalized()) ts()->finalize();
     init_last(home, ts()->last);
 
-    home.notice(*this,AP_DISPOSE);
+    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
   }
 
   template<class View, bool subscribe>

@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   Sorted<View,Perm>::
-  Sorted(Space& home,
+  Sorted(Home home,
          ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0) :
     Propagator(home), x(x0), y(y0), z(z0), w(home,y0), reachable(-1) {
     x.subscribe(home, *this, PC_INT_BND);
@@ -631,7 +631,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   template<class View, bool Perm>
   ExecStatus
   Sorted<View,Perm>::
-  post(Space& home,
+  post(Home home,
        ViewArray<View>& x0, ViewArray<View>& y0, ViewArray<View>& z0) {
     int n = x0.size();
     if (n < 2) {

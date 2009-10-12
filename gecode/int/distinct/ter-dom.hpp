@@ -45,12 +45,12 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline
-  TerDom<View>::TerDom(Space& home, View x0, View x1, View x2)
+  TerDom<View>::TerDom(Home home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
 
   template<class View>
   ExecStatus
-  TerDom<View>::post(Space& home, View x0, View x1, View x2) {
+  TerDom<View>::post(Home home, View x0, View x1, View x2) {
     (void) new (home) TerDom<View>(home,x0,x1,x2);
     return ES_OK;
   }

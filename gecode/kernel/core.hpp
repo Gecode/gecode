@@ -793,6 +793,24 @@ namespace Gecode {
   ExecStatus ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med);
 
   /**
+   * \brief Home class for posting propagators
+   */
+  class Home {
+  protected:
+    /// The space where the propagator is to be posted
+    Space& s;
+  public:
+    /// Initialize the home with space \a s
+    Home(Space& s);
+    /// Retrieve the space of the home
+    operator Space&(void);
+    /// Check whether corresponding space is failed
+    bool failed(void) const;
+    /// Mark space as failed
+    void fail(void);
+  };
+
+  /**
    * \brief Base-class for propagators
    * \ingroup TaskActor
    */
@@ -820,8 +838,8 @@ namespace Gecode {
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static const Propagator* cast(const ActorLink* al);
   protected:
-    /// Constructor for creation
-    Propagator(Space& home);
+    /// Constructor for posting
+    Propagator(Home home);
     /// Constructor for cloning \a p
     Propagator(Space& home, bool share, Propagator& p);
 
@@ -1073,7 +1091,7 @@ namespace Gecode {
     static const Brancher* cast(const ActorLink* al);
   protected:
     /// Constructor for creation
-    Brancher(Space& home);
+    Brancher(Home home);
     /// Constructor for cloning \a b
     Brancher(Space& home, bool share, Brancher& b);
   public:
@@ -2413,6 +2431,17 @@ namespace Gecode {
 
 
   /*
+   * Home for posting propagators
+   *
+   */
+  forceinline
+  Home::Home(Space& s0) : s(s0) {}
+  forceinline
+  Home::operator Space&(void) { 
+    return s; 
+  }
+
+  /*
    * Propagator
    *
    */
@@ -2433,10 +2462,10 @@ namespace Gecode {
   }
 
   forceinline
-  Propagator::Propagator(Space& home) {
+  Propagator::Propagator(Home home) {
     u.advisors = NULL;
-    assert(u.med == 0 && u.size == 0);
-    home.pl.head(this);
+    assert((u.med == 0) && (u.size == 0));
+    static_cast<Space&>(home).pl.head(this);
   }
 
   forceinline
@@ -2496,17 +2525,17 @@ namespace Gecode {
   }
 
   forceinline
-  Brancher::Brancher(Space& home) :
-    _id(home.pc.p.branch_id++) {
-    if (home.pc.p.branch_id == 0U)
+  Brancher::Brancher(Home home) :
+    _id(static_cast<Space&>(home).pc.p.branch_id++) {
+    if (static_cast<Space&>(home).pc.p.branch_id == 0U)
       throw TooManyBranchers("Brancher::Brancher");
     // If no brancher available, make it the first one
-    if (home.b_status == &home.bl) {
-      home.b_status = this;
-      if (home.b_commit == &home.bl)
-        home.b_commit = this;
+    if (static_cast<Space&>(home).b_status == &static_cast<Space&>(home).bl) {
+      static_cast<Space&>(home).b_status = this;
+      if (static_cast<Space&>(home).b_commit == &static_cast<Space&>(home).bl)
+        static_cast<Space&>(home).b_commit = this;
     }
-    home.bl.tail(this);
+    static_cast<Space&>(home).bl.tail(this);
   }
 
   forceinline
@@ -2753,10 +2782,18 @@ namespace Gecode {
   Space::fail(void) {
     pc.p.active = NULL;
   }
+  forceinline void
+  Home::fail(void) {
+    s.fail();
+  }
 
   forceinline bool
   Space::failed(void) const {
     return pc.p.active == NULL;
+  }
+  forceinline bool
+  Home::failed(void) const {
+    return s.failed();
   }
 
   forceinline bool

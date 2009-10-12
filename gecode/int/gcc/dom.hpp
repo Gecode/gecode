@@ -68,7 +68,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline
-  Dom<Card>::Dom(Space& home, ViewArray<IntView>& x0,
+  Dom<Card>::Dom(Home home, ViewArray<IntView>& x0,
                  ViewArray<Card>& k0, bool cf)
     : Propagator(home), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf){
@@ -297,7 +297,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline ExecStatus
-  Dom<Card>::post(Space& home, 
+  Dom<Card>::post(Home home, 
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 

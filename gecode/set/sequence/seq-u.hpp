@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   forceinline
-  SeqU::SeqU(Space& home, ViewArray<SetView>& x, SetView y)
+  SeqU::SeqU(Home home, ViewArray<SetView>& x, SetView y)
     : NaryOnePropagator<SetView,PC_SET_ANY>(home,x, y) {}
 
   forceinline
@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace Sequence {
   }
 
   forceinline ExecStatus
-  SeqU::post(Space& home, ViewArray<SetView> x, SetView y) {
+  SeqU::post(Home home, ViewArray<SetView> x, SetView y) {
     switch (x.size()) {
     case 0:
       GECODE_ME_CHECK(y.cardMax(home, 0));

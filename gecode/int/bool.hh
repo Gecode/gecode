@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Bool {
     BVA x0; ///< Boolean view
     BVB x1; ///< Boolean view
     /// Constructor for posting
-    BoolBinary(Space& home, BVA b0, BVB b1);
+    BoolBinary(Home home, BVA b0, BVB b1);
     /// Constructor for cloning
     BoolBinary(Space& home, bool share, BoolBinary& p);
     /// Constructor for rewriting \a p during cloning
@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Bool {
     BVB x1; ///< Boolean view
     BVC x2; ///< Boolean view
     /// Constructor for posting
-    BoolTernary(Space& home, BVA b0, BVB b1, BVC b2);
+    BoolTernary(Home home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning
     BoolTernary(Space& home, bool share, BoolTernary& p);
   public:
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
     /// Constructor for posting
-    Eq(Space& home, BVA b0, BVB b1);
+    Eq(Home home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
     Eq(Space& home, bool share, Eq& p);
   public:
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x_0 = x_1\f$
-    static  ExecStatus post(Space& home, BVA x0, BVB x1);
+    static  ExecStatus post(Home home, BVA x0, BVB x1);
   };
 
 
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Bool {
   protected:
     using NaryPropagator<BV,PC_BOOL_VAL>::x;
     /// Constructor for posting
-    NaryEq(Space& home, ViewArray<BV>& x);
+    NaryEq(Home home, ViewArray<BV>& x);
     /// Constructor for cloning \a p
     NaryEq(Space& home, bool share, NaryEq& p);
   public:
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
-    static  ExecStatus post(Space& home, ViewArray<BV>& x);
+    static  ExecStatus post(Home home, ViewArray<BV>& x);
   };
 
 
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BV,BV>::x0;
     using BoolBinary<BV,BV>::x1;
     /// Constructor for posting
-    Lq(Space& home, BV b0, BV b1);
+    Lq(Home home, BV b0, BV b1);
     /// Constructor for cloning \a p
     Lq(Space& home, bool share, Lq& p);
   public:
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \leq b_1\f$
-    static  ExecStatus post(Space& home, BV b0, BV b1);
+    static  ExecStatus post(Home home, BV b0, BV b1);
   };
 
 
@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Bool {
   class Le {
   public:
     /// Post propagator \f$ b_0 < b_1\f$
-    static  ExecStatus post(Space& home, BV b0, BV b1);
+    static  ExecStatus post(Home home, BV b0, BV b1);
   };
 
 
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
     /// Constructor for posting
-    BinOrTrue(Space& home, BVA b0, BVB b1);
+    BinOrTrue(Home home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
     BinOrTrue(Space& home, bool share, BinOrTrue& p);
   public:
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
-    static  ExecStatus post(Space& home, BVA b0, BVB b1);
+    static  ExecStatus post(Home home, BVA b0, BVB b1);
   };
 
   /**
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Boolean view without subscription
     BV x2;
     /// Constructor for posting
-    TerOrTrue(Space& home, BV b0, BV b1, BV b2);
+    TerOrTrue(Home home, BV b0, BV b1, BV b2);
     /// Constructor for cloning \a p
     TerOrTrue(Space& home, bool share, TerOrTrue& p);
   public:
@@ -241,7 +241,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 = 1 \f$
-    static  ExecStatus post(Space& home, BV b0, BV b1, BV b2);
+    static  ExecStatus post(Home home, BV b0, BV b1, BV b2);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Boolean view without subscription
     BV x3;
     /// Constructor for posting
-    QuadOrTrue(Space& home, BV b0, BV b1, BV b2, BV b3);
+    QuadOrTrue(Home home, BV b0, BV b1, BV b2, BV b3);
     /// Constructor for cloning \a p
     QuadOrTrue(Space& home, bool share, QuadOrTrue& p);
   public:
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 \lor b_3 = 1 \f$
-    static  ExecStatus post(Space& home, BV b0, BV b1, BV b2, BV b3);
+    static  ExecStatus post(Home home, BV b0, BV b1, BV b2, BV b3);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -292,7 +292,7 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolTernary<BVA,BVB,BVC>::x1;
     using BoolTernary<BVA,BVB,BVC>::x2;
     /// Constructor for posting
-    Or(Space& home, BVA b0, BVB b1, BVC b2);
+    Or(Home home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning \a p
     Or(Space& home, bool share, Or& p);
   public:
@@ -303,7 +303,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 = b_2 \f$
-    static  ExecStatus post(Space& home, BVA b0, BVB b1, BVC b2);
+    static  ExecStatus post(Home home, BVA b0, BVB b1, BVC b2);
   };
 
   /**
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// The advisor council
     Council<Advisor> c;
     /// Constructor for posting
-    NaryOr(Space& home,  ViewArray<VX>& x, VY y);
+    NaryOr(Home home,  ViewArray<VX>& x, VY y);
     /// Constructor for cloning \a p
     NaryOr(Space& home, bool share, NaryOr<VX,VY>& p);
   public:
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i = y\f$
-    static  ExecStatus post(Space& home, ViewArray<VX>& x, VY y);
+    static  ExecStatus post(Home home, ViewArray<VX>& x, VY y);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Update subscription
     ExecStatus resubscribe(Space& home, BV& x0, BV x1);
     /// Constructor for posting
-    NaryOrTrue(Space& home, ViewArray<BV>& x);
+    NaryOrTrue(Home home, ViewArray<BV>& x);
     /// Constructor for cloning \a p
     NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p);
   public:
@@ -369,7 +369,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
-    static  ExecStatus post(Space& home, ViewArray<BV>& b);
+    static  ExecStatus post(Home home, ViewArray<BV>& b);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -390,14 +390,14 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for cloning \a p
     Eqv(Space& home, bool share, Eqv& p);
     /// Constructor for posting
-    Eqv(Space& home, BVA b0 ,BVB b1, BVC b2);
+    Eqv(Home home, BVA b0 ,BVB b1, BVC b2);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
-    static  ExecStatus post(Space& home, BVA b0, BVB b1, BVC b2);
+    static  ExecStatus post(Home home, BVA b0, BVB b1, BVC b2);
   };
 
 
@@ -433,7 +433,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Cancel subscriptions
     void cancel(Space& home);
     /// Constructor for posting
-    Clause(Space& home,  ViewArray<VX>& x, ViewArray<VY>& y, VX z);
+    Clause(Home home,  ViewArray<VX>& x, ViewArray<VY>& y, VX z);
     /// Constructor for cloning \a p
     Clause(Space& home, bool share, Clause<VX,VY>& p);
   public:
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|x|-1} y_i = z\f$
-    static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y,
+    static  ExecStatus post(Home home, ViewArray<VX>& x, ViewArray<VY>& y,
                             VX z);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -470,7 +470,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Views not yet subscribed to (origin from negative variables)
     ViewArray<VY> y;
     /// Constructor for posting
-    ClauseTrue(Space& home, ViewArray<VX>& x, ViewArray<VY>& y);
+    ClauseTrue(Home home, ViewArray<VX>& x, ViewArray<VY>& y);
     /// Constructor for cloning \a p
     ClauseTrue(Space& home, bool share, ClauseTrue<VX,VY>& p);
   public:
@@ -481,7 +481,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|y|-1} y_i = 1\f$
-    static  ExecStatus post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y);
+    static  ExecStatus post(Home home, ViewArray<VX>& x, ViewArray<VY>& y);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

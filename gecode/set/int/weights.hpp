@@ -147,7 +147,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  Weights<View>::Weights(Space& home,
+  Weights<View>::Weights(Home home,
                    const SharedArray<int>& elements0,
                    const SharedArray<int>& weights0,
                    View x0, Gecode::Int::IntView y0)
@@ -169,7 +169,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   inline ExecStatus
-  Weights<View>::post(Space& home, const SharedArray<int>& elements,
+  Weights<View>::post(Home home, const SharedArray<int>& elements,
                       const SharedArray<int>& weights,
                       View x, Gecode::Int::IntView y) {
     if (elements.size() != weights.size())

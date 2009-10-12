@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   public:
     /// Constructor for posting
     template<class Var>
-    LayeredGraph(Space& home, 
+    LayeredGraph(Home home, 
                  const VarArgArray<Var>& x, const DFA& dfa);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -181,13 +181,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual size_t dispose(Space& home);
     /// Post propagator on views \a x and DFA \a dfa
     template<class Var>
-    static ExecStatus post(Space& home, 
+    static ExecStatus post(Home home, 
                            const VarArgArray<Var>& x, const DFA& dfa);
   };
 
   /// Select small types for the layered graph propagator
   template<class Var>
-  ExecStatus post_lgp(Space& home, 
+  ExecStatus post_lgp(Home home, 
                       const VarArgArray<Var>& x, const DFA& dfa);
 
 }}}
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for cloning \a p
     Base(Space& home, bool share, Base<View,subscribe>& p);
     /// Constructor for posting
-    Base(Space& home, ViewArray<View>& x, const TupleSet& t);
+    Base(Home home, ViewArray<View>& x, const TupleSet& t);
     /// Initialize last support
     void init_last(Space& home, Tuple** source);
     /// Find last support for view at position \a i and value \a n
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for cloning \a p
     Basic(Space& home, bool share, Basic<View,shared>& p);
     /// Constructor for posting
-    Basic(Space& home, ViewArray<View>& x, const TupleSet& t);
+    Basic(Home home, ViewArray<View>& x, const TupleSet& t);
 
   public:
     /// Perform propagation
@@ -292,7 +292,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
-    static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
+    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& t);
   };
 
 }}}
@@ -420,7 +420,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for cloning \a p
     Incremental(Space& home, bool share, Incremental<View>& p);
     /// Constructor for posting
-    Incremental(Space& home, ViewArray<View>& x, const TupleSet& t);
+    Incremental(Home home, ViewArray<View>& x, const TupleSet& t);
     /// Initialize support
     void init_support(Space& home);
     /// Find a next support for view at position \a i and value \a n
@@ -444,7 +444,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
-    static ExecStatus post(Space& home, ViewArray<View>& x, const TupleSet& t);
+    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& t);
     /// Delete propagator and return its size
     size_t dispose(Space& home);
   private:

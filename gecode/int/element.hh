@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for cloning \a p
     Int(Space& home, bool shared, Int& p);
     /// Constructor for creation
-    Int(Space& home, IntSharedArray& i, V0 x0, V1 x1);
+    Int(Home home, IntSharedArray& i, V0 x0, V1 x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -156,14 +156,14 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$i_{x_0}=x_1\f$
-    static  ExecStatus post(Space& home, IntSharedArray& i, V0 x0, V1 x1);
+    static  ExecStatus post(Home home, IntSharedArray& i, V0 x0, V1 x1);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
   /// Post propagator with apropriate index and value types
   template<class V0, class V1>
-  ExecStatus post_int(Space& home, IntSharedArray& c, V0 x0, V1 x1);
+  ExecStatus post_int(Home home, IntSharedArray& c, V0 x0, V1 x1);
 
 
   /**
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for cloning \a p
     View(Space& home, bool share, View& p);
     /// Constructor for creation
-    View(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
+    View(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     // Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -263,14 +263,14 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for cloning \a p
     ViewBnd(Space& home, bool share, ViewBnd& p);
     /// Constructor for creation
-    ViewBnd(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
+    ViewBnd(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
+    static  ExecStatus post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
   };
 
   /**
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for cloning \a p
     ViewDom(Space& home, bool share, ViewDom& p);
     /// Constructor for creation
-    ViewDom(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1);
+    ViewDom(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space& home, IdxViewArray<VA>& iv,
+    static  ExecStatus post(Home home, IdxViewArray<VA>& iv,
                             VB x0, VC x1);
   };
 
@@ -331,9 +331,9 @@ namespace Gecode { namespace Int { namespace Element {
     Pair(Space& home, bool share, Pair& p);
   public:
     /// Constructor for posting
-    Pair(Space& home, IntView x0, IntView x1, IntView x2, int w);
+    Pair(Home home, IntView x0, IntView x1, IntView x2, int w);
     /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
-    static ExecStatus post(Space& home, IntView x0, IntView x1, IntView x2, 
+    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2, 
                            int w, int h);
     /// Copy propagator during cloning
     GECODE_INT_EXPORT virtual Actor* copy(Space& home, bool share);

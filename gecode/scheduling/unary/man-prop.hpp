@@ -39,7 +39,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   
   template<class ManTask>
   forceinline
-  ManProp<ManTask>::ManProp(Space& home, TaskArray<ManTask>& t)
+  ManProp<ManTask>::ManProp(Home home, TaskArray<ManTask>& t)
     : TaskProp<ManTask>(home,t) {}
 
   template<class ManTask>
@@ -50,7 +50,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class ManTask>
   forceinline ExecStatus 
-  ManProp<ManTask>::post(Space& home, TaskArray<ManTask>& t) {
+  ManProp<ManTask>::post(Home home, TaskArray<ManTask>& t) {
     if (t.size() > 1)
       (void) new (home) ManProp<ManTask>(home,t);
     return ES_OK;

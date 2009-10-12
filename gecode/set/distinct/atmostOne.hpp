@@ -43,7 +43,7 @@ namespace Gecode { namespace Set { namespace Distinct {
    */
 
   forceinline
-  AtmostOne::AtmostOne(Space& home, ViewArray<SetView>& x, unsigned int _c)
+  AtmostOne::AtmostOne(Home home, ViewArray<SetView>& x, unsigned int _c)
     : NaryPropagator<SetView, PC_SET_ANY>(home,x), c(_c) {}
 
   forceinline
@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace Distinct {
     : NaryPropagator<SetView, PC_SET_ANY>(home,share,p), c(p.c) {}
 
   forceinline ExecStatus
-  AtmostOne::post(Space& home, ViewArray<SetView> x, unsigned int c) {
+  AtmostOne::post(Home home, ViewArray<SetView> x, unsigned int c) {
     for (int i=x.size(); i--;) {
       GECODE_ME_CHECK(x[i].cardMin(home, c));
       GECODE_ME_CHECK(x[i].cardMax(home, c));

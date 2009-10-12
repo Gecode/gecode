@@ -44,12 +44,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  EqBnd<View0,View1>::EqBnd(Space& home, View0 x0, View1 x1)
+  EqBnd<View0,View1>::EqBnd(Home home, View0 x0, View1 x1)
     : MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>(home,x0,x1) {}
 
   template<class View0, class View1>
   ExecStatus
-  EqBnd<View0,View1>::post(Space& home, View0 x0, View1 x1){
+  EqBnd<View0,View1>::post(Home home, View0 x0, View1 x1){
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
     } else if (x1.assigned()) {
@@ -112,12 +112,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  EqDom<View0,View1>::EqDom(Space& home, View0 x0, View1 x1)
+  EqDom<View0,View1>::EqDom(Home home, View0 x0, View1 x1)
     : MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>(home,x0,x1) {}
 
   template<class View0, class View1>
   ExecStatus
-  EqDom<View0,View1>::post(Space& home, View0 x0, View1 x1){
+  EqDom<View0,View1>::post(Home home, View0 x0, View1 x1){
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
     } else if (x1.assigned()) {
@@ -206,12 +206,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   forceinline
-  NaryEqDom<View>::NaryEqDom(Space& home, ViewArray<View>& x)
+  NaryEqDom<View>::NaryEqDom(Home home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_DOM>(home,x) {}
 
   template<class View>
   ExecStatus
-  NaryEqDom<View>::post(Space& home, ViewArray<View>& x) {
+  NaryEqDom<View>::post(Home home, ViewArray<View>& x) {
     x.unique(home);
     if (x.size() == 2) {
       return EqDom<View,View>::post(home,x[0],x[1]);
@@ -340,12 +340,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   forceinline
-  NaryEqBnd<View>::NaryEqBnd(Space& home, ViewArray<View>& x)
+  NaryEqBnd<View>::NaryEqBnd(Home home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_BND>(home,x) {}
 
   template<class View>
   ExecStatus
-  NaryEqBnd<View>::post(Space& home, ViewArray<View>& x) {
+  NaryEqBnd<View>::post(Home home, ViewArray<View>& x) {
     if (x.size() == 2) {
       return EqBnd<View,View>::post(home,x[0],x[1]);
     } else if (x.size() > 2) {
@@ -432,12 +432,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, class CtrlView>
   forceinline
-  ReEqDom<View,CtrlView>::ReEqDom(Space& home, View x0, View x1, CtrlView b)
+  ReEqDom<View,CtrlView>::ReEqDom(Home home, View x0, View x1, CtrlView b)
     : ReBinaryPropagator<View,PC_INT_DOM,CtrlView>(home,x0,x1,b) {}
 
   template<class View, class CtrlView>
   ExecStatus
-  ReEqDom<View,CtrlView>::post(Space& home, View x0, View x1, CtrlView b) {
+  ReEqDom<View,CtrlView>::post(Home home, View x0, View x1, CtrlView b) {
     if (b.one())
       return EqDom<View,View>::post(home,x0,x1);
     if (b.zero())
@@ -490,12 +490,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, class CtrlView>
   forceinline
-  ReEqBnd<View,CtrlView>::ReEqBnd(Space& home, View x0, View x1, CtrlView b)
+  ReEqBnd<View,CtrlView>::ReEqBnd(Home home, View x0, View x1, CtrlView b)
     : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,x0,x1,b) {}
 
   template<class View, class CtrlView>
   ExecStatus
-  ReEqBnd<View,CtrlView>::post(Space& home, View x0, View x1, CtrlView b){
+  ReEqBnd<View,CtrlView>::post(Home home, View x0, View x1, CtrlView b){
     if (b.one())
       return EqBnd<View,View>::post(home,x0,x1);
     if (b.zero())
@@ -550,12 +550,12 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView>
   forceinline
   ReEqDomInt<View,CtrlView>::ReEqDomInt
-  (Space& home, View x, int c0, CtrlView b)
+  (Home home, View x, int c0, CtrlView b)
     : ReUnaryPropagator<View,PC_INT_DOM,CtrlView>(home,x,b), c(c0) {}
 
   template<class View, class CtrlView>
   ExecStatus
-  ReEqDomInt<View,CtrlView>::post(Space& home, View x, int c, CtrlView b) {
+  ReEqDomInt<View,CtrlView>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
       GECODE_ME_CHECK(x.eq(home,c));
     } else if (b.zero()) {
@@ -627,12 +627,12 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView>
   forceinline
   ReEqBndInt<View,CtrlView>::ReEqBndInt
-  (Space& home, View x, int c0, CtrlView b)
+  (Home home, View x, int c0, CtrlView b)
     : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,x,b), c(c0) {}
 
   template<class View, class CtrlView>
   ExecStatus
-  ReEqBndInt<View,CtrlView>::post(Space& home, View x, int c, CtrlView b) {
+  ReEqBndInt<View,CtrlView>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
       GECODE_ME_CHECK(x.eq(home,c));
     } else if (b.zero()) {

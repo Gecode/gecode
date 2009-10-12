@@ -42,7 +42,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  element(Space& home, const IntArgs& c, IntVar x0, IntVar x1,
+  element(Home home, const IntArgs& c, IntVar x0, IntVar x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -56,7 +56,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntArgs& c, IntVar x0, BoolVar x1,
+  element(Home home, const IntArgs& c, IntVar x0, BoolVar x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -70,7 +70,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntArgs& c, IntVar x0, int x1,
+  element(Home home, const IntArgs& c, IntVar x0, int x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -87,7 +87,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntVarArgs& c, IntVar x0, IntVar x1,
+  element(Home home, const IntVarArgs& c, IntVar x0, IntVar x1,
           IntConLevel icl) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -103,7 +103,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntVarArgs& c, IntVar x0, int x1,
+  element(Home home, const IntVarArgs& c, IntVar x0, int x1,
           IntConLevel icl) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -121,7 +121,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
+  element(Home home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -132,7 +132,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const BoolVarArgs& c, IntVar x0, int x1,
+  element(Home home, const BoolVarArgs& c, IntVar x0, int x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -146,7 +146,7 @@ namespace Gecode {
 
   namespace {
     IntVar
-    pair(Space& home, IntVar x, int w, IntVar y, int h) {
+    pair(Home home, IntVar x, int w, IntVar y, int h) {
       IntVar xy(home,0,w*h-1);
       if (Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
         home.fail();
@@ -155,7 +155,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntArgs& a, 
+  element(Home home, const IntArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl) {
     if (a.size() != w*h)
@@ -165,7 +165,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntArgs& a, 
+  element(Home home, const IntArgs& a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl) {
     if (a.size() != w*h)
@@ -175,7 +175,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntVarArgs& a, 
+  element(Home home, const IntVarArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl) {
     if (a.size() != w*h)
@@ -185,7 +185,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const BoolVarArgs& a, 
+  element(Home home, const BoolVarArgs& a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl) {
     if (a.size() != w*h)

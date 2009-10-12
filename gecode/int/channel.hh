@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Constructor for cloning \a p
     Base(Space& home, bool share, Base<Info,pc>& p);
     /// Constructor for posting
-    Base(Space& home, int n, Info* xy);
+    Base(Home home, int n, Info* xy);
   public:
     /// Propagation cost (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -100,14 +100,14 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Constructor for cloning \a p
     Val(Space& home, bool share, Val& p);
     /// Constructor for posting
-    Val(Space& home, int n, ValInfo<View>* xy);
+    Val(Home home, int n, ValInfo<View>* xy);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling
-    static  ExecStatus post(Space& home, int n, ValInfo<View>* xy);
+    static  ExecStatus post(Home home, int n, ValInfo<View>* xy);
   };
 
   /**
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Constructor for cloning \a p
     Dom(Space& home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Space& home, int n, DomInfo<View>* xy);
+    Dom(Home home, int n, DomInfo<View>* xy);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling on \a xy
-    static  ExecStatus post(Space& home, int n, DomInfo<View>* xy);
+    static  ExecStatus post(Home home, int n, DomInfo<View>* xy);
   };
 
   /**
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Constructor for cloning \a p
     LinkSingle(Space& home, bool share, LinkSingle& p);
     /// Constructor for posting
-    LinkSingle(Space& home, BoolView x0, IntView x1);
+    LinkSingle(Home home, BoolView x0, IntView x1);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ x_0 = x_1\f$
-    static  ExecStatus post(Space& home, BoolView x0, IntView x1);
+    static  ExecStatus post(Home home, BoolView x0, IntView x1);
   };
 
   /**
@@ -196,7 +196,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Constructor for cloning \a p
     LinkMulti(Space& home, bool share, LinkMulti& p);
     /// Constructor for posting
-    LinkMulti(Space& home, ViewArray<BoolView>& x, IntView y, int o0);
+    LinkMulti(Home home, ViewArray<BoolView>& x, IntView y, int o0);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
     GECODE_INT_EXPORT
-    static  ExecStatus post(Space& home,
+    static  ExecStatus post(Home home,
                             ViewArray<BoolView>& x, IntView y, int o);
   };
 

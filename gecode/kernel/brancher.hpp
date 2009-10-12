@@ -89,7 +89,7 @@ namespace Gecode {
     ViewBrancher(Space& home, bool share, ViewBrancher& b);
   public:
     /// Constructor for creation
-    ViewBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
+    ViewBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                  ViewSel& vi_s);
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
@@ -118,7 +118,7 @@ namespace Gecode {
     ViewValBrancher(Space& home, bool share, ViewValBrancher& b);
   public:
     /// Constructor for creation
-    ViewValBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
+    ViewValBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                     ViewSel& vi_s, ValSel& va_s);
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -252,7 +252,7 @@ namespace Gecode {
 
   template<class ViewSel>
   forceinline
-  ViewBrancher<ViewSel>::ViewBrancher(Space& home,
+  ViewBrancher<ViewSel>::ViewBrancher(Home home,
                                       ViewArray<typename ViewSel::View>& x0,
                                       ViewSel& vi_s)
     : Brancher(home), x(x0), start(0), viewsel(vi_s) {}
@@ -322,7 +322,7 @@ namespace Gecode {
   template<class ViewSel, class ValSel>
   forceinline
   ViewValBrancher<ViewSel,ValSel>::
-  ViewValBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
+  ViewValBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                   ViewSel& vi_s, ValSel& va_s)
     : ViewBrancher<ViewSel>(home,x,vi_s), valsel(va_s) {}
 

@@ -44,14 +44,14 @@
 namespace Gecode {
 
   void
-  dom(Space& home, SetVar s, SetRelType r, int i) {
+  dom(Home home, SetVar s, SetRelType r, int i) {
     Set::Limits::check(i, "Set::dom");
     IntSet d(i,i);
     dom(home, s, r, d);
   }
 
   void
-  dom(Space& home, SetVar s, SetRelType r, int i, int j) {
+  dom(Home home, SetVar s, SetRelType r, int i, int j) {
     Set::Limits::check(i, "Set::dom");
     Set::Limits::check(j, "Set::dom");
     IntSet d(i,j);
@@ -59,7 +59,7 @@ namespace Gecode {
   }
 
   void
-  dom(Space& home, SetVar s, SetRelType r, const IntSet& is) {
+  dom(Home home, SetVar s, SetRelType r, const IntSet& is) {
     Set::Limits::check(is, "Set::dom");
     if (home.failed()) return;
 
@@ -144,14 +144,14 @@ namespace Gecode {
   }
 
   void
-  dom(Space& home, SetVar s, SetRelType r, int i, BoolVar b) {
+  dom(Home home, SetVar s, SetRelType r, int i, BoolVar b) {
     Set::Limits::check(i, "Set::dom");
     IntSet d(i,i);
     dom(home, s, r, d, b);
   }
 
   void
-  dom(Space& home, SetVar s, SetRelType r, int i, int j, BoolVar b) {
+  dom(Home home, SetVar s, SetRelType r, int i, int j, BoolVar b) {
     Set::Limits::check(i, "Set::dom");
     Set::Limits::check(j, "Set::dom");
     IntSet d(i,j);
@@ -159,7 +159,7 @@ namespace Gecode {
   }
 
   void
-  dom(Space& home, SetVar s, SetRelType r, const IntSet& is, BoolVar b) {
+  dom(Home home, SetVar s, SetRelType r, const IntSet& is, BoolVar b) {
     Set::Limits::check(is, "Set::dom");
     if (home.failed()) return;
     switch (r) {

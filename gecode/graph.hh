@@ -97,7 +97,7 @@ namespace Gecode {
    *  - Int::TooFewArguments, if \a x has no elements.
    */
   GECODE_GRAPH_EXPORT void
-  circuit(Space& home, const IntVarArgs& x,
+  circuit(Home home, const IntVarArgs& x,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator such that \a x forms a circuit with costs \a y and \a z
    *
@@ -120,7 +120,7 @@ namespace Gecode {
    *    size or if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_GRAPH_EXPORT void
-  circuit(Space& home, 
+  circuit(Home home, 
           const IntArgs& c,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
           IntConLevel icl=ICL_DEF);
@@ -143,7 +143,7 @@ namespace Gecode {
    *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_GRAPH_EXPORT void
-  circuit(Space& home, 
+  circuit(Home home, 
           const IntArgs& c,
           const IntVarArgs& x, IntVar z,
           IntConLevel icl=ICL_DEF);

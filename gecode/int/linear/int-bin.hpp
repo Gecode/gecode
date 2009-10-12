@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class A, class B, PropCond pc>
   forceinline
-  LinBin<Val,A,B,pc>::LinBin(Space& home, A y0, B y1, Val c0)
+  LinBin<Val,A,B,pc>::LinBin(Home home, A y0, B y1, Val c0)
     : Propagator(home), x0(y0), x1(y1), c(c0) {
     x0.subscribe(home,*this,pc);
     x1.subscribe(home,*this,pc);
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class A, class B, PropCond pc, class Ctrl>
   forceinline
-  ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Space& home, A y0, B y1, Val c0, Ctrl b0)
+  ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Home home, A y0, B y1, Val c0, Ctrl b0)
     : Propagator(home), x0(y0), x1(y1), c(c0), b(b0) {
     x0.subscribe(home,*this,pc);
     x1.subscribe(home,*this,pc);
@@ -130,12 +130,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  EqBin<Val,A,B>::EqBin(Space& home, A x0, B x1, Val c)
+  EqBin<Val,A,B>::EqBin(Home home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,x0,x1,c) {}
 
   template<class Val, class A, class B>
   ExecStatus
-  EqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
+  EqBin<Val,A,B>::post(Home home, A x0, B x1, Val c) {
     (void) new (home) EqBin<Val,A,B>(home,x0,x1,c);
     return ES_OK;
   }
@@ -200,12 +200,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class Ctrl>
   forceinline
-  ReEqBin<Val,A,B,Ctrl>::ReEqBin(Space& home, A x0, B x1, Val c, Ctrl b)
+  ReEqBin<Val,A,B,Ctrl>::ReEqBin(Home home, A x0, B x1, Val c, Ctrl b)
     : ReLinBin<Val,A,B,PC_INT_BND,Ctrl>(home,x0,x1,c,b) {}
 
   template<class Val, class A, class B, class Ctrl>
   ExecStatus
-  ReEqBin<Val,A,B,Ctrl>::post(Space& home, A x0, B x1, Val c, Ctrl b) {
+  ReEqBin<Val,A,B,Ctrl>::post(Home home, A x0, B x1, Val c, Ctrl b) {
     (void) new (home) ReEqBin<Val,A,B,Ctrl>(home,x0,x1,c,b);
     return ES_OK;
   }
@@ -249,12 +249,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class A, class B>
   forceinline
-  NqBin<Val,A,B>::NqBin(Space& home, A x0, B x1, Val c)
+  NqBin<Val,A,B>::NqBin(Home home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_VAL>(home,x0,x1,c) {}
 
   template<class Val, class A, class B>
   ExecStatus
-  NqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
+  NqBin<Val,A,B>::post(Home home, A x0, B x1, Val c) {
     (void) new (home) NqBin<Val,A,B>(home,x0,x1,c);
     return ES_OK;
   }
@@ -305,12 +305,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  LqBin<Val,A,B>::LqBin(Space& home, A x0, B x1, Val c)
+  LqBin<Val,A,B>::LqBin(Home home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,x0,x1,c) {}
 
   template<class Val, class A, class B>
   ExecStatus
-  LqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
+  LqBin<Val,A,B>::post(Home home, A x0, B x1, Val c) {
     (void) new (home) LqBin<Val,A,B>(home,x0,x1,c);
     return ES_OK;
   }
@@ -351,12 +351,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  GqBin<Val,A,B>::GqBin(Space& home, A x0, B x1, Val c)
+  GqBin<Val,A,B>::GqBin(Home home, A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,x0,x1,c) {}
 
   template<class Val, class A, class B>
   ExecStatus
-  GqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c) {
+  GqBin<Val,A,B>::post(Home home, A x0, B x1, Val c) {
     (void) new (home) GqBin<Val,A,B>(home,x0,x1,c);
     return ES_OK;
   }
@@ -397,12 +397,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  ReLqBin<Val,A,B>::ReLqBin(Space& home, A x0, B x1, Val c, BoolView b)
+  ReLqBin<Val,A,B>::ReLqBin(Home home, A x0, B x1, Val c, BoolView b)
     : ReLinBin<Val,A,B,PC_INT_BND,BoolView>(home,x0,x1,c,b) {}
 
   template<class Val, class A, class B>
   ExecStatus
-  ReLqBin<Val,A,B>::post(Space& home, A x0, B x1, Val c, BoolView b) {
+  ReLqBin<Val,A,B>::post(Home home, A x0, B x1, Val c, BoolView b) {
     (void) new (home) ReLqBin<Val,A,B>(home,x0,x1,c,b);
     return ES_OK;
   }

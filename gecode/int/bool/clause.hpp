@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   forceinline
-  ClauseTrue<VX,VY>::ClauseTrue(Space& home,
+  ClauseTrue<VX,VY>::ClauseTrue(Home home,
                                 ViewArray<VX>& x0, ViewArray<VY>& y0)
     : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>
   (home,x0[x0.size()-1],y0[y0.size()-1]), x(x0), y(y0) {
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   inline ExecStatus
-  ClauseTrue<VX,VY>::post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y) {
+  ClauseTrue<VX,VY>::post(Home home, ViewArray<VX>& x, ViewArray<VY>& y) {
     for (int i=x.size(); i--; )
       if (x[i].one())
         return ES_OK;
@@ -205,7 +205,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   forceinline
-  Clause<VX,VY>::Clause(Space& home, ViewArray<VX>& x0, ViewArray<VY>& y0,
+  Clause<VX,VY>::Clause(Home home, ViewArray<VX>& x0, ViewArray<VY>& y0,
                         VX z0)
     : Propagator(home), x(x0), y(y0), z(z0), n_zero(0), c(home) {
     x.subscribe(home,*new (home) Tagged(home,*this,c,true));
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   inline ExecStatus
-  Clause<VX,VY>::post(Space& home, ViewArray<VX>& x, ViewArray<VY>& y, VX z) {
+  Clause<VX,VY>::post(Home home, ViewArray<VX>& x, ViewArray<VY>& y, VX z) {
     assert(!x.shared(home) && !y.shared(home));
     if (z.one())
       return ClauseTrue<VX,VY>::post(home,x,y);

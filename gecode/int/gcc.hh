@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
     /// Constructor for posting
-    Val(Space& home, ViewArray<IntView>& x, ViewArray<Card>& k);
+    Val(Home home, ViewArray<IntView>& x, ViewArray<Card>& k);
     /// Constructor for cloning \a p
     Val(Space& home, bool share, Val<Card>& p);
   public:
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Destructor
     virtual size_t dispose(Space& home);
     /// Post propagator for views \a x and cardinalities \a k
-    static ExecStatus post(Space& home,
+    static ExecStatus post(Home home,
                            ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ExecStatus ubc(Space& home, int& nb, HallInfo hall[], Rank rank[],
                    int mu[], int nu[]);
     /// Constructor for posting
-    Bnd(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
+    Bnd(Home home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Destructor
     virtual size_t dispose(Space& home);
     /// Post propagator for views \a x and cardinalities \a k
-    static ExecStatus post(Space& home,
+    static ExecStatus post(Home home,
                            ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Constructor for cloning \a p
     Dom(Space& home, bool share, Dom<Card>& p);
     /// Constructor for posting
-    Dom(Space& home, ViewArray<IntView>&, ViewArray<Card>&, bool);
+    Dom(Home home, ViewArray<IntView>&, ViewArray<Card>&, bool);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Destructor
     virtual size_t dispose(Space& home);
     /// Post propagator for views \a x and cardinalities \a k
-    static ExecStatus post(Space& home,
+    static ExecStatus post(Home home,
                            ViewArray<IntView>& x, ViewArray<Card>& k);
   };
 

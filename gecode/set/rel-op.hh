@@ -75,14 +75,14 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for cloning \a p
     SuperOfInter(Space& home, bool share,SuperOfInter& p);
     /// Constructor for posting
-    SuperOfInter(Space& home,View0, View1, View2);
+    SuperOfInter(Home home,View0, View1, View2);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z \supseteq x \cap y\f$
-    static  ExecStatus  post(Space& home, View0 x, View1 y, View2 z);
+    static  ExecStatus  post(Home home, View0 x, View1 y, View2 z);
   };
 
   /**
@@ -105,14 +105,14 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for cloning \a p
     SubOfUnion(Space& home, bool share,SubOfUnion& p);
     /// Constructor for posting
-    SubOfUnion(Space& home,View0, View1, View2);
+    SubOfUnion(Home home,View0, View1, View2);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z \subseteq x \cap y\f$
-    static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
+    static  ExecStatus  post(Home home,View0 x,View1 y,View2 z);
   };
 
 
@@ -136,14 +136,14 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for cloning \a p
     Intersection(Space& home, bool share,Intersection& p);
     /// Constructor for posting
-    Intersection(Space& home,View0,View1,View2);
+    Intersection(Home home,View0,View1,View2);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z=x\cap y\f$
-    static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
+    static  ExecStatus  post(Home home,View0 x,View1 y,View2 z);
   };
 
   /**
@@ -166,14 +166,14 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for cloning \a p
     Union(Space& home, bool share,Union& p);
     /// Constructor for posting
-    Union(Space& home,View0,View1,View2);
+    Union(Home home,View0,View1,View2);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z=x\cup y\f$
-    static  ExecStatus  post(Space& home,View0 x,View1 y,View2 z);
+    static  ExecStatus  post(Home home,View0 x,View1 y,View2 z);
   };
 
    /**
@@ -195,9 +195,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for cloning \a p
     IntersectionN(Space& home, bool share,IntersectionN& p);
     /// Constructor for posting
-    IntersectionN(Space& home,ViewArray<View0>&, View1);
+    IntersectionN(Home home,ViewArray<View0>&, View1);
     /// Constructor for posting
-    IntersectionN(Space& home,ViewArray<View0>&, const IntSet&, View1);
+    IntersectionN(Home home,ViewArray<View0>&, const IntSet&, View1);
   public:
     virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
@@ -205,9 +205,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x = \bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
+    static  ExecStatus  post(Home home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\cap\bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Space& home,ViewArray<View0>& y,
+    static  ExecStatus  post(Home home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
   };
 
@@ -230,9 +230,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for cloning \a p
     UnionN(Space& home, bool share,UnionN& p);
     /// Constructor for posting
-    UnionN(Space& home,ViewArray<View0>&,View1);
+    UnionN(Home home,ViewArray<View0>&,View1);
     /// Constructor for posting
-    UnionN(Space& home,ViewArray<View0>&,const IntSet&,View1);
+    UnionN(Home home,ViewArray<View0>&,const IntSet&,View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home, bool);
@@ -240,9 +240,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
+    static  ExecStatus  post(Home home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Space& home,ViewArray<View0>& y,
+    static  ExecStatus  post(Home home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
   };
 
@@ -266,9 +266,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Constructor for cloning \a p
     PartitionN(Space& home, bool share,PartitionN& p);
     /// Constructor for posting
-    PartitionN(Space& home,ViewArray<View0>&, View1);
+    PartitionN(Home home,ViewArray<View0>&, View1);
     /// Constructor for posting
-    PartitionN(Space& home,ViewArray<View0>&, const IntSet&, View1);
+    PartitionN(Home home,ViewArray<View0>&, const IntSet&, View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
@@ -276,9 +276,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Space& home,ViewArray<View0>& y,View1 x);
+    static  ExecStatus  post(Home home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Space& home,ViewArray<View0>& y,
+    static  ExecStatus  post(Home home,ViewArray<View0>& y,
                              const IntSet& z,View1 x);
   };
 

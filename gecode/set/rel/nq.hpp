@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  Distinct<View0,View1>::Distinct(Space& home, View0 x, View1 y)
+  Distinct<View0,View1>::Distinct(Home home, View0 x, View1 y)
     : MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>(home,x,y) {}
 
   template<class View0, class View1>
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   ExecStatus
-  Distinct<View0,View1>::post(Space& home, View0 x, View1 y) {
+  Distinct<View0,View1>::post(Home home, View0 x, View1 y) {
     if (x.assigned()) {
       GlbRanges<View0> xr(x);
       IntSet xs(xr);
@@ -98,7 +98,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0>
   ExecStatus
-  DistinctDoit<View0>::post(Space& home, View0 x, ConstantView y) {
+  DistinctDoit<View0>::post(Home home, View0 x, ConstantView y) {
     (void) new (home) DistinctDoit<View0>(home,x,y);
     return ES_OK;
   }
@@ -144,7 +144,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0>
   forceinline
-  DistinctDoit<View0>::DistinctDoit(Space& home, View0 _x, ConstantView _y)
+  DistinctDoit<View0>::DistinctDoit(Home home, View0 _x, ConstantView _y)
     : UnaryPropagator<View0, PC_SET_ANY>(home,_x), y(_y)  {}
 
   template<class View0>

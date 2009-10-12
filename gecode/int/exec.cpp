@@ -41,21 +41,21 @@
 namespace Gecode {
 
   void
-  wait(Space& home, IntVar x, void (*c)(Space& home),
+  wait(Home home, IntVar x, void (*c)(Space& home),
        IntConLevel) {
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Kernel::UnaryWait<Int::IntView>::post(home,x,c));
   }
 
   void
-  wait(Space& home, BoolVar x, void (*c)(Space& home),
+  wait(Home home, BoolVar x, void (*c)(Space& home),
        IntConLevel) {
     if (home.failed()) return;
     GECODE_ES_FAIL(home,Kernel::UnaryWait<Int::BoolView>::post(home,x,c));
   }
 
   void
-  wait(Space& home, const IntVarArgs& x, void (*c)(Space& home),
+  wait(Home home, const IntVarArgs& x, void (*c)(Space& home),
        IntConLevel) {
     if (home.failed()) return;
     ViewArray<Int::IntView> xv(home,x);
@@ -63,7 +63,7 @@ namespace Gecode {
   }
 
   void
-  wait(Space& home, const BoolVarArgs& x, void (*c)(Space& home),
+  wait(Home home, const BoolVarArgs& x, void (*c)(Space& home),
        IntConLevel) {
     if (home.failed()) return;
     ViewArray<Int::BoolView> xv(home,x);
@@ -71,7 +71,7 @@ namespace Gecode {
   }
 
   void
-  when(Space& home, BoolVar x,
+  when(Home home, BoolVar x,
        void (*t)(Space& home), void (*e)(Space& home),
        IntConLevel) {
     if (home.failed()) return;

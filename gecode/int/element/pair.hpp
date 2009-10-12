@@ -38,11 +38,11 @@
 namespace Gecode { namespace Int { namespace Element {
 
   forceinline
-  Pair::Pair(Space& home, IntView x0, IntView x1, IntView x2, int w0)
+  Pair::Pair(Home home, IntView x0, IntView x1, IntView x2, int w0)
     : TernaryPropagator<IntView,PC_INT_DOM>(home,x0,x1,x2), w(w0) {}
 
   inline ExecStatus
-  Pair::post(Space& home, IntView x0, IntView x1, IntView x2,
+  Pair::post(Home home, IntView x0, IntView x1, IntView x2,
              int w, int h) {
     GECODE_ME_CHECK(x0.gq(home,0)); GECODE_ME_CHECK(x0.le(home,w));
     GECODE_ME_CHECK(x1.gq(home,0)); GECODE_ME_CHECK(x1.le(home,h));

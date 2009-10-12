@@ -64,14 +64,14 @@ namespace Gecode { namespace Set { namespace Convex {
     /// Constructor for cloning \a p
     Convex(Space& home, bool share, Convex& p);
     /// Constructor for posting
-    Convex(Space& home, SetView);
+    Convex(Home home, SetView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that propagates that \a x is convex
-    static  ExecStatus  post(Space& home,SetView x);
+    static  ExecStatus  post(Home home,SetView x);
   };
 
   /**
@@ -86,14 +86,14 @@ namespace Gecode { namespace Set { namespace Convex {
     /// Constructor for cloning \a p
     ConvexHull(Space& home, bool share, ConvexHull&);
     /// Constructor for posting
-    ConvexHull(Space& home, SetView, SetView);
+    ConvexHull(Home home, SetView, SetView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*  copy(Space& home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that propagates that \a y is the convex hull of \a x
-    static  ExecStatus  post(Space& home,SetView x,SetView y);
+    static  ExecStatus  post(Home home,SetView x,SetView y);
   };
 
 

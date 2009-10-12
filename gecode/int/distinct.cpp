@@ -44,7 +44,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  distinct(Space& home, const IntVarArgs& x, IntConLevel icl) {
+  distinct(Home home, const IntVarArgs& x, IntConLevel icl) {
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (home.failed()) return;
@@ -62,7 +62,7 @@ namespace Gecode {
   }
 
   void
-  distinct(Space& home, const IntArgs& c, const IntVarArgs& x,
+  distinct(Home home, const IntArgs& c, const IntVarArgs& x,
            IntConLevel icl) {
     if (x.same(home))
       throw ArgumentSame("Int::distinct");

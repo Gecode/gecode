@@ -52,7 +52,7 @@ namespace Gecode {
   using namespace Gecode::Set;
 
   void
-  element(Space& home, SetOpType op, const SetVarArgs& x, SetVar y, SetVar z,
+  element(Home home, SetOpType op, const SetVarArgs& x, SetVar y, SetVar z,
     const IntSet& universe) {
     if (home.failed()) return;
     
@@ -91,7 +91,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z,
+  element(Home home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z,
     const IntSet& universe) {
     if (home.failed()) return;
 
@@ -139,7 +139,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const SetVarArgs& x, IntVar y, SetVar z) {
+  element(Home home, const SetVarArgs& x, IntVar y, SetVar z) {
     if (x.size() == 0)
       throw Set::TooFewArguments("Set::element");
     if (home.failed()) return;
@@ -153,7 +153,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntSetArgs& s, IntVar y, SetVar z) {
+  element(Home home, const IntSetArgs& s, IntVar y, SetVar z) {
     if (s.size() == 0)
       throw Set::TooFewArguments("Set::element");
     for (int i=s.size(); i--;)
@@ -173,7 +173,7 @@ namespace Gecode {
 
   namespace {
     IntVar
-    pair(Space& home, IntVar x, int w, IntVar y, int h) {
+    pair(Home home, IntVar x, int w, IntVar y, int h) {
       IntVar xy(home,0,w*h-1);
       if (Int::Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
         home.fail();
@@ -182,7 +182,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const IntSetArgs& a, 
+  element(Home home, const IntSetArgs& a, 
           IntVar x, int w, IntVar y, int h, SetVar z) {
     if (a.size() == 0)
       throw Set::TooFewArguments("Set::element");
@@ -193,7 +193,7 @@ namespace Gecode {
   }
 
   void
-  element(Space& home, const SetVarArgs& a, 
+  element(Home home, const SetVarArgs& a, 
           IntVar x, int w, IntVar y, int h, SetVar z) {
     if (a.size() == 0)
       throw Set::TooFewArguments("Set::element");

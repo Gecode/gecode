@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class A, class B, class C, PropCond pc>
   forceinline
-  LinTer<Val,A,B,C,pc>::LinTer(Space& home, A y0, B y1, C y2, Val c0)
+  LinTer<Val,A,B,C,pc>::LinTer(Home home, A y0, B y1, C y2, Val c0)
     : Propagator(home), x0(y0), x1(y1), x2(y2), c(c0) {
     x0.subscribe(home,*this,pc);
     x1.subscribe(home,*this,pc);
@@ -94,12 +94,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C>
   forceinline
-  EqTer<Val,A,B,C>::EqTer(Space& home, A x0, B x1, C x2, Val c)
+  EqTer<Val,A,B,C>::EqTer(Home home, A x0, B x1, C x2, Val c)
     : LinTer<Val,A,B,C,PC_INT_BND>(home,x0,x1,x2,c) {}
 
   template<class Val, class A, class B, class C>
   ExecStatus
-  EqTer<Val,A,B,C>::post(Space& home, A x0, B x1, C x2, Val c) {
+  EqTer<Val,A,B,C>::post(Home home, A x0, B x1, C x2, Val c) {
     (void) new (home) EqTer<Val,A,B,C>(home,x0,x1,x2,c);
     return ES_OK;
   }
@@ -173,12 +173,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C>
   forceinline
-  NqTer<Val,A,B,C>::NqTer(Space& home, A x0, B x1, C x2, Val c)
+  NqTer<Val,A,B,C>::NqTer(Home home, A x0, B x1, C x2, Val c)
     : LinTer<Val,A,B,C,PC_INT_VAL>(home,x0,x1,x2,c) {}
 
   template<class Val, class A, class B, class C>
   ExecStatus
-  NqTer<Val,A,B,C>::post(Space& home, A x0, B x1, C x2, Val c) {
+  NqTer<Val,A,B,C>::post(Home home, A x0, B x1, C x2, Val c) {
     (void) new (home) NqTer<Val,A,B,C>(home,x0,x1,x2,c);
     return ES_OK;
   }
@@ -229,12 +229,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C>
   forceinline
-  LqTer<Val,A,B,C>::LqTer(Space& home, A x0, B x1, C x2, Val c)
+  LqTer<Val,A,B,C>::LqTer(Home home, A x0, B x1, C x2, Val c)
     : LinTer<Val,A,B,C,PC_INT_BND>(home,x0,x1,x2,c) {}
 
   template<class Val, class A, class B, class C>
   ExecStatus
-  LqTer<Val,A,B,C>::post(Space& home, A x0, B x1, C x2, Val c) {
+  LqTer<Val,A,B,C>::post(Home home, A x0, B x1, C x2, Val c) {
     (void) new (home) LqTer<Val,A,B,C>(home,x0,x1,x2,c);
     return ES_OK;
   }

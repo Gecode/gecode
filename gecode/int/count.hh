@@ -62,16 +62,16 @@ namespace Gecode { namespace Int { namespace Count {
   RelTest holds(VX x, ConstIntView y);
   /// Post that all views in \a x are equal to \a y
   template<class VX>
-  bool post_true(Space& home, ViewArray<VX>& x, VX y);
+  bool post_true(Home home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are equal to \a y
   template<class VX>
-  bool post_true(Space& home, ViewArray<VX>& x, ConstIntView y);
+  bool post_true(Home home, ViewArray<VX>& x, ConstIntView y);
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
-  bool post_false(Space& home, ViewArray<VX>& x, VX y);
+  bool post_false(Home home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
-  bool post_false(Space& home, ViewArray<VX>& x, ConstIntView y);
+  bool post_false(Home home, ViewArray<VX>& x, ConstIntView y);
   //@}
 
 }}}
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for cloning \a p
     BaseInt(Space& home, bool share, BaseInt& p);
     /// Constructor for creation
-    BaseInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
+    BaseInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -126,14 +126,14 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for cloning \a p
     EqInt(Space& home, bool share, EqInt& p);
     /// Constructor for creation
-    EqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
+    EqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, VY y, int c);
   };
 
   /**
@@ -155,14 +155,14 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for cloning \a p
     GqInt(Space& home, bool share, GqInt& p);
     /// Constructor for creation
-    GqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
+    GqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, VY y, int c);
   };
 
   /**
@@ -184,14 +184,14 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for cloning \a p
     LqInt(Space& home, bool share, LqInt& p);
     /// Constructor for creation
-    LqInt(Space& home, ViewArray<VX>& x, int n_s, VY y, int c);
+    LqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, VY y, int c);
   };
 
   /**
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Update subscription
     bool resubscribe(Space& home, VX& z);
     /// Constructor for posting
-    NqInt(Space& home,  ViewArray<VX>& x, VY y, int c);
+    NqInt(Home home,  ViewArray<VX>& x, VY y, int c);
     /// Constructor for cloning \a p
     NqInt(Space& home, bool share, NqInt& p);
   public:
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq c\f$
-    static  ExecStatus post(Space& home, ViewArray<VX>& x, VY y, int c);
+    static  ExecStatus post(Home home, ViewArray<VX>& x, VY y, int c);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for cloning \a p
     BaseView(Space& home, bool share, BaseView& p);
     /// Constructor for creation
-    BaseView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    BaseView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -299,13 +299,13 @@ namespace Gecode { namespace Int { namespace Count {
     EqView(Space& home, bool share, EqView& p);
   public:
     /// Constructor for creation
-    EqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    EqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
   /**
@@ -332,13 +332,13 @@ namespace Gecode { namespace Int { namespace Count {
     NqView(Space& home, bool share, NqView& p);
   public:
     /// Constructor for creation
-    NqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    NqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq z+c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
   /**
@@ -365,13 +365,13 @@ namespace Gecode { namespace Int { namespace Count {
     LqView(Space& home, bool share, LqView& p);
   public:
     /// Constructor for creation
-    LqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    LqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z+c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
   /**
@@ -398,13 +398,13 @@ namespace Gecode { namespace Int { namespace Count {
     GqView(Space& home, bool share, GqView& p);
   public:
     /// Constructor for creation
-    GqView(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    GqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z+c\f$
-    static ExecStatus post(Space& home, ViewArray<VX>& x, VY y, VZ z, int c);
+    static ExecStatus post(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
 }}}

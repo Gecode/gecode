@@ -383,7 +383,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   protected:
     using TaskProp<ManTask>::t;
     /// Constructor for creation
-    ManProp(Space& home, TaskArray<ManTask>& t);
+    ManProp(Home home, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
     ManProp(Space& home, bool shared, ManProp& p);
   public:
@@ -392,7 +392,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on unary resource
-    static ExecStatus post(Space& home, TaskArray<ManTask>& t);
+    static ExecStatus post(Home home, TaskArray<ManTask>& t);
   };
 
   /**
@@ -406,7 +406,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   protected:
     using TaskProp<OptTask>::t;
     /// Constructor for creation
-    OptProp(Space& home, TaskArray<OptTask>& t);
+    OptProp(Home home, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
     OptProp(Space& home, bool shared, OptProp& p);
   public:
@@ -415,7 +415,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on unary resource
-    static ExecStatus post(Space& home, TaskArray<OptTask>& t);
+    static ExecStatus post(Home home, TaskArray<OptTask>& t);
   };
 
 }}}

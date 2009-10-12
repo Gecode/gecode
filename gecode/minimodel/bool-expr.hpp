@@ -48,13 +48,13 @@ namespace Gecode {
   }
 
   forceinline BoolVar
-  BoolExpr::post(Space& home, IntConLevel icl) const {
+  BoolExpr::post(Home home, IntConLevel icl) const {
     Region r(home);
     return NNF::nnf(r,n,false)->post(home,icl);
   }
 
   forceinline void
-  BoolExpr::post(Space& home, bool t, IntConLevel icl) const {
+  BoolExpr::post(Home home, bool t, IntConLevel icl) const {
     Region r(home);
     return NNF::nnf(r,n,false)->post(home,t,icl);
   }
@@ -100,12 +100,12 @@ namespace Gecode {
 
 
   inline BoolVar
-  post(Space& home, const BoolExpr& e, IntConLevel icl) {
+  post(Home home, const BoolExpr& e, IntConLevel icl) {
     return e.post(home,icl);
   }
 
   inline BoolVar
-  post(Space&, const BoolVar& b, IntConLevel) {
+  post(Home, const BoolVar& b, IntConLevel) {
     return b;
   }
 

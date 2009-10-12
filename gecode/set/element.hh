@@ -81,7 +81,7 @@ namespace Gecode { namespace Set { namespace Element {
     /// Constructor for cloning \a p
     ElementIntersection(Space& home, bool share,ElementIntersection& p);
     /// Constructor for posting
-    ElementIntersection(Space& home,RView,IdxViewArray&,RView,
+    ElementIntersection(Home home,RView,IdxViewArray&,RView,
                        const IntSet& universe);
   public:
     /// Copy propagator during cloning
@@ -96,7 +96,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be the given universe
      * \a u (as an empty intersection is the universe).
      */
-    static ExecStatus post(Space& home,RView z,IdxViewArray& x,
+    static ExecStatus post(Home home,RView z,IdxViewArray& x,
                            RView y, const IntSet& u);
   };
 
@@ -118,7 +118,7 @@ namespace Gecode { namespace Set { namespace Element {
     /// Constructor for cloning \a p
     ElementUnion(Space& home, bool share,ElementUnion& p);
     /// Constructor for posting
-    ElementUnion(Space& home,SView,IdxViewArray&,RView);
+    ElementUnion(Home home,SView,IdxViewArray&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
@@ -132,7 +132,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus post(Space& home,SView z,IdxViewArray& x,
+    static  ExecStatus post(Home home,SView z,IdxViewArray& x,
                             RView y);
   };
 
@@ -152,7 +152,7 @@ namespace Gecode { namespace Set { namespace Element {
     /// Constructor for cloning \a p
     ElementUnionConst(Space& home, bool share,ElementUnionConst& p);
     /// Constructor for posting
-    ElementUnionConst(Space& home,SView,SharedArray<IntSet>&,RView);
+    ElementUnionConst(Home home,SView,SharedArray<IntSet>&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus  post(Space& home,SView z,SharedArray<IntSet>& x,
+    static  ExecStatus  post(Home home,SView z,SharedArray<IntSet>& x,
                              RView y);
   };
 
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Element {
     /// Constructor for cloning \a p
     ElementDisjoint(Space& home, bool share,ElementDisjoint& p);
     /// Constructor for posting
-    ElementDisjoint(Space& home,IdxViewArray&,RView);
+    ElementDisjoint(Home home,IdxViewArray&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home,bool);
@@ -197,7 +197,7 @@ namespace Gecode { namespace Set { namespace Element {
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
-    static  ExecStatus  post(Space& home,IdxViewArray& x,RView y);
+    static  ExecStatus  post(Home home,IdxViewArray& x,RView y);
   };
 
 }}}

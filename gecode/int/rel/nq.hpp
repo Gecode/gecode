@@ -43,12 +43,12 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template<class View>
   forceinline
-  Nq<View>::Nq(Space& home, View x0, View x1)
+  Nq<View>::Nq(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_VAL>(home,x0,x1) {}
 
   template<class View>
   ExecStatus
-  Nq<View>::post(Space& home, View x0, View x1){
+  Nq<View>::post(Home home, View x0, View x1){
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.nq(home,x0.val()));
     } else if (x1.assigned()) {

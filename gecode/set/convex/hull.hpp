@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace Convex {
    */
 
   forceinline
-  ConvexHull::ConvexHull(Space& home, SetView x, SetView y)
+  ConvexHull::ConvexHull(Home home, SetView x, SetView y)
     : BinaryPropagator<SetView, PC_SET_ANY>(home, x, y) {}
 
   forceinline
@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace Convex {
     : BinaryPropagator<SetView, PC_SET_ANY>(home, share, p) {}
 
   forceinline ExecStatus
-  ConvexHull::post(Space& home, SetView x, SetView y) {
+  ConvexHull::post(Home home, SetView x, SetView y) {
     (void) new (home) ConvexHull(home,x,y);
     return ES_OK;
   }

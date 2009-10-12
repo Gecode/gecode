@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  Lq<BV>::Lq(Space& home, BV b0, BV b1)
+  Lq<BV>::Lq(Home home, BV b0, BV b1)
     : BoolBinary<BV,BV>(home,b0,b1) {}
 
   template<class BV>
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   inline ExecStatus
-  Lq<BV>::post(Space& home, BV b0, BV b1) {
+  Lq<BV>::post(Home home, BV b0, BV b1) {
     if (b0.zero()) {
       return ES_OK;
     } else if (b0.one()) {
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline ExecStatus
-  Le<BV>::post(Space& home, BV b0, BV b1) {
+  Le<BV>::post(Home home, BV b0, BV b1) {
     GECODE_ME_CHECK(b0.zero(home));
     GECODE_ME_CHECK(b1.one(home));
     return ES_OK;

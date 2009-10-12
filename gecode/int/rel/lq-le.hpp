@@ -46,12 +46,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   forceinline
-  Lq<View>::Lq(Space& home, View x0, View x1)
+  Lq<View>::Lq(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template<class View>
   ExecStatus
-  Lq<View>::post(Space& home, View x0, View x1) {
+  Lq<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
     if (!same(x0,x1) && (x0.max() > x1.min()))
@@ -87,12 +87,12 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template<class View>
   forceinline
-  Le<View>::Le(Space& home, View x0, View x1)
+  Le<View>::Le(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template<class View>
   ExecStatus
-  Le<View>::post(Space& home, View x0, View x1) {
+  Le<View>::post(Home home, View x0, View x1) {
     if (same(x0,x1))
       return ES_FAILED;
     GECODE_ME_CHECK(x0.le(home,x1.max()));
@@ -130,12 +130,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, class CtrlView>
   forceinline
-  ReLq<View,CtrlView>::ReLq(Space& home, View x0, View x1, CtrlView b)
+  ReLq<View,CtrlView>::ReLq(Home home, View x0, View x1, CtrlView b)
     : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,x0,x1,b) {}
 
   template<class View, class CtrlView>
   ExecStatus
-  ReLq<View,CtrlView>::post(Space& home, View x0, View x1, CtrlView b) {
+  ReLq<View,CtrlView>::post(Home home, View x0, View x1, CtrlView b) {
     if (b.one())
       return Lq<View>::post(home,x0,x1);
     if (b.zero())
@@ -193,12 +193,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, class CtrlView>
   forceinline
-  ReLqInt<View,CtrlView>::ReLqInt(Space& home, View x, int c0, CtrlView b)
+  ReLqInt<View,CtrlView>::ReLqInt(Home home, View x, int c0, CtrlView b)
     : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,x,b), c(c0) {}
 
   template<class View, class CtrlView>
   ExecStatus
-  ReLqInt<View,CtrlView>::post(Space& home, View x, int c, CtrlView b) {
+  ReLqInt<View,CtrlView>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
       GECODE_ME_CHECK(x.lq(home,c));
     } else if (b.zero()) {

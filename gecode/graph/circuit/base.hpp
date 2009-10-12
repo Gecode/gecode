@@ -39,9 +39,9 @@ namespace Gecode { namespace Graph { namespace Circuit {
 
   template<class View>
   forceinline
-  Base<View>::Base(Space& home, ViewArray<View>& x)
+  Base<View>::Base(Home home, ViewArray<View>& x)
     : NaryPropagator<View,Int::PC_INT_DOM>(home,x), y(home,x) {
-    home.notice(*this,AP_WEAKLY);
+    static_cast<Space&>(home).notice(*this,AP_WEAKLY);
   }
 
   template<class View>

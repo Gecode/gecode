@@ -195,7 +195,7 @@ namespace Gecode {
 
   template<class Var>
   inline void
-  LinExpr<Var>::post(Space& home, IntRelType irt, IntConLevel icl) const {
+  LinExpr<Var>::post(Home home, IntRelType irt, IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<typename VarViewTraits<Var>::View>* ts =
       r.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
@@ -206,7 +206,7 @@ namespace Gecode {
 
   template<class Var>
   inline void
-  LinExpr<Var>::post(Space& home, IntRelType irt, const BoolVar& b,
+  LinExpr<Var>::post(Home home, IntRelType irt, const BoolVar& b,
                      IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<typename VarViewTraits<Var>::View>* ts =
@@ -218,7 +218,7 @@ namespace Gecode {
 
   template<>
   inline IntVar
-  LinExpr<IntVar>::post(Space& home, IntConLevel icl) const {
+  LinExpr<IntVar>::post(Home home, IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<Int::IntView>* ts =
       r.alloc<Int::Linear::Term<Int::IntView> >(n->n+1);
@@ -234,7 +234,7 @@ namespace Gecode {
 
   template<>
   inline IntVar
-  LinExpr<BoolVar>::post(Space& home, IntConLevel icl) const {
+  LinExpr<BoolVar>::post(Home home, IntConLevel icl) const {
     Region r(home);
     Int::Linear::Term<Int::BoolView>* ts =
       r.alloc<Int::Linear::Term<Int::BoolView> >(n->n);
@@ -432,19 +432,19 @@ namespace Gecode {
 
 
   forceinline IntVar
-  post(Space&, const IntVar& x, IntConLevel) {
+  post(Home, const IntVar& x, IntConLevel) {
     return x;
   }
 
   inline IntVar
-  post(Space& home, int n, IntConLevel) {
+  post(Home home, int n, IntConLevel) {
     IntVar x(home, n, n);
     return x;
   }
 
   template<class Var>
   inline IntVar
-  post(Space& home, const LinExpr<Var>& e, IntConLevel icl) {
+  post(Home home, const LinExpr<Var>& e, IntConLevel icl) {
     if (!home.failed())
       return e.post(home,icl);
     IntVar x(home,Int::Limits::min,Int::Limits::max);

@@ -50,14 +50,14 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1>
   forceinline
-  PartitionN<View0,View1>::PartitionN(Space& home, ViewArray<View0>& x, View1 y)
+  PartitionN<View0,View1>::PartitionN(Home home, ViewArray<View0>& x, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
     shared = x.shared(home) || viewarrayshared(home,x,y);
   }
 
   template<class View0, class View1>
   forceinline
-  PartitionN<View0,View1>::PartitionN(Space& home, ViewArray<View0>& x,
+  PartitionN<View0,View1>::PartitionN(Home home, ViewArray<View0>& x,
                                       const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
     shared = x.shared(home) || viewarrayshared(home,x,y);
@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template<class View0, class View1>
-  ExecStatus PartitionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
+  ExecStatus PartitionN<View0,View1>::post(Home home, ViewArray<View0>& x,
                                            View1 y) {
     switch (x.size()) {
     case 0:
@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template<class View0, class View1>
-  ExecStatus PartitionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
+  ExecStatus PartitionN<View0,View1>::post(Home home, ViewArray<View0>& x,
                                            const IntSet& z, View1 y) {
     (void) new (home) PartitionN<View0,View1>(home,x,z,y);
     return ES_OK;

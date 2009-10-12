@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   forceinline
-  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space& home,
+  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Home home,
                                                SBAP& p0, SBAN& n0,
                                                VX x0, int c0)
     : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space& home,
+  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Home home,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
     : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
@@ -384,7 +384,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   ExecStatus
-  EqBoolScale<SBAP,SBAN,VX>::post(Space& home,
+  EqBoolScale<SBAP,SBAN,VX>::post(Home home,
                                   SBAP& p, SBAN& n, VX x, int c) {
     p.sort(); n.sort();
     if (p.empty()) {
@@ -410,7 +410,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space& home,
+  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Home home,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
     : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
@@ -539,7 +539,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   ExecStatus
-  LqBoolScale<SBAP,SBAN,VX>::post(Space& home,
+  LqBoolScale<SBAP,SBAN,VX>::post(Home home,
                                   SBAP& p, SBAN& n, VX x, int c) {
     p.sort(); n.sort();
     if (p.empty()) {
@@ -564,7 +564,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   forceinline
-  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space& home,
+  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Home home,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
     : LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>(home,p,n,x,c) {}
@@ -672,7 +672,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class SBAP, class SBAN, class VX>
   ExecStatus
-  NqBoolScale<SBAP,SBAN,VX>::post(Space& home,
+  NqBoolScale<SBAP,SBAN,VX>::post(Home home,
                                   SBAP& p, SBAN& n, VX x, int c) {
     if (p.empty()) {
       EmptyScaleBoolArray ep;

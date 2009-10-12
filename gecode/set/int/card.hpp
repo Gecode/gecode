@@ -46,13 +46,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  Card<View>::Card(Space& home, View y0, Gecode::Int::IntView y1)
+  Card<View>::Card(Home home, View y0, Gecode::Int::IntView y1)
     : IntSetPropagator<View,PC_SET_CARD,
                        Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
   template<class View>
   forceinline ExecStatus
-  Card<View>::post(Space& home, View x0, Gecode::Int::IntView x1) {
+  Card<View>::post(Home home, View x0, Gecode::Int::IntView x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
     GECODE_ME_CHECK(x0.cardMax(home, Gecode::Int::Limits::max));
     (void) new (home) Card(home,x0,x1);

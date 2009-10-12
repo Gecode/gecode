@@ -79,12 +79,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  SqrtBnd<View>::SqrtBnd(Space& home, View x0, View x1)
+  SqrtBnd<View>::SqrtBnd(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template<class View>
   forceinline ExecStatus
-  SqrtBnd<View>::post(Space& home, View x0, View x1) {
+  SqrtBnd<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     if (same(x0,x1)) {
       GECODE_ME_CHECK(x1.lq(home,1));
@@ -147,12 +147,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  SqrtDom<View>::SqrtDom(Space& home, View x0, View x1)
+  SqrtDom<View>::SqrtDom(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
 
   template<class View>
   forceinline ExecStatus
-  SqrtDom<View>::post(Space& home, View x0, View x1) {
+  SqrtDom<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     if (same(x0,x1)) {
       GECODE_ME_CHECK(x1.lq(home,1));

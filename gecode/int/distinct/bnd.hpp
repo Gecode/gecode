@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline
-  Bnd<View>::Bnd(Space& home, ViewArray<View>& x0)
+  Bnd<View>::Bnd(Home home, ViewArray<View>& x0)
     : Propagator(home), x(x0), y(home,x0) {
     // Both x and y initially contain the same variables
     //  - x is used for bounds propagation
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   ExecStatus
-  Bnd<View>::post(Space& home, ViewArray<View>& x){
+  Bnd<View>::post(Home home, ViewArray<View>& x){
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() > 2)

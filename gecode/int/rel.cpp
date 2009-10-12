@@ -45,7 +45,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  rel(Space& home, IntVar x0, IntRelType r, int n, IntConLevel) {
+  rel(Home home, IntVar x0, IntRelType r, int n, IntConLevel) {
     Limits::check(n,"Int::rel");
     if (home.failed()) return;
     IntView x(x0);
@@ -61,7 +61,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, const IntVarArgs& x, IntRelType r, int n, IntConLevel) {
+  rel(Home home, const IntVarArgs& x, IntRelType r, int n, IntConLevel) {
     Limits::check(n,"Int::rel");
     if (home.failed()) return;
     switch (r) {
@@ -101,7 +101,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, IntVar x0, IntRelType r, IntVar x1, IntConLevel icl) {
+  rel(Home home, IntVar x0, IntRelType r, IntVar x1, IntConLevel icl) {
     if (home.failed()) return;
     switch (r) {
     case IRT_EQ:
@@ -127,7 +127,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, const IntVarArgs& x, IntRelType r, IntVar y,
+  rel(Home home, const IntVarArgs& x, IntRelType r, IntVar y,
       IntConLevel icl) {
     if (home.failed()) return;
     switch (r) {
@@ -176,7 +176,7 @@ namespace Gecode {
 
 
   void
-  rel(Space& home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
+  rel(Home home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
       IntConLevel icl) {
     if (home.failed()) return;
     switch (r) {
@@ -220,7 +220,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, IntVar x, IntRelType r, int n, BoolVar b,
+  rel(Home home, IntVar x, IntRelType r, int n, BoolVar b,
       IntConLevel icl) {
     Limits::check(n,"Int::rel");
     if (home.failed()) return;
@@ -267,7 +267,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, const IntVarArgs& x, IntRelType r,
+  rel(Home home, const IntVarArgs& x, IntRelType r,
       IntConLevel icl) {
     if (home.failed() || (x.size() < 2)) return;
     switch (r) {
@@ -306,7 +306,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space& home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+  rel(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl) {
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");

@@ -156,7 +156,7 @@ namespace Gecode {
   }
 
   BoolVar
-  BoolExpr::NNF::post(Space& home, IntConLevel icl) const {
+  BoolExpr::NNF::post(Home home, IntConLevel icl) const {
     if ((t == NT_VAR) && !u.a.neg)
       return u.a.x->x;
     BoolVar b(home,0,1);
@@ -214,7 +214,7 @@ namespace Gecode {
   }
 
   void
-  BoolExpr::NNF::post(Space& home, NodeType t,
+  BoolExpr::NNF::post(Home home, NodeType t,
                       BoolVarArgs& bp, BoolVarArgs& bn,
                       int& ip, int& in,
                       IntConLevel icl) const {
@@ -252,7 +252,7 @@ namespace Gecode {
   }
 
   void
-  BoolExpr::NNF::post(Space& home, bool b, IntConLevel icl) const {
+  BoolExpr::NNF::post(Home home, bool b, IntConLevel icl) const {
     if (b) {
       switch (t) {
       case NT_VAR:

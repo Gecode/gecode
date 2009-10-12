@@ -81,12 +81,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  AbsBnd<View>::AbsBnd(Space& home, View x0, View x1)
+  AbsBnd<View>::AbsBnd(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template<class View>
   ExecStatus
-  AbsBnd<View>::post(Space& home, View x0, View x1) {
+  AbsBnd<View>::post(Home home, View x0, View x1) {
     if (x0.min() >= 0) {
       return Rel::EqBnd<View,View>::post(home,x0,x1);
     } else if (x0.max() <= 0) {
@@ -134,12 +134,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  AbsDom<View>::AbsDom(Space& home, View x0, View x1)
+  AbsDom<View>::AbsDom(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
 
   template<class View>
   ExecStatus
-  AbsDom<View>::post(Space& home, View x0, View x1) {
+  AbsDom<View>::post(Home home, View x0, View x1) {
     if (x0.min() >= 0) {
       return Rel::EqDom<View,View>::post(home,x0,x1);
     } else if (x0.max() <= 0) {

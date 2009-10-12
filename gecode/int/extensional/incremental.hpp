@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View>
   forceinline
-  Incremental<View>::Incremental(Space& home, ViewArray<View>& x,
+  Incremental<View>::Incremental(Home home, ViewArray<View>& x,
                                  const TupleSet& t)
     : Base<View,false>(home,x,t), support_data(NULL),
       unassigned(x.size()), ac(home) {
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View>
   forceinline ExecStatus
-  Incremental<View>::post(Space& home, ViewArray<View>& x, const TupleSet& t) {
+  Incremental<View>::post(Home home, ViewArray<View>& x, const TupleSet& t) {
     // All variables in the correct domain
     for (int i = x.size(); i--; ) {
       GECODE_ME_CHECK(x[i].gq(home, t.min()));

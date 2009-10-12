@@ -43,7 +43,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
    */
   template<class View>
   forceinline
-  Val<View>::Val(Space& home, ViewArray<View>& x)
+  Val<View>::Val(Home home, ViewArray<View>& x)
     : Base<View>(home,x) {}
 
   template<class View>
@@ -81,7 +81,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
 
   template<class View>
   ExecStatus
-  Val<View>::post(Space& home, ViewArray<View>& x) {
+  Val<View>::post(Home home, ViewArray<View>& x) {
     int n = x.size();
     if (n == 1) {
       GECODE_ME_CHECK(x[0].eq(home,0));

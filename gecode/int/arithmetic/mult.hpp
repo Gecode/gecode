@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View, PropCond pc>
   forceinline
-  MultZeroOne<View,pc>::MultZeroOne(Space& home, View x0, View x1)
+  MultZeroOne<View,pc>::MultZeroOne(Home home, View x0, View x1)
     : BinaryPropagator<View,pc>(home,x0,x1) {}
 
   template<class View, PropCond pc>
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View, PropCond pc>
   forceinline ExecStatus
-  MultZeroOne<View,pc>::post(Space& home, View x0, View x1) {
+  MultZeroOne<View,pc>::post(Home home, View x0, View x1) {
     switch (equal(x0,0)) {
     case RT_FALSE:
       GECODE_ME_CHECK(x1.eq(home,1));
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Space& home, VA x0, VB x1, VC x2)
+  MultPlusBnd<Val,VA,VB,VC>::MultPlusBnd(Home home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,x0,x1,x2) {}
 
@@ -299,7 +299,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Val, class VA, class VB, class VC>
   forceinline ExecStatus
-  MultPlusBnd<Val,VA,VB,VC>::post(Space& home, VA x0, VB x1, VC x2) {
+  MultPlusBnd<Val,VA,VB,VC>::post(Home home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
     GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) *
@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template<class View>
   forceinline
-  MultBnd<View>::MultBnd(Space& home, View x0, View x1, View x2)
+  MultBnd<View>::MultBnd(Home home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
 
   template<class View>
@@ -434,7 +434,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   ExecStatus
-  MultBnd<View>::post(Space& home, View x0, View x1, View x2) {
+  MultBnd<View>::post(Home home, View x0, View x1, View x2) {
     if (same(x0,x1))
       return SqrBnd<View>::post(home,x0,x2);
     if (same(x0,x2))
@@ -506,7 +506,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Val, class VA, class VB, class VC>
   forceinline
-  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Space& home, VA x0, VB x1, VC x2)
+  MultPlusDom<Val,VA,VB,VC>::MultPlusDom(Home home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
   (home,x0,x1,x2) {}
 
@@ -546,7 +546,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Val, class VA, class VB, class VC>
   forceinline ExecStatus
-  MultPlusDom<Val,VA,VB,VC>::post(Space& home, VA x0, VB x1, VC x2) {
+  MultPlusDom<Val,VA,VB,VC>::post(Home home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
     GECODE_ME_CHECK(x2.gq(home,(static_cast<double>(x0.min()) *
@@ -568,7 +568,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template<class View>
   forceinline
-  MultDom<View>::MultDom(Space& home, View x0, View x1, View x2)
+  MultDom<View>::MultDom(Home home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
 
   template<class View>
@@ -693,7 +693,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   ExecStatus
-  MultDom<View>::post(Space& home, View x0, View x1, View x2) {
+  MultDom<View>::post(Home home, View x0, View x1, View x2) {
     if (same(x0,x1))
       return SqrDom<View>::post(home,x0,x2);
     if (same(x0,x2))

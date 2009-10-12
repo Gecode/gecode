@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void
-  sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y,
+  sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
          const IntVarArgs& z, IntConLevel) {
     using namespace Int;
     if ((x.size() != y.size()) || (x.size() != z.size()))
@@ -57,7 +57,7 @@ namespace Gecode {
   }
 
   void
-  sorted(Space& home, const IntVarArgs& x, const IntVarArgs& y,
+  sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
          IntConLevel) {
     using namespace Int;
     if (x.size() != y.size())

@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Channel {
    */
   template<class View, bool shared>
   forceinline
-  Val<View,shared>::Val(Space& home, int n, ValInfo<View>* xy)
+  Val<View,shared>::Val(Home home, int n, ValInfo<View>* xy)
     : Base<ValInfo<View>,PC_INT_VAL>(home,n,xy) {}
 
   template<class View, bool shared>
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class View, bool shared>
   ExecStatus
-  Val<View,shared>::post(Space& home, int n, ValInfo<View>* xy) {
+  Val<View,shared>::post(Home home, int n, ValInfo<View>* xy) {
     assert(n > 0);
     if (n == 1) {
       GECODE_ME_CHECK(xy[0].view.eq(home,0));

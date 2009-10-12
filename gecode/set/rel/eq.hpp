@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  Eq<View0,View1>::Eq(Space& home, View0 x, View1 y)
+  Eq<View0,View1>::Eq(Home home, View0 x, View1 y)
     : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {}
 
   template<class View0, class View1>
@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   ExecStatus
-  Eq<View0,View1>::post(Space& home, View0 x, View1 y) {
+  Eq<View0,View1>::post(Home home, View0 x, View1 y) {
     (void) new (home) Eq(home,x,y);
     return ES_OK;
   }

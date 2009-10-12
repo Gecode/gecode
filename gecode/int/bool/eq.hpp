@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  Eq<BVA,BVB>::Eq(Space& home, BVA b0, BVB b1)
+  Eq<BVA,BVB>::Eq(Home home, BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,b0,b1) {}
 
   template<class BVA, class BVB>
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   inline ExecStatus
-  Eq<BVA,BVB>::post(Space& home, BVA b0, BVB b1) {
+  Eq<BVA,BVB>::post(Home home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
     case BT_SAME: return ES_OK;
     case BT_COMP: return ES_FAILED;
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  NaryEq<BV>::NaryEq(Space& home, ViewArray<BV>& x)
+  NaryEq<BV>::NaryEq(Home home, ViewArray<BV>& x)
     : NaryPropagator<BV,PC_BOOL_VAL>(home,x) {}
 
   template<class BV>
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   inline ExecStatus
-  NaryEq<BV>::post(Space& home, ViewArray<BV>& x) {
+  NaryEq<BV>::post(Home home, ViewArray<BV>& x) {
     x.unique(home);
     int n = x.size();
     if (n < 2)

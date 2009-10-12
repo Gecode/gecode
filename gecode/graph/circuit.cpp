@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void
-  circuit(Space& home, const IntVarArgs& x, IntConLevel icl) {
+  circuit(Home home, const IntVarArgs& x, IntConLevel icl) {
     if (x.same(home))
       throw Int::ArgumentSame("Graph::circuit");
     if (x.size() == 0)
@@ -55,7 +55,7 @@ namespace Gecode {
   }
 
   void
-  circuit(Space& home, const IntArgs& c, 
+  circuit(Home home, const IntArgs& c, 
           const IntVarArgs& x, const IntVarArgs& y, IntVar z, 
           IntConLevel icl) {
     int n = x.size();
@@ -73,7 +73,7 @@ namespace Gecode {
   }
 
   void
-  circuit(Space& home, const IntArgs& c, 
+  circuit(Home home, const IntArgs& c, 
           const IntVarArgs& x, IntVar z, 
           IntConLevel icl) {
     if (home.failed()) return;

@@ -48,7 +48,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  NoSubset<View0,View1>::NoSubset(Space& home, View0 y0, View1 y1)
+  NoSubset<View0,View1>::NoSubset(Home home, View0 y0, View1 y1)
     : MixBinaryPropagator<View0,PC_SET_CLUB,
                             View1,PC_SET_CGLB>(home,y0,y1) {}
 
@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   ExecStatus
-  NoSubset<View0,View1>::post(Space& home, View0 x, View1 y) {
+  NoSubset<View0,View1>::post(Home home, View0 x, View1 y) {
     if (me_failed(x.cardMin(home,1)))
       return ES_FAILED;
     (void) new (home) NoSubset<View0,View1>(home,x,y);

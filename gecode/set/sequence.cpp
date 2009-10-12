@@ -44,7 +44,7 @@ using namespace Gecode::Set;
 namespace Gecode {
 
   void
-  sequence(Space& home, const SetVarArgs& xa) {
+  sequence(Home home, const SetVarArgs& xa) {
     if (xa.size()==0)
       throw TooFewArguments("Set::seq");
     if (home.failed()) return;
@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   void
-  sequence(Space& home, const SetVarArgs& xa, SetVar y) {
+  sequence(Home home, const SetVarArgs& xa, SetVar y) {
     if (home.failed()) return;
     ViewArray<SetView> x(home,xa);
     GECODE_ES_FAIL(home,Sequence::SeqU::post(home, x,y));

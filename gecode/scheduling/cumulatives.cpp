@@ -74,7 +74,7 @@ namespace Gecode {
     };
 
     void
-    sum(Space& home, IntVar s, IntVar d, IntVar e) {
+    sum(Home home, IntVar s, IntVar d, IntVar e) {
       Int::Linear::Term<Int::IntView> t[3];
       t[0].a= 1; t[0].x=s;
       t[1].a= 1; t[1].x=d;
@@ -83,7 +83,7 @@ namespace Gecode {
     }
 
     void
-    sum(Space& home, IntVar s, int d, IntVar e) {
+    sum(Home home, IntVar s, int d, IntVar e) {
       Int::Linear::Term<Int::IntView> t[2];
       t[0].a= 1; t[0].x=s;
       t[1].a=-1; t[1].x=e;
@@ -92,7 +92,7 @@ namespace Gecode {
 
     template<class Machine, class Duration, class Height>
     void
-    post_cumulatives(Space& home, const Machine& machine,
+    post_cumulatives(Home home, const Machine& machine,
                      const IntVarArgs& start, const Duration& duration,
                      const IntVarArgs& end, const Height& height,
                      const IntArgs& limit, bool at_most,
@@ -136,7 +136,7 @@ namespace Gecode {
 
 
   void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -146,7 +146,7 @@ namespace Gecode {
   }
 
   void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -156,7 +156,7 @@ namespace Gecode {
   }
 
   void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -166,7 +166,7 @@ namespace Gecode {
   }
 
   void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
@@ -176,7 +176,7 @@ namespace Gecode {
   }
 
   void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
@@ -186,7 +186,7 @@ namespace Gecode {
   }
 
   void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
@@ -196,7 +196,7 @@ namespace Gecode {
   }
 
   void
-  cumulatives(Space& home, const IntVarArgs& machine,
+  cumulatives(Home home, const IntVarArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
@@ -206,7 +206,7 @@ namespace Gecode {
   }
 
   void
-  cumulatives(Space& home, const IntArgs& machine,
+  cumulatives(Home home, const IntArgs& machine,
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,

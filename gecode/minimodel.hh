@@ -148,12 +148,12 @@ namespace Gecode {
     /// Assignment operator
     const LinExpr& operator =(const LinExpr& e);
     /// Post propagator
-    void post(Space& home, IntRelType irt, IntConLevel icl) const;
+    void post(Home home, IntRelType irt, IntConLevel icl) const;
     /// Post reified propagator
-    void post(Space& home, IntRelType irt, const BoolVar& b,
+    void post(Home home, IntRelType irt, const BoolVar& b,
               IntConLevel icl) const;
     /// Post propagator and return variable for value
-    IntVar post(Space& home, IntConLevel icl) const;
+    IntVar post(Home home, IntConLevel icl) const;
     /// Destructor
     ~LinExpr(void);
   };
@@ -178,9 +178,9 @@ namespace Gecode {
     /// Create linear relation for integer \a l and expression \a r
     LinRel(int l, IntRelType irt, const LinExpr<Var>& r);
     /// Post propagator for relation (if \a t is false for negated relation)
-    void post(Space& home, bool t,  IntConLevel icl) const;
+    void post(Home home, bool t,  IntConLevel icl) const;
     /// Post reified propagator for relation (if \a t is false for negated relation)
-    void post(Space& home, const BoolVar& b, bool t, IntConLevel icl) const;
+    void post(Home home, const BoolVar& b, bool t, IntConLevel icl) const;
   };
 
   /**
@@ -717,16 +717,16 @@ namespace Gecode {
       static NNF* nnf(Region& r, Node* n, bool neg);
       /// Post propagators for nested conjunctive and disjunctive expression
       GECODE_MINIMODEL_EXPORT
-      void post(Space& home, NodeType t,
+      void post(Home home, NodeType t,
                 BoolVarArgs& bp, BoolVarArgs& bn,
                 int& ip, int& in,
                 IntConLevel icl) const;
       /// Post propagators for expression
       GECODE_MINIMODEL_EXPORT
-      BoolVar post(Space& home, IntConLevel icl) const;
+      BoolVar post(Home home, IntConLevel icl) const;
       /// Post propagators for relation
       GECODE_MINIMODEL_EXPORT
-      void post(Space& home, bool t, IntConLevel icl) const;
+      void post(Home home, bool t, IntConLevel icl) const;
       /// Allocate memory from region
       static void* operator new(size_t s, Region& r);
       /// No-op (for exceptions)
@@ -756,9 +756,9 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     BoolExpr(const LinRel<BoolVar>& rl);
     /// Post propagators for expression
-    BoolVar post(Space& home, IntConLevel icl) const;
+    BoolVar post(Home home, IntConLevel icl) const;
     /// Post propagators for relation
-    void post(Space& home, bool t, IntConLevel icl) const;
+    void post(Home home, bool t, IntConLevel icl) const;
 
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
@@ -779,7 +779,7 @@ namespace Gecode {
     /// Constructor
     BoolRel(const BoolExpr& e, bool t);
     /// Post propagators for relation
-    void post(Space& home, IntConLevel icl) const;
+    void post(Home home, IntConLevel icl) const;
   };
 
   /**
@@ -837,31 +837,31 @@ namespace Gecode {
   //@{
   /// Post linear expression and return its value
   template<class Var>
-  IntVar post(Space& home, const LinExpr<Var>& e,
+  IntVar post(Home home, const LinExpr<Var>& e,
               IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for integer variable) and return its value
-  IntVar post(Space& home, const IntVar& x,
+  IntVar post(Home home, const IntVar& x,
               IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for constant) and return its value
-  IntVar post(Space& home, int n,
+  IntVar post(Home home, int n,
               IntConLevel icl=ICL_DEF);
 
   /// Post linear relation
   template<class Var>
-  void post(Space& home, const LinRel<Var>& r,
+  void post(Home home, const LinRel<Var>& r,
             IntConLevel icl=ICL_DEF);
   /// Make it work for special integer only-case
-  void post(Space& home, bool r,
+  void post(Home home, bool r,
             IntConLevel icl=ICL_DEF);
 
   /// Post Boolean expression and return its value
-  BoolVar post(Space& home, const BoolExpr& e,
+  BoolVar post(Home home, const BoolExpr& e,
                IntConLevel icl=ICL_DEF);
   /// Post Boolean expression (special case for variable) and return its value
-  BoolVar post(Space& home, const BoolVar& b,
+  BoolVar post(Home home, const BoolVar& b,
                IntConLevel icl=ICL_DEF);
   /// Post Boolean relation
-  void post(Space& home, const BoolRel& r,
+  void post(Home home, const BoolRel& r,
             IntConLevel icl=ICL_DEF);
   //@}
 
@@ -951,7 +951,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  abs(Space& home, IntVar x,
+  abs(Home home, IntVar x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x,y)\f$
    *
@@ -959,7 +959,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  min(Space& home, IntVar x, IntVar y,
+  min(Home home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x)\f$
    *
@@ -967,7 +967,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  min(Space& home, const IntVarArgs& x,
+  min(Home home, const IntVarArgs& x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\max(x,y)\f$
    *
@@ -975,7 +975,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  max(Space& home, IntVar x, IntVar y,
+  max(Home home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\max(x)\f$
    *
@@ -983,7 +983,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  max(Space& home, const IntVarArgs& x,
+  max(Home home, const IntVarArgs& x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\cdot y\f$
    *
@@ -991,21 +991,21 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  mult(Space& home, IntVar x, IntVar y,
+  mult(Home home, IntVar x, IntVar y,
        IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\ \mathrm{div}\ y\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
   IntVar
-  div(Space& home, IntVar x, IntVar y,
+  div(Home home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\ \mathrm{mod}\ y\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
   IntVar
-  mod(Space& home, IntVar x, IntVar y,
+  mod(Home home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x^2\f$
    *
@@ -1013,7 +1013,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  sqr(Space& home, IntVar x,
+  sqr(Home home, IntVar x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
    *
@@ -1021,7 +1021,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  sqrt(Space& home, IntVar x,
+  sqrt(Home home, IntVar x,
        IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x+y\f$
    *
@@ -1029,7 +1029,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  plus(Space& home, IntVar x, IntVar y,
+  plus(Home home, IntVar x, IntVar y,
        IntConLevel icl=ICL_DEF);
   /** Return variable constrained to \f$x-y\f$
    *
@@ -1037,7 +1037,7 @@ namespace Gecode {
    * and domain consistency (\a icl = ICL_DOM).
    */
   IntVar
-  minus(Space& home, IntVar x, IntVar y,
+  minus(Home home, IntVar x, IntVar y,
         IntConLevel icl=ICL_DEF);
   //@}
 }
@@ -1054,7 +1054,7 @@ namespace Gecode {
   //@{
   /// Return Boolean variable equal to \f$x\f$
   inline BoolVar
-  channel(Space& home, IntVar x,
+  channel(Home home, IntVar x,
           IntConLevel icl=ICL_DEF) {
     (void) icl;
     BoolVar b(home,0,1); channel(home,b,x);
@@ -1062,7 +1062,7 @@ namespace Gecode {
   }
   /// Return integer variable equal to \f$b\f$
   inline IntVar
-  channel(Space& home, BoolVar b,
+  channel(Home home, BoolVar b,
           IntConLevel icl=ICL_DEF) {
     (void) icl;
     IntVar x(home,0,1); channel(home,b,x);
@@ -1089,7 +1089,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atmost(Space& home, const IntVarArgs& x, int n, int m,
+  atmost(Home home, const IntVarArgs& x, int n, int m,
          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_LQ,m,icl);
   }
@@ -1098,7 +1098,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atmost(Space& home, const IntVarArgs& x, IntVar y, int m,
+  atmost(Home home, const IntVarArgs& x, IntVar y, int m,
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,m,icl);
   }
@@ -1110,7 +1110,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   inline void
-  atmost(Space& home, const IntVarArgs& x, const IntArgs& y, int m,
+  atmost(Home home, const IntVarArgs& x, const IntArgs& y, int m,
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,m,icl);
   }
@@ -1119,7 +1119,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atmost(Space& home, const IntVarArgs& x, int n, IntVar z,
+  atmost(Home home, const IntVarArgs& x, int n, IntVar z,
          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_LQ,z,icl);
   }
@@ -1128,7 +1128,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atmost(Space& home, const IntVarArgs& x, IntVar y, IntVar z,
+  atmost(Home home, const IntVarArgs& x, IntVar y, IntVar z,
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,z,icl);
   }
@@ -1140,7 +1140,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   inline void
-  atmost(Space& home, const IntVarArgs& x, const IntArgs& y, IntVar z,
+  atmost(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,z,icl);
   }
@@ -1150,7 +1150,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atleast(Space& home, const IntVarArgs& x, int n, int m,
+  atleast(Home home, const IntVarArgs& x, int n, int m,
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_GQ,m,icl);
   }
@@ -1159,7 +1159,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atleast(Space& home, const IntVarArgs& x, IntVar y, int m,
+  atleast(Home home, const IntVarArgs& x, IntVar y, int m,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,m,icl);
   }
@@ -1171,7 +1171,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   inline void
-  atleast(Space& home, const IntVarArgs& x, const IntArgs& y, int m,
+  atleast(Home home, const IntVarArgs& x, const IntArgs& y, int m,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,m,icl);
   }
@@ -1180,7 +1180,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atleast(Space& home, const IntVarArgs& x, int n, IntVar z,
+  atleast(Home home, const IntVarArgs& x, int n, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_GQ,z,icl);
   }
@@ -1189,7 +1189,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  atleast(Space& home, const IntVarArgs& x, IntVar y, IntVar z,
+  atleast(Home home, const IntVarArgs& x, IntVar y, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,z,icl);
   }
@@ -1201,7 +1201,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   inline void
-  atleast(Space& home, const IntVarArgs& x, const IntArgs& y, IntVar z,
+  atleast(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,z,icl);
   }
@@ -1211,7 +1211,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  exactly(Space& home, const IntVarArgs& x, int n, int m,
+  exactly(Home home, const IntVarArgs& x, int n, int m,
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_EQ,m,icl);
   }
@@ -1220,7 +1220,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  exactly(Space& home, const IntVarArgs& x, IntVar y, int m,
+  exactly(Home home, const IntVarArgs& x, IntVar y, int m,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,m,icl);
   }
@@ -1232,7 +1232,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   inline void
-  exactly(Space& home, const IntVarArgs& x, const IntArgs& y, int m,
+  exactly(Home home, const IntVarArgs& x, const IntArgs& y, int m,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,m,icl);
   }
@@ -1241,7 +1241,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  exactly(Space& home, const IntVarArgs& x, int n, IntVar z,
+  exactly(Home home, const IntVarArgs& x, int n, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_EQ,z,icl);
   }
@@ -1250,7 +1250,7 @@ namespace Gecode {
    * Supports domain consistent propagation only.
    */
   inline void
-  exactly(Space& home, const IntVarArgs& x, IntVar y, IntVar z,
+  exactly(Home home, const IntVarArgs& x, IntVar y, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,z,icl);
   }
@@ -1262,7 +1262,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   inline void
-  exactly(Space& home, const IntVarArgs& x, const IntArgs& y, IntVar z,
+  exactly(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,z,icl);
   }
@@ -1272,7 +1272,7 @@ namespace Gecode {
    * \a x and \a y are of different size.
    */
   inline void
-  lex(Space& home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+  lex(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF) {
     rel(home,x,r,y,icl);
   }
@@ -1282,7 +1282,7 @@ namespace Gecode {
    * \a x and \a y are of different size.
    */
   inline void
-  lex(Space& home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
+  lex(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
       IntConLevel icl=ICL_DEF) {
     rel(home,x,r,y,icl);
   }
@@ -1411,7 +1411,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
                IntVar z, IntConLevel icl=ICL_DEF);
   /** \brief Element constraint for matrix
    *
@@ -1419,7 +1419,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
                BoolVar z, IntConLevel icl=ICL_DEF);
   /** \brief Element constraint for matrix
    *
@@ -1427,7 +1427,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Space& home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
                IntVar z, IntConLevel icl=ICL_DEF);
   /** \brief Element constraint for matrix
    *
@@ -1435,7 +1435,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Space& home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
                BoolVar z, IntConLevel icl=ICL_DEF);
 #ifdef GECODE_HAS_SET_VARS
   /** \brief Element constraint for matrix
@@ -1444,7 +1444,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Space& home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
                SetVar z);
   /** \brief Element constraint for matrix
    *
@@ -1452,7 +1452,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Space& home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
                SetVar z);
 #endif
 

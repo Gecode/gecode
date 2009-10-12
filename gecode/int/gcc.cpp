@@ -45,7 +45,7 @@
 
 namespace Gecode {
 
-  void count(Space& home, const IntVarArgs& x,
+  void count(Home home, const IntVarArgs& x,
              const IntVarArgs& c, const IntArgs& v,
              IntConLevel icl) {
     using namespace Int;
@@ -77,7 +77,7 @@ namespace Gecode {
   }
 
   // domain is 0..|cards|- 1
-  void count(Space& home, const IntVarArgs& x, const IntVarArgs& c,
+  void count(Home home, const IntVarArgs& x, const IntVarArgs& c,
              IntConLevel icl) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; )
@@ -86,7 +86,7 @@ namespace Gecode {
   }
 
   // constant cards
-  void count(Space& home, const IntVarArgs& x,
+  void count(Home home, const IntVarArgs& x,
              const IntSetArgs& c, const IntArgs& v,
              IntConLevel icl) {
     using namespace Int;
@@ -150,7 +150,7 @@ namespace Gecode {
   }
 
   // domain is 0..|cards|- 1
-  void count(Space& home, const IntVarArgs& x, const IntSetArgs& c,
+  void count(Home home, const IntVarArgs& x, const IntSetArgs& c,
              IntConLevel icl) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; )
@@ -158,7 +158,7 @@ namespace Gecode {
     count(home, x, c, values, icl);
   }
 
-  void count(Space& home, const IntVarArgs& x,
+  void count(Home home, const IntVarArgs& x,
              const IntSet& c, const IntArgs& v,
              IntConLevel icl) {
     IntSetArgs cards(v.size());

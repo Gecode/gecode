@@ -73,7 +73,8 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// connection to dropped view
     int reachable;
     /// Constructor for posting
-    Sorted(Space&, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
+    Sorted(Home home, 
+           ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
     /// Constructor for cloning
     Sorted(Space& home, bool share, Sorted<View,Perm>& p);
   public:
@@ -86,7 +87,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for views \a x, \a y, and \a z
-    static  ExecStatus post(Space&, ViewArray<View>& x, ViewArray<View>& y,
+    static  ExecStatus post(Home home, ViewArray<View>& x, ViewArray<View>& y,
                             ViewArray<View>& z);
   };
 

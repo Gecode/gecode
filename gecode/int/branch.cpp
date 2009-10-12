@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void
-  assign(Space& home, const IntVarArgs& x, IntAssign vals,
+  assign(Home home, const IntVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals) {
     using namespace Int;
     if (home.failed()) return;
@@ -85,7 +85,7 @@ namespace Gecode {
   }
 
   void
-  assign(Space& home, const BoolVarArgs& x, IntAssign vals,
+  assign(Home home, const BoolVarArgs& x, IntAssign vals,
          const ValBranchOptions& o_vals) {
     using namespace Int;
     if (home.failed()) return;
@@ -120,28 +120,28 @@ namespace Gecode {
   }
 
   void
-  branch(Space& home, IntVar x, IntValBranch vals,
+  branch(Home home, IntVar x, IntValBranch vals,
          const ValBranchOptions& o_vals) {
     IntVarArgs xv(1); xv[0]=x;
     branch(home, xv, INT_VAR_NONE, vals, VarBranchOptions::def, o_vals);
   }
   
   void
-  branch(Space& home, BoolVar x, IntValBranch vals,
+  branch(Home home, BoolVar x, IntValBranch vals,
          const ValBranchOptions& o_vals) {
     BoolVarArgs xv(1); xv[0]=x;
     branch(home, xv, INT_VAR_NONE, vals, VarBranchOptions::def, o_vals);
   }
   
   void
-  assign(Space& home, IntVar x, IntAssign vals,
+  assign(Home home, IntVar x, IntAssign vals,
          const ValBranchOptions& o_vals) {
     IntVarArgs xv(1); xv[0]=x;
     assign(home, xv, vals, o_vals);
   }
   
   void
-  assign(Space& home, BoolVar x, IntAssign vals,
+  assign(Home home, BoolVar x, IntAssign vals,
          const ValBranchOptions& o_vals) {
     BoolVarArgs xv(1); xv[0]=x;
     assign(home, xv, vals, o_vals);

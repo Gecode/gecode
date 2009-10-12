@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX>
   forceinline
-  LinBoolInt<VX>::LinBoolInt(Space& home, ViewArray<VX>& x0,
+  LinBoolInt<VX>::LinBoolInt(Home home, ViewArray<VX>& x0,
                              int n_s, int c0)
     : Propagator(home), co(home), x(x0), n_as(n_s), n_hs(n_s), c(c0) {
     Advisor* a = new (home) Advisor(home,*this,co);
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX>
   forceinline
-  GqBoolInt<VX>::GqBoolInt(Space& home, ViewArray<VX>& x, int c)
+  GqBoolInt<VX>::GqBoolInt(Home home, ViewArray<VX>& x, int c)
     : LinBoolInt<VX>(home,x,c+1,c) {}
 
   template<class VX>
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   ExecStatus
-  GqBoolInt<VX>::post(Space& home, ViewArray<VX>& x, int c) {
+  GqBoolInt<VX>::post(Home home, ViewArray<VX>& x, int c) {
     // Eliminate assigned views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -234,7 +234,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX>
   forceinline
-  EqBoolInt<VX>::EqBoolInt(Space& home, ViewArray<VX>& x, int c)
+  EqBoolInt<VX>::EqBoolInt(Home home, ViewArray<VX>& x, int c)
     : LinBoolInt<VX>(home,x,std::max(c,x.size()-c)+1,c) {}
 
   template<class VX>
@@ -306,7 +306,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   ExecStatus
-  EqBoolInt<VX>::post(Space& home, ViewArray<VX>& x, int c) {
+  EqBoolInt<VX>::post(Home home, ViewArray<VX>& x, int c) {
     // Eliminate assigned views
     int n_x = x.size();
     for (int i=n_x; i--; )
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   forceinline
-  NqBoolInt<VX>::NqBoolInt(Space& home, ViewArray<VX>& b, int c0)
+  NqBoolInt<VX>::NqBoolInt(Home home, ViewArray<VX>& b, int c0)
     : BinaryPropagator<VX,PC_INT_VAL>(home,
                                       b[b.size()-2],
                                       b[b.size()-1]), x(b), c(c0) {
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   forceinline ExecStatus
-  NqBoolInt<VX>::post(Space& home, ViewArray<VX>& x, int c) {
+  NqBoolInt<VX>::post(Home home, ViewArray<VX>& x, int c) {
     int n = x.size();
     for (int i=n; i--; )
       if (x[i].one()) {
@@ -474,7 +474,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX, class VB>
   forceinline
-  ReLinBoolInt<VX,VB>::ReLinBoolInt(Space& home, ViewArray<VX>& x0,
+  ReLinBoolInt<VX,VB>::ReLinBoolInt(Home home, ViewArray<VX>& x0,
                                     int c0, VB b0)
     : Propagator(home), co(home), x(x0), n_s(x.size()), c(c0), b(b0) {
     x.subscribe(home,*new (home) Advisor(home,*this,co));
@@ -556,7 +556,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX, class VB>
   forceinline
-  ReGqBoolInt<VX,VB>::ReGqBoolInt(Space& home, ViewArray<VX>& x, int c, VB b)
+  ReGqBoolInt<VX,VB>::ReGqBoolInt(Home home, ViewArray<VX>& x, int c, VB b)
     : ReLinBoolInt<VX,VB>(home,x,c,b) {}
 
   template<class VX, class VB>
@@ -609,7 +609,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB>
   ExecStatus
-  ReGqBoolInt<VX,VB>::post(Space& home, ViewArray<VX>& x, int c, VB b) {
+  ReGqBoolInt<VX,VB>::post(Home home, ViewArray<VX>& x, int c, VB b) {
     assert(!b.assigned()); // checked before posting
 
     // Eliminate assigned views
@@ -651,7 +651,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class VX, class VB>
   forceinline
-  ReEqBoolInt<VX,VB>::ReEqBoolInt(Space& home, ViewArray<VX>& x, int c, VB b)
+  ReEqBoolInt<VX,VB>::ReEqBoolInt(Home home, ViewArray<VX>& x, int c, VB b)
     : ReLinBoolInt<VX,VB>(home,x,c,b) {}
 
   template<class VX, class VB>
@@ -701,7 +701,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB>
   ExecStatus
-  ReEqBoolInt<VX,VB>::post(Space& home, ViewArray<VX>& x, int c, VB b) {
+  ReEqBoolInt<VX,VB>::post(Home home, ViewArray<VX>& x, int c, VB b) {
     assert(!b.assigned()); // checked before posting
 
     // Eliminate assigned views

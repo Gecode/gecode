@@ -65,14 +65,14 @@ namespace Gecode { namespace Set { namespace Sequence {
     /// Constructor for cloning \a p
     Seq(Space& home, bool share,Seq& p);
     /// Constructor for posting
-    Seq(Space& home,ViewArray<SetView>&);
+    Seq(Home home,ViewArray<SetView>&);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
-    static ExecStatus post(Space& home,ViewArray<SetView>);
+    static ExecStatus post(Home home,ViewArray<SetView>);
   };
 
   /**
@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     /// Constructor for cloning \a p
     SeqU(Space& home, bool share,SeqU& p);
     /// Constructor for posting
-    SeqU(Space& home,ViewArray<SetView>&, SetView);
+    SeqU(Home home,ViewArray<SetView>&, SetView);
     ExecStatus propagateSeqUnion(Space& home,
                                  bool& modified, ViewArray<SetView>& x,
                                  SetView& y);
@@ -98,7 +98,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-    static ExecStatus post(Space& home,ViewArray<SetView>, SetView);
+    static ExecStatus post(Home home,ViewArray<SetView>, SetView);
   };
 
 

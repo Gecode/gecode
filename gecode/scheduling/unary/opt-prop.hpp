@@ -41,7 +41,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   
   template<class OptTask>
   forceinline
-  OptProp<OptTask>::OptProp(Space& home, TaskArray<OptTask>& t)
+  OptProp<OptTask>::OptProp(Home home, TaskArray<OptTask>& t)
     : TaskProp<OptTask>(home,t) {}
 
   template<class OptTask>
@@ -51,7 +51,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class OptTask>
   forceinline ExecStatus 
-  OptProp<OptTask>::post(Space& home, TaskArray<OptTask>& t) {
+  OptProp<OptTask>::post(Home home, TaskArray<OptTask>& t) {
     int m=0, o=0;
     for (int i=t.size(); i--; ) {
       if (t[i].mandatory())

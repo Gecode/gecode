@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1, class View2>
   forceinline
-  Union<View0,View1,View2>::Union(Space& home, View0 y0,View1 y1,View2 y2)
+  Union<View0,View1,View2>::Union(Home home, View0 y0,View1 y1,View2 y2)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,y0,y1,y2) {}
 
@@ -62,7 +62,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                              View2,PC_SET_ANY>(home,share,p) {}
 
   template<class View0, class View1, class View2>
-  ExecStatus Union<View0,View1,View2>::post(Space& home, View0 x0,
+  ExecStatus Union<View0,View1,View2>::post(Home home, View0 x0,
                                          View1 x1, View2 x2) {
     (void) new (home) Union<View0,View1,View2>(home,x0,x1,x2);
     return ES_OK;
@@ -205,14 +205,14 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1>
   forceinline
-  UnionN<View0,View1>::UnionN(Space& home, ViewArray<View0>& x, View1 y)
+  UnionN<View0,View1>::UnionN(Home home, ViewArray<View0>& x, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
     shared = x.shared(home) || viewarrayshared(home,x,y);
   }
 
   template<class View0, class View1>
   forceinline
-  UnionN<View0,View1>::UnionN(Space& home, ViewArray<View0>& x,
+  UnionN<View0,View1>::UnionN(Home home, ViewArray<View0>& x,
                               const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
     shared = x.shared(home) || viewarrayshared(home,x,y);
@@ -236,7 +236,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1>
   ExecStatus
-  UnionN<View0,View1>::post(Space& home, ViewArray<View0>& x, View1 y) {
+  UnionN<View0,View1>::post(Home home, ViewArray<View0>& x, View1 y) {
     switch (x.size()) {
     case 0:
       GECODE_ME_CHECK(y.cardMax(home, 0));
@@ -253,7 +253,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1>
   ExecStatus
-  UnionN<View0,View1>::post(Space& home, ViewArray<View0>& x,
+  UnionN<View0,View1>::post(Home home, ViewArray<View0>& x,
                             const IntSet& z, View1 y) {
     (void) new (home) UnionN<View0,View1>(home,x,z,y);
     return ES_OK;

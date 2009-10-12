@@ -46,10 +46,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for cloning \a p
     OrTrueSubsumed(Space& home, bool share, OrTrueSubsumed& p);
     /// Post propagator
-    static ExecStatus post(Space& home, BV b0, BV b1);
+    static ExecStatus post(Home home, BV b0, BV b1);
   public:
     /// Constructor
-    OrTrueSubsumed(Space& home, BV b0, BV b1);
+    OrTrueSubsumed(Home home, BV b0, BV b1);
     /// Constructor for rewriting \a p during cloning
     OrTrueSubsumed(Space& home, bool share, Propagator& p,
                    BV b0, BV b1);
@@ -62,12 +62,12 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   forceinline
   OrTrueSubsumed<BV>::OrTrueSubsumed
-  (Space& home, BV b0, BV b1)
+  (Home home, BV b0, BV b1)
     : BoolBinary<BV,BV>(home,b0,b1) {}
 
   template<class BV>
   forceinline ExecStatus
-  OrTrueSubsumed<BV>::post(Space& home, BV b0, BV b1) {
+  OrTrueSubsumed<BV>::post(Home home, BV b0, BV b1) {
     (void) new (home) OrTrueSubsumed(home,b0,b1);
     return ES_OK;
   }
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  BinOrTrue<BVA,BVB>::BinOrTrue(Space& home, BVA b0, BVB b1)
+  BinOrTrue<BVA,BVB>::BinOrTrue(Home home, BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,b0,b1) {}
 
   template<class BVA, class BVB>
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   inline ExecStatus
-  BinOrTrue<BVA,BVB>::post(Space& home, BVA b0, BVB b1) {
+  BinOrTrue<BVA,BVB>::post(Home home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
     case BT_SAME:
       GECODE_ME_CHECK(b0.one(home));
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  TerOrTrue<BV>::TerOrTrue(Space& home, BV b0, BV b1, BV b2)
+  TerOrTrue<BV>::TerOrTrue(Home home, BV b0, BV b1, BV b2)
     : BoolBinary<BV,BV>(home,b0,b1), x2(b2) {}
 
   template<class BV>
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline ExecStatus
-  TerOrTrue<BV>::post(Space& home, BV b0, BV b1, BV b2) {
+  TerOrTrue<BV>::post(Home home, BV b0, BV b1, BV b2) {
     (void) new (home) TerOrTrue<BV>(home,b0,b1,b2);
     return ES_OK;
   }
@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  QuadOrTrue<BV>::QuadOrTrue(Space& home, BV b0, BV b1, BV b2, BV b3)
+  QuadOrTrue<BV>::QuadOrTrue(Home home, BV b0, BV b1, BV b2, BV b3)
     : BoolBinary<BV,BV>(home,b0,b1), x2(b2), x3(b3) {}
 
   template<class BV>
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline ExecStatus
-  QuadOrTrue<BV>::post(Space& home, BV b0, BV b1, BV b2, BV b3) {
+  QuadOrTrue<BV>::post(Home home, BV b0, BV b1, BV b2, BV b3) {
     (void) new (home) QuadOrTrue<BV>(home,b0,b1,b2,b3);
     return ES_OK;
   }
@@ -470,7 +470,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   forceinline
-  Or<BVA,BVB,BVC>::Or(Space& home, BVA b0, BVB b1, BVC b2)
+  Or<BVA,BVB,BVC>::Or(Home home, BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,b0,b1,b2) {}
 
   template<class BVA, class BVB, class BVC>
@@ -503,7 +503,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   inline ExecStatus
-  Or<BVA,BVB,BVC>::post(Space& home, BVA b0, BVB b1, BVC b2) {
+  Or<BVA,BVB,BVC>::post(Home home, BVA b0, BVB b1, BVC b2) {
     if (b2.zero()) {
       GECODE_ME_CHECK(b0.zero(home));
       GECODE_ME_CHECK(b1.zero(home));
@@ -625,7 +625,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  NaryOrTrue<BV>::NaryOrTrue(Space& home, ViewArray<BV>& b)
+  NaryOrTrue<BV>::NaryOrTrue(Home home, ViewArray<BV>& b)
     : BinaryPropagator<BV,PC_BOOL_VAL>(home,
                                       b[b.size()-2],
                                       b[b.size()-1]), x(b) {
@@ -677,7 +677,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   inline ExecStatus
-  NaryOrTrue<BV>::post(Space& home, ViewArray<BV>& b) {
+  NaryOrTrue<BV>::post(Home home, ViewArray<BV>& b) {
     for (int i=b.size(); i--; )
       if (b[i].one())
         return ES_OK;
@@ -759,7 +759,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   forceinline
-  NaryOr<VX,VY>::NaryOr(Space& home, ViewArray<VX>& x, VY y)
+  NaryOr<VX,VY>::NaryOr(Home home, ViewArray<VX>& x, VY y)
     : MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>(home,x,y),
       n_zero(0), c(home) {
     x.subscribe(home,*new (home) Advisor(home,*this,c));
@@ -792,7 +792,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   inline ExecStatus
-  NaryOr<VX,VY>::post(Space& home, ViewArray<VX>& x, VY y) {
+  NaryOr<VX,VY>::post(Home home, ViewArray<VX>& x, VY y) {
     assert(!x.shared(home));
     if (y.one())
       return NaryOrTrue<VX>::post(home,x);

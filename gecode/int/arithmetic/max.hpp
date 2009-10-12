@@ -76,12 +76,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  MaxBnd<View>::MaxBnd(Space& home, View x0, View x1, View x2)
+  MaxBnd<View>::MaxBnd(Home home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
 
   template<class View>
   ExecStatus
-  MaxBnd<View>::post(Space& home, View x0, View x1, View x2) {
+  MaxBnd<View>::post(Home home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     if (same(x0,x1))
@@ -130,12 +130,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  NaryMaxBnd<View>::NaryMaxBnd(Space& home, ViewArray<View>& x, View y)
+  NaryMaxBnd<View>::NaryMaxBnd(Home home, ViewArray<View>& x, View y)
     : NaryOnePropagator<View,PC_INT_BND>(home,x,y) {}
 
   template<class View>
   ExecStatus
-  NaryMaxBnd<View>::post(Space& home, ViewArray<View>& x, View y) {
+  NaryMaxBnd<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
     x.unique(home);
     if (x.size() == 1)
@@ -234,12 +234,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  MaxDom<View>::MaxDom(Space& home, View x0, View x1, View x2)
+  MaxDom<View>::MaxDom(Home home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
 
   template<class View>
   ExecStatus
-  MaxDom<View>::post(Space& home, View x0, View x1, View x2) {
+  MaxDom<View>::post(Home home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     if (same(x0,x1))
@@ -310,12 +310,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  NaryMaxDom<View>::NaryMaxDom(Space& home, ViewArray<View>& x, View y)
+  NaryMaxDom<View>::NaryMaxDom(Home home, ViewArray<View>& x, View y)
     : NaryOnePropagator<View,PC_INT_DOM>(home,x,y) {}
 
   template<class View>
   ExecStatus
-  NaryMaxDom<View>::post(Space& home, ViewArray<View>& x, View y) {
+  NaryMaxDom<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
     x.unique(home);
     if (x.size() == 1)

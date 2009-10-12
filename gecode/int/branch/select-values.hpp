@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class ViewSel, class View>
   forceinline
   ViewValuesBrancher<ViewSel,View>::
-  ViewValuesBrancher(Space& home, ViewArray<typename ViewSel::View>& x,
+  ViewValuesBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                       ViewSel& vi_s)
     : ViewBrancher<ViewSel>(home,x,vi_s) {}
 

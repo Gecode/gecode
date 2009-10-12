@@ -67,6 +67,23 @@
 #
 
 [RELEASE]
+Version: 3.2.1
+Date: Whenever
+[DESCRIPTION]
+Yada Yada!
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Now posting of propagators and branchers take an object of class
+Home (rather than just a space) that can carry additional
+information relevant for posting (for example, groups and failure
+information). Models do not need to be changed in anyway!
+
+
+[RELEASE]
 Version: 3.2.0
 Date: 2009-10-05
 [DESCRIPTION]

@@ -46,7 +46,7 @@ namespace Gecode {
     : e(e0), t(t0) {}
 
   forceinline void
-  BoolRel::post(Space& home, IntConLevel icl) const {
+  BoolRel::post(Home home, IntConLevel icl) const {
     e.post(home,t,icl);
   }
 
@@ -68,7 +68,7 @@ namespace Gecode {
    *
    */
   inline void
-  post(Space& home, const BoolRel& r, IntConLevel icl) {
+  post(Home home, const BoolRel& r, IntConLevel icl) {
     if (home.failed()) return;
     r.post(home,icl);
   }

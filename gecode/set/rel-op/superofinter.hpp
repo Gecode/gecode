@@ -46,7 +46,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template<class View0, class View1, class View2>
   forceinline
   SuperOfInter<View0,View1,View2>::SuperOfInter
-  (Space& home, View0 y0, View1 y1, View2 y2)
+  (Home home, View0 y0, View1 y1, View2 y2)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_CLUB>(home,y0,y1,y2) {}
 
@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1, class View2>
   ExecStatus
-  SuperOfInter<View0,View1,View2>::post(Space& home,
+  SuperOfInter<View0,View1,View2>::post(Home home,
                                         View0 x0, View1 x1, View2 x2) {
     (void) new (home) SuperOfInter<View0,View1,View2>(home, x0, x1, x2);
     return ES_OK;

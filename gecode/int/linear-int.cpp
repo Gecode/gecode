@@ -42,7 +42,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntVarArgs& x, IntRelType r, int c,
          IntConLevel icl) {
     if (home.failed()) return;
@@ -55,7 +55,7 @@ namespace Gecode {
   }
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntVarArgs& x, IntRelType r, int c, BoolVar b,
          IntConLevel) {
     if (home.failed()) return;
@@ -68,7 +68,7 @@ namespace Gecode {
   }
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, int c,
          IntConLevel icl) {
     if (a.size() != x.size())
@@ -83,7 +83,7 @@ namespace Gecode {
   }
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, int c, BoolVar b,
          IntConLevel) {
     if (a.size() != x.size())
@@ -98,7 +98,7 @@ namespace Gecode {
   }
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntVarArgs& x, IntRelType r, IntVar y,
          IntConLevel icl) {
     if (home.failed()) return;
@@ -128,7 +128,7 @@ namespace Gecode {
   }
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntVarArgs& x, IntRelType r, IntVar y, BoolVar b,
          IntConLevel) {
     if (home.failed()) return;
@@ -142,7 +142,7 @@ namespace Gecode {
   }
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
          IntConLevel icl) {
     if (a.size() != x.size())
@@ -174,7 +174,7 @@ namespace Gecode {
   }
 
   void
-  linear(Space& home,
+  linear(Home home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
          BoolVar b, IntConLevel) {
     if (a.size() != x.size())

@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
-  ::DivPlusBnd(Space& home, VA x0, VB x1, VC x2)
+  ::DivPlusBnd(Home home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,x0,x1,x2) {}
 
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Val, class VA, class VB, class VC, bool towardsMinInf>
   forceinline ExecStatus
   DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
-  ::post(Space& home, VA x0, VB x1, VC x2) {
+  ::post(Home home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
     if (towardsMinInf) {
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template<class View>
   forceinline
-  DivBnd<View>::DivBnd(Space& home, View x0, View x1, View x2)
+  DivBnd<View>::DivBnd(Home home, View x0, View x1, View x2)
     : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
 
   template<class View>
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   ExecStatus
-  DivBnd<View>::post(Space& home, View x0, View x1, View x2) {
+  DivBnd<View>::post(Home home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x1.nq(home, 0));
     if (pos(x0)) {
       if (pos(x1) || pos(x2)) goto post_ppp;
@@ -341,12 +341,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  DivMod<View>::DivMod(Space& home, View x0, View x1)
+  DivMod<View>::DivMod(Home home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template<class View>
   forceinline ExecStatus
-  DivMod<View>::post(Space& home, View x0, View x1) {
+  DivMod<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x0.nq(home,0));
     (void) new (home) DivMod<View>(home,x0,x1);
     return ES_OK;

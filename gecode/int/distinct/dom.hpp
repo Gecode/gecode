@@ -658,12 +658,12 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline
-  Dom<View>::Dom(Space& home, ViewArray<View>& x)
+  Dom<View>::Dom(Home home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_DOM>(home,x) {}
 
   template<class View>
   ExecStatus
-  Dom<View>::post(Space& home, ViewArray<View>& x) {
+  Dom<View>::post(Home home, ViewArray<View>& x) {
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() == 3)

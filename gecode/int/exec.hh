@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace Exec {
     /// Constructor for cloning \a p
     When(Space& home, bool share, When& p);
     /// Constructor for creation
-    When(Space& home, BoolView x, void (*t0)(Space&), void (*e0)(Space&));
+    When(Home home, BoolView x, void (*t0)(Space&), void (*e0)(Space&));
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT 
@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Exec {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
     GECODE_INT_EXPORT 
-    static ExecStatus post(Space& home, BoolView x,
+    static ExecStatus post(Home home, BoolView x,
                            void (*t)(Space&), void (*e)(Space&));
   };
 

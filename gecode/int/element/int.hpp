@@ -125,9 +125,9 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template<class V0, class V1, class Idx, class Val>
   forceinline
-  Int<V0,V1,Idx,Val>::Int(Space& home, IntSharedArray& c0, V0 y0, V1 y1)
+  Int<V0,V1,Idx,Val>::Int(Home home, IntSharedArray& c0, V0 y0, V1 y1)
     : Propagator(home), x0(y0), x1(y1), c(c0), iv(NULL) {
-    home.notice(*this,AP_DISPOSE);
+    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this,PC_INT_DOM);
     x1.subscribe(home,*this,PC_INT_DOM);
   }
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class V0, class V1, class Idx, class Val>
   ExecStatus
-  Int<V0,V1,Idx,Val>::post(Space& home, IntSharedArray& c, V0 x0, V1 x1) {
+  Int<V0,V1,Idx,Val>::post(Home home, IntSharedArray& c, V0 x0, V1 x1) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,c[x0.val()]));
     } else {
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class V0, class V1>
   forceinline ExecStatus
-  post_int(Space& home, IntSharedArray& c, V0 x0, V1 x1) {
+  post_int(Home home, IntSharedArray& c, V0 x0, V1 x1) {
     assert(c.size() > 0);
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,c.size()));

@@ -40,7 +40,7 @@
 namespace Gecode {
 
   void
-  count(Space& home, const IntVarArgs& x, int n,
+  count(Home home, const IntVarArgs& x, int n,
         IntRelType r, int m, IntConLevel) {
     using namespace Int;
     Limits::check(n,"Int::count");
@@ -79,7 +79,7 @@ namespace Gecode {
   }
 
   void
-  count(Space& home, const IntVarArgs& x, IntVar y,
+  count(Home home, const IntVarArgs& x, IntVar y,
         IntRelType r, int m, IntConLevel) {
     using namespace Int;
     Limits::check(m,"Int::count");
@@ -116,7 +116,7 @@ namespace Gecode {
   }
 
   void
-  count(Space& home, const IntVarArgs& x, const IntArgs& y,
+  count(Home home, const IntVarArgs& x, const IntArgs& y,
         IntRelType r, int m, IntConLevel) {
     using namespace Int;
     if (x.size() != y.size())
@@ -160,7 +160,7 @@ namespace Gecode {
   }
 
   void
-  count(Space& home, const IntVarArgs& x, int n,
+  count(Home home, const IntVarArgs& x, int n,
         IntRelType r, IntVar z, IntConLevel) {
     using namespace Int;
     Limits::check(n,"Int::count");
@@ -198,7 +198,7 @@ namespace Gecode {
   }
 
   void
-  count(Space& home, const IntVarArgs& x, IntVar y,
+  count(Home home, const IntVarArgs& x, IntVar y,
         IntRelType r, IntVar z, IntConLevel) {
     using namespace Int;
     if (home.failed()) return;
@@ -234,7 +234,7 @@ namespace Gecode {
   }
 
   void
-  count(Space& home, const IntVarArgs& x, const IntArgs& y,
+  count(Home home, const IntVarArgs& x, const IntArgs& y,
         IntRelType r, IntVar z, IntConLevel) {
     using namespace Int;
     if (x.size() != y.size())

@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template<class XV, class YV>
-  LinBoolView<XV,YV>::LinBoolView(Space& home,
+  LinBoolView<XV,YV>::LinBoolView(Home home,
                                   ViewArray<XV>& x0, YV y0, int c0)
     :  Propagator(home), x(x0), y(y0), c(c0) {
     x.subscribe(home,*this,PC_INT_VAL);
@@ -80,12 +80,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class XV, class YV>
   forceinline
-  EqBoolView<XV,YV>::EqBoolView(Space& home, ViewArray<XV>& x, YV y, int c)
+  EqBoolView<XV,YV>::EqBoolView(Home home, ViewArray<XV>& x, YV y, int c)
     : LinBoolView<XV,YV>(home,x,y,c) {}
 
   template<class XV, class YV>
   ExecStatus
-  EqBoolView<XV,YV>::post(Space& home, ViewArray<XV>& x, YV y, int c) {
+  EqBoolView<XV,YV>::post(Home home, ViewArray<XV>& x, YV y, int c) {
     if (y.assigned())
       return EqBoolInt<XV>::post(home,x,y.val()+c);
     int n = x.size();
@@ -166,12 +166,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class XV, class YV>
   forceinline
-  NqBoolView<XV,YV>::NqBoolView(Space& home, ViewArray<XV>& x, YV y, int c)
+  NqBoolView<XV,YV>::NqBoolView(Home home, ViewArray<XV>& x, YV y, int c)
     : LinBoolView<XV,YV>(home,x,y,c) {}
 
   template<class XV, class YV>
   ExecStatus
-  NqBoolView<XV,YV>::post(Space& home, ViewArray<XV>& x, YV y, int c) {
+  NqBoolView<XV,YV>::post(Home home, ViewArray<XV>& x, YV y, int c) {
     if (y.assigned())
       return NqBoolInt<XV>::post(home,x,y.val()+c);
     int n = x.size();
@@ -249,12 +249,12 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class XV, class YV>
   forceinline
-  GqBoolView<XV,YV>::GqBoolView(Space& home, ViewArray<XV>& x, YV y, int c)
+  GqBoolView<XV,YV>::GqBoolView(Home home, ViewArray<XV>& x, YV y, int c)
     : LinBoolView<XV,YV>(home,x,y,c) {}
 
   template<class XV, class YV>
   ExecStatus
-  GqBoolView<XV,YV>::post(Space& home, ViewArray<XV>& x, YV y, int c) {
+  GqBoolView<XV,YV>::post(Home home, ViewArray<XV>& x, YV y, int c) {
     if (y.assigned())
       return GqBoolInt<XV>::post(home,x,y.val()+c);
     // Eliminate assigned views

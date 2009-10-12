@@ -68,7 +68,7 @@ namespace Gecode {
     /// Call function just once
     bool done;
     /// Construct brancher
-    FunctionBranch(Space& home, void (*f0)(Space&))
+    FunctionBranch(Home home, void (*f0)(Space&))
       : Brancher(home), f(f0), done(false) {}
     /// Copy constructor
     FunctionBranch(Space& home, bool share, FunctionBranch& b)
@@ -95,14 +95,14 @@ namespace Gecode {
       return new (home) FunctionBranch(home,share,*this);
     }
     /// Post brancher
-    static void post(Space& home, void (*f)(Space&)) {
+    static void post(Home home, void (*f)(Space&)) {
       (void) new (home) FunctionBranch(home,f);
     }
   };
 
 
   void
-  branch(Space& home, void (*f)(Space& home)) {
+  branch(Home home, void (*f)(Space& home)) {
     if (home.failed())
       return;
     FunctionBranch::post(home,f);

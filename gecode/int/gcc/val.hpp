@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   forceinline
-  Val<Card>::Val(Space& home, 
+  Val<Card>::Val(Home home, 
                  ViewArray<IntView>& x0, ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
     x.subscribe(home, *this, PC_INT_VAL);
@@ -276,7 +276,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   ExecStatus
-  Val<Card>::post(Space& home,
+  Val<Card>::post(Home home,
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 

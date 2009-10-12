@@ -98,7 +98,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     const bool        at_most;
 
     Val(Space& home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
-    Val(Space& home, const ViewArray<ViewM>&, const ViewArray<View>&,
+    Val(Home home, const ViewArray<ViewM>&, const ViewArray<View>&,
         const ViewArray<ViewD>&, const ViewArray<View>&,
         const ViewArray<ViewH>&, const SharedArray<int>&, bool);
 
@@ -114,7 +114,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    static ExecStatus post(Space& home, const ViewArray<ViewM>&,
+    static ExecStatus post(Home home, const ViewArray<ViewM>&,
                            const ViewArray<View>&, const ViewArray<ViewD>&,
                            const ViewArray<View>&, const ViewArray<ViewH>&,
                            const SharedArray<int>&, bool);

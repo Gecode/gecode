@@ -64,7 +64,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     /// Constructor for cloning \a p
     Base(Space& home, bool share, Base& p);
     /// Constructor for posting
-    Base(Space& home, ViewArray<View>& x);
+    Base(Home home, ViewArray<View>& x);
     /// Check whether the view value graph is strongly connected
     ExecStatus connected(Space& home);
     /// Ensure path property: prune edges that could give to small cycles
@@ -94,7 +94,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     /// Constructor for cloning \a p
     Val(Space& home, bool share, Val& p);
     /// Constructor for posting
-    Val(Space& home, ViewArray<View>& x);
+    Val(Home home, ViewArray<View>& x);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -103,7 +103,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for circuit on \a x
-    static  ExecStatus post(Space& home, ViewArray<View>& x);
+    static  ExecStatus post(Home home, ViewArray<View>& x);
   };
 
   /**
@@ -128,7 +128,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     /// Constructor for cloning \a p
     Dom(Space& home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Space& home, ViewArray<View>& x);
+    Dom(Home home, ViewArray<View>& x);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -142,7 +142,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for circuit on \a x
-    static  ExecStatus post(Space& home, ViewArray<View>& x);
+    static  ExecStatus post(Home home, ViewArray<View>& x);
   };
 
 }}}

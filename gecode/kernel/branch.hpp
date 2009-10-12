@@ -153,7 +153,7 @@ namespace Gecode {
   //@{
   /// Call the function \a f (with the current space as argument) for branching
   GECODE_KERNEL_EXPORT void
-  branch(Space& home, void (*f)(Space& home));
+  branch(Home home, void (*f)(Space& home));
   //@}
 
 

@@ -64,14 +64,14 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     MinElement(Space& home, bool share,MinElement& p);
     /// Constructor for posting
-    MinElement(Space& home, View, Gecode::Int::IntView);
+    MinElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is the minimal element of \a s
-    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
   };
 
   /**
@@ -89,14 +89,14 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     NotMinElement(Space& home, bool share,NotMinElement& p);
     /// Constructor for posting
-    NotMinElement(Space& home, View, Gecode::Int::IntView);
+    NotMinElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is not the minimal element of \a s
-    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
   };
 
   /**
@@ -115,7 +115,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     ReMinElement(Space& home, bool share,ReMinElement& p);
     /// Constructor for posting
-    ReMinElement(Space& home, View, Gecode::Int::IntView,
+    ReMinElement(Home home, View, Gecode::Int::IntView,
                  Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post reified propagator for \a b iff \a x is the minimal element of \a s
-    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
+    static ExecStatus post(Home home, View s, Gecode::Int::IntView x,
                            Gecode::Int::BoolView b);
   };
 
@@ -142,14 +142,14 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     MaxElement(Space& home, bool share,MaxElement& p);
     /// Constructor for posting
-    MaxElement(Space& home, View, Gecode::Int::IntView);
+    MaxElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is the largest element of \a s
-    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
   };
 
   /**
@@ -167,14 +167,14 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     NotMaxElement(Space& home, bool share,NotMaxElement& p);
     /// Constructor for posting
-    NotMaxElement(Space& home, View, Gecode::Int::IntView);
+    NotMaxElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is not the largest element of \a s
-    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
   };
 
   /**
@@ -193,14 +193,14 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     ReMaxElement(Space& home, bool share,ReMaxElement& p);
     /// Constructor for posting
-    ReMaxElement(Space& home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
+    ReMaxElement(Home home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post reified propagator for \a b iff \a x is the largest element of \a s
-    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x,
+    static ExecStatus post(Home home, View s, Gecode::Int::IntView x,
                            Gecode::Int::BoolView b);
   };
 
@@ -219,14 +219,14 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     Card(Space& home, bool share,Card& p);
     /// Constructor for posting
-    Card(Space& home, View, Gecode::Int::IntView);
+    Card(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ |s|=x \f$
-    static ExecStatus post(Space& home, View s, Gecode::Int::IntView x);
+    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
   };
 
 
@@ -247,7 +247,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     Match(Space& home, bool share,Match& p);
     /// Constructor for posting
-    Match(Space& home, View, ViewArray<Gecode::Int::IntView>&);
+    Match(Home home, View, ViewArray<Gecode::Int::IntView>&);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
@@ -258,7 +258,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
-    static ExecStatus post(Space& home, View s,
+    static ExecStatus post(Home home, View s,
                            ViewArray<Gecode::Int::IntView>& x);
   };
 
@@ -290,7 +290,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     ChannelInt(Space& home, bool share,ChannelInt& p);
     /// Constructor for posting
-    ChannelInt(Space& home,ViewArray<Gecode::Int::IntView>&,
+    ChannelInt(Home home,ViewArray<Gecode::Int::IntView>&,
                ViewArray<View>&);
   public:
     /// Copy propagator during cloning
@@ -302,7 +302,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-    static ExecStatus post(Space& home,ViewArray<Gecode::Int::IntView>& x,
+    static ExecStatus post(Home home,ViewArray<Gecode::Int::IntView>& x,
                            ViewArray<View>& y);
   };
 
@@ -332,7 +332,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     ChannelBool(Space& home, bool share,ChannelBool& p);
     /// Constructor for posting
-    ChannelBool(Space& home,ViewArray<Gecode::Int::BoolView>&,
+    ChannelBool(Home home,ViewArray<Gecode::Int::BoolView>&,
                 View);
 
     /// Advisor storing a single index
@@ -376,7 +376,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-    static ExecStatus post(Space& home,ViewArray<Gecode::Int::BoolView>& x,
+    static ExecStatus post(Home home,ViewArray<Gecode::Int::BoolView>& x,
                            View y);
   };
 
@@ -402,7 +402,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for cloning \a p
     Weights(Space& home, bool share,Weights& p);
     /// Constructor for posting
-    Weights(Space& home, const SharedArray<int>&, const SharedArray<int>&,
+    Weights(Home home, const SharedArray<int>&, const SharedArray<int>&,
             View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
@@ -414,7 +414,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
-    static ExecStatus post(Space& home,
+    static ExecStatus post(Home home,
                            const SharedArray<int>& elements,
                            const SharedArray<int>& weights,
                            View x, Gecode::Int::IntView y);

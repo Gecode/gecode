@@ -368,14 +368,14 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template<class Val, class View>
   forceinline
-  DomEq<Val,View>::DomEq(Space& home,
+  DomEq<Val,View>::DomEq(Home home,
                          ViewArray<View >& x, ViewArray<View >& y,
                          Val c)
     : Lin<Val,View,View,PC_INT_DOM>(home,x,y,c) {}
 
   template<class Val, class View>
   ExecStatus
-  DomEq<Val,View>::post(Space& home,
+  DomEq<Val,View>::post(Home home,
                         ViewArray<View>& x, ViewArray<View>& y,
                         Val c) {
     (void) new (home) DomEq<Val,View>(home,x,y,c);

@@ -66,7 +66,7 @@ namespace Gecode {
     UnaryPropagator(Space& home, bool share, Propagator& p,
                     View x0);
     /// Constructor for creation
-    UnaryPropagator(Space& home, View x0);
+    UnaryPropagator(Home home, View x0);
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -91,7 +91,7 @@ namespace Gecode {
     /// Constructor for cloning \a p
     BinaryPropagator(Space& home, bool share, BinaryPropagator& p);
     /// Constructor for creation
-    BinaryPropagator(Space& home, View x0, View x1);
+    BinaryPropagator(Home home, View x0, View x1);
     /// Constructor for rewriting \a p during cloning
     BinaryPropagator(Space& home, bool share, Propagator& p,
                      View x0, View x1);
@@ -119,7 +119,7 @@ namespace Gecode {
     /// Constructor for cloning \a p
     TernaryPropagator(Space& home, bool share, TernaryPropagator& p);
     /// Constructor for creation
-    TernaryPropagator(Space& home, View x0, View x1, View x2);
+    TernaryPropagator(Home home, View x0, View x1, View x2);
     /// Constructor for rewriting \a p during cloning
     TernaryPropagator(Space& home, bool share, Propagator& p,
                       View x0, View x1, View x2);
@@ -150,7 +150,7 @@ namespace Gecode {
     NaryPropagator(Space& home, bool share, Propagator& p,
                    ViewArray<View>& x);
     /// Constructor for creation
-    NaryPropagator(Space& home, ViewArray<View>& x);
+    NaryPropagator(Home home, ViewArray<View>& x);
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -181,7 +181,7 @@ namespace Gecode {
     NaryOnePropagator(Space& home, bool share, Propagator& p,
                       ViewArray<View>& x, View y);
     /// Constructor for creation
-    NaryOnePropagator(Space& home, ViewArray<View>& x, View y);
+    NaryOnePropagator(Home home, ViewArray<View>& x, View y);
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -209,7 +209,7 @@ namespace Gecode {
     /// Constructor for cloning
     MixBinaryPropagator(Space& home,bool,MixBinaryPropagator&);
     /// Constructor for creation
-    MixBinaryPropagator(Space& home,View0,View1);
+    MixBinaryPropagator(Home home,View0,View1);
     /// Constructor for rewriting \a p during cloning
     MixBinaryPropagator(Space& home, bool share, Propagator& p,
                         View0 x0, View1 x1);
@@ -243,7 +243,7 @@ namespace Gecode {
     /// Constructor for cloning
     MixTernaryPropagator(Space& home, bool share, MixTernaryPropagator& p);
     /// Constructor for creation
-    MixTernaryPropagator(Space& home, View0 x0, View1 x1, View2 x2);
+    MixTernaryPropagator(Home home, View0 x0, View1 x1, View2 x2);
     /// Constructor for rewriting \a p during cloning
     MixTernaryPropagator(Space& home, bool share, Propagator& p,
                          View0 x0, View1 x1, View2 x2);
@@ -274,7 +274,7 @@ namespace Gecode {
     /// Constructor for cloning \a p
     MixNaryOnePropagator(Space& home, bool share, MixNaryOnePropagator& p);
     /// Constructor for creation
-    MixNaryOnePropagator(Space& home, ViewArray<View0>& x, View1 y);
+    MixNaryOnePropagator(Home home, ViewArray<View0>& x, View1 y);
     /// Constructor for rewriting \a p during cloning
     MixNaryOnePropagator(Space& home, bool share, Propagator& p,
                          ViewArray<View0>& x, View1 y);
@@ -293,7 +293,7 @@ namespace Gecode {
    */
 
   template<class View, PropCond pc>
-  UnaryPropagator<View,pc>::UnaryPropagator(Space& home, View y0)
+  UnaryPropagator<View,pc>::UnaryPropagator(Home home, View y0)
     : Propagator(home), x0(y0) {
     if (pc != PC_GEN_NONE)
       x0.subscribe(home,*this,pc);
@@ -337,7 +337,7 @@ namespace Gecode {
    */
 
   template<class View, PropCond pc>
-  BinaryPropagator<View,pc>::BinaryPropagator(Space& home, View y0, View y1)
+  BinaryPropagator<View,pc>::BinaryPropagator(Home home, View y0, View y1)
     : Propagator(home), x0(y0), x1(y1) {
     if (pc != PC_GEN_NONE) {
       x0.subscribe(home,*this,pc);
@@ -387,7 +387,7 @@ namespace Gecode {
 
   template<class View, PropCond pc>
   TernaryPropagator<View,pc>::TernaryPropagator
-  (Space& home, View y0, View y1, View y2)
+  (Home home, View y0, View y1, View y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     if (pc != PC_GEN_NONE) {
       x0.subscribe(home,*this,pc);
@@ -441,7 +441,7 @@ namespace Gecode {
 
   template<class View, PropCond pc>
   NaryPropagator<View,pc>::NaryPropagator
-  (Space& home, ViewArray<View>& y)
+  (Home home, ViewArray<View>& y)
     : Propagator(home), x(y) {
     if (pc != PC_GEN_NONE)
       x.subscribe(home,*this,pc);
@@ -485,7 +485,7 @@ namespace Gecode {
 
   template<class View, PropCond pc>
   NaryOnePropagator<View,pc>::NaryOnePropagator
-  (Space& home, ViewArray<View>& x0, View y0)
+  (Home home, ViewArray<View>& x0, View y0)
     : Propagator(home), x(x0), y(y0) {
     if (pc != PC_GEN_NONE) {
       x.subscribe(home,*this,pc);
@@ -535,7 +535,7 @@ namespace Gecode {
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
-  (Space& home, View0 y0, View1 y1)
+  (Home home, View0 y0, View1 y1)
     : Propagator(home), x0(y0), x1(y1) {
     if (pc0 != PC_GEN_NONE)
       x0.subscribe(home,*this,pc0);
@@ -587,7 +587,7 @@ namespace Gecode {
   template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
-  MixTernaryPropagator(Space& home, View0 y0, View1 y1, View2 y2)
+  MixTernaryPropagator(Home home, View0 y0, View1 y1, View2 y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     if (pc0 != PC_GEN_NONE)
       x0.subscribe(home,*this,pc0);
@@ -650,7 +650,7 @@ namespace Gecode {
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
-  (Space& home, ViewArray<View0>& x0, View1 y0)
+  (Home home, ViewArray<View0>& x0, View1 y0)
     : Propagator(home), x(x0), y(y0) {
     if (pc0 != PC_GEN_NONE)
       x.subscribe(home,*this,pc0);

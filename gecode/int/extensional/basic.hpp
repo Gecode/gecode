@@ -48,14 +48,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, bool shared>
   forceinline
-  Basic<View,shared>::Basic(Space& home, ViewArray<View>& x,
+  Basic<View,shared>::Basic(Home home, ViewArray<View>& x,
                             const TupleSet& t)
     : Base<View>(home,x,t) {
   }
 
   template<class View, bool shared>
   forceinline ExecStatus
-  Basic<View,shared>::post(Space& home, ViewArray<View>& x,
+  Basic<View,shared>::post(Home home, ViewArray<View>& x,
                            const TupleSet& t) {
     // All variables in the correct domain
     for (int i = x.size(); i--; ) {

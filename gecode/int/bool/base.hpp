@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Bool {
    */
   template<class BVA, class BVB>
   forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space& home, BVA b0, BVB b1)
+  BoolBinary<BVA,BVB>::BoolBinary(Home home, BVA b0, BVB b1)
     : Propagator(home), x0(b0), x1(b1) {
     x0.subscribe(home,*this,PC_BOOL_VAL);
     x1.subscribe(home,*this,PC_BOOL_VAL);
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB, class BVC>
   forceinline
   BoolTernary<BVA,BVB,BVC>::BoolTernary
-  (Space& home, BVA b0, BVB b1, BVC b2)
+  (Home home, BVA b0, BVB b1, BVC b2)
     : Propagator(home), x0(b0), x1(b1), x2(b2) {
     x0.subscribe(home,*this,PC_BOOL_VAL);
     x1.subscribe(home,*this,PC_BOOL_VAL);
