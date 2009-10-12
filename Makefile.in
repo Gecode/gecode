@@ -641,13 +641,13 @@ FLATZINCOBJ = \
 FLATZINCEXESRC0 = fz.cpp
 FLATZINCEXESRC  = $(FLATZINCEXESRC0:%=tools/flatzinc/%)
 FLATZINCEXEOBJ  = $(FLATZINCEXESRC:%.cpp=%$(OBJSUFFIX))
+FLATZINCEXE	= tools/flatzinc/fz$(EXESUFFIX)
 
 FLATZINCALLSRC	= $(FLATZINCSRC) $(FLATZINCEXESRC)
 
 FLATZINCBUILDDIRS = gecode/flatzinc tools/flatzinc
 
 ifeq "@enable_flatzinc@" "yes"
-export FLATZINCEXE			= tools/flatzinc/fz$(EXESUFFIX)
 export FLATZINCDLL			= $(LIBPREFIX)@FLATZINC@$(DLLSUFFIX)
 export FLATZINCSTATICLIB	= $(LIBPREFIX)@FLATZINC@$(STATICLIBSUFFIX)
 export FLATZINCLIB			= $(LIBPREFIX)@FLATZINC@$(LIBSUFFIX)
@@ -659,7 +659,6 @@ else
 export FLATZINCSONAME =
 endif
 else
-export FLATZINCEXE			=
 export FLATZINCDLL			=
 export FLATZINCSTATICLIB	=
 export FLATZINCLIB			=
@@ -899,7 +898,7 @@ compilelib: mkcompiledirs
 	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
 	@$(MAKE) compilesubdirs
 	@$(MAKE) framework
-	@$(MAKE) $(FLATZINCEXE)
+	@$(MAKE) flatzinc
 
 compileexamples: $(EXAMPLEEXE)
 
@@ -1364,6 +1363,13 @@ $(TESTEXE): $(TESTOBJ) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
+
+.PHONY: flatzinc
+ifeq "@enable_flatzinc@" "yes"
+flatzinc: $(FLATZINCEXE)
+else
+flatzinc:
+endif
 
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(DLLPATH) $(CXXFLAGS) \
