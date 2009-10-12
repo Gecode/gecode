@@ -80,7 +80,7 @@ Rank:   major
 Now posting of propagators and branchers take an object of class
 Home (rather than just a space) that can carry additional
 information relevant for posting (for example, groups and failure
-information). Models do not need to be changed in anyway!
+information). Models do not need to be changed in any way!
 
 
 [RELEASE]
