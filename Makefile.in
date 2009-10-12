@@ -137,7 +137,7 @@ SUPPORTHDR0 = \
 	dynamic-stack exception heap \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \
-	thread/windows thread/pthreads \
+	thread/windows thread/pthreads thread/none \
 	dynamic-queue bitset
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)

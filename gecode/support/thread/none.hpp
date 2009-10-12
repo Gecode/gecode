@@ -41,67 +41,45 @@ namespace Gecode { namespace Support {
    * Mutex
    */
   forceinline
-  Mutex::Mutex(void) {
-    InitializeCriticalSection(&w_cs);
-  }
+  Mutex::Mutex(void) {}
   forceinline void
-  Mutex::acquire(void) {
-    EnterCriticalSection(&w_cs);
-  }
+  Mutex::acquire(void) {}
   forceinline bool
   Mutex::tryacquire(void) {
-    return TryEnterCriticalSection(&w_cs) != 0;
+    return true;
   }
   forceinline void
-  Mutex::release(void) {
-    LeaveCriticalSection(&w_cs);
-  }
+  Mutex::release(void) {}
   forceinline
-  Mutex::~Mutex(void) {
-    DeleteCriticalSection(&w_cs);
-  }
+  Mutex::~Mutex(void) {}
 
 
   /*
    * Event
    */
   forceinline
-  Event::Event(void)
-    : w_h(CreateEvent(NULL, FALSE, FALSE, NULL)) {
-    if (w_h == NULL)
-      throw OperatingSystemError("Event::Event[Windows::CreateEvent]");
-  }
+  Event::Event(void) {}
   forceinline void
-  Event::signal(void) {
-    if (SetEvent(w_h) == 0)
-      throw OperatingSystemError("Event::signal[Windows::SetEvent]");
-  }
+  Event::signal(void) {}
   forceinline void
-  Event::wait(void) {
-    if (WaitForSingleObject(w_h,INFINITE) != 0)
-      throw OperatingSystemError("Event::wait[Windows::WaitForSingleObject]");
-  }
+  Event::wait(void) {}
   forceinline
-  Event::~Event(void) {
-    if (CloseHandle(w_h) == 0)
-      throw OperatingSystemError("Event::~Event[Windows::CloseHandle]");
-  }
+  Event::~Event(void) {}
 
 
   /*
    * Thread
    */
-  forceinline void
-  Thread::sleep(unsigned int ms) {
-    Sleep(static_cast<DWORD>(ms));
+  Thread::Run::Run(Runnable*) {
+    throw OperatingSystemError("Thread::run[Threads not supported]");
   }
-
+  forceinline void
+  Thread::sleep(unsigned int) {}
   forceinline unsigned int
   Thread::npu(void) {
-    SYSTEM_INFO si;
-    GetSystemInfo(&si);
-    return static_cast<unsigned int>(si.dwNumberOfProcessors);
+    return 1;
   }
+
 
 }}
 

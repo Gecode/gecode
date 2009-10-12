@@ -63,8 +63,6 @@
 
 #endif
 
-#ifdef GECODE_HAS_THREADS
-
 /**
  * \defgroup FuncSupportThread Simple thread and synchronization support
  *
@@ -73,7 +71,11 @@
  *
  * Requires \code #include <gecode/support/thread.hh> \endcode
  * 
- * If the platform supports threads, the macro GECODE_HAS_THREADS is defined.
+ * If the platform supports threads, the macro GECODE_HAS_THREADS is 
+ * defined. If threads are not supported, all classes are
+ * still available, but are noops with the exception of trying to
+ * create a new thread which will throw an exception.
+ *
  *
  * \ingroup FuncSupport
  */  
@@ -246,6 +248,9 @@ namespace Gecode { namespace Support {
      *
      * After \a r terminates, \a r is deleted. After that, the thread
      * terminates.
+     *
+     * If the operatins system does not support any threads, throws an
+     * exception of type Support::OperatingSystemError.
      */
     static void run(Runnable* r);
     /// Put current thread to sleep for \a ms milliseconds
@@ -267,10 +272,11 @@ namespace Gecode { namespace Support {
 #ifdef GECODE_THREADS_PTHREADS
 #include <gecode/support/thread/pthreads.hpp>
 #endif
+#ifndef GECODE_HAS_THREADS
+#include <gecode/support/thread/none.hpp>
+#endif
 
 #include <gecode/support/thread/thread.hpp>
-
-#endif
 
 #endif
 
