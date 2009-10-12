@@ -1128,11 +1128,11 @@ gecode/flatzinc/parser.tab.hh gecode/flatzinc/parser.tab.cpp: \
 	bison -t -o gecode/flatzinc/parser.tab.cpp -d $<
 	mv gecode/flatzinc/parser.tab.hpp gecode/flatzinc/parser.tab.hh
 else
-gecode/flatzinc/flatzinc.yy.cpp: $(top_srcdir)/gecode/flatzinc/flatzinc.yy.cpp
+gecode/flatzinc/lexer.yy.cpp: $(top_srcdir)/gecode/flatzinc/lexer.yy.cpp
 	cp $(@:%=$(top_srcdir)/%) $@
-gecode/flatzinc/flatzinc.tab.hh: $(top_srcdir)/gecode/flatzinc/flatzinc.tab.hh
+gecode/flatzinc/parser.tab.hh: $(top_srcdir)/gecode/flatzinc/parser.tab.hh
 	cp $(@:%=$(top_srcdir)/%) $@
-gecode/flatzinc/flatzinc.tab.cpp: $(top_srcdir)/gecode/flatzinc/flatzinc.tab.cpp
+gecode/flatzinc/parser.tab.cpp: $(top_srcdir)/gecode/flatzinc/parser.tab.cpp
 	cp $(@:%=$(top_srcdir)/%) $@
 endif
 
