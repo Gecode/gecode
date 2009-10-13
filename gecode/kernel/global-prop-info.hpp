@@ -45,6 +45,8 @@ namespace Gecode {
   public:
     /// Initialize
     PropInfo(void);
+    /// Initialize
+    void init(void);
     /// Return accumulated failure count
     double afc(void) const;
     /// Increment failure count
@@ -97,6 +99,10 @@ namespace Gecode {
   forceinline
   PropInfo::PropInfo(void)
     : _afc(0.0) {}
+  forceinline void
+  PropInfo::init(void) {
+    _afc=0.0;
+  }
   forceinline double
   PropInfo::afc(void) const {
     return _afc;
@@ -172,6 +178,7 @@ namespace Gecode {
       cur = b;
     }
     pi = &cur->pi[--free];
+    pi->init();
     m.release();
     return *pi;
   }

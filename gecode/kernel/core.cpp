@@ -206,6 +206,9 @@ namespace Gecode {
       p->u.med = 0;
       switch (p->propagate(*this,med_o)) {
       case ES_FAILED:
+        // Count failure
+        p->pi.fail();
+        // Mark as failed
         fail(); s = SS_FAILED; goto exit;
       case ES_NOFIX:
         // Find next, if possible

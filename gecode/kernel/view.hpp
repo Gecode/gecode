@@ -47,6 +47,8 @@ namespace Gecode {
     //@{
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
+    /// Return accumulated failure count (plus degree)
+    double afc(void) const;
     /// Return whether this view is derived from a VarViewBase
     static bool varderived(void);
     /// Return dummy variable implementation of view
@@ -78,6 +80,8 @@ namespace Gecode {
     VarImp* var(void) const;
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
+    /// Return accumulated failure count (plus degree)
+    double afc(void) const;
     //@}
 
     /// \name View-dependent propagator support
@@ -152,6 +156,8 @@ namespace Gecode {
     View base(void) const;
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
+    /// Return accumulated failure count (plus degree)
+    double afc(void) const;
     //@}
   };
 
@@ -219,6 +225,10 @@ namespace Gecode {
   ConstViewBase::degree(void) const {
     return 0;
   }
+  forceinline double
+  ConstViewBase::afc(void) const {
+    return 0.0;
+  }
   forceinline bool
   ConstViewBase::varderived(void) {
     return false;
@@ -254,6 +264,11 @@ namespace Gecode {
   forceinline unsigned int
   VarViewBase<VarImp>::degree(void) const {
     return varimp->degree();
+  }
+  template<class VarImp>
+  forceinline double
+  VarViewBase<VarImp>::afc(void) const {
+    return varimp->afc();
   }
   template<class VarImp>
   forceinline void
@@ -344,6 +359,11 @@ namespace Gecode {
   forceinline unsigned int
   DerivedViewBase<View>::degree(void) const {
     return view.degree();
+  }
+  template<class View>
+  forceinline double
+  DerivedViewBase<View>::afc(void) const {
+    return view.afc();
   }
 
 

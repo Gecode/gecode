@@ -57,6 +57,8 @@ namespace Gecode {
     VarImp* var(void) const;
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
+    /// Return accumulated failure count (plus degree)
+    double afc(void) const;
     //@}
     /// \name Variable comparison
     //@{
@@ -89,6 +91,11 @@ namespace Gecode {
   forceinline unsigned int
   VarBase<VarImp>::degree(void) const {
     return varimp->degree();
+  }
+  template<class VarImp>
+  forceinline double
+  VarBase<VarImp>::afc(void) const {
+    return varimp->afc();
   }
   template<class VarImp>
   forceinline bool

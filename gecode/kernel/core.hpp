@@ -486,9 +486,16 @@ namespace Gecode {
      * \brief Return degree (number of subscribed propagators and advisors)
      *
      * Note that the degree of a variable implementation is not available
-     * during copying.
+     * during cloning.
      */
     unsigned int degree(void) const;
+    /**
+     * \brief Return accumulated failure count (plus degree)
+     *
+     * Note that the accumulated failure count of a variable implementation
+     * is not available during cloning.
+     */
+    double afc(void) const;
     /**
      * \brief Run advisors when variable implementation has been modified with modification event \a me and domain change \a d
      *
@@ -2877,6 +2884,31 @@ namespace Gecode {
   }
 
   template<class VIC>
+  forceinline double
+  VarImp<VIC>::afc(void) const {
+    if (degree() == 0)
+      return 0.0;
+    double d = degree();
+    // Count the afc of each propagator
+    {
+      ActorLink** a = const_cast<VarImp<VIC>*>(this)->actor(0);
+      ActorLink** e = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
+      while (a < e) {
+        d += Propagator::cast(*a)->afc(); a++;
+      }
+    }
+    // Count the afc of each advisor's propagator
+    {
+      ActorLink** a = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
+      ActorLink** e = const_cast<VarImp<VIC>*>(this)->base+entries;
+      while (a < e) {
+        d += Advisor::cast(*a)->propagator().afc(); a++;
+      }
+    }
+    return d;
+  }
+
+  template<class VIC>
   forceinline unsigned int
   VarImp<VIC>::bits(void) const {
     return free_and_bits;
@@ -3149,13 +3181,13 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home) {
-    // Entries in index structure are disabled. However they
-    // must still work for cloning (base) and degree (idx(pc_max+2))
     unsigned int n_sub = degree();
     home.pc.p.n_sub -= n_sub;
     unsigned int n = (free_and_bits >> VIC::free_bits) + n_sub;
     home.free<ActorLink*>(base,n);
+    // Must be NULL such that cloning works
     base = NULL;
+    // Must be 0 such that degree works
     entries = 0;
   }
 
@@ -3183,6 +3215,7 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
+        p.pi.fail();
         return false;
       case ES_NOFIX:
         schedule(home,p,me);
