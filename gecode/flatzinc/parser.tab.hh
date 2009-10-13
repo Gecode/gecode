@@ -39,97 +39,97 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     INT_LIT = 258,
-     BOOL_LIT = 259,
-     FLOAT_LIT = 260,
-     ID = 261,
-     STRING_LIT = 262,
-     VAR = 263,
-     PAR = 264,
-     ANNOTATION = 265,
-     ANY = 266,
-     ARRAY = 267,
-     BOOL = 268,
-     CASE = 269,
-     COLONCOLON = 270,
-     CONSTRAINT = 271,
-     DEFAULT = 272,
-     DOTDOT = 273,
-     ELSE = 274,
-     ELSEIF = 275,
-     ENDIF = 276,
-     ENUM = 277,
-     FLOAT = 278,
-     FUNCTION = 279,
-     IF = 280,
-     INCLUDE = 281,
-     INT = 282,
-     LET = 283,
-     MAXIMIZE = 284,
-     MINIMIZE = 285,
-     OF = 286,
-     SATISFY = 287,
-     OUTPUT = 288,
-     PREDICATE = 289,
-     RECORD = 290,
-     SET = 291,
-     SHOW = 292,
-     SHOWCOND = 293,
-     SOLVE = 294,
-     STRING = 295,
-     TEST = 296,
-     THEN = 297,
-     TUPLE = 298,
-     TYPE = 299,
-     VARIANT_RECORD = 300,
-     WHERE = 301
+     FZ_INT_LIT = 258,
+     FZ_BOOL_LIT = 259,
+     FZ_FLOAT_LIT = 260,
+     FZ_ID = 261,
+     FZ_STRING_LIT = 262,
+     FZ_VAR = 263,
+     FZ_PAR = 264,
+     FZ_ANNOTATION = 265,
+     FZ_ANY = 266,
+     FZ_ARRAY = 267,
+     FZ_BOOL = 268,
+     FZ_CASE = 269,
+     FZ_COLONCOLON = 270,
+     FZ_CONSTRAINT = 271,
+     FZ_DEFAULT = 272,
+     FZ_DOTDOT = 273,
+     FZ_ELSE = 274,
+     FZ_ELSEIF = 275,
+     FZ_ENDIF = 276,
+     FZ_ENUM = 277,
+     FZ_FLOAT = 278,
+     FZ_FUNCTION = 279,
+     FZ_IF = 280,
+     FZ_INCLUDE = 281,
+     FZ_INT = 282,
+     FZ_LET = 283,
+     FZ_MAXIMIZE = 284,
+     FZ_MINIMIZE = 285,
+     FZ_OF = 286,
+     FZ_SATISFY = 287,
+     FZ_OUTPUT = 288,
+     FZ_PREDICATE = 289,
+     FZ_RECORD = 290,
+     FZ_SET = 291,
+     FZ_SHOW = 292,
+     FZ_SHOWCOND = 293,
+     FZ_SOLVE = 294,
+     FZ_STRING = 295,
+     FZ_TEST = 296,
+     FZ_THEN = 297,
+     FZ_TUPLE = 298,
+     FZ_TYPE = 299,
+     FZ_VARIANT_RECORD = 300,
+     FZ_WHERE = 301
    };
 #endif
 /* Tokens.  */
-#define INT_LIT 258
-#define BOOL_LIT 259
-#define FLOAT_LIT 260
-#define ID 261
-#define STRING_LIT 262
-#define VAR 263
-#define PAR 264
-#define ANNOTATION 265
-#define ANY 266
-#define ARRAY 267
-#define BOOL 268
-#define CASE 269
-#define COLONCOLON 270
-#define CONSTRAINT 271
-#define DEFAULT 272
-#define DOTDOT 273
-#define ELSE 274
-#define ELSEIF 275
-#define ENDIF 276
-#define ENUM 277
-#define FLOAT 278
-#define FUNCTION 279
-#define IF 280
-#define INCLUDE 281
-#define INT 282
-#define LET 283
-#define MAXIMIZE 284
-#define MINIMIZE 285
-#define OF 286
-#define SATISFY 287
-#define OUTPUT 288
-#define PREDICATE 289
-#define RECORD 290
-#define SET 291
-#define SHOW 292
-#define SHOWCOND 293
-#define SOLVE 294
-#define STRING 295
-#define TEST 296
-#define THEN 297
-#define TUPLE 298
-#define TYPE 299
-#define VARIANT_RECORD 300
-#define WHERE 301
+#define FZ_INT_LIT 258
+#define FZ_BOOL_LIT 259
+#define FZ_FLOAT_LIT 260
+#define FZ_ID 261
+#define FZ_STRING_LIT 262
+#define FZ_VAR 263
+#define FZ_PAR 264
+#define FZ_ANNOTATION 265
+#define FZ_ANY 266
+#define FZ_ARRAY 267
+#define FZ_BOOL 268
+#define FZ_CASE 269
+#define FZ_COLONCOLON 270
+#define FZ_CONSTRAINT 271
+#define FZ_DEFAULT 272
+#define FZ_DOTDOT 273
+#define FZ_ELSE 274
+#define FZ_ELSEIF 275
+#define FZ_ENDIF 276
+#define FZ_ENUM 277
+#define FZ_FLOAT 278
+#define FZ_FUNCTION 279
+#define FZ_IF 280
+#define FZ_INCLUDE 281
+#define FZ_INT 282
+#define FZ_LET 283
+#define FZ_MAXIMIZE 284
+#define FZ_MINIMIZE 285
+#define FZ_OF 286
+#define FZ_SATISFY 287
+#define FZ_OUTPUT 288
+#define FZ_PREDICATE 289
+#define FZ_RECORD 290
+#define FZ_SET 291
+#define FZ_SHOW 292
+#define FZ_SHOWCOND 293
+#define FZ_SOLVE 294
+#define FZ_STRING 295
+#define FZ_TEST 296
+#define FZ_THEN 297
+#define FZ_TUPLE 298
+#define FZ_TYPE 299
+#define FZ_VARIANT_RECORD 300
+#define FZ_WHERE 301
 
 
 
@@ -150,7 +150,7 @@ typedef union YYSTYPE
          Gecode::FlatZinc::AST::Node* arg;
          Gecode::FlatZinc::AST::Array* argVec;
        }
-/* Line 1489 of yacc.c.  */
+/* Line 1529 of yacc.c.  */
 #line 155 "gecode/flatzinc/parser.tab.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

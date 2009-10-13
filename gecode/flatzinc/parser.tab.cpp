@@ -66,97 +66,97 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     INT_LIT = 258,
-     BOOL_LIT = 259,
-     FLOAT_LIT = 260,
-     ID = 261,
-     STRING_LIT = 262,
-     VAR = 263,
-     PAR = 264,
-     ANNOTATION = 265,
-     ANY = 266,
-     ARRAY = 267,
-     BOOL = 268,
-     CASE = 269,
-     COLONCOLON = 270,
-     CONSTRAINT = 271,
-     DEFAULT = 272,
-     DOTDOT = 273,
-     ELSE = 274,
-     ELSEIF = 275,
-     ENDIF = 276,
-     ENUM = 277,
-     FLOAT = 278,
-     FUNCTION = 279,
-     IF = 280,
-     INCLUDE = 281,
-     INT = 282,
-     LET = 283,
-     MAXIMIZE = 284,
-     MINIMIZE = 285,
-     OF = 286,
-     SATISFY = 287,
-     OUTPUT = 288,
-     PREDICATE = 289,
-     RECORD = 290,
-     SET = 291,
-     SHOW = 292,
-     SHOWCOND = 293,
-     SOLVE = 294,
-     STRING = 295,
-     TEST = 296,
-     THEN = 297,
-     TUPLE = 298,
-     TYPE = 299,
-     VARIANT_RECORD = 300,
-     WHERE = 301
+     FZ_INT_LIT = 258,
+     FZ_BOOL_LIT = 259,
+     FZ_FLOAT_LIT = 260,
+     FZ_ID = 261,
+     FZ_STRING_LIT = 262,
+     FZ_VAR = 263,
+     FZ_PAR = 264,
+     FZ_ANNOTATION = 265,
+     FZ_ANY = 266,
+     FZ_ARRAY = 267,
+     FZ_BOOL = 268,
+     FZ_CASE = 269,
+     FZ_COLONCOLON = 270,
+     FZ_CONSTRAINT = 271,
+     FZ_DEFAULT = 272,
+     FZ_DOTDOT = 273,
+     FZ_ELSE = 274,
+     FZ_ELSEIF = 275,
+     FZ_ENDIF = 276,
+     FZ_ENUM = 277,
+     FZ_FLOAT = 278,
+     FZ_FUNCTION = 279,
+     FZ_IF = 280,
+     FZ_INCLUDE = 281,
+     FZ_INT = 282,
+     FZ_LET = 283,
+     FZ_MAXIMIZE = 284,
+     FZ_MINIMIZE = 285,
+     FZ_OF = 286,
+     FZ_SATISFY = 287,
+     FZ_OUTPUT = 288,
+     FZ_PREDICATE = 289,
+     FZ_RECORD = 290,
+     FZ_SET = 291,
+     FZ_SHOW = 292,
+     FZ_SHOWCOND = 293,
+     FZ_SOLVE = 294,
+     FZ_STRING = 295,
+     FZ_TEST = 296,
+     FZ_THEN = 297,
+     FZ_TUPLE = 298,
+     FZ_TYPE = 299,
+     FZ_VARIANT_RECORD = 300,
+     FZ_WHERE = 301
    };
 #endif
 /* Tokens.  */
-#define INT_LIT 258
-#define BOOL_LIT 259
-#define FLOAT_LIT 260
-#define ID 261
-#define STRING_LIT 262
-#define VAR 263
-#define PAR 264
-#define ANNOTATION 265
-#define ANY 266
-#define ARRAY 267
-#define BOOL 268
-#define CASE 269
-#define COLONCOLON 270
-#define CONSTRAINT 271
-#define DEFAULT 272
-#define DOTDOT 273
-#define ELSE 274
-#define ELSEIF 275
-#define ENDIF 276
-#define ENUM 277
-#define FLOAT 278
-#define FUNCTION 279
-#define IF 280
-#define INCLUDE 281
-#define INT 282
-#define LET 283
-#define MAXIMIZE 284
-#define MINIMIZE 285
-#define OF 286
-#define SATISFY 287
-#define OUTPUT 288
-#define PREDICATE 289
-#define RECORD 290
-#define SET 291
-#define SHOW 292
-#define SHOWCOND 293
-#define SOLVE 294
-#define STRING 295
-#define TEST 296
-#define THEN 297
-#define TUPLE 298
-#define TYPE 299
-#define VARIANT_RECORD 300
-#define WHERE 301
+#define FZ_INT_LIT 258
+#define FZ_BOOL_LIT 259
+#define FZ_FLOAT_LIT 260
+#define FZ_ID 261
+#define FZ_STRING_LIT 262
+#define FZ_VAR 263
+#define FZ_PAR 264
+#define FZ_ANNOTATION 265
+#define FZ_ANY 266
+#define FZ_ARRAY 267
+#define FZ_BOOL 268
+#define FZ_CASE 269
+#define FZ_COLONCOLON 270
+#define FZ_CONSTRAINT 271
+#define FZ_DEFAULT 272
+#define FZ_DOTDOT 273
+#define FZ_ELSE 274
+#define FZ_ELSEIF 275
+#define FZ_ENDIF 276
+#define FZ_ENUM 277
+#define FZ_FLOAT 278
+#define FZ_FUNCTION 279
+#define FZ_IF 280
+#define FZ_INCLUDE 281
+#define FZ_INT 282
+#define FZ_LET 283
+#define FZ_MAXIMIZE 284
+#define FZ_MINIMIZE 285
+#define FZ_OF 286
+#define FZ_SATISFY 287
+#define FZ_OUTPUT 288
+#define FZ_PREDICATE 289
+#define FZ_RECORD 290
+#define FZ_SET 291
+#define FZ_SHOW 292
+#define FZ_SHOWCOND 293
+#define FZ_SOLVE 294
+#define FZ_STRING 295
+#define FZ_TEST 296
+#define FZ_THEN 297
+#define FZ_TUPLE 298
+#define FZ_TYPE 299
+#define FZ_VARIANT_RECORD 300
+#define FZ_WHERE 301
 
 
 
@@ -480,7 +480,7 @@ typedef union YYSTYPE
          Gecode::FlatZinc::AST::Node* arg;
          Gecode::FlatZinc::AST::Array* argVec;
        }
-/* Line 187 of yacc.c.  */
+/* Line 193 of yacc.c.  */
 #line 485 "gecode/flatzinc/parser.tab.cpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -544,7 +544,7 @@ typedef short int yytype_int16;
 #define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
 
 #ifndef YY_
-# if YYENABLE_NLS
+# if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -877,34 +877,36 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "INT_LIT", "BOOL_LIT", "FLOAT_LIT", "ID",
-  "STRING_LIT", "VAR", "PAR", "ANNOTATION", "ANY", "ARRAY", "BOOL", "CASE",
-  "COLONCOLON", "CONSTRAINT", "DEFAULT", "DOTDOT", "ELSE", "ELSEIF",
-  "ENDIF", "ENUM", "FLOAT", "FUNCTION", "IF", "INCLUDE", "INT", "LET",
-  "MAXIMIZE", "MINIMIZE", "OF", "SATISFY", "OUTPUT", "PREDICATE", "RECORD",
-  "SET", "SHOW", "SHOWCOND", "SOLVE", "STRING", "TEST", "THEN", "TUPLE",
-  "TYPE", "VARIANT_RECORD", "WHERE", "';'", "'('", "')'", "','", "':'",
-  "'['", "']'", "'='", "'{'", "'}'", "$accept", "model", "preddecl_items",
-  "preddecl_items_head", "vardecl_items", "vardecl_items_head",
-  "constraint_items", "constraint_items_head", "preddecl_item",
-  "pred_arg_list", "pred_arg_list_head", "pred_arg", "pred_arg_type",
-  "pred_arg_simple_type", "pred_array_init", "pred_array_init_arg",
-  "vardecl_item", "int_init", "int_init_list", "int_init_list_head",
-  "list_tail", "int_var_array_literal", "float_init", "float_init_list",
-  "float_init_list_head", "float_var_array_literal", "bool_init",
-  "bool_init_list", "bool_init_list_head", "bool_var_array_literal",
-  "set_init", "set_init_list", "set_init_list_head",
-  "set_var_array_literal", "vardecl_int_var_array_init",
-  "vardecl_bool_var_array_init", "vardecl_float_var_array_init",
-  "vardecl_set_var_array_init", "constraint_item", "solve_item",
-  "int_ti_expr_tail", "bool_ti_expr_tail", "float_ti_expr_tail",
-  "set_literal", "int_list", "int_list_head", "bool_list",
-  "bool_list_head", "float_list", "float_list_head", "set_literal_list",
-  "set_literal_list_head", "flat_expr_list", "flat_expr",
-  "non_array_expr_opt", "non_array_expr", "non_array_expr_list",
-  "non_array_expr_list_head", "solve_expr", "minmax", "annotations",
-  "annotations_head", "annotation", "annotation_list", "annotation_expr",
-  "ann_non_array_expr", 0
+  "$end", "error", "$undefined", "FZ_INT_LIT", "FZ_BOOL_LIT",
+  "FZ_FLOAT_LIT", "FZ_ID", "FZ_STRING_LIT", "FZ_VAR", "FZ_PAR",
+  "FZ_ANNOTATION", "FZ_ANY", "FZ_ARRAY", "FZ_BOOL", "FZ_CASE",
+  "FZ_COLONCOLON", "FZ_CONSTRAINT", "FZ_DEFAULT", "FZ_DOTDOT", "FZ_ELSE",
+  "FZ_ELSEIF", "FZ_ENDIF", "FZ_ENUM", "FZ_FLOAT", "FZ_FUNCTION", "FZ_IF",
+  "FZ_INCLUDE", "FZ_INT", "FZ_LET", "FZ_MAXIMIZE", "FZ_MINIMIZE", "FZ_OF",
+  "FZ_SATISFY", "FZ_OUTPUT", "FZ_PREDICATE", "FZ_RECORD", "FZ_SET",
+  "FZ_SHOW", "FZ_SHOWCOND", "FZ_SOLVE", "FZ_STRING", "FZ_TEST", "FZ_THEN",
+  "FZ_TUPLE", "FZ_TYPE", "FZ_VARIANT_RECORD", "FZ_WHERE", "';'", "'('",
+  "')'", "','", "':'", "'['", "']'", "'='", "'{'", "'}'", "$accept",
+  "model", "preddecl_items", "preddecl_items_head", "vardecl_items",
+  "vardecl_items_head", "constraint_items", "constraint_items_head",
+  "preddecl_item", "pred_arg_list", "pred_arg_list_head", "pred_arg",
+  "pred_arg_type", "pred_arg_simple_type", "pred_array_init",
+  "pred_array_init_arg", "vardecl_item", "int_init", "int_init_list",
+  "int_init_list_head", "list_tail", "int_var_array_literal", "float_init",
+  "float_init_list", "float_init_list_head", "float_var_array_literal",
+  "bool_init", "bool_init_list", "bool_init_list_head",
+  "bool_var_array_literal", "set_init", "set_init_list",
+  "set_init_list_head", "set_var_array_literal",
+  "vardecl_int_var_array_init", "vardecl_bool_var_array_init",
+  "vardecl_float_var_array_init", "vardecl_set_var_array_init",
+  "constraint_item", "solve_item", "int_ti_expr_tail", "bool_ti_expr_tail",
+  "float_ti_expr_tail", "set_literal", "int_list", "int_list_head",
+  "bool_list", "bool_list_head", "float_list", "float_list_head",
+  "set_literal_list", "set_literal_list_head", "flat_expr_list",
+  "flat_expr", "non_array_expr_opt", "non_array_expr",
+  "non_array_expr_list", "non_array_expr_list_head", "solve_expr",
+  "minmax", "annotations", "annotations_head", "annotation",
+  "annotation_list", "annotation_expr", "ann_non_array_expr", 0
 };
 #endif
 
@@ -1264,7 +1266,7 @@ while (YYID (0))
    we won't break user code: when these are the locations we know.  */
 
 #ifndef YY_LOCATION_PRINT
-# if YYLTYPE_IS_TRIVIAL
+# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
 #  define YY_LOCATION_PRINT(File, Loc)			\
      fprintf (File, "%d.%d-%d.%d",			\
 	      (Loc).first_line, (Loc).first_column,	\
@@ -3253,7 +3255,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 3257 "gecode/flatzinc/parser.tab.cpp"
+#line 3259 "gecode/flatzinc/parser.tab.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
