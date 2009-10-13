@@ -341,7 +341,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \brief View selection class for view with smallest cardinality of lub-glb 
    * divided by degree.
    *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class BySizeDegreeMin : public ViewSelBase<SetView> {
@@ -363,7 +363,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \brief View selection class for view with largest cardinality of lub-glb 
    * divided by degree.
    *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
+   * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
   class BySizeDegreeMax : public ViewSelBase<SetView> {
@@ -375,6 +375,50 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeDegreeMax(void);
     /// Constructor for initialization
     BySizeDegreeMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, SetView x);
+  };
+
+  /**
+   * \brief View selection class for view with smallest cardinality of lub-glb 
+   * divided by accumulated failure count
+   *
+   * Requires \code #include <gecode/set/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeAfcMin : public ViewSelBase<SetView> {
+  protected:
+    /// So-far smallest size/afc
+    double sizeafc;
+  public:
+    /// Default constructor
+    BySizeAfcMin(void);
+    /// Constructor for initialization
+    BySizeAfcMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, SetView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, SetView x);
+  };
+
+  /**
+   * \brief View selection class for view with largest cardinality of lub-glb 
+   * divided by accumulated failure count
+   *
+   * Requires \code #include <gecode/set/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeAfcMax : public ViewSelBase<SetView> {
+  protected:
+    /// So-far largest size/afc
+    double sizeafc;
+  public:
+    /// Default constructor
+    BySizeAfcMax(void);
+    /// Constructor for initialization
+    BySizeAfcMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x
     ViewSelStatus init(Space& home, SetView x);
     /// Possibly select better view \a x

@@ -129,6 +129,8 @@ namespace Test { namespace Branch {
     Gecode::INT_VAR_RND,
     Gecode::INT_VAR_DEGREE_MIN,
     Gecode::INT_VAR_DEGREE_MAX,
+    Gecode::INT_VAR_AFC_MIN,
+    Gecode::INT_VAR_AFC_MAX,
     Gecode::INT_VAR_MIN_MIN,
     Gecode::INT_VAR_MIN_MAX,
     Gecode::INT_VAR_MAX_MIN,
@@ -137,6 +139,8 @@ namespace Test { namespace Branch {
     Gecode::INT_VAR_SIZE_MAX,
     Gecode::INT_VAR_SIZE_DEGREE_MIN,
     Gecode::INT_VAR_SIZE_DEGREE_MAX,
+    Gecode::INT_VAR_SIZE_AFC_MIN,
+    Gecode::INT_VAR_SIZE_AFC_MAX,
     Gecode::INT_VAR_REGRET_MIN_MIN,
     Gecode::INT_VAR_REGRET_MIN_MAX,
     Gecode::INT_VAR_REGRET_MAX_MIN,
@@ -152,6 +156,8 @@ namespace Test { namespace Branch {
     "INT_VAR_RND",
     "INT_VAR_DEGREE_MIN",
     "INT_VAR_DEGREE_MAX",
+    "INT_VAR_AFC_MIN",
+    "INT_VAR_AFC_MAX",
     "INT_VAR_MIN_MIN",
     "INT_VAR_MIN_MAX",
     "INT_VAR_MAX_MIN",
@@ -160,6 +166,8 @@ namespace Test { namespace Branch {
     "INT_VAR_SIZE_MAX",
     "INT_VAR_SIZE_DEGREE_MIN",
     "INT_VAR_SIZE_DEGREE_MAX",
+    "INT_VAR_SIZE_AFC_MIN",
+    "INT_VAR_SIZE_AFC_MAX",
     "INT_VAR_REGRET_MIN_MIN",
     "INT_VAR_REGRET_MIN_MAX",
     "INT_VAR_REGRET_MAX_MIN",
@@ -205,6 +213,8 @@ namespace Test { namespace Branch {
     Gecode::SET_VAR_RND,
     Gecode::SET_VAR_DEGREE_MIN,
     Gecode::SET_VAR_DEGREE_MAX,
+    Gecode::SET_VAR_AFC_MIN,
+    Gecode::SET_VAR_AFC_MAX,
     Gecode::SET_VAR_MIN_MIN,
     Gecode::SET_VAR_MIN_MAX,
     Gecode::SET_VAR_MAX_MIN,
@@ -212,7 +222,9 @@ namespace Test { namespace Branch {
     Gecode::SET_VAR_SIZE_MIN,
     Gecode::SET_VAR_SIZE_MAX,
     Gecode::SET_VAR_SIZE_DEGREE_MIN,
-    Gecode::SET_VAR_SIZE_DEGREE_MAX
+    Gecode::SET_VAR_SIZE_DEGREE_MAX,
+    Gecode::SET_VAR_SIZE_AFC_MIN,
+    Gecode::SET_VAR_SIZE_AFC_MAX
   };
   /// Number of set variable selections
   const int n_set_var_branch =
@@ -224,6 +236,8 @@ namespace Test { namespace Branch {
     "SET_VAR_RND",
     "SET_VAR_DEGREE_MIN",
     "SET_VAR_DEGREE_MAX",
+    "SET_VAR_AFC_MIN",
+    "SET_VAR_AFC_MAX",
     "SET_VAR_MIN_MIN",
     "SET_VAR_MIN_MAX",
     "SET_VAR_MAX_MIN",
@@ -231,7 +245,9 @@ namespace Test { namespace Branch {
     "SET_VAR_SIZE_MIN",
     "SET_VAR_SIZE_MAX",
     "SET_VAR_SIZE_DEGREE_MIN",
-    "SET_VAR_SIZE_DEGREE_MAX"
+    "SET_VAR_SIZE_DEGREE_MAX",
+    "SET_VAR_SIZE_AFC_MIN",
+    "SET_VAR_SIZE_AFC_MAX"
   };
   /// Set value selections
   const Gecode::SetValBranch set_val_branch[] = {

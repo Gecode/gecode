@@ -425,6 +425,50 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
+   * \brief View selection class for view with smallest accumulated failure count divided
+   * by degree
+   *
+   * Requires \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeAfcMin : public ViewSelBase<IntView> {
+  protected:
+    /// So-far smallest size/afc
+    double sizeafc;
+  public:
+    /// Default constructor
+    BySizeAfcMin(void);
+    /// Constructor for initialization
+    BySizeAfcMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, IntView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, IntView x);
+  };
+
+  /**
+   * \brief View selection class for view with largest accumulated failure count divided
+   * by degree
+   *
+   * Requires \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeAfcMax : public ViewSelBase<IntView> {
+  protected:
+    /// So-far largest size/afc
+    double sizeafc;
+  public:
+    /// Default constructor
+    BySizeAfcMax(void);
+    /// Constructor for initialization
+    BySizeAfcMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, IntView x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, IntView x);
+  };
+
+  /**
    * \brief View selection class for view with smallest min-regret
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode

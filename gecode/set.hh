@@ -1003,6 +1003,8 @@ namespace Gecode {
     SET_VAR_RND,        ///< Random (uniform, for tie breaking)
     SET_VAR_DEGREE_MIN, ///< With smallest degree
     SET_VAR_DEGREE_MAX, ///< With largest degree
+    SET_VAR_AFC_MIN,    ///< With smallest accumulated failure count
+    SET_VAR_AFC_MAX,    ///< With largest accumulated failure count
     SET_VAR_MIN_MIN,    ///< With smallest minimum unknown element
     SET_VAR_MIN_MAX,    ///< With largest minimum unknown element
     SET_VAR_MAX_MIN,    ///< With smallest maximum unknown element
@@ -1010,7 +1012,9 @@ namespace Gecode {
     SET_VAR_SIZE_MIN,   ///< With smallest unknown set
     SET_VAR_SIZE_MAX,   ///< With largest unknown set
     SET_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
-    SET_VAR_SIZE_DEGREE_MAX  ///< With largest domain size divided by degree
+    SET_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
+    SET_VAR_SIZE_AFC_MIN, ///< With smallest domain size divided by accumulated failure count
+    SET_VAR_SIZE_AFC_MAX  ///< With largest domain size divided by accumulated failure count
   };
 
   /// Which values to select first for branching

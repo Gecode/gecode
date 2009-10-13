@@ -89,11 +89,23 @@ Type:		ViewSelDegreeMin<IntView>
 Value:		INT_VAR_DEGREE_MAX
 Type:		ViewSelDegreeMax<IntView>
 [VarBranch]
+Value:		INT_VAR_AFC_MIN
+Type:		ViewSelAfcMin<IntView>
+[VarBranch]
+Value:		INT_VAR_AFC_MAX
+Type:		ViewSelAfcMax<IntView>
+[VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
 Type:		BySizeDegreeMin
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MAX
 Type:		BySizeDegreeMax
+[VarBranch]
+Value:		INT_VAR_SIZE_AFC_MIN
+Type:		BySizeAfcMin
+[VarBranch]
+Value:		INT_VAR_SIZE_AFC_MAX
+Type:		BySizeAfcMax
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
 Type:		ByRegretMinMin

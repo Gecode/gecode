@@ -2149,6 +2149,8 @@ namespace Gecode {
     INT_VAR_RND,             ///< Random (uniform, for tie breaking)
     INT_VAR_DEGREE_MIN,      ///< With smallest degree
     INT_VAR_DEGREE_MAX,      ///< With largest degree
+    INT_VAR_AFC_MIN,         ///< With smallest accumulated failure count
+    INT_VAR_AFC_MAX,         ///< With largest accumulated failure count
     INT_VAR_MIN_MIN,         ///< With smallest min
     INT_VAR_MIN_MAX,         ///< With largest min
     INT_VAR_MAX_MIN,         ///< With smallest max
@@ -2157,6 +2159,8 @@ namespace Gecode {
     INT_VAR_SIZE_MAX,        ///< With largest domain size
     INT_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
     INT_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
+    INT_VAR_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
+    INT_VAR_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
     /** \brief With smallest min-regret
      *
      * The min-regret of a variable is the difference between the

@@ -56,7 +56,13 @@ namespace Gecode { namespace Set { namespace Branch {
       v = new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
       break;
     case SET_VAR_DEGREE_MAX:
-      v = new (home) ViewSelVirtual<ViewSelDegreeMin<SetView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelDegreeMax<SetView> >(home,o_vars);
+      break;
+    case SET_VAR_AFC_MIN:
+      v = new (home) ViewSelVirtual<ViewSelAfcMin<SetView> >(home,o_vars);
+      break;
+    case SET_VAR_AFC_MAX:
+      v = new (home) ViewSelVirtual<ViewSelAfcMax<SetView> >(home,o_vars);
       break;
     case SET_VAR_MIN_MIN:
       v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
@@ -81,6 +87,12 @@ namespace Gecode { namespace Set { namespace Branch {
       break;
     case SET_VAR_SIZE_DEGREE_MAX:
       v = new (home) ViewSelVirtual<BySizeDegreeMax>(home,o_vars);
+      break;
+    case SET_VAR_SIZE_AFC_MIN:
+      v = new (home) ViewSelVirtual<BySizeAfcMin>(home,o_vars);
+      break;
+    case SET_VAR_SIZE_AFC_MAX:
+      v = new (home) ViewSelVirtual<BySizeAfcMax>(home,o_vars);
       break;
     default:
       throw UnknownBranching("Set::branch");
@@ -124,7 +136,19 @@ namespace Gecode {
       break;
     case SET_VAR_DEGREE_MAX:
       {
-        ViewSelDegreeMin<SetView> v(home,o_vars);
+        ViewSelDegreeMax<SetView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_AFC_MIN:
+      {
+        ViewSelAfcMin<SetView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_AFC_MAX:
+      {
+        ViewSelAfcMax<SetView> v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -176,6 +200,18 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals);
       }
       break;
+    case SET_VAR_SIZE_AFC_MIN:
+      {
+        BySizeAfcMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_SIZE_AFC_MAX:
+      {
+        BySizeAfcMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
     default:
       throw UnknownBranching("Set::branch");
     }
@@ -220,8 +256,24 @@ namespace Gecode {
       break;
     case SET_VAR_DEGREE_MAX:
       {
-        ViewSelDegreeMin<SetView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelDegreeMin<SetView>,
+        ViewSelDegreeMax<SetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelDegreeMax<SetView>,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_AFC_MIN:
+      {
+        ViewSelAfcMin<SetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelAfcMin<SetView>,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_AFC_MAX:
+      {
+        ViewSelAfcMax<SetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelAfcMax<SetView>,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }
@@ -286,6 +338,22 @@ namespace Gecode {
       {
         BySizeDegreeMax va(home,o_vars.a);
         ViewSelTieBreakStatic<BySizeDegreeMax,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_SIZE_AFC_MIN:
+      {
+        BySizeAfcMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeAfcMin,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case SET_VAR_SIZE_AFC_MAX:
+      {
+        BySizeAfcMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeAfcMax,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }

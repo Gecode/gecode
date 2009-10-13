@@ -73,6 +73,14 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module: bug
+What:   set
+Rank:   minor
+[DESCRIPTION]
+For branching, SET_VAR_DEGREE_MAX would select the variable with
+smallest rather than largest degree.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major

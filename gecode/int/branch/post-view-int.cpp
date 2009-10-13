@@ -76,11 +76,23 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VAR_DEGREE_MAX:
       v = new (home) ViewSelVirtual<ViewSelDegreeMax<IntView> >(home,o_vars);
       break;
+    case INT_VAR_AFC_MIN:
+      v = new (home) ViewSelVirtual<ViewSelAfcMin<IntView> >(home,o_vars);
+      break;
+    case INT_VAR_AFC_MAX:
+      v = new (home) ViewSelVirtual<ViewSelAfcMax<IntView> >(home,o_vars);
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       v = new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
       v = new (home) ViewSelVirtual<BySizeDegreeMax>(home,o_vars);
+      break;
+    case INT_VAR_SIZE_AFC_MIN:
+      v = new (home) ViewSelVirtual<BySizeAfcMin>(home,o_vars);
+      break;
+    case INT_VAR_SIZE_AFC_MAX:
+      v = new (home) ViewSelVirtual<BySizeAfcMax>(home,o_vars);
       break;
     case INT_VAR_REGRET_MIN_MIN:
       v = new (home) ViewSelVirtual<ByRegretMinMin>(home,o_vars);
@@ -176,6 +188,18 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals);
       }
       break;
+    case INT_VAR_AFC_MIN:
+      {
+        ViewSelAfcMin<IntView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_AFC_MAX:
+      {
+        ViewSelAfcMax<IntView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
         BySizeDegreeMin v(home,o_vars);
@@ -185,6 +209,18 @@ namespace Gecode {
     case INT_VAR_SIZE_DEGREE_MAX:
       {
         BySizeDegreeMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_AFC_MIN:
+      {
+        BySizeAfcMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_AFC_MAX:
+      {
+        BySizeAfcMax v(home,o_vars);
         post(home,xv,v,vals,o_vals);
       }
       break;
@@ -310,6 +346,22 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals);
       }
       break;
+    case INT_VAR_AFC_MIN:
+      {
+        ViewSelAfcMin<IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelAfcMin<IntView>,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_AFC_MAX:
+      {
+        ViewSelAfcMax<IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelAfcMax<IntView>,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
         BySizeDegreeMin va(home,o_vars.a);
@@ -322,6 +374,22 @@ namespace Gecode {
       {
         BySizeDegreeMax va(home,o_vars.a);
         ViewSelTieBreakStatic<BySizeDegreeMax,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_AFC_MIN:
+      {
+        BySizeAfcMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeAfcMin,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals);
+      }
+      break;
+    case INT_VAR_SIZE_AFC_MAX:
+      {
+        BySizeAfcMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeAfcMax,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals);
       }

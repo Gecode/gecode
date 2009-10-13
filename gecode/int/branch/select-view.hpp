@@ -221,6 +221,52 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
+  // Select variable with smallest size/afc
+  forceinline
+  BySizeAfcMin::BySizeAfcMin(void) : sizeafc(0) {}
+  forceinline
+  BySizeAfcMin::BySizeAfcMin(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<IntView>(home,vbo), sizeafc(0) {}
+  forceinline ViewSelStatus
+  BySizeAfcMin::init(Space&, View x) {
+    sizeafc = static_cast<double>(x.size())/x.afc();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  BySizeAfcMin::select(Space&, View x) {
+    double sa = static_cast<double>(x.size())/x.afc();
+    if (sa < sizeafc) {
+      sizeafc = sa; return VSS_BETTER;
+    } else if (sa > sizeafc) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+
+  // Select variable with largest size/afc
+  forceinline
+  BySizeAfcMax::BySizeAfcMax(void) : sizeafc(0) {}
+  forceinline
+  BySizeAfcMax::BySizeAfcMax(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<IntView>(home,vbo), sizeafc(0) {}
+  forceinline ViewSelStatus
+  BySizeAfcMax::init(Space&, View x) {
+    sizeafc = static_cast<double>(x.size())/x.afc();
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  BySizeAfcMax::select(Space&, View x) {
+    double sa = static_cast<double>(x.size())/x.afc();
+    if (sa > sizeafc) {
+      sizeafc = sa; return VSS_BETTER;
+    } else if (sa < sizeafc) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+
   // Select variable with smallest min-regret
   forceinline
   ByRegretMinMin::ByRegretMinMin(void) : regret(0U) {}

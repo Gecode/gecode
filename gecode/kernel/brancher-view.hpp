@@ -129,6 +129,44 @@ namespace Gecode {
   };
 
   /**
+   * \brief View selection class for view with smallest accumulated failure count
+   */
+  template<class View>
+  class ViewSelAfcMin : public ViewSelBase<View> {
+  protected:
+    /// So-far smallest afc
+    double afc;
+  public:
+    /// Default constructor
+    ViewSelAfcMin(void);
+    /// Constructor for initialization
+    ViewSelAfcMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, View x);
+  };
+
+  /**
+   * \brief View selection class for view with largest accumulated failure count
+   */
+  template<class View>
+  class ViewSelAfcMax : public ViewSelBase<View> {
+  protected:
+    /// So-far largest afc
+    double afc;
+  public:
+    /// Default constructor
+    ViewSelAfcMax(void);
+    /// Constructor for initialization
+    ViewSelAfcMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x
+    ViewSelStatus init(Space& home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(Space& home, View x);
+  };
+
+  /**
    * \brief View selection class for random selection
    */
   template<class _View>
@@ -262,6 +300,65 @@ namespace Gecode {
       degree = x.degree();
       return VSS_BETTER;
     } else if (x.degree() < degree) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+
+
+  // Select variable with smallest afc
+  template<class View>
+  forceinline
+  ViewSelAfcMin<View>::ViewSelAfcMin(void) : afc(0.0) {}
+  template<class View>
+  forceinline
+  ViewSelAfcMin<View>::ViewSelAfcMin(Space& home,
+                                     const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo), afc(0.0) {}
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelAfcMin<View>::init(Space&, View x) {
+    afc = x.afc();
+    return (afc == 0.0) ? VSS_BEST : VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelAfcMin<View>::select(Space&, View x) {
+    if (x.afc() < afc) {
+      afc = x.afc();
+      return (afc == 0.0) ? VSS_BEST : VSS_BETTER;
+    } else if (x.afc() > afc) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+
+
+  // Select variable with largest afc
+  template<class View>
+  forceinline
+  ViewSelAfcMax<View>::ViewSelAfcMax(void) : afc(0.0) {}
+  template<class View>
+  forceinline
+  ViewSelAfcMax<View>::ViewSelAfcMax(Space& home,
+                                     const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo), afc(0.0) {}
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelAfcMax<View>::init(Space&, View x) {
+    afc = x.afc();
+    return VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelAfcMax<View>::select(Space&, View x) {
+    double xafc = x.afc();
+    if (xafc > afc) {
+      afc = xafc;
+      return VSS_BETTER;
+    } else if (xafc < afc) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;

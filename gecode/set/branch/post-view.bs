@@ -69,7 +69,13 @@ Value:		SET_VAR_DEGREE_MIN
 Type:		ViewSelDegreeMin<SetView>
 [VarBranch]
 Value:		SET_VAR_DEGREE_MAX
-Type:		ViewSelDegreeMin<SetView>
+Type:		ViewSelDegreeMax<SetView>
+[VarBranch]
+Value:		SET_VAR_AFC_MIN
+Type:		ViewSelAfcMin<SetView>
+[VarBranch]
+Value:		SET_VAR_AFC_MAX
+Type:		ViewSelAfcMax<SetView>
 [VarBranch]
 Value:		SET_VAR_MIN_MIN
 Type:		ByMinMin
@@ -94,4 +100,10 @@ Type:		BySizeDegreeMin
 [VarBranch]
 Value:		SET_VAR_SIZE_DEGREE_MAX
 Type:		BySizeDegreeMax
+[VarBranch]
+Value:		SET_VAR_SIZE_AFC_MIN
+Type:		BySizeAfcMin
+[VarBranch]
+Value:		SET_VAR_SIZE_AFC_MAX
+Type:		BySizeAfcMax
 [End]
