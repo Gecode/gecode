@@ -136,34 +136,34 @@ namespace Gecode {
 
 
   forceinline void
-  element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
           IntVar z, IntConLevel icl) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
   }
   forceinline void
-  element(Space& home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
           BoolVar z, IntConLevel icl) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
   }
   forceinline void
-  element(Space& home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
           IntVar z, IntConLevel icl) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
   }
   forceinline void
-  element(Space& home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
           BoolVar z, IntConLevel icl) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
   }
 
 #ifdef GECODE_HAS_SET_VARS
   forceinline void
-  element(Space& home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
           SetVar z) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z);
   }
   forceinline void
-  element(Space& home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
           SetVar z) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z);
   }

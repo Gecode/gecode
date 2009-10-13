@@ -1327,7 +1327,7 @@ namespace Gecode {
    *             shared unassigned variables.
    */
   GECODE_INT_EXPORT void
-  sorted(Space&, const IntVarArgs& x, const IntVarArgs& y,
+  sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
          const IntVarArgs& z,
          IntConLevel icl=ICL_DEF);
   //@}
