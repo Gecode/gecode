@@ -93,7 +93,7 @@ namespace Gecode {
 #endif
 
   Space::Space(void)
-    : sm(new SharedMemory), mm(sm), n_wmp(0) {
+    : sm(new SharedMemory), mm(sm), gpi(new GlobalPropInfo), n_wmp(0) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -175,6 +175,9 @@ namespace Gecode {
     // Release shared memory
     if (sm->release())
       delete sm;
+    // Release global propagator information
+    if (gpi->release())
+      delete gpi;
   }
 
 
@@ -384,6 +387,7 @@ namespace Gecode {
   Space::Space(bool share, Space& s)
     : sm(s.sm->copy(share)), 
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
+      gpi(s.gpi->copy(share)),
       n_wmp(s.n_wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)

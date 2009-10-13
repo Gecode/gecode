@@ -833,6 +833,8 @@ namespace Gecode {
       /// A list of advisors (used during cloning)
       Gecode::ActorLink* advisors;
     } u;
+    /// A reference to global propagator information
+    PropInfo& pi;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Propagator* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -903,6 +905,11 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    //@}
+    /// \name Information
+    //@{
+    /// Return the accumlated failure count
+    double afc(void) const;
     //@}
   };
 
@@ -1208,6 +1215,8 @@ namespace Gecode {
     SharedMemory* sm;
     /// Performs memory management for space
     MemoryManager mm;
+    /// Global propagator information
+    GlobalPropInfo* gpi;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -2462,18 +2471,25 @@ namespace Gecode {
   }
 
   forceinline
-  Propagator::Propagator(Home home) {
+  Propagator::Propagator(Home home) 
+    : pi(static_cast<Space&>(home).gpi->allocate()) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     static_cast<Space&>(home).pl.head(this);
   }
 
   forceinline
-  Propagator::Propagator(Space&, bool, Propagator& p) {
+  Propagator::Propagator(Space&, bool, Propagator& p) 
+    : pi(p.pi) {
     u.advisors = NULL;
-    assert(u.med == 0 && u.size == 0);
+    assert((u.med == 0) && (u.size == 0));
     // Set forwarding pointer
     p.prev(this);
+  }
+
+  forceinline double
+  Propagator::afc(void) const {
+    return pi.afc();
   }
 
   forceinline ExecStatus
