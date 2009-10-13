@@ -261,6 +261,14 @@ AC_GECODE_ENABLE_MODULE(graph, yes,
 	[enable_int="yes";
 	])
 
+AC_GECODE_ENABLE_MODULE(flatzinc, yes,
+  [build FlatZinc interpreter],
+  [enable_search="yes";
+   enable_driver="yes";
+   enable_minimodel="yes";
+   enable_scheduling="yes";
+  ])
+
 AC_GECODE_ENABLE_MODULE(scheduling, yes,
 	[build scheduling library],
 	[enable_int="yes";
@@ -278,10 +286,6 @@ AC_GECODE_ENABLE_MODULE(examples, yes,
          enable_driver="yes";
          enable_minimodel="yes";
 	])
-
-AC_GECODE_ENABLE_MODULE(flatzinc, yes,
-  [build FlatZinc interpreter],
-  [enable_search="yes"; enable_driver="yes"; enable_minimodel="yes" ])
 
 AC_GECODE_ENABLE_MODULE(minimodel, yes,
 	[build modeling support library for the enabled variable types])
