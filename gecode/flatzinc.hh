@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __FLATZINC_FLATZINC_HH__
-#define __FLATZINC_FLATZINC_HH__
+#ifndef __GECODE_FLATZINC_HH__
+#define __GECODE_FLATZINC_HH__
 
 #include <iostream>
 
