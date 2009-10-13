@@ -38,11 +38,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_THREAD_HH__
-#define __GECODE_SUPPORT_THREAD_HH__
-
-#include <gecode/support.hh>
-
 #ifdef GECODE_THREADS_WINDOWS
 
 #ifndef NOMIMMAX
@@ -51,6 +46,10 @@
 
 #ifndef _WIN32_WINNT
 #  define _WIN32_WINNT 0x400
+#endif
+
+#ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
 #endif
 
 #include <windows.h>
@@ -69,8 +68,6 @@
  * This is very simplistic, just enough for parallel search engines. Do
  * not mistake it for a full-fledged thread package.
  *
- * Requires \code #include <gecode/support/thread.hh> \endcode
- * 
  * If the platform supports threads, the macro GECODE_HAS_THREADS is 
  * defined. If threads are not supported, all classes are
  * still available, but are noops with the exception of trying to
@@ -88,8 +85,6 @@ namespace Gecode { namespace Support {
    * It is not specified whether the mutex is recursive or not.
    * Likewise, there is no guarantee of fairness among the
    * blocking threads.
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
    *
    * \ingroup FuncSupportThread
    */
@@ -124,8 +119,6 @@ namespace Gecode { namespace Support {
   /**
    * \brief A lock as a scoped frontend for a mutex
    *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
    * \ingroup FuncSupportThread
    */
   class Lock {
@@ -149,8 +142,6 @@ namespace Gecode { namespace Support {
    * 
    * An event can be waited on by a single thread until the event is
    * signalled.
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
    *
    * \ingroup FuncSupportThread
    */
@@ -187,8 +178,6 @@ namespace Gecode { namespace Support {
   /**
    * \brief An interface for objects that can be run by a thread
    *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
-   *
    * \ingroup FuncSupportThread
    */
   class Runnable {
@@ -209,8 +198,6 @@ namespace Gecode { namespace Support {
    * Threads cannot be created, only runnable objects can be submitted
    * for execution by a thread. Threads are pooled to avoid
    * creation/destruction of threads as much as possible.
-   *
-   * Requires \code #include <gecode/support/thread.hh> \endcode
    *
    * \ingroup FuncSupportThread
    */
@@ -277,7 +264,5 @@ namespace Gecode { namespace Support {
 #endif
 
 #include <gecode/support/thread/thread.hpp>
-
-#endif
 
 // STATISTICS: support-any

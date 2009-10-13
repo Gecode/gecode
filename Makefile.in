@@ -137,13 +137,11 @@ SUPPORTHDR0 = \
 	dynamic-stack exception heap \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \
-	thread/windows thread/pthreads thread/none \
+	thread thread/windows thread/pthreads thread/none timer \
 	dynamic-queue bitset
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR  =  gecode/support.hh \
-	gecode/support/thread.hh \
-	gecode/support/timer.hh \
 	$(SUPPORTHDR0:%=gecode/support/%.hpp)
 SUPPORTOBJ  =  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX))
 SUPPORTSRC  =  $(SUPPORTSRC1)

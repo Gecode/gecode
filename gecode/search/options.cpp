@@ -37,10 +37,6 @@
 
 #include <gecode/search.hh>
 
-#ifdef GECODE_HAS_THREADS
-#include <gecode/support/thread.hh>
-#endif
-
 #include <cmath>
 
 namespace Gecode { namespace Search {

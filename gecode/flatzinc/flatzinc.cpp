@@ -39,7 +39,6 @@
 #include <gecode/flatzinc/registry.hh>
 
 #include <gecode/search.hh>
-#include <gecode/support/timer.hh>
 
 #include <vector>
 #include <string>

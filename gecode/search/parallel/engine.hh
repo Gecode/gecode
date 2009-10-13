@@ -43,8 +43,6 @@
 #include <gecode/search/worker.hh>
 #include <gecode/search/parallel/path.hh>
 
-#include <gecode/support/thread.hh>
-
 namespace Gecode { namespace Search { namespace Parallel {
 
   /// Parallel DFS engine

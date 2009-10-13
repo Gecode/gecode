@@ -79,11 +79,11 @@
 #include <gecode/support/auto-link.hpp>
 #endif
 
+#include <gecode/driver.hh>
+
 #include <gecode/flatzinc/conexpr.hh>
 #include <gecode/flatzinc/ast.hh>
 #include <gecode/flatzinc/varspec.hh>
-
-#include <gecode/driver.hh>
 
 /**
  * \namespace Gecode::FlatZinc

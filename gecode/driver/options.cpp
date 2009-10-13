@@ -38,8 +38,6 @@
 
 #include <gecode/driver.hh>
 
-#include <gecode/support/thread.hh>
-
 #include <iostream>
 #include <iomanip>
 

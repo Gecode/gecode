@@ -35,9 +35,7 @@
  *
  */
 
-#include <gecode/support/thread.hh>
-
-#ifdef GECODE_HAS_THREADS
+#include <gecode/support.hh>
 
 namespace Gecode { namespace Support {
 
@@ -70,7 +68,5 @@ namespace Gecode { namespace Support {
   }
 
 }}
-
-#endif
 
 // STATISTICS: support-any

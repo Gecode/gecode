@@ -41,7 +41,6 @@
 #define __GECODE_SEARCH_HH__
 
 #include <gecode/kernel.hh>
-#include <gecode/support/timer.hh>
 
 /*
  * Configure linking

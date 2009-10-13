@@ -106,6 +106,7 @@
 #include <gecode/support/marked-pointer.hpp>
 #include <gecode/support/int-type.hpp>
 
+
 /*
  * Common datastructures and algorithms
  *
@@ -119,6 +120,15 @@
 #include <gecode/support/random.hpp>
 #include <gecode/support/sort.hpp>
 #include <gecode/support/static-stack.hpp>
+
+
+/*
+ * Operating system support
+ *
+ */
+
+#include <gecode/support/thread.hpp>
+#include <gecode/support/timer.hpp>
 
 #endif
 

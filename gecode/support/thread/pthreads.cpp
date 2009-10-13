@@ -35,7 +35,7 @@
  *
  */
 
-#include <gecode/support/thread.hh>
+#include <gecode/support.hh>
 
 #ifdef GECODE_THREADS_PTHREADS
 
