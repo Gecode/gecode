@@ -52,7 +52,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (subscribe)
       x.subscribe(home, *this, PC_INT_DOM);
 
-    if (!ts()->finalized()) ts()->finalize();
+    assert(ts()->finalized());
+
     init_last(home, ts()->last);
 
     home.notice(*this,AP_DISPOSE);
