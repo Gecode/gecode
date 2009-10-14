@@ -1240,7 +1240,7 @@ namespace Gecode {
     /// Performs memory management for space
     MemoryManager mm;
     /// Global propagator information
-    GlobalPropInfo* gpi;
+    GlobalPropInfo gpi;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -2523,7 +2523,7 @@ namespace Gecode {
          // Inherit propagator information
          home.propagator()->pi :
          // New propagator information
-         static_cast<Space&>(home).gpi->allocate()) {
+         static_cast<Space&>(home).gpi.allocate()) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     static_cast<Space&>(home).pl.head(this);

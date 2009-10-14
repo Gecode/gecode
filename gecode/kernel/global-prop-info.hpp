@@ -35,6 +35,8 @@
  *
  */
 
+#include <algorithm>
+
 namespace Gecode {
 
   /// Class for propagator information
@@ -64,19 +66,37 @@ namespace Gecode {
       /// Start of information entries
       PropInfo pi[1];
     };
-    /// Mutex to synchronize globally shared access
-    Support::Mutex m;
-    /// How many spaces use this globally shared object
-    unsigned int use_cnt;
-    /// Currently used block
-    Block* cur;
-    /// Size of current block
-    unsigned int size;
-    /// Number of free entries in current block
-    unsigned int free;
+    /// Initial smallest number of entries per block
+    static const unsigned int size_min = 32;
+    /// Largest possible number of entries per block
+    static const unsigned int size_max = 32 * 1024;
+    /// The actual object to store the required information
+    class Object {
+    public:
+      /// Mutex to synchronize globally shared access
+      Support::Mutex m;
+      /// How many spaces use this globally shared object
+      unsigned int use_cnt;
+      /// Currently used block
+      Block* cur;
+      /// Size of current block
+      unsigned int size;
+      /// Number of free entries in current block
+      unsigned int free;
+      /// Default constructor
+      Object(void);
+      /// Allocate memory from heap
+      static void* operator new(size_t s);
+      /// Free memory allocated from heap
+      static void  operator delete(void* p);
+    };
+    /// The object
+    Object* o;
   public:
     /// Initialize
     GlobalPropInfo(void);
+    /// Copy during cloning
+    GlobalPropInfo(const GlobalPropInfo& gpi);
     /// Destructor
     ~GlobalPropInfo(void);
     /// Allocate new propagator info
@@ -85,10 +105,6 @@ namespace Gecode {
     GlobalPropInfo* copy(bool share);
     /// Release by one space
     bool release(void);
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
   };
 
 
@@ -119,67 +135,69 @@ namespace Gecode {
    */
 
   forceinline void*
-  GlobalPropInfo::operator new(size_t s) {
+  GlobalPropInfo::Object::operator new(size_t s) {
     return Gecode::heap.ralloc(s);
   }
 
   forceinline void
-  GlobalPropInfo::operator delete(void* p) {
+  GlobalPropInfo::Object::operator delete(void* p) {
     Gecode::heap.rfree(p);
   }
 
   forceinline
-  GlobalPropInfo::GlobalPropInfo(void)
-    : use_cnt(1), size(4), free(4) {
-    // No synchronization needed as single thread is creating this object
+  GlobalPropInfo::Object::Object(void)
+    : use_cnt(1), size(size_min), free(size_min) {
     cur = static_cast<Block*>(heap.ralloc(sizeof(Block)+
                                           (size-1)*sizeof(PropInfo)));
     cur->next = NULL;
   }
 
   forceinline
+  GlobalPropInfo::GlobalPropInfo(void)
+    : o(new Object) {
+    // No synchronization needed as single thread is creating this object
+  }
+
+  forceinline
+  GlobalPropInfo::GlobalPropInfo(const GlobalPropInfo& gpi)
+    : o(gpi.o) {
+    o->m.acquire();
+    o->use_cnt++;
+    o->m.release();
+  }
+
+  forceinline
   GlobalPropInfo::~GlobalPropInfo(void) {
-    // No synchronization needed as only one space and hence one thread left
-    Block* b = cur;
-    while (b != NULL) {
-      Block* d = b; b=b->next;
-      heap.rfree(d);
+    o->m.acquire();
+    if (--o->use_cnt == 0) {
+      o->m.release();
+      // No synchronization needed as only one space and hence one thread left
+      Block* b = o->cur;
+      while (b != NULL) {
+        Block* d = b; b=b->next;
+        heap.rfree(d);
+      }
+      delete o;
+    } else {
+      o->m.release();
     }
-  }
-
-  forceinline GlobalPropInfo*
-  GlobalPropInfo::copy(bool share) {
-    (void) share;
-    m.acquire();
-    use_cnt++;
-    m.release();
-    return this;
-  }
-
-  forceinline bool
-  GlobalPropInfo::release(void) {
-    bool r;
-    m.acquire();
-    r = (--use_cnt == 0);
-    m.release();
-    return r;
   }
 
   forceinline PropInfo&
   GlobalPropInfo::allocate(void) {
     PropInfo* pi;
-    m.acquire();
-    if (free == 0) {
-      size *= 2;
-      free = size;
+    o->m.acquire();
+    if (o->free == 0) {
+      o->size = std::min(2*o->size,size_max);
+      o->free = o->size;
       Block* b = static_cast<Block*>(heap.ralloc(sizeof(Block)+
-                                                 (size-1)*sizeof(PropInfo)));
-      b->next = cur;
-      cur = b;
+                                                 (o->size-1)*sizeof(PropInfo)));
+      b->next = o->cur;
+      o->cur = b;
     }
-    pi = &cur->pi[--free];
+    pi = &o->cur->pi[--o->free];
     pi->init();
-    m.release();
+    o->m.release();
     return *pi;
   }
 
