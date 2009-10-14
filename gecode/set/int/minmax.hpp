@@ -290,9 +290,9 @@ namespace Gecode { namespace Set { namespace Int {
   ReMinElement<View>::propagate(Space& home, const ModEventDelta&) {
     // check if b is determined
     if (b.one())
-      GECODE_REWRITE(*this, (MinElement<View>::post(home,x0,x1)));
+      GECODE_REWRITE(*this, (MinElement<View>::post(home(*this),x0,x1)));
     if (b.zero())
-      GECODE_REWRITE(*this, (NotMinElement<View>::post(home,x0,x1)));
+      GECODE_REWRITE(*this, (NotMinElement<View>::post(home(*this),x0,x1)));
     // cheap tests for => b=0
     // if x0 is empty, then b=0 and entailed
     // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then b=0 and entailed
@@ -568,9 +568,9 @@ namespace Gecode { namespace Set { namespace Int {
   ReMaxElement<View>::propagate(Space& home, const ModEventDelta&) {
     // check if b is determined
     if (b.one())
-      GECODE_REWRITE(*this, (MaxElement<View>::post(home,x0,x1)));
+      GECODE_REWRITE(*this, (MaxElement<View>::post(home(*this),x0,x1)));
     if (b.zero())
-      GECODE_REWRITE(*this, (NotMaxElement<View>::post(home,x0,x1)));
+      GECODE_REWRITE(*this, (NotMaxElement<View>::post(home(*this),x0,x1)));
     // cheap tests for => b=0
     // if x0 is empty, then b=0 and entailed
     // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then b=0 and entailed

@@ -171,9 +171,9 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReLq<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
-      GECODE_REWRITE(*this,Lq<View>::post(home,x0,x1));
+      GECODE_REWRITE(*this,Lq<View>::post(home(*this),x0,x1));
     if (b.zero())
-      GECODE_REWRITE(*this,Le<View>::post(home,x1,x0));
+      GECODE_REWRITE(*this,Le<View>::post(home(*this),x1,x0));
     switch (rtest_lq(x0,x1)) {
     case RT_TRUE:
       GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(*this,home);

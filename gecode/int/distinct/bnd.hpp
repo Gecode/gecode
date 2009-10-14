@@ -306,7 +306,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     if (y.size() == 2)
-      GECODE_REWRITE(*this,Rel::Nq<View>::post(home,y[0],y[1]));
+      GECODE_REWRITE(*this,Rel::Nq<View>::post(home(*this),y[0],y[1]));
 
     ExecStatus es = prop_bnd<View>(home,x);
 
@@ -339,7 +339,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return ES_SUBSUMED(*this,home);
 
     if (x.size() == 2)
-      GECODE_REWRITE(*this,Rel::Nq<View>::post(home,x[0],x[1]));
+      GECODE_REWRITE(*this,Rel::Nq<View>::post(home(*this),x[0],x[1]));
 
     return es;
   }

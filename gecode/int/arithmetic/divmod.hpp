@@ -287,16 +287,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   rewrite_ppp:
     GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,IntView,IntView>
-                         ::post(home,x0,x1,x2)));
+                         ::post(home(*this),x0,x1,x2)));
   rewrite_nnp:
     GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,MinusView,IntView>
-                         ::post(home,x0,x1,x2)));
+                         ::post(home(*this),x0,x1,x2)));
   rewrite_pnn:
     GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,MinusView,MinusView,false>
-                         ::post(home,x0,x1,x2)));
+                         ::post(home(*this),x0,x1,x2)));
   rewrite_npn:
     GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,IntView,MinusView,false>
-                         ::post(home,x0,x1,x2)));
+                         ::post(home(*this),x0,x1,x2)));
   subsumed:
     assert(x0.assigned() && x1.assigned());
     GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));

@@ -806,15 +806,24 @@ namespace Gecode {
   protected:
     /// The space where the propagator is to be posted
     Space& s;
+    /// A propagator (possibly) that is currently being rewritten
+    Propagator* p;
   public:
     /// \name Conversion
     //@{
-    /// Initialize the home with space \a s
-    Home(Space& s);
+    /// Initialize the home with space \a s and propagator \a p
+    Home(Space& s, Propagator* p=NULL);
     /// Retrieve the space of the home
     operator Space&(void);
     //@}
-    /// Forwarding of common space operations
+    /// \name Extended information
+    //@{
+    /// Return a home extended by propagator to be rewritten
+    Home operator ()(Propagator& p);
+    /// Return propagator (or NULL) for currently rewritten propagator
+    Propagator* propagator(void) const;
+    //@}
+    /// \name Forwarding of common space operations
     //@{
     /// Check whether corresponding space is failed
     bool failed(void) const;
@@ -1602,6 +1611,12 @@ namespace Gecode {
      * branchers.
      */
     GECODE_KERNEL_EXPORT unsigned int branchers(void) const;
+
+    /// \name Conversion from Space to Home
+    //@{
+    /// Return a home for this space with the information that \a p is being rewritten
+    Home operator ()(Propagator& p);
+    //@}
 
     /**
      * \defgroup FuncMemSpace Space-memory management
@@ -2460,14 +2475,26 @@ namespace Gecode {
 
 
   /*
-   * Home for posting propagators
+   * Home for posting actors
    *
    */
   forceinline
-  Home::Home(Space& s0) : s(s0) {}
+  Home::Home(Space& s0, Propagator* p0) : s(s0), p(p0) {}
   forceinline
   Home::operator Space&(void) { 
     return s; 
+  }
+  forceinline Home
+  Home::operator ()(Propagator& p) {
+    return Home(s,&p);
+  }
+  forceinline Home
+  Space::operator ()(Propagator& p) {
+    return Home(*this,&p);
+  }
+  forceinline Propagator*
+  Home::propagator(void) const {
+    return p;
   }
 
   /*
@@ -2492,7 +2519,11 @@ namespace Gecode {
 
   forceinline
   Propagator::Propagator(Home home) 
-    : pi(static_cast<Space&>(home).gpi->allocate()) {
+    : pi((home.propagator() != NULL) ?
+         // Inherit propagator information
+         home.propagator()->pi :
+         // New propagator information
+         static_cast<Space&>(home).gpi->allocate()) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     static_cast<Space&>(home).pl.head(this);

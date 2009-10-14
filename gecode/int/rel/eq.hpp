@@ -466,9 +466,9 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqDom<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
-      GECODE_REWRITE(*this,(EqDom<View,View>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(EqDom<View,View>::post(home(*this),x0,x1)));
     if (b.zero())
-      GECODE_REWRITE(*this,Nq<View>::post(home,x0,x1));
+      GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
       GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(*this,home);
@@ -524,9 +524,9 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqBnd<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
-      GECODE_REWRITE(*this,(EqBnd<View,View>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(EqBnd<View,View>::post(home(*this),x0,x1)));
     if (b.zero())
-      GECODE_REWRITE(*this,Nq<View>::post(home,x0,x1));
+      GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
     switch (rtest_eq_bnd(x0,x1)) {
     case RT_TRUE:
       GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(*this,home);

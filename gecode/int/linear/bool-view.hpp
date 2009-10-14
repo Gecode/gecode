@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_SUBSUMED(*this,sizeof(*this));
     }
     if (y.assigned())
-      GECODE_REWRITE(*this,EqBoolInt<XV>::post(home,x,y.val()+c));
+      GECODE_REWRITE(*this,EqBoolInt<XV>::post(home(*this),x,y.val()+c));
     return ES_FIX;
   }
 
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_SUBSUMED(*this,home);
     }
     if (y.assigned())
-      GECODE_REWRITE(*this,GqBoolInt<XV>::post(home,x,y.val()+c));
+      GECODE_REWRITE(*this,GqBoolInt<XV>::post(home(*this),x,y.val()+c));
     return ES_FIX;
   }
 

@@ -108,7 +108,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
         mt[i].init(t[i].st(),t[i].p());
       GECODE_REWRITE(*this,
                      (ManProp<typename TaskTraits<OptTask>::ManTask>
-                      ::post(home,mt)));
+                      ::post(home(*this),mt)));
     }
     // Truncate array to only contain mandatory tasks
     t.size(i);

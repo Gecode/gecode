@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Rel {
     } while (x0.glbSize() > x0glbsize);
 
     if (x0.cardMin() == x1.cardMax())
-      GECODE_REWRITE(*this,(Eq<View0,View1>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(Eq<View0,View1>::post(home(*this),x0,x1)));
 
     if (shared(x0,x1)) {
       return oneassigned ? ES_SUBSUMED(*this,home) : ES_NOFIX;

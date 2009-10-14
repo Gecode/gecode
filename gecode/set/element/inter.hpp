@@ -275,16 +275,16 @@ namespace Gecode { namespace Set { namespace Element {
         for (int i=n; i--;)
           is[i]=iv[i].view;
         GECODE_REWRITE(*this,(RelOp::IntersectionN<SView, RView>
-                        ::post(home,is,x0)));
+                        ::post(home(*this),is,x0)));
       } else if (ubsize == 2) {
         assert(n==2);
         SView a = iv[0].view;
         SView b = iv[1].view;
         GECODE_REWRITE(*this,(RelOp::Intersection<SView, SView, RView>
-                       ::post(home,a,b,x0)));
+                       ::post(home(*this),a,b,x0)));
       } else if (ubsize == 1) {
         assert(n==1);
-        GECODE_REWRITE(*this,(Rel::Eq<RView,SView>::post(home,x0,iv[0].view)));
+        GECODE_REWRITE(*this,(Rel::Eq<RView,SView>::post(home(*this),x0,iv[0].view)));
       } else {
         GECODE_ME_CHECK(x0.cardMax(home, 0));
         return ES_SUBSUMED(*this,home);

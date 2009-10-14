@@ -713,7 +713,8 @@ namespace Gecode { namespace Int { namespace Bool {
         } else {
           // Rewrite if there is just one view left
           if (i == 0) {
-            GECODE_REWRITE(*this,(BinOrTrue<BV,BV>::post(home,x1,x[0])));
+            GECODE_REWRITE(*this,
+                           (BinOrTrue<BV,BV>::post(home(*this),x1,x[0])));
           }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n];
@@ -840,7 +841,7 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   NaryOr<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (y.one())
-      GECODE_REWRITE(*this,NaryOrTrue<VX>::post(home,x));
+      GECODE_REWRITE(*this,NaryOrTrue<VX>::post(home(*this),x));
     if (y.zero()) {
       // Note that this might trigger the advisor of this propagator!
       for (int i = x.size(); i--; )

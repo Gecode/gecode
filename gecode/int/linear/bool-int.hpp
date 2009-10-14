@@ -595,13 +595,13 @@ namespace Gecode { namespace Int { namespace Linear {
     } else {
       normalize();
       if (b.one()) {
-        GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home,x,c)));
+        GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home(*this),x,c)));
       } else {
         ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,x.size());
         for (int i=x.size(); i--; )
           nx[i]=BoolNegTraits<VX>::neg(x[i]);
         GECODE_REWRITE(*this,GqBoolInt<typename BoolNegTraits<VX>::NegView>
-                       ::post(home,nx,x.size()-c+1));
+                       ::post(home(*this),nx,x.size()-c+1));
       }
     }
     return ES_SUBSUMED(*this,home);
@@ -691,9 +691,9 @@ namespace Gecode { namespace Int { namespace Linear {
     } else {
       normalize();
       if (b.one()) {
-        GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home,x,c)));
+        GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home(*this),x,c)));
       } else {
-        GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home,x,c)));
+        GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home(*this),x,c)));
       }
     }
     return ES_SUBSUMED(*this,home);

@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Bool {
           // Rewrite if there is just one view left
           if ((i == 0) && (y.size() == 0)) {
             VX z = x[0]; x.size(0);
-            GECODE_REWRITE(p,(BinOrTrue<VX,VY>::post(home,z,x1)));
+            GECODE_REWRITE(p,(BinOrTrue<VX,VY>::post(home(p),z,x1)));
           }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n];
@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace Bool {
       for (int i=y.size(); i--; )
         z[i]=y[i];
       z[y.size()] = x1;
-      GECODE_REWRITE(p,(NaryOrTrue<VY>::post(home,z)));
+      GECODE_REWRITE(p,(NaryOrTrue<VY>::post(home(p),z)));
     }
     return ES_FIX;
   }
@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   Clause<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (z.one())
-      GECODE_REWRITE(*this,(ClauseTrue<VX,VY>::post(home,x,y)));
+      GECODE_REWRITE(*this,(ClauseTrue<VX,VY>::post(home(*this),x,y)));
     if (z.zero()) {
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));

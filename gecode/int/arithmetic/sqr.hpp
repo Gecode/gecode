@@ -154,9 +154,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SqrBnd<View>::propagate(Space& home, const ModEventDelta&) {
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
-      GECODE_REWRITE(*this,(SqrPlusBnd<IntView,IntView>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(SqrPlusBnd<IntView,IntView>::post(home(*this),x0,x1)));
     if (x0.max() <= 0)
-      GECODE_REWRITE(*this,(SqrPlusBnd<MinusView,IntView>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(SqrPlusBnd<MinusView,IntView>::post(home(*this),x0,x1)));
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                         x0.max()*x0.max())));
@@ -322,9 +322,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     assert(x1.min() >= 0);
     if (View::me(med) != ME_INT_DOM) {
       if (x0.min() >= 0)
-        GECODE_REWRITE(*this,(SqrPlusDom<IntView,IntView>::post(home,x0,x1)));
+        GECODE_REWRITE(*this,(SqrPlusDom<IntView,IntView>::post(home(*this),x0,x1)));
       if (x0.max() <= 0)
-        GECODE_REWRITE(*this,(SqrPlusDom<MinusView,IntView>::post(home,x0,x1)));
+        GECODE_REWRITE(*this,(SqrPlusDom<MinusView,IntView>::post(home(*this),x0,x1)));
 
       GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                           x0.max()*x0.max())));

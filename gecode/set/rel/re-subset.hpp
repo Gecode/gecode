@@ -93,9 +93,9 @@ namespace Gecode { namespace Set { namespace Rel {
   ExecStatus
   ReSubset<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
-      GECODE_REWRITE(*this,(Subset<View0,View1>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(Subset<View0,View1>::post(home(*this),x0,x1)));
     if (b.zero())
-      GECODE_REWRITE(*this,(NoSubset<View0,View1>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(NoSubset<View0,View1>::post(home(*this),x0,x1)));
 
     // check whether cardinalities still allow subset
     if (x0.cardMin() > x1.cardMax()) {

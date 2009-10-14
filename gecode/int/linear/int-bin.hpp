@@ -227,9 +227,9 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   ReEqBin<Val,A,B,Ctrl>::propagate(Space& home, const ModEventDelta&) {
     if (b.zero())
-      GECODE_REWRITE(*this,(NqBin<Val,A,B>::post(home,x0,x1,c)));
+      GECODE_REWRITE(*this,(NqBin<Val,A,B>::post(home(*this),x0,x1,c)));
     if (b.one())
-      GECODE_REWRITE(*this,(EqBin<Val,A,B>::post(home,x0,x1,c)));
+      GECODE_REWRITE(*this,(EqBin<Val,A,B>::post(home(*this),x0,x1,c)));
     if ((x0.min() + x1.min() > c) || (x0.max() + x1.max() < c)) {
       GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(*this,home);
     }
@@ -423,9 +423,9 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   ReLqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
-      GECODE_REWRITE(*this,(LqBin<Val,A,B>::post(home,x0,x1,c)));
+      GECODE_REWRITE(*this,(LqBin<Val,A,B>::post(home(*this),x0,x1,c)));
     if (b.zero())
-      GECODE_REWRITE(*this,(GqBin<Val,A,B>::post(home,x0,x1,c+1)));
+      GECODE_REWRITE(*this,(GqBin<Val,A,B>::post(home(*this),x0,x1,c+1)));
     if (x0.max() + x1.max() <= c) {
       GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(*this,home);
     }

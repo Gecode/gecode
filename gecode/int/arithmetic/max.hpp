@@ -116,9 +116,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MaxBnd<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
     if ((x0.max() <= x1.min()) || (x0.max() < x2.min()))
-      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x1,x2)));
+      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x1,x2)));
     if ((x1.max() <= x0.min()) || (x1.max() < x2.min()))
-      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home,x0,x2)));
+      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x0,x2)));
     return x0.assigned() && x1.assigned() && x2.assigned() ?
       ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
@@ -282,9 +282,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ME_CHECK(prop_max_bnd(home,x0,x1,x2));
       if ((x0.max() <= x1.min()) || (x0.max() < x2.min()))
-        GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x1,x2)));
+        GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x1,x2)));
       if ((x1.max() <= x0.min()) || (x1.max() < x2.min()))
-        GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
+        GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x0,x2)));
       return x0.assigned() && x1.assigned() && x2.assigned() ?
         ES_SUBSUMED(*this,sizeof(*this)) :
         ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
@@ -294,11 +294,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x2.inter_r(home,u,false));
     if (rtest_nq_dom(x0,x2) == RT_TRUE) {
       GECODE_ES_CHECK(Rel::Lq<View>::post(home,x0,x2));
-      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x1,x2)));
+      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x1,x2)));
     }
     if (rtest_nq_dom(x1,x2) == RT_TRUE) {
       GECODE_ES_CHECK(Rel::Lq<View>::post(home,x1,x2));
-      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x0,x2)));
+      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x0,x2)));
     }
     return ES_FIX;
   }
@@ -388,7 +388,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     assert(x.size() > 0);
     if (x.size() == 1)
-      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home,x[0],y)));
+      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x[0],y)));
     return ES_FIX;
   }
 

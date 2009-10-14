@@ -96,9 +96,9 @@ namespace Gecode { namespace Set { namespace Rel {
   ExecStatus
   ReEq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
-      GECODE_REWRITE(*this,(Eq<View0,View1>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(Eq<View0,View1>::post(home(*this),x0,x1)));
     if (b.zero())
-      GECODE_REWRITE(*this,(Distinct<View0,View1>::post(home,x0,x1)));
+      GECODE_REWRITE(*this,(Distinct<View0,View1>::post(home(*this),x0,x1)));
 
     if (x0.assigned() && x1.assigned()) {
       // directly test x0==x1

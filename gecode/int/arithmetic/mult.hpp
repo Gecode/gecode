@@ -421,15 +421,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   rewrite_ppp:
     GECODE_REWRITE(*this,(MultPlusBnd<double,IntView,IntView,IntView>
-                         ::post(home,x0,x1,x2)));
+                         ::post(home(*this),x0,x1,x2)));
   rewrite_nnp:
     GECODE_REWRITE(*this,(MultPlusBnd<double,MinusView,MinusView,IntView>
-                         ::post(home,x0,x1,x2)));
+                         ::post(home(*this),x0,x1,x2)));
   rewrite_pnn:
     std::swap(x0,x1);
   rewrite_npn:
     GECODE_REWRITE(*this,(MultPlusBnd<double,MinusView,IntView,MinusView>
-                         ::post(home,x0,x1,x2)));
+                         ::post(home(*this),x0,x1,x2)));
   }
 
   template<class View>
@@ -678,15 +678,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     rewrite_ppp:
       GECODE_REWRITE(*this,(MultPlusDom<double,IntView,IntView,IntView>
-                           ::post(home,x0,x1,x2)));
+                           ::post(home(*this),x0,x1,x2)));
     rewrite_nnp:
       GECODE_REWRITE(*this,(MultPlusDom<double,MinusView,MinusView,IntView>
-                           ::post(home,x0,x1,x2)));
+                           ::post(home(*this),x0,x1,x2)));
     rewrite_pnn:
       std::swap(x0,x1);
     rewrite_npn:
       GECODE_REWRITE(*this,(MultPlusDom<double,MinusView,IntView,MinusView>
-                           ::post(home,x0,x1,x2)));
+                           ::post(home(*this),x0,x1,x2)));
     }
     return prop_mult_dom<double,View>(home,*this,x0,x1,x2);
   }

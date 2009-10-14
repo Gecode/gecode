@@ -428,9 +428,9 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   ReEq<Val,P,N,Ctrl>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero())
-      GECODE_REWRITE(*this,(Nq<Val,P,N>::post(home,x,y,c)));
+      GECODE_REWRITE(*this,(Nq<Val,P,N>::post(home(*this),x,y,c)));
     if (b.one())
-      GECODE_REWRITE(*this,(Eq<Val,P,N>::post(home,x,y,c)));
+      GECODE_REWRITE(*this,(Eq<Val,P,N>::post(home(*this),x,y,c)));
 
     Val sl = 0;
     Val su = 0;
@@ -837,9 +837,9 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   ReLq<Val,P,N>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero())
-      GECODE_REWRITE(*this,(Lq<Val,N,P>::post(home,y,x,-c-1)));
+      GECODE_REWRITE(*this,(Lq<Val,N,P>::post(home(*this),y,x,-c-1)));
     if (b.one())
-      GECODE_REWRITE(*this,(Lq<Val,P,N>::post(home,x,y,c)));
+      GECODE_REWRITE(*this,(Lq<Val,P,N>::post(home(*this),x,y,c)));
 
     // Eliminate singletons
     Val sl = 0;

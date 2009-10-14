@@ -87,12 +87,12 @@ namespace Gecode { namespace Set { namespace Rel {
       GlbRanges<View0> xr(x0);
       IntSet xs(xr);
       ConstantView cv(home, xs);
-      GECODE_REWRITE(*this,(DistinctDoit<View1>::post(home,x1,cv)));
+      GECODE_REWRITE(*this,(DistinctDoit<View1>::post(home(*this),x1,cv)));
     } else {
       GlbRanges<View1> yr(x1);
       IntSet ys(yr);
       ConstantView cv(home, ys);
-      GECODE_REWRITE(*this,(DistinctDoit<View0>::post(home,x0,cv)));
+      GECODE_REWRITE(*this,(DistinctDoit<View0>::post(home(*this),x0,cv)));
     }
   }
 
