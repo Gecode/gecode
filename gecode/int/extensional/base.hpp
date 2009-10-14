@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (!ts()->finalized()) ts()->finalize();
     init_last(home, ts()->last);
 
-    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
+    home.notice(*this,AP_DISPOSE);
   }
 
   template<class View, bool subscribe>

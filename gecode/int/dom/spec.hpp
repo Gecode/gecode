@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Dom {
   ReIntSet<View>::ReIntSet
   (Home home, View x, const IntSet& s, BoolView b)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b), is(s) {
-    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
+    home.notice(*this,AP_DISPOSE);
   }
 
   template<class View>

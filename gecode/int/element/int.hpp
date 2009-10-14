@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline
   Int<V0,V1,Idx,Val>::Int(Home home, IntSharedArray& c0, V0 y0, V1 y1)
     : Propagator(home), x0(y0), x1(y1), c(c0), iv(NULL) {
-    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
+    home.notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this,PC_INT_DOM);
     x1.subscribe(home,*this,PC_INT_DOM);
   }

@@ -59,7 +59,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
     Propagator(home),
     machine(_machine), start(_start), duration(_duration),
     end(_end), height(_height), limit(_limit), at_most(_at_most) {
-    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
+    home.notice(*this,AP_DISPOSE);
 
     machine.subscribe(home,*this,Int::PC_INT_DOM);
     start.subscribe(home,*this,Int::PC_INT_BND);

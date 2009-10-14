@@ -807,14 +807,22 @@ namespace Gecode {
     /// The space where the propagator is to be posted
     Space& s;
   public:
+    /// \name Conversion
+    //@{
     /// Initialize the home with space \a s
     Home(Space& s);
     /// Retrieve the space of the home
     operator Space&(void);
+    //@}
+    /// Forwarding of common space operations
+    //@{
     /// Check whether corresponding space is failed
     bool failed(void) const;
     /// Mark space as failed
     void fail(void);
+    ///  Notice actor property
+    void notice(Actor& a, ActorProperty p);
+    //@}
   };
 
   /**
@@ -2407,6 +2415,11 @@ namespace Gecode {
       else
         n_wmp++;
     }
+  }
+
+  forceinline void
+  Home::notice(Actor& a, ActorProperty p) {
+    s.notice(a,p);
   }
 
   forceinline void

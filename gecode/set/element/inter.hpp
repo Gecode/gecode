@@ -47,7 +47,7 @@ namespace Gecode { namespace Set { namespace Element {
                      RView y1,
                      const IntSet& theUniverse)
     : Propagator(home), universe(theUniverse), x0(y0), iv(iv0), x1(y1) {
-    static_cast<Space&>(home).notice(*this,AP_DISPOSE);
+    home.notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
     iv.subscribe(home,*this, PC_SET_ANY);
