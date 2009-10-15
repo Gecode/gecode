@@ -1661,7 +1661,7 @@ namespace Gecode {
      * Note that this function implements C++ semantics: the destructor
      * of \a T is run for all \a n objects.
      *
-     * Note that the memory is not freed, it is just scheduled for latter
+     * Note that the memory is not freed, it is just scheduled for later
      * reusal.
      */
     template<class T>
@@ -1672,7 +1672,7 @@ namespace Gecode {
      * Note that this function implements C++ semantics: the destructor
      * of \a T is run for all \a n objects.
      *
-     * Note that the memory is not freed, it is just scheduled for latter
+     * Note that the memory is not freed, it is just scheduled for later
      * reusal.
      */
     template<class T>
@@ -1683,7 +1683,7 @@ namespace Gecode {
      * Note that this function implements C++ semantics: the destructor
      * of \a T is run for all \a n objects.
      *
-     * Note that the memory is not freed, it is just scheduled for latter
+     * Note that the memory is not freed, it is just scheduled for later
      * reusal.
      */
     template<class T>
@@ -1694,7 +1694,7 @@ namespace Gecode {
      * Note that this function implements C++ semantics: the destructor
      * of \a T is run for all \a n objects.
      *
-     * Note that the memory is not freed, it is just scheduled for latter
+     * Note that the memory is not freed, it is just scheduled for later
      * reusal.
      */
     template<class T>
