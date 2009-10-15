@@ -74,6 +74,14 @@ public:
     MODEL_MIXED  ///< Use both integer and set constraints
   };
 #endif
+  // Branching variants
+  enum {
+    BRANCH_NONE,        ///< Use lexicographic ordering
+    BRANCH_SIZE,        ///< Use minimum size
+    BRANCH_SIZE_DEGREE, ///< Use minimum size over degree
+    BRANCH_SIZE_AFC,    ///< Use minimum size over afc
+    BRANCH_AFC          ///< Use maximum afc
+  };
 
   /// Constructor
   Sudoku(const SizeOptions& opt) : n(example_size(examples[opt.size()])) {}
@@ -164,8 +172,17 @@ public:
       }
     }
 #endif
-
-    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+    if (opt.branching() == BRANCH_NONE) {
+      branch(*this, x, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+    } else if (opt.branching() == BRANCH_SIZE) {
+      branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+    } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
+      branch(*this, x, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_SPLIT_MIN);
+    } else if (opt.branching() == BRANCH_SIZE_AFC) {
+      branch(*this, x, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+    } else if (opt.branching() == BRANCH_AFC) {
+      branch(*this, x, INT_VAR_AFC_MAX, INT_VAL_SPLIT_MIN);
+    }
   }
 
   /// Constructor for cloning \a s
@@ -291,7 +308,17 @@ public:
         if (int idx = sudokuField(examples[opt.size()], nn, i, j))
           dom(*this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
-    branch(*this, y, SET_VAR_NONE, SET_VAL_MIN_INC);
+    if (opt.branching() == BRANCH_NONE) {
+      branch(*this, y, SET_VAR_NONE, SET_VAL_MIN_INC);
+    } else if (opt.branching() == BRANCH_SIZE) {
+      branch(*this, y, SET_VAR_SIZE_MIN, SET_VAL_MIN_INC);
+    } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
+      branch(*this, y, SET_VAR_SIZE_DEGREE_MIN, SET_VAL_MIN_INC);
+    } else if (opt.branching() == BRANCH_SIZE_AFC) {
+      branch(*this, y, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
+    } else if (opt.branching() == BRANCH_AFC) {
+      branch(*this, y, SET_VAR_AFC_MAX, SET_VAL_MIN_INC);
+    }
   }
 
   /// Constructor for cloning \a s
@@ -397,6 +424,12 @@ main(int argc, char* argv[]) {
   opt.propagation(SudokuInt::PROP_SAME, "same",
                   "additional \"same\" constraint for integer model");
 #endif
+  opt.branching(Sudoku::BRANCH_SIZE_AFC);
+  opt.branching(Sudoku::BRANCH_NONE, "none", "none");
+  opt.branching(Sudoku::BRANCH_SIZE, "size", "min size");
+  opt.branching(Sudoku::BRANCH_SIZE_DEGREE, "sizedeg", "min size over degree");
+  opt.branching(Sudoku::BRANCH_SIZE_AFC, "sizeafc", "min size over afc");
+  opt.branching(Sudoku::BRANCH_AFC, "afc", "maximum afc");
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
@@ -2170,7 +2203,61 @@ namespace {
     "..F..E8D.....A.."
     ".2..741.....3..8"
     "D6....5.92B..1.."
-    ".A.EB.....C6...."
+    ".A.EB.....C6....",
+    // 89
+    //".N..JG..O7591...8I....L.."
+    "BNDAJG62O7591KHF8IP34CLME"
+    "FG.M.B8...P.E...CJ..H...."
+    "...........G.4.H.D.O.NJA2"
+    ".....J.EN4.L6MA.B.2......"
+    "HE..2..DC.....F4KMA.B.9O8"
+    "M....62...47C19......E5.."
+    ".I2.8M.JGL...ADN..K..3.F7"
+    "..H3.5..89....I.J.....NL."
+    "1B..9.FAP.6.N....537.H..O"
+    "......1..N...O...LC.68.PG"
+    "KOA.FNBH.....7.C.....M..6"
+    "45.ECP.I..N.F.J1...MK.79."
+    "I.L..8.O..9.P...A...2.1J."
+    "..621.D.M.....B8LG..P..CH"
+    ".HP.N7E.L1....3..B..O.G45"
+    "....BIO....5.C.P...FN48E."
+    "...FL.....2.DH..17..59O.."
+    "..I.MF..2G.N...A6O.HC.PB."
+    "72.1..L...IM.96E.45G....."
+    "..9...7M..A.O...I...L...."
+    ".C.JA.........1.....E.48."
+    "O.BI.......PHL.6..1....5C"
+    "G6M...N4FI8...K..H.E....."
+    ".L..4.917....BE.G8F.M.I.."
+    "8F......5.O3..4...9.....K",
+    // 90
+    //".N..JG..O7591...8I....L.."
+    ".ND.JG6.O7591..F8IP.4.LM."
+    "FG.M.B8...P.E...CJ..H...."
+    "...........G.4.H.D.O.NJA2"
+    ".....J.EN4.L6MA.B.2......"
+    "HE..2..DC.....F4KMA.B.9O8"
+    "M....62...47C19......E5.."
+    ".I2.8M.JGL...ADN..K..3.F7"
+    "..H3.5..89....I.J.....NL."
+    "1B..9.FAP.6.N....537.H..O"
+    "......1..N...O...LC.68.PG"
+    "KOA.FNBH.....7.C.....M..6"
+    "45.ECP.I..N.F.J1...MK.79."
+    "I.L..8.O..9.P...A...2.1J."
+    "..621.D.M.....B8LG..P..CH"
+    ".HP.N7E.L1....3..B..O.G45"
+    "....BIO....5.C.P...FN48E."
+    "...FL.....2.DH..17..59O.."
+    "..I.MF..2G.N...A6O.HC.PB."
+    "72.1..L...IM.96E.45G....."
+    "..9...7M..A.O...I...L...."
+    ".C.JA.........1.....E.48."
+    "O.BI.......PHL.6..1....5C"
+    "G6M...N4FI8...K..H.E....."
+    ".L..4.917....BE.G8F.M.I.."
+    "8F......5.O3..4...9.....K"
   };
 
   /// The number of instances

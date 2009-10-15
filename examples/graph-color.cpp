@@ -325,7 +325,8 @@ public:
   enum {
     BRANCH_DEGREE,      ///< Choose variable with largest degree
     BRANCH_SIZE,        ///< Choose variable with smallest size
-    BRANCH_SIZE_DEGREE  ///< Choose variable with smallest size/degree
+    BRANCH_SIZE_DEGREE, ///< Choose variable with smallest size/degree
+    BRANCH_SIZE_AFC,    ///< Choose variable with smallest size/degree
   };
   /// The actual model
   GraphColor(const SizeOptions& opt)
@@ -354,8 +355,10 @@ public:
     } else if (opt.branching() == BRANCH_DEGREE) {
       branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN),
              INT_VAL_MIN);
-    } else {
+    } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
       branch(*this, v, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_MIN);
+    } else {
+      branch(*this, v, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
     }
   }
   /// Cost function
@@ -405,6 +408,7 @@ main(int argc, char* argv[]) {
   opt.branching(GraphColor::BRANCH_DEGREE, "degree");
   opt.branching(GraphColor::BRANCH_SIZE, "size");
   opt.branching(GraphColor::BRANCH_SIZE_DEGREE, "sizedegree");
+  opt.branching(GraphColor::BRANCH_SIZE_AFC, "sizeafc");
   opt.parse(argc,argv);
   Script::run<GraphColor,BAB,SizeOptions>(opt);
   return 0;

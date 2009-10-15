@@ -73,6 +73,14 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Sudoku and GraphColor now uses smallest size over accumulated failure
+count as the default heuristic.
+
+[ENTRY]
 Module: bug
 What:   set
 Rank:   minor
