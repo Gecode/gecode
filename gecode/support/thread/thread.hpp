@@ -51,6 +51,21 @@ namespace Gecode { namespace Support {
 
 
   /*
+   * Mutexes
+   *
+   */
+  forceinline void*
+  Mutex::operator new(size_t s) {
+    return Gecode::heap.ralloc(s);
+  }
+
+  forceinline void
+  Mutex::operator delete(void* p) {
+    Gecode::heap.rfree(p);
+  }
+
+
+  /*
    * Locks
    */
   forceinline

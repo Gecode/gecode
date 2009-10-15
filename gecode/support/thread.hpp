@@ -109,6 +109,10 @@ namespace Gecode { namespace Support {
     void release(void);
     /// Delete mutex
     ~Mutex(void);
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
   private:
     /// A mutex cannot be copied
     Mutex(const Mutex&) {}

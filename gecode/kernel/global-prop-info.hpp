@@ -74,7 +74,7 @@ namespace Gecode {
     class Object {
     public:
       /// Mutex to synchronize globally shared access
-      Support::Mutex m;
+      Support::Mutex* m;
       /// How many spaces use this globally shared object
       unsigned int use_cnt;
       /// Currently used block
@@ -146,7 +146,7 @@ namespace Gecode {
 
   forceinline
   GlobalPropInfo::Object::Object(void)
-    : use_cnt(1), size(size_min), free(size_min) {
+    : m(new Support::Mutex), use_cnt(1), size(size_min), free(size_min) {
     cur = static_cast<Block*>(heap.ralloc(sizeof(Block)+
                                           (size-1)*sizeof(PropInfo)));
     cur->next = NULL;
@@ -161,32 +161,33 @@ namespace Gecode {
   forceinline
   GlobalPropInfo::GlobalPropInfo(const GlobalPropInfo& gpi)
     : o(gpi.o) {
-    o->m.acquire();
+    o->m->acquire();
     o->use_cnt++;
-    o->m.release();
+    o->m->release();
   }
 
   forceinline
   GlobalPropInfo::~GlobalPropInfo(void) {
-    o->m.acquire();
+    o->m->acquire();
     if (--o->use_cnt == 0) {
-      o->m.release();
+      o->m->release();
+      // Delete mutex
+      delete o->m;
       // No synchronization needed as only one space and hence one thread left
       Block* b = o->cur;
       while (b != NULL) {
         Block* d = b; b=b->next;
         heap.rfree(d);
       }
-      delete o;
     } else {
-      o->m.release();
+      o->m->release();
     }
   }
 
   forceinline PropInfo&
   GlobalPropInfo::allocate(void) {
     PropInfo* pi;
-    o->m.acquire();
+    o->m->acquire();
     if (o->free == 0) {
       o->size = std::min(2*o->size,size_max);
       o->free = o->size;
@@ -197,7 +198,7 @@ namespace Gecode {
     }
     pi = &o->cur->pi[--o->free];
     pi->init();
-    o->m.release();
+    o->m->release();
     return *pi;
   }
 
