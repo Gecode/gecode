@@ -39,6 +39,8 @@
 
 namespace Gecode {
 
+  class GlobalPropInfo;
+
   /// Class for propagator information
   class PropInfo {
   private:
@@ -52,11 +54,12 @@ namespace Gecode {
     /// Return accumulated failure count
     double afc(void) const;
     /// Increment failure count
-    void fail(void);
+    void fail(GlobalPropInfo& gpi);
   };
 
   /// Globally shared object for propagator information
   class GlobalPropInfo {
+    friend PropInfo;
   private:
     /// Block of propagator information (of variable size)
     class Block {
@@ -130,10 +133,6 @@ namespace Gecode {
   forceinline double
   PropInfo::afc(void) const {
     return _afc;
-  }
-  forceinline void
-  PropInfo::fail(void) {
-    _afc++;
   }
 
 
@@ -218,6 +217,14 @@ namespace Gecode {
     // All objects are deleted, so also delete mutex
     if (c == NULL)
       delete m;
+  }
+
+  forceinline void
+  PropInfo::fail(GlobalPropInfo& gpi) {
+    Support::Mutex& m = *gpi.object()->mutex;
+    m.acquire();
+    _afc++;
+    m.release();
   }
 
   forceinline PropInfo&

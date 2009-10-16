@@ -204,7 +204,7 @@ namespace Gecode {
       switch (p->propagate(*this,med_o)) {
       case ES_FAILED:
         // Count failure
-        p->pi.fail();
+        p->pi.fail(gpi);
         // Mark as failed
         fail(); s = SS_FAILED; goto exit;
       case ES_NOFIX:

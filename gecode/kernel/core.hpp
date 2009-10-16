@@ -3259,7 +3259,7 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
-        p.pi.fail();
+        p.pi.fail(home.gpi);
         return false;
       case ES_NOFIX:
         schedule(home,p,me);
