@@ -73,12 +73,47 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module:	int
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added AFC-based branching strategies for integer and Boolean
+variables: INT_VAR_AFC_MIN, INT_VAR_AFC_MAX,
+INT_VAR_SIZE_AFC_MIN, INT_VAR_SIZE_AFC_MAX. For details, see
+"Modeling with Gecode".
+
+[ENTRY]
+Module:	set
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added AFC-based branching strategies for set variables:
+SET_VAR_AFC_MIN, SET_VAR_AFC_MAX, SET_VAR_SIZE_AFC_MIN,
+SET_VAR_SIZE_AFC_MAX. For details, see "Modeling with Gecode".
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Propagators and variables now maintain an accumulated failure
+count (AFC).
+[MORE]
+The AFC of a propagator counts how often has the propagator
+failed during the entire search, and the AFC of a variable is its
+degree plus the sum of the AFCs of all propagators depending on
+the variable. While it looks straightforward, this required a
+major extension of the Gecode kernel to deal with global
+information accessed concurrently from several threads during
+search. The AFC is also known as "weighted degree".
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor
 [DESCRIPTION]
 Sudoku and GraphColor now uses smallest size over accumulated failure
-count as the default heuristic.
+count (AFC) as the default heuristic.
 
 [ENTRY]
 Module: bug
@@ -95,8 +130,19 @@ Rank:   major
 [DESCRIPTION]
 Now posting of propagators and branchers take an object of class
 Home (rather than just a space) that can carry additional
-information relevant for posting (for example, groups and failure
-information). Models do not need to be changed in any way!
+information relevant for posting (for example, groups and
+accumulated failure information). Models do not need to be
+changed in any way!
+[MORE]
+While models require no change, propagator rewriting does (it
+will work but some information might be lost). Instead of writing
+something like
+GECODE_REWRITE(*this,SomeProp::post(home,...));
+where *this is the propagator to be rewritten, you should now
+write
+GECODE_REWRITE(*this,SomeProp::post(home(*this),...));
+By this, the new propagator will inherit information from *this
+(in particular the accumulated failure count).
 
 
 [RELEASE]

@@ -65,6 +65,8 @@ namespace Gecode {
       Block* next;
       /// Start of information entries
       PropInfo pi[1];
+      /// Allocate block with \a n entries and previous block \a p
+      static Block* allocate(unsigned int n, Block* p=NULL);
     };
     /// Initial smallest number of entries per block
     static const unsigned int size_min = 32;
@@ -74,24 +76,34 @@ namespace Gecode {
     class Object {
     public:
       /// Mutex to synchronize globally shared access
-      Support::Mutex* m;
-      /// How many spaces use this globally shared object
+      Support::Mutex* mutex;
+      /// Link to previous object (NULL if none)
+      Object* parent;
+      /// How many spaces or objects use this object
       unsigned int use_cnt;
-      /// Currently used block
-      Block* cur;
       /// Size of current block
       unsigned int size;
       /// Number of free entries in current block
       unsigned int free;
-      /// Default constructor
-      Object(void);
+      /// Currently used block
+      Block* cur;
+      /// Constructor
+      Object(Support::Mutex* m, Object* p=NULL);
       /// Allocate memory from heap
       static void* operator new(size_t s);
       /// Free memory allocated from heap
       static void  operator delete(void* p);
     };
-    /// The object
-    Object* o;
+    /// Pointer to object, possibly marked
+    void* mo;
+    /// Pointer to object without mark
+    Object* object(void) const;
+    /// Whether pointer points to local object
+    bool local(void) const;
+    /// Set pointer to local object
+    void local(Object* o);
+    /// Set global pointer to possibly marked object
+    void global(void* mo);
   public:
     /// Initialize
     GlobalPropInfo(void);
@@ -101,10 +113,6 @@ namespace Gecode {
     ~GlobalPropInfo(void);
     /// Allocate new propagator info
     PropInfo& allocate(void);
-    /// Return copy during cloning
-    GlobalPropInfo* copy(bool share);
-    /// Release by one space
-    bool release(void);
   };
 
 
@@ -144,61 +152,98 @@ namespace Gecode {
     Gecode::heap.rfree(p);
   }
 
-  forceinline
-  GlobalPropInfo::Object::Object(void)
-    : m(new Support::Mutex), use_cnt(1), size(size_min), free(size_min) {
-    cur = static_cast<Block*>(heap.ralloc(sizeof(Block)+
-                                          (size-1)*sizeof(PropInfo)));
-    cur->next = NULL;
+  forceinline GlobalPropInfo::Block*
+  GlobalPropInfo::Block::allocate(unsigned int n, GlobalPropInfo::Block* p) {
+    Block* b = static_cast<Block*>(heap.ralloc(sizeof(Block)+
+                                               (n-1)*sizeof(PropInfo)));
+    b->next = p;
+    return b;
   }
 
   forceinline
-  GlobalPropInfo::GlobalPropInfo(void)
-    : o(new Object) {
+  GlobalPropInfo::Object::Object(Support::Mutex* m, Object* p)
+    : mutex(m), parent(p), use_cnt(1), size(size_min), free(size_min),
+      cur(Block::allocate(size)) {}
+
+  forceinline GlobalPropInfo::Object*
+  GlobalPropInfo::object(void) const {
+    return static_cast<Object*>(Support::funmark(mo));
+  }
+  forceinline bool
+  GlobalPropInfo::local(void) const {
+    return !Support::marked(mo);
+  }
+  forceinline void
+  GlobalPropInfo::local(Object* o) {
+    assert(!Support::marked(o));
+    mo = o;
+  }
+  forceinline void
+  GlobalPropInfo::global(void* o) {
+    mo = Support::fmark(o);
+  }
+
+  forceinline
+  GlobalPropInfo::GlobalPropInfo(void) {
     // No synchronization needed as single thread is creating this object
+    local(new Object(new Support::Mutex));
   }
 
   forceinline
-  GlobalPropInfo::GlobalPropInfo(const GlobalPropInfo& gpi)
-    : o(gpi.o) {
-    o->m->acquire();
+  GlobalPropInfo::GlobalPropInfo(const GlobalPropInfo& gpi) {
+    global(gpi.mo);
+    Object* o = object();
+    o->mutex->acquire();
     o->use_cnt++;
-    o->m->release();
+    o->mutex->release();
   }
 
   forceinline
   GlobalPropInfo::~GlobalPropInfo(void) {
-    o->m->acquire();
-    if (--o->use_cnt == 0) {
-      o->m->release();
-      // Delete mutex
-      delete o->m;
-      // No synchronization needed as only one space and hence one thread left
-      Block* b = o->cur;
+    Support::Mutex* m = object()->mutex;
+    m->acquire();
+    Object* c = object();
+    while ((c != NULL) && (--c->use_cnt == 0)) {
+      // Delete all blocks for c
+      Block* b = c->cur;
       while (b != NULL) {
         Block* d = b; b=b->next;
         heap.rfree(d);
       }
-    } else {
-      o->m->release();
+      // Delete object
+      Object* d = c; c = c->parent;
+      delete c; 
     }
+    m->release();
+    // All objects are deleted, so also delete mutex
+    if (c == NULL)
+      delete m;
   }
 
   forceinline PropInfo&
   GlobalPropInfo::allocate(void) {
-    PropInfo* pi;
-    o->m->acquire();
+    /*
+     * If there is no local object, create one.
+     *
+     * There is no synchronization needed as only ONE space has access
+     * to the marked pointer AND the local object.
+     */
+    if (!local())
+      local(new Object(object()->mutex,object()));
+
+    assert(local());
+
+    Object* o = object();
+
     if (o->free == 0) {
       o->size = std::min(2*o->size,size_max);
       o->free = o->size;
-      Block* b = static_cast<Block*>(heap.ralloc(sizeof(Block)+
-                                                 (o->size-1)*sizeof(PropInfo)));
-      b->next = o->cur;
-      o->cur = b;
+      o->cur  = Block::allocate(o->size,o->cur);
     }
-    pi = &o->cur->pi[--o->free];
+
+    PropInfo* pi = &o->cur->pi[--o->free];
     pi->init();
-    o->m->release();
+
     return *pi;
   }
 

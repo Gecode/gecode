@@ -39,12 +39,16 @@
 
 namespace Gecode { namespace Support {
 
-  /// Return marked pointer for \a p
-  void* mark(void* p);
   /// Check whether \a p is marked
   bool marked(void* p);
-  /// Return the unmarked pointer for a marked pointer \a p
+  /// Return marked pointer for \a p
+  void* mark(void* p);
+  /// Return unmarked pointer for a marked pointer \a p
   void* unmark(void* p);
+  /// Return marked pointer for \a p (possibly already marked)
+  void* fmark(void* p);
+  /// Return unmarked pointer for a possibly marked pointer \a p
+  void* funmark(void* p);
 
   forceinline bool
   marked(void* p) {
@@ -59,6 +63,15 @@ namespace Gecode { namespace Support {
   unmark(void* p) {
     assert(marked(p));
     return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)-1);
+  }
+  forceinline void*
+  fmark(void* p) {
+    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)|1);
+  }
+  forceinline void*
+  funmark(void* p) {
+    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)&
+                                   ~static_cast<ptrdiff_t>(1));
   }
 
 }}
