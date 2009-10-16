@@ -350,15 +350,22 @@ public:
         rel(*this, m, IRT_GQ, n-1);
     }
     branch(*this, m, INT_VAL_MIN);
-    if (opt.branching() == BRANCH_SIZE) {
+    switch (opt.branching()) {
+    case BRANCH_SIZE:
       branch(*this, v, INT_VAR_SIZE_MIN, INT_VAL_MIN);
-    } else if (opt.branching() == BRANCH_DEGREE) {
+      break;
+    case BRANCH_DEGREE:
       branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN),
              INT_VAL_MIN);
-    } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
+      break;
+    case BRANCH_SIZE_DEGREE:
       branch(*this, v, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_MIN);
-    } else {
+      break;
+    case BRANCH_SIZE_AFC:
       branch(*this, v, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
+      break;
+    default:
+      break;
     }
   }
   /// Cost function
