@@ -59,7 +59,7 @@ namespace Gecode {
 
   /// Globally shared object for propagator information
   class GlobalPropInfo {
-    friend PropInfo;
+    friend class PropInfo;
   private:
     /// Block of propagator information (of variable size)
     class Block {
