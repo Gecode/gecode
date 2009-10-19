@@ -211,7 +211,7 @@ namespace Gecode {
       }
       // Delete object
       Object* d = c; c = c->parent;
-      delete c; 
+      delete d; 
     }
     m->release();
     // All objects are deleted, so also delete mutex
