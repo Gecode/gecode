@@ -35,8 +35,6 @@
  *
  */
 
-#include <algorithm>
-
 namespace Gecode {
 
   class GlobalPropInfo;
@@ -243,7 +241,8 @@ namespace Gecode {
     Object* o = object();
 
     if (o->free == 0) {
-      o->size = std::min(2*o->size,size_max);
+      if (2*o->size <= size_max)
+        o->size *= 2;
       o->free = o->size;
       o->cur  = Block::allocate(o->size,o->cur);
     }
