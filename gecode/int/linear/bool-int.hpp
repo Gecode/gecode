@@ -352,6 +352,13 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
+  size_t
+  NqBoolInt<VX>::dispose(Space& home) {
+    (void) BinaryPropagator<VX,PC_INT_VAL>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class VX>
   forceinline
   NqBoolInt<VX>::NqBoolInt(Space& home, bool share, NqBoolInt<VX>& p)
     : BinaryPropagator<VX,PC_INT_VAL>(home,share,p), x(home,p.x.size()) {

@@ -889,6 +889,8 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
     static  ExecStatus post(Home home, ViewArray<VX>& b, int c);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
   };
 
 

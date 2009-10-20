@@ -74,6 +74,16 @@ Yada Yada!
 
 [ENTRY]
 Module:	int
+What:	bug
+Rank:	minor
+[DESCRIPTION]
+Added missing dispose function for linear disequality of Boolean
+variables (the only problem was that with a proper dispose
+function more memory can be reused when the propagator becomes
+subsumed, so really a tiny quirk).
+
+[ENTRY]
+Module:	int
 What:	new
 Rank:	major
 [DESCRIPTION]
