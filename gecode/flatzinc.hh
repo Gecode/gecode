@@ -107,10 +107,10 @@ namespace Gecode { namespace FlatZinc {
                    AST::Node* ai,
                    const Gecode::IntVarArray& iv,
                    const Gecode::BoolVarArray& bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
                    ,
                    const Gecode::SetVarArray& sv
-  #endif
+#endif
                    ) const;
   public:
     Printer(void) : _output(NULL) {}
@@ -119,10 +119,10 @@ namespace Gecode { namespace FlatZinc {
     void print(std::ostream& out,
                const Gecode::IntVarArray& iv,
                const Gecode::BoolVarArray& bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
                ,
                const Gecode::SetVarArray& sv
-  #endif
+#endif
                ) const;
   
     ~Printer(void);
@@ -252,12 +252,12 @@ namespace Gecode { namespace FlatZinc {
     Gecode::BoolVarArray bv;
     /// Indicates whether a Boolean variable is introduced by mzn2fzn
     std::vector<bool> bv_introduced;
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     /// The set variables
     Gecode::SetVarArray sv;
     /// Indicates whether a set variable is introduced by mzn2fzn
     std::vector<bool> sv_introduced;
-  #endif
+#endif
     /// Construct problem with given number of variables
     FlatZincSpace(int intVars, int boolVars, int setVars);
   
