@@ -2195,6 +2195,8 @@ namespace Gecode {
     INT_VAL_RND,       ///< Select random value
     INT_VAL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
     INT_VAL_SPLIT_MAX, ///< Select values greater than mean of smallest and largest value
+    INT_VAL_RANGE_MIN, ///< Select the smallest range of the variable domain if it has sevral ranges, otherwise select values not greater than mean of smallest and largest value
+    INT_VAL_RANGE_MAX, ///< Select the largest range of the variable domain if it has sevral ranges, otherwise select values greater than mean of smallest and largest value
     INT_VALUES_MIN,    ///< Try all values starting from smallest
     INT_VALUES_MAX     ///< Try all values starting from largest
   };

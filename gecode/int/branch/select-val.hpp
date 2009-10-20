@@ -141,6 +141,31 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
+  ValRangeMin<View>::ValRangeMin(void) {}
+  template<class View>
+  forceinline
+  ValRangeMin<View>::ValRangeMin(Space& home,
+    const ValBranchOptions& vbo)
+    : ValSelBase<View,int>(home,vbo) {}
+  template<class View>
+  forceinline int
+  ValRangeMin<View>::val(Space&, View x) const {
+    if (x.range()) {
+      return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
+    } else {
+      ViewRanges<View> r(x);
+      return r.max();
+    }
+  }
+  template<class View>
+  forceinline ModEvent
+  ValRangeMin<View>::tell(Space& home, unsigned int a, View x, int n) {
+    return (a == 0) ? x.lq(home,n) : x.gr(home,n);
+  }
+
+
+  template<class View>
+  forceinline
   ValZeroOne<View>::ValZeroOne(void) {}
   template<class View>
   forceinline

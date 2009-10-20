@@ -153,6 +153,28 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
 
+  /**
+   * \brief Class for trying the first range of a domain first or splitting domain at mean of smallest and largest element 
+   * (lower half first)
+   *
+   * Requires
+   * \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntSelVal
+   */
+  template<class View>
+  class ValRangeMin : public ValSelBase<View,int> {
+  public:
+    /// Default constructor
+    ValRangeMin(void);
+    /// Constructor for initialization
+    ValRangeMin(Space& home, const ValBranchOptions& vbo);
+    /// Return minimum value of view \a x
+    int val(Space& home, View x) const;
+    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
+    ModEvent tell(Space& home, unsigned int a, View x, int n);
+  };
+
+
   /// For Boolean branchers not needing a value
   class NoValue {};
 

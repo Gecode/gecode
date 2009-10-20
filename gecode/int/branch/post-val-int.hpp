@@ -85,6 +85,20 @@ namespace Gecode { namespace Int { namespace Branch {
           (home,x,v,a);
       }
       break;
+    case INT_VAL_RANGE_MIN:
+      {
+        ValRangeMin<IntView> a(home,o_vals);
+        (void) new (home) ViewValBrancher<SelView,ValRangeMin<IntView> >
+          (home,x,v,a);
+      }
+      break;
+    case INT_VAL_RANGE_MAX:
+      {
+        ValRangeMin<MinusView> a(home,o_vals);
+        (void) new (home) ViewValBrancher<SelView,ValRangeMin<MinusView> >
+          (home,x,v,a);
+      }
+      break;
     case INT_VALUES_MIN:
       (void) new (home) ViewValuesBrancher<SelView,IntView>
         (home,x,v);

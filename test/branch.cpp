@@ -181,6 +181,8 @@ namespace Test { namespace Branch {
     Gecode::INT_VAL_RND,
     Gecode::INT_VAL_SPLIT_MIN,
     Gecode::INT_VAL_SPLIT_MAX,
+    Gecode::INT_VAL_RANGE_MIN,
+    Gecode::INT_VAL_RANGE_MAX,
     Gecode::INT_VALUES_MIN,
     Gecode::INT_VALUES_MAX
   };
@@ -195,6 +197,8 @@ namespace Test { namespace Branch {
     "INT_VAL_RND",
     "INT_VAL_SPLIT_MIN",
     "INT_VAL_SPLIT_MAX",
+    "INT_VAL_RANGE_MIN",
+    "INT_VAL_RANGE_MAX",
     "INT_VALUES_MIN",
     "INT_VALUES_MAX"
   };
