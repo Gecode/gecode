@@ -132,6 +132,8 @@ namespace Gecode { namespace FlatZinc {
         return INT_VAL_SPLIT_MAX;
       if (s->id == "indomain_random")
         return INT_VAL_RND;
+      if (s->id == "indomain")
+        return INT_VALUES_MIN;
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -139,7 +141,7 @@ namespace Gecode { namespace FlatZinc {
     return INT_VAL_MIN;
   }
 
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
   SetVarBranch ann2svarsel(AST::Node* ann) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
@@ -175,7 +177,7 @@ namespace Gecode { namespace FlatZinc {
     std::cerr << std::endl;
     return SET_VAL_MIN_INC;
   }
-  #endif
+#endif
 
   FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
     : Space(share, f) {
@@ -184,9 +186,9 @@ namespace Gecode { namespace FlatZinc {
       _noOfSols = f._noOfSols;
       iv.update(*this, share, f.iv);
       bv.update(*this, share, f.bv);
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
       sv.update(*this, share, f.sv);
-  #endif
+#endif
     }
   
   FlatZincSpace::FlatZincSpace(int intVars,
@@ -199,10 +201,10 @@ namespace Gecode { namespace FlatZinc {
   : intVarCount(0), boolVarCount(0), setVarCount(0),
     iv(*this, intVars), iv_introduced(intVars),
     bv(*this, boolVars), bv_introduced(boolVars)
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     , sv(*this, setVars),
       sv_introduced(setVars)
-  #endif
+#endif
     {}
 
   void
@@ -225,7 +227,7 @@ namespace Gecode { namespace FlatZinc {
     bv_introduced[boolVarCount-1] = vs->introduced;
   }
 
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
   void
   FlatZincSpace::newSetVar(SetVarSpec* vs) {
     if (vs->alias) {
@@ -264,12 +266,12 @@ namespace Gecode { namespace FlatZinc {
     }
     sv_introduced[setVarCount-1] = vs->introduced;
   }
-  #else
+#else
   void
   FlatZincSpace::newSetVar(SetVarSpec*) {
     throw FlatZinc::Error("Gecode", "set variables not supported");
   }
-  #endif
+#endif
 
   void
   FlatZincSpace::postConstraint(const ConExpr& ce, AST::Node* ann) {
@@ -335,7 +337,7 @@ namespace Gecode { namespace FlatZinc {
             hadSearchAnnotation = true;
           } catch (AST::TypeError& e) {
             (void) e;
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
             try {
               AST::Call *call = flatAnn[i]->getCall("set_search");
               AST::Array *args = call->getArgs(4);
@@ -356,11 +358,11 @@ namespace Gecode { namespace FlatZinc {
               flatAnn[i]->print(std::cerr);
               std::cerr << std::endl;
             }
-  #else
+#else
             std::cerr << "Warning, ignored search annotation: ";
             flatAnn[i]->print(std::cerr);
             std::cerr << std::endl;
-  #endif
+#endif
           }
         }
       }
@@ -384,7 +386,7 @@ namespace Gecode { namespace FlatZinc {
           bva[countUp++] = bv[i];
       branch(*this, iva, INT_VAR_NONE, INT_VAL_MIN);
       branch(*this, bva, INT_VAR_NONE, INT_VAL_MIN);
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
       countUp = 0;
       countDown = sv.size()-1;
       SetVarArgs sva(sv.size());
@@ -394,7 +396,7 @@ namespace Gecode { namespace FlatZinc {
         else
           sva[countUp++] = sv[i];
       branch(*this, sva, SET_VAR_NONE, SET_VAL_MIN_INC);
-  #endif
+#endif
     }
   }
 
@@ -427,7 +429,7 @@ namespace Gecode { namespace FlatZinc {
     branch(*this, optVar, INT_VAR_NONE, INT_VAL_MAX);
   }
 
-  #ifdef GECODE_HAS_GIST
+#ifdef GECODE_HAS_GIST
 
   /**
    * \brief Traits class for search engines
@@ -500,19 +502,19 @@ namespace Gecode { namespace FlatZinc {
     getStream() << std::endl;
   }
 
-  #endif
+#endif
 
   template<template<class> class Engine>
   void
   FlatZincSpace::runEngine(std::ostream& out, const Printer& p,
                             const FlatZincOptions& opt, Support::Timer& t_total) {
-  #ifdef GECODE_HAS_GIST
+#ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
       FZPrintingInspector<FlatZincSpace> pi(p);
       (void) GistEngine<Engine<FlatZincSpace> >::explore(this,&pi);
       return;
     }
-  #endif
+#endif
     StatusStatistics sstat;
     unsigned int n_p = 0;
     Support::Timer t_solve;
@@ -598,9 +600,9 @@ namespace Gecode { namespace FlatZinc {
   void
   FlatZincSpace::print(std::ostream& out, const Printer& p) const {
     p.print(out, iv, bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     , sv
-  #endif
+#endif
     );
   }
 
@@ -614,9 +616,9 @@ namespace Gecode { namespace FlatZinc {
                        AST::Node* ai,
                        const Gecode::IntVarArray& iv,
                        const Gecode::BoolVarArray& bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
                        , const Gecode::SetVarArray& sv
-  #endif
+#endif
                        ) const {
     int k;
     if (ai->isInt(k)) {
@@ -631,7 +633,7 @@ namespace Gecode { namespace FlatZinc {
       } else {
         out << "false..true";
       }
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     } else if (ai->isSetVar()) {
       if (!sv[ai->getSetVar()].assigned()) {
         out << sv[ai->getSetVar()];
@@ -656,7 +658,7 @@ namespace Gecode { namespace FlatZinc {
       } else {
         out << min << ".." << max;
       }
-  #endif
+#endif
     } else if (ai->isBool()) {
       out << (ai->getBool() ? "true" : "false");
     } else if (ai->isSet()) {
@@ -691,10 +693,10 @@ namespace Gecode { namespace FlatZinc {
   Printer::print(std::ostream& out,
                    const Gecode::IntVarArray& iv,
                    const Gecode::BoolVarArray& bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
                    ,
                    const Gecode::SetVarArray& sv
-  #endif
+#endif
                    ) const {
     if (_output == NULL)
       return;
@@ -706,9 +708,9 @@ namespace Gecode { namespace FlatZinc {
         out << "[";
         for (int j=0; j<size; j++) {
           printElem(out,aia->a[j],iv,bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
           ,sv
-  #endif
+#endif
           );
           if (j<size-1)
             out << ", ";
@@ -719,29 +721,29 @@ namespace Gecode { namespace FlatZinc {
         if (aia->a[0]->isBool()) {
           if (aia->a[0]->getBool())
             printElem(out, aia->a[1], iv,bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
             ,sv
-  #endif
+#endif
             );
           else
             printElem(out, aia->a[2], iv,bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
             ,sv
-  #endif
+#endif
             );
         } else if (aia->a[0]->isBoolVar()) {
           BoolVar b = bv[aia->a[0]->getBoolVar()];
           if (b.one())
             printElem(out, aia->a[1], iv,bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
             ,sv
-  #endif
+#endif
             );
           else if (b.zero())
             printElem(out, aia->a[2], iv,bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
             ,sv
-  #endif
+#endif
             );
           else
             std::cerr << "Error: Condition not fixed." << std::endl;
@@ -750,9 +752,9 @@ namespace Gecode { namespace FlatZinc {
         }
       } else {
         printElem(out,ai,iv,bv
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
         ,sv
-  #endif
+#endif
         );
       }
     }

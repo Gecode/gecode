@@ -203,7 +203,7 @@ namespace Gecode { namespace FlatZinc {
       return ia;
     }
 
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     SetVar getSetVar(FlatZincSpace& s, AST::Node* n) {
       SetVar x0;
       if (!n->isSetVar()) {
@@ -240,7 +240,7 @@ namespace Gecode { namespace FlatZinc {
       }
       return ia;
     }
-  #endif
+#endif
 
     BoolVar getBoolVar(FlatZincSpace& s, AST::Node* n) {
       BoolVar x0;
@@ -612,7 +612,7 @@ namespace Gecode { namespace FlatZinc {
       p_bool_CMP_reif(s, IRT_LE, ce, ann);
     }
 
-  #define BOOL_OP(op) \
+#define BOOL_OP(op) \
     BoolVar b0 = getBoolVar(s, ce[0]); \
     BoolVar b1 = getBoolVar(s, ce[1]); \
     if (ce[2]->isBool()) { \
@@ -621,7 +621,7 @@ namespace Gecode { namespace FlatZinc {
       rel(s, b0, op, b1, s.bv[ce[2]->getBoolVar()], ann2icl(ann)); \
     }
 
-  #define BOOL_ARRAY_OP(op) \
+#define BOOL_ARRAY_OP(op) \
     BoolVarArgs bv = arg2boolvarargs(s, ce[0]); \
     if (ce[1]->isBool()) { \
       rel(s, op, bv, ce[1]->getBool(), ann2icl(ann)); \
@@ -1056,7 +1056,7 @@ namespace Gecode { namespace FlatZinc {
     };
     IntPoster __int_poster;
 
-  #ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_SET_VARS
     void p_set_OP(FlatZincSpace& s, SetOpType op,
                   const ConExpr& ce, AST::Node *) {
       rel(s, getSetVar(s, ce[0]), op, getSetVar(s, ce[1]), 
@@ -1303,7 +1303,7 @@ namespace Gecode { namespace FlatZinc {
       }
     };
     SetPoster __set_poster;
-  #endif
+#endif
 
   }
 }}
