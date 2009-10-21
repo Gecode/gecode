@@ -678,37 +678,45 @@ namespace Gecode { namespace FlatZinc {
     }
   
     /* element constraints */
-    void p_array_int_element(FlatZincSpace& s, const ConExpr& ce,
-                             AST::Node* ann) {
-      IntArgs ia = arg2intargs(ce[1], 1);
-      IntVar selector = getIntVar(s, ce[0]);
-      post(s, selector > 0);
-      element(s, ia, selector,
-                     getIntVar(s, ce[2]), ann2icl(ann));
-    }
-    void p_array_var_int_element(FlatZincSpace& s, const ConExpr& ce, 
+    void p_array_int_element(FlatZincSpace& s, const ConExpr& ce, 
                                  AST::Node* ann) {
-      IntVarArgs iv = arg2intvarargs(s, ce[1], 1);
+      bool isConstant = true;
+      AST::Array* a = ce[1]->getArray();
+      for (int i=a->a.size(); i--;) {
+        if (!a->a[i]->isInt()) {
+          isConstant = false;
+          break;
+        }
+      }
       IntVar selector = getIntVar(s, ce[0]);
       post(s, selector > 0);
-      element(s, iv, selector, getIntVar(s, ce[2]),
-              ann2icl(ann));
+      if (isConstant) {
+        IntArgs ia = arg2intargs(ce[1], 1);
+        element(s, ia, selector, getIntVar(s, ce[2]), ann2icl(ann));
+      } else {
+        IntVarArgs iv = arg2intvarargs(s, ce[1], 1);
+        element(s, iv, selector, getIntVar(s, ce[2]), ann2icl(ann));
+      }
     }
     void p_array_bool_element(FlatZincSpace& s, const ConExpr& ce, 
                                   AST::Node* ann) {
-      IntArgs bv = arg2boolargs(ce[1], 1);
+      bool isConstant = true;
+      AST::Array* a = ce[1]->getArray();
+      for (int i=a->a.size(); i--;) {
+        if (!a->a[i]->isBool()) {
+          isConstant = false;
+          break;
+        }
+      }
       IntVar selector = getIntVar(s, ce[0]);
       post(s, selector > 0);
-      element(s, bv, selector, getBoolVar(s, ce[2]),
-              ann2icl(ann));
-    }
-    void p_array_var_bool_element(FlatZincSpace& s, const ConExpr& ce, 
-                                  AST::Node* ann) {
-      BoolVarArgs bv = arg2boolvarargs(s, ce[1], 1);
-      IntVar selector = getIntVar(s, ce[0]);
-      post(s, selector > 0);
-      element(s, bv, selector, getBoolVar(s, ce[2]),
-              ann2icl(ann));
+      if (isConstant) {
+        IntArgs ia = arg2boolargs(ce[1], 1);
+        element(s, ia, selector, getBoolVar(s, ce[2]), ann2icl(ann));
+      } else {
+        BoolVarArgs iv = arg2boolvarargs(s, ce[1], 1);
+        element(s, iv, selector, getBoolVar(s, ce[2]), ann2icl(ann));
+      }
     }
   
     /* coercion constraints */
@@ -1017,9 +1025,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("bool_right_imp", &p_bool_r_imp);
         registry().add("bool_not", &p_bool_not);
         registry().add("array_int_element", &p_array_int_element);
-        registry().add("array_var_int_element", &p_array_var_int_element);
         registry().add("array_bool_element", &p_array_bool_element);
-        registry().add("array_var_bool_element", &p_array_var_bool_element);
         registry().add("bool2int", &p_bool2int);
       
         registry().add("array_int_lt", &p_array_int_lt);
@@ -1204,13 +1210,6 @@ namespace Gecode { namespace FlatZinc {
 
     void p_array_set_element(FlatZincSpace& s, const ConExpr& ce,
                              AST::Node*) {
-      IntSetArgs sv = arg2intsetargs(ce[1],1);
-      IntVar selector = getIntVar(s, ce[0]);
-      post(s, selector > 0);
-      element(s, sv, selector, getSetVar(s, ce[2]));
-    }
-    void p_array_var_set_element(FlatZincSpace& s, const ConExpr& ce,
-                                 AST::Node* ann) {
       bool isConstant = true;
       AST::Array* a = ce[1]->getArray();
       for (int i=a->a.size(); i--;) {
@@ -1219,38 +1218,70 @@ namespace Gecode { namespace FlatZinc {
           break;
         }
       }
-      if (isConstant)
-        return p_array_set_element(s,ce,ann);
-      SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
       IntVar selector = getIntVar(s, ce[0]);
       post(s, selector > 0);
-      element(s, sv, selector, getSetVar(s, ce[2]));
+      if (isConstant) {
+        IntSetArgs sv = arg2intsetargs(ce[1],1);
+        element(s, sv, selector, getSetVar(s, ce[2]));
+      } else {
+        SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
+        element(s, sv, selector, getSetVar(s, ce[2]));
+      }
+    }
+
+    void p_array_set_element_op(FlatZincSpace& s, const ConExpr& ce,
+                                AST::Node*, SetOpType op,
+                                const IntSet& universe = 
+                                IntSet(Set::Limits::min,Set::Limits::max)) {
+      bool isConstant = true;
+      AST::Array* a = ce[1]->getArray();
+      for (int i=a->a.size(); i--;) {
+        if (a->a[i]->isSetVar()) {
+          isConstant = false;
+          break;
+        }
+      }
+      SetVar selector = getSetVar(s, ce[0]);
+      dom(s, selector, SRT_DISJ, 0);
+      if (isConstant) {
+        IntSetArgs sv = arg2intsetargs(ce[1], 1);
+        element(s, op, sv, selector, getSetVar(s, ce[2]), universe);
+      } else {
+        SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
+        element(s, op, sv, selector, getSetVar(s, ce[2]), universe);
+      }
     }
 
     void p_array_set_element_union(FlatZincSpace& s, const ConExpr& ce,
-                                   AST::Node*) {
-      IntSetArgs sv = arg2intsetargs(ce[1], 1);
-      SetVar selector = getSetVar(s, ce[0]);
-      dom(s, selector, SRT_DISJ, 0);
-      element(s, SOT_UNION, sv, selector, getSetVar(s, ce[2]));
+                                       AST::Node* ann) {
+      p_array_set_element_op(s, ce, ann, SOT_UNION);
     }
 
-    void p_array_var_set_element_union(FlatZincSpace& s, const ConExpr& ce,
+    void p_array_set_element_intersect(FlatZincSpace& s, const ConExpr& ce,
                                        AST::Node* ann) {
-      bool isConstant = true;
-      AST::Array* a = ce[1]->getArray();
-      for (int i=a->a.size(); i--;) {
-        if (a->a[i]->isSetVar()) {
-          isConstant = false;
-          break;
-        }
+      p_array_set_element_op(s, ce, ann, SOT_INTER);
+    }
+
+    void p_array_set_element_intersect_in(FlatZincSpace& s,
+                                              const ConExpr& ce,
+                                              AST::Node* ann) {
+      AST::SetLit* sl = ce[3]->getSet();
+      IntSet d;
+      if (sl->interval) {
+        d = IntSet(sl->min, sl->max);
+      } else {
+        Region re(s);
+        int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
+        for (int i=sl->s.size(); i--; )
+          is[i] = sl->s[i];
+        d = IntSet(is, sl->s.size());
       }
-      if (isConstant)
-        return p_array_set_element_union(s,ce,ann);
-      SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
-      SetVar selector = getSetVar(s, ce[0]);
-      dom(s, selector, SRT_DISJ, 0);
-      element(s, SOT_UNION, sv, selector, getSetVar(s, ce[2]));
+      p_array_set_element_op(s, ce, ann, SOT_INTER, d);
+    }
+
+    void p_array_set_element_partition(FlatZincSpace& s, const ConExpr& ce,
+                                           AST::Node* ann) {
+      p_array_set_element_op(s, ce, ann, SOT_DUNION);
     }
 
     void p_set_convex(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
@@ -1276,7 +1307,6 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_ne", &p_set_ne);
         registry().add("set_union", &p_set_union);
         registry().add("array_set_element", &p_array_set_element);
-        registry().add("array_var_set_element", &p_array_var_set_element);
         registry().add("set_intersect", &p_set_intersect);
         registry().add("set_diff", &p_set_diff);
         registry().add("set_symdiff", &p_set_symdiff);
@@ -1297,9 +1327,14 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_convex", &p_set_convex);
         registry().add("array_set_seq", &p_array_set_seq);
         registry().add("array_set_seq_union", &p_array_set_seq_union);
-        registry().add("array_set_element_union", &p_array_set_element_union);
-        registry().add("array_var_set_element_union", 
-                     &p_array_var_set_element_union);
+        registry().add("array_set_element_union", 
+                       &p_array_set_element_union);
+        registry().add("array_set_element_intersect", 
+                       &p_array_set_element_intersect);
+        registry().add("array_set_element_intersect_in", 
+                       &p_array_set_element_intersect_in);
+        registry().add("array_set_element_partition", 
+                       &p_array_set_element_partition);
       }
     };
     SetPoster __set_poster;
