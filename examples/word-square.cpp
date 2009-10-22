@@ -131,7 +131,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("WordSquare");
   opt.size(4);
   opt.parse(argc,argv);
-  if (opt.size() >= max_word_len) {
+  if (opt.size() > max_word_len) {
     std::cerr << "Error: size must be between 0 and "
               << max_word_len << std::endl;
     return 1;
