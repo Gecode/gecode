@@ -669,6 +669,9 @@ endif
 # EXAMPLES
 #
 
+
+INTEXAMPLEHDR0 =						\
+	scowl
 INTEXAMPLESRC0 =						\
 	alpha bacp bibd donald efpa eq20 golomb-ruler		\
 	graph-color grocery ind-set magic-sequence magic-square	\
@@ -678,8 +681,10 @@ INTEXAMPLESRC0 =						\
 	all-interval langford-number warehouses			\
 	stress-domain stress-exec stress-search baseline	\
 	stress-element stress-min stress-distinct		\
-	stress-extensional stress-linear-bool sat radiotherapy
+	stress-extensional stress-linear-bool sat radiotherapy  \
+	word-square
 
+INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_int_vars@" "yes"
 INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cpp=%$(EXESUFFIX))
@@ -736,7 +741,8 @@ ALLSRC = \
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(SCHEDULINGHDR) \
-	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR)
+	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
+	$(INTEXAMPLEHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
