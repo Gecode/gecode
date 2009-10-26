@@ -128,6 +128,9 @@ namespace Test {
         default:
           GECODE_NEVER;
         }
+      // Delete all remaining spaces
+      for (int i=n; i--; )
+        delete s[i];
       return true;
     }
   };
