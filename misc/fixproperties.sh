@@ -38,7 +38,7 @@
 set -e
 
 # List of file extensions for which properties should be set
-KEYWORDEXTS="cpp hpp hh sh perl ac in vsl vis mzn"
+KEYWORDEXTS="cpp hpp hh sh perl ac in vsl vis mzn m4"
 
 for ext in ${KEYWORDEXTS}; do
     find . -name "*.$ext" ! -path './contribs/*' -prune \
@@ -88,7 +88,7 @@ rm -f ${IGNORETOOLS}
 done
 
 # Append the test executable to svn-ignore.txt
-IGNORETEST=`mktemp ignoretest` || exit 1
+IGNORETEST=`mktemp ignoretestXXXX` || exit 1
 (cat misc/svn-ignore.txt; echo "test") > ${IGNORETEST}
 svn propset svn:ignore -F ${IGNORETEST} './test'
 rm -f ${IGNORETEST}
