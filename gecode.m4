@@ -6,9 +6,9 @@ dnl Copyright:
 dnl   Guido Tack, 2004, 2005
 dnl
 dnl Last modified:
-dnl   $Date: 2005-10-27 21:01:30 +0200 (Thu, 27 Oct 2005) $
-dnl   by $Author: schulte $
-dnl   $Revision: 2420 $
+dnl   $Date$
+dnl   by $Author$
+dnl   $Revision$
 dnl
 dnl This file is part of Gecode, the generic constraint
 dnl development environment:
