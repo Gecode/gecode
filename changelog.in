@@ -73,6 +73,13 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module:	int
+What:	bug
+Rank:	major
+[DESCRIPTION]
+Fixed segfault in matrix element constraint.
+
+[ENTRY]
 Module:	example
 What:	new
 Rank:	minor

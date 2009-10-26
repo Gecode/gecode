@@ -95,7 +95,7 @@ namespace Gecode { namespace Iter { namespace Values {
   template<class BS>
   forceinline
   BitSet<BS>::BitSet(const BS& bs0, int n, int m) 
-    : bs(bs0), cur(n), limit(m) {
+    : bs(bs0), cur(n), limit(std::min(bs.size(),m)) {
     move();
   }
 
