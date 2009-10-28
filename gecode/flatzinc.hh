@@ -226,9 +226,6 @@ namespace Gecode { namespace FlatZinc {
     /// Index of the integer variable to optimize
     int _optVar;
   
-    /// Number of solutions to search for
-    int _noOfSols;
-  
     /// Whether to solve as satisfaction or optimization problem
     Meth _method;
 

@@ -183,7 +183,6 @@ namespace Gecode { namespace FlatZinc {
     : Space(share, f) {
       _optVar = f._optVar;
       _method = f._method;
-      _noOfSols = f._noOfSols;
       iv.update(*this, share, f.iv);
       bv.update(*this, share, f.bv);
 #ifdef GECODE_HAS_SET_VARS
@@ -314,10 +313,6 @@ namespace Gecode { namespace FlatZinc {
           for (int i=vars->a.size(); i--; )
             va[i] = iv[vars->a[i]->getIntVar()];
           branch(*this, va, ann2ivarsel(args->a[1]), ann2ivalsel(args->a[2]));
-          if (AST::String* s = dynamic_cast<AST::String*>(args->a[3])) {
-            if (s->s == "all")
-              _noOfSols = 0;
-          }
           hadSearchAnnotation = true;
         } catch (AST::TypeError& e) {
           (void) e;
@@ -330,10 +325,6 @@ namespace Gecode { namespace FlatZinc {
               va[i] = bv[vars->a[i]->getBoolVar()];
             branch(*this, va, ann2ivarsel(args->a[1]), 
                    ann2ivalsel(args->a[2]));        
-            if (AST::String* s = dynamic_cast<AST::String*>(args->a[3])) {
-              if (s->s == "all")
-                  _noOfSols = 0;
-            }
             hadSearchAnnotation = true;
           } catch (AST::TypeError& e) {
             (void) e;
@@ -347,10 +338,6 @@ namespace Gecode { namespace FlatZinc {
                 va[i] = sv[vars->a[i]->getSetVar()];
               branch(*this, va, ann2svarsel(args->a[1]), 
                                ann2svalsel(args->a[2]));        
-              if (AST::String* s = dynamic_cast<AST::String*>(args->a[3])) {
-                if (s->s == "all")
-                  _noOfSols = 0;
-              }
               hadSearchAnnotation = true;
             } catch (AST::TypeError& e) {
               (void) e;
@@ -403,7 +390,6 @@ namespace Gecode { namespace FlatZinc {
   void
   FlatZincSpace::solve(AST::Array* ann) {
     _method = SAT;
-    _noOfSols = 1;
     parseSolveAnn(ann);
   }
 
@@ -528,7 +514,8 @@ namespace Gecode { namespace FlatZinc {
     o.a_d = opt.a_d();
     o.threads = opt.threads();
     Engine<FlatZincSpace> se(this,o);
-    int findSol = _method == SAT ? opt.solutions() : 0;
+    int noOfSolutions = _method == SAT ? opt.solutions() : 0;
+    int findSol = noOfSolutions;
     while (FlatZincSpace* sol = se.next()) {
       sol->print(out, p);
       out << "----------" << std::endl;
@@ -549,7 +536,7 @@ namespace Gecode { namespace FlatZinc {
       Driver::stop(t_solve,out);
       out << endl
            << "%%  solutions:     " 
-           << std::abs(static_cast<int>(opt.solutions()) - findSol) << endl
+           << std::abs(noOfSolutions - findSol) << endl
            << "%%  variables:     " 
            << (intVarCount + boolVarCount + setVarCount) << endl
            << "%%  propagators:   " << n_p << endl

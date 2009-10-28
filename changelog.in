@@ -73,6 +73,13 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module:	flatzinc
+What:	bug
+Rank:	minor
+[DESCRIPTION]
+Fixed statistics output (number of solutions was sometimes wrong).
+
+[ENTRY]
 Module:	int
 What:	bug
 Rank:	major
