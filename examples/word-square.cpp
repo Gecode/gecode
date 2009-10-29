@@ -178,21 +178,19 @@ public:
       }
     }
     
-    // copy the word list to TupleSet 
-    TupleSet words;
+    // copy the word list to a regular expression
+    REG r_words;
     for (int i = 0; i < n_w; i++) {
-      IntArgs word(w_l);
-      for (int j = 0; j < w_l; j++) {
-        word[j] = dict[w_l][i][j];
-      }
-      words.add(word);
+      REG r_word;
+      for (int j = 0; j < w_l; j++)
+        r_word += dict[w_l][i][j];
+      r_words |= r_word;
     }
-    words.finalize();
+    DFA words(r_words);
     
     // Make sure the square contains words
-    for (int i = 0; i < w_l; ++i) {
+    for (int i = 0; i < w_l; ++i)
       extensional(*this, ml.row(i), words);
-    }
 
     // Break symmetries: word in last row must be later than first row
     rel(*this, ml.row(0), IRT_LE, ml.row(w_l-1));
