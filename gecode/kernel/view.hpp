@@ -219,7 +219,7 @@ namespace Gecode {
 
   /// Test whether views \a x and \a y are the same
   template<class ViewX, class ViewY>
-  bool same(const ViewX& x, const ViewY& y) {
+  bool same(const ViewX&, const ViewY&) {
     return false;
   }
 
