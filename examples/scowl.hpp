@@ -13377,7 +13377,7 @@ namespace {
   };
 
   /// Maximal word length
-  const int max_word_len = 22;
+  const unsigned int max_word_len = 22;
 
   /// Number of words per given length
   const int n_words[] = {
@@ -13888,15 +13888,16 @@ namespace {
  * 
  * RECREATING THE WORD LISTS:
  * 
- * In order to recreate the word lists you need a modern version of Perl,
- * bash, the traditional set of shell utilities, a system that supports
- * symbolic links, and quite possibly GNU Make.  Once you have downloaded
- * all the necessary raw data in the r/ directory you should be able to
- * type "rm final/* && make all" and the word lists in the final/
- * directory should be recreated.  If you have any problems fell free to
- * contact me; however, unless you are interested in improving the
- * scripts used, I will likely ignore you as there should be little need
- * for anyone not interested in improving the word list to do so.
+ * In order to recreate the word lists you need a modern version of
+ * Perl, bash, the traditional set of shell utilities, a system that
+ * supports symbolic links, and quite possibly GNU Make.  Once you
+ * have downloaded all the necessary raw data in the r/ directory you
+ * should be able to type "rm -r final && mkdir final && make all" and
+ * the word lists in the final/ directory should be recreated.  If you
+ * have any problems fell free to contact me; however, unless you are
+ * interested in improving the scripts used, I will likely ignore you
+ * as there should be little need for anyone not interested in
+ * improving the word list to do so.
  * 
  * The src/ directory contains the numerous scripts used in the creation
  * of the final product. 

@@ -3,10 +3,12 @@
  *  Main authors:
  *     Håkan Kjellerstrand <hakank@bonetmail.com>
  *     Christian Schulte <schulte@gecode.org>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
  *     Håkan Kjellerstrand, 2009
  *     Christian Schulte, 2009
+ *     Mikael Lagerkvist, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -61,14 +63,42 @@ using namespace Gecode;
  */
 class WordSquare : public Script {
 protected:
+  const int w_l; ///< Length of a word
+  const int n_w; ///< Number of words of length \a w_l
+public:
+  /// Model variants
+  enum {
+    MODEL_WORDS,   ///< Use variables representing the words
+    MODEL_LETTERS, ///< Use letters representing the letters
+  };
+  /// Constructor
+  WordSquare(const SizeOptions& opt) 
+    : Script(), w_l(opt.size()), n_w(n_words[w_l]) {}
+  /// Constructor for cloning \a s
+  WordSquare(bool share, WordSquare& s) 
+    : Script(share,s), w_l(s.w_l), n_w(s.n_w) {}
+  /// Copy during cloning
+  virtual Space*
+  copy(bool share) {
+    return new WordSquare(share,*this);
+  }
+};
+
+
+/**
+ * \brief %Example: Solve Word-squares with word-variables
+ *
+ * \ingroup ExProblem
+ */
+class WordSquareWords : public WordSquare {
+protected:
   /// Which word (position of word in dictionary) for columns
   IntVarArray words;
 public:
   /// Actual model
-  WordSquare(const SizeOptions& opt)
-    : words(*this,opt.size(),0,n_words[opt.size()]-1) {
-    const int w_l = words.size();
-    const int n_w = n_words[w_l];
+  WordSquareWords(const SizeOptions& opt)
+    : WordSquare(opt),
+      words(*this,w_l,0,n_w-1) {
 
     IntArgs w(w_l*n_w);
     Matrix<IntArgs> mw(w, n_w, w_l);
@@ -99,13 +129,13 @@ public:
     branch(*this, words, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
-  WordSquare(bool share, WordSquare& s) : Script(share,s) {
+  WordSquareWords(bool share, WordSquareWords& s) : WordSquare(share,s) {
     words.update(*this, share, s.words);
   }
   /// Copy during cloning
   virtual Space*
   copy(bool share) {
-    return new WordSquare(share,*this);
+    return new WordSquareWords(share,*this);
   }
   /// Print solution
   virtual void
@@ -120,8 +150,84 @@ public:
       } 
     os << std::endl << std::endl;
   }
-
 };
+
+
+/**
+ * \brief %Example: Solve Word-squares with letter-variables
+ *
+ * \ingroup ExProblem
+ */
+class WordSquareLetters : public WordSquare {
+protected:
+  /// The matrix of letters
+  IntVarArray letters;
+public:
+  /// Actual model
+  WordSquareLetters(const SizeOptions& opt)
+    : WordSquare(opt),
+      letters(*this, opt.size()*opt.size())
+  {
+    // Initialize the letters
+    Matrix<IntVarArray> ml(letters, w_l, w_l);
+    for (int i = 0; i < w_l; ++i) {
+      for (int j = i; j < w_l; ++j) {
+        IntVar c(*this, CHAR_MIN, CHAR_MAX);
+        ml(i, j) = c;
+        ml(j, i) = c;
+      }
+    }
+    
+    // copy the word list to TupleSet 
+    TupleSet words;
+    for (int i = 0; i < n_w; i++) {
+      IntArgs word(w_l);
+      for (int j = 0; j < w_l; j++) {
+        word[j] = dict[w_l][i][j];
+      }
+      words.add(word);
+    }
+    words.finalize();
+    
+    // Make sure the square contains words
+    for (int i = 0; i < w_l; ++i) {
+      extensional(*this, ml.row(i), words);
+    }
+
+    // Branching
+    branch(*this, letters, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+  }
+  /// Constructor for cloning \a s
+  WordSquareLetters(bool share, WordSquareLetters& s) : WordSquare(share,s) {
+    letters.update(*this, share, s.letters);
+  }
+  /// Copy during cloning
+  virtual Space*
+  copy(bool share) {
+    return new WordSquareLetters(share,*this);
+  }
+  /// Print solution
+  virtual void
+  print(std::ostream& os) const {
+    os << "\tletters=" << letters << std::endl
+       << std::endl;
+    int pos  = 0;
+    for (int i = 0; i < w_l; ++i) {
+      os << "\t\t";
+      for (int j = 0; j < w_l; ++j) {
+        if (letters[pos].assigned()) {
+          os << static_cast<char>(letters[pos].val());
+        } else {
+          os << ".";
+        }
+        ++pos;
+      }
+      os << std::endl;
+    }
+    os << std::endl;
+  }
+};
+
 
 /** \brief Main-function
  *  \relates WordSquare
@@ -130,13 +236,23 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("WordSquare");
   opt.size(4);
+  opt.model(WordSquare::MODEL_WORDS);
+  opt.model(WordSquare::MODEL_WORDS,   "words");
+  opt.model(WordSquare::MODEL_LETTERS, "letters");
   opt.parse(argc,argv);
   if (opt.size() > max_word_len) {
     std::cerr << "Error: size must be between 0 and "
               << max_word_len << std::endl;
     return 1;
   }
-  Script::run<WordSquare,DFS,SizeOptions>(opt);
+  switch (opt.model()) {
+  case WordSquare::MODEL_WORDS:
+    Script::run<WordSquareWords,  DFS,SizeOptions>(opt);
+    break;
+  case WordSquare::MODEL_LETTERS:
+    Script::run<WordSquareLetters,DFS,SizeOptions>(opt);
+    break;
+  }
   return 0;
 }
 
