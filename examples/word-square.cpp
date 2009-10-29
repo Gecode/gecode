@@ -2,13 +2,13 @@
 /*
  *  Main authors:
  *     Håkan Kjellerstrand <hakank@bonetmail.com>
- *     Christian Schulte <schulte@gecode.org>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Håkan Kjellerstrand, 2009
- *     Christian Schulte, 2009
  *     Mikael Lagerkvist, 2009
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -69,7 +69,7 @@ public:
   /// Model variants
   enum {
     MODEL_WORDS,   ///< Use variables representing the words
-    MODEL_LETTERS, ///< Use letters representing the letters
+    MODEL_LETTERS, ///< Use variables representing the letters
   };
   /// Constructor
   WordSquare(const SizeOptions& opt) 
@@ -194,8 +194,11 @@ public:
       extensional(*this, ml.row(i), words);
     }
 
+    // Break symmetries: word in last row must be later than first row
+    rel(*this, ml.row(0), IRT_LE, ml.row(w_l-1));
+
     // Branching
-    branch(*this, letters, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+    branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
   WordSquareLetters(bool share, WordSquareLetters& s) : WordSquare(share,s) {
