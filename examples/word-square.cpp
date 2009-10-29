@@ -71,12 +71,12 @@ public:
     const int n_w = n_words[w_l];
 
     IntArgs w(w_l*n_w);
+    Matrix<IntArgs> mw(w, n_w, w_l);
+
     for (int i=n_w;  i--; )
       for (int j=w_l; j--; )
-        w[i*w_l+j] = dict[w_l][i][j];
-    
-    Matrix<IntArgs> mw(w, w_l, n_w);
-    
+        mw(i,j) = dict[w_l][i][j];
+        
     distinct(*this, words);
 
     // Convenience variables
@@ -86,10 +86,10 @@ public:
 
     for (int i=0; i<w_l; i++)
       for (int j=i+1; j<w_l; j++) {
-        // w[words[i], j] ==  w[words[j],i]
+        // w[j,words[i]] ==  w[i,words[j]]
         IntVar c(*this, CHAR_MIN, CHAR_MAX);
-        element(*this, mw, col[j], words[i], c);
-        element(*this, mw, col[i], words[j], c);
+        element(*this, mw, words[i], col[j], c);
+        element(*this, mw, words[j], col[i], c);
       }
 
     // Symmetry breaking: the last word must be later

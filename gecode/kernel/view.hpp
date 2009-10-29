@@ -217,6 +217,12 @@ namespace Gecode {
   bool shared(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&);
 
 
+  /// Test whether views \a x and \a y are the same
+  template<class ViewX, class ViewY>
+  bool same(const ViewX& x, const ViewY& y) {
+    return false;
+  }
+
   /*
    * Constant view: has no variable implementation
    *

@@ -35,6 +35,8 @@
  *
  */
 
+#include <gecode/int/rel.hh>
+
 namespace Gecode { namespace Int { namespace Element {
 
   forceinline
@@ -49,6 +51,9 @@ namespace Gecode { namespace Int { namespace Element {
     GECODE_ME_CHECK(x2.gq(home,0)); GECODE_ME_CHECK(x2.le(home,w*h));
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,x0.val()+w*x1.val()));
+    } else if (x1.assigned()) {
+      OffsetView x0x1w(x0,x1.val()*w);
+      return Rel::EqDom<OffsetView,IntView>::post(home,x0x1w,x2);
     } else if (x2.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x2.val() % w));
       GECODE_ME_CHECK(x1.eq(home,static_cast<int>(x2.val() / w)));

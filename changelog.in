@@ -73,6 +73,14 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module:	int
+What:	performance
+Rank:	minor
+[DESCRIPTION]
+Optimized element for matrices (in special cases, the propagator
+is up to six times as efficient as before).
+
+[ENTRY]
 Module:	flatzinc
 What:	bug
 Rank:	minor
@@ -90,7 +98,7 @@ Fixed segfault in matrix element constraint.
 Module:	example
 What:	new
 Rank:	minor
-Thanks:	Håkan Kjellerstrand
+Author:	Håkan Kjellerstrand
 [DESCRIPTION]
 Added word square puzzle.
 

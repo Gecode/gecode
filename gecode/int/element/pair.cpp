@@ -101,19 +101,33 @@ namespace Gecode { namespace Int { namespace Element {
   Pair::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
     
-    // Bitset for supported div and mod values
-    Support::BitSet<Region> d(r,(x2.max() / w)+1), m(r,w);
-    for (ViewValues<IntView> i(x2); i(); ++i) {
-      d.set(i.val() / w); m.set(i.val() % w);
+    if (x0.assigned()) {
+      // Bitset for supported div and mod values
+      Support::BitSet<Region> d(r,(x2.max() / w)+1);
+      for (ViewValues<IntView> i(x2); i(); ++i) {
+        d.set(i.val() / w);
+      }
+      Iter::Values::BitSet<Support::BitSet<Region> > id(d,x1.min(),x1.max());
+      GECODE_ME_CHECK(x1.inter_v(home,id,false));
+    } else {
+      // Bitset for supported div and mod values
+      Support::BitSet<Region> d(r,(x2.max() / w)+1), m(r,w);
+      for (ViewValues<IntView> i(x2); i(); ++i) {
+        d.set(i.val() / w); m.set(i.val() % w);
+      }
+      Iter::Values::BitSet<Support::BitSet<Region> > im(m,x0.min(),x0.max());
+      GECODE_ME_CHECK(x0.inter_v(home,im,false));
+      Iter::Values::BitSet<Support::BitSet<Region> > id(d,x1.min(),x1.max());
+      GECODE_ME_CHECK(x1.inter_v(home,id,false));
     }
-    Iter::Values::BitSet<Support::BitSet<Region> > im(m,x0.min(),x0.max());
-    GECODE_ME_CHECK(x0.inter_v(home,im,false));
-    Iter::Values::BitSet<Support::BitSet<Region> > id(d,x1.min(),x1.max());
-    GECODE_ME_CHECK(x1.inter_v(home,id,false));
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,x0.val()+w*x1.val()));
       return ES_SUBSUMED(*this,sizeof(*this));
+    } else if (x1.assigned()) {
+      OffsetView x0x1w(x0,x1.val()*w);
+      GECODE_REWRITE(*this,(Rel::EqDom<OffsetView,IntView>
+                            ::post(home(*this),x0x1w,x2)));
     }
 
     PairValues xy(x0,x1,w);
