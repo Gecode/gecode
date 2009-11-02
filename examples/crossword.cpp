@@ -137,7 +137,7 @@ public:
     }
 
     // Split the available words into two halves
-    branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+    branch(*this, allwords, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
   Crossword(bool share, Crossword& s) 
