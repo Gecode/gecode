@@ -120,6 +120,15 @@ Author:	Håkan Kjellerstrand
 Added word square puzzle.
 
 [ENTRY]
+Module:	example
+What:	new
+Rank:	minor
+Thanks:	Peter Van Beek
+[DESCRIPTION]
+Added crossword puzzle (thanks to Peter Van Beek for providing
+access to some crossword grids).
+
+[ENTRY]
 Module:	int
 What:	new
 Rank:	minor
