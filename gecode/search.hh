@@ -247,7 +247,7 @@ namespace Gecode {
       NodeStop(unsigned long int l);
       /// Return current limit
       unsigned long int limit(void) const;
-      /// Set current limit to \a l bodes
+      /// Set current limit to \a l nodes
       void limit(unsigned long int l);
       /// Return true if node limit is exceeded
       virtual bool stop(const Statistics& s, const Options& o);
