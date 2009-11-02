@@ -77,10 +77,11 @@ namespace Gecode {
       Exp* kids[2];
     } data;
 
-    void followpos(MiniModel::PosSetAllocator&,
-                   MiniModel::NodeInfo&,
-                   MiniModel::PosInfo*,
-                   int&);
+    MiniModel::NodeInfo
+    followpos(MiniModel::PosSetAllocator&,MiniModel::PosInfo*,int&);
+    MiniModel::PosSet*
+    followpos(MiniModel::PosSetAllocator&,
+              MiniModel::PosInfo*);
     void inc(void);
     void dec(void);
     unsigned int n_pos(void) const;
@@ -454,6 +455,7 @@ namespace Gecode {
       bool    nullable;
       PosSet* firstpos;
       PosSet* lastpos;
+      NodeInfo(bool n, PosSet* fp, PosSet* lp);
     };
 
 
@@ -467,70 +469,70 @@ namespace Gecode {
       PosSet* followpos;
     };
 
+    forceinline
+    NodeInfo::NodeInfo(bool n, PosSet* fp, PosSet* lp)
+      : nullable(n), firstpos(fp), lastpos(lp) {}
+
   }
 
-  void
+  MiniModel::NodeInfo
   REG::Exp::followpos(MiniModel::PosSetAllocator& psm,
-                      MiniModel::NodeInfo& ni,
                       MiniModel::PosInfo* pi, int& p) {
     using MiniModel::PosSet;
     using MiniModel::NodeInfo;
-    if (this == NULL) {
-      ni.nullable = true;
-      ni.firstpos = NULL;
-      ni.lastpos  = NULL;
-      return;
-    }
+    if (this == NULL)
+      return NodeInfo(true,NULL,NULL);
     switch (type) {
     case ET_SYMBOL:
       {
         pi[p].symbol = data.symbol;
-        PosSet* ps = new (psm) PosSet(p);
-        p++;
-        ni.nullable = false;
-        ni.firstpos = ps;
-        ni.lastpos  = ps;
+        PosSet* ps = new (psm) PosSet(p++);
+        return NodeInfo(false,ps,ps);
       }
-      break;
     case ET_STAR:
       {
-        data.kids[0]->followpos(psm, ni, pi, p);
-        ni.nullable = true;
+        NodeInfo ni = data.kids[0]->followpos(psm, pi, p);
         for (PosSet* ps = ni.lastpos; ps != NULL; ps = ps->next)
           pi[ps->pos].followpos =
             PosSet::cup(psm,pi[ps->pos].followpos, ni.firstpos);
+        return NodeInfo(true,ni.firstpos,ni.lastpos);
       }
-      break;
     case ET_CONC:
       {
-        NodeInfo ni0; data.kids[0]->followpos(psm, ni0, pi, p);
-        data.kids[1]->followpos(psm, ni, pi, p);
+        NodeInfo ni0 = data.kids[0]->followpos(psm, pi, p);
+        NodeInfo ni1 = data.kids[1]->followpos(psm, pi, p);
         for (PosSet* ps = ni0.lastpos; ps != NULL; ps = ps->next)
           pi[ps->pos].followpos =
-            PosSet::cup(psm,pi[ps->pos].followpos,ni.firstpos);
-        ni.firstpos =
-          ni0.nullable ? PosSet::cup(psm,ni0.firstpos,ni.firstpos)
-          : ni0.firstpos;
-        ni.lastpos =
-          ni.nullable ? PosSet::cup(psm,ni0.lastpos,ni.lastpos)
-          : ni.lastpos;
-        ni.nullable &= ni0.nullable;
+            PosSet::cup(psm,pi[ps->pos].followpos,ni1.firstpos);
+        return NodeInfo(ni0.nullable & ni1.nullable,
+                        ni0.nullable ? 
+                        PosSet::cup(psm,ni0.firstpos,ni1.firstpos) : ni0.firstpos,
+                        ni1.nullable ? 
+                        PosSet::cup(psm,ni0.lastpos,ni1.lastpos) : ni1.lastpos);
+                        
       }
-      break;
     case ET_OR:
       {
-        NodeInfo ni0; data.kids[0]->followpos(psm, ni0, pi, p);
-        data.kids[1]->followpos(psm, ni, pi, p);
-        ni.nullable |= ni0.nullable;
-        ni.firstpos = PosSet::cup(psm,ni0.firstpos,ni.firstpos);
-        ni.lastpos  = PosSet::cup(psm,ni0.lastpos,ni.lastpos);
+        NodeInfo ni0 = data.kids[0]->followpos(psm, pi, p);
+        NodeInfo ni1 = data.kids[1]->followpos(psm, pi, p);
+        return NodeInfo(ni0.nullable | ni1.nullable,
+                        PosSet::cup(psm,ni0.firstpos,ni1.firstpos),
+                        PosSet::cup(psm,ni0.lastpos,ni1.lastpos));
       }
-      break;
     default: GECODE_NEVER;
     }
+    GECODE_NEVER;
+    return NodeInfo(false,NULL,NULL);
   }
 
-
+  forceinline MiniModel::PosSet*
+  REG::Exp::followpos(MiniModel::PosSetAllocator& psm,
+                      MiniModel::PosInfo* pi) {
+    int p=0;
+    MiniModel::NodeInfo ni = followpos(psm,pi,p);
+    return ni.firstpos;
+  }
+    
   namespace MiniModel {
 
     class StateNode;
@@ -733,10 +735,7 @@ namespace Gecode {
     for (int i=n_pos; i--; )
       pi[i].followpos = NULL;
 
-    NodeInfo ni_root;
-    int n_p = 0;
-    r.e->followpos(psm,ni_root,&pi[0],n_p);
-    assert(n_p == n_pos);
+    PosSet* firstpos = r.e->followpos(psm,&pi[0]);
 
     // Compute symbols
     int* symbols = heap.alloc<int>(n_pos);
@@ -751,7 +750,7 @@ namespace Gecode {
 
     // Compute states and transitions
     TransitionBag tb;
-    StatePool sp(ni_root.firstpos);
+    StatePool sp(firstpos);
     while (!sp.empty()) {
       StateNode* sn = sp.pop();
       for (int i = n_symbols; i--; ) {
