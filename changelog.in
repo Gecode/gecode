@@ -73,6 +73,14 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks: Jan Wolter
+[DESCRIPTION]
+The Nonogram example no longer crashes on empty lines.
+
+[ENTRY]
 Module:	int
 What:	performance
 Rank:	minor

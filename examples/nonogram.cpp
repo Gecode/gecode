@@ -86,10 +86,13 @@ protected:
     REG border = *r0;
     REG between = +r0;
     int hints = spec[spos++];
-    REG r = border + r1(spec[spos],spec[spos]);
-    spos++;
-    for (int i=hints-1; i--; spos++)
-      r += between + r1(spec[spos],spec[spos]);
+    REG r = border;
+    if (hints > 0) {
+      r += r1(spec[spos],spec[spos]);
+      spos++;
+      for (int i=hints-1; i--; spos++)
+        r += between + r1(spec[spos],spec[spos]);
+    }
     return r + border;
   }
 
