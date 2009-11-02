@@ -237,7 +237,7 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          return x[0] == x[1]*x[2]+x[3] &&
                 abs(x[3]) < abs(x[1]) &&
-                (x[3] == 0 || sgn(x[3]) == sgn(x[1]));
+                (x[3] == 0 || sgn(x[3]) == sgn(x[0]));
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -255,9 +255,11 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
            return false;
+         int divsign = (x[0] / x[1] < 0) ? -1 : 1;
          int divresult =
-           static_cast<int>(floor(static_cast<double>(x[0])/
-                                  static_cast<double>(x[1])));
+           divsign *
+           static_cast<int>(floor(static_cast<double>(std::abs(x[0]))/
+                                  static_cast<double>(std::abs(x[1]))));
          return x[2] == divresult;
        }
        /// Post constraint on \a x
@@ -276,9 +278,11 @@ namespace Test { namespace Int {
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
            return false;
+         int divsign = (x[0] / x[1] < 0) ? -1 : 1;
          int divresult =
-           static_cast<int>(floor(static_cast<double>(x[0])/
-                                  static_cast<double>(x[1])));
+           divsign *
+           static_cast<int>(floor(static_cast<double>(std::abs(x[0]))/
+                                  static_cast<double>(std::abs(x[1]))));
          return x[0] == x[1]*divresult+x[2];
        }
        /// Post constraint on \a x

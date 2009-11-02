@@ -73,6 +73,15 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The semantics of division and modulo has changed to match the C standard. This
+means that the operations round towards zero, and that the result of the 
+modulo has the same as its first argument.
+
+[ENTRY]
 Module: example
 What:   bug
 Rank:   minor

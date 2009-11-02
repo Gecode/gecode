@@ -43,128 +43,63 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Positive bounds consistent division
    *
    */
-  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
-  forceinline ExecStatus
-  prop_div_plus_bnd(Space& home, Propagator& p, VA x0, VB x1, VC x2) {
-    assert(pos(x0) && pos(x1) && !neg(x2));
-    bool mod;
-    do {
-      mod = false;
-      {
-        ModEvent me;
-        if (towardsMinInf)
-          me = x2.lq(home,f_d_p<Val>(x0.max(),x1.min()));
-        else
-          me = x2.lq(home,c_d_p<Val>(x0.max(),x1.min()));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me;
-        if (towardsMinInf)
-          me = x2.gq(home,f_d_p<Val>(x0.min(),x1.max()));
-        else
-          me = x2.gq(home,c_d_p<Val>(x0.min(),x1.max()));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me;
-        if (towardsMinInf)
-          me = x0.le(home,m<Val>(x1.max(),
-                                 static_cast<Val>(x2.max())+
-                                 static_cast<Val>(1)));
-        else
-          me = x0.lq(home,m<Val>(x1.max(),x2.max()));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me;
-        if (towardsMinInf)
-          me = x0.gq(home,m<Val>(x1.min(),x2.min()));
-        else
-          me = x0.gr(home,m<Val>(x1.min(),
-                                 static_cast<Val>(x2.min())-
-                                 static_cast<Val>(1)));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        if (x2.min() > 0) {
-          ModEvent me;
-          if (towardsMinInf)
-            me = x1.lq(home,f_d_p<Val>(x0.max(),x2.min()));
-          else if (x2.min() != 1) {
-            me = x1.lq(home,c_d_p<Val>(x0.max(),
-                                       static_cast<Val>(x2.min())-
-                                       static_cast<Val>(1)));
-          } else
-            me = ME_INT_NONE;
-          if (me_failed(me)) return ES_FAILED;
-          mod |= me_modified(me);
-        }
-      }
-      {
-        ModEvent me;
-        if (towardsMinInf)
-          me = x1.gq(home,c_d_p<Val>(x0.min(),
-            static_cast<Val>(x2.max())+static_cast<Val>(1)));
-        else
-          me = x1.gq(home,f_d_p<Val>(x0.min(),
-            static_cast<Val>(x2.max())+static_cast<Val>(1)));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-    } while (mod);
-    return x0.assigned() && x1.assigned() ?
-      ES_SUBSUMED(p,sizeof(p)) : ES_FIX;
-  }
 
-  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC>
   forceinline
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  DivPlusBnd<Val,VA,VB,VC>
   ::DivPlusBnd(Home home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,x0,x1,x2) {}
 
-  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC>
   forceinline
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  DivPlusBnd<Val,VA,VB,VC>
   ::DivPlusBnd(Space& home, bool share,
-               DivPlusBnd<Val,VA,VB,VC,towardsMinInf>& p)
+               DivPlusBnd<Val,VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,share,p) {}
 
-  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC>
   Actor*
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>::copy(Space& home, bool share) {
-    return new (home) DivPlusBnd<Val,VA,VB,VC,towardsMinInf>(home,
-                                                             share,*this);
+  DivPlusBnd<Val,VA,VB,VC>::copy(Space& home, bool share) {
+    return new (home) DivPlusBnd<Val,VA,VB,VC>(home,share,*this);
   }
 
-  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC>
   ExecStatus
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  DivPlusBnd<Val,VA,VB,VC>
   ::propagate(Space& home, const ModEventDelta&) {
-    return prop_div_plus_bnd<Val,VA,VB,VC,towardsMinInf>(home,*this,x0,x1,x2);
+    assert(pos(x0) && pos(x1) && !neg(x2));
+    bool mod;
+    do {
+      mod = false;
+      GECODE_ME_CHECK_MODIFIED(mod,x2.lq(home,f_d_p<Val>(x0.max(),x1.min())));
+      GECODE_ME_CHECK_MODIFIED(mod,x2.gq(home,f_d_p<Val>(x0.min(),x1.max())));
+      GECODE_ME_CHECK_MODIFIED(mod,x0.le(home,m<Val>(x1.max(),
+                                              static_cast<Val>(x2.max())+
+                                              static_cast<Val>(1))));
+      GECODE_ME_CHECK_MODIFIED(mod,x0.gq(home,m<Val>(x1.min(),x2.min())));
+      if (x2.min() > 0) {
+          GECODE_ME_CHECK_MODIFIED(mod,
+            x1.lq(home,f_d_p<Val>(x0.max(),x2.min())));
+      }
+      GECODE_ME_CHECK_MODIFIED(mod,x1.gq(home,c_d_p<Val>(x0.min(),
+          static_cast<Val>(x2.max())+static_cast<Val>(1))));
+    } while (mod);
+    return x0.assigned() && x1.assigned() ?
+      ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
   }
 
-  template<class Val, class VA, class VB, class VC, bool towardsMinInf>
+  template<class Val, class VA, class VB, class VC>
   forceinline ExecStatus
-  DivPlusBnd<Val,VA,VB,VC,towardsMinInf>
+  DivPlusBnd<Val,VA,VB,VC>
   ::post(Home home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
-    if (towardsMinInf) {
-      GECODE_ME_CHECK(x2.gq(home,floor(static_cast<double>(x0.min()) /
-                                       static_cast<double>(x1.max()))));
-    } else {
-      GECODE_ME_CHECK(x2.gq(home,ceil(static_cast<double>(x0.min()) /
-                                      static_cast<double>(x1.max()))));
-    }
+    GECODE_ME_CHECK(x2.gq(home,floor(static_cast<double>(x0.min()) /
+                                     static_cast<double>(x1.max()))));
     (void)
-      new (home) DivPlusBnd<double,VA,VB,VC,towardsMinInf>(home,x0,x1,x2);
+      new (home) DivPlusBnd<double,VA,VB,VC>(home,x0,x1,x2);
     return ES_OK;
   }
 
@@ -214,9 +149,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     assert(any(x1) && any(x2));
     GECODE_ME_CHECK(x0.lq(home,std::max(m<double>(x1.max(),x2.max()+1)-1,
-                                        m<double>(x1.min(),x2.min()))));
+                                        m<double>(x1.min(),x2.min()-1)-1)));
     GECODE_ME_CHECK(x0.gq(home,std::min(m<double>(x1.min(),x2.max()+1),
-                                        m<double>(x1.max(),x2.min()))));
+                                        m<double>(x1.max(),x2.min()-1))));
     return ES_NOFIX;
 
   prop_xxp:
@@ -239,7 +174,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     assert(any(x0) && pos(x1) && any(x2));
 
     GECODE_ME_CHECK(x0.le(home, m<double>(x1.max(),x2.max()+1)));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min())));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
 
     if (pos(x0)) goto rewrite_ppp;
     if (neg(x0)) goto rewrite_npn;
@@ -254,8 +189,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_xxn:
     assert(any(x0) && any(x1) && neg(x2));
 
-    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min())));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min())));
+    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
 
     if (pos(x0)) goto rewrite_pnn;
     if (neg(x0)) goto rewrite_npn;
@@ -272,7 +207,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_xnx:
     assert(any(x0) && neg(x1) && any(x2));
 
-    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min())));
+    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min()-1)));
     GECODE_ME_CHECK(x0.gq(home, m<double>(x1.min(),x2.max()+1)));
 
     if (pos(x0)) goto rewrite_pnn;
@@ -292,14 +227,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,MinusView,IntView>
                          ::post(home(*this),x0,x1,x2)));
   rewrite_pnn:
-    GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,MinusView,MinusView,false>
+    GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,MinusView,MinusView>
                          ::post(home(*this),x0,x1,x2)));
   rewrite_npn:
-    GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,IntView,MinusView,false>
+    GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,IntView,MinusView>
                          ::post(home(*this),x0,x1,x2)));
   subsumed:
     assert(x0.assigned() && x1.assigned());
-    GECODE_ME_CHECK(x2.eq(home,f_d(x0.val(),x1.val())));
+    int result = std::abs(x0.val()) / std::abs(x1.val());
+    if (x0.val()/x1.val() < 0)
+      result = -result;
+    GECODE_ME_CHECK(x2.eq(home,result));
     return ES_SUBSUMED(*this,sizeof(*this));
   }
 
@@ -328,9 +266,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   post_nnp:
     return DivPlusBnd<double,MinusView,MinusView,IntView>::post(home,x0,x1,x2);
   post_pnn:
-    return DivPlusBnd<double,IntView,MinusView,MinusView,false>::post(home,x0,x1,x2);
+    return DivPlusBnd<double,IntView,MinusView,MinusView>::post(home,x0,x1,x2);
   post_npn:
-    return DivPlusBnd<double,MinusView,IntView,MinusView,false>::post(home,x0,x1,x2);
+    return DivPlusBnd<double,MinusView,IntView,MinusView>::post(home,x0,x1,x2);
   }
 
 
@@ -341,22 +279,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  DivMod<View>::DivMod(Home home, View x0, View x1)
-    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+  DivMod<View>::DivMod(Home home, View x0, View x1, View x2)
+    : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
 
   template<class View>
   forceinline ExecStatus
-  DivMod<View>::post(Home home, View x0, View x1) {
-    GECODE_ME_CHECK(x0.nq(home,0));
-    (void) new (home) DivMod<View>(home,x0,x1);
+  DivMod<View>::post(Home home, View x0, View x1, View x2) {
+    GECODE_ME_CHECK(x1.nq(home,0));
+    (void) new (home) DivMod<View>(home,x0,x1,x2);
     return ES_OK;
   }
 
   template<class View>
   forceinline
-  DivMod<View>::DivMod(Space& home, bool share,
-                             DivMod<View>& p)
-  : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  DivMod<View>::DivMod(Space& home, bool share, DivMod<View>& p)
+  : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
   template<class View>
   Actor*
@@ -370,45 +307,37 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     bool signIsSame;
     do {
       signIsSame = true;
-      // The sign of x1 and x3 is the same
-      if (x0.min() > 0) {
-        GECODE_ME_CHECK(x1.gq(home, 0));
-      } else if (x0.max() < 0) {
-        GECODE_ME_CHECK(x1.lq(home, 0));
-      } else if (x1.min() > 0) {
-        GECODE_ME_CHECK(x0.gr(home, 0));
-      } else if (x1.max() < 0) {
-        GECODE_ME_CHECK(x0.le(home, 0));
+      // The sign of x0 and x2 is the same
+      if (x0.min() >= 0) {
+        GECODE_ME_CHECK(x2.gq(home, 0));
+      } else if (x0.max() <= 0) {
+        GECODE_ME_CHECK(x2.lq(home, 0));
+      } else if (x2.min() > 0) {
+        GECODE_ME_CHECK(x0.gq(home, 0));
+      } else if (x2.max() < 0) {
+        GECODE_ME_CHECK(x0.lq(home, 0));
       } else {
         signIsSame = false;
       }
 
-      // abs(x1) is less than abs(x0)
-      int x0max = std::max(x0.max(),std::max(-x0.max(),
-                           std::max(x0.min(),-x0.min())));
-      GECODE_ME_CHECK(x1.le(home, x0max));
-      GECODE_ME_CHECK(x1.gr(home, -x0max));
+      // abs(x2) is less than abs(x1)
+      int x1max = std::max(x1.max(),std::max(-x1.max(),
+                           std::max(x1.min(),-x1.min())));
+      GECODE_ME_CHECK(x2.le(home, x1max));
+      GECODE_ME_CHECK(x2.gr(home, -x1max));
 
-      if (x0.min() > 0) {
-        int min = std::min(x1.min() < 0 ? -x1.min():x1.min(),
-                           x1.max() < 0 ? -x1.max():x1.max());
-        GECODE_ME_CHECK(x0.gr(home,min));
-      } else if (x0.max() < 0) {
-        int min = std::min(x1.min() < 0 ? -x1.min():x1.min(),
-                           x1.max() < 0 ? -x1.max():x1.max());
-        GECODE_ME_CHECK(x0.le(home,-min));
-      }
+      int x2absmin = any(x2) ? 0 : (pos(x2) ? x2.min() : -x2.max());
+      Iter::Ranges::Singleton sr(-x2absmin,x2absmin);
+      GECODE_ME_CHECK(x1.minus_r(home,sr,false));
     } while (!signIsSame &&
-             (x0.min() > 0 || x0.max() < 0 || x1.min() > 0 || x1.max() < 0));
+             (x0.min() > 0 || x0.max() < 0 || x2.min() > 0 || x2.max() < 0));
 
     if (signIsSame) {
-      int maxx1 = std::max(x1.min() < 0 ? -x1.min():x1.min(),
-                           x1.max() < 0 ? -x1.max():x1.max());
-      int minx0 = std::min(x0.min() < 0 ? -x0.min():x0.min(),
-                           x0.max() < 0 ? -x0.max():x0.max());
-      if (maxx1 < minx0) {
+      int x2max = std::max(x2.max(),std::max(-x2.max(),
+                           std::max(x2.min(),-x2.min())));
+      int x1absmin = any(x1) ? 0 : (pos(x1) ? x1.min() : -x1.max());
+      if (x2max < x1absmin)
         return ES_SUBSUMED(*this,home);
-      }
     }
     return ES_FIX;
   }

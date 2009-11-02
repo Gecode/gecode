@@ -573,7 +573,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides division for positive views only.
    */
-  template<class Val, class VA, class VB, class VC, bool towardsMinInf=true>
+  template<class Val, class VA, class VB, class VC>
   class DivPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
@@ -585,8 +585,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     DivPlusBnd(Home home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
     DivPlusBnd(Space& home, bool share,
-               DivPlusBnd<Val,VA,VB,VC,towardsMinInf>& p);
-    /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding to \f$-\infty\f$)
+               DivPlusBnd<Val,VA,VB,VC>& p);
+    /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding towards 0)
     static ExecStatus post(Home home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -613,7 +613,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   public:
     /// Constructor for posting
     DivBnd(Home home, View x0, View x1, View x2);
-    /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding to \f$-\infty\f$)
+    /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding towards 0)
     static  ExecStatus post(Home home, View x0, View x1, View x2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -632,18 +632,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template<class View>
-  class DivMod : public BinaryPropagator<View,PC_INT_BND> {
+  class DivMod : public TernaryPropagator<View,PC_INT_BND> {
   protected:
-    using BinaryPropagator<View,PC_INT_BND>::x0;
-    using BinaryPropagator<View,PC_INT_BND>::x1;
+    using TernaryPropagator<View,PC_INT_BND>::x0;
+    using TernaryPropagator<View,PC_INT_BND>::x1;
+    using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
     DivMod(Space& home, bool share, DivMod<View>& p);
   public:
     /// Constructor for posting
-    DivMod(Home home, View x0, View x1);
-    /// Post propagator \f$x_0\neq 0 \land (x_1\neq 0\Rightarrow x_0\times x_1>0) \land \mathrm{abs}(x_1)<\mathrm{abs}(x_0)\f$
-    static  ExecStatus post(Home home, View x0, View x1);
+    DivMod(Home home, View x0, View x1, View x2);
+    /// Post propagator \f$x_1\neq 0 \land (x_2\neq 0\Rightarrow x_0\times x_2>0) \land \mathrm{abs}(x_2)<\mathrm{abs}(x_1)\f$
+    static  ExecStatus post(Home home, View x0, View x1, View x2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation

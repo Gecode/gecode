@@ -161,7 +161,7 @@ namespace Gecode {
     if (home.failed()) return;
     IntView x1v(x1);
     GECODE_ES_FAIL(home,
-      Arithmetic::DivMod<IntView>::post(home,x1,x3));
+      Arithmetic::DivMod<IntView>::post(home,x0,x1,x3));
   }
 
   void
