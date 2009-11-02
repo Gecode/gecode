@@ -44,7 +44,6 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
-#include <climits>
 #include <examples/scowl.hpp>
 
 using namespace Gecode;
@@ -77,11 +76,6 @@ public:
   /// Constructor for cloning \a s
   WordSquare(bool share, WordSquare& s) 
     : Script(share,s), w_l(s.w_l), n_w(s.n_w) {}
-  /// Copy during cloning
-  virtual Space*
-  copy(bool share) {
-    return new WordSquare(share,*this);
-  }
 };
 
 
@@ -117,7 +111,7 @@ public:
     for (int i=0; i<w_l; i++)
       for (int j=i+1; j<w_l; j++) {
         // w[j,words[i]] ==  w[i,words[j]]
-        IntVar c(*this, CHAR_MIN, CHAR_MAX);
+        IntVar c(*this, 'a', 'z');
         element(*this, mw, words[i], col[j], c);
         element(*this, mw, words[j], col[i], c);
       }
@@ -170,13 +164,9 @@ public:
   {
     // Initialize the letters
     Matrix<IntVarArray> ml(letters, w_l, w_l);
-    for (int i = 0; i < w_l; ++i) {
-      for (int j = i; j < w_l; ++j) {
-        IntVar c(*this, CHAR_MIN, CHAR_MAX);
-        ml(i, j) = c;
-        ml(j, i) = c;
-      }
-    }
+    for (int i = 0; i < w_l; ++i)
+      for (int j = i; j < w_l; ++j)
+        ml(i,j) = ml(j,i) = IntVar(*this, 'a','z');
     
     // copy the word list to a regular expression
     REG r_words;
