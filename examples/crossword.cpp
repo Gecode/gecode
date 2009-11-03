@@ -92,52 +92,52 @@ public:
       }
     }
 
-    // Get number of all words
-    int a_n=*g++;
-    IntVarArgs allwords(a_n);
+    // Skip number of all words (not needed)
+    g++;
 
     // While words of length w_l to process
     while (int w_l=*g++) {
       if (w_l > max_word_len)
-        std::cerr << "Dictionary does not have words of required length. Crashing now ;-)" << std::endl;
+        throw Exception("Crossword",
+                        "Dictionary does not have words of required length");
       // Number of words of that length in the dictionary
       int n_w = n_words[w_l];
       // Number of words of that length in the puzzle
       int n=*g++;
+
       // Array of all words of length w_l
       IntVarArgs words(n);
+      for (int i=n; i--; )
+        words[i].init(*this,0,n_w-1);
 
-      // Matrix that maps words to their letters
-      IntArgs w(w_l*n_w);
-      Matrix<IntArgs> mw(w, n_w, w_l);
-      for (int i=n_w;  i--; )
-        for (int j=w_l; j--; )
-          mw(i,j) = dict[w_l][i][j];
-
-      for (; n--; ) {
-        // Get (x,y) coordinate where word begins
-        int x=*g++, y=*g++;
-        // Whether word is horizontal
-        bool h=(*g++ == 0);
-        // Initialize word variable
-        words[n].init(*this,0,n_w-1);
-        // Constrain the letters to the words' letters
-        if (h) {
-          for (int d=0; d<w_l; d++)
-            element(*this, mw, words[n], IntVar(*this,d,d), ml(x+d,y));
-        } else {
-          for (int d=0; d<w_l; d++)
-            element(*this, mw, words[n], IntVar(*this,d,d), ml(x,y+d));
-        }
-        // Add word variable to array of all words
-        allwords[--a_n]=words[n];
-      }
       // All words of same length must be different
       distinct(*this, words, ICL_BND);
-    }
+      // Branch on words of reasonable length (longer words come first in specification)
+      if (w_l > 3)
+        branch(*this, words, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
 
-    // Split the available words into two halves
-    branch(*this, allwords, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+      // Array that maps words to a letter at a certain position
+      IntArgs w2l(n_w);
+
+      for (int d=0; d<w_l; d++) {
+        // Initialize word to letter map
+        for (int i=n_w; i--; )
+          w2l[i] = dict[w_l][i][d];
+        // Link word to letter variable
+        for (int i=0; i<n; i++) {
+          // Get (x,y) coordinate where word begins
+          int x=g[3*i+0], y=g[3*i+1];
+          // Whether word is horizontal
+          bool h=(g[3*i+2] == 0);
+          // Constrain the letters to the words' letters
+          element(*this, w2l, words[i], h ? ml(x+d,y) : ml(x,y+d));
+        }
+      }
+      // Skip word coordinates
+      g += 3*n;
+    }
+    // Finish branching by assigning remaining letters
+    branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
   Crossword(bool share, Crossword& s) 
@@ -271,13 +271,13 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    4, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 1,4,0, 4,1,1, 
-    // Length and number of words of that length
     5, 6,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 0,2,0, 0,3,0, 1,0,1, 2,0,1, 3,0,1, 
+    // Length and number of words of that length
+    4, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 1,4,0, 4,1,1, 
     // End marker
     0
   };
@@ -301,17 +301,17 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 2,
+    5, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 4,2,1, 
+    0,2,0, 1,0,1, 2,0,1, 3,0,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,1,0, 1,3,0, 1,4,0, 
     // Length and number of words of that length
-    5, 4,
+    3, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 1,0,1, 2,0,1, 3,0,1, 
+    0,0,1, 4,2,1, 
     // End marker
     0
   };
@@ -335,17 +335,17 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 4,
+    5, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 2,4,0, 4,2,1, 
+    0,2,0, 2,0,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 1,0,1, 1,3,0, 3,1,1, 
     // Length and number of words of that length
-    5, 2,
+    3, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,0,1, 
+    0,0,0, 0,0,1, 2,4,0, 4,2,1, 
     // End marker
     0
   };
@@ -369,13 +369,13 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 1,0,1, 2,3,0, 2,4,0, 3,2,1, 4,2,1, 
-    // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,2,0, 2,0,1, 
+    // Length and number of words of that length
+    3, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 1,0,1, 2,3,0, 2,4,0, 3,2,1, 4,2,1, 
     // End marker
     0
   };
@@ -399,13 +399,13 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    4, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,1,1, 0,4,0, 1,0,0, 4,0,1, 
-    // Length and number of words of that length
     5, 6,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 0,2,0, 0,3,0, 1,0,1, 2,0,1, 3,0,1, 
+    // Length and number of words of that length
+    4, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,1,1, 0,4,0, 1,0,0, 4,0,1, 
     // End marker
     0
   };
@@ -429,17 +429,17 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 2,
+    5, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,1, 4,0,1, 
+    0,2,0, 1,0,1, 2,0,1, 3,0,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 0,4,0, 1,0,0, 1,1,0, 
     // Length and number of words of that length
-    5, 4,
+    3, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 1,0,1, 2,0,1, 3,0,1, 
+    0,2,1, 4,0,1, 
     // End marker
     0
   };
@@ -463,13 +463,13 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,1,1, 1,0,0, 1,4,0, 4,1,1, 
-    // Length and number of words of that length
     5, 6,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 0,2,0, 0,3,0, 1,0,1, 2,0,1, 3,0,1, 
+    // Length and number of words of that length
+    3, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,1,1, 1,0,0, 1,4,0, 4,1,1, 
     // End marker
     0
   };
@@ -493,17 +493,17 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 4,
+    5, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,1, 0,4,0, 2,0,0, 4,0,1, 
+    0,2,0, 2,0,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 1,1,0, 1,1,1, 3,0,1, 
     // Length and number of words of that length
-    5, 2,
+    3, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,0,1, 
+    0,2,1, 0,4,0, 2,0,0, 4,0,1, 
     // End marker
     0
   };
@@ -527,13 +527,13 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,1, 0,3,0, 0,4,0, 1,2,1, 2,0,0, 2,1,0, 3,0,1, 4,0,1, 
-    // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,2,0, 2,0,1, 
+    // Length and number of words of that length
+    3, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,2,1, 0,3,0, 0,4,0, 1,2,1, 2,0,0, 2,1,0, 3,0,1, 4,0,1, 
     // End marker
     0
   };
@@ -567,29 +567,29 @@ namespace {
     // Total number of words in grid
     78,
     // Length and number of words of that length
-    3, 16,
+    10, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,7,0, 3,4,0, 4,9,1, 5,6,1, 6,5,0, 6,9,0, 6,12,1, 7,0,1, 7,12,1, 8,0,1, 9,6,1, 9,10,0, 10,3,1, 12,7,0, 12,8,0, 
-    // Length and number of words of that length
-    4, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,8,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 6,0,1, 8,11,1, 11,0,0, 11,1,0, 11,2,0, 11,6,0, 11,13,0, 11,14,0, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,5,1, 0,9,0, 1,5,1, 5,0,0, 5,0,1, 5,1,0, 5,10,1, 5,13,0, 5,14,0, 9,0,1, 9,10,1, 10,5,0, 10,9,0, 13,5,1, 14,5,1, 
-    // Length and number of words of that length
-    6, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,11,0, 2,10,0, 3,0,1, 4,2,1, 4,6,0, 5,8,0, 6,5,1, 7,4,0, 8,4,1, 9,3,0, 10,7,1, 11,9,1, 
+    0,2,0, 2,5,1, 5,12,0, 12,0,1, 
     // Length and number of words of that length
     7, 6,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 3,8,1, 4,7,0, 7,4,1, 8,11,0, 11,0,1, 
     // Length and number of words of that length
-    10, 4,
+    6, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,5,1, 5,12,0, 12,0,1, 
+    0,11,0, 2,10,0, 3,0,1, 4,2,1, 4,6,0, 5,8,0, 6,5,1, 7,4,0, 8,4,1, 9,3,0, 10,7,1, 11,9,1, 
+    // Length and number of words of that length
+    5, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,5,1, 0,9,0, 1,5,1, 5,0,0, 5,0,1, 5,1,0, 5,10,1, 5,13,0, 5,14,0, 9,0,1, 9,10,1, 10,5,0, 10,9,0, 13,5,1, 14,5,1, 
+    // Length and number of words of that length
+    4, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,8,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 6,0,1, 8,11,1, 11,0,0, 11,1,0, 11,2,0, 11,6,0, 11,13,0, 11,14,0, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,7,0, 3,4,0, 4,9,1, 5,6,1, 6,5,0, 6,9,0, 6,12,1, 7,0,1, 7,12,1, 8,0,1, 9,6,1, 9,10,0, 10,3,1, 12,7,0, 12,8,0, 
     // End marker
     0
   };
@@ -623,33 +623,33 @@ namespace {
     // Total number of words in grid
     80,
     // Length and number of words of that length
-    3, 16,
+    15, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,9,0, 3,10,0, 4,0,1, 4,9,0, 5,8,0, 6,7,0, 6,7,1, 7,6,0, 7,6,1, 8,5,0, 8,5,1, 9,4,0, 10,12,1, 12,5,0, 12,10,0, 
-    // Length and number of words of that length
-    4, 36,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,6,1, 0,8,0, 0,11,1, 0,13,0, 0,14,0, 1,6,1, 1,11,1, 2,6,1, 2,11,1, 3,0,1, 3,5,0, 3,5,1, 4,4,0, 4,4,1, 4,9,1, 5,14,0, 6,0,0, 6,11,1, 7,10,0, 8,0,1, 8,9,0, 10,2,1, 10,7,1, 11,0,0, 11,1,0, 11,6,0, 11,6,1, 11,11,0, 11,11,1, 12,0,1, 12,5,1, 13,0,1, 13,5,1, 14,0,1, 14,5,1, 
-    // Length and number of words of that length
-    5, 14,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,7,0, 1,0,1, 2,0,1, 3,10,1, 7,0,1, 7,10,1, 10,7,0, 10,14,0, 11,0,1, 12,10,1, 13,10,1, 14,10,1, 
-    // Length and number of words of that length
-    6, 6,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 5,1,1, 6,0,1, 8,9,1, 9,8,0, 9,8,1, 
-    // Length and number of words of that length
-    7, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,8,1, 9,0,1, 
+    0,2,0, 0,12,0, 
     // Length and number of words of that length
     10, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 0,11,0, 5,3,0, 5,13,0, 
     // Length and number of words of that length
-    15, 2,
+    7, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,12,0, 
+    5,8,1, 9,0,1, 
+    // Length and number of words of that length
+    6, 6,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 5,1,1, 6,0,1, 8,9,1, 9,8,0, 9,8,1, 
+    // Length and number of words of that length
+    5, 14,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,7,0, 1,0,1, 2,0,1, 3,10,1, 7,0,1, 7,10,1, 10,7,0, 10,14,0, 11,0,1, 12,10,1, 13,10,1, 14,10,1, 
+    // Length and number of words of that length
+    4, 36,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,6,1, 0,8,0, 0,11,1, 0,13,0, 0,14,0, 1,6,1, 1,11,1, 2,6,1, 2,11,1, 3,0,1, 3,5,0, 3,5,1, 4,4,0, 4,4,1, 4,9,1, 5,14,0, 6,0,0, 6,11,1, 7,10,0, 8,0,1, 8,9,0, 10,2,1, 10,7,1, 11,0,0, 11,1,0, 11,6,0, 11,6,1, 11,11,0, 11,11,1, 12,0,1, 12,5,1, 13,0,1, 13,5,1, 14,0,1, 14,5,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,9,0, 3,10,0, 4,0,1, 4,9,0, 5,8,0, 6,7,0, 6,7,1, 7,6,0, 7,6,1, 8,5,0, 8,5,1, 9,4,0, 10,12,1, 12,5,0, 12,10,0, 
     // End marker
     0
   };
@@ -683,25 +683,25 @@ namespace {
     // Total number of words in grid
     78,
     // Length and number of words of that length
-    3, 4,
+    8, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 6,12,1, 8,0,1, 12,6,0, 
-    // Length and number of words of that length
-    4, 36,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,4,0, 3,10,0, 4,3,1, 4,8,1, 7,0,1, 7,11,1, 8,4,0, 8,10,0, 10,3,1, 10,8,1, 11,0,0, 11,1,0, 11,2,0, 11,7,0, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 22,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,6,0, 1,5,1, 2,5,1, 4,8,0, 5,0,0, 5,1,0, 5,2,0, 5,7,0, 5,12,0, 5,13,0, 5,14,0, 6,0,1, 6,6,0, 6,6,1, 7,5,1, 8,4,1, 8,10,1, 10,8,0, 12,5,1, 13,5,1, 14,5,1, 
+    0,3,0, 0,9,0, 3,0,1, 5,7,1, 7,5,0, 7,11,0, 9,0,1, 11,7,1, 
     // Length and number of words of that length
     6, 8,
     // Coordinates where words start and direction (0 = horizontal)
     0,5,0, 0,11,0, 3,9,1, 5,0,1, 9,3,0, 9,9,0, 9,9,1, 11,0,1, 
     // Length and number of words of that length
-    8, 8,
+    5, 22,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 3,0,1, 5,7,1, 7,5,0, 7,11,0, 9,0,1, 11,7,1, 
+    0,5,1, 0,6,0, 1,5,1, 2,5,1, 4,8,0, 5,0,0, 5,1,0, 5,2,0, 5,7,0, 5,12,0, 5,13,0, 5,14,0, 6,0,1, 6,6,0, 6,6,1, 7,5,1, 8,4,1, 8,10,1, 10,8,0, 12,5,1, 13,5,1, 14,5,1, 
+    // Length and number of words of that length
+    4, 36,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,4,0, 3,10,0, 4,3,1, 4,8,1, 7,0,1, 7,11,1, 8,4,0, 8,10,0, 10,3,1, 10,8,1, 11,0,0, 11,1,0, 11,2,0, 11,7,0, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 6,12,1, 8,0,1, 12,6,0, 
     // End marker
     0
   };
@@ -735,29 +735,29 @@ namespace {
     // Total number of words in grid
     76,
     // Length and number of words of that length
-    3, 16,
+    15, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,5,0, 0,11,0, 3,4,0, 3,12,1, 5,0,1, 5,6,0, 6,5,1, 7,8,0, 8,7,1, 9,10,0, 9,12,1, 11,0,1, 12,3,0, 12,9,0, 12,14,0, 
-    // Length and number of words of that length
-    4, 22,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,6,0, 0,11,1, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,1,1, 4,0,0, 6,0,1, 6,9,1, 7,14,0, 8,2,1, 8,11,1, 11,8,0, 11,10,1, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 22,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,5,1, 0,9,0, 1,5,1, 2,5,1, 3,6,1, 3,10,0, 4,5,0, 4,11,0, 5,4,1, 5,10,1, 6,3,0, 6,9,0, 7,4,0, 9,0,1, 9,6,1, 10,5,0, 10,11,0, 11,4,1, 12,5,1, 13,5,1, 14,5,1, 
-    // Length and number of words of that length
-    6, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,13,0, 0,14,0, 4,0,1, 9,0,0, 9,1,0, 9,6,0, 10,9,1, 
+    0,2,0, 0,7,0, 0,12,0, 7,0,1, 
     // Length and number of words of that length
     8, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 4,7,1, 7,13,0, 10,0,1, 
     // Length and number of words of that length
-    15, 4,
+    6, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,7,0, 0,12,0, 7,0,1, 
+    0,8,0, 0,13,0, 0,14,0, 4,0,1, 9,0,0, 9,1,0, 9,6,0, 10,9,1, 
+    // Length and number of words of that length
+    5, 22,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,5,1, 0,9,0, 1,5,1, 2,5,1, 3,6,1, 3,10,0, 4,5,0, 4,11,0, 5,4,1, 5,10,1, 6,3,0, 6,9,0, 7,4,0, 9,0,1, 9,6,1, 10,5,0, 10,11,0, 11,4,1, 12,5,1, 13,5,1, 14,5,1, 
+    // Length and number of words of that length
+    4, 22,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,6,0, 0,11,1, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,1,1, 4,0,0, 6,0,1, 6,9,1, 7,14,0, 8,2,1, 8,11,1, 11,8,0, 11,10,1, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,5,0, 0,11,0, 3,4,0, 3,12,1, 5,0,1, 5,6,0, 6,5,1, 7,8,0, 8,7,1, 9,10,0, 9,12,1, 11,0,1, 12,3,0, 12,9,0, 12,14,0, 
     // End marker
     0
   };
@@ -791,33 +791,33 @@ namespace {
     // Total number of words in grid
     78,
     // Length and number of words of that length
-    3, 10,
+    15, 1,
     // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 4,0,1, 4,4,0, 5,7,1, 6,7,1, 8,5,1, 8,10,0, 9,5,1, 10,12,1, 14,7,1, 
-    // Length and number of words of that length
-    4, 38,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,3,0, 0,11,0, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 3,0,1, 3,5,1, 4,9,0, 5,2,1, 5,11,1, 5,13,0, 5,14,0, 6,0,0, 6,1,0, 6,11,1, 7,0,1, 7,5,0, 7,11,1, 8,0,1, 9,0,1, 9,9,1, 11,0,0, 11,1,0, 11,2,0, 11,3,0, 11,6,1, 11,11,0, 11,11,1, 12,6,1, 12,11,1, 13,6,1, 13,11,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 21,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,6,0, 0,10,0, 0,10,1, 1,10,1, 2,10,1, 3,10,1, 5,3,0, 5,11,0, 6,0,1, 7,5,1, 8,10,1, 10,4,0, 10,8,0, 10,13,0, 10,14,0, 11,0,1, 12,0,1, 13,0,1, 14,0,1, 
-    // Length and number of words of that length
-    6, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 9,9,0, 
-    // Length and number of words of that length
-    7, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    1,8,0, 4,4,1, 7,6,0, 10,4,1, 
+    0,7,0, 
     // Length and number of words of that length
     10, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,2,0, 5,12,0, 
     // Length and number of words of that length
-    15, 1,
+    7, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 
+    1,8,0, 4,4,1, 7,6,0, 10,4,1, 
+    // Length and number of words of that length
+    6, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 9,9,0, 
+    // Length and number of words of that length
+    5, 21,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,6,0, 0,10,0, 0,10,1, 1,10,1, 2,10,1, 3,10,1, 5,3,0, 5,11,0, 6,0,1, 7,5,1, 8,10,1, 10,4,0, 10,8,0, 10,13,0, 10,14,0, 11,0,1, 12,0,1, 13,0,1, 14,0,1, 
+    // Length and number of words of that length
+    4, 38,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,3,0, 0,11,0, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 3,0,1, 3,5,1, 4,9,0, 5,2,1, 5,11,1, 5,13,0, 5,14,0, 6,0,0, 6,1,0, 6,11,1, 7,0,1, 7,5,0, 7,11,1, 8,0,1, 9,0,1, 9,9,1, 11,0,0, 11,1,0, 11,2,0, 11,3,0, 11,6,1, 11,11,0, 11,11,1, 12,6,1, 12,11,1, 13,6,1, 13,11,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 10,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 4,0,1, 4,4,0, 5,7,1, 6,7,1, 8,5,1, 8,10,0, 9,5,1, 10,12,1, 14,7,1, 
     // End marker
     0
   };
@@ -851,33 +851,33 @@ namespace {
     // Total number of words in grid
     72,
     // Length and number of words of that length
-    3, 8,
+    9, 3,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 3,4,0, 4,0,1, 4,12,1, 9,10,0, 10,0,1, 10,12,1, 12,7,0, 
-    // Length and number of words of that length
-    4, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,3,0, 0,11,0, 0,11,1, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 6,0,1, 6,5,1, 8,6,1, 8,11,1, 11,3,0, 11,11,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 14,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,8,0, 1,5,1, 2,5,1, 3,10,0, 5,3,0, 5,11,0, 6,10,1, 7,4,0, 8,0,1, 10,6,0, 12,5,1, 13,5,1, 14,5,1, 
-    // Length and number of words of that length
-    6, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 5,9,1, 9,0,1, 9,5,0, 
-    // Length and number of words of that length
-    7, 19,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,2,0, 0,12,0, 0,13,0, 0,14,0, 3,0,1, 3,8,1, 4,4,1, 4,7,0, 8,0,0, 8,1,0, 8,2,0, 8,12,0, 8,13,0, 8,14,0, 10,4,1, 11,0,1, 11,8,1, 
+    0,6,0, 6,8,0, 7,3,1, 
     // Length and number of words of that length
     8, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,5,0, 5,0,1, 7,9,0, 9,7,1, 
     // Length and number of words of that length
-    9, 3,
+    7, 19,
     // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 6,8,0, 7,3,1, 
+    0,0,0, 0,1,0, 0,2,0, 0,12,0, 0,13,0, 0,14,0, 3,0,1, 3,8,1, 4,4,1, 4,7,0, 8,0,0, 8,1,0, 8,2,0, 8,12,0, 8,13,0, 8,14,0, 10,4,1, 11,0,1, 11,8,1, 
+    // Length and number of words of that length
+    6, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,9,0, 5,9,1, 9,0,1, 9,5,0, 
+    // Length and number of words of that length
+    5, 14,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 0,8,0, 1,5,1, 2,5,1, 3,10,0, 5,3,0, 5,11,0, 6,10,1, 7,4,0, 8,0,1, 10,6,0, 12,5,1, 13,5,1, 14,5,1, 
+    // Length and number of words of that length
+    4, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,3,0, 0,11,0, 0,11,1, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 6,0,1, 6,5,1, 8,6,1, 8,11,1, 11,3,0, 11,11,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 3,4,0, 4,0,1, 4,12,1, 9,10,0, 10,0,1, 10,12,1, 12,7,0, 
     // End marker
     0
   };
@@ -911,33 +911,33 @@ namespace {
     // Total number of words in grid
     74,
     // Length and number of words of that length
-    3, 8,
+    10, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 4,7,1, 5,10,0, 7,0,1, 7,4,0, 7,12,1, 10,5,1, 12,7,0, 
-    // Length and number of words of that length
-    4, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,5,1, 0,6,0, 0,10,0, 1,0,1, 1,5,1, 2,4,0, 4,2,1, 4,11,1, 5,0,0, 5,1,0, 6,0,1, 6,13,0, 6,14,0, 8,11,1, 9,10,0, 10,0,1, 10,9,1, 11,4,0, 11,8,0, 11,13,0, 11,14,0, 13,6,1, 13,11,1, 14,6,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,10,1, 0,12,0, 0,13,0, 0,14,0, 1,10,1, 2,10,1, 5,0,1, 9,10,1, 10,0,0, 10,1,0, 10,2,0, 10,9,0, 12,0,1, 13,0,1, 14,0,1, 
-    // Length and number of words of that length
-    6, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    3,9,0, 5,6,1, 6,5,0, 9,3,1, 
-    // Length and number of words of that length
-    7, 10,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,11,0, 3,0,1, 3,8,1, 4,7,0, 7,4,1, 8,3,0, 8,11,0, 11,0,1, 11,8,1, 
+    0,8,0, 5,6,0, 6,5,1, 8,0,1, 
     // Length and number of words of that length
     9, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,2,0, 2,0,1, 6,12,0, 12,6,1, 
     // Length and number of words of that length
-    10, 4,
+    7, 10,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 5,6,0, 6,5,1, 8,0,1, 
+    0,3,0, 0,11,0, 3,0,1, 3,8,1, 4,7,0, 7,4,1, 8,3,0, 8,11,0, 11,0,1, 11,8,1, 
+    // Length and number of words of that length
+    6, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,9,0, 5,6,1, 6,5,0, 9,3,1, 
+    // Length and number of words of that length
+    5, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,10,1, 0,12,0, 0,13,0, 0,14,0, 1,10,1, 2,10,1, 5,0,1, 9,10,1, 10,0,0, 10,1,0, 10,2,0, 10,9,0, 12,0,1, 13,0,1, 14,0,1, 
+    // Length and number of words of that length
+    4, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,5,1, 0,6,0, 0,10,0, 1,0,1, 1,5,1, 2,4,0, 4,2,1, 4,11,1, 5,0,0, 5,1,0, 6,0,1, 6,13,0, 6,14,0, 8,11,1, 9,10,0, 10,0,1, 10,9,1, 11,4,0, 11,8,0, 11,13,0, 11,14,0, 13,6,1, 13,11,1, 14,6,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 4,7,1, 5,10,0, 7,0,1, 7,4,0, 7,12,1, 10,5,1, 12,7,0, 
     // End marker
     0
   };
@@ -971,29 +971,29 @@ namespace {
     // Total number of words in grid
     84,
     // Length and number of words of that length
-    3, 20,
+    8, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,11,0, 3,4,0, 3,12,1, 4,3,1, 4,7,1, 5,0,1, 5,6,0, 5,10,0, 6,5,1, 7,4,0, 7,8,0, 8,7,1, 9,10,0, 9,12,1, 10,5,1, 10,9,1, 11,0,1, 12,3,0, 12,9,0, 
-    // Length and number of words of that length
-    4, 32,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,5,1, 0,6,0, 0,10,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 4,11,1, 5,0,0, 5,1,0, 5,2,0, 6,0,1, 6,12,0, 6,13,0, 6,14,0, 8,11,1, 10,0,1, 11,4,0, 11,8,0, 11,12,0, 11,13,0, 11,14,0, 12,6,1, 12,11,1, 13,6,1, 13,11,1, 14,6,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,10,1, 0,12,0, 0,13,0, 0,14,0, 1,10,1, 2,10,1, 3,0,1, 3,6,1, 4,11,0, 6,3,0, 10,0,0, 10,1,0, 10,2,0, 10,11,0, 11,4,1, 11,10,1, 12,0,1, 13,0,1, 14,0,1, 
-    // Length and number of words of that length
-    6, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 6,9,1, 8,0,1, 9,6,0, 
+    3,9,0, 4,5,0, 5,4,1, 9,3,1, 
     // Length and number of words of that length
     7, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,7,0, 7,0,1, 7,8,1, 8,7,0, 
     // Length and number of words of that length
-    8, 4,
+    6, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    3,9,0, 4,5,0, 5,4,1, 9,3,1, 
+    0,8,0, 6,9,1, 8,0,1, 9,6,0, 
+    // Length and number of words of that length
+    5, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,10,1, 0,12,0, 0,13,0, 0,14,0, 1,10,1, 2,10,1, 3,0,1, 3,6,1, 4,11,0, 6,3,0, 10,0,0, 10,1,0, 10,2,0, 10,11,0, 11,4,1, 11,10,1, 12,0,1, 13,0,1, 14,0,1, 
+    // Length and number of words of that length
+    4, 32,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,5,1, 0,6,0, 0,10,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 4,11,1, 5,0,0, 5,1,0, 5,2,0, 6,0,1, 6,12,0, 6,13,0, 6,14,0, 8,11,1, 10,0,1, 11,4,0, 11,8,0, 11,12,0, 11,13,0, 11,14,0, 12,6,1, 12,11,1, 13,6,1, 13,11,1, 14,6,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,11,0, 3,4,0, 3,12,1, 4,3,1, 4,7,1, 5,0,1, 5,6,0, 5,10,0, 6,5,1, 7,4,0, 7,8,0, 8,7,1, 9,10,0, 9,12,1, 10,5,1, 10,9,1, 11,0,1, 12,3,0, 12,9,0, 
     // End marker
     0
   };
@@ -1027,25 +1027,25 @@ namespace {
     // Total number of words in grid
     82,
     // Length and number of words of that length
-    3, 16,
+    7, 10,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 3,4,0, 4,3,1, 5,6,0, 5,6,1, 6,5,0, 6,5,1, 6,9,0, 7,0,1, 7,8,0, 7,12,1, 8,7,1, 9,6,1, 9,10,0, 10,9,1, 12,7,0, 
-    // Length and number of words of that length
-    4, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 6,0,1, 8,11,1, 11,0,0, 11,1,0, 11,2,0, 11,8,0, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,5,1, 0,9,0, 1,5,1, 2,5,1, 3,10,0, 4,7,1, 5,0,0, 5,0,1, 5,1,0, 5,2,0, 5,10,1, 5,12,0, 5,13,0, 5,14,0, 7,4,0, 9,0,1, 9,10,1, 10,3,1, 10,5,0, 10,9,0, 12,5,1, 13,5,1, 14,5,1, 
+    0,3,0, 0,11,0, 3,0,1, 3,8,1, 4,7,0, 7,4,1, 8,3,0, 8,11,0, 11,0,1, 11,8,1, 
     // Length and number of words of that length
     6, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,8,0, 6,9,1, 8,0,1, 9,6,0, 
     // Length and number of words of that length
-    7, 10,
+    5, 24,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,11,0, 3,0,1, 3,8,1, 4,7,0, 7,4,1, 8,3,0, 8,11,0, 11,0,1, 11,8,1, 
+    0,5,0, 0,5,1, 0,9,0, 1,5,1, 2,5,1, 3,10,0, 4,7,1, 5,0,0, 5,0,1, 5,1,0, 5,2,0, 5,10,1, 5,12,0, 5,13,0, 5,14,0, 7,4,0, 9,0,1, 9,10,1, 10,3,1, 10,5,0, 10,9,0, 12,5,1, 13,5,1, 14,5,1, 
+    // Length and number of words of that length
+    4, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 6,0,1, 8,11,1, 11,0,0, 11,1,0, 11,2,0, 11,8,0, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 3,4,0, 4,3,1, 5,6,0, 5,6,1, 6,5,0, 6,5,1, 6,9,0, 7,0,1, 7,8,0, 7,12,1, 8,7,1, 9,6,1, 9,10,0, 10,9,1, 12,7,0, 
     // End marker
     0
   };
@@ -1079,29 +1079,29 @@ namespace {
     // Total number of words in grid
     72,
     // Length and number of words of that length
-    4, 38,
+    10, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,5,1, 0,6,0, 0,11,0, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 3,0,1, 4,2,1, 4,4,0, 4,7,1, 6,6,1, 6,11,1, 7,10,0, 8,0,1, 8,5,1, 10,4,1, 10,9,1, 11,0,0, 11,1,0, 11,2,0, 11,3,0, 11,8,0, 11,11,1, 11,13,0, 11,14,0, 12,6,1, 12,11,1, 13,6,1, 13,11,1, 14,6,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 18,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,10,1, 1,10,1, 2,10,1, 3,9,0, 5,0,0, 5,0,1, 5,1,0, 5,13,0, 5,14,0, 6,0,1, 7,5,0, 8,10,1, 9,10,1, 10,9,0, 12,0,1, 13,0,1, 14,0,1, 
-    // Length and number of words of that length
-    6, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,10,0, 9,4,0, 
-    // Length and number of words of that length
-    7, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 7,0,1, 7,8,1, 8,7,0, 
+    0,2,0, 0,3,0, 0,8,0, 3,5,1, 5,6,0, 5,11,0, 5,12,0, 11,0,1, 
     // Length and number of words of that length
     9, 2,
     // Coordinates where words start and direction (0 = horizontal)
     5,6,1, 9,0,1, 
     // Length and number of words of that length
-    10, 8,
+    7, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,3,0, 0,8,0, 3,5,1, 5,6,0, 5,11,0, 5,12,0, 11,0,1, 
+    0,7,0, 7,0,1, 7,8,1, 8,7,0, 
+    // Length and number of words of that length
+    6, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,10,0, 9,4,0, 
+    // Length and number of words of that length
+    5, 18,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,10,1, 1,10,1, 2,10,1, 3,9,0, 5,0,0, 5,0,1, 5,1,0, 5,13,0, 5,14,0, 6,0,1, 7,5,0, 8,10,1, 9,10,1, 10,9,0, 12,0,1, 13,0,1, 14,0,1, 
+    // Length and number of words of that length
+    4, 38,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,5,1, 0,6,0, 0,11,0, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 3,0,1, 4,2,1, 4,4,0, 4,7,1, 6,6,1, 6,11,1, 7,10,0, 8,0,1, 8,5,1, 10,4,1, 10,9,1, 11,0,0, 11,1,0, 11,2,0, 11,3,0, 11,8,0, 11,11,1, 11,13,0, 11,14,0, 12,6,1, 12,11,1, 13,6,1, 13,11,1, 14,6,1, 14,11,1, 
     // End marker
     0
   };
@@ -1139,33 +1139,33 @@ namespace {
     // Total number of words in grid
     128,
     // Length and number of words of that length
-    3, 12,
+    9, 6,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 0,12,0, 3,4,0, 6,16,1, 7,0,1, 9,3,1, 9,13,1, 11,16,1, 12,0,1, 13,14,0, 16,6,0, 16,11,0, 
-    // Length and number of words of that length
-    4, 70,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,5,1, 0,6,0, 0,10,1, 0,11,0, 0,15,1, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,9,0, 2,15,1, 3,8,1, 3,14,0, 4,2,1, 4,7,0, 4,7,1, 5,0,0, 5,1,0, 5,6,0, 5,6,1, 5,17,0, 5,18,0, 6,0,1, 6,5,0, 6,5,1, 7,4,0, 7,4,1, 7,15,0, 7,15,1, 8,3,0, 8,14,0, 9,13,0, 10,0,0, 10,1,0, 10,12,0, 10,17,0, 10,18,0, 11,0,1, 11,11,0, 11,11,1, 12,4,0, 12,10,1, 12,15,1, 13,9,0, 13,9,1, 14,8,1, 14,13,1, 15,0,0, 15,1,0, 15,7,0, 15,7,1, 15,12,0, 15,17,0, 15,18,0, 16,0,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
-    // Length and number of words of that length
-    5, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,10,0, 4,12,0, 4,12,1, 5,0,1, 5,11,0, 6,10,0, 6,10,1, 7,9,0, 7,9,1, 8,8,0, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,0, 10,6,1, 11,5,1, 12,4,1, 13,14,1, 14,2,1, 14,8,0, 14,13,0, 
-    // Length and number of words of that length
-    6, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,15,0, 3,13,1, 13,3,0, 15,0,1, 
-    // Length and number of words of that length
-    7, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,8,0, 3,0,1, 8,0,1, 10,12,1, 12,10,0, 12,15,0, 15,12,1, 
+    0,2,0, 0,16,0, 2,5,1, 10,2,0, 10,16,0, 16,5,1, 
     // Length and number of words of that length
     8, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,13,0, 5,11,1, 11,5,0, 13,0,1, 
     // Length and number of words of that length
-    9, 6,
+    7, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,16,0, 2,5,1, 10,2,0, 10,16,0, 16,5,1, 
+    0,3,0, 0,8,0, 3,0,1, 8,0,1, 10,12,1, 12,10,0, 12,15,0, 15,12,1, 
+    // Length and number of words of that length
+    6, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,15,0, 3,13,1, 13,3,0, 15,0,1, 
+    // Length and number of words of that length
+    5, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,10,0, 4,12,0, 4,12,1, 5,0,1, 5,11,0, 6,10,0, 6,10,1, 7,9,0, 7,9,1, 8,8,0, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,0, 10,6,1, 11,5,1, 12,4,1, 13,14,1, 14,2,1, 14,8,0, 14,13,0, 
+    // Length and number of words of that length
+    4, 70,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,5,1, 0,6,0, 0,10,1, 0,11,0, 0,15,1, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,9,0, 2,15,1, 3,8,1, 3,14,0, 4,2,1, 4,7,0, 4,7,1, 5,0,0, 5,1,0, 5,6,0, 5,6,1, 5,17,0, 5,18,0, 6,0,1, 6,5,0, 6,5,1, 7,4,0, 7,4,1, 7,15,0, 7,15,1, 8,3,0, 8,14,0, 9,13,0, 10,0,0, 10,1,0, 10,12,0, 10,17,0, 10,18,0, 11,0,1, 11,11,0, 11,11,1, 12,4,0, 12,10,1, 12,15,1, 13,9,0, 13,9,1, 14,8,1, 14,13,1, 15,0,0, 15,1,0, 15,7,0, 15,7,1, 15,12,0, 15,17,0, 15,18,0, 16,0,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
+    // Length and number of words of that length
+    3, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 0,12,0, 3,4,0, 6,16,1, 7,0,1, 9,3,1, 9,13,1, 11,16,1, 12,0,1, 13,14,0, 16,6,0, 16,11,0, 
     // End marker
     0
   };
@@ -1203,37 +1203,37 @@ namespace {
     // Total number of words in grid
     118,
     // Length and number of words of that length
-    3, 16,
+    14, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 0,12,0, 4,0,1, 4,4,1, 4,9,1, 6,7,1, 7,16,1, 8,16,1, 10,0,1, 11,0,1, 12,9,1, 14,7,1, 14,12,1, 14,16,1, 16,6,0, 16,11,0, 
-    // Length and number of words of that length
-    4, 44,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,3,0, 0,5,1, 0,8,0, 0,10,1, 0,13,0, 0,15,1, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 3,8,1, 5,2,1, 5,7,1, 5,12,1, 7,6,1, 7,11,1, 8,6,1, 8,11,1, 9,0,1, 9,5,1, 9,10,1, 9,15,1, 10,4,1, 10,9,1, 11,4,1, 11,9,1, 13,3,1, 13,8,1, 13,13,1, 15,5,0, 15,7,1, 15,10,0, 15,15,0, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
-    // Length and number of words of that length
-    5, 30,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,6,0, 0,11,0, 0,16,0, 0,17,0, 0,18,0, 4,14,1, 5,3,0, 5,8,0, 5,13,0, 6,1,1, 7,0,0, 7,0,1, 7,18,0, 8,0,1, 9,5,0, 9,10,0, 9,15,0, 10,14,1, 11,14,1, 12,13,1, 14,0,0, 14,0,1, 14,1,0, 14,2,0, 14,7,0, 14,12,0, 14,17,0, 14,18,0, 
-    // Length and number of words of that length
-    6, 6,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,10,0, 3,4,0, 3,13,1, 10,14,0, 13,8,0, 15,0,1, 
-    // Length and number of words of that length
-    7, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,15,0, 2,9,0, 2,14,0, 3,0,1, 5,12,0, 6,1,0, 6,11,1, 6,17,0, 7,6,0, 10,4,0, 10,9,0, 12,1,1, 12,3,0, 12,13,0, 15,12,1, 
-    // Length and number of words of that length
-    8, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,7,0, 6,11,0, 
+    2,5,1, 16,0,1, 
     // Length and number of words of that length
     13, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,2,0, 6,16,0, 
     // Length and number of words of that length
-    14, 2,
+    8, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    2,5,1, 16,0,1, 
+    5,7,0, 6,11,0, 
+    // Length and number of words of that length
+    7, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,15,0, 2,9,0, 2,14,0, 3,0,1, 5,12,0, 6,1,0, 6,11,1, 6,17,0, 7,6,0, 10,4,0, 10,9,0, 12,1,1, 12,3,0, 12,13,0, 15,12,1, 
+    // Length and number of words of that length
+    6, 6,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,10,0, 3,4,0, 3,13,1, 10,14,0, 13,8,0, 15,0,1, 
+    // Length and number of words of that length
+    5, 30,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,6,0, 0,11,0, 0,16,0, 0,17,0, 0,18,0, 4,14,1, 5,3,0, 5,8,0, 5,13,0, 6,1,1, 7,0,0, 7,0,1, 7,18,0, 8,0,1, 9,5,0, 9,10,0, 9,15,0, 10,14,1, 11,14,1, 12,13,1, 14,0,0, 14,0,1, 14,1,0, 14,2,0, 14,7,0, 14,12,0, 14,17,0, 14,18,0, 
+    // Length and number of words of that length
+    4, 44,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,3,0, 0,5,1, 0,8,0, 0,10,1, 0,13,0, 0,15,1, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 3,8,1, 5,2,1, 5,7,1, 5,12,1, 7,6,1, 7,11,1, 8,6,1, 8,11,1, 9,0,1, 9,5,1, 9,10,1, 9,15,1, 10,4,1, 10,9,1, 11,4,1, 11,9,1, 13,3,1, 13,8,1, 13,13,1, 15,5,0, 15,7,1, 15,10,0, 15,15,0, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 0,12,0, 4,0,1, 4,4,1, 4,9,1, 6,7,1, 7,16,1, 8,16,1, 10,0,1, 11,0,1, 12,9,1, 14,7,1, 14,12,1, 14,16,1, 16,6,0, 16,11,0, 
     // End marker
     0
   };
@@ -1271,33 +1271,33 @@ namespace {
     // Total number of words in grid
     118,
     // Length and number of words of that length
-    3, 20,
+    9, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 0,15,0, 3,0,1, 3,16,1, 7,8,0, 7,8,1, 8,7,0, 8,7,1, 8,11,0, 9,0,1, 9,10,0, 9,16,1, 10,9,1, 11,8,1, 15,0,1, 15,16,1, 16,3,0, 16,9,0, 16,15,0, 
-    // Length and number of words of that length
-    4, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,14,0, 4,0,1, 4,5,1, 4,10,1, 4,15,1, 5,4,0, 5,14,0, 10,4,0, 10,14,0, 14,0,1, 14,5,1, 14,10,1, 14,15,1, 15,4,0, 15,14,0, 
-    // Length and number of words of that length
-    5, 32,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,7,1, 0,13,0, 1,7,1, 2,7,1, 3,4,1, 3,6,0, 3,10,1, 4,3,0, 4,15,0, 5,0,1, 5,14,1, 6,3,1, 7,0,0, 7,1,0, 7,2,0, 7,16,0, 7,17,0, 7,18,0, 10,3,0, 10,15,0, 11,12,0, 12,11,1, 13,0,1, 13,14,1, 14,5,0, 14,13,0, 15,4,1, 15,10,1, 16,7,1, 17,7,1, 18,7,1, 
-    // Length and number of words of that length
-    6, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,8,0, 0,13,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,13,1, 2,0,1, 2,13,1, 8,0,1, 10,13,1, 13,0,0, 13,1,0, 13,2,0, 13,10,0, 13,16,0, 13,17,0, 13,18,0, 16,0,1, 16,13,1, 17,0,1, 17,13,1, 18,0,1, 18,13,1, 
-    // Length and number of words of that length
-    7, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 0,11,0, 3,12,0, 5,6,1, 6,5,0, 6,9,1, 6,13,0, 7,0,1, 7,12,1, 9,6,0, 11,0,1, 11,12,1, 12,3,1, 12,7,0, 12,11,0, 13,6,1, 
+    5,9,0, 9,5,1, 
     // Length and number of words of that length
     8, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,10,0, 8,11,1, 10,0,1, 11,8,0, 
     // Length and number of words of that length
-    9, 2,
+    7, 16,
     // Coordinates where words start and direction (0 = horizontal)
-    5,9,0, 9,5,1, 
+    0,7,0, 0,11,0, 3,12,0, 5,6,1, 6,5,0, 6,9,1, 6,13,0, 7,0,1, 7,12,1, 9,6,0, 11,0,1, 11,12,1, 12,3,1, 12,7,0, 12,11,0, 13,6,1, 
+    // Length and number of words of that length
+    6, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,8,0, 0,13,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,13,1, 2,0,1, 2,13,1, 8,0,1, 10,13,1, 13,0,0, 13,1,0, 13,2,0, 13,10,0, 13,16,0, 13,17,0, 13,18,0, 16,0,1, 16,13,1, 17,0,1, 17,13,1, 18,0,1, 18,13,1, 
+    // Length and number of words of that length
+    5, 32,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,7,1, 0,13,0, 1,7,1, 2,7,1, 3,4,1, 3,6,0, 3,10,1, 4,3,0, 4,15,0, 5,0,1, 5,14,1, 6,3,1, 7,0,0, 7,1,0, 7,2,0, 7,16,0, 7,17,0, 7,18,0, 10,3,0, 10,15,0, 11,12,0, 12,11,1, 13,0,1, 13,14,1, 14,5,0, 14,13,0, 15,4,1, 15,10,1, 16,7,1, 17,7,1, 18,7,1, 
+    // Length and number of words of that length
+    4, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,14,0, 4,0,1, 4,5,1, 4,10,1, 4,15,1, 5,4,0, 5,14,0, 10,4,0, 10,14,0, 14,0,1, 14,5,1, 14,10,1, 14,15,1, 15,4,0, 15,14,0, 
+    // Length and number of words of that length
+    3, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,9,0, 0,15,0, 3,0,1, 3,16,1, 7,8,0, 7,8,1, 8,7,0, 8,7,1, 8,11,0, 9,0,1, 9,10,0, 9,16,1, 10,9,1, 11,8,1, 15,0,1, 15,16,1, 16,3,0, 16,9,0, 16,15,0, 
     // End marker
     0
   };
@@ -1335,29 +1335,29 @@ namespace {
     // Total number of words in grid
     132,
     // Length and number of words of that length
-    3, 52,
+    13, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,7,0, 0,11,0, 0,15,0, 3,0,1, 3,4,1, 3,8,1, 3,12,1, 3,16,1, 4,3,0, 4,5,1, 4,7,0, 4,11,0, 4,11,1, 4,15,0, 5,4,0, 5,9,0, 5,14,0, 7,0,1, 7,4,1, 7,8,1, 7,12,1, 7,16,1, 8,3,0, 8,7,0, 8,11,0, 8,15,0, 9,5,1, 9,11,1, 11,0,1, 11,4,0, 11,4,1, 11,8,1, 11,9,0, 11,12,1, 11,14,0, 11,16,1, 12,3,0, 12,7,0, 12,11,0, 12,15,0, 14,5,1, 14,11,1, 15,0,1, 15,4,1, 15,8,1, 15,12,1, 15,16,1, 16,3,0, 16,7,0, 16,11,0, 16,15,0, 
-    // Length and number of words of that length
-    4, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,8,0, 0,9,0, 0,10,0, 0,14,0, 4,0,1, 4,15,1, 5,8,0, 5,10,0, 8,0,1, 8,5,1, 8,10,1, 8,15,1, 9,0,1, 9,15,1, 10,0,1, 10,5,1, 10,8,0, 10,10,0, 10,10,1, 10,15,1, 14,0,1, 14,15,1, 15,4,0, 15,8,0, 15,9,0, 15,10,0, 15,14,0, 
-    // Length and number of words of that length
-    5, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,14,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,14,1, 2,0,1, 2,14,1, 6,7,1, 7,6,0, 7,12,0, 12,7,1, 14,0,0, 14,1,0, 14,2,0, 14,16,0, 14,17,0, 14,18,0, 16,0,1, 16,14,1, 17,0,1, 17,14,1, 18,0,1, 18,14,1, 
-    // Length and number of words of that length
-    6, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,12,0, 6,0,1, 6,13,1, 12,0,1, 12,13,1, 13,6,0, 13,12,0, 
+    3,5,0, 3,13,0, 5,3,1, 13,3,1, 
     // Length and number of words of that length
     7, 12,
     // Coordinates where words start and direction (0 = horizontal)
     0,6,1, 1,6,1, 2,6,1, 6,0,0, 6,1,0, 6,2,0, 6,16,0, 6,17,0, 6,18,0, 16,6,1, 17,6,1, 18,6,1, 
     // Length and number of words of that length
-    13, 4,
+    6, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    3,5,0, 3,13,0, 5,3,1, 13,3,1, 
+    0,6,0, 0,12,0, 6,0,1, 6,13,1, 12,0,1, 12,13,1, 13,6,0, 13,12,0, 
+    // Length and number of words of that length
+    5, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,14,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,14,1, 2,0,1, 2,14,1, 6,7,1, 7,6,0, 7,12,0, 12,7,1, 14,0,0, 14,1,0, 14,2,0, 14,16,0, 14,17,0, 14,18,0, 16,0,1, 16,14,1, 17,0,1, 17,14,1, 18,0,1, 18,14,1, 
+    // Length and number of words of that length
+    4, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,8,0, 0,9,0, 0,10,0, 0,14,0, 4,0,1, 4,15,1, 5,8,0, 5,10,0, 8,0,1, 8,5,1, 8,10,1, 8,15,1, 9,0,1, 9,15,1, 10,0,1, 10,5,1, 10,8,0, 10,10,0, 10,10,1, 10,15,1, 14,0,1, 14,15,1, 15,4,0, 15,8,0, 15,9,0, 15,10,0, 15,14,0, 
+    // Length and number of words of that length
+    3, 52,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,7,0, 0,11,0, 0,15,0, 3,0,1, 3,4,1, 3,8,1, 3,12,1, 3,16,1, 4,3,0, 4,5,1, 4,7,0, 4,11,0, 4,11,1, 4,15,0, 5,4,0, 5,9,0, 5,14,0, 7,0,1, 7,4,1, 7,8,1, 7,12,1, 7,16,1, 8,3,0, 8,7,0, 8,11,0, 8,15,0, 9,5,1, 9,11,1, 11,0,1, 11,4,0, 11,4,1, 11,8,1, 11,9,0, 11,12,1, 11,14,0, 11,16,1, 12,3,0, 12,7,0, 12,11,0, 12,15,0, 14,5,1, 14,11,1, 15,0,1, 15,4,1, 15,8,1, 15,12,1, 15,16,1, 16,3,0, 16,7,0, 16,11,0, 16,15,0, 
     // End marker
     0
   };
@@ -1395,33 +1395,33 @@ namespace {
     // Total number of words in grid
     126,
     // Length and number of words of that length
-    3, 25,
+    19, 1,
     // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,11,0, 0,16,1, 1,16,1, 2,16,1, 4,9,1, 4,13,1, 5,9,1, 6,0,0, 7,0,1, 7,16,1, 8,3,0, 8,15,0, 9,8,1, 10,18,0, 11,0,1, 11,16,1, 13,7,1, 14,3,1, 14,7,1, 16,0,1, 16,7,0, 16,12,0, 17,0,1, 18,0,1, 
-    // Length and number of words of that length
-    4, 62,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,8,0, 0,11,1, 0,12,0, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,7,1, 3,10,0, 3,15,0, 4,3,1, 4,6,0, 4,11,0, 5,1,0, 5,2,0, 5,7,0, 5,16,0, 5,17,0, 5,18,0, 6,12,0, 7,11,1, 8,7,1, 9,3,1, 9,6,0, 9,12,1, 10,0,0, 10,1,0, 10,2,0, 10,8,1, 10,11,0, 10,16,0, 10,17,0, 11,4,1, 11,7,0, 11,12,0, 12,3,0, 12,8,0, 14,12,1, 15,0,0, 15,1,0, 15,2,0, 15,6,0, 15,8,1, 15,10,0, 15,11,0, 15,16,0, 15,17,0, 15,18,0, 16,4,1, 16,15,1, 17,4,1, 17,15,1, 18,4,1, 18,15,1, 
-    // Length and number of words of that length
-    5, 18,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,13,0, 1,5,1, 2,5,1, 5,14,1, 6,0,1, 6,8,0, 6,14,1, 7,5,0, 7,13,0, 8,10,0, 12,0,1, 12,14,1, 13,0,1, 14,5,0, 16,9,1, 17,9,1, 18,9,1, 
-    // Length and number of words of that length
-    6, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 3,0,1, 7,4,1, 8,0,1, 10,13,1, 11,9,1, 13,13,0, 15,13,1, 
-    // Length and number of words of that length
-    7, 10,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 3,12,1, 5,1,1, 6,6,1, 8,12,1, 10,0,1, 12,6,1, 12,15,0, 13,11,1, 15,0,1, 
+    0,9,0, 
     // Length and number of words of that length
     16, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,14,0, 3,4,0, 
     // Length and number of words of that length
-    19, 1,
+    7, 10,
     // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 
+    0,3,0, 3,12,1, 5,1,1, 6,6,1, 8,12,1, 10,0,1, 12,6,1, 12,15,0, 13,11,1, 15,0,1, 
+    // Length and number of words of that length
+    6, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 3,0,1, 7,4,1, 8,0,1, 10,13,1, 11,9,1, 13,13,0, 15,13,1, 
+    // Length and number of words of that length
+    5, 18,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 0,13,0, 1,5,1, 2,5,1, 5,14,1, 6,0,1, 6,8,0, 6,14,1, 7,5,0, 7,13,0, 8,10,0, 12,0,1, 12,14,1, 13,0,1, 14,5,0, 16,9,1, 17,9,1, 18,9,1, 
+    // Length and number of words of that length
+    4, 62,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,8,0, 0,11,1, 0,12,0, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,7,1, 3,10,0, 3,15,0, 4,3,1, 4,6,0, 4,11,0, 5,1,0, 5,2,0, 5,7,0, 5,16,0, 5,17,0, 5,18,0, 6,12,0, 7,11,1, 8,7,1, 9,3,1, 9,6,0, 9,12,1, 10,0,0, 10,1,0, 10,2,0, 10,8,1, 10,11,0, 10,16,0, 10,17,0, 11,4,1, 11,7,0, 11,12,0, 12,3,0, 12,8,0, 14,12,1, 15,0,0, 15,1,0, 15,2,0, 15,6,0, 15,8,1, 15,10,0, 15,11,0, 15,16,0, 15,17,0, 15,18,0, 16,4,1, 16,15,1, 17,4,1, 17,15,1, 18,4,1, 18,15,1, 
+    // Length and number of words of that length
+    3, 25,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,11,0, 0,16,1, 1,16,1, 2,16,1, 4,9,1, 4,13,1, 5,9,1, 6,0,0, 7,0,1, 7,16,1, 8,3,0, 8,15,0, 9,8,1, 10,18,0, 11,0,1, 11,16,1, 13,7,1, 14,3,1, 14,7,1, 16,0,1, 16,7,0, 16,12,0, 17,0,1, 18,0,1, 
     // End marker
     0
   };
@@ -1459,37 +1459,37 @@ namespace {
     // Total number of words in grid
     128,
     // Length and number of words of that length
-    3, 32,
+    11, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,11,0, 0,12,0, 0,16,1, 1,3,0, 1,16,1, 2,16,1, 3,4,0, 4,4,1, 4,8,1, 5,7,0, 5,7,1, 6,6,0, 7,5,1, 8,4,0, 8,14,0, 9,3,1, 9,13,1, 10,12,0, 11,11,0, 11,11,1, 13,9,1, 13,14,0, 14,8,1, 14,12,1, 15,15,0, 16,0,1, 16,6,0, 16,7,0, 17,0,1, 18,0,1, 18,16,1, 
-    // Length and number of words of that length
-    4, 58,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,2,0, 0,5,1, 0,7,0, 0,10,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 2,0,1, 2,9,0, 2,14,0, 4,12,1, 5,0,0, 5,1,0, 5,2,0, 5,16,0, 5,17,0, 5,18,0, 6,0,1, 6,5,0, 6,5,1, 6,10,1, 6,15,1, 7,0,1, 7,15,1, 9,13,0, 10,0,0, 10,1,0, 10,2,0, 10,16,0, 10,17,0, 10,18,0, 11,0,1, 11,15,1, 12,0,1, 12,5,1, 12,10,1, 12,15,1, 13,4,0, 13,9,0, 14,3,1, 15,0,0, 15,1,0, 15,2,0, 15,11,0, 15,16,0, 15,17,0, 15,18,0, 16,15,1, 17,5,1, 17,10,1, 17,15,1, 18,5,1, 18,10,1, 
-    // Length and number of words of that length
-    5, 22,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,6,0, 0,10,0, 4,12,0, 5,0,1, 5,11,0, 6,10,0, 7,9,0, 7,9,1, 8,8,0, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,0, 10,6,1, 11,5,1, 13,14,1, 14,8,0, 14,12,0, 14,13,0, 
-    // Length and number of words of that length
-    6, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    3,13,1, 15,0,1, 
-    // Length and number of words of that length
-    7, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 8,0,1, 10,12,1, 12,10,0, 
-    // Length and number of words of that length
-    8, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,13,0, 5,11,1, 11,5,0, 13,0,1, 
+    3,0,1, 3,15,0, 5,3,0, 15,8,1, 
     // Length and number of words of that length
     10, 2,
     // Coordinates where words start and direction (0 = horizontal)
     2,5,1, 16,4,1, 
     // Length and number of words of that length
-    11, 4,
+    8, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    3,0,1, 3,15,0, 5,3,0, 15,8,1, 
+    0,13,0, 5,11,1, 11,5,0, 13,0,1, 
+    // Length and number of words of that length
+    7, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 8,0,1, 10,12,1, 12,10,0, 
+    // Length and number of words of that length
+    6, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,13,1, 15,0,1, 
+    // Length and number of words of that length
+    5, 22,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,6,0, 0,10,0, 4,12,0, 5,0,1, 5,11,0, 6,10,0, 7,9,0, 7,9,1, 8,8,0, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,0, 10,6,1, 11,5,1, 13,14,1, 14,8,0, 14,12,0, 14,13,0, 
+    // Length and number of words of that length
+    4, 58,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,2,0, 0,5,1, 0,7,0, 0,10,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 2,0,1, 2,9,0, 2,14,0, 4,12,1, 5,0,0, 5,1,0, 5,2,0, 5,16,0, 5,17,0, 5,18,0, 6,0,1, 6,5,0, 6,5,1, 6,10,1, 6,15,1, 7,0,1, 7,15,1, 9,13,0, 10,0,0, 10,1,0, 10,2,0, 10,16,0, 10,17,0, 10,18,0, 11,0,1, 11,15,1, 12,0,1, 12,5,1, 12,10,1, 12,15,1, 13,4,0, 13,9,0, 14,3,1, 15,0,0, 15,1,0, 15,2,0, 15,11,0, 15,16,0, 15,17,0, 15,18,0, 16,15,1, 17,5,1, 17,10,1, 17,15,1, 18,5,1, 18,10,1, 
+    // Length and number of words of that length
+    3, 32,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,11,0, 0,12,0, 0,16,1, 1,3,0, 1,16,1, 2,16,1, 3,4,0, 4,4,1, 4,8,1, 5,7,0, 5,7,1, 6,6,0, 7,5,1, 8,4,0, 8,14,0, 9,3,1, 9,13,1, 10,12,0, 11,11,0, 11,11,1, 13,9,1, 13,14,0, 14,8,1, 14,12,1, 15,15,0, 16,0,1, 16,6,0, 16,7,0, 17,0,1, 18,0,1, 18,16,1, 
     // End marker
     0
   };
@@ -1527,37 +1527,37 @@ namespace {
     // Total number of words in grid
     134,
     // Length and number of words of that length
-    3, 40,
+    15, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,16,0, 0,17,0, 0,18,0, 3,0,1, 3,14,0, 4,4,0, 4,8,1, 4,12,1, 4,16,1, 5,7,0, 5,12,1, 5,16,1, 6,11,0, 6,11,1, 7,5,1, 7,10,1, 8,0,1, 8,4,1, 8,9,0, 9,8,1, 10,7,0, 10,12,1, 10,16,1, 11,6,1, 11,11,0, 11,11,1, 12,5,1, 12,14,0, 13,0,1, 13,4,0, 13,4,1, 14,0,1, 14,4,1, 14,8,1, 15,16,1, 16,0,0, 16,1,0, 16,2,0, 16,15,0, 
-    // Length and number of words of that length
-    4, 66,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,5,1, 0,7,0, 0,10,1, 0,11,0, 0,15,0, 0,15,1, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,5,1, 2,10,1, 2,15,1, 3,9,0, 4,3,0, 4,17,0, 4,18,0, 5,2,1, 5,7,1, 6,0,0, 6,1,0, 6,6,0, 6,6,1, 6,15,0, 6,15,1, 7,0,1, 7,5,0, 7,10,0, 7,14,0, 8,4,0, 8,8,0, 8,8,1, 8,13,0, 8,13,1, 9,3,0, 9,12,0, 9,17,0, 9,18,0, 10,2,1, 10,7,1, 11,0,0, 11,1,0, 11,15,0, 11,15,1, 12,0,1, 12,9,0, 12,9,1, 13,8,1, 13,13,1, 15,3,0, 15,7,0, 15,11,0, 16,0,1, 16,5,1, 16,10,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
-    // Length and number of words of that length
-    5, 10,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,6,0, 6,0,1, 7,14,1, 11,0,1, 12,14,1, 14,12,0, 14,17,0, 14,18,0, 
-    // Length and number of words of that length
-    6, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,10,0, 13,8,0, 13,13,0, 
-    // Length and number of words of that length
-    7, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,13,0, 4,0,1, 9,0,1, 9,12,1, 12,5,0, 12,10,0, 14,12,1, 
-    // Length and number of words of that length
-    8, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,12,0, 11,6,0, 
+    0,2,0, 4,16,0, 
     // Length and number of words of that length
     11, 2,
     // Coordinates where words start and direction (0 = horizontal)
     3,5,1, 15,3,1, 
     // Length and number of words of that length
-    15, 2,
+    8, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 4,16,0, 
+    0,12,0, 11,6,0, 
+    // Length and number of words of that length
+    7, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,13,0, 4,0,1, 9,0,1, 9,12,1, 12,5,0, 12,10,0, 14,12,1, 
+    // Length and number of words of that length
+    6, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,10,0, 13,8,0, 13,13,0, 
+    // Length and number of words of that length
+    5, 10,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,6,0, 6,0,1, 7,14,1, 11,0,1, 12,14,1, 14,12,0, 14,17,0, 14,18,0, 
+    // Length and number of words of that length
+    4, 66,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,5,1, 0,7,0, 0,10,1, 0,11,0, 0,15,0, 0,15,1, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,5,1, 2,10,1, 2,15,1, 3,9,0, 4,3,0, 4,17,0, 4,18,0, 5,2,1, 5,7,1, 6,0,0, 6,1,0, 6,6,0, 6,6,1, 6,15,0, 6,15,1, 7,0,1, 7,5,0, 7,10,0, 7,14,0, 8,4,0, 8,8,0, 8,8,1, 8,13,0, 8,13,1, 9,3,0, 9,12,0, 9,17,0, 9,18,0, 10,2,1, 10,7,1, 11,0,0, 11,1,0, 11,15,0, 11,15,1, 12,0,1, 12,9,0, 12,9,1, 13,8,1, 13,13,1, 15,3,0, 15,7,0, 15,11,0, 16,0,1, 16,5,1, 16,10,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
+    // Length and number of words of that length
+    3, 40,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,16,0, 0,17,0, 0,18,0, 3,0,1, 3,14,0, 4,4,0, 4,8,1, 4,12,1, 4,16,1, 5,7,0, 5,12,1, 5,16,1, 6,11,0, 6,11,1, 7,5,1, 7,10,1, 8,0,1, 8,4,1, 8,9,0, 9,8,1, 10,7,0, 10,12,1, 10,16,1, 11,6,1, 11,11,0, 11,11,1, 12,5,1, 12,14,0, 13,0,1, 13,4,0, 13,4,1, 14,0,1, 14,4,1, 14,8,1, 15,16,1, 16,0,0, 16,1,0, 16,2,0, 16,15,0, 
     // End marker
     0
   };
@@ -1595,37 +1595,37 @@ namespace {
     // Total number of words in grid
     130,
     // Length and number of words of that length
-    3, 20,
+    12, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 3,4,0, 3,9,0, 3,14,0, 4,8,1, 4,13,1, 5,11,0, 8,12,1, 8,16,1, 9,3,1, 9,13,1, 10,0,1, 10,4,1, 11,7,0, 13,4,0, 13,9,0, 13,14,0, 14,3,1, 14,8,1, 16,12,0, 
-    // Length and number of words of that length
-    4, 74,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,5,1, 0,7,0, 0,10,1, 0,11,0, 0,12,0, 0,15,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,5,1, 2,10,1, 2,15,1, 4,3,1, 5,0,0, 5,1,0, 5,2,0, 5,9,1, 5,12,0, 5,16,0, 5,17,0, 5,18,0, 6,0,1, 6,5,1, 6,10,1, 6,13,0, 6,15,1, 7,0,1, 7,14,0, 8,4,0, 9,5,0, 10,0,0, 10,1,0, 10,2,0, 10,6,0, 10,16,0, 10,17,0, 10,18,0, 11,15,1, 12,0,1, 12,5,1, 12,10,1, 12,15,1, 13,6,1, 14,12,1, 15,0,0, 15,1,0, 15,2,0, 15,6,0, 15,7,0, 15,11,0, 15,16,0, 15,17,0, 15,18,0, 16,0,1, 16,5,1, 16,10,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
-    // Length and number of words of that length
-    5, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,13,0, 4,6,0, 5,7,0, 5,14,1, 6,8,0, 7,5,1, 7,9,0, 8,0,1, 8,6,1, 8,10,0, 9,7,1, 9,11,0, 10,8,1, 10,12,0, 10,14,1, 11,9,1, 13,0,1, 14,5,0, 14,10,0, 
-    // Length and number of words of that length
-    6, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    3,0,1, 15,13,1, 
-    // Length and number of words of that length
-    7, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,10,0, 12,8,0, 
-    // Length and number of words of that length
-    8, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,15,0, 5,0,1, 7,11,1, 11,0,1, 11,3,0, 11,13,0, 13,11,1, 
+    3,7,1, 15,0,1, 
     // Length and number of words of that length
     10, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 9,15,0, 
     // Length and number of words of that length
-    12, 2,
+    8, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    3,7,1, 15,0,1, 
+    0,5,0, 0,15,0, 5,0,1, 7,11,1, 11,0,1, 11,3,0, 11,13,0, 13,11,1, 
+    // Length and number of words of that length
+    7, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,10,0, 12,8,0, 
+    // Length and number of words of that length
+    6, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,0,1, 15,13,1, 
+    // Length and number of words of that length
+    5, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,13,0, 4,6,0, 5,7,0, 5,14,1, 6,8,0, 7,5,1, 7,9,0, 8,0,1, 8,6,1, 8,10,0, 9,7,1, 9,11,0, 10,8,1, 10,12,0, 10,14,1, 11,9,1, 13,0,1, 14,5,0, 14,10,0, 
+    // Length and number of words of that length
+    4, 74,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,5,1, 0,7,0, 0,10,1, 0,11,0, 0,12,0, 0,15,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,5,1, 2,10,1, 2,15,1, 4,3,1, 5,0,0, 5,1,0, 5,2,0, 5,9,1, 5,12,0, 5,16,0, 5,17,0, 5,18,0, 6,0,1, 6,5,1, 6,10,1, 6,13,0, 6,15,1, 7,0,1, 7,14,0, 8,4,0, 9,5,0, 10,0,0, 10,1,0, 10,2,0, 10,6,0, 10,16,0, 10,17,0, 10,18,0, 11,15,1, 12,0,1, 12,5,1, 12,10,1, 12,15,1, 13,6,1, 14,12,1, 15,0,0, 15,1,0, 15,2,0, 15,6,0, 15,7,0, 15,11,0, 15,16,0, 15,17,0, 15,18,0, 16,0,1, 16,5,1, 16,10,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
+    // Length and number of words of that length
+    3, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 3,4,0, 3,9,0, 3,14,0, 4,8,1, 4,13,1, 5,11,0, 8,12,1, 8,16,1, 9,3,1, 9,13,1, 10,0,1, 10,4,1, 11,7,0, 13,4,0, 13,9,0, 13,14,0, 14,3,1, 14,8,1, 16,12,0, 
     // End marker
     0
   };
@@ -1663,37 +1663,37 @@ namespace {
     // Total number of words in grid
     130,
     // Length and number of words of that length
-    3, 32,
+    15, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 0,11,0, 0,15,0, 3,8,1, 3,12,1, 3,16,1, 4,8,1, 4,13,1, 5,7,0, 5,7,1, 6,6,0, 6,6,1, 7,5,0, 7,5,1, 8,4,0, 8,14,0, 9,3,1, 9,13,0, 9,13,1, 10,12,0, 11,11,0, 11,11,1, 12,10,1, 13,9,1, 14,3,1, 14,8,1, 15,0,1, 15,4,1, 15,8,1, 16,3,0, 16,7,0, 16,11,0, 
-    // Length and number of words of that length
-    4, 62,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,5,1, 0,10,1, 0,12,0, 0,15,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,9,0, 2,14,0, 3,4,0, 4,3,1, 5,0,0, 5,1,0, 5,2,0, 5,12,0, 5,16,0, 5,17,0, 5,18,0, 6,10,1, 6,15,1, 7,0,1, 7,15,1, 10,0,0, 10,1,0, 10,2,0, 10,6,0, 10,16,0, 10,17,0, 10,18,0, 11,0,1, 11,15,1, 12,0,1, 12,5,1, 12,14,0, 13,4,0, 13,9,0, 14,12,1, 15,0,0, 15,1,0, 15,2,0, 15,6,0, 15,16,0, 15,17,0, 15,18,0, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
-    // Length and number of words of that length
-    5, 18,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,10,0, 5,11,0, 6,0,1, 6,10,0, 7,9,0, 7,9,1, 8,8,0, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,1, 11,5,1, 12,14,1, 14,8,0, 14,12,0, 
-    // Length and number of words of that length
-    6, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 5,0,1, 13,13,0, 13,13,1, 
-    // Length and number of words of that length
-    7, 6,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 3,0,1, 8,0,1, 10,12,1, 12,10,0, 15,12,1, 
-    // Length and number of words of that length
-    8, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,13,0, 5,11,1, 11,5,0, 13,0,1, 
+    0,3,0, 4,15,0, 
     // Length and number of words of that length
     14, 2,
     // Coordinates where words start and direction (0 = horizontal)
     2,5,1, 16,0,1, 
     // Length and number of words of that length
-    15, 2,
+    8, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 4,15,0, 
+    0,13,0, 5,11,1, 11,5,0, 13,0,1, 
+    // Length and number of words of that length
+    7, 6,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 3,0,1, 8,0,1, 10,12,1, 12,10,0, 15,12,1, 
+    // Length and number of words of that length
+    6, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 5,0,1, 13,13,0, 13,13,1, 
+    // Length and number of words of that length
+    5, 18,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,10,0, 5,11,0, 6,0,1, 6,10,0, 7,9,0, 7,9,1, 8,8,0, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,1, 11,5,1, 12,14,1, 14,8,0, 14,12,0, 
+    // Length and number of words of that length
+    4, 62,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,5,1, 0,10,1, 0,12,0, 0,15,1, 0,16,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,1, 2,0,1, 2,9,0, 2,14,0, 3,4,0, 4,3,1, 5,0,0, 5,1,0, 5,2,0, 5,12,0, 5,16,0, 5,17,0, 5,18,0, 6,10,1, 6,15,1, 7,0,1, 7,15,1, 10,0,0, 10,1,0, 10,2,0, 10,6,0, 10,16,0, 10,17,0, 10,18,0, 11,0,1, 11,15,1, 12,0,1, 12,5,1, 12,14,0, 13,4,0, 13,9,0, 14,12,1, 15,0,0, 15,1,0, 15,2,0, 15,6,0, 15,16,0, 15,17,0, 15,18,0, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,0,1, 18,5,1, 18,10,1, 18,15,1, 
+    // Length and number of words of that length
+    3, 32,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 0,11,0, 0,15,0, 3,8,1, 3,12,1, 3,16,1, 4,8,1, 4,13,1, 5,7,0, 5,7,1, 6,6,0, 6,6,1, 7,5,0, 7,5,1, 8,4,0, 8,14,0, 9,3,1, 9,13,0, 9,13,1, 10,12,0, 11,11,0, 11,11,1, 12,10,1, 13,9,1, 14,3,1, 14,8,1, 15,0,1, 15,4,1, 15,8,1, 16,3,0, 16,7,0, 16,11,0, 
     // End marker
     0
   };
@@ -1731,37 +1731,37 @@ namespace {
     // Total number of words in grid
     128,
     // Length and number of words of that length
-    3, 18,
+    19, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,5,1, 0,7,0, 0,12,0, 0,16,1, 3,4,0, 5,16,1, 6,16,1, 7,0,1, 11,16,1, 12,0,1, 13,0,1, 13,14,0, 16,6,0, 16,11,0, 16,18,0, 18,0,1, 18,11,1, 
-    // Length and number of words of that length
-    4, 78,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,1,0, 0,6,0, 0,10,1, 0,11,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,0, 1,15,1, 2,0,1, 2,5,1, 2,10,1, 2,15,1, 3,8,1, 3,14,0, 4,2,1, 4,7,0, 4,7,1, 4,13,1, 5,0,0, 5,1,0, 5,6,0, 5,6,1, 5,11,1, 5,12,0, 5,17,0, 5,18,0, 6,0,1, 6,5,0, 6,11,1, 7,4,0, 7,4,1, 7,10,0, 7,15,0, 7,15,1, 8,3,0, 8,8,0, 8,14,0, 9,2,1, 9,13,0, 9,13,1, 10,0,0, 10,1,0, 10,6,0, 10,12,0, 10,17,0, 10,18,0, 11,0,1, 11,11,0, 11,11,1, 12,4,0, 12,4,1, 12,15,1, 13,4,1, 13,9,1, 14,2,1, 14,3,0, 14,8,1, 14,13,1, 15,0,0, 15,1,0, 15,7,0, 15,7,1, 15,12,0, 15,17,0, 16,0,1, 16,5,1, 16,10,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,5,1, 18,15,1, 
-    // Length and number of words of that length
-    5, 17,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,10,0, 5,0,1, 5,11,0, 6,5,1, 7,9,1, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,1, 11,5,1, 12,9,1, 13,14,1, 14,8,0, 14,13,0, 
-    // Length and number of words of that length
-    6, 6,
-    // Coordinates where words start and direction (0 = horizontal)
-    1,8,0, 3,1,1, 3,13,1, 12,10,0, 15,0,1, 15,12,1, 
-    // Length and number of words of that length
-    7, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 8,0,1, 10,12,1, 12,15,0, 
-    // Length and number of words of that length
-    8, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,13,0, 11,5,0, 
+    0,2,0, 0,16,0, 
     // Length and number of words of that length
     13, 1,
     // Coordinates where words start and direction (0 = horizontal)
     3,9,0, 
     // Length and number of words of that length
-    19, 2,
+    8, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,16,0, 
+    0,13,0, 11,5,0, 
+    // Length and number of words of that length
+    7, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 8,0,1, 10,12,1, 12,15,0, 
+    // Length and number of words of that length
+    6, 6,
+    // Coordinates where words start and direction (0 = horizontal)
+    1,8,0, 3,1,1, 3,13,1, 12,10,0, 15,0,1, 15,12,1, 
+    // Length and number of words of that length
+    5, 17,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,10,0, 5,0,1, 5,11,0, 6,5,1, 7,9,1, 8,8,1, 8,14,1, 9,7,0, 9,7,1, 10,0,1, 10,6,1, 11,5,1, 12,9,1, 13,14,1, 14,8,0, 14,13,0, 
+    // Length and number of words of that length
+    4, 78,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,1,0, 0,6,0, 0,10,1, 0,11,0, 0,17,0, 0,18,0, 1,0,1, 1,5,1, 1,10,1, 1,15,0, 1,15,1, 2,0,1, 2,5,1, 2,10,1, 2,15,1, 3,8,1, 3,14,0, 4,2,1, 4,7,0, 4,7,1, 4,13,1, 5,0,0, 5,1,0, 5,6,0, 5,6,1, 5,11,1, 5,12,0, 5,17,0, 5,18,0, 6,0,1, 6,5,0, 6,11,1, 7,4,0, 7,4,1, 7,10,0, 7,15,0, 7,15,1, 8,3,0, 8,8,0, 8,14,0, 9,2,1, 9,13,0, 9,13,1, 10,0,0, 10,1,0, 10,6,0, 10,12,0, 10,17,0, 10,18,0, 11,0,1, 11,11,0, 11,11,1, 12,4,0, 12,4,1, 12,15,1, 13,4,1, 13,9,1, 14,2,1, 14,3,0, 14,8,1, 14,13,1, 15,0,0, 15,1,0, 15,7,0, 15,7,1, 15,12,0, 15,17,0, 16,0,1, 16,5,1, 16,10,1, 16,15,1, 17,0,1, 17,5,1, 17,10,1, 17,15,1, 18,5,1, 18,15,1, 
+    // Length and number of words of that length
+    3, 18,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,5,1, 0,7,0, 0,12,0, 0,16,1, 3,4,0, 5,16,1, 6,16,1, 7,0,1, 11,16,1, 12,0,1, 13,0,1, 13,14,0, 16,6,0, 16,11,0, 16,18,0, 18,0,1, 18,11,1, 
     // End marker
     0
   };
@@ -1801,45 +1801,45 @@ namespace {
     // Total number of words in grid
     138,
     // Length and number of words of that length
-    3, 10,
+    12, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,14,0, 6,18,1, 7,13,1, 8,0,1, 12,18,1, 13,5,1, 14,0,1, 18,6,0, 18,12,0, 
-    // Length and number of words of that length
-    4, 40,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,7,0, 0,13,0, 0,17,1, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,4,0, 3,16,0, 5,7,0, 5,13,0, 6,19,0, 6,20,0, 7,0,1, 7,17,1, 8,11,0, 9,9,0, 10,3,1, 10,14,1, 11,0,0, 11,1,0, 12,7,0, 12,13,0, 13,0,1, 13,17,1, 14,4,0, 14,16,0, 17,7,0, 17,13,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
-    // Length and number of words of that length
-    5, 50,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,6,0, 0,11,1, 0,19,0, 0,20,0, 1,5,1, 1,11,1, 2,10,0, 3,9,1, 4,2,1, 4,8,1, 5,0,0, 5,1,0, 6,0,1, 6,6,1, 6,12,1, 7,5,0, 7,5,1, 7,17,0, 8,4,0, 8,4,1, 8,10,0, 8,10,1, 8,16,0, 8,16,1, 9,3,0, 9,8,1, 9,15,0, 10,8,1, 11,8,1, 11,19,0, 11,20,0, 12,0,1, 12,6,1, 12,12,1, 13,11,1, 14,4,1, 14,10,0, 14,10,1, 14,16,1, 16,0,0, 16,1,0, 16,8,1, 16,14,0, 16,14,1, 17,7,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
-    // Length and number of words of that length
-    6, 10,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,11,0, 0,17,0, 3,15,1, 5,0,1, 15,3,0, 15,9,0, 15,15,0, 15,15,1, 17,0,1, 
-    // Length and number of words of that length
-    7, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,12,0, 4,14,1, 9,0,1, 9,14,1, 11,0,1, 11,14,1, 14,8,0, 16,0,1, 
-    // Length and number of words of that length
-    8, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 0,15,0, 3,0,1, 13,5,0, 13,11,0, 13,17,0, 17,13,1, 
-    // Length and number of words of that length
-    9, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    4,8,0, 8,12,0, 
-    // Length and number of words of that length
-    10, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,18,0, 11,2,0, 11,18,0, 
+    5,7,1, 15,2,1, 
     // Length and number of words of that length
     11, 4,
     // Coordinates where words start and direction (0 = horizontal)
     2,5,1, 4,14,0, 6,6,0, 18,5,1, 
     // Length and number of words of that length
-    12, 2,
+    10, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    5,7,1, 15,2,1, 
+    0,2,0, 0,18,0, 11,2,0, 11,18,0, 
+    // Length and number of words of that length
+    9, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    4,8,0, 8,12,0, 
+    // Length and number of words of that length
+    8, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,9,0, 0,15,0, 3,0,1, 13,5,0, 13,11,0, 13,17,0, 17,13,1, 
+    // Length and number of words of that length
+    7, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,12,0, 4,14,1, 9,0,1, 9,14,1, 11,0,1, 11,14,1, 14,8,0, 16,0,1, 
+    // Length and number of words of that length
+    6, 10,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,11,0, 0,17,0, 3,15,1, 5,0,1, 15,3,0, 15,9,0, 15,15,0, 15,15,1, 17,0,1, 
+    // Length and number of words of that length
+    5, 50,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 0,6,0, 0,11,1, 0,19,0, 0,20,0, 1,5,1, 1,11,1, 2,10,0, 3,9,1, 4,2,1, 4,8,1, 5,0,0, 5,1,0, 6,0,1, 6,6,1, 6,12,1, 7,5,0, 7,5,1, 7,17,0, 8,4,0, 8,4,1, 8,10,0, 8,10,1, 8,16,0, 8,16,1, 9,3,0, 9,8,1, 9,15,0, 10,8,1, 11,8,1, 11,19,0, 11,20,0, 12,0,1, 12,6,1, 12,12,1, 13,11,1, 14,4,1, 14,10,0, 14,10,1, 14,16,1, 16,0,0, 16,1,0, 16,8,1, 16,14,0, 16,14,1, 17,7,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
+    // Length and number of words of that length
+    4, 40,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,7,0, 0,13,0, 0,17,1, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,4,0, 3,16,0, 5,7,0, 5,13,0, 6,19,0, 6,20,0, 7,0,1, 7,17,1, 8,11,0, 9,9,0, 10,3,1, 10,14,1, 11,0,0, 11,1,0, 12,7,0, 12,13,0, 13,0,1, 13,17,1, 14,4,0, 14,16,0, 17,7,0, 17,13,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
+    // Length and number of words of that length
+    3, 10,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,14,0, 6,18,1, 7,13,1, 8,0,1, 12,18,1, 13,5,1, 14,0,1, 18,6,0, 18,12,0, 
     // End marker
     0
   };
@@ -1879,37 +1879,37 @@ namespace {
     // Total number of words in grid
     150,
     // Length and number of words of that length
-    3, 16,
+    12, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 0,15,0, 4,9,1, 4,15,0, 5,0,1, 5,4,1, 9,4,0, 9,16,0, 9,18,1, 11,0,1, 14,5,0, 15,14,1, 15,18,1, 16,9,1, 18,5,0, 18,11,0, 
-    // Length and number of words of that length
-    4, 50,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,8,0, 0,12,0, 0,17,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,10,0, 4,9,0, 5,8,0, 6,7,0, 6,13,0, 7,6,1, 7,11,1, 8,0,1, 8,5,1, 8,17,1, 10,3,1, 10,14,1, 11,7,0, 11,13,0, 12,0,1, 12,12,0, 12,12,1, 12,17,1, 13,6,1, 13,11,0, 13,11,1, 14,10,0, 17,0,0, 17,1,0, 17,2,0, 17,8,0, 17,12,0, 17,18,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
-    // Length and number of words of that length
-    5, 54,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,5,1, 0,7,0, 0,11,1, 0,13,0, 1,5,1, 1,11,1, 2,5,1, 2,11,1, 3,4,0, 3,10,1, 3,16,0, 3,16,1, 4,3,1, 4,13,1, 5,0,0, 5,1,0, 5,2,0, 5,8,1, 5,18,0, 5,19,0, 5,20,0, 6,3,0, 7,0,1, 7,16,1, 8,5,0, 8,10,0, 8,15,0, 10,8,1, 10,17,0, 11,0,0, 11,1,0, 11,2,0, 11,18,0, 11,19,0, 11,20,0, 13,0,1, 13,4,0, 13,16,0, 13,16,1, 15,8,1, 16,3,1, 16,7,0, 16,13,0, 16,13,1, 16,17,0, 17,0,1, 17,6,1, 18,5,1, 18,11,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
-    // Length and number of words of that length
-    6, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,14,0, 5,12,0, 6,0,1, 6,15,1, 8,10,1, 10,8,0, 12,5,1, 14,0,1, 14,15,1, 15,6,0, 15,14,0, 
-    // Length and number of words of that length
-    7, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 5,14,1, 6,7,1, 7,6,0, 7,14,0, 14,7,1, 14,15,0, 15,0,1, 
-    // Length and number of words of that length
-    8, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    9,0,1, 9,9,1, 11,4,1, 11,13,1, 
+    0,11,0, 9,9,0, 
     // Length and number of words of that length
     9, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,17,0, 3,0,1, 12,3,0, 17,12,1, 
     // Length and number of words of that length
-    12, 2,
+    8, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,11,0, 9,9,0, 
+    9,0,1, 9,9,1, 11,4,1, 11,13,1, 
+    // Length and number of words of that length
+    7, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 5,14,1, 6,7,1, 7,6,0, 7,14,0, 14,7,1, 14,15,0, 15,0,1, 
+    // Length and number of words of that length
+    6, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,14,0, 5,12,0, 6,0,1, 6,15,1, 8,10,1, 10,8,0, 12,5,1, 14,0,1, 14,15,1, 15,6,0, 15,14,0, 
+    // Length and number of words of that length
+    5, 54,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,5,1, 0,7,0, 0,11,1, 0,13,0, 1,5,1, 1,11,1, 2,5,1, 2,11,1, 3,4,0, 3,10,1, 3,16,0, 3,16,1, 4,3,1, 4,13,1, 5,0,0, 5,1,0, 5,2,0, 5,8,1, 5,18,0, 5,19,0, 5,20,0, 6,3,0, 7,0,1, 7,16,1, 8,5,0, 8,10,0, 8,15,0, 10,8,1, 10,17,0, 11,0,0, 11,1,0, 11,2,0, 11,18,0, 11,19,0, 11,20,0, 13,0,1, 13,4,0, 13,16,0, 13,16,1, 15,8,1, 16,3,1, 16,7,0, 16,13,0, 16,13,1, 16,17,0, 17,0,1, 17,6,1, 18,5,1, 18,11,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
+    // Length and number of words of that length
+    4, 50,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,8,0, 0,12,0, 0,17,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,10,0, 4,9,0, 5,8,0, 6,7,0, 6,13,0, 7,6,1, 7,11,1, 8,0,1, 8,5,1, 8,17,1, 10,3,1, 10,14,1, 11,7,0, 11,13,0, 12,0,1, 12,12,0, 12,12,1, 12,17,1, 13,6,1, 13,11,0, 13,11,1, 14,10,0, 17,0,0, 17,1,0, 17,2,0, 17,8,0, 17,12,0, 17,18,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,9,0, 0,15,0, 4,9,1, 4,15,0, 5,0,1, 5,4,1, 9,4,0, 9,16,0, 9,18,1, 11,0,1, 14,5,0, 15,14,1, 15,18,1, 16,9,1, 18,5,0, 18,11,0, 
     // End marker
     0
   };
@@ -1949,37 +1949,37 @@ namespace {
     // Total number of words in grid
     144,
     // Length and number of words of that length
-    3, 26,
+    11, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,10,0, 0,15,0, 0,16,0, 0,18,1, 1,18,1, 2,5,0, 3,0,1, 5,1,1, 5,8,0, 5,15,1, 6,0,0, 10,0,1, 10,18,1, 12,20,0, 13,12,0, 15,3,1, 15,17,1, 16,15,0, 17,18,1, 18,4,0, 18,5,0, 18,10,0, 18,17,0, 19,0,1, 20,0,1, 
-    // Length and number of words of that length
-    4, 34,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,2,0, 0,8,0, 0,9,0, 0,13,1, 3,11,1, 3,17,1, 4,16,0, 5,1,0, 5,2,0, 5,9,0, 5,15,0, 7,8,1, 8,12,0, 8,17,1, 9,8,0, 9,17,1, 11,0,1, 12,0,1, 12,5,0, 12,11,0, 12,18,0, 12,19,0, 13,4,0, 13,9,1, 17,0,1, 17,6,1, 17,11,0, 17,12,0, 17,18,0, 17,19,0, 17,20,0, 20,4,1, 
-    // Length and number of words of that length
-    5, 42,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,4,0, 0,6,1, 0,14,0, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,6,1, 1,12,1, 4,3,0, 4,3,1, 4,10,1, 4,16,1, 6,4,0, 6,5,0, 6,18,0, 6,19,0, 6,20,0, 9,4,1, 9,10,1, 10,0,0, 10,1,0, 10,2,0, 10,15,0, 10,16,0, 11,6,1, 11,12,1, 12,17,0, 16,0,0, 16,0,1, 16,1,0, 16,2,0, 16,6,0, 16,6,1, 16,13,1, 16,16,0, 19,4,1, 19,10,1, 19,16,1, 20,10,1, 20,16,1, 
-    // Length and number of words of that length
-    6, 18,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,13,0, 1,12,0, 3,4,1, 4,10,0, 6,0,1, 6,7,1, 7,13,0, 8,7,0, 10,4,1, 10,11,1, 11,10,0, 14,8,0, 14,8,1, 14,15,1, 15,7,0, 15,14,0, 17,11,1, 
-    // Length and number of words of that length
-    7, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 6,14,1, 7,0,1, 8,9,1, 12,5,1, 13,14,1, 14,0,1, 14,13,0, 
-    // Length and number of words of that length
-    8, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    2,17,0, 3,11,0, 5,6,1, 6,14,0, 7,6,0, 7,13,1, 8,0,1, 10,9,0, 11,3,0, 12,13,1, 13,0,1, 15,7,1, 
+    2,0,1, 18,10,1, 
     // Length and number of words of that length
     9, 2,
     // Coordinates where words start and direction (0 = horizontal)
     2,12,1, 18,0,1, 
     // Length and number of words of that length
-    11, 2,
+    8, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    2,0,1, 18,10,1, 
+    2,17,0, 3,11,0, 5,6,1, 6,14,0, 7,6,0, 7,13,1, 8,0,1, 10,9,0, 11,3,0, 12,13,1, 13,0,1, 15,7,1, 
+    // Length and number of words of that length
+    7, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 6,14,1, 7,0,1, 8,9,1, 12,5,1, 13,14,1, 14,0,1, 14,13,0, 
+    // Length and number of words of that length
+    6, 18,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,13,0, 1,12,0, 3,4,1, 4,10,0, 6,0,1, 6,7,1, 7,13,0, 8,7,0, 10,4,1, 10,11,1, 11,10,0, 14,8,0, 14,8,1, 14,15,1, 15,7,0, 15,14,0, 17,11,1, 
+    // Length and number of words of that length
+    5, 42,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,4,0, 0,6,1, 0,14,0, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,6,1, 1,12,1, 4,3,0, 4,3,1, 4,10,1, 4,16,1, 6,4,0, 6,5,0, 6,18,0, 6,19,0, 6,20,0, 9,4,1, 9,10,1, 10,0,0, 10,1,0, 10,2,0, 10,15,0, 10,16,0, 11,6,1, 11,12,1, 12,17,0, 16,0,0, 16,0,1, 16,1,0, 16,2,0, 16,6,0, 16,6,1, 16,13,1, 16,16,0, 19,4,1, 19,10,1, 19,16,1, 20,10,1, 20,16,1, 
+    // Length and number of words of that length
+    4, 34,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,2,0, 0,8,0, 0,9,0, 0,13,1, 3,11,1, 3,17,1, 4,16,0, 5,1,0, 5,2,0, 5,9,0, 5,15,0, 7,8,1, 8,12,0, 8,17,1, 9,8,0, 9,17,1, 11,0,1, 12,0,1, 12,5,0, 12,11,0, 12,18,0, 12,19,0, 13,4,0, 13,9,1, 17,0,1, 17,6,1, 17,11,0, 17,12,0, 17,18,0, 17,19,0, 17,20,0, 20,4,1, 
+    // Length and number of words of that length
+    3, 26,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,10,0, 0,15,0, 0,16,0, 0,18,1, 1,18,1, 2,5,0, 3,0,1, 5,1,1, 5,8,0, 5,15,1, 6,0,0, 10,0,1, 10,18,1, 12,20,0, 13,12,0, 15,3,1, 15,17,1, 16,15,0, 17,18,1, 18,4,0, 18,5,0, 18,10,0, 18,17,0, 19,0,1, 20,0,1, 
     // End marker
     0
   };
@@ -2019,29 +2019,29 @@ namespace {
     // Total number of words in grid
     144,
     // Length and number of words of that length
-    3, 20,
+    8, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,11,0, 0,17,0, 3,0,1, 3,18,1, 5,6,1, 6,5,0, 6,9,1, 9,6,0, 9,14,0, 9,18,1, 11,0,1, 12,15,0, 14,9,1, 15,12,1, 17,0,1, 17,18,1, 18,3,0, 18,9,0, 18,17,0, 
-    // Length and number of words of that length
-    4, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,10,0, 0,16,0, 3,7,0, 3,13,0, 4,0,1, 4,17,1, 7,3,1, 7,14,1, 10,0,1, 10,17,1, 13,3,1, 13,14,1, 14,7,0, 14,13,0, 16,0,1, 16,17,1, 17,4,0, 17,10,0, 17,16,0, 
-    // Length and number of words of that length
-    5, 56,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,8,1, 0,9,0, 0,15,0, 1,8,1, 2,8,1, 3,12,1, 4,5,1, 4,11,0, 4,11,1, 4,17,0, 5,0,1, 5,4,0, 5,10,0, 5,10,1, 5,16,0, 5,16,1, 6,9,0, 6,15,0, 7,8,1, 8,0,0, 8,1,0, 8,2,0, 8,7,0, 8,13,0, 8,18,0, 8,19,0, 8,20,0, 9,0,1, 9,6,1, 9,12,1, 10,5,0, 10,5,1, 10,11,0, 10,11,1, 11,4,0, 11,4,1, 11,10,0, 11,10,1, 11,16,0, 11,16,1, 12,3,0, 12,9,0, 13,8,1, 15,0,1, 15,6,1, 15,16,1, 16,5,0, 16,5,1, 16,11,0, 16,11,1, 16,15,0, 17,4,1, 18,8,1, 19,8,1, 20,8,1, 
-    // Length and number of words of that length
-    6, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,12,0, 8,0,1, 8,15,1, 12,0,1, 12,15,1, 15,8,0, 15,12,0, 
+    0,6,0, 0,14,0, 6,0,1, 6,13,1, 13,6,0, 13,14,0, 14,0,1, 14,13,1, 
     // Length and number of words of that length
     7, 32,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,14,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,14,1, 2,0,1, 2,14,1, 3,4,1, 4,3,0, 7,8,0, 7,12,0, 8,7,1, 10,17,0, 12,7,1, 14,0,0, 14,1,0, 14,2,0, 14,18,0, 14,19,0, 14,20,0, 17,10,1, 18,0,1, 18,14,1, 19,0,1, 19,14,1, 20,0,1, 20,14,1, 
     // Length and number of words of that length
-    8, 8,
+    6, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,14,0, 6,0,1, 6,13,1, 13,6,0, 13,14,0, 14,0,1, 14,13,1, 
+    0,8,0, 0,12,0, 8,0,1, 8,15,1, 12,0,1, 12,15,1, 15,8,0, 15,12,0, 
+    // Length and number of words of that length
+    5, 56,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,8,1, 0,9,0, 0,15,0, 1,8,1, 2,8,1, 3,12,1, 4,5,1, 4,11,0, 4,11,1, 4,17,0, 5,0,1, 5,4,0, 5,10,0, 5,10,1, 5,16,0, 5,16,1, 6,9,0, 6,15,0, 7,8,1, 8,0,0, 8,1,0, 8,2,0, 8,7,0, 8,13,0, 8,18,0, 8,19,0, 8,20,0, 9,0,1, 9,6,1, 9,12,1, 10,5,0, 10,5,1, 10,11,0, 10,11,1, 11,4,0, 11,4,1, 11,10,0, 11,10,1, 11,16,0, 11,16,1, 12,3,0, 12,9,0, 13,8,1, 15,0,1, 15,6,1, 15,16,1, 16,5,0, 16,5,1, 16,11,0, 16,11,1, 16,15,0, 17,4,1, 18,8,1, 19,8,1, 20,8,1, 
+    // Length and number of words of that length
+    4, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,10,0, 0,16,0, 3,7,0, 3,13,0, 4,0,1, 4,17,1, 7,3,1, 7,14,1, 10,0,1, 10,17,1, 13,3,1, 13,14,1, 14,7,0, 14,13,0, 16,0,1, 16,17,1, 17,4,0, 17,10,0, 17,16,0, 
+    // Length and number of words of that length
+    3, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,11,0, 0,17,0, 3,0,1, 3,18,1, 5,6,1, 6,5,0, 6,9,1, 9,6,0, 9,14,0, 9,18,1, 11,0,1, 12,15,0, 14,9,1, 15,12,1, 17,0,1, 17,18,1, 18,3,0, 18,9,0, 18,17,0, 
     // End marker
     0
   };
@@ -2081,25 +2081,25 @@ namespace {
     // Total number of words in grid
     144,
     // Length and number of words of that length
-    3, 28,
+    7, 24,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 0,17,0, 3,0,1, 3,6,0, 3,14,0, 3,18,1, 5,12,1, 6,3,1, 6,5,0, 6,9,1, 6,15,1, 9,6,0, 9,14,0, 9,18,1, 11,0,1, 12,15,0, 14,3,1, 14,9,1, 14,15,1, 15,6,0, 15,6,1, 15,14,0, 17,0,1, 17,18,1, 18,3,0, 18,11,0, 18,17,0, 
-    // Length and number of words of that length
-    4, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,10,0, 0,16,0, 4,0,1, 4,17,1, 5,10,0, 6,11,0, 9,6,1, 10,0,1, 10,5,1, 10,12,1, 10,17,1, 11,9,0, 11,11,1, 12,10,0, 16,0,1, 16,17,1, 17,4,0, 17,10,0, 17,16,0, 
-    // Length and number of words of that length
-    5, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,11,0, 0,15,0, 3,4,1, 4,5,1, 4,11,1, 4,17,0, 5,0,1, 5,4,0, 5,6,1, 5,16,0, 5,16,1, 6,15,0, 9,0,1, 10,5,0, 11,4,0, 11,16,0, 11,16,1, 12,3,0, 15,0,1, 15,10,1, 15,16,1, 16,5,0, 16,5,1, 16,9,0, 16,11,1, 16,15,0, 17,12,1, 
+    0,7,1, 1,7,1, 2,7,1, 3,10,1, 4,3,0, 7,0,0, 7,1,0, 7,2,0, 7,7,0, 7,7,1, 7,8,0, 7,12,0, 7,13,0, 7,18,0, 7,19,0, 7,20,0, 8,7,1, 10,17,0, 12,7,1, 13,7,1, 17,4,1, 18,7,1, 19,7,1, 20,7,1, 
     // Length and number of words of that length
     6, 44,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,8,0, 0,12,0, 0,13,0, 0,15,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,15,1, 2,0,1, 2,15,1, 4,9,0, 7,0,1, 7,15,1, 8,0,1, 8,15,1, 9,11,1, 11,4,1, 11,11,0, 12,0,1, 12,15,1, 13,0,1, 13,15,1, 15,0,0, 15,1,0, 15,2,0, 15,7,0, 15,8,0, 15,12,0, 15,13,0, 15,18,0, 15,19,0, 15,20,0, 18,0,1, 18,15,1, 19,0,1, 19,15,1, 20,0,1, 20,15,1, 
     // Length and number of words of that length
-    7, 24,
+    5, 28,
     // Coordinates where words start and direction (0 = horizontal)
-    0,7,1, 1,7,1, 2,7,1, 3,10,1, 4,3,0, 7,0,0, 7,1,0, 7,2,0, 7,7,0, 7,7,1, 7,8,0, 7,12,0, 7,13,0, 7,18,0, 7,19,0, 7,20,0, 8,7,1, 10,17,0, 12,7,1, 13,7,1, 17,4,1, 18,7,1, 19,7,1, 20,7,1, 
+    0,5,0, 0,11,0, 0,15,0, 3,4,1, 4,5,1, 4,11,1, 4,17,0, 5,0,1, 5,4,0, 5,6,1, 5,16,0, 5,16,1, 6,15,0, 9,0,1, 10,5,0, 11,4,0, 11,16,0, 11,16,1, 12,3,0, 15,0,1, 15,10,1, 15,16,1, 16,5,0, 16,5,1, 16,9,0, 16,11,1, 16,15,0, 17,12,1, 
+    // Length and number of words of that length
+    4, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,10,0, 0,16,0, 4,0,1, 4,17,1, 5,10,0, 6,11,0, 9,6,1, 10,0,1, 10,5,1, 10,12,1, 10,17,1, 11,9,0, 11,11,1, 12,10,0, 16,0,1, 16,17,1, 17,4,0, 17,10,0, 17,16,0, 
+    // Length and number of words of that length
+    3, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,9,0, 0,17,0, 3,0,1, 3,6,0, 3,14,0, 3,18,1, 5,12,1, 6,3,1, 6,5,0, 6,9,1, 6,15,1, 9,6,0, 9,14,0, 9,18,1, 11,0,1, 12,15,0, 14,3,1, 14,9,1, 14,15,1, 15,6,0, 15,6,1, 15,14,0, 17,0,1, 17,18,1, 18,3,0, 18,11,0, 18,17,0, 
     // End marker
     0
   };
@@ -2139,33 +2139,33 @@ namespace {
     // Total number of words in grid
     146,
     // Length and number of words of that length
-    3, 16,
+    11, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,12,0, 3,9,1, 6,6,0, 6,12,1, 8,0,1, 8,18,1, 9,3,0, 9,17,0, 12,0,1, 12,14,0, 12,18,1, 14,6,1, 17,9,1, 18,8,0, 18,12,0, 
-    // Length and number of words of that length
-    4, 40,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,13,0, 0,17,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,4,0, 3,16,0, 4,3,1, 4,14,1, 7,0,1, 7,17,1, 13,0,1, 13,17,1, 14,4,0, 14,16,0, 16,3,1, 16,14,1, 17,0,0, 17,1,0, 17,2,0, 17,7,0, 17,13,0, 17,18,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
-    // Length and number of words of that length
-    5, 54,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,6,0, 0,11,1, 0,14,0, 1,5,1, 1,11,1, 2,10,0, 4,8,1, 4,12,0, 5,0,0, 5,1,0, 5,7,0, 5,13,0, 5,19,0, 5,20,0, 6,0,1, 6,6,1, 6,14,0, 6,16,1, 7,5,1, 7,11,0, 7,11,1, 8,4,0, 8,4,1, 8,10,0, 8,16,0, 9,7,1, 9,9,0, 10,2,1, 10,6,0, 10,8,1, 10,14,1, 11,0,0, 11,1,0, 11,7,0, 11,9,1, 11,13,0, 11,19,0, 11,20,0, 12,8,0, 12,12,1, 13,5,1, 13,11,1, 14,0,1, 14,10,0, 14,10,1, 14,16,1, 16,6,0, 16,8,1, 16,14,0, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
-    // Length and number of words of that length
-    6, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,11,0, 0,15,0, 5,0,1, 5,15,1, 9,0,1, 11,15,1, 15,0,1, 15,5,0, 15,9,0, 15,15,0, 15,15,1, 
-    // Length and number of words of that length
-    7, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    4,8,0, 5,7,1, 7,5,0, 7,15,0, 8,10,1, 10,12,0, 12,4,1, 15,7,1, 
+    2,5,1, 5,2,0, 5,18,0, 18,5,1, 
     // Length and number of words of that length
     8, 12,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 0,9,0, 0,17,0, 3,0,1, 3,13,1, 9,13,1, 11,0,1, 13,3,0, 13,11,0, 13,17,0, 17,0,1, 17,13,1, 
     // Length and number of words of that length
-    11, 4,
+    7, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    2,5,1, 5,2,0, 5,18,0, 18,5,1, 
+    4,8,0, 5,7,1, 7,5,0, 7,15,0, 8,10,1, 10,12,0, 12,4,1, 15,7,1, 
+    // Length and number of words of that length
+    6, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,11,0, 0,15,0, 5,0,1, 5,15,1, 9,0,1, 11,15,1, 15,0,1, 15,5,0, 15,9,0, 15,15,0, 15,15,1, 
+    // Length and number of words of that length
+    5, 54,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 0,6,0, 0,11,1, 0,14,0, 1,5,1, 1,11,1, 2,10,0, 4,8,1, 4,12,0, 5,0,0, 5,1,0, 5,7,0, 5,13,0, 5,19,0, 5,20,0, 6,0,1, 6,6,1, 6,14,0, 6,16,1, 7,5,1, 7,11,0, 7,11,1, 8,4,0, 8,4,1, 8,10,0, 8,16,0, 9,7,1, 9,9,0, 10,2,1, 10,6,0, 10,8,1, 10,14,1, 11,0,0, 11,1,0, 11,7,0, 11,9,1, 11,13,0, 11,19,0, 11,20,0, 12,8,0, 12,12,1, 13,5,1, 13,11,1, 14,0,1, 14,10,0, 14,10,1, 14,16,1, 16,6,0, 16,8,1, 16,14,0, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
+    // Length and number of words of that length
+    4, 40,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,13,0, 0,17,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,4,0, 3,16,0, 4,3,1, 4,14,1, 7,0,1, 7,17,1, 13,0,1, 13,17,1, 14,4,0, 14,16,0, 16,3,1, 16,14,1, 17,0,0, 17,1,0, 17,2,0, 17,7,0, 17,13,0, 17,18,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,12,0, 3,9,1, 6,6,0, 6,12,1, 8,0,1, 8,18,1, 9,3,0, 9,17,0, 12,0,1, 12,14,0, 12,18,1, 14,6,1, 17,9,1, 18,8,0, 18,12,0, 
     // End marker
     0
   };
@@ -2205,29 +2205,29 @@ namespace {
     // Total number of words in grid
     152,
     // Length and number of words of that length
-    3, 36,
+    10, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,9,0, 0,15,0, 3,6,1, 5,0,1, 5,6,0, 5,14,0, 5,18,1, 6,3,0, 6,5,1, 6,9,1, 6,13,1, 7,8,0, 7,12,0, 8,7,1, 8,11,1, 9,0,1, 9,6,0, 9,14,0, 11,8,0, 11,12,0, 11,18,1, 12,7,1, 12,11,1, 12,17,0, 13,6,0, 13,14,0, 14,5,1, 14,9,1, 14,13,1, 15,0,1, 15,18,1, 17,12,1, 18,5,0, 18,11,0, 18,15,0, 
-    // Length and number of words of that length
-    4, 36,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,6,0, 0,14,0, 0,17,1, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,4,0, 2,16,0, 4,2,1, 4,15,1, 6,0,1, 6,11,0, 6,17,1, 9,11,1, 11,6,1, 11,9,0, 14,0,1, 14,17,1, 15,4,0, 15,16,0, 16,2,1, 16,15,1, 17,0,0, 17,1,0, 17,6,0, 17,14,0, 17,19,0, 17,20,0, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
-    // Length and number of words of that length
-    5, 44,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,5,1, 0,11,0, 0,11,1, 0,17,0, 1,5,1, 1,11,1, 3,0,1, 3,10,0, 3,10,1, 3,16,1, 4,15,0, 5,0,0, 5,1,0, 5,12,1, 5,19,0, 5,20,0, 6,17,0, 7,8,1, 8,7,0, 8,13,0, 9,16,1, 10,3,0, 10,3,1, 10,13,1, 11,0,0, 11,0,1, 11,1,0, 11,19,0, 11,20,0, 12,5,0, 13,8,1, 13,10,0, 15,4,1, 16,3,0, 16,9,0, 16,17,0, 17,0,1, 17,6,1, 17,16,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
-    // Length and number of words of that length
-    6, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,12,0, 4,9,0, 8,0,1, 8,15,1, 9,4,1, 11,11,0, 11,11,1, 12,0,1, 12,15,1, 15,8,0, 15,12,0, 
+    0,2,0, 0,18,0, 2,0,1, 2,11,1, 11,2,0, 11,18,0, 18,0,1, 18,11,1, 
     // Length and number of words of that length
     7, 16,
     // Coordinates where words start and direction (0 = horizontal)
     0,7,0, 0,13,0, 4,5,0, 4,7,1, 5,4,1, 7,0,1, 7,4,0, 7,14,1, 7,16,0, 10,15,0, 13,0,1, 13,14,1, 14,7,0, 14,13,0, 15,10,1, 16,7,1, 
     // Length and number of words of that length
-    10, 8,
+    6, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,18,0, 2,0,1, 2,11,1, 11,2,0, 11,18,0, 18,0,1, 18,11,1, 
+    0,8,0, 0,12,0, 4,9,0, 8,0,1, 8,15,1, 9,4,1, 11,11,0, 11,11,1, 12,0,1, 12,15,1, 15,8,0, 15,12,0, 
+    // Length and number of words of that length
+    5, 44,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,5,1, 0,11,0, 0,11,1, 0,17,0, 1,5,1, 1,11,1, 3,0,1, 3,10,0, 3,10,1, 3,16,1, 4,15,0, 5,0,0, 5,1,0, 5,12,1, 5,19,0, 5,20,0, 6,17,0, 7,8,1, 8,7,0, 8,13,0, 9,16,1, 10,3,0, 10,3,1, 10,13,1, 11,0,0, 11,0,1, 11,1,0, 11,19,0, 11,20,0, 12,5,0, 13,8,1, 13,10,0, 15,4,1, 16,3,0, 16,9,0, 16,17,0, 17,0,1, 17,6,1, 17,16,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
+    // Length and number of words of that length
+    4, 36,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,6,0, 0,14,0, 0,17,1, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,4,0, 2,16,0, 4,2,1, 4,15,1, 6,0,1, 6,11,0, 6,17,1, 9,11,1, 11,6,1, 11,9,0, 14,0,1, 14,17,1, 15,4,0, 15,16,0, 16,2,1, 16,15,1, 17,0,0, 17,1,0, 17,6,0, 17,14,0, 17,19,0, 17,20,0, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
+    // Length and number of words of that length
+    3, 36,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,9,0, 0,15,0, 3,6,1, 5,0,1, 5,6,0, 5,14,0, 5,18,1, 6,3,0, 6,5,1, 6,9,1, 6,13,1, 7,8,0, 7,12,0, 8,7,1, 8,11,1, 9,0,1, 9,6,0, 9,14,0, 11,8,0, 11,12,0, 11,18,1, 12,7,1, 12,11,1, 12,17,0, 13,6,0, 13,14,0, 14,5,1, 14,9,1, 14,13,1, 15,0,1, 15,18,1, 17,12,1, 18,5,0, 18,11,0, 18,15,0, 
     // End marker
     0
   };
@@ -2267,29 +2267,29 @@ namespace {
     // Total number of words in grid
     150,
     // Length and number of words of that length
-    3, 9,
+    9, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,14,0, 6,18,1, 8,0,1, 9,10,0, 12,18,1, 14,0,1, 18,6,0, 18,12,0, 
-    // Length and number of words of that length
-    4, 54,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,13,0, 0,17,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,4,0, 3,10,0, 3,16,0, 4,3,1, 4,14,1, 6,7,1, 7,0,1, 7,6,0, 7,11,0, 7,17,1, 8,11,1, 9,10,1, 10,3,1, 10,9,0, 10,14,0, 10,14,1, 11,7,1, 12,6,1, 13,0,1, 13,17,1, 14,4,0, 14,10,0, 14,10,1, 14,16,0, 16,3,1, 16,14,1, 17,0,0, 17,1,0, 17,2,0, 17,7,0, 17,13,0, 17,18,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
-    // Length and number of words of that length
-    5, 61,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,6,0, 0,11,1, 0,12,0, 1,5,1, 1,11,1, 2,5,1, 2,11,1, 3,9,1, 4,8,0, 4,8,1, 4,14,0, 5,0,0, 5,1,0, 5,2,0, 5,7,0, 5,7,1, 5,13,0, 5,18,0, 5,19,0, 5,20,0, 6,0,1, 6,12,0, 6,12,1, 7,5,0, 7,5,1, 7,11,1, 7,17,0, 8,4,0, 8,16,0, 8,16,1, 9,3,0, 9,15,0, 10,8,0, 10,8,1, 11,0,0, 11,1,0, 11,2,0, 11,7,0, 11,13,0, 11,18,0, 11,19,0, 11,20,0, 12,0,1, 12,6,0, 12,12,0, 13,5,1, 13,11,1, 14,4,1, 14,16,1, 15,9,1, 16,8,0, 16,8,1, 16,14,0, 17,7,1, 18,5,1, 18,11,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
-    // Length and number of words of that length
-    6, 14,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,11,0, 0,17,0, 3,15,1, 5,0,1, 8,4,1, 9,15,1, 11,0,1, 12,11,1, 15,3,0, 15,9,0, 15,15,0, 15,15,1, 17,0,1, 
+    0,9,0, 12,11,0, 
     // Length and number of words of that length
     8, 10,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 0,15,0, 3,0,1, 5,13,1, 9,0,1, 11,13,1, 13,5,0, 13,17,0, 15,0,1, 17,13,1, 
     // Length and number of words of that length
-    9, 2,
+    6, 14,
     // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 12,11,0, 
+    0,5,0, 0,11,0, 0,17,0, 3,15,1, 5,0,1, 8,4,1, 9,15,1, 11,0,1, 12,11,1, 15,3,0, 15,9,0, 15,15,0, 15,15,1, 17,0,1, 
+    // Length and number of words of that length
+    5, 61,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 0,6,0, 0,11,1, 0,12,0, 1,5,1, 1,11,1, 2,5,1, 2,11,1, 3,9,1, 4,8,0, 4,8,1, 4,14,0, 5,0,0, 5,1,0, 5,2,0, 5,7,0, 5,7,1, 5,13,0, 5,18,0, 5,19,0, 5,20,0, 6,0,1, 6,12,0, 6,12,1, 7,5,0, 7,5,1, 7,11,1, 7,17,0, 8,4,0, 8,16,0, 8,16,1, 9,3,0, 9,15,0, 10,8,0, 10,8,1, 11,0,0, 11,1,0, 11,2,0, 11,7,0, 11,13,0, 11,18,0, 11,19,0, 11,20,0, 12,0,1, 12,6,0, 12,12,0, 13,5,1, 13,11,1, 14,4,1, 14,16,1, 15,9,1, 16,8,0, 16,8,1, 16,14,0, 17,7,1, 18,5,1, 18,11,1, 19,5,1, 19,11,1, 20,5,1, 20,11,1, 
+    // Length and number of words of that length
+    4, 54,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,7,0, 0,13,0, 0,17,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,17,1, 2,0,1, 2,17,1, 3,4,0, 3,10,0, 3,16,0, 4,3,1, 4,14,1, 6,7,1, 7,0,1, 7,6,0, 7,11,0, 7,17,1, 8,11,1, 9,10,1, 10,3,1, 10,9,0, 10,14,0, 10,14,1, 11,7,1, 12,6,1, 13,0,1, 13,17,1, 14,4,0, 14,10,0, 14,10,1, 14,16,0, 16,3,1, 16,14,1, 17,0,0, 17,1,0, 17,2,0, 17,7,0, 17,13,0, 17,18,0, 17,19,0, 17,20,0, 18,0,1, 18,17,1, 19,0,1, 19,17,1, 20,0,1, 20,17,1, 
+    // Length and number of words of that length
+    3, 9,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,14,0, 6,18,1, 8,0,1, 9,10,0, 12,18,1, 14,0,1, 18,6,0, 18,12,0, 
     // End marker
     0
   };
@@ -2329,29 +2329,29 @@ namespace {
     // Total number of words in grid
     144,
     // Length and number of words of that length
-    3, 16,
+    8, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,11,0, 0,17,0, 3,0,1, 3,18,1, 5,6,1, 6,5,0, 9,18,1, 11,0,1, 12,15,0, 15,12,1, 17,0,1, 17,18,1, 18,3,0, 18,9,0, 18,17,0, 
-    // Length and number of words of that length
-    4, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,10,0, 0,16,0, 3,7,0, 3,13,0, 4,0,1, 4,17,1, 7,3,1, 7,14,1, 10,0,1, 10,17,1, 13,3,1, 13,14,1, 14,7,0, 14,13,0, 16,0,1, 16,17,1, 17,4,0, 17,10,0, 17,16,0, 
-    // Length and number of words of that length
-    5, 72,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,1, 0,5,0, 0,8,1, 0,9,0, 0,14,1, 0,15,0, 1,8,1, 2,0,0, 2,8,1, 2,20,0, 3,12,1, 4,5,1, 4,11,0, 4,11,1, 4,17,0, 5,0,1, 5,4,0, 5,10,0, 5,10,1, 5,16,0, 5,16,1, 6,9,0, 6,9,1, 6,15,0, 7,8,0, 7,8,1, 7,14,0, 8,0,0, 8,1,0, 8,2,0, 8,7,0, 8,7,1, 8,13,0, 8,18,0, 8,19,0, 8,20,0, 9,0,1, 9,6,0, 9,6,1, 9,12,0, 9,12,1, 10,5,0, 10,5,1, 10,11,0, 10,11,1, 11,4,0, 11,4,1, 11,10,0, 11,10,1, 11,16,0, 11,16,1, 12,3,0, 12,9,0, 12,9,1, 13,8,1, 14,0,0, 14,7,1, 14,20,0, 15,0,1, 15,6,1, 15,16,1, 16,5,0, 16,5,1, 16,11,0, 16,11,1, 16,15,0, 17,4,1, 18,8,1, 19,8,1, 20,2,1, 20,8,1, 20,14,1, 
-    // Length and number of words of that length
-    6, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,14,0, 1,1,0, 1,1,1, 1,14,1, 1,19,0, 6,15,1, 8,0,1, 12,15,1, 14,0,1, 14,1,0, 14,19,0, 15,6,0, 15,12,0, 19,1,1, 19,14,1, 
+    0,6,0, 0,12,0, 6,0,1, 8,13,1, 12,0,1, 13,8,0, 13,14,0, 14,13,1, 
     // Length and number of words of that length
     7, 12,
     // Coordinates where words start and direction (0 = horizontal)
     0,2,0, 0,18,0, 2,0,1, 2,14,1, 3,4,1, 4,3,0, 10,17,0, 14,2,0, 14,18,0, 17,10,1, 18,0,1, 18,14,1, 
     // Length and number of words of that length
-    8, 8,
+    6, 16,
     // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,12,0, 6,0,1, 8,13,1, 12,0,1, 13,8,0, 13,14,0, 14,13,1, 
+    0,8,0, 0,14,0, 1,1,0, 1,1,1, 1,14,1, 1,19,0, 6,15,1, 8,0,1, 12,15,1, 14,0,1, 14,1,0, 14,19,0, 15,6,0, 15,12,0, 19,1,1, 19,14,1, 
+    // Length and number of words of that length
+    5, 72,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,2,1, 0,5,0, 0,8,1, 0,9,0, 0,14,1, 0,15,0, 1,8,1, 2,0,0, 2,8,1, 2,20,0, 3,12,1, 4,5,1, 4,11,0, 4,11,1, 4,17,0, 5,0,1, 5,4,0, 5,10,0, 5,10,1, 5,16,0, 5,16,1, 6,9,0, 6,9,1, 6,15,0, 7,8,0, 7,8,1, 7,14,0, 8,0,0, 8,1,0, 8,2,0, 8,7,0, 8,7,1, 8,13,0, 8,18,0, 8,19,0, 8,20,0, 9,0,1, 9,6,0, 9,6,1, 9,12,0, 9,12,1, 10,5,0, 10,5,1, 10,11,0, 10,11,1, 11,4,0, 11,4,1, 11,10,0, 11,10,1, 11,16,0, 11,16,1, 12,3,0, 12,9,0, 12,9,1, 13,8,1, 14,0,0, 14,7,1, 14,20,0, 15,0,1, 15,6,1, 15,16,1, 16,5,0, 16,5,1, 16,11,0, 16,11,1, 16,15,0, 17,4,1, 18,8,1, 19,8,1, 20,2,1, 20,8,1, 20,14,1, 
+    // Length and number of words of that length
+    4, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,10,0, 0,16,0, 3,7,0, 3,13,0, 4,0,1, 4,17,1, 7,3,1, 7,14,1, 10,0,1, 10,17,1, 13,3,1, 13,14,1, 14,7,0, 14,13,0, 16,0,1, 16,17,1, 17,4,0, 17,10,0, 17,16,0, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,11,0, 0,17,0, 3,0,1, 3,18,1, 5,6,1, 6,5,0, 9,18,1, 11,0,1, 12,15,0, 15,12,1, 17,0,1, 17,18,1, 18,3,0, 18,9,0, 18,17,0, 
     // End marker
     0
   };
@@ -2391,33 +2391,33 @@ namespace {
     // Total number of words in grid
     134,
     // Length and number of words of that length
-    3, 24,
+    13, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,17,0, 3,0,1, 3,18,1, 4,13,1, 5,12,1, 5,16,0, 6,7,1, 6,11,1, 6,15,0, 7,6,0, 7,14,0, 11,6,0, 11,14,0, 12,5,0, 13,4,0, 14,7,1, 14,11,1, 15,6,1, 16,5,1, 17,0,1, 17,18,1, 18,3,0, 18,17,0, 
-    // Length and number of words of that length
-    4, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,12,0, 0,16,0, 4,0,1, 4,17,1, 8,17,1, 12,0,1, 16,0,1, 16,17,1, 17,4,0, 17,8,0, 17,16,0, 
-    // Length and number of words of that length
-    5, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,8,1, 0,11,0, 0,15,0, 1,8,1, 2,8,1, 5,0,1, 5,6,1, 5,16,1, 6,5,0, 8,0,0, 8,1,0, 8,2,0, 8,18,0, 8,19,0, 8,20,0, 9,16,1, 10,15,0, 11,0,1, 15,0,1, 15,10,1, 15,16,1, 16,5,0, 16,9,0, 16,15,0, 18,8,1, 19,8,1, 20,8,1, 
-    // Length and number of words of that length
-    6, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,10,0, 0,14,0, 3,7,0, 6,0,1, 6,15,1, 7,3,1, 10,0,1, 10,15,1, 12,13,0, 13,12,1, 14,0,1, 14,15,1, 15,6,0, 15,10,0, 15,14,0, 
-    // Length and number of words of that length
-    7, 42,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,9,0, 0,14,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,14,1, 2,0,1, 2,14,1, 4,5,1, 5,4,0, 5,12,0, 6,11,0, 7,10,0, 8,9,0, 8,9,1, 9,0,1, 9,8,0, 9,8,1, 9,16,0, 10,7,1, 11,6,1, 11,14,1, 12,5,1, 14,0,0, 14,1,0, 14,2,0, 14,11,0, 14,18,0, 14,19,0, 14,20,0, 16,9,1, 18,0,1, 18,14,1, 19,0,1, 19,14,1, 20,0,1, 20,14,1, 
+    3,4,1, 4,3,0, 4,17,0, 17,4,1, 
     // Length and number of words of that length
     8, 8,
     // Coordinates where words start and direction (0 = horizontal)
     0,8,0, 3,13,0, 7,10,1, 8,0,1, 10,7,0, 12,13,1, 13,3,1, 13,12,0, 
     // Length and number of words of that length
-    13, 4,
+    7, 42,
     // Coordinates where words start and direction (0 = horizontal)
-    3,4,1, 4,3,0, 4,17,0, 17,4,1, 
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,9,0, 0,14,1, 0,18,0, 0,19,0, 0,20,0, 1,0,1, 1,14,1, 2,0,1, 2,14,1, 4,5,1, 5,4,0, 5,12,0, 6,11,0, 7,10,0, 8,9,0, 8,9,1, 9,0,1, 9,8,0, 9,8,1, 9,16,0, 10,7,1, 11,6,1, 11,14,1, 12,5,1, 14,0,0, 14,1,0, 14,2,0, 14,11,0, 14,18,0, 14,19,0, 14,20,0, 16,9,1, 18,0,1, 18,14,1, 19,0,1, 19,14,1, 20,0,1, 20,14,1, 
+    // Length and number of words of that length
+    6, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,10,0, 0,14,0, 3,7,0, 6,0,1, 6,15,1, 7,3,1, 10,0,1, 10,15,1, 12,13,0, 13,12,1, 14,0,1, 14,15,1, 15,6,0, 15,10,0, 15,14,0, 
+    // Length and number of words of that length
+    5, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,8,1, 0,11,0, 0,15,0, 1,8,1, 2,8,1, 5,0,1, 5,6,1, 5,16,1, 6,5,0, 8,0,0, 8,1,0, 8,2,0, 8,18,0, 8,19,0, 8,20,0, 9,16,1, 10,15,0, 11,0,1, 15,0,1, 15,10,1, 15,16,1, 16,5,0, 16,9,0, 16,15,0, 18,8,1, 19,8,1, 20,8,1, 
+    // Length and number of words of that length
+    4, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,12,0, 0,16,0, 4,0,1, 4,17,1, 8,17,1, 12,0,1, 16,0,1, 16,17,1, 17,4,0, 17,8,0, 17,16,0, 
+    // Length and number of words of that length
+    3, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,17,0, 3,0,1, 3,18,1, 4,13,1, 5,12,1, 5,16,0, 6,7,1, 6,11,1, 6,15,0, 7,6,0, 7,14,0, 11,6,0, 11,14,0, 12,5,0, 13,4,0, 14,7,1, 14,11,1, 15,6,1, 16,5,1, 17,0,1, 17,18,1, 18,3,0, 18,17,0, 
     // End marker
     0
   };
@@ -2459,45 +2459,45 @@ namespace {
     // Total number of words in grid
     172,
     // Length and number of words of that length
-    3, 44,
+    23, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 4,0,1, 4,5,0, 4,9,1, 4,13,1, 5,3,0, 5,8,0, 5,12,0, 6,7,1, 6,11,1, 6,15,1, 7,6,0, 7,6,1, 7,10,1, 7,14,1, 8,0,1, 8,5,0, 8,9,1, 8,17,0, 8,20,1, 9,0,1, 11,8,1, 11,12,1, 12,5,0, 12,17,0, 13,16,0, 13,20,1, 14,0,1, 14,11,1, 14,20,1, 15,6,1, 15,10,0, 15,10,1, 15,14,0, 15,14,1, 15,19,0, 16,5,1, 16,9,1, 16,13,1, 16,17,0, 18,7,1, 18,11,1, 18,20,1, 20,18,0, 
-    // Length and number of words of that length
-    4, 40,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,8,0, 0,12,0, 0,16,0, 0,21,0, 0,22,0, 3,0,1, 3,17,0, 4,4,1, 4,17,1, 5,21,0, 5,22,0, 6,2,1, 6,19,1, 7,19,1, 8,4,1, 9,4,1, 9,19,0, 10,3,0, 10,7,1, 10,12,1, 12,7,1, 12,12,1, 13,15,1, 14,0,0, 14,1,0, 14,15,1, 15,0,1, 16,0,1, 16,5,0, 16,17,1, 18,2,1, 18,15,1, 19,0,0, 19,1,0, 19,6,0, 19,10,0, 19,14,0, 19,19,0, 19,19,1, 
-    // Length and number of words of that length
-    5, 38,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,6,1, 0,7,0, 0,12,1, 0,15,0, 0,18,1, 1,0,1, 1,6,1, 1,12,1, 1,18,1, 2,0,1, 2,6,1, 2,12,1, 2,18,1, 5,16,0, 6,7,0, 6,15,0, 7,0,1, 11,0,1, 11,18,1, 12,7,0, 12,15,0, 13,6,0, 15,18,1, 18,7,0, 18,15,0, 20,0,1, 20,6,1, 20,12,1, 20,18,1, 21,0,1, 21,6,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
-    // Length and number of words of that length
-    6, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,6,0, 0,10,0, 0,14,0, 0,18,0, 7,0,0, 7,1,0, 7,14,0, 8,13,1, 10,0,1, 10,8,0, 10,17,1, 10,21,0, 10,22,0, 12,0,1, 12,17,1, 14,4,1, 17,4,0, 17,8,0, 17,12,0, 17,16,0, 17,21,0, 17,22,0, 
-    // Length and number of words of that length
-    7, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 0,13,0, 3,11,0, 5,0,1, 5,8,1, 5,16,1, 7,10,0, 8,9,0, 8,13,0, 9,12,0, 13,11,0, 16,9,0, 16,13,0, 17,0,1, 17,8,1, 17,16,1, 
-    // Length and number of words of that length
-    8, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,19,0, 15,3,0, 
-    // Length and number of words of that length
-    11, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    4,4,0, 8,18,0, 
-    // Length and number of words of that length
-    12, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    9,9,1, 13,2,1, 
+    0,2,0, 0,20,0, 
     // Length and number of words of that length
     17, 2,
     // Coordinates where words start and direction (0 = horizontal)
     3,6,1, 19,0,1, 
     // Length and number of words of that length
-    23, 2,
+    12, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,20,0, 
+    9,9,1, 13,2,1, 
+    // Length and number of words of that length
+    11, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    4,4,0, 8,18,0, 
+    // Length and number of words of that length
+    8, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,19,0, 15,3,0, 
+    // Length and number of words of that length
+    7, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,9,0, 0,13,0, 3,11,0, 5,0,1, 5,8,1, 5,16,1, 7,10,0, 8,9,0, 8,13,0, 9,12,0, 13,11,0, 16,9,0, 16,13,0, 17,0,1, 17,8,1, 17,16,1, 
+    // Length and number of words of that length
+    6, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,6,0, 0,10,0, 0,14,0, 0,18,0, 7,0,0, 7,1,0, 7,14,0, 8,13,1, 10,0,1, 10,8,0, 10,17,1, 10,21,0, 10,22,0, 12,0,1, 12,17,1, 14,4,1, 17,4,0, 17,8,0, 17,12,0, 17,16,0, 17,21,0, 17,22,0, 
+    // Length and number of words of that length
+    5, 38,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,6,1, 0,7,0, 0,12,1, 0,15,0, 0,18,1, 1,0,1, 1,6,1, 1,12,1, 1,18,1, 2,0,1, 2,6,1, 2,12,1, 2,18,1, 5,16,0, 6,7,0, 6,15,0, 7,0,1, 11,0,1, 11,18,1, 12,7,0, 12,15,0, 13,6,0, 15,18,1, 18,7,0, 18,15,0, 20,0,1, 20,6,1, 20,12,1, 20,18,1, 21,0,1, 21,6,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
+    // Length and number of words of that length
+    4, 40,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,8,0, 0,12,0, 0,16,0, 0,21,0, 0,22,0, 3,0,1, 3,17,0, 4,4,1, 4,17,1, 5,21,0, 5,22,0, 6,2,1, 6,19,1, 7,19,1, 8,4,1, 9,4,1, 9,19,0, 10,3,0, 10,7,1, 10,12,1, 12,7,1, 12,12,1, 13,15,1, 14,0,0, 14,1,0, 14,15,1, 15,0,1, 16,0,1, 16,5,0, 16,17,1, 18,2,1, 18,15,1, 19,0,0, 19,1,0, 19,6,0, 19,10,0, 19,14,0, 19,19,0, 19,19,1, 
+    // Length and number of words of that length
+    3, 44,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 4,0,1, 4,5,0, 4,9,1, 4,13,1, 5,3,0, 5,8,0, 5,12,0, 6,7,1, 6,11,1, 6,15,1, 7,6,0, 7,6,1, 7,10,1, 7,14,1, 8,0,1, 8,5,0, 8,9,1, 8,17,0, 8,20,1, 9,0,1, 11,8,1, 11,12,1, 12,5,0, 12,17,0, 13,16,0, 13,20,1, 14,0,1, 14,11,1, 14,20,1, 15,6,1, 15,10,0, 15,10,1, 15,14,0, 15,14,1, 15,19,0, 16,5,1, 16,9,1, 16,13,1, 16,17,0, 18,7,1, 18,11,1, 18,20,1, 20,18,0, 
     // End marker
     0
   };
@@ -2539,45 +2539,45 @@ namespace {
     // Total number of words in grid
     182,
     // Length and number of words of that length
-    3, 32,
+    12, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 0,14,0, 0,19,0, 3,0,1, 3,5,0, 3,20,1, 4,0,1, 4,4,1, 6,18,1, 7,12,1, 7,17,0, 8,20,1, 9,15,1, 10,3,1, 10,8,0, 10,14,0, 12,17,1, 13,5,0, 13,5,1, 14,0,1, 15,8,1, 16,2,1, 17,17,0, 18,16,1, 18,20,1, 19,0,1, 19,20,1, 20,3,0, 20,8,0, 20,13,0, 20,19,0, 
-    // Length and number of words of that length
-    4, 72,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,1, 0,7,0, 0,8,0, 0,13,0, 0,18,0, 1,6,1, 3,10,1, 3,15,1, 3,16,0, 4,9,0, 4,9,1, 4,14,1, 4,19,0, 4,19,1, 5,2,1, 5,8,0, 5,13,0, 5,13,1, 5,18,0, 6,0,0, 6,1,0, 6,6,0, 6,12,0, 7,0,1, 7,5,0, 8,0,1, 8,5,1, 8,10,0, 8,15,0, 8,16,0, 9,4,0, 9,9,0, 9,9,1, 9,19,1, 10,8,1, 10,13,0, 10,13,1, 10,18,0, 11,6,0, 11,7,0, 11,12,0, 12,6,1, 12,11,1, 12,17,0, 13,0,1, 13,10,0, 13,10,1, 13,16,0, 13,21,0, 13,22,0, 14,4,0, 14,9,0, 14,14,0, 14,14,1, 14,19,1, 15,3,0, 15,13,0, 15,19,1, 16,6,0, 17,6,1, 17,17,1, 18,0,1, 18,5,1, 18,10,1, 19,4,0, 19,4,1, 19,9,0, 19,9,1, 19,14,0, 19,15,0, 21,13,1, 22,13,1, 
-    // Length and number of words of that length
-    5, 48,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,6,0, 0,11,1, 0,12,0, 0,17,0, 0,17,1, 1,0,1, 1,11,1, 1,22,0, 2,0,1, 2,10,0, 3,4,1, 4,14,0, 5,7,0, 5,7,1, 5,18,1, 6,0,1, 7,5,1, 7,21,0, 7,22,0, 10,18,1, 11,0,0, 11,0,1, 11,1,0, 11,18,1, 12,0,1, 13,15,0, 14,8,0, 15,13,1, 16,12,0, 16,18,1, 17,0,0, 17,0,1, 17,11,1, 18,5,0, 18,10,0, 18,16,0, 18,21,0, 18,22,0, 19,14,1, 20,18,1, 21,7,1, 21,18,1, 22,1,1, 22,7,1, 22,18,1, 
-    // Length and number of words of that length
-    6, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,21,0, 1,17,1, 2,17,1, 7,17,1, 15,0,1, 17,1,0, 20,0,1, 21,0,1, 
-    // Length and number of words of that length
-    7, 7,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,11,0, 0,15,0, 8,11,0, 16,7,0, 16,11,0, 16,18,0, 
-    // Length and number of words of that length
-    8, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    9,0,1, 13,15,1, 
-    // Length and number of words of that length
-    9, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,3,0, 8,10,1, 9,19,0, 14,4,1, 
-    // Length and number of words of that length
-    10, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,6,1, 13,20,0, 20,7,1, 
+    0,20,0, 11,2,0, 
     // Length and number of words of that length
     11, 3,
     // Coordinates where words start and direction (0 = horizontal)
     6,6,1, 11,6,1, 16,6,1, 
     // Length and number of words of that length
-    12, 2,
+    10, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,20,0, 11,2,0, 
+    0,2,0, 2,6,1, 13,20,0, 20,7,1, 
+    // Length and number of words of that length
+    9, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    5,3,0, 8,10,1, 9,19,0, 14,4,1, 
+    // Length and number of words of that length
+    8, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    9,0,1, 13,15,1, 
+    // Length and number of words of that length
+    7, 7,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,11,0, 0,15,0, 8,11,0, 16,7,0, 16,11,0, 16,18,0, 
+    // Length and number of words of that length
+    6, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,21,0, 1,17,1, 2,17,1, 7,17,1, 15,0,1, 17,1,0, 20,0,1, 21,0,1, 
+    // Length and number of words of that length
+    5, 48,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,6,0, 0,11,1, 0,12,0, 0,17,0, 0,17,1, 1,0,1, 1,11,1, 1,22,0, 2,0,1, 2,10,0, 3,4,1, 4,14,0, 5,7,0, 5,7,1, 5,18,1, 6,0,1, 7,5,1, 7,21,0, 7,22,0, 10,18,1, 11,0,0, 11,0,1, 11,1,0, 11,18,1, 12,0,1, 13,15,0, 14,8,0, 15,13,1, 16,12,0, 16,18,1, 17,0,0, 17,0,1, 17,11,1, 18,5,0, 18,10,0, 18,16,0, 18,21,0, 18,22,0, 19,14,1, 20,18,1, 21,7,1, 21,18,1, 22,1,1, 22,7,1, 22,18,1, 
+    // Length and number of words of that length
+    4, 72,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,1, 0,7,0, 0,8,0, 0,13,0, 0,18,0, 1,6,1, 3,10,1, 3,15,1, 3,16,0, 4,9,0, 4,9,1, 4,14,1, 4,19,0, 4,19,1, 5,2,1, 5,8,0, 5,13,0, 5,13,1, 5,18,0, 6,0,0, 6,1,0, 6,6,0, 6,12,0, 7,0,1, 7,5,0, 8,0,1, 8,5,1, 8,10,0, 8,15,0, 8,16,0, 9,4,0, 9,9,0, 9,9,1, 9,19,1, 10,8,1, 10,13,0, 10,13,1, 10,18,0, 11,6,0, 11,7,0, 11,12,0, 12,6,1, 12,11,1, 12,17,0, 13,0,1, 13,10,0, 13,10,1, 13,16,0, 13,21,0, 13,22,0, 14,4,0, 14,9,0, 14,14,0, 14,14,1, 14,19,1, 15,3,0, 15,13,0, 15,19,1, 16,6,0, 17,6,1, 17,17,1, 18,0,1, 18,5,1, 18,10,1, 19,4,0, 19,4,1, 19,9,0, 19,9,1, 19,14,0, 19,15,0, 21,13,1, 22,13,1, 
+    // Length and number of words of that length
+    3, 32,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,9,0, 0,14,0, 0,19,0, 3,0,1, 3,5,0, 3,20,1, 4,0,1, 4,4,1, 6,18,1, 7,12,1, 7,17,0, 8,20,1, 9,15,1, 10,3,1, 10,8,0, 10,14,0, 12,17,1, 13,5,0, 13,5,1, 14,0,1, 15,8,1, 16,2,1, 17,17,0, 18,16,1, 18,20,1, 19,0,1, 19,20,1, 20,3,0, 20,8,0, 20,13,0, 20,19,0, 
     // End marker
     0
   };
@@ -2619,49 +2619,49 @@ namespace {
     // Total number of words in grid
     174,
     // Length and number of words of that length
-    3, 26,
+    13, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,10,0, 0,15,0, 2,11,0, 4,5,1, 4,15,1, 4,20,1, 5,4,0, 5,18,1, 7,0,1, 8,16,0, 9,11,1, 9,20,1, 12,6,0, 13,0,1, 13,9,1, 15,18,0, 15,20,1, 17,2,1, 18,0,1, 18,5,1, 18,11,0, 18,15,1, 20,7,0, 20,12,0, 20,18,0, 
-    // Length and number of words of that length
-    4, 58,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,12,1, 0,13,0, 0,14,0, 0,18,0, 0,19,0, 1,12,1, 3,0,1, 3,11,1, 3,16,0, 4,0,1, 4,9,1, 5,14,0, 5,19,0, 6,2,1, 6,8,1, 6,13,1, 6,21,0, 6,22,0, 7,6,0, 8,0,1, 8,5,1, 9,0,1, 9,15,1, 10,0,1, 10,6,1, 10,11,1, 10,16,1, 11,7,1, 11,12,1, 12,3,1, 12,8,1, 12,13,1, 12,16,0, 12,19,1, 13,0,0, 13,1,0, 13,4,1, 13,19,1, 14,3,0, 14,8,0, 14,14,1, 14,19,1, 16,6,0, 16,6,1, 16,11,1, 16,17,1, 18,10,1, 18,19,1, 19,3,0, 19,4,0, 19,8,0, 19,8,1, 19,9,0, 19,14,0, 19,19,1, 21,7,1, 22,7,1, 
-    // Length and number of words of that length
-    5, 42,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,6,1, 0,17,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 2,0,1, 3,5,1, 4,10,0, 5,12,1, 6,11,0, 6,18,1, 7,0,0, 7,1,0, 7,4,1, 7,7,0, 7,12,0, 7,17,0, 8,3,0, 9,5,1, 10,19,0, 11,5,0, 11,10,0, 11,15,0, 11,21,0, 11,22,0, 12,11,0, 13,13,1, 14,12,0, 15,14,1, 16,0,1, 17,6,1, 18,0,0, 18,1,0, 18,5,0, 19,13,1, 20,18,1, 21,12,1, 21,18,1, 22,12,1, 22,18,1, 
-    // Length and number of words of that length
-    6, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,6,0, 0,7,0, 0,12,0, 0,17,1, 1,17,1, 2,17,1, 4,15,0, 7,10,1, 7,17,1, 11,0,1, 11,17,1, 13,7,0, 15,0,1, 15,7,1, 17,10,0, 17,15,0, 17,16,0, 17,21,0, 17,22,0, 20,0,1, 21,0,1, 22,0,1, 
-    // Length and number of words of that length
-    7, 10,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 3,5,0, 3,16,1, 5,18,0, 11,4,0, 13,17,0, 16,13,0, 16,19,0, 19,0,1, 
-    // Length and number of words of that length
-    8, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,8,0, 10,14,0, 
-    // Length and number of words of that length
-    9, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,13,0, 9,9,0, 
-    // Length and number of words of that length
-    10, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,20,0, 2,6,1, 13,2,0, 20,7,1, 
-    // Length and number of words of that length
-    11, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,0,1, 17,12,1, 
+    8,10,1, 14,0,1, 
     // Length and number of words of that length
     12, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,2,0, 11,20,0, 
     // Length and number of words of that length
-    13, 2,
+    11, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    8,10,1, 14,0,1, 
+    5,0,1, 17,12,1, 
+    // Length and number of words of that length
+    10, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,20,0, 2,6,1, 13,2,0, 20,7,1, 
+    // Length and number of words of that length
+    9, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    5,13,0, 9,9,0, 
+    // Length and number of words of that length
+    8, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    5,8,0, 10,14,0, 
+    // Length and number of words of that length
+    7, 10,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,9,0, 3,5,0, 3,16,1, 5,18,0, 11,4,0, 13,17,0, 16,13,0, 16,19,0, 19,0,1, 
+    // Length and number of words of that length
+    6, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,6,0, 0,7,0, 0,12,0, 0,17,1, 1,17,1, 2,17,1, 4,15,0, 7,10,1, 7,17,1, 11,0,1, 11,17,1, 13,7,0, 15,0,1, 15,7,1, 17,10,0, 17,15,0, 17,16,0, 17,21,0, 17,22,0, 20,0,1, 21,0,1, 22,0,1, 
+    // Length and number of words of that length
+    5, 42,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,6,1, 0,17,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 2,0,1, 3,5,1, 4,10,0, 5,12,1, 6,11,0, 6,18,1, 7,0,0, 7,1,0, 7,4,1, 7,7,0, 7,12,0, 7,17,0, 8,3,0, 9,5,1, 10,19,0, 11,5,0, 11,10,0, 11,15,0, 11,21,0, 11,22,0, 12,11,0, 13,13,1, 14,12,0, 15,14,1, 16,0,1, 17,6,1, 18,0,0, 18,1,0, 18,5,0, 19,13,1, 20,18,1, 21,12,1, 21,18,1, 22,12,1, 22,18,1, 
+    // Length and number of words of that length
+    4, 58,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,12,1, 0,13,0, 0,14,0, 0,18,0, 0,19,0, 1,12,1, 3,0,1, 3,11,1, 3,16,0, 4,0,1, 4,9,1, 5,14,0, 5,19,0, 6,2,1, 6,8,1, 6,13,1, 6,21,0, 6,22,0, 7,6,0, 8,0,1, 8,5,1, 9,0,1, 9,15,1, 10,0,1, 10,6,1, 10,11,1, 10,16,1, 11,7,1, 11,12,1, 12,3,1, 12,8,1, 12,13,1, 12,16,0, 12,19,1, 13,0,0, 13,1,0, 13,4,1, 13,19,1, 14,3,0, 14,8,0, 14,14,1, 14,19,1, 16,6,0, 16,6,1, 16,11,1, 16,17,1, 18,10,1, 18,19,1, 19,3,0, 19,4,0, 19,8,0, 19,8,1, 19,9,0, 19,14,0, 19,19,1, 21,7,1, 22,7,1, 
+    // Length and number of words of that length
+    3, 26,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,10,0, 0,15,0, 2,11,0, 4,5,1, 4,15,1, 4,20,1, 5,4,0, 5,18,1, 7,0,1, 8,16,0, 9,11,1, 9,20,1, 12,6,0, 13,0,1, 13,9,1, 15,18,0, 15,20,1, 17,2,1, 18,0,1, 18,5,1, 18,11,0, 18,15,1, 20,7,0, 20,12,0, 20,18,0, 
     // End marker
     0
   };
@@ -2703,33 +2703,33 @@ namespace {
     // Total number of words in grid
     170,
     // Length and number of words of that length
-    3, 20,
+    9, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 0,13,0, 3,10,1, 6,7,1, 7,16,0, 9,0,1, 9,10,1, 9,20,1, 10,3,0, 10,9,0, 10,13,0, 10,19,0, 13,0,1, 13,6,0, 13,10,1, 13,20,1, 16,13,1, 19,10,1, 20,9,0, 20,13,0, 
-    // Length and number of words of that length
-    4, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,14,0, 3,5,0, 3,11,0, 3,17,0, 5,3,1, 5,16,1, 8,0,1, 8,19,1, 11,3,1, 11,16,1, 14,0,1, 14,19,1, 16,5,0, 16,11,0, 16,17,0, 17,3,1, 17,16,1, 19,8,0, 19,14,0, 
-    // Length and number of words of that length
-    5, 84,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,1, 0,7,0, 0,12,1, 0,15,0, 0,18,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 1,12,1, 1,18,1, 2,0,1, 2,6,1, 2,12,1, 2,18,1, 4,9,0, 4,9,1, 4,13,0, 5,8,0, 6,0,0, 6,1,0, 6,2,0, 6,7,0, 6,11,1, 6,15,0, 6,20,0, 6,21,0, 6,22,0, 7,0,1, 7,6,0, 7,6,1, 7,12,1, 7,18,1, 8,13,1, 9,4,0, 9,4,1, 9,14,1, 9,18,0, 11,16,0, 12,0,0, 12,1,0, 12,2,0, 12,7,0, 12,15,0, 12,20,0, 12,21,0, 12,22,0, 13,4,1, 13,14,0, 13,14,1, 14,5,1, 14,9,0, 14,13,0, 15,0,1, 15,6,1, 15,12,1, 15,18,1, 16,7,1, 18,0,0, 18,1,0, 18,2,0, 18,7,0, 18,9,1, 18,15,0, 18,20,0, 18,21,0, 18,22,0, 20,0,1, 20,6,1, 20,12,1, 20,18,1, 21,0,1, 21,6,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
-    // Length and number of words of that length
-    6, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,10,0, 0,16,0, 6,0,1, 6,17,1, 10,17,1, 12,0,1, 16,0,1, 16,17,1, 17,6,0, 17,12,0, 17,16,0, 
-    // Length and number of words of that length
-    7, 14,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,8,1, 5,14,0, 7,10,0, 8,5,0, 8,5,1, 8,11,0, 8,17,0, 9,12,0, 10,9,1, 11,8,0, 11,8,1, 12,7,1, 14,11,1, 17,8,1, 
+    0,3,0, 0,19,0, 3,0,1, 3,14,1, 14,3,0, 14,19,0, 19,0,1, 19,14,1, 
     // Length and number of words of that length
     8, 12,
     // Coordinates where words start and direction (0 = horizontal)
     0,4,0, 0,12,0, 0,18,0, 4,0,1, 4,15,1, 10,0,1, 12,15,1, 15,4,0, 15,10,0, 15,18,0, 18,0,1, 18,15,1, 
     // Length and number of words of that length
-    9, 8,
+    7, 14,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,19,0, 3,0,1, 3,14,1, 14,3,0, 14,19,0, 19,0,1, 19,14,1, 
+    5,8,1, 5,14,0, 7,10,0, 8,5,0, 8,5,1, 8,11,0, 8,17,0, 9,12,0, 10,9,1, 11,8,0, 11,8,1, 12,7,1, 14,11,1, 17,8,1, 
+    // Length and number of words of that length
+    6, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,10,0, 0,16,0, 6,0,1, 6,17,1, 10,17,1, 12,0,1, 16,0,1, 16,17,1, 17,6,0, 17,12,0, 17,16,0, 
+    // Length and number of words of that length
+    5, 84,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,1, 0,7,0, 0,12,1, 0,15,0, 0,18,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 1,12,1, 1,18,1, 2,0,1, 2,6,1, 2,12,1, 2,18,1, 4,9,0, 4,9,1, 4,13,0, 5,8,0, 6,0,0, 6,1,0, 6,2,0, 6,7,0, 6,11,1, 6,15,0, 6,20,0, 6,21,0, 6,22,0, 7,0,1, 7,6,0, 7,6,1, 7,12,1, 7,18,1, 8,13,1, 9,4,0, 9,4,1, 9,14,1, 9,18,0, 11,16,0, 12,0,0, 12,1,0, 12,2,0, 12,7,0, 12,15,0, 12,20,0, 12,21,0, 12,22,0, 13,4,1, 13,14,0, 13,14,1, 14,5,1, 14,9,0, 14,13,0, 15,0,1, 15,6,1, 15,12,1, 15,18,1, 16,7,1, 18,0,0, 18,1,0, 18,2,0, 18,7,0, 18,9,1, 18,15,0, 18,20,0, 18,21,0, 18,22,0, 20,0,1, 20,6,1, 20,12,1, 20,18,1, 21,0,1, 21,6,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
+    // Length and number of words of that length
+    4, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,14,0, 3,5,0, 3,11,0, 3,17,0, 5,3,1, 5,16,1, 8,0,1, 8,19,1, 11,3,1, 11,16,1, 14,0,1, 14,19,1, 16,5,0, 16,11,0, 16,17,0, 17,3,1, 17,16,1, 19,8,0, 19,14,0, 
+    // Length and number of words of that length
+    3, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,9,0, 0,13,0, 3,10,1, 6,7,1, 7,16,0, 9,0,1, 9,10,1, 9,20,1, 10,3,0, 10,9,0, 10,13,0, 10,19,0, 13,0,1, 13,6,0, 13,10,1, 13,20,1, 16,13,1, 19,10,1, 20,9,0, 20,13,0, 
     // End marker
     0
   };
@@ -2771,33 +2771,33 @@ namespace {
     // Total number of words in grid
     180,
     // Length and number of words of that length
-    3, 30,
+    11, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,8,0, 0,14,0, 0,19,0, 3,0,1, 3,5,0, 3,11,0, 3,17,0, 3,20,1, 5,13,1, 5,17,1, 7,17,0, 8,0,1, 8,20,1, 11,3,1, 11,17,1, 13,5,0, 14,0,1, 14,20,1, 17,3,1, 17,5,0, 17,7,1, 17,11,0, 17,17,0, 19,0,1, 19,20,1, 20,3,0, 20,8,0, 20,14,0, 20,19,0, 
-    // Length and number of words of that length
-    4, 38,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 0,15,0, 3,4,1, 3,15,1, 4,3,0, 4,14,0, 4,19,0, 5,2,1, 6,12,0, 7,0,1, 7,19,1, 8,10,0, 8,10,1, 8,15,1, 9,9,0, 9,9,1, 9,14,0, 10,8,0, 10,8,1, 10,13,0, 10,13,1, 11,12,0, 12,6,1, 12,11,1, 13,10,0, 13,10,1, 14,4,1, 14,9,1, 15,0,1, 15,3,0, 15,8,0, 15,19,0, 15,19,1, 17,17,1, 19,4,1, 19,7,0, 19,15,0, 19,15,1, 
-    // Length and number of words of that length
-    5, 80,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,6,0, 0,6,1, 0,12,0, 0,12,1, 0,16,0, 0,18,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 1,12,1, 1,18,1, 2,0,1, 2,6,1, 2,12,1, 2,18,1, 3,9,1, 4,8,0, 5,7,0, 5,7,1, 6,0,0, 6,0,1, 6,1,0, 6,6,0, 6,6,1, 6,12,1, 6,16,0, 6,18,1, 6,20,0, 6,21,0, 6,22,0, 7,5,0, 7,5,1, 8,4,1, 9,3,0, 9,19,0, 10,18,1, 11,17,0, 12,0,0, 12,0,1, 12,1,0, 12,2,0, 12,6,0, 12,16,0, 12,21,0, 12,22,0, 13,15,0, 14,14,0, 14,14,1, 15,13,1, 16,0,1, 16,6,1, 16,12,1, 16,18,1, 17,11,1, 18,0,0, 18,1,0, 18,2,0, 18,6,0, 18,10,0, 18,16,0, 18,21,0, 18,22,0, 19,9,1, 20,0,1, 20,6,1, 20,12,1, 20,18,1, 21,0,1, 21,6,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
-    // Length and number of words of that length
-    7, 20,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,10,0, 0,18,0, 4,0,1, 4,8,1, 4,16,1, 5,15,0, 7,11,1, 8,4,0, 8,18,0, 10,0,1, 11,7,0, 12,16,1, 15,5,1, 16,4,0, 16,12,0, 16,18,0, 18,0,1, 18,8,1, 18,16,1, 
-    // Length and number of words of that length
-    8, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 9,0,1, 13,15,1, 15,13,0, 
+    0,2,0, 12,20,0, 
     // Length and number of words of that length
     9, 6,
     // Coordinates where words start and direction (0 = horizontal)
     0,13,0, 7,11,0, 9,14,1, 11,7,1, 13,0,1, 14,9,0, 
     // Length and number of words of that length
-    11, 2,
+    8, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 12,20,0, 
+    0,9,0, 9,0,1, 13,15,1, 15,13,0, 
+    // Length and number of words of that length
+    7, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,10,0, 0,18,0, 4,0,1, 4,8,1, 4,16,1, 5,15,0, 7,11,1, 8,4,0, 8,18,0, 10,0,1, 11,7,0, 12,16,1, 15,5,1, 16,4,0, 16,12,0, 16,18,0, 18,0,1, 18,8,1, 18,16,1, 
+    // Length and number of words of that length
+    5, 80,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,6,0, 0,6,1, 0,12,0, 0,12,1, 0,16,0, 0,18,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 1,12,1, 1,18,1, 2,0,1, 2,6,1, 2,12,1, 2,18,1, 3,9,1, 4,8,0, 5,7,0, 5,7,1, 6,0,0, 6,0,1, 6,1,0, 6,6,0, 6,6,1, 6,12,1, 6,16,0, 6,18,1, 6,20,0, 6,21,0, 6,22,0, 7,5,0, 7,5,1, 8,4,1, 9,3,0, 9,19,0, 10,18,1, 11,17,0, 12,0,0, 12,0,1, 12,1,0, 12,2,0, 12,6,0, 12,16,0, 12,21,0, 12,22,0, 13,15,0, 14,14,0, 14,14,1, 15,13,1, 16,0,1, 16,6,1, 16,12,1, 16,18,1, 17,11,1, 18,0,0, 18,1,0, 18,2,0, 18,6,0, 18,10,0, 18,16,0, 18,21,0, 18,22,0, 19,9,1, 20,0,1, 20,6,1, 20,12,1, 20,18,1, 21,0,1, 21,6,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
+    // Length and number of words of that length
+    4, 38,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 0,15,0, 3,4,1, 3,15,1, 4,3,0, 4,14,0, 4,19,0, 5,2,1, 6,12,0, 7,0,1, 7,19,1, 8,10,0, 8,10,1, 8,15,1, 9,9,0, 9,9,1, 9,14,0, 10,8,0, 10,8,1, 10,13,0, 10,13,1, 11,12,0, 12,6,1, 12,11,1, 13,10,0, 13,10,1, 14,4,1, 14,9,1, 15,0,1, 15,3,0, 15,8,0, 15,19,0, 15,19,1, 17,17,1, 19,4,1, 19,7,0, 19,15,0, 19,15,1, 
+    // Length and number of words of that length
+    3, 30,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,8,0, 0,14,0, 0,19,0, 3,0,1, 3,5,0, 3,11,0, 3,17,0, 3,20,1, 5,13,1, 5,17,1, 7,17,0, 8,0,1, 8,20,1, 11,3,1, 11,17,1, 13,5,0, 14,0,1, 14,20,1, 17,3,1, 17,5,0, 17,7,1, 17,11,0, 17,17,0, 19,0,1, 19,20,1, 20,3,0, 20,8,0, 20,14,0, 20,19,0, 
     // End marker
     0
   };
@@ -2839,33 +2839,33 @@ namespace {
     // Total number of words in grid
     156,
     // Length and number of words of that length
-    3, 16,
+    9, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,12,0, 0,19,0, 3,0,1, 3,20,1, 9,10,1, 10,0,1, 10,9,0, 10,13,0, 12,20,1, 13,10,1, 19,0,1, 19,20,1, 20,3,0, 20,10,0, 20,19,0, 
-    // Length and number of words of that length
-    4, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,11,0, 0,18,0, 3,7,0, 3,15,0, 4,0,1, 4,19,1, 5,6,1, 6,17,0, 7,3,1, 7,16,1, 11,0,1, 11,19,1, 13,5,0, 15,3,1, 15,16,1, 16,7,0, 16,15,0, 17,13,1, 18,0,1, 18,19,1, 19,4,0, 19,11,0, 19,18,0, 
-    // Length and number of words of that length
-    5, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,10,0, 0,17,0, 5,0,1, 5,11,0, 5,18,1, 6,9,1, 6,10,0, 9,6,0, 9,16,0, 10,12,1, 10,18,1, 11,5,1, 11,13,1, 12,0,1, 12,6,1, 12,12,0, 13,11,0, 16,9,1, 17,0,1, 17,18,1, 18,5,0, 18,12,0, 18,17,0, 
-    // Length and number of words of that length
-    6, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,14,0, 3,13,1, 4,3,0, 4,5,1, 4,12,1, 5,4,0, 5,11,1, 5,18,0, 6,5,0, 8,0,1, 8,17,1, 11,17,0, 12,4,0, 12,18,0, 13,19,0, 14,0,1, 14,17,1, 17,6,1, 17,8,0, 17,14,0, 18,5,1, 18,12,1, 19,4,1, 
-    // Length and number of words of that length
-    7, 44,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,8,1, 0,16,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,8,1, 1,16,1, 2,0,1, 2,8,1, 2,16,1, 4,12,0, 7,8,1, 8,0,0, 8,1,0, 8,2,0, 8,7,0, 8,15,0, 8,20,0, 8,21,0, 8,22,0, 10,4,1, 12,10,0, 12,12,1, 15,8,1, 16,0,0, 16,1,0, 16,2,0, 16,20,0, 16,21,0, 16,22,0, 20,0,1, 20,8,1, 20,16,1, 21,0,1, 21,8,1, 21,16,1, 22,0,1, 22,8,1, 22,16,1, 
+    0,9,0, 0,13,0, 7,8,0, 7,14,0, 8,7,1, 9,0,1, 9,14,1, 13,0,1, 13,14,1, 14,7,1, 14,9,0, 14,13,0, 
     // Length and number of words of that length
     8, 12,
     // Coordinates where words start and direction (0 = horizontal)
     0,6,0, 0,16,0, 3,4,1, 4,19,0, 6,0,1, 6,15,1, 11,3,0, 15,6,0, 15,16,0, 16,0,1, 16,15,1, 19,11,1, 
     // Length and number of words of that length
-    9, 12,
+    7, 44,
     // Coordinates where words start and direction (0 = horizontal)
-    0,9,0, 0,13,0, 7,8,0, 7,14,0, 8,7,1, 9,0,1, 9,14,1, 13,0,1, 13,14,1, 14,7,1, 14,9,0, 14,13,0, 
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,8,1, 0,16,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,8,1, 1,16,1, 2,0,1, 2,8,1, 2,16,1, 4,12,0, 7,8,1, 8,0,0, 8,1,0, 8,2,0, 8,7,0, 8,15,0, 8,20,0, 8,21,0, 8,22,0, 10,4,1, 12,10,0, 12,12,1, 15,8,1, 16,0,0, 16,1,0, 16,2,0, 16,20,0, 16,21,0, 16,22,0, 20,0,1, 20,8,1, 20,16,1, 21,0,1, 21,8,1, 21,16,1, 22,0,1, 22,8,1, 22,16,1, 
+    // Length and number of words of that length
+    6, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,14,0, 3,13,1, 4,3,0, 4,5,1, 4,12,1, 5,4,0, 5,11,1, 5,18,0, 6,5,0, 8,0,1, 8,17,1, 11,17,0, 12,4,0, 12,18,0, 13,19,0, 14,0,1, 14,17,1, 17,6,1, 17,8,0, 17,14,0, 18,5,1, 18,12,1, 19,4,1, 
+    // Length and number of words of that length
+    5, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,10,0, 0,17,0, 5,0,1, 5,11,0, 5,18,1, 6,9,1, 6,10,0, 9,6,0, 9,16,0, 10,12,1, 10,18,1, 11,5,1, 11,13,1, 12,0,1, 12,6,1, 12,12,0, 13,11,0, 16,9,1, 17,0,1, 17,18,1, 18,5,0, 18,12,0, 18,17,0, 
+    // Length and number of words of that length
+    4, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,11,0, 0,18,0, 3,7,0, 3,15,0, 4,0,1, 4,19,1, 5,6,1, 6,17,0, 7,3,1, 7,16,1, 11,0,1, 11,19,1, 13,5,0, 15,3,1, 15,16,1, 16,7,0, 16,15,0, 17,13,1, 18,0,1, 18,19,1, 19,4,0, 19,11,0, 19,18,0, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,12,0, 0,19,0, 3,0,1, 3,20,1, 9,10,1, 10,0,1, 10,9,0, 10,13,0, 12,20,1, 13,10,1, 19,0,1, 19,20,1, 20,3,0, 20,10,0, 20,19,0, 
     // End marker
     0
   };
@@ -2907,45 +2907,45 @@ namespace {
     // Total number of words in grid
     174,
     // Length and number of words of that length
-    3, 16,
+    12, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,14,0, 0,19,0, 3,16,0, 3,20,1, 8,0,1, 8,20,1, 10,3,1, 12,17,1, 14,0,1, 14,20,1, 17,6,0, 19,0,1, 20,3,0, 20,8,0, 20,14,0, 
-    // Length and number of words of that length
-    4, 64,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,7,0, 0,13,0, 0,18,0, 1,0,1, 2,0,1, 2,10,0, 3,4,0, 3,15,1, 4,14,0, 4,14,1, 4,19,0, 4,19,1, 5,13,1, 5,18,0, 6,6,0, 6,6,1, 6,12,0, 6,12,1, 6,17,0, 6,17,1, 7,0,1, 7,11,0, 7,16,0, 8,10,1, 8,15,1, 9,14,0, 9,19,1, 10,8,0, 10,13,1, 11,7,1, 11,12,1, 12,6,0, 12,6,1, 12,11,0, 13,0,1, 13,5,0, 13,10,0, 13,16,0, 14,4,0, 14,4,1, 14,9,1, 15,3,0, 15,8,0, 15,19,1, 16,2,1, 16,7,1, 16,13,1, 16,18,0, 17,6,1, 17,12,0, 18,0,1, 18,5,1, 19,4,0, 19,4,1, 19,9,0, 19,15,0, 19,21,0, 19,22,0, 20,19,1, 21,19,1, 22,19,1, 
-    // Length and number of words of that length
-    5, 54,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,6,0, 0,11,1, 0,12,0, 0,17,0, 0,17,1, 1,5,1, 1,11,1, 1,22,0, 3,9,1, 4,2,1, 4,8,0, 4,8,1, 5,0,0, 5,1,0, 5,7,1, 5,18,1, 6,0,1, 7,5,0, 7,10,0, 7,21,0, 7,22,0, 8,4,0, 8,4,1, 9,3,0, 9,19,0, 10,7,1, 10,18,0, 10,18,1, 11,0,0, 11,1,0, 11,12,0, 11,17,0, 12,0,1, 12,11,1, 13,21,0, 13,22,0, 14,14,0, 14,14,1, 16,18,1, 17,0,0, 17,0,1, 17,11,1, 18,5,0, 18,10,0, 18,10,1, 18,16,0, 18,16,1, 19,9,1, 21,7,1, 21,13,1, 22,1,1, 22,7,1, 22,13,1, 
-    // Length and number of words of that length
-    6, 14,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,11,0, 0,21,0, 1,17,1, 2,17,1, 5,0,1, 11,0,1, 11,17,1, 17,1,0, 17,11,0, 17,17,0, 17,17,1, 20,0,1, 21,0,1, 
-    // Length and number of words of that length
-    7, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,15,0, 7,16,1, 15,0,1, 16,7,0, 
-    // Length and number of words of that length
-    8, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 3,0,1, 9,0,1, 13,15,1, 15,13,0, 15,19,0, 19,15,1, 
-    // Length and number of words of that length
-    9, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    5,13,0, 9,9,0, 9,9,1, 13,5,1, 
-    // Length and number of words of that length
-    10, 6,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 5,7,0, 7,5,1, 8,15,0, 13,20,0, 15,8,1, 
+    0,20,0, 11,2,0, 
     // Length and number of words of that length
     11, 2,
     // Coordinates where words start and direction (0 = horizontal)
     2,5,1, 20,7,1, 
     // Length and number of words of that length
-    12, 2,
+    10, 6,
     // Coordinates where words start and direction (0 = horizontal)
-    0,20,0, 11,2,0, 
+    0,2,0, 5,7,0, 7,5,1, 8,15,0, 13,20,0, 15,8,1, 
+    // Length and number of words of that length
+    9, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    5,13,0, 9,9,0, 9,9,1, 13,5,1, 
+    // Length and number of words of that length
+    8, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,9,0, 3,0,1, 9,0,1, 13,15,1, 15,13,0, 15,19,0, 19,15,1, 
+    // Length and number of words of that length
+    7, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,15,0, 7,16,1, 15,0,1, 16,7,0, 
+    // Length and number of words of that length
+    6, 14,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,11,0, 0,21,0, 1,17,1, 2,17,1, 5,0,1, 11,0,1, 11,17,1, 17,1,0, 17,11,0, 17,17,0, 17,17,1, 20,0,1, 21,0,1, 
+    // Length and number of words of that length
+    5, 54,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 0,6,0, 0,11,1, 0,12,0, 0,17,0, 0,17,1, 1,5,1, 1,11,1, 1,22,0, 3,9,1, 4,2,1, 4,8,0, 4,8,1, 5,0,0, 5,1,0, 5,7,1, 5,18,1, 6,0,1, 7,5,0, 7,10,0, 7,21,0, 7,22,0, 8,4,0, 8,4,1, 9,3,0, 9,19,0, 10,7,1, 10,18,0, 10,18,1, 11,0,0, 11,1,0, 11,12,0, 11,17,0, 12,0,1, 12,11,1, 13,21,0, 13,22,0, 14,14,0, 14,14,1, 16,18,1, 17,0,0, 17,0,1, 17,11,1, 18,5,0, 18,10,0, 18,10,1, 18,16,0, 18,16,1, 19,9,1, 21,7,1, 21,13,1, 22,1,1, 22,7,1, 22,13,1, 
+    // Length and number of words of that length
+    4, 64,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,7,0, 0,13,0, 0,18,0, 1,0,1, 2,0,1, 2,10,0, 3,4,0, 3,15,1, 4,14,0, 4,14,1, 4,19,0, 4,19,1, 5,13,1, 5,18,0, 6,6,0, 6,6,1, 6,12,0, 6,12,1, 6,17,0, 6,17,1, 7,0,1, 7,11,0, 7,16,0, 8,10,1, 8,15,1, 9,14,0, 9,19,1, 10,8,0, 10,13,1, 11,7,1, 11,12,1, 12,6,0, 12,6,1, 12,11,0, 13,0,1, 13,5,0, 13,10,0, 13,16,0, 14,4,0, 14,4,1, 14,9,1, 15,3,0, 15,8,0, 15,19,1, 16,2,1, 16,7,1, 16,13,1, 16,18,0, 17,6,1, 17,12,0, 18,0,1, 18,5,1, 19,4,0, 19,4,1, 19,9,0, 19,15,0, 19,21,0, 19,22,0, 20,19,1, 21,19,1, 22,19,1, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 0,14,0, 0,19,0, 3,16,0, 3,20,1, 8,0,1, 8,20,1, 10,3,1, 12,17,1, 14,0,1, 14,20,1, 17,6,0, 19,0,1, 20,3,0, 20,8,0, 20,14,0, 
     // End marker
     0
   };
@@ -2987,29 +2987,29 @@ namespace {
     // Total number of words in grid
     172,
     // Length and number of words of that length
-    3, 16,
+    8, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,8,0, 0,13,0, 0,19,0, 3,0,1, 3,20,1, 8,0,1, 9,20,1, 13,0,1, 14,20,1, 19,0,1, 19,20,1, 20,3,0, 20,9,0, 20,14,0, 20,19,0, 
-    // Length and number of words of that length
-    4, 44,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,12,0, 0,18,0, 3,4,1, 3,9,1, 3,15,0, 4,0,1, 4,3,0, 4,8,0, 4,19,1, 5,6,1, 6,5,0, 6,7,1, 6,12,1, 7,6,0, 7,11,0, 7,16,0, 7,16,1, 8,4,1, 9,3,0, 10,19,0, 10,19,1, 11,7,1, 11,12,1, 12,0,1, 12,6,0, 12,11,0, 12,16,0, 13,17,0, 14,15,1, 15,3,1, 15,14,0, 15,19,0, 16,7,0, 16,7,1, 16,12,1, 17,13,1, 18,0,1, 18,19,1, 19,4,0, 19,10,0, 19,10,1, 19,15,1, 19,18,0, 
-    // Length and number of words of that length
-    5, 40,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,10,0, 0,17,0, 3,14,1, 4,13,0, 4,13,1, 4,19,0, 5,0,1, 5,12,0, 5,18,0, 5,18,1, 7,10,1, 8,9,0, 8,9,1, 8,15,0, 9,8,0, 9,8,1, 9,14,0, 9,14,1, 10,0,1, 10,7,0, 10,13,0, 10,13,1, 12,5,1, 12,18,1, 13,4,0, 13,4,1, 13,10,0, 13,10,1, 14,3,0, 14,9,0, 14,9,1, 15,8,1, 17,0,1, 17,18,1, 18,5,0, 18,5,1, 18,12,0, 18,17,0, 19,4,1, 
-    // Length and number of words of that length
-    6, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,11,0, 0,16,0, 3,7,0, 5,11,1, 6,0,1, 6,10,0, 6,17,0, 6,17,1, 7,3,1, 10,6,1, 11,0,1, 11,5,0, 11,12,0, 11,17,1, 12,11,1, 14,15,0, 15,14,1, 16,0,1, 16,17,1, 17,6,0, 17,6,1, 17,11,0, 17,16,0, 
+    0,14,0, 8,15,1, 14,0,1, 15,8,0, 
     // Length and number of words of that length
     7, 44,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,8,1, 0,9,0, 0,16,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,8,1, 1,16,1, 2,0,1, 2,8,1, 2,16,1, 4,5,1, 5,4,0, 8,0,0, 8,1,0, 8,2,0, 8,20,0, 8,21,0, 8,22,0, 9,0,1, 11,18,0, 13,16,1, 16,0,0, 16,1,0, 16,2,0, 16,13,0, 16,20,0, 16,21,0, 16,22,0, 18,11,1, 20,0,1, 20,8,1, 20,16,1, 21,0,1, 21,8,1, 21,16,1, 22,0,1, 22,8,1, 22,16,1, 
     // Length and number of words of that length
-    8, 4,
+    6, 24,
     // Coordinates where words start and direction (0 = horizontal)
-    0,14,0, 8,15,1, 14,0,1, 15,8,0, 
+    0,6,0, 0,11,0, 0,16,0, 3,7,0, 5,11,1, 6,0,1, 6,10,0, 6,17,0, 6,17,1, 7,3,1, 10,6,1, 11,0,1, 11,5,0, 11,12,0, 11,17,1, 12,11,1, 14,15,0, 15,14,1, 16,0,1, 16,17,1, 17,6,0, 17,6,1, 17,11,0, 17,16,0, 
+    // Length and number of words of that length
+    5, 40,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,10,0, 0,17,0, 3,14,1, 4,13,0, 4,13,1, 4,19,0, 5,0,1, 5,12,0, 5,18,0, 5,18,1, 7,10,1, 8,9,0, 8,9,1, 8,15,0, 9,8,0, 9,8,1, 9,14,0, 9,14,1, 10,0,1, 10,7,0, 10,13,0, 10,13,1, 12,5,1, 12,18,1, 13,4,0, 13,4,1, 13,10,0, 13,10,1, 14,3,0, 14,9,0, 14,9,1, 15,8,1, 17,0,1, 17,18,1, 18,5,0, 18,5,1, 18,12,0, 18,17,0, 19,4,1, 
+    // Length and number of words of that length
+    4, 44,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,12,0, 0,18,0, 3,4,1, 3,9,1, 3,15,0, 4,0,1, 4,3,0, 4,8,0, 4,19,1, 5,6,1, 6,5,0, 6,7,1, 6,12,1, 7,6,0, 7,11,0, 7,16,0, 7,16,1, 8,4,1, 9,3,0, 10,19,0, 10,19,1, 11,7,1, 11,12,1, 12,0,1, 12,6,0, 12,11,0, 12,16,0, 13,17,0, 14,15,1, 15,3,1, 15,14,0, 15,19,0, 16,7,0, 16,7,1, 16,12,1, 17,13,1, 18,0,1, 18,19,1, 19,4,0, 19,10,0, 19,10,1, 19,15,1, 19,18,0, 
+    // Length and number of words of that length
+    3, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,8,0, 0,13,0, 0,19,0, 3,0,1, 3,20,1, 8,0,1, 9,20,1, 13,0,1, 14,20,1, 19,0,1, 19,20,1, 20,3,0, 20,9,0, 20,14,0, 20,19,0, 
     // End marker
     0
   };
@@ -3051,33 +3051,33 @@ namespace {
     // Total number of words in grid
     174,
     // Length and number of words of that length
-    3, 36,
+    17, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,6,0, 0,12,0, 0,18,0, 1,17,0, 4,0,1, 4,6,0, 4,10,1, 4,14,1, 5,1,1, 5,5,1, 5,17,0, 6,4,0, 6,16,1, 6,20,1, 7,7,1, 7,15,0, 10,0,1, 10,4,0, 10,18,0, 12,20,1, 13,7,0, 14,18,0, 15,5,0, 15,13,1, 16,0,1, 16,4,1, 16,16,0, 17,15,1, 17,19,1, 18,6,1, 18,10,1, 18,20,1, 19,5,0, 20,4,0, 20,10,0, 20,16,0, 
-    // Length and number of words of that length
-    4, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 0,13,0, 3,19,1, 9,0,1, 9,19,1, 13,0,1, 13,19,1, 19,0,1, 19,9,0, 19,13,0, 19,19,0, 
-    // Length and number of words of that length
-    5, 86,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,4,0, 0,6,1, 0,8,0, 0,12,1, 0,14,0, 0,18,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 2,0,1, 3,5,0, 3,7,1, 3,13,1, 4,4,1, 4,12,0, 4,18,0, 4,18,1, 5,3,0, 5,9,0, 5,9,1, 5,15,1, 6,0,0, 6,8,0, 6,14,0, 6,21,0, 6,22,0, 7,7,0, 7,11,1, 7,19,0, 8,0,1, 8,6,1, 8,10,0, 8,12,1, 8,18,1, 9,5,0, 9,11,0, 9,13,1, 9,17,0, 10,4,1, 10,10,1, 10,12,0, 11,3,0, 11,9,1, 11,15,0, 12,0,0, 12,1,0, 12,8,0, 12,8,1, 12,14,0, 12,14,1, 12,22,0, 13,5,1, 13,13,0, 13,19,0, 14,0,1, 14,4,0, 14,6,1, 14,10,0, 14,12,1, 14,18,1, 15,7,1, 15,17,0, 17,3,1, 17,9,1, 18,0,0, 18,0,1, 18,1,0, 18,2,0, 18,8,0, 18,14,0, 18,14,1, 18,18,0, 18,22,0, 19,5,1, 19,11,1, 20,18,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
-    // Length and number of words of that length
-    6, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 0,15,0, 0,19,0, 2,11,0, 3,0,1, 7,0,1, 7,17,1, 11,2,1, 11,15,1, 15,0,1, 15,11,0, 15,17,1, 17,3,0, 17,7,0, 17,15,0, 19,17,1, 
-    // Length and number of words of that length
-    7, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,10,0, 0,16,0, 5,13,0, 6,0,1, 6,8,1, 8,6,0, 8,16,0, 9,5,1, 10,16,1, 11,9,0, 12,0,1, 13,11,1, 16,6,0, 16,8,1, 16,12,0, 16,16,1, 
+    0,2,0, 2,6,1, 6,20,0, 20,0,1, 
     // Length and number of words of that length
     11, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 1,12,1, 12,21,0, 21,0,1, 
     // Length and number of words of that length
-    17, 4,
+    7, 16,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,6,1, 6,20,0, 20,0,1, 
+    0,10,0, 0,16,0, 5,13,0, 6,0,1, 6,8,1, 8,6,0, 8,16,0, 9,5,1, 10,16,1, 11,9,0, 12,0,1, 13,11,1, 16,6,0, 16,8,1, 16,12,0, 16,16,1, 
+    // Length and number of words of that length
+    6, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 0,15,0, 0,19,0, 2,11,0, 3,0,1, 7,0,1, 7,17,1, 11,2,1, 11,15,1, 15,0,1, 15,11,0, 15,17,1, 17,3,0, 17,7,0, 17,15,0, 19,17,1, 
+    // Length and number of words of that length
+    5, 86,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,4,0, 0,6,1, 0,8,0, 0,12,1, 0,14,0, 0,18,1, 0,20,0, 0,21,0, 0,22,0, 1,0,1, 1,6,1, 2,0,1, 3,5,0, 3,7,1, 3,13,1, 4,4,1, 4,12,0, 4,18,0, 4,18,1, 5,3,0, 5,9,0, 5,9,1, 5,15,1, 6,0,0, 6,8,0, 6,14,0, 6,21,0, 6,22,0, 7,7,0, 7,11,1, 7,19,0, 8,0,1, 8,6,1, 8,10,0, 8,12,1, 8,18,1, 9,5,0, 9,11,0, 9,13,1, 9,17,0, 10,4,1, 10,10,1, 10,12,0, 11,3,0, 11,9,1, 11,15,0, 12,0,0, 12,1,0, 12,8,0, 12,8,1, 12,14,0, 12,14,1, 12,22,0, 13,5,1, 13,13,0, 13,19,0, 14,0,1, 14,4,0, 14,6,1, 14,10,0, 14,12,1, 14,18,1, 15,7,1, 15,17,0, 17,3,1, 17,9,1, 18,0,0, 18,0,1, 18,1,0, 18,2,0, 18,8,0, 18,14,0, 18,14,1, 18,18,0, 18,22,0, 19,5,1, 19,11,1, 20,18,1, 21,12,1, 21,18,1, 22,0,1, 22,6,1, 22,12,1, 22,18,1, 
+    // Length and number of words of that length
+    4, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,9,0, 0,13,0, 3,19,1, 9,0,1, 9,19,1, 13,0,1, 13,19,1, 19,0,1, 19,9,0, 19,13,0, 19,19,0, 
+    // Length and number of words of that length
+    3, 36,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,6,0, 0,12,0, 0,18,0, 1,17,0, 4,0,1, 4,6,0, 4,10,1, 4,14,1, 5,1,1, 5,5,1, 5,17,0, 6,4,0, 6,16,1, 6,20,1, 7,7,1, 7,15,0, 10,0,1, 10,4,0, 10,18,0, 12,20,1, 13,7,0, 14,18,0, 15,5,0, 15,13,1, 16,0,1, 16,4,1, 16,16,0, 17,15,1, 17,19,1, 18,6,1, 18,10,1, 18,20,1, 19,5,0, 20,4,0, 20,10,0, 20,16,0, 
     // End marker
     0
   };
@@ -3119,37 +3119,37 @@ namespace {
     // Total number of words in grid
     156,
     // Length and number of words of that length
-    3, 24,
+    13, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,12,0, 0,14,1, 0,19,0, 1,17,0, 3,0,1, 3,20,1, 5,19,1, 6,22,0, 9,10,1, 10,9,0, 10,13,0, 10,20,1, 12,0,1, 13,10,1, 14,0,0, 17,1,1, 19,0,1, 19,5,0, 19,20,1, 20,3,0, 20,10,0, 20,19,0, 22,6,1, 
-    // Length and number of words of that length
-    4, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,11,0, 2,6,0, 5,0,1, 6,2,1, 11,0,1, 11,19,1, 16,17,1, 17,16,0, 17,19,1, 19,11,0, 19,17,0, 
-    // Length and number of words of that length
-    5, 32,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,10,0, 0,18,0, 0,18,1, 0,22,0, 4,0,1, 4,6,1, 4,12,1, 4,18,1, 5,5,0, 5,5,1, 6,4,0, 6,18,0, 8,9,1, 9,8,0, 9,14,0, 10,0,1, 12,4,0, 12,18,0, 12,18,1, 13,17,0, 14,9,1, 17,13,1, 18,0,0, 18,0,1, 18,4,0, 18,6,1, 18,12,0, 18,12,1, 18,18,0, 18,18,1, 22,0,1, 
-    // Length and number of words of that length
-    6, 40,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,7,1, 0,16,0, 1,0,1, 1,7,1, 3,13,0, 3,13,1, 4,12,0, 4,19,0, 5,11,0, 6,10,0, 6,17,1, 7,0,0, 7,1,0, 9,14,1, 10,6,1, 10,13,1, 10,21,0, 10,22,0, 11,5,1, 11,12,0, 11,12,1, 12,4,1, 12,11,0, 12,11,1, 13,3,0, 13,3,1, 13,10,0, 14,9,0, 16,0,1, 17,6,0, 17,21,0, 17,22,0, 19,4,1, 21,10,1, 21,17,1, 22,10,1, 22,17,1, 
-    // Length and number of words of that length
-    7, 16,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,7,0, 0,15,0, 5,11,1, 5,17,0, 7,0,1, 7,8,1, 7,16,1, 8,7,0, 8,15,0, 11,5,0, 15,0,1, 15,8,1, 15,16,1, 16,7,0, 16,15,0, 17,5,1, 
-    // Length and number of words of that length
-    8, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 0,14,0, 3,4,1, 4,3,0, 8,0,1, 8,15,1, 11,19,0, 14,0,1, 14,15,1, 15,8,0, 15,14,0, 19,11,1, 
+    0,2,0, 2,0,1, 10,20,0, 20,10,1, 
     // Length and number of words of that length
     9, 16,
     // Coordinates where words start and direction (0 = horizontal)
     0,9,0, 0,20,0, 0,21,0, 1,14,1, 2,14,1, 6,7,1, 7,6,0, 7,16,0, 9,0,1, 13,14,1, 14,1,0, 14,2,0, 14,13,0, 16,7,1, 20,0,1, 21,0,1, 
     // Length and number of words of that length
-    13, 4,
+    8, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,0,1, 10,20,0, 20,10,1, 
+    0,8,0, 0,14,0, 3,4,1, 4,3,0, 8,0,1, 8,15,1, 11,19,0, 14,0,1, 14,15,1, 15,8,0, 15,14,0, 19,11,1, 
+    // Length and number of words of that length
+    7, 16,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,7,0, 0,15,0, 5,11,1, 5,17,0, 7,0,1, 7,8,1, 7,16,1, 8,7,0, 8,15,0, 11,5,0, 15,0,1, 15,8,1, 15,16,1, 16,7,0, 16,15,0, 17,5,1, 
+    // Length and number of words of that length
+    6, 40,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,7,1, 0,16,0, 1,0,1, 1,7,1, 3,13,0, 3,13,1, 4,12,0, 4,19,0, 5,11,0, 6,10,0, 6,17,1, 7,0,0, 7,1,0, 9,14,1, 10,6,1, 10,13,1, 10,21,0, 10,22,0, 11,5,1, 11,12,0, 11,12,1, 12,4,1, 12,11,0, 12,11,1, 13,3,0, 13,3,1, 13,10,0, 14,9,0, 16,0,1, 17,6,0, 17,21,0, 17,22,0, 19,4,1, 21,10,1, 21,17,1, 22,10,1, 22,17,1, 
+    // Length and number of words of that length
+    5, 32,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,4,0, 0,10,0, 0,18,0, 0,18,1, 0,22,0, 4,0,1, 4,6,1, 4,12,1, 4,18,1, 5,5,0, 5,5,1, 6,4,0, 6,18,0, 8,9,1, 9,8,0, 9,14,0, 10,0,1, 12,4,0, 12,18,0, 12,18,1, 13,17,0, 14,9,1, 17,13,1, 18,0,0, 18,0,1, 18,4,0, 18,6,1, 18,12,0, 18,12,1, 18,18,0, 18,18,1, 22,0,1, 
+    // Length and number of words of that length
+    4, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,11,0, 2,6,0, 5,0,1, 6,2,1, 11,0,1, 11,19,1, 16,17,1, 17,16,0, 17,19,1, 19,11,0, 19,17,0, 
+    // Length and number of words of that length
+    3, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 0,12,0, 0,14,1, 0,19,0, 1,17,0, 3,0,1, 3,20,1, 5,19,1, 6,22,0, 9,10,1, 10,9,0, 10,13,0, 10,20,1, 12,0,1, 13,10,1, 14,0,0, 17,1,1, 19,0,1, 19,5,0, 19,20,1, 20,3,0, 20,10,0, 20,19,0, 22,6,1, 
     // End marker
     0
   };
@@ -3170,13 +3170,13 @@ namespace {
     // Total number of words in grid
     4,
     // Length and number of words of that length
-    1, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 1,1,1, 
-    // Length and number of words of that length
     2, 2,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,1, 0,1,0, 
+    // Length and number of words of that length
+    1, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 1,1,1, 
     // End marker
     0
   };
@@ -3198,13 +3198,13 @@ namespace {
     // Total number of words in grid
     6,
     // Length and number of words of that length
-    2, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,1,1, 1,0,0, 
-    // Length and number of words of that length
     3, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 0,2,0, 1,0,1, 2,0,1, 
+    // Length and number of words of that length
+    2, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,1,1, 1,0,0, 
     // End marker
     0
   };
@@ -3227,13 +3227,13 @@ namespace {
     // Total number of words in grid
     8,
     // Length and number of words of that length
-    3, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 1,3,0, 3,1,1, 
-    // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 0,2,0, 1,0,1, 2,0,1, 
+    // Length and number of words of that length
+    3, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 1,3,0, 3,1,1, 
     // End marker
     0
   };
@@ -3257,17 +3257,17 @@ namespace {
     // Total number of words in grid
     10,
     // Length and number of words of that length
-    3, 4,
+    5, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 2,4,0, 4,2,1, 
+    0,2,0, 2,0,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 1,0,1, 1,3,0, 3,1,1, 
     // Length and number of words of that length
-    5, 2,
+    3, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,0,1, 
+    0,0,0, 0,0,1, 2,4,0, 4,2,1, 
     // End marker
     0
   };
@@ -3291,21 +3291,21 @@ namespace {
     // Total number of words in grid
     14,
     // Length and number of words of that length
-    1, 4,
+    5, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 1,4,1, 3,0,1, 4,1,0, 
-    // Length and number of words of that length
-    3, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,1,0, 1,0,1, 2,3,0, 3,2,1, 
+    0,2,0, 2,0,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 1,4,0, 4,1,1, 
     // Length and number of words of that length
-    5, 2,
+    3, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,0,1, 
+    0,1,0, 1,0,1, 2,3,0, 3,2,1, 
+    // Length and number of words of that length
+    1, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 1,4,1, 3,0,1, 4,1,0, 
     // End marker
     0
   };
@@ -3329,17 +3329,17 @@ namespace {
     // Total number of words in grid
     14,
     // Length and number of words of that length
-    1, 4,
+    5, 6,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 1,4,1, 3,0,1, 4,1,0, 
+    0,0,0, 0,0,1, 0,2,0, 0,4,0, 2,0,1, 4,0,1, 
     // Length and number of words of that length
     3, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,1,0, 1,0,1, 2,3,0, 3,2,1, 
     // Length and number of words of that length
-    5, 6,
+    1, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,2,0, 0,4,0, 2,0,1, 4,0,1, 
+    0,3,0, 1,4,1, 3,0,1, 4,1,0, 
     // End marker
     0
   };
@@ -3364,25 +3364,25 @@ namespace {
     // Total number of words in grid
     20,
     // Length and number of words of that length
-    1, 4,
+    5, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,1,0, 1,0,1, 4,5,1, 5,4,0, 
-    // Length and number of words of that length
-    2, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 2,4,1, 3,0,1, 4,2,0, 
-    // Length and number of words of that length
-    3, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 2,0,1, 3,3,0, 3,3,1, 
+    0,0,0, 0,0,1, 1,5,0, 5,1,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,4,0, 1,2,1, 2,1,0, 4,0,1, 
     // Length and number of words of that length
-    5, 4,
+    3, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 1,5,0, 5,1,1, 
+    0,2,0, 2,0,1, 3,3,0, 3,3,1, 
+    // Length and number of words of that length
+    2, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,0, 2,4,1, 3,0,1, 4,2,0, 
+    // Length and number of words of that length
+    1, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,1,0, 1,0,1, 4,5,1, 5,4,0, 
     // End marker
     0
   };
@@ -3408,25 +3408,25 @@ namespace {
     // Total number of words in grid
     26,
     // Length and number of words of that length
-    1, 2,
+    7, 3,
     // Coordinates where words start and direction (0 = horizontal)
-    3,0,1, 3,6,1, 
-    // Length and number of words of that length
-    2, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,5,1, 0,6,0, 2,0,1, 4,5,1, 5,0,0, 5,4,0, 6,0,1, 
-    // Length and number of words of that length
-    3, 9,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,1,0, 0,5,0, 1,4,0, 2,3,1, 3,2,0, 3,2,1, 4,1,0, 4,1,1, 4,5,0, 
+    0,3,0, 1,0,1, 5,0,1, 
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 3,6,0, 6,3,1, 
     // Length and number of words of that length
-    7, 3,
+    3, 9,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 1,0,1, 5,0,1, 
+    0,1,0, 0,5,0, 1,4,0, 2,3,1, 3,2,0, 3,2,1, 4,1,0, 4,1,1, 4,5,0, 
+    // Length and number of words of that length
+    2, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,2,0, 0,5,1, 0,6,0, 2,0,1, 4,5,1, 5,0,0, 5,4,0, 6,0,1, 
+    // Length and number of words of that length
+    1, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,0,1, 3,6,1, 
     // End marker
     0
   };
@@ -3452,25 +3452,25 @@ namespace {
     // Total number of words in grid
     18,
     // Length and number of words of that length
-    1, 1,
+    7, 3,
     // Coordinates where words start and direction (0 = horizontal)
-    3,3,1, 
-    // Length and number of words of that length
-    2, 2,
-    // Coordinates where words start and direction (0 = horizontal)
-    3,0,1, 3,5,1, 
-    // Length and number of words of that length
-    3, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,2,1, 0,4,0, 2,0,0, 2,6,0, 4,2,0, 4,4,0, 6,2,1, 
+    0,3,0, 2,0,1, 4,0,1, 
     // Length and number of words of that length
     5, 4,
     // Coordinates where words start and direction (0 = horizontal)
     1,1,0, 1,1,1, 1,5,0, 5,1,1, 
     // Length and number of words of that length
-    7, 3,
+    3, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 2,0,1, 4,0,1, 
+    0,2,0, 0,2,1, 0,4,0, 2,0,0, 2,6,0, 4,2,0, 4,4,0, 6,2,1, 
+    // Length and number of words of that length
+    2, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,0,1, 3,5,1, 
+    // Length and number of words of that length
+    1, 1,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,3,1, 
     // End marker
     0
   };
@@ -3496,17 +3496,17 @@ namespace {
     // Total number of words in grid
     24,
     // Length and number of words of that length
-    1, 4,
+    7, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    2,3,0, 3,2,1, 3,4,1, 4,3,0, 
+    0,2,0, 0,4,0, 2,0,1, 4,0,1, 
     // Length and number of words of that length
     3, 16,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 0,1,0, 0,4,1, 0,5,0, 0,6,0, 1,0,1, 1,4,1, 4,0,0, 4,1,0, 4,5,0, 4,6,0, 5,0,1, 5,4,1, 6,0,1, 6,4,1, 
     // Length and number of words of that length
-    7, 4,
+    1, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,4,0, 2,0,1, 4,0,1, 
+    2,3,0, 3,2,1, 3,4,1, 4,3,0, 
     // End marker
     0
   };
@@ -3532,25 +3532,25 @@ namespace {
     // Total number of words in grid
     18,
     // Length and number of words of that length
-    2, 2,
+    7, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    3,0,1, 3,5,1, 
-    // Length and number of words of that length
-    3, 6,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,3,0, 0,4,0, 4,2,0, 4,3,0, 4,4,0, 
-    // Length and number of words of that length
-    4, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,1, 1,6,0, 2,0,0, 6,1,1, 
+    2,0,1, 4,0,1, 
     // Length and number of words of that length
     6, 4,
     // Coordinates where words start and direction (0 = horizontal)
     0,5,0, 1,1,0, 1,1,1, 5,0,1, 
     // Length and number of words of that length
-    7, 2,
+    4, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    2,0,1, 4,0,1, 
+    0,2,1, 1,6,0, 2,0,0, 6,1,1, 
+    // Length and number of words of that length
+    3, 6,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,2,0, 0,3,0, 0,4,0, 4,2,0, 4,3,0, 4,4,0, 
+    // Length and number of words of that length
+    2, 2,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,0,1, 3,5,1, 
     // End marker
     0
   };
@@ -3577,17 +3577,17 @@ namespace {
     // Total number of words in grid
     28,
     // Length and number of words of that length
-    3, 12,
+    5, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,5,0, 0,6,0, 0,7,0, 1,0,1, 2,0,1, 5,0,0, 5,1,0, 5,2,0, 5,5,1, 6,5,1, 7,5,1, 
+    0,4,0, 3,0,1, 3,3,0, 4,3,1, 
     // Length and number of words of that length
     4, 12,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,1,0, 0,2,0, 0,4,1, 1,4,1, 2,4,1, 4,5,0, 4,6,0, 4,7,0, 5,0,1, 6,0,1, 7,0,1, 
     // Length and number of words of that length
-    5, 4,
+    3, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 3,0,1, 3,3,0, 4,3,1, 
+    0,0,1, 0,5,0, 0,6,0, 0,7,0, 1,0,1, 2,0,1, 5,0,0, 5,1,0, 5,2,0, 5,5,1, 6,5,1, 7,5,1, 
     // End marker
     0
   };
@@ -3615,21 +3615,21 @@ namespace {
     // Total number of words in grid
     34,
     // Length and number of words of that length
-    2, 4,
+    9, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    3,0,1, 3,7,1, 5,0,1, 5,7,1, 
-    // Length and number of words of that length
-    3, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,6,0, 3,3,1, 3,4,0, 4,3,1, 5,3,1, 6,2,0, 6,6,0, 
+    0,3,0, 0,5,0, 
     // Length and number of words of that length
     4, 20,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 0,1,0, 0,5,1, 0,7,0, 0,8,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 5,0,0, 5,1,0, 5,7,0, 5,8,0, 6,0,1, 6,5,1, 7,0,1, 7,5,1, 8,0,1, 8,5,1, 
     // Length and number of words of that length
-    9, 2,
+    3, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,5,0, 
+    0,2,0, 0,6,0, 3,3,1, 3,4,0, 4,3,1, 5,3,1, 6,2,0, 6,6,0, 
+    // Length and number of words of that length
+    2, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,0,1, 3,7,1, 5,0,1, 5,7,1, 
     // End marker
     0
   };
@@ -3658,21 +3658,21 @@ namespace {
     // Total number of words in grid
     28,
     // Length and number of words of that length
-    3, 8,
+    7, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,6,0, 3,7,1, 4,7,1, 5,0,1, 6,0,1, 7,3,0, 7,4,0, 
-    // Length and number of words of that length
-    4, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,1, 0,4,0, 3,0,0, 3,9,0, 4,0,1, 5,6,1, 6,5,0, 9,3,1, 
+    1,2,0, 2,1,1, 2,7,0, 7,2,1, 
     // Length and number of words of that length
     5, 8,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 1,2,1, 2,1,0, 3,0,1, 3,8,0, 5,6,0, 6,5,1, 8,3,1, 
     // Length and number of words of that length
-    7, 4,
+    4, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    1,2,0, 2,1,1, 2,7,0, 7,2,1, 
+    0,3,1, 0,4,0, 3,0,0, 3,9,0, 4,0,1, 5,6,1, 6,5,0, 9,3,1, 
+    // Length and number of words of that length
+    3, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,6,0, 3,7,1, 4,7,1, 5,0,1, 6,0,1, 7,3,0, 7,4,0, 
     // End marker
     0
   };
@@ -3702,17 +3702,17 @@ namespace {
     // Total number of words in grid
     46,
     // Length and number of words of that length
-    3, 16,
+    5, 22,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,7,0, 1,6,0, 3,0,1, 3,4,1, 3,8,1, 4,3,0, 4,7,0, 4,7,1, 6,1,1, 7,0,1, 7,4,0, 7,4,1, 7,8,1, 8,3,0, 8,7,0, 
+    0,1,0, 0,2,0, 0,8,0, 0,9,0, 1,0,1, 1,4,0, 1,6,1, 2,0,1, 2,6,1, 3,5,0, 4,1,1, 5,3,1, 5,6,0, 6,1,0, 6,2,0, 6,5,1, 6,8,0, 6,9,0, 8,0,1, 8,6,1, 9,0,1, 9,6,1, 
     // Length and number of words of that length
     4, 8,
     // Coordinates where words start and direction (0 = horizontal)
     0,0,0, 0,0,1, 0,7,1, 0,10,0, 7,0,0, 7,10,0, 10,0,1, 10,7,1, 
     // Length and number of words of that length
-    5, 22,
+    3, 16,
     // Coordinates where words start and direction (0 = horizontal)
-    0,1,0, 0,2,0, 0,8,0, 0,9,0, 1,0,1, 1,4,0, 1,6,1, 2,0,1, 2,6,1, 3,5,0, 4,1,1, 5,3,1, 5,6,0, 6,1,0, 6,2,0, 6,5,1, 6,8,0, 6,9,0, 8,0,1, 8,6,1, 9,0,1, 9,6,1, 
+    0,3,0, 0,7,0, 1,6,0, 3,0,1, 3,4,1, 3,8,1, 4,3,0, 4,7,0, 4,7,1, 6,1,1, 7,0,1, 7,4,0, 7,4,1, 7,8,1, 8,3,0, 8,7,0, 
     // End marker
     0
   };
@@ -3744,25 +3744,25 @@ namespace {
     // Total number of words in grid
     68,
     // Length and number of words of that length
-    3, 26,
+    7, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,1,0, 0,2,0, 0,7,0, 0,10,1, 1,10,1, 2,10,1, 3,4,0, 3,9,0, 4,7,0, 4,7,1, 5,6,0, 6,0,1, 6,5,0, 6,5,1, 6,10,1, 7,3,0, 7,8,0, 8,3,1, 10,0,1, 10,5,0, 10,10,0, 10,11,0, 10,12,0, 11,0,1, 12,0,1, 
-    // Length and number of words of that length
-    4, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,1, 0,5,1, 0,6,0, 0,10,0, 0,11,0, 0,12,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 3,3,1, 4,0,0, 4,1,0, 4,2,0, 5,10,0, 5,11,0, 5,12,0, 9,0,0, 9,1,0, 9,2,0, 9,6,0, 9,6,1, 10,4,1, 10,9,1, 11,4,1, 11,9,1, 12,4,1, 12,9,1, 
-    // Length and number of words of that length
-    5, 6,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 3,8,1, 5,0,1, 7,8,1, 8,7,0, 9,0,1, 
+    5,6,1, 7,0,1, 
     // Length and number of words of that length
     6, 6,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 0,8,0, 4,0,1, 7,4,0, 7,9,0, 8,7,1, 
     // Length and number of words of that length
-    7, 2,
+    5, 6,
     // Coordinates where words start and direction (0 = horizontal)
-    5,6,1, 7,0,1, 
+    0,5,0, 3,8,1, 5,0,1, 7,8,1, 8,7,0, 9,0,1, 
+    // Length and number of words of that length
+    4, 28,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,1, 0,5,1, 0,6,0, 0,10,0, 0,11,0, 0,12,0, 1,0,1, 1,5,1, 2,0,1, 2,5,1, 3,3,1, 4,0,0, 4,1,0, 4,2,0, 5,10,0, 5,11,0, 5,12,0, 9,0,0, 9,1,0, 9,2,0, 9,6,0, 9,6,1, 10,4,1, 10,9,1, 11,4,1, 11,9,1, 12,4,1, 12,9,1, 
+    // Length and number of words of that length
+    3, 26,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,1,0, 0,2,0, 0,7,0, 0,10,1, 1,10,1, 2,10,1, 3,4,0, 3,9,0, 4,7,0, 4,7,1, 5,6,0, 6,0,1, 6,5,0, 6,5,1, 6,10,1, 7,3,0, 7,8,0, 8,3,1, 10,0,1, 10,5,0, 10,10,0, 10,11,0, 10,12,0, 11,0,1, 12,0,1, 
     // End marker
     0
   };
@@ -3796,25 +3796,25 @@ namespace {
     // Total number of words in grid
     88,
     // Length and number of words of that length
-    3, 48,
+    7, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,4,1, 0,8,0, 0,8,1, 0,12,1, 0,13,0, 0,14,0, 1,0,1, 1,4,1, 1,8,1, 1,12,1, 3,7,0, 4,0,0, 4,1,0, 4,6,1, 4,8,0, 4,13,0, 4,14,0, 6,0,1, 6,4,0, 6,4,1, 6,10,0, 7,3,1, 7,9,1, 8,0,0, 8,1,0, 8,6,0, 8,8,1, 8,12,1, 8,13,0, 8,14,0, 9,7,0, 10,6,1, 12,0,0, 12,1,0, 12,6,0, 12,13,0, 12,14,0, 13,0,1, 13,4,1, 13,8,1, 13,12,1, 14,0,1, 14,4,1, 14,8,1, 14,12,1, 
-    // Length and number of words of that length
-    4, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,9,0, 2,3,0, 3,9,1, 5,0,1, 5,11,1, 9,0,1, 9,11,0, 9,11,1, 11,2,1, 11,5,0, 11,9,0, 
-    // Length and number of words of that length
-    5, 12,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,4,0, 0,10,0, 4,0,1, 4,10,1, 5,5,0, 5,5,1, 5,9,0, 9,5,1, 10,0,1, 10,4,0, 10,10,0, 10,10,1, 
+    0,2,0, 0,6,0, 0,12,0, 2,0,1, 2,8,1, 6,8,1, 8,0,1, 8,2,0, 8,8,0, 8,12,0, 12,0,1, 12,8,1, 
     // Length and number of words of that length
     6, 4,
     // Coordinates where words start and direction (0 = horizontal)
     2,11,0, 3,2,1, 7,3,0, 11,7,1, 
     // Length and number of words of that length
-    7, 12,
+    5, 12,
     // Coordinates where words start and direction (0 = horizontal)
-    0,2,0, 0,6,0, 0,12,0, 2,0,1, 2,8,1, 6,8,1, 8,0,1, 8,2,0, 8,8,0, 8,12,0, 12,0,1, 12,8,1, 
+    0,4,0, 0,10,0, 4,0,1, 4,10,1, 5,5,0, 5,5,1, 5,9,0, 9,5,1, 10,0,1, 10,4,0, 10,10,0, 10,10,1, 
+    // Length and number of words of that length
+    4, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,9,0, 2,3,0, 3,9,1, 5,0,1, 5,11,1, 9,0,1, 9,11,0, 9,11,1, 11,2,1, 11,5,0, 11,9,0, 
+    // Length and number of words of that length
+    3, 48,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,4,1, 0,8,0, 0,8,1, 0,12,1, 0,13,0, 0,14,0, 1,0,1, 1,4,1, 1,8,1, 1,12,1, 3,7,0, 4,0,0, 4,1,0, 4,6,1, 4,8,0, 4,13,0, 4,14,0, 6,0,1, 6,4,0, 6,4,1, 6,10,0, 7,3,1, 7,9,1, 8,0,0, 8,1,0, 8,6,0, 8,8,1, 8,12,1, 8,13,0, 8,14,0, 9,7,0, 10,6,1, 12,0,0, 12,1,0, 12,6,0, 12,13,0, 12,14,0, 13,0,1, 13,4,1, 13,8,1, 13,12,1, 14,0,1, 14,4,1, 14,8,1, 14,12,1, 
     // End marker
     0
   };
@@ -3848,21 +3848,21 @@ namespace {
     // Total number of words in grid
     86,
     // Length and number of words of that length
-    3, 30,
+    10, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,9,0, 3,6,1, 3,10,0, 4,3,1, 4,4,0, 4,5,0, 4,8,1, 4,9,0, 5,0,1, 5,4,1, 5,8,1, 5,12,1, 6,3,0, 6,7,0, 6,11,0, 7,6,1, 8,5,0, 8,9,0, 8,10,0, 9,0,1, 9,4,0, 9,4,1, 9,8,1, 9,12,1, 10,4,1, 10,9,1, 11,6,1, 12,5,0, 12,9,0, 
-    // Length and number of words of that length
-    4, 36,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,7,0, 0,11,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,0,1, 6,11,1, 7,0,1, 7,11,1, 8,0,1, 11,0,0, 11,1,0, 11,2,0, 11,3,0, 11,7,0, 11,8,0, 11,11,1, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    0,8,0, 5,6,0, 6,0,1, 8,5,1, 
     // Length and number of words of that length
     5, 16,
     // Coordinates where words start and direction (0 = horizontal)
     0,3,0, 0,5,1, 1,5,1, 2,5,1, 3,10,1, 5,0,0, 5,1,0, 5,2,0, 5,12,0, 5,13,0, 5,14,0, 10,11,0, 11,0,1, 12,5,1, 13,5,1, 14,5,1, 
     // Length and number of words of that length
-    10, 4,
+    4, 36,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 5,6,0, 6,0,1, 8,5,1, 
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,7,0, 0,11,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 3,0,1, 6,11,1, 7,0,1, 7,11,1, 8,0,1, 11,0,0, 11,1,0, 11,2,0, 11,3,0, 11,7,0, 11,8,0, 11,11,1, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 30,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,9,0, 3,6,1, 3,10,0, 4,3,1, 4,4,0, 4,5,0, 4,8,1, 4,9,0, 5,0,1, 5,4,1, 5,8,1, 5,12,1, 6,3,0, 6,7,0, 6,11,0, 7,6,1, 8,5,0, 8,9,0, 8,10,0, 9,0,1, 9,4,0, 9,4,1, 9,8,1, 9,12,1, 10,4,1, 10,9,1, 11,6,1, 12,5,0, 12,9,0, 
     // End marker
     0
   };
@@ -3896,33 +3896,33 @@ namespace {
     // Total number of words in grid
     80,
     // Length and number of words of that length
-    3, 12,
+    10, 2,
     // Coordinates where words start and direction (0 = horizontal)
-    0,8,0, 3,4,0, 4,3,1, 5,6,1, 6,5,0, 6,9,0, 7,0,1, 7,12,1, 9,6,1, 9,10,0, 10,9,1, 12,6,0, 
-    // Length and number of words of that length
-    4, 32,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,7,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 4,8,1, 6,0,1, 8,11,1, 10,3,1, 11,0,0, 11,1,0, 11,2,0, 11,7,0, 11,8,0, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
-    // Length and number of words of that length
-    5, 23,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,5,0, 0,5,1, 0,9,0, 1,5,1, 2,5,1, 3,10,0, 5,0,0, 5,0,1, 5,1,0, 5,2,0, 5,7,0, 5,10,1, 5,12,0, 5,13,0, 5,14,0, 7,4,0, 9,0,1, 9,10,1, 10,5,0, 10,9,0, 12,5,1, 13,5,1, 14,5,1, 
-    // Length and number of words of that length
-    6, 4,
-    // Coordinates where words start and direction (0 = horizontal)
-    3,9,1, 4,8,0, 5,6,0, 11,0,1, 
-    // Length and number of words of that length
-    7, 5,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,11,0, 7,4,1, 8,3,0, 8,11,0, 
+    6,5,1, 8,0,1, 
     // Length and number of words of that length
     8, 2,
     // Coordinates where words start and direction (0 = horizontal)
     3,0,1, 11,7,1, 
     // Length and number of words of that length
-    10, 2,
+    7, 5,
     // Coordinates where words start and direction (0 = horizontal)
-    6,5,1, 8,0,1, 
+    0,3,0, 0,11,0, 7,4,1, 8,3,0, 8,11,0, 
+    // Length and number of words of that length
+    6, 4,
+    // Coordinates where words start and direction (0 = horizontal)
+    3,9,1, 4,8,0, 5,6,0, 11,0,1, 
+    // Length and number of words of that length
+    5, 23,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,0, 0,5,1, 0,9,0, 1,5,1, 2,5,1, 3,10,0, 5,0,0, 5,0,1, 5,1,0, 5,2,0, 5,7,0, 5,10,1, 5,12,0, 5,13,0, 5,14,0, 7,4,0, 9,0,1, 9,10,1, 10,5,0, 10,9,0, 12,5,1, 13,5,1, 14,5,1, 
+    // Length and number of words of that length
+    4, 32,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,7,0, 0,11,1, 0,12,0, 0,13,0, 0,14,0, 1,0,1, 1,11,1, 2,0,1, 2,11,1, 4,8,1, 6,0,1, 8,11,1, 10,3,1, 11,0,0, 11,1,0, 11,2,0, 11,7,0, 11,8,0, 11,12,0, 11,13,0, 11,14,0, 12,0,1, 12,11,1, 13,0,1, 13,11,1, 14,0,1, 14,11,1, 
+    // Length and number of words of that length
+    3, 12,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,8,0, 3,4,0, 4,3,1, 5,6,1, 6,5,0, 6,9,0, 7,0,1, 7,12,1, 9,6,1, 9,10,0, 10,9,1, 12,6,0, 
     // End marker
     0
   };
@@ -3950,21 +3950,21 @@ namespace {
     // Total number of words in grid
     24,
     // Length and number of words of that length
-    3, 8,
+    7, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,1, 0,4,0, 3,0,0, 3,8,0, 4,0,1, 4,6,1, 6,4,0, 8,3,1, 
-    // Length and number of words of that length
-    4, 8,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,5,0, 3,0,1, 3,5,1, 5,0,1, 5,3,0, 5,5,0, 5,5,1, 
+    1,2,0, 1,6,0, 2,1,1, 6,1,1, 
     // Length and number of words of that length
     5, 4,
     // Coordinates where words start and direction (0 = horizontal)
     1,2,1, 2,1,0, 2,7,0, 7,2,1, 
     // Length and number of words of that length
-    7, 4,
+    4, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    1,2,0, 1,6,0, 2,1,1, 6,1,1, 
+    0,3,0, 0,5,0, 3,0,1, 3,5,1, 5,0,1, 5,3,0, 5,5,0, 5,5,1, 
+    // Length and number of words of that length
+    3, 8,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,3,1, 0,4,0, 3,0,0, 3,8,0, 4,0,1, 4,6,1, 6,4,0, 8,3,1, 
     // End marker
     0
   };
@@ -3996,21 +3996,21 @@ namespace {
     // Total number of words in grid
     64,
     // Length and number of words of that length
-    3, 24,
+    6, 8,
     // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 0,6,0, 1,5,1, 2,5,1, 3,4,0, 3,8,0, 4,3,1, 4,7,1, 5,0,0, 5,1,0, 5,2,0, 5,10,0, 5,11,0, 5,12,0, 6,0,1, 6,10,1, 7,4,0, 7,8,0, 8,3,1, 8,7,1, 10,5,1, 10,6,0, 11,5,1, 12,5,1, 
-    // Length and number of words of that length
-    4, 24,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,9,1, 0,10,0, 0,11,0, 0,12,0, 1,0,1, 1,9,1, 2,0,1, 2,9,1, 9,0,0, 9,1,0, 9,2,0, 9,10,0, 9,11,0, 9,12,0, 10,0,1, 10,9,1, 11,0,1, 11,9,1, 12,0,1, 12,9,1, 
+    0,3,0, 0,9,0, 3,0,1, 3,7,1, 7,3,0, 7,9,0, 9,0,1, 9,7,1, 
     // Length and number of words of that length
     5, 8,
     // Coordinates where words start and direction (0 = horizontal)
     0,5,0, 0,7,0, 5,0,1, 5,8,1, 7,0,1, 7,8,1, 8,5,0, 8,7,0, 
     // Length and number of words of that length
-    6, 8,
+    4, 24,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 3,0,1, 3,7,1, 7,3,0, 7,9,0, 9,0,1, 9,7,1, 
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,9,1, 0,10,0, 0,11,0, 0,12,0, 1,0,1, 1,9,1, 2,0,1, 2,9,1, 9,0,0, 9,1,0, 9,2,0, 9,10,0, 9,11,0, 9,12,0, 10,0,1, 10,9,1, 11,0,1, 11,9,1, 12,0,1, 12,9,1, 
+    // Length and number of words of that length
+    3, 24,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 0,6,0, 1,5,1, 2,5,1, 3,4,0, 3,8,0, 4,3,1, 4,7,1, 5,0,0, 5,1,0, 5,2,0, 5,10,0, 5,11,0, 5,12,0, 6,0,1, 6,10,1, 7,4,0, 7,8,0, 8,3,1, 8,7,1, 10,5,1, 10,6,0, 11,5,1, 12,5,1, 
     // End marker
     0
   };
@@ -4042,21 +4042,21 @@ namespace {
     // Total number of words in grid
     60,
     // Length and number of words of that length
-    3, 20,
+    13, 4,
     // Coordinates where words start and direction (0 = horizontal)
-    0,5,1, 1,5,1, 2,5,1, 3,4,0, 3,8,0, 4,3,1, 4,7,1, 5,0,0, 5,1,0, 5,2,0, 5,10,0, 5,11,0, 5,12,0, 7,4,0, 7,8,0, 8,3,1, 8,7,1, 10,5,1, 11,5,1, 12,5,1, 
-    // Length and number of words of that length
-    4, 28,
-    // Coordinates where words start and direction (0 = horizontal)
-    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,9,1, 0,10,0, 0,11,0, 0,12,0, 1,0,1, 1,9,1, 2,0,1, 2,9,1, 6,0,1, 6,9,1, 9,0,0, 9,1,0, 9,2,0, 9,6,0, 9,10,0, 9,11,0, 9,12,0, 10,0,1, 10,9,1, 11,0,1, 11,9,1, 12,0,1, 12,9,1, 
+    0,3,0, 0,9,0, 3,0,1, 9,0,1, 
     // Length and number of words of that length
     5, 8,
     // Coordinates where words start and direction (0 = horizontal)
     0,5,0, 0,7,0, 5,0,1, 5,8,1, 7,0,1, 7,8,1, 8,5,0, 8,7,0, 
     // Length and number of words of that length
-    13, 4,
+    4, 28,
     // Coordinates where words start and direction (0 = horizontal)
-    0,3,0, 0,9,0, 3,0,1, 9,0,1, 
+    0,0,0, 0,0,1, 0,1,0, 0,2,0, 0,6,0, 0,9,1, 0,10,0, 0,11,0, 0,12,0, 1,0,1, 1,9,1, 2,0,1, 2,9,1, 6,0,1, 6,9,1, 9,0,0, 9,1,0, 9,2,0, 9,6,0, 9,10,0, 9,11,0, 9,12,0, 10,0,1, 10,9,1, 11,0,1, 11,9,1, 12,0,1, 12,9,1, 
+    // Length and number of words of that length
+    3, 20,
+    // Coordinates where words start and direction (0 = horizontal)
+    0,5,1, 1,5,1, 2,5,1, 3,4,0, 3,8,0, 4,3,1, 4,7,1, 5,0,0, 5,1,0, 5,2,0, 5,10,0, 5,11,0, 5,12,0, 7,4,0, 7,8,0, 8,3,1, 8,7,1, 10,5,1, 11,5,1, 12,5,1, 
     // End marker
     0
   };
