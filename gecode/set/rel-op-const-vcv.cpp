@@ -10,8 +10,8 @@
  *     Guido Tack, 2004, 2005
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-10-12 17:36:53 +0200 (Mo, 12 Okt 2009) $ by $Author: schulte $
+ *     $Revision: 9878 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -46,14 +46,6 @@ namespace Gecode {
   using namespace Gecode::Set;
   using namespace Gecode::Set::Rel;
   using namespace Gecode::Set::RelOp;
-
-  void
-  rel(Home home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
-      SetVar z) {
-    Set::Limits::check(x, "Set::rel");
-    ConstantView xv(home, x);
-    rel_op_post<ConstantView,SetView,SetView>(home, xv, op, y, r, z);
-  }
 
   void
   rel(Home home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
@@ -152,152 +144,9 @@ namespace Gecode {
         throw UnknownRelation("Set::rel");
       }
     } else {
-      rel_op_post<ConstantView,SetView,SetView>(home, yv, op, x, r, z);
+      rel(home, y, op, x, r, z);
     }
   }
-
-  void
-  rel(Home home, SetVar x, SetOpType op, SetVar y, SetRelType r,
-      const IntSet& z) {
-    Set::Limits::check(z, "Set::rel");
-    if (r == SRT_CMPL) {
-      IntSetRanges zr(z);
-      RangesCompl<IntSetRanges> zrc(zr);
-      IntSet zc(zrc);
-      ConstantView cz(home, zc);
-      rel_eq<SetView,SetView,ConstantView>(home, x, op, y, cz);
-    } else {
-      ConstantView zv(home, z);
-      rel_op_post_nocompl<SetView,SetView,ConstantView>(home, x, op, y, r, zv);
-    }
-  }
-
-  void
-  rel(Home home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
-      const IntSet& z) {
-    Set::Limits::check(x, "Set::rel");
-    Set::Limits::check(z, "Set::rel");
-    ConstantView xv(home, x);
-    if (r == SRT_CMPL) {
-      IntSetRanges zr(z);
-      RangesCompl<IntSetRanges> zrc(zr);
-      IntSet zc(zrc);
-      ConstantView cz(home, zc);
-      rel_eq<ConstantView,SetView,ConstantView>(home, xv, op, y, cz);
-    } else {
-      ConstantView zv(home, z);
-      rel_op_post_nocompl<ConstantView,SetView,ConstantView>(home, xv, op, y, r, zv);
-    }
-  }
-
-  void
-  rel(Home home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
-      const IntSet& z) {
-    Set::Limits::check(y, "Set::rel");
-    Set::Limits::check(z, "Set::rel");
-    ConstantView yv(home, y);
-    ConstantView zv(home, z);
-
-    if (op==SOT_MINUS) {
-      switch (r) {
-      case SRT_EQ:
-        {
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
-          IntSet yc(yrc);
-          ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
-                         (Intersection<ConstantView,
-                          SetView,ConstantView>
-                          ::post(home,cy,x,zv)));
-        }
-        break;
-      case SRT_NQ:
-        {
-          SetVar tmp(home);
-          GECODE_ES_FAIL(home,
-                         (Distinct<SetView,ConstantView>
-                          ::post(home,tmp,zv)));
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
-          IntSet yc(yrc);
-          ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
-                         (Intersection<ConstantView,
-                          SetView,SetView>
-                          ::post(home,cy,x,tmp)));
-        }
-        break;
-      case SRT_SUB:
-        {
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
-          IntSet yc(yrc);
-          ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
-                         (SuperOfInter<ConstantView,SetView,ConstantView>
-                          ::post(home,cy,x,zv)));
-
-        }
-        break;
-      case SRT_SUP:
-        {
-          // z <= tmp
-          SetVar tmp(home,z,Limits::min, Limits::max);
-          SetView xv(x);
-
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
-          IntSet yc(yrc);
-          ConstantView cy(home, yc);
-
-          GECODE_ES_FAIL(home,
-                         (Intersection<ConstantView,
-                          SetView,SetView>
-                          ::post(home,cy,xv,tmp)));
-        }
-        break;
-      case SRT_DISJ:
-        {
-          SetVar tmp(home);
-          SetView tmpv(tmp);
-          IntSetRanges zi(z);
-          GECODE_ME_FAIL(home, tmpv.excludeI(home, zi));
-
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
-          IntSet yc(yrc);
-          ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
-                         (Intersection<ConstantView,
-                          SetView,SetView>
-                          ::post(home,cy,x,tmp)));
-        }
-        break;
-      case SRT_CMPL:
-        {
-          SetView xv(x);
-          ComplementView<SetView> cx(xv);
-          GECODE_ES_FAIL(home,
-                         (Union<ConstantView,
-                          ComplementView<SetView>,
-                          ConstantView>::post(home, yv, cx, zv)));
-        }
-        break;
-      default:
-        throw UnknownRelation("Set::rel");
-      }
-    } else if (r == SRT_CMPL) {
-      IntSetRanges zr(z);
-      RangesCompl<IntSetRanges> zrc(zr);
-      IntSet zc(zrc);
-      ConstantView cz(home, zc);
-      rel_eq<ConstantView,SetView,ConstantView>(home, yv, op, x, cz);
-    } else {
-      rel_op_post_nocompl<ConstantView,SetView,ConstantView>(home, yv, op, x, r, zv);
-    }
-  }
-
 }
 
 // STATISTICS: set-post

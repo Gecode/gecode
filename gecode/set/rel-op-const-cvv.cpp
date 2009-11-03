@@ -10,8 +10,8 @@
  *     Guido Tack, 2004, 2005
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-10-12 17:36:53 +0200 (Mo, 12 Okt 2009) $ by $Author: schulte $
+ *     $Revision: 9878 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -38,6 +38,8 @@
  *
  */
 
+#include <gecode/set.hh>
+#include <gecode/set/rel.hh>
 #include <gecode/set/rel-op.hh>
 
 namespace Gecode {
@@ -46,57 +48,15 @@ namespace Gecode {
   using namespace Gecode::Set::RelOp;
 
   void
-  rel(Home home, SetOpType op, const SetVarArgs& x, SetVar y) {
+  rel(Home home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
+      SetVar z) {
+    Set::Limits::check(x, "Set::rel");
+    ConstantView xv(home, x);
     if (home.failed()) return;
-    ViewArray<SetView> xa(home,x);
-    switch (op) {
-    case SOT_UNION:
-      GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, y)));
-      break;
-    case SOT_DUNION:
-      GECODE_ES_FAIL(home,
-                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, y)));
-      break;
-    case SOT_INTER:
-      {
-        GECODE_ES_FAIL(home,
-                       (RelOp::IntersectionN<SetView,SetView>
-                        ::post(home, xa, y)));
-      }
-      break;
-    case SOT_MINUS:
-      throw IllegalOperation("Set::rel");
-      break;
-    default:
-      throw UnknownOperation("Set::rel");
-    }
-  }
-
-  void
-  rel(Home home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
-    if (home.failed()) return;
-    Set::Limits::check(z, "Set::rel");
-    ViewArray<SetView> xa(home,x);
-    switch (op) {
-    case SOT_UNION:
-      GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, z, y)));
-      break;
-    case SOT_DUNION:
-      GECODE_ES_FAIL(home,
-                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, z, y)));
-      break;
-    case SOT_INTER:
-      {
-        GECODE_ES_FAIL(home,
-                       (RelOp::IntersectionN<SetView,SetView>
-                        ::post(home, xa, z, y)));
-      }
-      break;
-    case SOT_MINUS:
-      throw IllegalOperation("Set::rel");
-      break;
-    default:
-      throw UnknownOperation("Set::rel");
+    if (r == SRT_CMPL) {
+      post_compl(home, xv, op, y, z);
+    } else {
+      post_nocompl(home, xv, op, y, r, z);
     }
   }
 

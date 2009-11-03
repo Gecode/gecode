@@ -73,6 +73,14 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Split rel-op.cpp and rel-op-const.cpp into several compilation units, to avoid
+excessive memory and time usage of the gcc compiler.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor

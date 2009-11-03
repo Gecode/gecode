@@ -10,8 +10,8 @@
  *     Guido Tack, 2004, 2005
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-10-12 17:36:53 +0200 (Mo, 12 Okt 2009) $ by $Author: schulte $
+ *     $Revision: 9878 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -46,23 +46,28 @@ namespace Gecode {
   using namespace Gecode::Set::RelOp;
 
   void
-  rel(Home home, SetOpType op, const SetVarArgs& x, SetVar y) {
+  rel(Home home, SetOpType op, const IntVarArgs& x, SetVar y) {
     if (home.failed()) return;
-    ViewArray<SetView> xa(home,x);
+    ViewArray<SingletonView> xa(home,x.size());
+    for (int i=x.size(); i--;) {
+      Int::IntView iv(x[i]);
+      SingletonView sv(iv);
+      xa[i] = sv;
+    }
+
     switch (op) {
     case SOT_UNION:
-      GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, y)));
+      GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>
+                           ::post(home, xa, y)));
       break;
     case SOT_DUNION:
-      GECODE_ES_FAIL(home,
-                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, y)));
+      GECODE_ES_FAIL(home,(RelOp::PartitionN<SingletonView,SetView>
+                           ::post(home, xa, y)));
       break;
     case SOT_INTER:
-      {
-        GECODE_ES_FAIL(home,
-                       (RelOp::IntersectionN<SetView,SetView>
-                        ::post(home, xa, y)));
-      }
+      GECODE_ES_FAIL(home,
+                     (RelOp::IntersectionN<SingletonView,SetView>
+                      ::post(home, xa, y)));
       break;
     case SOT_MINUS:
       throw IllegalOperation("Set::rel");
@@ -73,33 +78,38 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
+  rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z, 
+      SetVar y) {
     if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");
-    ViewArray<SetView> xa(home,x);
+    ViewArray<SingletonView> xa(home,x.size());
+    for (int i=x.size(); i--;) {
+      Int::IntView iv(x[i]);
+      SingletonView sv(iv);
+      xa[i] = sv;
+    }
+
     switch (op) {
     case SOT_UNION:
-      GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, z, y)));
+      GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>
+                           ::post(home, xa, z, y)));
       break;
     case SOT_DUNION:
-      GECODE_ES_FAIL(home,
-                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, z, y)));
+      GECODE_ES_FAIL(home,(RelOp::PartitionN<SingletonView,SetView>
+                           ::post(home, xa, z, y)));
       break;
     case SOT_INTER:
-      {
-        GECODE_ES_FAIL(home,
-                       (RelOp::IntersectionN<SetView,SetView>
-                        ::post(home, xa, z, y)));
-      }
+      GECODE_ES_FAIL(home,
+                     (RelOp::IntersectionN<SingletonView,SetView>
+                      ::post(home, xa, z, y)));
       break;
     case SOT_MINUS:
-      throw IllegalOperation("Set::rel");
+      throw IllegalOperation("set::rel");
       break;
     default:
       throw UnknownOperation("Set::rel");
     }
   }
-
 }
 
 // STATISTICS: set-post

@@ -339,7 +339,14 @@ INTBUILDDIRS	= \
 
 SETSRC0 =								 \
 	branch.cpp cardinality.cpp convex.cpp convex/conv.cpp convex/hull.cpp \
-	dom.cpp rel.cpp rel-op.cpp rel-op-const.cpp				 \
+	dom.cpp rel.cpp \
+	rel-op.cpp rel-op-ternary.cpp rel-op-singleton.cpp \
+	rel-op/post-compl.cpp rel-op/post-nocompl.cpp \
+	rel-op/post-compl-cvv.cpp rel-op/post-nocompl-cvv.cpp \
+	rel-op/post-compl-vvc.cpp rel-op/post-nocompl-vvc.cpp \
+	rel-op/post-compl-cvc.cpp rel-op/post-nocompl-cvc.cpp \
+	rel-op-const-vvc.cpp rel-op-const-vcv.cpp rel-op-const-vcc.cpp \
+	rel-op-const-cvc.cpp rel-op-const-cvv.cpp \
 	int.cpp								 \
 	element.cpp sequence.cpp			 \
 	distinct.cpp distinct/atmostOne.cpp				 \

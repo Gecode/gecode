@@ -205,18 +205,33 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   }
 
-  template<class View0, class View1, class View2>
-  forceinline void
-  rel_op_post(Home home, View0 x, SetOpType op, View1 y,
-           SetRelType r, View2 z) {
-    if (home.failed()) return;
-    if (r == SRT_CMPL) {
-      ComplementView<View2> cz(z);
-      rel_eq<View0,View1,ComplementView<View2> >(home, x, op, y, cz);
-    } else {
-      rel_op_post_nocompl<View0,View1,View2>(home, x, op, y, r, z);
-    }
-  }
+  GECODE_SET_EXPORT void
+  post_nocompl(Home home, SetView x, SetOpType op, SetView y,
+               SetRelType r, SetView z);
+  GECODE_SET_EXPORT void
+  post_nocompl(Home home, ConstantView x, SetOpType op, SetView y,
+               SetRelType r, SetView z);
+
+  GECODE_SET_EXPORT void
+  post_nocompl(Home home, SetView x, SetOpType op, SetView y,
+               SetRelType r, ConstantView z);
+
+  GECODE_SET_EXPORT void
+  post_nocompl(Home home, ConstantView x, SetOpType op, SetView y,
+               SetRelType r, ConstantView z);
+
+  GECODE_SET_EXPORT void
+  post_compl(Home home, SetView x, SetOpType op, SetView y, SetView z);
+
+  GECODE_SET_EXPORT void
+  post_compl(Home home, ConstantView x, SetOpType op, SetView y, SetView z);
+
+  GECODE_SET_EXPORT void
+  post_compl(Home home, SetView x, SetOpType op, SetView y, ConstantView z);
+
+  GECODE_SET_EXPORT void
+  post_compl(Home home, ConstantView x, SetOpType op, SetView y,
+             ConstantView z);
 
 }}}
 
