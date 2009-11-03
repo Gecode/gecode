@@ -73,6 +73,11 @@ protected:
   /// Letters for grid
   IntVarArray letters;
 public:
+  /// Branching to use for model
+  enum {
+    BRANCH_WORDS,  ///< Branch on the words
+    BRANCH_LETTERS ///< Branch on the letters
+  };
   /// Actual model
   Crossword(const SizeOptions& opt)
     : w(grids[opt.size()][0]), h(grids[opt.size()][1]),
@@ -92,8 +97,9 @@ public:
       }
     }
 
-    // Skip number of all words (not needed)
-    g++;
+    // Array of all words
+    IntVarArgs allwords(*g++);
+    int aw_i=0;
 
     // While words of length w_l to process
     while (int w_l=*g++) {
@@ -107,14 +113,13 @@ public:
 
       // Array of all words of length w_l
       IntVarArgs words(n);
-      for (int i=n; i--; )
+      for (int i=n; i--; ) {
         words[i].init(*this,0,n_w-1);
+        allwords[aw_i++]=words[i];
+      }
 
       // All words of same length must be different
       distinct(*this, words, ICL_BND);
-      // Branch on words of reasonable length (longer words come first in specification)
-      if (w_l > 3)
-        branch(*this, words, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
 
       for (int d=0; d<w_l; d++) {
         // Array that maps words to a letter at a certain position (shared among all element constraints)
@@ -135,8 +140,16 @@ public:
       // Skip word coordinates
       g += 3*n;
     }
-    // Finish branching by assigning remaining letters
-    branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+    switch (opt.branching()) {
+    case BRANCH_WORDS:
+      // Branch by assigning words
+      branch(*this, allwords, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+      break;
+    case BRANCH_LETTERS:
+      // Branch by assigning letters
+      branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+      break;
+    }
   }
   /// Constructor for cloning \a s
   Crossword(bool share, Crossword& s) 
@@ -177,6 +190,9 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("Crossword");
   opt.size(0);
+  opt.branching(Crossword::BRANCH_WORDS);
+  opt.branching(Crossword::BRANCH_WORDS, "words");
+  opt.branching(Crossword::BRANCH_LETTERS, "letters");
   opt.parse(argc,argv);
   if (opt.size() >= n_grids) {
     std::cerr << "Error: size must be between 0 and "
