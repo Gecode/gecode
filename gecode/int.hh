@@ -1097,13 +1097,15 @@ namespace Gecode {
    */
 
   //@{
+  /// Arrays of integers that can be shared among several element constraints
+  typedef SharedArray<int> IntSharedArray;
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Home home, const IntArgs& n, IntVar x0, IntVar x1,
+  element(Home home, IntSharedArray n, IntVar x0, IntVar x1,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
@@ -1111,7 +1113,7 @@ namespace Gecode {
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Home home, const IntArgs& n, IntVar x0, BoolVar x1,
+  element(Home home, IntSharedArray n, IntVar x0, BoolVar x1,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
@@ -1119,7 +1121,7 @@ namespace Gecode {
    *  the integers in \a n exceed the limits in Int::Limits.
    */
   GECODE_INT_EXPORT void
-  element(Home home, const IntArgs& n, IntVar x0, int x1,
+  element(Home home, IntSharedArray n, IntVar x0, int x1,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
@@ -1155,7 +1157,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Home home, const IntArgs& a, 
+  element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1167,7 +1169,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Home home, const IntArgs& a, 
+  element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$

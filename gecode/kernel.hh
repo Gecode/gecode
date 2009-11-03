@@ -160,18 +160,11 @@
 
 
 /*
- * Variable and argument arrays
+ * Arrays
  *
  */
 
 #include <gecode/kernel/array.hpp>
-
-
-/*
- * Shared arrays
- *
- */
-
 #include <gecode/kernel/shared-array.hpp>
 
 

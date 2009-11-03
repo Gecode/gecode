@@ -50,13 +50,6 @@
 
 namespace Gecode { namespace Int { namespace Element {
 
-  /*
-   * Element constraint for array of integers
-   *
-   */
-
-  typedef SharedArray<int> IntSharedArray;
-
   /**
    * \brief %Element propagator for array of integers
    *

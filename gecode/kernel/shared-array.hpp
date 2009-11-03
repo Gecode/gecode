@@ -97,6 +97,8 @@ namespace Gecode {
     void init(int n);
     /// Initialize from shared array \a a (share elements)
     SharedArray(const SharedArray& a);
+    /// Initialize from argument array \a a
+    SharedArray(const ArgArrayBase<T>& a);
 
     /// Access element at position \a i
     T& operator [](int i);
@@ -203,6 +205,14 @@ namespace Gecode {
   SharedArray<T>::operator [](int i) const {
     assert(object() != NULL);
     return (*static_cast<SAO*>(object()))[i];
+  }
+
+  template<class T>
+  forceinline
+  SharedArray<T>::SharedArray(const ArgArrayBase<T>& a)
+    : SharedHandle(new SAO(a.size())) {
+    for (int i=a.size(); i--; )
+      operator [](i)=a[i];
   }
 
   template<class T>

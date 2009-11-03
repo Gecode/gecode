@@ -74,12 +74,24 @@ Yada Yada!
 
 [ENTRY]
 Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Element constraints for integer arrays now accept shared integer
+arrays (IntSharedArray). By this, the very same array can be
+shared among several element constraints. Models require no
+change, as IntArgs are automatically coerced to
+IntSharedArrays. See "Modelling with Gecode" for more
+explanation.
+
+[ENTRY]
+Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
 The semantics of division and modulo has changed to match the C standard. This
 means that the operations round towards zero, and that the result of the 
-modulo has the same as its first argument.
+modulo has the same sign as its first argument.
 
 [ENTRY]
 Module: example

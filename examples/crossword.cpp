@@ -116,10 +116,9 @@ public:
       if (w_l > 3)
         branch(*this, words, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
 
-      // Array that maps words to a letter at a certain position
-      IntArgs w2l(n_w);
-
       for (int d=0; d<w_l; d++) {
+        // Array that maps words to a letter at a certain position (shared among all element constraints)
+        IntSharedArray w2l(n_w);
         // Initialize word to letter map
         for (int i=n_w; i--; )
           w2l[i] = dict[w_l][i][d];

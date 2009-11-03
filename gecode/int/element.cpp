@@ -42,48 +42,39 @@ namespace Gecode {
   using namespace Int;
 
   void
-  element(Home home, const IntArgs& c, IntVar x0, IntVar x1,
+  element(Home home, IntSharedArray c, IntVar x0, IntVar x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
-    Element::IntSharedArray cs(c.size());
-    for (int i = c.size(); i--; ) {
+    for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
-      cs[i] = c[i];
-    }
-    GECODE_ES_FAIL(home,(Element::post_int<IntView,IntView>(home,cs,x0,x1)));
+    GECODE_ES_FAIL(home,(Element::post_int<IntView,IntView>(home,c,x0,x1)));
   }
 
   void
-  element(Home home, const IntArgs& c, IntVar x0, BoolVar x1,
+  element(Home home, IntSharedArray c, IntVar x0, BoolVar x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
-    Element::IntSharedArray cs(c.size());
-    for (int i = c.size(); i--; ) {
+    for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
-      cs[i] = c[i];
-    }
-    GECODE_ES_FAIL(home,(Element::post_int<IntView,BoolView>(home,cs,x0,x1)));
+    GECODE_ES_FAIL(home,(Element::post_int<IntView,BoolView>(home,c,x0,x1)));
   }
 
   void
-  element(Home home, const IntArgs& c, IntVar x0, int x1,
+  element(Home home, IntSharedArray c, IntVar x0, int x1,
           IntConLevel) {
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
-    Element::IntSharedArray cs(c.size());
-    for (int i = c.size(); i--; ) {
+    for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
-      cs[i] = c[i];
-    }
     ConstIntView cx1(x1);
     GECODE_ES_FAIL(home,
-                   (Element::post_int<IntView,ConstIntView>(home,cs,x0,cx1)));
+                   (Element::post_int<IntView,ConstIntView>(home,c,x0,cx1)));
   }
 
   void
@@ -155,7 +146,7 @@ namespace Gecode {
   }
 
   void
-  element(Home home, const IntArgs& a, 
+  element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl) {
     if (a.size() != w*h)
@@ -165,7 +156,7 @@ namespace Gecode {
   }
 
   void
-  element(Home home, const IntArgs& a, 
+  element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl) {
     if (a.size() != w*h)
