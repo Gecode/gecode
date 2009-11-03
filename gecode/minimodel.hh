@@ -874,12 +874,17 @@ namespace Gecode {
 
 namespace Gecode {
 
+  namespace MiniModel {
+    class ExpInfo;
+  }
+
   /**
    * \brief Regular expressions over integer values
    *
    * \ingroup TaskModelMiniModel
    */
   class GECODE_MINIMODEL_EXPORT REG {
+    friend class MiniModel::ExpInfo;
   private:
     /// Implementation of the actual expression tree
     class Exp;

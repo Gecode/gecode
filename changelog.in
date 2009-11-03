@@ -73,6 +73,16 @@ Date: Whenever
 Yada Yada!
 
 [ENTRY]
+Module: minimodel
+What:   performance
+Rank:   minor
+Thanks:	Håkan Kjellerstrand
+[DESCRIPTION]
+Conversion of a regular expression to a DFA would crash on
+regular expressions with several million nodes (due to running
+out of call stack space).
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor
