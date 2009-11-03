@@ -1809,11 +1809,13 @@ namespace Gecode {
      */
     size_t allocated(void) const;
     /**
-     * \brief Flush cached memory blocks
+     * \brief Flush cached memory blocks and AFC information
      *
      * All spaces that are obtained as non-shared clones from some same space
      * try to cache memory blocks from failed spaces. To minimize memory
      * consumption, these blocks can be flushed.
+     *
+     * Also, the numbers for AFC are reset to zero.
      */
     GECODE_KERNEL_EXPORT void flush(void);
     //@}
