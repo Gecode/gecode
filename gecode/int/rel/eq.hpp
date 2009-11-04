@@ -189,9 +189,9 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_FIX_PARTIAL(*this,View0::med(ME_INT_DOM));
     }
     ViewRanges<View0> r0(x0);
-    GECODE_ME_CHECK(x1.inter_r(home,r0,false));
+    GECODE_ME_CHECK(x1.inter_r(home,r0,shared(x0,x1)));
     ViewRanges<View1> r1(x1);
-    GECODE_ME_CHECK(x0.narrow_r(home,r1,false));
+    GECODE_ME_CHECK(x0.narrow_r(home,r1,shared(x0,x1)));
     if (x0.assigned())
       return ES_SUBSUMED(*this,sizeof(*this));
     return ES_FIX;
