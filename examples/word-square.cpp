@@ -75,8 +75,6 @@ public:
   /// Actual model
   WordSquare(const SizeOptions& opt)
     : w_l(opt.size()), letters(*this, w_l*w_l) {
-    // Number of words with that length
-    const int n_w = n_words[w_l];
 
     // Initialize letters
     Matrix<IntVarArray> ml(letters, w_l, w_l);
@@ -84,6 +82,9 @@ public:
       for (int j=i; j<w_l; j++)
         ml(i,j) = ml(j,i) = IntVar(*this, 'a','z');
     
+    // Number of words with that length
+    const int n_w = n_words[w_l];
+
     // Initialize word array
     IntVarArgs words(w_l);
     for (int i=0; i<w_l; i++)
@@ -92,8 +93,9 @@ public:
     // All words must be different
     distinct(*this, words);
 
+    // Link words with letters
     for (int i=0; i<w_l; i++) {
-      // Map each word to i-th letter in word
+      // Map each word to i-th letter in that word
       IntSharedArray w2l(n_w);
       for (int n=n_w; n--; )
         w2l[n]=dict[w_l][n][i];
@@ -101,7 +103,7 @@ public:
         element(*this, w2l, words[j], ml(i,j));
     }
 
-    // Symmetry breaking: the last word must be later
+    // Symmetry breaking: the last word must be later in the wordlist
     rel(*this, words[0], IRT_LE, words[w_l-1]);
 
     switch (opt.branching()) {
