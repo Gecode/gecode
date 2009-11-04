@@ -92,20 +92,13 @@ public:
     // All words must be different
     distinct(*this, words);
 
-
-    // Setup word matrix: maps
-    IntArgs w(w_l*n_w);
-    Matrix<IntArgs> mw(w, n_w, w_l);
-
-    for (int i=n_w;  i--; )
-      for (int j=w_l; j--; )
-        mw(i,j) = dict[w_l][i][j];
-
     for (int i=0; i<w_l; i++) {
-      for (int j=i; j<w_l; j++) {
-        element(*this, mw, words[i], IntVar(*this,j,j), ml(i,j));
-        element(*this, mw, words[j], IntVar(*this,i,i), ml(i,j));
-      }
+      // Map each word to i-th letter in word
+      IntSharedArray w2l(n_w);
+      for (int n=n_w; n--; )
+        w2l[n]=dict[w_l][n][i];
+      for (int j=0; j<w_l; j++)
+        element(*this, w2l, words[j], ml(i,j));
     }
 
     // Symmetry breaking: the last word must be later
