@@ -147,7 +147,7 @@ public:
       break;
     case BRANCH_LETTERS:
       // Branch by assigning letters
-      branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+      branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
       break;
     }
   }
