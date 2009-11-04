@@ -68,7 +68,7 @@
 
 [RELEASE]
 Version: 3.2.1
-Date: Whenever
+Date: 2009-11-04
 [DESCRIPTION]
 This release fixes one serious bug in the element constraint for
 matrices; adds branchings using accumulated failure counts (also
