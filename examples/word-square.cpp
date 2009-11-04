@@ -62,157 +62,88 @@ using namespace Gecode;
  */
 class WordSquare : public Script {
 protected:
-  const int w_l; ///< Length of a word
-  const int n_w; ///< Number of words of length \a w_l
+  /// Length of words
+  const int w_l;
+  /// The array of letters
+  IntVarArray letters;
 public:
-  /// Model variants
+  /// Branching variants
   enum {
-    MODEL_WORDS,   ///< Use variables representing the words
-    MODEL_LETTERS, ///< Use variables representing the letters
+    BRANCH_WORDS,   ///< Branch on word variables
+    BRANCH_LETTERS, ///< Branch on letter variables
   };
-  /// Constructor
-  WordSquare(const SizeOptions& opt) 
-    : Script(), w_l(opt.size()), n_w(n_words[w_l]) {}
-  /// Constructor for cloning \a s
-  WordSquare(bool share, WordSquare& s) 
-    : Script(share,s), w_l(s.w_l), n_w(s.n_w) {}
-};
-
-
-/**
- * \brief %Example: Solve Word-squares with word-variables
- *
- * \ingroup ExProblem
- */
-class WordSquareWords : public WordSquare {
-protected:
-  /// Which word (position of word in dictionary) for columns
-  IntVarArray words;
-public:
   /// Actual model
-  WordSquareWords(const SizeOptions& opt)
-    : WordSquare(opt),
-      words(*this,w_l,0,n_w-1) {
+  WordSquare(const SizeOptions& opt)
+    : w_l(opt.size()), letters(*this, w_l*w_l) {
+    // Number of words with that length
+    const int n_w = n_words[w_l];
 
+    // Initialize letters
+    Matrix<IntVarArray> ml(letters, w_l, w_l);
+    for (int i=0; i<w_l; i++)
+      for (int j=i; j<w_l; j++)
+        ml(i,j) = ml(j,i) = IntVar(*this, 'a','z');
+    
+    // Initialize word array
+    IntVarArgs words(w_l);
+    for (int i=0; i<w_l; i++)
+      words[i].init(*this,0,n_w-1);
+
+    // All words must be different
+    distinct(*this, words);
+
+
+    // Setup word matrix: maps
     IntArgs w(w_l*n_w);
     Matrix<IntArgs> mw(w, n_w, w_l);
 
     for (int i=n_w;  i--; )
       for (int j=w_l; j--; )
         mw(i,j) = dict[w_l][i][j];
-        
-    distinct(*this, words);
 
-    // Convenience variables
-    IntVarArgs col(w_l);
-    for (int i=w_l; i--; )
-      col[i].init(*this,i,i);
-
-    for (int i=0; i<w_l; i++)
-      for (int j=i+1; j<w_l; j++) {
-        // w[j,words[i]] ==  w[i,words[j]]
-        IntVar c(*this, 'a', 'z');
-        element(*this, mw, words[i], col[j], c);
-        element(*this, mw, words[j], col[i], c);
+    for (int i=0; i<w_l; i++) {
+      for (int j=i; j<w_l; j++) {
+        element(*this, mw, words[i], IntVar(*this,j,j), ml(i,j));
+        element(*this, mw, words[j], IntVar(*this,i,i), ml(i,j));
       }
+    }
 
     // Symmetry breaking: the last word must be later
     rel(*this, words[0], IRT_LE, words[w_l-1]);
 
-    // Split the available words into two halves
-    branch(*this, words, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
-  }
-  /// Constructor for cloning \a s
-  WordSquareWords(bool share, WordSquareWords& s) : WordSquare(share,s) {
-    words.update(*this, share, s.words);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(bool share) {
-    return new WordSquareWords(share,*this);
-  }
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    os << "\twords=" << words << std::endl
-       << std::endl;
-    for (int i=0; i<words.size(); i++)
-      if (words[i].assigned()) {
-        os << "\t\t" << dict[words.size()][words[i].val()] << std::endl;
-      } else {
-        os << "\t\t..." << std::endl;
-      } 
-    os << std::endl << std::endl;
-  }
-};
-
-
-/**
- * \brief %Example: Solve Word-squares with letter-variables
- *
- * \ingroup ExProblem
- */
-class WordSquareLetters : public WordSquare {
-protected:
-  /// The matrix of letters
-  IntVarArray letters;
-public:
-  /// Actual model
-  WordSquareLetters(const SizeOptions& opt)
-    : WordSquare(opt),
-      letters(*this, opt.size()*opt.size())
-  {
-    // Initialize the letters
-    Matrix<IntVarArray> ml(letters, w_l, w_l);
-    for (int i = 0; i < w_l; ++i)
-      for (int j = i; j < w_l; ++j)
-        ml(i,j) = ml(j,i) = IntVar(*this, 'a','z');
-    
-    // copy the word list to a regular expression
-    REG r_words;
-    for (int i = 0; i < n_w; i++) {
-      REG r_word;
-      for (int j = 0; j < w_l; j++)
-        r_word += dict[w_l][i][j];
-      r_words |= r_word;
+    switch (opt.branching()) {
+    case BRANCH_WORDS:
+      // Branch by assigning words
+      branch(*this, words, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+      break;
+    case BRANCH_LETTERS:
+      // Branch by assigning letters
+      branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
+      break;
     }
-    DFA words(r_words);
-    
-    // Make sure the square contains words
-    for (int i = 0; i < w_l; ++i)
-      extensional(*this, ml.row(i), words);
-
-    // Break symmetries: word in last row must be later than first row
-    rel(*this, ml.row(0), IRT_LE, ml.row(w_l-1));
-
-    // Branching
-    branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
-  WordSquareLetters(bool share, WordSquareLetters& s) : WordSquare(share,s) {
+  WordSquare(bool share, WordSquare& s) 
+    : Script(share,s), w_l(s.w_l) {
     letters.update(*this, share, s.letters);
   }
   /// Copy during cloning
   virtual Space*
   copy(bool share) {
-    return new WordSquareLetters(share,*this);
+    return new WordSquare(share,*this);
   }
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\tletters=" << letters << std::endl
-       << std::endl;
-    int pos  = 0;
-    for (int i = 0; i < w_l; ++i) {
+    Matrix<IntVarArray> ml(letters, w_l, w_l);
+    for (int i=0; i<w_l; i++) {
       os << "\t\t";
-      for (int j = 0; j < w_l; ++j) {
-        if (letters[pos].assigned()) {
-          os << static_cast<char>(letters[pos].val());
+      for (int j=0; j<w_l; j++)
+        if (ml(i,j).assigned()) {
+          os << static_cast<char>(ml(i,j).val());
         } else {
           os << ".";
         }
-        ++pos;
-      }
       os << std::endl;
     }
     os << std::endl;
@@ -227,23 +158,16 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("WordSquare");
   opt.size(4);
-  opt.model(WordSquare::MODEL_WORDS);
-  opt.model(WordSquare::MODEL_WORDS,   "words");
-  opt.model(WordSquare::MODEL_LETTERS, "letters");
+  opt.branching(WordSquare::BRANCH_LETTERS);
+  opt.branching(WordSquare::BRANCH_WORDS,   "words");
+  opt.branching(WordSquare::BRANCH_LETTERS, "letters");
   opt.parse(argc,argv);
   if (opt.size() > max_word_len) {
     std::cerr << "Error: size must be between 0 and "
               << max_word_len << std::endl;
     return 1;
   }
-  switch (opt.model()) {
-  case WordSquare::MODEL_WORDS:
-    Script::run<WordSquareWords,  DFS,SizeOptions>(opt);
-    break;
-  case WordSquare::MODEL_LETTERS:
-    Script::run<WordSquareLetters,DFS,SizeOptions>(opt);
-    break;
-  }
+  Script::run<WordSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 
