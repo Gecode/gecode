@@ -70,7 +70,12 @@
 Version: 3.2.1
 Date: Whenever
 [DESCRIPTION]
-Yada Yada!
+This release fixes one serious bug in the element constraint for
+matrices; adds branchings using accumulated failure counts (also
+known as weighted degree); provides some optimizations (mostly
+for element constraints and for regular expressions with millions
+of nodes); adds two cute models (word-square and crossword); and
+a little this and that as always.
 
 [ENTRY]
 Module: minimodel
