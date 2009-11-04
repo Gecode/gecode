@@ -152,21 +152,21 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
 /// Macro for posting binary special cases for linear constraints
-#define GECODE_INT_PL_BIN(CLASS)                                \
-  switch (n_p) {                                                \
-  case 2:                                                       \
-    GECODE_ES_FAIL(home,(CLASS<int,IntView,IntView>::post       \
-                         (home,t_p[0].x,t_p[1].x,c)));          \
-    break;                                                      \
-  case 1:                                                       \
-    GECODE_ES_FAIL(home,(CLASS<int,IntView,MinusView>::post     \
-                         (home,t_p[0].x,t_n[0].x,c)));          \
-    break;                                                      \
-  case 0:                                                       \
-    GECODE_ES_FAIL(home,(CLASS<int,MinusView,MinusView>::post   \
-                         (home,t_n[0].x,t_n[1].x,c)));          \
-    break;                                                      \
-  default: GECODE_NEVER;                                        \
+#define GECODE_INT_PL_BIN(CLASS)                                             \
+  switch (n_p) {                                                             \
+  case 2:                                                                    \
+    GECODE_ES_FAIL(home,(CLASS<int,IntView,IntView>::post                    \
+                         (home,t_p[0].x,t_p[1].x,c)));                       \
+    break;                                                                   \
+  case 1:                                                                    \
+    GECODE_ES_FAIL(home,(CLASS<int,IntView,MinusView>::post                  \
+                         (home,t_p[0].x,MinusView(t_n[0].x),c)));            \
+    break;                                                                   \
+  case 0:                                                                    \
+    GECODE_ES_FAIL(home,(CLASS<int,MinusView,MinusView>::post                \
+                         (home,MinusView(t_n[0].x),MinusView(t_n[1].x),c))); \
+    break;                                                                   \
+  default: GECODE_NEVER;                                                     \
   }
 
 /// Macro for posting ternary special cases for linear constraints
@@ -178,15 +178,18 @@ namespace Gecode { namespace Int { namespace Linear {
     break;                                                              \
   case 2:                                                               \
     GECODE_ES_FAIL(home,(CLASS<int,IntView,IntView,MinusView>::post     \
-                         (home,t_p[0].x,t_p[1].x,t_n[0].x,c)));         \
+                         (home,t_p[0].x,t_p[1].x,                       \
+                          MinusView(t_n[0].x),c)));                     \
     break;                                                              \
   case 1:                                                               \
     GECODE_ES_FAIL(home,(CLASS<int,IntView,MinusView,MinusView>::post   \
-                         (home,t_p[0].x,t_n[0].x,t_n[1].x,c)));         \
+                         (home,t_p[0].x,                                \
+                          MinusView(t_n[0].x),MinusView(t_n[1].x),c))); \
     break;                                                              \
   case 0:                                                               \
     GECODE_ES_FAIL(home,(CLASS<int,MinusView,MinusView,MinusView>::post \
-                         (home,t_n[0].x,t_n[1].x,t_n[2].x,c)));         \
+                         (home,MinusView(t_n[0].x),                     \
+                          MinusView(t_n[1].x),MinusView(t_n[2].x),c))); \
     break;                                                              \
   default: GECODE_NEVER;                                                \
   }
@@ -406,7 +409,7 @@ namespace Gecode { namespace Int { namespace Linear {
             break;
           case 1:
             GECODE_ES_FAIL(home,(ReEqBin<int,IntView,MinusView,BoolView>::post
-                                 (home,t_p[0].x,t_n[0].x,c,b)));
+                                 (home,t_p[0].x,MinusView(t_n[0].x),c,b)));
             break;
           case 0:
             GECODE_ES_FAIL(home,(ReEqBin<int,IntView,IntView,BoolView>::post
@@ -427,12 +430,13 @@ namespace Gecode { namespace Int { namespace Linear {
             case 1:
               GECODE_ES_FAIL(home,
                              (ReEqBin<int,IntView,MinusView,NegBoolView>::post
-                              (home,t_p[0].x,t_n[0].x,c,b)));
+                              (home,t_p[0].x,MinusView(t_n[0].x),c,
+                               NegBoolView(b))));
               break;
             case 0:
               GECODE_ES_FAIL(home,
                              (ReEqBin<int,IntView,IntView,NegBoolView>::post
-                              (home,t_p[0].x,t_p[1].x,-c,b)));
+                              (home,t_p[0].x,t_p[1].x,-c,NegBoolView(b))));
               break;
             default: GECODE_NEVER;
             }
@@ -446,11 +450,12 @@ namespace Gecode { namespace Int { namespace Linear {
             break;
           case 1:
             GECODE_ES_FAIL(home,(ReLqBin<int,IntView,MinusView>::post
-                                 (home,t_p[0].x,t_n[0].x,c,b)));
+                                 (home,t_p[0].x,MinusView(t_n[0].x),c,b)));
             break;
           case 0:
             GECODE_ES_FAIL(home,(ReLqBin<int,MinusView,MinusView>::post
-                                 (home,t_n[0].x,t_n[1].x,c,b)));
+                                 (home,MinusView(t_n[0].x),
+                                  MinusView(t_n[1].x),c,b)));
             break;
           default: GECODE_NEVER;
           }

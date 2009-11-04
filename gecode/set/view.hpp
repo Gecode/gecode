@@ -1000,7 +1000,7 @@ namespace Gecode {
       /// Default constructor
       ComplementView(void);
       /// Initialize with set view x
-      ComplementView(View& x);
+      explicit ComplementView(View& x);
       //@}
 
       /// \name Value access

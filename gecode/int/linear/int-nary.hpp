@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace Linear {
         (home,share,p,x[0],x[1],c);
     if (x.size() == 1)
       return new (home) EqBin<Val,IntView,MinusView>
-        (home,share,p,x[0],y[0],c);
+        (home,share,p,x[0],MinusView(y[0]),c);
     return new (home) EqBin<Val,IntView,IntView>
       (home,share,p,y[0],y[1],-c);
   }
@@ -359,10 +359,10 @@ namespace Gecode { namespace Int { namespace Linear {
         (home,share,p,x[0],x[1],x[2],c);
     if (x.size() == 2)
       return new (home) EqTer<Val,IntView,IntView,MinusView>
-        (home,share,p,x[0],x[1],y[0],c);
+        (home,share,p,x[0],x[1],MinusView(y[0]),c);
     if (x.size() == 1)
       return new (home) EqTer<Val,IntView,IntView,MinusView>
-        (home,share,p,y[0],y[1],x[0],-c);
+        (home,share,p,y[0],y[1],MinusView(x[0]),-c);
     return new (home) EqTer<Val,IntView,IntView,IntView>
       (home,share,p,y[0],y[1],y[2],-c);
   }
@@ -514,7 +514,7 @@ namespace Gecode { namespace Int { namespace Linear {
         (home,share,p,x[0],x[1],c);
     if (x.size() == 1)
       return new (home) NqBin<Val,IntView,MinusView>
-        (home,share,p,x[0],y[0],c);
+        (home,share,p,x[0],MinusView(y[0]),c);
     return new (home) NqBin<Val,IntView,IntView>
       (home,share,p,y[0],y[1],-c);
   }
@@ -553,10 +553,10 @@ namespace Gecode { namespace Int { namespace Linear {
         (home,share,p,x[0],x[1],x[2],c);
     if (x.size() == 2)
       return new (home) NqTer<Val,IntView,IntView,MinusView>
-        (home,share,p,x[0],x[1],y[0],c);
+        (home,share,p,x[0],x[1],MinusView(y[0]),c);
     if (x.size() == 1)
       return new (home) NqTer<Val,IntView,IntView,MinusView>
-        (home,share,p,y[0],y[1],x[0],-c);
+        (home,share,p,y[0],y[1],MinusView(x[0]),-c);
     return new (home) NqTer<Val,IntView,IntView,IntView>
       (home,share,p,y[0],y[1],y[2],-c);
   }
@@ -652,7 +652,7 @@ namespace Gecode { namespace Int { namespace Linear {
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 2);
     return new (home) LqBin<Val,MinusView,MinusView>
-      (home,share,p,y[0],y[1],c);
+      (home,share,p,MinusView(y[0]),MinusView(y[1]),c);
   }
   template<class Val>
   forceinline Actor*
@@ -663,9 +663,9 @@ namespace Gecode { namespace Int { namespace Linear {
         (home,share,p,x[0],x[1],c);
     if (x.size() == 1)
       return new (home) LqBin<Val,IntView,MinusView>
-        (home,share,p,x[0],y[0],c);
+        (home,share,p,x[0],MinusView(y[0]),c);
     return new (home) LqBin<Val,MinusView,MinusView>
-      (home,share,p,y[0],y[1],c);
+      (home,share,p,MinusView(y[0]),MinusView(y[1]),c);
   }
 
   /**
@@ -691,7 +691,7 @@ namespace Gecode { namespace Int { namespace Linear {
           ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 3);
     return new (home) LqTer<Val,MinusView,MinusView,MinusView>
-      (home,share,p,y[0],y[1],y[2],c);
+      (home,share,p,MinusView(y[0]),MinusView(y[1]),MinusView(y[2]),c);
   }
   template<class Val>
   forceinline Actor*
@@ -702,12 +702,12 @@ namespace Gecode { namespace Int { namespace Linear {
         (home,share,p,x[0],x[1],x[2],c);
     if (x.size() == 2)
       return new (home) LqTer<Val,IntView,IntView,MinusView>
-        (home,share,p,x[0],x[1],y[0],c);
+        (home,share,p,x[0],x[1],MinusView(y[0]),c);
     if (x.size() == 1)
       return new (home) LqTer<Val,IntView,MinusView,MinusView>
-        (home,share,p,x[0],y[0],y[1],c);
+        (home,share,p,x[0],MinusView(y[0]),MinusView(y[1]),c);
     return new (home) LqTer<Val,MinusView,MinusView,MinusView>
-      (home,share,p,y[0],y[1],y[2],c);
+      (home,share,p,MinusView(y[0]),MinusView(y[1]),MinusView(y[2]),c);
   }
 
   template<class Val, class P, class N>

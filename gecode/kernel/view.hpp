@@ -120,11 +120,11 @@ namespace Gecode {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  template<class VarImp>
-  bool same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y);
+  template<class VarImpA, class VarImpB>
+  bool same(const VarViewBase<VarImpA>& x, const VarViewBase<VarImpB>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  template<class VarImp>
-  bool before(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y);
+  template<class ViewA, class ViewB>
+  bool before(const ViewA& x, const ViewB& y);
   //@}
 
 
@@ -217,9 +217,34 @@ namespace Gecode {
   bool shared(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&);
 
 
-  /// Test whether views \a x and \a y are the same
-  template<class ViewX, class ViewY>
-  bool same(const ViewX&, const ViewY&) {
+  /// Test whether two views are the same
+  inline
+  bool same(const ConstViewBase&, const ConstViewBase&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class VarImp>
+  bool same(const VarViewBase<VarImp>&, const ConstViewBase&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class ViewA>
+  bool same(const ConstViewBase&, const DerivedViewBase<ViewA>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class VarImpA, class ViewB>
+  bool same(const VarViewBase<VarImpA>&, const DerivedViewBase<ViewB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class ViewA, class VarImpB>
+  bool same(const DerivedViewBase<ViewA>&, const VarViewBase<VarImpB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class ViewA, class ViewB>
+  bool same(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
     return false;
   }
 
@@ -323,9 +348,9 @@ namespace Gecode {
   same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
     return x.var() == y.var();
   }
-  template<class VarImp>
+  template<class ViewA, class ViewB>
   forceinline bool
-  before(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
+  before(const ViewA& x, const ViewB& y) {
     return x.var() < y.var();
   }
 

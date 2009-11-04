@@ -225,13 +225,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                          ::post(home(*this),x0,x1,x2)));
   rewrite_nnp:
     GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,MinusView,IntView>
-                         ::post(home(*this),x0,x1,x2)));
+                         ::post(home(*this),MinusView(x0),MinusView(x1),x2)));
   rewrite_pnn:
     GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,MinusView,MinusView>
-                         ::post(home(*this),x0,x1,x2)));
+                         ::post(home(*this),x0,MinusView(x1),MinusView(x2))));
   rewrite_npn:
     GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,IntView,MinusView>
-                         ::post(home(*this),x0,x1,x2)));
+                         ::post(home(*this),MinusView(x0),x1,MinusView(x2))));
   subsumed:
     assert(x0.assigned() && x1.assigned());
     int result = std::abs(x0.val()) / std::abs(x1.val());
@@ -264,11 +264,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   post_ppp:
     return DivPlusBnd<double,IntView,IntView,IntView>::post(home,x0,x1,x2);
   post_nnp:
-    return DivPlusBnd<double,MinusView,MinusView,IntView>::post(home,x0,x1,x2);
+    return DivPlusBnd<double,MinusView,MinusView,IntView>::post(home,
+      MinusView(x0),MinusView(x1),x2);
   post_pnn:
-    return DivPlusBnd<double,IntView,MinusView,MinusView>::post(home,x0,x1,x2);
+    return DivPlusBnd<double,IntView,MinusView,MinusView>::post(home,
+      x0,MinusView(x1),MinusView(x2));
   post_npn:
-    return DivPlusBnd<double,MinusView,IntView,MinusView>::post(home,x0,x1,x2);
+    return DivPlusBnd<double,MinusView,IntView,MinusView>::post(home,
+      MinusView(x0),x1,MinusView(x2));
   }
 
 

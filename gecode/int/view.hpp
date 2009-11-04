@@ -327,7 +327,7 @@ namespace Gecode {
       /// Default constructor
       MinusView(void);
       /// Initialize with integer view \a x
-      MinusView(const IntView& x);
+      explicit MinusView(const IntView& x);
       /// Initialize with integer view \a x
       void init(const IntView& x);
       //@}
@@ -1578,7 +1578,7 @@ namespace Gecode {
       /// Default constructor
       NegBoolView(void);
       /// Initialize with Boolean view \a b
-      NegBoolView(const BoolView& b);
+      explicit NegBoolView(const BoolView& b);
       /// Initialize with Boolean view \a b
       void init(const BoolView& b);
       //@}

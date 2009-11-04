@@ -130,7 +130,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (x0.min() >= 0)
         return SqrPlusBnd<IntView,IntView>::post(home,x0,x1);
       if (x0.max() <= 0)
-        return SqrPlusBnd<MinusView,IntView>::post(home,x0,x1);
+        return SqrPlusBnd<MinusView,IntView>::post(home,MinusView(x0),x1);
       GECODE_ME_CHECK(x1.lq(home,
                             std::max(x0.min()*x0.min(),x0.max()*x0.max())));
       (void) new (home) SqrBnd<View>(home,x0,x1);
@@ -156,7 +156,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (x0.min() >= 0)
       GECODE_REWRITE(*this,(SqrPlusBnd<IntView,IntView>::post(home(*this),x0,x1)));
     if (x0.max() <= 0)
-      GECODE_REWRITE(*this,(SqrPlusBnd<MinusView,IntView>::post(home(*this),x0,x1)));
+      GECODE_REWRITE(*this,(SqrPlusBnd<MinusView,IntView>::post(home(*this),
+        MinusView(x0),x1)));
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                         x0.max()*x0.max())));
@@ -286,7 +287,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (x0.min() >= 0)
         return SqrPlusDom<IntView,IntView>::post(home,x0,x1);
       if (x0.max() <= 0)
-        return SqrPlusDom<MinusView,IntView>::post(home,x0,x1);
+        return SqrPlusDom<MinusView,IntView>::post(home,MinusView(x0),x1);
       GECODE_ME_CHECK(x1.lq(home,
                             std::max(x0.min()*x0.min(),x0.max()*x0.max())));
       (void) new (home) SqrDom<View>(home,x0,x1);
@@ -324,7 +325,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (x0.min() >= 0)
         GECODE_REWRITE(*this,(SqrPlusDom<IntView,IntView>::post(home(*this),x0,x1)));
       if (x0.max() <= 0)
-        GECODE_REWRITE(*this,(SqrPlusDom<MinusView,IntView>::post(home(*this),x0,x1)));
+        GECODE_REWRITE(*this,(SqrPlusDom<MinusView,IntView>::post(home(*this),
+          MinusView(x0),x1)));
 
       GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                           x0.max()*x0.max())));

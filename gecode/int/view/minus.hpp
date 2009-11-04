@@ -337,7 +337,7 @@ namespace Gecode {
       unsigned int i = view.size() / 2;
       if (size() % 2 == 0)
         i--;
-      ViewRanges<MinusView> r(view);
+      ViewRanges<MinusView> r(*this);
       while (i >= r.width()) {
         i -= r.width();
         ++r;
