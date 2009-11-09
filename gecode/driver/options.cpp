@@ -76,6 +76,37 @@ namespace Gecode {
       strdel(exp);
     }
 
+
+    bool
+    StringValueOption::parse(int& argc, char* argv[]) {
+      if ((argc < 2) || strcmp(argv[1],opt))
+        return false;
+      if (argc == 2) {
+        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      cur = strdup(argv[2]);
+      // Remove options
+      argc -= 2;
+      for (int i=1; i<argc; i++)
+        argv[i] = argv[i+2];
+      return true;
+    }
+    
+    void
+    StringValueOption::help(void) {
+      using namespace std;
+      cerr << '\t' << opt << " (string) default: " 
+           << ((cur == NULL) ? "NONE" : cur) << endl
+           << "\t\t" << exp << endl;
+    }
+  
+    StringValueOption::~StringValueOption(void) {
+      strdel(cur);
+    }
+  
+
+
     void
     StringOption::add(int v, const char* o, const char* h) {
       Value* n = new Value;

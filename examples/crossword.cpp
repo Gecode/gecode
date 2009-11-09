@@ -40,7 +40,7 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
-#include <examples/scowl.hpp>
+#include "examples/scowl.hpp"
 
 using namespace Gecode;
 
@@ -103,11 +103,11 @@ public:
 
     // While words of length w_l to process
     while (int w_l=*g++) {
-      if (w_l > max_word_len)
+      if (w_l > dict.len())
         throw Exception("Crossword",
                         "Dictionary does not have words of required length");
       // Number of words of that length in the dictionary
-      int n_w = n_words[w_l];
+      int n_w = dict.words(w_l);
       // Number of words of that length in the puzzle
       int n=*g++;
 
@@ -126,7 +126,7 @@ public:
         IntSharedArray w2l(n_w);
         // Initialize word to letter map
         for (int i=n_w; i--; )
-          w2l[i] = dict[w_l][i][d];
+          w2l[i] = dict.word(w_l,i)[d];
         // Link word to letter variable
         for (int i=0; i<n; i++) {
           // Get (x,y) coordinate where word begins
@@ -188,12 +188,14 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Crossword");
+  FileSizeOptions opt("Crossword");
   opt.size(0);
   opt.branching(Crossword::BRANCH_WORDS);
   opt.branching(Crossword::BRANCH_WORDS, "words");
   opt.branching(Crossword::BRANCH_LETTERS, "letters");
   opt.parse(argc,argv);
+  dict.init(opt.file());
+  std::cout << dict;
   if (opt.size() >= n_grids) {
     std::cerr << "Error: size must be between 0 and "
               << n_grids-1 << std::endl;

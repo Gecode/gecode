@@ -44,7 +44,7 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
-#include <examples/scowl.hpp>
+#include "examples/scowl.hpp"
 
 using namespace Gecode;
 
@@ -83,7 +83,7 @@ public:
         ml(i,j) = ml(j,i) = IntVar(*this, 'a','z');
     
     // Number of words with that length
-    const int n_w = n_words[w_l];
+    const int n_w = dict.words(w_l);
 
     // Initialize word array
     IntVarArgs words(w_l);
@@ -98,7 +98,7 @@ public:
       // Map each word to i-th letter in that word
       IntSharedArray w2l(n_w);
       for (int n=n_w; n--; )
-        w2l[n]=dict[w_l][n][i];
+        w2l[n]=dict.word(w_l,n)[i];
       for (int j=0; j<w_l; j++)
         element(*this, w2l, words[j], ml(i,j));
     }
@@ -151,15 +151,16 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("WordSquare");
+  FileSizeOptions opt("WordSquare");
   opt.size(4);
   opt.branching(WordSquare::BRANCH_LETTERS);
   opt.branching(WordSquare::BRANCH_WORDS,   "words");
   opt.branching(WordSquare::BRANCH_LETTERS, "letters");
   opt.parse(argc,argv);
-  if (opt.size() > max_word_len) {
+  dict.init(opt.file());
+  if (opt.size() > dict.len()) {
     std::cerr << "Error: size must be between 0 and "
-              << max_word_len << std::endl;
+              << dict.len() << std::endl;
     return 1;
   }
   Script::run<WordSquare,DFS,SizeOptions>(opt);

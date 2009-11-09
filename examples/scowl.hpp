@@ -32,6 +32,72 @@
  *
  */
 
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <cctype>
+
+/// Parse an additional file option
+class FileSizeOptions : public Gecode::SizeOptions {
+protected:
+  /// The file name
+  Gecode::Driver::StringValueOption _file;
+public:
+  /// Initialize with name \a s
+  FileSizeOptions(const char* s);
+  /// Return file name (NULL if none given)
+  const char* file(void) const;
+};
+
+/// A simple dictionary class
+class Dictionary {
+protected:
+  /// Maximal word length support
+  static const int limit_len = 64;
+  /// Actual maximal length in dictionary
+  int max_len;
+  /// Total number of words
+  int n_all_words;
+  /// Number of words of some length
+  int n_words[limit_len];
+  /// Beginning of words of some length
+  char* s_words[limit_len];
+  /// One big memory chunk for storing words
+  char* chunk;
+public:
+  /// Initialize as empty dictionary
+  Dictionary(void);
+  /**
+   * \brief Perform actual initialization
+   *
+   * Reads words from file with name \a fn. If \a fn is NULL, the
+   * predefined dictionary is used.
+   */
+  void init(const char* fn);
+  /// Return maximal length of a word
+  int len(void) const;
+  /// Return total number of words
+  int words(void) const;
+  /// Return number of words with length \a l
+  int words(int l) const;
+  /// Return word number \a i with length \a l
+  const char* word(int l, int i) const;
+  /// Print statistics summary
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  print(std::basic_ostream<Char,Traits>& os) const;
+  /// Destructor
+  ~Dictionary(void);
+};
+
+/// Print statistics summary
+template<class Char, class Traits>
+std::basic_ostream<Char,Traits>&
+operator <<(std::basic_ostream<Char,Traits>& os, const Dictionary& d);
+
+/// The dictionary to be used
+Dictionary dict;
+
 namespace {
 
   /*
@@ -13386,7 +13452,7 @@ namespace {
   };
 
   /// Dictionary of all word lists
-  const char** dict[] = {
+  const char** s_words[] = {
     &w_0[0], &w_1[0], &w_2[0], &w_3[0], &w_4[0], &w_5[0], &w_6[0],
     &w_7[0], &w_8[0], &w_9[0], &w_10[0], &w_11[0], &w_12[0], &w_13[0],
     &w_14[0], &w_15[0], &w_16[0], &w_17[0], &w_18[0], &w_19[0],
@@ -13394,6 +13460,173 @@ namespace {
   };
 
 }
+
+
+inline
+FileSizeOptions::FileSizeOptions(const char* s) 
+  : Gecode::SizeOptions(s), 
+    _file("-file","file name of dictionary") {
+  add(_file);
+}
+inline const char*
+FileSizeOptions::file(void) const {
+  return _file.value();
+}
+
+
+inline
+Dictionary::Dictionary(void)
+  : max_len(0), n_all_words(0), chunk(NULL) {
+  for (int i=max_len; i--; ) {
+    n_words[i]=0; s_words[i]=NULL;
+  }
+}
+
+inline void
+Dictionary::init(const char* fn) {
+  if (fn == NULL) {
+    // Initialize from predefined dictionary
+
+    // Set up information
+    max_len = ::max_word_len;
+    n_all_words = 0;
+
+    size_t sz = 0;
+    for (int l=max_len+1; l--; ) {
+      n_words[l]=::n_words[l];
+      n_all_words += n_words[l];
+      sz += n_words[l] * (l+1); // Leave room for terminating zero
+    }
+    chunk = static_cast<char*>(Gecode::heap.ralloc(sz));
+
+    // Copy words
+    char* c = chunk;
+    for (int l=max_len+1; l--; ) {
+      s_words[l] = c;
+      for (int i=n_words[l]; i--; ) {
+        for (int j=0; j<l; j++)
+          *c++ = ::s_words[l][i][j];
+        *c++ = 0;
+      }
+    }
+  } else {
+    // Initialize from file
+
+    // Set up information
+    max_len = 0;
+    n_all_words = 0;
+    
+    size_t sz = 0;
+
+    {
+      std::string s;
+      std::ifstream f;
+      f.open(fn);
+      
+      if (!f.is_open())
+        throw Gecode::Exception("Dictionary",
+                                "Unable to open file");
+      while (!f.eof()) {
+        getline(f,s);
+        if (s.size() >= limit_len)
+          goto skip1;
+        for (int i=s.size(); i--; )
+          if (!isalpha(s[i]) || !islower(s[i]))
+            goto skip1;
+        // Found a legal word
+        n_all_words++;
+        n_words[s.size()]++;
+        sz += s.size()+1;
+        if (max_len < s.size())
+          max_len = s.size();
+      skip1: ;
+      }
+
+      f.close();
+    }
+
+    chunk = static_cast<char*>(Gecode::heap.ralloc(sz));
+
+    {
+      // Initialize start information in chunk
+      char* c = chunk;
+      for (int l=0; l<=max_len; l++) {
+        s_words[l] = c; c += (l+1)*n_words[l];
+      }
+    }
+
+    {
+      std::string s;
+      std::ifstream f;
+      f.open(fn);
+        
+      if (!f.is_open())
+        throw Gecode::Exception("Dictionary",
+                                "Unable to open file");
+      while (!f.eof()) {
+        getline(f,s);
+        if (s.size() >= limit_len)
+          goto skip2;
+        for (int i=s.size(); i--; )
+          if (!isalpha(s[i]) || !islower(s[i]))
+            goto skip2;
+        // Found a legal word, copy it
+        for (int i=0; i<s.size(); i++)
+          *s_words[s.size()]++ = s[i];
+        *s_words[s.size()]++ = 0;
+      skip2: ;
+      }
+
+      f.close();
+    }
+
+    {
+      // Re-Initialize start information in chunk
+      char* c = chunk;
+      for (int l=0; l<=max_len; l++) {
+        s_words[l] = c; c += (l+1)*n_words[l];
+      }
+    }
+
+  }
+}
+
+inline int
+Dictionary::len(void) const {
+  return max_len;
+}
+inline int
+Dictionary::words(void) const {
+  return n_all_words;
+}
+inline int
+Dictionary::words(int l) const {
+  return n_words[l];
+}
+inline const char*
+Dictionary::word(int l, int i) const {
+  return s_words[l]+i*(l+1);
+}
+template<class Char, class Traits>
+std::basic_ostream<Char,Traits>&
+Dictionary::print(std::basic_ostream<Char,Traits>& os) const {
+  os << "Total number of words: " << n_all_words << std::endl
+     << "Maximal length: " << max_len << std::endl;
+  for (int i=1; i<=max_len; i++)
+    os << "\t#words of length " << i << ": " << n_words[i] << std::endl;
+  return os;
+}
+template<class Char, class Traits>
+inline std::basic_ostream<Char,Traits>&
+operator <<(std::basic_ostream<Char,Traits>& os, const Dictionary& d) {
+  return d.print(os);
+}
+
+inline
+Dictionary::~Dictionary(void) {
+  Gecode::heap.rfree(chunk);
+}
+
 
 // STATISTICS: example-ignore
 

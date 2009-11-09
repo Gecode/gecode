@@ -134,6 +134,29 @@ namespace Gecode {
      * \brief String-valued option
      *
      */
+    class GECODE_DRIVER_EXPORT StringValueOption : public BaseOption {
+    protected:
+      const char* cur; ///< Current value
+    public:
+      /// Initialize for option \a o and explanation \a e and default value \a v
+      StringValueOption(const char* o, const char* e, const char* v=NULL);
+      /// Set default value to \a v
+      void value(const char* v);
+      /// Return current option value
+      const char* value(void) const;
+      /// Parse option at first position
+      virtual bool parse(int& argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+      /// Destructor
+      virtual ~StringValueOption(void);
+    };
+  
+
+    /**
+     * \brief String-valued option (integer value defined by strings)
+     *
+     */
     class GECODE_DRIVER_EXPORT StringOption : public BaseOption {
     protected:
       /// Option value

@@ -46,6 +46,24 @@ namespace Gecode {
      *
      */
     inline
+    StringValueOption::StringValueOption(const char* o, const char* e, 
+                                         const char* v)
+      : BaseOption(o,e), cur(strdup(v)) {}
+    inline void
+    StringValueOption::value(const char* v) {
+      strdel(cur);
+      cur = strdup(v);
+    }
+    inline const char*
+    StringValueOption::value(void) const {
+      return cur;
+    }
+
+    /*
+     * String option
+     *
+     */
+    inline
     StringOption::StringOption(const char* o, const char* e, int v)
       : BaseOption(o,e), cur(v), fst(NULL), lst(NULL) {}
     inline void
