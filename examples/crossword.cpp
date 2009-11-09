@@ -195,7 +195,6 @@ main(int argc, char* argv[]) {
   opt.branching(Crossword::BRANCH_LETTERS, "letters");
   opt.parse(argc,argv);
   dict.init(opt.file());
-  std::cout << dict;
   if (opt.size() >= n_grids) {
     std::cerr << "Error: size must be between 0 and "
               << n_grids-1 << std::endl;
