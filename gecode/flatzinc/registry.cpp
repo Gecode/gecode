@@ -1025,7 +1025,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("bool_right_imp", &p_bool_r_imp);
         registry().add("bool_not", &p_bool_not);
         registry().add("array_int_element", &p_array_int_element);
+        registry().add("array_var_int_element", &p_array_int_element);
         registry().add("array_bool_element", &p_array_bool_element);
+        registry().add("array_var_bool_element", &p_array_bool_element);
         registry().add("bool2int", &p_bool2int);
       
         registry().add("array_int_lt", &p_array_int_lt);
@@ -1307,6 +1309,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_ne", &p_set_ne);
         registry().add("set_union", &p_set_union);
         registry().add("array_set_element", &p_array_set_element);
+        registry().add("array_var_set_element", &p_array_set_element);
         registry().add("set_intersect", &p_set_intersect);
         registry().add("set_diff", &p_set_diff);
         registry().add("set_symdiff", &p_set_symdiff);

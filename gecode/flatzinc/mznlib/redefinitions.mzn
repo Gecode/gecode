@@ -60,7 +60,3 @@ predicate bool_sum_ge(array[int] of var bool: x, var int: c) =
     bool_lin_ge([1 | i in index_set(x)],x,c);
 predicate bool_sum_gt(array[int] of var bool: x, var int: c) =
     bool_lin_gt([1 | i in index_set(x)],x,c);
-
-predicate array_set_element(var int: x, array[int] of var set of int: y, var set of int: z);
-predicate array_var_set_element(var int: x, array[int] of set of int: y, var set of int: z) =
-    array_set_element(x,y,z);
