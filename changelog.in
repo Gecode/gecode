@@ -67,6 +67,19 @@
 #
 
 [RELEASE]
+Version: 3.2.2
+Date: dfgahfdghsd
+[DESCRIPTION]
+gsagsdgasdf
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Report if search engine has been stopped.
+
+[RELEASE]
 Version: 3.2.1
 Date: 2009-11-04
 [DESCRIPTION]

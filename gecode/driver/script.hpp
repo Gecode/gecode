@@ -56,12 +56,25 @@ namespace Gecode { namespace Driver {
         fs((fail > 0) ? new Search::FailStop(fail) : NULL),
         ts((time > 0) ? new Search::TimeStop(time) : NULL) {}
   public:
+    /// Reason why search has been stopped
+    enum {
+      SR_NODE = 1 << 0, ///< Node limit reached
+      SR_FAIL = 1 << 1, ///< Fail limit reached
+      SR_TIME = 1 << 2  ///< Time limit reached
+    };
     /// Test whether search must be stopped
     virtual bool stop(const Search::Statistics& s, const Search::Options& o) {
       return
         ((ns != NULL) && ns->stop(s,o)) ||
         ((fs != NULL) && fs->stop(s,o)) ||
         ((ts != NULL) && ts->stop(s,o));
+    }
+    /// Report reason why search has been stopped
+    int reason(const Search::Statistics& s, const Search::Options& o) {
+      return 
+        (((ns != NULL) && ns->stop(s,o)) ? SR_NODE : 0) |
+        (((fs != NULL) && fs->stop(s,o)) ? SR_FAIL : 0) |
+        (((ts != NULL) && ts->stop(s,o)) ? SR_TIME : 0);
     }
     /// Create appropriate stop-object
     static Search::Stop*
@@ -190,6 +203,18 @@ namespace Gecode { namespace Driver {
           } while (--i != 0);
           Search::Statistics stat = e.statistics();
           cout << endl;
+          if (e.stopped()) {
+            cout << "Search engine stopped..." << endl
+                 << "\treason: ";
+            int r = static_cast<Cutoff*>(so.stop)->reason(stat,so);
+            if (r & Cutoff::SR_NODE)
+              cout << "node ";
+            if (r & Cutoff::SR_FAIL)
+              cout << "fail ";
+            if (r & Cutoff::SR_TIME)
+              cout << "time ";
+            cout << "limit reached" << endl << endl;
+          }
           cout << "Initial" << endl
                << "\tpropagators: " << n_p << endl
                << "\tbranchers:   " << n_b << endl
@@ -277,7 +302,7 @@ namespace Gecode { namespace Driver {
           }
           double m = am(ts,o.samples());
           double d = dev(ts,o.samples()) * 100.0;
-          delete[] ts;
+          delete [] ts;
           cout << "\tRuntime: "
                << setw(20) << right
                << showpoint << fixed
