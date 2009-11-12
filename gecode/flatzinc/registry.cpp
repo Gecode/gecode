@@ -784,13 +784,30 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
       IntVarArgs iv1 = arg2intvarargs(s, ce[1]);
       int cmin = ce[2]->getInt();
-      if (cmin == 0) {
+
+      int smallest = cmin;
+      int largest = iv1.size()-1;
+      for (int i=iv0.size(); i--;) {
+        smallest = std::min(smallest, iv0[i].min());
+        largest = std::max(largest, iv0[i].max());
+      }
+      
+
+      if (cmin == 0 && smallest == 0 && largest == iv1.size()-1) {
         count(s, iv0, iv1, ann2icl(ann));      
       } else {
-        IntArgs values(iv1.size());
-        for (int i=values.size(); i--;)
-          values[i] = i+cmin;
-        count(s, iv0, iv1, values, ann2icl(ann));
+        IntArgs values(largest - smallest + 1);
+        for (int i=largest-smallest+1; i--;)
+          values[i] = i+smallest;
+        IntVarArgs iv1tmp(largest-smallest+1);
+        int k = 0;
+        for (int i=cmin-smallest; i--;)
+          iv1tmp[k++] = IntVar(s, 0, iv0.size());
+        for (int i=iv1.size(); i--;)
+          iv1tmp[k++] = iv1[i];
+        for (int i=k; i<iv1tmp.size(); i++)
+          iv1tmp[i] = IntVar(s, 0, iv0.size());
+        count(s, iv0, iv1tmp, values, ann2icl(ann));
       }
     }
 

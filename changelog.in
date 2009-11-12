@@ -79,6 +79,24 @@ Rank:   minor
 [DESCRIPTION]
 Report if search engine has been stopped.
 
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The global_cardinality constraint was not completely compatible with
+the MiniZinc semantics. It would constrain values not mentioned in the
+array to have zero occurrences, while in MiniZinc they are unrestricted.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Element constraints in reified positions produced an error in the mzn2fzn
+translation.
+
 [RELEASE]
 Version: 3.2.1
 Date: 2009-11-04
