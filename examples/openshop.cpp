@@ -76,6 +76,100 @@ protected:
   /// Start times
   IntVarArray _start;
 
+  /// Task representation for CROSH heuristic
+  class Task {
+  public:
+    int j; //< Job
+    int m; //< Machine
+    int p; //< Processing time
+    /// Default constructor
+    Task(void) {}
+    /// Constructor
+    Task(int j0, int m0, int p0) : j(j0), m(m0), p(p0) {}
+  };
+
+  /** \brief Use Constructive Randomized Open-Shop Heuristics
+   *         to compute lower and upper bounds
+   *
+   * This heuristic is taken from the paper
+   * A. Malapert, H. Cambazard, C. Gueret, N. Jussien, A. Langevin,
+   * L.-M. Rousseau: An Optimal Constraint Programming Approach to the
+   * Open-Shop Problem. Technical report, CIRRELT-2009-25.
+   *
+   */
+  void crosh(Matrix<IntArgs>& dur, int& minmakespan, int& maxmakespan) {
+    Support::RandomGenerator rnd;
+
+    // Compute maximum makespan as the sum of all production times.
+    maxmakespan = 0;
+    for (int i=0; i<spec.m; i++)
+      for (int j=0; j<spec.n; j++)
+        maxmakespan += dur(i,j);
+
+    // Compute minimum makespan as the maximum of individual jobs and machines
+    minmakespan = 0;
+    for (int i=0; i<spec.m; i++) {
+      int ms = 0;
+      for (int j=0; j<spec.n; j++) {
+        ms += dur(i,j);
+      }
+      minmakespan = std::max(minmakespan, ms);
+    }
+    for (int j=0; j<spec.n; j++) {
+      int ms = 0;
+      for (int i=0; i<spec.m; i++) {
+        ms += dur(i,j);
+      }
+      minmakespan = std::max(minmakespan, ms);
+    }
+
+    Region re(*this);
+    int* ct_j = re.alloc<int>(spec.n); // Job completion time
+    int* ct_m = re.alloc<int>(spec.m); // Machine completion time
+    Task* tasks = re.alloc<Task>(spec.n*spec.m); // Tasks
+    int k=0;
+    for (int i=spec.m; i--;)
+      for (int j=spec.n; j--;)
+        new (&tasks[k++]) Task(j,i,dur(i,j));
+    int* t0_tasks = re.alloc<int>(spec.n*spec.m); // Earliest possible tasks
+    
+    bool stopCROSH = false;
+    int count = 0;
+    while (!stopCROSH && maxmakespan > minmakespan) {
+      for (int i=spec.n; i--;) ct_j[i] = 0;
+      for (int i=spec.m; i--;) ct_m[i] = 0;
+      int cmax = 0; // Current makespan
+      int u = spec.n*spec.m; // Consider all tasks
+      while (u > 0) {
+        int u_t0 = 0; // Set of selectable tasks
+        int t0 = maxmakespan; // Minimal head of unscheduled tasks
+        for (int i=0; i<u; i++) {
+          const Task& t = tasks[i];
+          int est = std::max(ct_j[t.j], ct_m[t.m]); // Head of T_jm
+          if (est < t0) {
+            t0 = est;
+            t0_tasks[0] = i;
+            u_t0 = 1;
+          } else if (est == t0) {
+            t0_tasks[u_t0++] = i;
+          }
+        }
+        int t_j0m0 = rnd(u_t0); // Select random task
+        const Task& t = tasks[t0_tasks[t_j0m0]];
+        int ect = t0 + t.p;
+        ct_j[t.j] = ect;
+        ct_m[t.m] = ect;
+        std::swap(tasks[--u],tasks[t0_tasks[t_j0m0]]); // Remove task from u
+        cmax = std::max(cmax, ect);
+        if (cmax > maxmakespan)
+          break;
+      }
+      
+      maxmakespan = std::min(maxmakespan,cmax);
+      if (count++ > 8)
+        stopCROSH = true; // Iterate a couple of times
+    }
+  }
 public:
   /// Search variants
   enum {
@@ -93,13 +187,11 @@ public:
     IntArgs _dur(spec.m*spec.n, spec.p);
     Matrix<IntArgs> dur(_dur, spec.m, spec.n);
 
-    // Compute maximum makespan as the sum of all production times.
-    // This is a terrible upper bound, one should use a proper heuristic
-    // method instead.
-    int maxmakespan = 0;
-    for (int i=0; i<spec.m*spec.n; i++)
-      maxmakespan += _dur[i];
+    int minmakespan;
+    int maxmakespan;
+    crosh(dur, minmakespan, maxmakespan);
     post(*this, makespan <= maxmakespan);
+    post(*this, makespan >= minmakespan);
 
     int k=0;
     for (int m=0; m<spec.m; m++)
