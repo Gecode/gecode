@@ -134,7 +134,19 @@ protected:
     int* t0_tasks = re.alloc<int>(spec.n*spec.m); // Earliest possible tasks
     
     bool stopCROSH = false;
-    int count = 0;
+
+    int maxIterations;
+    switch (spec.n) {
+    case 3: maxIterations = 5; break;
+    case 4: maxIterations = 25; break;
+    case 5: maxIterations = 50; break;
+    case 6: maxIterations = 1000; break;
+    case 7: maxIterations = 10000; break;
+    case 8: maxIterations = 10000; break;
+    case 9: maxIterations = 10000; break;
+    default: maxIterations = 25000; break;
+    }
+    int iteration = 0;
     while (!stopCROSH && maxmakespan > minmakespan) {
       for (int i=spec.n; i--;) ct_j[i] = 0;
       for (int i=spec.m; i--;) ct_m[i] = 0;
@@ -154,7 +166,16 @@ protected:
             t0_tasks[u_t0++] = i;
           }
         }
-        int t_j0m0 = rnd(u_t0); // Select random task
+        int t_j0m0;
+        if (iteration == 0) {
+          // In the first iteration, select tasks with longest processing time
+          t_j0m0 = 0;
+          for (int i=1; i<u_t0; i++)
+            if (tasks[t0_tasks[i]].p > tasks[t0_tasks[t_j0m0]].p)
+              t_j0m0 = i;
+        } else {
+          t_j0m0 = rnd(u_t0); // Select random task
+        }
         const Task& t = tasks[t0_tasks[t_j0m0]];
         int ect = t0 + t.p;
         ct_j[t.j] = ect;
@@ -166,7 +187,7 @@ protected:
       }
       
       maxmakespan = std::min(maxmakespan,cmax);
-      if (count++ > 8)
+      if (iteration++ > maxIterations)
         stopCROSH = true; // Iterate a couple of times
     }
   }
@@ -222,7 +243,7 @@ public:
     }
 
     // First branch over the precedences
-    branch(*this, b, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, b, INT_VAR_AFC_MAX, INT_VAL_MIN);
     // When the precedences are fixed, simply assign the start times
     assign(*this, _start, INT_ASSIGN_MIN);
     // When the start times are fixed, use the tightest makespan
@@ -248,13 +269,38 @@ public:
     return makespan;
   }
 
+  /// Helper class for representing tasks when printing a solution
+  class PrintTask {
+  public:
+    int start; //< Start time
+    int job;   //< Job number
+    int p;     //< Processing time
+    /// Comparison of tasks based on start time, used for sorting
+    bool operator()(const PrintTask& t1, const PrintTask& t2) {
+      return t1.start < t2.start;
+    }
+  };
+
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << b << std::endl;
-    os << _start << std::endl;
+    Region re(*this);
+    PrintTask* m = re.alloc<PrintTask>(spec.n);
+    for (int i=0; i<spec.m; i++) {
+      int k=0;
+      for (int j=0; j<spec.n; j++) {
+        m[k].start = _start[i*spec.n+j].val();
+        m[k].job = j;
+        m[k].p = spec.p[i*spec.n+j];
+        k++;
+      }
+      Support::quicksort(m, spec.n, m[0]);
+      os << "Machine " << i << ": ";
+      for (int j=0; j<spec.n; j++)
+        os << "\t" << m[j].job << "("<<m[j].p<<")";
+      os << " = " << m[spec.n-1].start+m[spec.n-1].p << std::endl;
+    }
     os << "Makespan: " << makespan << std::endl;
-    os << std::endl;
   }
   
 };
