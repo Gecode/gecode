@@ -73,6 +73,14 @@ Date: dfgahfdghsd
 gsagsdgasdf
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+Author:	David Rijsman
+[DESCRIPTION]
+Added sequence constraint.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor

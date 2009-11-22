@@ -261,7 +261,7 @@ INTSRC0 = \
 	distinct.cpp \
 	sorted.cpp gcc.cpp \
 	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
-	unshare.cpp
+	unshare.cpp sequence.cpp
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
 	exec.hh exec/when.hpp \
@@ -302,7 +302,8 @@ INTHDR0 = \
 	propagator.hpp extensional.hh rel.hh \
 	sorted.hh var-imp.hpp view.hpp \
 	channel.hh channel/dom.hpp channel/val.hpp \
-	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp
+	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
+	sequence.hh sequence/int.hpp sequence/view.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
@@ -331,7 +332,7 @@ endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
 	int/channel int/linear int/bool int/branch int/exec \
-	int/element
+	int/element int/sequence
 
 #
 # SET COMPONENTS
@@ -817,7 +818,7 @@ EXETARGETS = $(FLATZINCEXE)
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear gcc sorted unshare exec \
+	rel linear gcc sorted unshare exec sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))

@@ -6,8 +6,10 @@
  *
  *  Contributing authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     David Rijsman <David.Rijsman@quintiq.com>
  *
  *  Copyright:
+ *     David Rijsman, 2009
  *     Mikael Lagerkvist, 2006
  *     Christian Schulte, 2002
  *     Guido Tack, 2004
@@ -1494,6 +1496,34 @@ namespace Gecode {
   count(Home home, const IntVarArgs& x,
         const IntSet& c, const IntArgs& v,
         IntConLevel icl=ICL_DEF);
+
+  //@}
+
+  /**
+   * \defgroup TaskModelIntSequence Sequence constraints
+   * \ingroup TaskModelInt
+   */
+
+  //@{
+  /** \brief Post propagator for \f$sequence(X,S,q,l,u)\f$
+   *
+   *  Where \f$ X=x_0,x_1,...,x_n\f$ and S a set of domain values.
+   *   \f$1\leq q \leq n\f$ and \f$0\leq l \leq u \leq q\f$
+   * 
+   */
+  GECODE_INT_EXPORT void
+  sequence(Home home, const IntVarArgs &x, const IntSet &s, 
+           int q, int l, int u, IntConLevel icl=ICL_DEF); 
+  
+  /** \brief Post propagator for \f$sequence(X,S,q,l,u)\f$
+   *
+   *  Where \f$ X=x_0,x_1,...,x_n\f$ and S a set of domain values.
+   *   \f$1\leq q \leq n\f$ and \f$0\leq l \leq u \leq q\f$
+   * 
+   */
+  GECODE_INT_EXPORT void
+  sequence(Home home, const BoolVarArgs &x, bool s, 
+           int q, int l, int u, IntConLevel icl=ICL_DEF); 
 
   //@}
 
