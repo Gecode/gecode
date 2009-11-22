@@ -73,6 +73,14 @@ Date: dfgahfdghsd
 gsagsdgasdf
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added car sequenceing example (problem 1 in CSPLib). Uses new 
+sequence-constraint.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major
