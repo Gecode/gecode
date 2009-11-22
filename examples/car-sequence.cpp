@@ -59,16 +59,15 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class CarSequencing : public MinimizeScript {
+class CarSequencing : public Script {
 protected:
+  /// Problem number
+  const int problem;
   /// Number of marks
   const int ncars, noptions, nclasses;
   const int fill; ///< Color of fills
-  const int end;  ///< Color of end-markers
   /// Number of fills
   IntVar nfill;
-  /// Number of end-markers
-  IntVar nend;
   /// Sequence of cars produced
   IntVarArray s;
 public:
@@ -80,48 +79,57 @@ public:
 
   /// Actual model
   CarSequencing(const SizeOptions& opt)
-    : ncars(problems[opt.size()][0]), 
-      noptions(problems[opt.size()][1]), 
-      nclasses(problems[opt.size()][2]),
-      fill(nclasses+1),
-      end(nclasses),
-      // The amount 2*ncars is a very rough over-approximation,
-      // especially since most example need no extra fills!
+    : problem(opt.size()),
+      ncars(problems[problem][0]), 
+      noptions(problems[problem][1]), 
+      nclasses(problems[problem][2]),
+      fill(nclasses),
       nfill(*this, 0, ncars),
-      nend( *this, 0, ncars),
-      s(*this,2*ncars, 0,nclasses+2) {
+      s() {
+    Gecode::wait(*this, nfill, post_model, ICL_DEF);
+    branch(*this, nfill, INT_VAL_MIN);
+  }
 
-    const int* probit = problems[opt.size()] + 3;
+  static void post_model(Space& _home) {
+    CarSequencing& home = static_cast<CarSequencing&>(_home);
+
+    // Initialize variables
+    home.s.resize(home, home.ncars + home.nfill.val());
+    for (int i = home.s.size(); i--; )
+      home.s[i] = IntVar(home, 0, home.nclasses);
+
+    // Read problem
+    const int* probit = problems[home.problem] + 3;
 
     // Sequence requirements for the options.
-    IntArgs max(noptions), block(noptions);
-    for (int i = 0; i < noptions; ++i ) {
+    IntArgs max(home.noptions), block(home.noptions);
+    for (int i = 0; i < home.noptions; ++i ) {
       max[i] = *probit++;
     }
-    for (int i = 0; i < noptions; ++i ) {
+    for (int i = 0; i < home.noptions; ++i ) {
       block[i] = *probit++;
     }
     // Number of cars per class
-    IntArgs ncc(nclasses);
+    IntArgs ncc(home.nclasses);
     // What classes require an option
-    IntSetArgs classes(noptions);
-    int** cdata = new int*[noptions]; 
-    for (int i = noptions; i--; ) cdata[i] = new int[nclasses];
-    int* n = new int[noptions];
-    for (int i = noptions; i--; ) n[i] = 0;
+    IntSetArgs classes(home.noptions);
+    int** cdata = new int*[home.noptions]; 
+    for (int i = home.noptions; i--; ) cdata[i] = new int[home.nclasses];
+    int* n = new int[home.noptions];
+    for (int i = home.noptions; i--; ) n[i] = 0;
     // Read data
-    for (int c = 0; c < nclasses; ++c) {
+    for (int c = 0; c < home.nclasses; ++c) {
       *probit++;
       //int car = *probit++;
       //assert(car == c);
       ncc[c] = *probit++;
-      for (int o = 0; o < noptions; ++o) {
+      for (int o = 0; o < home.noptions; ++o) {
         if (*probit++) {
           cdata[o][n[o]++] = c;
         }
       }
     }
-    for (int o = noptions; o--; ) {
+    for (int o = home.noptions; o--; ) {
       classes[o] = IntSet(cdata[o], n[o]);
       //std::cerr << "Option " << o << " used by " << classes[o] << std::endl;
       delete [] cdata[o];
@@ -129,41 +137,29 @@ public:
     delete [] cdata;
     delete [] n;
 
-    // End is located at end of sequence, and
-    // no fill at end
-    for (int i = s.size()-1; i--; ) {
-      post(*this, imp(~(s[i] == end),  ~(s[i+1] == end))); 
-      post(*this, imp(~(s[i+1] == end), ~(s[i] != fill))); 
-    }
-
     // Count of cars
-    IntSetArgs c(nclasses+2);
-    for (int i = nclasses; i--; ) {
+    IntSetArgs c(home.nclasses+1);
+    for (int i = home.nclasses; i--; ) {
       c[i] = IntSet(ncc[i], ncc[i]);
     }
-    c[fill] = IntSet(0, s.size()-ncars);
-    c[ end] = IntSet(0, s.size()-ncars);
-    count(*this, s, c);
-
-    // Count number of end and fills
-    count(*this, s, fill, IRT_EQ, nfill);
-    count(*this, s,  end, IRT_EQ,  nend);
-    post(*this, nfill+nend == (s.size()-ncars));
+    c[home.fill] = IntSet(home.nfill.val(), home.nfill.val());
+    count(home, home.s, c);
 
     // Make sure nothing is overloaded
-    for (int o = noptions; o--; ) {
+    for (int o = home.noptions; o--; ) {
       //std::cerr << "Option " << o << ": classes=" << classes[o] 
       //          << " block=" << block[o] << " max=" << max[o] 
       //          << std::endl;
-      sequence(*this, s, classes[o], block[o], 0, max[o]);
+      sequence(home, home.s, classes[o], block[o], 0, max[o]);
     }
 
-    branch(*this, s, INT_VAR_NONE, INT_VAL_MIN);
+    branch(home, home.s, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Return cost
-  virtual IntVar cost(void) const {
-    return nfill;
+  virtual void constrain(const Space& _best) {
+    const CarSequencing& best = static_cast<const CarSequencing&>(_best);
+    rel(*this, nfill, IRT_LE, best.nfill.val());
   }
 
   /// Print solution
@@ -172,32 +168,32 @@ public:
     int width = nclasses > 9 ? 2 : 1;
     const char* space = nclasses > 9 ? " " : "";
     os << "Number of fills = " << nfill << std::endl;
-    for (int i = 0; i < s.size(); ++i) {
-      if (s[i].assigned()) {
-        int v = s[i].val();
-        if (v == end) break;
-        if (v == fill) os << space << "_ ";
-        else           os << std::setw(width) << v << " ";
-      } else {
-        os << space << "? ";    
+    if (s.size() > 0) {
+      for (int i = 0; i < s.size(); ++i) {
+        if (s[i].assigned()) {
+          int v = s[i].val();
+          if (v == fill) os << space << "_ ";
+          else           os << std::setw(width) << v << " ";
+        } else {
+          os << space << "? ";    
+        }
+        if ((i+1)%20 == 0) os << std::endl;
       }
-      if ((i+1)%20 == 0) os << std::endl;
+      if ((s.size())%20)
+        os << std::endl;
     }
-    if ((s.size())%20)
-      os << std::endl;
   }
 
   /// Constructor for cloning \a s
   CarSequencing(bool share, CarSequencing& cs)
-    : MinimizeScript(share,cs), 
+    : Script(share,cs), 
+      problem(cs.problem),
       ncars(cs.ncars),
       noptions(cs.noptions),
       nclasses(cs.nclasses),
-      fill(cs.fill),
-      end(cs.end)
+      fill(cs.fill)
   {
     nfill.update(*this, share, cs.nfill);
-    nend.update(*this, share, cs.nend);
     s.update(*this, share, cs.s);
   }
   /// Copy during cloning
@@ -227,9 +223,9 @@ main(int argc, char* argv[]) {
 
   switch (opt.search()) {
   case CarSequencing::SEARCH_BAB:
-    MinimizeScript::run<CarSequencing,BAB,SizeOptions>(opt); break;
+    Script::run<CarSequencing,BAB,SizeOptions>(opt); break;
   case CarSequencing::SEARCH_RESTART:
-    MinimizeScript::run<CarSequencing,Restart,SizeOptions>(opt); break;
+    Script::run<CarSequencing,Restart,SizeOptions>(opt); break;
   }
   return 0;
 }
