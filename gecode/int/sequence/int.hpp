@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val>
   ExecStatus 
-  Sequence<View,Val>::propagate(Space& home, const ModEventDelta& med) {
+  Sequence<View,Val>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(vvsamax.propagate(home,x,s,q,l,u));
     GECODE_ME_CHECK(vvsamin.propagate(home,x,s,q,l,u));
 

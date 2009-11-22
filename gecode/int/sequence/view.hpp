@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val,bool iss>
   forceinline ViewValSupport<View,Val,iss>*
   ViewValSupport<View,Val,iss>::allocate(Space& home, int n) {
-    return home.alloc<ViewValSupport<View,Val,iss>>(n);
+    return home.alloc<ViewValSupport<View,Val,iss> >(n);
   }
 
   template<class View, class Val,bool iss>
@@ -190,7 +190,9 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val,bool iss>
   forceinline void
-  ViewValSupport<View,Val,iss>::update(Space& home, bool share,ViewValSupport<View,Val,iss>& vvs, int n0) {
+  ViewValSupport<View,Val,iss>::update(Space& home, bool,
+                                       ViewValSupport<View,Val,iss>& vvs, 
+                                       int n0) {
     y = 0;
     if ( !vvs.retired() ) {
       v = &home.construct<S>(S::key_compare(),S::allocator_type(home));
@@ -203,7 +205,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View,class Val,bool iss>
   forceinline bool
-  ViewValSupport<View,Val,iss>::shaved(const View& x, Val s, int i) const {
+  ViewValSupport<View,Val,iss>::shaved(const View& x, Val s, int) const {
     return (iss && !x.in(s)) || (!iss && x.assigned() && x.in(s));
   }
 
@@ -229,7 +231,9 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View,class Val,bool iss>
   forceinline ExecStatus
-  ViewValSupport<View,Val,iss>::advise(Space& home,ViewArray<View>& a,Val s,int i,int q, int j,const Delta& d) {
+  ViewValSupport<View,Val,iss>::advise(Space&, ViewArray<View>& a,
+                                       Val s,int i,int q, int j,
+                                       const Delta&) {
     ExecStatus status = ES_FIX;
     if ( !retired() ) {
 	    if ( j == i && shaved(a[j],s,j) ) {

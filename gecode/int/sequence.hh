@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Array containing supports for not s
     ViewValSupportArray<View,Val,false> vvsamin;
     /// Council for advisors
-    Council<SupportAdvisor<View>> ac;
+    Council<SupportAdvisor<View> > ac;
   };
 
   /// Post propagator 

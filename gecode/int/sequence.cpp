@@ -43,7 +43,7 @@ namespace Gecode {
 
   void
   sequence(Home home, const IntVarArgs &x, const IntSet &s, 
-           int q, int l, int u,IntConLevel icl) {
+           int q, int l, int u ,IntConLevel) {
     if ( x.size() == 0 )
       throw TooFewArguments("Int::sequence");
 
@@ -75,7 +75,7 @@ namespace Gecode {
       return;
     }
 
-    if ( s.width() * l > q ) {
+    if ( s.width() * l > static_cast<unsigned int>(q) ) {
       home.fail();
       return;
     }
