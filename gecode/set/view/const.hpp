@@ -243,8 +243,10 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  ConstantView::subscribe(Space& home, Propagator& p, PropCond,bool) {
-    schedule(home,p,ME_SET_VAL);
+  ConstantView::subscribe(Space& home, Propagator& p, PropCond,
+                          bool process) {
+    if (process)
+      schedule(home,p,ME_SET_VAL);
   }
   forceinline void
   ConstantView::cancel(Space&,Propagator&,PropCond) {}
@@ -427,8 +429,10 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  EmptyView::subscribe(Space& home, Propagator& p, PropCond,bool) {
-    schedule(home,p,ME_SET_VAL);
+  EmptyView::subscribe(Space& home, Propagator& p, PropCond,
+                       bool process) {
+    if (process)
+      schedule(home,p,ME_SET_VAL);
   }
   forceinline void
   EmptyView::cancel(Space&,Propagator&,PropCond) {}
@@ -598,8 +602,10 @@ namespace Gecode { namespace Set {
     return SetVarImp::med(me);
   }
   forceinline void
-  UniverseView::subscribe(Space& home, Propagator& p, PropCond,bool) {
-    schedule(home,p,ME_SET_VAL);
+  UniverseView::subscribe(Space& home, Propagator& p, PropCond,
+                          bool process) {
+    if (process)
+      schedule(home,p,ME_SET_VAL);
   }
   forceinline void
   UniverseView::cancel(Space&,Propagator&,PropCond) {}

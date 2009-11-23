@@ -244,8 +244,10 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::subscribe(Space& home, Propagator& p, PropCond,bool) {
-      schedule(home,p,ME_INT_VAL);
+    ZeroIntView::subscribe(Space& home, Propagator& p, PropCond,
+                           bool process) {
+      if (process)
+        schedule(home,p,ME_INT_VAL);
     }
     forceinline void
     ZeroIntView::cancel(Space&,Propagator&,PropCond) {}

@@ -73,11 +73,27 @@ Date: dfgahfdghsd
 gsagsdgasdf
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Subscription to constant views did not honor the flag to avoid
+processing.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Subscription to constant views did not honor the flag to avoid
+processing.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added car sequenceing example (problem 1 in CSPLib). Uses new 
+Added car sequenceing example (problem 1 in CSPLib). Uses the new
 sequence-constraint.
 
 [ENTRY]
