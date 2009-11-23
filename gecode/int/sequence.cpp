@@ -43,7 +43,7 @@ namespace Gecode {
 
   void
   sequence(Home home, const IntVarArgs &x, const IntSet &s, 
-           int q, int l, int u ,IntConLevel) {
+           int q, int l, int u, IntConLevel) {
     if ( x.size() == 0 )
       throw TooFewArguments("Int::sequence");
 
@@ -81,7 +81,7 @@ namespace Gecode {
     }
 
     if ( l == q ) {
-       for ( int i=x.size(); i--; ) {
+      for ( int i=x.size(); i--; ) {
         IntView xv(x[i]);
         IntSetRanges ris(s);
         GECODE_ME_FAIL(home,xv.inter_r(home,ris,false));
@@ -91,12 +91,11 @@ namespace Gecode {
 
     ViewArray<IntView> xv(home,x);
 
-    IntSetValues vs(s);
-  
-    while ( vs() ) {
-      GECODE_ES_FAIL(home,(Sequence::post_sequence<IntView,int>(home,xv,vs.val(),q,l,u)));
-      ++vs;
-    }
+    for (IntSetValues vs(s); vs(); ++vs)
+      GECODE_ES_FAIL(home,
+                     (Sequence::Sequence<IntView,int>::post
+                      (home,xv,vs.val(),q,l,u)));
+
   }
 
   void
@@ -145,7 +144,9 @@ namespace Gecode {
 
       ViewArray<BoolView> xv(home,x);
 
-      GECODE_ES_FAIL(home,(Sequence::post_sequence<BoolView,bool>(home,xv,s,q,l,u)));
+      GECODE_ES_FAIL(home,
+                     (Sequence::Sequence<BoolView,bool>::post
+                      (home,xv,s,q,l,u)));
   }
 }
 

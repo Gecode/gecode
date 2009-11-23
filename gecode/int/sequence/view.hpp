@@ -36,39 +36,46 @@
  */
 
 namespace Gecode { namespace Int { namespace Sequence {
+
+  /// Advisor for view at position
   template<class View>
   class SupportAdvisor : public Advisor {
   public:
-    SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,int i0);
-    SupportAdvisor(Space& home, bool share, SupportAdvisor& a);
-    
-    void dispose(Space& home, Council<SupportAdvisor>& c);
-
+    /// Index position
     int i;
+    /// Initialize
+    SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
+                   int i0);
+    /// Copy during cloning
+    SupportAdvisor(Space& home, bool share, SupportAdvisor& a);
+    /// Dispose advisor
+    void dispose(Space& home, Council<SupportAdvisor>& c);
   };
 
   template<class View>
   forceinline
-  SupportAdvisor<View>::SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,int i0)
+  SupportAdvisor<View>::SupportAdvisor(Space& home, Propagator& p, 
+                                       Council<SupportAdvisor>& c,int i0)
     : Advisor(home,p,c), i(i0) {
   }
 
   template<class View>
   forceinline
-  SupportAdvisor<View>::SupportAdvisor(Space& home, bool share, SupportAdvisor& a)
+  SupportAdvisor<View>::SupportAdvisor(Space& home, bool share, 
+                                       SupportAdvisor& a)
     : Advisor(home,share,a), i(a.i) {
   }
-
+  
   template<class View>
   forceinline void
   SupportAdvisor<View>::dispose(Space& home, Council<SupportAdvisor>& c) {
-      Advisor::dispose(home,c);
+    Advisor::dispose(home,c);
   }
 
   template<class View, class Val,bool iss>
   class ViewValSupport {
   public:
-     /// Initialize
+    /// Initialize
     void init(Space& home, ViewArray<View>& x,Val s, int i, int q);
     /// Update
     void update(Space& home, bool share, ViewValSupport<View,Val,iss>& vvs, int n0);
@@ -79,7 +86,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Return true if sequence j has been violated
     bool violated(int j, int q, int l, int u) const;
     /// Check if retired 
-    bool retired() const;
+    bool retired(void) const;
     /// Allocate an instance
     static ViewValSupport* allocate(Space&,int);
   private:
@@ -88,9 +95,9 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Schedules the invoking support to be concluded (to be shaved)
     ExecStatus schedule_conclusion(ViewArray<View>& a,Val s,int i);
     /// Returns true if a conclusion to be made has been scheduled
-    bool conlusion_scheduled() const;
+    bool conlusion_scheduled(void) const;
     /// Retires invoking instance
-    void retire();
+    void retire(void);
     /// Return number of forced to s elements in sequence j
     int values(int j, int q) const;
     /// Checks if x[i] has been shaved
@@ -104,9 +111,9 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Returns true if a[idx] can be not s taking into account a[i]=s if iss or a[i]!=s if ! iss
     bool alternative_not_possible(ViewArray<View>& a,Val s,int i, int idx) const;
     /// Returns true if there are potential violations marked
-    bool has_potential_violation() const;
+    bool has_potential_violation(void) const;
     /// Returns next potential violation 
-    int next_potential_violation() const;
+    int next_potential_violation(void) const;
     /// Adds potential violation i
     void potential_violation(int i);
     // Sets element idx of cumulative array to v
@@ -127,14 +134,14 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val,bool iss>
   forceinline bool 
-  ViewValSupport<View,Val,iss>::has_potential_violation() const {
+  ViewValSupport<View,Val,iss>::has_potential_violation(void) const {
     assert(v);
     return !v->empty();
   }
     
   template<class View, class Val,bool iss>
   forceinline int 
-  ViewValSupport<View,Val,iss>::next_potential_violation() const {
+  ViewValSupport<View,Val,iss>::next_potential_violation(void) const {
     assert(v);
     int n = -1;
     if ( !v->empty() ) {
@@ -155,27 +162,33 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val,bool iss>
   forceinline bool 
-  ViewValSupport<View,Val,iss>::retired() const {
+  ViewValSupport<View,Val,iss>::retired(void) const {
     return 0 == y;
   }
 
   template<class View, class Val,bool iss>
   forceinline void
-  ViewValSupport<View,Val,iss>::retire() {
+  ViewValSupport<View,Val,iss>::retire(void) {
     y = 0;
+  }
+
+  template<class View,class Val,bool iss>
+  forceinline bool
+  ViewValSupport<View,Val,iss>::alternative_not_possible(ViewArray<View>& a,Val s,int i, int idx) const {
+    return (a[idx-1].assigned() && a[idx-1].in(s)) || (iss && idx-1==i);
   }
 
   template<class View, class Val,bool iss>
   forceinline void
-  ViewValSupport<View,Val,iss>::init(Space& home,ViewArray<View>& a,Val s, int i, int q) {
+  ViewValSupport<View,Val,iss>::init(Space& home, ViewArray<View>& a, Val s,
+                                     int i, int q) {
     v = &home.construct<S>(S::key_compare(),S::allocator_type(home));
     y = home.alloc<int>(a.size()+1);
     y[0] = 0;
     for ( int l=0; l<a.size(); l++ ) {
       if ( alternative_not_possible(a,s,i,l+1) ) {
         y[l+1] = y[l] + 1;
-      }
-      else {
+      } else {
         y[l+1] = y[l];
       }
       if ( l+1 >= q ) {
@@ -225,8 +238,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View,class Val,bool iss>
   forceinline bool
-  ViewValSupport<View,Val,iss>::conlusion_scheduled() const {
-      return !retired() && y[0] > 0;
+  ViewValSupport<View,Val,iss>::conlusion_scheduled(void) const {
+    return !retired() && y[0] > 0;
   }
 
   template<class View,class Val,bool iss>
@@ -234,20 +247,18 @@ namespace Gecode { namespace Int { namespace Sequence {
   ViewValSupport<View,Val,iss>::advise(Space&, ViewArray<View>& a,
                                        Val s,int i,int q, int j,
                                        const Delta&) {
-    ExecStatus status = ES_FIX;
+    ExecStatus status = ES_FIX; 
     if ( !retired() ) {
-	    if ( j == i && shaved(a[j],s,j) ) {
-		    retire();
-      }
-      else  {
+      if ( j == i && shaved(a[j],s,j) ) {
+        retire();
+      } else  {
         if ( a[j].in(s) ) {
           if ( a[j].assigned() && y[j+1]-y[j]==0) {
             if ( !pushup(a,s,i,q,j+1,1) ) {
               GECODE_ME_CHECK(schedule_conclusion(a,s,i));
             }
           }
-        }
-        else {
+        } else {
           if ( y[j+1]-y[j] > 0 ) {
             if ( !pushup(a,s,i,q,j,y[j+1]-y[j]) ) {
               GECODE_ME_CHECK(schedule_conclusion(a,s,i));
@@ -276,6 +287,20 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
 
   template<class View,class Val,bool iss>
+  forceinline ExecStatus
+  ViewValSupport<View,Val,iss>::conclude(Space& home,ViewArray<View>& a,Val s,int i) {
+    if ( iss ) {
+      GECODE_ME_CHECK(a[i].nq(home,s)); 
+    } else {
+      GECODE_ME_CHECK(a[i].eq(home,s)); 
+    }
+
+    retire();
+
+    return ES_OK;
+  }
+
+  template<class View,class Val,bool iss>
   forceinline ExecStatus 
   ViewValSupport<View,Val,iss>::propagate(Space& home,ViewArray<View>& a,Val s,int i,int q,int l,int u) {
     if ( !retired() ) {
@@ -291,8 +316,7 @@ namespace Gecode { namespace Int { namespace Sequence {
             if ( !pushup(a,s,i,q,j+q,l-forced_to_s) ) {
               return conclude(home,a,s,i);
             }
-          }
-          else {
+          } else {
             if ( !pushup(a,s,i,q,j,forced_to_s-u) ) {
               return conclude(home,a,s,i);
             }
@@ -303,21 +327,6 @@ namespace Gecode { namespace Int { namespace Sequence {
         }
       }
     }
-    return ES_OK;
-  }
-
-  template<class View,class Val,bool iss>
-  forceinline ExecStatus
-  ViewValSupport<View,Val,iss>::conclude(Space& home,ViewArray<View>& a,Val s,int i) {
-    if ( iss ) {
-      GECODE_ME_CHECK(a[i].nq(home,s)); 
-    }
-    else {
-      GECODE_ME_CHECK(a[i].eq(home,s)); 
-    }
-
-    retire();
-
     return ES_OK;
   }
 
@@ -336,8 +345,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline void
   ViewValSupport<View,Val,iss>::set(int idx, int v, int q, int n) {
     assert(y[idx]<=v);
-    if ( y[idx] < v )
-    {
+    if ( y[idx] < v ) {
       y[idx] = v;
       potential_violation(idx,q,n);   
     }
@@ -361,8 +369,7 @@ namespace Gecode { namespace Int { namespace Sequence {
       while ( idx > 0 && ((y[idx]-y[idx-1]>1) || ((y[idx]-y[idx-1]==1 && s_not_possible(a,s,i,idx)))) )  {
         if ( s_not_possible(a,s,i,idx) ) {
           set(idx-1,y[idx],q,n);
-        }
-        else {
+        } else {
           set(idx-1,y[idx]-1,q,n);
         }
         if ( y[idx-1]>idx-1 ) {
@@ -377,8 +384,7 @@ namespace Gecode { namespace Int { namespace Sequence {
       while ( idx < a.size() && ((y[idx]-y[idx+1]>0) || ((y[idx]-y[idx+1]==0) && alternative_not_possible(a,s,i,idx+1))) ) {
         if ( alternative_not_possible(a,s,i,idx+1) ) {
           set(idx+1,y[idx]+1,q,n);
-        }
-        else {
+        } else {
           set(idx+1,y[idx],q,n);
         }
         idx += 1;
@@ -388,16 +394,10 @@ namespace Gecode { namespace Int { namespace Sequence {
     return true;
   }
 
-  template<class View,class Val,bool iss>
-  forceinline bool
-    ViewValSupport<View,Val,iss>::alternative_not_possible(ViewArray<View>& a,Val s,int i, int idx) const {
-      return (a[idx-1].assigned() && a[idx-1].in(s)) || (iss && idx-1==i);
-  }
-
   template<class View, class Val,bool iss>
   forceinline bool
   ViewValSupport<View,Val,iss>::s_not_possible(ViewArray<View>& a, Val s, int i, int idx) const {
-      return !a[idx-1].in(s) || (!iss && i == idx-1 );
+    return !a[idx-1].in(s) || (!iss && i == idx-1 );
   }
  
   template<class View,class Val,bool iss>
@@ -443,21 +443,21 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View,class Val,bool iss>
   forceinline const ViewValSupport<View,Val,iss>&
-    ViewValSupportArray<View,Val,iss>::operator [](int i) const {
-      assert((i >= 0) && (i < size()));
-      return xs[i];
+  ViewValSupportArray<View,Val,iss>::operator [](int i) const {
+    assert((i >= 0) && (i < size()));
+    return xs[i];
   }
 
   template<class View,class Val,bool iss>
   void
-    ViewValSupportArray<View,Val,iss>::update(Space& home, bool share, ViewValSupportArray<View,Val,iss>& a) {
-      n = a.size();
-      if (n>0) {
-        xs = ViewValSupport<View,Val,iss>::allocate(home,n);
-        for (int i=n; i--; ) {
-          xs[i].update(home,share,a[i],n+1);
-        }
+  ViewValSupportArray<View,Val,iss>::update(Space& home, bool share, ViewValSupportArray<View,Val,iss>& a) {
+    n = a.size();
+    if (n>0) {
+      xs = ViewValSupport<View,Val,iss>::allocate(home,n);
+      for (int i=n; i--; ) {
+        xs[i].update(home,share,a[i],n+1);
       }
+    }
   }
 
   template<class View,class Val,bool iss>

@@ -51,43 +51,31 @@ namespace Gecode { namespace Int { namespace Sequence {
    *
    * This namespace contains a propagator for the
    * cumulatives constraint as presented in
-   \verbatim
-   @article{DBLP:journals/constraints/HoevePRS09,
-      author    = {Willem Jan van Hoeve and
-                   Gilles Pesant and
-                   Louis-Martin Rousseau and
-                   Ashish Sabharwal},
-      title     = {New filtering algorithms for combinations of among constraints},
-      journal   = {Constraints},
-      volume    = {14},
-      number    = {2},
-      year      = {2009},
-      pages     = {273-292},
-      ee        = {http://dx.doi.org/10.1007/s10601-008-9067-7},
-      bibsource = {DBLP, http://dblp.uni-trier.de}
-     }
-   \endverbatim
+   * Willem Jan van Hoeve, Gilles Pesant, Louis-Martin Rousseau, and
+   * Ashish Sabharwal, New filtering algorithms for combinations of 
+   * among constraints. Constraints, 14(2), 273-292, 2009.
+   *
    */
 
   /**
-  * \brief Class for advising the propagator
-  *
-  */
+   * \brief Class for advising the propagator
+   *
+   */
   template<class View> class SupportAdvisor;
   /**
-  * \brief Class for view value support structure
-  *
-  */
+   * \brief Class for view value support structure
+   *
+   */
   template<class View,class Val,bool iss> class ViewValSupport;
   /**
-  * \brief An array of ViewValSupport data structures
-  *
-  */
+   * \brief An array of ViewValSupport data structures
+   *
+   */
   template<class View, class Val,bool iss>
   class ViewValSupportArray {
   private:
     /// The actual array
-     ViewValSupport<View,Val,iss>* xs;
+    ViewValSupport<View,Val,iss>* xs;
     /// The size of the array
     int n;
   public:
@@ -122,8 +110,6 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val>
   class Sequence : public Propagator {
   protected:
-
-  public:
     /// Constructor for cloning \a p
     Sequence(Space& home, bool shared, Sequence& p);
     /// Constructor for creation
@@ -162,9 +148,6 @@ namespace Gecode { namespace Int { namespace Sequence {
     Council<SupportAdvisor<View> > ac;
   };
 
-  /// Post propagator 
-  template<class View, class Val>
-  ExecStatus post_sequence(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
 }}}
 
 #include <gecode/int/sequence/int.hpp>
