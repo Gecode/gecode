@@ -94,8 +94,6 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Allocate an instance
     static ViewValSupport* allocate(Space&,int);
   private:
-    /// Set for potential violation, allocated on space heap
-    typedef std::set<int, std::less<int>, Gecode::space_allocator<int> > S;
     /// Schedules the invoking support to be concluded (to be shaved)
     ExecStatus schedule_conclusion(ViewArray<View>& a,Val s,int i);
     /// Returns true if a conclusion to be made has been scheduled
@@ -126,8 +124,8 @@ namespace Gecode { namespace Int { namespace Sequence {
     void potential_violation(int idx, int q, int n);
     /// Cumulative array
     int* y;
-    /// Potential violation set, memory managed by Space
-    S* v;
+    /// Potential violation set
+    Violations v;
   };
 
     
@@ -140,39 +138,32 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val,bool iss>
   forceinline bool 
   ViewValSupport<View,Val,iss>::has_potential_violation(void) const {
-    assert(v);
-    return !v->empty();
+    return !v.empty();
   }
     
   template<class View, class Val,bool iss>
   forceinline int 
   ViewValSupport<View,Val,iss>::next_potential_violation(void) {
-    assert(v && !v-empty());
-    S::iterator ite = v->begin();
-    int n = (*ite);
-    v->erase(ite);
-    assert(v->count(n) == 0);
-    return n;
+    return v.get();
   }
 
   template<class View, class Val,bool iss>
   forceinline void 
   ViewValSupport<View,Val,iss>::potential_violation(int k) {
-    assert(v);
-    v->insert(k);
+    v.add(k);
   }
   
 
   template<class View, class Val,bool iss>
   forceinline bool 
   ViewValSupport<View,Val,iss>::retired(void) const {
-    return 0 == y;
+    return NULL == y;
   }
 
   template<class View, class Val,bool iss>
   forceinline void
   ViewValSupport<View,Val,iss>::retire(void) {
-    y = 0;
+    y = NULL;
   }
 
   template<class View,class Val,bool iss>
@@ -194,8 +185,8 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline void
   ViewValSupport<View,Val,iss>::init(Space& home, ViewArray<View>& a, Val s,
                                      int i, int q) {
-    v = &home.construct<S>(S::key_compare(),S::allocator_type(home));
     y = home.alloc<int>(a.size()+1);
+    v.init(home,a.size());
     y[0] = 0;
     for ( int l=0; l<a.size(); l++ ) {
       if ( alternative_not_possible(a,s,i,l+1) ) {
@@ -215,16 +206,17 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val,bool iss>
   forceinline void
-  ViewValSupport<View,Val,iss>::update(Space& home, bool,
+  ViewValSupport<View,Val,iss>::update(Space& home, bool share,
                                        ViewValSupport<View,Val,iss>& vvs, 
                                        int n0) {
-    y = 0;
+    y = NULL;
     if ( !vvs.retired() ) {
-      v = &home.construct<S>(S::key_compare(),S::allocator_type(home));
       y = home.alloc<int>(n0);
       for ( int l=0; l<n0; l++ ) {
         y[l] = vvs.y[l];
       }
+      v.update(home,share,vvs.v);
+      // = &home.construct<S>(S::key_compare(),S::allocator_type(home));
     }
   }
 
@@ -258,45 +250,6 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
 
   template<class View,class Val,bool iss>
-  forceinline ExecStatus
-  ViewValSupport<View,Val,iss>::advise(Space&, ViewArray<View>& a,
-                                       Val s,int i,int q, int j,
-                                       const Delta&) {
-    ExecStatus status = ES_FIX; 
-    if (!retired()) {
-      if ((j == i) && shaved(a[j],s,j)) {
-        retire();
-      } else {
-        switch (takes(a[j],s)) {
-        case TS_YES:
-          if (y[j+1]-y[j] == 0) {
-            if (!pushup(a,s,i,q,j+1,1)) {
-              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
-            }
-          }
-          break;
-        case TS_NO:
-          if (y[j+1]-y[j] > 0) {
-            if (!pushup(a,s,i,q,j,y[j+1]-y[j])) {
-              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
-            }
-          }
-          break;
-        case TS_MAYBE:
-          break;
-        default:
-          GECODE_NEVER;
-        }
-
-        if ( has_potential_violation() )
-          status = ES_NOFIX;
-      }
-    }
-
-    return status;
-  }
-
-  template<class View,class Val,bool iss>
   forceinline int
   ViewValSupport<View,Val,iss>::values(int j, int q) const {
     return y[j+q]-y[j];
@@ -320,33 +273,6 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     retire();
 
-    return ES_OK;
-  }
-
-  template<class View,class Val,bool iss>
-  forceinline ExecStatus 
-  ViewValSupport<View,Val,iss>::propagate(Space& home,ViewArray<View>& a,Val s,int i,int q,int l,int u) {
-    if ( !retired() ) {
-      if ( conlusion_scheduled() ) {
-        return conclude(home,a,s,i);
-      }
-
-      while (has_potential_violation()) {
-        int j = next_potential_violation();
-        if (violated(j,q,l,u)) {
-          int forced_to_s = values(j,q);
-          if (forced_to_s < l) {
-            if (!pushup(a,s,i,q,j+q,l-forced_to_s))
-              return conclude(home,a,s,i);
-          } else {
-            if (!pushup(a,s,i,q,j,forced_to_s-u))
-              return conclude(home,a,s,i);
-          }
-          if (violated(j,q,l,u))
-            return conclude(home,a,s,i);
-        }
-      }
-    }
     return ES_OK;
   }
 
@@ -412,6 +338,72 @@ namespace Gecode { namespace Int { namespace Sequence {
     }
 
     return true;
+  }
+
+  template<class View,class Val,bool iss>
+  forceinline ExecStatus
+  ViewValSupport<View,Val,iss>::advise(Space&, ViewArray<View>& a,
+                                       Val s,int i,int q, int j,
+                                       const Delta&) {
+    ExecStatus status = ES_FIX; 
+    if (!retired()) {
+      if ((j == i) && shaved(a[j],s,j)) {
+        retire();
+      } else {
+        switch (takes(a[j],s)) {
+        case TS_YES:
+          if (y[j+1]-y[j] == 0) {
+            if (!pushup(a,s,i,q,j+1,1)) {
+              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
+            }
+          }
+          break;
+        case TS_NO:
+          if (y[j+1]-y[j] > 0) {
+            if (!pushup(a,s,i,q,j,y[j+1]-y[j])) {
+              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
+            }
+          }
+          break;
+        case TS_MAYBE:
+          break;
+        default:
+          GECODE_NEVER;
+        }
+
+        if ( has_potential_violation() )
+          status = ES_NOFIX;
+      }
+    }
+
+    return status;
+  }
+
+  template<class View,class Val,bool iss>
+  forceinline ExecStatus 
+  ViewValSupport<View,Val,iss>::propagate(Space& home,ViewArray<View>& a,Val s,int i,int q,int l,int u) {
+    if ( !retired() ) {
+      if ( conlusion_scheduled() ) {
+        return conclude(home,a,s,i);
+      }
+
+      while (has_potential_violation()) {
+        int j = next_potential_violation();
+        if (violated(j,q,l,u)) {
+          int forced_to_s = values(j,q);
+          if (forced_to_s < l) {
+            if (!pushup(a,s,i,q,j+q,l-forced_to_s))
+              return conclude(home,a,s,i);
+          } else {
+            if (!pushup(a,s,i,q,j,forced_to_s-u))
+              return conclude(home,a,s,i);
+          }
+          if (violated(j,q,l,u))
+            return conclude(home,a,s,i);
+        }
+      }
+    }
+    return ES_OK;
   }
 
   template<class View,class Val,bool iss>

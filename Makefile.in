@@ -304,7 +304,7 @@ INTHDR0 = \
 	channel.hh channel/dom.hpp channel/val.hpp \
 	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
 	sequence.hh sequence/int.hpp sequence/view.hpp \
-	sequence/set-op.hpp
+	sequence/set-op.hpp sequence/violations.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \

@@ -41,8 +41,6 @@
 #include <gecode/int.hh>
 #include <gecode/int/rel.hh>
 
-#include <set>
-
 namespace Gecode { namespace Int { namespace Sequence {
 
   /**
@@ -151,6 +149,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 }}}
 
 #include <gecode/int/sequence/set-op.hpp>
+#include <gecode/int/sequence/violations.hpp>
 #include <gecode/int/sequence/int.hpp>
 #include <gecode/int/sequence/view.hpp>
 
