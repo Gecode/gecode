@@ -87,7 +87,8 @@ namespace {
    * x_1,x_2,\ldots,x_n\rangle\f$, a variable \f$y\f$, and a value
    * \f$val\f$. It It makes sure that the last \f$y\f$ variables of
    * \f$x\f$ are assigned the value, and that the value does not
-   * appear in the rest of the array. 
+   * appear in the rest of the array. Furthermore, the constriant
+   * ensure that \$fval\$f isnot adjacent to \$fval-1\$f.
    *
    * Since the propagator is custom-made for the car sequencing
    * example, it relies on the fact that the value will be equal to
@@ -154,13 +155,17 @@ namespace {
   template <class View>
   ExecStatus
   PushToEnd<View>::propagate(Space& home, const ModEventDelta&) {
-    // Find span of possible positions
-    int min = 0, max = 0;
+    // Find number of required positions
+    int min = 0;
+    for (int i = x.size(); i-- && x[i].min() >= val-1; ) {
+      ++min;
+    }
+    // Find number of possible positions
+    int max = 0;
     int i = x.size();
     while (i--) {
       if (x[i].max() != val) break;
       ++max;
-      if (x[i].assigned()) ++min;
       if (max >= y.max()) break;
     }
     // No variables later than max can have value val
@@ -341,7 +346,6 @@ public:
     
 
     // Branching
-    branch(*this, nstall, INT_VAL_MIN);
     switch (opt.branching()) {
     case BRANCH_INORDER:
       branch(*this, s, INT_VAR_NONE, INT_VAL_MIN);
@@ -377,22 +381,21 @@ public:
     const char* space = nclasses > 9 ? " " : "";
     os << "Stall slots=" << nstall 
        << ", End slots=" << nend << std::endl;
-    if (s.size() > 0) {
-      int i = 0;
-      for (; i < s.size(); ++i) {
-        if (s[i].assigned()) {
-          int v = s[i].val();
-          if (v == endval) break;
-          if (v == stallval) os << space << "_ ";
-          else               os << std::setw(width) << v << " ";
-        } else {
-          os << space << "? ";    
-        }
-        if ((i+1)%20 == 0) os << std::endl;
+    int i = 0;
+    for (; i < s.size(); ++i) {
+      if (s[i].assigned()) {
+        int v = s[i].val();
+        if (v == endval) break;
+        if (v == stallval) os << space << "_ ";
+        else               os << std::setw(width) << v << " ";
+      } else {
+        os << space << "? ";    
       }
-      if ((i+1)%20)
-        os << std::endl;
+      if ((i+1)%20 == 0) os << std::endl;
     }
+    if (i%20)
+      os << std::endl;
+    os << std::endl;
   }
 
   /// Constructor for cloning \a s
