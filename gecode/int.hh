@@ -1505,21 +1505,37 @@ namespace Gecode {
    */
 
   //@{
-  /** \brief Post propagator for \f$sequence(X,S,q,l,u)\f$
+  /** \brief Post propagator for \f$\operatorname{sequence}(x,s,q,l,u)\f$
    *
-   *  Where \f$ X=x_0,x_1,...,x_n\f$ and S a set of domain values.
-   *   \f$1\leq q \leq n\f$ and \f$0\leq l \leq u \leq q\f$
-   * 
+   * Posts a domain consistent propagator for the constraint
+   * \f$\bigwedge_{i=0}^{|x|-q} 
+   *      \operatorname{among}(\langle x_i,\ldots,x_{i+q-1}\rangle,s,l,u)\f$
+   * where the among constraint is defined as
+   * \f$l\leq\#\{j\in\{i,\ldots,i+q-1\}\;|\;x_j\in s\} \leq u\f$.
+   *
+   * Throws the following exceptions:
+   *  - Of type Int::TooFewArguments, if \f$|x|=0\f$.
+   *  - Of type Int::ArgumentSame, if \a x contains
+   *    the same unassigned variable multiply.
+   *  - Of type Exception, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const IntVarArgs& x, const IntSet& s, 
            int q, int l, int u, IntConLevel icl=ICL_DEF); 
   
-  /** \brief Post propagator for \f$sequence(X,S,q,l,u)\f$
+  /** \brief Post propagator for \f$\operatorname{sequence}(x,s,q,l,u)\f$
    *
-   *  Where \f$ X=x_0,x_1,...,x_n\f$ and S a set of domain values.
-   *   \f$1\leq q \leq n\f$ and \f$0\leq l \leq u \leq q\f$
-   * 
+   * Posts a domain consistent propagator for the constraint
+   * \f$\bigwedge_{i=0}^{|x|-q} 
+   *      \operatorname{among}(\langle x_i,\ldots,x_{i+q-1}\rangle,s,l,u)\f$
+   * where the among constraint is defined as
+   * \f$l\leq\#\{j\in\{i,\ldots,i+q-1\}\;|\;x_j\in s\} \leq u\f$.
+   *
+   * Throws the following exceptions:
+   *  - Of type Int::TooFewArguments, if \f$|x|=0\f$.
+   *  - Of type Int::ArgumentSame, if \a x contains
+   *    the same unassigned variable multiply.
+   *  - Of type Exception, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
