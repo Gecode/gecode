@@ -70,7 +70,9 @@
 Version: 3.2.2
 Date: dfgahfdghsd
 [DESCRIPTION]
-gsagsdgasdf
+This release adds the sequence constraint (contributed by David
+Rijsman, Quintiq) and has as always some small additions and
+fixes.
 
 [ENTRY]
 Module: iter
@@ -144,6 +146,7 @@ Thanks: Håkan Kjellerstrand
 [DESCRIPTION]
 Element constraints in reified positions produced an error in the mzn2fzn
 translation.
+
 
 [RELEASE]
 Version: 3.2.1
