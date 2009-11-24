@@ -150,6 +150,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
 }}}
 
+#include <gecode/int/sequence/set-op.hpp>
 #include <gecode/int/sequence/int.hpp>
 #include <gecode/int/sequence/view.hpp>
 
