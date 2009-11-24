@@ -126,6 +126,53 @@ namespace Gecode { namespace Int { namespace Sequence {
     S* v;
   };
 
+  /// Status of whether a view takes a value from a set
+  enum TakesStatus {
+    TS_NO,   ///< Definitely not
+    TS_YES,  ///< Definitely yes
+    TS_MAYBE ///< Maybe or maybe not
+  };
+
+  /// Return whether view \a x takes value \a s
+  template<class View>
+  forceinline TakesStatus
+  takes(const View& x, int s) {
+    if (x.in(s))
+      return x.assigned() ? TS_YES : TS_MAYBE;
+    else
+      return TS_NO;
+  }
+  /// Test whether all values of view \a x are included in \a s
+  template<class View>
+  forceinline bool
+  includes(const View& x, int s) {
+    return x.assigned() && x.in(s);
+  }
+  /// Test whether all values of view \a x are excluded from \a s
+  template<class View>
+  forceinline bool
+  excludes(const View& x, int s) {
+    return !x.in(s);
+  }
+  /// Test whether no decision on inclusion or exclusion of values of view \a x in \a s can be made
+  template<class View>
+  forceinline bool
+  undecided(const View& x, int s) {
+    return !x.assigned() && x.in(s);
+  }
+  /// Prune view \a x to only include values from \a s
+  template<class View>
+  forceinline ModEvent
+  include(Space& home, View& x, int s) {
+    return x.eq(home,s);
+  }
+  /// Prune view \a x to exclude all values from \a s
+  template<class View>
+  forceinline ModEvent
+  exclude(Space& home, View& x, int s) {
+    return x.nq(home,s);
+  }
+    
   template<class View, class Val,bool iss>
   forceinline ViewValSupport<View,Val,iss>*
   ViewValSupport<View,Val,iss>::allocate(Space& home, int n) {
@@ -174,9 +221,20 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View,class Val,bool iss>
   forceinline bool
-  ViewValSupport<View,Val,iss>::alternative_not_possible(ViewArray<View>& a,Val s,int i, int idx) const {
-    return (a[idx-1].assigned() && a[idx-1].in(s)) || (iss && idx-1==i);
+  ViewValSupport<View,Val,iss>::alternative_not_possible
+  (ViewArray<View>& a, Val s, int i, int idx) const {
+    //    return (a[idx-1].assigned() && a[idx-1].in(s)) || (iss && idx-1==i);
+    return includes(a[idx-1],s) || (iss && (idx-1 == i));
   }
+
+  template<class View, class Val,bool iss>
+  forceinline bool
+  ViewValSupport<View,Val,iss>::s_not_possible
+  (ViewArray<View>& a, Val s, int i, int idx) const {
+    // return !a[idx-1].in(s) || (!iss && i == idx-1 );
+    return excludes(a[idx-1],s) || (!iss && (i == idx-1));
+  }
+ 
 
   template<class View, class Val,bool iss>
   forceinline void
@@ -219,16 +277,21 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View,class Val,bool iss>
   forceinline bool
   ViewValSupport<View,Val,iss>::shaved(const View& x, Val s, int) const {
-    return (iss && !x.in(s)) || (!iss && x.assigned() && x.in(s));
+    //    return (iss && !x.in(s)) || (!iss && x.assigned() && x.in(s));
+    if (iss)
+      return excludes(x,s);
+    else
+      return includes(x,s);
   }
 
   template<class View,class Val,bool iss>
   forceinline ExecStatus 
-  ViewValSupport<View,Val,iss>::schedule_conclusion(ViewArray<View>& a,Val s,int i) {
-    if ( !retired() ) {
-      if ( (iss && a[i].assigned() && a[i].in(s)) || (!iss && !a[i].in(s)) ) {
+  ViewValSupport<View,Val,iss>::schedule_conclusion(ViewArray<View>& a, Val s,
+                                                    int i) {
+    if (!retired()) {
+      if ((iss && includes(a[i],s)) || (!iss && excludes(a[i],s)))
+        // (iss && a[i].assigned() && a[i].in(s)) || (!iss && !a[i].in(s)) ) {
         return ES_FAILED;
-      }
       y[0] = 1;
       potential_violation(0);
     }
@@ -248,10 +311,31 @@ namespace Gecode { namespace Int { namespace Sequence {
                                        Val s,int i,int q, int j,
                                        const Delta&) {
     ExecStatus status = ES_FIX; 
-    if ( !retired() ) {
-      if ( j == i && shaved(a[j],s,j) ) {
+    if (!retired()) {
+      if ((j == i) && shaved(a[j],s,j)) {
         retire();
-      } else  {
+      } else {
+        switch (takes(a[j],s)) {
+        case TS_YES:
+          if (y[j+1]-y[j] == 0) {
+            if (!pushup(a,s,i,q,j+1,1)) {
+              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
+            }
+          }
+          break;
+        case TS_NO:
+          if (y[j+1]-y[j] > 0) {
+            if (!pushup(a,s,i,q,j,y[j+1]-y[j])) {
+              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
+            }
+          }
+          break;
+        case TS_MAYBE:
+          break;
+        default:
+          GECODE_NEVER;
+        }
+        /*
         if ( a[j].in(s) ) {
           if ( a[j].assigned() && y[j+1]-y[j]==0) {
             if ( !pushup(a,s,i,q,j+1,1) ) {
@@ -265,6 +349,7 @@ namespace Gecode { namespace Int { namespace Sequence {
             }
           }
         }
+        */
 
         if ( has_potential_violation() )
           status = ES_NOFIX;
@@ -291,9 +376,11 @@ namespace Gecode { namespace Int { namespace Sequence {
   ViewValSupport<View,Val,iss>::conclude(Space& home,ViewArray<View>& a,
                                          Val s, int i) {
     if ( iss ) {
-      GECODE_ME_CHECK(a[i].nq(home,s)); 
+      //      GECODE_ME_CHECK(a[i].nq(home,s)); 
+      GECODE_ME_CHECK(exclude(home,a[i],s)); 
     } else {
-      GECODE_ME_CHECK(a[i].eq(home,s)); 
+      GECODE_ME_CHECK(include(home,a[i],s)); 
+      //      GECODE_ME_CHECK(a[i].eq(home,s)); 
     }
 
     retire();
@@ -395,12 +482,6 @@ namespace Gecode { namespace Int { namespace Sequence {
     return true;
   }
 
-  template<class View, class Val,bool iss>
-  forceinline bool
-  ViewValSupport<View,Val,iss>::s_not_possible(ViewArray<View>& a, Val s, int i, int idx) const {
-    return !a[idx-1].in(s) || (!iss && i == idx-1 );
-  }
- 
   template<class View,class Val,bool iss>
   ViewValSupportArray<View,Val,iss>::ViewValSupportArray(void) : xs(NULL), n(0) {
   }

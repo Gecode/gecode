@@ -45,10 +45,12 @@ namespace Gecode { namespace Int { namespace Sequence {
       vvsamax(home,x,s0,q0), vvsamin(home,x,s0,q0), ac(home) {
     home.notice(*this,AP_DISPOSE);
     for (int i=x.size(); i--; ) {
-      if ( !x[i].assigned() && x[i].in(s) ) {
+      if (undecided(x[i],s)) {
+        //      if ( !x[i].assigned() && x[i].in(s) ) {
         x[i].subscribe(home,*new (home) SupportAdvisor<View>(home,*this,ac,i));   
       } else {
-        x[i].schedule(home,*this,ME_GEN_ASSIGNED);
+        //        x[i].schedule(home,*this,ME_GEN_ASSIGNED);
+        x[i].schedule(home,*this,x[i].assigned() ? ME_INT_VAL : ME_INT_BND);
       }
     }
   }
@@ -73,14 +75,14 @@ namespace Gecode { namespace Int { namespace Sequence {
       status = ES_NOFIX;
     }
 
-    if ( !x[a.i].in(s) || x[a.i].assigned() ) {
-      if ( !x[a.i].assigned() )
+    if (!undecided(x[a.i],s)) {
+      //    if ( !x[a.i].in(s) || x[a.i].assigned() ) {
+      if (!x[a.i].assigned())
         x[a.i].cancel(home,a);
 
       if ( ES_NOFIX == status ) {
         return ES_SUBSUMED_NOFIX(a,home,ac);
-      }
-      else {
+      } else {
         return ES_SUBSUMED_FIX(a,home,ac);
       }
     }
@@ -109,10 +111,16 @@ namespace Gecode { namespace Int { namespace Sequence {
     for ( int j=0; j<x.size(); j++ ) {
       upper[j+1] = upper[j];
       lower[j+1] = lower[j];
+      /*
       if ( x[j].assigned() && x[j].in(s) ) {
         upper[j+1] += 1;
+      } else if ( !x[j].in(s) ) { 
+        lower[j+1] += 1;
       }
-      if ( !x[j].in(s) ) { 
+      */
+      if (includes(x[j],s)) {
+        upper[j+1] += 1;
+      } else if (excludes(x[j],s)) {
         lower[j+1] += 1;
       }
       if ( j+1 >= q && (q - l < lower[j+1] - lower[j+1-q] || upper[j+1] - upper[j+1-q] > u) ) {
@@ -153,7 +161,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     GECODE_ME_CHECK(vvsamin.propagate(home,x,s,q,l,u));
 
     for (int i=x.size(); i--; )
-      if (x[i].in(s) && !x[i].assigned())
+      if (undecided(x[i],s))
         return ES_NOFIX;
 
     return ES_SUBSUMED(*this,dispose(home));
