@@ -288,7 +288,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View,class Val,bool iss>
   forceinline ExecStatus
-  ViewValSupport<View,Val,iss>::conclude(Space& home,ViewArray<View>& a,Val s,int i) {
+  ViewValSupport<View,Val,iss>::conclude(Space& home,ViewArray<View>& a,
+                                         Val s, int i) {
     if ( iss ) {
       GECODE_ME_CHECK(a[i].nq(home,s)); 
     } else {

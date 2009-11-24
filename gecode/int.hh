@@ -1512,7 +1512,7 @@ namespace Gecode {
    * 
    */
   GECODE_INT_EXPORT void
-  sequence(Home home, const IntVarArgs &x, const IntSet &s, 
+  sequence(Home home, const IntVarArgs& x, const IntSet& s, 
            int q, int l, int u, IntConLevel icl=ICL_DEF); 
   
   /** \brief Post propagator for \f$sequence(X,S,q,l,u)\f$
@@ -1522,7 +1522,7 @@ namespace Gecode {
    * 
    */
   GECODE_INT_EXPORT void
-  sequence(Home home, const BoolVarArgs &x, bool s, 
+  sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
            int q, int l, int u, IntConLevel icl=ICL_DEF); 
 
   //@}

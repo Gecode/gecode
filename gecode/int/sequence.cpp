@@ -37,51 +37,49 @@
 
 #include <gecode/int/sequence.hh>
 
+#include <algorithm>
+
 namespace Gecode {
 
   using namespace Int;
 
   void
-  sequence(Home home, const IntVarArgs &x, const IntSet &s, 
+  sequence(Home home, const IntVarArgs& x, const IntSet &s, 
            int q, int l, int u, IntConLevel) {
-    if ( x.size() == 0 )
-      throw TooFewArguments("Int::sequence");
-
     Limits::check(s.min(),"Int::sequence");
     Limits::check(s.max(),"Int::sequence");
+
+    if (x.size() == 0)
+      throw TooFewArguments("Int::sequence");
+
     Limits::check(q,"Int::sequence");
     Limits::check(l,"Int::sequence");
     Limits::check(u,"Int::sequence");
 
-    if ( x.same(home) )
+    if (x.same(home))
       throw ArgumentSame("Int::sequence");
 
-    if ( q < 1 || q > x.size() )
-      throw Exception("Int::sequence","1<=q<=n, invalid");
+    if ((q < 1) || (q > x.size()))
+      throw Exception("Int::sequence","1<=q<=|x| invalid");
 
-    if ( l < 0 || u > q || u < l )
-      throw Exception("Int::sequence","0<=l<=u<=q, invalid");
-
-    if ( home.failed() ) return;
-
-    if ( 0 == l && q == u ) return;
-
-    if ( 0 == u ) {
-      for ( int i=x.size(); i--; ) {
-        IntView xv(x[i]);
-        IntSetRanges ris(s);
-        GECODE_ME_FAIL(home,xv.minus_r(home,ris,false));
-      }
+    if (home.failed())
       return;
+
+    // Normalize l and u
+    l=std::max(0,l); u=std::min(q,u);
+
+    // Lower bound of values taken can never exceed upper bound
+    if (u < l) {
+      home.fail(); return;
     }
 
-    if ( s.width() * l > static_cast<unsigned int>(q) ) {
-      home.fail();
+    // Already subsumed as any number of values taken is okay
+    if ((0 == l) && (q == u)) 
       return;
-    }
 
-    if ( l == q ) {
-      for ( int i=x.size(); i--; ) {
+    // All variables must take a value in s
+    if (l == q) {
+      for (int i=x.size(); i--; ) {
         IntView xv(x[i]);
         IntSetRanges ris(s);
         GECODE_ME_FAIL(home,xv.inter_r(home,ris,false));
@@ -89,65 +87,104 @@ namespace Gecode {
       return;
     }
 
-    ViewArray<IntView> xv(home,x);
+    // No variable can take a value in s
+    if (0 == u) {
+      for (int i=x.size(); i--; ) {
+        IntView xv(x[i]);
+        IntSetRanges ris(s);
+        GECODE_ME_FAIL(home,xv.minus_r(home,ris,false));
+      }
+      return;
+    }
 
-    for (IntSetValues vs(s); vs(); ++vs)
+    for (IntSetValues vs(s); vs(); ++vs) {
+      ViewArray<IntView> xv(home,x);
       GECODE_ES_FAIL(home,
                      (Sequence::Sequence<IntView,int>::post
                       (home,xv,vs.val(),q,l,u)));
+    }
 
   }
 
   void
-  sequence(Home home, const BoolVarArgs &x, bool s, 
+  sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
            int q, int l, int u, IntConLevel) {
-      if ( x.size() == 0 )
-        throw TooFewArguments("Int::sequence");
+    if ((s.min() < 0) || (s.max() > 1))
+      throw NotZeroOne("Int::sequence");
 
-      Limits::check(q,"Int::sequence");
-      Limits::check(l,"Int::sequence");
-      Limits::check(u,"Int::sequence");
+    if (x.size() == 0)
+      throw TooFewArguments("Int::sequence");
 
-      if ( x.same(home) )
-        throw ArgumentSame("Int::sequence");
+    Limits::check(q,"Int::sequence");
+    Limits::check(l,"Int::sequence");
+    Limits::check(u,"Int::sequence");
 
-      if ( q < 1 || q > x.size() )
-        throw Exception("Int::sequence","1<=q<=n, invalid");
+    if (x.same(home))
+      throw ArgumentSame("Int::sequence");
 
-      if ( l < 0 || u > q || u < l )
-        throw Exception("Int::sequence","0<=l<=u<=q, invalid");
+    if ((q < 1) || (q > x.size()))
+      throw Exception("Int::sequence","1<=q<=|x| invalid");
 
-      if ( home.failed() ) return;
+    if (home.failed())
+      return;
 
-      if ( 0 == u ) {
-        for ( int i=x.size(); i--; ) {
-          BoolView xv(x[i]);
-          GECODE_ME_FAIL(home,xv.nq(home,s));
+    // Normalize l and u
+    l=std::max(0,l); u=std::min(q,u);
+
+    // Lower bound of values taken can never exceed upper bound
+    if (u < l) {
+      home.fail(); return;
+    }
+
+    // Already subsumed as any number of values taken is okay
+    if ((0 == l) && (q == u)) 
+      return;
+
+    // Check whether the set is {0,1}, then the number of values taken is q
+    if ((s.min() == 0) && (s.max() == 1)) {
+      if ((l > 0) || (u < q))
+        home.failed();
+      return;
+    }
+    assert(s.min() == s.max());
+
+    // All variables must take a value in s
+    if (l == q) {
+      if (s.min() == 0) {
+        for (int i=x.size(); i--; ) {
+          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.zero(home));
         }
-        return;
-      }
-
-      if ( s * l > q ) {
-        home.fail();
-        return;
-      }
-
-      if ( l == q ) {
-        for ( int i=x.size(); i--; ) {
-          BoolView xv(x[i]);
-          GECODE_ME_FAIL(home,xv.eq(home,s));
+      } else {
+        assert(s.min() == 1);
+        for (int i=x.size(); i--; ) {
+          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.one(home));
         }
-        return;
       }
+      return;
+    }
 
-      if ( 0 == l && q == u ) return;
+    // No variable can take a value in s
+    if (0 == u) {
+      if (s.min() == 0) {
+        for (int i=x.size(); i--; ) {
+          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.one(home));
+        }
+      } else {
+        assert(s.min() == 1);
+        for (int i=x.size(); i--; ) {
+          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.zero(home));
+        }
+      }
+      return;
+    }
 
-      ViewArray<BoolView> xv(home,x);
+    ViewArray<BoolView> xv(home,x);
 
-      GECODE_ES_FAIL(home,
-                     (Sequence::Sequence<BoolView,bool>::post
-                      (home,xv,s,q,l,u)));
+    GECODE_ES_FAIL(home,
+                   (Sequence::Sequence<BoolView,int>::post
+                    (home,xv,s.min(),q,l,u)));
   }
+
 }
 
 // STATISTICS: int-post

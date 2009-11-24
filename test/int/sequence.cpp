@@ -81,19 +81,21 @@ namespace Test { namespace Int {
      class SequenceBoolTest : public SequenceTest {
      public:
        /// Create and register test
-       SequenceBoolTest(const std::string& s,bool s0,int q0, int l0, int u0, int size)
+       SequenceBoolTest(const std::string& s, int s0, 
+                        int q0, int l0, int u0, int size)
          : SequenceTest("Bool::"+s,s0,q0,l0,u0,size,0,1) {
        }
        
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::IntSet is(s,s);
          Gecode::BoolVarArgs c(x.size());
          
          for (int i=0; i<x.size(); i++) {
            c[i]=Gecode::channel(home,x[i]);
          }
          
-         Gecode::sequence(home,c,s,q,l,u);
+         Gecode::sequence(home,c,is,q,l,u);
        }
      };
      
@@ -120,11 +122,11 @@ namespace Test { namespace Int {
        Create(void) {
          using namespace Gecode;
 
-         (void) new SequenceBoolTest("A",false,3,2,2,6);
-         (void) new SequenceBoolTest("B",true,3,2,2,6);
-         (void) new SequenceBoolTest("C",true,6,2,2,6);
-         (void) new SequenceBoolTest("D",true,6,0,0,6);
-         (void) new SequenceBoolTest("E",true,6,6,6,6);
+         (void) new SequenceBoolTest("A",0,3,2,2,6);
+         (void) new SequenceBoolTest("B",1,3,2,2,6);
+         (void) new SequenceBoolTest("C",1,6,2,2,6);
+         (void) new SequenceBoolTest("D",1,6,0,0,6);
+         (void) new SequenceBoolTest("E",1,6,6,6,6);
 
 
          (void) new SequenceIntTest ("A",2,3,2,2,6,2,3);
