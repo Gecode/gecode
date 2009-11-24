@@ -50,10 +50,8 @@ namespace Gecode { namespace Int { namespace Sequence {
     home.notice(*this,AP_DISPOSE);
     for (int i=x.size(); i--; ) {
       if (undecided(x[i],s)) {
-        //      if ( !x[i].assigned() && x[i].in(s) ) {
         x[i].subscribe(home,*new (home) SupportAdvisor<View>(home,*this,ac,i));   
       } else {
-        //        x[i].schedule(home,*this,ME_GEN_ASSIGNED);
         x[i].schedule(home,*this,x[i].assigned() ? ME_INT_VAL : ME_INT_BND);
       }
     }
@@ -80,7 +78,6 @@ namespace Gecode { namespace Int { namespace Sequence {
     }
 
     if (!undecided(x[a.i],s)) {
-      //    if ( !x[a.i].in(s) || x[a.i].assigned() ) {
       if (!x[a.i].assigned())
         x[a.i].cancel(home,a);
 
@@ -116,13 +113,6 @@ namespace Gecode { namespace Int { namespace Sequence {
     for ( int j=0; j<x.size(); j++ ) {
       upper[j+1] = upper[j];
       lower[j+1] = lower[j];
-      /*
-      if ( x[j].assigned() && x[j].in(s) ) {
-        upper[j+1] += 1;
-      } else if ( !x[j].in(s) ) { 
-        lower[j+1] += 1;
-      }
-      */
       if (includes(x[j],s)) {
         upper[j+1] += 1;
       } else if (excludes(x[j],s)) {

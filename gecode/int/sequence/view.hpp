@@ -279,7 +279,6 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline bool
   ViewValSupport<View,Val,iss>::alternative_not_possible
   (ViewArray<View>& a, Val s, int i, int idx) const {
-    //    return (a[idx-1].assigned() && a[idx-1].in(s)) || (iss && idx-1==i);
     return includes(a[idx-1],s) || (iss && (idx-1 == i));
   }
 
@@ -287,7 +286,6 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline bool
   ViewValSupport<View,Val,iss>::s_not_possible
   (ViewArray<View>& a, Val s, int i, int idx) const {
-    // return !a[idx-1].in(s) || (!iss && i == idx-1 );
     return excludes(a[idx-1],s) || (!iss && (i == idx-1));
   }
  
@@ -333,7 +331,6 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View,class Val,bool iss>
   forceinline bool
   ViewValSupport<View,Val,iss>::shaved(const View& x, Val s, int) const {
-    //    return (iss && !x.in(s)) || (!iss && x.assigned() && x.in(s));
     if (iss)
       return excludes(x,s);
     else
@@ -346,7 +343,6 @@ namespace Gecode { namespace Int { namespace Sequence {
                                                     int i) {
     if (!retired()) {
       if ((iss && includes(a[i],s)) || (!iss && excludes(a[i],s)))
-        // (iss && a[i].assigned() && a[i].in(s)) || (!iss && !a[i].in(s)) ) {
         return ES_FAILED;
       y[0] = 1;
       potential_violation(0);
@@ -391,21 +387,6 @@ namespace Gecode { namespace Int { namespace Sequence {
         default:
           GECODE_NEVER;
         }
-        /*
-        if ( a[j].in(s) ) {
-          if ( a[j].assigned() && y[j+1]-y[j]==0) {
-            if ( !pushup(a,s,i,q,j+1,1) ) {
-              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
-            }
-          }
-        } else {
-          if ( y[j+1]-y[j] > 0 ) {
-            if ( !pushup(a,s,i,q,j,y[j+1]-y[j]) ) {
-              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
-            }
-          }
-        }
-        */
 
         if ( has_potential_violation() )
           status = ES_NOFIX;
@@ -432,11 +413,9 @@ namespace Gecode { namespace Int { namespace Sequence {
   ViewValSupport<View,Val,iss>::conclude(Space& home,ViewArray<View>& a,
                                          Val s, int i) {
     if ( iss ) {
-      //      GECODE_ME_CHECK(a[i].nq(home,s)); 
       GECODE_ME_CHECK(exclude(home,a[i],s)); 
     } else {
       GECODE_ME_CHECK(include(home,a[i],s)); 
-      //      GECODE_ME_CHECK(a[i].eq(home,s)); 
     }
 
     retire();
