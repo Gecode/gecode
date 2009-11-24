@@ -116,8 +116,8 @@ namespace Gecode { namespace Int { namespace Sequence {
     bool alternative_not_possible(ViewArray<View>& a,Val s,int i, int idx) const;
     /// Returns true if there are potential violations marked
     bool has_potential_violation(void) const;
-    /// Returns next potential violation 
-    int next_potential_violation(void) const;
+    /// Returns next potential violation and removes it
+    int next_potential_violation(void);
     /// Adds potential violation i
     void potential_violation(int i);
     // Sets element idx of cumulative array to v
@@ -146,11 +146,12 @@ namespace Gecode { namespace Int { namespace Sequence {
     
   template<class View, class Val,bool iss>
   forceinline int 
-  ViewValSupport<View,Val,iss>::next_potential_violation(void) const {
+  ViewValSupport<View,Val,iss>::next_potential_violation(void) {
     assert(v && !v-empty());
     S::iterator ite = v->begin();
     int n = (*ite);
     v->erase(ite);
+    assert(v->count(n) == 0);
     return n;
   }
 
