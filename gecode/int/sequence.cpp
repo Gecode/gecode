@@ -97,13 +97,16 @@ namespace Gecode {
       return;
     }
 
-    for (IntSetValues vs(s); vs(); ++vs) {
-      ViewArray<IntView> xv(home,x);
+    ViewArray<IntView> xv(home,x);
+    if (s.size() == 1) {
       GECODE_ES_FAIL(home,
                      (Sequence::Sequence<IntView,int>::post
-                      (home,xv,vs.val(),q,l,u)));
+                      (home,xv,s.min(),q,l,u)));
+    } else {
+      GECODE_ES_FAIL(home,
+                     (Sequence::Sequence<IntView,IntSet>::post
+                      (home,xv,s,q,l,u)));
     }
-
   }
 
   void

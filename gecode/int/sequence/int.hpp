@@ -95,6 +95,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   Sequence<View,Val>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     ac.dispose(home);
+    s.~Val();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
