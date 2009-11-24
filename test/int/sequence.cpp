@@ -45,6 +45,14 @@ namespace Test { namespace Int {
    /// Tests for sequence constraints
    namespace Sequence {
 
+     inline bool
+     in(const Gecode::IntSet& s, int n) {
+       for (int i=s.ranges(); i--; )
+         if ((n >= s.min(i)) && (n <= s.max(i)))
+           return true;
+       return false;
+     }
+
      /**
       * \defgroup TaskTestIntSequence Sequence constraints
       * \ingroup TaskTestInt
@@ -53,19 +61,22 @@ namespace Test { namespace Int {
      /// Base test for sequence
      class SequenceTest : public Test {
      protected:
-       int s,q,l,u;
+       Gecode::IntSet s;
+       int q,l,u;
      public:
        /// Create and register test
-       SequenceTest(const std::string& s,bool s0,int q0, int l0, int u0, int size, int min, int max)
+       SequenceTest(const std::string& s, 
+                    const Gecode::IntSet& s0, int q0, int l0, int u0, 
+                    int size, int min, int max)
          : Test("Sequence::"+s,size,min,max), s(s0), q(q0), l(l0), u(u0) {
        }
-       
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i< (x.size() - q + 1); i++ ) {
            int total = 0;
            for (int j=i; j < i + q; j++ ) {
-             total += (x[j]==(int)s);
+             if (in(s,x[j]))
+               total++;
              if ( total > u )
                return false;
            }
@@ -81,21 +92,20 @@ namespace Test { namespace Int {
      class SequenceBoolTest : public SequenceTest {
      public:
        /// Create and register test
-       SequenceBoolTest(const std::string& s, int s0, 
+       SequenceBoolTest(const std::string& s, const Gecode::IntSet& s0, 
                         int q0, int l0, int u0, int size)
          : SequenceTest("Bool::"+s,s0,q0,l0,u0,size,0,1) {
        }
        
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::IntSet is(s,s);
          Gecode::BoolVarArgs c(x.size());
          
          for (int i=0; i<x.size(); i++) {
            c[i]=Gecode::channel(home,x[i]);
          }
          
-         Gecode::sequence(home,c,is,q,l,u);
+         Gecode::sequence(home,c,s,q,l,u);
        }
      };
      
@@ -103,14 +113,14 @@ namespace Test { namespace Int {
      class SequenceIntTest : public SequenceTest {
      public:
        /// Create and register test
-       SequenceIntTest(const std::string& s,int s0,int q0, int l0, int u0, int size, int min, int max)
+       SequenceIntTest(const std::string& s, const Gecode::IntSet& s0,
+                       int q0, int l0, int u0, int size, int min, int max)
          : SequenceTest("Int::"+s,s0,q0,l0,u0,size,min,max) {
        }
        
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::IntSet is(s,s);
-         Gecode::sequence(home,x,is,q,l,u);
+         Gecode::sequence(home,x,s,q,l,u);
        }
      };
 
@@ -122,19 +132,32 @@ namespace Test { namespace Int {
        Create(void) {
          using namespace Gecode;
 
-         (void) new SequenceBoolTest("A",0,3,2,2,6);
-         (void) new SequenceBoolTest("B",1,3,2,2,6);
-         (void) new SequenceBoolTest("C",1,6,2,2,6);
-         (void) new SequenceBoolTest("D",1,6,0,0,6);
-         (void) new SequenceBoolTest("E",1,6,6,6,6);
+         IntSet a(0,0);
+         IntSet b(1,1);
+         IntSet c(2,2);
+         IntSet d(0,1);
+         IntSet e(IntArgs(2, 0,2));
+
+         (void) new SequenceBoolTest("A",a,3,2,2,6);
+         (void) new SequenceBoolTest("B",b,3,2,2,6);
+         (void) new SequenceBoolTest("C",b,6,2,2,6);
+         (void) new SequenceBoolTest("D",b,6,0,0,6);
+         (void) new SequenceBoolTest("E",b,6,6,6,6);
 
 
-         (void) new SequenceIntTest ("A",2,3,2,2,6,2,3);
-         (void) new SequenceIntTest ("B",2,3,2,2,6,2,4);
-         (void) new SequenceIntTest ("C",1,3,2,2,6,1,3);
-         (void) new SequenceIntTest ("D",2,3,0,0,3,1,3);
-         (void) new SequenceIntTest ("E",2,3,3,3,3,1,3);
-         (void) new SequenceIntTest ("F",2,3,2,2,10,2,3);
+         (void) new SequenceIntTest ("A",c,3,2,2,6,2,3);
+         (void) new SequenceIntTest ("B",c,3,2,2,6,2,4);
+         (void) new SequenceIntTest ("C",b,3,2,2,6,1,3);
+         (void) new SequenceIntTest ("D",c,3,0,0,3,1,3);
+         (void) new SequenceIntTest ("E",c,3,3,3,3,1,3);
+         (void) new SequenceIntTest ("F",c,3,2,2,10,2,3);
+
+         (void) new SequenceIntTest ("G",d,3,2,2,6,0,3);
+         (void) new SequenceIntTest ("H",d,3,2,2,6,0,4);
+         (void) new SequenceIntTest ("I",d,3,2,2,6,1,3);
+         (void) new SequenceIntTest ("J",e,3,0,0,6,0,3);
+         (void) new SequenceIntTest ("K",e,3,3,3,6,0,3);
+         (void) new SequenceIntTest ("L",e,3,2,2,6,0,3);
 
        }
      };
