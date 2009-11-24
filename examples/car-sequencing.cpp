@@ -51,115 +51,323 @@ namespace {
   extern const unsigned int n_problems;
 }
 
+namespace {
+  /**
+   * \brief %Options for car sequencing problems
+   *
+   * \relates CarSequence
+   */
+  class CarOptions : public SizeOptions {
+  private:
+    /// Max slack parameter
+    Driver::UnsignedIntOption _maxstall;
+
+  public:
+    /// Initialize options for example with name \a s
+    CarOptions(const char* s)
+      : SizeOptions(s),
+        _maxstall("-maxstall", "Maximum numbere of stalls", 30)
+    {
+      // Add options
+      add(_maxstall);
+    }
+    /// Parse options from arguments \a argv (number is \a argc)
+    void parse(int& argc, char* argv[]) {
+      SizeOptions::parse(argc,argv);
+    }
+    /// Get max stalls
+    int maxstall(void) const { return _maxstall.value(); }
+  };
+
+
+  /**
+   * \brief Propagator that pushes all occurences of a value to the end.
+   *
+   * This propagator uses a variable array \f$x=\langle
+   * x_1,x_2,\ldots,x_n\rangle\f$, a variable \f$y\f$, and a value
+   * \f$val\f$. It It makes sure that the last \f$y\f$ variables of
+   * \f$x\f$ are assigned the value, and that the value does not
+   * appear in the rest of the array. 
+   *
+   * Since the propagator is custom-made for the car sequencing
+   * example, it relies on the fact that the value will be equal to
+   * the upper bound to speed up computation. For example, it can
+   * safely rely on only subscribing to bound events.
+   * 
+   * \relates CarSequence 
+   */
+  template <class View>
+  class PushToEnd : public NaryOnePropagator<View,Int::PC_INT_BND> {
+  protected:
+    using NaryOnePropagator<View,Int::PC_INT_BND>::x;
+    using NaryOnePropagator<View,Int::PC_INT_BND>::y;
+    int val;
+
+    /// Constructor for cloning \a p
+    PushToEnd(Space& home, bool share, PushToEnd& p);
+    /// Constructor for posting
+    PushToEnd(Space& home, ViewArray<View>& x0, View y0, int val0);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    PushToEnd(Space& home, bool share, Propagator& p, 
+              ViewArray<View>& x0, View y0, int val0);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator
+    static  ExecStatus post(Space& home, 
+                            ViewArray<View>& x0, View y0, int val0);
+  };
+
+  template <class View>
+  inline
+  PushToEnd<View>::PushToEnd(Space& home, 
+                             ViewArray<View>& x0, View y0, int val0)
+    : NaryOnePropagator<View,Int::PC_INT_BND>(home,x0,y0), val(val0) {}
+
+  template <class View>
+  ExecStatus
+  PushToEnd<View>::post(Space& home, 
+                        ViewArray<View>& x0, View y0, int val0) {
+    (void) new (home) PushToEnd<View>(home,x0,y0,val0);
+    return ES_OK;
+  }
+
+  template <class View>
+  inline
+  PushToEnd<View>::PushToEnd(Space& home, bool share, PushToEnd<View>& p)
+    : NaryOnePropagator<View,Int::PC_INT_BND>(home,share,p), val(p.val) {}
+
+  template <class View>
+  inline
+  PushToEnd<View>::PushToEnd(Space& home, bool share, Propagator& p,
+                             ViewArray<View>& x0, View y0, int val0)
+  : NaryOnePropagator<View,Int::PC_INT_BND>(home,share,p,x0,y0), val(val0) {}
+
+  template <class View>
+  Actor*
+  PushToEnd<View>::copy(Space& home, bool share) {
+    return new (home) PushToEnd<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  PushToEnd<View>::propagate(Space& home, const ModEventDelta&) {
+    // Find span of possible positions
+    int min = 0, max = 0;
+    int i = x.size();
+    while (i--) {
+      if (x[i].max() != val) break;
+      ++max;
+      if (x[i].assigned()) ++min;
+      if (max >= y.max()) break;
+    }
+    // No variables later than max can have value val
+    while (i--) {
+      GECODE_ME_CHECK(x[i].le(home, val));
+    }
+    
+    // Constrain y to be in {min..max}
+    GECODE_ME_CHECK(y.gq(home, min));
+    GECODE_ME_CHECK(y.lq(home, max));
+
+    // At least the y.min() last values have value val
+    for (int i = 0, pos = x.size()-1; i < y.min(); ++i, --pos) {
+      GECODE_ME_CHECK(x[pos].eq(home, val));
+    }
+    
+    return y.assigned() ?
+      ES_SUBSUMED(*this,home) : ES_FIX;
+  }
+
+  /** \brief Post PushToEnd propagator.
+   */
+  void pushtoend(Space& home, IntVarArgs x, IntVar y, int val) {
+    ViewArray<Int::IntView> vx(home, x);
+    Int::IntView vy(y);
+    GECODE_ES_FAIL(home,PushToEnd<Int::IntView>::post(home, vx, vy, val));
+  }
+
+}
+
+
 /**
  * \brief %Example: Car sequencing
  *
  * See problem 1 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * This model uses extra stall-slots instead of violations, as proposed
+ * in "Combining Forces to Solve the Car Sequencing Problem", Perron
+ * and Shaw, CPAIOR 2004.
  *
+ * \ingroup ExProblem
  */
 class CarSequencing : public Script {
-protected:
-  /// Problem number
-  const int problem;
-  /// Number of marks
-  const int ncars, noptions, nclasses;
-  const int fill; ///< Color of fills
-  /// Number of fills
-  IntVar nfill;
-  /// Sequence of cars produced
-  IntVarArray s;
 public:
   /// Search variants
   enum {
     SEARCH_BAB,    ///< Use branch and bound to optimize
     SEARCH_RESTART ///< Use restart to optimize
   };
-
-  /// Actual model
-  CarSequencing(const SizeOptions& opt)
+  /// Branching variants
+  enum {
+    BRANCH_INORDER,  ///< Branch from left to right
+    BRANCH_MIDDLE  ///< Branch from middle out
+  };
+  /// Propagation variants
+  enum {
+    PROP_REGULAR,  ///< Use regular constraints
+    PROP_CUSTOM    ///< Use custom constraint
+  };
+protected:
+  /// Problem number
+  const int problem;
+  /// Number of cars
+  const int ncars;
+  /// Number of options
+  const int noptions; 
+  /// Number of classes
+  const int nclasses;
+  /// Maximum number of stalls
+  const int maxstall;
+  /// Stall number
+  const int stallval;
+  /// End number
+  const int endval;
+  /// Number of stalls (cost to minimize)
+  IntVar nstall;
+  /// Number of end markers
+  IntVar nend;
+  /// Sequence of cars produced
+  IntVarArray s;
+public:
+  /// Initial model
+  CarSequencing(const CarOptions& opt)
     : problem(opt.size()),
       ncars(problems[problem][0]), 
       noptions(problems[problem][1]), 
       nclasses(problems[problem][2]),
-      fill(nclasses),
-      nfill(*this, 0, ncars),
-      s() {
-    Gecode::wait(*this, nfill, post_model, ICL_DEF);
-    branch(*this, nfill, INT_VAL_MIN);
-  }
-
-  static void post_model(Space& _home) {
-    CarSequencing& home = static_cast<CarSequencing&>(_home);
-
-    // Initialize variables
-    home.s.resize(home, home.ncars + home.nfill.val());
-    for (int i = home.s.size(); i--; )
-      home.s[i] = IntVar(home, 0, home.nclasses);
-
+      maxstall(opt.maxstall()),
+      stallval(nclasses),
+      endval(nclasses+1),
+      nstall(*this, 0, maxstall),
+      nend(*this, 0, maxstall),
+      s(*this, ncars+maxstall, 0, nclasses+1)
+  {
     // Read problem
-    const int* probit = problems[home.problem] + 3;
+    const int* probit = problems[problem] + 3;
 
     // Sequence requirements for the options.
-    IntArgs max(home.noptions), block(home.noptions);
-    for (int i = 0; i < home.noptions; ++i ) {
+    IntArgs max(noptions), block(noptions);
+    for (int i = 0; i < noptions; ++i ) {
       max[i] = *probit++;
     }
-    for (int i = 0; i < home.noptions; ++i ) {
+    for (int i = 0; i < noptions; ++i ) {
       block[i] = *probit++;
     }
     // Number of cars per class
-    IntArgs ncc(home.nclasses);
+    IntArgs ncc(nclasses);
     // What classes require an option
-    IntSetArgs classes(home.noptions);
-    int** cdata = new int*[home.noptions]; 
-    for (int i = home.noptions; i--; ) cdata[i] = new int[home.nclasses];
-    int* n = new int[home.noptions];
-    for (int i = home.noptions; i--; ) n[i] = 0;
+    IntSetArgs classes(noptions);
+    int** cdata = new int*[noptions]; 
+    for (int i = noptions; i--; ) cdata[i] = new int[nclasses];
+    int* n = new int[noptions];
+    for (int i = noptions; i--; ) n[i] = 0;
     // Read data
-    for (int c = 0; c < home.nclasses; ++c) {
+    for (int c = 0; c < nclasses; ++c) {
       *probit++;
-      //int car = *probit++;
-      //assert(car == c);
       ncc[c] = *probit++;
-      for (int o = 0; o < home.noptions; ++o) {
+      for (int o = 0; o < noptions; ++o) {
         if (*probit++) {
           cdata[o][n[o]++] = c;
         }
       }
     }
-    for (int o = home.noptions; o--; ) {
+    // Transfer specification data to int-sets
+    for (int o = noptions; o--; ) {
       classes[o] = IntSet(cdata[o], n[o]);
-      //std::cerr << "Option " << o << " used by " << classes[o] << std::endl;
       delete [] cdata[o];
     }
     delete [] cdata;
     delete [] n;
 
-    // Count of cars
-    IntSetArgs c(home.nclasses+1);
-    for (int i = home.nclasses; i--; ) {
+    // Count the cars
+    IntSetArgs c(nclasses+2);
+    for (int i = nclasses; i--; ) {
       c[i] = IntSet(ncc[i], ncc[i]);
     }
-    c[home.fill] = IntSet(home.nfill.val(), home.nfill.val());
-    count(home, home.s, c);
+    c[stallval] = IntSet(0, maxstall);
+    c[  endval] = IntSet(0, maxstall);
+    count(*this, s, c);
+
+    // Count number of end and stallss
+    count(*this, s, stallval, IRT_EQ, nstall);
+    count(*this, s,   endval, IRT_EQ,   nend);
+    post(*this, nstall+nend == maxstall);
 
     // Make sure nothing is overloaded
-    for (int o = home.noptions; o--; ) {
-      //std::cerr << "Option " << o << ": classes=" << classes[o] 
-      //          << " block=" << block[o] << " max=" << max[o] 
-      //          << std::endl;
-      sequence(home, home.s, classes[o], block[o], 0, max[o]);
+    IntSet one(1, 1);
+    for (int o = noptions; o--; ) {
+      // sb[i] reflects if car s[i] has option o
+      BoolVarArgs sb(s.size());
+      for (int i = s.size(); i--; ) {
+        BoolVar b(*this, 0, 1);
+        dom(*this, s[i], classes[o], b);
+        sb[i] = b;
+      }
+      sequence(*this, sb, one, block[o], 0, max[o]);
     }
 
-    branch(home, home.s, INT_VAR_NONE, INT_VAL_MIN);
-  }
+    // End-markers located at end only
+    switch (opt.propagation()) {
+    case PROP_REGULAR: {
+      IntArgs notend(nclasses), notstallend(nclasses+1);
+      for (int i = nclasses; i--; ) {
+        notend[i] = i;
+        notstallend[i] = i;
+      }
+      notstallend[nclasses] = stallval;
+      REG r = *REG(notend) + REG(notstallend) + *REG(endval);
+      extensional(*this, s, r);
+      for (int pos = s.size()-1, i = 0; i < maxstall; ++i, --pos) {
+        post(*this, imp(~(nend > i), ~(s[pos]==endval)));
+      }
+    } break;
+    case PROP_CUSTOM: {
+      pushtoend(*this, s, nend, endval);
+    } break;
+    }
+    
 
+    // Branching
+    branch(*this, nstall, INT_VAL_MIN);
+    switch (opt.branching()) {
+    case BRANCH_INORDER:
+      branch(*this, s, INT_VAR_NONE, INT_VAL_MIN);
+      break;
+    case BRANCH_MIDDLE: {
+      IntVarArgs m(s.size());
+      int mid = s.size() / 2;
+      int pos = 0;
+      m[pos++] = s[mid];
+      for (int i = 1; i <= m.size()/2; ++i) {
+        if (mid-i >= 0)
+          m[pos++] = s[mid-i];
+        if (mid+i < s.size())
+          m[pos++] = s[mid+i];
+      }
+      assert(pos == m.size());
+      branch(*this, m, INT_VAR_NONE, INT_VAL_MIN);
+      break;
+    }
+    }
+  }
+        
   /// Return cost
   virtual void constrain(const Space& _best) {
     const CarSequencing& best = static_cast<const CarSequencing&>(_best);
-    rel(*this, nfill, IRT_LE, best.nfill.val());
+    rel(*this, nstall, IRT_LE, best.nstall.val());
   }
 
   /// Print solution
@@ -167,19 +375,22 @@ public:
   print(std::ostream& os) const {
     int width = nclasses > 9 ? 2 : 1;
     const char* space = nclasses > 9 ? " " : "";
-    os << "Number of fills = " << nfill << std::endl;
+    os << "Stall slots=" << nstall 
+       << ", End slots=" << nend << std::endl;
     if (s.size() > 0) {
-      for (int i = 0; i < s.size(); ++i) {
+      int i = 0;
+      for (; i < s.size(); ++i) {
         if (s[i].assigned()) {
           int v = s[i].val();
-          if (v == fill) os << space << "_ ";
-          else           os << std::setw(width) << v << " ";
+          if (v == endval) break;
+          if (v == stallval) os << space << "_ ";
+          else               os << std::setw(width) << v << " ";
         } else {
           os << space << "? ";    
         }
         if ((i+1)%20 == 0) os << std::endl;
       }
-      if ((s.size())%20)
+      if ((i+1)%20)
         os << std::endl;
     }
   }
@@ -191,9 +402,12 @@ public:
       ncars(cs.ncars),
       noptions(cs.noptions),
       nclasses(cs.nclasses),
-      fill(cs.fill)
+      maxstall(cs.maxstall),
+      stallval(cs.stallval),
+      endval(cs.endval)
   {
-    nfill.update(*this, share, cs.nfill);
+    nstall.update(*this, share, cs.nstall);
+    nend.update(*this, share, cs.nend);
     s.update(*this, share, cs.s);
   }
   /// Copy during cloning
@@ -208,12 +422,18 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("CarSequencing");
+  CarOptions opt("CarSequencing");
   opt.solutions(0);
   opt.size(0);
   opt.search(CarSequencing::SEARCH_BAB);
   opt.search(CarSequencing::SEARCH_BAB, "bab");
   opt.search(CarSequencing::SEARCH_RESTART, "restart");
+  opt.branching(CarSequencing::BRANCH_INORDER);
+  opt.branching(CarSequencing::BRANCH_INORDER,  "inorder");
+  opt.branching(CarSequencing::BRANCH_MIDDLE, "middle");
+  opt.propagation(CarSequencing::PROP_CUSTOM);
+  opt.propagation(CarSequencing::PROP_REGULAR, "regular");
+  opt.propagation(CarSequencing::PROP_CUSTOM,  "custom");
   opt.parse(argc,argv);
   if (opt.size() >= n_problems) {
     std::cerr << "Error: size must be between 0 and "
@@ -223,9 +443,9 @@ main(int argc, char* argv[]) {
 
   switch (opt.search()) {
   case CarSequencing::SEARCH_BAB:
-    Script::run<CarSequencing,BAB,SizeOptions>(opt); break;
+    Script::run<CarSequencing,BAB,CarOptions>(opt); break;
   case CarSequencing::SEARCH_RESTART:
-    Script::run<CarSequencing,Restart,SizeOptions>(opt); break;
+    Script::run<CarSequencing,Restart,CarOptions>(opt); break;
   }
   return 0;
 }
