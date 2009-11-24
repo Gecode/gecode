@@ -245,13 +245,10 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val,bool iss>
   forceinline int 
   ViewValSupport<View,Val,iss>::next_potential_violation(void) const {
-    assert(v);
-    int n = -1;
-    if ( !v->empty() ) {
-      S::iterator ite = v->begin();
-      n = (*ite);
-      v->erase(ite);
-    }
+    assert(v && !v-empty());
+    S::iterator ite = v->begin();
+    int n = (*ite);
+    v->erase(ite);
     return n;
   }
 
@@ -431,22 +428,19 @@ namespace Gecode { namespace Int { namespace Sequence {
         return conclude(home,a,s,i);
       }
 
-     int j = -1;
-     while( (j=next_potential_violation()) > -1 ) {
-       if ( violated(j,q,l,u) ) {
+      while (has_potential_violation()) {
+        int j = next_potential_violation();
+        if (violated(j,q,l,u)) {
           int forced_to_s = values(j,q);
-          if ( forced_to_s < l ) {
-            if ( !pushup(a,s,i,q,j+q,l-forced_to_s) ) {
+          if (forced_to_s < l) {
+            if (!pushup(a,s,i,q,j+q,l-forced_to_s))
               return conclude(home,a,s,i);
-            }
           } else {
-            if ( !pushup(a,s,i,q,j,forced_to_s-u) ) {
+            if (!pushup(a,s,i,q,j,forced_to_s-u))
               return conclude(home,a,s,i);
-            }
           }
-          if ( violated(j,q,l,u) ) {
+          if (violated(j,q,l,u))
             return conclude(home,a,s,i);
-          }
         }
       }
     }
