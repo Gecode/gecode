@@ -134,7 +134,23 @@ namespace Gecode { namespace FlatZinc {
       return ia;
     }
 
-    inline IntSetArgs arg2intsetargs(AST::Node* arg, int offset = 0) {
+    inline IntSet arg2intset(FlatZincSpace& s, AST::Node* n) {
+      AST::SetLit* sl = n->getSet();
+      IntSet d;
+      if (sl->interval) {
+        d = IntSet(sl->min, sl->max);
+      } else {
+        Region re(s);
+        int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
+        for (int i=sl->s.size(); i--; )
+          is[i] = sl->s[i];
+        d = IntSet(is, sl->s.size());
+      }
+      return d;
+    }
+
+    inline IntSetArgs arg2intsetargs(FlatZincSpace& s,
+                                     AST::Node* arg, int offset = 0) {
       AST::Array* a = arg->getArray();
       if (a->a.size() == 0) {
         IntSetArgs emptyIa(0);
@@ -144,17 +160,7 @@ namespace Gecode { namespace FlatZinc {
       for (int i=offset; i--;)
         ia[i] = IntSet::empty;
       for (int i=a->a.size(); i--;) {
-        AST::SetLit* sl = a->a[i]->getSet();
-        if (sl->interval) {
-          ia[i+offset] = IntSet(sl->min, sl->max);
-        } else {
-          int* is =
-            heap.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
-          for (int j=sl->s.size(); j--; )
-            is[j] = sl->s[j];
-          ia[i+offset] = IntSet(is, sl->s.size());
-          heap.free(is,static_cast<unsigned long int>(sl->s.size()));
-        }
+        ia[i+offset] = arg2intset(s, a->a[i]);
       }
       return ia;
     }
@@ -207,18 +213,8 @@ namespace Gecode { namespace FlatZinc {
     SetVar getSetVar(FlatZincSpace& s, AST::Node* n) {
       SetVar x0;
       if (!n->isSetVar()) {
-        AST::SetLit* sl = n->getSet();
-        if (sl->interval) {
-          IntSet d(sl->min, sl->max);
-          x0 = SetVar(s, d, d);        
-        } else {
-          Region re(s);
-          int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
-          for (int i=sl->s.size(); i--; )
-            is[i] = sl->s[i];
-          IntSet d(is, sl->s.size());
-          x0 = SetVar(s, d, d);
-        }
+        IntSet d = arg2intset(s,n);
+        x0 = SetVar(s, d, d);        
       } else {
         x0 = s.sv[n->getSetVar()];
       }
@@ -981,6 +977,26 @@ namespace Gecode { namespace FlatZinc {
       }
     }
 
+    void p_among_seq_int(FlatZincSpace& s, const ConExpr& ce,
+                         AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntSet S = arg2intset(s, ce[1]);
+      int q = ce[2]->getInt();
+      int l = ce[3]->getInt();
+      int u = ce[4]->getInt();
+      sequence(s, x, S, q, l, u, ann2icl(ann));
+    }
+
+    void p_among_seq_bool(FlatZincSpace& s, const ConExpr& ce,
+                          AST::Node* ann) {
+      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
+      bool S = ce[1]->getBool();
+      int q = ce[2]->getInt();
+      int l = ce[3]->getInt();
+      int u = ce[4]->getInt();
+      sequence(s, x, S, q, l, u, ann2icl(ann));
+    }
+
     class IntPoster {
     public:
       IntPoster(void) {
@@ -1063,6 +1079,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("table_int", &p_table_int);
         registry().add("table_bool", &p_table_bool);
         registry().add("cumulatives", &p_cumulatives);
+        registry().add("among_seq_int", &p_among_seq_int);
+        registry().add("among_seq_bool", &p_among_seq_bool);
 
         registry().add("bool_lin_eq", &p_bool_lin_eq);
         registry().add("bool_lin_ne", &p_bool_lin_ne);
@@ -1149,21 +1167,18 @@ namespace Gecode { namespace FlatZinc {
     }
     void p_set_in(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isSetVar()) {
-        AST::SetLit* sl = ce[1]->getSet();
-        IntSet d;
-        if (sl->interval) {
-          d = IntSet(sl->min, sl->max);
-        } else {
-          Region re(s);
-          int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
-          for (int i=sl->s.size(); i--; )
-            is[i] = sl->s[i];
-          d = IntSet(is, sl->s.size());
-        }
+        IntSet d = arg2intset(s,ce[1]);
         if (ce[0]->isBoolVar()) {
-          assert(sl->interval);
-          rel(s, getBoolVar(s, ce[0]), IRT_GQ, sl->min);
-          rel(s, getBoolVar(s, ce[0]), IRT_LQ, sl->max);
+          IntSetRanges dr(d);
+          Iter::Ranges::Singleton sr(0,1);
+          Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton> i(dr,sr);
+          IntSet d01(i);
+          if (d01.size() == 0) {
+            s.fail();
+          } else {
+            rel(s, getBoolVar(s, ce[0]), IRT_GQ, d01.min());
+            rel(s, getBoolVar(s, ce[0]), IRT_LQ, d01.max());
+          }
         } else {
           dom(s, getIntVar(s, ce[0]), d);
         }
@@ -1195,21 +1210,21 @@ namespace Gecode { namespace FlatZinc {
     }
     void p_set_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isSetVar()) {
-        AST::SetLit* sl = ce[1]->getSet();
-        IntSet d;
-        if (sl->interval) {
-          d = IntSet(sl->min, sl->max);
-        } else {
-          Region re(s);
-          int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
-          for (int i=sl->s.size(); i--; )
-            is[i] = sl->s[i];
-          d = IntSet(is, sl->s.size());
-        }
+        IntSet d = arg2intset(s,ce[1]);
         if (ce[0]->isBoolVar()) {
-          assert(sl->interval);
-          rel(s, getBoolVar(s, ce[0]), IRT_GQ, sl->min, getBoolVar(s, ce[2]));
-          rel(s, getBoolVar(s, ce[0]), IRT_LQ, sl->max, getBoolVar(s, ce[2]));
+          IntSetRanges dr(d);
+          Iter::Ranges::Singleton sr(0,1);
+          Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton> i(dr,sr);
+          IntSet d01(i);
+          if (d01.size() == 0) {
+            post(s, getBoolVar(s, ce[2]) == 0);
+          } else if (d01.max() == 0) {
+            post(s, tt(eqv(getBoolVar(s, ce[2]), !getBoolVar(s, ce[0]))));
+          } else if (d01.min() == 1) {
+            post(s, getBoolVar(s, ce[2]) == getBoolVar(s, ce[0]));
+          } else {
+            post(s, getBoolVar(s, ce[2]) == 1);
+          }
         } else {
           dom(s, getIntVar(s, ce[0]), d, getBoolVar(s, ce[2]));
         }
@@ -1240,7 +1255,7 @@ namespace Gecode { namespace FlatZinc {
       IntVar selector = getIntVar(s, ce[0]);
       post(s, selector > 0);
       if (isConstant) {
-        IntSetArgs sv = arg2intsetargs(ce[1],1);
+        IntSetArgs sv = arg2intsetargs(s,ce[1],1);
         element(s, sv, selector, getSetVar(s, ce[2]));
       } else {
         SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
@@ -1263,7 +1278,7 @@ namespace Gecode { namespace FlatZinc {
       SetVar selector = getSetVar(s, ce[0]);
       dom(s, selector, SRT_DISJ, 0);
       if (isConstant) {
-        IntSetArgs sv = arg2intsetargs(ce[1], 1);
+        IntSetArgs sv = arg2intsetargs(s,ce[1], 1);
         element(s, op, sv, selector, getSetVar(s, ce[2]), universe);
       } else {
         SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
@@ -1284,17 +1299,7 @@ namespace Gecode { namespace FlatZinc {
     void p_array_set_element_intersect_in(FlatZincSpace& s,
                                               const ConExpr& ce,
                                               AST::Node* ann) {
-      AST::SetLit* sl = ce[3]->getSet();
-      IntSet d;
-      if (sl->interval) {
-        d = IntSet(sl->min, sl->max);
-      } else {
-        Region re(s);
-        int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
-        for (int i=sl->s.size(); i--; )
-          is[i] = sl->s[i];
-        d = IntSet(is, sl->s.size());
-      }
+      IntSet d = arg2intset(s, ce[3]);
       p_array_set_element_op(s, ce, ann, SOT_INTER, d);
     }
 

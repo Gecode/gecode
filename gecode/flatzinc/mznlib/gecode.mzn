@@ -49,3 +49,19 @@ predicate array_set_element_partition(var set of int: x, array[int] of set of in
 % z subset u /\ ( i in z <-> forall (j in x) (i in y[j]) )
 predicate array_set_element_intersect_in(var set of int: x, array[int] of var set of int: y,
     var set of int: z, set of int: u);
+
+% Every subsequence of x of length l has at least m and at most occurrences
+% of the values in S
+predicate among_seq_int(array[int] of var int: x, set of int: S,
+    int l, int m, int n);
+
+% Every subsequence of x of length l has at least m and at most occurrences
+% of the value b
+predicate among_seq_bool(array[int] of var bool: x, bool: b,
+    int l, int m, int n);
+
+% Overloading for among_seq
+predicate among_seq(array[int] of var int: x, set of int: S,
+    int l, int m, int n) = among_seq_int(x,S,l,m,n);
+predicate among_seq(array[int] of var bool: x, bool: b,
+    int l, int m, int n) = among_seq_bool(x,b,l,m,n);
