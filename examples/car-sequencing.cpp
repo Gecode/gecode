@@ -52,7 +52,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Car sequencing.
+ * \brief %Example: Car sequencing
  *
  * See problem 1 at http://www.csplib.org/.
  *
