@@ -3,8 +3,12 @@
  *  Main authors:
  *     David Rijsman <David.Rijsman@quintiq.com>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
  *     David Rijsman, 2009
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$
