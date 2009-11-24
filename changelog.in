@@ -75,6 +75,15 @@ Rijsman, Quintiq) and has as always some small additions and
 fixes.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Thanks:	Gustavo Gutierrez
+[DESCRIPTION]
+Added missing assignment operator for space-based allocators for
+STL data structures.
+
+[ENTRY]
 Module: iter
 What:   change
 Rank:   minor

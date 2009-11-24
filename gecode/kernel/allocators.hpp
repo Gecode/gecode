@@ -6,6 +6,9 @@
  *  Copyright:
  *     LOGIS, s.r.o., 2009
  *
+ *  Bugfixes provided by:
+ *     Gustavo Gutierrez
+ *
  *  Last modified:
  *     $Date$ by $Author$
  *     $Revision$
@@ -204,6 +207,14 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * @param al The allocator to copy.
      */
     space_allocator(space_allocator const& al) throw() : space(al.space) {}
+    /**
+     * \brief Assignment operator
+     * @param al The allocator to assign.
+     */
+    space_allocator& operator =(space_allocator const& al) {
+      assert(&space == &al.space);
+      return *this;
+    }
     /**
      * \brief Copy from other instantiation
      * @param al The source allocator.
