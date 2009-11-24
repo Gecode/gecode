@@ -73,6 +73,13 @@ Date: dfgahfdghsd
 gsagsdgasdf
 
 [ENTRY]
+Module: iter
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Renamed test for subset or disjointness of range iterators to "compare".
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
@@ -87,7 +94,7 @@ What:   bug
 Rank:   minor
 [DESCRIPTION]
 Subscription to constant views did not honor the flag to avoid
-processing.
+processing (did not occur in practice).
 
 [ENTRY]
 Module: int

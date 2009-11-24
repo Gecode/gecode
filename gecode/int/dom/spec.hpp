@@ -95,12 +95,12 @@ namespace Gecode { namespace Int { namespace Dom {
     {
       ViewRanges<View> i_x(x0);
 
-      switch (Iter::Ranges::subsumes(i_is,i_x)) {
-      case Iter::Ranges::SS_SUBSUMED:
+      switch (Iter::Ranges::compare(i_x,i_is)) {
+      case Iter::Ranges::CS_SUBSET:
         GECODE_ME_CHECK(b.one_none(home)); goto subsumed;
-      case Iter::Ranges::SS_EMPTY:
+      case Iter::Ranges::CS_DISJOINT:
         GECODE_ME_CHECK(b.zero_none(home)); goto subsumed;
-      case Iter::Ranges::SS_NONE:
+      case Iter::Ranges::CS_NONE:
         break;
       default: GECODE_NEVER;
       }

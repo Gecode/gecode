@@ -59,10 +59,10 @@ namespace Gecode { namespace Int { namespace Sequence {
   takes(const View& x, const IntSet& s) {
     ViewRanges<View> ix(x);
     IntSetRanges is(s);
-    switch (Iter::Ranges::subsumes(is,ix)) {
-    case Iter::Ranges::SS_SUBSUMED: return TS_YES;
-    case Iter::Ranges::SS_EMPTY: return TS_NO;
-    case Iter::Ranges::SS_NONE: return TS_MAYBE;
+    switch (Iter::Ranges::compare(ix,is)) {
+    case Iter::Ranges::CS_SUBSET: return TS_YES;
+    case Iter::Ranges::CS_DISJOINT: return TS_NO;
+    case Iter::Ranges::CS_NONE: return TS_MAYBE;
     default: GECODE_NEVER;
     }
     return TS_MAYBE;
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   undecided(const View& x, const IntSet& s) {
     ViewRanges<View> ix(x);
     IntSetRanges is(s);
-    return Iter::Ranges::subsumes(is,ix) == Iter::Ranges::SS_NONE;
+    return Iter::Ranges::compare(ix,is) == Iter::Ranges::CS_NONE;
   }
   /// Prune view \a x to only include values from \a s
   template<class View>

@@ -60,16 +60,16 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I, class J>
   bool disjoint(I& i, J& j);
 
-  /// Is one iterator subsumed by another, or is the intersection empty?
-  enum SubsumptionStatus {
-    SS_SUBSUMED, ///< Subsumed (subset)
-    SS_EMPTY,    ///< Intersection is empty
-    SS_NONE      ///< Neither of the above
+  /// Comapre two iterators with each other
+  enum CompareStatus {
+    CS_SUBSET,   ///< First is subset of second iterator
+    CS_DISJOINT, ///< Intersection is empty
+    CS_NONE      ///< Neither of the above
   };
 
-  /// Check whether range iterator \a i subsumes \a j, or whether intersection is empty
+  /// Check whether range iterator \a i is a subset of \a j, or whether they are disjoint
   template<class I, class J>
-  SubsumptionStatus subsumes(I& i, J& j);
+  CompareStatus compare(I& i, J& j);
   //@}
 
 
@@ -134,30 +134,30 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
 
   template<class I, class J>
-  inline SubsumptionStatus
-  subsumes(I& i, J& j) {
+  forceinline CompareStatus
+  compare(I& i, J& j) {
     IsRangeIter<I>();
     IsRangeIter<J>();
-    bool subsumed = true;
-    bool empty    = true;
+    bool subset = true;
+    bool disjoint = true;
     while (i() && j()) {
-      if (i.max() < j.min()) {
-        ++i;
-      } else if (j.max() < i.min()) {
-        ++j; subsumed = false;
-      } else if ((j.min() >= i.min()) && (j.max() <= i.max())) {
-        ++j; empty = false;
-      } else if (j.max() <= i.max()) {
-        ++j; empty = false; subsumed = false;
+      if (j.max() < i.min()) {
+        ++j;
+      } else if (i.max() < j.min()) {
+        ++i; subset = false;
+      } else if ((i.min() >= j.min()) && (i.max() <= j.max())) {
+        ++i; disjoint = false;
       } else if (i.max() <= j.max()) {
-        ++i; empty = false; subsumed = false;
+        ++i; disjoint = false; subset = false;
+      } else if (j.max() <= i.max()) {
+        ++j; disjoint = false; subset = false;
       }
     }
-    if (j())
-      subsumed = false;
-    if (subsumed)
-      return SS_SUBSUMED;
-    return empty ? SS_EMPTY : SS_NONE;
+    if (i())
+      subset = false;
+    if (subset)
+      return CS_SUBSET;
+    return disjoint ? CS_DISJOINT : CS_NONE;
   }
 
 }}}
