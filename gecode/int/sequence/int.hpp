@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     for (int i=x.size(); i--; )
       if (undecided(x[i],s))
-        return ES_NOFIX;
+        return ES_FIX;
 
     return ES_SUBSUMED(*this,dispose(home));
   }
