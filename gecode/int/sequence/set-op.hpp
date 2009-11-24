@@ -57,6 +57,8 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View>
   forceinline TakesStatus
   takes(const View& x, const IntSet& s) {
+    if ((x.max() < s.min()) || (x.min() > s.max()))
+      return TS_NO;
     ViewRanges<View> ix(x);
     IntSetRanges is(s);
     switch (Iter::Ranges::compare(ix,is)) {
@@ -67,6 +69,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     }
     return TS_MAYBE;
   }
+
   /// Test whether all values of view \a x are included in \a s
   template<class View>
   forceinline bool
@@ -77,24 +80,30 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View>
   forceinline bool
   includes(const View& x, const IntSet& s) {
+    if ((x.max() < s.min()) || (x.min() > s.max()))
+      return false;
     ViewRanges<View> ix(x);
     IntSetRanges is(s);
     return Iter::Ranges::subset(ix,is);
   }
+
   /// Test whether all values of view \a x are excluded from \a s
   template<class View>
   forceinline bool
   excludes(const View& x, int s) {
     return !x.in(s);
   }
-  /// Test whether all values of view \a x are included from \a s
+  /// Test whether all values of view \a x are excluded from \a s
   template<class View>
   forceinline bool
   excludes(const View& x, const IntSet& s) {
+    if ((x.max() < s.min()) || (x.min() > s.max()))
+      return true;
     ViewRanges<View> ix(x);
     IntSetRanges is(s);
     return Iter::Ranges::disjoint(ix,is);
   }
+
   /// Test whether no decision on inclusion or exclusion of values of view \a x in \a s can be made
   template<class View>
   forceinline bool
@@ -105,10 +114,13 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View>
   forceinline bool
   undecided(const View& x, const IntSet& s) {
+    if ((x.max() < s.min()) || (x.min() > s.max()))
+      return false;
     ViewRanges<View> ix(x);
     IntSetRanges is(s);
     return Iter::Ranges::compare(ix,is) == Iter::Ranges::CS_NONE;
   }
+
   /// Prune view \a x to only include values from \a s
   template<class View>
   forceinline ModEvent
@@ -122,6 +134,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     IntSetRanges is(s);
     return x.inter_r(home,is,false);
   }
+
   /// Prune view \a x to exclude all values from \a s
   template<class View>
   forceinline ModEvent
