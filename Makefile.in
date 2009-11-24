@@ -691,7 +691,7 @@ INTEXAMPLESRC0 =						\
 	stress-domain stress-exec stress-search baseline	\
 	stress-element stress-min stress-distinct		\
 	stress-extensional stress-linear-bool sat radiotherapy  \
-	word-square crossword openshop
+	word-square crossword openshop car-sequencing
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
