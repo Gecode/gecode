@@ -389,6 +389,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
+      stat.lao(s);
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       if (mark > ds.entries()-1) {
@@ -396,7 +397,6 @@ namespace Gecode { namespace Search { namespace Parallel {
         s->constrain(*best);
       }
       ds.top().space(NULL);
-      stat.lao(s);
       d = 0;
       return s;
     }

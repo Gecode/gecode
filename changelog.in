@@ -75,6 +75,14 @@ Rijsman, Quintiq) and has as always some small additions and
 fixes.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The memory reported could be sometimes too low (the previous fix
+for 3.2.0 did not fix it for branch and bound search).
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor
