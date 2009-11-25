@@ -404,8 +404,8 @@ AC_DEFUN([AC_GECODE_STATICLIBS],
                   "${ac_gecode_compiler_vendor}" = "gnu"; then
             enable_static="yes"
 	    enable_shared="no"
-          fi
-          AC_ARG_ENABLE([static],
+      fi
+      AC_ARG_ENABLE([static],
 	   AC_HELP_STRING([--enable-static],
 	     [build static libraries @<:@default=no@:>@]))
 	  AC_MSG_CHECKING(whether to build static libraries)
@@ -414,8 +414,11 @@ AC_DEFUN([AC_GECODE_STATICLIBS],
                        [Whether we are compiling static libraries])
  	     AC_SUBST(BUILDSTATIC, "yes")
  	     AC_MSG_RESULT(yes)
+         AC_GECODE_CHECK_GLDFLAG("-static")
+         enable_shared=no
  	  else
  	     AC_SUBST(BUILDSTATIC, "no")
+ 	     enable_shared=yes
  	     AC_MSG_RESULT(no)
  	  fi
 	  AC_ARG_ENABLE([shared],
