@@ -1310,7 +1310,7 @@ namespace Gecode { namespace Int { namespace GCC {
     // start repair
     while (!re.empty()) {
       Node* n = re.pop();
-      if (!n->removed())
+      if (!n->removed()) {
         if (!n->type()) {
           VarNode* vrn = static_cast<VarNode*>(n);
           if (!vrn->matched(UBC) && !augmenting_path<UBC>(home,vrn))
@@ -1321,6 +1321,7 @@ namespace Gecode { namespace Int { namespace GCC {
             if (!augmenting_path<LBC>(home,vln))
               return ES_FAILED;
         }
+      }
     }
 
     return ES_OK;

@@ -102,12 +102,13 @@ namespace Test {
           // clone space
           {
             int i = index();
-            if ((s[i] != NULL))
+            if ((s[i] != NULL)) {
               if (n_s > 1) {
                 delete s[i]; s[i]=NULL; n_s--;
               } else {
                 break;
               }
+            }
             int j = space(s);
             (void) s[j]->status();
             s[i] = static_cast<TestSpace*>(s[j]->clone());

@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     Index& a = static_cast<Index&>(_a);
     Layer& l = layers[a.i];
 
-    if (l.size <= l.x.size())
+    if (l.size <= l.x.size()) {
       // Propagator has already done everything
       if (View::modevent(d) == ME_INT_VAL) {
         a.dispose(home,c);
@@ -257,6 +257,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       } else {
         return ES_FIX;
       }
+    }
 
     bool i_mod = false;
     bool o_mod = false;
