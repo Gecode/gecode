@@ -797,12 +797,14 @@ namespace Gecode { namespace FlatZinc {
           values[i] = i+smallest;
         IntVarArgs iv1tmp(largest-smallest+1);
         int k = 0;
-        for (int i=cmin-smallest; i--;)
+        for (int i=cmin-smallest; i--;) {
           iv1tmp[k++] = IntVar(s, 0, iv0.size());
-        for (int i=iv1.size(); i--;)
+        }
+        for (int i=0; i<iv1.size(); i++)
           iv1tmp[k++] = iv1[i];
-        for (int i=k; i<iv1tmp.size(); i++)
+        for (int i=k; i<iv1tmp.size(); i++) {
           iv1tmp[i] = IntVar(s, 0, iv0.size());
+        }
         count(s, iv0, iv1tmp, values, ann2icl(ann));
       }
     }
