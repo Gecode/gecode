@@ -75,6 +75,14 @@ Rijsman, Quintiq) and has as always some small additions and
 fixes.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Support search annotations with constants in the variable arrays.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor

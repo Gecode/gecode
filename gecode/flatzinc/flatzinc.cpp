@@ -309,9 +309,17 @@ namespace Gecode { namespace FlatZinc {
           AST::Call *call = flatAnn[i]->getCall("int_search");
           AST::Array *args = call->getArgs(4);
           AST::Array *vars = args->a[0]->getArray();
-          IntVarArgs va(vars->a.size());
-          for (int i=vars->a.size(); i--; )
-            va[i] = iv[vars->a[i]->getIntVar()];
+          int k=vars->a.size();
+          for (int i=vars->a.size(); i--;)
+            if (vars->a[i]->isInt())
+              k--;
+          IntVarArgs va(k);
+          k=0;
+          for (unsigned int i=0; i<vars->a.size(); i++) {
+            if (vars->a[i]->isInt())
+              continue;
+            va[k++] = iv[vars->a[i]->getIntVar()];
+          }
           branch(*this, va, ann2ivarsel(args->a[1]), ann2ivalsel(args->a[2]));
           hadSearchAnnotation = true;
         } catch (AST::TypeError& e) {
@@ -320,9 +328,17 @@ namespace Gecode { namespace FlatZinc {
             AST::Call *call = flatAnn[i]->getCall("bool_search");
             AST::Array *args = call->getArgs(4);
             AST::Array *vars = args->a[0]->getArray();
-            BoolVarArgs va(vars->a.size());
-            for (int i=vars->a.size(); i--; )
-              va[i] = bv[vars->a[i]->getBoolVar()];
+            int k=vars->a.size();
+            for (int i=vars->a.size(); i--;)
+              if (vars->a[i]->isBool())
+                k--;
+            BoolVarArgs va(k);
+            k=0;
+            for (unsigned int i=0; i<vars->a.size(); i++) {
+              if (vars->a[i]->isBool())
+                continue;
+              va[k++] = bv[vars->a[i]->getBoolVar()];
+            }
             branch(*this, va, ann2ivarsel(args->a[1]), 
                    ann2ivalsel(args->a[2]));        
             hadSearchAnnotation = true;
@@ -333,9 +349,17 @@ namespace Gecode { namespace FlatZinc {
               AST::Call *call = flatAnn[i]->getCall("set_search");
               AST::Array *args = call->getArgs(4);
               AST::Array *vars = args->a[0]->getArray();
-              SetVarArgs va(vars->a.size());
-              for (int i=vars->a.size(); i--; )
-                va[i] = sv[vars->a[i]->getSetVar()];
+              int k=vars->a.size();
+              for (int i=vars->a.size(); i--;)
+                if (vars->a[i]->isSet())
+                  k--;
+              SetVarArgs va(k);
+              k=0;
+              for (unsigned int i=0; i<vars->a.size(); i++) {
+                if (vars->a[i]->isSet())
+                  continue;
+                va[k++] = sv[vars->a[i]->getSetVar()];
+              }
               branch(*this, va, ann2svarsel(args->a[1]), 
                                ann2svalsel(args->a[2]));        
               hadSearchAnnotation = true;
