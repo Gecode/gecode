@@ -22,6 +22,7 @@ THE SOFTWARE.
 
 #include "qsolver_general.hh"
 #include "QCOPPlus.hh"
+#include <time.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // This is a model of the nim-fibonacci game. We have a N matches set. First player may  //
@@ -32,6 +33,9 @@ THE SOFTWARE.
 int main() {
     for (int N = 10; N<=22;N++)  // Initial number of matches
     {
+		clock_t start, finish;
+		start=clock();
+
     int* scopeSize = new int[N+2];
     bool* qtScope = new bool[N+2];
     for (int i=0;i<N+2;i++) {
@@ -65,9 +69,11 @@ int main() {
     unsigned long int nodes=0;
 
     Strategy outcome  = s.solve(nodes);
+			finish=clock();
     cout << "For " << N << " matches : "<<endl;
     cout << "  outcome: " << ( outcome.isFalse() ? "FALSE" : "TRUE") << endl;
     cout << "  nodes visited: " << nodes << endl;
+			cout << "Time taken: " << (finish-start) << " microseconds."<<endl;
     }
     return 0;
 }

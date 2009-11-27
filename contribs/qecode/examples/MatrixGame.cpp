@@ -20,9 +20,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
 
-#include <cstdlib> /* pour srand, rand et RAND_MAX */
-#include <ctime> /* pour time */
-#include <math.h> /* pour pow */
+#include <cstdlib> /* for srand, rand et RAND_MAX */
+#include <ctime> /* for time */
+#include <math.h> /* for pow */
 
 #include <iostream>
 
@@ -51,7 +51,7 @@ int main (int argc, char * const argv[]) {
     bool* qtScopes = new bool[nbScope];
     for (int i=0;i<nbScope;i++) {
         qtScopes[i] = ((i%2) != 0);
-        cout << (((i%2) != 0)?"true":"false")<<endl;
+//        cout << (((i%2) != 0)?"true":"false")<<endl;
     }
     int boardSize = (int)pow((double)2,(double)depth);
 
@@ -77,8 +77,8 @@ int main (int argc, char * const argv[]) {
 	}
     cout  << endl;
     for (int i=0; i<nbDecisionVar; i++)
-        cout << access[i] << " ";
-    cout << endl;
+//        cout << access[i] << " ";
+//    cout << endl;
     // end debug
 
     int *scopesSize = new int[nbScope];
@@ -121,6 +121,8 @@ int main (int argc, char * const argv[]) {
     //  MiniModel::LinRel R(E, IRT_EQ, MiniModel::LinExpr(p.var(nbDecisionVar+1)));
     element(*(p.space()), board, p.var(nbDecisionVar+1), p.var(nbDecisionVar));
 
+	  // Note : declaring a brancher for the goal is not mandatory, as the goal will be tested only when all variables are assigned.
+	 
     // When every variables and constraints have been declared, the makeStructure method
     // must be called in order to lead the problem ready for solving.
     p.makeStructure();
