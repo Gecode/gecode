@@ -46,6 +46,13 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
+  template<class Card>
+  class CardLess : public Support::Less<Card> {
+  public:
+    bool operator ()(const Card& x, const Card& y) {
+      return x.card() < y.card();
+    }
+  };
 
   /**
    * \brief Post side constraints for the GCC
@@ -54,6 +61,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   ExecStatus
   postSideConstraints(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+    CardLess<Card> cl;
+    Support::quicksort(&k[0], k.size(), cl);
     Region r(home);
 
     {

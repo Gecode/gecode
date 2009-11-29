@@ -75,6 +75,15 @@ Rijsman, Quintiq) and has as always some small additions and
 fixes.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Alberto Delgado
+[DESCRIPTION]
+The global cardinality (count) constraint now accepts unsorted arrays of values.
+It previously propagated incorrectly if the array was not sorted.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
