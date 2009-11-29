@@ -114,8 +114,9 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = x.size(); i--; )
       if (x[i].assigned()) {
         int idx;
-        if (!lookupValue(k,x[i].val(),idx))
+        if (!lookupValue(k,x[i].val(),idx)) {
           return ES_FAILED;
+        }
         count[idx]++;
         non--;
       }
@@ -147,8 +148,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
       // number of unassigned views cannot satisfy
       // the required minimum occurence
-      if (req > non)
+      if (req > non) {
         return ES_FAILED;
+      }
     }
 
     // if only one unsatisfied occurences is left
@@ -174,15 +176,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = k.size(); i--; ) {
       int ci = count[i] + k[i].counter();
-      if ((ci == k[i].max()) && !rem.get(i)) {
+      if (ci == k[i].max()) {
+        assert(!rem.get(i));
         rem.set(i);
         k[i].counter(ci);
         // the solution contains ci occurences of value k[i].card();
-        if (Card::propagate)
-          GECODE_ME_CHECK(k[i].eq(home, ci));
+        GECODE_ME_CHECK(k[i].eq(home, ci));
       } else {
-        if (ci > k[i].max())
+        if (ci > k[i].max()) {
           return ES_FAILED;
+        }
         
         // in case of variable cardinalities
         if (Card::propagate) {
@@ -201,8 +204,9 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = n_x; i--; ) {
         if (x[i].assigned()) {
           int idx;
-          if (!lookupValue(k,x[i].val(),idx))
+          if (!lookupValue(k,x[i].val(),idx)) {
             return ES_FAILED;
+          }
           if (rem.get(idx))
             x[i]=x[--n_x];
         }
@@ -231,8 +235,9 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = x.size(); i--; ) {
         if (x[i].assigned()) {
           int idx;
-          if (!lookupValue(k,x[i].val(),idx))
+          if (!lookupValue(k,x[i].val(),idx)) {
             return ES_FAILED;
+          }
           count[idx]++;
         } else {
           all_assigned = false;
@@ -251,18 +256,18 @@ namespace Gecode { namespace Int { namespace GCC {
       int reqmin = 0;
       int allmax = 0;
       for (int i = k.size(); i--; ) {
-        if (k[i].counter() > k[i].max())
+        if (k[i].counter() > k[i].max()) {
           return ES_FAILED;
+        }
         allmax += k[i].max() - k[i].counter();
         if (k[i].counter() < k[i].min())
           reqmin += k[i].min() - k[i].counter();
-        if (k[i].min() > x.size())
-          return ES_FAILED;
-        GECODE_ME_CHECK((k[i].lq(home, x.size())));
+        GECODE_ME_CHECK((k[i].lq(home, x.size()+k[i].counter())));
       }
-
-      if ((x.size() < reqmin) || (allmax < x.size()))
+    
+      if ((x.size() < reqmin) || (allmax < x.size())) {
         return ES_FAILED;
+      }
     }
 
     return ES_NOFIX;
