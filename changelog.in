@@ -68,7 +68,7 @@
 
 [RELEASE]
 Version: 3.2.2
-Date: dfgahfdghsd
+Date: 2009-11-30
 [DESCRIPTION]
 This release adds the sequence constraint (contributed by David
 Rijsman, Quintiq) and has as always some small additions and
@@ -80,8 +80,9 @@ What:   bug
 Rank:   minor
 Thanks: Alberto Delgado
 [DESCRIPTION]
-The global cardinality (count) constraint now accepts unsorted arrays of values.
-It previously propagated incorrectly if the array was not sorted.
+The global cardinality (count) constraint now accepts unsorted
+arrays of values.  It previously propagated incorrectly if the
+array was not sorted.
 
 [ENTRY]
 Module: int
