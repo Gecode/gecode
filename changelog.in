@@ -67,6 +67,20 @@
 #
 
 [RELEASE]
+Version: 3.2.3
+Date: ??????
+[DESCRIPTION]
+The next big thing.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Avoid inter-thread call to QWidget::update, which apparently causes a slight 
+memory leak (and warning messages on stderr) on Mac OS.
+
+[RELEASE]
 Version: 3.2.2
 Date: 2009-11-30
 [DESCRIPTION]

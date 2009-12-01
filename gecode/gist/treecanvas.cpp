@@ -321,9 +321,9 @@ namespace Gecode { namespace Gist {
       t->stopSearchFlag = false;
       t->mutex.unlock();
       if (sol != NULL) {
-        t->setCurrentNode(sol);
+        t->setCurrentNode(sol,false);
       } else {
-        t->setCurrentNode(node);
+        t->setCurrentNode(node,false);
       }
     }
     updateCanvas();
@@ -981,14 +981,15 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::setCurrentNode(VisualNode* n) {
+  TreeCanvas::setCurrentNode(VisualNode* n, bool update) {
     QMutexLocker locker(&mutex);
     if (n != NULL) {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
       emit statusChanged(currentNode,stats,true);
-      QWidget::update();
+      if (update)
+        QWidget::update();
     }
   }
 

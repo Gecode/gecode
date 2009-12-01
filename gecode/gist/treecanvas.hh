@@ -275,7 +275,7 @@ namespace Gecode {  namespace Gist {
     /// Handle context menu event
     void contextMenuEvent(QContextMenuEvent* event);
     /// Set the selected node to \a n
-    void setCurrentNode(VisualNode* n);
+    void setCurrentNode(VisualNode* n, bool update=true);
     /// Log the current node as new point in time
     void saveCurrentNode(void);
 
