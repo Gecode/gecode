@@ -195,12 +195,11 @@ namespace Gecode { namespace Int { namespace Extensional {
 #include <gecode/int/extensional/layered-graph.hpp>
 
 
-#include <gecode/int/extensional/bitset.hpp>
-
 namespace Gecode { namespace Int { namespace Extensional {
 
   typedef TupleSet::Tuple Tuple;
-  typedef BitSet* Domain;
+  typedef Support::BitSetBase BitSet;
+  typedef Support::BitSetBase* Domain;
 
   /**
    * \brief Base for domain consistent extensional propagation

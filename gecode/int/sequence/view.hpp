@@ -144,13 +144,13 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val,bool iss>
   forceinline int 
   ViewValSupport<View,Val,iss>::next_potential_violation(void) {
-    return v.get();
+    return static_cast<int>(v.get());
   }
 
   template<class View, class Val,bool iss>
   forceinline void 
   ViewValSupport<View,Val,iss>::potential_violation(int k) {
-    v.add(k);
+    v.add(static_cast<int>(k));
   }
   
 
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   ViewValSupport<View,Val,iss>::init(Space& home, ViewArray<View>& a, Val s,
                                      int i, int q) {
     y = home.alloc<int>(a.size()+1);
-    v.init(home,a.size());
+    v.init(home,static_cast<unsigned int>(a.size()));
     y[0] = 0;
     for ( int l=0; l<a.size(); l++ ) {
       if ( alternative_not_possible(a,s,i,l+1) ) {

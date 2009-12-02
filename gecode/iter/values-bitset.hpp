@@ -48,9 +48,9 @@ namespace Gecode { namespace Iter { namespace Values {
     /// Bitset
     const BS& bs;
     /// Current value
-    int cur;
+    unsigned int cur;
     /// Limit value
-    int limit;
+    unsigned int limit;
     /// Move to next set bit
     void move(void);
   public:
@@ -95,7 +95,9 @@ namespace Gecode { namespace Iter { namespace Values {
   template<class BS>
   forceinline
   BitSet<BS>::BitSet(const BS& bs0, int n, int m) 
-    : bs(bs0), cur(n), limit(std::min(bs.size(),m)) {
+    : bs(bs0), 
+      cur(static_cast<unsigned int>(n)), 
+      limit(std::min(bs.size(),static_cast<unsigned int>(m))) {
     move();
   }
 
@@ -113,7 +115,7 @@ namespace Gecode { namespace Iter { namespace Values {
   template<class BS>
   forceinline int
   BitSet<BS>::val(void) const {
-    return cur;
+    return static_cast<int>(cur);
   }
 
 }}}

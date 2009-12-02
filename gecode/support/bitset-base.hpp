@@ -49,13 +49,13 @@ namespace Gecode { namespace Support {
     /// Basetype for bits
     typedef unsigned int Base;
     /// Bits per base
-    static const int bpb = static_cast<int>(CHAR_BIT * sizeof(Base));
+    static const unsigned int bpb = static_cast<unsigned int>(CHAR_BIT * sizeof(Base));
     /// Size of bitset (number of bits)
-    int sz;
+    unsigned int sz;
     /// Stored bits
     Base* data;
     /// Get number of Base elements for \a s bits
-    static int base(int s);
+    static unsigned int base(unsigned int s);
     /// Dispose memory for bit set
     template<class A>
     void dispose(A& a);
@@ -64,25 +64,25 @@ namespace Gecode { namespace Support {
     BitSetBase(void);
     /// Initialize for \a s bits and allocator \a a
     template<class A>
-    BitSetBase(A& a, int s);
+    BitSetBase(A& a, unsigned int s);
     /// Copy from bitset \a bs with allocator \a a
     template<class A>
     BitSetBase(A& a, const BitSetBase& bs);
     /// Initialize for \a s bits and allocator \a a (only after default constructor)
     template<class A>
-    void init(A& a, int s);
+    void init(A& a, unsigned int s);
     /// Return size of bitset (number of bits)
-    int size(void) const;
+    unsigned int size(void) const;
     /// Access value at bit \a i
-    bool get(int i) const;
+    bool get(unsigned int i) const;
     /// Set bit \a i
-    void set(int i);
+    void set(unsigned int i);
     /// Clear bit \a i
-    void clear(int i);
+    void clear(unsigned int i);
   };
 
-  forceinline int
-  BitSetBase::base(int s) {
+  forceinline unsigned int
+  BitSetBase::base(unsigned int s) {
     return (s+bpb-1) / bpb;
   }
 
@@ -98,9 +98,9 @@ namespace Gecode { namespace Support {
 
   template<class A>
   forceinline
-  BitSetBase::BitSetBase(A& a, int s)
+  BitSetBase::BitSetBase(A& a, unsigned int s)
     : sz(s), data(a.template alloc<Base>(base(sz))) {
-    for (int i=base(sz); i--; ) 
+    for (unsigned int i=base(sz); i--; ) 
       data[i] = 0;
   }
 
@@ -108,47 +108,45 @@ namespace Gecode { namespace Support {
   forceinline
   BitSetBase::BitSetBase(A& a, const BitSetBase& bs)
     : sz(bs.sz), data(a.template alloc<Base>(base(bs.sz))) {
-    for (int i = base(sz); i--; ) 
+    for (unsigned int i = base(sz); i--; ) 
       data[i] = bs.data[i];
   }
 
   template<class A>
   forceinline void
-  BitSetBase::init(A& a, int s) {
+  BitSetBase::init(A& a, unsigned int s) {
     assert((sz == 0) && (data == NULL));
     sz=s; data=a.template alloc<Base>(base(sz));
-    for (int i=base(sz); i--; )
+    for (unsigned int i=base(sz); i--; )
       data[i] = 0;
   }
 
-  forceinline int
+  forceinline unsigned int
   BitSetBase::size(void) const {
     return sz;
   }
 
   forceinline bool
-  BitSetBase::get(int i) const {
-    assert((i >= 0) && (i < sz));
-    if (bpb == 8) {
-    } else {
-      int pos = i / bpb;
-      int bit = i % bpb;
+  BitSetBase::get(unsigned int i) const {
+    assert(i < sz);
+    unsigned int pos = i / bpb;
+    unsigned int bit = i % bpb;
     return (data[pos] & (static_cast<Base>(1) << bit)) != 0;
   }
 
   forceinline void
-  BitSetBase::set(int i) {
-    assert((i >= 0) && (i < sz));
-    int pos = i / bpb;
-    int bit = i % bpb;
+  BitSetBase::set(unsigned int i) {
+    assert(i < sz);
+    unsigned int pos = i / bpb;
+    unsigned int bit = i % bpb;
     data[pos] |= 1 << bit;
   }
 
   forceinline void
-  BitSetBase::clear(int i) {
+  BitSetBase::clear(unsigned int i) {
     assert(i < sz);
-    int pos = i / bpb;
-    int bit = i % bpb;
+    unsigned int pos = i / bpb;
+    unsigned int bit = i % bpb;
     data[pos] &= ~(1 << bit);
   }
 
