@@ -45,66 +45,49 @@
 namespace Gecode { namespace Int { namespace Extensional {
 
   /// Simple bitsets
-  class BitSet {
-    /// Basetype for bits
-    typedef unsigned int Base;
-    /// Stored bits
-    Base* data;
-    /// Size of bitset
-    unsigned int size;
+  class BitSet : public Support::BitSetBase {
   public:
     /// Default (empty) initialization of BitSet
     BitSet(void);
-    /// BitSet with space for \a s bits. The bits are  set to \a value.
-    BitSet(Space& home, unsigned int s, bool value = false);
+    /// BitSet with space for \a s bits
+    BitSet(Space& home, unsigned int s);
     /// Copy BitSet \a bs
     BitSet(Space& home, const BitSet& bs);
-    /// Initialize BitSet for \a s bits. The bits are  set to \a value.
-    void init(Space& home, unsigned int s, bool value=false);
+    /// Initialize BitSet for \a s bits
+    void init(Space& home, unsigned int s);
     /// Access value at bit \a i
     bool get(unsigned int i) const;
-    /// Set value at bit \a i to \a value
-    void set(unsigned int i, bool value=true);
+    /// Set value at bit \a i
+    void set(unsigned int i);
+    /// Clear value at bit \a i
+    void clear(unsigned int i);
   };
 
-  forceinline void
-  BitSet::init(Space& home, unsigned int s, bool value) {
-    size = static_cast<unsigned int>(std::ceil(static_cast<double>(s)
-                                               /(CHAR_BIT*sizeof(Base))));
-    data = home.alloc<Base>(size);
-    Base ival = value ? ~0 : 0;
-    for (unsigned int i = size; i--; ) data[i] = ival;
-  }
-
   forceinline
-  BitSet::BitSet(void) : data(NULL), size(0) {}
-
+  BitSet::BitSet(void) {}
   forceinline
-  BitSet::BitSet(Space& home, unsigned int s, bool value)
-    : data(NULL), size(0) {
-    init(home, s, value);
-  }
+  BitSet::BitSet(Space& home, unsigned int s)
+    : Support::BitSetBase(home,s) {}
   forceinline
   BitSet::BitSet(Space& home, const BitSet& bs)
-    : data(home.alloc<Base>(bs.size)), size(bs.size) {
-    for (unsigned int i = size; i--; ) data[i] = bs.data[i];
+    : Support::BitSetBase(home,bs) {}
+
+  forceinline void
+  BitSet::init(Space& home, unsigned int s) {
+    Support::BitSetBase::init(home,static_cast<int>(s));
   }
+
   forceinline bool
   BitSet::get(unsigned int i) const {
-    unsigned int pos = i / (sizeof(Base)*CHAR_BIT);
-    unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
-    assert(pos < size);
-    return (data[pos] & ((Base)1 << bit)) != 0;
+    return Support::BitSetBase::get(static_cast<int>(i));
   }
   forceinline void
-  BitSet::set(unsigned int i, bool value) {
-    unsigned int pos = i / (sizeof(Base)*CHAR_BIT);
-    unsigned int bit = i % (sizeof(Base)*CHAR_BIT);
-    assert(pos < size);
-    if (value)
-      data[pos] |= 1 << bit;
-    else
-      data[pos] &= ~(1 << bit);
+  BitSet::set(unsigned int i) {
+    Support::BitSetBase::set(static_cast<int>(i));
+  }
+  forceinline void
+  BitSet::clear(unsigned int i) {
+    Support::BitSetBase::clear(static_cast<int>(i));
   }
 
 }}}

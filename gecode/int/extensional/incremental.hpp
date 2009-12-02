@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Work is still relevant
         if (dom[i].get(n-ts()->min)) {
           GECODE_ME_CHECK(x[i].nq(home,n));
-          dom[i].set(n-ts()->min,false);
+          dom[i].clear(n-ts()->min);
         }
       }
       while (!w_support.empty()) {

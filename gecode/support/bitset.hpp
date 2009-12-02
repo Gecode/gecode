@@ -46,87 +46,33 @@ namespace Gecode { namespace Support {
 
   /// Simple bitsets
   template<class A>
-  class BitSet {
+  class BitSet : public BitSetBase {
+  protected:
     /// Allocator
     A& a;
-    /// Basetype for bits
-    typedef unsigned int Base;
-    /// Stored bits
-    Base* data;
-    /// Size of bitset (number of bits)
-    int sz;
-    /// Get number of Base elements for \a s bits
-    static int base(int s);
   public:
-    /// BitSet with space for \a s bits
+    /// Bit set with space for \a s bits
     BitSet(A& a, int s);
-    /// Copy BitSet \a bs
+    /// Copy bit set \a bs
     BitSet(A& a, const BitSet& bs);
-    /// Access value at bit \a i
-    bool get(int i) const;
-    /// Set bit \a i
-    void set(int i);
-    /// Clear bit \a i
-    void clear(int i);
-    /// Return size of bitset (number of bits)
-    int size(void) const;
+    /// Destructor
+    ~BitSet(void);
   };
-
-
-  template<class A>
-  forceinline int
-  BitSet<A>::base(int s) {
-    return static_cast<int>(std::ceil(static_cast<double>(s)
-                                      /(CHAR_BIT*sizeof(Base))));
-  }
 
   template<class A>
   forceinline
   BitSet<A>::BitSet(A& a0, int s)
-    : a(a0), sz(s) {
-    data = a.template alloc<Base>(base(sz));
-    for (int i=base(sz); i--; ) data[i] = 0;
-  }
+    : BitSetBase(a0,s), a(a0) {}
 
   template<class A>
   forceinline
   BitSet<A>::BitSet(A& a0, const BitSet<A>& bs)
-    : a(a0), data(a.template alloc<Base>(base(bs.sz))), sz(bs.sz) {
-    for (int i = base(sz); i--; ) 
-      data[i] = bs.data[i];
-  }
+    : BitSetBase(a0,bs), a(a0) {}
 
   template<class A>
-  forceinline bool
-  BitSet<A>::get(int i) const {
-    assert(i < sz);
-    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
-    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
-    return (data[pos] & ((Base)1 << bit)) != 0;
-  }
-
-  template<class A>
-  forceinline void
-  BitSet<A>::set(int i) {
-    assert(i < sz);
-    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
-    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
-    data[pos] |= 1 << bit;
-  }
-
-  template<class A>
-  forceinline void
-  BitSet<A>::clear(int i) {
-    assert(i < sz);
-    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
-    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
-    data[pos] &= ~(1 << bit);
-  }
-
-  template<class A>
-  forceinline int
-  BitSet<A>::size(void) const {
-    return sz;
+  forceinline
+  BitSet<A>::~BitSet(void) {
+    dispose(a);
   }
 
 }}

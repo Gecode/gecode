@@ -40,24 +40,11 @@
 
 namespace Gecode { namespace Int { namespace Sequence {
 
-  /// Simple bitsets
-  class Violations {
-    /// Basetype for bits
-    typedef unsigned int Base;
-    /// Size of bitset (number of bits)
-    int sz;
-    /// Stored bits
-    Base* data;
+  /// Simple bitsets for recording violations
+  class Violations : public Support::BitSetBase {
+  protected:
     /// The (possibly) first set bit (set is empty if fst == sz)
     mutable int fst;
-    /// Get number of Base elements for \a n bits
-    static int base(int n);
-    /// Access value at bit \a i
-    bool get(int i) const;
-    /// Set bit \a i
-    void set(int i);
-    /// Clear bit \a i
-    void clear(int i);
   public:
     /// Default constructor
     Violations(void);
@@ -74,53 +61,19 @@ namespace Gecode { namespace Int { namespace Sequence {
   };
 
 
-  forceinline int
-  Violations::base(int n) {
-    return static_cast<int>(std::ceil(static_cast<double>(n)
-                                      /(CHAR_BIT*sizeof(Base))));
-  }
-
   forceinline
-  Violations::Violations(void)
-    : sz(0), data(NULL), fst(0) {}
+  Violations::Violations(void) : fst(0) {}
 
   forceinline void
   Violations::init(Space& home, int n) {
-    sz = n;
-    data = home.alloc<Base>(base(sz));
-    for (int i=base(sz); i--; ) 
-      data[i] = 0;
-    fst = sz;
-  }
-
-  forceinline bool
-  Violations::get(int i) const {
-    assert(i < sz);
-    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
-    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
-    return (data[pos] & ((Base)1 << bit)) != 0;
-  }
-
-  forceinline void
-  Violations::set(int i) {
-    assert(i < sz);
-    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
-    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
-    data[pos] |= 1 << bit;
-  }
-
-  forceinline void
-  Violations::clear(int i) {
-    assert(i < sz);
-    int pos = i / static_cast<int>(sizeof(Base)*CHAR_BIT);
-    int bit = i % static_cast<int>(sizeof(Base)*CHAR_BIT);
-    data[pos] &= ~(1 << bit);
+    Support::BitSetBase::init(home,n);
+    fst=size();
   }
 
   forceinline bool
   Violations::empty(void) const {
-    while (fst < sz)
-      if (get(fst))
+    while (fst < size())
+      if (Support::BitSetBase::get(fst))
         return false;
       else
         fst++;
@@ -130,11 +83,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline void
   Violations::update(Space& home, bool share, Violations& v) {
     assert(v.empty());
-    sz = v.sz;
-    data = home.alloc<Base>(base(sz));
-    for (int i=base(sz); i--; ) 
-      data[i] = 0;
-    fst = sz;
+    init(home,v.size());
   }
 
   forceinline void
@@ -145,7 +94,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline int
   Violations::get(void) {
     assert(!empty());
-    while (!get(fst)) 
+    while (!Support::BitSetBase::get(fst)) 
       fst++;
     clear(fst); fst++;
     return fst-1;
