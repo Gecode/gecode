@@ -11,8 +11,8 @@
  *     Christian Schulte, 2007
  *
  *  Last modified:
- *     $Date: 2009-09-15 14:24:56 +0200 (Tue, 15 Sep 2009) $ by $Author: schulte $
- *     $Revision: 9748 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -129,8 +129,10 @@ namespace Gecode { namespace Support {
   forceinline bool
   BitSetBase::get(int i) const {
     assert((i >= 0) && (i < sz));
-    int pos = i / bpb;
-    int bit = i % bpb;
+    if (bpb == 8) {
+    } else {
+      int pos = i / bpb;
+      int bit = i % bpb;
     return (data[pos] & (static_cast<Base>(1) << bit)) != 0;
   }
 
