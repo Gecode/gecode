@@ -119,6 +119,15 @@ namespace Gecode {
     return (o == NULL) ? 0 : o->n;
   }
 
+  forceinline bool
+  IntSet::in(int n) const {
+    IntSetObject* o = static_cast<IntSetObject*>(object());
+    if ((o == NULL) || (n < o->r[0].min) || (n > o->r[o->n-1].max))
+      return false;
+    else
+      return o->in(n);
+  }
+
   forceinline int
   IntSet::min(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());

@@ -49,14 +49,6 @@ namespace Test { namespace Int {
    /// Tests for sequence constraints
    namespace Sequence {
 
-     inline bool
-     in(const Gecode::IntSet& s, int n) {
-       for (int i=s.ranges(); i--; )
-         if ((n >= s.min(i)) && (n <= s.max(i)))
-           return true;
-       return false;
-     }
-
      /**
       * \defgroup TaskTestIntSequence Sequence constraints
       * \ingroup TaskTestInt
@@ -74,14 +66,14 @@ namespace Test { namespace Int {
                     int size, int min, int max)
          : Test("Sequence::"+s,size,min,max), s(s0), q(q0), l(l0), u(u0) {
        }
-       /// Test whether \a x is solution
+       /// Test whether \a x is solutionin
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i< (x.size() - q + 1); i++ ) {
            int total = 0;
            for (int j=i; j < i + q; j++ ) {
-             if (in(s,x[j]))
+             if (s.in(x[j]))
                total++;
-             if ( total > u )
+             if (total > u)
                return false;
            }
            if ( total < l )

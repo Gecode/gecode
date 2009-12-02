@@ -56,6 +56,26 @@ namespace Gecode {
     return o;
   }
 
+  bool
+  IntSet::IntSetObject::in(int n) const {
+    int l = 0;
+    int r = this->n - 1;
+
+    while (l <= r) {
+      int m = l + (r - l) / 2;
+      if ((this->r[m].min <= n) && (n <= this->r[m].max)) {
+        return true;
+      } else if (l == r) {
+        return false;
+      } else if (n < this->r[m].min) {
+        r=m-1;
+      } else {
+        l=m+1;
+      }
+    }
+    return false;
+  }
+
   IntSet::IntSetObject::~IntSetObject(void) {
     heap.free<Range>(r,n);
   }

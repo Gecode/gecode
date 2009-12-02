@@ -73,12 +73,22 @@ Date: ??????
 The next big thing.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Integer sets (IntSet) now have a in member function for testing
+whether an integer is included.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor
 [DESCRIPTION]
 Avoid inter-thread call to QWidget::update, which apparently causes a slight 
 memory leak (and warning messages on stderr) on Mac OS.
+
+
 
 [RELEASE]
 Version: 3.2.2

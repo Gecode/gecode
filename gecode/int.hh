@@ -155,6 +155,8 @@ namespace Gecode {
       GECODE_INT_EXPORT static IntSetObject* allocate(int m);
       /// Return copy of object
       GECODE_INT_EXPORT SharedHandle::Object* copy(void) const;
+      /// Check whether \a n is included in the set
+      GECODE_INT_EXPORT bool in(int n) const;
       /// Delete object
       GECODE_INT_EXPORT virtual ~IntSetObject(void);
     };
@@ -215,6 +217,8 @@ namespace Gecode {
 
     /// \name Entire set access
     //@{
+    /// Return whether \a n is included in the set
+    bool in(int n) const;
     /// Return size (cardinality) of set
     unsigned int size(void) const;
     /// Return width of set (distance between maximum and minimum)
