@@ -1023,28 +1023,6 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /**
-   * \brief Base-class for reified Boolean linear propagators
-   *
-   */
-  template<class XV, class YV, class BV>
-  class ReLinBoolView : public LinBoolView<XV,YV> {
-  protected:
-    using LinBoolView<XV,YV>::x;
-    using LinBoolView<XV,YV>::y;
-    using LinBoolView<XV,YV>::c;
-    /// Control variable
-    BV b;
-    /// Constructor for cloning \a p
-    ReLinBoolView(Space& home, bool share, ReLinBoolView& p);
-    /// Constructor for creation
-    ReLinBoolView(Home home, ViewArray<XV>& x, YV y, int c, BV b);
-  public:
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-
-  /**
    * \brief %Propagator for equality to Boolean sum (cardinality)
    *
    * Requires \code #include <gecode/int/linear.hh> \endcode
@@ -1120,60 +1098,6 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq y+c\f$
     static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
-  };
-
-  /**
-   * \brief %Propagator for reified equality to Boolean sum (cardinality)
-   *
-   * Requires \code #include <gecode/int/linear.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class XV, class YV, class BV>
-  class ReEqBoolView : public ReLinBoolView<XV,YV,BV> {
-  protected:
-    using ReLinBoolView<XV,YV,BV>::x;
-    using ReLinBoolView<XV,YV,BV>::y;
-    using ReLinBoolView<XV,YV,BV>::c;
-    using ReLinBoolView<XV,YV,BV>::b;
-
-    /// Constructor for cloning \a p
-    ReEqBoolView(Space& home, bool share, ReEqBoolView& p);
-    /// Constructor for creation
-    ReEqBoolView(Home home, ViewArray<XV>& x, YV y, int c, BV b);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = y+c\right)\Leftrightarrow b\f$
-    static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c, BV b);
-  };
-
-  /**
-   * \brief %Propagator for reified greater or equal to Boolean sum (cardinality)
-   *
-   * Requires \code #include <gecode/int/linear.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class XV, class YV, class BV>
-  class ReGqBoolView : public ReLinBoolView<XV,YV,BV> {
-  protected:
-    using ReLinBoolView<XV,YV,BV>::x;
-    using ReLinBoolView<XV,YV,BV>::y;
-    using ReLinBoolView<XV,YV,BV>::c;
-    using ReLinBoolView<XV,YV,BV>::b;
-
-    /// Constructor for cloning \a p
-    ReGqBoolView(Space& home, bool share, ReGqBoolView& p);
-    /// Constructor for creation
-    ReGqBoolView(Home home, ViewArray<XV>& x, YV y, int c, BV b);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq y+c\right)\Leftrightarrow b\f$
-    static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c, BV b);
   };
 
 }}}
