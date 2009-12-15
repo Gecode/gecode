@@ -139,7 +139,7 @@ namespace Gecode { namespace Support {
     assert(i < sz);
     unsigned int pos = i / bpb;
     unsigned int bit = i % bpb;
-    data[pos] |= 1 << bit;
+    data[pos] |= static_cast<Base>(1) << bit;
   }
 
   forceinline void
@@ -147,7 +147,7 @@ namespace Gecode { namespace Support {
     assert(i < sz);
     unsigned int pos = i / bpb;
     unsigned int bit = i % bpb;
-    data[pos] &= ~(1 << bit);
+    data[pos] &= ~(static_cast<Base>(1) << bit);
   }
 
 }}
