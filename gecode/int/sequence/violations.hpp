@@ -72,8 +72,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   forceinline bool
   Violations::empty(void) const {
-    if (fst < size())
-      fst = next(fst);
+    fst = next(fst);
     return fst >= size();
   }
   

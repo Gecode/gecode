@@ -130,7 +130,7 @@ namespace Gecode { namespace Support {
     void set(unsigned int i);
     /// Clear bit \a i
     void clear(unsigned int i);
-    /// Return position greater or equal \a i of next set bit
+    /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
     unsigned int next(unsigned int i) const;
   };
 
@@ -288,7 +288,7 @@ namespace Gecode { namespace Support {
 
   forceinline unsigned int
   BitSetBase::next(unsigned int i) const {
-    assert(i < sz);
+    assert(i <= sz);
     unsigned int pos = i / bpb;
     unsigned int bit = i % bpb;
     if (data[pos](bit))
