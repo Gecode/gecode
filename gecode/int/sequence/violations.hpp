@@ -72,12 +72,9 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   forceinline bool
   Violations::empty(void) const {
-    while (fst < size())
-      if (Support::BitSetBase::get(fst))
-        return false;
-      else
-        fst++;
-    return true;
+    if (fst < size())
+      fst = next(fst);
+    return fst >= size();
   }
   
   forceinline void
@@ -94,8 +91,8 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline unsigned int
   Violations::get(void) {
     assert(!empty());
-    while (!Support::BitSetBase::get(fst)) 
-      fst++;
+    fst = next(fst);
+    assert(Support::BitSetBase::get(fst));
     clear(fst); fst++;
     return fst-1;
   }
