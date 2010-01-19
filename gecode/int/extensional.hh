@@ -156,24 +156,27 @@ namespace Gecode { namespace Int { namespace Extensional {
     IndexRange i_ch;
     /// Index range with out-degree modifications
     IndexRange o_ch;
-
+    /// Return in state for layer \a i and state index \a is
     State& i_state(int i, StateIdx is) {
-      assert((is / n_states) == i);
-      return states[is];
+      return states[i * n_states + is];
     }
+    /// Return in state for layer \a i and in state of edge \a e
     State& i_state(int i, const Edge& e) {
       return i_state(i,e.i_state);
     }
+    /// Decrement out degree for in state of edge \a e for layer \a i
     bool i_dec(int i, const Edge& e) {
       return --i_state(i,e).o_deg == 0;
     }
+    /// Return out state for layer \a i and state index \a os
     State& o_state(int i, StateIdx os) {
-      assert((os / n_states) == (i+1));
-      return states[os];
+      return states[(i+1) * n_states + os];
     }
+    /// Return state for layer \a i and out state of edge \a e
     State& o_state(int i, const Edge& e) {
       return o_state(i,e.o_state);
     }
+    /// Decrement in degree for out state of edge \a e for layer \a i
     bool o_dec(int i, const Edge& e) {
       return --o_state(i,e).i_deg == 0;
     }

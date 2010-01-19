@@ -48,6 +48,47 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>::State::State(void) 
     : i_deg(0), o_deg(0) {}
 
+  
+  /*
+
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  i_state(int i, StateIdx is) {
+    assert((is / n_states) == i);
+    return states[is];
+  }
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  LayeredGraph<View,Val,Degree,StateIdx>::i_state
+  (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
+    return i_state(i,e.i_state);
+  }
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline bool 
+  LayeredGraph<View,Val,Degree,StateIdx>::i_dec
+  (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
+    return --i_state(i,e).o_deg == 0;
+  }
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  o_state(int i, StateIdx os) {
+    assert((os / n_states) == (i+1));
+    return states[os];
+  }
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  LayeredGraph<View,Val,Degree,StateIdx>::o_state
+  (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
+    return o_state(i,e.o_state);
+  }
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline bool 
+  LayeredGraph<View,Val,Degree,StateIdx>::o_dec
+  (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
+    return --o_state(i,e).i_deg == 0;
+  }
+
+  */
 
   /*
    * Value iterator
@@ -162,7 +203,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Mark final states as reachable as well
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
-      o_state(n-1,n*n_states + s).o_deg = 1;
+      o_state(n-1,s).o_deg = 1;
 
     // Temporary memory for edges
     Region r(home);
@@ -177,13 +218,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (ViewValues<View> nx(layers[i].x); nx(); ++nx) {
         Degree n_edges=0;
         for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
-          if (i_state(i,i*n_states + t.i_state()).i_deg != 0) {
-            StateIdx i_s = static_cast<StateIdx>(i*n_states + t.i_state());
-            i_state(i,i_s).o_deg++;
-            StateIdx o_s = static_cast<StateIdx>((i+1)*n_states +  t.o_state());
-            o_state(i,o_s).i_deg++;
-            edges[n_edges].i_state = i_s;
-            edges[n_edges].o_state = o_s;
+          if (i_state(i,static_cast<StateIdx>(t.i_state())).i_deg != 0) {
+            i_state(i,static_cast<StateIdx>(t.i_state())).o_deg++;
+            o_state(i,static_cast<StateIdx>(t.o_state())).i_deg++;
+            edges[n_edges].i_state = static_cast<StateIdx>(t.i_state());
+            edges[n_edges].o_state = static_cast<StateIdx>(t.o_state());
             n_edges++;
           }
         assert(n_edges <= dfa.max_degree());
@@ -534,12 +573,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         as.advisor().i -= k;
       // Update states
       states += k*n_states;
-      for (int i=n; i--; )
-        for (unsigned int j=layers[i].size; j--; )
-          for (Degree d=layers[i].support[j].n_edges; d--; ) {
-            layers[i].support[j].edges[d].i_state -= k*n_states;
-            layers[i].support[j].edges[d].o_state -= k*n_states;
-          }
     }
     return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);
   }
@@ -549,7 +582,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   post_lgp(Home home, const VarArgArray<Var>& x, const DFA& dfa) {
     Gecode::Support::IntType t_state_idx =
-      Gecode::Support::s_type((x.size()+2)*dfa.n_states());
+      Gecode::Support::s_type(dfa.n_states());
     Gecode::Support::IntType t_degree =
       Gecode::Support::u_type(dfa.max_degree());
     Gecode::Support::IntType t_val = 
