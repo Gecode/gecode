@@ -157,6 +157,26 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Index range with out-degree modifications
     IndexRange o_ch;
 
+    State& i_state(int i, StateIdx is) {
+      assert((is / n_states) == i);
+      return states[is];
+    }
+    State& i_state(int i, const Edge& e) {
+      return i_state(i,e.i_state);
+    }
+    bool i_dec(int i, const Edge& e) {
+      return --i_state(i,e).o_deg == 0;
+    }
+    State& o_state(int i, StateIdx os) {
+      assert((os / n_states) == (i+1));
+      return states[os];
+    }
+    State& o_state(int i, const Edge& e) {
+      return o_state(i,e.o_state);
+    }
+    bool o_dec(int i, const Edge& e) {
+      return --o_state(i,e).i_deg == 0;
+    }
     /// Initialize layered graph
     template<class Var>
     ExecStatus initialize(Space& home, 

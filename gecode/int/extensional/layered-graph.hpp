@@ -158,11 +158,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     states = home.alloc<State>((n+1)*n_states);
 
     // Mark initial state as being reachable
-    states[0].i_deg = 1;
+    i_state(0,0).i_deg = 1;
 
     // Mark final states as reachable as well
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
-      states[n*n_states + s].o_deg = 1;
+      o_state(n-1,n*n_states + s).o_deg = 1;
 
     // Temporary memory for edges
     Region r(home);
@@ -177,11 +177,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (ViewValues<View> nx(layers[i].x); nx(); ++nx) {
         Degree n_edges=0;
         for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
-          if (states[i*n_states + t.i_state()].i_deg != 0) {
+          if (i_state(i,i*n_states + t.i_state()).i_deg != 0) {
             StateIdx i_s = static_cast<StateIdx>(i*n_states + t.i_state());
-            states[i_s].o_deg++;
+            i_state(i,i_s).o_deg++;
             StateIdx o_s = static_cast<StateIdx>((i+1)*n_states +  t.o_state());
-            states[o_s].i_deg++;
+            o_state(i,o_s).i_deg++;
             edges[n_edges].i_state = i_s;
             edges[n_edges].o_state = o_s;
             n_edges++;
@@ -189,11 +189,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         assert(n_edges <= dfa.max_degree());
         // Found support for value
         if (n_edges > 0) {
-          layers[i].support[j].val = static_cast<Val>(nx.val());
-          layers[i].support[j].n_edges = n_edges;
-          layers[i].support[j].edges = home.alloc<Edge>(n_edges);
+          Support& s = layers[i].support[j];
+          s.val = static_cast<Val>(nx.val());
+          s.n_edges = n_edges;
+          s.edges = home.alloc<Edge>(n_edges);
           for (Degree d=n_edges; d--; )
-            layers[i].support[j].edges[d] = edges[d];
+            s.edges[d] = edges[d];
           j++;
         }
       }
@@ -205,18 +206,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i=n; i--; ) {
       unsigned int k=0;
       for (unsigned int j=0; j<layers[i].size; j++) {
-        for (Degree d=layers[i].support[j].n_edges; d--; )
-          if (states[layers[i].support[j].edges[d].o_state].o_deg == 0) {
+        Support& s = layers[i].support[j];
+        for (Degree d=s.n_edges; d--; )
+          if (o_state(i,s.edges[d]).o_deg == 0) {
             // Adapt states
-            states[layers[i].support[j].edges[d].i_state].o_deg--;
-            states[layers[i].support[j].edges[d].o_state].i_deg--;
+            (void) i_dec(i,s.edges[d]);
+            (void) o_dec(i,s.edges[d]);
             // Unreachable, prune edge
-            layers[i].support[j].edges[d] = 
-              layers[i].support[j].edges[--layers[i].support[j].n_edges];
+            s.edges[d] = s.edges[--s.n_edges];
           }
         // Value has support, copy the support information
-        if (layers[i].support[j].n_edges > 0)
-          layers[i].support[k++]=layers[i].support[j];
+        if (s.n_edges > 0)
+          layers[i].support[k++]=s;
       }
       if ((layers[i].size = k) == 0)
         return ES_FAILED;
@@ -239,17 +240,19 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (states == NULL) {
       states = home.alloc<State>((n+1)*n_states);
       for (int i=n; i--; )
-        for (unsigned int j=layers[i].size; j--; )
-          for (Degree d=layers[i].support[j].n_edges; d--; ) {
-            states[layers[i].support[j].edges[d].i_state].o_deg++;
-            states[layers[i].support[j].edges[d].o_state].i_deg++;
+        for (unsigned int j=layers[i].size; j--; ) {
+          Support& s = layers[i].support[j];
+          for (Degree d=s.n_edges; d--; ) {
+            i_state(i,s.edges[d]).o_deg++;
+            o_state(i,s.edges[d]).i_deg++;
           }
+        }
     }
     
     Index& a = static_cast<Index&>(_a);
-    Layer& l = layers[a.i];
+    const int i = a.i;
 
-    if (l.size <= l.x.size()) {
+    if (layers[i].size <= layers[i].x.size()) {
       // Propagator has already done everything
       if (View::modevent(d) == ME_INT_VAL) {
         a.dispose(home,c);
@@ -263,80 +266,91 @@ namespace Gecode { namespace Int { namespace Extensional {
     bool o_mod = false;
 
     if (View::modevent(d) == ME_INT_VAL) {
-      Val n = static_cast<Val>(l.x.val());
+      Val n = static_cast<Val>(layers[i].x.val());
       unsigned int j=0;
-      for (; l.support[j].val < n; j++)
+      for (; layers[i].support[j].val < n; j++) {
+        Support& s=layers[i].support[j];
         // Supported value not any longer in view
-        for (Degree d=l.support[j].n_edges; d--; ) {
+        for (Degree d=s.n_edges; d--; ) {
           // Adapt states
-          o_mod |= ((--states[l.support[j].edges[d].i_state].o_deg) == 0);
-          i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
+          o_mod |= i_dec(i,s.edges[d]);
+          i_mod |= o_dec(i,s.edges[d]);
         }
-      assert(l.support[j].val == n);
-      l.support[0] = l.support[j++];
-      unsigned int s=l.size;
-      l.size = 1;
-      for (; j<s; j++)
-        for (Degree d=l.support[j].n_edges; d--; ) {
+      }
+      assert(layers[i].support[j].val == n);
+      layers[i].support[0] = layers[i].support[j++];
+      unsigned int s=layers[i].size;
+      layers[i].size = 1;
+      for (; j<s; j++) {
+        Support& s=layers[i].support[j];
+        for (Degree d=s.n_edges; d--; ) {
           // Adapt states
-          o_mod |= ((--states[l.support[j].edges[d].i_state].o_deg) == 0);
-          i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
+          o_mod |= i_dec(i,s.edges[d]);
+          i_mod |= o_dec(i,s.edges[d]);
         }
-    } else if (l.x.any(d)) {
+      }
+    } else if (layers[i].x.any(d)) {
       unsigned int j=0;
       unsigned int k=0;
-      unsigned int s=l.size;
-      for (ViewRanges<View> rx(l.x); rx() && (j<s);)
-        if (l.support[j].val < static_cast<Val>(rx.min())) {
+      unsigned int s=layers[i].size;
+      for (ViewRanges<View> rx(layers[i].x); rx() && (j<s);) {
+        Support& s=layers[i].support[j];
+        if (s.val < static_cast<Val>(rx.min())) {
           // Supported value not any longer in view
-          for (Degree d=l.support[j].n_edges; d--; ) {
+          for (Degree d=s.n_edges; d--; ) {
             // Adapt states
-            o_mod |= ((--states[l.support[j].edges[d].i_state].o_deg) == 0);
-            i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
+            o_mod |= i_dec(i,s.edges[d]);
+            i_mod |= o_dec(i,s.edges[d]);
           }
           ++j;
-        } else if (l.support[j].val > static_cast<Val>(rx.max())) {
+        } else if (s.val > static_cast<Val>(rx.max())) {
           ++rx;
         } else {
-          l.support[k++]=l.support[j++];
+          layers[i].support[k++]=s;
+          ++j;
         }
+      }
       assert(k > 0);
-      l.size = k;
+      layers[i].size = k;
       // Remove remaining values
-      for (; j<s; j++)
-        for (Degree d=l.support[j].n_edges; d--; ) {
+      for (; j<s; j++) {
+        Support& s=layers[i].support[j];
+        for (Degree d=s.n_edges; d--; ) {
           // Adapt states
-          o_mod |= ((--states[l.support[j].edges[d].i_state].o_deg) == 0);
-          i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
+          o_mod |= i_dec(i,s.edges[d]);
+          i_mod |= o_dec(i,s.edges[d]);
         }
+      }
     } else {
-      Val min = static_cast<Val>(l.x.min(d));
+      Val min = static_cast<Val>(layers[i].x.min(d));
       unsigned int j=0;
       // Skip values smaller than min (to keep)
-      for (; l.support[j].val < min; j++) {}
-      Val max = static_cast<Val>(l.x.max(d));
+      for (; layers[i].support[j].val < min; j++) {}
+      Val max = static_cast<Val>(layers[i].x.max(d));
       unsigned int k=j;
-      unsigned int s=l.size;
+      unsigned int s=layers[i].size;
       // Remove pruned values
-      for (; (j<s) && (l.support[j].val <= max); j++)
-        for (Degree d=l.support[j].n_edges; d--; ) {
+      for (; (j<s) && (layers[i].support[j].val <= max); j++) {
+        Support& s=layers[i].support[j];
+        for (Degree d=s.n_edges; d--; ) {
           // Adapt states
-          o_mod |= ((--states[l.support[j].edges[d].i_state].o_deg) == 0);
-          i_mod |= ((--states[l.support[j].edges[d].o_state].i_deg) == 0);
+          o_mod |= i_dec(i,s.edges[d]);
+          i_mod |= o_dec(i,s.edges[d]);
         }
+      }
       // Keep remaining values
       while (j<s)
-        l.support[k++]=l.support[j++];
-      l.size =k;
+        layers[i].support[k++]=layers[i].support[j++];
+      layers[i].size =k;
       assert(k > 0);
     }
 
     bool fix = true;
-    if (o_mod && (a.i > 0)) {
-      o_ch.add(a.i-1); fix = false;
+    if (o_mod && (i > 0)) {
+      o_ch.add(i-1); fix = false;
      }
-    if (i_mod && (a.i+1 < n)) {
-      i_ch.add(a.i+1); fix = false;
+    if (i_mod && (i+1 < n)) {
+      i_ch.add(i+1); fix = false;
     }
     if (fix) {
       if (View::modevent(d) == ME_INT_VAL) {
@@ -362,25 +376,23 @@ namespace Gecode { namespace Int { namespace Extensional {
       unsigned int k=0;
       unsigned int s=layers[i].size;
       do {
-        for (Degree d=layers[i].support[j].n_edges; d--; )
-          if (states[layers[i].support[j].edges[d].i_state].i_deg == 0) {
+        Support& s=layers[i].support[j];
+        for (Degree d=s.n_edges; d--; )
+          if (i_state(i,s.edges[d]).i_deg == 0) {
             // Adapt states
-            o_mod |= ((--states[layers[i].support[j].edges[d].i_state].o_deg)
-                      == 0);
-            i_mod |= ((--states[layers[i].support[j].edges[d].o_state].i_deg)
-                      == 0);
+            o_mod |= i_dec(i,s.edges[d]);
+            i_mod |= o_dec(i,s.edges[d]);
             // Remove edge
-            layers[i].support[j].edges[d] = 
-              layers[i].support[j].edges[--layers[i].support[j].n_edges];
+            s.edges[d] = s.edges[--s.n_edges];
           }
         // Check whether value is still supported
-        if (layers[i].support[j].n_edges == 0) {
+        if (s.n_edges == 0) {
           layers[i].size--;
-          GECODE_ME_CHECK(layers[i].x.nq(home,layers[i].support[j++].val));
+          GECODE_ME_CHECK(layers[i].x.nq(home,s.val));
         } else {
-          layers[i].support[k++]=layers[i].support[j++];
+          layers[i].support[k++]=s;
         }
-      } while (j<s);
+      } while (++j<s);
       assert(k > 0);
       // Update modification information
       if (o_mod && (i > 0))
@@ -397,24 +409,23 @@ namespace Gecode { namespace Int { namespace Extensional {
       unsigned int k=0;
       unsigned int s=layers[i].size;
       do {
-        for (Degree d=layers[i].support[j].n_edges; d--; )
-          if (states[layers[i].support[j].edges[d].o_state].o_deg == 0) {
+        Support& s=layers[i].support[j];
+        for (Degree d=s.n_edges; d--; )
+          if (o_state(i,s.edges[d]).o_deg == 0) {
             // Adapt states
-            o_mod |= ((--states[layers[i].support[j].edges[d].i_state].o_deg) 
-                      == 0);
-            --states[layers[i].support[j].edges[d].o_state].i_deg;
+            o_mod |= i_dec(i,s.edges[d]);
+            (void)   o_dec(i,s.edges[d]);
             // Remove edge
-            layers[i].support[j].edges[d] = 
-              layers[i].support[j].edges[--layers[i].support[j].n_edges];
+            s.edges[d] = s.edges[--s.n_edges];
           }
         // Check whether value is still supported
-        if (layers[i].support[j].n_edges == 0) {
+        if (s.n_edges == 0) {
           layers[i].size--;
-          GECODE_ME_CHECK(layers[i].x.nq(home,layers[i].support[j++].val));
+          GECODE_ME_CHECK(layers[i].x.nq(home,s.val));
         } else {
-          layers[i].support[k++]=layers[i].support[j++];
+          layers[i].support[k++]=s;
         }
-      } while (j<s);
+      } while (++j<s);
       assert(k > 0);
       // Update modification information
       if (o_mod && (i > 0))
@@ -515,7 +526,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         k++;
       // There is only a single edge
       assert((layers[k-1].support[0].n_edges == 1) &&
-             (states[layers[k-1].support[0].edges[0].o_state].i_deg == 1));
+             (o_state(k-1,layers[k-1].support[0].edges[0]).i_deg == 1));
       // Eliminate assigned layers
       n -= k; layers += k;
       // Update advisor indices
