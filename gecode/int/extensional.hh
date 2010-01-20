@@ -93,7 +93,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     class Layer {
     public:
       View x; ///< Integer view
+      StateIdx n_states; ///< Number of states used by outgoing edges
       unsigned int size; ///< Number of supported values
+      State* states; ///< States used by outgoing edges
       Support* support; ///< Supported values
     };
     /// Iterator for telling variable domains by scanning support
@@ -150,8 +152,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     const int n_states;
     /// The layers of the graph
     Layer* layers;
-    /// The states used in the graph
-    State* states;
     /// Index range with in-degree modifications
     IndexRange i_ch;
     /// Index range with out-degree modifications

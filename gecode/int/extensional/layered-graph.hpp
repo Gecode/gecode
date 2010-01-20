@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
   LayeredGraph<View,Val,Degree,StateIdx>::i_state(int i, StateIdx is) {
-    return states[i * n_states + is];
+    return layers[i].states[is];
   }
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
   LayeredGraph<View,Val,Degree,StateIdx>::o_state(int i, StateIdx os) {
-    return states[(i+1) * n_states + os];
+    return layers[i+1].states[os];
   }
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
@@ -191,7 +191,10 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                      const DFA& dfa) {
     // Allocate memory
     layers = home.alloc<Layer>(n+2)+1;
-    states = home.alloc<State>((n+1)*n_states);
+    for (int i=n+1; i--; ) {
+      layers[i].n_states = n_states;
+      layers[i].states = home.alloc<State>(n_states);
+    }
 
     // Mark initial state as being reachable
     i_state(0,0).i_deg = 1;
@@ -244,9 +247,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         for (Degree d=s.n_edges; d--; )
           if (o_state(i,s.edges[d]).o_deg == 0) {
             // Adapt states
-            (void) i_dec(i,s.edges[d]);
-            (void) o_dec(i,s.edges[d]);
-            // Unreachable, prune edge
+            i_dec(i,s.edges[d]); o_dec(i,s.edges[d]);
+            // Prune edge
             s.edges[d] = s.edges[--s.n_edges];
           }
         // Value has support, copy the support information
@@ -269,8 +271,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   ExecStatus
   LayeredGraph<View,Val,Degree,StateIdx>::advise(Space& home,
-                                             Advisor& _a, const Delta& d) {
+                                                 Advisor& _a, const Delta& d) {
     // Check whether state information has already been created
+    /*
     if (states == NULL) {
       states = home.alloc<State>((n+1)*n_states);
       for (int i=n; i--; )
@@ -282,6 +285,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           }
         }
     }
+    */
     
     Index& a = static_cast<Index&>(_a);
     const int i = a.i;
@@ -513,9 +517,15 @@ namespace Gecode { namespace Int { namespace Extensional {
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Val,Degree,StateIdx>& p)
     : Propagator(home,share,p), n(p.n), n_states(p.n_states),
-      layers(home.alloc<Layer>(n+2)+1), states(NULL) {
+      layers(home.alloc<Layer>(n+2)+1) {
     c.update(home,share,p.c);
     // The states are not copied but reconstructed when needed (advise)
+    for (int i=n+1; i--; ) {
+      layers[i].n_states = p.layers[i].n_states;
+      layers[i].states = home.alloc<State>(layers[i].n_states);
+      for (StateIdx j=layers[i].n_states; j--; )
+        layers[i].states[j] = p.layers[i].states[j];
+    }
     // Copy layers
     for (int i=n; i--; ) {
       layers[i].x.update(home,share,p.layers[i].x);
@@ -553,7 +563,6 @@ namespace Gecode { namespace Int { namespace Extensional {
        * an advisor must have been run (which then has created the state
        * information).
        */
-      assert(states != NULL);
       // Skip all layers corresponding to assigned views
       StateIdx k = 1;
       while (layers[k].size == 1)
@@ -566,8 +575,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Update advisor indices
       for (Advisors<Index> as(c); as(); ++as)
         as.advisor().i -= k;
-      // Update states
-      states += k*n_states;
     }
     return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);
   }
