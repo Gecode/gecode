@@ -157,29 +157,17 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Index range with out-degree modifications
     IndexRange o_ch;
     /// Return in state for layer \a i and state index \a is
-    State& i_state(int i, StateIdx is) {
-      return states[i * n_states + is];
-    }
+    State& i_state(int i, StateIdx is);
     /// Return in state for layer \a i and in state of edge \a e
-    State& i_state(int i, const Edge& e) {
-      return i_state(i,e.i_state);
-    }
+    State& i_state(int i, const Edge& e);
     /// Decrement out degree for in state of edge \a e for layer \a i
-    bool i_dec(int i, const Edge& e) {
-      return --i_state(i,e).o_deg == 0;
-    }
+    bool i_dec(int i, const Edge& e);
     /// Return out state for layer \a i and state index \a os
-    State& o_state(int i, StateIdx os) {
-      return states[(i+1) * n_states + os];
-    }
+    State& o_state(int i, StateIdx os);
     /// Return state for layer \a i and out state of edge \a e
-    State& o_state(int i, const Edge& e) {
-      return o_state(i,e.o_state);
-    }
+    State& o_state(int i, const Edge& e);
     /// Decrement in degree for out state of edge \a e for layer \a i
-    bool o_dec(int i, const Edge& e) {
-      return --o_state(i,e).i_deg == 0;
-    }
+    bool o_dec(int i, const Edge& e);
     /// Initialize layered graph
     template<class Var>
     ExecStatus initialize(Space& home, 

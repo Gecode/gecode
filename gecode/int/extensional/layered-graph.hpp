@@ -49,13 +49,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     : i_deg(0), o_deg(0) {}
 
   
-  /*
-
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
-  i_state(int i, StateIdx is) {
-    assert((is / n_states) == i);
-    return states[is];
+  LayeredGraph<View,Val,Degree,StateIdx>::i_state(int i, StateIdx is) {
+    return states[i * n_states + is];
   }
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
@@ -71,9 +68,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
-  o_state(int i, StateIdx os) {
-    assert((os / n_states) == (i+1));
-    return states[os];
+  LayeredGraph<View,Val,Degree,StateIdx>::o_state(int i, StateIdx os) {
+    return states[(i+1) * n_states + os];
   }
   template<class View, class Val, class Degree, class StateIdx>
   forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
@@ -88,7 +84,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     return --o_state(i,e).i_deg == 0;
   }
 
-  */
 
   /*
    * Value iterator
