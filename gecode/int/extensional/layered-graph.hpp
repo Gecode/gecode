@@ -357,10 +357,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>::advise(Space& home,
                                                  Advisor& _a, const Delta& d) {
     // Check whether state information has already been created
-    /*
-    if (states == NULL) {
-      states = home.alloc<State>((n+1)*n_states);
-      for (int i=n; i--; )
+    if (layers[0].states == NULL) {
+      layers[n].states = home.alloc<State>(layers[n].n_states);
+      for (int i=n; i--; ) {
+        layers[i].states = home.alloc<State>(layers[i].n_states);
         for (unsigned int j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
           for (Degree d=s.n_edges; d--; ) {
@@ -368,8 +368,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             o_state(i,s.edges[d]).i_deg++;
           }
         }
+      }
     }
-    */
     
     Index& a = static_cast<Index&>(_a);
     const int i = a.i;
@@ -606,9 +606,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // The states are not copied but reconstructed when needed (advise)
     for (int i=n+1; i--; ) {
       layers[i].n_states = p.layers[i].n_states;
-      layers[i].states = home.alloc<State>(layers[i].n_states);
-      for (StateIdx j=layers[i].n_states; j--; )
-        layers[i].states[j] = p.layers[i].states[j];
+      layers[i].states = NULL;
     }
     // Copy layers
     for (int i=n; i--; ) {
