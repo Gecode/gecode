@@ -276,21 +276,21 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Number of out states
       StateIdx o_n = 0;
       // Initialize map for in states
-      for (StateIdx j=0; j<n_states; j++)
-        if (layers[0].states[j].i_deg > 0)
-          o_map[j]=o_n++;
-      layers[0].n_states = o_n;
-      layers[0].states = home.alloc<State>(o_n);
+      for (StateIdx j=n_states; j--; )
+        if (layers[n].states[j].i_deg > 0)
+          i_map[j]=i_n++;
+      layers[n].n_states = i_n;
+      layers[n].states = home.alloc<State>(i_n);
 
-      for (int i=0; i<n; i++) {
-        // Out states become in states
-        std::swap(i_map,o_map); i_n=o_n; o_n=0;
+      for (int i=n; i--; ) {
+        // In states become out states
+        std::swap(o_map,i_map); o_n=i_n; i_n=0;
         // Initialize map for in states
-        for (StateIdx j=0; j<n_states; j++)
-          if (layers[i+1].states[j].i_deg > 0)
-            o_map[j]=o_n++;
-        layers[i+1].n_states = o_n;
-        layers[i+1].states = home.alloc<State>(o_n);
+        for (StateIdx j=n_states; j--; )
+          if (layers[i].states[j].i_deg > 0)
+            i_map[j]=i_n++;
+        layers[i].n_states = i_n;
+        layers[i].states = home.alloc<State>(i_n);
 
         // Update states in edges and reconstruct state information
         for (unsigned int j=layers[i].size; j--; ) {
@@ -604,14 +604,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       layers(home.alloc<Layer>(n+2)+1) {
     c.update(home,share,p.c);
     // The states are not copied but reconstructed when needed (advise)
-    for (int i=n+1; i--; ) {
-      layers[i].n_states = p.layers[i].n_states;
-      layers[i].states = NULL;
-    }
+    layers[n].n_states = p.layers[n].n_states;
+    layers[n].states = NULL;
     // Copy layers
     for (int i=n; i--; ) {
       layers[i].x.update(home,share,p.layers[i].x);
       assert(layers[i].x.size() == p.layers[i].size);
+      layers[i].n_states = p.layers[i].n_states;
+      layers[i].states = NULL;
       layers[i].size = p.layers[i].size;
       layers[i].support = home.alloc<Support>(layers[i].size);
       for (unsigned int j=layers[i].size; j--; ) {
