@@ -189,19 +189,20 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>::initialize(Space& home,
                                                      const VarArgArray<Var>& x, 
                                                      const DFA& dfa) {
-    // Allocate memory
+
+    Region r(home);
+
+    // Allocate memory for layers
     layers = home.alloc<Layer>(n+2)+1;
-    for (int i=n+1; i--; ) {
-      layers[i].n_states = n_states;
-      layers[i].states = home.alloc<State>(n_states);
-    }
+    // Allocate temporary memory for all possible states
+    State* states = r.alloc<State>(n_states*(n+1)); 
+    for (int i=n+1; i--; )
+      layers[i].states = states + i*n_states;
+    // Allocate temporary memory for edges
+    Edge* edges = r.alloc<Edge>(dfa.max_degree());
 
     // Mark initial state as being reachable
     i_state(0,0).i_deg = 1;
-
-    // Temporary memory for edges
-    Region r(home);
-    Edge* edges = r.alloc<Edge>(dfa.max_degree());
 
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
@@ -264,7 +265,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
     }
 
-    // Compress states
+    // Copy and compress states
     {
       // State map for in states
       StateIdx* i_map = r.alloc<StateIdx>(n_states);
@@ -274,7 +275,47 @@ namespace Gecode { namespace Int { namespace Extensional {
       StateIdx i_n = 0;
       // Number of out states
       StateIdx o_n = 0;
-      // Initialize map for in states and compress states
+      // Initialize map for in states
+      for (StateIdx j=0; j<n_states; j++)
+        if (layers[0].states[j].i_deg > 0)
+          o_map[j]=o_n++;
+      layers[0].n_states = o_n;
+      layers[0].states = home.alloc<State>(o_n);
+
+      for (int i=0; i<n; i++) {
+        // Out states become in states
+        std::swap(i_map,o_map); i_n=o_n; o_n=0;
+        // Initialize map for in states
+        for (StateIdx j=0; j<n_states; j++)
+          if (layers[i+1].states[j].i_deg > 0)
+            o_map[j]=o_n++;
+        layers[i+1].n_states = o_n;
+        layers[i+1].states = home.alloc<State>(o_n);
+
+        // Update states in edges and reconstruct state information
+        for (unsigned int j=layers[i].size; j--; ) {
+          Support& s = layers[i].support[j];
+          for (Degree d=s.n_edges; d--; ) {
+            s.edges[d].i_state = i_map[s.edges[d].i_state];
+            s.edges[d].o_state = o_map[s.edges[d].o_state];
+            i_state(i,s.edges[d]).o_deg++;
+            o_state(i,s.edges[d]).i_deg++;
+          }
+        }
+      }
+    }
+
+    /*
+    {
+      // State map for in states
+      StateIdx* i_map = r.alloc<StateIdx>(n_states);
+      // State map for out states
+      StateIdx* o_map = r.alloc<StateIdx>(n_states);
+      // Number of in states
+      StateIdx i_n = 0;
+      // Number of out states
+      StateIdx o_n = 0;
+      // Initialize map for in states and co states
       for (StateIdx j=0; j<n_states; j++)
         if (layers[0].states[j].i_deg > 0) {
           layers[0].states[o_n]=layers[0].states[j];
@@ -302,6 +343,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
       }
     }
+    */
 
     // Schedule if subsumption is needed
     if (c.empty())
