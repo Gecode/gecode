@@ -264,15 +264,48 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
     }
 
+    // Compress states
+    {
+      // State map for in states
+      StateIdx* i_map = r.alloc<StateIdx>(n_states);
+      // State map for out states
+      StateIdx* o_map = r.alloc<StateIdx>(n_states);
+      // Number of in states
+      StateIdx i_n = 0;
+      // Number of out states
+      StateIdx o_n = 0;
+      // Initialize map for in states and compress states
+      for (StateIdx j=0; j<n_states; j++)
+        if (layers[0].states[j].i_deg > 0) {
+          layers[0].states[o_n]=layers[0].states[j];
+          o_map[j]=o_n++;
+        }
+      layers[0].n_states=o_n;
+
+      for (int i=0; i<n; i++) {
+        // Out states become in states
+        std::swap(i_map,o_map); i_n=o_n; o_n=0;
+        // Initialize map for in states and compress states
+        for (StateIdx j=0; j<n_states; j++)
+          if (layers[i+1].states[j].i_deg > 0) {
+            layers[i+1].states[o_n]=layers[i+1].states[j];
+            o_map[j]=o_n++;
+          }
+        layers[i+1].n_states=o_n;
+        // Update states in edges
+        for (unsigned int j=layers[i].size; j--; ) {
+          Support& s = layers[i].support[j];
+          for (Degree d=s.n_edges; d--; ) {
+            s.edges[d].i_state = i_map[s.edges[d].i_state];
+            s.edges[d].o_state = o_map[s.edges[d].o_state];
+          }
+        }
+      }
+    }
+
     // Schedule if subsumption is needed
     if (c.empty())
       View::schedule(home,*this,ME_INT_VAL);
-
-    // Check state invariant
-    for (int i=n+1; i--; )
-      for (StateIdx j=layers[i].n_states; j--; )
-        assert((layers[i].states[j].i_deg > 0) ==
-               (layers[i].states[j].o_deg > 0));
 
     return ES_OK;
   }
