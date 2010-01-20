@@ -156,6 +156,17 @@ namespace Gecode { namespace Int { namespace Extensional {
     _fst=std::min(_fst,i); _lst=std::max(_lst,i);
   }
   template<class View, class Val, class Degree, class StateIdx>
+  forceinline void
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::add
+  (const typename LayeredGraph<View,Val,Degree,StateIdx>::IndexRange& ir) {
+    _fst=std::min(_fst,ir._fst); _lst=std::max(_lst,ir._lst);
+  }
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline bool
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::empty(void) const {
+    return _fst>_lst;
+  }
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline int
   LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::fst(void) const {
     return _fst;
@@ -522,7 +533,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (i_mod && (i+1 < n))
         i_ch.add(i+1);
     }
-    i_ch.reset();
 
     // Backward pass
     for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
@@ -553,7 +563,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (o_mod && (i > 0))
         o_ch.add(i-1);
     }
-    o_ch.reset();
+
+    a_ch.add(i_ch); i_ch.reset();
+    a_ch.add(o_ch); o_ch.reset();
 
     // Check subsumption
     if (c.empty()) {
@@ -657,6 +669,17 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Update advisor indices
       for (Advisors<Index> as(c); as(); ++as)
         as.advisor().i -= k;
+      // Update all change information
+      if (!a_ch.empty()) {
+        int fst = std::max(a_ch.fst()-k,0);
+        int lst = a_ch.lst()-k;
+        a_ch.reset();
+        a_ch.add(fst); a_ch.add(lst);
+      }
+    }
+    // Compress states
+    if (!a_ch.empty()) {
+      a_ch.reset();
     }
     return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);
   }

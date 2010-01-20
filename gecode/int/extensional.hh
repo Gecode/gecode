@@ -139,6 +139,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       void reset(void);
       /// Add index \a i to range
       void add(int i);
+      /// Add index range \a ir to range
+      void add(const IndexRange& ir);
+      /// Test whether range is empty
+      bool empty(void) const;
       /// Return first position
       int fst(void) const;
       /// Return last position
@@ -156,6 +160,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     IndexRange i_ch;
     /// Index range with out-degree modifications
     IndexRange o_ch;
+    /// Index range for any change (for compression)
+    IndexRange a_ch;
     /// Return in state for layer \a i and state index \a is
     State& i_state(int i, StateIdx is);
     /// Return in state for layer \a i and in state of edge \a e
