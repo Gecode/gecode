@@ -199,10 +199,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Mark initial state as being reachable
     i_state(0,0).i_deg = 1;
 
-    // Mark final states as reachable as well
-    for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
-      o_state(n-1,s).o_deg = 1;
-
     // Temporary memory for edges
     Region r(home);
     Edge* edges = r.alloc<Edge>(dfa.max_degree());
@@ -239,6 +235,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_FAILED;
     }
 
+    // Mark final states as reachable only if they matter (stronger invariant)
+    for (int s=dfa.final_fst(); s<dfa.final_lst(); s++)
+      if (o_state(n-1,s).i_deg > 0)
+        o_state(n-1,s).o_deg = 1;
+
     // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
       unsigned int k=0;
@@ -262,9 +263,17 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (!layers[i].x.assigned())
         layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
     }
+
     // Schedule if subsumption is needed
     if (c.empty())
       View::schedule(home,*this,ME_INT_VAL);
+
+    // Check state invariant
+    for (int i=n+1; i--; )
+      for (StateIdx j=layers[i].n_states; j--; )
+        assert((layers[i].states[j].i_deg > 0) ==
+               (layers[i].states[j].o_deg > 0));
+
     return ES_OK;
   }
 
