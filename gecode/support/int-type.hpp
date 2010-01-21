@@ -39,6 +39,72 @@
 
 namespace Gecode { namespace Support {
 
+  /// Traits to map signed to unsigned integer types
+  template<class SignedType>
+  class SignedToUnsignedTraits {};
+
+  /// Traits to map unsigned to signed integer types
+  template<class UnsignedType>
+  class UnsignedToSignedTraits {};
+
+  /// Mapping for signed char
+  template<>
+  class SignedToUnsignedTraits<signed char> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned char type;
+  };
+  /// Mapping for signed short int
+  template<>
+  class SignedToUnsignedTraits<signed short int> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned short int type;
+  };
+  /// Mapping for signed int
+  template<>
+  class SignedToUnsignedTraits<signed int> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned int type;
+  };
+  /// Mapping for signed long int
+  template<>
+  class SignedToUnsignedTraits<signed long int> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned long int type;
+  };
+
+  /// Mapping for unsigned char
+  template<>
+  class UnsignedToSignedTraits<unsigned char> {
+  public:
+    /// Corresponding signed type
+    typedef signed char type;
+  };
+  /// Mapping for unsigned short int
+  template<>
+  class UnsignedToSignedTraits<unsigned short int> {
+  public:
+    /// Corresponding signed type
+    typedef signed short int type;
+  };
+  /// Mapping for unsigned int
+  template<>
+  class UnsignedToSignedTraits<unsigned int> {
+  public:
+    /// Corresponding signed type
+    typedef signed int type;
+  };
+  /// Mapping for unsigned long int
+  template<>
+  class UnsignedToSignedTraits<unsigned long int> {
+  public:
+    /// Corresponding signed type
+    typedef signed long int type;
+  };
+
   /// Description of integer types
   enum IntType {
     IT_CHAR = 0, ///< char integer type

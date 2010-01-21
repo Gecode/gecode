@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>::LayeredGraph(Home home,
                                                        const VarArgArray<Var>& x, 
                                                        const DFA& dfa)
-    : Propagator(home), c(home), n(x.size()), n_states(dfa.n_states()) {
+    : Propagator(home), c(home), n(x.size()) {
     assert(n > 0);
   }
 
@@ -202,6 +202,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                      const DFA& dfa) {
 
     Region r(home);
+    const int n_states = dfa.n_states();
 
     // Allocate memory for layers
     layers = home.alloc<Layer>(n+2)+1;
@@ -219,7 +220,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i=0; i<n; i++) {
       layers[i].x = x[i];
       layers[i].support = home.alloc<Support>(layers[i].x.size());
-      unsigned int j=0;
+      Size j=0;
       // Enter links leaving reachable states (indegree != 0)
       for (ViewValues<View> nx(layers[i].x); nx(); ++nx) {
         Degree n_edges=0;
@@ -254,8 +255,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
-      unsigned int k=0;
-      for (unsigned int j=0; j<layers[i].size; j++) {
+      Size k=0;
+      for (Size j=0; j<layers[i].size; j++) {
         Support& s = layers[i].support[j];
         for (Degree d=s.n_edges; d--; )
           if (o_state(i,s.edges[d]).o_deg == 0) {
@@ -304,7 +305,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].states = home.alloc<State>(i_n);
 
         // Update states in edges and reconstruct state information
-        for (unsigned int j=layers[i].size; j--; ) {
+        for (Size j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
           for (Degree d=s.n_edges; d--; ) {
             s.edges[d].i_state = i_map[s.edges[d].i_state];
@@ -372,7 +373,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       layers[n].states = home.alloc<State>(layers[n].n_states);
       for (int i=n; i--; ) {
         layers[i].states = home.alloc<State>(layers[i].n_states);
-        for (unsigned int j=layers[i].size; j--; ) {
+        for (Size j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
           for (Degree d=s.n_edges; d--; ) {
             i_state(i,s.edges[d]).o_deg++;
@@ -400,7 +401,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     if (View::modevent(d) == ME_INT_VAL) {
       Val n = static_cast<Val>(layers[i].x.val());
-      unsigned int j=0;
+      Size j=0;
       for (; layers[i].support[j].val < n; j++) {
         Support& s=layers[i].support[j];
         // Supported value not any longer in view
@@ -412,7 +413,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
       assert(layers[i].support[j].val == n);
       layers[i].support[0] = layers[i].support[j++];
-      unsigned int s=layers[i].size;
+      Size s=layers[i].size;
       layers[i].size = 1;
       for (; j<s; j++) {
         Support& s=layers[i].support[j];
@@ -423,9 +424,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
       }
     } else if (layers[i].x.any(d)) {
-      unsigned int j=0;
-      unsigned int k=0;
-      unsigned int s=layers[i].size;
+      Size j=0;
+      Size k=0;
+      Size s=layers[i].size;
       for (ViewRanges<View> rx(layers[i].x); rx() && (j<s);) {
         Support& s=layers[i].support[j];
         if (s.val < static_cast<Val>(rx.min())) {
@@ -456,12 +457,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
     } else {
       Val min = static_cast<Val>(layers[i].x.min(d));
-      unsigned int j=0;
+      Size j=0;
       // Skip values smaller than min (to keep)
       for (; layers[i].support[j].val < min; j++) {}
       Val max = static_cast<Val>(layers[i].x.max(d));
-      unsigned int k=j;
-      unsigned int s=layers[i].size;
+      Size k=j;
+      Size s=layers[i].size;
       // Remove pruned values
       for (; (j<s) && (layers[i].support[j].val <= max); j++) {
         Support& s=layers[i].support[j];
@@ -505,9 +506,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i=i_ch.fst(); i<=i_ch.lst(); i++) {
       bool i_mod = false;
       bool o_mod = false;
-      unsigned int j=0;
-      unsigned int k=0;
-      unsigned int s=layers[i].size;
+      Size j=0;
+      Size k=0;
+      Size s=layers[i].size;
       do {
         Support& s=layers[i].support[j];
         for (Degree d=s.n_edges; d--; )
@@ -537,9 +538,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Backward pass
     for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
       bool o_mod = false;
-      unsigned int j=0;
-      unsigned int k=0;
-      unsigned int s=layers[i].size;
+      Size j=0;
+      Size k=0;
+      Size s=layers[i].size;
       do {
         Support& s=layers[i].support[j];
         for (Degree d=s.n_edges; d--; )
@@ -612,8 +613,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Val,Degree,StateIdx>& p)
-    : Propagator(home,share,p), n(p.n), n_states(p.n_states),
-      layers(home.alloc<Layer>(n+2)+1) {
+    : Propagator(home,share,p), n(p.n), layers(home.alloc<Layer>(n+2)+1) {
     c.update(home,share,p.c);
     // The states are not copied but reconstructed when needed (advise)
     layers[n].n_states = p.layers[n].n_states;
@@ -626,7 +626,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       layers[i].states = NULL;
       layers[i].size = p.layers[i].size;
       layers[i].support = home.alloc<Support>(layers[i].size);
-      for (unsigned int j=layers[i].size; j--; ) {
+      for (Size j=layers[i].size; j--; ) {
         layers[i].support[j].val = p.layers[i].support[j].val;
         layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
         assert(layers[i].support[j].n_edges > 0);

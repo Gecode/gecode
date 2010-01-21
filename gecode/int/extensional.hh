@@ -89,12 +89,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       Degree n_edges; ///< Number of supporting edges
       Edge* edges; ///< Supporting edges in layered graph
     };
+    /// Type for support size
+    typedef typename Gecode::Support::SignedToUnsignedTraits<Val>::type Size;
     /// Layer for a view in the layered graph
     class Layer {
     public:
       View x; ///< Integer view
       StateIdx n_states; ///< Number of states used by outgoing edges
-      unsigned int size; ///< Number of supported values
+      Size size; ///< Number of supported values
       State* states; ///< States used by outgoing edges
       Support* support; ///< Supported values
     };
@@ -152,8 +154,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     Council<Index> c;
     /// Number of layers (and views)
     int n;
-    /// Number of states of DFA
-    const int n_states;
     /// The layers of the graph
     Layer* layers;
     /// Index range with in-degree modifications
