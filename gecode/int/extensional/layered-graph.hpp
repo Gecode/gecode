@@ -190,7 +190,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>::LayeredGraph(Home home,
                                                        const VarArgArray<Var>& x, 
                                                        const DFA& dfa)
-    : Propagator(home), c(home), n(x.size()) {
+    : Propagator(home), c(home), n(x.size()), 
+      max_states(static_cast<StateIdx>(dfa.n_states())) {
     assert(n > 0);
   }
 
@@ -202,14 +203,13 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                      const DFA& dfa) {
 
     Region r(home);
-    const int n_states = dfa.n_states();
 
     // Allocate memory for layers
     layers = home.alloc<Layer>(n+2)+1;
     // Allocate temporary memory for all possible states
-    State* states = r.alloc<State>(n_states*(n+1)); 
+    State* states = r.alloc<State>(max_states*(n+1)); 
     for (int i=n+1; i--; )
-      layers[i].states = states + i*n_states;
+      layers[i].states = states + i*max_states;
     // Allocate temporary memory for edges
     Edge* edges = r.alloc<Edge>(dfa.max_degree());
 
@@ -279,83 +279,62 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Copy and compress states
     {
-      // State map for in states
-      StateIdx* i_map = r.alloc<StateIdx>(n_states);
-      // State map for out states
-      StateIdx* o_map = r.alloc<StateIdx>(n_states);
-      // Number of in states
+      // State map for in-states
+      StateIdx* i_map = r.alloc<StateIdx>(max_states);
+      // State map for out-states
+      StateIdx* o_map = r.alloc<StateIdx>(max_states);
+      // Number of in-states
       StateIdx i_n = 0;
-      // Number of out states
+      // Number of out-states
       StateIdx o_n = 0;
-      // Initialize map for in states
-      for (StateIdx j=n_states; j--; )
+
+      // Initialize map for in-states
+      for (StateIdx j=max_states; j--; )
         if (layers[n].states[j].i_deg > 0)
           i_map[j]=i_n++;
       layers[n].n_states = i_n;
-      layers[n].states = home.alloc<State>(i_n);
+      
+      // Total number of states
+      n_states = i_n;
+      // New maximal number of states
+      StateIdx max_s = i_n;
 
       for (int i=n; i--; ) {
-        // In states become out states
+        // In-states become out-states
         std::swap(o_map,i_map); o_n=i_n; i_n=0;
-        // Initialize map for in states
-        for (StateIdx j=n_states; j--; )
+        // Initialize map for in-states
+        for (StateIdx j=max_states; j--; )
           if (layers[i].states[j].i_deg > 0)
             i_map[j]=i_n++;
         layers[i].n_states = i_n;
-        layers[i].states = home.alloc<State>(i_n);
+        n_states += i_n;
+        max_s = std::max(max_s,i_n);
 
-        // Update states in edges and reconstruct state information
+        // Update states in edges
         for (Size j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
           for (Degree d=s.n_edges; d--; ) {
             s.edges[d].i_state = i_map[s.edges[d].i_state];
             s.edges[d].o_state = o_map[s.edges[d].o_state];
-            i_state(i,s.edges[d]).o_deg++;
-            o_state(i,s.edges[d]).i_deg++;
           }
         }
       }
-    }
 
-    /*
-    {
-      // State map for in states
-      StateIdx* i_map = r.alloc<StateIdx>(n_states);
-      // State map for out states
-      StateIdx* o_map = r.alloc<StateIdx>(n_states);
-      // Number of in states
-      StateIdx i_n = 0;
-      // Number of out states
-      StateIdx o_n = 0;
-      // Initialize map for in states and co states
-      for (StateIdx j=0; j<n_states; j++)
-        if (layers[0].states[j].i_deg > 0) {
-          layers[0].states[o_n]=layers[0].states[j];
-          o_map[j]=o_n++;
-        }
-      layers[0].n_states=o_n;
-
-      for (int i=0; i<n; i++) {
-        // Out states become in states
-        std::swap(i_map,o_map); i_n=o_n; o_n=0;
-        // Initialize map for in states and compress states
-        for (StateIdx j=0; j<n_states; j++)
-          if (layers[i+1].states[j].i_deg > 0) {
-            layers[i+1].states[o_n]=layers[i+1].states[j];
-            o_map[j]=o_n++;
-          }
-        layers[i+1].n_states=o_n;
-        // Update states in edges
-        for (unsigned int j=layers[i].size; j--; ) {
-          Support& s = layers[i].support[j];
-          for (Degree d=s.n_edges; d--; ) {
-            s.edges[d].i_state = i_map[s.edges[d].i_state];
-            s.edges[d].o_state = o_map[s.edges[d].o_state];
-          }
-        }
+      // Allocate and copy states
+      State* a_states = home.alloc<State>(n_states);
+      for (int i=n+1; i--; ) {
+        StateIdx k=0;
+        for (StateIdx j=max_states; j--; )
+          if (layers[i].states[j].i_deg > 0)
+            a_states[k++] = layers[i].states[j];
+        assert(k == layers[i].n_states);
+        layers[i].states = a_states;
+        a_states += layers[i].n_states;
       }
+      
+      // Update maximal number of states
+      max_states = max_s;
     }
-    */
 
     // Schedule if subsumption is needed
     if (c.empty())
@@ -381,6 +360,16 @@ namespace Gecode { namespace Int { namespace Extensional {
           }
         }
       }
+      /*
+      // Fix i_deg for first layer
+      for (StateIdx j=layers[0].n_states; j--; )
+        if (layers[0].states[j].o_deg > 0)
+          layers[0].states[j].i_deg = 1;
+      // Fix o_deg for last layer
+      for (StateIdx j=layers[n].n_states; j--; )
+        if (layers[n].states[j].i_deg > 0)
+          layers[n].states[j].o_deg = 1;
+      */
     }
     
     Index& a = static_cast<Index&>(_a);
@@ -613,7 +602,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Val,Degree,StateIdx>& p)
-    : Propagator(home,share,p), n(p.n), layers(home.alloc<Layer>(n+2)+1) {
+    : Propagator(home,share,p), 
+      n(p.n), layers(home.alloc<Layer>(n+2)+1),
+      max_states(p.max_states), n_states(p.n_states) {
     c.update(home,share,p.c);
     // The states are not copied but reconstructed when needed (advise)
     layers[n].n_states = p.layers[n].n_states;
@@ -649,6 +640,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   Actor*
   LayeredGraph<View,Val,Degree,StateIdx>::copy(Space& home, bool share) {
     // Eliminate an assigned prefix
+    
     if (layers[0].size == 1) {
       /*
        * The state information is always available: either the propagator
@@ -671,14 +663,77 @@ namespace Gecode { namespace Int { namespace Extensional {
         as.advisor().i -= k;
       // Update all change information
       if (!a_ch.empty()) {
-        int fst = std::max(a_ch.fst()-k,0);
-        int lst = a_ch.lst()-k;
+        int f = std::max(a_ch.fst()-k,0);
+        int l = a_ch.lst()-k;
         a_ch.reset();
-        a_ch.add(fst); a_ch.add(lst);
+        a_ch.add(f); a_ch.add(l);
       }
     }
+
     // Compress states
-    if (!a_ch.empty()) {
+    if (!a_ch.empty() && (layers[0].states != NULL)) {
+      int f = a_ch.fst();
+      int l = a_ch.lst();
+      assert(l <= n);
+      Region r(home);
+      // State map for in-states
+      StateIdx* i_map = r.alloc<StateIdx>(max_states);
+      // State map for out-states
+      StateIdx* o_map = r.alloc<StateIdx>(max_states);
+      // Number of in-states
+      StateIdx i_n = 0;
+      // Number of out-states
+      StateIdx o_n = 0;
+      // Initialize map for in-states and compress
+      for (StateIdx j=0; j<layers[l].n_states; j++)
+        if ((layers[l].states[j].i_deg > 0) || 
+            (layers[l].states[j].o_deg > 0)) {
+          layers[l].states[i_n]=layers[l].states[j];
+          i_map[j]=i_n++;
+        }
+      layers[l].n_states = i_n;
+      assert(i_n > 0);
+
+      // Update in-states in edges for last layer, if any
+      if (l < n)
+        for (Size j=layers[l].size; j--; ) {
+          Support& s = layers[l].support[j];
+          for (Degree d=s.n_edges; d--; )
+            s.edges[d].i_state = i_map[s.edges[d].i_state];
+        }
+
+      // Update all changed layers
+      for (int i=l-1; i>=f; i--) {
+        // In-states become out-states
+        std::swap(o_map,i_map); o_n=i_n; i_n=0;
+        // Initialize map for in-states and compress
+        for (StateIdx j=0; j<layers[i].n_states; j++)
+          if ((layers[i].states[j].i_deg > 0) ||
+              (layers[i].states[j].o_deg > 0)) {
+            layers[i].states[i_n]=layers[i].states[j];
+            i_map[j]=i_n++;
+          }
+        layers[i].n_states = i_n;
+        assert(i_n > 0);
+
+        // Update states in edges
+        for (Size j=layers[i].size; j--; ) {
+          Support& s = layers[i].support[j];
+          for (Degree d=s.n_edges; d--; ) {
+            s.edges[d].i_state = i_map[s.edges[d].i_state];
+            s.edges[d].o_state = o_map[s.edges[d].o_state];
+          }
+        }
+      }
+
+      // Update out-states in edges for previous layer, if any
+      if (f > 0)
+        for (Size j=layers[f-1].size; j--; ) {
+          Support& s = layers[f-1].support[j];
+          for (Degree d=s.n_edges; d--; )
+            s.edges[d].o_state = i_map[s.edges[d].o_state];
+        }
+
       a_ch.reset();
     }
     return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);

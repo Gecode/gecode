@@ -156,6 +156,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     int n;
     /// The layers of the graph
     Layer* layers;
+    /// Maximal number of states per layer
+    StateIdx max_states;
+    /// Total nmber of states
+    int n_states;
     /// Index range with in-degree modifications
     IndexRange i_ch;
     /// Index range with out-degree modifications
