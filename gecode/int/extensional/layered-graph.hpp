@@ -253,10 +253,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_FAILED;
     }
 
-    // Mark final states as reachable only if they matter (stronger invariant)
+    // Mark final states as reachabl
     for (int s=dfa.final_fst(); s<dfa.final_lst(); s++)
-      if (o_state(n-1,s).i_deg > 0)
-        o_state(n-1,s).o_deg = 1;
+      o_state(n-1,s).o_deg = 1;
 
     // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
@@ -315,8 +314,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         std::swap(o_map,i_map); o_n=i_n; i_n=0;
         // Initialize map for in-states
         for (StateIdx j=max_states; j--; )
-          if (layers[i].states[j].i_deg > 0)
+          if (layers[i].states[j].o_deg != 0) {
             i_map[j]=i_n++;
+          } else {
+            assert(layers[i].states[j].i_deg == 0);
+          }
         layers[i].n_states = i_n;
         n_states += i_n;
         max_s = std::max(max_s,i_n);
@@ -376,14 +378,6 @@ namespace Gecode { namespace Int { namespace Extensional {
           }
         }
       }
-      // Fix i_deg for first layer
-      for (StateIdx j=layers[0].n_states; j--; )
-        if (layers[0].states[j].o_deg > 0)
-          layers[0].states[j].i_deg = 1;
-      // Fix o_deg for last layer
-      for (StateIdx j=layers[n].n_states; j--; )
-        if (layers[n].states[j].i_deg > 0)
-          layers[n].states[j].o_deg = 1;
     }
     
     Index& a = static_cast<Index&>(_a);
@@ -699,14 +693,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Number of out-states
       StateIdx o_n = 0;
       // Initialize map for in-states and compress
-      for (StateIdx j=0; j<layers[l].n_states; j++) {
-        assert((layers[l].states[j].i_deg > 0) ==
-               (layers[l].states[j].o_deg > 0));
-        if (layers[l].states[j].i_deg > 0) {
+      for (StateIdx j=0; j<layers[l].n_states; j++)
+        // For the last layer, o_deg can be zero even if i_deg is not!
+        if (layers[l].states[j].i_deg != 0) {
           layers[l].states[i_n]=layers[l].states[j];
           i_map[j]=i_n++;
+        } else {
+          assert(layers[l].states[j].o_deg == 0);
         }
-      }
       n_states -= layers[l].n_states - i_n;
       layers[l].n_states = i_n;
       assert(i_n > 0);
@@ -724,14 +718,14 @@ namespace Gecode { namespace Int { namespace Extensional {
         // In-states become out-states
         std::swap(o_map,i_map); o_n=i_n; i_n=0;
         // Initialize map for in-states and compress
-        for (StateIdx j=0; j<layers[i].n_states; j++) {
-          assert((layers[i].states[j].i_deg > 0) ==
-                 (layers[i].states[j].o_deg > 0));
-          if (layers[i].states[j].i_deg > 0) {
+        for (StateIdx j=0; j<layers[i].n_states; j++)
+          // For the first layer, i_deg can be zero even if o_deg is not!
+          if (layers[i].states[j].o_deg != 0) {
             layers[i].states[i_n]=layers[i].states[j];
             i_map[j]=i_n++;
+          } else {
+            assert(layers[i].states[j].i_deg == 0);
           }
-        }
         n_states -= layers[i].n_states - i_n;
         layers[i].n_states = i_n;
         assert(i_n > 0);
