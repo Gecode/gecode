@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       Degree i_deg; ///< The in-degree (number of incoming edges)
       Degree o_deg; ///< The out-degree (number of outgoing edges)
       /// Initialize with zeroes
-      State(void);
+      void init(void);
     };
     ///
     class Edge {

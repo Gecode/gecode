@@ -44,9 +44,10 @@ namespace Gecode { namespace Int { namespace Extensional {
    * States
    */
   template<class View, class Val, class Degree, class StateIdx>
-  forceinline
-  LayeredGraph<View,Val,Degree,StateIdx>::State::State(void) 
-    : i_deg(0), o_deg(0) {}
+  forceinline void
+  LayeredGraph<View,Val,Degree,StateIdx>::State::init(void) {
+    i_deg=o_deg=0; 
+  }
 
   
   template<class View, class Val, class Degree, class StateIdx>
@@ -206,10 +207,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Allocate memory for layers
     layers = home.alloc<Layer>(n+2)+1;
+
     // Allocate temporary memory for all possible states
-    State* states = r.alloc<State>(max_states*(n+1)); 
+    State* states = r.alloc<State>(max_states*(n+1));
+    for (int i=max_states*(n+1); i--; )
+      states[i].init();
     for (int i=n+1; i--; )
       layers[i].states = states + i*max_states;
+
     // Allocate temporary memory for edges
     Edge* edges = r.alloc<Edge>(dfa.max_degree());
 
@@ -284,14 +289,20 @@ namespace Gecode { namespace Int { namespace Extensional {
       // State map for out-states
       StateIdx* o_map = r.alloc<StateIdx>(max_states);
       // Number of in-states
-      StateIdx i_n = 0;
+      StateIdx i_n = 1;
       // Number of out-states
       StateIdx o_n = 0;
 
-      // Initialize map for in-states
-      for (StateIdx j=max_states; j--; )
-        if (layers[n].states[j].i_deg > 0)
-          i_map[j]=i_n++;
+      // Initialize map for in-states (special for last layer)
+      // Degree for single final state
+      Degree d = 0;
+      for (StateIdx j=max_states; j--; ) {
+        d += layers[n].states[j].i_deg;
+        layers[n].states[j].init();
+        i_map[j] = 0;
+      }
+      layers[n].states[0].i_deg = d;
+      layers[n].states[0].o_deg = 1;
       layers[n].n_states = i_n;
       
       // Total number of states
@@ -350,6 +361,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Check whether state information has already been created
     if (layers[0].states == NULL) {
       State* states = home.alloc<State>(n_states);
+      for (int i=n_states; i--; )
+        states[i].init();
       layers[n].states = states;
       states += layers[n].n_states;
       for (int i=n; i--; ) {
