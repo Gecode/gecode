@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     Region r(home);
 
     // Allocate memory for layers
-    layers = home.alloc<Layer>(n+2)+1;
+    layers = home.alloc<Layer>(n+1);
 
     // Allocate temporary memory for all possible states
     State* states = r.alloc<State>(max_states*(n+1));
@@ -617,7 +617,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Val,Degree,StateIdx>& p)
     : Propagator(home,share,p), 
-      n(p.n), layers(home.alloc<Layer>(n+2)+1),
+      n(p.n), layers(home.alloc<Layer>(n+1)),
       max_states(p.max_states), n_states(p.n_states) {
     c.update(home,share,p.c);
     // Do not allocate states, postpone to advise!
