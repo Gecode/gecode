@@ -338,8 +338,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (int i=n+1; i--; ) {
         StateIdx k=0;
         for (StateIdx j=max_states; j--; )
-          if (layers[i].states[j].i_deg > 0)
+          if (layers[i].states[j].o_deg != 0) {
             a_states[k++] = layers[i].states[j];
+          } else {
+            assert(layers[i].states[j].i_deg == 0);
+          }
         assert(k == layers[i].n_states);
         layers[i].states = a_states;
         a_states += layers[i].n_states;
