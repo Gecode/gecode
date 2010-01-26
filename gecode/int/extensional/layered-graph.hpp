@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   LayeredGraph<View,Val,Degree,StateIdx>::Index::Index(Space& home, Propagator& p,
                                                        Council<Index>& c,
-                                                       StateIdx i0)
+                                                       int i0)
     : Advisor(home,p,c), i(i0) {}
 
   template<class View, class Val, class Degree, class StateIdx>
@@ -225,7 +225,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i=0; i<n; i++) {
       layers[i].x = x[i];
       layers[i].support = home.alloc<Support>(layers[i].x.size());
-      Size j=0;
+      ValSize j=0;
       // Enter links leaving reachable states (indegree != 0)
       for (ViewValues<View> nx(layers[i].x); nx(); ++nx) {
         Degree n_edges=0;
@@ -253,14 +253,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_FAILED;
     }
 
-    // Mark final states as reachabl
+    // Mark final states as reachable
     for (int s=dfa.final_fst(); s<dfa.final_lst(); s++)
-      o_state(n-1,s).o_deg = 1;
+      if (o_state(n-1,s).i_deg != 0)
+        o_state(n-1,s).o_deg = 1;
 
     // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
-      Size k=0;
-      for (Size j=0; j<layers[i].size; j++) {
+      ValSize k=0;
+      for (ValSize j=0; j<layers[i].size; j++) {
         Support& s = layers[i].support[j];
         for (Degree d=s.n_edges; d--; )
           if (o_state(i,s.edges[d]).o_deg == 0) {
@@ -288,20 +289,35 @@ namespace Gecode { namespace Int { namespace Extensional {
       // State map for out-states
       StateIdx* o_map = r.alloc<StateIdx>(max_states);
       // Number of in-states
-      StateIdx i_n = 1;
+      StateIdx i_n = 0;
       // Number of out-states
       StateIdx o_n = 0;
 
       // Initialize map for in-states (special for last layer)
       // Degree for single final state
-      Degree d = 0;
-      for (StateIdx j=max_states; j--; ) {
-        d += layers[n].states[j].i_deg;
-        layers[n].states[j].init();
-        i_map[j] = 0;
+      unsigned int d = 0;
+      for (StateIdx j=max_states; j--; )
+        d += static_cast<unsigned int>(layers[n].states[j].i_deg);
+      // Check whether all final states can be joined to a single state
+      if (d > 
+          static_cast<unsigned int>
+          (Gecode::Support::IntTypeTraits<Degree>::max)) {
+        // Initialize map for in-states
+        for (StateIdx j=max_states; j--; )
+          if (layers[n].states[j].o_deg != 0) {
+            i_map[j]=i_n++;
+          } else {
+            assert(layers[n].states[j].i_deg == 0);
+          }
+      } else {
+        i_n = 1;
+        for (StateIdx j=max_states; j--; ) {
+          layers[n].states[j].init();
+          i_map[j] = 0;
+        }
+        layers[n].states[0].i_deg = static_cast<Degree>(d);
+        layers[n].states[0].o_deg = 1;
       }
-      layers[n].states[0].i_deg = d;
-      layers[n].states[0].o_deg = 1;
       layers[n].n_states = i_n;
       
       // Total number of states
@@ -324,7 +340,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         max_s = std::max(max_s,i_n);
 
         // Update states in edges
-        for (Size j=layers[i].size; j--; ) {
+        for (ValSize j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
           for (Degree d=s.n_edges; d--; ) {
             s.edges[d].i_state = i_map[s.edges[d].i_state];
@@ -373,7 +389,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (int i=n; i--; ) {
         layers[i].states = states;
         states += layers[i].n_states;
-        for (Size j=layers[i].size; j--; ) {
+        for (ValSize j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
           for (Degree d=s.n_edges; d--; ) {
             i_state(i,s.edges[d]).o_deg++;
@@ -401,7 +417,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     if (View::modevent(d) == ME_INT_VAL) {
       Val n = static_cast<Val>(layers[i].x.val());
-      Size j=0;
+      ValSize j=0;
       for (; layers[i].support[j].val < n; j++) {
         Support& s=layers[i].support[j];
         // Supported value not any longer in view
@@ -413,7 +429,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
       assert(layers[i].support[j].val == n);
       layers[i].support[0] = layers[i].support[j++];
-      Size s=layers[i].size;
+      ValSize s=layers[i].size;
       layers[i].size = 1;
       for (; j<s; j++) {
         Support& s=layers[i].support[j];
@@ -424,9 +440,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
       }
     } else if (layers[i].x.any(d)) {
-      Size j=0;
-      Size k=0;
-      Size s=layers[i].size;
+      ValSize j=0;
+      ValSize k=0;
+      ValSize s=layers[i].size;
       for (ViewRanges<View> rx(layers[i].x); rx() && (j<s);) {
         Support& s=layers[i].support[j];
         if (s.val < static_cast<Val>(rx.min())) {
@@ -457,12 +473,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
     } else {
       Val min = static_cast<Val>(layers[i].x.min(d));
-      Size j=0;
+      ValSize j=0;
       // Skip values smaller than min (to keep)
       for (; layers[i].support[j].val < min; j++) {}
       Val max = static_cast<Val>(layers[i].x.max(d));
-      Size k=j;
-      Size s=layers[i].size;
+      ValSize k=j;
+      ValSize s=layers[i].size;
       // Remove pruned values
       for (; (j<s) && (layers[i].support[j].val <= max); j++) {
         Support& s=layers[i].support[j];
@@ -506,9 +522,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i=i_ch.fst(); i<=i_ch.lst(); i++) {
       bool i_mod = false;
       bool o_mod = false;
-      Size j=0;
-      Size k=0;
-      Size s=layers[i].size;
+      ValSize j=0;
+      ValSize k=0;
+      ValSize s=layers[i].size;
       do {
         Support& s=layers[i].support[j];
         for (Degree d=s.n_edges; d--; )
@@ -538,9 +554,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Backward pass
     for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
       bool o_mod = false;
-      Size j=0;
-      Size k=0;
-      Size s=layers[i].size;
+      ValSize j=0;
+      ValSize k=0;
+      ValSize s=layers[i].size;
       do {
         Support& s=layers[i].support[j];
         for (Degree d=s.n_edges; d--; )
@@ -626,7 +642,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       assert(layers[i].x.size() == p.layers[i].size);
       layers[i].size = p.layers[i].size;
       layers[i].support = home.alloc<Support>(layers[i].size);
-      for (Size j=layers[i].size; j--; ) {
+      for (ValSize j=layers[i].size; j--; ) {
         layers[i].support[j].val = p.layers[i].support[j].val;
         layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
         assert(layers[i].support[j].n_edges > 0);
@@ -661,7 +677,7 @@ namespace Gecode { namespace Int { namespace Extensional {
        * information).
        */
       // Skip all layers corresponding to assigned views
-      StateIdx k = 1;
+      int k = 1;
       while (layers[k].size == 1)
         k++;
       // There is only a single edge
@@ -710,7 +726,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       // Update in-states in edges for last layer, if any
       if (l < n)
-        for (Size j=layers[l].size; j--; ) {
+        for (ValSize j=layers[l].size; j--; ) {
           Support& s = layers[l].support[j];
           for (Degree d=s.n_edges; d--; )
             s.edges[d].i_state = i_map[s.edges[d].i_state];
@@ -734,7 +750,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         assert(i_n > 0);
 
         // Update states in edges
-        for (Size j=layers[i].size; j--; ) {
+        for (ValSize j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
           for (Degree d=s.n_edges; d--; ) {
             s.edges[d].i_state = i_map[s.edges[d].i_state];
@@ -745,7 +761,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       // Update out-states in edges for previous layer, if any
       if (f > 0)
-        for (Size j=layers[f-1].size; j--; ) {
+        for (ValSize j=layers[f-1].size; j--; ) {
           Support& s = layers[f-1].support[j];
           for (Degree d=s.n_edges; d--; )
             s.edges[d].o_state = i_map[s.edges[d].o_state];
@@ -761,7 +777,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   post_lgp(Home home, const VarArgArray<Var>& x, const DFA& dfa) {
     Gecode::Support::IntType t_state_idx =
-      Gecode::Support::s_type(dfa.n_states());
+      Gecode::Support::u_type(static_cast<unsigned int>(dfa.n_states()));
     Gecode::Support::IntType t_degree =
       Gecode::Support::u_type(dfa.max_degree());
     Gecode::Support::IntType t_val = 
@@ -775,15 +791,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned char,signed char>
+            <typename VarViewTraits<Var>::View,short int,unsigned char,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned short int,signed char>
+            <typename VarViewTraits<Var>::View,short int,unsigned short int,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned int,signed char>
+            <typename VarViewTraits<Var>::View,short int,unsigned int,unsigned char>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -792,15 +808,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned char,short int>
+            <typename VarViewTraits<Var>::View,short int,unsigned char,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned short int,short int>
+            <typename VarViewTraits<Var>::View,short int,unsigned short int,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned int,short int>
+            <typename VarViewTraits<Var>::View,short int,unsigned int,unsigned short int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -809,15 +825,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned char,int>
+            <typename VarViewTraits<Var>::View,short int,unsigned char,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned short int,int>
+            <typename VarViewTraits<Var>::View,short int,unsigned short int,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned int,int>
+            <typename VarViewTraits<Var>::View,short int,unsigned int,unsigned int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -831,15 +847,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned char,signed char>
+            <typename VarViewTraits<Var>::View,int,unsigned char,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned short int,signed char>
+            <typename VarViewTraits<Var>::View,int,unsigned short int,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned int,signed char>
+            <typename VarViewTraits<Var>::View,int,unsigned int,unsigned char>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -848,15 +864,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned char,short int>
+            <typename VarViewTraits<Var>::View,int,unsigned char,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned short int,short int>
+            <typename VarViewTraits<Var>::View,int,unsigned short int,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned int,short int>
+            <typename VarViewTraits<Var>::View,int,unsigned int,unsigned short int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -865,15 +881,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned char,int>
+            <typename VarViewTraits<Var>::View,int,unsigned char,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned short int,int>
+            <typename VarViewTraits<Var>::View,int,unsigned short int,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned int,int>
+            <typename VarViewTraits<Var>::View,int,unsigned int,unsigned int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }

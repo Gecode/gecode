@@ -90,13 +90,13 @@ namespace Gecode { namespace Int { namespace Extensional {
       Edge* edges; ///< Supporting edges in layered graph
     };
     /// Type for support size
-    typedef typename Gecode::Support::SignedToUnsignedTraits<Val>::type Size;
+    typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
     /// Layer for a view in the layered graph
     class Layer {
     public:
       View x; ///< Integer view
       StateIdx n_states; ///< Number of states used by outgoing edges
-      Size size; ///< Number of supported values
+      ValSize size; ///< Number of supported values
       State* states; ///< States used by outgoing edges
       Support* support; ///< Supported values
     };
@@ -123,9 +123,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     class Index : public Advisor {
     public:
       /// The position of the view in the view array
-      StateIdx i;
+      int i;
       /// Create index advisor
-      Index(Space& home, Propagator& p, Council<Index>& c, StateIdx i);
+      Index(Space& home, Propagator& p, Council<Index>& c, int i);
       /// Clone index advisor \a a
       Index(Space& home, bool share, Index& a);
     };

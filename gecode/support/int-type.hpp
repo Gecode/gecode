@@ -39,72 +39,6 @@
 
 namespace Gecode { namespace Support {
 
-  /// Traits to map signed to unsigned integer types
-  template<class SignedType>
-  class SignedToUnsignedTraits {};
-
-  /// Traits to map unsigned to signed integer types
-  template<class UnsignedType>
-  class UnsignedToSignedTraits {};
-
-  /// Mapping for signed char
-  template<>
-  class SignedToUnsignedTraits<signed char> {
-  public:
-    /// Corresponding unsigned type
-    typedef unsigned char type;
-  };
-  /// Mapping for signed short int
-  template<>
-  class SignedToUnsignedTraits<signed short int> {
-  public:
-    /// Corresponding unsigned type
-    typedef unsigned short int type;
-  };
-  /// Mapping for signed int
-  template<>
-  class SignedToUnsignedTraits<signed int> {
-  public:
-    /// Corresponding unsigned type
-    typedef unsigned int type;
-  };
-  /// Mapping for signed long int
-  template<>
-  class SignedToUnsignedTraits<signed long int> {
-  public:
-    /// Corresponding unsigned type
-    typedef unsigned long int type;
-  };
-
-  /// Mapping for unsigned char
-  template<>
-  class UnsignedToSignedTraits<unsigned char> {
-  public:
-    /// Corresponding signed type
-    typedef signed char type;
-  };
-  /// Mapping for unsigned short int
-  template<>
-  class UnsignedToSignedTraits<unsigned short int> {
-  public:
-    /// Corresponding signed type
-    typedef signed short int type;
-  };
-  /// Mapping for unsigned int
-  template<>
-  class UnsignedToSignedTraits<unsigned int> {
-  public:
-    /// Corresponding signed type
-    typedef signed int type;
-  };
-  /// Mapping for unsigned long int
-  template<>
-  class UnsignedToSignedTraits<unsigned long int> {
-  public:
-    /// Corresponding signed type
-    typedef signed long int type;
-  };
-
   /// Description of integer types
   enum IntType {
     IT_CHAR = 0, ///< char integer type
@@ -116,6 +50,102 @@ namespace Gecode { namespace Support {
   IntType u_type(unsigned int n);
   /// Return type required to represent \a n
   IntType s_type(signed int n);
+
+  /// Traits to for information about integer types
+  template<class IntType>
+  class IntTypeTraits {};
+
+  /// Traits for signed char
+  template<>
+  class IntTypeTraits<signed char> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned char utype;
+    /// Corresponding signed type
+    typedef signed char stype;
+    /// Minimal value
+    static const signed char min = SCHAR_MIN;
+    /// Maximal value
+    static const signed char max = SCHAR_MAX;
+    /// Description of type
+    static const IntType description = IT_CHAR;
+  };
+  /// Traits for unsigned char
+  template<>
+  class IntTypeTraits<unsigned char> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned char utype;
+    /// Corresponding signed type
+    typedef signed char stype;
+    /// Minimal value
+    static const unsigned char min = 0;
+    /// Maximal value
+    static const unsigned char max = UCHAR_MAX;
+    /// Description of type
+    static const IntType description = IT_CHAR;
+  };
+  /// Traits for signed short int
+  template<>
+  class IntTypeTraits<signed short int> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned short int utype;
+    /// Corresponding signed type
+    typedef signed short int stype;
+    /// Minimal value
+    static const signed short int min = SHRT_MIN;
+    /// Maximal value
+    static const signed short int max = SHRT_MAX;
+    /// Description of type
+    static const IntType description = IT_SHRT;
+  };
+  /// Traits for unsigned short int
+  template<>
+  class IntTypeTraits<unsigned short int> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned short int utype;
+    /// Corresponding signed type
+    typedef signed short int stype;
+    /// Minimal value
+    static const unsigned short int min = 0;
+    /// Maximal value
+    static const unsigned short int max = USHRT_MAX;
+    /// Description of type
+    static const IntType description = IT_SHRT;
+  };
+  /// Traits for signed integer
+  template<>
+  class IntTypeTraits<signed int> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned int utype;
+    /// Corresponding signed type
+    typedef signed int stype;
+    /// Minimal value
+    static const signed int min = INT_MIN;
+    /// Maximal value
+    static const signed int max = INT_MAX;
+    /// Description of type
+    static const IntType description = IT_INT;
+  };
+  /// Traits for unsigned integer
+  template<>
+  class IntTypeTraits<unsigned int> {
+  public:
+    /// Corresponding unsigned type
+    typedef unsigned int utype;
+    /// Corresponding signed type
+    typedef signed int stype;
+    /// Minimal value
+    static const unsigned int min = 0;
+    /// Maximal value
+    static const unsigned int max = UINT_MAX;
+    /// Description of type
+    static const IntType description = IT_INT;
+  };
+
 
   forceinline IntType
   u_type(unsigned int n) {
