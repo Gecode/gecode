@@ -76,7 +76,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Initialize with zeroes
       void init(void);
     };
-    ///
+    /// Whether state indices are of character type
+    static const bool si_char =
+    (Gecode::Support::IntTypeTraits<StateIdx>::description ==
+     Gecode::Support::IT_CHAR);
+    /// Edge defined by in-state and out-state
     class Edge {
     public:
       StateIdx i_state; ///< Number of in-state
@@ -183,7 +187,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Decrement in degree for out state of edge \a e for layer \a i
     bool o_dec(int i, const Edge& e);
     /// Perform consistency check on data structures
-    void audit(bool strict = false);
+    void audit(bool strict=false);
     /// Initialize layered graph
     template<class Var>
     ExecStatus initialize(Space& home, 

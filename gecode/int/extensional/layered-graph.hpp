@@ -690,6 +690,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Do not allocate states, postpone to advise!
     layers[n].n_states = p.layers[n].n_states;
     layers[n].states = NULL;
+    // Allocate memory for edges
+    Edge* edges = home.alloc<Edge>(n_edges);
     // Copy layers
     for (int i=n; i--; ) {
       layers[i].x.update(home,share,p.layers[i].x);
@@ -700,10 +702,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].support[j].val = p.layers[i].support[j].val;
         layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
         assert(layers[i].support[j].n_edges > 0);
-        layers[i].support[j].edges = 
-          home.alloc<Edge>(layers[i].support[j].n_edges);
+        layers[i].support[j].edges = edges;
         for (Degree d=layers[i].support[j].n_edges; d--; )
-          layers[i].support[j].edges[d] = p.layers[i].support[j].edges[d];
+          *(edges++) = p.layers[i].support[j].edges[d];
       }
       layers[i].n_states = p.layers[i].n_states;
       layers[i].states = NULL;
