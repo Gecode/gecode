@@ -39,20 +39,6 @@ namespace Gecode { namespace Int {
 
   template<class View, class A>
   forceinline void
-  SupportValues<View,A>::set(unsigned int i) {
-    unsigned int p = i / bpui;
-    bits[p] |= 1 << (i-p*bpui);
-  }
-
-  template<class View, class A>
-  forceinline bool
-  SupportValues<View,A>::bit(unsigned int i) const {
-    unsigned int p = i / bpui;
-    return (bits[p] & (1 << (i-p*bpui))) != 0;
-  }
-
-  template<class View, class A>
-  forceinline void
   SupportValues<View,A>::reset(void) {
     rp = rp_fst; v = rp->min;
     max = rp->min + static_cast<int>((rp+1)->pos - rp->pos) - 1;
@@ -61,10 +47,7 @@ namespace Gecode { namespace Int {
   template<class View, class A>
   inline
   SupportValues<View,A>::SupportValues(A& a0, View x0)
-    : a(a0), x(x0), sz((x.size() / bpui) + 1),
-      bits(a.template alloc<unsigned int>(sz)) {
-    for (unsigned int i = (x.size() / bpui) + 1; i--; )
-      bits[i] = 0;
+    : a(a0), x(x0), bs(a,x.size(),true) {
     unsigned int n = 0;
     for (ViewRanges<View> r(x); r(); ++r)
       n++;
@@ -82,9 +65,9 @@ namespace Gecode { namespace Int {
   }
 
   template<class View, class A>
-  inline
+  forceinline
   SupportValues<View,A>::~SupportValues(void) {
-    a.free(bits,sz);
+    bs.dispose(a);
     a.free(rp_fst,static_cast<unsigned long int>(rp_lst-rp_fst+1));
   }
 
@@ -113,7 +96,7 @@ namespace Gecode { namespace Int {
   template<class View, class A>
   forceinline void
   SupportValues<View,A>::support(void) {
-    set(rp->pos + static_cast<unsigned int>(v-rp->min));
+    bs.clear(rp->pos + static_cast<unsigned int>(v-rp->min));
   }
 
   template<class View, class A>
@@ -126,7 +109,7 @@ namespace Gecode { namespace Int {
       RangePos* m = l + (r-l)/2;
       int max = m->min + static_cast<int>((m+1)->pos - m->pos) - 1;
       if ((n >= m->min) && (n <= max)) {
-        set(m->pos + static_cast<unsigned int>(n-m->min));
+        bs.clear(m->pos + static_cast<unsigned int>(n-m->min));
         return true;
       }
       if (l == r) return false;
@@ -159,8 +142,8 @@ namespace Gecode { namespace Int {
   forceinline void
   SupportValues<View,A>::Unsupported::find(void) {
     // Skip all supported positions
-    while ((p < sv.x.size()) && sv.bit(p))
-      p++;
+    while ((p < sv.x.size()) && !sv.bs.get(p))
+      p = sv.bs.next(p);
     // Move to matching range
     while ((rp < sv.rp_lst) && (p >= (rp+1)->pos))
       rp++;

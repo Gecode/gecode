@@ -78,8 +78,8 @@ namespace Gecode { namespace Support {
     static const unsigned int bpb = 
       static_cast<unsigned int>(CHAR_BIT * sizeof(Base));
   public:
-    /// Initialize (no bit is set)
-    void init(void);
+    /// Initialize with all bits set if \a set
+    void init(bool set=false);
     /// Get number of data elements for \a s bits
     static unsigned int data(unsigned int s);
     /// Test wether any bit with position greater or equal to \a i is set
@@ -103,9 +103,6 @@ namespace Gecode { namespace Support {
     unsigned int sz;
     /// Stored bits
     BitSetData* data;
-    /// Dispose memory for bit set
-    template<class A>
-    void dispose(A& a);
     /// Access value at bit \a i (no index check)
     bool _get(unsigned int i) const;
     /// Set bit \a i (no index check)
@@ -115,13 +112,13 @@ namespace Gecode { namespace Support {
     BitSetBase(void);
     /// Initialize for \a s bits and allocator \a a
     template<class A>
-    BitSetBase(A& a, unsigned int s);
+    BitSetBase(A& a, unsigned int s, bool set=false);
     /// Copy from bitset \a bs with allocator \a a
     template<class A>
     BitSetBase(A& a, const BitSetBase& bs);
     /// Initialize for \a s bits and allocator \a a (only after default constructor)
     template<class A>
-    void init(A& a, unsigned int s);
+    void init(A& a, unsigned int s, bool set=false);
     /// Return size of bitset (number of bits)
     unsigned int size(void) const;
     /// Access value at bit \a i
@@ -132,6 +129,9 @@ namespace Gecode { namespace Support {
     void clear(unsigned int i);
     /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
     unsigned int next(unsigned int i) const;
+    /// Dispose memory for bit set
+    template<class A>
+    void dispose(A& a);
   };
 
 
@@ -141,8 +141,8 @@ namespace Gecode { namespace Support {
    */
 
   forceinline void
-  BitSetData::init(void) {
-    bits = static_cast<Base>(0);
+  BitSetData::init(bool set) {
+    bits = set ? ~static_cast<Base>(0) : static_cast<Base>(0);
   }
   forceinline unsigned int
   BitSetData::data(unsigned int s) {
@@ -234,11 +234,11 @@ namespace Gecode { namespace Support {
 
   template<class A>
   forceinline
-  BitSetBase::BitSetBase(A& a, unsigned int s)
+  BitSetBase::BitSetBase(A& a, unsigned int s, bool set)
     : sz(s), 
       data(a.template alloc<BitSetData>(BitSetData::data(sz+1))) {
     for (unsigned int i = BitSetData::data(sz+1); i--; ) 
-      data[i].init();
+      data[i].init(set);
     // Set a bit at position sz as sentinel (for efficient next)
     _set(sz);
   }
@@ -256,11 +256,11 @@ namespace Gecode { namespace Support {
 
   template<class A>
   forceinline void
-  BitSetBase::init(A& a, unsigned int s) {
+  BitSetBase::init(A& a, unsigned int s, bool set) {
     assert((sz == 0) && (data == NULL));
     sz=s; data=a.template alloc<BitSetData>(BitSetData::data(sz+1));
     for (unsigned int i=BitSetData::data(sz+1); i--; )
-      data[i].init();
+      data[i].init(set);
     // Set a bit at position sz as sentinel (for efficient next)
     _set(sz);
   }

@@ -53,8 +53,6 @@ namespace Gecode { namespace Int {
   private:
     /// Memory allocator
     A& a;
-    /// Number of bits per unsigned integer
-    static const unsigned int bpui = sizeof(unsigned int) * 8;
     /// Range and position information
     class RangePos {
     public:
@@ -96,10 +94,8 @@ namespace Gecode { namespace Int {
 
     /// The view
     View x;
-    /// Size of bitarray
-    unsigned int sz;
-    /// Array of bits
-    unsigned int* bits;
+    /// Bit set
+    Gecode::Support::BitSetBase bs;
     /// Start of range and position information
     RangePos* rp_fst;
     /// End of range and position information
@@ -111,10 +107,6 @@ namespace Gecode { namespace Int {
     /// Current maximum of range
     int max;
 
-    /// Set bit at position \a i
-    void set(unsigned int i);
-    /// Test whether bit is set at position \a i
-    bool bit(unsigned int i) const;
     /// Mark \a n as supported and return whether value can be supported
     bool _support(int n);
   public:

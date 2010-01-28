@@ -73,6 +73,14 @@ Date: ??????
 The next big thing.
 
 [ENTRY]
+Module: support
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Changed to single, really efficient bitset implementation used
+allover the system.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   major
