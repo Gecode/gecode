@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, class Val, class Degree, class StateIdx>
   forceinline void
-  LayeredGraph<View,Val,Degree,StateIdx>::audit(bool strict) {
+  LayeredGraph<View,Val,Degree,StateIdx>::audit(void) {
 #ifndef NDEBUG
     // Check states and edge information to be consistent
     unsigned int n_e = 0; // Number of edges
@@ -226,10 +226,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     m_s = std::max(m_s,layers[n].n_states);
     assert(n_e == n_edges);
     assert(n_s <= n_states);
-    if (strict)
-      assert(m_s == max_states);
-    else
-      assert(m_s <= max_states);
+    assert(m_s <= max_states);
 #endif
   }
 
@@ -722,9 +719,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   Actor*
   LayeredGraph<View,Val,Degree,StateIdx>::copy(Space& home, bool share) {
-    // Whether to recompute maximal number of states
-    bool rm=false;
-
     // Eliminate an assigned prefix
     {
       int k=0;
@@ -750,7 +744,6 @@ namespace Gecode { namespace Int { namespace Extensional {
           as.advisor().i -= k;
         // Update all change information
         a_ch.lshift(k);
-        rm = true;
       }
     }
     audit();
@@ -829,20 +822,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
       a_ch.reset();
-      rm = true;
     }
     audit();
-
-    if (rm) {
-      StateIdx m_s=layers[n].n_states;
-      for (int i=n; i--; )
-        if (m_s == max_states)
-          break;
-        else
-          m_s = std::max(m_s,layers[i].n_states);
-      max_states = m_s;
-    }
-    audit(true);
 
     return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);
   }
