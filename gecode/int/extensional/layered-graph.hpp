@@ -168,6 +168,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     return _fst>_lst;
   }
   template<class View, class Val, class Degree, class StateIdx>
+  forceinline void
+  LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::lshift(int n) {
+    if (empty())
+      return;
+    if (n > _lst) {
+      reset();
+    } else {
+      _fst = std::max(0,_fst-n);
+      _lst -= n;
+    }
+  }
+  template<class View, class Val, class Degree, class StateIdx>
   forceinline int
   LayeredGraph<View,Val,Degree,StateIdx>::IndexRange::fst(void) const {
     return _fst;
@@ -194,6 +206,31 @@ namespace Gecode { namespace Int { namespace Extensional {
     : Propagator(home), c(home), n(x.size()), 
       max_states(static_cast<StateIdx>(dfa.n_states())) {
     assert(n > 0);
+  }
+
+  template<class View, class Val, class Degree, class StateIdx>
+  forceinline void
+  LayeredGraph<View,Val,Degree,StateIdx>::audit(bool strict) {
+#ifndef NDEBUG
+    // Check states and edge information to be consistent
+    unsigned int n_e = 0; // Number of edges
+    unsigned int n_s = 0; // Number of states
+    StateIdx m_s = 0; // Maximal number of states per layer
+    for (int i=n; i--; ) {
+      n_s += layers[i].n_states;
+      m_s = std::max(m_s,layers[i].n_states);
+      for (ValSize j=layers[i].size; j--; )
+        n_e += layers[i].support[j].n_edges;
+    }
+    n_s += layers[n].n_states;
+    m_s = std::max(m_s,layers[n].n_states);
+    assert(n_e == n_edges);
+    assert(n_s <= n_states);
+    if (strict)
+      assert(m_s == max_states);
+    else
+      assert(m_s <= max_states);
+#endif
   }
 
   template<class View, class Val, class Degree, class StateIdx>
@@ -282,7 +319,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
     }
 
-    // Copy and compress states
+    // Copy and compress states, setup other information
     {
       // State map for in-states
       StateIdx* i_map = r.alloc<StateIdx>(max_states);
@@ -322,6 +359,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       
       // Total number of states
       n_states = i_n;
+      // Total number of edges
+      n_edges = 0;
       // New maximal number of states
       StateIdx max_s = i_n;
 
@@ -342,6 +381,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Update states in edges
         for (ValSize j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
+          n_edges += s.n_edges;
           for (Degree d=s.n_edges; d--; ) {
             s.edges[d].i_state = i_map[s.edges[d].i_state];
             s.edges[d].o_state = o_map[s.edges[d].o_state];
@@ -372,6 +412,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (c.empty())
       View::schedule(home,*this,ME_INT_VAL);
 
+    audit();
     return ES_OK;
   }
 
@@ -419,7 +460,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       Val n = static_cast<Val>(layers[i].x.val());
       ValSize j=0;
       for (; layers[i].support[j].val < n; j++) {
-        Support& s=layers[i].support[j];
+        Support& s = layers[i].support[j];
+        n_edges -= s.n_edges;
         // Supported value not any longer in view
         for (Degree d=s.n_edges; d--; ) {
           // Adapt states
@@ -432,7 +474,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       ValSize s=layers[i].size;
       layers[i].size = 1;
       for (; j<s; j++) {
-        Support& s=layers[i].support[j];
+        Support& s = layers[i].support[j];
+        n_edges -= s.n_edges;
         for (Degree d=s.n_edges; d--; ) {
           // Adapt states
           o_mod |= i_dec(i,s.edges[d]);
@@ -444,9 +487,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       ValSize k=0;
       ValSize s=layers[i].size;
       for (ViewRanges<View> rx(layers[i].x); rx() && (j<s);) {
-        Support& s=layers[i].support[j];
+        Support& s = layers[i].support[j];
         if (s.val < static_cast<Val>(rx.min())) {
           // Supported value not any longer in view
+          n_edges -= s.n_edges;
           for (Degree d=s.n_edges; d--; ) {
             // Adapt states
             o_mod |= i_dec(i,s.edges[d]);
@@ -465,6 +509,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Remove remaining values
       for (; j<s; j++) {
         Support& s=layers[i].support[j];
+        n_edges -= s.n_edges;
         for (Degree d=s.n_edges; d--; ) {
           // Adapt states
           o_mod |= i_dec(i,s.edges[d]);
@@ -482,6 +527,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Remove pruned values
       for (; (j<s) && (layers[i].support[j].val <= max); j++) {
         Support& s=layers[i].support[j];
+        n_edges -= s.n_edges;
         for (Degree d=s.n_edges; d--; ) {
           // Adapt states
           o_mod |= i_dec(i,s.edges[d]);
@@ -494,6 +540,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       layers[i].size =k;
       assert(k > 0);
     }
+
+    audit();
 
     bool fix = true;
     if (o_mod && (i > 0)) {
@@ -527,6 +575,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       ValSize s=layers[i].size;
       do {
         Support& s=layers[i].support[j];
+        n_edges -= s.n_edges;
         for (Degree d=s.n_edges; d--; )
           if (i_state(i,s.edges[d]).i_deg == 0) {
             // Adapt states
@@ -535,6 +584,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             // Remove edge
             s.edges[d] = s.edges[--s.n_edges];
           }
+        n_edges += s.n_edges;
         // Check whether value is still supported
         if (s.n_edges == 0) {
           layers[i].size--;
@@ -559,6 +609,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       ValSize s=layers[i].size;
       do {
         Support& s=layers[i].support[j];
+        n_edges -= s.n_edges;
         for (Degree d=s.n_edges; d--; )
           if (o_state(i,s.edges[d]).o_deg == 0) {
             // Adapt states
@@ -567,6 +618,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             // Remove edge
             s.edges[d] = s.edges[--s.n_edges];
           }
+        n_edges += s.n_edges;
         // Check whether value is still supported
         if (s.n_edges == 0) {
           layers[i].size--;
@@ -583,6 +635,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     a_ch.add(i_ch); i_ch.reset();
     a_ch.add(o_ch); o_ch.reset();
+
+    audit();
 
     // Check subsumption
     if (c.empty()) {
@@ -631,7 +685,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                  LayeredGraph<View,Val,Degree,StateIdx>& p)
     : Propagator(home,share,p), 
       n(p.n), layers(home.alloc<Layer>(n+1)),
-      max_states(p.max_states), n_states(p.n_states) {
+      max_states(p.max_states), n_states(p.n_states), n_edges(p.n_edges) {
     c.update(home,share,p.c);
     // Do not allocate states, postpone to advise!
     layers[n].n_states = p.layers[n].n_states;
@@ -654,6 +708,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       layers[i].n_states = p.layers[i].n_states;
       layers[i].states = NULL;
     }
+    audit();
   }
 
   template<class View, class Val, class Degree, class StateIdx>
@@ -666,36 +721,38 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   Actor*
   LayeredGraph<View,Val,Degree,StateIdx>::copy(Space& home, bool share) {
+    // Whether to recompute maximal number of states
+    bool rm=false;
+
     // Eliminate an assigned prefix
-    
-    if (layers[0].size == 1) {
-      /*
-       * The state information is always available: either the propagator
-       * has been created (hence, also the state information has been
-       * created), or the first variable become assigned and hence
-       * an advisor must have been run (which then has created the state
-       * information).
-       */
-      // Skip all layers corresponding to assigned views
-      int k = 1;
-      while (layers[k].size == 1)
+    {
+      int k=0;
+      while (layers[k].size == 1) {
+        assert(layers[k].support[0].n_edges == 1);
+        n_states -= layers[k].n_states;
         k++;
-      // There is only a single edge
-      assert((layers[k-1].support[0].n_edges == 1) &&
-             (o_state(k-1,layers[k-1].support[0].edges[0]).i_deg == 1));
-      // Eliminate assigned layers
-      n -= k; layers += k;
-      // Update advisor indices
-      for (Advisors<Index> as(c); as(); ++as)
-        as.advisor().i -= k;
-      // Update all change information
-      if (!a_ch.empty()) {
-        int f = std::max(a_ch.fst()-k,0);
-        int l = a_ch.lst()-k;
-        a_ch.reset();
-        a_ch.add(f); a_ch.add(l);
+      }
+      if (k > 0) {
+        /*
+         * The state information is always available: either the propagator
+         * has been created (hence, also the state information has been
+         * created), or the first variable become assigned and hence
+         * an advisor must have been run (which then has created the state
+         * information).
+         */
+        // Eliminate assigned layers
+        n -= k; layers += k;
+        // Eliminate edges
+        n_edges -= static_cast<unsigned int>(k);
+        // Update advisor indices
+        for (Advisors<Index> as(c); as(); ++as)
+          as.advisor().i -= k;
+        // Update all change information
+        a_ch.lshift(k);
+        rm = true;
       }
     }
+    audit();
 
     // Compress states
     if (!a_ch.empty() && (layers[0].states != NULL)) {
@@ -711,6 +768,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       StateIdx i_n = 0;
       // Number of out-states
       StateIdx o_n = 0;
+
+      n_states -= layers[l].n_states;
       // Initialize map for in-states and compress
       for (StateIdx j=0; j<layers[l].n_states; j++)
         // For the last layer, o_deg can be zero even if i_deg is not!
@@ -720,8 +779,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         } else {
           assert(layers[l].states[j].o_deg == 0);
         }
-      n_states -= layers[l].n_states - i_n;
       layers[l].n_states = i_n;
+      n_states += layers[l].n_states;
       assert(i_n > 0);
 
       // Update in-states in edges for last layer, if any
@@ -737,6 +796,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         // In-states become out-states
         std::swap(o_map,i_map); o_n=i_n; i_n=0;
         // Initialize map for in-states and compress
+        n_states -= layers[i].n_states;
         for (StateIdx j=0; j<layers[i].n_states; j++)
           // For the first layer, i_deg can be zero even if o_deg is not!
           if (layers[i].states[j].o_deg != 0) {
@@ -745,8 +805,8 @@ namespace Gecode { namespace Int { namespace Extensional {
           } else {
             assert(layers[i].states[j].i_deg == 0);
           }
-        n_states -= layers[i].n_states - i_n;
         layers[i].n_states = i_n;
+        n_states += layers[i].n_states;
         assert(i_n > 0);
 
         // Update states in edges
@@ -768,7 +828,21 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
       a_ch.reset();
+      rm = true;
     }
+    audit();
+
+    if (rm) {
+      StateIdx m_s=layers[n].n_states;
+      for (int i=n; i--; )
+        if (m_s == max_states)
+          break;
+        else
+          m_s = std::max(m_s,layers[i].n_states);
+      max_states = m_s;
+    }
+    audit(true);
+
     return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);
   }
 

@@ -143,6 +143,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       void add(int i);
       /// Add index range \a ir to range
       void add(const IndexRange& ir);
+      /// Shift index range by \a n elements to the left
+      void lshift(int n);
       /// Test whether range is empty
       bool empty(void) const;
       /// Return first position
@@ -158,8 +160,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     Layer* layers;
     /// Maximal number of states per layer
     StateIdx max_states;
-    /// Total nmber of states
-    int n_states;
+    /// Total number of states
+    unsigned int n_states;
+    /// Total number of edges
+    unsigned int n_edges;
     /// Index range with in-degree modifications
     IndexRange i_ch;
     /// Index range with out-degree modifications
@@ -178,6 +182,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     State& o_state(int i, const Edge& e);
     /// Decrement in degree for out state of edge \a e for layer \a i
     bool o_dec(int i, const Edge& e);
+    /// Perform consistency check on data structures
+    void audit(bool strict = false);
     /// Initialize layered graph
     template<class Var>
     ExecStatus initialize(Space& home, 
