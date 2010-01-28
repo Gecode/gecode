@@ -74,6 +74,14 @@ The next big thing.
 
 [ENTRY]
 Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Considerably improved performance and memory consumption of the
+DFA-based extensional constraint (regular).
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
