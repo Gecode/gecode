@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Val,Degree,StateIdx>::audit(void) {
-#ifndef NDEBUG
+#ifdef GECODE_AUDIT
     // Check states and edge information to be consistent
     unsigned int n_e = 0; // Number of edges
     unsigned int n_s = 0; // Number of states
