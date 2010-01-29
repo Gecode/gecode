@@ -277,9 +277,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           Support& s = layers[i].support[j];
           s.val = static_cast<Val>(nx.val());
           s.n_edges = n_edges;
-          s.edges = home.alloc<Edge>(n_edges);
-          for (Degree d=n_edges; d--; )
-            s.edges[d] = edges[d];
+          s.edges = Heap::copy(home.alloc<Edge>(n_edges),edges,n_edges);
           j++;
         }
       }
@@ -699,9 +697,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].support[j].val = p.layers[i].support[j].val;
         layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
         assert(layers[i].support[j].n_edges > 0);
-        layers[i].support[j].edges = edges;
-        for (Degree d=layers[i].support[j].n_edges; d--; )
-          *(edges++) = p.layers[i].support[j].edges[d];
+        layers[i].support[j].edges = 
+          Heap::copy(edges,p.layers[i].support[j].edges,
+                     layers[i].support[j].n_edges);
+        edges += layers[i].support[j].n_edges;
       }
       layers[i].n_states = p.layers[i].n_states;
       layers[i].states = NULL;
@@ -749,10 +748,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     audit();
 
     // Compress states
-    if (!a_ch.empty() && (layers[0].states != NULL)) {
+    if (!a_ch.empty()) {
       int f = a_ch.fst();
       int l = a_ch.lst();
-      assert(l <= n);
+      assert((f >= 0) && (l <= n));
       Region r(home);
       // State map for in-states
       StateIdx* i_map = r.alloc<StateIdx>(max_states);
