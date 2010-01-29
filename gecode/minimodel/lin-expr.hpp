@@ -72,41 +72,44 @@ namespace Gecode {
   }
 
   template<class Var>
-  int
-  LinExpr<Var>::Node::fill(Int::Linear::Term<View> t[],
-                           int i, int m, int c_i, int& c_o) const {
+  void
+  LinExpr<Var>::Node::fill(Int::Linear::Term<View> t[], int i_i, int& i_o, 
+                           int m, int c_i, int& c_o) const {
     switch (this->t) {
     case NT_VAR:
       c_o = c_i;
       if (a != 0) {
-        t[i].a=m*a; t[i].x=x;
-        return i+1;
+        t[i_i].a=m*a; t[i_i].x=x; i_o=i_i+1;
       } else {
-        return i;
+        i_o=i_i;
       }
+      break;
     case NT_ADD:
       if (l == NULL) {
-        return r->fill(t,i,m,c_i+m*c,c_o);
+        r->fill(t,i_i,i_o,m,c_i+m*c,c_o);
       } else {
+        int i_m;
         int c_m = 0;
-        i = l->fill(t,i,m,c_i,c_m);
-        return r->fill(t,i,m,c_m,c_o);
+        l->fill(t,i_i,i_m,m,c_i,c_m);
+        r->fill(t,i_m,i_o,m,c_m,c_o);
       }
+      break;
     case NT_SUB:
       if (l == NULL) {
-        return r->fill(t,i,-m,c_i+m*c,c_o);
+        r->fill(t,i_i,i_o,-m,c_i+m*c,c_o);
       } else {
+        int i_m;
         int c_m = 0;
-        i = l->fill(t,i,m,c_i,c_m);
-        return r->fill(t,i,-m,c_m,c_o);
+        l->fill(t,i_i,i_m,m,c_i,c_m);
+        r->fill(t,i_m,i_o,-m,c_m,c_o);
       }
+      break;
     case NT_MUL:
-      return l->fill(t,i,a*m,c_i,c_o);
+      l->fill(t,i_i,i_o,a*m,c_i,c_o);
+      break;
     default:
       GECODE_NEVER;
     }
-    GECODE_NEVER;
-    return 0;
   }
 
 
@@ -199,9 +202,10 @@ namespace Gecode {
     Region r(home);
     Int::Linear::Term<typename VarViewTraits<Var>::View>* ts =
       r.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
-    int c_o = 0;
-    int i = n->fill(ts,0,1,0,c_o);
-    Int::Linear::post(home, ts, i, irt, -c_o, icl);
+    int i_o; int c_o;
+    n->fill(ts,0,i_o,1,0,c_o);
+    assert(i_o == n->n);
+    Int::Linear::post(home, ts, n->n, irt, -c_o, icl);
   }
 
   template<class Var>
@@ -211,9 +215,10 @@ namespace Gecode {
     Region r(home);
     Int::Linear::Term<typename VarViewTraits<Var>::View>* ts =
       r.alloc<Int::Linear::Term<typename VarViewTraits<Var>::View> >(n->n);
-    int c_o = 0;
-    int i = n->fill(ts,0,1,0,c_o);
-    Int::Linear::post(home, ts, i, irt, -c_o, b, icl);
+    int i_o; int c_o;
+    n->fill(ts,0,i_o,1,0,c_o);
+    assert(i_o == n->n);
+    Int::Linear::post(home, ts, n->n, irt, -c_o, b, icl);
   }
 
   template<>
@@ -222,13 +227,14 @@ namespace Gecode {
     Region r(home);
     Int::Linear::Term<Int::IntView>* ts =
       r.alloc<Int::Linear::Term<Int::IntView> >(n->n+1);
-    int c_o = 0;
-    int i = n->fill(ts,0,1,0,c_o);
+    int i_o; int c_o;
+    n->fill(ts,0,i_o,1,0,c_o);
+    assert(i_o == n->n);
     int min, max;
-    Int::Linear::estimate(&ts[0],i,c_o,min,max);
+    Int::Linear::estimate(&ts[0],n->n,c_o,min,max);
     IntVar x(home, min, max);
-    ts[i].x = x; ts[i].a = -1;
-    Int::Linear::post(home, ts, i+1, IRT_EQ, -c_o, icl);
+    ts[n->n].x = x; ts[n->n].a = -1;
+    Int::Linear::post(home, ts, n->n+1, IRT_EQ, -c_o, icl);
     return x;
   }
 
@@ -238,12 +244,13 @@ namespace Gecode {
     Region r(home);
     Int::Linear::Term<Int::BoolView>* ts =
       r.alloc<Int::Linear::Term<Int::BoolView> >(n->n);
-    int c_o = 0;
-    int i = n->fill(ts,0,1,0,c_o);
+    int i_o; int c_o;
+    n->fill(ts,0,i_o,1,0,c_o);
+    assert(i_o == n->n);
     int min, max;
-    Int::Linear::estimate(&ts[0],i,c_o,min,max);
+    Int::Linear::estimate(&ts[0],n->n,c_o,min,max);
     IntVar x(home, min, max);
-    Int::Linear::post(home, ts, i, IRT_EQ, x, -c_o, icl);
+    Int::Linear::post(home, ts, n->n, IRT_EQ, x, -c_o, icl);
     return x;
   }
 

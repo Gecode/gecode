@@ -122,8 +122,8 @@ namespace Gecode {
       /// Default constructor
       Node(void);
       /// Generate linear terms from expression
-      int fill(Int::Linear::Term<View> t[], int i, int m,
-               int c_i, int& c_o) const;
+      void fill(Int::Linear::Term<View> t[], int i_i, int& i_o,
+                int m, int c_i, int& c_o) const;
       /// Decrement reference count and possibly free memory
       bool decrement(void);
       /// Memory management
