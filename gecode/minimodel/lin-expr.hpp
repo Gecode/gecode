@@ -49,6 +49,21 @@ namespace Gecode {
   LinExpr::Node::Node(void) : use(1) {
   }
 
+  forceinline
+  LinExpr::Node::~Node(void) {
+    switch (t) {
+    case NT_SUM_INT:
+      if (n_int > 0)
+        heap.free<Int::Linear::Term<Int::IntView> >(sum.ti,n_int);
+      break;
+    case NT_SUM_BOOL:
+      if (n_bool > 0)
+        heap.free<Int::Linear::Term<Int::BoolView> >(sum.tb,n_bool);
+      break;
+    default: ;
+    }
+  }
+
   forceinline void*
   LinExpr::Node::operator new(size_t size) {
     return heap.ralloc(size);
@@ -58,6 +73,7 @@ namespace Gecode {
   LinExpr::Node::operator delete(void* p, size_t) {
     heap.rfree(p);
   }
+
 
   /*
    * Operations for expressions
@@ -69,187 +85,131 @@ namespace Gecode {
     n->use++;
   }
 
-
-  /*
-   * Operators
-   *
-   */
-  inline LinExpr
-  operator +(int c, const IntVar& x) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
-  }
-  inline LinExpr
-  operator +(int c, const BoolVar& x) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
-  }
-  inline LinExpr
-  operator +(int c, const LinExpr& e) {
-    return LinExpr(e,LinExpr::NT_ADD,c);
-  }
-  inline LinExpr
-  operator +(const IntVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
-  }
-  inline LinExpr
-  operator +(const BoolVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
-  }
-  inline LinExpr
-  operator +(const LinExpr& e, int c) {
-    return LinExpr(e,LinExpr::NT_ADD,c);
-  }
-  inline LinExpr
-  operator +(const IntVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
-  }
-  inline LinExpr
-  operator +(const IntVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
-  }
-  inline LinExpr
-  operator +(const BoolVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
-  }
-  inline LinExpr
-  operator +(const BoolVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
-  }
-  inline LinExpr
-  operator +(const IntVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_ADD,e);
-  }
-  inline LinExpr
-  operator +(const BoolVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_ADD,e);
-  }
-  inline LinExpr
-  operator +(const LinExpr& e, const IntVar& x) {
-    return LinExpr(e,LinExpr::NT_ADD,x);
-  }
-  inline LinExpr
-  operator +(const LinExpr& e, const BoolVar& x) {
-    return LinExpr(e,LinExpr::NT_ADD,x);
-  }
-  inline LinExpr
-  operator +(const LinExpr& e1, const LinExpr& e2) {
-    return LinExpr(e1,LinExpr::NT_ADD,e2);
+  forceinline
+  LinExpr::LinExpr(const IntVar& x, int a) :
+    n(new Node) {
+    n->n_int = 1;
+    n->n_bool = 0;
+    n->t = NT_VAR_INT;
+    n->l = n->r = NULL;
+    n->a = a;
+    n->x_int = x;
   }
 
-  inline LinExpr
-  operator -(int c, const IntVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,c);
-  }
-  inline LinExpr
-  operator -(int c, const BoolVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,c);
-  }
-  inline LinExpr
-  operator -(int c, const LinExpr& e) {
-    return LinExpr(e,LinExpr::NT_SUB,c);
-  }
-  inline LinExpr
-  operator -(const IntVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,-c);
-  }
-  inline LinExpr
-  operator -(const BoolVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,-c);
-  }
-  inline LinExpr
-  operator -(const LinExpr& e, int c) {
-    return LinExpr(e,LinExpr::NT_ADD,-c);
-  }
-  inline LinExpr
-  operator -(const IntVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
-  }
-  inline LinExpr
-  operator -(const IntVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
-  }
-  inline LinExpr
-  operator -(const BoolVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
-  }
-  inline LinExpr
-  operator -(const BoolVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
-  }
-  inline LinExpr
-  operator -(const IntVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_SUB,e);
-  }
-  inline LinExpr
-  operator -(const BoolVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_SUB,e);
-  }
-  inline LinExpr
-  operator -(const LinExpr& e, const IntVar& x) {
-    return LinExpr(e,LinExpr::NT_SUB,x);
-  }
-  inline LinExpr
-  operator -(const LinExpr& e, const BoolVar& x) {
-    return LinExpr(e,LinExpr::NT_SUB,x);
-  }
-  inline LinExpr
-  operator -(const LinExpr& e1, const LinExpr& e2) {
-    return LinExpr(e1,LinExpr::NT_SUB,e2);
+  forceinline
+  LinExpr::LinExpr(const BoolVar& x, int a) :
+    n(new Node) {
+    n->n_int = 0;
+    n->n_bool = 1;
+    n->t = NT_VAR_BOOL;
+    n->l = n->r = NULL;
+    n->a = a;
+    n->x_bool = x;
   }
 
-  inline LinExpr
-  operator -(const IntVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,0);
-  }
-  inline LinExpr
-  operator -(const BoolVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,0);
-  }
-  inline LinExpr
-  operator -(const LinExpr& e) {
-    return LinExpr(e,LinExpr::NT_SUB,0);
-  }
-
-  inline LinExpr
-  operator *(int a, const IntVar& x) {
-    return LinExpr(x,a);
-  }
-  inline LinExpr
-  operator *(int a, const BoolVar& x) {
-    return LinExpr(x,a);
-  }
-  inline LinExpr
-  operator *(const IntVar& x, int a) {
-    return LinExpr(x,a);
-  }
-  inline LinExpr
-  operator *(const BoolVar& x, int a) {
-    return LinExpr(x,a);
-  }
-  inline LinExpr
-  operator *(const LinExpr& e, int a) {
-    return LinExpr(a,e);
-  }
-  inline LinExpr
-  operator *(int a, const LinExpr& e) {
-    return LinExpr(a,e);
+  forceinline
+  LinExpr::LinExpr(const IntVarArgs& x) :
+    n(new Node) {
+    n->n_int = x.size();
+    n->n_bool = 0;
+    n->t = NT_SUM_INT;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.ti[i].x = x[i];
+        n->sum.ti[i].a = 1;
+      }
+    }
   }
 
-  inline LinExpr
-  sum(const IntVarArgs& x) {
-    return LinExpr(x);
+  forceinline
+  LinExpr::LinExpr(const IntArgs& a, const IntVarArgs& x) :
+    n(new Node) {
+    if (a.size() != x.size())
+      throw Int::ArgumentSizeMismatch("MiniModel::LinExpr");
+    n->n_int = x.size();
+    n->n_bool = 0;
+    n->t = NT_SUM_INT;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.ti[i].x = x[i];
+        n->sum.ti[i].a = a[i];
+      }
+    }
   }
-  inline LinExpr
-  sum(const IntArgs& a, const IntVarArgs& x) {
-    return LinExpr(a,x);
+
+  forceinline
+  LinExpr::LinExpr(const BoolVarArgs& x) :
+    n(new Node) {
+    n->n_int = 0;
+    n->n_bool = x.size();
+    n->t = NT_SUM_BOOL;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.tb[i].x = x[i];
+        n->sum.tb[i].a = 1;
+      }
+    }
   }
-  inline LinExpr
-  sum(const BoolVarArgs& x) {
-    return LinExpr(x);
+
+  forceinline
+  LinExpr::LinExpr(const IntArgs& a, const BoolVarArgs& x) :
+    n(new Node) {
+    if (a.size() != x.size())
+      throw Int::ArgumentSizeMismatch("MiniModel::LinExpr");
+    n->n_int = 0;
+    n->n_bool = x.size();
+    n->t = NT_SUM_BOOL;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.tb[i].x = x[i];
+        n->sum.tb[i].a = a[i];
+      }
+    }
   }
-  inline LinExpr
-  sum(const IntArgs& a, const BoolVarArgs& x) {
-    return LinExpr(a,x);
+
+  forceinline
+  LinExpr::LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1) :
+    n(new Node) {
+    n->n_int = e0.n->n_int + e1.n->n_int;
+    n->n_bool = e0.n->n_bool + e1.n->n_bool;
+    n->t = t;
+    n->l = e0.n; n->l->use++;
+    n->r = e1.n; n->r->use++;
   }
+
+  forceinline
+  LinExpr::LinExpr(const LinExpr& e, NodeType t, int c) :
+    n(new Node) {
+    n->n_int = e.n->n_int;
+    n->n_bool = e.n->n_bool;
+    n->t = t;
+    n->l = NULL;
+    n->r = e.n; n->r->use++;
+    n->c = c;
+  }
+
+  forceinline
+  LinExpr::LinExpr(int a, const LinExpr& e) :
+    n(new Node) {
+    n->n_int = e.n->n_int;
+    n->n_bool = e.n->n_bool;
+    n->t = NT_MUL;
+    n->l = e.n; n->l->use++;
+    n->r = NULL;
+    n->a = a;
+  }
+
+
+
+
 
   forceinline IntVar
   post(Home, const IntVar& x, IntConLevel) {

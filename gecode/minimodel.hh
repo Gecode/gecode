@@ -134,15 +134,12 @@ namespace Gecode {
       /// Default constructor
       Node(void);
       /// Generate linear terms from expression
-      GECODE_MINIMODEL_EXPORT
       void fill(Int::Linear::Term<Int::IntView> ti[], int ii_i, int& ii_o,
                 Int::Linear::Term<Int::BoolView> tb[], int ib_i, int& ib_o,
                 int m, int c_i, int& c_o) const;
       /// Decrement reference count and possibly free memory
-      GECODE_MINIMODEL_EXPORT
       bool decrement(void);
       /// Destructor
-      GECODE_MINIMODEL_EXPORT
       ~Node(void);
       /// Memory management
       static void* operator new(size_t size);
@@ -155,33 +152,24 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     LinExpr(void);
     /// Create expression
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const IntVar& x, int a=1);
     /// Create expression
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const BoolVar& x, int a=1);
     /// Create sum expression
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const IntVarArgs& x);
     /// Create sum expression
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const IntArgs& a, const IntVarArgs& x);
     /// Create sum expression
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const BoolVarArgs& x);
     /// Create sum expression
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const IntArgs& a, const BoolVarArgs& x);
     /// Copy constructor
     LinExpr(const LinExpr& e);
     /// Create expression for type and subexpressions
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1);
     /// Create expression for type and subexpression
-    GECODE_MINIMODEL_EXPORT
     LinExpr(const LinExpr& e0, NodeType t, int c);
     /// Create expression for multiplication
-    GECODE_MINIMODEL_EXPORT
     LinExpr(int a, const LinExpr& e);
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
@@ -244,137 +232,137 @@ namespace Gecode {
 
   //@{
   /// Construct linear expression as sum of integer variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(int, const IntVar&);
   /// Construct linear expression as sum of Boolean variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(int, const BoolVar&);
   /// Construct linear expression as sum of linear expression and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(int, const LinExpr&);
   /// Construct linear expression as sum of integer variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const IntVar&, int);
   /// Construct linear expression as sum of Boolean variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const BoolVar&, int);
   /// Construct linear expression as sum of linear expression and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const LinExpr&, int);
   /// Construct linear expression as sum of integer variables
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const IntVar&, const IntVar&);
   /// Construct linear expression as sum of integer and Boolean variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const IntVar&, const BoolVar&);
   /// Construct linear expression as sum of Boolean and integer variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const BoolVar&, const IntVar&);
   /// Construct linear expression as sum of Boolean variables
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const BoolVar&, const BoolVar&);
   /// Construct linear expression as sum of integer variable and linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const IntVar&, const LinExpr&);
   /// Construct linear expression as sum of Boolean variable and linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const BoolVar&, const LinExpr&);
   /// Construct linear expression as sum of linear expression and integer variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const LinExpr&, const IntVar&);
   /// Construct linear expression as sum of linear expression and Boolean variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const LinExpr&, const BoolVar&);
   /// Construct linear expression as sum of linear expressions
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator +(const LinExpr&, const LinExpr&);
 
   /// Construct linear expression as sum of integer variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(int, const IntVar&);
   /// Construct linear expression as sum of Boolean variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(int, const BoolVar&);
   /// Construct linear expression as sum of integer and linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(int, const LinExpr&);
   /// Construct linear expression as sum of integer variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const IntVar&, int);
   /// Construct linear expression as sum of Boolean variable and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const BoolVar&, int);
   /// Construct linear expression as sum of linear expression and integer
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const LinExpr&, int);
   /// Construct linear expression as sum of integer variables
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const IntVar&, const IntVar&);
   /// Construct linear expression as sum of integer and Boolean variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const IntVar&, const BoolVar&);
   /// Construct linear expression as sum of Boolean and integer variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const BoolVar&, const IntVar&);
   /// Construct linear expression as sum of Boolean variables
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const BoolVar&, const BoolVar&);
   /// Construct linear expression as sum of integer variable and linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const IntVar&, const LinExpr&);
   /// Construct linear expression as sum of Boolean variable and linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const BoolVar&, const LinExpr&);
   /// Construct linear expression as sum of linear expression and integer variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const LinExpr&, const IntVar&);
   /// Construct linear expression as sum of linear expression and Boolean variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const LinExpr&, const BoolVar&);
   /// Construct linear expression as sum of linear expressions
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const LinExpr&, const LinExpr&);
 
   /// Construct linear expression as negative of integer variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const IntVar&);
   /// Construct linear expression as negative of Boolean variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const BoolVar&);
   /// Construct linear expression as negative of linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator -(const LinExpr&);
 
   /// Construct linear expression as product of integer coefficient and integer variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator *(int, const IntVar&);
   /// Construct linear expression as product of integer coefficient and Boolean variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator *(int, const BoolVar&);
   /// Construct linear expression as product of integer coefficient and integer variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator *(const IntVar&, int);
   /// Construct linear expression as product of integer coefficient and Boolean variable
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator *(const BoolVar&, int);
   /// Construct linear expression as product of integer coefficient and linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator *(const LinExpr&, int);
   /// Construct linear expression as product of integer coefficient and linear expression
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   operator *(int, const LinExpr&);
 
   /// Construct linear expression as sum of integer variables
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   sum(const IntVarArgs& x);
   /// Construct linear expression as sum of integer variables with coefficients
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   sum(const IntArgs& a, const IntVarArgs& x);
   /// Construct linear expression as sum of Boolean variables
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   sum(const BoolVarArgs& x);
   /// Construct linear expression as sum of Boolean variables with coefficients
-  LinExpr
+  GECODE_MINIMODEL_EXPORT LinExpr
   sum(const IntArgs& a, const BoolVarArgs& x);
 
   /// Construct linear equality relation
