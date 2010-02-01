@@ -491,7 +491,7 @@ SCHEDULINGBUILDDIRS	= \
 #
 
 MMSRC0 = \
-	lin-expr.cpp bool-expr.cpp reg.cpp 
+	lin-expr.cpp lin-rel.cpp bool-expr.cpp reg.cpp 
 MMHDR0 = \
 	lin-expr.hpp lin-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp bool-rel.hpp optimize.hpp arithmetic.hpp \

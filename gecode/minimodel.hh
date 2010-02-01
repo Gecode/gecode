@@ -366,279 +366,279 @@ namespace Gecode {
   sum(const IntArgs& a, const BoolVarArgs& x);
 
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(int l, const IntVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(int l, const BoolVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(int l, const LinExpr& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const IntVar& l, int r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const BoolVar& l, int r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const LinExpr& l, int r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const IntVar& l, const IntVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const IntVar& l, const BoolVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const BoolVar& l, const IntVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const BoolVar& l, const BoolVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const IntVar& l, const LinExpr& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const BoolVar& l, const LinExpr& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const LinExpr& l, const IntVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const LinExpr& l, const BoolVar& r);
   /// Construct linear equality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator ==(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(int l, const IntVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(int l, const BoolVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(int l, const LinExpr& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const IntVar& l, int r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const BoolVar& l, int r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const LinExpr& l, int r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const IntVar& l, const IntVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const IntVar& l, const BoolVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const BoolVar& l, const IntVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const BoolVar& l, const BoolVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const IntVar& l, const LinExpr& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const BoolVar& l, const LinExpr& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const LinExpr& l, const IntVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const LinExpr& l, const BoolVar& r);
   /// Construct linear disequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator !=(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(int l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const IntVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const IntVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const IntVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const BoolVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const LinExpr& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const LinExpr& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(int l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const IntVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const IntVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const IntVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const BoolVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const LinExpr& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const LinExpr& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator <=(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(int l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const IntVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const IntVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const IntVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const BoolVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const LinExpr& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const LinExpr& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(int l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const IntVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const IntVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const IntVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const BoolVar& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const LinExpr& l, const IntVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const LinExpr& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel
+  GECODE_MINIMODEL_EXPORT LinRel
   operator >=(const LinExpr& l, const LinExpr& r);
   //@}
 
@@ -736,22 +736,17 @@ namespace Gecode {
     /// Copy constructor
     BoolExpr(const BoolExpr& e);
     /// Construct expression for type and subexpresssions
-    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r);
     /// Construct expression for variable
-    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolVar& x);
     /// Construct expression for negation
-    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& e, NodeType t);
     /// Construct expression for reified linear relation
-    GECODE_MINIMODEL_EXPORT
     BoolExpr(const LinRel& rl);
     /// Post propagators for expression
     BoolVar post(Home home, IntConLevel icl) const;
     /// Post propagators for relation
     void post(Home home, bool t, IntConLevel icl) const;
-
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
     const BoolExpr& operator =(const BoolExpr& e);
@@ -789,26 +784,26 @@ namespace Gecode {
 
   //@{
   /// Negated Boolean expression
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   operator !(const BoolExpr&);
   /// Conjunction of Boolean expressions
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   operator &&(const BoolExpr&, const BoolExpr&);
   /// Disjunction of Boolean expressions
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   operator ||(const BoolExpr&, const BoolExpr&);
   /// Exclusive-or of Boolean expressions
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   operator ^(const BoolExpr&, const BoolExpr&);
   /// Reification of linear relations
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   operator ~(const LinRel&);
 
   /// Equivalence of Boolean expressions
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   eqv(const BoolExpr&, const BoolExpr&);
   /// Implication of Boolean expressions
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   imp(const BoolExpr&, const BoolExpr&);
 
   /// State that Boolean expression must be true
