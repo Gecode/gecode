@@ -75,9 +75,8 @@ namespace Gecode {
     return BoolExpr(BoolExpr(l,BoolExpr::NT_EQV,r),BoolExpr::NT_NOT);
   }
 
-  template<class Var>
   inline BoolExpr
-  operator ~(const LinRel<Var>& rl) {
+  operator ~(const LinRel& rl) {
     return BoolExpr(rl);
   }
 

@@ -92,39 +92,45 @@ namespace Gecode {
   namespace MiniModel {}
 
   /// Linear expressions
-  template<class Var>
   class LinExpr {
   public:
     /// Type of linear expression
     enum NodeType {
-      NT_VAR, ///< Linear term with variable
+      NT_VAR_INT, ///< Linear term with integer variable
+      NT_VAR_BOOL, ///< Linear term with Boolean variable
       NT_ADD, ///< Addition of linear terms
       NT_SUB, ///< Subtraction of linear terms
-      NT_MUL  ///< Multiplication by coefficient
+      NT_MUL ///< Multiplication by coefficient
     };
   private:
-    typedef typename VarViewTraits<Var>::View View;
     /// Nodes for linear expressions
     class Node {
     public:
       /// Nodes are reference counted
       unsigned int use;
-      /// Variables in tree
-      unsigned int n;
+      /// Integer variables in tree
+      unsigned int n_int;
+      /// Boolean variables in tree
+      unsigned int n_bool;
       /// Type of expression
       NodeType t;
       /// Subexpressions
       Node *l, *r;
       /// Coefficient and offset
       int a, c;
-      /// Variable (potentially)
-      Var x;
+      /// Integer variable (potentially)
+      IntVar x_int;
+      /// Boolean variable (potentially)
+      BoolVar x_bool;
       /// Default constructor
       Node(void);
       /// Generate linear terms from expression
-      void fill(Int::Linear::Term<View> t[], int i_i, int& i_o,
+      GECODE_MINIMODEL_EXPORT
+      void fill(Int::Linear::Term<Int::IntView> ti[], int ii_i, int& ii_o,
+                Int::Linear::Term<Int::BoolView> tb[], int ib_i, int& ib_o,
                 int m, int c_i, int& c_o) const;
       /// Decrement reference count and possibly free memory
+      GECODE_MINIMODEL_EXPORT
       bool decrement(void);
       /// Memory management
       static void* operator new(size_t size);
@@ -134,49 +140,61 @@ namespace Gecode {
     Node* n;
   public:
     /// Default constructor
+    GECODE_MINIMODEL_EXPORT
     LinExpr(void);
     /// Create expression
-    LinExpr(const Var& x, int a=1);
+    GECODE_MINIMODEL_EXPORT
+    LinExpr(const IntVar& x, int a=1);
+    /// Create expression
+    GECODE_MINIMODEL_EXPORT
+    LinExpr(const BoolVar& x, int a=1);
     /// Copy constructor
     LinExpr(const LinExpr& e);
     /// Create expression for type and subexpressions
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1);
     /// Create expression for type and subexpression
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const LinExpr& e0, NodeType t, int c);
     /// Create expression for multiplication
+    GECODE_MINIMODEL_EXPORT
     LinExpr(int a, const LinExpr& e);
     /// Assignment operator
+    GECODE_MINIMODEL_EXPORT
     const LinExpr& operator =(const LinExpr& e);
     /// Post propagator
+    GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, IntConLevel icl) const;
     /// Post reified propagator
+    GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, const BoolVar& b,
               IntConLevel icl) const;
     /// Post propagator and return variable for value
+    GECODE_MINIMODEL_EXPORT
     IntVar post(Home home, IntConLevel icl) const;
     /// Destructor
+    GECODE_MINIMODEL_EXPORT
     ~LinExpr(void);
   };
 
   /// Linear relations
-  template<class Var>
   class LinRel {
   private:
     /// Linear expression describing the entire relation
-    LinExpr<Var> e;
+    LinExpr e;
     /// Which relation
-    IntRelType   irt;
+    IntRelType irt;
     /// Negate relation type
     static IntRelType neg(IntRelType irt);
   public:
     /// Default constructor
     LinRel(void);
     /// Create linear relation for expressions \a l and \a r
-    LinRel(const LinExpr<Var>& l, IntRelType irt, const LinExpr<Var>& r);
+    LinRel(const LinExpr& l, IntRelType irt, const LinExpr& r);
     /// Create linear relation for expression \a l and integer \a r
-    LinRel(const LinExpr<Var>& l, IntRelType irt, int r);
+    LinRel(const LinExpr& l, IntRelType irt, int r);
     /// Create linear relation for integer \a l and expression \a r
-    LinRel(int l, IntRelType irt, const LinExpr<Var>& r);
+    LinRel(int l, IntRelType irt, const LinExpr& r);
     /// Post propagator for relation (if \a t is false for negated relation)
     void post(Home home, bool t,  IntConLevel icl) const;
     /// Post reified propagator for relation (if \a t is false for negated relation)
@@ -201,447 +219,403 @@ namespace Gecode {
    */
 
   //@{
-  /// Construct linear expression as sum of variable and integer
-  LinExpr<IntVar>
+  /// Construct linear expression as sum of integer variable and integer
+  LinExpr
   operator +(int, const IntVar&);
-  /// Construct linear expression as sum of linear expression and integer
-  LinExpr<IntVar>
-  operator +(int, const LinExpr<IntVar>&);
-  /// Construct linear expression as sum of integer and linear expression
-  LinExpr<IntVar>
-  operator +(const IntVar&, int);
-  /// Construct linear expression as sum of integer and variable
-  LinExpr<IntVar>
-  operator +(const LinExpr<IntVar>&, int);
-  /// Construct linear expression as sum of variables
-  LinExpr<IntVar>
-  operator +(const IntVar&, const IntVar&);
-  /// Construct linear expression as sum of variable and linear expression
-  LinExpr<IntVar>
-  operator +(const IntVar&, const LinExpr<IntVar>&);
-  /// Construct linear expression as sum of linear expression and variable
-  LinExpr<IntVar>
-  operator +(const LinExpr<IntVar>&, const IntVar&);
-  /// Construct linear expression as sum of linear expressions
-  LinExpr<IntVar>
-  operator +(const LinExpr<IntVar>&, const LinExpr<IntVar>&);
-
-  /// Construct linear expression as sum of variable and integer
-  LinExpr<IntVar>
-  operator -(int, const IntVar&);
-  /// Construct linear expression as sum of linear expression and integer
-  LinExpr<IntVar>
-  operator -(int, const LinExpr<IntVar>&);
-  /// Construct linear expression as sum of integer and linear expression
-  LinExpr<IntVar>
-  operator -(const IntVar&, int);
-  /// Construct linear expression as sum of integer and variable
-  LinExpr<IntVar>
-  operator -(const LinExpr<IntVar>&, int);
-  /// Construct linear expression as sum of variables
-  LinExpr<IntVar>
-  operator -(const IntVar&, const IntVar&);
-  /// Construct linear expression as sum of variable and linear expression
-  LinExpr<IntVar>
-  operator -(const IntVar&, const LinExpr<IntVar>&);
-  /// Construct linear expression as sum of linear expression and variable
-  LinExpr<IntVar>
-  operator -(const LinExpr<IntVar>&, const IntVar&);
-  /// Construct linear expression as sum of linear expressions
-  LinExpr<IntVar>
-  operator -(const LinExpr<IntVar>&, const LinExpr<IntVar>&);
-  /// Construct linear expression as negative of variable
-  LinExpr<IntVar>
-  operator -(const IntVar&);
-  /// Construct linear expression as negative of linear expression
-  LinExpr<IntVar>
-  operator -(const LinExpr<IntVar>&);
-
-  /// Construct linear expression as product of integer coefficient and integer variable
-  LinExpr<IntVar>
-  operator *(int, const IntVar&);
-  /// Construct linear expression as product of integer coefficient and integer variable
-  LinExpr<IntVar>
-  operator *(const IntVar&, int);
-  /// Construct linear expression as product of integer coefficient and linear expression
-  LinExpr<IntVar>
-  operator *(const LinExpr<IntVar>&, int);
-  /// Construct linear expression as product of integer coefficient and linear expression
-  LinExpr<IntVar>
-  operator *(int, const LinExpr<IntVar>&);
-
-
-  /// Construct linear expression as sum of variable and integer
-  LinExpr<BoolVar>
+  /// Construct linear expression as sum of Boolean variable and integer
+  LinExpr
   operator +(int, const BoolVar&);
   /// Construct linear expression as sum of linear expression and integer
-  LinExpr<BoolVar>
-  operator +(int, const LinExpr<BoolVar>&);
-  /// Construct linear expression as sum of integer and linear expression
-  LinExpr<BoolVar>
+  LinExpr
+  operator +(int, const LinExpr&);
+  /// Construct linear expression as sum of integer variable and integer
+  LinExpr
+  operator +(const IntVar&, int);
+  /// Construct linear expression as sum of Boolean variable and integer
+  LinExpr
   operator +(const BoolVar&, int);
-  /// Construct linear expression as sum of integer and variable
-  LinExpr<BoolVar>
-  operator +(const LinExpr<BoolVar>&, int);
-  /// Construct linear expression as sum of variables
-  LinExpr<BoolVar>
-  operator +(const BoolVar&, const BoolVar&);
-  /// Construct linear expression as sum of variable and linear expression
-  LinExpr<BoolVar>
-  operator +(const BoolVar&, const LinExpr<BoolVar>&);
-  /// Construct linear expression as sum of linear expression and variable
-  LinExpr<BoolVar>
-  operator +(const LinExpr<BoolVar>&, const BoolVar&);
-  /// Construct linear expression as sum of linear expressions
-  LinExpr<BoolVar>
-  operator +(const LinExpr<BoolVar>&, const LinExpr<BoolVar>&);
-
-  /// Construct linear expression as sum of variable and integer
-  LinExpr<BoolVar>
-  operator -(int, const BoolVar&);
   /// Construct linear expression as sum of linear expression and integer
-  LinExpr<BoolVar>
-  operator -(int, const LinExpr<BoolVar>&);
-  /// Construct linear expression as sum of integer and linear expression
-  LinExpr<BoolVar>
-  operator -(const BoolVar&, int);
-  /// Construct linear expression as sum of integer and variable
-  LinExpr<BoolVar>
-  operator -(const LinExpr<BoolVar>&, int);
-  /// Construct linear expression as sum of variables
-  LinExpr<BoolVar>
-  operator -(const BoolVar&, const BoolVar&);
-  /// Construct linear expression as sum of variable and linear expression
-  LinExpr<BoolVar>
-  operator -(const BoolVar&, const LinExpr<BoolVar>&);
-  /// Construct linear expression as sum of linear expression and variable
-  LinExpr<BoolVar>
-  operator -(const LinExpr<BoolVar>&, const BoolVar&);
+  LinExpr
+  operator +(const LinExpr&, int);
+  /// Construct linear expression as sum of integer variables
+  LinExpr
+  operator +(const IntVar&, const IntVar&);
+  /// Construct linear expression as sum of integer and Boolean variable
+  LinExpr
+  operator +(const IntVar&, const BoolVar&);
+  /// Construct linear expression as sum of Boolean and integer variable
+  LinExpr
+  operator +(const BoolVar&, const IntVar&);
+  /// Construct linear expression as sum of Boolean variables
+  LinExpr
+  operator +(const BoolVar&, const BoolVar&);
+  /// Construct linear expression as sum of integer variable and linear expression
+  LinExpr
+  operator +(const IntVar&, const LinExpr&);
+  /// Construct linear expression as sum of Boolean variable and linear expression
+  LinExpr
+  operator +(const BoolVar&, const LinExpr&);
+  /// Construct linear expression as sum of linear expression and integer variable
+  LinExpr
+  operator +(const LinExpr&, const IntVar&);
+  /// Construct linear expression as sum of linear expression and Boolean variable
+  LinExpr
+  operator +(const LinExpr&, const BoolVar&);
   /// Construct linear expression as sum of linear expressions
-  LinExpr<BoolVar>
-  operator -(const LinExpr<BoolVar>&, const LinExpr<BoolVar>&);
-  /// Construct linear expression as negative of variable
-  LinExpr<BoolVar>
+  LinExpr
+  operator +(const LinExpr&, const LinExpr&);
+
+  /// Construct linear expression as sum of integer variable and integer
+  LinExpr
+  operator -(int, const IntVar&);
+  /// Construct linear expression as sum of Boolean variable and integer
+  LinExpr
+  operator -(int, const BoolVar&);
+  /// Construct linear expression as sum of integer and linear expression
+  LinExpr
+  operator -(int, const LinExpr&);
+  /// Construct linear expression as sum of integer variable and integer
+  LinExpr
+  operator -(const IntVar&, int);
+  /// Construct linear expression as sum of Boolean variable and integer
+  LinExpr
+  operator -(const BoolVar&, int);
+  /// Construct linear expression as sum of linear expression and integer
+  LinExpr
+  operator -(const LinExpr&, int);
+  /// Construct linear expression as sum of integer variables
+  LinExpr
+  operator -(const IntVar&, const IntVar&);
+  /// Construct linear expression as sum of integer and Boolean variable
+  LinExpr
+  operator -(const IntVar&, const BoolVar&);
+  /// Construct linear expression as sum of Boolean and integer variable
+  LinExpr
+  operator -(const BoolVar&, const IntVar&);
+  /// Construct linear expression as sum of Boolean variables
+  LinExpr
+  operator -(const BoolVar&, const BoolVar&);
+  /// Construct linear expression as sum of integer variable and linear expression
+  LinExpr
+  operator -(const IntVar&, const LinExpr&);
+  /// Construct linear expression as sum of Boolean variable and linear expression
+  LinExpr
+  operator -(const BoolVar&, const LinExpr&);
+  /// Construct linear expression as sum of linear expression and integer variable
+  LinExpr
+  operator -(const LinExpr&, const IntVar&);
+  /// Construct linear expression as sum of linear expression and Boolean variable
+  LinExpr
+  operator -(const LinExpr&, const BoolVar&);
+  /// Construct linear expression as sum of linear expressions
+  LinExpr
+  operator -(const LinExpr&, const LinExpr&);
+
+  /// Construct linear expression as negative of integer variable
+  LinExpr
+  operator -(const IntVar&);
+  /// Construct linear expression as negative of Boolean variable
+  LinExpr
   operator -(const BoolVar&);
   /// Construct linear expression as negative of linear expression
-  LinExpr<BoolVar>
-  operator -(const LinExpr<BoolVar>&);
+  LinExpr
+  operator -(const LinExpr&);
 
   /// Construct linear expression as product of integer coefficient and integer variable
-  LinExpr<BoolVar>
+  LinExpr
+  operator *(int, const IntVar&);
+  /// Construct linear expression as product of integer coefficient and Boolean variable
+  LinExpr
   operator *(int, const BoolVar&);
   /// Construct linear expression as product of integer coefficient and integer variable
-  LinExpr<BoolVar>
+  LinExpr
+  operator *(const IntVar&, int);
+  /// Construct linear expression as product of integer coefficient and Boolean variable
+  LinExpr
   operator *(const BoolVar&, int);
   /// Construct linear expression as product of integer coefficient and linear expression
-  LinExpr<BoolVar>
-  operator *(const LinExpr<BoolVar>&, int);
+  LinExpr
+  operator *(const LinExpr&, int);
   /// Construct linear expression as product of integer coefficient and linear expression
-  LinExpr<BoolVar>
-  operator *(int, const LinExpr<BoolVar>&);
+  LinExpr
+  operator *(int, const LinExpr&);
 
 
   /// Construct linear equality relation
-  LinRel<IntVar>
+  LinRel
   operator ==(int l, const IntVar& r);
   /// Construct linear equality relation
-  LinRel<IntVar>
-  operator ==(int l, const LinExpr<IntVar>& r);
-  /// Construct linear equality relation
-  LinRel<IntVar>
-  operator ==(const IntVar& l, int r);
-  /// Construct linear equality relation
-  LinRel<IntVar>
-  operator ==(const LinExpr<IntVar>& l, int r);
-  /// Construct linear equality relation
-  LinRel<IntVar>
-  operator ==(const IntVar& l, const IntVar& r);
-  /// Construct linear equality relation
-  LinRel<IntVar>
-  operator ==(const IntVar& l, const LinExpr<IntVar>& r);
-  /// Construct linear equality relation
-  LinRel<IntVar>
-  operator ==(const LinExpr<IntVar>& l, const IntVar& r);
-  /// Construct linear equality relation
-  LinRel<IntVar>
-  operator ==(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(int l, const IntVar& r);
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(int l, const LinExpr<IntVar>& r);
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(const IntVar& l, int r);
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(const LinExpr<IntVar>& l, int r);
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(const IntVar& l, const IntVar& r);
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(const IntVar& l, const LinExpr<IntVar>& r);
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(const LinExpr<IntVar>& l, const IntVar& r);
-  /// Construct linear disequality relation
-  LinRel<IntVar>
-  operator !=(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(int l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(int l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(const IntVar& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(const LinExpr<IntVar>& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(const IntVar& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(const IntVar& l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(const LinExpr<IntVar>& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(int l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(int l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(const IntVar& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(const LinExpr<IntVar>& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(const IntVar& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(const IntVar& l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(const LinExpr<IntVar>& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator <=(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(int l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(int l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(const IntVar& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(const LinExpr<IntVar>& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(const IntVar& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(const IntVar& l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(const LinExpr<IntVar>& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(int l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(int l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(const IntVar& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(const LinExpr<IntVar>& l, int r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(const IntVar& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(const IntVar& l, const LinExpr<IntVar>& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(const LinExpr<IntVar>& l, const IntVar& r);
-  /// Construct linear inequality relation
-  LinRel<IntVar>
-  operator >=(const LinExpr<IntVar>& l, const LinExpr<IntVar>& r);
-
-
-  /// Construct linear equality relation
-  LinRel<BoolVar>
+  LinRel
   operator ==(int l, const BoolVar& r);
   /// Construct linear equality relation
-  LinRel<BoolVar>
-  operator ==(int l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator ==(int l, const LinExpr& r);
   /// Construct linear equality relation
-  LinRel<BoolVar>
+  LinRel
+  operator ==(const IntVar& l, int r);
+  /// Construct linear equality relation
+  LinRel
   operator ==(const BoolVar& l, int r);
   /// Construct linear equality relation
-  LinRel<BoolVar>
-  operator ==(const LinExpr<BoolVar>& l, int r);
+  LinRel
+  operator ==(const LinExpr& l, int r);
   /// Construct linear equality relation
-  LinRel<BoolVar>
+  LinRel
+  operator ==(const IntVar& l, const IntVar& r);
+  /// Construct linear equality relation
+  LinRel
+  operator ==(const IntVar& l, const BoolVar& r);
+  /// Construct linear equality relation
+  LinRel
+  operator ==(const BoolVar& l, const IntVar& r);
+  /// Construct linear equality relation
+  LinRel
   operator ==(const BoolVar& l, const BoolVar& r);
   /// Construct linear equality relation
-  LinRel<BoolVar>
-  operator ==(const BoolVar& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator ==(const IntVar& l, const LinExpr& r);
   /// Construct linear equality relation
-  LinRel<BoolVar>
-  operator ==(const LinExpr<BoolVar>& l, const BoolVar& r);
+  LinRel
+  operator ==(const BoolVar& l, const LinExpr& r);
   /// Construct linear equality relation
-  LinRel<BoolVar>
-  operator ==(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator ==(const LinExpr& l, const IntVar& r);
+  /// Construct linear equality relation
+  LinRel
+  operator ==(const LinExpr& l, const BoolVar& r);
+  /// Construct linear equality relation
+  LinRel
+  operator ==(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear disequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator !=(int l, const IntVar& r);
+  /// Construct linear disequality relation
+  LinRel
   operator !=(int l, const BoolVar& r);
   /// Construct linear disequality relation
-  LinRel<BoolVar>
-  operator !=(int l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator !=(int l, const LinExpr& r);
   /// Construct linear disequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator !=(const IntVar& l, int r);
+  /// Construct linear disequality relation
+  LinRel
   operator !=(const BoolVar& l, int r);
   /// Construct linear disequality relation
-  LinRel<BoolVar>
-  operator !=(const LinExpr<BoolVar>& l, int r);
+  LinRel
+  operator !=(const LinExpr& l, int r);
   /// Construct linear disequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator !=(const IntVar& l, const IntVar& r);
+  /// Construct linear disequality relation
+  LinRel
+  operator !=(const IntVar& l, const BoolVar& r);
+  /// Construct linear disequality relation
+  LinRel
+  operator !=(const BoolVar& l, const IntVar& r);
+  /// Construct linear disequality relation
+  LinRel
   operator !=(const BoolVar& l, const BoolVar& r);
   /// Construct linear disequality relation
-  LinRel<BoolVar>
-  operator !=(const BoolVar& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator !=(const IntVar& l, const LinExpr& r);
   /// Construct linear disequality relation
-  LinRel<BoolVar>
-  operator !=(const LinExpr<BoolVar>& l, const BoolVar& r);
+  LinRel
+  operator !=(const BoolVar& l, const LinExpr& r);
   /// Construct linear disequality relation
-  LinRel<BoolVar>
-  operator !=(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator !=(const LinExpr& l, const IntVar& r);
+  /// Construct linear disequality relation
+  LinRel
+  operator !=(const LinExpr& l, const BoolVar& r);
+  /// Construct linear disequality relation
+  LinRel
+  operator !=(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator <(int l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator <(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <(int l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator <(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator <(const IntVar& l, int r);
+  /// Construct linear inequality relation
+  LinRel
   operator <(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <(const LinExpr<BoolVar>& l, int r);
+  LinRel
+  operator <(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator <(const IntVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <(const IntVar& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <(const BoolVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator <(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <(const BoolVar& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator <(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <(const LinExpr<BoolVar>& l, const BoolVar& r);
+  LinRel
+  operator <(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator <(const LinExpr& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <(const LinExpr& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator <=(int l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator <=(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <=(int l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator <=(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator <=(const IntVar& l, int r);
+  /// Construct linear inequality relation
+  LinRel
   operator <=(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <=(const LinExpr<BoolVar>& l, int r);
+  LinRel
+  operator <=(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator <=(const IntVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <=(const IntVar& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <=(const BoolVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator <=(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <=(const BoolVar& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator <=(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <=(const LinExpr<BoolVar>& l, const BoolVar& r);
+  LinRel
+  operator <=(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator <=(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator <=(const LinExpr& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <=(const LinExpr& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator <=(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator >(int l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator >(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >(int l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator >(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator >(const IntVar& l, int r);
+  /// Construct linear inequality relation
+  LinRel
   operator >(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >(const LinExpr<BoolVar>& l, int r);
+  LinRel
+  operator >(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator >(const IntVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >(const IntVar& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >(const BoolVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator >(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >(const BoolVar& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator >(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >(const LinExpr<BoolVar>& l, const BoolVar& r);
+  LinRel
+  operator >(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator >(const LinExpr& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >(const LinExpr& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >(const LinExpr& l, const LinExpr& r);
 
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator >=(int l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator >=(int l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >=(int l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator >=(int l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator >=(const IntVar& l, int r);
+  /// Construct linear inequality relation
+  LinRel
   operator >=(const BoolVar& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >=(const LinExpr<BoolVar>& l, int r);
+  LinRel
+  operator >=(const LinExpr& l, int r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
+  LinRel
+  operator >=(const IntVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >=(const IntVar& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >=(const BoolVar& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
   operator >=(const BoolVar& l, const BoolVar& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >=(const BoolVar& l, const LinExpr<BoolVar>& r);
+  LinRel
+  operator >=(const IntVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >=(const LinExpr<BoolVar>& l, const BoolVar& r);
+  LinRel
+  operator >=(const BoolVar& l, const LinExpr& r);
   /// Construct linear inequality relation
-  LinRel<BoolVar>
-  operator >=(const LinExpr<BoolVar>& l, const LinExpr<BoolVar>& r);
-
+  LinRel
+  operator >=(const LinExpr& l, const IntVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >=(const LinExpr& l, const BoolVar& r);
+  /// Construct linear inequality relation
+  LinRel
+  operator >=(const LinExpr& l, const LinExpr& r);
   //@}
 
 
@@ -650,13 +624,12 @@ namespace Gecode {
   public:
     /// Type of Boolean expression
     enum NodeType {
-      NT_VAR,       ///< Variable
-      NT_NOT,       ///< Negation
-      NT_AND,       ///< Conjunction
-      NT_OR,        ///< Disjunction
-      NT_EQV,       ///< Equivalence
-      NT_RLIN_INT,  ///< Reified linear relation (integer variables)
-      NT_RLIN_BOOL  ///< Reified linear relation (Boolean variables)
+      NT_VAR, ///< Variable
+      NT_NOT, ///< Negation
+      NT_AND, ///< Conjunction
+      NT_OR,  ///< Disjunction
+      NT_EQV, ///< Equivalence
+      NT_RLIN ///< Reified linear relation
     };
     /// Node for Boolean expression
     class Node {
@@ -671,10 +644,8 @@ namespace Gecode {
       Node *l, *r;
       /// Possibly a variable
       BoolVar x;
-      /// Possibly a reified linear relation over integer variables
-      LinRel<IntVar> rl_int;
-      /// Possibly a reified linear relation over Boolean variables
-      LinRel<BoolVar> rl_bool;
+      /// Possibly a reified linear relation
+      LinRel rl;
 
       /// Default constructor
       Node(void);
@@ -751,10 +722,7 @@ namespace Gecode {
     BoolExpr(const BoolExpr& e, NodeType t);
     /// Construct expression for reified linear relation
     GECODE_MINIMODEL_EXPORT
-    BoolExpr(const LinRel<IntVar>& rl);
-    /// Construct expression for reified linear relation
-    GECODE_MINIMODEL_EXPORT
-    BoolExpr(const LinRel<BoolVar>& rl);
+    BoolExpr(const LinRel& rl);
     /// Post propagators for expression
     BoolVar post(Home home, IntConLevel icl) const;
     /// Post propagators for relation
@@ -809,9 +777,8 @@ namespace Gecode {
   BoolExpr
   operator ^(const BoolExpr&, const BoolExpr&);
   /// Reification of linear relations
-  template<class Var>
   BoolExpr
-  operator ~(const LinRel<Var>&);
+  operator ~(const LinRel&);
 
   /// Equivalence of Boolean expressions
   BoolExpr
@@ -836,8 +803,7 @@ namespace Gecode {
    */
   //@{
   /// Post linear expression and return its value
-  template<class Var>
-  IntVar post(Home home, const LinExpr<Var>& e,
+  IntVar post(Home home, const LinExpr& e,
               IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for integer variable) and return its value
   IntVar post(Home home, const IntVar& x,
@@ -847,8 +813,7 @@ namespace Gecode {
               IntConLevel icl=ICL_DEF);
 
   /// Post linear relation
-  template<class Var>
-  void post(Home home, const LinRel<Var>& r,
+  void post(Home home, const LinRel& r,
             IntConLevel icl=ICL_DEF);
   /// Make it work for special integer only-case
   void post(Home home, bool r,

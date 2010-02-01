@@ -73,6 +73,13 @@ Date: ??????
 The next big thing.
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Linear expressions can freely mix integer and Boolean variables.
+
+[ENTRY]
 Module: support
 What:   performance
 Rank:   major

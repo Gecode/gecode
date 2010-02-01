@@ -90,7 +90,7 @@ namespace Test { namespace Int {
      }
 
      /**
-      * \defgroup TaskTestIntMiniModelLin Minimal modelling constraints (linear constraints)
+      * \defgroup TaskTestIntMiniModelLin Minimal modeling constraints (linear constraints)
       * \ingroup TaskTestInt
       */
      //@{
@@ -106,16 +106,69 @@ namespace Test { namespace Int {
        /// Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int reg[3] = {x[0],x[1],x[2]};
-         //         std::cout << "eval: " << eval(lis, reg) << std::endl;
          return eval(lis, reg) == x[3];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinExpr<IntVar> reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr reg[3] = {x[0],x[1],x[2]};
          rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
        }
      };
+
+     /// Test linear expressions over Boolean variables
+     class LinExprBool : public Test {
+     protected:
+       /// Linear instruction sequence
+       const LinInstr* lis;
+     public:
+       /// Create and register test
+       LinExprBool(const LinInstr* lis0, const std::string& s)
+         : Test("MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int i=3; i--; )
+           if ((x[i] < 0) || (x[i] > 1))
+             return false;
+         int reg[3] = {x[0],x[1],x[2]};
+         return eval(lis, reg) == x[3];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Gecode::LinExpr reg[3] = {
+           channel(home,x[0]),channel(home,x[1]),channel(home,x[2])
+         };
+         rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
+       }
+     };
+
+     /// Test linear expressions over integer and Boolean variables
+     class LinExprMixed : public Test {
+     protected:
+       /// Linear instruction sequence
+       const LinInstr* lis;
+     public:
+       /// Create and register test
+       LinExprMixed(const LinInstr* lis0, const std::string& s)
+         : Test("MiniModel::LinExpr::Mixed::"+s,4,-3,3), lis(lis0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         if ((x[2] < 0) || (x[2] > 1))
+           return false;
+         int reg[3] = {x[0],x[1],x[2]};
+         return eval(lis, reg) == x[3];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Gecode::LinExpr reg[3] = {
+           x[0],x[1],channel(home,x[2])
+         };
+         rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
+       }
+     };
+
 
      /// Test linear relations over integer variables
      class LinRelInt : public Test {
@@ -141,8 +194,8 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
            Gecode::post(home, tt(0 == eval(l_lis,l_reg) - eval(r_lis,r_reg)));
@@ -165,12 +218,12 @@ namespace Test { namespace Int {
          default: GECODE_NEVER;
          }
        }
-       /// Post constraint on \a x for \a bb
+       /// Post constraint on \a x for \a b
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          using namespace Gecode;
-         Gecode::LinExpr<IntVar> l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::LinExpr<IntVar> r_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinExpr r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
            rel(home, Gecode::post(home,
@@ -200,33 +253,6 @@ namespace Test { namespace Int {
            break;
          default: GECODE_NEVER;
          }
-       }
-     };
-
-     /// Test linear expressions over Boolean variables
-     class LinExprBool : public Test {
-     protected:
-       /// Linear instruction sequence
-       const LinInstr* lis;
-     public:
-       /// Create and register test
-       LinExprBool(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {}
-       /// Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         for (int i=3; i--; )
-           if ((x[i] < 0) || (x[i] > 1))
-             return false;
-         int reg[3] = {x[0],x[1],x[2]};
-         return eval(lis, reg) == x[3];
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         Gecode::LinExpr<BoolVar> reg[3] = {
-           channel(home,x[0]),channel(home,x[1]),channel(home,x[2])
-         };
-         rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
        }
      };
 
@@ -257,8 +283,8 @@ namespace Test { namespace Int {
          BoolVarArgs y(3);
          y[0] = channel(home,x[0]); y[1] = channel(home,x[1]);
          y[2] = channel(home,x[2]);
-         Gecode::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
-         Gecode::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
            Gecode::post(home, tt(eval(l_lis,l_reg) - eval(r_lis,r_reg) == 0));
@@ -281,15 +307,15 @@ namespace Test { namespace Int {
          default: GECODE_NEVER;
          }
        }
-       /// Post constraint on \a x for \a bb
+       /// Post constraint on \a x for \a b
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          using namespace Gecode;
          BoolVarArgs y(3);
          y[0] = channel(home,x[0]); y[1] = channel(home,x[1]);
          y[2] = channel(home,x[2]);
-         Gecode::LinExpr<BoolVar> l_reg[3] = {y[0],y[1],y[2]};
-         Gecode::LinExpr<BoolVar> r_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinExpr r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
            rel(home, Gecode::post(home,
@@ -316,6 +342,98 @@ namespace Test { namespace Int {
          case IRT_GR:
            Gecode::post(home,
                         ff(~(eval(l_lis,l_reg)>eval(r_lis,r_reg))^b));
+           break;
+         default: GECODE_NEVER;
+         }
+       }
+     };
+
+     /// Test linear relations over integer and Boolean variables
+     class LinRelMixed : public Test {
+     protected:
+       /// Linear instruction sequence for left hand side
+       const LinInstr* l_lis;
+       /// Linear instruction sequence for right hand side
+       const LinInstr* r_lis;
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       LinRelMixed(const LinInstr* l_lis0, const LinInstr* r_lis0,
+                   Gecode::IntRelType irt0, const std::string& s)
+         : Test("MiniModel::LinRel::Mixed::"+s+"::"+str(irt0),6,0,1,true),
+           l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int l_reg[3] = {x[0],x[1],x[2]};
+         int r_reg[3] = {x[3],x[4],x[5]};
+         return cmp(eval(l_lis,l_reg),irt,eval(r_lis,r_reg));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Gecode::LinExpr l_reg[3] = {channel(home,x[0]),x[1],x[2]};
+         Gecode::LinExpr r_reg[3] = {channel(home,x[3]),x[4],
+                                     channel(home,x[5])};
+         switch (irt) {
+         case IRT_EQ:
+           Gecode::post(home, tt(0 == eval(l_lis,l_reg) - eval(r_lis,r_reg)));
+           break;
+         case IRT_NQ:
+           Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
+           break;
+         case IRT_LQ:
+           Gecode::post(home, ff(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
+           break;
+         case IRT_LE:
+           Gecode::post(home, tt(eval(l_lis,l_reg) < eval(r_lis,r_reg)));
+           break;
+         case IRT_GQ:
+           Gecode::post(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
+           break;
+         case IRT_GR:
+           Gecode::post(home, ff(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
+           break;
+         default: GECODE_NEVER;
+         }
+       }
+       /// Post constraint on \a x for \a b
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::BoolVar b) {
+         using namespace Gecode;
+         Gecode::LinExpr l_reg[3] = {channel(home,x[0]),x[1],x[2]};
+         Gecode::LinExpr r_reg[3] = {channel(home,x[3]),x[4],
+                                     channel(home,x[5])};
+         switch (irt) {
+         case IRT_EQ:
+           rel(home, Gecode::post(home,
+                                  ~(eval(l_lis,l_reg)==eval(r_lis,r_reg))),
+               IRT_EQ, b);
+           break;
+         case IRT_NQ:
+           rel(home, Gecode::post(home,
+                                  ~(eval(l_lis,l_reg)!=eval(r_lis,r_reg))),
+               IRT_EQ, b);
+           break;
+         case IRT_LQ:
+           rel(home, Gecode::post(home,
+                                  ~(eval(l_lis,l_reg)<=eval(r_lis,r_reg))),
+               IRT_EQ, b);
+           break;
+         case IRT_LE:
+           rel(home, Gecode::post(home,
+                                  ~(eval(l_lis,l_reg)<eval(r_lis,r_reg))),
+               IRT_EQ, b);
+           break;
+         case IRT_GQ:
+           rel(home, Gecode::post(home,
+                                  ~(eval(l_lis,l_reg)>=eval(r_lis,r_reg))),
+               IRT_EQ, b);
+           break;
+         case IRT_GR:
+           rel(home, Gecode::post(home,
+                                  ~(eval(l_lis,l_reg)>eval(r_lis,r_reg))),
+               IRT_EQ, b);
            break;
          default: GECODE_NEVER;
          }
@@ -2008,6 +2126,7 @@ namespace Test { namespace Int {
            }
            (void) new LinExprInt(li[i],s);
            (void) new LinExprBool(li[i],s);
+           (void) new LinExprMixed(li[i],s);
          }
          IntRelTypes irts;
          for (int i=0; i<n/2; i++) {
@@ -2019,6 +2138,7 @@ namespace Test { namespace Int {
            }
            (void) new LinRelInt(li[2*i],li[2*i+1],irts.irt(),s);
            (void) new LinRelBool(li[2*i],li[2*i+1],irts.irt(),s);
+           (void) new LinRelMixed(li[2*i],li[2*i+1],irts.irt(),s);
            ++irts;
            if (!irts())
              irts.reset();

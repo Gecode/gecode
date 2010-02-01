@@ -106,22 +106,13 @@ namespace Gecode {
     }
   }
 
-  BoolExpr::BoolExpr(const LinRel<IntVar>& rl)
+  BoolExpr::BoolExpr(const LinRel& rl)
     : n(new Node) {
-    n->same   = 1;
-    n->t      = NT_RLIN_INT;
-    n->l      = NULL;
-    n->r      = NULL;
-    n->rl_int = rl;
-  }
-
-  BoolExpr::BoolExpr(const LinRel<BoolVar>& rl)
-    : n(new Node) {
-    n->same    = 1;
-    n->t       = NT_RLIN_BOOL;
-    n->l       = NULL;
-    n->r       = NULL;
-    n->rl_bool = rl;
+    n->same = 1;
+    n->t    = NT_RLIN;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->rl   = rl;
   }
 
   const BoolExpr&
@@ -165,11 +156,8 @@ namespace Gecode {
       assert(u.a.neg);
       rel(home, u.a.x->x, IRT_NQ, b);
       break;
-    case NT_RLIN_INT:
-      u.a.x->rl_int.post(home, b, !u.a.neg, icl);
-      break;
-    case NT_RLIN_BOOL:
-      u.a.x->rl_bool.post(home, b, !u.a.neg, icl);
+    case NT_RLIN:
+      u.a.x->rl.post(home, b, !u.a.neg, icl);
       break;
     case NT_AND:
       {
@@ -227,17 +215,10 @@ namespace Gecode {
           bp[ip++]=u.a.x->x;
         }
         break;
-      case NT_RLIN_INT:
+      case NT_RLIN:
         {
           BoolVar b(home,0,1);
-          u.a.x->rl_int.post(home, b, !u.a.neg, icl);
-          bp[ip++]=b;
-        }
-        break;
-      case NT_RLIN_BOOL:
-        {
-          BoolVar b(home,0,1);
-          u.a.x->rl_bool.post(home, b, !u.a.neg, icl);
+          u.a.x->rl.post(home, b, !u.a.neg, icl);
           bp[ip++]=b;
         }
         break;
@@ -258,11 +239,8 @@ namespace Gecode {
       case NT_VAR:
         rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
         break;
-      case NT_RLIN_INT:
-        u.a.x->rl_int.post(home, !u.a.neg, icl);
-        break;
-      case NT_RLIN_BOOL:
-        u.a.x->rl_bool.post(home, !u.a.neg, icl);
+      case NT_RLIN:
+        u.a.x->rl.post(home, !u.a.neg, icl);
         break;
       case NT_AND:
         u.b.l->post(home, true, icl);
@@ -287,11 +265,8 @@ namespace Gecode {
       case NT_VAR:
         rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 1 : 0);
         break;
-      case NT_RLIN_INT:
-        u.a.x->rl_int.post(home, u.a.neg, icl);
-        break;
-      case NT_RLIN_BOOL:
-        u.a.x->rl_bool.post(home, u.a.neg, icl);
+      case NT_RLIN:
+        u.a.x->rl.post(home, u.a.neg, icl);
         break;
       case NT_AND:
         {
@@ -317,7 +292,7 @@ namespace Gecode {
   BoolExpr::NNF*
   BoolExpr::NNF::nnf(Region& r, Node* n, bool neg) {
     switch (n->t) {
-    case NT_VAR: case NT_RLIN_INT: case NT_RLIN_BOOL:
+    case NT_VAR: case NT_RLIN:
       {
         NNF* x = new (r) NNF;
         x->t = n->t; x->u.a.neg = neg; x->u.a.x = n;
