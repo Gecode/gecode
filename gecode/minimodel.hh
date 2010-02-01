@@ -829,25 +829,11 @@ namespace Gecode {
   /// Post linear expression and return its value
   IntVar post(Home home, const LinExpr& e,
               IntConLevel icl=ICL_DEF);
-  /// Post linear expression (special case for integer variable) and return its value
-  IntVar post(Home home, const IntVar& x,
-              IntConLevel icl=ICL_DEF);
-  /// Post linear expression (special case for constant) and return its value
-  IntVar post(Home home, int n,
-              IntConLevel icl=ICL_DEF);
-
   /// Post linear relation
   void post(Home home, const LinRel& r,
             IntConLevel icl=ICL_DEF);
-  /// Make it work for special integer only-case
-  void post(Home home, bool r,
-            IntConLevel icl=ICL_DEF);
-
   /// Post Boolean expression and return its value
   BoolVar post(Home home, const BoolExpr& e,
-               IntConLevel icl=ICL_DEF);
-  /// Post Boolean expression (special case for variable) and return its value
-  BoolVar post(Home home, const BoolVar& b,
                IntConLevel icl=ICL_DEF);
   /// Post Boolean relation
   void post(Home home, const BoolRel& r,

@@ -100,14 +100,11 @@ namespace Gecode {
 
   inline BoolVar
   post(Home home, const BoolExpr& e, IntConLevel icl) {
-    return e.post(home,icl);
+    if (!home.failed())
+      return e.post(home,icl);
+    BoolVar x(home,0,1);
+    return x;
   }
-
-  inline BoolVar
-  post(Home, const BoolVar& b, IntConLevel) {
-    return b;
-  }
-
 
 }
 

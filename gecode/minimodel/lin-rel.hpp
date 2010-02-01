@@ -471,12 +471,6 @@ namespace Gecode {
     if (home.failed()) return;
     r.post(home,true,icl);
   }
-  forceinline void
-  post(Home home, bool r, IntConLevel) {
-    if (home.failed()) return;
-    if (!r)
-      home.fail();
-  }
 
 }
 

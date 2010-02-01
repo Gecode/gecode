@@ -209,19 +209,6 @@ namespace Gecode {
 
 
 
-
-
-  forceinline IntVar
-  post(Home, const IntVar& x, IntConLevel) {
-    return x;
-  }
-
-  inline IntVar
-  post(Home home, int n, IntConLevel) {
-    IntVar x(home, n, n);
-    return x;
-  }
-
   inline IntVar
   post(Home home, const LinExpr& e, IntConLevel icl) {
     if (!home.failed())
