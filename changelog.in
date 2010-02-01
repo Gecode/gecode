@@ -74,6 +74,14 @@ The next big thing.
 
 [ENTRY]
 Module: minimodel
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed special cases for posting linear and Boolean expressions
+consisting of a single variable only (was highly ambigious).
+
+[ENTRY]
+Module: minimodel
 What:   new
 Rank:   minor
 [DESCRIPTION]
