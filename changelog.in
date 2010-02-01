@@ -77,7 +77,8 @@ Module: minimodel
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Linear expressions can freely mix integer and Boolean variables.
+Linear expressions can freely mix integer and Boolean variables
+and support construction from variable arrays via a sum function.
 
 [ENTRY]
 Module: support

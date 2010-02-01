@@ -96,11 +96,13 @@ namespace Gecode {
   public:
     /// Type of linear expression
     enum NodeType {
-      NT_VAR_INT, ///< Linear term with integer variable
+      NT_VAR_INT,  ///< Linear term with integer variable
       NT_VAR_BOOL, ///< Linear term with Boolean variable
-      NT_ADD, ///< Addition of linear terms
-      NT_SUB, ///< Subtraction of linear terms
-      NT_MUL ///< Multiplication by coefficient
+      NT_SUM_INT,  ///< Sum of integer variables
+      NT_SUM_BOOL, ///< Sum of Boolean variables
+      NT_ADD,      ///< Addition of linear terms
+      NT_SUB,      ///< Subtraction of linear terms
+      NT_MUL       ///< Multiplication by coefficient
     };
   private:
     /// Nodes for linear expressions
@@ -116,6 +118,13 @@ namespace Gecode {
       NodeType t;
       /// Subexpressions
       Node *l, *r;
+      /// Sum of integer or Boolean variables
+      union {
+        /// Integer views and coefficients
+        Int::Linear::Term<Int::IntView>* ti;
+        /// Bool views and coefficients
+        Int::Linear::Term<Int::BoolView>* tb;
+      } sum;
       /// Coefficient and offset
       int a, c;
       /// Integer variable (potentially)
@@ -132,6 +141,9 @@ namespace Gecode {
       /// Decrement reference count and possibly free memory
       GECODE_MINIMODEL_EXPORT
       bool decrement(void);
+      /// Destructor
+      GECODE_MINIMODEL_EXPORT
+      ~Node(void);
       /// Memory management
       static void* operator new(size_t size);
       /// Memory management
@@ -148,6 +160,18 @@ namespace Gecode {
     /// Create expression
     GECODE_MINIMODEL_EXPORT
     LinExpr(const BoolVar& x, int a=1);
+    /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
+    LinExpr(const IntVarArgs& x);
+    /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
+    LinExpr(const IntArgs& a, const IntVarArgs& x);
+    /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
+    LinExpr(const BoolVarArgs& x);
+    /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
+    LinExpr(const IntArgs& a, const BoolVarArgs& x);
     /// Copy constructor
     LinExpr(const LinExpr& e);
     /// Create expression for type and subexpressions
@@ -340,6 +364,18 @@ namespace Gecode {
   LinExpr
   operator *(int, const LinExpr&);
 
+  /// Construct linear expression as sum of integer variables
+  LinExpr
+  sum(const IntVarArgs& x);
+  /// Construct linear expression as sum of integer variables with coefficients
+  LinExpr
+  sum(const IntArgs& a, const IntVarArgs& x);
+  /// Construct linear expression as sum of Boolean variables
+  LinExpr
+  sum(const BoolVarArgs& x);
+  /// Construct linear expression as sum of Boolean variables with coefficients
+  LinExpr
+  sum(const IntArgs& a, const BoolVarArgs& x);
 
   /// Construct linear equality relation
   LinRel

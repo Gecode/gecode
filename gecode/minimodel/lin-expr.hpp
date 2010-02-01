@@ -234,6 +234,22 @@ namespace Gecode {
     return LinExpr(a,e);
   }
 
+  inline LinExpr
+  sum(const IntVarArgs& x) {
+    return LinExpr(x);
+  }
+  inline LinExpr
+  sum(const IntArgs& a, const IntVarArgs& x) {
+    return LinExpr(a,x);
+  }
+  inline LinExpr
+  sum(const BoolVarArgs& x) {
+    return LinExpr(x);
+  }
+  inline LinExpr
+  sum(const IntArgs& a, const BoolVarArgs& x) {
+    return LinExpr(a,x);
+  }
 
   forceinline IntVar
   post(Home, const IntVar& x, IntConLevel) {

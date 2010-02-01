@@ -198,7 +198,13 @@ namespace Test { namespace Int {
          Gecode::LinExpr r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
-           Gecode::post(home, tt(0 == eval(l_lis,l_reg) - eval(r_lis,r_reg)));
+           {
+             IntVar x = Gecode::post(home,eval(l_lis,l_reg));
+             IntVar y = Gecode::post(home,eval(r_lis,r_reg));
+             IntArgs a(2, 1,-1);
+             IntVarArgs xy(2); xy[0]=x; xy[1]=y;
+             Gecode::post(home, tt(0 == sum(a,xy)));
+           }
            break;
          case IRT_NQ:
            Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
@@ -287,7 +293,13 @@ namespace Test { namespace Int {
          Gecode::LinExpr r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
-           Gecode::post(home, tt(eval(l_lis,l_reg) - eval(r_lis,r_reg) == 0));
+           {
+             IntVar x = Gecode::post(home,eval(l_lis,l_reg));
+             IntVar y = Gecode::post(home,eval(r_lis,r_reg));
+             IntArgs a(2, -2,2);
+             IntVarArgs xy(2); xy[0]=x; xy[1]=y;
+             Gecode::post(home, tt(0 == sum(a,xy)));
+           }
            break;
          case IRT_NQ:
            Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);

@@ -39,6 +39,20 @@
 
 namespace Gecode {
 
+  LinExpr::Node::~Node(void) {
+    switch (t) {
+    case NT_SUM_INT:
+      if (n_int > 0)
+        heap.free<Int::Linear::Term<Int::IntView> >(sum.ti,n_int);
+      break;
+    case NT_SUM_BOOL:
+      if (n_bool > 0)
+        heap.free<Int::Linear::Term<Int::BoolView> >(sum.tb,n_bool);
+      break;
+    default: ;
+    }
+  }
+
   bool
   LinExpr::Node::decrement(void) {
     if (--use == 0) {
@@ -82,6 +96,70 @@ namespace Gecode {
     n->l = n->r = NULL;
     n->a = a;
     n->x_bool = x;
+  }
+
+  LinExpr::LinExpr(const IntVarArgs& x) :
+    n(new Node) {
+    n->n_int = x.size();
+    n->n_bool = 0;
+    n->t = NT_SUM_INT;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.ti[i].x = x[i];
+        n->sum.ti[i].a = 1;
+      }
+    }
+  }
+
+  LinExpr::LinExpr(const IntArgs& a, const IntVarArgs& x) :
+    n(new Node) {
+    if (a.size() != x.size())
+      throw Int::ArgumentSizeMismatch("MiniModel::LinExpr");
+    n->n_int = x.size();
+    n->n_bool = 0;
+    n->t = NT_SUM_INT;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.ti[i].x = x[i];
+        n->sum.ti[i].a = a[i];
+      }
+    }
+  }
+
+  LinExpr::LinExpr(const BoolVarArgs& x) :
+    n(new Node) {
+    n->n_int = 0;
+    n->n_bool = x.size();
+    n->t = NT_SUM_BOOL;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.tb[i].x = x[i];
+        n->sum.tb[i].a = 1;
+      }
+    }
+  }
+
+  LinExpr::LinExpr(const IntArgs& a, const BoolVarArgs& x) :
+    n(new Node) {
+    if (a.size() != x.size())
+      throw Int::ArgumentSizeMismatch("MiniModel::LinExpr");
+    n->n_int = 0;
+    n->n_bool = x.size();
+    n->t = NT_SUM_BOOL;
+    n->l = n->r = NULL;
+    if (x.size() > 0) {
+      n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      for (int i=x.size(); i--; ) {
+        n->sum.tb[i].x = x[i];
+        n->sum.tb[i].a = a[i];
+      }
+    }
   }
 
   LinExpr::LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1) :
@@ -150,6 +228,20 @@ namespace Gecode {
         tb[ib_i].a=m*a; tb[ib_i].x=x_bool; ib_o=ib_i+1;
       } else {
         ib_o=ib_i;
+      }
+      break;
+    case NT_SUM_INT:
+      c_o=c_i; ii_o=ii_i+n_int; ib_o=ib_i; 
+      for (int i=n_int; i--; ) {
+        ti[ii_i+i].x = sum.ti[i].x;
+        ti[ii_i+i].a = m*sum.ti[i].a;
+      }
+      break;
+    case NT_SUM_BOOL:
+      c_o=c_i; ii_o=ii_i; ib_o=ib_i+n_bool; 
+      for (int i=n_bool; i--; ) {
+        tb[ib_i+i].x = sum.tb[i].x;
+        tb[ib_i+i].a = m*sum.tb[i].a;
       }
       break;
     case NT_ADD:
