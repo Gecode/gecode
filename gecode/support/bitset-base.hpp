@@ -92,6 +92,21 @@ namespace Gecode { namespace Support {
     void clear(unsigned int i);
     /// Return next set bit with position greater or equal to \a i (there must be a bit)
     unsigned int next(unsigned int i=0U) const;
+    /// Whether all bits are set
+    bool all(void) const;
+    /// Whether all bits from bit 0 to bit \a i are set
+    bool all(unsigned int i) const;
+    /// Whether no bits are set
+    bool none(void) const;
+    /// Whether no bits from bit 0 to bit \a i are set
+    bool none(unsigned int i) const;
+  };
+
+  /// Status of a bitset
+  enum BitSetStatus {
+    BSS_NONE, ///< No bits set
+    BSS_ALL,  ///< All bits set
+    BSS_SOME  ///< Some but not all bits set
   };
 
   /// Basic bitset support
@@ -129,6 +144,8 @@ namespace Gecode { namespace Support {
     void clear(unsigned int i);
     /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
     unsigned int next(unsigned int i) const;
+    /// Return status of bitset
+    BitSetStatus status(void) const;
     /// Dispose memory for bit set
     template<class A>
     void dispose(A& a);
@@ -204,6 +221,24 @@ namespace Gecode { namespace Support {
       return i;
     }
 #endif
+  }
+  forceinline bool
+  BitSetData::all(void) const {
+    return bits == ~static_cast<Base>(0U);
+  }
+  forceinline bool
+  BitSetData::all(unsigned int i) const {
+    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+    return (bits & mask) == mask;
+  }
+  forceinline bool
+  BitSetData::none(void) const {
+    return bits == static_cast<Base>(0U);
+  }
+  forceinline bool
+  BitSetData::none(unsigned int i) const {
+    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+    return (bits & mask) == static_cast<Base>(0U);
   }
 
 
@@ -298,6 +333,32 @@ namespace Gecode { namespace Support {
       pos++; 
     } while (!data[pos]());
     return pos * bpb + data[pos].next();
+  }
+
+  forceinline BitSetStatus
+  BitSetBase::status(void) const {
+    unsigned int pos = sz / bpb;
+    unsigned int bits = sz % bpb;
+    if (pos > 0) {
+      if (data[0].all()) {
+        for (unsigned int i=1; i<pos; i++)
+          if (!data[i].all())
+            return BSS_SOME;
+        return data[pos].all(bits) ? BSS_ALL : BSS_SOME;
+      } else if (data[0].none()) {
+        for (unsigned int i=1; i<pos; i++)
+          if (!data[i].none())
+            return BSS_SOME;
+        return data[pos].none(bits) ? BSS_NONE : BSS_SOME;
+      } else {
+        return BSS_SOME;
+      }
+    }
+    if (data[0].all(bits))
+      return BSS_ALL;
+    if (data[0].none(bits))
+      return BSS_NONE;
+    return BSS_SOME;
   }
 
 }}

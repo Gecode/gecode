@@ -46,13 +46,11 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   class SupportSet {
   private:
-    /// Number of bits per unsigned integer
-    static const unsigned int bpui = sizeof(unsigned int) * 8;
-    /// Number of unsigned ints
-    unsigned int n;
-    /// Array of bits
-    unsigned int* bits;
+    /// Bitset for storing support information
+    Support::BitSetBase bs;
   public:
+    /// Default constructor
+    SupportSet(void);
     /// Initialize support set with cardinality \a n
     void init(Region& r, unsigned int n);
     /// Record that there is support at position \a i
@@ -65,12 +63,12 @@ namespace Gecode { namespace Int { namespace Linear {
     class ResultIter : public ViewValues<IntView> {
     protected:
       /// The support set used
-      const SupportSet* s;
+      const SupportSet& s;
       /// The current position of the value
       unsigned int p;
     public:
       /// Initialize iterator
-      ResultIter(const SupportSet* s0, const IntView& x);
+      ResultIter(const SupportSet& s0, const IntView& x);
       /// Increment to next supported value
       void operator ++(void);
     };
@@ -165,28 +163,25 @@ namespace Gecode { namespace Int { namespace Linear {
    * Support set
    *
    */
+  forceinline
+  SupportSet::SupportSet(void) {}
   forceinline void
-  SupportSet::init(Region& r, unsigned int n0) {
-    n = n0;
-    bits = r.alloc<unsigned int>((n / bpui) + 1);
-    for (unsigned int i = (n / bpui) + 1; i--; )
-      bits[i] = 0;
+  SupportSet::init(Region& r, unsigned int n) {
+    bs.init(r,n);
   }
   forceinline void
   SupportSet::support(unsigned int i) {
-    unsigned int p = i / bpui;
-    bits[p] |= 1 << (i-p*bpui);
+    bs.set(i);
   }
   forceinline bool
   SupportSet::supported(unsigned int i) const {
-    unsigned int p = i / bpui;
-    return (bits[p] & (1 << (i-p*bpui))) != 0;
+    return bs.get(i);
   }
 
   forceinline
-  SupportSet::ResultIter::ResultIter(const SupportSet* s0, const IntView& x)
+  SupportSet::ResultIter::ResultIter(const SupportSet& s0, const IntView& x)
     : ViewValues<IntView>(x), s(s0), p(0) {
-    while (ViewValues<IntView>::operator ()() && s->supported(p)) {
+    while (ViewValues<IntView>::operator ()() && s.supported(p)) {
       ViewValues<IntView>::operator ++(); ++p;
     }
   }
@@ -194,33 +189,26 @@ namespace Gecode { namespace Int { namespace Linear {
   SupportSet::ResultIter::operator ++(void) {
     do {
       ViewValues<IntView>::operator ++(); ++p;
-    } while (ViewValues<IntView>::operator ()() && s->supported(p));
+    } while (ViewValues<IntView>::operator ()() && s.supported(p));
   }
 
 
-  inline ModEvent
+  forceinline ModEvent
   SupportSet::tell(Space& home, IntView& x) const {
-    unsigned int n = x.size() / bpui;
-    // Check whether all bits are zero: failure
-    for (unsigned int i=n+1; i--; )
-      if (bits[i] != 0)
-        goto all;
-    return ME_INT_FAILED;
-  all:
-    // Check whether all bits are one: nothing changed
-    for (unsigned int i=n; i--; )
-      if (bits[i] != ~0U)
-        goto tell;
-    // Now check the bits in the last word
-    for (unsigned int i=n*bpui; i<x.size(); i++)
-      if (!supported(i))
-        goto tell;
-    return ME_INT_NONE;
-  tell:
-    {
-      ResultIter i(this,x);
-      return x.minus_v(home,i);
+    switch (bs.status()) {
+    case Support::BSS_NONE:
+      return ME_INT_FAILED;
+    case Support::BSS_ALL:
+      return ME_INT_NONE;
+    case Support::BSS_SOME:
+      {
+        ResultIter i(*this,x);
+        return x.minus_v(home,i);
+      }
+    default:
+      GECODE_NEVER;
     }
+    return ME_INT_NONE;
   }
 
 
