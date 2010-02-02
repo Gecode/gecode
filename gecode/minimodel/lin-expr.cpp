@@ -81,57 +81,57 @@ namespace Gecode {
 
 
   void
-  LinExpr::Node::fill(Int::Linear::Term<Int::IntView> ti[], int& ii, 
-                      Int::Linear::Term<Int::BoolView> tb[], int& ib,
+  LinExpr::Node::fill(Int::Linear::Term<Int::IntView>*& ti, 
+                      Int::Linear::Term<Int::BoolView>*& tb,
                       double m, double& d) const {
     switch (this->t) {
     case NT_VAR_INT:
       if (a != 0) {
         Int::Limits::check(m*a,"MiniModel::LinExpr");
-        ti[ii].a=m*a; ti[ii].x=x_int; ii++;
+        ti->a=m*a; ti->x=x_int; ti++;
       }
       break;
     case NT_VAR_BOOL:
       if (a != 0) {
         Int::Limits::check(m*a,"MiniModel::LinExpr");
-        tb[ib].a=m*a; tb[ib].x=x_bool; ib++;
+        tb->a=m*a; tb->x=x_bool; tb++;
       }
       break;
     case NT_SUM_INT:
       for (int i=n_int; i--; ) {
         Int::Limits::check(m*sum.ti[i].a,"MiniModel::LinExpr");
-        ti[ii+i].x = sum.ti[i].x; ti[ii+i].a = m*sum.ti[i].a;
+        ti[i].x = sum.ti[i].x; ti[i].a = m*sum.ti[i].a;
       }
-      ii += n_int;
+      ti += n_int;
       break;
     case NT_SUM_BOOL:
       for (int i=n_bool; i--; ) {
         Int::Limits::check(m*sum.tb[i].a,"MiniModel::LinExpr");
-        tb[ib+i].x = sum.tb[i].x; tb[ib+i].a = m*sum.tb[i].a;
+        tb[i].x = sum.tb[i].x; tb[i].a = m*sum.tb[i].a;
       }
-      ib += n_bool;
+      tb += n_bool;
       break;
     case NT_ADD:
       if (l == NULL) {
         Int::Limits::check(m*c,"MiniModel::LinExpr");
         d += m*c;
       } else {
-        l->fill(ti,ii,tb,ib,m,d);
+        l->fill(ti,tb,m,d);
       }
-      r->fill(ti,ii,tb,ib,m,d);
+      r->fill(ti,tb,m,d);
       break;
     case NT_SUB:
       if (l == NULL) {
         Int::Limits::check(m*c,"MiniModel::LinExpr");
         d += m*c;
       } else {
-        l->fill(ti,ii,tb,ib,m,d);
+        l->fill(ti,tb,m,d);
       }
-      r->fill(ti,ii,tb,ib,-m,d);
+      r->fill(ti,tb,-m,d);
       break;
     case NT_MUL:
       Int::Limits::check(m*a,"MiniModel::LinExpr");
-      l->fill(ti,ii,tb,ib,m*a,d);
+      l->fill(ti,tb,m*a,d);
       break;
     default:
       GECODE_NEVER;
@@ -139,12 +139,10 @@ namespace Gecode {
   }
 
   forceinline int
-  LinExpr::Node::fill(Int::Linear::Term<Int::IntView> ti[], 
-                      Int::Linear::Term<Int::BoolView> tb[]) const {
-    int ii=0, ib=0;
+  LinExpr::Node::fill(Int::Linear::Term<Int::IntView>* ti, 
+                      Int::Linear::Term<Int::BoolView>* tb) const {
     double d=0;
-    fill(ti,ii,tb,ib,1.0,d);
-    assert((ii == n_int) && (ib == n_bool));
+    fill(ti,tb,1.0,d);
     Int::Limits::check(d,"MiniModel::LinExpr");
     return static_cast<int>(d);
   }
