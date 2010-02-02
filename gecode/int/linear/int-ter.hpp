@@ -79,7 +79,6 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class A, class B, class C, PropCond pc>
   forceinline size_t
   LinTer<Val,A,B,C,pc>::dispose(Space& home) {
-    assert(!home.failed());
     x0.cancel(home,*this,pc);
     x1.cancel(home,*this,pc);
     x2.cancel(home,*this,pc);

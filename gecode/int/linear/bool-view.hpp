@@ -52,7 +52,6 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class XV, class YV>
   forceinline size_t
   LinBoolView<XV,YV>::dispose(Space& home) {
-    assert(!home.failed());
     x.cancel(home,*this,PC_INT_VAL);
     y.cancel(home,*this,PC_INT_BND);
     (void) Propagator::dispose(home);

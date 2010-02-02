@@ -136,10 +136,8 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline size_t
   Int<V0,V1,Idx,Val>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
-    if (!home.failed()) {
-      x0.cancel(home,*this,PC_INT_DOM);
-      x1.cancel(home,*this,PC_INT_DOM);
-    }
+    x0.cancel(home,*this,PC_INT_DOM);
+    x1.cancel(home,*this,PC_INT_DOM);
     c.~IntSharedArray();
     (void) Propagator::dispose(home);
     return sizeof(*this);

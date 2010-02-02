@@ -71,7 +71,6 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY, class VZ, bool shr>
   forceinline size_t
   BaseView<VX,VY,VZ,shr>::dispose(Space& home) {
-    assert(!home.failed());
     x.cancel(home,*this,PC_INT_DOM);
     y.cancel(home,*this,PC_INT_DOM);
     z.cancel(home,*this,PC_INT_BND);

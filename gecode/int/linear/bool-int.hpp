@@ -102,7 +102,6 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class VX>
   forceinline size_t
   LinBoolInt<VX>::dispose(Space& home) {
-    assert(!home.failed());
     Advisors<Advisor> as(co);
     for (int i=n_hs; i--; )
       x[i].cancel(home,as.advisor());
@@ -352,7 +351,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
-  size_t
+  forceinline size_t
   NqBoolInt<VX>::dispose(Space& home) {
     (void) BinaryPropagator<VX,PC_INT_VAL>::dispose(home);
     return sizeof(*this);
@@ -515,7 +514,6 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class VX, class VB>
   forceinline size_t
   ReLinBoolInt<VX,VB>::dispose(Space& home) {
-    assert(!home.failed());
     Advisors<Advisor> as(co);
     x.cancel(home,as.advisor());
     co.dispose(home);

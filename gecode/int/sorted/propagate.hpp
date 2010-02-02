@@ -370,9 +370,8 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
-  size_t
+  forceinline size_t
   Sorted<View,Perm>::dispose(Space& home) {
-    assert(!home.failed());
     x.cancel(home,*this, PC_INT_BND);
     y.cancel(home,*this, PC_INT_BND);
     if (Perm)

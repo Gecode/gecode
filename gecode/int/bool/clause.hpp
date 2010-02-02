@@ -131,6 +131,13 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
+  forceinline size_t
+  ClauseTrue<VX,VY>::dispose(Space& home) {
+    (void) MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class VX, class VY>
   forceinline ExecStatus
   resubscribe(Space& home, Propagator& p,
               VX& x0, ViewArray<VX>& x,
@@ -173,13 +180,6 @@ namespace Gecode { namespace Int { namespace Bool {
     GECODE_ES_CHECK(resubscribe(home,*this,x0,x,x1,y));
     GECODE_ES_CHECK(resubscribe(home,*this,x1,y,x0,x));
     return ES_FIX;
-  }
-
-  template<class VX, class VY>
-  size_t
-  ClauseTrue<VX,VY>::dispose(Space& home) {
-    (void) MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>::dispose(home);
-    return sizeof(*this);
   }
 
 
@@ -306,6 +306,14 @@ namespace Gecode { namespace Int { namespace Bool {
     z.cancel(home,*this,PC_BOOL_VAL);
   }
 
+  template<class VX, class VY>
+  forceinline size_t
+  Clause<VX,VY>::dispose(Space& home) {
+    cancel(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
 
   template<class VX, class VY>
   ExecStatus
@@ -338,14 +346,6 @@ namespace Gecode { namespace Int { namespace Bool {
       GECODE_ME_CHECK(z.one_none(home));
     }
     return ES_SUBSUMED(*this,sizeof(*this));
-  }
-
-  template<class VX, class VY>
-  size_t
-  Clause<VX,VY>::dispose(Space& home) {
-    cancel(home);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
   }
 
 }}}

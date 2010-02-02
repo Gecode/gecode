@@ -144,20 +144,19 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
   template<class View, bool subscribe>
-  size_t
+  forceinline size_t
   Base<View,subscribe>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     (void) Propagator::dispose(home);
-    if (!home.failed()) {
-      if (subscribe)
-        x.cancel(home,*this,PC_INT_DOM);
-      // take care of last_data
-      int literals = ts()->domsize*x.size();
-      home.rfree(last_data, sizeof(Tuple*)*literals);
-    }
+    if (subscribe)
+      x.cancel(home,*this,PC_INT_DOM);
+    // take care of last_data
+    int literals = ts()->domsize*x.size();
+    home.rfree(last_data, sizeof(Tuple*)*literals);
     (void) tupleSet.~TupleSet();
     return sizeof(*this);
   }
+
 }}}
 
 // STATISTICS: int-prop

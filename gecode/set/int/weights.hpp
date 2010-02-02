@@ -192,9 +192,8 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template<class View>
-  size_t
+  forceinline size_t
   Weights<View>::dispose(Space& home) {
-    assert(!home.failed());
     x.cancel(home,*this, PC_SET_ANY);
     y.cancel(home,*this, Gecode::Int::PC_INT_BND);
     (void) Propagator::dispose(home);

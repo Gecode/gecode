@@ -558,6 +558,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, class Val, class Degree, class StateIdx>
+  forceinline size_t
+  LayeredGraph<View,Val,Degree,StateIdx>::dispose(Space& home) {
+    c.dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View, class Val, class Degree, class StateIdx>
   ExecStatus
   LayeredGraph<View,Val,Degree,StateIdx>::propagate(Space& home,
                                                     const ModEventDelta&) {
@@ -641,14 +649,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_FIX;
   }
 
-
-  template<class View, class Val, class Degree, class StateIdx>
-  forceinline size_t
-  LayeredGraph<View,Val,Degree,StateIdx>::dispose(Space& home) {
-    c.dispose(home);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
 
   template<class View, class Val, class Degree, class StateIdx>
   template<class Var>

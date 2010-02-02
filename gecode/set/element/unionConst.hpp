@@ -69,7 +69,7 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template<class SView, class RView>
-  size_t
+  forceinline size_t
   ElementUnionConst<SView,RView>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {

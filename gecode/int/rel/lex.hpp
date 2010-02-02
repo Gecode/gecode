@@ -67,6 +67,16 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template<class View>
+  forceinline size_t
+  Lex<View>::dispose(Space& home) {
+    assert(!home.failed());
+    x.cancel(home,*this,PC_INT_BND);
+    y.cancel(home,*this,PC_INT_BND);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View>
   ExecStatus
   Lex<View>::propagate(Space& home, const ModEventDelta&) {
     /*
@@ -234,16 +244,6 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     (void) new (home) Lex<View>(home,x,y,strict);
     return ES_OK;
-  }
-
-  template<class View>
-  size_t
-  Lex<View>::dispose(Space& home) {
-    assert(!home.failed());
-    x.cancel(home,*this,PC_INT_BND);
-    y.cancel(home,*this,PC_INT_BND);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
   }
 
 }}}

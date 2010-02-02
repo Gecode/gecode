@@ -700,6 +700,13 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
+  forceinline size_t
+  NaryOrTrue<BV>::dispose(Space& home) {
+    (void) BinaryPropagator<BV,PC_BOOL_VAL>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class BV>
   forceinline ExecStatus
   NaryOrTrue<BV>::resubscribe(Space& home, BV& x0, BV x1) {
     if (x0.zero()) {
@@ -743,13 +750,6 @@ namespace Gecode { namespace Int { namespace Bool {
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
     GECODE_ES_CHECK(resubscribe(home,x1,x0));
     return ES_FIX;
-  }
-
-  template<class BV>
-  size_t
-  NaryOrTrue<BV>::dispose(Space& home) {
-    (void) BinaryPropagator<BV,PC_BOOL_VAL>::dispose(home);
-    return sizeof(*this);
   }
 
 
@@ -838,6 +838,17 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
+  forceinline size_t
+  NaryOr<VX,VY>::dispose(Space& home) {
+    Advisors<Advisor> as(c);
+    x.cancel(home,as.advisor());
+    c.dispose(home);
+    (void) MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>
+      ::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class VX, class VY>
   ExecStatus
   NaryOr<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (y.one())
@@ -857,17 +868,6 @@ namespace Gecode { namespace Int { namespace Bool {
     }
     c.dispose(home);
     return ES_SUBSUMED(*this,sizeof(*this));
-  }
-
-  template<class VX, class VY>
-  size_t
-  NaryOr<VX,VY>::dispose(Space& home) {
-    Advisors<Advisor> as(c);
-    x.cancel(home,as.advisor());
-    c.dispose(home);
-    (void) MixNaryOnePropagator<VX,PC_BOOL_NONE,VY,PC_BOOL_VAL>
-      ::dispose(home);
-    return sizeof(*this);
   }
 
 }}}

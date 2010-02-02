@@ -68,9 +68,8 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template<class View0, class View1>
-  size_t
+  forceinline size_t
   ReEq<View0,View1>::dispose(Space& home) {
-    assert(!home.failed());
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
     x0.cancel(home,*this, PC_SET_ANY);
     x1.cancel(home,*this, PC_SET_ANY);

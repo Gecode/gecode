@@ -80,9 +80,8 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template<class SView, class RView>
-  size_t
+  forceinline size_t
   ElementDisjoint<SView,RView>::dispose(Space& home) {
-    assert(!home.failed());
     x1.cancel(home,*this, PC_SET_ANY);
     iv.cancel(home,*this,PC_SET_ANY);
     (void) Propagator::dispose(home);

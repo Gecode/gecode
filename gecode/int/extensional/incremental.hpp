@@ -353,6 +353,25 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View>
+  forceinline size_t
+  Incremental<View>::dispose(Space& home) {
+    if (!home.failed()) {
+      int literals = ts()->domsize*x.size();
+      for (int i = literals; i--; )
+        if (support_data[i]) {
+          SupportEntry* lastse = support_data[i];
+          while (lastse->next() != NULL)
+            lastse = lastse->next();
+          support_data[i]->dispose(home, lastse);
+        }
+      home.rfree(support_data, sizeof(SupportEntry*)*literals);
+    }
+    ac.dispose(home);
+    (void) Base<View,false>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View>
   ExecStatus
   Incremental<View>::propagate(Space& home, const ModEventDelta&) {
     assert(!w_support.empty() || !w_remove.empty() || unassigned==0);
@@ -428,25 +447,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_NOFIX;
   }
 
-
-  template<class View>
-  size_t
-  Incremental<View>::dispose(Space& home) {
-    if (!home.failed()) {
-      int literals = ts()->domsize*x.size();
-      for (int i = literals; i--; )
-        if (support_data[i]) {
-          SupportEntry* lastse = support_data[i];
-          while (lastse->next() != NULL)
-            lastse = lastse->next();
-          support_data[i]->dispose(home, lastse);
-        }
-      home.rfree(support_data, sizeof(SupportEntry*)*literals);
-    }
-    ac.dispose(home);
-    (void) Base<View,false>::dispose(home);
-    return sizeof(*this);
-  }
 
 }}}
 

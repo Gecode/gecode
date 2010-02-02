@@ -92,9 +92,8 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template<class View>
-  size_t
+  forceinline size_t
   ChannelInt<View>::dispose(Space& home) {
-    assert(!home.failed());
     xs.cancel(home,*this, Gecode::Int::PC_INT_DOM);
     ys.cancel(home,*this, PC_SET_ANY);
     (void) Propagator::dispose(home);

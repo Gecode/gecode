@@ -63,9 +63,8 @@ namespace Gecode { namespace Int { namespace Channel {
   template<class Info, PropCond pc>
   forceinline size_t
   Base<Info,pc>::dispose(Space& home) {
-    if (!home.failed())
-      for (int i=2*n; i--; )
-        xy[i].view.cancel(home,*this,pc);
+    for (int i=2*n; i--; )
+      xy[i].view.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

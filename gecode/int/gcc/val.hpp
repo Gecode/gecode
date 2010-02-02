@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card>
-  size_t
+  forceinline size_t
   Val<Card>::dispose(Space& home) {
     x.cancel(home,*this, PC_INT_VAL);
     k.cancel(home,*this, PC_INT_VAL);

@@ -127,9 +127,8 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template<class View>
-  size_t
+  forceinline size_t
   ChannelBool<View>::dispose(Space& home) {
-    assert(!home.failed());
     co.dispose(home);
     (void) Super::dispose(home);
     return sizeof(*this);
