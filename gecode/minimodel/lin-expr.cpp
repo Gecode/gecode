@@ -81,68 +81,72 @@ namespace Gecode {
 
 
   void
-  LinExpr::Node::fill(Int::Linear::Term<Int::IntView> ti[], 
-                      int ii_i, int& ii_o, 
-                      Int::Linear::Term<Int::BoolView> tb[], 
-                      int ib_i, int& ib_o, 
-                      int m, int c_i, int& c_o) const {
+  LinExpr::Node::fill(Int::Linear::Term<Int::IntView> ti[], int& ii, 
+                      Int::Linear::Term<Int::BoolView> tb[], int& ib,
+                      double m, double& d) const {
     switch (this->t) {
     case NT_VAR_INT:
-      c_o=c_i; ib_o=ib_i;
       if (a != 0) {
-        ti[ii_i].a=m*a; ti[ii_i].x=x_int; ii_o=ii_i+1;
-      } else {
-        ii_o=ii_i;
+        Int::Limits::check(m*a,"MiniModel::LinExpr");
+        ti[ii].a=m*a; ti[ii].x=x_int; ii++;
       }
       break;
     case NT_VAR_BOOL:
-      c_o=c_i; ii_o=ii_i;
       if (a != 0) {
-        tb[ib_i].a=m*a; tb[ib_i].x=x_bool; ib_o=ib_i+1;
-      } else {
-        ib_o=ib_i;
+        Int::Limits::check(m*a,"MiniModel::LinExpr");
+        tb[ib].a=m*a; tb[ib].x=x_bool; ib++;
       }
       break;
     case NT_SUM_INT:
-      c_o=c_i; ii_o=ii_i+n_int; ib_o=ib_i; 
       for (int i=n_int; i--; ) {
-        ti[ii_i+i].x = sum.ti[i].x;
-        ti[ii_i+i].a = m*sum.ti[i].a;
+        Int::Limits::check(m*sum.ti[i].a,"MiniModel::LinExpr");
+        ti[ii+i].x = sum.ti[i].x; ti[ii+i].a = m*sum.ti[i].a;
       }
+      ii += n_int;
       break;
     case NT_SUM_BOOL:
-      c_o=c_i; ii_o=ii_i; ib_o=ib_i+n_bool; 
       for (int i=n_bool; i--; ) {
-        tb[ib_i+i].x = sum.tb[i].x;
-        tb[ib_i+i].a = m*sum.tb[i].a;
+        Int::Limits::check(m*sum.tb[i].a,"MiniModel::LinExpr");
+        tb[ib+i].x = sum.tb[i].x; tb[ib+i].a = m*sum.tb[i].a;
       }
+      ib += n_bool;
       break;
     case NT_ADD:
       if (l == NULL) {
-        r->fill(ti,ii_i,ii_o,tb,ib_i,ib_o,m,c_i+m*c,c_o);
+        Int::Limits::check(m*c,"MiniModel::LinExpr");
+        d += m*c;
       } else {
-        int ii_m, ib_m;
-        int c_m = 0;
-        l->fill(ti,ii_i,ii_m,tb,ib_i,ib_m,m,c_i,c_m);
-        r->fill(ti,ii_m,ii_o,tb,ib_m,ib_o,m,c_m,c_o);
+        l->fill(ti,ii,tb,ib,m,d);
       }
+      r->fill(ti,ii,tb,ib,m,d);
       break;
     case NT_SUB:
       if (l == NULL) {
-        r->fill(ti,ii_i,ii_o,tb,ib_i,ib_o,-m,c_i+m*c,c_o);
+        Int::Limits::check(m*c,"MiniModel::LinExpr");
+        d += m*c;
       } else {
-        int ii_m, ib_m;
-        int c_m = 0;
-        l->fill(ti,ii_i,ii_m,tb,ib_i,ib_m,m,c_i,c_m);
-        r->fill(ti,ii_m,ii_o,tb,ib_m,ib_o,-m,c_m,c_o);
+        l->fill(ti,ii,tb,ib,m,d);
       }
+      r->fill(ti,ii,tb,ib,-m,d);
       break;
     case NT_MUL:
-      l->fill(ti,ii_i,ii_o,tb,ib_i,ib_o,a*m,c_i,c_o);
+      Int::Limits::check(m*a,"MiniModel::LinExpr");
+      l->fill(ti,ii,tb,ib,m*a,d);
       break;
     default:
       GECODE_NEVER;
     }
+  }
+
+  forceinline int
+  LinExpr::Node::fill(Int::Linear::Term<Int::IntView> ti[], 
+                      Int::Linear::Term<Int::BoolView> tb[]) const {
+    int ii=0, ib=0;
+    double d=0;
+    fill(ti,ii,tb,ib,1.0,d);
+    assert((ii == n_int) && (ib == n_bool));
+    Int::Limits::check(d,"MiniModel::LinExpr");
+    return static_cast<int>(d);
   }
 
   void
@@ -152,33 +156,27 @@ namespace Gecode {
       // Only integer variables
       Int::Linear::Term<Int::IntView>* its =
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
-      int ii_o, ib_o, c_o;
-      n->fill(its,0,ii_o,NULL,0,ib_o,1,0,c_o);
-      assert((ii_o == n->n_int) && (ib_o == 0));
-      Int::Linear::post(home, its, n->n_int, irt, -c_o, icl);
+      int c = n->fill(its,NULL);
+      Int::Linear::post(home, its, n->n_int, irt, -c, icl);
     } else if (n->n_int == 0) {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int ii_o, ib_o, c_o;
-      n->fill(NULL,0,ii_o,bts,0,ib_o,1,0,c_o);
-      assert((ii_o == 0) && (n->n_bool == ib_o));
-      Int::Linear::post(home, bts, n->n_bool, irt, -c_o, icl);
+      int c = n->fill(NULL,bts);
+      Int::Linear::post(home, bts, n->n_bool, irt, -c, icl);
     } else {
       // Both integer and Boolean variables
       Int::Linear::Term<Int::IntView>* its =
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+1);
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int ii_o, ib_o, c_o;
-      n->fill(its,0,ii_o,bts,0,ib_o,1,0,c_o);
-      assert((ii_o == n->n_int) && (ib_o == n->n_bool));
+      int c = n->fill(its,bts);
       int min, max;
       Int::Linear::estimate(&bts[0],n->n_bool,0,min,max);
       IntVar x(home,min,max);
       its[n->n_int].x = x; its[n->n_int].a = 1;
       Int::Linear::post(home, bts, n->n_bool, IRT_EQ, x, 0, icl);
-      Int::Linear::post(home, its, n->n_int+1, irt, -c_o, icl);
+      Int::Linear::post(home, its, n->n_int+1, irt, -c, icl);
     }
   }
 
@@ -190,33 +188,27 @@ namespace Gecode {
       // Only integer variables
       Int::Linear::Term<Int::IntView>* its =
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
-      int ii_o, ib_o, c_o;
-      n->fill(its,0,ii_o,NULL,0,ib_o,1,0,c_o);
-      assert((ii_o == n->n_int) && (ib_o == 0));
-      Int::Linear::post(home, its, n->n_int, irt, -c_o, b, icl);
+      int c = n->fill(its,NULL);
+      Int::Linear::post(home, its, n->n_int, irt, -c, b, icl);
     } else if (n->n_int == 0) {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int ii_o, ib_o, c_o;
-      n->fill(NULL,0,ii_o,bts,0,ib_o,1,0,c_o);
-      assert((ii_o == 0) && (n->n_bool == ib_o));
-      Int::Linear::post(home, bts, n->n_bool, irt, -c_o, b, icl);
+      int c = n->fill(NULL,bts);
+      Int::Linear::post(home, bts, n->n_bool, irt, -c, b, icl);
     } else {
       // Both integer and Boolean variables
       Int::Linear::Term<Int::IntView>* its =
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+1);
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int ii_o, ib_o, c_o;
-      n->fill(its,0,ii_o,bts,0,ib_o,1,0,c_o);
-      assert((ii_o == n->n_int) && (ib_o == n->n_bool));
+      int c = n->fill(its,bts);
       int min, max;
       Int::Linear::estimate(&bts[0],n->n_bool,0,min,max);
       IntVar x(home,min,max);
       its[n->n_int].x = x; its[n->n_int].a = 1;
       Int::Linear::post(home, bts, n->n_bool, IRT_EQ, x, 0, icl);
-      Int::Linear::post(home, its, n->n_int+1, irt, -c_o, b, icl);
+      Int::Linear::post(home, its, n->n_int+1, irt, -c, b, icl);
     }
   }
 
@@ -227,26 +219,22 @@ namespace Gecode {
       // Only integer variables
       Int::Linear::Term<Int::IntView>* its =
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+1);
-      int ii_o, ib_o, c_o;
-      n->fill(its,0,ii_o,NULL,0,ib_o,1,0,c_o);
-      assert((ii_o == n->n_int) && (ib_o == 0));
+      int c = n->fill(its,NULL);
       int min, max;
-      Int::Linear::estimate(&its[0],n->n_int,c_o,min,max);
+      Int::Linear::estimate(&its[0],n->n_int,c,min,max);
       IntVar x(home, min, max);
       its[n->n_int].x = x; its[n->n_int].a = -1;
-      Int::Linear::post(home, its, n->n_int+1, IRT_EQ, -c_o, icl);
+      Int::Linear::post(home, its, n->n_int+1, IRT_EQ, -c, icl);
       return x;
     } else if (n->n_int == 0) {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int ii_o, ib_o, c_o;
-      n->fill(NULL,0,ii_o,bts,0,ib_o,1,0,c_o);
-      assert((ii_o == 0) && (ib_o == n->n_bool));
+      int c = n->fill(NULL,bts);
       int min, max;
-      Int::Linear::estimate(&bts[0],n->n_bool,c_o,min,max);
+      Int::Linear::estimate(&bts[0],n->n_bool,c,min,max);
       IntVar x(home, min, max);
-      Int::Linear::post(home, bts, n->n_bool, IRT_EQ, x, -c_o, icl);
+      Int::Linear::post(home, bts, n->n_bool, IRT_EQ, x, -c, icl);
       return x;
     } else {
       // Both integer and Boolean variables
@@ -254,19 +242,17 @@ namespace Gecode {
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+2);
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int ii_o, ib_o, c_o;
-      n->fill(its,0,ii_o,bts,0,ib_o,1,0,c_o);
-      assert((ii_o == n->n_int) && (ib_o == n->n_bool));
+      int c = n->fill(its,bts);
       int x_min, x_max;
       Int::Linear::estimate(&bts[0],n->n_bool,0,x_min,x_max);
       IntVar x(home, x_min, x_max);
       Int::Linear::post(home, bts, n->n_bool, IRT_EQ, x, 0, icl);
       its[n->n_int].x = x; its[n->n_int].a = 1;
       int y_min, y_max;
-      Int::Linear::estimate(&its[0],n->n_int+1,c_o,y_min,y_max);
+      Int::Linear::estimate(&its[0],n->n_int+1,c,y_min,y_max);
       IntVar y(home, y_min, y_max);
       its[n->n_int+1].x = y; its[n->n_int+1].a = -1;
-      Int::Linear::post(home, its, n->n_int+2, IRT_EQ, -c_o, icl);
+      Int::Linear::post(home, its, n->n_int+2, IRT_EQ, -c, icl);
       return y;
     }
   }

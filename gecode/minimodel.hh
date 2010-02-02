@@ -134,9 +134,12 @@ namespace Gecode {
       /// Default constructor
       Node(void);
       /// Generate linear terms from expression
-      void fill(Int::Linear::Term<Int::IntView> ti[], int ii_i, int& ii_o,
-                Int::Linear::Term<Int::BoolView> tb[], int ib_i, int& ib_o,
-                int m, int c_i, int& c_o) const;
+      void fill(Int::Linear::Term<Int::IntView> ti[], int& ii,
+                Int::Linear::Term<Int::BoolView> tb[], int& ib,
+                double m, double& d) const;
+      /// Generate linear terms for expressions
+      int fill(Int::Linear::Term<Int::IntView> ti[],
+               Int::Linear::Term<Int::BoolView> tb[]) const;
       /// Decrement reference count and possibly free memory
       bool decrement(void);
       /// Destructor
