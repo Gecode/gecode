@@ -320,6 +320,18 @@ namespace Gecode {
                     BoolExpr::NT_OR,r);
   }
 
+  /*
+   * Posting Boolean expressions
+   *
+   */
+  BoolVar
+  post(Home home, const BoolExpr& e, IntConLevel icl) {
+    if (!home.failed())
+      return e.post(home,icl);
+    BoolVar x(home,0,1);
+    return x;
+  }
+
 }
 
 // STATISTICS: minimodel-any

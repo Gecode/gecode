@@ -91,8 +91,11 @@ namespace Gecode {
   /// Minimalistic modeling support
   namespace MiniModel {}
 
+  class LinRel;
+
   /// Linear expressions
   class LinExpr {
+    friend class LinRel;
   public:
     /// Type of linear expression
     enum NodeType {
@@ -134,6 +137,7 @@ namespace Gecode {
       /// Default constructor
       Node(void);
       /// Generate linear terms from expression
+      GECODE_MINIMODEL_EXPORT
       void fill(Int::Linear::Term<Int::IntView>*& ti,
                 Int::Linear::Term<Int::BoolView>*& tb,
                 double m, double& d) const;
@@ -150,10 +154,9 @@ namespace Gecode {
       static void  operator delete(void* p,size_t size);
     };
     Node* n;
-  public:
     /// Default constructor
-    GECODE_MINIMODEL_EXPORT
     LinExpr(void);
+  public:
     /// Create expression
     LinExpr(const IntVar& x, int a=1);
     /// Create expression
@@ -178,22 +181,22 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     const LinExpr& operator =(const LinExpr& e);
     /// Post propagator
-    GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, IntConLevel icl) const;
     /// Post reified propagator
-    GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, const BoolVar& b,
               IntConLevel icl) const;
     /// Post propagator and return variable for value
-    GECODE_MINIMODEL_EXPORT
     IntVar post(Home home, IntConLevel icl) const;
     /// Destructor
     GECODE_MINIMODEL_EXPORT
     ~LinExpr(void);
   };
 
+  class BoolExpr;
+
   /// Linear relations
   class LinRel {
+    friend class BoolExpr;
   private:
     /// Linear expression describing the entire relation
     LinExpr e;
@@ -201,9 +204,9 @@ namespace Gecode {
     IntRelType irt;
     /// Negate relation type
     static IntRelType neg(IntRelType irt);
-  public:
     /// Default constructor
     LinRel(void);
+  public:
     /// Create linear relation for expressions \a l and \a r
     LinRel(const LinExpr& l, IntRelType irt, const LinExpr& r);
     /// Create linear relation for expression \a l and integer \a r
@@ -810,11 +813,11 @@ namespace Gecode {
   imp(const BoolExpr&, const BoolExpr&);
 
   /// State that Boolean expression must be true
-  BoolRel
+  GECODE_MINIMODEL_EXPORT BoolRel
   tt(const BoolExpr&);
 
   /// State that Boolean expression must be false
-  BoolRel
+  GECODE_MINIMODEL_EXPORT BoolRel
   ff(const BoolExpr&);
   //@}
 
@@ -825,17 +828,17 @@ namespace Gecode {
    */
   //@{
   /// Post linear expression and return its value
-  IntVar post(Home home, const LinExpr& e,
-              IntConLevel icl=ICL_DEF);
+  GECODE_MINIMODEL_EXPORT IntVar 
+  post(Home home, const LinExpr& e, IntConLevel icl=ICL_DEF);
   /// Post linear relation
-  void post(Home home, const LinRel& r,
-            IntConLevel icl=ICL_DEF);
+  GECODE_MINIMODEL_EXPORT void 
+  post(Home home, const LinRel& r, IntConLevel icl=ICL_DEF);
   /// Post Boolean expression and return its value
-  BoolVar post(Home home, const BoolExpr& e,
-               IntConLevel icl=ICL_DEF);
+  GECODE_MINIMODEL_EXPORT BoolVar
+  post(Home home, const BoolExpr& e, IntConLevel icl=ICL_DEF);
   /// Post Boolean relation
-  void post(Home home, const BoolRel& r,
-            IntConLevel icl=ICL_DEF);
+  GECODE_MINIMODEL_EXPORT void 
+  post(Home home, const BoolRel& r, IntConLevel icl=ICL_DEF);
   //@}
 
 }

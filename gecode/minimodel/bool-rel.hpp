@@ -50,29 +50,6 @@ namespace Gecode {
     e.post(home,t,icl);
   }
 
-  /*
-   * Construction of linear relations
-   *
-   */
-  inline BoolRel
-  tt(const BoolExpr& e) {
-    return BoolRel(e,true);
-  }
-  inline BoolRel
-  ff(const BoolExpr& e) {
-    return BoolRel(e,false);
-  }
-
-  /*
-   * Posting
-   *
-   */
-  inline void
-  post(Home home, const BoolRel& r, IntConLevel icl) {
-    if (home.failed()) return;
-    r.post(home,icl);
-  }
-
 }
 
 // STATISTICS: minimodel-any

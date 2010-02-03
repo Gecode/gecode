@@ -35,49 +35,31 @@
  *
  */
 
+#include <gecode/minimodel.hh>
+
 namespace Gecode {
 
   /*
-   * Operations for linear expressions
+   * Construction of linear relations
    *
    */
-  forceinline
-  LinRel::LinRel(void) {}
-
-  forceinline
-  LinRel::LinRel(const LinExpr& l, IntRelType irt0, const LinExpr& r)
-    : e(l-r), irt(irt0) {}
-
-  forceinline
-  LinRel::LinRel(const LinExpr& l, IntRelType irt0, int r)
-    : e(l-r), irt(irt0) {}
-
-  forceinline
-  LinRel::LinRel(int l, IntRelType irt0, const LinExpr& r)
-    : e(l-r), irt(irt0) {}
-
-  forceinline IntRelType
-  LinRel::neg(IntRelType irt) {
-    switch (irt) {
-    case IRT_EQ: return IRT_NQ;
-    case IRT_NQ: return IRT_EQ;
-    case IRT_LQ: return IRT_GR;
-    case IRT_LE: return IRT_GQ;
-    case IRT_GQ: return IRT_LE;
-    case IRT_GR: return IRT_LQ;
-    default: GECODE_NEVER;
-    }
-    return IRT_LQ;
+  BoolRel
+  tt(const BoolExpr& e) {
+    return BoolRel(e,true);
+  }
+  BoolRel
+  ff(const BoolExpr& e) {
+    return BoolRel(e,false);
   }
 
-  forceinline void
-  LinRel::post(Home home, bool t, IntConLevel icl) const {
-    e.post(home,t ? irt : neg(irt),icl);
-  }
-
-  forceinline void
-  LinRel::post(Home home, const BoolVar& b, bool t, IntConLevel icl) const {
-    e.post(home,t ? irt : neg(irt),b,icl);
+  /*
+   * Posting
+   *
+   */
+  void
+  post(Home home, const BoolRel& r, IntConLevel icl) {
+    if (home.failed()) return;
+    r.post(home,icl);
   }
 
 }

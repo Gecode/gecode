@@ -119,15 +119,6 @@ namespace Gecode {
     return NNF::nnf(r,n,false)->post(home,t,icl);
   }
 
-
-  inline BoolVar
-  post(Home home, const BoolExpr& e, IntConLevel icl) {
-    if (!home.failed())
-      return e.post(home,icl);
-    BoolVar x(home,0,1);
-    return x;
-  }
-
 }
 
 // STATISTICS: minimodel-any
