@@ -241,6 +241,18 @@ namespace Gecode {
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
       int c = n->fill(NULL,bts);
       Int::Linear::post(home, bts, n->n_bool, irt, -c, icl);
+    } else if (n->n_bool == 1) {
+      // Integer variables and only one Boolean variable
+      Int::Linear::Term<Int::IntView>* its =
+        r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+1);
+      Int::Linear::Term<Int::BoolView>* bts =
+        r.alloc<Int::Linear::Term<Int::BoolView> >(1);
+      int c = n->fill(its,bts);
+      IntVar x(home,0,1);
+      channel(home,bts[0].x,x);
+      its[n->n_int].x = x;
+      its[n->n_int].a = bts[0].a;
+      Int::Linear::post(home, its, n->n_int+1, irt, -c, icl);
     } else {
       // Both integer and Boolean variables
       Int::Linear::Term<Int::IntView>* its =
@@ -273,6 +285,18 @@ namespace Gecode {
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
       int c = n->fill(NULL,bts);
       Int::Linear::post(home, bts, n->n_bool, irt, -c, b, icl);
+    } else if (n->n_bool == 1) {
+      // Integer variables and only one Boolean variable
+      Int::Linear::Term<Int::IntView>* its =
+        r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+1);
+      Int::Linear::Term<Int::BoolView>* bts =
+        r.alloc<Int::Linear::Term<Int::BoolView> >(1);
+      int c = n->fill(its,bts);
+      IntVar x(home,0,1);
+      channel(home,bts[0].x,x);
+      its[n->n_int].x = x;
+      its[n->n_int].a = bts[0].a;
+      Int::Linear::post(home, its, n->n_int+1, irt, -c, b, icl);
     } else {
       // Both integer and Boolean variables
       Int::Linear::Term<Int::IntView>* its =
@@ -313,6 +337,22 @@ namespace Gecode {
       IntVar x(home, min, max);
       Int::Linear::post(home, bts, n->n_bool, IRT_EQ, x, -c, icl);
       return x;
+    } else if (n->n_bool == 1) {
+      // Integer variables and single Boolean variable
+      Int::Linear::Term<Int::IntView>* its =
+        r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+2);
+      Int::Linear::Term<Int::BoolView>* bts =
+        r.alloc<Int::Linear::Term<Int::BoolView> >(1);
+      int c = n->fill(its,bts);
+      IntVar x(home, 0, 1);
+      channel(home, x, bts[0].x);
+      its[n->n_int].x = x; its[n->n_int].a = bts[0].a;
+      int y_min, y_max;
+      Int::Linear::estimate(&its[0],n->n_int+1,c,y_min,y_max);
+      IntVar y(home, y_min, y_max);
+      its[n->n_int+1].x = y; its[n->n_int+1].a = -1;
+      Int::Linear::post(home, its, n->n_int+2, IRT_EQ, -c, icl);
+      return y;
     } else {
       // Both integer and Boolean variables
       Int::Linear::Term<Int::IntView>* its =
