@@ -43,6 +43,7 @@
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
 #include <gecode/scheduling.hh>
+#include <gecode/graph.hh>
 #include <gecode/minimodel.hh>
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
@@ -1000,6 +1001,39 @@ namespace Gecode { namespace FlatZinc {
       sequence(s, x, S, q, l, u, ann2icl(ann));
     }
 
+    void p_schedule_unary(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntArgs p = arg2intargs(ce[1]);
+      unary(s, x, p);
+    }
+
+    void p_schedule_unary_optional(FlatZincSpace& s, const ConExpr& ce,
+                                   AST::Node*) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntArgs p = arg2intargs(ce[1]);
+      BoolVarArgs m = arg2boolvarargs(s, ce[2]);
+      unary(s, x, p, m);
+    }
+
+    void p_circuit(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
+      IntVarArgs xv = arg2intvarargs(s, ce[0]);
+      circuit(s,xv,ann2icl(ann));
+    }
+    void p_circuit_cost_array(FlatZincSpace& s, const ConExpr& ce,
+                              AST::Node *ann) {
+      IntArgs c = arg2intargs(ce[0]);
+      IntVarArgs xv = arg2intvarargs(s, ce[1]);
+      IntVarArgs yv = arg2intvarargs(s, ce[2]);
+      IntVar z = getIntVar(s, ce[3]);
+      circuit(s,c,xv,yv,z,ann2icl(ann));
+    }
+    void p_circuit_cost(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
+      IntArgs c = arg2intargs(ce[0]);
+      IntVarArgs xv = arg2intvarargs(s, ce[1]);
+      IntVar z = getIntVar(s, ce[2]);
+      circuit(s,c,xv,z,ann2icl(ann));
+    }
+
     class IntPoster {
     public:
       IntPoster(void) {
@@ -1098,6 +1132,13 @@ namespace Gecode { namespace FlatZinc {
         registry().add("bool_lin_lt_reif", &p_bool_lin_lt_reif);
         registry().add("bool_lin_ge_reif", &p_bool_lin_ge_reif);
         registry().add("bool_lin_gt_reif", &p_bool_lin_gt_reif);
+        
+        registry().add("schedule_unary", &p_schedule_unary);
+        registry().add("schedule_unary_optional", &p_schedule_unary_optional);
+
+        registry().add("circuit", &p_circuit);
+        registry().add("circuit_cost_array", &p_circuit_cost_array);
+        registry().add("circuit_cost", &p_circuit_cost);
       }
     };
     IntPoster __int_poster;

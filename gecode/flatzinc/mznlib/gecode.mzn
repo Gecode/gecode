@@ -53,15 +53,27 @@ predicate array_set_element_intersect_in(var set of int: x, array[int] of var se
 % Every subsequence of x of length l has at least m and at most occurrences
 % of the values in S
 predicate among_seq_int(array[int] of var int: x, set of int: S,
-    int l, int m, int n);
+    int: l, int: m, int: n);
 
 % Every subsequence of x of length l has at least m and at most occurrences
 % of the value b
 predicate among_seq_bool(array[int] of var bool: x, bool: b,
-    int l, int m, int n);
+    int: l, int: m, int: n);
 
 % Overloading for among_seq
 predicate among_seq(array[int] of var int: x, set of int: S,
-    int l, int m, int n) = among_seq_int(x,S,l,m,n);
+    int: l, int: m, int: n) = among_seq_int(x,S,l,m,n);
 predicate among_seq(array[int] of var bool: x, bool: b,
-    int l, int m, int n) = among_seq_bool(x,b,l,m,n);
+    int: l, int: m, int: n) = among_seq_bool(x,b,l,m,n);
+
+% Circuit constraints
+predicate circuit(array[int] of var int: x);
+predicate circuit_cost_array(array[int] of int: c,
+    array[int] of var int: x, array[int] of var int: y, var int: z);
+predicate circuit_cost(array[int] of int: c, array[int] of var int: x,
+    var int: z);
+
+% Scheduling constraints
+predicate schedule_unary(array[int] of var int: x, array[int] of int: p);
+predicate schedule_unary_optional(array[int] of var int: x,
+    array[int] of int: p, array[int] of var bool: m);

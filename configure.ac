@@ -266,6 +266,7 @@ AC_GECODE_ENABLE_MODULE(flatzinc, yes,
   [enable_search="yes";
    enable_driver="yes";
    enable_minimodel="yes";
+   enable_graph="yes";
    enable_scheduling="yes";
   ])
 

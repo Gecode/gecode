@@ -13570,6 +13570,7 @@ echo "${ECHO_T}yes" >&6; }
 	    enable_search="yes";
    enable_driver="yes";
    enable_minimodel="yes";
+   enable_graph="yes";
    enable_scheduling="yes";
 
 	 else
