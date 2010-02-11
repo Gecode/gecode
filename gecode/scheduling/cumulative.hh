@@ -77,7 +77,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /// Return required capacity
     int c(void) const;
     /// Return required energy
-    int e(void) const;
+    double e(void) const;
     //@}
 
     /// \name Cloning
@@ -225,9 +225,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   class OmegaNode {
   public:
     /// Energy for subtree
-    int e;
+    double e;
     /// Energy envelope for subtree
-    int env;
+    double env;
     /// Initialize node from left child \a l and right child \a r
     void init(const OmegaNode& l, const OmegaNode& r);
     /// Update node from left child \a l and right child \a r
@@ -253,7 +253,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /// Remove task with index \a i
     void remove(int i);
     /// Return energy envelope of all tasks
-    int env(void) const;
+    double env(void) const;
   };
 
 }}}

@@ -49,7 +49,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
     for (int i=0; i<f.size(); i++) {
       o.insert(i);
-      if (o.env() > c*f[i].lct())
+      if (o.env() > static_cast<double>(c)*f[i].lct())
         return ES_FAILED;
     }
     return ES_OK;

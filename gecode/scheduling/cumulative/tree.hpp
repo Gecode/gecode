@@ -46,7 +46,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
   forceinline void
   OmegaNode::init(const OmegaNode&, const OmegaNode&) {
-    e = 0; env = -Int::Limits::infinity;
+    e = 0.0; env = -Int::Limits::double_infinity;
   }
 
   forceinline void
@@ -59,7 +59,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
                                  const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t), c(c0) {
     for (int i=tasks.size(); i--; ) {
-      leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
+      leaf(i).e = 0.0; leaf(i).env = -Int::Limits::double_infinity;
     }
     init();
   }
@@ -68,19 +68,19 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
     leaf(i).e = tasks[i].e(); 
-    leaf(i).env = c*tasks[i].est()+tasks[i].e();
+    leaf(i).env = static_cast<double>(c)*tasks[i].est()+tasks[i].e();
     update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
-    leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
+    leaf(i).e = 0.0; leaf(i).env = -Int::Limits::double_infinity;
     update(i);
   }
 
   template<class TaskView>
-  forceinline int 
+  forceinline double
   OmegaTree<TaskView>::env(void) const {
     return root().env;
   }

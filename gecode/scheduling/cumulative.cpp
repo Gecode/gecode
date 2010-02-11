@@ -50,6 +50,7 @@ namespace Gecode {
       throw Int::ArgumentSame("Scheduling::cumulative");
     if ((s.size() != p.size()) || (s.size() != u.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
+    double w = 0.0;
     for (int i=p.size(); i--; ) {
       Int::Limits::positive(p[i],"Scheduling::cumulative");
       Int::Limits::positive(u[i],"Scheduling::cumulative");
@@ -57,11 +58,10 @@ namespace Gecode {
                          "Scheduling::cumulative");
       Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
                                 "Scheduling::cumulative");
-      Int::Limits::double_check(static_cast<double>(c) * s[i].min(),
-                                "Scheduling::cumulative");
-      Int::Limits::double_check(static_cast<double>(c) * s[i].max(),
-                                "Scheduling::cumulative");
+      w += s[i].width();
     }
+    Int::Limits::double_check(c * w * s.size(),
+                              "Scheduling::cumulative");
     if (home.failed()) return;
     TaskArray<ManFixTask> t(home,s.size());
     for (int i=s.size(); i--; )
@@ -79,6 +79,7 @@ namespace Gecode {
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
         (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
+    double w = 0.0;
     for (int i=p.size(); i--; ) {
       Int::Limits::positive(p[i],"Scheduling::cumulative");
       Int::Limits::positive(u[i],"Scheduling::cumulative");
@@ -86,11 +87,10 @@ namespace Gecode {
                          "Scheduling::cumulative");
       Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
                                 "Scheduling::cumulative");
-      Int::Limits::double_check(static_cast<double>(c) * s[i].min(),
-                                "Scheduling::cumulative");
-      Int::Limits::double_check(static_cast<double>(c) * s[i].max(),
-                                "Scheduling::cumulative");
+      w += s[i].width();
     }
+    Int::Limits::double_check(c * w * s.size(),
+                              "Scheduling::cumulative");
     if (home.failed()) return;
     TaskArray<OptFixTask> t(home,s.size());
     for (int i=s.size(); i--; )

@@ -47,6 +47,7 @@
 #define __GECODE_INT_HH__
 
 #include <climits>
+#include <cfloat>
 #include <iostream>
 
 #include <gecode/kernel.hh>
@@ -124,6 +125,8 @@ namespace Gecode { namespace Int {
     const double double_min = -9007199254740991.0;
     /// Check whether double \a n is in exactly representable range, otherwise throw out of limits with information \a l
     void double_check(double n, const char* l);
+    /// Infinity value for doubles
+    const double double_infinity = DBL_MAX;
   }
 
 }}

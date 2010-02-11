@@ -55,9 +55,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   ManFixTask::c(void) const {
     return _c;
   }
-  forceinline int
+  forceinline double
   ManFixTask::e(void) const {
-    return p()*c();
+    return static_cast<double>(p())*c();
   }
 
   forceinline void

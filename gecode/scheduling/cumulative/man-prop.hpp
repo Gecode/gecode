@@ -84,7 +84,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     TaskViewIter<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true> 
       lct(r,f);
     int t;
-    int u=0;
+    double u=0;
     while (est()) {
       assert(lct());
       t = std::min(f[est.task()].est(),f[lct.task()].lct());
@@ -94,10 +94,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       while (lct() && (f[lct.task()].lct() == t)) {
         u -= f[lct.task()].c(); ++lct;
       }
-      if (u > c)
+      if (u > static_cast<double>(c))
         return ES_FAILED;
     }
-    assert(lct());
     return ES_SUBSUMED(*this,home);
   }
 
