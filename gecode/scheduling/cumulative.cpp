@@ -55,8 +55,12 @@ namespace Gecode {
       Int::Limits::positive(u[i],"Scheduling::cumulative");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
                          "Scheduling::cumulative");
-      Int::Limits::check(static_cast<double>(p[i]) * u[i],
-                         "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
+                                "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(c) * s[i].min(),
+                                "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(c) * s[i].max(),
+                                "Scheduling::cumulative");
     }
     if (home.failed()) return;
     TaskArray<ManFixTask> t(home,s.size());
@@ -80,8 +84,12 @@ namespace Gecode {
       Int::Limits::positive(u[i],"Scheduling::cumulative");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
                          "Scheduling::cumulative");
-      Int::Limits::check(static_cast<double>(p[i]) * u[i],
-                         "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
+                                "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(c) * s[i].min(),
+                                "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(c) * s[i].max(),
+                                "Scheduling::cumulative");
     }
     if (home.failed()) return;
     TaskArray<OptFixTask> t(home,s.size());

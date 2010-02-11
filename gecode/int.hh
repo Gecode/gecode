@@ -122,6 +122,8 @@ namespace Gecode { namespace Int {
     const double double_max = 9007199254740991.0;
     /// Smallest double that can exactly be represented
     const double double_min = -9007199254740991.0;
+    /// Check whether double \a n is in exactly representable range, otherwise throw out of limits with information \a l
+    void double_check(double n, const char* l);
   }
 
 }}

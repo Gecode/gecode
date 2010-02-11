@@ -61,6 +61,12 @@ namespace Gecode { namespace Int {
         throw OutOfLimits(l);
     }
 
+    inline void
+    Limits::double_check(double n, const char* l) {
+      if ((n < double_min) || (n > double_max))
+        throw OutOfLimits(l);
+    }
+
 }}
 
 // STATISTICS: int-var
