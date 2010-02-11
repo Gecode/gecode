@@ -35,36 +35,26 @@
  *
  */
 
-namespace Gecode { namespace Scheduling {
+namespace Gecode { namespace Scheduling { namespace Cumulative {
 
-  template<class Task>  
-  forceinline
-  TaskProp<Task>::TaskProp(Home home, TaskArray<Task>& t0)
-    : Propagator(home), t(t0) {
-    t.subscribe(home,*this);
+  // Overload checking for mandatory tasks
+  template<class ManTask>
+  ExecStatus
+  overload(Space& home, int c, TaskArray<ManTask>& t) {
+    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
+    sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
+
+    Region r(home);
+    OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,c,f);
+
+    for (int i=0; i<f.size(); i++) {
+      o.insert(i);
+      if (o.env() > c*f[i].lct())
+        return ES_FAILED;
+    }
+    return ES_OK;
   }
-
-  template<class Task>  
-  forceinline
-  TaskProp<Task>::TaskProp(Space& home, bool shared, TaskProp<Task>& p) 
-    : Propagator(home,shared,p) {
-    t.update(home,shared,p.t);
-  }
-
-  template<class Task>  
-  PropCost 
-  TaskProp<Task>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,t.size());
-  }
-
-  template<class Task>  
-  forceinline size_t 
-  TaskProp<Task>::dispose(Space& home) {
-    t.cancel(home,*this);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-}}
+  
+}}}
 
 // STATISTICS: scheduling-prop

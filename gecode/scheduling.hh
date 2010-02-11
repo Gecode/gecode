@@ -245,6 +245,48 @@ namespace Gecode {
   unary(Home home, const IntVarArgs& s, const IntArgs& p, 
         const BoolVarArgs& m);
   //@}
+
+
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   *
+   * Schedule tasks with start times \a s, processing times \a p, and
+   * use capacity \a u on a cumulative resource with capacity \a c.
+   *
+   * The propagator does nothing yet.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *    \a p, or \a u are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
+   *    contain an integer that is not strictly positive or that could generate
+   *    an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p,
+             const IntArgs& u);
+
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   *
+   * Schedule optional tasks with start times \a s, processing times \a p,
+   * used capacity \a u, and whether a task is mandatory \a m (a task is 
+   * mandatory if the Boolean variable is 1) on a cumulative resource 
+   * with capacity \a c.
+   * 
+   * The propagator does nothing yet.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   *    \a p, \a u, or \a m are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
+   *    contain an integer that is not strictly positive or that could generate
+   *    an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
+             const IntArgs& u, const BoolVarArgs& m);
+
 }
 
 #endif

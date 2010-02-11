@@ -35,36 +35,56 @@
  *
  */
 
-namespace Gecode { namespace Scheduling {
+#include <algorithm>
+#include <cmath>
 
-  template<class Task>  
-  forceinline
-  TaskProp<Task>::TaskProp(Home home, TaskArray<Task>& t0)
-    : Propagator(home), t(t0) {
-    t.subscribe(home,*this);
+namespace Gecode { namespace Scheduling { namespace Cumulative {
+
+  /*
+   * Omega tree
+   */
+
+  forceinline void
+  OmegaNode::init(const OmegaNode&, const OmegaNode&) {
+    e = 0; env = -Int::Limits::infinity;
   }
 
-  template<class Task>  
-  forceinline
-  TaskProp<Task>::TaskProp(Space& home, bool shared, TaskProp<Task>& p) 
-    : Propagator(home,shared,p) {
-    t.update(home,shared,p.t);
+  forceinline void
+  OmegaNode::update(const OmegaNode& l, const OmegaNode& r) {
+    e = l.e + r.e; env = std::max(l.env + r.e, r.env);
   }
 
-  template<class Task>  
-  PropCost 
-  TaskProp<Task>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,t.size());
+  template<class TaskView>
+  OmegaTree<TaskView>::OmegaTree(Region& r, int c0,
+                                 const TaskViewArray<TaskView>& t)
+    : TaskTree<TaskView,OmegaNode>(r,t), c(c0) {
+    for (int i=tasks.size(); i--; ) {
+      leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
+    }
+    init();
   }
 
-  template<class Task>  
-  forceinline size_t 
-  TaskProp<Task>::dispose(Space& home) {
-    t.cancel(home,*this);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
+  template<class TaskView>
+  forceinline void 
+  OmegaTree<TaskView>::insert(int i) {
+    leaf(i).e = tasks[i].e(); 
+    leaf(i).env = c*tasks[i].est()+tasks[i].e();
+    update(i);
   }
 
-}}
+  template<class TaskView>
+  forceinline void
+  OmegaTree<TaskView>::remove(int i) {
+    leaf(i).e = 0; leaf(i).env = -Int::Limits::infinity;
+    update(i);
+  }
+
+  template<class TaskView>
+  forceinline int 
+  OmegaTree<TaskView>::env(void) const {
+    return root().env;
+  }
+  
+}}}
 
 // STATISTICS: scheduling-prop

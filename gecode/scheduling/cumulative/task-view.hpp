@@ -35,36 +35,27 @@
  *
  */
 
-namespace Gecode { namespace Scheduling {
+namespace Gecode { namespace Scheduling { namespace Cumulative {
 
-  template<class Task>  
-  forceinline
-  TaskProp<Task>::TaskProp(Home home, TaskArray<Task>& t0)
-    : Propagator(home), t(t0) {
-    t.subscribe(home,*this);
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTaskBwd& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ":[" << t.p() << ',' << t.c() << "]:" << t.lct();
+    return os << s.str();
   }
-
-  template<class Task>  
-  forceinline
-  TaskProp<Task>::TaskProp(Space& home, bool shared, TaskProp<Task>& p) 
-    : Propagator(home,shared,p) {
-    t.update(home,shared,p.t);
+    
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTaskBwd& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ":[" << t.p() << ',' << t.c() << "]:" << t.lct() << ':'
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
+    return os << s.str();
   }
+    
+}}}
 
-  template<class Task>  
-  PropCost 
-  TaskProp<Task>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,t.size());
-  }
-
-  template<class Task>  
-  forceinline size_t 
-  TaskProp<Task>::dispose(Space& home) {
-    t.cancel(home,*this);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-}}
-
-// STATISTICS: scheduling-prop
+// STATISTICS: scheduling-var
