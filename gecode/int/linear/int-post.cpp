@@ -43,11 +43,6 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
-  /// Largest double that can exactly be represented
-  const double double_max = 9007199254740991.0;
-  /// Smallest double that can exactly be represented
-  const double double_min = -9007199254740991.0;
-
   /// Eliminate assigned views
   inline void
   eliminate(Term<IntView>* t, int &n, double& d) {
@@ -56,7 +51,7 @@ namespace Gecode { namespace Int { namespace Linear {
         d -= t[i].a * static_cast<double>(t[i].x.val());
         t[i]=t[--n];
       }
-    if ((d < double_min) || (d > double_max))
+    if ((d < Limits::double_min) || (d > Limits::double_max))
       throw OutOfLimits("Int::linear");
   }
 
@@ -100,27 +95,31 @@ namespace Gecode { namespace Int { namespace Linear {
     sl -= d;
     su -= d;
 
-    if ((sl < double_min) || (su > double_max))
+    if ((sl < Limits::double_min) || (su > Limits::double_max))
       throw OutOfLimits("Int::linear");
 
     bool is_ip = (sl >= Limits::min) && (su <= Limits::max);
 
     for (int i = n_p; i--; ) {
-      if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) < double_min)
+      if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) 
+          < Limits::double_min)
         throw OutOfLimits("Int::linear");
       if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) < Limits::min)
         is_ip = false;
-      if (su - t_p[i].a * static_cast<double>(t_p[i].x.max()) > double_max)
+      if (su - t_p[i].a * static_cast<double>(t_p[i].x.max()) 
+          > Limits::double_max)
         throw OutOfLimits("Int::linear");
       if (su - t_p[i].a * static_cast<double>(t_p[i].x.max()) > Limits::max)
         is_ip = false;
     }
     for (int i = n_n; i--; ) {
-      if (sl + t_n[i].a * static_cast<double>(t_n[i].x.min()) < double_min)
+      if (sl + t_n[i].a * static_cast<double>(t_n[i].x.min()) 
+          < Limits::double_min)
         throw OutOfLimits("Int::linear");
       if (sl + t_n[i].a * static_cast<double>(t_n[i].x.min()) < Limits::min)
         is_ip = false;
-      if (su + t_n[i].a * static_cast<double>(t_n[i].x.max()) > double_max)
+      if (su + t_n[i].a * static_cast<double>(t_n[i].x.max()) 
+          > Limits::double_max)
         throw OutOfLimits("Int::linear");
       if (su + t_n[i].a * static_cast<double>(t_n[i].x.max()) > Limits::max)
         is_ip = false;

@@ -118,6 +118,10 @@ namespace Gecode { namespace Int {
     void positive(int n, const char* l);
     /// Check whether double \a n is in integer range and strictly postive, otherwise throw out of limits exception with information \a l
     void positive(double n, const char* l);
+    /// Largest double that can exactly be represented
+    const double double_max = 9007199254740991.0;
+    /// Smallest double that can exactly be represented
+    const double double_min = -9007199254740991.0;
   }
 
 }}
