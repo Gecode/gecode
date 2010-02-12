@@ -262,6 +262,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 
+  /// Perform basic propagation
+  template<class Task>
+  ExecStatus basic(Space& home, int c, TaskArray<Task>& t);
+
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
@@ -322,6 +326,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
 }}}
 
+#include <gecode/scheduling/cumulative/basic.hpp>
 #include <gecode/scheduling/cumulative/overload.hpp>
 #include <gecode/scheduling/cumulative/man-prop.hpp>
 #include <gecode/scheduling/cumulative/opt-prop.hpp>
