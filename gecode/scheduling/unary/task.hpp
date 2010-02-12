@@ -99,14 +99,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline ModEvent
   ManFixTask::norun(Space& home, int e, int l) {
     assert(e <= l);
-    e -= _p-1;
-    /*
-    if (e <= _s.min())
-      return _s.gq(home,l);
-    if (l >= _s.max())
-      return _s.lq(home,e);
-    */
-    Iter::Ranges::Singleton r(e,l);
+    Iter::Ranges::Singleton r(e-_p+1,l);
     return _s.minus_r(home,r,false);
   }
 
