@@ -196,8 +196,9 @@ protected:
 public:
   /// Propagation to use for model
   enum {
-    PROP_REIFIED,     ///< Use reified constraints
-    PROP_CUMULATIVES, ///< Use cumulatives constraint
+    PROP_REIFIED,    ///< Use reified constraints
+    PROP_CUMULATIVE, ///< Use cumulative constraint
+    PROP_CUMULATIVES ///< Use cumulatives constraint
   };
   /// Actual model
   PerfectSquare(const SizeOptions& opt)
@@ -224,46 +225,62 @@ public:
      * Capacity constraints
      *
      */
-    if (opt.propagation() == PROP_REIFIED) {
-      IntArgs sa(n,s);
-      BoolVarArgs b(n);
-      for (int cx=0; cx<w; cx++) {
-        for (int i=0; i<n; i++) {
-          b[i].init(*this,0,1);
-          dom(*this, x[i], cx-s[i]+1, cx, b[i]);
-        }
-        linear(*this, sa, b, IRT_EQ, w);
-      }
-      for (int cy=0; cy<w; cy++) {
-        for (int i=0; i<n; i++) {
-          b[i].init(*this,0,1);
-          dom(*this, y[i], cy-s[i]+1, cy, b[i]);
-        }
-        linear(*this, sa, b, IRT_EQ, w);
-      }
-    } else {
-      IntArgs m(n), dh(n);
-      for (int i = n; i--; ) {
-        m[i]=0; dh[i]=s[i];
-      }
-      IntVarArgs e(n);
-      IntArgs limit(1);
+    switch (opt.propagation()) {
+    case PROP_REIFIED:
       {
-        // x-direction
-        for (int i = n; i--; )
-          e[i].init(*this, 0, w);
-        limit[0] = w;
-        cumulatives(*this, m, x, dh, e, dh, limit, true);
-        cumulatives(*this, m, x, dh, e, dh, limit, false);
+        IntArgs sa(n,s);
+        BoolVarArgs b(n);
+        for (int cx=0; cx<w; cx++) {
+          for (int i=0; i<n; i++) {
+            b[i].init(*this,0,1);
+            dom(*this, x[i], cx-s[i]+1, cx, b[i]);
+          }
+          linear(*this, sa, b, IRT_EQ, w);
+        }
+        for (int cy=0; cy<w; cy++) {
+          for (int i=0; i<n; i++) {
+            b[i].init(*this,0,1);
+            dom(*this, y[i], cy-s[i]+1, cy, b[i]);
+          }
+          linear(*this, sa, b, IRT_EQ, w);
+        }
       }
+      break;
+    case PROP_CUMULATIVE:
       {
-        // y-direction
-        for (int i = n; i--; )
-          e[i].init(*this, 0, w);
-        limit[0] = w;
-        cumulatives(*this, m, y, dh, e, dh, limit, true);
-        cumulatives(*this, m, y, dh, e, dh, limit, false);
+        IntArgs sa(n,s);
+        cumulative(*this, w, y, sa, sa);
+        cumulative(*this, w, x, sa, sa);
       }
+      break;
+    case PROP_CUMULATIVES:
+      {
+        IntArgs m(n), dh(n);
+        for (int i = n; i--; ) {
+          m[i]=0; dh[i]=s[i];
+        }
+        IntVarArgs e(n);
+        IntArgs limit(1);
+        {
+          // x-direction
+          for (int i = n; i--; )
+            e[i].init(*this, 0, w);
+          limit[0] = w;
+          cumulatives(*this, m, x, dh, e, dh, limit, true);
+          cumulatives(*this, m, x, dh, e, dh, limit, false);
+        }
+        {
+          // y-direction
+          for (int i = n; i--; )
+            e[i].init(*this, 0, w);
+          limit[0] = w;
+          cumulatives(*this, m, y, dh, e, dh, limit, true);
+          cumulatives(*this, m, y, dh, e, dh, limit, false);
+        }
+      }
+      break;
+    default:
+      GECODE_NEVER;
     }
 
     branch(*this, x, INT_VAR_MIN_MIN, INT_VAL_MIN);
@@ -298,6 +315,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("PerfectSquare");
   opt.propagation(PerfectSquare::PROP_REIFIED);
   opt.propagation(PerfectSquare::PROP_REIFIED,     "reified");
+  opt.propagation(PerfectSquare::PROP_CUMULATIVE,  "cumulative");
   opt.propagation(PerfectSquare::PROP_CUMULATIVES, "cumulatives");
   opt.a_d(5);
   opt.c_d(20);
