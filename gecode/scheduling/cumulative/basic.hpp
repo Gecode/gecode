@@ -37,43 +37,36 @@
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 
-  /// Event type for task with order in which they are processed
-  enum EventType {
-    ET_LRT = 0, ///< Latest required time of task
-    ET_LCT = 1, ///< Latest completion time of task
-    ET_EST = 2, ///< Earliest start time of task
-    ET_ERT = 3, ///< Earliest required time of task
-    ET_END = 4  ///< End marker
-  };
-
   /// Event for task
   class Event {
   public:
-    EventType e; ///< Type of event
-    int t;       ///< Time of event
-    int i;       ///< Number of task
+    /// Event type for task with order in which they are processed
+    enum Type {
+      LRT = 0, ///< Latest required time of task
+      LCT = 1, ///< Latest completion time of task
+      EST = 2, ///< Earliest start time of task
+      ERT = 3, ///< Earliest required time of task
+      END = 4  ///< End marker
+    };
+    Type e; ///< Type of event
+    int t;  ///< Time of event
+    int i;  ///< Number of task
     /// Initialize event
-    void init(EventType e, int t, int i);
+    void init(Type e, int t, int i);
+    /// Order among events
+    bool operator <(const Event& e) const;
   };
-
-  /// Sort events by time and type
-  class EventByTimeType {
-  public:
-    /// Sort order
-    bool operator ()(const Event& e1, const Event& e2) const;
-  };
-
 
   forceinline void
-  Event::init(EventType e0, int t0, int i0) {
+  Event::init(Event::Type e0, int t0, int i0) {
     e=e0; t=t0; i=i0;
   }
 
   forceinline bool
-  EventByTimeType::operator ()(const Event& e1, const Event& e2) const {
-    if (e1.t == e2.t)
-      return e1.e < e2.e;
-    return e1.t < e2.t;
+  Event::operator <(const Event& e) const {
+    if (this->t == e.t)
+      return this->e < e.e;
+    return this->t < e.t;
   }
 
   // Basic propagation
@@ -88,12 +81,12 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     {
       int n=0;
       for (int i=t.size(); i--; ) {
-        e[n++].init(ET_EST,t[i].est(),i);
-        e[n++].init(ET_LCT,t[i].lct(),i);
+        e[n++].init(Event::EST,t[i].est(),i);
+        e[n++].init(Event::LCT,t[i].lct(),i);
         // Check whether task has required part
         if (t[i].lst() < t[i].ect()) {
-          e[n++].init(ET_ERT,t[i].lst(),i);
-          e[n++].init(ET_LRT,t[i].ect(),i);
+          e[n++].init(Event::ERT,t[i].lst(),i);
+          e[n++].init(Event::LRT,t[i].ect(),i);
         }
       }
       
@@ -102,11 +95,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
         return ES_OK;
       
       // Write end marker
-      e[n++].init(ET_END,Int::Limits::infinity,-1);
+      e[n++].init(Event::END,Int::Limits::infinity,-1);
       
       // Sort events
-      EventByTimeType ebtt;
-      Support::quicksort(e, n, ebtt);
+      Support::quicksort(e, n);
     }
 
     // Set of current but not required tasks
@@ -119,29 +111,29 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       // Process sorted events with same timestamp
       for ( ; e->t == time; e++)
         switch (e->e) {
-        case ET_LRT:
+        case Event::LRT:
           // Process events for completion of required part
           tasks.set(e->i); c += t[e->i].c();
           break;
-        case ET_LCT:
+        case Event::LCT:
           // Process events for completion of task
           tasks.clear(e->i);
           break;
-        case ET_EST:
+        case Event::EST:
           // Process events for start of task
           tasks.set(e->i);
           break;
-        case ET_ERT:
+        case Event::ERT:
           // Process events for start of required part
           tasks.clear(e->i); c -= t[e->i].c();        
           if (c < 0)
             return ES_FAILED;
           break;
-        case ET_END: default:
+        case Event::END: default:
           GECODE_NEVER;
         }
       
-      if (e->e == ET_END)
+      if (e->e == Event::END)
         break;
       
       for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); j(); ++j) 
