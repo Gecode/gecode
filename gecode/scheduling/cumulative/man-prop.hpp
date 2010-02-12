@@ -71,9 +71,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
   template<class ManTask>
   ExecStatus 
-  ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
+  ManProp<ManTask>::propagate(Space& home, const ModEventDelta& med) {
+    if (Int::IntView::me(med) != Int::ME_INT_DOM)
+      GECODE_ES_CHECK(overload(home,c,t));
     GECODE_ES_CHECK(basic(home,c,t));
-    GECODE_ES_CHECK(overload(home,c,t));
     for (int i=t.size(); i--; )
       if (!t[i].assigned())
         return ES_NOFIX;
