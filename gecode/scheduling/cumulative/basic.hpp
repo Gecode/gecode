@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
 
-  /// Event type for task
+  /// Event type for task with order in which they are processed
   enum EventType {
     ET_LRT = 0, ///< Latest required time of task
     ET_LCT = 1, ///< Latest completion time of task
@@ -109,46 +109,49 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       Support::quicksort(e, n, ebtt);
     }
 
-    // Set of current and required tasks
-    Support::BitSet<Region> ct(r,t.size());
-    Support::BitSet<Region> rt(r,t.size());
+    // Set of current but not required tasks
+    Support::BitSet<Region> tasks(r,t.size());
 
     // Process events, use c as the capacity that is still free
     while (true) {
       // Current time
       int t_c = e->t;
-      // Process events for completion of required part
-      for (; (e->t == t_c) && (e->e == ET_LRT); e++) {
-        rt.clear(e->i); ct.set(e->i);
-        c += t[e->i].c();
-      }
-      // Process events for completion of task
-      for (; (e->t == t_c) && (e->e == ET_LCT); e++) {
-        ct.clear(e->i);
-      }
-      // Process events for start of task
-      for (; (e->t == t_c) && (e->e == ET_EST); e++) {
-        ct.set(e->i);
-      }
-      // Process events for start of required part
-      for (; (e->t == t_c) && (e->e == ET_ERT); e++) {
-        ct.clear(e->i); rt.set(e->i);
-        c -= t[e->i].c();        
-        if (c < 0)
-          return ES_FAILED;
-      }
-
+      // Process sorted events with same timestamp
+      for ( ; e->t == t_c; e++)
+        switch (e->e) {
+        case ET_LRT:
+          // Process events for completion of required part
+          tasks.set(e->i); c += t[e->i].c();
+          break;
+        case ET_LCT:
+          // Process events for completion of task
+          tasks.clear(e->i);
+          break;
+        case ET_EST:
+          // Process events for start of task
+          tasks.set(e->i);
+          break;
+        case ET_ERT:
+          // Process events for start of required part
+          tasks.clear(e->i); c -= t[e->i].c();        
+          if (c < 0)
+            return ES_FAILED;
+          break;
+        case ET_END: default:
+          GECODE_NEVER;
+        }
+      
       if (e->e == ET_END)
         break;
       
       // Next time
       int t_n = e->t;
       assert(t_n != t_c);
-      for (Iter::Values::BitSet<Support::BitSet<Region> > j(ct); j(); ++j) 
-        if (t[j.val()].c() > c) {
-          // Task j cannot run from t_c to t_n-1
+
+      for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); j(); ++j) 
+        // Task j cannot run from t_c to t_n-1
+        if (t[j.val()].c() > c)
           GECODE_ME_CHECK(t[j.val()].norun(home,t_c,t_n-1));
-        }
 
     }
 
