@@ -57,6 +57,14 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     bool operator <(const Event& e) const;
   };
 
+  /// Sort order for tasks by decreasing capacity
+  template<class Task>
+  class TaskByDecCap {
+  public:
+    /// Sort order
+    bool operator ()(const Task& t1, const Task& t2) const;
+  };
+
   forceinline void
   Event::init(Event::Type e0, int t0, int i0) {
     e=e0; t=t0; i=i0;
@@ -69,10 +77,22 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     return this->t < e.t;
   }
 
+  template<class Task>
+  forceinline bool
+  TaskByDecCap<Task>::operator ()(const Task& t1, const Task& t2) const {
+    return t1.c() > t2.c();
+  }
+
+
   // Basic propagation
   template<class Task>
   ExecStatus
   basic(Space& home, int c, TaskArray<Task>& t) {
+
+    // Sort tasks by decreasing capacity
+    TaskByDecCap<Task> tbdc;
+    Support::quicksort(&t[0], t.size(), tbdc);
+
     Region r(home);
 
     Event* e = r.alloc<Event>(4*t.size()+1);
@@ -136,10 +156,11 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       if (e->e == Event::END)
         break;
       
-      for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); j(); ++j) 
+      // Exploit that tasks are sorted according to capacity
+      for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+           j() && (t[j.val()].c() > c); ++j) 
         // Task j cannot run from time to next time - 1
-        if (t[j.val()].c() > c)
-          GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
+        GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
 
     }
 
