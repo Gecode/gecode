@@ -39,9 +39,9 @@ namespace Gecode { namespace Scheduling {
 
   template<class Task>  
   forceinline
-  TaskProp<Task>::TaskProp(Home home, TaskArray<Task>& t0)
+  TaskProp<Task>::TaskProp(Home home, TaskArray<Task>& t0, PropCond pc)
     : Propagator(home), t(t0) {
-    t.subscribe(home,*this);
+    t.subscribe(home,*this,pc);
   }
 
   template<class Task>  
@@ -59,10 +59,16 @@ namespace Gecode { namespace Scheduling {
 
   template<class Task>  
   forceinline size_t 
-  TaskProp<Task>::dispose(Space& home) {
-    t.cancel(home,*this);
+  TaskProp<Task>::dispose(Space& home, PropCond pc) {
+    t.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
+  }
+
+  template<class Task>  
+  forceinline size_t 
+  TaskProp<Task>::dispose(Space& home) {
+    return dispose(home,Int::PC_INT_BND);
   }
 
 }}

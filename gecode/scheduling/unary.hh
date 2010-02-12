@@ -102,6 +102,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     ModEvent lst(Space& home, int n);
     /// Update latest completion time to \a n
     ModEvent lct(Space& home, int n);
+    /// Update such that task cannot run from \a e to \a l
+    ModEvent norun(Space& home, int e, int l);
     //@}
 
     /// \name Cloning
@@ -113,9 +115,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p);
+    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p);
+    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     //@}
 
   };

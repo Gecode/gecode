@@ -87,9 +87,9 @@ namespace Gecode { namespace Scheduling {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p);
+    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p);
+    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     //@}
   };
 
@@ -125,6 +125,8 @@ namespace Gecode { namespace Scheduling {
     ModEvent lst(Space& home, int n);
     /// Update latest completion time to \a n
     ModEvent lct(Space& home, int n);
+    /// Update such that task cannot run from \a e to \a l
+    ModEvent norun(Space& home, int e, int l);
     //@}
   };
 
@@ -196,9 +198,9 @@ namespace Gecode { namespace Scheduling {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to all tasks
-    void subscribe(Space& home, Propagator& p);
+    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     /// Cancel subscription of propagator \a p for all tasks
-    void cancel(Space& home, Propagator& p);
+    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     //@}
 
     /// \name Cloning
@@ -404,12 +406,14 @@ namespace Gecode { namespace Scheduling {
     /// Tasks
     TaskArray<Task> t;
     /// Constructor for creation
-    TaskProp(Home home, TaskArray<Task>& t);
+    TaskProp(Home home, TaskArray<Task>& t, PropCond pc=Int::PC_INT_BND);
     /// Constructor for cloning \a p
     TaskProp(Space& home, bool shared, TaskProp<Task>& p);
   public:
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    size_t dispose(Space& home, PropCond pc);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

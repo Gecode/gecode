@@ -84,15 +84,15 @@ namespace Gecode { namespace Scheduling {
 
   template<class ManTask>
   forceinline void
-  ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p) {
-    ManTask::subscribe(home, p);
+  ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p, PropCond pc) {
+    ManTask::subscribe(home, p, pc);
     _m.subscribe(home, p, Int::PC_BOOL_VAL);
   }
   template<class ManTask>
   forceinline void
-  ManToOptTask<ManTask>::cancel(Space& home, Propagator& p) {
+  ManToOptTask<ManTask>::cancel(Space& home, Propagator& p, PropCond pc) {
     _m.cancel(home, p, Int::PC_BOOL_VAL);
-    ManTask::cancel(home, p);
+    ManTask::cancel(home, p, pc);
   }
 
 }}

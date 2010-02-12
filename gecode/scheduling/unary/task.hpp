@@ -96,6 +96,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ManFixTask::lct(Space& home, int n) {
     return _s.lq(home,n-_p);
   }
+  forceinline ModEvent
+  ManFixTask::norun(Space& home, int e, int l) {
+    assert(e <= l);
+    e -= _p-1;
+    /*
+    if (e <= _s.min())
+      return _s.gq(home,l);
+    if (l >= _s.max())
+      return _s.lq(home,e);
+    */
+    Iter::Ranges::Singleton r(e,l);
+    return _s.minus_r(home,r,false);
+  }
 
   forceinline void
   ManFixTask::update(Space& home, bool share, ManFixTask& t) {
@@ -103,12 +116,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
   forceinline void
-  ManFixTask::subscribe(Space& home, Propagator& p) {
-    _s.subscribe(home, p, Int::PC_INT_BND);
+  ManFixTask::subscribe(Space& home, Propagator& p, PropCond pc) {
+    _s.subscribe(home, p, pc);
   }
   forceinline void
-  ManFixTask::cancel(Space& home, Propagator& p) {
-    _s.cancel(home, p, Int::PC_INT_BND);
+  ManFixTask::cancel(Space& home, Propagator& p, PropCond pc) {
+    _s.cancel(home, p, pc);
   }
 
   template<class Char, class Traits>

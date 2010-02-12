@@ -40,7 +40,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>
   forceinline
   ManProp<ManTask>::ManProp(Home home, int c0, TaskArray<ManTask>& t)
-    : TaskProp<ManTask>(home,t), c(c0) {}
+    : TaskProp<ManTask>(home,t,Int::PC_INT_DOM), c(c0) {}
 
   template<class ManTask>
   forceinline
@@ -65,7 +65,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>  
   forceinline size_t 
   ManProp<ManTask>::dispose(Space& home) {
-    (void) TaskProp<ManTask>::dispose(home);
+    (void) TaskProp<ManTask>::dispose(home,Int::PC_INT_DOM);
     return sizeof(*this);
   }
 
@@ -76,28 +76,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     GECODE_ES_CHECK(overload(home,c,t));
     for (int i=t.size(); i--; )
       if (!t[i].assigned())
-        return ES_FIX;
-    // Perform definitive overload check
-    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
-    Region r(home);
-    TaskViewIter<typename TaskTraits<ManTask>::TaskViewFwd,STO_EST,true> 
-      est(r,f);
-    TaskViewIter<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true> 
-      lct(r,f);
-    int t;
-    double u=0;
-    while (est()) {
-      assert(lct());
-      t = std::min(f[est.task()].est(),f[lct.task()].lct());
-      while (est() && (f[est.task()].est() == t)) {
-        u += f[est.task()].c(); ++est;
-      }
-      while (lct() && (f[lct.task()].lct() == t)) {
-        u -= f[lct.task()].c(); ++lct;
-      }
-      if (u > static_cast<double>(c))
-        return ES_FAILED;
-    }
+        return ES_NOFIX;
+    // Perform definitive check
+    GECODE_ES_CHECK(basic(home,c,t));
     return ES_SUBSUMED(*this,home);
   }
 

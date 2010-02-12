@@ -146,7 +146,8 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       assert(t_n != t_c);
       for (Iter::Values::BitSet<Support::BitSet<Region> > j(ct); j(); ++j) 
         if (t[j.val()].c() > c) {
-          // Task cannot run from t_c to t_n
+          // Task j cannot run from t_c to t_n-1
+          GECODE_ME_CHECK(t[j.val()].norun(home,t_c,t_n-1));
         }
 
     }

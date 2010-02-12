@@ -88,16 +88,16 @@ namespace Gecode { namespace Scheduling {
 
   template<class Task>
   inline void 
-  TaskArray<Task>::subscribe(Space& home, Propagator& p) {
+  TaskArray<Task>::subscribe(Space& home, Propagator& p, PropCond pc) {
     for (int i=n; i--; )
-      t[i].subscribe(home,p);
+      t[i].subscribe(home,p,pc);
   }
 
   template<class Task>
   inline void 
-  TaskArray<Task>::cancel(Space& home, Propagator& p) {
+  TaskArray<Task>::cancel(Space& home, Propagator& p, PropCond pc) {
     for (int i=n; i--; )
-      t[i].cancel(home,p);
+      t[i].cancel(home,p,pc);
   }
 
   template<class Task>

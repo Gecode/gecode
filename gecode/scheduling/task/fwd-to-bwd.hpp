@@ -81,6 +81,11 @@ namespace Gecode { namespace Scheduling {
   FwdToBwd<TaskView>::lct(Space& home, int n) {
     return TaskView::est(home,-n);
   }
+  template<class TaskView>
+  forceinline ModEvent
+  FwdToBwd<TaskView>::norun(Space& home, int e, int l) {
+    return TaskView::norun(home,-l,-e);
+  }
 
 }}
 
