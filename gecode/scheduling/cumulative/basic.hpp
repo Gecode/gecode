@@ -115,9 +115,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     // Process events, use c as the capacity that is still free
     while (true) {
       // Current time
-      int t_c = e->t;
+      int time = e->t;
       // Process sorted events with same timestamp
-      for ( ; e->t == t_c; e++)
+      for ( ; e->t == time; e++)
         switch (e->e) {
         case ET_LRT:
           // Process events for completion of required part
@@ -144,14 +144,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       if (e->e == ET_END)
         break;
       
-      // Next time
-      int t_n = e->t;
-      assert(t_n != t_c);
-
       for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); j(); ++j) 
         // Task j cannot run from t_c to t_n-1
         if (t[j.val()].c() > c)
-          GECODE_ME_CHECK(t[j.val()].norun(home,t_c,t_n-1));
+          GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
 
     }
 
