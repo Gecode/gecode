@@ -74,13 +74,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta& med) {
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c,t));
-    GECODE_ES_CHECK(basic(home,c,t));
-    for (int i=t.size(); i--; )
-      if (!t[i].assigned())
-        return ES_NOFIX;
-    // Perform definitive check
-    GECODE_ES_CHECK(basic(home,c,t));
-    return ES_SUBSUMED(*this,home);
+    return basic(home,*this,c,t);
   }
 
 }}}

@@ -87,7 +87,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   // Basic propagation
   template<class Task>
   ExecStatus
-  basic(Space& home, int c, TaskArray<Task>& t) {
+  basic(Space& home, Propagator& p, int c, TaskArray<Task>& t) {
 
     // Sort tasks by decreasing capacity
     TaskByDecCap<Task> tbdc;
@@ -98,27 +98,60 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     Event* e = r.alloc<Event>(4*t.size()+1);
 
     // Initialize events
+    bool assigned=true;
     {
+      bool required=false;
       int n=0;
-      for (int i=t.size(); i--; ) {
-        e[n++].init(Event::EST,t[i].est(),i);
-        e[n++].init(Event::LCT,t[i].lct(),i);
-        // Check whether task has required part
-        if (t[i].lst() < t[i].ect()) {
+      for (int i=t.size(); i--; ) 
+        if (t[i].assigned()) {
+          // Only add required part
+          required = true;
           e[n++].init(Event::ERT,t[i].lst(),i);
           e[n++].init(Event::LRT,t[i].ect(),i);
+        } else {
+          assigned = false;
+          e[n++].init(Event::EST,t[i].est(),i);
+          e[n++].init(Event::LCT,t[i].lct(),i);
+          // Check whether task has required part
+          if (t[i].lst() < t[i].ect()) {
+            required = true;
+            e[n++].init(Event::ERT,t[i].lst(),i);
+            e[n++].init(Event::LRT,t[i].ect(),i);
+          }
         }
-      }
       
       // Check whether no task has a required part
-      if (n == 2*t.size())
-        return ES_OK;
+      if (!required)
+        return ES_FIX;
       
       // Write end marker
       e[n++].init(Event::END,Int::Limits::infinity,-1);
       
       // Sort events
       Support::quicksort(e, n);
+    }
+
+    if (assigned) {
+      // Just perform a quick check
+      // Process events, use c as the capacity that is still free
+      for ( ; true; e++)
+        switch (e->e) {
+        case Event::LRT:
+          // Process events for completion of required part
+          c += t[e->i].c();
+          break;
+        case Event::ERT:
+          // Process events for start of required part
+          c -= t[e->i].c();        
+          if (c < 0)
+            return ES_FAILED;
+          break;
+        case Event::END:
+          return ES_SUBSUMED(p,home);
+        default:
+          GECODE_NEVER;
+        }
+      GECODE_NEVER;
     }
 
     // Set of current but not required tasks
@@ -161,10 +194,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
            j() && (t[j.val()].c() > c); ++j) 
         // Task j cannot run from time to next time - 1
         GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
-
     }
-
-    return ES_OK;
+    
+    return ES_NOFIX;
   }
 
 }}}

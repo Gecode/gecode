@@ -264,7 +264,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
   /// Perform basic propagation
   template<class Task>
-  ExecStatus basic(Space& home, int c, TaskArray<Task>& t);
+  ExecStatus basic(Space& home, Propagator& p, int c, TaskArray<Task>& t);
 
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
