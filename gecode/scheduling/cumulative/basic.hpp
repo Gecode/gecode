@@ -131,29 +131,6 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       Support::quicksort(e, n);
     }
 
-    if (assigned) {
-      // Just perform a quick check
-      // Process events, use c as the capacity that is still free
-      for ( ; true; e++)
-        switch (e->e) {
-        case Event::LRT:
-          // Process events for completion of required part
-          c += t[e->i].c();
-          break;
-        case Event::ERT:
-          // Process events for start of required part
-          c -= t[e->i].c();        
-          if (c < 0)
-            return ES_FAILED;
-          break;
-        case Event::END:
-          return ES_SUBSUMED(p,home);
-        default:
-          GECODE_NEVER;
-        }
-      GECODE_NEVER;
-    }
-
     // Set of current but not required tasks
     Support::BitSet<Region> tasks(r,t.size());
 
@@ -161,42 +138,37 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     while (true) {
       // Current time
       int time = e->t;
-      // Process sorted events with same timestamp
-      for ( ; e->t == time; e++)
-        switch (e->e) {
-        case Event::LRT:
-          // Process events for completion of required part
-          tasks.set(e->i); c += t[e->i].c();
-          break;
-        case Event::LCT:
-          // Process events for completion of task
-          tasks.clear(e->i);
-          break;
-        case Event::EST:
-          // Process events for start of task
-          tasks.set(e->i);
-          break;
-        case Event::ERT:
-          // Process events for start of required part
-          tasks.clear(e->i); c -= t[e->i].c();        
-          if (c < 0)
-            return ES_FAILED;
-          break;
-        case Event::END: default:
-          GECODE_NEVER;
-        }
-      
-      if (e->e == Event::END)
-        break;
+
+      // Process events for completion of required part
+      for ( ; (e->t == time) && (e->e == Event::LRT); e++) {
+        tasks.set(e->i); c += t[e->i].c();
+      }
+      // Process events for completion of task
+      for ( ; (e->t == time) && (e->e == Event::LCT); e++) {
+        tasks.clear(e->i);
+      }
+      // Process events for start of task
+      for ( ; (e->t == time) && (e->e == Event::EST); e++) {
+        tasks.set(e->i);
+      }
+      // Process events for start of required part
+      for ( ; (e->t == time) && (e->e == Event::ERT); e++) {
+        tasks.clear(e->i); c -= t[e->i].c();        
+        if (c < 0)
+          return ES_FAILED;
+      }
       
       // Exploit that tasks are sorted according to capacity
       for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
            j() && (t[j.val()].c() > c); ++j) 
         // Task j cannot run from time to next time - 1
         GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
+
+      if (e->e == Event::END)
+        break;
     }
     
-    return ES_NOFIX;
+    return assigned ? ES_SUBSUMED(p,sizeof(p)) : ES_NOFIX;
   }
 
 }}}
