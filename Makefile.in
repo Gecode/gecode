@@ -460,7 +460,7 @@ SCHEDULINGHDR0 = \
 	unary/man-prop.hpp unary/opt-prop.hpp \
 	cumulative.hh cumulative/task.hpp cumulative/task-view.hpp \
 	cumulative/tree.hpp cumulative/overload.hpp \
-	cumulative/basic.hpp \
+	cumulative/basic.hpp cumulative/edge-finding.hpp \
 	cumulative/man-prop.hpp cumulative/opt-prop.hpp \
 	cumulatives.hh cumulatives/val.hpp
 

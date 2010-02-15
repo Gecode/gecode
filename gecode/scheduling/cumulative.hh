@@ -256,6 +256,89 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     double env(void) const;
   };
 
+  /// Node for an extended omega tree
+  class ExtOmegaNode : public OmegaNode {
+  public:
+    /// Energy envelope for subtree
+    double cenv;
+    /// Initialize node from left child \a l and right child \a r
+    void init(const ExtOmegaNode& l, const ExtOmegaNode& r);
+    /// Update node from left child \a l and right child \a r
+    void update(const ExtOmegaNode& l, const ExtOmegaNode& r);
+  };
+
+  /// Omega trees for computing ect of task sets
+  template<class TaskView>
+  class ExtOmegaTree : public TaskTree<TaskView,ExtOmegaNode> {
+  protected:
+    using TaskTree<TaskView,ExtOmegaNode>::tasks;
+    using TaskTree<TaskView,ExtOmegaNode>::leaf;
+    using TaskTree<TaskView,ExtOmegaNode>::root;
+    using TaskTree<TaskView,ExtOmegaNode>::init;
+    using TaskTree<TaskView,ExtOmegaNode>::update;
+    using TaskTree<TaskView,ExtOmegaNode>::node;
+    using TaskTree<TaskView,ExtOmegaNode>::n_leaf;
+    using TaskTree<TaskView,ExtOmegaNode>::n_left;
+    using TaskTree<TaskView,ExtOmegaNode>::left;
+    using TaskTree<TaskView,ExtOmegaNode>::n_right;
+    using TaskTree<TaskView,ExtOmegaNode>::right;
+    using TaskTree<TaskView,ExtOmegaNode>::n_root;
+    using TaskTree<TaskView,ExtOmegaNode>::n_parent;
+    /// Capacity
+    int c, ci;
+  public:
+    /// Initialize tree for tasks \a t and capacities \a c, \a ci
+    ExtOmegaTree(Region& r, int c, const TaskViewArray<TaskView>& t, int ci);
+    /// Compute update for task with index \a i
+    int diff(int i);
+  };
+
+
+  /// Node for an omega lambda tree
+  class OmegaLambdaNode : public OmegaNode {
+  public:
+    /// Undefined task
+    static const int undef = -1;
+    /// Energy for subtree
+    double le;
+    /// Energy envelope for subtree
+    double lenv;
+    /// Node which is responsible for lect
+    int res;
+    /// Initialize node from left child \a l and right child \a r
+    void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
+    /// Update node from left child \a l and right child \a r
+    void update(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
+  };
+
+  /// Omega-lambda trees for computing ect of task sets
+  template<class TaskView>
+  class OmegaLambdaTree : public TaskTree<TaskView,OmegaLambdaNode> {
+  protected:
+    using TaskTree<TaskView,OmegaLambdaNode>::tasks;
+    using TaskTree<TaskView,OmegaLambdaNode>::leaf;
+    using TaskTree<TaskView,OmegaLambdaNode>::root;
+    using TaskTree<TaskView,OmegaLambdaNode>::init;
+    using TaskTree<TaskView,OmegaLambdaNode>::update;
+    /// Capacity
+    int c;
+  public:
+    /// Initialize tree for tasks \a t and capcity \a c with all tasks included in omega
+    OmegaLambdaTree(Region& r, int c, const TaskViewArray<TaskView>& t);
+    /// Shift task with index \a i from omega to lambda
+    void shift(int i);
+    /// Remove task with index \a i from lambda
+    void lremove(int i);
+    /// Whether has responsible task
+    bool lempty(void) const;
+    /// Return responsible task
+    int responsible(void) const;
+    /// Return energy envelope of all tasks
+    double env(void) const;
+    /// Return energy envelope of all tasks excluding lambda tasks
+    double lenv(void) const;
+  };
+
 }}}
 
 #include <gecode/scheduling/cumulative/tree.hpp>
@@ -269,6 +352,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
+
+  /// Propagate by edge finding
+  template<class Task>
+  ExecStatus edgefinding(Space& home, int c, TaskArray<Task>& t);
 
   /**
    * \brief Scheduling propagator for cumulative resource with mandatory tasks
@@ -328,6 +415,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
 #include <gecode/scheduling/cumulative/basic.hpp>
 #include <gecode/scheduling/cumulative/overload.hpp>
+#include <gecode/scheduling/cumulative/edge-finding.hpp>
 #include <gecode/scheduling/cumulative/man-prop.hpp>
 #include <gecode/scheduling/cumulative/opt-prop.hpp>
 

@@ -371,8 +371,12 @@ namespace Gecode { namespace Scheduling {
     bool n_leaf(int i) const;
     /// Return index of left child of node \a i
     static int n_left(int i);
+    /// Test whether node \a i is a left child
+    static bool left(int i);
     /// Return index of right child of node \a i
     static int n_right(int i);
+    /// Test whether node \a i is a right child
+    static bool right(int i);
     /// Return index of parent of node \a i
     static int n_parent(int i);
   protected:

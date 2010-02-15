@@ -70,9 +70,23 @@ namespace Gecode { namespace Scheduling {
     return 2*(i+1) - 1;
   }
   template<class TaskView, class Node>
+  forceinline bool
+  TaskTree<TaskView,Node>::left(int i) {
+    assert(!n_root(i));
+    // A left node has an odd number
+    return (i & 1) != 0;
+  }
+  template<class TaskView, class Node>
   forceinline int
   TaskTree<TaskView,Node>::n_right(int i) {
     return 2*(i+1);
+  }
+  template<class TaskView, class Node>
+  forceinline bool
+  TaskTree<TaskView,Node>::right(int i) {
+    assert(!n_root(i));
+    // A left node has an even number
+    return (i & 1) == 0;
   }
   template<class TaskView, class Node>
   forceinline int
