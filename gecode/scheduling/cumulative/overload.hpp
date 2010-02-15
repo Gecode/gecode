@@ -48,9 +48,10 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,c,f);
 
     for (int i=0; i<f.size(); i++) {
-      o.insert(i);
+      if (f[i].mandatory())
+        o.insert(i);
       if (o.env() > static_cast<double>(c)*f[i].lct())
-        return ES_FAILED;
+        GECODE_ME_CHECK(f[i].excluded(home));
     }
     return ES_OK;
   }

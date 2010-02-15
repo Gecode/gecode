@@ -76,6 +76,19 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
 
   forceinline bool
+  ManFixTask::mandatory(void) const {
+    return true;
+  }
+  forceinline bool
+  ManFixTask::excluded(void) const {
+    return false;
+  }
+  forceinline bool
+  ManFixTask::optional(void) const {
+    return false;
+  }
+
+  forceinline bool
   ManFixTask::assigned(void) const {
     return _s.assigned();
   }
@@ -101,6 +114,16 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     assert(e <= l);
     Iter::Ranges::Singleton r(e-_p+1,l);
     return _s.minus_r(home,r,false);
+  }
+
+
+  forceinline ModEvent
+  ManFixTask::mandatory(Space&) {
+    return Int::ME_INT_NONE;
+  }
+  forceinline ModEvent
+  ManFixTask::excluded(Space&) {
+    return Int::ME_INT_FAILED;
   }
 
   forceinline void

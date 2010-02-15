@@ -50,7 +50,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestScheduling
       */
      //@{
-     /// Test for unary constraint
+     /// Test for cumulative constraint with mandatory tasks
      class ManFixCumulative : public Test {
      protected:
        /// Capacity of resource
@@ -62,9 +62,9 @@ namespace Test { namespace Int {
        /// Get a reasonable maximal start time
        static int st(int c, 
                      const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
-         int e = 0;
+         double e = 0;
          for (int i=p.size(); i--; )
-           e += p[i]*u[i];
+           e += static_cast<double>(p[i])*u[i];
          return e / c;
        }
      public:
@@ -111,6 +111,79 @@ namespace Test { namespace Int {
        }
      };
 
+
+     /// Test for cumulative constraint with optional tasks
+     class OptFixCumulative : public Test {
+     protected:
+       /// Capacity of resource
+       int c;
+       /// The processing times
+       Gecode::IntArgs p;
+       /// The resource usage
+       Gecode::IntArgs u;
+       /// Limit for optional tasks
+       int l;
+       /// Get a reasonable maximal start time
+       static int st(int c, 
+                     const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
+         double e = 0;
+         for (int i=p.size(); i--; )
+           e += static_cast<double>(p[i])*u[i];
+         return e / c;
+       }
+     public:
+       /// Create and register test
+       OptFixCumulative(int c0, 
+                        const Gecode::IntArgs& p0,
+                        const Gecode::IntArgs& u0)
+         : Test("Scheduling::Cumulative::Opt::Fix::"+
+                str(c0)+"::"+str(p0)+"::"+str(u0),
+                2*p0.size(),0,st(c0,p0,u0)), 
+           c(c0), p(p0), u(u0), l(st(c,p,u)/2) {
+         testsearch = false;
+         contest = CTL_NONE;
+       }
+       /// Create and register initial assignment
+       virtual Assignment* assignment(void) const {
+         return new RandomAssignment(arity,dom,500);
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size() / 2;
+         // Compute maximal time
+         int t = 0;
+         for (int i=0; i<n; i++)
+           t = std::max(t,x[i]+p[i]);
+         // Compute resource usage
+         int* used = new int[t];
+         for (int i=0; i<t; i++)
+           used[i] = 0;
+         for (int i=0; i<n; i++)
+           if (x[n+i] > l)
+             for (int t=0; t<p[i]; t++)
+               used[x[i]+t] += u[i];
+         // Check resource usage
+         for (int i=0; i<t; i++)
+           if (used[i] > c) {
+             delete [] used;
+             return false;
+           }
+         delete [] used;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size() / 2;
+         Gecode::IntVarArgs s(n);
+         Gecode::BoolVarArgs m(n);
+         for (int i=0; i<n; i++) {
+           s[i]=x[i];
+           m[i]=Gecode::post(home, ~(x[n+i] > l));
+         }
+         Gecode::cumulative(home, c, s, p, u, m);
+       }
+     };
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -135,6 +208,17 @@ namespace Test { namespace Int {
            (void) new ManFixCumulative(c,p3,u1);
            (void) new ManFixCumulative(c,p3,u2);
            (void) new ManFixCumulative(c,p3,u3);
+           /*
+           (void) new OptFixCumulative(c,p1,u1);
+           (void) new OptFixCumulative(c,p1,u2);
+           (void) new OptFixCumulative(c,p1,u3);
+           (void) new OptFixCumulative(c,p2,u1);
+           (void) new OptFixCumulative(c,p2,u2);
+           (void) new OptFixCumulative(c,p2,u3);
+           (void) new OptFixCumulative(c,p3,u1);
+           (void) new OptFixCumulative(c,p3,u2);
+           (void) new OptFixCumulative(c,p3,u3);
+           */
          }
        }
      };

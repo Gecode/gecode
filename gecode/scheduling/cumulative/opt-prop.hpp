@@ -42,7 +42,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Home home, int c0, TaskArray<OptTask>& t)
-    : TaskProp<OptTask>(home,t), c(c0) {}
+    : TaskProp<OptTask>(home,t,Int::PC_INT_DOM), c(c0) {}
 
   template<class OptTask>
   forceinline
@@ -52,21 +52,27 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class OptTask>
   forceinline ExecStatus 
   OptProp<OptTask>::post(Home home, int c, TaskArray<OptTask>& t) {
-    int m=0, o=0;
-    for (int i=t.size(); i--; ) {
-      if (t[i].mandatory())
+    //    std::cout << "OptProp::post()" << std::endl;
+    // Check for overload by single task and remove excluded tasks
+    int n=t.size(), m=0;
+    for (int i=n; i--; ) {
+      if (t[i].c() > c) 
+        GECODE_ME_CHECK(t[i].excluded(home));
+      if (t[i].excluded())
+        t[i]=t[--n];
+      else if (t[i].mandatory())
         m++;
-      else if (t[i].optional())
-        o++;
     }
+    t.size(n);
+    if (t.size() < 2)
+      return ES_OK;
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i].st(),t[i].p(),t[i].c());
       return ManProp<typename TaskTraits<OptTask>::ManTask>::post(home,c,mt);
     }
-    if (o+m > 1)
-      (void) new (home) OptProp<OptTask>(home,c,t);
+    (void) new (home) OptProp<OptTask>(home,c,t);
     return ES_OK;
   }
 
@@ -79,7 +85,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class OptTask>  
   forceinline size_t 
   OptProp<OptTask>::dispose(Space& home) {
-    (void) TaskProp<OptTask>::dispose(home);
+    (void) TaskProp<OptTask>::dispose(home,Int::PC_INT_DOM);
     return sizeof(*this);
   }
 
@@ -87,37 +93,12 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   ExecStatus 
   OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
-    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK(purge(home,*this,t));
-
-    // Partition into mandatory and optional activities
-    int n = t.size();
-    int i=0, j=n-1;
-    while (true) {
-      while ((i < n) && t[i].mandatory()) i++;
-      while ((j >= 0) && !t[j].mandatory()) j--;
-      if (i >= j) break;
-      std::swap(t[i],t[j]);
-    }
-    // No propagation possible
-    if (i < 2)
-      return ES_NOFIX;
-    // All tasks are mandatory: rewrite
-    if (i == n) {
-      TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,n);
-      for (int i=n; i--; )
-        mt[i].init(t[i].st(),t[i].p(),t[i].c());
-      GECODE_REWRITE(*this,
-                     (ManProp<typename TaskTraits<OptTask>::ManTask>
-                      ::post(home,c,mt)));
-    }
-    // Truncate array to only contain mandatory tasks
-    t.size(i);
-
-    // Restore to also include optional tasks
-    t.size(n);
-
-    return ES_FAILED;
+    //    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
+    //      GECODE_ES_CHECK(purge(home,*this,t));
+    // Only bounds changes?
+    //    GECODE_ES_CHECK(overload(home,c,t));
+    GECODE_ES_CHECK(basic(home,*this,c,t));
+    return ES_NOFIX;
   }
 
 }}}

@@ -140,29 +140,32 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       int time = e->t;
 
       // Process events for completion of required part
-      for ( ; (e->t == time) && (e->e == Event::LRT); e++) {
-        tasks.set(e->i); c += t[e->i].c();
-      }
+      for ( ; (e->t == time) && (e->e == Event::LRT); e++) 
+        if (t[e->i].mandatory()) {
+          tasks.set(e->i); c += t[e->i].c();
+        }
       // Process events for completion of task
-      for ( ; (e->t == time) && (e->e == Event::LCT); e++) {
+      for ( ; (e->t == time) && (e->e == Event::LCT); e++)
         tasks.clear(e->i);
-      }
       // Process events for start of task
-      for ( ; (e->t == time) && (e->e == Event::EST); e++) {
+      for ( ; (e->t == time) && (e->e == Event::EST); e++)
         tasks.set(e->i);
-      }
       // Process events for start of required part
-      for ( ; (e->t == time) && (e->e == Event::ERT); e++) {
-        tasks.clear(e->i); c -= t[e->i].c();        
-        if (c < 0)
-          return ES_FAILED;
-      }
+      for ( ; (e->t == time) && (e->e == Event::ERT); e++) 
+        if (t[e->i].mandatory()) {
+          tasks.clear(e->i); c -= t[e->i].c();        
+          if (c < 0)
+            return ES_FAILED;
+        } else if (t[e->i].optional() && (t[e->i].c() > c)) {
+          GECODE_ME_CHECK(t[e->i].excluded(home));
+        }
       
       // Exploit that tasks are sorted according to capacity
       for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
            j() && (t[j.val()].c() > c); ++j) 
         // Task j cannot run from time to next time - 1
-        GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
+        if (t[j.val()].mandatory())
+          GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
 
       if (e->e == Event::END)
         break;

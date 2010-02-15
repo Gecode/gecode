@@ -83,7 +83,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Return start time
     IntVar st(void) const;
     /// Return processing time
-    int p(void) const;
+   int p(void) const;
+    /// Whether task is mandatory
+    bool mandatory(void) const;
+    /// Whether task is excluded
+    bool excluded(void) const;
+    /// Whether task can still be optional
+    bool optional(void) const;
     //@}
 
     /// \name Domain tests
@@ -104,6 +110,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     ModEvent lct(Space& home, int n);
     /// Update such that task cannot run from \a e to \a l
     ModEvent norun(Space& home, int e, int l);
+    /// Mark task as mandatory
+    ModEvent mandatory(Space& home);
+    /// Mark task as excluded
+    ModEvent excluded(Space& home);
     //@}
 
     /// \name Cloning

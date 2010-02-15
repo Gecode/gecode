@@ -51,6 +51,11 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>
   forceinline ExecStatus 
   ManProp<ManTask>::post(Home home, int c, TaskArray<ManTask>& t) {
+    //    std::cout << "ManProp::post()" << std::endl;
+    // Check that tasks do not overload resource
+    for (int i=t.size(); i--; )
+      if (t[i].c() > c)
+        return ES_FAILED;
     if (t.size() > 1)
       (void) new (home) ManProp<ManTask>(home,c,t);
     return ES_OK;
@@ -72,6 +77,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>
   ExecStatus 
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta& med) {
+    // Only bounds changes?
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c,t));
     return basic(home,*this,c,t);
