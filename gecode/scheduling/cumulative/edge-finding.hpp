@@ -42,7 +42,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class TaskView>
   forceinline ExecStatus
   edgefinding(Space& home, int c, TaskViewArray<TaskView>& t) {
-    sort<TaskView,STO_LCT,true>(t);
+    sort<TaskView,STO_LCT,false>(t);
 
     Region r(home);
 
@@ -55,7 +55,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
 
     for (int j=0; j<t.size(); j++) {
       while (!ol.lempty() && 
-             (ol.env() > static_cast<double>(c)*t[j].lct())) {
+             (ol.lenv() > static_cast<double>(c)*t[j].lct())) {
         int i = ol.responsible();
         prec[i] = t[j].lct();
         ol.lremove(i);
@@ -72,20 +72,23 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       ExtOmegaTree<TaskView> eo(r,c,t,t[i].c());
       int u = -Int::Limits::infinity;
       for (int j=0; j<t.size(); j++) {
-        u = std::max(u,eo.diff(j));
-        update[i*t.size()+j]=u;
+        int diff = static_cast<int>
+          (ceil((eo.env(j) - 
+                 static_cast<double>(c-t[i].c())*t[j].lct()) 
+                / t[i].c())); 
+        u = std::max(u,diff);
+        update[i*t.size()+j] = u;
       }
     }
     
-    /*
     for (int i=0; i<t.size(); i++)
       for (int j=0; j<t.size(); j++)
-        if (t[j].lct() <= prec[i]) {
-          std::cout << "t[" << i << "].est()=" << t[i].est()
-                    << " >= " << update[i*t.size()+j] << std::endl;
-          GECODE_ME_CHECK(t[i].est(home,));
+        if (t[j].lct() == prec[i]) {
+          std::cout << "Update: t[" << i << "] = " 
+                    << t[i].est() << " --> " << update[i*t.size()+j]
+                    << std::endl;
+          GECODE_ME_CHECK(t[i].est(home,update[i*t.size()+j]));
         }
-    */
   
     return ES_OK;
   }

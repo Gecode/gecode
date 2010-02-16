@@ -290,7 +290,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /// Initialize tree for tasks \a t and capacities \a c, \a ci
     ExtOmegaTree(Region& r, int c, const TaskViewArray<TaskView>& t, int ci);
     /// Compute update for task with index \a i
-    int diff(int i);
+    double env(int i);
   };
 
 

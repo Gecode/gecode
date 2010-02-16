@@ -80,7 +80,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     // Only bounds changes?
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c,t));
-    //    edgefinding(home,c,t);
+    //    GECODE_ES_CHECK(edgefinding(home,c,t));
     return basic(home,*this,c,t);
   }
 

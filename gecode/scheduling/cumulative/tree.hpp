@@ -114,8 +114,8 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   }
 
   template<class TaskView>
-  forceinline int
-  ExtOmegaTree<TaskView>::diff(int i) {
+  forceinline double
+  ExtOmegaTree<TaskView>::env(int i) {
     // Enter task i
     leaf(i).e = tasks[i].e(); 
     leaf(i).env = static_cast<double>(c)*tasks[i].est()+tasks[i].e();
@@ -157,9 +157,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       met = n_parent(met);
     }
 
-    return 
-      static_cast<int>(ceil((b_e + a_env - 
-                             static_cast<double>(c-ci) * tasks[i].lct()) / c));
+    return b_e + a_env;
   }
 
   
