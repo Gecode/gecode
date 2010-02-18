@@ -452,8 +452,11 @@ namespace Gecode { namespace FlatZinc {
   template<typename S>
   class GistEngine<DFS<S> > {
   public:
-    static void explore(S* root, Gist::Inspector* i) {
-      Gecode::Gist::Options o; o.inspect.click(i);
+    static void explore(S* root, const FlatZincOptions& opt,
+                        Gist::Inspector* i) {
+      Gecode::Gist::Options o;
+      o.c_d = opt.c_d(); o.a_d = opt.a_d();
+      o.inspect.click(i);
       (void) Gecode::Gist::dfs(root, o);
     }
   };
@@ -462,8 +465,11 @@ namespace Gecode { namespace FlatZinc {
   template<typename S>
   class GistEngine<LDS<S> > {
   public:
-    static void explore(S* root, Gist::Inspector* i) {
-      Gecode::Gist::Options o; o.inspect.click(i);
+    static void explore(S* root, const FlatZincOptions& opt,
+                        Gist::Inspector* i) {
+      Gecode::Gist::Options o;
+      o.c_d = opt.c_d(); o.a_d = opt.a_d();
+      o.inspect.click(i);
       (void) Gecode::Gist::dfs(root, o);
     }
   };
@@ -472,8 +478,11 @@ namespace Gecode { namespace FlatZinc {
   template<typename S>
   class GistEngine<BAB<S> > {
   public:
-    static void explore(S* root, Gist::Inspector* i) {
-      Gecode::Gist::Options o; o.inspect.click(i);
+    static void explore(S* root, const FlatZincOptions& opt,
+                        Gist::Inspector* i) {
+      Gecode::Gist::Options o;
+      o.c_d = opt.c_d(); o.a_d = opt.a_d();
+      o.inspect.click(i);
       (void) Gecode::Gist::bab(root, o);
     }
   };
@@ -482,8 +491,11 @@ namespace Gecode { namespace FlatZinc {
   template<typename S>
   class GistEngine<Restart<S> > {
   public:
-    static void explore(S* root, Gist::Inspector* i) {
-      Gecode::Gist::Options o; o.inspect.click = i;
+    static void explore(S* root, const FlatZincOptions& opt,
+                        Gist::Inspector* i) {
+      Gecode::Gist::Options o;
+      o.c_d = opt.c_d(); o.a_d = opt.a_d();
+      o.inspect.click = i;
       (void) Gecode::Gist::bab(root, o);
     }
   };
@@ -521,7 +533,7 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
       FZPrintingInspector<FlatZincSpace> pi(p);
-      (void) GistEngine<Engine<FlatZincSpace> >::explore(this,&pi);
+      (void) GistEngine<Engine<FlatZincSpace> >::explore(this,opt,&pi);
       return;
     }
 #endif

@@ -73,6 +73,14 @@ Date: ??????
 The next big thing.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The FlatZinc interpreter ignored the -c-d and -a-d command line 
+switches when used with Gist.
+
+[ENTRY]
 Module: minimodel
 What:   removed
 Rank:   minor
