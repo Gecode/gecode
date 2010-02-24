@@ -111,6 +111,14 @@ namespace Gecode { namespace FlatZinc {
           INT_VAR_DEGREE_MAX);
       if (s->id == "random")
         return TieBreakVarBranch<IntVarBranch>(INT_VAR_RND);
+      if (s->id == "afc_min")
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MIN);
+      if (s->id == "afc_max")
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MAX);
+      if (s->id == "size_afc_min")
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MIN);
+      if (s->id == "size_afc_max")
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MAX);
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -139,6 +147,23 @@ namespace Gecode { namespace FlatZinc {
     ann->print(std::cerr);
     std::cerr << std::endl;
     return INT_VAL_MIN;
+  }
+
+  IntAssign ann2asnivalsel(AST::Node* ann) {
+    if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
+      if (s->id == "indomain_min")
+        return INT_ASSIGN_MIN;
+      if (s->id == "indomain_max")
+        return INT_ASSIGN_MAX;
+      if (s->id == "indomain_median")
+        return INT_ASSIGN_MED;
+      if (s->id == "indomain_random")
+        return INT_ASSIGN_RND;
+    }
+    std::cerr << "Warning, ignored search annotation: ";
+    ann->print(std::cerr);
+    std::cerr << std::endl;
+    return INT_ASSIGN_MIN;
   }
 
 #ifdef GECODE_HAS_SET_VARS
@@ -323,6 +348,24 @@ namespace Gecode { namespace FlatZinc {
           branch(*this, va, ann2ivarsel(args->a[1]), ann2ivalsel(args->a[2]));
           hadSearchAnnotation = true;
         } catch (AST::TypeError& e) {
+        try {
+          AST::Call *call = flatAnn[i]->getCall("int_assign");
+          AST::Array *args = call->getArgs(2);
+          AST::Array *vars = args->a[0]->getArray();
+          int k=vars->a.size();
+          for (int i=vars->a.size(); i--;)
+            if (vars->a[i]->isInt())
+              k--;
+          IntVarArgs va(k);
+          k=0;
+          for (unsigned int i=0; i<vars->a.size(); i++) {
+            if (vars->a[i]->isInt())
+              continue;
+            va[k++] = iv[vars->a[i]->getIntVar()];
+          }
+          assign(*this, va, ann2asnivalsel(args->a[1]));
+          hadSearchAnnotation = true;
+        } catch (AST::TypeError& e) {
           (void) e;
           try {
             AST::Call *call = flatAnn[i]->getCall("bool_search");
@@ -375,6 +418,7 @@ namespace Gecode { namespace FlatZinc {
             std::cerr << std::endl;
 #endif
           }
+        }
         }
       }
     }

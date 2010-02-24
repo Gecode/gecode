@@ -37,6 +37,13 @@
 % This file contains predicate definitions for additional constraints available
 % in the Gecode FlatZinc interpreter.
 
+% Additional search annotations
+annotation afc_min;
+annotation size_afc_min;
+annotation afc_max;
+annotation size_afc_max;
+annotation int_assign(array[int] of var int: x, ann:a);
+
 % i in z <-> exists (j in x) (i in y[j])
 predicate array_set_element_union(var set of int: x, array[int] of set of int: y, var set of int: z);
 
