@@ -61,12 +61,13 @@ int main(int argc, char** argv) {
   FlatZinc::Printer p;
   FlatZinc::FlatZincSpace* fg = NULL;
   if (!strcmp(filename, "-")) {
-    fg = FlatZinc::solve(cin, p);
+    fg = FlatZinc::parse(cin, p);
   } else {
-    fg = FlatZinc::solve(filename, p);
+    fg = FlatZinc::parse(filename, p);
   }
   
   if (fg) {
+    fg->createBranchers(false, std::cerr);
     fg->run(std::cout, p, opt, t_total);
   } else {
     exit(EXIT_FAILURE);    

@@ -205,18 +205,21 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
   FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
-    : Space(share, f) {
+    : Space(share, f), _solveAnnotations(NULL) {
       _optVar = f._optVar;
       _method = f._method;
       iv.update(*this, share, f.iv);
+      intVarCount = f.intVarCount;
       bv.update(*this, share, f.bv);
+      boolVarCount = f.boolVarCount;
 #ifdef GECODE_HAS_SET_VARS
       sv.update(*this, share, f.sv);
+      setVarCount = f.setVarCount;
 #endif
     }
   
   FlatZincSpace::FlatZincSpace(void)
-  : intVarCount(-1), boolVarCount(-1), setVarCount(-1) {}
+  : intVarCount(-1), boolVarCount(-1), setVarCount(-1), _solveAnnotations(NULL) {}
 
   void
   FlatZincSpace::init(int intVars, int boolVars,
@@ -231,7 +234,6 @@ namespace Gecode { namespace FlatZinc {
     boolVarCount = 0;
     bv = BoolVarArray(*this, boolVars);
     bv_introduced = std::vector<bool>(boolVars);
-    std::cerr << "initialized " << iv.size() << ", " << bv.size() << std::endl;
 #ifdef GECODE_HAS_SET_VARS
     setVarCount = 0;
     sv = SetVarArray(*this, setVars);
@@ -331,11 +333,11 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincSpace::parseSolveAnn(AST::Array* ann) {
+  FlatZincSpace::createBranchers(bool ignoreUnknown, std::ostream& err) {
     bool hadSearchAnnotation = false;
-    if (ann) {
+    if (_solveAnnotations) {
       std::vector<AST::Node*> flatAnn;
-      flattenAnnotations(ann, flatAnn);
+      flattenAnnotations(_solveAnnotations, flatAnn);
 
       for (unsigned int i=0; i<flatAnn.size(); i++) {
         try {
@@ -416,14 +418,18 @@ namespace Gecode { namespace FlatZinc {
               hadSearchAnnotation = true;
             } catch (AST::TypeError& e) {
               (void) e;
-              std::cerr << "Warning, ignored search annotation: ";
-              flatAnn[i]->print(std::cerr);
-              std::cerr << std::endl;
+              if (!ignoreUnknown) {
+                err << "Warning, ignored search annotation: ";
+                flatAnn[i]->print(err);
+                err << std::endl;
+              }
             }
 #else
-            std::cerr << "Warning, ignored search annotation: ";
-            flatAnn[i]->print(std::cerr);
-            std::cerr << std::endl;
+            if (!ignoreUnknown) {
+              err << "Warning, ignored search annotation: ";
+              flatAnn[i]->print(err);
+              err << std::endl;
+            }
 #endif
           }
         }
@@ -466,29 +472,29 @@ namespace Gecode { namespace FlatZinc {
   void
   FlatZincSpace::solve(AST::Array* ann) {
     _method = SAT;
-    parseSolveAnn(ann);
+    _solveAnnotations = ann;
   }
 
   void
   FlatZincSpace::minimize(int var, AST::Array* ann) {
     _method = MIN;
     _optVar = var;
-    parseSolveAnn(ann);
+    _solveAnnotations = ann;
     // Branch on optimization variable to ensure that it is given a value.
-    IntVarArgs optVar(1);
-    optVar[0] = iv[_optVar];
-    branch(*this, optVar, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, iv[_optVar], INT_VAL_MIN);
   }
 
   void
   FlatZincSpace::maximize(int var, AST::Array* ann) {
     _method = MAX;
     _optVar = var;
-    parseSolveAnn(ann);
+    _solveAnnotations = ann;
     // Branch on optimization variable to ensure that it is given a value.
-    IntVarArgs optVar(1);
-    optVar[0] = iv[_optVar];
-    branch(*this, optVar, INT_VAR_NONE, INT_VAL_MAX);
+    branch(*this, iv[_optVar], INT_VAL_MAX);
+  }
+
+  FlatZincSpace::~FlatZincSpace(void) {
+    delete _solveAnnotations;
   }
 
 #ifdef GECODE_HAS_GIST

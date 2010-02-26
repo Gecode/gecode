@@ -78,7 +78,9 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The FlatZinc library can now parse a FlatZinc model into any subclass of
-FlatZincSpace, so that custom extensions can be built.
+FlatZincSpace, so that custom extensions can be built. Annotations on the
+solve item can now be accessed from the returned FlatZincSpace, so that
+additional search strategies can be implemented.
 
 [ENTRY]
 Module: flatzinc

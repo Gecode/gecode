@@ -229,8 +229,8 @@ namespace Gecode { namespace FlatZinc {
     /// Whether to solve as satisfaction or optimization problem
     Meth _method;
 
-    /// Parse the solve annotations and create corresponding branchings
-    void parseSolveAnn(AST::Array* ann);
+    /// Annotations on the solve item
+    AST::Array* _solveAnnotations;
 
     /// Copy constructor
     FlatZincSpace(bool share, FlatZincSpace&);
@@ -258,7 +258,10 @@ namespace Gecode { namespace FlatZinc {
     /// Construct empty space
     FlatZincSpace(void);
   
-	/// Initialize space with given number of variables
+    /// Destructor
+    ~FlatZincSpace(void);
+  
+    /// Initialize space with given number of variables
     void init(int intVars, int boolVars, int setVars);
 
     /// Create new integer variable from specification
@@ -288,6 +291,17 @@ namespace Gecode { namespace FlatZinc {
     /// Return whether to solve a satisfaction or optimization problem
     Meth method(void);
 
+    /**
+     * \brief Create branchers corresponding to the solve item annotations
+     *
+     * If \a ignoreUnknown is true, unknown solve item annotations will be
+     * ignored, otherwise a warning is written to \a err.
+     */
+    void createBranchers(bool ignoreUnknown, std::ostream& err = std::cerr);
+
+    /// Return the solve item annotations
+    AST::Array* solveAnnotations(void) const;
+
     /// Implement optimization
     virtual void constrain(const Space& s);
     /// Copy function
@@ -310,9 +324,9 @@ namespace Gecode { namespace FlatZinc {
    * Creates a new empty FlatZincSpace if \a fzs is NULL.
    */
   GECODE_FLATZINC_EXPORT
-  FlatZincSpace* solve(const std::string& fileName,
-                        Printer& p, std::ostream& err = std::cerr,
-                        FlatZincSpace* fzs=NULL);
+  FlatZincSpace* parse(const std::string& fileName,
+                       Printer& p, std::ostream& err = std::cerr,
+                       FlatZincSpace* fzs=NULL);
 
   /**
    * \brief Parse FlatZinc from \a is into \a fzs and return it.
@@ -320,7 +334,7 @@ namespace Gecode { namespace FlatZinc {
    * Creates a new empty FlatZincSpace if \a fzs is NULL.
    */
   GECODE_FLATZINC_EXPORT
-  FlatZincSpace* solve(std::istream& is,
+  FlatZincSpace* parse(std::istream& is,
                        Printer& p, std::ostream& err = std::cerr,
                        FlatZincSpace* fzs=NULL);
 

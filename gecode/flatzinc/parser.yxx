@@ -255,7 +255,7 @@ AST::Node* arrayOutput(AST::Call* ann) {
 
 namespace Gecode { namespace FlatZinc {
 
-  FlatZincSpace* solve(const std::string& filename, Printer& p, std::ostream& err,
+  FlatZincSpace* parse(const std::string& filename, Printer& p, std::ostream& err,
                        FlatZincSpace* fzs) {
 #ifdef HAVE_MMAP
     int fd;
@@ -305,7 +305,7 @@ namespace Gecode { namespace FlatZinc {
     return pp.hadError ? NULL : pp.fg;
   }
 
-  FlatZincSpace* solve(std::istream& is, Printer& p, std::ostream& err,
+  FlatZincSpace* parse(std::istream& is, Printer& p, std::ostream& err,
                        FlatZincSpace* fzs) {
     std::string s = string(istreambuf_iterator<char>(is),
                            istreambuf_iterator<char>());
@@ -1155,7 +1155,6 @@ solve_item :
         if (!pp->hadError) {
           pp->fg->solve($2);
         }
-        delete $2;
       }
     | FZ_SOLVE annotations minmax solve_expr
       { 
