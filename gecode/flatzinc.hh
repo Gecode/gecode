@@ -255,9 +255,12 @@ namespace Gecode { namespace FlatZinc {
     /// Indicates whether a set variable is introduced by mzn2fzn
     std::vector<bool> sv_introduced;
 #endif
-    /// Construct problem with given number of variables
-    FlatZincSpace(int intVars, int boolVars, int setVars);
+    /// Construct empty space
+    FlatZincSpace(void);
   
+	/// Initialize space with given number of variables
+    void init(int intVars, int boolVars, int setVars);
+
     /// Create new integer variable from specification
     void newIntVar(IntVarSpec* vs);
     /// Create new Boolean variable from specification
@@ -301,15 +304,25 @@ namespace Gecode { namespace FlatZinc {
     const std::string& toString(void) const { return msg; }
   };
 
-  /// Construct Space from FlatZinc file \a fileName
+  /**
+   * \brief Parse FlatZinc file \a fileName into \a fzs and return it.
+   *
+   * Creates a new empty FlatZincSpace if \a fzs is NULL.
+   */
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* solve(const std::string& fileName,
-                        Printer& p, std::ostream& err = std::cerr);
+                        Printer& p, std::ostream& err = std::cerr,
+                        FlatZincSpace* fzs=NULL);
 
-  /// Construct Space from FlatZinc stream \a is
+  /**
+   * \brief Parse FlatZinc from \a is into \a fzs and return it.
+   *
+   * Creates a new empty FlatZincSpace if \a fzs is NULL.
+   */
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* solve(std::istream& is,
-                        Printer& p, std::ostream& err = std::cerr);
+                       Printer& p, std::ostream& err = std::cerr,
+                       FlatZincSpace* fzs=NULL);
 
 }}
 

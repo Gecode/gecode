@@ -215,21 +215,29 @@ namespace Gecode { namespace FlatZinc {
 #endif
     }
   
-  FlatZincSpace::FlatZincSpace(int intVars,
-                                 int boolVars,
+  FlatZincSpace::FlatZincSpace(void)
+  : intVarCount(-1), boolVarCount(-1), setVarCount(-1) {}
+
+  void
+  FlatZincSpace::init(int intVars, int boolVars,
 #ifdef GECODE_HAS_SET_VARS
-                                 int setVars)
+                                 int setVars) {
 #else
-                                 int)
+                                 int) {
 #endif
-  : intVarCount(0), boolVarCount(0), setVarCount(0),
-    iv(*this, intVars), iv_introduced(intVars),
-    bv(*this, boolVars), bv_introduced(boolVars)
+    intVarCount = 0;
+    iv = IntVarArray(*this, intVars);
+    iv_introduced = std::vector<bool>(intVars);
+    boolVarCount = 0;
+    bv = BoolVarArray(*this, boolVars);
+    bv_introduced = std::vector<bool>(boolVars);
+    std::cerr << "initialized " << iv.size() << ", " << bv.size() << std::endl;
 #ifdef GECODE_HAS_SET_VARS
-    , sv(*this, setVars),
-      sv_introduced(setVars)
+    setVarCount = 0;
+    sv = SetVarArray(*this, setVars);
+    sv_introduced = std::vector<bool>(setVars);
 #endif
-    {}
+  }
 
   void
   FlatZincSpace::newIntVar(IntVarSpec* vs) {

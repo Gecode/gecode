@@ -74,6 +74,14 @@ The next big thing.
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The FlatZinc library can now parse a FlatZinc model into any subclass of
+FlatZincSpace, so that custom extensions can be built.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]

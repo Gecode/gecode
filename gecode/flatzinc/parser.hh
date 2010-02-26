@@ -77,12 +77,14 @@ namespace Gecode { namespace FlatZinc {
   /// State of the FlatZinc parser
   class ParserState {
   public:
-    ParserState(const std::string& b, std::ostream& err0)
-    : buf(b.c_str()), pos(0), length(b.size()), fg(NULL),
+    ParserState(const std::string& b, std::ostream& err0,
+                Gecode::FlatZinc::FlatZincSpace* fg0)
+    : buf(b.c_str()), pos(0), length(b.size()), fg(fg0),
       hadError(false), err(err0) {}
 
-    ParserState(char* buf0, int length0, std::ostream& err0)
-    : buf(buf0), pos(0), length(length0), fg(NULL),
+    ParserState(char* buf0, int length0, std::ostream& err0,
+                Gecode::FlatZinc::FlatZincSpace* fg0)
+    : buf(buf0), pos(0), length(length0), fg(fg0),
       hadError(false), err(err0) {}
   
     void* yyscanner;

@@ -151,9 +151,9 @@ void addDomainConstraint(ParserState* pp, std::string id, AST::Node* var,
 
 void initfg(ParserState* pp) {
   if (!pp->hadError)
-    pp->fg = new FlatZincSpace(pp->intvars.size(),
-                                pp->boolvars.size(),
-                                pp->setvars.size());
+    pp->fg->init(pp->intvars.size(),
+                 pp->boolvars.size(),
+                 pp->setvars.size());
 
   for (unsigned int i=0; i<pp->intvars.size(); i++) {
     if (!pp->hadError) {
@@ -255,8 +255,8 @@ AST::Node* arrayOutput(AST::Call* ann) {
 
 namespace Gecode { namespace FlatZinc {
 
-  FlatZincSpace* solve(const std::string& filename, Printer& p,
-                        std::ostream& err) {
+  FlatZincSpace* solve(const std::string& filename, Printer& p, std::ostream& err,
+                       FlatZincSpace* fzs) {
 #ifdef HAVE_MMAP
     int fd;
     char* data;
@@ -276,7 +276,10 @@ namespace Gecode { namespace FlatZinc {
       return NULL;      
     }
 
-    ParserState pp(data, sbuf.st_size, err);
+    if (fzs == NULL) {
+      fzs = new FlatZincSpace();
+    }
+    ParserState pp(data, sbuf.st_size, err, fzs);
 #else
     std::ifstream file;
     file.open(filename.c_str());
@@ -286,7 +289,10 @@ namespace Gecode { namespace FlatZinc {
     }
     std::string s = string(istreambuf_iterator<char>(file),
                            istreambuf_iterator<char>());
-    ParserState pp(s, err);
+    if (fzs == NULL) {
+      fzs = new FlatZincSpace();
+    }
+    ParserState pp(s, err, fzs);
 #endif
     yylex_init(&pp.yyscanner);
     yyset_extra(&pp, pp.yyscanner);
@@ -299,12 +305,15 @@ namespace Gecode { namespace FlatZinc {
     return pp.hadError ? NULL : pp.fg;
   }
 
-  FlatZincSpace* solve(std::istream& is, Printer& p,
-                        std::ostream& err) {
+  FlatZincSpace* solve(std::istream& is, Printer& p, std::ostream& err,
+                       FlatZincSpace* fzs) {
     std::string s = string(istreambuf_iterator<char>(is),
                            istreambuf_iterator<char>());
 
-    ParserState pp(s, err);
+    if (fzs == NULL) {
+      fzs = new FlatZincSpace();
+    }
+    ParserState pp(s, err, fzs);
     yylex_init(&pp.yyscanner);
     yyset_extra(&pp, pp.yyscanner);
     // yydebug = 1;
