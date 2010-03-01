@@ -1030,6 +1030,8 @@ AC_DEFUN([AC_GECODE_QT],
         qmake
         if test -d a.xcodeproj; then
           ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
+        elif test -d a.pbproj; then
+          ac_gecode_qt_makefile=a.pbproj/qt_preprocess.mak
         elif test -f Makefile.Debug; then
             if test "${enable_debug:-no}" = "no"; then
               ac_gecode_qt_makefile=Makefile.Release
@@ -1042,7 +1044,7 @@ AC_DEFUN([AC_GECODE_QT],
         ac_gecode_qt_defines=`grep ${ac_gecode_qt_makefile} -e 'DEFINES.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
         ac_gecode_qt_inc=`grep ${ac_gecode_qt_makefile} -e 'INCPATH.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
         ac_gecode_qt_libs=`grep ${ac_gecode_qt_makefile} -e 'LIBS.*=' | sed -e 's/.*=//' -e 's|\\\\|/|g' -e 's|-I\\("*\\)\\.\\./\\.\\.|-I\\1..|g'`
-        if test -d a.xcodeproj; then
+        if test -d a.xcodeproj -o -d a.pbproj; then
           ac_gecode_qt_libs="-framework QtGui -framework QtCore"
         fi
         cd ..
