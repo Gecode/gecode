@@ -481,7 +481,16 @@ namespace Gecode { namespace FlatZinc {
     _optVar = var;
     _solveAnnotations = ann;
     // Branch on optimization variable to ensure that it is given a value.
-    branch(*this, iv[_optVar], INT_VAL_MIN);
+    AST::Array* args = new AST::Array(4);
+    args->a[0] = new AST::Array(new AST::IntVar(_optVar));
+    args->a[1] = new AST::Atom("input_order");
+    args->a[2] = new AST::Atom("indomain_min");
+    args->a[3] = new AST::Atom("complete");
+    AST::Call* c = new AST::Call("int_search", args);
+    if (!ann)
+      ann = new AST::Array(c);
+    else
+      ann->a.push_back(c);
   }
 
   void
@@ -490,7 +499,16 @@ namespace Gecode { namespace FlatZinc {
     _optVar = var;
     _solveAnnotations = ann;
     // Branch on optimization variable to ensure that it is given a value.
-    branch(*this, iv[_optVar], INT_VAL_MAX);
+    AST::Array* args = new AST::Array(4);
+    args->a[0] = new AST::Array(new AST::IntVar(_optVar));
+    args->a[1] = new AST::Atom("input_order");
+    args->a[2] = new AST::Atom("indomain_min");
+    args->a[3] = new AST::Atom("complete");
+    AST::Call* c = new AST::Call("int_search", args);
+    if (!ann)
+      ann = new AST::Array(c);
+    else
+      ann->a.push_back(c);
   }
 
   FlatZincSpace::~FlatZincSpace(void) {

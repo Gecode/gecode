@@ -1154,6 +1154,8 @@ solve_item :
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
           pp->fg->solve($2);
+        } else {
+          delete $2;
         }
       }
     | FZ_SOLVE annotations minmax solve_expr
@@ -1164,8 +1166,9 @@ solve_item :
             pp->fg->minimize($4,$2);
           else
             pp->fg->maximize($4,$2);
+        } else {
+          delete $2;
         }
-        delete $2;
       }
 
 /********************************/
