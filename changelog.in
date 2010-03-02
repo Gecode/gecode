@@ -77,6 +77,14 @@ Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Added command line option -print, which controls whether all solutions are 
+printed or only the last one that is found.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
 The FlatZinc library can now parse a FlatZinc model into any subclass of
 FlatZincSpace, so that custom extensions can be built. Annotations on the
 solve item can now be accessed from the returned FlatZincSpace, so that
