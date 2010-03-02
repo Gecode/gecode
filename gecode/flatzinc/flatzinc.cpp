@@ -628,13 +628,22 @@ namespace Gecode { namespace FlatZinc {
     Engine<FlatZincSpace> se(this,o);
     int noOfSolutions = _method == SAT ? opt.solutions() : 0;
     int findSol = noOfSolutions;
-    while (FlatZincSpace* sol = se.next()) {
-      sol->print(out, p);
-      out << "----------" << std::endl;
+    FlatZincSpace* sol = NULL;
+    while (FlatZincSpace* next_sol = se.next()) {
       delete sol;
+      sol = next_sol;
+      if (opt.print()==0) {
+        sol->print(out, p);
+        out << "----------" << std::endl;
+      }
       if (--findSol==0)
         goto stopped;
     }
+    if (sol && opt.print()!=0) {
+      sol->print(out, p);
+      out << "----------" << std::endl;
+    }
+    delete sol;
     if (!se.stopped())
       out << "==========" << endl;
     stopped:

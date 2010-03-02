@@ -154,6 +154,7 @@ namespace Gecode { namespace FlatZinc {
       /// \name Execution options
       //@{
       Gecode::Driver::StringOption      _mode;       ///< Script mode to run
+      Gecode::Driver::StringOption      _print;      ///< Print all solutions
       //@}
   public:
     /// Constructor
@@ -170,17 +171,21 @@ namespace Gecode { namespace FlatZinc {
       _node("-node","node cutoff (0 = none, solution mode)"),
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
-      _mode("-mode","how to execute script",Gecode::SM_SOLUTION) {
+      _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
+      _print("-print","which solutions to print",0) {
 
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
+      _print.add(0,"all");
+      _print.add(1,"last");
       add(_solutions); add(_threads); add(_c_d); add(_a_d);
       add(_allSolutions);
       add(_parallel);
       add(_free);
       add(_node); add(_fail); add(_time);
       add(_mode);
+      add(_print);
     }
 
     void parse(int& argc, char* argv[]) {
@@ -199,6 +204,7 @@ namespace Gecode { namespace FlatZinc {
     unsigned int node(void) const { return _node.value(); }
     unsigned int fail(void) const { return _fail.value(); }
     unsigned int time(void) const { return _time.value(); }
+    unsigned int print(void) const { return _print.value(); }
     Gecode::ScriptMode mode(void) const {
       return static_cast<Gecode::ScriptMode>(_mode.value());
     }
