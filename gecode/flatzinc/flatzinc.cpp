@@ -475,10 +475,12 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::parseSearchOptions(void) {
-    for (unsigned int i=0; i<_solveAnnotations->a.size(); i++) {
-      if (_solveAnnotations->a[i]->isCall("gecode_search")) {
-        AST::Call* c = _solveAnnotations->a[i]->getCall();
-        branchWithPlugin(c->args);
+    if (_solveAnnotations) {
+      for (unsigned int i=0; i<_solveAnnotations->a.size(); i++) {
+        if (_solveAnnotations->a[i]->isCall("gecode_search")) {
+          AST::Call* c = _solveAnnotations->a[i]->getCall();
+          branchWithPlugin(c->args);
+        }
       }
     }
   }
