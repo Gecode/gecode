@@ -733,7 +733,10 @@ namespace Gecode { namespace FlatZinc {
     switch (_method) {
     case MIN:
     case MAX:
-      runEngine<BAB>(out,p,opt,t_total);
+      if (opt.search() == FlatZincOptions::FZ_SEARCH_BAB)
+        runEngine<BAB>(out,p,opt,t_total);
+      else
+        runEngine<Restart>(out,p,opt,t_total);
       break;
     case SAT:
       runEngine<DFS>(out,p,opt,t_total);

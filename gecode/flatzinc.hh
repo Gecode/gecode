@@ -144,6 +144,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::DoubleOption      _threads;   ///< How many threads to use
       Gecode::Driver::BoolOption        _parallel; ///< Use all cores
       Gecode::Driver::BoolOption        _free; ///< Use free search
+      Gecode::Driver::StringOption      _search; ///< Search engine variant
       Gecode::Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
       Gecode::Driver::UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
       Gecode::Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
@@ -157,6 +158,10 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::StringOption      _print;      ///< Print all solutions
       //@}
   public:
+    enum SearchOptions {
+      FZ_SEARCH_BAB,    //< Branch-and-bound search
+      FZ_SEARCH_RESTART //< Restart search
+    };
     /// Constructor
     FlatZincOptions(const char* s)
     : Gecode::BaseOptions(s),
@@ -166,6 +171,7 @@ namespace Gecode { namespace FlatZinc {
                Gecode::Search::Config::threads),
       _parallel("--parallel", "use parallel search (equal to -threads 0)"),
       _free("--free", "no need to follow search-specification"),
+      _search("--search","search engine variant", FZ_SEARCH_BAB),
       _c_d("-c-d","recomputation commit distance",Gecode::Search::Config::c_d),
       _a_d("-a-d","recomputation adaption distance",Gecode::Search::Config::a_d),
       _node("-node","node cutoff (0 = none, solution mode)"),
@@ -174,6 +180,8 @@ namespace Gecode { namespace FlatZinc {
       _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
       _print("-print","which solutions to print",0) {
 
+      _search.add(FZ_SEARCH_BAB, "bab");
+      _search.add(FZ_SEARCH_RESTART, "restart");
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
@@ -183,6 +191,7 @@ namespace Gecode { namespace FlatZinc {
       add(_allSolutions);
       add(_parallel);
       add(_free);
+      add(_search);
       add(_node); add(_fail); add(_time);
       add(_mode);
       add(_print);
@@ -199,6 +208,9 @@ namespace Gecode { namespace FlatZinc {
     unsigned int solutions(void) const { return _solutions.value(); }
     double threads(void) const { return _threads.value(); }
     bool free(void) const { return _free.value(); }
+    SearchOptions search(void) const {
+      return static_cast<SearchOptions>(_search.value());
+    }
     unsigned int c_d(void) const { return _c_d.value(); }
     unsigned int a_d(void) const { return _a_d.value(); }
     unsigned int node(void) const { return _node.value(); }

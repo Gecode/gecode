@@ -117,7 +117,8 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 Added command line option -print, which controls whether all solutions are 
-printed or only the last one that is found.
+printed or only the last one that is found, and -search, to choose between
+branch-and-bound and restart optimization.
 
 [ENTRY]
 Module: flatzinc
