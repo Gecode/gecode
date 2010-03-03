@@ -41,4 +41,7 @@ HEADERS       = myplugin.hh
 SOURCES       = myplugin.cpp
 TARGET        = myplugin
 win32:DESTDIR = ./
-LIBS         += -L../../.. -lgecodekernel -lgecodesupport -lgecodeint -lgecodescheduling -lgecodegraph -lgecodeminimodel -lgecodedriver -lgecodesearch -lgecodeflatzinc
+LIBS          += -L../../..
+!win32 {
+	LIBS         += -lgecodekernel -lgecodesupport -lgecodeint -lgecodescheduling -lgecodegraph -lgecodeminimodel -lgecodedriver -lgecodesearch -lgecodeflatzinc
+}
