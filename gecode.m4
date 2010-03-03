@@ -1026,7 +1026,7 @@ AC_DEFUN([AC_GECODE_QT],
         dnl use qmake to find the Qt installation
         ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
         cd ${ac_gecode_qt_tmpdir}
-        touch a.pro
+        echo "CONFIG += release" > a.pro
         qmake
         if test -d a.xcodeproj; then
           ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
