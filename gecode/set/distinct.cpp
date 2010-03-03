@@ -48,7 +48,7 @@ namespace Gecode {
     if (xa.size() < 2)
       return;
     ViewArray<SetView> x(home,xa);
-    GECODE_ES_FAIL(home,Distinct::AtmostOne::post(home, x, c));
+    GECODE_ES_FAIL(Distinct::AtmostOne::post(home, x, c));
   }
 
 }

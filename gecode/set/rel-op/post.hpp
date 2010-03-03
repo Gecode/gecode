@@ -51,27 +51,27 @@ namespace Gecode { namespace Set { namespace RelOp {
     case SOT_DUNION:
       {
         EmptyView emptyset;
-        GECODE_ES_FAIL(home,(SuperOfInter<View0,View1,EmptyView>
+        GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
                              ::post(home, x0, x1, emptyset)));
         // fall through to SOT_UNION
       }
     case SOT_UNION:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Union<View0,View1,Res>
                         ::post(home, x0, x1, x2)));
       }
       break;
     case SOT_INTER:
       {
-        GECODE_ES_FAIL(home,(Intersection<View0,View1,Res>
+        GECODE_ES_FAIL((Intersection<View0,View1,Res>
                              ::post(home, x0,x1,x2)));
       }
       break;
     case SOT_MINUS:
       {
         ComplementView<View1> cx1(x1);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Intersection<View0,
                         ComplementView<View1>,Res>
                         ::post(home,x0,cx1,x2)));
@@ -87,31 +87,31 @@ namespace Gecode { namespace Set { namespace RelOp {
     case SOT_DUNION:
       {
         EmptyView emptyset;
-        GECODE_ES_FAIL(home,(SuperOfInter<View0,View1,EmptyView>
+        GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
                              ::post(home, x0, x1, emptyset)));
         // fall through to SOT_UNION
       }
     case SOT_UNION:
       {
         SetVar tmp(home);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Rel::Subset<SetView,View2>::post(home,tmp,x2)));
 
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Union<View0,View1,SetView>
                         ::post(home, x0, x1, tmp)));
       }
       break;
     case SOT_INTER:
       {
-        GECODE_ES_FAIL(home,(SuperOfInter<View0,View1,View2>
+        GECODE_ES_FAIL((SuperOfInter<View0,View1,View2>
                              ::post(home, x0,x1,x2)));
       }
       break;
     case SOT_MINUS:
       {
         ComplementView<View1> cx1(x1);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (SuperOfInter<View0,
                         ComplementView<View1>,View2>
                         ::post(home,x0,cx1,x2)));
@@ -128,13 +128,13 @@ namespace Gecode { namespace Set { namespace RelOp {
     case SOT_DUNION:
       {
         EmptyView emptyset;
-        GECODE_ES_FAIL(home,(SuperOfInter<View0,View1,EmptyView>
+        GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
                              ::post(home, x0, x1, emptyset)));
         // fall through to SOT_UNION
       }
     case SOT_UNION:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (SubOfUnion<View0,View1,View2>
                         ::post(home, x0, x1, x2)));
       }
@@ -142,21 +142,21 @@ namespace Gecode { namespace Set { namespace RelOp {
     case SOT_INTER:
       {
         SetVar tmp(home);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Rel::Subset<View2,SetView>::post(home,x2,tmp)));
 
-        GECODE_ES_FAIL(home,(Intersection<View0,View1,SetView>
+        GECODE_ES_FAIL((Intersection<View0,View1,SetView>
                              ::post(home, x0,x1,tmp)));
       }
       break;
     case SOT_MINUS:
       {
         SetVar tmp(home);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Rel::Subset<View2,SetView>::post(home,x2,tmp)));
 
         ComplementView<View1> cx1(x1);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Intersection<View0,
                         ComplementView<View1>,SetView>
                         ::post(home,x0,cx1,tmp)));
@@ -178,7 +178,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     case SRT_NQ:
       {
         SetVar tmp(home);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Rel::Distinct<SetView,View2>
                         ::post(home,tmp,z)));
         rel_eq<View0,View1,SetView>(home, x, op, y, tmp);
@@ -194,7 +194,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       {
         SetVar tmp(home);
         EmptyView emptyset;
-        GECODE_ES_FAIL(home,(SuperOfInter<View2,SetView,EmptyView>
+        GECODE_ES_FAIL((SuperOfInter<View2,SetView,EmptyView>
                              ::post(home, z, tmp, emptyset)));
         rel_eq<View0,View1,SetView>(home, x, op, y, tmp);
       }

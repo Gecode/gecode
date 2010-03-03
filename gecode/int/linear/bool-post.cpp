@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(EqBoolView<BoolView,IntView>
+        GECODE_ES_FAIL((EqBoolView<BoolView,IntView>
                              ::post(home,x,y,c)));
       }
       break;
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(NqBoolView<BoolView,IntView>
+        GECODE_ES_FAIL((NqBoolView<BoolView,IntView>
                              ::post(home,x,y,c)));
       }
       break;
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(GqBoolView<BoolView,IntView>
+        GECODE_ES_FAIL((GqBoolView<BoolView,IntView>
                              ::post(home,x,y,c)));
       }
       break;
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Linear {
         for (int i=n_p; i--; )
           x[i]=NegBoolView(t_p[i].x);
         MinusView z(y);
-        GECODE_ES_FAIL(home,(GqBoolView<NegBoolView,MinusView>
+        GECODE_ES_FAIL((GqBoolView<NegBoolView,MinusView>
                              ::post(home,x,z,n_p-c)));
       }
       break;
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(EqBoolInt<BoolView>::post(home,x,c)));
+        GECODE_ES_FAIL((EqBoolInt<BoolView>::post(home,x,c)));
       }
       break;
     case IRT_NQ:
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(NqBoolInt<BoolView>::post(home,x,c)));
+        GECODE_ES_FAIL((NqBoolInt<BoolView>::post(home,x,c)));
       }
       break;
     case IRT_GQ:
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(GqBoolInt<BoolView>::post(home,x,c)));
+        GECODE_ES_FAIL((GqBoolInt<BoolView>::post(home,x,c)));
       }
       break;
     case IRT_LQ:
@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<NegBoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=NegBoolView(t_p[i].x);
-        GECODE_ES_FAIL(home,(GqBoolInt<NegBoolView>::post(home,x,n_p-c)));
+        GECODE_ES_FAIL((GqBoolInt<NegBoolView>::post(home,x,n_p-c)));
       }
       break;
     default: GECODE_NEVER;
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,BoolView>::post(home,x,c,b)));
+        GECODE_ES_FAIL((ReEqBoolInt<BoolView,BoolView>::post(home,x,c,b)));
       }
       break;
     case IRT_NQ:
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Linear {
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
         NegBoolView nb(b);
-        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,NegBoolView>::post(home,x,c,nb)));
+        GECODE_ES_FAIL((ReEqBoolInt<BoolView,NegBoolView>::post(home,x,c,nb)));
       }
       break;
     case IRT_GQ:
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(ReGqBoolInt<BoolView,BoolView>::post(home,x,c,b)));
+        GECODE_ES_FAIL((ReGqBoolInt<BoolView,BoolView>::post(home,x,c,b)));
       }
       break;
     case IRT_LQ:
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<NegBoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=NegBoolView(t_p[i].x);
-        GECODE_ES_FAIL(home,(ReGqBoolInt<NegBoolView,BoolView>::post(home,x,n_p-c,b)));
+        GECODE_ES_FAIL((ReGqBoolInt<NegBoolView,BoolView>::post(home,x,n_p-c,b)));
       }
       break;
     default: GECODE_NEVER;
@@ -225,7 +225,7 @@ namespace Gecode { namespace Int { namespace Linear {
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
         MinusView z(y);
-        GECODE_ES_FAIL(home,(EqBoolView<BoolView,MinusView>
+        GECODE_ES_FAIL((EqBoolView<BoolView,MinusView>
                              ::post(home,x,z,-c)));
       }
       break;
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace Linear {
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
         MinusView z(y);
-        GECODE_ES_FAIL(home,(NqBoolView<BoolView,MinusView>
+        GECODE_ES_FAIL((NqBoolView<BoolView,MinusView>
                              ::post(home,x,z,-c)));
       }
       break;
@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<NegBoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=NegBoolView(t_n[i].x);
-        GECODE_ES_FAIL(home,(GqBoolView<NegBoolView,IntView>
+        GECODE_ES_FAIL((GqBoolView<NegBoolView,IntView>
                              ::post(home,x,y,n_n+c)));
       }
       break;
@@ -254,7 +254,7 @@ namespace Gecode { namespace Int { namespace Linear {
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
         MinusView z(y);
-        GECODE_ES_FAIL(home,(GqBoolView<BoolView,MinusView>
+        GECODE_ES_FAIL((GqBoolView<BoolView,MinusView>
                              ::post(home,x,z,-c)));
       }
       break;
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(EqBoolInt<BoolView>::post(home,x,-c)));
+        GECODE_ES_FAIL((EqBoolInt<BoolView>::post(home,x,-c)));
       }
       break;
     case IRT_NQ:
@@ -280,7 +280,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(NqBoolInt<BoolView>::post(home,x,-c)));
+        GECODE_ES_FAIL((NqBoolInt<BoolView>::post(home,x,-c)));
       }
       break;
     case IRT_GQ:
@@ -288,7 +288,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<NegBoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=NegBoolView(t_n[i].x);
-        GECODE_ES_FAIL(home,(GqBoolInt<NegBoolView>::post(home,x,n_n+c)));
+        GECODE_ES_FAIL((GqBoolInt<NegBoolView>::post(home,x,n_n+c)));
       }
       break;
     case IRT_LQ:
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(GqBoolInt<BoolView>::post(home,x,-c)));
+        GECODE_ES_FAIL((GqBoolInt<BoolView>::post(home,x,-c)));
       }
       break;
     default: GECODE_NEVER;
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,BoolView>::post(home,x,-c,b)));
+        GECODE_ES_FAIL((ReEqBoolInt<BoolView,BoolView>::post(home,x,-c,b)));
       }
       break;
     case IRT_NQ:
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Linear {
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
         NegBoolView nb(b);
-        GECODE_ES_FAIL(home,(ReEqBoolInt<BoolView,NegBoolView>::post(home,x,-c,nb)));
+        GECODE_ES_FAIL((ReEqBoolInt<BoolView,NegBoolView>::post(home,x,-c,nb)));
       }
       break;
     case IRT_GQ:
@@ -331,7 +331,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<NegBoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=NegBoolView(t_n[i].x);
-        GECODE_ES_FAIL(home,(ReGqBoolInt<NegBoolView,BoolView>::post(home,x,n_n+c,b)));
+        GECODE_ES_FAIL((ReGqBoolInt<NegBoolView,BoolView>::post(home,x,n_n+c,b)));
       }
       break;
     case IRT_LQ:
@@ -339,7 +339,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(ReGqBoolInt<BoolView,BoolView>::post(home,x,-c,b)));
+        GECODE_ES_FAIL((ReGqBoolInt<BoolView,BoolView>::post(home,x,-c,b)));
       }
       break;
     default: GECODE_NEVER;
@@ -367,24 +367,24 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     switch (r) {
     case IRT_EQ:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (EqBoolScale<ScaleBoolArray,ScaleBoolArray,IntView>
                       ::post(home,b_p,b_n,y,c)));
       break;
     case IRT_NQ:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (NqBoolScale<ScaleBoolArray,ScaleBoolArray,IntView>
                       ::post(home,b_p,b_n,y,c)));
       break;
     case IRT_LQ:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (LqBoolScale<ScaleBoolArray,ScaleBoolArray,IntView>
                       ::post(home,b_p,b_n,y,c)));
       break;
     case IRT_GQ:
       {
         MinusView m(y);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (LqBoolScale<ScaleBoolArray,ScaleBoolArray,MinusView>
                         ::post(home,b_n,b_p,m,-c)));
       }
@@ -416,22 +416,22 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     switch (r) {
     case IRT_EQ:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (EqBoolScale<ScaleBoolArray,ScaleBoolArray,ZeroIntView>
                       ::post(home,b_p,b_n,y,c)));
       break;
     case IRT_NQ:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (NqBoolScale<ScaleBoolArray,ScaleBoolArray,ZeroIntView>
                       ::post(home,b_p,b_n,y,c)));
       break;
     case IRT_LQ:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (LqBoolScale<ScaleBoolArray,ScaleBoolArray,ZeroIntView>
                       ::post(home,b_p,b_n,y,c)));
       break;
     case IRT_GQ:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (LqBoolScale<ScaleBoolArray,ScaleBoolArray,ZeroIntView>
                       ::post(home,b_n,b_p,y,-c)));
       break;
@@ -462,10 +462,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (n == 0) {
       switch (r) {
-      case IRT_EQ: GECODE_ME_FAIL(home,x.eq(home,-c)); break;
-      case IRT_NQ: GECODE_ME_FAIL(home,x.nq(home,-c)); break;
-      case IRT_GQ: GECODE_ME_FAIL(home,x.lq(home,-c)); break;
-      case IRT_LQ: GECODE_ME_FAIL(home,x.gq(home,-c)); break;
+      case IRT_EQ: GECODE_ME_FAIL(x.eq(home,-c)); break;
+      case IRT_NQ: GECODE_ME_FAIL(x.nq(home,-c)); break;
+      case IRT_GQ: GECODE_ME_FAIL(x.lq(home,-c)); break;
+      case IRT_LQ: GECODE_ME_FAIL(x.gq(home,-c)); break;
       default: GECODE_NEVER;
       }
       return;

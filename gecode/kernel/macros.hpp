@@ -67,7 +67,7 @@
  * To be used inside post functions.
  * \ingroup TaskActor
  */
-#define GECODE_ME_FAIL(home,me) do {            \
+#define GECODE_ME_FAIL(me) do {                 \
   if (::Gecode::me_failed(me)) {                \
     (home).fail();                              \
     return;                                     \
@@ -93,7 +93,7 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_ES_FAIL(home,es) do {                            \
+#define GECODE_ES_FAIL(es) do {                                 \
     ::Gecode::ExecStatus __es__ ## __LINE__ = (es);             \
     assert(__es__ ## __LINE__ != ::Gecode::__ES_SUBSUMED);      \
     if (__es__ ## __LINE__ < ::Gecode::ES_OK) {                 \

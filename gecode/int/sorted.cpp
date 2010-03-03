@@ -52,7 +52,7 @@ namespace Gecode {
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,z);
 
-    GECODE_ES_FAIL(home,
+    GECODE_ES_FAIL(
                    (Sorted::Sorted<IntView,true>::post(home,x0,y0,z0)));
   }
 
@@ -69,7 +69,7 @@ namespace Gecode {
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,0);
 
-    GECODE_ES_FAIL(home,
+    GECODE_ES_FAIL(
                    (Sorted::Sorted<IntView,false>::post(home,x0,y0,z0)));
   }
 

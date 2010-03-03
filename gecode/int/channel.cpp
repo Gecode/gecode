@@ -73,9 +73,9 @@ namespace Gecode {
           di[n+xoff].init(y0, n+xoff);
         }
         if (x.same(home,y)) {
-          GECODE_ES_FAIL(home,(Dom<IntView,true>::post(home,n+xoff,di)));
+          GECODE_ES_FAIL((Dom<IntView,true>::post(home,n+xoff,di)));
         } else {
-          GECODE_ES_FAIL(home,(Dom<IntView,false>::post(home,n+xoff,di)));
+          GECODE_ES_FAIL((Dom<IntView,false>::post(home,n+xoff,di)));
         }
       } else {
         ValInfo<IntView>* vi = 
@@ -91,9 +91,9 @@ namespace Gecode {
           vi[n+xoff].init(y0, n+xoff);
         }
         if (x.same(home,y)) {
-          GECODE_ES_FAIL(home,(Val<IntView,true>::post(home,n+xoff,vi)));
+          GECODE_ES_FAIL((Val<IntView,true>::post(home,n+xoff,vi)));
         } else {
-          GECODE_ES_FAIL(home,(Val<IntView,false>::post(home,n+xoff,vi)));
+          GECODE_ES_FAIL((Val<IntView,false>::post(home,n+xoff,vi)));
         }
       }
     } else {
@@ -107,9 +107,9 @@ namespace Gecode {
           di[i+n].init(oyi,n);
         }
         if (x.same(home,y)) {
-          GECODE_ES_FAIL(home,(Dom<OffsetView,true>::post(home,n,di)));
+          GECODE_ES_FAIL((Dom<OffsetView,true>::post(home,n,di)));
         } else {
-          GECODE_ES_FAIL(home,(Dom<OffsetView,false>::post(home,n,di)));
+          GECODE_ES_FAIL((Dom<OffsetView,false>::post(home,n,di)));
         }
       } else {
         ValInfo<OffsetView>* vi = 
@@ -121,9 +121,9 @@ namespace Gecode {
           vi[i+n].init(oyi,n);
         }
         if (x.same(home,y)) {
-          GECODE_ES_FAIL(home,(Val<OffsetView,true>::post(home,n,vi)));
+          GECODE_ES_FAIL((Val<OffsetView,true>::post(home,n,vi)));
         } else {
-          GECODE_ES_FAIL(home,(Val<OffsetView,false>::post(home,n,vi)));
+          GECODE_ES_FAIL((Val<OffsetView,false>::post(home,n,vi)));
         }
       }
     }
@@ -139,7 +139,7 @@ namespace Gecode {
   channel(Home home, BoolVar x0, IntVar x1, IntConLevel) {
     using namespace Int;
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Channel::LinkSingle::post(home,x0,x1));
+    GECODE_ES_FAIL(Channel::LinkSingle::post(home,x0,x1));
   }
 
   void
@@ -151,7 +151,7 @@ namespace Gecode {
     Limits::check(o,"Int::channel");
     if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(home,Channel::LinkMulti::post(home,xv,y,o));
+    GECODE_ES_FAIL(Channel::LinkMulti::post(home,xv,y,o));
   }
 
 }

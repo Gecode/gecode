@@ -43,14 +43,14 @@ namespace Gecode {
   void
   wait(Home home, SetVar x, void (*c)(Space& home)) {
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Kernel::UnaryWait<Set::SetView>::post(home,x,c));
+    GECODE_ES_FAIL(Kernel::UnaryWait<Set::SetView>::post(home,x,c));
   }
 
   void
   wait(Home home, const SetVarArgs& x, void (*c)(Space& home)) {
     if (home.failed()) return;
     ViewArray<Set::SetView> xv(home,x);
-    GECODE_ES_FAIL(home,Kernel::NaryWait<Set::SetView>::post(home,xv,c));
+    GECODE_ES_FAIL(Kernel::NaryWait<Set::SetView>::post(home,xv,c));
   }
 
 }

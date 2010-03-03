@@ -48,7 +48,7 @@ namespace Gecode {
     Limits::check(n,"Int::dom");
     if (home.failed()) return;
     IntView xv(x);
-    GECODE_ME_FAIL(home,xv.eq(home,n));
+    GECODE_ME_FAIL(xv.eq(home,n));
   }
 
   void
@@ -57,7 +57,7 @@ namespace Gecode {
     if (home.failed()) return;
     for (int i=x.size(); i--; ) {
       IntView xv(x[i]);
-      GECODE_ME_FAIL(home,xv.eq(home,n));
+      GECODE_ME_FAIL(xv.eq(home,n));
     }
   }
 
@@ -67,8 +67,8 @@ namespace Gecode {
     Limits::check(max,"Int::dom");
     if (home.failed()) return;
     IntView xv(x);
-    GECODE_ME_FAIL(home,xv.gq(home,min));
-    GECODE_ME_FAIL(home,xv.lq(home,max));
+    GECODE_ME_FAIL(xv.gq(home,min));
+    GECODE_ME_FAIL(xv.lq(home,max));
   }
 
   void
@@ -78,8 +78,8 @@ namespace Gecode {
     if (home.failed()) return;
     for (int i=x.size(); i--; ) {
       IntView xv(x[i]);
-      GECODE_ME_FAIL(home,xv.gq(home,min));
-      GECODE_ME_FAIL(home,xv.lq(home,max));
+      GECODE_ME_FAIL(xv.gq(home,min));
+      GECODE_ME_FAIL(xv.lq(home,max));
     }
   }
 
@@ -90,7 +90,7 @@ namespace Gecode {
     if (home.failed()) return;
     IntView xv(x);
     IntSetRanges ris(is);
-    GECODE_ME_FAIL(home,xv.inter_r(home,ris,false));
+    GECODE_ME_FAIL(xv.inter_r(home,ris,false));
   }
 
   void
@@ -101,7 +101,7 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       IntSetRanges ris(is);
       IntView xv(x[i]);
-      GECODE_ME_FAIL(home,xv.inter_r(home,ris,false));
+      GECODE_ME_FAIL(xv.inter_r(home,ris,false));
     }
   }
 
@@ -109,7 +109,7 @@ namespace Gecode {
   dom(Home home, IntVar x, int n, BoolVar b, IntConLevel) {
     Limits::check(n,"Int::dom");
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,(Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)));
+    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)));
   }
 
   void
@@ -117,7 +117,7 @@ namespace Gecode {
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Dom::ReRange<IntView>::post(home,x,min,max,b));
+    GECODE_ES_FAIL(Dom::ReRange<IntView>::post(home,x,min,max,b));
   }
 
 
@@ -126,7 +126,7 @@ namespace Gecode {
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Dom::ReIntSet<IntView>::post(home,x,is,b));
+    GECODE_ES_FAIL(Dom::ReIntSet<IntView>::post(home,x,is,b));
   }
 
 }

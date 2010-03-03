@@ -51,15 +51,15 @@ namespace Gecode {
     ViewArray<SetView> xa(home,x);
     switch (op) {
     case SOT_UNION:
-      GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, y)));
+      GECODE_ES_FAIL((RelOp::UnionN<SetView,SetView>::post(home, xa, y)));
       break;
     case SOT_DUNION:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (RelOp::PartitionN<SetView,SetView>::post(home, xa, y)));
       break;
     case SOT_INTER:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (RelOp::IntersectionN<SetView,SetView>
                         ::post(home, xa, y)));
       }
@@ -79,15 +79,15 @@ namespace Gecode {
     ViewArray<SetView> xa(home,x);
     switch (op) {
     case SOT_UNION:
-      GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, z, y)));
+      GECODE_ES_FAIL((RelOp::UnionN<SetView,SetView>::post(home, xa, z, y)));
       break;
     case SOT_DUNION:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (RelOp::PartitionN<SetView,SetView>::post(home, xa, z, y)));
       break;
     case SOT_INTER:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (RelOp::IntersectionN<SetView,SetView>
                         ::post(home, xa, z, y)));
       }

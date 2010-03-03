@@ -45,14 +45,14 @@ namespace Gecode {
   convex(Home home, SetVar x) {
     using namespace Gecode::Set;
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Convex::Convex::post(home, x));
+    GECODE_ES_FAIL(Convex::Convex::post(home, x));
   }
 
   void
   convex(Home home, SetVar x, SetVar y) {
     using namespace Gecode::Set;
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Convex::ConvexHull::post(home, x,y));
+    GECODE_ES_FAIL(Convex::ConvexHull::post(home, x,y));
   }
 
 }

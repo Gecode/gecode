@@ -63,15 +63,15 @@ namespace Gecode {
       cv[i].init(c[i],v[i]);
     switch (icl) {
     case ICL_BND:
-      GECODE_ES_FAIL(home, 
+      GECODE_ES_FAIL( 
                      (GCC::Bnd<GCC::CardView>::post(home,xv,cv)));
       break;
     case ICL_DOM:
-      GECODE_ES_FAIL(home, 
+      GECODE_ES_FAIL( 
                      (GCC::Dom<GCC::CardView>::post(home,xv,cv)));
       break;
     default:
-      GECODE_ES_FAIL(home, 
+      GECODE_ES_FAIL( 
                      (GCC::Val<GCC::CardView>::post(home,xv,cv)));
     }
   }
@@ -113,15 +113,15 @@ namespace Gecode {
           cv[j].init(home,c[j],v[j]);
         switch (icl) {
         case ICL_BND:
-          GECODE_ES_FAIL(home, 
+          GECODE_ES_FAIL( 
                          (GCC::Bnd<GCC::CardView>::post(home, xv, cv)));
           break;
         case ICL_DOM:
-          GECODE_ES_FAIL(home, 
+          GECODE_ES_FAIL( 
                          (GCC::Dom<GCC::CardView>::post(home, xv, cv)));
           break;
         default:
-          GECODE_ES_FAIL(home, 
+          GECODE_ES_FAIL( 
                          (GCC::Val<GCC::CardView>::post(home, xv, cv)));
         }
         return;
@@ -136,15 +136,15 @@ namespace Gecode {
 
     switch (icl) {
     case ICL_BND:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (GCC::Bnd<GCC::CardConst>::post(home, xv, cv)));
       break;
     case ICL_DOM:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (GCC::Dom<GCC::CardConst>::post(home, xv, cv)));
       break;
     default:
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (GCC::Val<GCC::CardConst>::post(home, xv, cv)));
     }
   }

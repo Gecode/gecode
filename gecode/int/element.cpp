@@ -49,7 +49,7 @@ namespace Gecode {
     if (home.failed()) return;
     for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
-    GECODE_ES_FAIL(home,(Element::post_int<IntView,IntView>(home,c,x0,x1)));
+    GECODE_ES_FAIL((Element::post_int<IntView,IntView>(home,c,x0,x1)));
   }
 
   void
@@ -60,7 +60,7 @@ namespace Gecode {
     if (home.failed()) return;
     for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
-    GECODE_ES_FAIL(home,(Element::post_int<IntView,BoolView>(home,c,x0,x1)));
+    GECODE_ES_FAIL((Element::post_int<IntView,BoolView>(home,c,x0,x1)));
   }
 
   void
@@ -73,7 +73,7 @@ namespace Gecode {
     for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
     ConstIntView cx1(x1);
-    GECODE_ES_FAIL(home,
+    GECODE_ES_FAIL(
                    (Element::post_int<IntView,ConstIntView>(home,c,x0,cx1)));
   }
 
@@ -85,10 +85,10 @@ namespace Gecode {
     if (home.failed()) return;
     Element::IdxViewArray<IntView> iv(home,c);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
-      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,IntView>
+      GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,IntView>
                            ::post(home,iv,x0,x1)));
     } else {
-      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,IntView>
+      GECODE_ES_FAIL((Element::ViewBnd<IntView,IntView,IntView>
                            ::post(home,iv,x0,x1)));
     }
   }
@@ -103,10 +103,10 @@ namespace Gecode {
     Element::IdxViewArray<IntView> iv(home,c);
     ConstIntView v1(x1);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
-      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,ConstIntView>
+      GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,ConstIntView>
                            ::post(home,iv,x0,v1)));
     } else {
-      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,ConstIntView>
+      GECODE_ES_FAIL((Element::ViewBnd<IntView,IntView,ConstIntView>
                            ::post(home,iv,x0,v1)));
     }
   }
@@ -118,7 +118,7 @@ namespace Gecode {
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
     Element::IdxViewArray<BoolView> iv(home,c);
-    GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,BoolView>
+    GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,BoolView>
                          ::post(home,iv,x0,x1)));
   }
 
@@ -131,7 +131,7 @@ namespace Gecode {
     if (home.failed()) return;
     Element::IdxViewArray<BoolView> iv(home,c);
     ConstIntView v1(x1);
-    GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,ConstIntView>
+    GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,ConstIntView>
                          ::post(home,iv,x0,v1)));
   }
 

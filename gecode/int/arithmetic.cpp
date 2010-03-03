@@ -45,9 +45,9 @@ namespace Gecode {
   abs(Home home, IntVar x0, IntVar x1, IntConLevel icl) {
     if (home.failed()) return;
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::AbsDom<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(Arithmetic::AbsDom<IntView>::post(home,x0,x1));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::AbsBnd<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(Arithmetic::AbsBnd<IntView>::post(home,x0,x1));
     }
   }
 
@@ -57,9 +57,9 @@ namespace Gecode {
       IntConLevel icl) {
     if (home.failed()) return;
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::MaxDom<IntView>::post(home,x0,x1,x2));
+      GECODE_ES_FAIL(Arithmetic::MaxDom<IntView>::post(home,x0,x1,x2));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::MaxBnd<IntView>::post(home,x0,x1,x2));
+      GECODE_ES_FAIL(Arithmetic::MaxBnd<IntView>::post(home,x0,x1,x2));
     }
   }
 
@@ -71,9 +71,9 @@ namespace Gecode {
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::NaryMaxDom<IntView>::post(home,xv,y));
+      GECODE_ES_FAIL(Arithmetic::NaryMaxDom<IntView>::post(home,xv,y));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::NaryMaxBnd<IntView>::post(home,xv,y));
+      GECODE_ES_FAIL(Arithmetic::NaryMaxBnd<IntView>::post(home,xv,y));
     }
   }
 
@@ -84,9 +84,9 @@ namespace Gecode {
     if (home.failed()) return;
     MinusView m0(x0); MinusView m1(x1); MinusView m2(x2);
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::MaxDom<MinusView>::post(home,m0,m1,m2));
+      GECODE_ES_FAIL(Arithmetic::MaxDom<MinusView>::post(home,m0,m1,m2));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::MaxBnd<MinusView>::post(home,m0,m1,m2));
+      GECODE_ES_FAIL(Arithmetic::MaxBnd<MinusView>::post(home,m0,m1,m2));
     }
   }
 
@@ -101,9 +101,9 @@ namespace Gecode {
       m[i].init(x[i]);
     MinusView my(y);
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::NaryMaxDom<MinusView>::post(home,m,my));
+      GECODE_ES_FAIL(Arithmetic::NaryMaxDom<MinusView>::post(home,m,my));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::NaryMaxBnd<MinusView>::post(home,m,my));
+      GECODE_ES_FAIL(Arithmetic::NaryMaxBnd<MinusView>::post(home,m,my));
     }
   }
 
@@ -113,9 +113,9 @@ namespace Gecode {
        IntConLevel icl) {
     if (home.failed()) return;
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::MultDom<IntView>::post(home,x0,x1,x2));
+      GECODE_ES_FAIL(Arithmetic::MultDom<IntView>::post(home,x0,x1,x2));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::MultBnd<IntView>::post(home,x0,x1,x2));
+      GECODE_ES_FAIL(Arithmetic::MultBnd<IntView>::post(home,x0,x1,x2));
     }
   }
 
@@ -124,9 +124,9 @@ namespace Gecode {
   sqr(Home home, IntVar x0, IntVar x1, IntConLevel icl) {
     if (home.failed()) return;
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::SqrDom<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(Arithmetic::SqrDom<IntView>::post(home,x0,x1));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::SqrBnd<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(Arithmetic::SqrBnd<IntView>::post(home,x0,x1));
     }
   }
 
@@ -134,9 +134,9 @@ namespace Gecode {
   sqrt(Home home, IntVar x0, IntVar x1, IntConLevel icl) {
     if (home.failed()) return;
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Arithmetic::SqrtDom<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(Arithmetic::SqrtDom<IntView>::post(home,x0,x1));
     } else {
-      GECODE_ES_FAIL(home,Arithmetic::SqrtBnd<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(Arithmetic::SqrtBnd<IntView>::post(home,x0,x1));
     }
   }
 
@@ -146,7 +146,7 @@ namespace Gecode {
     if (home.failed()) return;
 
     IntVar prod(home, Int::Limits::min, Int::Limits::max);
-    GECODE_ES_FAIL(home,
+    GECODE_ES_FAIL(
                    Arithmetic::MultBnd<IntView>::post(home,x1,x2,prod));
     Linear::Term<IntView> t[3];
     t[0].a = 1; t[0].x = prod;
@@ -154,13 +154,13 @@ namespace Gecode {
     int min, max;
     Linear::estimate(t,2,0,min,max);
     IntView x0v(x0);
-    GECODE_ME_FAIL(home, x0v.gq(home,min));
-    GECODE_ME_FAIL(home, x0v.lq(home,max));
+    GECODE_ME_FAIL( x0v.gq(home,min));
+    GECODE_ME_FAIL( x0v.lq(home,max));
     t[2].a=-1; t[2].x=x0;
     Linear::post(home,t,3,IRT_EQ,0);
     if (home.failed()) return;
     IntView x1v(x1);
-    GECODE_ES_FAIL(home,
+    GECODE_ES_FAIL(
       Arithmetic::DivMod<IntView>::post(home,x0,x1,x3));
   }
 
@@ -168,7 +168,7 @@ namespace Gecode {
   div(Home home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel) {
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,
+    GECODE_ES_FAIL(
       (Arithmetic::DivBnd<IntView>::post(home,x0,x1,x2)));
   }
 

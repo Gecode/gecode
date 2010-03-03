@@ -50,14 +50,14 @@ namespace Gecode {
     Set::Limits::check(j, "Set::cardinality");
     if (home.failed()) return;
     Set::SetView _x(x);
-    GECODE_ME_FAIL(home,_x.cardMin(home, i));
-    GECODE_ME_FAIL(home,_x.cardMax(home, j));
+    GECODE_ME_FAIL(_x.cardMin(home, i));
+    GECODE_ME_FAIL(_x.cardMax(home, j));
   }
 
   void
   cardinality(Home home, SetVar s, IntVar x) {
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Set::Int::Card<Set::SetView>::post(home,s, x));
+    GECODE_ES_FAIL(Set::Int::Card<Set::SetView>::post(home,s, x));
   }
 
 }

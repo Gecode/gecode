@@ -112,13 +112,13 @@ namespace Gecode {
     IntView v(y);
     switch (r) {
     case IRT_EQ:
-      GECODE_ME_FAIL(home,v.gq(home,min)); GECODE_ME_FAIL(home,v.lq(home,max));
+      GECODE_ME_FAIL(v.gq(home,min)); GECODE_ME_FAIL(v.lq(home,max));
       break;
     case IRT_GQ:
-      GECODE_ME_FAIL(home,v.lq(home,max));
+      GECODE_ME_FAIL(v.lq(home,max));
       break;
     case IRT_LQ:
-      GECODE_ME_FAIL(home,v.gq(home,min));
+      GECODE_ME_FAIL(v.gq(home,min));
       break;
     default: ;
     }
@@ -158,13 +158,13 @@ namespace Gecode {
     IntView v(y);
     switch (r) {
     case IRT_EQ:
-      GECODE_ME_FAIL(home,v.gq(home,min)); GECODE_ME_FAIL(home,v.lq(home,max));
+      GECODE_ME_FAIL(v.gq(home,min)); GECODE_ME_FAIL(v.lq(home,max));
       break;
     case IRT_GQ:
-      GECODE_ME_FAIL(home,v.lq(home,max));
+      GECODE_ME_FAIL(v.lq(home,max));
       break;
     case IRT_LQ:
-      GECODE_ME_FAIL(home,v.gq(home,min));
+      GECODE_ME_FAIL(v.gq(home,min));
       break;
     default: ;
     }

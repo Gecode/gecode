@@ -54,39 +54,39 @@ namespace Gecode {
     switch (r) {
     case SRT_EQ:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Eq<View0,View1>::post(home,x0,x1)));
       }
       break;
     case SRT_NQ:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Distinct<View0,View1>::post(home,x0,x1)));
       }
       break;
     case SRT_SUB:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Subset<View0,View1>::post(home, x0,x1)));
       }
       break;
     case SRT_SUP:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Subset<View1,View0>::post(home, x1,x0)));
       }
       break;
     case SRT_DISJ:
       {
         EmptyView emptyset;
-        GECODE_ES_FAIL(home,(SuperOfInter<View0,View1,EmptyView>
+        GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
                              ::post(home, x0, x1, emptyset)));
       }
       break;
     case SRT_CMPL:
       {
         ComplementView<View0> cx0(x0);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Eq<ComplementView<View0>, View1>
                         ::post(home, cx0, x1)));
       }
@@ -103,7 +103,7 @@ namespace Gecode {
     switch (r) {
     case SRT_EQ:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (ReEq<View0,View1>::post(home, x,y,b)));
       }
       break;
@@ -111,19 +111,19 @@ namespace Gecode {
       {
         BoolVar notb(home, 0, 1);
         rel(home, b, IRT_NQ, notb);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (ReEq<View0,View1>::post(home,x,y,notb)));
       }
       break;
     case SRT_SUB:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (ReSubset<View0,View1>::post(home, x,y,b)));
       }
       break;
     case SRT_SUP:
       {
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (ReSubset<View1,View0>::post(home, y,x,b)));
       }
       break;
@@ -133,7 +133,7 @@ namespace Gecode {
         // ( y <= complement(x) ) <=> b
 
         ComplementView<View0> xc(x);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (ReSubset<View1,ComplementView<View0> >
                         ::post(home, y, xc, b)));
       }
@@ -141,7 +141,7 @@ namespace Gecode {
     case SRT_CMPL:
       {
         ComplementView<View0> xc(x);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (ReEq<ComplementView<View0>,View1>
                        ::post(home, xc, y, b)));
       }

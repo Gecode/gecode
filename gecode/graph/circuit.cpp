@@ -48,9 +48,9 @@ namespace Gecode {
     if (home.failed()) return;
     ViewArray<Int::IntView> xv(home,x);
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(home,Graph::Circuit::Dom<Int::IntView>::post(home,xv));
+      GECODE_ES_FAIL(Graph::Circuit::Dom<Int::IntView>::post(home,xv));
     } else {
-      GECODE_ES_FAIL(home,Graph::Circuit::Val<Int::IntView>::post(home,xv));
+      GECODE_ES_FAIL(Graph::Circuit::Val<Int::IntView>::post(home,xv));
     }
   }
 

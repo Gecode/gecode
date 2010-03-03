@@ -69,30 +69,30 @@ namespace Gecode {
     case SRT_EQ:
       {
         if (is.ranges() == 1) {
-          GECODE_ME_FAIL(home,_s.include(home, is.min(), is.max()));
-          GECODE_ME_FAIL(home,_s.intersect(home, is.min(), is.max()));
+          GECODE_ME_FAIL(_s.include(home, is.min(), is.max()));
+          GECODE_ME_FAIL(_s.intersect(home, is.min(), is.max()));
         } else {
           IntSetRanges rd1(is);
-          GECODE_ME_FAIL(home,_s.includeI(home, rd1));
+          GECODE_ME_FAIL(_s.includeI(home, rd1));
           IntSetRanges rd2(is);
-          GECODE_ME_FAIL(home,_s.intersectI(home, rd2));
+          GECODE_ME_FAIL(_s.intersectI(home, rd2));
         }
       }
       break;
     case SRT_DISJ:
       {
         if (is.ranges() == 1) {
-          GECODE_ME_FAIL(home,_s.exclude(home, is.min(), is.max()));
+          GECODE_ME_FAIL(_s.exclude(home, is.min(), is.max()));
         } else {
           IntSetRanges rd(is);
-          GECODE_ME_FAIL(home,_s.excludeI(home, rd));
+          GECODE_ME_FAIL(_s.excludeI(home, rd));
         }
       }
       break;
     case SRT_NQ:
       {
         Set::ConstantView cv(home, is);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Set::Rel::DistinctDoit<Set::SetView>::post(home, s,
                                                                    cv)));
       }
@@ -100,41 +100,41 @@ namespace Gecode {
     case SRT_SUB:
       {
          if (is.ranges() == 1) {
-           GECODE_ME_FAIL(home,_s.intersect(home, is.min(), is.max()));
+           GECODE_ME_FAIL(_s.intersect(home, is.min(), is.max()));
          } else {
           IntSetRanges rd(is);
-          GECODE_ME_FAIL(home,_s.intersectI(home, rd));
+          GECODE_ME_FAIL(_s.intersectI(home, rd));
          }
       }
       break;
     case SRT_SUP:
       {
         if (is.ranges() == 1) {
-          GECODE_ME_FAIL(home,_s.include(home, is.min(), is.max()));
+          GECODE_ME_FAIL(_s.include(home, is.min(), is.max()));
         } else {
           IntSetRanges rd(is);
-          GECODE_ME_FAIL(home,_s.includeI(home, rd));
+          GECODE_ME_FAIL(_s.includeI(home, rd));
         }
       }
       break;
     case SRT_CMPL:
       {
         if (is.ranges() == 1) {
-          GECODE_ME_FAIL(home,_s.exclude(home, is.min(), is.max()));
-          GECODE_ME_FAIL(home,
+          GECODE_ME_FAIL(_s.exclude(home, is.min(), is.max()));
+          GECODE_ME_FAIL(
                          _s.include(home,
                                     Set::Limits::min,
                                     is.min()-1) );
-          GECODE_ME_FAIL(home,
+          GECODE_ME_FAIL(
                          _s.include(home, is.max()+1,
                                     Set::Limits::max) );
         } else {
           IntSetRanges rd1(is);
           Set::RangesCompl<IntSetRanges > rdC1(rd1);
-          GECODE_ME_FAIL(home,_s.includeI(home, rdC1));
+          GECODE_ME_FAIL(_s.includeI(home, rdC1));
           IntSetRanges rd2(is);
           Set::RangesCompl<IntSetRanges > rdC2(rd2);
-          GECODE_ME_FAIL(home,_s.intersectI(home, rdC2));
+          GECODE_ME_FAIL(_s.intersectI(home, rdC2));
         }
       }
       break;
@@ -166,7 +166,7 @@ namespace Gecode {
     case SRT_EQ:
       {
         Set::ConstantView cv(home, is);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Set::Rel::ReEq<Set::SetView,
                         Set::ConstantView>::post(home, s, cv, b)));
       }
@@ -176,7 +176,7 @@ namespace Gecode {
         BoolVar notb(home,0,1);
         rel(home, b, IRT_NQ, notb);
         Set::ConstantView cv(home, is);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Set::Rel::ReEq<Set::SetView,
                         Set::ConstantView>::post(home, s, cv, notb)));
       }
@@ -184,7 +184,7 @@ namespace Gecode {
     case SRT_SUB:
       {
         Set::ConstantView cv(home, is);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Set::Rel::ReSubset<Set::SetView,Set::ConstantView>
                         ::post(home, s, cv, b)));
       }
@@ -192,7 +192,7 @@ namespace Gecode {
     case SRT_SUP:
       {
         Set::ConstantView cv(home, is);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Set::Rel::ReSubset<Set::ConstantView,Set::SetView>
                         ::post(home, cv, s, b)));
       }
@@ -207,7 +207,7 @@ namespace Gecode {
         Set::RangesCompl<IntSetRanges > dc1(dr1);
         IntSet dcompl(dc1);
         Set::ConstantView cvcompl(home, dcompl);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Set::Rel::ReSubset<Set::SetView,Set::ConstantView>
                         ::post(home, s, cvcompl, b)));
       }
@@ -221,7 +221,7 @@ namespace Gecode {
         IntSet dcompl(dc1);
         Set::ConstantView cvcompl(home, dcompl);
 
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Set::Rel::ReEq<Set::SetView,Set::ConstantView>
                         ::post(home, sv, cvcompl, b)));
       }

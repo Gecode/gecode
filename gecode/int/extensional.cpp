@@ -48,7 +48,7 @@ namespace Gecode {
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Extensional::post_lgp(home,x,dfa));
+    GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
   }
 
   void
@@ -58,7 +58,7 @@ namespace Gecode {
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
-    GECODE_ES_FAIL(home,Extensional::post_lgp(home,x,dfa));
+    GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
   }
 
   void
@@ -75,15 +75,15 @@ namespace Gecode {
     ViewArray<IntView> xv(home,x);
     switch (epk) {
     case EPK_SPEED:
-      GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>
+      GECODE_ES_FAIL((Extensional::Incremental<IntView>
                            ::post(home,xv,t)));
       break;
     default:
       if (x.same(home)) {
-        GECODE_ES_FAIL(home,(Extensional::Basic<IntView,true>
+        GECODE_ES_FAIL((Extensional::Basic<IntView,true>
                              ::post(home,xv,t)));
       } else {
-        GECODE_ES_FAIL(home,(Extensional::Basic<IntView,false>
+        GECODE_ES_FAIL((Extensional::Basic<IntView,false>
                              ::post(home,xv,t)));
       }
       break;
@@ -104,15 +104,15 @@ namespace Gecode {
     ViewArray<BoolView> xv(home,x);
     switch (epk) {
     case EPK_SPEED:
-      GECODE_ES_FAIL(home,(Extensional::Incremental<BoolView>
+      GECODE_ES_FAIL((Extensional::Incremental<BoolView>
                            ::post(home,xv,t)));
       break;
     default:
       if (x.same(home)) {
-        GECODE_ES_FAIL(home,(Extensional::Basic<BoolView,true>
+        GECODE_ES_FAIL((Extensional::Basic<BoolView,true>
                              ::post(home,xv,t)));
       } else {
-        GECODE_ES_FAIL(home,(Extensional::Basic<BoolView,false>
+        GECODE_ES_FAIL((Extensional::Basic<BoolView,false>
                              ::post(home,xv,t)));
       }
       break;

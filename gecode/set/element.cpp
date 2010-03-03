@@ -61,14 +61,14 @@ namespace Gecode {
       {
         Set::Element::ElementDisjoint<SetView,SetView>::IdxViewArray
           iv(home, x);
-        GECODE_ES_FAIL(home,(Element::ElementDisjoint<SetView,SetView>::
+        GECODE_ES_FAIL((Element::ElementDisjoint<SetView,SetView>::
                         post(home,iv,y)));
       }
       // fall through
     case SOT_UNION:
       {
         Set::Element::ElementUnion<SetView,SetView>::IdxViewArray iv(home, x);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Element::ElementUnion<SetView,SetView>::
                         post(home,z,iv,y)));
       }
@@ -77,7 +77,7 @@ namespace Gecode {
       {
         Set::Element::ElementIntersection<SetView,SetView>::IdxViewArray
           iv(home, x);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Element::ElementIntersection<SetView,SetView>::
                         post(home,z,iv,y,universe)));
       }
@@ -103,7 +103,7 @@ namespace Gecode {
         for (int i=x.size(); i--;) {
           iv[i].idx = i; iv[i].view = ConstantView(home, x[i]);
         }
-        GECODE_ES_FAIL(home,(Element::ElementDisjoint<ConstantView,SetView>::
+        GECODE_ES_FAIL((Element::ElementDisjoint<ConstantView,SetView>::
                         post(home,iv,y)));
       }
       // fall through
@@ -112,7 +112,7 @@ namespace Gecode {
         SharedArray<IntSet> s(x.size());
         for (int i=s.size(); i--;)
           new (&s[i]) IntSet(x[i]);
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Element::ElementUnionConst<SetView,SetView>::
                         post(home,z,s,y)));
       }
@@ -124,7 +124,7 @@ namespace Gecode {
         for (int i=x.size(); i--;) {
           iv[i].idx = i; iv[i].view = ConstantView(home, x[i]);
         }
-        GECODE_ES_FAIL(home,
+        GECODE_ES_FAIL(
                        (Element::ElementIntersection<ConstantView,SetView>::
                         post(home,z,iv,y,universe)));
       }
@@ -148,7 +148,7 @@ namespace Gecode {
 
     Int::IntView yv(y);
     SingletonView single(yv);
-    GECODE_ES_FAIL(home,(Element::ElementUnion<SetView,
+    GECODE_ES_FAIL((Element::ElementUnion<SetView,
                          SingletonView>::post(home, z, iv, single)));
   }
 
@@ -166,7 +166,7 @@ namespace Gecode {
 
     Int::IntView yv(y);
     SingletonView single(yv);
-    GECODE_ES_FAIL(home,(Element::ElementUnionConst<SetView,
+    GECODE_ES_FAIL((Element::ElementUnionConst<SetView,
                          SingletonView>::post(home, z, x, single)));
   }
 

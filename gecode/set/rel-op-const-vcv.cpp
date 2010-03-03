@@ -61,7 +61,7 @@ namespace Gecode {
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);
           IntSet yc(yrc);
           ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (Intersection<ConstantView,
                           SetView,SetView>
                           ::post(home,cy,x,z)));
@@ -70,14 +70,14 @@ namespace Gecode {
       case SRT_NQ:
         {
           SetVar tmp(home);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (Distinct<SetView,SetView>
                           ::post(home,z,tmp)));
           GlbRanges<ConstantView> yr(yv);
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);
           IntSet yc(yrc);
           ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (Intersection<ConstantView,
                           SetView,SetView>
                           ::post(home,cy,x,tmp)));
@@ -89,7 +89,7 @@ namespace Gecode {
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);
           IntSet yc(yrc);
           ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (SuperOfInter<ConstantView,SetView,SetView>
                           ::post(home,cy,x,z)));
 
@@ -98,7 +98,7 @@ namespace Gecode {
       case SRT_SUP:
         {
           SetVar tmp(home);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (Subset<SetView,SetView>::post(home,z,tmp)));
 
           GlbRanges<ConstantView> yr(yv);
@@ -107,7 +107,7 @@ namespace Gecode {
           ConstantView cy(home, yc);
 
           SetView xv(x);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (Intersection<ConstantView,
                           SetView,SetView>
                           ::post(home,cy,xv,tmp)));
@@ -117,14 +117,14 @@ namespace Gecode {
         {
           SetVar tmp(home);
           EmptyView emptyset;
-          GECODE_ES_FAIL(home,(SuperOfInter<SetView,SetView,EmptyView>
+          GECODE_ES_FAIL((SuperOfInter<SetView,SetView,EmptyView>
                                ::post(home, z, tmp, emptyset)));
 
           GlbRanges<ConstantView> yr(yv);
           RangesCompl<GlbRanges<ConstantView> > yrc(yr);
           IntSet yc(yrc);
           ConstantView cy(home, yc);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (Intersection<ConstantView,
                           SetView,SetView>
                           ::post(home,cy,x,tmp)));
@@ -134,7 +134,7 @@ namespace Gecode {
         {
           SetView xv(x);
           ComplementView<SetView> cx(xv);
-          GECODE_ES_FAIL(home,
+          GECODE_ES_FAIL(
                          (Union<ConstantView,
                           ComplementView<SetView>,
                           SetView>::post(home, yv, cx, z)));

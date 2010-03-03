@@ -51,13 +51,13 @@ namespace Gecode {
     ViewArray<IntView> xv(home,x);
     switch (icl) {
     case ICL_BND:
-      GECODE_ES_FAIL(home,Distinct::Bnd<IntView>::post(home,xv));
+      GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
       break;
     case ICL_DOM:
-      GECODE_ES_FAIL(home,Distinct::Dom<IntView>::post(home,xv));
+      GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,xv));
       break;
     default:
-      GECODE_ES_FAIL(home,Distinct::Val<IntView>::post(home,xv));
+      GECODE_ES_FAIL(Distinct::Val<IntView>::post(home,xv));
     }
   }
 
@@ -82,13 +82,13 @@ namespace Gecode {
     }
     switch (icl) {
     case ICL_BND:
-      GECODE_ES_FAIL(home,Distinct::Bnd<OffsetView>::post(home,cx));
+      GECODE_ES_FAIL(Distinct::Bnd<OffsetView>::post(home,cx));
       break;
     case ICL_DOM:
-      GECODE_ES_FAIL(home,Distinct::Dom<OffsetView>::post(home,cx));
+      GECODE_ES_FAIL(Distinct::Dom<OffsetView>::post(home,cx));
       break;
     default:
-      GECODE_ES_FAIL(home,Distinct::Val<OffsetView>::post(home,cx));
+      GECODE_ES_FAIL(Distinct::Val<OffsetView>::post(home,cx));
     }
   }
 

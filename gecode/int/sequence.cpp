@@ -86,7 +86,7 @@ namespace Gecode {
       for (int i=x.size(); i--; ) {
         IntView xv(x[i]);
         IntSetRanges ris(s);
-        GECODE_ME_FAIL(home,xv.inter_r(home,ris,false));
+        GECODE_ME_FAIL(xv.inter_r(home,ris,false));
       }
       return;
     }
@@ -96,18 +96,18 @@ namespace Gecode {
       for (int i=x.size(); i--; ) {
         IntView xv(x[i]);
         IntSetRanges ris(s);
-        GECODE_ME_FAIL(home,xv.minus_r(home,ris,false));
+        GECODE_ME_FAIL(xv.minus_r(home,ris,false));
       }
       return;
     }
 
     ViewArray<IntView> xv(home,x);
     if (s.size() == 1) {
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (Sequence::Sequence<IntView,int>::post
                       (home,xv,s.min(),q,l,u)));
     } else {
-      GECODE_ES_FAIL(home,
+      GECODE_ES_FAIL(
                      (Sequence::Sequence<IntView,IntSet>::post
                       (home,xv,s,q,l,u)));
     }
@@ -159,12 +159,12 @@ namespace Gecode {
     if (l == q) {
       if (s.min() == 0) {
         for (int i=x.size(); i--; ) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.zero(home));
+          BoolView xv(x[i]); GECODE_ME_FAIL(xv.zero(home));
         }
       } else {
         assert(s.min() == 1);
         for (int i=x.size(); i--; ) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.one(home));
+          BoolView xv(x[i]); GECODE_ME_FAIL(xv.one(home));
         }
       }
       return;
@@ -174,12 +174,12 @@ namespace Gecode {
     if (0 == u) {
       if (s.min() == 0) {
         for (int i=x.size(); i--; ) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.one(home));
+          BoolView xv(x[i]); GECODE_ME_FAIL(xv.one(home));
         }
       } else {
         assert(s.min() == 1);
         for (int i=x.size(); i--; ) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(home,xv.zero(home));
+          BoolView xv(x[i]); GECODE_ME_FAIL(xv.zero(home));
         }
       }
       return;
@@ -187,7 +187,7 @@ namespace Gecode {
 
     ViewArray<BoolView> xv(home,x);
 
-    GECODE_ES_FAIL(home,
+    GECODE_ES_FAIL(
                    (Sequence::Sequence<BoolView,int>::post
                     (home,xv,s.min(),q,l,u)));
   }

@@ -119,7 +119,7 @@ namespace Gecode {
         limit_s[i] = limit[i];
 
       // There is only the value-consistent propagator for this constraint
-      GECODE_ES_FAIL(home,(Scheduling::Cumulatives::Val<
+      GECODE_ES_FAIL((Scheduling::Cumulatives::Val<
                            typename ViewType<Machine>::Result,
                            typename ViewType<Duration>::Result,
                            typename ViewType<Height>::Result,
