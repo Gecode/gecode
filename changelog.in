@@ -77,6 +77,16 @@ Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
+The failure macros for posting GECODE_ES_FAIL and GECODE_ME_FAIL
+now only accept a single argument and assume that "home" actually
+refers to the home space.  Read "Modeling and Programming with
+Gecode" for details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
 The functions ES_FIX_PARTIAL, ES_NOFIX_PARTIAL, ES_FIX_SUBSUMED,
 and ES_NOFIX_SUBSUMED are now member of Space. Read "Modeling and
 Programming with Gecode" for details.
