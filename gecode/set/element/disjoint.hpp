@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Element {
 
       if (x1.cardMax()==0) {
         // Selector is empty, we're done
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
       {
@@ -313,7 +313,7 @@ namespace Gecode { namespace Set { namespace Element {
     if (!x1.assigned())
       allAssigned = false;
 
-    return allAssigned ? ES_SUBSUMED(home,*this) : ES_FIX;
+    return allAssigned ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 

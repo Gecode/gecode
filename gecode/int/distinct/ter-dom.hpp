@@ -73,11 +73,11 @@ namespace Gecode { namespace Int { namespace Distinct {
     GECODE_ME_CHECK(x2.nq(home,x0.val()));      \
     if (x1.assigned()) {                        \
       GECODE_ME_CHECK(x2.nq(home,x1.val()));    \
-      return ES_SUBSUMED(home,*this);            \
+      return home.ES_SUBSUMED(*this);            \
     }                                           \
     if (x2.assigned()) {                        \
       GECODE_ME_CHECK(x1.nq(home,x2.val()));    \
-      return ES_SUBSUMED(home,*this);            \
+      return home.ES_SUBSUMED(*this);            \
     }                                           \
     return ES_FIX;                              \
   }

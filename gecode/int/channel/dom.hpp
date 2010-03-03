@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Channel {
                            (home,n,y,x,n_na,ya,xa)));
           assert(ya.empty());
         } while (!xa.empty() || !ya.empty());
-        return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+        return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
       } else {
         do {
           // Propagate assigned views for x
@@ -231,7 +231,7 @@ namespace Gecode { namespace Int { namespace Channel {
                            (home,n,y,x,n_na,ya,xa)));
           assert(ya.empty());
         } while (!xa.empty());
-        return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+        return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
       }
     }
 
@@ -293,9 +293,9 @@ namespace Gecode { namespace Int { namespace Channel {
       for (int i=2*n; i--; )
         if (!xy[i].view.assigned())
           return ES_NOFIX;
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     } else {
-      return (n_na == 0) ? ES_SUBSUMED(home,*this) : ES_FIX;
+      return (n_na == 0) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
   }
 

@@ -116,28 +116,28 @@ namespace Gecode { namespace Set { namespace Rel {
       GlbRanges<View0> xi(x0);
       GlbRanges<ConstantView> yi(y);
       if (Iter::Ranges::equal(xi,yi)) { return ES_FAILED; }
-      else { return ES_SUBSUMED(home,*this); }
+      else { return home.ES_SUBSUMED(*this); }
     }
     assert(x0.lubSize()-x0.glbSize() >0);
-    if (x0.cardMin()>y.cardMax()) { return ES_SUBSUMED(home,*this); }
-    if (x0.cardMax()<y.cardMin()) { return ES_SUBSUMED(home,*this); }
+    if (x0.cardMin()>y.cardMax()) { return home.ES_SUBSUMED(*this); }
+    if (x0.cardMax()<y.cardMin()) { return home.ES_SUBSUMED(*this); }
     //These tests are too expensive, we should only do them
     //in the 1 unknown left case.
     GlbRanges<View0> xi1(x0);
     LubRanges<ConstantView> yi1(y);
-    if (!Iter::Ranges::subset(xi1,yi1)){ return ES_SUBSUMED(home,*this); }
+    if (!Iter::Ranges::subset(xi1,yi1)){ return home.ES_SUBSUMED(*this); }
     LubRanges<View0> xi2(x0);
     GlbRanges<ConstantView> yi2(y);
-    if (!Iter::Ranges::subset(yi2,xi2)){ return ES_SUBSUMED(home,*this); }
+    if (!Iter::Ranges::subset(yi2,xi2)){ return home.ES_SUBSUMED(*this); }
     // from here, we know y\subseteq lub(x) and glb(x)\subseteq y
 
     if (x0.lubSize() == y.cardMin() && x0.lubSize() > 0) {
       GECODE_ME_CHECK(x0.cardMax(home, x0.lubSize() - 1));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     if (x0.glbSize() == y.cardMin()) {
       GECODE_ME_CHECK(x0.cardMin(home, x0.glbSize() + 1));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }

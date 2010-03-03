@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Int {
 
     new (&delta) SetDelta();
 
-    return y.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
+    return y.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
   template<class View>
@@ -212,7 +212,7 @@ namespace Gecode { namespace Set { namespace Int {
         SetDelta dummy;
         ones.include(home, index, index, dummy);
       }
-      return ES_SUBSUMED_NOFIX(home, co, a);
+      return home.ES_SUBSUMED_NOFIX( co, a);
     }
 
     if ((a.index() == -1) && Rel::testSetEventLB(me)) {
@@ -272,7 +272,7 @@ namespace Gecode { namespace Set { namespace Int {
     }
 
     if (y.assigned())
-      return ES_SUBSUMED_NOFIX(home, co, a);
+      return home.ES_SUBSUMED_NOFIX( co, a);
     else
       return ES_NOFIX;
   }

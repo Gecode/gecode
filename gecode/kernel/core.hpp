@@ -745,56 +745,6 @@ namespace Gecode {
   };
 
 
-  /**
-   * \brief %Propagator \a p is subsumed
-   *
-   * First disposes the propagator and then returns subsumption.
-   *
-   * \warning Has a side-effect on the propagator. Overwrites
-   *          the modification event delta of a propagator.
-   *          Use only directly with returning from propagation.
-   * \ingroup TaskActorStatus
-   */
-  ExecStatus ES_SUBSUMED(Space& home, Propagator& p);
-  /**
-   * \brief %Propagator \a p is subsumed
-   *
-   * The size of the propagator is \a s.
-   *
-   * Note that the propagator must be subsumed and also disposed. So
-   * in general, there should be code such as
-   * \code return ES_SUBSUMED_DISPOSE(home,*this,dispose(home)) \endcode.
-   *
-   * \warning Has a side-effect on the propagator. Overwrites
-   *          the modification event delta of a propagator.
-   *          Use only directly with returning from propagation.
-   * \ingroup TaskActorStatus
-   */
-  ExecStatus ES_SUBSUMED_DISPOSED(Space& home, Propagator& p, size_t s);
-  /**
-   * \brief %Propagator \a p has computed partial fixpoint
-   *
-   * %Set modification event delta to \a med and schedule propagator
-   * accordingly.
-   *
-   * \warning Has a side-effect on the propagator.
-   *          Use only directly with returning from propagation.
-   * \ingroup TaskActorStatus
-   */
-  ExecStatus ES_FIX_PARTIAL(Space& home, Propagator& p, 
-                            const ModEventDelta& med);
-  /**
-   * \brief %Propagator \a p has not computed partial fixpoint
-   *
-   * Combine current modification event delta with \a and schedule
-   * propagator accordingly.
-   *
-   * \warning Has a side-effect on the propagator.
-   *          Use only directly with returning from propagation.
-   * \ingroup TaskActorStatus
-   */
-  ExecStatus ES_NOFIX_PARTIAL(Space& home, Propagator& p, 
-                              const ModEventDelta& med);
 
   /**
    * \brief Home class for posting propagators
@@ -839,10 +789,6 @@ namespace Gecode {
     friend class ActorLink;
     friend class Space;
     template<class VIC> friend class VarImp;
-    friend ExecStatus ES_SUBSUMED(Space&, Propagator&);
-    friend ExecStatus ES_SUBSUMED_DISPOSED(Space&,Propagator&, size_t);
-    friend ExecStatus ES_FIX_PARTIAL(Space&,Propagator&, const ModEventDelta&);
-    friend ExecStatus ES_NOFIX_PARTIAL(Space&,Propagator&, const ModEventDelta&);
     friend class Advisor;
     template<class A> friend class Council;
   private:
@@ -881,7 +827,7 @@ namespace Gecode {
      *    again will do nothing.
      *
      * Apart from the above values, a propagator can return
-     * the result from calling one of the functions
+     * the result from calling one of the functions defined by a space:
      *  - ES_SUBSUMED: the propagator is subsumed and has been already
      *    deleted.
      *  - ES_NOFIX_PARTIAL: the propagator has consumed some of its
@@ -910,7 +856,7 @@ namespace Gecode {
      *    must be run
      *
      * Apart from the above values, an advisor can return
-     * the result from calling the function
+     * the result from calling the function defined by a space:
      *  - ES_SUBSUMED_FIX: the advisor is subsumed, the advisor's
      *    propagator does not need to be run
      *  - ES_SUBSUMED_NOFIX: the advisor is subsumed, the advisor's
@@ -983,33 +929,6 @@ namespace Gecode {
     A& advisor(void) const;
   };
 
-
-  /**
-   * \brief %Advisor \a a is subsumed
-   *
-   * Disposes the advisor and:
-   *  - returns subsumption.
-   *  - returns that the propagator of \a a need not be run.
-   *
-   * \warning Has a side-effect on the advisor. Use only directly when
-   *          returning from advise.
-   * \ingroup TaskActorStatus
-   */
-  template<class A>
-  ExecStatus ES_SUBSUMED_FIX(Space& home, Council<A>& c, A& a);
-  /**
-   * \brief %Advisor \a a is subsumed
-   *
-   * Disposes the advisor and:
-   *  - returns subsumption.
-   *  - returns that the propagator of \a a must be run.
-   *
-   * \warning Has a side-effect on the advisor. Use only directly when
-   *          returning from advise.
-   * \ingroup TaskActorStatus
-   */
-  template<class A>
-  ExecStatus ES_SUBSUMED_NOFIX(Space& home, Council<A>& c, A& a);
 
   /**
    * \brief Base-class for advisors
@@ -1572,6 +1491,83 @@ namespace Gecode {
      */
     void ignore(Actor& a, ActorProperty p);
 
+
+    /**
+     * \brief %Propagator \a p is subsumed
+     *
+     * First disposes the propagator and then returns subsumption.
+     *
+     * \warning Has a side-effect on the propagator. Overwrites
+     *          the modification event delta of a propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActorStatus
+     */
+    ExecStatus ES_SUBSUMED(Propagator& p);
+    /**
+     * \brief %Propagator \a p is subsumed
+     *
+     * The size of the propagator is \a s.
+     *
+     * Note that the propagator must be subsumed and also disposed. So
+     * in general, there should be code such as
+     * \code return ES_SUBSUMED_DISPOSE(home,*this,dispose(home)) \endcode.
+     *
+     * \warning Has a side-effect on the propagator. Overwrites
+     *          the modification event delta of a propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActorStatus
+     */
+    ExecStatus ES_SUBSUMED_DISPOSED(Propagator& p, size_t s);
+    /**
+     * \brief %Propagator \a p has computed partial fixpoint
+     *
+     * %Set modification event delta to \a med and schedule propagator
+     * accordingly.
+     *
+     * \warning Has a side-effect on the propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActorStatus
+     */
+    ExecStatus ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med);
+    /**
+     * \brief %Propagator \a p has not computed partial fixpoint
+     *
+     * Combine current modification event delta with \a and schedule
+     * propagator accordingly.
+     *
+     * \warning Has a side-effect on the propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActorStatus
+     */
+    ExecStatus ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med);
+    
+    /**
+     * \brief %Advisor \a a is subsumed
+     *
+     * Disposes the advisor and:
+     *  - returns subsumption.
+     *  - returns that the propagator of \a a need not be run.
+     *
+     * \warning Has a side-effect on the advisor. Use only directly when
+     *          returning from advise.
+     * \ingroup TaskActorStatus
+     */
+    template<class A>
+    ExecStatus ES_SUBSUMED_FIX(Council<A>& c, A& a);
+    /**
+     * \brief %Advisor \a a is subsumed
+     *
+     * Disposes the advisor and:
+     *  - returns subsumption.
+     *  - returns that the propagator of \a a must be run.
+     *
+     * \warning Has a side-effect on the advisor. Use only directly when
+     *          returning from advise.
+     * \ingroup TaskActorStatus
+     */
+    template<class A>
+    ExecStatus ES_SUBSUMED_NOFIX(Council<A>& c, A& a);
+    
     /**
      * \brief Fail space
      *
@@ -2543,26 +2539,26 @@ namespace Gecode {
   }
 
   forceinline ExecStatus
-  ES_SUBSUMED_DISPOSED(Space&, Propagator& p, size_t s) {
+  Space::ES_SUBSUMED_DISPOSED(Propagator& p, size_t s) {
     p.u.size = s;
     return __ES_SUBSUMED;
   }
 
   forceinline ExecStatus
-  ES_SUBSUMED(Space& home, Propagator& p) {
-    p.u.size = p.dispose(home);
+  Space::ES_SUBSUMED(Propagator& p) {
+    p.u.size = p.dispose(*this);
     return __ES_SUBSUMED;
   }
 
   forceinline ExecStatus
-  ES_FIX_PARTIAL(Space&, Propagator& p, const ModEventDelta& med) {
+  Space::ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
     p.u.med = med;
     assert(p.u.med != 0);
     return __ES_PARTIAL;
   }
 
   forceinline ExecStatus
-  ES_NOFIX_PARTIAL(Space&, Propagator& p, const ModEventDelta& med) {
+  Space::ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
     p.u.med = AllVarConf::med_combine(p.u.med,med);
     assert(p.u.med != 0);
     return __ES_PARTIAL;
@@ -2702,15 +2698,15 @@ namespace Gecode {
 
   template<class A>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(Space& home, Council<A>& c, A& a) {
-    a.dispose(home,c);
+  Space::ES_SUBSUMED_FIX(Council<A>& c, A& a) {
+    a.dispose(*this,c);
     return ES_FIX;
   }
 
   template<class A>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(Space& home, Council<A>& c, A& a) {
-    a.dispose(home,c);
+  Space::ES_SUBSUMED_NOFIX(Council<A>& c, A& a) {
+    a.dispose(*this,c);
     return ES_NOFIX;
   }
 

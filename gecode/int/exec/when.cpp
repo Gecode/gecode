@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Exec {
       t(home);
     }
     if (home.failed()) return ES_FAILED;
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 

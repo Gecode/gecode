@@ -47,7 +47,7 @@ namespace Gecode { namespace Scheduling {
       }
     t.size(n);
 
-    return (t.size() < 2) ? ES_SUBSUMED(home,p) : ES_OK;
+    return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
   
 }}

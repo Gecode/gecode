@@ -82,9 +82,9 @@ namespace Gecode { namespace Int { namespace Sequence {
         x[a.i].cancel(home,a);
 
       if ( ES_NOFIX == status ) {
-        return ES_SUBSUMED_NOFIX(home,ac,a);
+        return home.ES_SUBSUMED_NOFIX(ac,a);
       } else {
-        return ES_SUBSUMED_FIX(home,ac,a);
+        return home.ES_SUBSUMED_FIX(ac,a);
       }
     }
 
@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace Sequence {
       if (undecided(x[i],s))
         return ES_FIX;
 
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 }}}

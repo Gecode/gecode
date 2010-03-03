@@ -125,7 +125,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (non == 0) {
       for (int i = k.size(); i--; )
         GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
-      return ES_SUBSUMED(home,p);
+      return home.ES_SUBSUMED(p);
     }
 
     // total number of unsatisfied miminum occurences
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
       for (int i = k.size(); i--; )
         GECODE_ME_CHECK(k[i].eq(home, count[i] + k[i].counter()));
-      return ES_SUBSUMED(home,p);
+      return home.ES_SUBSUMED(p);
     }
 
     // Bitset for indexes that can be removed
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (all_assigned) {
         for (int i = k.size(); i--; )
           GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
-        return ES_SUBSUMED(home,p);
+        return home.ES_SUBSUMED(p);
       }
     }
 

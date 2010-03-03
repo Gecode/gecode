@@ -148,13 +148,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     if (shared(x0,x1,x2)) {
       if (allassigned) {
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       } else {
         return ES_NOFIX;
       }
     } else {
       if (x0.assigned() + x1.assigned() + x2.assigned() >= 2) {
-         return ES_SUBSUMED(home,*this);
+         return home.ES_SUBSUMED(*this);
       } else {
         return ES_FIX;
       }

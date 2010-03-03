@@ -137,7 +137,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     for (int i=x.size(); i--;)
       if (!x[i].assigned())
         return ES_FIX;
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 }}}

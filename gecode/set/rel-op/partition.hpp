@@ -153,7 +153,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       BndSetRanges all2(unionOfDets);
       GECODE_ME_CHECK( y.includeI(home,all2) );
       unionOfDets.dispose(home);
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     return shared ? ES_NOFIX : ES_FIX;

@@ -222,7 +222,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       break;
     default: GECODE_NEVER;
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 
@@ -269,7 +269,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     } while (mod);
     return x0.assigned() && x1.assigned() ?
-      ES_SUBSUMED(home,p) : ES_FIX;
+      home.ES_SUBSUMED(p) : ES_FIX;
   }
 
   template<class Val, class VA, class VB, class VC>
@@ -367,12 +367,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned()) {
       assert((x0.val() == 0) && (x2.val() == 0));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     if (x1.assigned()) {
       assert((x1.val() == 0) && (x2.val() == 0));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     return ES_NOFIX;
@@ -393,7 +393,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     return ES_NOFIX;
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     return ES_NOFIX;
@@ -503,7 +503,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(s0.tell(home));
     GECODE_ME_CHECK(s1.tell(home));
     GECODE_ME_CHECK(s2.tell(home));
-    return x0.assigned() && x1.assigned() ? ES_SUBSUMED(home,p) : ES_FIX;
+    return x0.assigned() && x1.assigned() ? home.ES_SUBSUMED(p) : ES_FIX;
   }
 
   template<class Val, class VA, class VB, class VC>
@@ -540,7 +540,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlusDom<Val,VA,VB,VC>::propagate(Space& home, const ModEventDelta& med) {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_mult_plus_bnd<Val,VA,VB,VC>(home,*this,x0,x1,x2)));
-      return ES_FIX_PARTIAL(home,*this,VA::med(ME_INT_DOM));
+      return home.ES_FIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
     IntView y0(x0.var()), y1(x1.var()), y2(x2.var());
     return prop_mult_dom<Val,IntView>(home,*this,y0,y1,y2);
@@ -626,15 +626,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
       if (x0.assigned()) {
         assert((x0.val() == 0) && (x2.val() == 0));
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
       if (x1.assigned()) {
         assert((x1.val() == 0) && (x2.val() == 0));
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
-      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+      return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
 
     prop_xpx:
       std::swap(x0,x1);
@@ -652,10 +652,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
       if (x0.assigned() && x1.assigned()) {
         GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
-      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+      return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
 
     prop_xnx:
       std::swap(x0,x1);
@@ -673,10 +673,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
       if (x0.assigned() && x1.assigned()) {
         GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
-      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+      return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
 
     rewrite_ppp:
       GECODE_REWRITE(*this,(MultPlusDom<double,IntView,IntView,IntView>

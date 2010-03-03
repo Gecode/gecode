@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Rel {
     } else {
       GECODE_ME_CHECK(x0.nq(home,x1.val()));
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 }}}

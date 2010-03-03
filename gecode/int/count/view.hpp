@@ -169,9 +169,9 @@ namespace Gecode { namespace Int { namespace Count {
 
     if (z.assigned()) {
       if (z.val() == atleast())
-        return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+        return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
       if (z.val() == atmost())
-        return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+        return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(EqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
     }
     return shr ? ES_NOFIX : ES_FIX;
@@ -219,12 +219,12 @@ namespace Gecode { namespace Int { namespace Count {
     count(home);
     if (atleast() == atmost()) {
       GECODE_ME_CHECK(z.nq(home,atleast()));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     if (z.max() < atleast())
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (z.min() > atmost())
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (z.assigned())
       GECODE_REWRITE(*this,(NqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
     return ES_FIX;
@@ -274,9 +274,9 @@ namespace Gecode { namespace Int { namespace Count {
     count(home);
     GECODE_ME_CHECK(z.gq(home,atleast()));
     if (z.max() == atleast())
-      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+      return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
     if (x.size() == 0)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (z.assigned())
       GECODE_REWRITE(*this,(LqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
     return shr ? ES_NOFIX : ES_FIX;
@@ -327,9 +327,9 @@ namespace Gecode { namespace Int { namespace Count {
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.min() == atmost())
-      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+      return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
     if (x.size() == 0)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (z.assigned())
       GECODE_REWRITE(*this,(GqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
     return shr ? ES_NOFIX : ES_FIX;

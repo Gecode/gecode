@@ -213,7 +213,7 @@ namespace Gecode { namespace Set { namespace Element {
             before[i].dispose(home);
         selectedInter.dispose(home);
         sofarBefore.dispose(home);
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
       if (x1.cardMin() > 0) {
@@ -278,7 +278,7 @@ namespace Gecode { namespace Set { namespace Element {
     } while (loopVar);
 
     if (x0.assigned() || x1.assigned()) {
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     return ES_FIX;

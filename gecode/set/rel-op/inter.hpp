@@ -160,7 +160,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       if (x2.cardMin() == Set::Limits::card) {
         GECODE_ME_CHECK( x0.cardMin(home, Set::Limits::card) );
         GECODE_ME_CHECK( x1.cardMin(home, Set::Limits::card) );
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
       if (x0.cardMin() == Set::Limits::card)
@@ -171,10 +171,10 @@ namespace Gecode { namespace Set { namespace RelOp {
     } while(modified);
 
     if (shared(x0,x1,x2)) {
-      return (x0ass && x1ass && x2ass) ? ES_SUBSUMED(home,*this) : ES_NOFIX;
+      return (x0ass && x1ass && x2ass) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     } else {
       if (x0ass && x1ass && x2ass)
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       if (x0ass != x0.assigned() ||
           x1ass != x1.assigned() ||
           x2ass != x2.assigned()) {
@@ -288,7 +288,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         if (x[i].cardMax()==0) {
           GECODE_ME_CHECK( y.cardMax(home, 0));
           intOfDets.dispose(home);
-          return ES_SUBSUMED(home,*this);
+          return home.ES_SUBSUMED(*this);
         }
       }
       {
@@ -365,7 +365,7 @@ namespace Gecode { namespace Set { namespace RelOp {
           if (intOfDets.size()==0) {
             GECODE_ME_CHECK( y.cardMax(home,0) );
             intOfDets.dispose(home);
-            return ES_SUBSUMED(home,*this);
+            return home.ES_SUBSUMED(*this);
           }
         }
       }
@@ -376,7 +376,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         BndSetRanges all2(intOfDets);
         GECODE_ME_CHECK( y.includeI(home,all2) );
         intOfDets.dispose(home);
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       }
 
     } while (repeat);

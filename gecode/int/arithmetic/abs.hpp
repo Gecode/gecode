@@ -46,24 +46,24 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_abs_bnd(Space& home, Propagator& p, View x0, View x1) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,(x0.val() < 0) ? -x0.val() : x0.val()));
-      return ES_SUBSUMED(home,p);
+      return home.ES_SUBSUMED(p);
     }
 
     if (x1.assigned()) {
       if (x0.min() >= 0) {
         GECODE_ME_CHECK(x0.eq(home,x1.val()));
-        return ES_SUBSUMED(home,p);
+        return home.ES_SUBSUMED(p);
       } else if (x0.max() <= 0) {
         GECODE_ME_CHECK(x0.eq(home,-x1.val()));
-        return ES_SUBSUMED(home,p);
+        return home.ES_SUBSUMED(p);
       } else if (x1.val() == 0) {
         GECODE_ME_CHECK(x0.eq(home,0));
-        return ES_SUBSUMED(home,p);
+        return home.ES_SUBSUMED(p);
       } else {
         int mp[2] = {-x1.val(),x1.val()};
         Iter::Values::Array i(mp,2);
         GECODE_ME_CHECK(x0.inter_v(home,i,false));
-        return ES_SUBSUMED(home,p);
+        return home.ES_SUBSUMED(p);
       }
     }
 
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   AbsDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_abs_bnd<View,Rel::EqDom>(home, *this, x0, x1)));
-      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+      return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
     {
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     if (x1.assigned())
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
 
     if (x0.min() >= 0)
       GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x0,x1)));

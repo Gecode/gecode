@@ -703,18 +703,18 @@ namespace Gecode { namespace Int { namespace Distinct {
       ExecStatus es = prop_val<View,false>(home,x);
       GECODE_ES_CHECK(es);
       if (x.size() < 2)
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       if (es == ES_FIX)
-        return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+        return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
       es = prop_bnd<View>(home,x);
       GECODE_ES_CHECK(es);
       if (x.size() < 2)
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       es = prop_val<View,true>(home,x);
       GECODE_ES_CHECK(es);
       if (x.size() < 2)
-        return ES_SUBSUMED(home,*this);
-      return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+        return home.ES_SUBSUMED(*this);
+      return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
     if (x.size() == 2)

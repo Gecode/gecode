@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   SqrtBnd<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
-    return x1.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
+    return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 
@@ -191,8 +191,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SqrtDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
-      return x1.assigned() ? ES_SUBSUMED(home,*this)
-        : ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+      return x1.assigned() ? home.ES_SUBSUMED(*this)
+        : home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
     {
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.inter_r(home,m,false));
     }
 
-    return x1.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
+    return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 

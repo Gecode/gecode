@@ -126,7 +126,7 @@ namespace Gecode { namespace Set { namespace Int {
       GECODE_ME_CHECK(x0.include(home,x1.val()));
       GECODE_ME_CHECK(x0.exclude(home,
                                  Limits::min, x1.val()-1));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     return ES_FIX;
@@ -170,18 +170,18 @@ namespace Gecode { namespace Set { namespace Int {
     if ((x0.cardMax() == 0) ||
         ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
         ((x0.glbSize() > 0) && (x0.glbMin() < x1.min())))
-      return ES_SUBSUMED( home,*this);
+      return home.ES_SUBSUMED(*this);
     // if x1 is determined and = x0.lub.min: remove it from x0,
     // then entailed
     if (x1.assigned() && x1.val()==x0.lubMin()) {
       GECODE_ME_CHECK(x0.exclude(home,x1.val()));
-      return ES_SUBSUMED( home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     // if min(x0) is decided: remove min(x0) from the domain of x1
     // then entailed
     if (x0.glbMin() == x0.lubMin()) {
       GECODE_ME_CHECK(x1.nq(home,x0.glbMin()));
-      return ES_SUBSUMED( home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     // if x1 is determined and = x0.glb.min, then we need at least
     // one more element; if there is only one below, then we must
@@ -202,7 +202,7 @@ namespace Gecode { namespace Set { namespace Int {
         ++ur;
         if (!ur() || ur.min()>x1.val()) {
           GECODE_ME_CHECK(x0.include(home,i));
-          return ES_SUBSUMED( home,*this);
+          return home.ES_SUBSUMED(*this);
         }
       }
       GECODE_ME_CHECK(x0.cardMin(home, oldGlbSize+1));
@@ -213,7 +213,7 @@ namespace Gecode { namespace Set { namespace Int {
       Gecode::Int::ViewRanges<Gecode::Int::IntView> d(x1);
       Gecode::Iter::Ranges::Inter<LubRanges<View>,
         Gecode::Int::ViewRanges<Gecode::Int::IntView> > ir(ub,d);
-      if (!ir()) return ES_SUBSUMED( home,*this);
+      if (!ir()) return home.ES_SUBSUMED(*this);
     }
     // x0 is fated to eventually contain at least x0.cardMin elements.
     // therefore min(x0) <= x0.cardMin-th largest element of x0.lub
@@ -253,7 +253,7 @@ namespace Gecode { namespace Set { namespace Int {
       }
       // if x1.min > nth_largest, then entailed
       if (x1.min() > nth_largest)
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }
@@ -302,7 +302,7 @@ namespace Gecode { namespace Set { namespace Int {
         ((x0.glbSize() > 0) && (x0.glbMin() < x1.min())))
       {
         GECODE_ME_CHECK(b.zero(home));
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
       }
     // if min(x0) is decided
     if (x0.glbMin() == x0.lubMin()) {
@@ -313,7 +313,7 @@ namespace Gecode { namespace Set { namespace Int {
         } else {
           GECODE_ME_CHECK(b.zero(home));
         }
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
       }
       // if min(x0) not in dom(x1): b=0, entailed
       else if ((x0.glbMin() < x1.min()) ||
@@ -321,7 +321,7 @@ namespace Gecode { namespace Set { namespace Int {
                !x1.in(x0.glbMin()))
         {
           GECODE_ME_CHECK(b.zero(home));
-          return ES_SUBSUMED( home,*this);
+          return home.ES_SUBSUMED(*this);
         }
     }
     // // if dom(x1) and lub(x0) are disjoint, then b=0, entailed;
@@ -332,7 +332,7 @@ namespace Gecode { namespace Set { namespace Int {
     //     Gecode::Int::ViewRanges<Gecode::Int::IntView> > ir(ub,d);
     //   if (!ir()) {
     //     GECODE_ME_CHECK(b.zero(home));
-    //     return ES_SUBSUMED( home,*this);
+    //     return home.ES_SUBSUMED(*this);
     //   }
     // }
     // // x0 is fated to eventually contain at least x0.cardMin elements.
@@ -375,7 +375,7 @@ namespace Gecode { namespace Set { namespace Int {
     //   // if x1.min > nth_largest, then entailed
     //   if (x1.min() > nth_largest) {
     //     GECODE_ME_CHECK(b.zero(home));
-    //     return ES_SUBSUMED( home,*this);
+    //     return home.ES_SUBSUMED(*this);
     //   }
     // }
     return ES_FIX;
@@ -423,7 +423,7 @@ namespace Gecode { namespace Set { namespace Int {
       GECODE_ME_CHECK(x0.include(home,x1.val()));
       GECODE_ME_CHECK( x0.exclude(home,
                                   x1.val()+1,Limits::max) );
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     return ES_FIX;
@@ -466,18 +466,18 @@ namespace Gecode { namespace Set { namespace Int {
     if ((x0.cardMax() == 0) ||
         ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
         ((x0.glbSize() > 0) && (x0.glbMax() > x1.max())))
-      return ES_SUBSUMED( home,*this);
+      return home.ES_SUBSUMED(*this);
     // if x1 is determined and = max(x0.lub): remove it from x0,
     // then entailed
     if (x1.assigned() && x1.val()==x0.lubMax()) {
       GECODE_ME_CHECK(x0.exclude(home,x1.val()));
-      return ES_SUBSUMED( home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     // if max(x0) is decided: remove max(x0) from the domain of x1
     // then entailed
     if (x0.glbMax() == x0.lubMax()) {
       GECODE_ME_CHECK(x1.nq(home,x0.glbMax()));
-      return ES_SUBSUMED( home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     // if x1 is determined and = max(x0.glb), then we need at least
     // one more element; if there is only one above, then we must
@@ -500,7 +500,7 @@ namespace Gecode { namespace Set { namespace Int {
         if (!ur()) {
           // last range
           GECODE_ME_CHECK(x0.include(home,i));
-          return ES_SUBSUMED( home,*this);
+          return home.ES_SUBSUMED(*this);
         }
       }
       GECODE_ME_CHECK(x0.cardMin(home, oldGlbSize+1));
@@ -511,7 +511,7 @@ namespace Gecode { namespace Set { namespace Int {
       Gecode::Int::ViewRanges<Gecode::Int::IntView> d(x1);
       Gecode::Iter::Ranges::Inter<LubRanges<View>,
         Gecode::Int::ViewRanges<Gecode::Int::IntView> > ir(ub,d);
-      if (!ir()) return ES_SUBSUMED( home,*this);
+      if (!ir()) return home.ES_SUBSUMED(*this);
     }
     // x0 is fated to eventually contain at least x0.cardMin elements.
     // therefore max(x0) >= x0.cardMin-th smallest element of x0.lub.
@@ -530,7 +530,7 @@ namespace Gecode { namespace Set { namespace Int {
       }
       // if x1.max < nth_smallest, then entailed
       if (x1.max() < nth_smallest)
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }
@@ -580,7 +580,7 @@ namespace Gecode { namespace Set { namespace Int {
         ((x0.glbSize() > 0) && (x0.glbMax() > x1.max())))
       {
         GECODE_ME_CHECK(b.zero(home));
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
       }
     // if max(x0) is decided
     if (x0.glbMax() == x0.lubMax()) {
@@ -591,7 +591,7 @@ namespace Gecode { namespace Set { namespace Int {
         } else {
           GECODE_ME_CHECK(b.zero(home));
         }
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
       }
       // if max(x0) not in dom(x1): b=0, entailed
       else if ((x0.glbMax() < x1.min()) ||
@@ -599,7 +599,7 @@ namespace Gecode { namespace Set { namespace Int {
                !x1.in(x0.glbMax()))
         {
           GECODE_ME_CHECK(b.zero(home));
-          return ES_SUBSUMED( home,*this);
+          return home.ES_SUBSUMED(*this);
         }
     }
     // if dom(x1) and lub(x0) are disjoint, then b=0, entailed
@@ -610,7 +610,7 @@ namespace Gecode { namespace Set { namespace Int {
         Gecode::Int::ViewRanges<Gecode::Int::IntView> > ir(ub,d);
       if (!ir()) {
         GECODE_ME_CHECK(b.zero(home));
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
       }
     }
     // x0 is fated to eventually contain at least x0.cardMin elements.
@@ -632,7 +632,7 @@ namespace Gecode { namespace Set { namespace Int {
       // if x1.max < nth_smallest, then entailed
       if (x1.max() < nth_smallest) {
         GECODE_ME_CHECK(b.zero(home));
-        return ES_SUBSUMED( home,*this);
+        return home.ES_SUBSUMED(*this);
       }
     }
     return ES_FIX;

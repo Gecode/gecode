@@ -404,7 +404,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (unassigned != 0)
       return ES_FIX;
 
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 
@@ -437,9 +437,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       // propagator is not subsumed since unassigned!=0
       if (((w_support.empty() && w_remove.empty()) || scheduled) &&
           (unassigned != 0))
-        return ES_SUBSUMED_FIX(home,ac,a);
+        return home.ES_SUBSUMED_FIX(ac,a);
       else
-        return ES_SUBSUMED_NOFIX(home,ac,a);
+        return home.ES_SUBSUMED_NOFIX(ac,a);
     } else if ((w_support.empty() && w_remove.empty()) || scheduled) {
       // nothing to do or already scheduled
       return ES_FIX;

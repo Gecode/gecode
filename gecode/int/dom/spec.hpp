@@ -87,11 +87,11 @@ namespace Gecode { namespace Int { namespace Dom {
     IntSetRanges i_is(is);
     if (b.one()) {
       GECODE_ME_CHECK(x0.inter_r(home,i_is,false));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     if (b.zero()) {
       GECODE_ME_CHECK(x0.minus_r(home,i_is,false));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     {
@@ -100,10 +100,10 @@ namespace Gecode { namespace Int { namespace Dom {
       switch (Iter::Ranges::compare(i_x,i_is)) {
       case Iter::Ranges::CS_SUBSET:
         GECODE_ME_CHECK(b.one_none(home));
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       case Iter::Ranges::CS_DISJOINT:
         GECODE_ME_CHECK(b.zero_none(home));
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
       case Iter::Ranges::CS_NONE:
         break;
       default: GECODE_NEVER;

@@ -112,7 +112,7 @@
   ExecStatus __es__ ## __LINE__ = (post);                                \
   if (__es__ ## __LINE__ != ::Gecode::ES_OK)                             \
     return ::Gecode::ES_FAILED;                                          \
-  return ES_SUBSUMED_DISPOSED(home,__p__ ## __LINE__,__s__ ## __LINE__); \
+  return home.ES_SUBSUMED_DISPOSED(__p__ ## __LINE__,__s__ ## __LINE__); \
 } while (0)
 
 // STATISTICS: kernel-other

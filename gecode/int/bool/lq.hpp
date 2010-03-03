@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
 #undef GECODE_INT_STATUS
   }
 

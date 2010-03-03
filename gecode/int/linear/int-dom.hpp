@@ -396,7 +396,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (View::me(med) != ME_INT_DOM) {
       ExecStatus es = prop_bnd<Val,View,View>(home,med,*this,x,y,c);
       GECODE_ES_CHECK(es);
-      return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+      return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
     // Value of equation for partial assignment
@@ -475,7 +475,7 @@ namespace Gecode { namespace Int { namespace Linear {
         assigned = false;
     }
     if (assigned)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     return ES_FIX;
   }
 

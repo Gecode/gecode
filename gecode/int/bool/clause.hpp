@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Bool {
       for (int i=n; i--; )
         if (x[i].one()) {
           x.size(n);
-          return ES_SUBSUMED(home,p);
+          return home.ES_SUBSUMED(p);
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   ClauseTrue<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (x0.one() || x1.one())
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     GECODE_ES_CHECK(resubscribe(home,*this,x0,x,x1,y));
     GECODE_ES_CHECK(resubscribe(home,*this,x1,y,x0,x));
     return ES_FIX;
@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Bool {
       // There is exactly one view which is one
       GECODE_ME_CHECK(z.one_none(home));
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 }}}

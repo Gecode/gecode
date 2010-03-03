@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (Card::propagate)
           GECODE_ME_CHECK(k[i].eq(home, count[i]));
       }
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     // before propagation performs inferences on cardinality variables:
@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int j = k.size(); j--; )
         if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
           return ES_FAILED;
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     } else if ((x.size() == 1) && (x[0].assigned())) {
       int idx;
       if (!lookupValue(k,x[0].val(),idx))
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int j = k.size(); j--; )
         if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
           return ES_FAILED;
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     if (vvg == NULL) {
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace GCC {
             if ((k[j].min() > k[j].counter()) || 
                 (k[j].max() < k[j].counter()))
               return ES_FAILED;
-          return ES_SUBSUMED(home,*this);
+          return home.ES_SUBSUMED(*this);
         } else if ((x.size() == 1) && x[0].assigned()) {
           int idx;
           if (!lookupValue(k,x[0].val(),idx))
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace GCC {
             if ((k[j].min() > k[j].counter()) || 
                 (k[j].max() < k[j].counter()))
               return ES_FAILED;
-          return ES_SUBSUMED(home,*this);
+          return home.ES_SUBSUMED(*this);
         }
       }
     }
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (Card::propagate)
           GECODE_ME_CHECK(k[i].eq(home,count[i]));
       }
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     if (Card::propagate) {

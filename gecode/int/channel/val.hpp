@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Channel {
     } while (!xa.empty());
 
     if (n_na == 0)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     return shared ? ES_NOFIX : ES_FIX;
   }
 

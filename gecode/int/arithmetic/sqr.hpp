@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   SqrPlusBnd<VA,VB>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
-    return x0.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
+    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned())
       return (x0.val()*x0.val() == x1.val()) ?
-        ES_SUBSUMED(home,*this) : ES_FAILED;
+        home.ES_SUBSUMED(*this) : ES_FAILED;
 
     return ES_NOFIX;
   }
@@ -243,8 +243,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
       return x0.assigned() ?
-        ES_SUBSUMED(home,*this)
-        : ES_NOFIX_PARTIAL(home,*this,VA::med(ME_INT_DOM));
+        home.ES_SUBSUMED(*this)
+        : home.ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
 
     {
@@ -259,7 +259,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.inter_v(home,s1,false));
     }
 
-    return x0.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
+    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 
@@ -338,8 +338,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
       if (x0.assigned() && x1.assigned())
         return (x0.val()*x0.val() == x1.val()) ?
-          ES_SUBSUMED(home,*this) : ES_FAILED;
-      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
+          home.ES_SUBSUMED(*this) : ES_FAILED;
+      return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
 
     }
 
@@ -367,7 +367,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.inter_v(home,u,false));
     }
 
-    return x0.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
+    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 }}}

@@ -165,10 +165,10 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_FAILED;
     if (c == 0)
       // All views must be different
-      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+      return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
     if (c == n_x)
       // All views must be equal
-      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+      return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
     int m = std::max(c,n_x-c)+1;
     assert(m <= n_x);
     // Now, there must be new subscriptions from x[n_s] up to x[m-1]
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Count {
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     // Eliminate decided views from unsubscribed views
     for (int i=n_x; i-- > n_s; )
       switch (holds(x[i],y)) {
@@ -264,10 +264,10 @@ namespace Gecode { namespace Int { namespace Count {
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (c == n_x)
       // All views must be equal
-      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+      return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
     // Now, there must be new subscriptions from x[n_s] up to x[c+1]
     while (n_s <= c)
       x[n_s++].subscribe(home,*this,PC_INT_DOM,false);
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int { namespace Count {
     if (c < 0)
       return ES_FAILED;
     if (c >= n_x)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     // Eliminate decided views from unsubscribed views
     for (int i=n_x; i-- > n_s; )
       switch (holds(x[i],y)) {
@@ -359,10 +359,10 @@ namespace Gecode { namespace Int { namespace Count {
     if (c < 0)
       return ES_FAILED;
     if (c >= n_x)
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (c == 0)
       // All views must be different
-      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+      return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
     // Now, there must be new subscriptions from x[n_s] up to x[n_x-c+1]
     int m = n_x-c;
     while (n_s <= m)
@@ -479,20 +479,20 @@ namespace Gecode { namespace Int { namespace Count {
     bool s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;
     if ((n < c) || (c < 0))
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (n == 0)
-      return (c == 0) ? ES_FAILED : ES_SUBSUMED(home,*this);
+      return (c == 0) ? ES_FAILED : home.ES_SUBSUMED(*this);
     if (n == 1) {
       if (s0)
         if (c == 1)
-          return post_false(home,x0,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+          return post_false(home,x0,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
         else
-          return post_true(home,x0,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+          return post_true(home,x0,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
       else
         if (c == 1)
-          return post_false(home,x1,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+          return post_false(home,x1,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
         else
-          return post_true(home,x1,y) ? ES_FAILED : ES_SUBSUMED(home,*this);
+          return post_true(home,x1,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }

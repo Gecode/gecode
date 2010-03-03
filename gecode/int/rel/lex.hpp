@@ -95,14 +95,14 @@ namespace Gecode { namespace Int { namespace Rel {
       }
 
       if (i == n) // case: $
-        return strict ? ES_FAILED : ES_SUBSUMED(home,*this);
+        return strict ? ES_FAILED : home.ES_SUBSUMED(*this);
 
       // Possible cases left: <, <=, > (yields failure), ?
       GECODE_ME_CHECK(x[i].lq(home,y[i].max()));
       GECODE_ME_CHECK(y[i].gq(home,x[i].min()));
 
       if (x[i].max() < y[i].min()) // case: < (after tell)
-        return ES_SUBSUMED(home,*this);
+        return home.ES_SUBSUMED(*this);
 
       // x[i] can never be equal to y[i] (otherwise: >=)
       assert(!(x[i].assigned() && y[i].assigned() &&

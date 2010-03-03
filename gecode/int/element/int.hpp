@@ -259,11 +259,11 @@ namespace Gecode { namespace Int { namespace Element {
       IterVal v(iv);
       if (shared(x0,x1)) {
         GECODE_ME_CHECK(x1.inter_v(home,v,false));
-        return assigned ? ES_SUBSUMED(home,*this) : ES_NOFIX;
+        return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
       } else {
         GECODE_ME_CHECK(x1.narrow_v(home,v,false));
         return (x0.assigned() || x1.assigned()) ?
-          ES_SUBSUMED(home,*this) : ES_FIX;
+          home.ES_SUBSUMED(*this) : ES_FIX;
       }
     }
   }

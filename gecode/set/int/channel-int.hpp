@@ -144,7 +144,7 @@ namespace Gecode { namespace Set { namespace Int {
       }
     }
 
-    return (assigned==xs.size()) ? ES_SUBSUMED(home,*this) : ES_NOFIX;
+    return (assigned==xs.size()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
   }
 
 }}}

@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Dom {
     } else {
       return ES_FIX;
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 

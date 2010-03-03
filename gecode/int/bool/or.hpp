@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   ExecStatus
   OrTrueSubsumed<BV>::propagate(Space& home, const ModEventDelta&) {
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
         GECODE_NEVER;
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
 #undef GECODE_INT_STATUS
   }
 
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
 #undef GECODE_INT_STATUS
   }
 
@@ -451,7 +451,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
 #undef GECODE_INT_STATUS
   }
 
@@ -542,7 +542,7 @@ namespace Gecode { namespace Int { namespace Bool {
       return ES_FIX;
     case GECODE_INT_STATUS(NONE,ZERO,NONE):
       switch (bool_test(x0,x2)) {
-      case BT_SAME: return ES_SUBSUMED(home,*this);
+      case BT_SAME: return home.ES_SUBSUMED(*this);
       case BT_COMP: return ES_FAILED;
       case BT_NONE: return ES_FIX;
       default: GECODE_NEVER;
@@ -560,7 +560,7 @@ namespace Gecode { namespace Int { namespace Bool {
       break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE):
       switch (bool_test(x1,x2)) {
-      case BT_SAME: return ES_SUBSUMED(home,*this);
+      case BT_SAME: return home.ES_SUBSUMED(*this);
       case BT_COMP: return ES_FAILED;
       case BT_NONE: return ES_FIX;
       default: GECODE_NEVER;
@@ -603,7 +603,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
 #undef GECODE_INT_STATUS
   }
 
@@ -702,7 +702,7 @@ namespace Gecode { namespace Int { namespace Bool {
       int n = x.size();
       for (int i=n; i--; )
         if (x[i].one()) {
-          return ES_SUBSUMED(home,*this);
+          return home.ES_SUBSUMED(*this);
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
@@ -719,7 +719,7 @@ namespace Gecode { namespace Int { namespace Bool {
         }
       // All views have been assigned!
       GECODE_ME_CHECK(x1.one(home));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }
@@ -728,9 +728,9 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   NaryOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
     if (x0.one())
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     if (x1.one())
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
     GECODE_ES_CHECK(resubscribe(home,x1,x0));
     return ES_FIX;
@@ -848,7 +848,7 @@ namespace Gecode { namespace Int { namespace Bool {
       // There is exactly one view which is one
       GECODE_ME_CHECK(y.one_none(home));
     }
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 }}}

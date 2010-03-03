@@ -553,7 +553,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       return ES_FIX;
     } else {
       return (View::modevent(d) == ME_INT_VAL)
-        ? ES_SUBSUMED_NOFIX(home,c,a) : ES_NOFIX;
+        ? home.ES_SUBSUMED_NOFIX(c,a) : ES_NOFIX;
     }
   }
 
@@ -643,7 +643,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Check subsumption
     if (c.empty())
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     else
       return ES_FIX;
   }

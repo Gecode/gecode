@@ -75,8 +75,8 @@ namespace Gecode { namespace Graph { namespace Circuit {
       if (escv != ES_FIX)
         return escv;
       if (y.size() < 2)
-        return ES_SUBSUMED(home,*this);
-      return ES_FIX_PARTIAL(home,*this,View::med(Int::ME_INT_DOM));
+        return home.ES_SUBSUMED(*this);
+      return home.ES_FIX_PARTIAL(*this,View::med(Int::ME_INT_DOM));
     }
 
     if (dc.available()) {

@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace Int {
      GECODE_ME_CHECK(x1.lq(home,static_cast<int>(x0.cardMax())));
    } while (x1.min() > x1min || x1.max() < x1max);
    if (x1.assigned())
-     return ES_SUBSUMED(home,*this);
+     return home.ES_SUBSUMED(*this);
    return ES_FIX;
   }
 

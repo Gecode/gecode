@@ -593,7 +593,7 @@ namespace Gecode { namespace Int { namespace GCC {
   Bnd<Card>::propagate(Space& home, const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
       GECODE_ES_CHECK(prop_val<Card>(home,*this,y,k));
-      return ES_NOFIX_PARTIAL(home,*this,IntView::med(ME_INT_BND));
+      return home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_BND));
     }
 
     if (Card::propagate)
@@ -663,7 +663,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (all_assigned) {
       for (int i = k.size(); i--; )
         GECODE_ME_CHECK(k[i].eq(home, count[i]));
-      return ES_SUBSUMED(home,*this);
+      return home.ES_SUBSUMED(*this);
     }
 
     if (Card::propagate)
@@ -796,7 +796,7 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = k.size(); i--; )
       GECODE_ME_CHECK(k[i].eq(home, count[i]));
 
-    return ES_SUBSUMED(home,*this);
+    return home.ES_SUBSUMED(*this);
   }
 
 
