@@ -642,11 +642,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     audit();
 
     // Check subsumption
-    if (c.empty()) {
-      c.dispose(home);
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
-    return ES_FIX;
+    if (c.empty())
+      return ES_SUBSUMED(*this,home);
+    else
+      return ES_FIX;
   }
 
 

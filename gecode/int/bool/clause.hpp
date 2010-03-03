@@ -342,10 +342,9 @@ namespace Gecode { namespace Int { namespace Bool {
       c.dispose(home);
     } else {
       // There is exactly one view which is one
-      cancel(home);
       GECODE_ME_CHECK(z.one_none(home));
     }
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}

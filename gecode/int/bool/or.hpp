@@ -158,23 +158,20 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ZERO):
       GECODE_ME_CHECK(x0.one_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE):
-      x0.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ZERO,NONE):
       GECODE_ME_CHECK(x1.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,ZERO):
       return ES_FAILED;
     case GECODE_INT_STATUS(ZERO,ONE):
-      break;
     case GECODE_INT_STATUS(ONE,NONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ONE,ZERO):
-      break;
     case GECODE_INT_STATUS(ONE,ONE):
       break;
     default:
         GECODE_NEVER;
     }
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
 #undef GECODE_INT_STATUS
   }
 
@@ -249,14 +246,14 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ONE,NONE):
     case GECODE_INT_STATUS(NONE,ONE,ZERO):
     case GECODE_INT_STATUS(NONE,ONE,ONE):
-      x0.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE):
       std::swap(x0,x2); x0.subscribe(home,*this,PC_BOOL_VAL);
       return ES_FIX;
     case GECODE_INT_STATUS(ZERO,NONE,ZERO):
       GECODE_ME_CHECK(x1.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,NONE,ONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ZERO,ZERO,NONE):
       GECODE_ME_CHECK(x2.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,ZERO,ZERO):
@@ -265,11 +262,9 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ZERO,ONE,NONE):
     case GECODE_INT_STATUS(ZERO,ONE,ZERO):
     case GECODE_INT_STATUS(ZERO,ONE,ONE):
-      break;
     case GECODE_INT_STATUS(ONE,NONE,NONE):
     case GECODE_INT_STATUS(ONE,NONE,ZERO):
     case GECODE_INT_STATUS(ONE,NONE,ONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ONE,ZERO,NONE):
     case GECODE_INT_STATUS(ONE,ZERO,ZERO):
     case GECODE_INT_STATUS(ONE,ZERO,ONE):
@@ -280,7 +275,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
 #undef GECODE_INT_STATUS
   }
 
@@ -364,7 +359,7 @@ namespace Gecode { namespace Int { namespace Bool {
       std::swap(x1,x2); x1.subscribe(home,*this,PC_BOOL_VAL,false);
       return ES_FIX;
     case GECODE_INT_STATUS(NONE,ZERO,NONE,ONE):
-      x0.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(NONE,ZERO,ZERO,NONE):
       std::swap(x1,x3); x1.subscribe(home,*this,PC_BOOL_VAL,false);
       return ES_FIX;
@@ -383,24 +378,23 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ONE,ONE,NONE):
     case GECODE_INT_STATUS(NONE,ONE,ONE,ZERO):
     case GECODE_INT_STATUS(NONE,ONE,ONE,ONE):
-      x0.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE,NONE):
     case GECODE_INT_STATUS(ZERO,NONE,NONE,ZERO):
       std::swap(x0,x2); x0.subscribe(home,*this,PC_BOOL_VAL,false);
       return ES_FIX;
     case GECODE_INT_STATUS(ZERO,NONE,NONE,ONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ZERO,NONE,ZERO,NONE):
       std::swap(x0,x3); x0.subscribe(home,*this,PC_BOOL_VAL,false);
       return ES_FIX;
     case GECODE_INT_STATUS(ZERO,NONE,ZERO,ZERO):
       GECODE_ME_CHECK(x1.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,NONE,ZERO,ONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ZERO,NONE,ONE,NONE):
     case GECODE_INT_STATUS(ZERO,NONE,ONE,ZERO):
     case GECODE_INT_STATUS(ZERO,NONE,ONE,ONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ZERO,ZERO,NONE,NONE):
       std::swap(x0,x2); x0.subscribe(home,*this,PC_BOOL_VAL,false);
       std::swap(x1,x3); x1.subscribe(home,*this,PC_BOOL_VAL,false);
@@ -426,7 +420,6 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ZERO,ONE,ONE,NONE):
     case GECODE_INT_STATUS(ZERO,ONE,ONE,ZERO):
     case GECODE_INT_STATUS(ZERO,ONE,ONE,ONE):
-      break;
     case GECODE_INT_STATUS(ONE,NONE,NONE,NONE):
     case GECODE_INT_STATUS(ONE,NONE,NONE,ZERO):
     case GECODE_INT_STATUS(ONE,NONE,NONE,ONE):
@@ -436,7 +429,6 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ONE,NONE,ONE,NONE):
     case GECODE_INT_STATUS(ONE,NONE,ONE,ZERO):
     case GECODE_INT_STATUS(ONE,NONE,ONE,ONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ONE,ZERO,NONE,NONE):
     case GECODE_INT_STATUS(ONE,ZERO,NONE,ZERO):
     case GECODE_INT_STATUS(ONE,ZERO,NONE,ONE):
@@ -459,7 +451,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
 #undef GECODE_INT_STATUS
   }
 
@@ -561,13 +553,11 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ZERO,ONE):
       GECODE_ME_CHECK(x0.one_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE,NONE):
-      x0.cancel(home,*this,PC_BOOL_VAL);
-      GECODE_ME_CHECK(x2.one_none(home));
-      break;
+      GECODE_ME_CHECK(x2.one_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE,ZERO):
       return ES_FAILED;
     case GECODE_INT_STATUS(NONE,ONE,ONE):
-      x0.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE):
       switch (bool_test(x1,x2)) {
       case BT_SAME: return ES_SUBSUMED(*this,home);
@@ -593,12 +583,11 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ZERO,ONE,ONE):
       break;
     case GECODE_INT_STATUS(ONE,NONE,NONE):
-      x1.cancel(home,*this,PC_BOOL_VAL);
       GECODE_ME_CHECK(x2.one_none(home)); break;
     case GECODE_INT_STATUS(ONE,NONE,ZERO):
       return ES_FAILED;
     case GECODE_INT_STATUS(ONE,NONE,ONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
+      break;
     case GECODE_INT_STATUS(ONE,ZERO,NONE):
       GECODE_ME_CHECK(x2.one_none(home)); break;
     case GECODE_INT_STATUS(ONE,ZERO,ZERO):
@@ -614,7 +603,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
 #undef GECODE_INT_STATUS
   }
 
@@ -713,8 +702,7 @@ namespace Gecode { namespace Int { namespace Bool {
       int n = x.size();
       for (int i=n; i--; )
         if (x[i].one()) {
-          x1.cancel(home,*this,PC_BOOL_VAL);
-          return ES_SUBSUMED(*this,sizeof(*this));
+          return ES_SUBSUMED(*this,home);
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
@@ -731,7 +719,7 @@ namespace Gecode { namespace Int { namespace Bool {
         }
       // All views have been assigned!
       GECODE_ME_CHECK(x1.one(home));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     return ES_FIX;
   }
@@ -739,14 +727,10 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   ExecStatus
   NaryOrTrue<BV>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.one()) {
-      x1.cancel(home,*this,PC_BOOL_VAL);
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
-    if (x1.one()) {
-      x0.cancel(home,*this,PC_BOOL_VAL);
-      return ES_SUBSUMED(*this,sizeof(*this));
-    }
+    if (x0.one())
+      return ES_SUBSUMED(*this,home);
+    if (x1.one())
+      return ES_SUBSUMED(*this,home);
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
     GECODE_ES_CHECK(resubscribe(home,x1,x0));
     return ES_FIX;
@@ -861,13 +845,10 @@ namespace Gecode { namespace Int { namespace Bool {
       // All views are zero
       GECODE_ME_CHECK(y.zero_none(home));
     } else {
-      Advisors<Advisor> as(c);
-      x.cancel(home,as.advisor());
       // There is exactly one view which is one
       GECODE_ME_CHECK(y.one_none(home));
     }
-    c.dispose(home);
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}

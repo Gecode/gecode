@@ -182,13 +182,8 @@ namespace Gecode { namespace Int { namespace Linear {
       for (int i=n_hs; i--; )
         if (x[i].none())
           GECODE_ME_CHECK(x[i].one_none(home));
-    } else {
-      Advisors<Advisor> as(co);
-      for (int i=n_hs; i--; )
-        x[i].cancel(home,as.advisor());
     }
-    co.dispose(home);
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
   template<class VX>
@@ -299,8 +294,7 @@ namespace Gecode { namespace Int { namespace Linear {
         if (x[i].none())
           GECODE_ME_CHECK(x[i].one_none(home));
     }
-    co.dispose(home);
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
   template<class VX>
@@ -453,7 +447,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((n < c) || (c < 0))
       return ES_SUBSUMED(*this,home);
     if (n == 0)
-      return (c == 0) ? ES_FAILED : ES_SUBSUMED(*this,sizeof(*this));
+      return (c == 0) ? ES_FAILED : ES_SUBSUMED(*this,home);
     if (n == 1) {
       if (s0) {
         if (c == 1) {
@@ -469,7 +463,7 @@ namespace Gecode { namespace Int { namespace Linear {
           GECODE_ME_CHECK(x1.one_none(home));
         }
       }
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     return ES_FIX;
   }

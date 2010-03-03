@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace Sequence {
       if (undecided(x[i],s))
         return ES_FIX;
 
-    return ES_SUBSUMED(*this,dispose(home));
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}

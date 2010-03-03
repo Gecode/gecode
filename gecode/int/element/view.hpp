@@ -425,9 +425,9 @@ namespace Gecode { namespace Int { namespace Element {
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
-      size_t s = this->dispose(home);
+      ExecStatus es = ES_SUBSUMED(*this,home);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
-      return ES_SUBSUMED(*this,s);
+      return es;
     }
     assert(iv.size() > 1);
     // Compute new result
@@ -516,9 +516,9 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
                        (home,iv,x0,x1,*this,rt)));
       if (iv.size() == 1) {
-        size_t s = this->dispose(home);
+        ExecStatus es = ES_SUBSUMED(*this,home);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-        return ES_SUBSUMED(*this,s);
+        return es;
       }
       // Compute new result
       int min = iv[iv.size()-1].view.min();
@@ -537,9 +537,9 @@ namespace Gecode { namespace Int { namespace Element {
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
-      size_t s = this->dispose(home);
+      ExecStatus es = ES_SUBSUMED(*this,home);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-      return ES_SUBSUMED(*this,s);
+      return es;
     }
     assert(iv.size() > 1);
     Region r(home);

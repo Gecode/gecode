@@ -748,26 +748,6 @@ namespace Gecode {
   /**
    * \brief %Propagator \a p is subsumed
    *
-   * The size of the propagator is \a s.
-   *
-   * Note that the propagator must be subsumed and also disposed. So
-   * in general, there should be code such as
-   * \code return ES_SUBSUMED(*this,dispose(home)) \endcode.
-   *
-   * However, in case the propagator has nothing to dispose (all its
-   * views are assigned and no external resources) it is sufficient
-   * to do
-   * \code return ES_SUBSUMED(*this,sizeof(*this)) \endcode.
-   *
-   * \warning Has a side-effect on the propagator. Overwrites
-   *          the modification event delta of a propagator.
-   *          Use only directly with returning from propagation.
-   * \ingroup TaskActorStatus
-   */
-  ExecStatus ES_SUBSUMED(Propagator& p, size_t s);
-  /**
-   * \brief %Propagator \a p is subsumed
-   *
    * First disposes the propagator and then returns subsumption.
    *
    * \warning Has a side-effect on the propagator. Overwrites
@@ -776,6 +756,21 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   ExecStatus ES_SUBSUMED(Propagator& p, Space& home);
+  /**
+   * \brief %Propagator \a p is subsumed
+   *
+   * The size of the propagator is \a s.
+   *
+   * Note that the propagator must be subsumed and also disposed. So
+   * in general, there should be code such as
+   * \code return ES_SUBSUMED(*this,dispose(home)) \endcode.
+   *
+   * \warning Has a side-effect on the propagator. Overwrites
+   *          the modification event delta of a propagator.
+   *          Use only directly with returning from propagation.
+   * \ingroup TaskActorStatus
+   */
+  ExecStatus ES_SUBSUMED_DISPOSED(Space& home, Propagator& p, size_t s);
   /**
    * \brief %Propagator \a p has computed partial fixpoint
    *
@@ -842,8 +837,8 @@ namespace Gecode {
     friend class ActorLink;
     friend class Space;
     template<class VIC> friend class VarImp;
-    friend ExecStatus ES_SUBSUMED(Propagator&, size_t);
     friend ExecStatus ES_SUBSUMED(Propagator&, Space&);
+    friend ExecStatus ES_SUBSUMED_DISPOSED(Space&,Propagator&, size_t);
     friend ExecStatus ES_FIX_PARTIAL(Propagator&, const ModEventDelta&);
     friend ExecStatus ES_NOFIX_PARTIAL(Propagator&, const ModEventDelta&);
     friend class Advisor;
@@ -2546,7 +2541,7 @@ namespace Gecode {
   }
 
   forceinline ExecStatus
-  ES_SUBSUMED(Propagator& p, size_t s) {
+  ES_SUBSUMED_DISPOSED(Space&,Propagator& p, size_t s) {
     p.u.size = s;
     return __ES_SUBSUMED;
   }

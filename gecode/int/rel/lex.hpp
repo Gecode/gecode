@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Rel {
       }
 
       if (i == n) // case: $
-        return strict ? ES_FAILED : ES_SUBSUMED(*this,sizeof(*this));
+        return strict ? ES_FAILED : ES_SUBSUMED(*this,home);
 
       // Possible cases left: <, <=, > (yields failure), ?
       GECODE_ME_CHECK(x[i].lq(home,y[i].max()));

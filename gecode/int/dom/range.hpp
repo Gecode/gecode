@@ -81,23 +81,17 @@ namespace Gecode { namespace Int { namespace Dom {
     if (b.one()) {
       GECODE_ME_CHECK(x0.gq(home,min));
       GECODE_ME_CHECK(x0.lq(home,max));
-      goto subsumed;
-    }
-    if (b.zero()) {
+    } else if (b.zero()) {
       Iter::Ranges::Singleton r(min,max);
       GECODE_ME_CHECK(x0.minus_r(home,r,false));
-      goto subsumed;
+    } else if ((x0.max() <= max) && (x0.min() >= min)) {
+      GECODE_ME_CHECK(b.one_none(home));
+    } else if ((x0.max() < min) || (x0.min() > max)) {
+      GECODE_ME_CHECK(b.zero_none(home));
+    } else {
+      return ES_FIX;
     }
-    if ((x0.max() <= max) && (x0.min() >= min)) {
-      GECODE_ME_CHECK(b.one_none(home));  goto subsumed;
-    }
-    if ((x0.max() < min) || (x0.min() > max)) {
-      GECODE_ME_CHECK(b.zero_none(home)); goto subsumed;
-    }
-    return ES_FIX;
-  subsumed:
-    x0.cancel(home,*this,PC_INT_BND);
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
 

@@ -181,14 +181,14 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((IntView::me(med) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
         GECODE_ME_CHECK(x[0].eq(home,c));
-        return ES_SUBSUMED(p,sizeof(p));
+        return ES_SUBSUMED(p,home);
       }
       if (y.size() == 1) {
         GECODE_ME_CHECK(y[0].eq(home,-c));
-        return ES_SUBSUMED(p,sizeof(p));
+        return ES_SUBSUMED(p,home);
       }
       return (c == static_cast<Val>(0)) ?
-        ES_SUBSUMED(p,sizeof(p)) : ES_FAILED;
+        ES_SUBSUMED(p,home) : ES_FAILED;
     }
 
     sl += c; su += c;
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     } while (mod);
 
-    return (sl == su) ? ES_SUBSUMED(p,sizeof(p)) : ES_FIX;
+    return (sl == su) ? ES_SUBSUMED(p,home) : ES_FIX;
   }
 
   /*
@@ -438,7 +438,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if ((-sl == c) && (-su == c)) {
       GECODE_ME_CHECK(b.one_none(home));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     if ((-sl > c) || (-su < c)) {
       GECODE_ME_CHECK(b.zero_none(home));
@@ -591,7 +591,7 @@ namespace Gecode { namespace Int { namespace Linear {
         GECODE_ME_CHECK(y[0].nq(home,-c)); return ES_SUBSUMED(*this,home);
       }
       return (c == static_cast<Val>(0)) ?
-        ES_FAILED : ES_SUBSUMED(*this,sizeof(*this));
+        ES_FAILED : ES_SUBSUMED(*this,home);
     }
     return ES_FIX;
   }
@@ -754,7 +754,7 @@ namespace Gecode { namespace Int { namespace Linear {
           return ES_SUBSUMED(*this,home);
         }
         return (c >= static_cast<Val>(0)) ?
-          ES_SUBSUMED(*this,sizeof(*this)) : ES_FAILED;
+          ES_SUBSUMED(*this,home) : ES_FAILED;
       }
     } else {
       for (int i = x.size(); i--; )
@@ -790,7 +790,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (me_modified(me) && (sly != y[i].min()))
         es = ES_NOFIX;
     }
-    return assigned ? ES_SUBSUMED(*this,sizeof(*this)) : es;
+    return assigned ? ES_SUBSUMED(*this,home) : es;
   }
 
   /*

@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
           static_cast<Val>(x2.max())+static_cast<Val>(1))));
     } while (mod);
     return x0.assigned() && x1.assigned() ?
-      ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
+      ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
   template<class Val, class VA, class VB, class VC>
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (x0.val()/x1.val() < 0)
       result = -result;
     GECODE_ME_CHECK(x2.eq(home,result));
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
   template<class View>

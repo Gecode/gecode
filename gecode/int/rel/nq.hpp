@@ -83,12 +83,10 @@ namespace Gecode { namespace Int { namespace Rel {
   Nq<View>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.nq(home,x0.val()));
-      x1.cancel(home,*this,PC_INT_VAL);
     } else {
       GECODE_ME_CHECK(x0.nq(home,x1.val()));
-      x0.cancel(home,*this,PC_INT_VAL);
     }
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}

@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (p.empty() && n.empty()) {
       GECODE_ME_CHECK(x.eq(home,-c));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
 
     sl_p += x.max() + c;
@@ -377,7 +377,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     } while (mod != 0);
 
-    return (sl_p == -su_n) ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
+    return (sl_p == -su_n) ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 

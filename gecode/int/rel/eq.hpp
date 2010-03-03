@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_FIX;
     }
     assert(x0.assigned() && x1.assigned());
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
   /*
@@ -167,11 +167,11 @@ namespace Gecode { namespace Int { namespace Rel {
   EqDom<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     if ((View0::me(med) != ME_INT_DOM) && (View1::me(med) != ME_INT_DOM)) {
       do {
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Rel {
         GECODE_ME_CHECK(x1.lq(home,x0.max()));
       } while (x0.max() != x1.max());
       if (x0.assigned())
-        return ES_SUBSUMED(*this,sizeof(*this));
+        return ES_SUBSUMED(*this,home);
       if (x0.range() && x1.range())
         return ES_FIX;
       return ES_FIX_PARTIAL(*this,View0::med(ME_INT_DOM));
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ViewRanges<View1> r1(x1);
     GECODE_ME_CHECK(x0.narrow_r(home,r1,shared(x0,x1)));
     if (x0.assigned())
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     return ES_FIX;
   }
 
@@ -266,10 +266,9 @@ namespace Gecode { namespace Int { namespace Rel {
           x.move_lst(i);
           for (int j = x.size(); j--; )
             GECODE_ME_CHECK(x[j].eq(home,n));
-          return ES_SUBSUMED(*this,sizeof(*this));
+          return ES_SUBSUMED(*this,home);
         }
       GECODE_NEVER;
-      return ES_SUBSUMED(*this,sizeof(*this));
     }
 
     if (me == ME_INT_BND) {
@@ -298,7 +297,7 @@ namespace Gecode { namespace Int { namespace Rel {
         }
       }
       if (x[0].assigned())
-        return ES_SUBSUMED(*this,sizeof(*this));
+        return ES_SUBSUMED(*this,home);
       return ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
@@ -396,10 +395,9 @@ namespace Gecode { namespace Int { namespace Rel {
           x.move_lst(i);
           for (int j = x.size(); j--; )
             GECODE_ME_CHECK(x[j].eq(home,n));
-          return ES_SUBSUMED(*this,sizeof(*this));
+          return ES_SUBSUMED(*this,home);
         }
       GECODE_NEVER;
-      return ES_SUBSUMED(*this,sizeof(*this));
     }
 
     int mn = x[0].min();
@@ -420,7 +418,7 @@ namespace Gecode { namespace Int { namespace Rel {
         goto restart_max;
       }
     }
-    return x[0].assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
+    return x[0].assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 
@@ -590,30 +588,20 @@ namespace Gecode { namespace Int { namespace Rel {
   ReEqDomInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.eq(home,c));
-      assert(x0.assigned());
-      goto subsumed;
-    }
-    if (b.zero()) {
+    } else if (b.zero()) {
       GECODE_ME_CHECK(x0.nq(home,c));
-      x0.cancel(home,*this,PC_INT_DOM);
-      goto subsumed;
+    } else {
+      switch (rtest_eq_dom(x0,c)) {
+      case RT_TRUE:
+        GECODE_ME_CHECK(b.one_none(home)); break;
+      case RT_FALSE:
+        GECODE_ME_CHECK(b.zero_none(home)); break;
+      case RT_MAYBE:
+        return ES_FIX;
+      default: GECODE_NEVER;
+      }
     }
-    switch (rtest_eq_dom(x0,c)) {
-    case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home));
-      assert(x0.assigned());
-      goto subsumed;
-    case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home));
-      x0.cancel(home,*this,PC_INT_DOM);
-      goto subsumed;
-    case RT_MAYBE:
-      break;
-    default: GECODE_NEVER;
-    }
-    return ES_FIX;
-  subsumed:
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
 
@@ -667,30 +655,20 @@ namespace Gecode { namespace Int { namespace Rel {
   ReEqBndInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.eq(home,c));
-      assert(x0.assigned());
-      goto subsumed;
-    }
-    if (b.zero()) {
+    } else if (b.zero()) {
       GECODE_ME_CHECK(x0.nq(home,c));
-      x0.cancel(home,*this,PC_INT_BND);
-      goto subsumed;
+    } else {
+      switch (rtest_eq_bnd(x0,c)) {
+      case RT_TRUE:
+        GECODE_ME_CHECK(b.one_none(home)); break;
+      case RT_FALSE:
+        GECODE_ME_CHECK(b.zero_none(home)); break;
+      case RT_MAYBE:
+        return ES_FIX;
+      default: GECODE_NEVER;
+      }
     }
-    switch (rtest_eq_bnd(x0,c)) {
-    case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home));
-      assert(x0.assigned());
-      goto subsumed;
-    case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home));
-      x0.cancel(home,*this,PC_INT_BND);
-      goto subsumed;
-    case RT_MAYBE:
-      break;
-    default: GECODE_NEVER;
-    }
-    return ES_FIX;
-  subsumed:
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
   }
 
 }}}

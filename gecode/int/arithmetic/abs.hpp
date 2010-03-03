@@ -46,19 +46,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_abs_bnd(Space& home, Propagator& p, View x0, View x1) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,(x0.val() < 0) ? -x0.val() : x0.val()));
-      return ES_SUBSUMED(p,sizeof(p));
+      return ES_SUBSUMED(p,home);
     }
 
     if (x1.assigned()) {
       if (x0.min() >= 0) {
         GECODE_ME_CHECK(x0.eq(home,x1.val()));
-        return ES_SUBSUMED(p,sizeof(p));
+        return ES_SUBSUMED(p,home);
       } else if (x0.max() <= 0) {
         GECODE_ME_CHECK(x0.eq(home,-x1.val()));
-        return ES_SUBSUMED(p,sizeof(p));
+        return ES_SUBSUMED(p,home);
       } else if (x1.val() == 0) {
         GECODE_ME_CHECK(x0.eq(home,0));
-        return ES_SUBSUMED(p,sizeof(p));
+        return ES_SUBSUMED(p,home);
       } else {
         int mp[2] = {-x1.val(),x1.val()};
         Iter::Values::Array i(mp,2);

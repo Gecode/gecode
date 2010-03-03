@@ -106,13 +106,13 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_REWRITE(prop,post) do {                                  \
-  Propagator& __p__ ## __LINE__ = (prop);                               \
-  size_t     __s__ ## __LINE__  = __p__ ## __LINE__.dispose((home));    \
-  ExecStatus __es__ ## __LINE__ = (post);                               \
-  if (__es__ ## __LINE__ != ::Gecode::ES_OK)                            \
-    return ::Gecode::ES_FAILED;                                         \
-  return ES_SUBSUMED(__p__ ## __LINE__,__s__ ## __LINE__);              \
+#define GECODE_REWRITE(prop,post) do {                                   \
+  Propagator& __p__ ## __LINE__ = (prop);                                \
+  size_t     __s__ ## __LINE__  = __p__ ## __LINE__.dispose(home);       \
+  ExecStatus __es__ ## __LINE__ = (post);                                \
+  if (__es__ ## __LINE__ != ::Gecode::ES_OK)                             \
+    return ::Gecode::ES_FAILED;                                          \
+  return ES_SUBSUMED_DISPOSED(home,__p__ ## __LINE__,__s__ ## __LINE__); \
 } while (0)
 
 // STATISTICS: kernel-other

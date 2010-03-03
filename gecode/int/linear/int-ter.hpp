@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Linear {
                     TM_X0_MIN | TM_X1_MIN);
     } while (bm);
     return (x0.assigned() && x1.assigned()) ?
-      ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
+      ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 #undef GECODE_INT_PV

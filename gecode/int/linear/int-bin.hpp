@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_INT_PV(BM_X0_MAX, x0.lq(home,c-x1.min()), BM_X1_MIN);
       GECODE_INT_PV(BM_X1_MAX, x1.lq(home,c-x0.min()), BM_X0_MIN);
     } while (bm);
-    return x0.assigned() ? ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
+    return x0.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
 #undef GECODE_INT_PV

@@ -86,11 +86,8 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ZERO):
       GECODE_ME_CHECK(x0.zero_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE):
-      x0.cancel(home,*this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ZERO,NONE):
-      x1.cancel(home,*this,PC_BOOL_VAL); break;
     case GECODE_INT_STATUS(ZERO,ZERO):
-      break;
     case GECODE_INT_STATUS(ZERO,ONE):
       break;
     case GECODE_INT_STATUS(ONE,NONE):
@@ -102,7 +99,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(*this,sizeof(*this));
+    return ES_SUBSUMED(*this,home);
 #undef GECODE_INT_STATUS
   }
 

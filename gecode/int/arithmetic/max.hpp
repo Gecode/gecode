@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((x1.max() <= x0.min()) || (x1.max() < x2.min()))
       GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x0,x2)));
     return x0.assigned() && x1.assigned() && x2.assigned() ?
-      ES_SUBSUMED(*this,sizeof(*this)) : ES_FIX;
+      ES_SUBSUMED(*this,home) : ES_FIX;
   }
 
   /*
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((status & MPS_REMOVED) != 0)
       goto rerun;
     if (((status & MPS_ASSIGNED) != 0) && y.assigned())
-      return ES_SUBSUMED(p,sizeof(p));
+      return ES_SUBSUMED(p,home);
     return ((status & MPS_NEW_BOUND) != 0) ? ES_NOFIX : ES_FIX;
   }
 
@@ -286,7 +286,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if ((x1.max() <= x0.min()) || (x1.max() < x2.min()))
         GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x0,x2)));
       return x0.assigned() && x1.assigned() && x2.assigned() ?
-        ES_SUBSUMED(*this,sizeof(*this)) :
+        ES_SUBSUMED(*this,home) :
         ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
     ViewRanges<View> r0(x0), r1(x1);

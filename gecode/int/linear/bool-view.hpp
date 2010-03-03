@@ -140,18 +140,18 @@ namespace Gecode { namespace Int { namespace Linear {
     GECODE_ME_CHECK(y.lq(home,n-c));
     GECODE_ME_CHECK(y.gq(home,-c));
     if (n == 0)
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     if (y.min()+c == n) {
       assert(y.assigned());
       for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].one_none(home));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
       for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].zero_none(home));
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     if (y.assigned())
       GECODE_REWRITE(*this,EqBoolInt<XV>::post(home(*this),x,y.val()+c));
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace Linear {
         assert(y.val()+c == 0);
         GECODE_ME_CHECK(x[0].one_none(home));
       }
-      return ES_SUBSUMED(*this,sizeof(*this));
+      return ES_SUBSUMED(*this,home);
     }
     return ES_FIX;
   }
