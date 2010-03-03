@@ -531,7 +531,7 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK(x1.gq(home,min));
       return (x1.assigned() && (min == max)) ?
         ES_SUBSUMED(home,*this) :
-        ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
+        ES_NOFIX_PARTIAL(home,*this,VA::med(ME_INT_DOM));
     }
     RelTestDom<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >

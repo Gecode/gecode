@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   AbsDom<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_abs_bnd<View,Rel::EqDom>(home, *this, x0, x1)));
-      return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
     }
 
     {

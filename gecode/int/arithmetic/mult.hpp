@@ -540,7 +540,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlusDom<Val,VA,VB,VC>::propagate(Space& home, const ModEventDelta& med) {
     if (VA::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK((prop_mult_plus_bnd<Val,VA,VB,VC>(home,*this,x0,x1,x2)));
-      return ES_FIX_PARTIAL(*this,VA::med(ME_INT_DOM));
+      return ES_FIX_PARTIAL(home,*this,VA::med(ME_INT_DOM));
     }
     IntView y0(x0.var()), y1(x1.var()), y2(x2.var());
     return prop_mult_dom<Val,IntView>(home,*this,y0,y1,y2);
@@ -634,7 +634,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return ES_SUBSUMED(home,*this);
       }
 
-      return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
 
     prop_xpx:
       std::swap(x0,x1);
@@ -655,7 +655,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return ES_SUBSUMED(home,*this);
       }
 
-      return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
 
     prop_xnx:
       std::swap(x0,x1);
@@ -676,7 +676,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return ES_SUBSUMED(home,*this);
       }
 
-      return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
 
     rewrite_ppp:
       GECODE_REWRITE(*this,(MultPlusDom<double,IntView,IntView,IntView>

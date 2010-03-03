@@ -705,7 +705,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (x.size() < 2)
         return ES_SUBSUMED(home,*this);
       if (es == ES_FIX)
-        return ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
+        return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
       es = prop_bnd<View>(home,x);
       GECODE_ES_CHECK(es);
       if (x.size() < 2)
@@ -714,7 +714,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       GECODE_ES_CHECK(es);
       if (x.size() < 2)
         return ES_SUBSUMED(home,*this);
-      return ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
     }
 
     if (x.size() == 2)

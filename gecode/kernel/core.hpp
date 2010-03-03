@@ -781,7 +781,8 @@ namespace Gecode {
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med);
+  ExecStatus ES_FIX_PARTIAL(Space& home, Propagator& p, 
+                            const ModEventDelta& med);
   /**
    * \brief %Propagator \a p has not computed partial fixpoint
    *
@@ -792,7 +793,8 @@ namespace Gecode {
    *          Use only directly with returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med);
+  ExecStatus ES_NOFIX_PARTIAL(Space& home, Propagator& p, 
+                              const ModEventDelta& med);
 
   /**
    * \brief Home class for posting propagators
@@ -839,8 +841,8 @@ namespace Gecode {
     template<class VIC> friend class VarImp;
     friend ExecStatus ES_SUBSUMED(Space&, Propagator&);
     friend ExecStatus ES_SUBSUMED_DISPOSED(Space&,Propagator&, size_t);
-    friend ExecStatus ES_FIX_PARTIAL(Propagator&, const ModEventDelta&);
-    friend ExecStatus ES_NOFIX_PARTIAL(Propagator&, const ModEventDelta&);
+    friend ExecStatus ES_FIX_PARTIAL(Space&,Propagator&, const ModEventDelta&);
+    friend ExecStatus ES_NOFIX_PARTIAL(Space&,Propagator&, const ModEventDelta&);
     friend class Advisor;
     template<class A> friend class Council;
   private:
@@ -2553,14 +2555,14 @@ namespace Gecode {
   }
 
   forceinline ExecStatus
-  ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
+  ES_FIX_PARTIAL(Space&, Propagator& p, const ModEventDelta& med) {
     p.u.med = med;
     assert(p.u.med != 0);
     return __ES_PARTIAL;
   }
 
   forceinline ExecStatus
-  ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
+  ES_NOFIX_PARTIAL(Space&, Propagator& p, const ModEventDelta& med) {
     p.u.med = AllVarConf::med_combine(p.u.med,med);
     assert(p.u.med != 0);
     return __ES_PARTIAL;

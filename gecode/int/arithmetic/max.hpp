@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x0,x2)));
       return x0.assigned() && x1.assigned() && x2.assigned() ?
         ES_SUBSUMED(home,*this) :
-        ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+        ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
     }
     ViewRanges<View> r0(x0), r1(x1);
     Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
@@ -371,8 +371,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       ExecStatus es = prop_nary_max_bnd(home,*this,x,y,PC_INT_DOM);
       GECODE_ES_CHECK(es);
       return (es == ES_FIX) ?
-        ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM)) :
-        ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+        ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM)) :
+        ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
     }
     Region r(home);
     ViewRanges<View>* i_x = r.alloc<ViewRanges<View> >(x.size());

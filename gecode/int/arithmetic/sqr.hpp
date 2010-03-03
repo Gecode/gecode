@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ES_CHECK(prop_sqr_plus_bnd(home,x0,x1));
       return x0.assigned() ?
         ES_SUBSUMED(home,*this)
-        : ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
+        : ES_NOFIX_PARTIAL(home,*this,VA::med(ME_INT_DOM));
     }
 
     {
@@ -339,7 +339,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (x0.assigned() && x1.assigned())
         return (x0.val()*x0.val() == x1.val()) ?
           ES_SUBSUMED(home,*this) : ES_FAILED;
-      return ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
 
     }
 

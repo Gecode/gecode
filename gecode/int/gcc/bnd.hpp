@@ -593,7 +593,7 @@ namespace Gecode { namespace Int { namespace GCC {
   Bnd<Card>::propagate(Space& home, const ModEventDelta& med) {
     if (IntView::me(med) == ME_INT_VAL) {
       GECODE_ES_CHECK(prop_val<Card>(home,*this,y,k));
-      return ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_BND));
+      return ES_NOFIX_PARTIAL(home,*this,IntView::med(ME_INT_BND));
     }
 
     if (Card::propagate)

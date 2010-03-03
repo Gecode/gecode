@@ -192,7 +192,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (View::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_sqrt_bnd(home,x0,x1));
       return x1.assigned() ? ES_SUBSUMED(home,*this)
-        : ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+        : ES_NOFIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
     }
 
     {

@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (y.size() < 2)
         return ES_SUBSUMED(home,*this);
       if (es == ES_FIX)
-        return ES_FIX_PARTIAL(*this,View::med(ME_INT_BND));
+        return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_BND));
     }
 
     if (y.size() == 2)

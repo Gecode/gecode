@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_SUBSUMED(home,*this);
       if (x0.range() && x1.range())
         return ES_FIX;
-      return ES_FIX_PARTIAL(*this,View0::med(ME_INT_DOM));
+      return ES_FIX_PARTIAL(home,*this,View0::med(ME_INT_DOM));
     }
     ViewRanges<View0> r0(x0);
     GECODE_ME_CHECK(x1.inter_r(home,r0,shared(x0,x1)));
@@ -298,7 +298,7 @@ namespace Gecode { namespace Int { namespace Rel {
       }
       if (x[0].assigned())
         return ES_SUBSUMED(home,*this);
-      return ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return ES_FIX_PARTIAL(home,*this,View::med(ME_INT_DOM));
     }
 
     int n = x.size();
