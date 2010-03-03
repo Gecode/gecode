@@ -134,7 +134,7 @@ namespace Gecode { namespace Kernel {
   UnaryWait<View>::propagate(Space& home, const ModEventDelta&) {
     assert(x.assigned());
     c(home);
-    return home.failed() ? ES_FAILED : ES_SUBSUMED(*this,home);
+    return home.failed() ? ES_FAILED : ES_SUBSUMED(home,*this);
   }
   template<class View>
   ExecStatus 
@@ -200,7 +200,7 @@ namespace Gecode { namespace Kernel {
     if (x.size() == 1) {
       x.size(0);
       c(home);
-      return home.failed() ? ES_FAILED : ES_SUBSUMED(*this,home);
+      return home.failed() ? ES_FAILED : ES_SUBSUMED(home,*this);
     } else {
       // Create new subscription
       x.move_lst(0);

@@ -46,24 +46,24 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_abs_bnd(Space& home, Propagator& p, View x0, View x1) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,(x0.val() < 0) ? -x0.val() : x0.val()));
-      return ES_SUBSUMED(p,home);
+      return ES_SUBSUMED(home,p);
     }
 
     if (x1.assigned()) {
       if (x0.min() >= 0) {
         GECODE_ME_CHECK(x0.eq(home,x1.val()));
-        return ES_SUBSUMED(p,home);
+        return ES_SUBSUMED(home,p);
       } else if (x0.max() <= 0) {
         GECODE_ME_CHECK(x0.eq(home,-x1.val()));
-        return ES_SUBSUMED(p,home);
+        return ES_SUBSUMED(home,p);
       } else if (x1.val() == 0) {
         GECODE_ME_CHECK(x0.eq(home,0));
-        return ES_SUBSUMED(p,home);
+        return ES_SUBSUMED(home,p);
       } else {
         int mp[2] = {-x1.val(),x1.val()};
         Iter::Values::Array i(mp,2);
         GECODE_ME_CHECK(x0.inter_v(home,i,false));
-        return ES_SUBSUMED(p,home);
+        return ES_SUBSUMED(home,p);
       }
     }
 
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     if (x1.assigned())
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
 
     if (x0.min() >= 0)
       GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x0,x1)));

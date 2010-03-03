@@ -73,6 +73,17 @@ Date: ??????
 The next big thing.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The function ES_SUBSUMED now accepts a space as its first
+argument and a propagator as its second (order got reversed). The
+variant with a size as the second argument is available as
+ES_SUBSUMED_DISPOSED but use is highly discouraged. Read
+"Modeling and Programming with Gecode" for details.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

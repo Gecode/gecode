@@ -171,7 +171,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
         break;
     }
     
-    return assigned ? ES_SUBSUMED(p,home) : ES_NOFIX;
+    return assigned ? ES_SUBSUMED(home,p) : ES_NOFIX;
   }
 
 }}}

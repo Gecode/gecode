@@ -643,7 +643,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Check subsumption
     if (c.empty())
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     else
       return ES_FIX;
   }

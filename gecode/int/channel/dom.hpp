@@ -293,9 +293,9 @@ namespace Gecode { namespace Int { namespace Channel {
       for (int i=2*n; i--; )
         if (!xy[i].view.assigned())
           return ES_NOFIX;
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     } else {
-      return (n_na == 0) ? ES_SUBSUMED(*this,home) : ES_FIX;
+      return (n_na == 0) ? ES_SUBSUMED(home,*this) : ES_FIX;
     }
   }
 

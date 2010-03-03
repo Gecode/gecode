@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i = x.size(); i--; )
       if (!x[i].assigned())
         return shared ? ES_NOFIX : ES_FIX;
-    return ES_SUBSUMED(*this, home);
+    return ES_SUBSUMED( home,*this);
   }
 
 }}}

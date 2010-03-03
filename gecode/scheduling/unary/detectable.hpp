@@ -99,7 +99,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       }
     t.size(n);
 
-    return (t.size() < 2) ? ES_SUBSUMED(p,home) : ES_OK;
+    return (t.size() < 2) ? ES_SUBSUMED(home,p) : ES_OK;
   }
   
   template<class OptTask>

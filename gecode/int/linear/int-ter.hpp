@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Linear {
                     TM_X0_MIN | TM_X1_MIN);
     } while (bm);
     return (x0.assigned() && x1.assigned()) ?
-      ES_SUBSUMED(*this,home) : ES_FIX;
+      ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 #undef GECODE_INT_PV
@@ -206,15 +206,15 @@ namespace Gecode { namespace Int { namespace Linear {
   NqTer<Val,A,B,C>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.nq(home,c-x0.val()-x1.val()));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     if (x0.assigned() && x2.assigned()) {
       GECODE_ME_CHECK(x1.nq(home,c-x0.val()-x2.val()));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     if (x1.assigned() && x2.assigned()) {
       GECODE_ME_CHECK(x0.nq(home,c-x1.val()-x2.val()));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     return ES_FIX;
   }
@@ -264,7 +264,7 @@ namespace Gecode { namespace Int { namespace Linear {
     GECODE_ME_CHECK(x1.lq(home,c-x0.min()-x2.min()));
     GECODE_ME_CHECK(x2.lq(home,c-x0.min()-x1.min()));
     return (x0.max()+x1.max()+x2.max() <= c) ?
-      ES_SUBSUMED(*this,home) : ES_FIX;
+      ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 }}}

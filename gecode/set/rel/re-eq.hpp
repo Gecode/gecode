@@ -107,15 +107,15 @@ namespace Gecode { namespace Set { namespace Rel {
         if (x0lb.min() != x1lb.min() ||
             x0lb.max() != x1lb.max()) {
           GECODE_ME_CHECK(b.zero_none(home));
-          return ES_SUBSUMED(*this,home);
+          return ES_SUBSUMED(home,*this);
         }
       }
       if (!x0lb() && !x1lb()) {
         GECODE_ME_CHECK(b.one_none(home));
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       } else {
         GECODE_ME_CHECK(b.zero_none(home));
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       }
     }
 
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Rel {
     if (x0.cardMin() > x1.cardMax() ||
         x1.cardMin() > x0.cardMax()) {
       GECODE_ME_CHECK(b.zero_none(home));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     // check glb(x0) subset lub(x1)
@@ -132,7 +132,7 @@ namespace Gecode { namespace Set { namespace Rel {
     Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View1> > diff1(x0lb, x1ub);
     if ( diff1() ) {
       GECODE_ME_CHECK(b.zero_none(home));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     // check glb(x1) subset lub(x0)
@@ -141,7 +141,7 @@ namespace Gecode { namespace Set { namespace Rel {
     Iter::Ranges::Diff<GlbRanges<View1>, LubRanges<View0> > diff2(x1lb, x0ub);
     if ( diff2() ) {
       GECODE_ME_CHECK(b.zero_none(home));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     return ES_FIX;

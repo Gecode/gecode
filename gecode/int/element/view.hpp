@@ -425,7 +425,7 @@ namespace Gecode { namespace Int { namespace Element {
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
-      ExecStatus es = ES_SUBSUMED(*this,home);
+      ExecStatus es = ES_SUBSUMED(home,*this);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
       return es;
     }
@@ -453,7 +453,7 @@ namespace Gecode { namespace Int { namespace Element {
        es = ES_NOFIX;
     }
     return (x1.assigned() && (min == max)) ?
-      ES_SUBSUMED(*this,home) : es;
+      ES_SUBSUMED(home,*this) : es;
   }
 
 
@@ -516,7 +516,7 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
                        (home,iv,x0,x1,*this,rt)));
       if (iv.size() == 1) {
-        ExecStatus es = ES_SUBSUMED(*this,home);
+        ExecStatus es = ES_SUBSUMED(home,*this);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
         return es;
       }
@@ -530,14 +530,14 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK(x1.lq(home,max));
       GECODE_ME_CHECK(x1.gq(home,min));
       return (x1.assigned() && (min == max)) ?
-        ES_SUBSUMED(*this,home) :
+        ES_SUBSUMED(home,*this) :
         ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
     RelTestDom<VA,VC> rt;
     GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
-      ExecStatus es = ES_SUBSUMED(*this,home);
+      ExecStatus es = ES_SUBSUMED(home,*this);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
       return es;
     }

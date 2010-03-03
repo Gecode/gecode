@@ -86,9 +86,9 @@ namespace Gecode { namespace Set { namespace Rel {
       GECODE_REWRITE(*this,(Eq<View0,View1>::post(home(*this),x0,x1)));
 
     if (shared(x0,x1)) {
-      return oneassigned ? ES_SUBSUMED(*this,home) : ES_NOFIX;
+      return oneassigned ? ES_SUBSUMED(home,*this) : ES_NOFIX;
     }
-    return (x0.assigned() || x1.assigned()) ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return (x0.assigned() || x1.assigned()) ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 }}}

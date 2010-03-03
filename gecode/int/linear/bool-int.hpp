@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Linear {
         if (x[i].none())
           GECODE_ME_CHECK(x[i].one_none(home));
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
   template<class VX>
@@ -294,7 +294,7 @@ namespace Gecode { namespace Int { namespace Linear {
         if (x[i].none())
           GECODE_ME_CHECK(x[i].one_none(home));
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
   template<class VX>
@@ -445,9 +445,9 @@ namespace Gecode { namespace Int { namespace Linear {
       s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;
     if ((n < c) || (c < 0))
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     if (n == 0)
-      return (c == 0) ? ES_FAILED : ES_SUBSUMED(*this,home);
+      return (c == 0) ? ES_FAILED : ES_SUBSUMED(home,*this);
     if (n == 1) {
       if (s0) {
         if (c == 1) {
@@ -463,7 +463,7 @@ namespace Gecode { namespace Int { namespace Linear {
           GECODE_ME_CHECK(x1.one_none(home));
         }
       }
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     return ES_FIX;
   }
@@ -603,7 +603,7 @@ namespace Gecode { namespace Int { namespace Linear {
                        ::post(home(*this),nx,x.size()-c+1));
       }
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
   template<class VX, class VB>
@@ -695,7 +695,7 @@ namespace Gecode { namespace Int { namespace Linear {
         GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home(*this),x,c)));
       }
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
   template<class VX, class VB>

@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Int {
 
     new (&delta) SetDelta();
 
-    return y.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return y.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
   template<class View>

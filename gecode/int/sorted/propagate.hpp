@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (subsumed || array_subs)
-      return ES_SUBSUMED(p,home);
+      return ES_SUBSUMED(home,p);
 
     /*
      * STEP 2: creating tau
@@ -415,7 +415,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (array_subs)
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
 
     sort_sigma<View,Perm>(home,x,z);
 
@@ -426,7 +426,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (subsumed)
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
 
     if (Perm) {
       // dropping possibly yields inconsistent indices on permutation variables
@@ -616,13 +616,13 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     if (array_subs)
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
 
     if (!check_subsumption<View,Perm>(x,y,z,subsumed,dropfst))
       return ES_FAILED;
 
     if (subsumed)
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
 
     return nofix ? ES_NOFIX : ES_FIX;
   }

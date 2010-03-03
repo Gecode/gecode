@@ -404,7 +404,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (unassigned != 0)
       return ES_FIX;
 
-    return ES_SUBSUMED(*this, home);
+    return ES_SUBSUMED( home,*this);
   }
 
 

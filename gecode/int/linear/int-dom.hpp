@@ -475,7 +475,7 @@ namespace Gecode { namespace Int { namespace Linear {
         assigned = false;
     }
     if (assigned)
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     return ES_FIX;
   }
 

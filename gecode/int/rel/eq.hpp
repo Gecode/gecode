@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_FIX;
     }
     assert(x0.assigned() && x1.assigned());
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
   /*
@@ -167,11 +167,11 @@ namespace Gecode { namespace Int { namespace Rel {
   EqDom<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     if ((View0::me(med) != ME_INT_DOM) && (View1::me(med) != ME_INT_DOM)) {
       do {
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Rel {
         GECODE_ME_CHECK(x1.lq(home,x0.max()));
       } while (x0.max() != x1.max());
       if (x0.assigned())
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       if (x0.range() && x1.range())
         return ES_FIX;
       return ES_FIX_PARTIAL(*this,View0::med(ME_INT_DOM));
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ViewRanges<View1> r1(x1);
     GECODE_ME_CHECK(x0.narrow_r(home,r1,shared(x0,x1)));
     if (x0.assigned())
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     return ES_FIX;
   }
 
@@ -266,7 +266,7 @@ namespace Gecode { namespace Int { namespace Rel {
           x.move_lst(i);
           for (int j = x.size(); j--; )
             GECODE_ME_CHECK(x[j].eq(home,n));
-          return ES_SUBSUMED(*this,home);
+          return ES_SUBSUMED(home,*this);
         }
       GECODE_NEVER;
     }
@@ -297,7 +297,7 @@ namespace Gecode { namespace Int { namespace Rel {
         }
       }
       if (x[0].assigned())
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       return ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
@@ -395,7 +395,7 @@ namespace Gecode { namespace Int { namespace Rel {
           x.move_lst(i);
           for (int j = x.size(); j--; )
             GECODE_ME_CHECK(x[j].eq(home,n));
-          return ES_SUBSUMED(*this,home);
+          return ES_SUBSUMED(home,*this);
         }
       GECODE_NEVER;
     }
@@ -418,7 +418,7 @@ namespace Gecode { namespace Int { namespace Rel {
         goto restart_max;
       }
     }
-    return x[0].assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return x[0].assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 
@@ -469,9 +469,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(home,*this);
     case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(home,*this);
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -527,9 +527,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
     switch (rtest_eq_bnd(x0,x1)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(home,*this);
     case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(home,*this);
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -601,7 +601,7 @@ namespace Gecode { namespace Int { namespace Rel {
       default: GECODE_NEVER;
       }
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
 
@@ -668,7 +668,7 @@ namespace Gecode { namespace Int { namespace Rel {
       default: GECODE_NEVER;
       }
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
 }}}

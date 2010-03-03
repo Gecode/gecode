@@ -172,7 +172,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       if (x2.cardMax() == 0) {
         GECODE_ME_CHECK( x0.cardMax(home, 0) );
         GECODE_ME_CHECK( x1.cardMax(home, 0) );
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       }
 
       if (x0.cardMax() == 0)
@@ -183,10 +183,10 @@ namespace Gecode { namespace Set { namespace RelOp {
     } while(modified);
 
     if (shared(x0,x1,x2)) {
-      return (x0ass && x1ass && x2ass) ? ES_SUBSUMED(*this,home) : ES_NOFIX;
+      return (x0ass && x1ass && x2ass) ? ES_SUBSUMED(home,*this) : ES_NOFIX;
     } else {
       if (x0ass && x1ass && x2ass)
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       if (x0ass != x0.assigned() ||
           x1ass != x1.assigned() ||
           x2ass != x2.assigned()) {
@@ -308,7 +308,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       BndSetRanges all2(unionOfDets);
       GECODE_ME_CHECK( y.includeI(home,all2) );
       unionOfDets.dispose(home);
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     return shared ? ES_NOFIX : ES_FIX;

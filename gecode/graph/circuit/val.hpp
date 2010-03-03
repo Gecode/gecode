@@ -75,7 +75,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
      * a permutation.
      */
     if (y.size() < 2)
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     return path(home);
   }
 

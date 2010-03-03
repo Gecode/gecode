@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (p.empty() && n.empty()) {
       GECODE_ME_CHECK(x.eq(home,-c));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     sl_p += x.max() + c;
@@ -377,7 +377,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     } while (mod != 0);
 
-    return (sl_p == -su_n) ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return (sl_p == -su_n) ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 
@@ -530,7 +530,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     if (p.empty() && n.empty())
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
 
     return es;
   }
@@ -643,7 +643,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (p.empty() && n.empty()) {
       GECODE_ME_CHECK(x.nq(home,-c));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     if (x.assigned()) {
@@ -654,7 +654,7 @@ namespace Gecode { namespace Int { namespace Linear {
         } else if (r == 0) {
           GECODE_ME_CHECK(n.fst()->x.one_none(home));
         }
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       }
       if ((p.size() == 1) && n.empty()) {
         if (r == p.fst()->a) {
@@ -662,7 +662,7 @@ namespace Gecode { namespace Int { namespace Linear {
         } else if (r == 0) {
           GECODE_ME_CHECK(p.fst()->x.one_none(home));
         }
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       }
     }
     return ES_FIX;

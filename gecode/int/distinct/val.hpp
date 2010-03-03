@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   ExecStatus
   Val<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK((prop_val<View,true>(home,x)));
-    return (x.size() < 2) ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return (x.size() < 2) ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
   template<class View>

@@ -383,7 +383,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulatives {
                             ntask, sheight,
                             contribution, prune_tasks, prune_tasks_size));
     }
-    return subsumed ? ES_SUBSUMED(*this,home): ES_NOFIX;
+    return subsumed ? ES_SUBSUMED(home,*this): ES_NOFIX;
   }
 
 }}}

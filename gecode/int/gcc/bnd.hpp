@@ -663,7 +663,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (all_assigned) {
       for (int i = k.size(); i--; )
         GECODE_ME_CHECK(k[i].eq(home, count[i]));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     if (Card::propagate)
@@ -796,7 +796,7 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = k.size(); i--; )
       GECODE_ME_CHECK(k[i].eq(home, count[i]));
 
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
 

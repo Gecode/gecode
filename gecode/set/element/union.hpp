@@ -235,7 +235,7 @@ namespace Gecode { namespace Set { namespace Element {
         }
         for (int i=n; i--;)
           before[i].dispose(home);
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       }
 
       if (x1.cardMin() > 0) {
@@ -322,7 +322,7 @@ namespace Gecode { namespace Set { namespace Element {
         GECODE_REWRITE(*this,(Rel::Eq<SView,SView>::post(home(*this),x0,iv[0].view)));
       } else {
         GECODE_ME_CHECK(x0.cardMax(home, 0));
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       }
     }
 
@@ -334,7 +334,7 @@ namespace Gecode { namespace Set { namespace Element {
       }
     }
     if (x0.assigned() && x1.assigned() && allAssigned) {
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     return ES_FIX;

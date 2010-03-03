@@ -191,7 +191,7 @@ namespace Gecode { namespace Set { namespace Int {
     for (int i=xs_size; i--; )
       if (!xs[i].assigned())
         return ES_FIX;
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
 }}}

@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
     if (x0.assigned()) {
       assert (x1.assigned());
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     return shared(x0,x1) ? ES_NOFIX : ES_FIX;
   }

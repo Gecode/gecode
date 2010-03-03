@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_INT_PV(BM_X0_MAX, x0.lq(home,c-x1.min()), BM_X1_MIN);
       GECODE_INT_PV(BM_X1_MAX, x1.lq(home,c-x0.min()), BM_X0_MIN);
     } while (bm);
-    return x0.assigned() ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return x0.assigned() ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 #undef GECODE_INT_PV
@@ -229,11 +229,11 @@ namespace Gecode { namespace Int { namespace Linear {
     if (b.one())
       GECODE_REWRITE(*this,(EqBin<Val,A,B>::post(home(*this),x0,x1,c)));
     if ((x0.min() + x1.min() > c) || (x0.max() + x1.max() < c)) {
-      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(home,*this);
     }
     if (x0.assigned() && x1.assigned()) {
       assert(x0.val() + x1.val() == c);
-      GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(home,*this);
     }
     return ES_FIX;
   }
@@ -292,7 +292,7 @@ namespace Gecode { namespace Int { namespace Linear {
       assert(x1.assigned());
       GECODE_ME_CHECK(x0.nq(home,c-x1.val()));
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
   }
 
 
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Linear {
   LqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,c-x1.min()));
     GECODE_ME_CHECK(x1.lq(home,c-x0.min()));
-    return (x0.max()+x1.max() <= c) ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return (x0.max()+x1.max() <= c) ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace Linear {
   GqBin<Val,A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.gq(home,c-x1.max()));
     GECODE_ME_CHECK(x1.gq(home,c-x0.max()));
-    return (x0.min()+x1.min() >= c) ? ES_SUBSUMED(*this,home) : ES_FIX;
+    return (x0.min()+x1.min() >= c) ? ES_SUBSUMED(home,*this) : ES_FIX;
   }
 
 
@@ -425,10 +425,10 @@ namespace Gecode { namespace Int { namespace Linear {
     if (b.zero())
       GECODE_REWRITE(*this,(GqBin<Val,A,B>::post(home(*this),x0,x1,c+1)));
     if (x0.max() + x1.max() <= c) {
-      GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(home,*this);
     }
     if (x0.min() + x1.min() > c) {
-      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(*this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(home,*this);
     }
     return ES_FIX;
   }

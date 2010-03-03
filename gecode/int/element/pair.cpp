@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Element {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,x0.val()+w*x1.val()));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     } else if (x1.assigned()) {
       OffsetView x0x1w(x0,x1.val()*w);
       GECODE_REWRITE(*this,(Rel::EqDom<OffsetView,IntView>
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (x2.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x2.val() % w));
       GECODE_ME_CHECK(x1.eq(home,static_cast<int>(x2.val() / w)));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     return ES_NOFIX;

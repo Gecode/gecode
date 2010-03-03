@@ -300,7 +300,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       ExecStatus es = prop_val<View,false>(home,y);
       GECODE_ES_CHECK(es);
       if (y.size() < 2)
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       if (es == ES_FIX)
         return ES_FIX_PARTIAL(*this,View::med(ME_INT_BND));
     }
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     if (x.size() < 2)
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
 
     if (x.size() == 2)
       GECODE_REWRITE(*this,Rel::Nq<View>::post(home(*this),x[0],x[1]));

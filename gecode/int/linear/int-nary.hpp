@@ -181,14 +181,14 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((IntView::me(med) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
         GECODE_ME_CHECK(x[0].eq(home,c));
-        return ES_SUBSUMED(p,home);
+        return ES_SUBSUMED(home,p);
       }
       if (y.size() == 1) {
         GECODE_ME_CHECK(y[0].eq(home,-c));
-        return ES_SUBSUMED(p,home);
+        return ES_SUBSUMED(home,p);
       }
       return (c == static_cast<Val>(0)) ?
-        ES_SUBSUMED(p,home) : ES_FAILED;
+        ES_SUBSUMED(home,p) : ES_FAILED;
     }
 
     sl += c; su += c;
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     } while (mod);
 
-    return (sl == su) ? ES_SUBSUMED(p,home) : ES_FIX;
+    return (sl == su) ? ES_SUBSUMED(home,p) : ES_FIX;
   }
 
   /*
@@ -438,11 +438,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if ((-sl == c) && (-su == c)) {
       GECODE_ME_CHECK(b.one_none(home));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     if ((-sl > c) || (-su < c)) {
       GECODE_ME_CHECK(b.zero_none(home));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     return ES_FIX;
   }
@@ -585,13 +585,13 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     if (x.size() + y.size() <= 1) {
       if (x.size() == 1) {
-        GECODE_ME_CHECK(x[0].nq(home,c)); return ES_SUBSUMED(*this,home);
+        GECODE_ME_CHECK(x[0].nq(home,c)); return ES_SUBSUMED(home,*this);
       }
       if (y.size() == 1) {
-        GECODE_ME_CHECK(y[0].nq(home,-c)); return ES_SUBSUMED(*this,home);
+        GECODE_ME_CHECK(y[0].nq(home,-c)); return ES_SUBSUMED(home,*this);
       }
       return (c == static_cast<Val>(0)) ?
-        ES_FAILED : ES_SUBSUMED(*this,home);
+        ES_FAILED : ES_SUBSUMED(home,*this);
     }
     return ES_FIX;
   }
@@ -747,14 +747,14 @@ namespace Gecode { namespace Int { namespace Linear {
       if ((x.size() + y.size()) <= 1) {
         if (x.size() == 1) {
           GECODE_ME_CHECK(x[0].lq(home,c));
-          return ES_SUBSUMED(*this,home);
+          return ES_SUBSUMED(home,*this);
         }
         if (y.size() == 1) {
           GECODE_ME_CHECK(y[0].gq(home,-c));
-          return ES_SUBSUMED(*this,home);
+          return ES_SUBSUMED(home,*this);
         }
         return (c >= static_cast<Val>(0)) ?
-          ES_SUBSUMED(*this,home) : ES_FAILED;
+          ES_SUBSUMED(home,*this) : ES_FAILED;
       }
     } else {
       for (int i = x.size(); i--; )
@@ -790,7 +790,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (me_modified(me) && (sly != y[i].min()))
         es = ES_NOFIX;
     }
-    return assigned ? ES_SUBSUMED(*this,home) : es;
+    return assigned ? ES_SUBSUMED(home,*this) : es;
   }
 
   /*
@@ -848,11 +848,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (-sl > c) {
       GECODE_ME_CHECK(b.zero_none(home));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
     if (-su <= c) {
       GECODE_ME_CHECK(b.one_none(home));
-      return ES_SUBSUMED(*this,home);
+      return ES_SUBSUMED(home,*this);
     }
 
     return ES_FIX;

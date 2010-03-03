@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return ES_SUBSUMED(*this,home);
+    return ES_SUBSUMED(home,*this);
 #undef GECODE_INT_STATUS
   }
 
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Bool {
           for (int j=i+1; j<n; j++)
             GECODE_ME_CHECK(x[j].zero(home));
         }
-        return ES_SUBSUMED(*this,home);
+        return ES_SUBSUMED(home,*this);
       }
       i++;
     }
