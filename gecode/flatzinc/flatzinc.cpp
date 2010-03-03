@@ -37,6 +37,7 @@
 
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/registry.hh>
+#include <gecode/flatzinc/plugin.hh>
 
 #include <gecode/search.hh>
 
@@ -341,6 +342,8 @@ namespace Gecode { namespace FlatZinc {
       flattenAnnotations(_solveAnnotations, flatAnn);
 
       for (unsigned int i=0; i<flatAnn.size(); i++) {
+        if (flatAnn[i]->isCall("gecode_search"))
+          continue;
         try {
           AST::Call *call = flatAnn[i]->getCall("int_search");
           AST::Array *args = call->getArgs(4);
@@ -471,9 +474,20 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
+  FlatZincSpace::parseSearchOptions(void) {
+    for (unsigned int i=0; i<_solveAnnotations->a.size(); i++) {
+      if (_solveAnnotations->a[i]->isCall("gecode_search")) {
+        AST::Call* c = _solveAnnotations->a[i]->getCall();
+        branchWithPlugin(c->args);
+      }
+    }
+  }
+
+  void
   FlatZincSpace::solve(AST::Array* ann) {
     _method = SAT;
     _solveAnnotations = ann;
+    parseSearchOptions();
   }
 
   void
@@ -481,6 +495,7 @@ namespace Gecode { namespace FlatZinc {
     _method = MIN;
     _optVar = var;
     _solveAnnotations = ann;
+    parseSearchOptions();
     // Branch on optimization variable to ensure that it is given a value.
     AST::Array* args = new AST::Array(4);
     args->a[0] = new AST::Array(new AST::IntVar(_optVar));
@@ -499,6 +514,7 @@ namespace Gecode { namespace FlatZinc {
     _method = MAX;
     _optVar = var;
     _solveAnnotations = ann;
+    parseSearchOptions();
     // Branch on optimization variable to ensure that it is given a value.
     AST::Array* args = new AST::Array(4);
     args->a[0] = new AST::Array(new AST::IntVar(_optVar));
@@ -572,7 +588,7 @@ namespace Gecode { namespace FlatZinc {
                         Gist::Inspector* i) {
       Gecode::Gist::Options o;
       o.c_d = opt.c_d(); o.a_d = opt.a_d();
-      o.inspect.click = i;
+      o.inspect.click(i);
       (void) Gecode::Gist::bab(root, o);
     }
   };
@@ -671,6 +687,43 @@ namespace Gecode { namespace FlatZinc {
            << endl;
     }
   }
+
+#ifdef GECODE_HAS_QT
+  void
+  FlatZincSpace::branchWithPlugin(AST::Node* ann) {
+    if (AST::Call* c = dynamic_cast<AST::Call*>(ann)) {
+      QString pluginName(c->id.c_str());
+      if (QLibrary::isLibrary(pluginName+".dll")) {
+        pluginName += ".dll";
+      } else if (QLibrary::isLibrary(pluginName+".dylib")) {
+        pluginName = "lib" + pluginName + ".dylib";
+      } else if (QLibrary::isLibrary(pluginName+".so")) {
+        // Must check .so after .dylib so that Mac OS uses .dylib
+        pluginName = "lib" + pluginName + ".so";
+      }
+      QPluginLoader pl(pluginName);
+      QObject* plugin_o = pl.instance();
+      if (!plugin_o) {
+        throw FlatZinc::Error("FlatZinc",
+          "Error loading plugin "+pluginName.toStdString()+
+          ": "+pl.errorString().toStdString());
+      }
+      BranchPlugin* pb = qobject_cast<BranchPlugin*>(plugin_o);
+      if (!pb) {
+        throw FlatZinc::Error("FlatZinc",
+        "Error loading plugin "+pluginName.toStdString()+
+        ": does not contain valid PluginBrancher");
+      }
+      pb->branch(*this, c);
+    }
+  }
+#else
+  void
+  FlatZincSpace::branchWithPlugin(AST::Node* ann) {
+    throw FlatZinc::Error("FlatZinc",
+      "Branching with plugins not supported (requires Qt support)");
+  }
+#endif
 
   void
   FlatZincSpace::run(std::ostream& out, const Printer& p,

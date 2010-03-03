@@ -638,7 +638,7 @@ endif
 FLATZINCSRC0 = flatzinc.cpp registry.cpp
 FLATZINC_GENSRC0 = parser.tab.cpp lexer.yy.cpp
 FLATZINCHDR0 = ast.hh conexpr.hh option.hh parser.hh \
-	registry.hh symboltable.hh varspec.hh
+	plugin.hh registry.hh symboltable.hh varspec.hh
 
 FLATZINCSRC = $(FLATZINCSRC0:%=gecode/flatzinc/%)
 FLATZINC_GENSRC = $(FLATZINC_GENSRC0:%=gecode/flatzinc/%)
@@ -1155,22 +1155,22 @@ endif
 endif
 
 $(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
 $(FLATZINCSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 $(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
 $(FLATZINC_GENSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
@@ -1255,7 +1255,7 @@ $(FLATZINCDLL): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) \
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
 		$(LINKSET) $(LINKMM) $(LINKSCHEDULING) $(LINKGRAPH) \
-		$(LINKGIST) $(LINKDRIVER) \
+		$(LINKGIST) $(LINKDRIVER) $(LINKQT) \
 		@LINKOUTPUT@$(FLATZINCDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))

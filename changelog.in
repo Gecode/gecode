@@ -77,6 +77,16 @@ Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
+The FlatZinc interpreter can now be extended by plugins that implement
+custom search strategies. The plugins are implemented as dynamically loaded
+libraries using the Qt plugin mechanism. An example can be found in the
+directory gecode/flatzinc/exampleplugin.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
 The index of the variable used for optimization is now available in the
 FlatZincSpace class.
 

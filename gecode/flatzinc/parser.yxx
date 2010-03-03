@@ -1153,7 +1153,11 @@ solve_item :
       { 
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
-          pp->fg->solve($2);
+          try {
+            pp->fg->solve($2);
+          } catch (Gecode::FlatZinc::Error& e) {
+            yyerror(pp, e.toString().c_str());
+          }
         } else {
           delete $2;
         }
@@ -1162,10 +1166,14 @@ solve_item :
       { 
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
-          if ($3)
-            pp->fg->minimize($4,$2);
-          else
-            pp->fg->maximize($4,$2);
+          try {
+            if ($3)
+              pp->fg->minimize($4,$2);
+            else
+              pp->fg->maximize($4,$2);
+          } catch (Gecode::FlatZinc::Error& e) {
+            yyerror(pp, e.toString().c_str());
+          }
         } else {
           delete $2;
         }

@@ -52,6 +52,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   
   class Call;
   class Array;
+  class Atom;
   class SetLit;
   
   /// Exception signaling type error
@@ -89,6 +90,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     Call* getCall(const std::string& id);
     /// Cast this node to an array node
     Array* getArray(void);
+    /// Cast this node to an Atom node
+    Atom* getAtom(void);
     /// Cast this node to an integer variable node
     int getIntVar(void);
     /// Cast this node to a Boolean variable node
@@ -122,6 +125,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     bool isArray(void);
     /// Test if node is a set literal node
     bool isSet(void);
+    /// Test if node is an atom node
+    bool isAtom(void);
     
     /// Output string representation
     virtual void print(std::ostream&) = 0;
@@ -374,6 +379,13 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       return a;
     throw TypeError("array expected");
   }
+
+  inline Atom*
+  Node::getAtom(void) {
+    if (Atom* a = dynamic_cast<Atom*>(this))
+      return a;
+    throw TypeError("atom expected");
+  }
   
   inline int
   Node::getIntVar(void) {
@@ -448,6 +460,10 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   inline bool
   Node::isArray(void) {
     return (dynamic_cast<Array*>(this) != NULL);
+  }
+  inline bool
+  Node::isAtom(void) {
+    return (dynamic_cast<Atom*>(this) != NULL);
   }
 
   inline Node*

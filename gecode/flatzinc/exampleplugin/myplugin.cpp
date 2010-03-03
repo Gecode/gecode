@@ -4,7 +4,7 @@
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2007
+ *     Guido Tack, 2010
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,46 +35,15 @@
  *
  */
 
-#include <iostream>
-#include <fstream>
-#include <gecode/flatzinc.hh>
+#include <QObject>
 
-using namespace std;
-using namespace Gecode;
+#include "myplugin.hh"
 
-int main(int argc, char** argv) {
-  
-  Support::Timer t_total;
-  t_total.start();
-  FlatZinc::FlatZincOptions opt("Gecode/FlatZinc");
-  opt.parse(argc, argv);
-  
-  if (argc!=2) {
-    cerr << "Usage: " << argv[0] << " [options] <file>" << endl;
-    cerr << "       " << argv[0] << " -help for more information" << endl;
-    exit(EXIT_FAILURE);
-  }
-  
-  const char* filename = argv[1];
-  opt.name(filename);
-  
-  FlatZinc::Printer p;
-  FlatZinc::FlatZincSpace* fg = NULL;
-  if (!strcmp(filename, "-")) {
-    fg = FlatZinc::parse(cin, p);
-  } else {
-    fg = FlatZinc::parse(filename, p);
-  }
-
-  if (fg) {
-    fg->createBranchers(false, std::cerr);
-    fg->run(std::cout, p, opt, t_total);
-  } else {
-    exit(EXIT_FAILURE);    
-  }
-  delete fg;
-  
-  return 0;
+void MyPlugin::branch(Gecode::FlatZinc::FlatZincSpace& s,
+                  Gecode::FlatZinc::AST::Call* c) {
+  std::cerr << "MyPlugin::branch ";
+  c->print(std::cerr);
+  std::cerr << std::endl;
 }
 
-// STATISTICS: flatzinc-any
+Q_EXPORT_PLUGIN2(myplugin, MyPlugin)

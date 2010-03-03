@@ -234,18 +234,22 @@ namespace Gecode { namespace FlatZinc {
   
     /// Whether to solve as satisfaction or optimization problem
     Meth _method;
-
+    
     /// Annotations on the solve item
     AST::Array* _solveAnnotations;
 
     /// Copy constructor
     FlatZincSpace(bool share, FlatZincSpace&);
   private:
+    /// Parse search engine options from annotation
+    void parseSearchOptions(void);
     /// Run the search engine
     template<template<class> class Engine>
     void
     runEngine(std::ostream& out, const Printer& p, 
               const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
+    void
+    branchWithPlugin(AST::Node* ann);
   public:
     /// The integer variables
     Gecode::IntVarArray iv;
@@ -297,7 +301,7 @@ namespace Gecode { namespace FlatZinc {
     /// Return whether to solve a satisfaction or optimization problem
     Meth method(void) const;
 
-    /// Return index of variable that is used for optimization
+    /// Return index of variable used for optimization
     int optVar(void) const;
 
     /**

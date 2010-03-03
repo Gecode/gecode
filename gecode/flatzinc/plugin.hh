@@ -4,7 +4,7 @@
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2007
+ *     Guido Tack, 2010
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,46 +35,49 @@
  *
  */
 
-#include <iostream>
-#include <fstream>
-#include <gecode/flatzinc.hh>
+#ifndef __GECODE_FLATZINC_PLUGIN_HH__
+#define __GECODE_FLATZINC_PLUGIN_HH__
 
-using namespace std;
-using namespace Gecode;
+#ifdef GECODE_HAS_QT
+#include <QPluginLoader>
+#include <QLibrary>
+#include <QtCore/QPlugin.h>
 
-int main(int argc, char** argv) {
-  
-  Support::Timer t_total;
-  t_total.start();
-  FlatZinc::FlatZincOptions opt("Gecode/FlatZinc");
-  opt.parse(argc, argv);
-  
-  if (argc!=2) {
-    cerr << "Usage: " << argv[0] << " [options] <file>" << endl;
-    cerr << "       " << argv[0] << " -help for more information" << endl;
-    exit(EXIT_FAILURE);
-  }
-  
-  const char* filename = argv[1];
-  opt.name(filename);
-  
-  FlatZinc::Printer p;
-  FlatZinc::FlatZincSpace* fg = NULL;
-  if (!strcmp(filename, "-")) {
-    fg = FlatZinc::parse(cin, p);
-  } else {
-    fg = FlatZinc::parse(filename, p);
-  }
+namespace Gecode { namespace FlatZinc {
+  /**
+   * \brief Interface for branch plugins
+   *
+   * This interface has to be implemented as a Qt Plugin. It then
+   * provides custom branch methods that can be loaded at runtime
+   * from a FlatZinc file.
+   *
+   * In order to use a custom branching, add an annotation to the
+   * FlatZinc solve item like the following:
+   *
+   * ::gecode_search(mybranch(some,arguments,x,y,z))
+   *
+   * This will load the plugin called mybranch and invoke its branch
+   * method with the arguments encoded in an AST.
+   *
+   * The plugin mybranch must reside in a file called mybranch.dll
+   * on Windows, libmybranch.dylib on Mac OS and libmybranch.so on
+   * Linux systems.
+   *
+   * An example plugin can be found in the Gecode source tree under
+   * gecode/flatzinc/exampleplugin.
+   *
+   */
+  class BranchPlugin {
+  public:
+    /// The custom branch method that this plugin provides
+    virtual void branch(Gecode::FlatZinc::FlatZincSpace& s,
+                        Gecode::FlatZinc::AST::Call* c) = 0;
+  };
+}}
+Q_DECLARE_INTERFACE(Gecode::FlatZinc::BranchPlugin,
+  "org.gecode.FlatZinc.BranchPlugin/1.0");
+#endif
 
-  if (fg) {
-    fg->createBranchers(false, std::cerr);
-    fg->run(std::cout, p, opt, t_total);
-  } else {
-    exit(EXIT_FAILURE);    
-  }
-  delete fg;
-  
-  return 0;
-}
+#endif
 
 // STATISTICS: flatzinc-any
