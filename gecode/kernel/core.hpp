@@ -996,7 +996,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template<class A>
-  ExecStatus ES_SUBSUMED_FIX(A& a, Space& home, Council<A>& c);
+  ExecStatus ES_SUBSUMED_FIX(Space& home, Council<A>& c, A& a);
   /**
    * \brief %Advisor \a a is subsumed
    *
@@ -1009,7 +1009,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template<class A>
-  ExecStatus ES_SUBSUMED_NOFIX(A& a, Space& home, Council<A>& c);
+  ExecStatus ES_SUBSUMED_NOFIX(Space& home, Council<A>& c, A& a);
 
   /**
    * \brief Base-class for advisors
@@ -2543,7 +2543,7 @@ namespace Gecode {
   }
 
   forceinline ExecStatus
-  ES_SUBSUMED_DISPOSED(Space&,Propagator& p, size_t s) {
+  ES_SUBSUMED_DISPOSED(Space&, Propagator& p, size_t s) {
     p.u.size = s;
     return __ES_SUBSUMED;
   }
@@ -2702,14 +2702,14 @@ namespace Gecode {
 
   template<class A>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(A& a, Space& home, Council<A>& c) {
+  ES_SUBSUMED_FIX(Space& home, Council<A>& c, A& a) {
     a.dispose(home,c);
     return ES_FIX;
   }
 
   template<class A>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(A& a, Space& home, Council<A>& c) {
+  ES_SUBSUMED_NOFIX(Space& home, Council<A>& c, A& a) {
     a.dispose(home,c);
     return ES_NOFIX;
   }

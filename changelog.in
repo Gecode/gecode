@@ -77,9 +77,10 @@ Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The functions ES_FIX_PARTIAL and ES_NOFIX_PARTIAL now take an
-additional argument for the home space. Read "Modeling and
-Programming with Gecode" for details.
+The functions ES_FIX_PARTIAL, ES_NOFIX_PARTIAL, ES_FIX_SUBSUMED,
+and ES_NOFIX_SUBSUMED now take an additional argument for the
+home space. Read "Modeling and Programming with Gecode" for
+details.
 
 [ENTRY]
 Module: kernel

@@ -553,7 +553,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       return ES_FIX;
     } else {
       return (View::modevent(d) == ME_INT_VAL)
-        ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
+        ? ES_SUBSUMED_NOFIX(home,c,a) : ES_NOFIX;
     }
   }
 
