@@ -295,7 +295,10 @@ namespace Gecode { namespace FlatZinc {
     void print(std::ostream& out, const Printer& p) const;
 
     /// Return whether to solve a satisfaction or optimization problem
-    Meth method(void);
+    Meth method(void) const;
+
+    /// Return index of variable that is used for optimization
+    int optVar(void) const;
 
     /**
      * \brief Create branchers corresponding to the solve item annotations

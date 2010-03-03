@@ -219,7 +219,8 @@ namespace Gecode { namespace FlatZinc {
     }
   
   FlatZincSpace::FlatZincSpace(void)
-  : intVarCount(-1), boolVarCount(-1), setVarCount(-1), _solveAnnotations(NULL) {}
+  : intVarCount(-1), boolVarCount(-1), setVarCount(-1), _optVar(-1),
+    _solveAnnotations(NULL) {}
 
   void
   FlatZincSpace::init(int intVars, int boolVars,
@@ -701,8 +702,13 @@ namespace Gecode { namespace FlatZinc {
   }
 
   FlatZincSpace::Meth
-  FlatZincSpace::method(void) {
+  FlatZincSpace::method(void) const {
     return _method;
+  }
+
+  int
+  FlatZincSpace::optVar(void) const {
+    return _optVar;
   }
 
   void
