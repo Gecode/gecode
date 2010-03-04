@@ -171,7 +171,7 @@ namespace Gecode { namespace FlatZinc {
                Gecode::Search::Config::threads),
       _parallel("--parallel", "use parallel search (equal to -threads 0)"),
       _free("--free", "no need to follow search-specification"),
-      _search("--search","search engine variant", FZ_SEARCH_BAB),
+      _search("-search","search engine variant", FZ_SEARCH_BAB),
       _c_d("-c-d","recomputation commit distance",Gecode::Search::Config::c_d),
       _a_d("-a-d","recomputation adaption distance",Gecode::Search::Config::a_d),
       _node("-node","node cutoff (0 = none, solution mode)"),
