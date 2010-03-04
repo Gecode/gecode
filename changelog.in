@@ -74,6 +74,14 @@ The next big thing.
 
 [ENTRY]
 Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+ViewValBrancher with random value selection did not produce a
+random sequence of values.
+
+[ENTRY]
+Module: kernel
 What:   new
 Rank:   minor
 [DESCRIPTION]

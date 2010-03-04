@@ -346,10 +346,10 @@ namespace Gecode {
   ViewValBrancher<ViewSel,ValSel>::choice(Space& home) {
     Pos p = ViewBrancher<ViewSel>::pos(home);
     typename ValSel::View v(ViewBrancher<ViewSel>::view(p).var());
+    typename ValSel::Val val(valsel.val(home,v));
     return new PosValChoice<ViewSel,ValSel>
       (*this,p,
-       viewsel.choice(home),
-       valsel.choice(home),valsel.val(home,v));
+       viewsel.choice(home),valsel.choice(home),val);
   }
 
   template<class ViewSel, class ValSel>
