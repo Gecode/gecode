@@ -182,8 +182,7 @@ namespace {
       GECODE_ME_CHECK(x[pos].eq(home, val));
     }
     
-    return y.assigned() ?
-      ES_SUBSUMED(*this,home) : ES_FIX;
+    return y.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
   /** \brief Post PushToEnd propagator.
@@ -191,7 +190,7 @@ namespace {
   void pushtoend(Space& home, IntVarArgs x, IntVar y, int val) {
     ViewArray<Int::IntView> vx(home, x);
     Int::IntView vy(y);
-    GECODE_ES_FAIL(home,PushToEnd<Int::IntView>::post(home, vx, vy, val));
+    GECODE_ES_FAIL(PushToEnd<Int::IntView>::post(home, vx, vy, val));
   }
 
 }
