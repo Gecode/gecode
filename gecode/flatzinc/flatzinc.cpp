@@ -749,7 +749,7 @@ namespace Gecode { namespace FlatZinc {
     if (_method == MIN)
       rel(*this, iv[_optVar], IRT_LE, 
                  static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
-    else
+    else if (_method == MAX)
       rel(*this, iv[_optVar], IRT_GR,
                  static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
   }
