@@ -74,6 +74,19 @@ The next big thing.
 
 [ENTRY]
 Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Advisors now can force its propagator to be rescheduled,
+including recomputation of its cost used for scheduling
+(normally, a propagator is only rescheduled if its modification
+event delta changes). An advisor can signal forceful rescheduling
+by returning ES_NOFIX_FORCE or returning the return value of
+ES_SUBSUMED_NOFIX_FORCE. Read "Modeling and Programming with
+Gecode" for details.
+
+[ENTRY]
+Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]

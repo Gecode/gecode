@@ -518,8 +518,15 @@ namespace Gecode {
 
     /// \name Variable implementation-dependent propagator support
     //@{
-    /// Schedule propagator \a p with modification event \a me
-    static void schedule(Space& home, Propagator& p, ModEvent me);
+    /**
+     * \brief Schedule propagator \a p with modification event \a me
+     *
+     * If \a force is true, the propagator is re-scheduled (including
+     * cost computation) even though its modification event delta has
+     * not changed.
+     */
+    static void schedule(Space& home, Propagator& p, ModEvent me,
+                         bool force = false);
     /// Project modification event for this variable type from \a med
     static ModEvent me(const ModEventDelta& med);
     /// Translate modification event \a me into modification event delta
@@ -563,6 +570,7 @@ namespace Gecode {
     ES_NOFIX            =  0, ///< Propagation has not computed fixpoint
     ES_OK               =  0, ///< Execution is okay
     ES_FIX              =  1, ///< Propagation has computed fixpoint
+    ES_NOFIX_FORCE      =  2, ///< Advisor forces rescheduling of propagator 
     __ES_PARTIAL        =  2  ///< Internal: propagator has computed partial fixpoint, do not use
   };
 
@@ -849,11 +857,14 @@ namespace Gecode {
      * A propagator must specialize this advise function, if it
      * uses advisors. The advise function must return an execution
      * status as follows:
-     *  - ES_FAILED: the advisor has detected failure
+     *  - ES_FAILED: the advisor has detected failure.
      *  - ES_FIX: the advisor's propagator (that is, this propagator)
-     *    does not need to be run
+     *    does not need to be run.
      *  - ES_NOFIX: the advisor's propagator (that is, this propagator)
-     *    must be run
+     *    must be run.
+     *  - ES_NOFIX_FORCE: the advisor's propagator (that is, this propagator)
+     *    must be run and it must forcefully be rescheduled (including
+     *    recomputation of cost).
      *
      * Apart from the above values, an advisor can return
      * the result from calling the function defined by a space:
@@ -861,6 +872,9 @@ namespace Gecode {
      *    propagator does not need to be run
      *  - ES_SUBSUMED_NOFIX: the advisor is subsumed, the advisor's
      *    propagator must be run
+     *  - ES_SUBSUMED_NOFIX_FORCE: the advisor is subsumed, the advisor's
+     *    propagator must be run and it must forcefully be rescheduled 
+     *    (including recomputation of cost).
      * For more details, see the function documentation.
      *
      * The delta \a d describes how the variable has been changed
@@ -1555,7 +1569,7 @@ namespace Gecode {
     template<class A>
     ExecStatus ES_SUBSUMED_FIX(Council<A>& c, A& a);
     /**
-     * \brief %Advisor \a a is subsumed
+     * \brief %Advisor \a a is subsumed and its propagator must be run
      *
      * Disposes the advisor and:
      *  - returns subsumption.
@@ -1567,6 +1581,20 @@ namespace Gecode {
      */
     template<class A>
     ExecStatus ES_SUBSUMED_NOFIX(Council<A>& c, A& a);
+    /**
+     * \brief %Advisor \a a is subsumed and its propagator must be forcefully rescheduled
+     *
+     * Disposes the advisor and:
+     *  - returns subsumption.
+     *  - returns that the propagator of \a a must be run and must be
+     *    forcefully rescheduled (including recomputation of cost).
+     *
+     * \warning Has a side-effect on the advisor. Use only directly when
+     *          returning from advise.
+     * \ingroup TaskActorStatus
+     */
+    template<class A>
+    ExecStatus ES_SUBSUMED_NOFIX_FORCE(Council<A>& c, A& a);
     
     /**
      * \brief Fail space
@@ -2710,6 +2738,13 @@ namespace Gecode {
     return ES_NOFIX;
   }
 
+  template<class A>
+  forceinline ExecStatus
+  Space::ES_SUBSUMED_NOFIX_FORCE(Council<A>& c, A& a) {
+    a.dispose(*this,c);
+    return ES_NOFIX_FORCE;
+  }
+
 
 
   /*
@@ -3037,8 +3072,9 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::schedule(Space& home, Propagator& p, ModEvent me) {
-    if (VIC::med_update(p.u.med,me))
+  VarImp<VIC>::schedule(Space& home, Propagator& p, ModEvent me,
+                        bool force) {
+    if (VIC::med_update(p.u.med,me) || force)
       home.enqueue(&p);
   }
 
@@ -3258,6 +3294,9 @@ namespace Gecode {
         return false;
       case ES_NOFIX:
         schedule(home,p,me);
+        break;
+      case ES_NOFIX_FORCE:
+        schedule(home,p,me,true);
         break;
       default:
         GECODE_NEVER;
