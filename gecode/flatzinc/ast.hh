@@ -103,6 +103,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     int getInt(void);
     /// Cast this node to a Boolean node
     bool getBool(void);
+    /// Cast this node to a Float node
+    double getFloat(void);
     /// Cast this node to a set literal node
     SetLit *getSet(void);
     
@@ -416,6 +418,12 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     if (BoolLit* a = dynamic_cast<BoolLit*>(this))
       return a->b;
     throw TypeError("bool literal expected");
+  }
+  inline double
+  Node::getFloat(void) {
+    if (FloatLit* a = dynamic_cast<FloatLit*>(this))
+      return a->d;
+    throw TypeError("float literal expected");
   }
   inline SetLit*
   Node::getSet(void) {
