@@ -306,11 +306,10 @@ INTHDR0 = \
 	sequence/set-op.hpp sequence/violations.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
-	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
-	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp
+	gecode/int/branch/post-view-int.cpp \
+	gecode/int/branch/post-view-bool.cpp
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
-INTOBJ0		= $(INTSRC:%.cpp=%$(OBJSUFFIX))
-INTOBJ		= $(subst $(top_srcdir)/,,$(INTOBJ0))
+INTOBJ		= $(INTSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_int_vars@" "yes"
 export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
@@ -381,10 +380,9 @@ SETHDR0 =								     \
 	branch/post-val.hpp
 
 SETSRC		= $(SETSRC0:%=gecode/set/%) \
-	$(top_srcdir)/gecode/set/branch/post-view.cpp
+	gecode/set/branch/post-view.cpp
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
-SETOBJ0		= $(SETSRC:%.cpp=%$(OBJSUFFIX))
-SETOBJ		= $(subst $(top_srcdir)/,,$(SETOBJ0))
+SETOBJ		= $(SETSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_set_vars@" "yes"
 export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
@@ -419,8 +417,7 @@ GRAPHHDR0 = \
 
 GRAPHSRC	= $(GRAPHSRC0:%=gecode/graph/%)
 GRAPHHDR	= gecode/graph.hh $(GRAPHHDR0:%=gecode/graph/%)
-GRAPHOBJ0	= $(GRAPHSRC:%.cpp=%$(OBJSUFFIX))
-GRAPHOBJ	= $(subst $(top_srcdir)/,,$(GRAPHOBJ0))
+GRAPHOBJ	= $(GRAPHSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_graph@" "yes"
 export GRAPHDLL		= $(LIBPREFIX)@GRAPH@$(DLLSUFFIX)
@@ -466,8 +463,7 @@ SCHEDULINGHDR0 = \
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
 SCHEDULINGHDR	= gecode/scheduling.hh $(SCHEDULINGHDR0:%=gecode/scheduling/%)
-SCHEDULINGOBJ0	= $(SCHEDULINGSRC:%.cpp=%$(OBJSUFFIX))
-SCHEDULINGOBJ	= $(subst $(top_srcdir)/,,$(SCHEDULINGOBJ0))
+SCHEDULINGOBJ	= $(SCHEDULINGSRC:%.cpp=%$(OBJSUFFIX))
 
 ifeq "@enable_scheduling@" "yes"
 export SCHEDULINGDLL		= $(LIBPREFIX)@SCHEDULING@$(DLLSUFFIX)
@@ -758,7 +754,8 @@ ALLHDR = \
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
-ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
+ALLOBJ = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
+
 ALLSBJ0 = $(ALLSRC:%.cpp=%$(SBJSUFFIX))
 ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
