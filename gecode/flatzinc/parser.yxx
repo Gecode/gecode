@@ -485,6 +485,7 @@ pred_arg_simple_type:
     | FZ_SET FZ_OF int_ti_expr_tail
     | FZ_BOOL
     | FZ_FLOAT
+    | FZ_STRING
 
 pred_array_init:
       pred_array_init_arg
@@ -1363,6 +1364,11 @@ non_array_expr :
           $$ = new AST::IntLit(0); // keep things consistent
         free($1);
       }
+    | FZ_STRING_LIT
+      {
+        $$ = new AST::String($1);
+        free($1);
+      }
 
 non_array_expr_list :
       /* empty */
@@ -1514,5 +1520,10 @@ ann_non_array_expr :
           $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i);
         else
           $$ = new AST::IntLit(0); // keep things consistent
+        free($1);
+      }
+    | FZ_STRING_LIT
+      {
+        $$ = new AST::String($1);
         free($1);
       }
