@@ -335,16 +335,22 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincSpace::createBranchers(bool ignoreUnknown, std::ostream& err) {
+  FlatZincSpace::createBranchers(AST::Node* ann, bool ignoreUnknown,
+                                 std::ostream& err) {
     bool hadSearchAnnotation = false;
-    if (_solveAnnotations) {
+    if (ann) {
       std::vector<AST::Node*> flatAnn;
-      flattenAnnotations(_solveAnnotations, flatAnn);
+      if (ann->isArray()) {
+        flattenAnnotations(ann->getArray()  , flatAnn);
+      } else {
+        flatAnn.push_back(ann);
+      }
 
       for (unsigned int i=0; i<flatAnn.size(); i++) {
-        if (flatAnn[i]->isCall("gecode_search"))
-          continue;
-        try {
+        if (flatAnn[i]->isCall("gecode_search")) {
+          AST::Call* c = flatAnn[i]->getCall();
+          branchWithPlugin(c->args);
+        } else try {
           AST::Call *call = flatAnn[i]->getCall("int_search");
           AST::Array *args = call->getArgs(4);
           AST::Array *vars = args->a[0]->getArray();
@@ -473,23 +479,15 @@ namespace Gecode { namespace FlatZinc {
     }
   }
 
-  void
-  FlatZincSpace::parseSearchOptions(void) {
-    if (_solveAnnotations) {
-      for (unsigned int i=0; i<_solveAnnotations->a.size(); i++) {
-        if (_solveAnnotations->a[i]->isCall("gecode_search")) {
-          AST::Call* c = _solveAnnotations->a[i]->getCall();
-          branchWithPlugin(c->args);
-        }
-      }
-    }
+  AST::Array*
+  FlatZincSpace::solveAnnotations(void) const {
+    return _solveAnnotations;
   }
 
   void
   FlatZincSpace::solve(AST::Array* ann) {
     _method = SAT;
     _solveAnnotations = ann;
-    parseSearchOptions();
   }
 
   void
@@ -497,7 +495,6 @@ namespace Gecode { namespace FlatZinc {
     _method = MIN;
     _optVar = var;
     _solveAnnotations = ann;
-    parseSearchOptions();
     // Branch on optimization variable to ensure that it is given a value.
     AST::Array* args = new AST::Array(4);
     args->a[0] = new AST::Array(new AST::IntVar(_optVar));
@@ -516,7 +513,6 @@ namespace Gecode { namespace FlatZinc {
     _method = MAX;
     _optVar = var;
     _solveAnnotations = ann;
-    parseSearchOptions();
     // Branch on optimization variable to ensure that it is given a value.
     AST::Array* args = new AST::Array(4);
     args->a[0] = new AST::Array(new AST::IntVar(_optVar));

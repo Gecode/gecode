@@ -253,8 +253,6 @@ namespace Gecode { namespace FlatZinc {
     /// Copy constructor
     FlatZincSpace(bool share, FlatZincSpace&);
   private:
-    /// Parse search engine options from annotation
-    void parseSearchOptions(void);
     /// Run the search engine
     template<template<class> class Engine>
     void
@@ -322,7 +320,8 @@ namespace Gecode { namespace FlatZinc {
      * If \a ignoreUnknown is true, unknown solve item annotations will be
      * ignored, otherwise a warning is written to \a err.
      */
-    void createBranchers(bool ignoreUnknown, std::ostream& err = std::cerr);
+    void createBranchers(AST::Node* ann, bool ignoreUnknown,
+                         std::ostream& err = std::cerr);
 
     /// Return the solve item annotations
     AST::Array* solveAnnotations(void) const;

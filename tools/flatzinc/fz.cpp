@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
   }
 
   if (fg) {
-    fg->createBranchers(false, std::cerr);
+    fg->createBranchers(fg->solveAnnotations(), false, std::cerr);
     fg->run(std::cout, p, opt, t_total);
   } else {
     exit(EXIT_FAILURE);    
