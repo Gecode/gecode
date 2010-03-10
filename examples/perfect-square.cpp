@@ -197,7 +197,6 @@ public:
   /// Propagation to use for model
   enum {
     PROP_REIFIED,    ///< Use reified constraints
-    PROP_CUMULATIVE, ///< Use cumulative constraint
     PROP_CUMULATIVES ///< Use cumulatives constraint
   };
   /// Actual model
@@ -244,13 +243,6 @@ public:
           }
           linear(*this, sa, b, IRT_EQ, w);
         }
-      }
-      break;
-    case PROP_CUMULATIVE:
-      {
-        IntArgs sa(n,s);
-        cumulative(*this, w, y, sa, sa);
-        cumulative(*this, w, x, sa, sa);
       }
       break;
     case PROP_CUMULATIVES:
@@ -315,7 +307,6 @@ main(int argc, char* argv[]) {
   SizeOptions opt("PerfectSquare");
   opt.propagation(PerfectSquare::PROP_REIFIED);
   opt.propagation(PerfectSquare::PROP_REIFIED,     "reified");
-  opt.propagation(PerfectSquare::PROP_CUMULATIVE,  "cumulative");
   opt.propagation(PerfectSquare::PROP_CUMULATIVES, "cumulatives");
   opt.a_d(5);
   opt.c_d(20);
