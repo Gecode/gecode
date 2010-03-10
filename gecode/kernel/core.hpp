@@ -868,13 +868,13 @@ namespace Gecode {
      *
      * Apart from the above values, an advisor can return
      * the result from calling the function defined by a space:
-     *  - ES_SUBSUMED_FIX: the advisor is subsumed, the advisor's
-     *    propagator does not need to be run
-     *  - ES_SUBSUMED_NOFIX: the advisor is subsumed, the advisor's
-     *    propagator must be run
-     *  - ES_SUBSUMED_NOFIX_FORCE: the advisor is subsumed, the advisor's
-     *    propagator must be run and it must forcefully be rescheduled 
-     *    (including recomputation of cost).
+     *  - ES_FIX_DISPOSE: the advisor's propagator does not need to be run
+     *    and the advisor will be disposed.
+     *  - ES_NOFIX_DISPOSE: the advisor's propagator must be run and the
+     *    advisor will be disposed.
+     *  - ES_NOFIX_FORCE_DISPOSE: the advisor's propagator must be run 
+     *    , it must forcefully be rescheduled (including recomputation 
+     *    of cost), and the adviser will be disposed.
      * For more details, see the function documentation.
      *
      * The delta \a d describes how the variable has been changed
@@ -1556,45 +1556,42 @@ namespace Gecode {
     ExecStatus ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med);
     
     /**
-     * \brief %Advisor \a a is subsumed
+     * \brief %Advisor \a a must be disposed
      *
-     * Disposes the advisor and:
-     *  - returns subsumption.
-     *  - returns that the propagator of \a a need not be run.
+     * Disposes the advisor and returns that the propagator of \a a 
+     * need not be run.
      *
      * \warning Has a side-effect on the advisor. Use only directly when
      *          returning from advise.
      * \ingroup TaskActorStatus
      */
     template<class A>
-    ExecStatus ES_SUBSUMED_FIX(Council<A>& c, A& a);
+    ExecStatus ES_FIX_DISPOSE(Council<A>& c, A& a);
     /**
-     * \brief %Advisor \a a is subsumed and its propagator must be run
+     * \brief %Advisor \a a must be disposed and its propagator must be run
      *
-     * Disposes the advisor and:
-     *  - returns subsumption.
-     *  - returns that the propagator of \a a must be run.
+     * Disposes the advisor and returns that the propagator of \a a 
+     * must be run.
      *
      * \warning Has a side-effect on the advisor. Use only directly when
      *          returning from advise.
      * \ingroup TaskActorStatus
      */
     template<class A>
-    ExecStatus ES_SUBSUMED_NOFIX(Council<A>& c, A& a);
+    ExecStatus ES_NOFIX_DISPOSE(Council<A>& c, A& a);
     /**
-     * \brief %Advisor \a a is subsumed and its propagator must be forcefully rescheduled
+     * \brief %Advisor \a a must be disposed and its propagator must be forcefully rescheduled
      *
-     * Disposes the advisor and:
-     *  - returns subsumption.
-     *  - returns that the propagator of \a a must be run and must be
-     *    forcefully rescheduled (including recomputation of cost).
+     * Disposes the advisor and returns that the propagator of \a a 
+     * must be run and must be forcefully rescheduled (including 
+     * recomputation of cost).
      *
      * \warning Has a side-effect on the advisor. Use only directly when
      *          returning from advise.
      * \ingroup TaskActorStatus
      */
     template<class A>
-    ExecStatus ES_SUBSUMED_NOFIX_FORCE(Council<A>& c, A& a);
+    ExecStatus ES_NOFIX_DISPOSE_FORCE(Council<A>& c, A& a);
     
     /**
      * \brief Fail space
@@ -2726,21 +2723,21 @@ namespace Gecode {
 
   template<class A>
   forceinline ExecStatus
-  Space::ES_SUBSUMED_FIX(Council<A>& c, A& a) {
+  Space::ES_FIX_DISPOSE(Council<A>& c, A& a) {
     a.dispose(*this,c);
     return ES_FIX;
   }
 
   template<class A>
   forceinline ExecStatus
-  Space::ES_SUBSUMED_NOFIX(Council<A>& c, A& a) {
+  Space::ES_NOFIX_DISPOSE(Council<A>& c, A& a) {
     a.dispose(*this,c);
     return ES_NOFIX;
   }
 
   template<class A>
   forceinline ExecStatus
-  Space::ES_SUBSUMED_NOFIX_FORCE(Council<A>& c, A& a) {
+  Space::ES_NOFIX_DISPOSE_FORCE(Council<A>& c, A& a) {
     a.dispose(*this,c);
     return ES_NOFIX_FORCE;
   }

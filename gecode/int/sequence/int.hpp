@@ -82,9 +82,9 @@ namespace Gecode { namespace Int { namespace Sequence {
         x[a.i].cancel(home,a);
 
       if ( ES_NOFIX == status ) {
-        return home.ES_SUBSUMED_NOFIX(ac,a);
+        return home.ES_NOFIX_DISPOSE(ac,a);
       } else {
-        return home.ES_SUBSUMED_FIX(ac,a);
+        return home.ES_FIX_DISPOSE(ac,a);
       }
     }
 

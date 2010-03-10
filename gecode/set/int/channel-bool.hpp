@@ -212,7 +212,7 @@ namespace Gecode { namespace Set { namespace Int {
         SetDelta dummy;
         ones.include(home, index, index, dummy);
       }
-      return home.ES_SUBSUMED_NOFIX( co, a);
+      return home.ES_NOFIX_DISPOSE( co, a);
     }
 
     if ((a.index() == -1) && Rel::testSetEventLB(me)) {
@@ -272,7 +272,7 @@ namespace Gecode { namespace Set { namespace Int {
     }
 
     if (y.assigned())
-      return home.ES_SUBSUMED_NOFIX( co, a);
+      return home.ES_NOFIX_DISPOSE( co, a);
     else
       return ES_NOFIX;
   }

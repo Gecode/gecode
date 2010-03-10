@@ -67,10 +67,14 @@
 #
 
 [RELEASE]
-Version: 3.2.3
-Date: ??????
+Version: 3.3.0
+Date: 2010-03-12
 [DESCRIPTION]
-The next big thing.
+This release provides some fixes, some performance improvements
+for domain propagators, and quite some clean ups how propagators
+and advisors report their status to the kernel. Many of these
+clean ups are essential to make it easier to program propagators
+and branchers with Gecode.
 
 [ENTRY]
 Module: kernel
@@ -90,7 +94,7 @@ including recomputation of its cost used for scheduling
 (normally, a propagator is only rescheduled if its modification
 event delta changes). An advisor can signal forceful rescheduling
 by returning ES_NOFIX_FORCE or returning the return value of
-ES_SUBSUMED_NOFIX_FORCE. Read "Modeling and Programming with
+ES_NOFIX_FORCE_DISPOSE. Read "Modeling and Programming with
 Gecode" for details.
 
 [ENTRY]
@@ -108,8 +112,8 @@ Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The functions ES_FIX_PARTIAL, ES_NOFIX_PARTIAL, ES_FIX_SUBSUMED,
-and ES_NOFIX_SUBSUMED are now member of Space. Read "Modeling and
+The functions ES_FIX_PARTIAL, ES_NOFIX_PARTIAL, ES_FIX_DISPOSE,
+and ES_NOFIX_DISPOSE are now member of Space. Read "Modeling and
 Programming with Gecode" for details.
 
 [ENTRY]
@@ -122,6 +126,15 @@ propagator as its single argument. The variant with a size as the
 second argument is available as ES_SUBSUMED_DISPOSED but use is
 highly discouraged. Read "Modeling and Programming with Gecode"
 for details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The functions ES_SUBSUMED_FIX and ES_SUBSUMED_NOFIX for advisors
+have been renamed to ES_FIX_DISPOSE and ES_NOFIX_DISPOSE. Read
+"Modeling and Programming with Gecode" for details.
 
 [ENTRY]
 Module: flatzinc
