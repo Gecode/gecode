@@ -230,9 +230,9 @@ namespace Gecode {
 
     /// \name Moving elements
     //@{
-    /// Move assigned view from position 0 to position \a i (shift elements to the left)
+    /// Move view from position 0 to position \a i (shift elements to the left)
     void move_fst(int i);
-    /// Move assigned view from position \c size()-1 to position \a i (truncate array by one)
+    /// Move view from position \c size()-1 to position \a i (truncate array by one)
     void move_lst(int i);
     /** \brief Move view from position 0 to position \a i (shift elements to the left)
      *
@@ -262,9 +262,9 @@ namespace Gecode {
 
     /// \name Dropping elements
     //@{
-    /// Drop assigned views from positions 0 to \a i-1 from array
+    /// Drop views from positions 0 to \a i-1 from array
     void drop_fst(int i);
-    /// Drop assigned views from positions \a i+1 to \c size()-1 from array
+    /// Drop views from positions \a i+1 to \c size()-1 from array
     void drop_lst(int i);
     /** \brief Drop views from positions 0 to \a i-1 from array
      *
@@ -757,23 +757,18 @@ namespace Gecode {
   template<class View>
   forceinline void
   ViewArray<View>::move_fst(int i) {
-    // move x[0] to x[i]
-    assert(x[i].assigned());
     x[i]=x[0]; x++; n--;
   }
 
   template<class View>
   forceinline void
   ViewArray<View>::move_lst(int i) {
-    // move x[n-1] to x[i]
-    assert(x[i].assigned());
     n--; x[i]=x[n];
   }
 
   template<class View>
   forceinline void
   ViewArray<View>::drop_fst(int i) {
-    // Drop elements from 0..i-1
     assert(i>=0);
     x += i; n -= i;
   }
@@ -781,7 +776,6 @@ namespace Gecode {
   template<class View>
   forceinline void
   ViewArray<View>::drop_lst(int i) {
-    // Drop elements from i+1..n-1
     assert(i<n);
     n = i+1;
   }
