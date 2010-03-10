@@ -39,9 +39,9 @@
 #define __GECODE_FLATZINC_PLUGIN_HH__
 
 #ifdef GECODE_HAS_QT
+#include <QtCore>
 #include <QPluginLoader>
 #include <QLibrary>
-#include <QtCore/qplugin.h>
 
 namespace Gecode { namespace FlatZinc {
   /**
