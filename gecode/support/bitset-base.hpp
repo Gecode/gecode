@@ -198,7 +198,9 @@ namespace Gecode { namespace Support {
     if ((bpb == 32) || (bpb == 64)) {
       Base b = bits >> i;
       if ((bpb == 64) && ((b & 0xFFFFFFFFUL) == 0UL)) {
+#if __LP64__==1 || defined(GECODE_SUPPORT_MSVC_64)
         b >>= 32; i += 32U;
+#endif
       }
       if ((b & 0xFFFFUL) == 0UL) {
         b >>= 16; i += 16U;
