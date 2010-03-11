@@ -46,66 +46,56 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VAL_MIN:
       {
         ValMin<IntView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMin<IntView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValMin<IntView> >::post(home,x,v,a);
       }
       break;
     case INT_VAL_MED:
       {
         ValMed<IntView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMed<IntView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValMed<IntView> >::post(home,x,v,a);
       }
       break;
     case INT_VAL_MAX:
       {
         ValMin<MinusView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMin<MinusView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValMin<MinusView> >::post(home,x,v,a);
       }
       break;
     case INT_VAL_RND:
       {
         ValRnd<IntView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValRnd<IntView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValRnd<IntView> >::post(home,x,v,a);
       }
       break;
     case INT_VAL_SPLIT_MIN:
       {
         ValSplitMin<IntView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValSplitMin<IntView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValSplitMin<IntView> >::post(home,x,v,a);
       }
       break;
     case INT_VAL_SPLIT_MAX:
       {
         ValSplitMin<MinusView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValSplitMin<MinusView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValSplitMin<MinusView> >::post(home,x,v,a);
       }
       break;
     case INT_VAL_RANGE_MIN:
       {
         ValRangeMin<IntView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValRangeMin<IntView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValRangeMin<IntView> >::post(home,x,v,a);
       }
       break;
     case INT_VAL_RANGE_MAX:
       {
         ValRangeMin<MinusView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValRangeMin<MinusView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValRangeMin<MinusView> >::post(home,x,v,a);
       }
       break;
     case INT_VALUES_MIN:
-      (void) new (home) ViewValuesBrancher<SelView,IntView>
-        (home,x,v);
+      ViewValuesBrancher<SelView,IntView>::post(home,x,v);
       break;
     case INT_VALUES_MAX:
-      (void) new (home) ViewValuesBrancher<SelView,MinusView>
-        (home,x,v);
+      ViewValuesBrancher<SelView,MinusView>::post(home,x,v);
       break;
     default:
       throw UnknownBranching("Int::branch");

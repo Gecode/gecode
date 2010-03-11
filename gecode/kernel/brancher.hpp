@@ -87,10 +87,10 @@ namespace Gecode {
     typename ViewSel::View view(const Pos& p) const;
     /// Constructor for cloning \a b
     ViewBrancher(Space& home, bool share, ViewBrancher& b);
-  public:
     /// Constructor for creation
     ViewBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                  ViewSel& vi_s);
+  public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
     /// Delete brancher and return its size
@@ -116,10 +116,10 @@ namespace Gecode {
     ValSel valsel;
     /// Constructor for cloning \a b
     ViewValBrancher(Space& home, bool share, ViewValBrancher& b);
-  public:
     /// Constructor for creation
     ViewValBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                     ViewSel& vi_s, ValSel& va_s);
+  public:
     /// Return choice
     virtual const Choice* choice(Space& home);
     /// Perform commit for choice \a c and alternative \a a
@@ -128,6 +128,10 @@ namespace Gecode {
     virtual Actor* copy(Space& home, bool share);
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
+    /// Brancher post function
+    static void post(Home home, ViewArray<typename ViewSel::View>& x,
+                     ViewSel& vi_s, ValSel& va_s);
+
   };
 
 
@@ -325,6 +329,14 @@ namespace Gecode {
   ViewValBrancher(Home home, ViewArray<typename ViewSel::View>& x,
                   ViewSel& vi_s, ValSel& va_s)
     : ViewBrancher<ViewSel>(home,x,vi_s), valsel(va_s) {}
+
+  template<class ViewSel, class ValSel>
+  void
+  ViewValBrancher<ViewSel,ValSel>::
+  post(Home home, ViewArray<typename ViewSel::View>& x,
+       ViewSel& vi_s, ValSel& va_s) {
+    (void) new (home) ViewValBrancher<ViewSel,ValSel>(home,x,vi_s,va_s);
+  }
 
   template<class ViewSel, class ValSel>
   forceinline

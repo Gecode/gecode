@@ -210,16 +210,19 @@ namespace Gecode { namespace Int { namespace Branch {
     using ViewBrancher<ViewSel>::viewsel;
     /// Constructor for cloning \a b
     ViewValuesBrancher(Space& home, bool share, ViewValuesBrancher& b);
-  public:
     /// Constructor for creation
     ViewValuesBrancher(Home home, ViewArray<typename ViewSel::View>& x,
-                        ViewSel& vi_s);
+                       ViewSel& vi_s);
+  public:
     /// Return choice
     virtual const Choice* choice(Space& home);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Constructor for creation
+    static void post(Home home, ViewArray<typename ViewSel::View>& x,
+                     ViewSel& vi_s);
   };
 
 

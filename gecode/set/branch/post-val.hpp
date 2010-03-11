@@ -52,49 +52,49 @@ namespace Gecode { namespace Set { namespace Branch {
     case SET_VAL_MIN_INC:
       {
         ValMin<true> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMin<true> >(home,x,v,a);
+        ViewValBrancher<SelView,ValMin<true> >::post(home,x,v,a);
       }
       break;
     case SET_VAL_MIN_EXC:
       {
         ValMin<false> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMin<false> >(home,x,v,a);
+        ViewValBrancher<SelView,ValMin<false> >::post(home,x,v,a);
       }
       break;
     case SET_VAL_MED_INC:
       {
         ValMed<true> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMed<true> >(home,x,v,a);
+        ViewValBrancher<SelView,ValMed<true> >::post(home,x,v,a);
       }
       break;
     case SET_VAL_MED_EXC:
       {
         ValMed<false> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMed<false> >(home,x,v,a);
+        ViewValBrancher<SelView,ValMed<false> >::post(home,x,v,a);
       }
       break;
     case SET_VAL_MAX_INC:
       {
         ValMax<true> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMax<true> >(home,x,v,a);
+        ViewValBrancher<SelView,ValMax<true> >::post(home,x,v,a);
       }
       break;
     case SET_VAL_MAX_EXC:
       {
         ValMax<false> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValMax<false> >(home,x,v,a);
+        ViewValBrancher<SelView,ValMax<false> >::post(home,x,v,a);
       }
       break;
     case SET_VAL_RND_INC:
       {
         ValRnd<true> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValRnd<true> >(home,x,v,a);
+        ViewValBrancher<SelView,ValRnd<true> >::post(home,x,v,a);
       }
       break;
     case SET_VAL_RND_EXC:
       {
         ValRnd<false> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValRnd<false> >(home,x,v,a);
+        ViewValBrancher<SelView,ValRnd<false> >::post(home,x,v,a);
       }
       break;
     default:

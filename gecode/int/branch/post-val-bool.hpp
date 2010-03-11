@@ -50,8 +50,8 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VALUES_MIN:
       {
         ValZeroOne<BoolView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValZeroOne<BoolView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValZeroOne<BoolView> >
+          ::post(home,x,v,a);
       }
       break;
     case INT_VAL_MAX:
@@ -60,15 +60,15 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VALUES_MAX:
       {
         ValZeroOne<NegBoolView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValZeroOne<NegBoolView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValZeroOne<NegBoolView> >
+          ::post(home,x,v,a);
       }
       break;
     case INT_VAL_RND:
       {
         ValRnd<BoolView> a(home,o_vals);
-        (void) new (home) ViewValBrancher<SelView,ValRnd<BoolView> >
-          (home,x,v,a);
+        ViewValBrancher<SelView,ValRnd<BoolView> >
+          ::post(home,x,v,a);
       }
       break;
     default:

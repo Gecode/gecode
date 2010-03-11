@@ -124,8 +124,15 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   ViewValuesBrancher<ViewSel,View>::
   ViewValuesBrancher(Home home, ViewArray<typename ViewSel::View>& x,
-                      ViewSel& vi_s)
+                     ViewSel& vi_s)
     : ViewBrancher<ViewSel>(home,x,vi_s) {}
+
+  template<class ViewSel, class View>
+  void
+  ViewValuesBrancher<ViewSel,View>::
+  post(Home home, ViewArray<typename ViewSel::View>& x, ViewSel& vi_s) {
+    (void) new (home) ViewValuesBrancher<ViewSel,View>(home,x,vi_s);
+  }
 
   template<class ViewSel, class View>
   forceinline
