@@ -49,6 +49,9 @@
 /* Whether to compile boost dependent parts */
 #undef GECODE_HAS_BOOST
 
+/* whether __builtin_ffsl is available */
+#undef GECODE_HAS_BUILTIN_FFSL
+
 /* Whether to build FLOAT variables */
 #undef GECODE_HAS_FLOAT_VARS
 

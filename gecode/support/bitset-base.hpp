@@ -194,34 +194,15 @@ namespace Gecode { namespace Support {
     unsigned long int p;
     _BitScanForward64(&p,bits >> i);
     return static_cast<unsigned int>(p)+i;
-#else
+#elif defined(GECODE_HAS_BUILTIN_FFSL)
     if ((bpb == 32) || (bpb == 64)) {
-      Base b = bits >> i;
-      if ((bpb == 64) && ((b & 0xFFFFFFFFUL) == 0UL)) {
-#ifdef _LP64
-        b >>= 32; i += 32U;
-#endif
-      }
-      if ((b & 0xFFFFUL) == 0UL) {
-        b >>= 16; i += 16U;
-      }
-      if ((b & 0xFFUL) == 0UL) {
-        b >>= 8; i += 8U;
-      }
-      if ((b & 0xFUL) == 0UL) {
-        b >>= 4; i += 4U;
-      }
-      if ((b & 0x3UL) == 0UL) {
-        b >>= 2; i += 2U;
-      }
-      if ((b & 0x1UL) == 0UL) {
-        i += 1;
-      }
-      return i;
-    } else {
-      while (!get(i)) i++;
-      return i;
+      int p = __builtin_ffsl(bits >> i);
+      assert(p > 0);
+      return static_cast<unsigned int>(p-1)+i;
     }
+#else
+    while (!get(i)) i++;
+    return i;
 #endif
   }
   forceinline bool
