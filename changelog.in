@@ -68,13 +68,29 @@
 
 [RELEASE]
 Version: 3.3.0
-Date: 2010-03-12
+Date: 2010-03-15
 [DESCRIPTION]
 This release provides some fixes, some performance improvements
 for domain propagators, and quite some clean ups how propagators
 and advisors report their status to the kernel. Many of these
 clean ups are essential to make it easier to program propagators
 and branchers with Gecode.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Patterns for reified propagators have been moved to the
+Gecode::Int namespace.
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Patterns for set propagators have been moved to the
+Gecode::Set namespace.
 
 [ENTRY]
 Module: kernel
@@ -94,8 +110,8 @@ including recomputation of its cost used for scheduling
 (normally, a propagator is only rescheduled if its modification
 event delta changes). An advisor can signal forceful rescheduling
 by returning ES_NOFIX_FORCE or returning the return value of
-ES_NOFIX_FORCE_DISPOSE. Read "Modeling and Programming with
-Gecode" for details.
+ES_NOFIX_FORCE_DISPOSE. Read the forthcoming "Modeling and
+Programming with Gecode" for details.
 
 [ENTRY]
 Module: kernel
@@ -104,8 +120,8 @@ Rank:   minor
 [DESCRIPTION]
 The failure macros for posting GECODE_ES_FAIL and GECODE_ME_FAIL
 now only accept a single argument and assume that "home" actually
-refers to the home space.  Read "Modeling and Programming with
-Gecode" for details.
+refers to the home space.  Read the forthcoming "Modeling and
+Programming with Gecode" for details.
 
 [ENTRY]
 Module: kernel
@@ -113,8 +129,8 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The functions ES_FIX_PARTIAL, ES_NOFIX_PARTIAL, ES_FIX_DISPOSE,
-and ES_NOFIX_DISPOSE are now member of Space. Read "Modeling and
-Programming with Gecode" for details.
+and ES_NOFIX_DISPOSE are now member of Space. Read the
+forthcoming "Modeling and Programming with Gecode" for details.
 
 [ENTRY]
 Module: kernel
@@ -124,8 +140,8 @@ Rank:   minor
 The function ES_SUBSUMED now is a member of Space and accepts a
 propagator as its single argument. The variant with a size as the
 second argument is available as ES_SUBSUMED_DISPOSED but use is
-highly discouraged. Read "Modeling and Programming with Gecode"
-for details.
+highly discouraged. Read the forthcoming "Modeling and
+Programming with Gecode" for details.
 
 [ENTRY]
 Module: kernel
@@ -134,7 +150,8 @@ Rank:   minor
 [DESCRIPTION]
 The functions ES_SUBSUMED_FIX and ES_SUBSUMED_NOFIX for advisors
 have been renamed to ES_FIX_DISPOSE and ES_NOFIX_DISPOSE. Read
-"Modeling and Programming with Gecode" for details.
+the forthcoming "Modeling and Programming with Gecode" for
+details.
 
 [ENTRY]
 Module: flatzinc

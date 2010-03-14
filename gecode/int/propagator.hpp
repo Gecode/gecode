@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Int {
 
   /**
    * \defgroup TaskPropRePat Reified propagator patterns
@@ -305,7 +305,7 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-}
+}}
 
 // STATISTICS: int-prop
 

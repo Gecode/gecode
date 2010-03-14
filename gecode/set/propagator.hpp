@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Set {
 
   /**
    * \defgroup TaskPropSetPat Patterns for set propagators
@@ -169,7 +169,7 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-}
+}}
 
 // STATISTICS: set-prop
 
