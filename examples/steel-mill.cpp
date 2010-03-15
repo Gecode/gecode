@@ -339,7 +339,7 @@ public:
     };
 
     /// Construct brancher
-    SteelMillBranch(Space& home)
+    SteelMillBranch(Home home)
       : Brancher(home), start(0) {}
     /// Copy constructor
     SteelMillBranch(Space& home, bool share, SteelMillBranch& b)
@@ -405,7 +405,7 @@ public:
       return new (home) SteelMillBranch(home, share, *this);
     }
     /// Post brancher
-    static void post(Space& home) {
+    static void post(Home home) {
       (void) new (home) SteelMillBranch(home);
     }
     /// Delete brancher and return its size

@@ -78,7 +78,7 @@ protected:
   };
  
   /// Construct brancher
-  Warnsdorff(Space& home, ViewArray<Int::IntView>& xv) 
+  Warnsdorff(Home home, ViewArray<Int::IntView>& xv) 
     : Brancher(home), x(xv), start(0) {}
   /// Copy constructor
   Warnsdorff(Space& home, bool share, Warnsdorff& b) 
@@ -127,7 +127,7 @@ public:
     return new (home) Warnsdorff(home, share, *this);
   }
   /// Post brancher
-  static void post(Space& home, const IntVarArgs& x) {
+  static void post(Home home, const IntVarArgs& x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) Warnsdorff(home, xv);
   }

@@ -120,7 +120,7 @@ protected:
   };
 
   /// Construct brancher
-  BlackHoleBranch(Space& home, ViewArray<Int::IntView>& xv)
+  BlackHoleBranch(Home home, ViewArray<Int::IntView>& xv)
     : Brancher(home), x(xv), start(0) {}
   /// Copy constructor
   BlackHoleBranch(Space& home, bool share, BlackHoleBranch& b)
@@ -166,7 +166,7 @@ public:
     return new (home) BlackHoleBranch(home, share, *this);
   }
   /// Post brancher
-  static void post(Space& home, IntVarArgs x) {
+  static void post(Home home, IntVarArgs x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) BlackHoleBranch(home, xv);
   }

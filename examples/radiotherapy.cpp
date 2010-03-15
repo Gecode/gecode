@@ -310,7 +310,7 @@ public:
       return new (home) NestedSearch(home, share, *this);
     }
     /// Post brancher
-    static void post(Space& home) {
+    static void post(Home home) {
       (void) new (home) NestedSearch(home);
     }
     /// Dispose member function

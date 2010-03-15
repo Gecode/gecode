@@ -188,7 +188,7 @@ public:
     };
 
     /// Construct brancher
-    QueenBranch(Space& home)
+    QueenBranch(Home home)
       : Brancher(home), start(0) {}
     /// Constructor for cloning
     QueenBranch(Space& home, bool share, QueenBranch& b)
