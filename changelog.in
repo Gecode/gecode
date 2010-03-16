@@ -67,6 +67,19 @@
 #
 
 [RELEASE]
+Version: 3.3.1
+Date: Soonish
+[DESCRIPTION]
+Yada!
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Yada!
+
+[RELEASE]
 Version: 3.3.0
 Date: 2010-03-15
 [DESCRIPTION]
