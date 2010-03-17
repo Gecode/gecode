@@ -79,6 +79,16 @@ Rank:   major
 [DESCRIPTION]
 Yada!
 
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Comply with MiniZinc 1.1. String literals are not allowed any longer 
+except in annotations, the solver outputs UNKNOWN and UNSATISFIABLE 
+instead of just ==========, and the global constraints all_equal, 
+decreasing_int, and decreasing_bool are supported.
+
 [RELEASE]
 Version: 3.3.0
 Date: 2010-03-15

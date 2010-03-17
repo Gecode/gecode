@@ -485,7 +485,6 @@ pred_arg_simple_type:
     | FZ_SET FZ_OF int_ti_expr_tail
     | FZ_BOOL
     | FZ_FLOAT
-    | FZ_STRING
 
 pred_array_init:
       pred_array_init_arg
@@ -1117,38 +1116,6 @@ constraint_item :
         }
         delete $6; free($2);
       }
-    | FZ_CONSTRAINT FZ_ID annotations
-      {
-        ParserState *pp = static_cast<ParserState*>(parm);
-        AST::Array* args = new AST::Array(2);
-        args->a[0] = getVarRefArg(pp,$2);
-        args->a[1] = new AST::BoolLit(true);
-        ConExpr c("bool_eq", args);
-        if (!pp->hadError) {
-          try {
-            pp->fg->postConstraint(c, $3);
-          } catch (Gecode::FlatZinc::Error& e) {
-            yyerror(pp, e.toString().c_str());
-          }
-        }
-        delete $3; free($2);
-      }
-    | FZ_CONSTRAINT FZ_ID '[' FZ_INT_LIT ']' annotations
-        { 
-          ParserState *pp = static_cast<ParserState*>(parm);
-          AST::Array* args = new AST::Array(2);
-          args->a[0] = getArrayElement(pp,$2,$4);
-          args->a[1] = new AST::BoolLit(true);
-          ConExpr c("bool_eq", args);
-          if (!pp->hadError) {
-            try {
-              pp->fg->postConstraint(c, $6);
-            } catch (Gecode::FlatZinc::Error& e) {
-              yyerror(pp, e.toString().c_str());
-            }
-          }
-          delete $6; free($2);
-        }
 solve_item :
       FZ_SOLVE annotations FZ_SATISFY
       { 
@@ -1362,11 +1329,6 @@ non_array_expr :
           $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i);
         else
           $$ = new AST::IntLit(0); // keep things consistent
-        free($1);
-      }
-    | FZ_STRING_LIT
-      {
-        $$ = new AST::String($1);
         free($1);
       }
 

@@ -658,9 +658,16 @@ namespace Gecode { namespace FlatZinc {
       sol->print(out, p);
       out << "----------" << std::endl;
     }
+    if (!se.stopped()) {
+      if (sol) {
+        out << "==========" << endl;
+      } else {
+        out << "=====UNSATISFIABLE=====" << endl;
+      }
+    } else if (!sol) {
+        out << "=====UNKNOWN=====" << endl;
+    }
     delete sol;
-    if (!se.stopped())
-      out << "==========" << endl;
     stopped:
     if (opt.mode() == SM_STAT) {
       Gecode::Search::Statistics stat = se.statistics();

@@ -274,6 +274,11 @@ namespace Gecode { namespace FlatZinc {
       distinct(s, oa, va, ann2icl(ann));
     }
 
+    void p_all_equal(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs va = arg2intvarargs(s, ce[0]);
+      rel(s, va, IRT_EQ, ann2icl(ann));
+    }
+
     void p_int_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
                    AST::Node* ann) {
       if (ce[0]->isIntVar()) {
@@ -563,8 +568,13 @@ namespace Gecode { namespace FlatZinc {
           rel(s, getBoolVar(s, ce[0]), irt, ce[1]->getBool(), ann2icl(ann));
         }
       } else {
-        rel(s, getBoolVar(s, ce[1]), swap(irt), ce[0]->getBool(), 
-            ann2icl(ann));
+        if (ce[1]->isBoolVar()) {
+          rel(s, getBoolVar(s, ce[1]), swap(irt), ce[0]->getBool(), 
+              ann2icl(ann));
+        } else {
+          if (ce[0]->getBool() != ce[1]->getBool())
+            s.fail();
+        }
       }
     }
     void p_bool_CMP_reif(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
@@ -909,6 +919,18 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void
+    p_decreasing_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      rel(s,x,IRT_GQ,ann2icl(ann));
+    }
+
+    void
+    p_decreasing_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
+      rel(s,x,IRT_GQ,ann2icl(ann));
+    }
+
+    void
     p_table_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = arg2intvarargs(s, ce[0]);
       IntArgs tuples = arg2intargs(ce[1]);
@@ -1039,6 +1061,7 @@ namespace Gecode { namespace FlatZinc {
       IntPoster(void) {
         registry().add("all_different_int", &p_distinct);
         registry().add("all_different_offset", &p_distinctOffset);
+        registry().add("all_equal_int", &p_all_equal);
         registry().add("int_eq", &p_int_eq);
         registry().add("int_ne", &p_int_ne);
         registry().add("int_ge", &p_int_ge);
@@ -1113,6 +1136,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("inverse_offsets", &p_inverse_offsets);
         registry().add("increasing_int", &p_increasing_int);
         registry().add("increasing_bool", &p_increasing_bool);
+        registry().add("decreasing_int", &p_decreasing_int);
+        registry().add("decreasing_bool", &p_decreasing_bool);
         registry().add("table_int", &p_table_int);
         registry().add("table_bool", &p_table_bool);
         registry().add("cumulatives", &p_cumulatives);
