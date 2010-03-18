@@ -4278,14 +4278,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-isysroot ${with_sdk}"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-isysroot ${with_sdk}"
+       CXXFLAGS="-isysroot ${with_sdk}${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-isysroot ${with_sdk}${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -isysroot ${with_sdk}" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -isysroot ${with_sdk}... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-isysroot ${with_sdk} -Werror"
+   CXXFLAGS="-isysroot ${with_sdk}${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4328,7 +4328,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-isysroot ${with_sdk}"
+        CXXFLAGS="-isysroot ${with_sdk}${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4350,7 +4350,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -isysroot ${with_sdk}" >&5
 echo $ECHO_N "checking whether ${CC} accepts -isysroot ${with_sdk}... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-isysroot ${with_sdk} -Werror"
+   CFLAGS="-isysroot ${with_sdk}${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4393,7 +4393,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-isysroot ${with_sdk}"
+        CFLAGS="-isysroot ${with_sdk}${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4412,7 +4412,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-      DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-Wl,-syslibroot,${with_sdk}"
+      DLLFLAGS="-Wl,-syslibroot,${with_sdk}${DLLFLAGS:+ }${DLLFLAGS}"
     fi
   fi
 
@@ -4435,14 +4435,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-mmacosx-version-min=${with_macosx_version_min}"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-mmacosx-version-min=${with_macosx_version_min}"
+       CXXFLAGS="-mmacosx-version-min=${with_macosx_version_min}${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-mmacosx-version-min=${with_macosx_version_min}${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -mmacosx-version-min=${with_macosx_version_min}" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -mmacosx-version-min=${with_macosx_version_min}... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-mmacosx-version-min=${with_macosx_version_min} -Werror"
+   CXXFLAGS="-mmacosx-version-min=${with_macosx_version_min}${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4485,7 +4485,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-mmacosx-version-min=${with_macosx_version_min}"
+        CXXFLAGS="-mmacosx-version-min=${with_macosx_version_min}${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4507,7 +4507,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -mmacosx-version-min=${with_macosx_version_min}" >&5
 echo $ECHO_N "checking whether ${CC} accepts -mmacosx-version-min=${with_macosx_version_min}... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-mmacosx-version-min=${with_macosx_version_min} -Werror"
+   CFLAGS="-mmacosx-version-min=${with_macosx_version_min}${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4550,7 +4550,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-mmacosx-version-min=${with_macosx_version_min}"
+        CFLAGS="-mmacosx-version-min=${with_macosx_version_min}${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4569,7 +4569,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-      DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-mmacosx-version-min=${with_macosx_version_min}"
+      DLLFLAGS="-mmacosx-version-min=${with_macosx_version_min}${DLLFLAGS:+ }${DLLFLAGS}"
     fi
   fi
 
@@ -4598,14 +4598,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }${archflags}"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }${archflags}"
+       CXXFLAGS="${archflags}${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="${archflags}${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts ${archflags}" >&5
 echo $ECHO_N "checking whether ${CXX} accepts ${archflags}... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }${archflags} -Werror"
+   CXXFLAGS="${archflags}${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4648,7 +4648,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }${archflags}"
+        CXXFLAGS="${archflags}${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4670,7 +4670,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts ${archflags}" >&5
 echo $ECHO_N "checking whether ${CC} accepts ${archflags}... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }${archflags} -Werror"
+   CFLAGS="${archflags}${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4713,7 +4713,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }${archflags}"
+        CFLAGS="${archflags}${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4732,7 +4732,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-      DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${archflags}"
+      DLLFLAGS="${archflags}${DLLFLAGS:+ }${DLLFLAGS}"
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
     else
@@ -4846,7 +4846,7 @@ echo "${ECHO_T}yes" >&6; }
    { echo "$as_me:$LINENO: checking whether the linker accepts \"-static\"" >&5
 echo $ECHO_N "checking whether the linker accepts \"-static\"... $ECHO_C" >&6; }
    ac_gecode_save_GLDFLAGS="${GLDFLAGS}"
-   GLDFLAGS="${GLDFLAGS}${GLDFLAGS:+ }"-static""
+   GLDFLAGS=""-static"${GLDFLAGS:+ }${GLDFLAGS}"
    cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -4883,7 +4883,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
   { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
       GLDFLAGS="$ac_gecode_save_GLDFLAGS"
-      GLDFLAGS="${GLDFLAGS}${GLDFLAGS:+ }"-static""
+      GLDFLAGS=""-static"${GLDFLAGS:+ }${GLDFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -4948,8 +4948,8 @@ echo "${ECHO_T}yes" >&6; }
 
 	    { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
-       	    CFLAGS="${CFLAGS}${CFLAGS:+ }-DNDEBUG"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-DNDEBUG"
+       	    CFLAGS="-DNDEBUG${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-DNDEBUG${CXXFLAGS:+ }${CXXFLAGS}"
 	 fi
 
 # Check whether --enable-leak-debug was given.
@@ -5080,14 +5080,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-p"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-p"
+       CXXFLAGS="-p${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-p${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -p" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -p... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-p -Werror"
+   CXXFLAGS="-p${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5130,7 +5130,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-p"
+        CXXFLAGS="-p${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5152,7 +5152,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -p" >&5
 echo $ECHO_N "checking whether ${CC} accepts -p... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-p -Werror"
+   CFLAGS="-p${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5195,7 +5195,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-p"
+        CFLAGS="-p${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5218,14 +5218,14 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-pg"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pg"
+       CFLAGS="-pg${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-pg${CXXFLAGS:+ }${CXXFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -pg" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -pg... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pg -Werror"
+   CXXFLAGS="-pg${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5268,8 +5268,8 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-pg"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pg"
+       CFLAGS="-pg${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-pg${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5289,14 +5289,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-p"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-p"
+       CXXFLAGS="-p${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-p${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -p" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -p... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-p -Werror"
+   CXXFLAGS="-p${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5339,7 +5339,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-p"
+        CXXFLAGS="-p${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5361,7 +5361,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -p" >&5
 echo $ECHO_N "checking whether ${CC} accepts -p... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-p -Werror"
+   CFLAGS="-p${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5404,7 +5404,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-p"
+        CFLAGS="-p${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5461,14 +5461,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fprofile-arcs"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fprofile-arcs"
+       CXXFLAGS="-fprofile-arcs${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fprofile-arcs${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fprofile-arcs" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fprofile-arcs... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fprofile-arcs -Werror"
+   CXXFLAGS="-fprofile-arcs${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5511,7 +5511,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fprofile-arcs"
+        CXXFLAGS="-fprofile-arcs${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5533,7 +5533,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fprofile-arcs" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fprofile-arcs... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fprofile-arcs -Werror"
+   CFLAGS="-fprofile-arcs${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5576,7 +5576,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fprofile-arcs"
+        CFLAGS="-fprofile-arcs${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5607,14 +5607,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ftest-coverage"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-ftest-coverage"
+       CXXFLAGS="-ftest-coverage${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-ftest-coverage${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ftest-coverage" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ftest-coverage... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ftest-coverage -Werror"
+   CXXFLAGS="-ftest-coverage${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5657,7 +5657,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ftest-coverage"
+        CXXFLAGS="-ftest-coverage${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5679,7 +5679,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -ftest-coverage" >&5
 echo $ECHO_N "checking whether ${CC} accepts -ftest-coverage... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-ftest-coverage -Werror"
+   CFLAGS="-ftest-coverage${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5722,7 +5722,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-ftest-coverage"
+        CFLAGS="-ftest-coverage${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -5741,8 +5741,8 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-	    DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-fprofile-arcs""
-	    DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-ftest-coverage""
+	    DLLFLAGS=""-fprofile-arcs"${DLLFLAGS:+ }${DLLFLAGS}"
+	    DLLFLAGS=""-ftest-coverage"${DLLFLAGS:+ }${DLLFLAGS}"
 	 else
 	    { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
@@ -7203,9 +7203,9 @@ cat >>confdefs.h <<\_ACEOF
 #define GECODE_THREADS_PTHREADS 1
 _ACEOF
 
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-pthread"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pthread"
-   DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-pthread"
+   CFLAGS="-pthread${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-pthread${CXXFLAGS:+ }${CXXFLAGS}"
+   DLLFLAGS="-pthread${DLLFLAGS:+ }${DLLFLAGS}"
 
 else
   if test "${ac_cv_header_windows_h+set}" = set; then
@@ -7509,8 +7509,8 @@ gnu)
      darwin*)
        need_soname="yes"
 
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-Wl,-single_module"
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-dynamiclib""
+       DLLFLAGS="-Wl,-single_module${DLLFLAGS:+ }${DLLFLAGS}"
+       DLLFLAGS=""-dynamiclib"${DLLFLAGS:+ }${DLLFLAGS}"
        DLLEXT="${ac_gecode_soversion}.0.dylib"
 
        SOSUFFIX=".${ac_gecode_soversion}.dylib"
@@ -7553,7 +7553,7 @@ gnu)
 echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
    { (exit 1); exit 1; }; }
        fi
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
+       DLLFLAGS=""-shared"${DLLFLAGS:+ }${DLLFLAGS}"
        DLLEXT="dll"
 
        SOSUFFIX=""
@@ -7595,7 +7595,7 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
      *)
        need_soname="yes"
 
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
+       DLLFLAGS=""-shared"${DLLFLAGS:+ }${DLLFLAGS}"
        DLLEXT="so.${ac_gecode_soversion}.0"
 
        SOSUFFIX=".so.${ac_gecode_soversion}"
@@ -7642,14 +7642,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fPIC"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fPIC"
+       CXXFLAGS="-fPIC${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fPIC${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fPIC... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fPIC -Werror"
+   CXXFLAGS="-fPIC${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -7692,7 +7692,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fPIC"
+        CXXFLAGS="-fPIC${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -7714,7 +7714,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fPIC... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fPIC -Werror"
+   CFLAGS="-fPIC${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -7757,7 +7757,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fPIC"
+        CFLAGS="-fPIC${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -7788,14 +7788,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wextra"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-Wextra"
+       CXXFLAGS="-Wextra${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-Wextra${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wextra... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wextra -Werror"
+   CXXFLAGS="-Wextra${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -7838,7 +7838,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wextra"
+        CXXFLAGS="-Wextra${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -7860,7 +7860,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wextra... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-Wextra -Werror"
+   CFLAGS="-Wextra${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -7903,7 +7903,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-Wextra"
+        CFLAGS="-Wextra${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -7934,14 +7934,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wall"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-Wall"
+       CXXFLAGS="-Wall${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-Wall${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wall... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wall -Werror"
+   CXXFLAGS="-Wall${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -7984,7 +7984,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wall"
+        CXXFLAGS="-Wall${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8006,7 +8006,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wall... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-Wall -Werror"
+   CFLAGS="-Wall${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8049,7 +8049,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-Wall"
+        CFLAGS="-Wall${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8080,14 +8080,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pipe"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-pipe"
+       CXXFLAGS="-pipe${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-pipe${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -pipe... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pipe -Werror"
+   CXXFLAGS="-pipe${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8130,7 +8130,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pipe"
+        CXXFLAGS="-pipe${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8152,7 +8152,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CC} accepts -pipe... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-pipe -Werror"
+   CFLAGS="-pipe${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8195,7 +8195,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-pipe"
+        CFLAGS="-pipe${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8232,14 +8232,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+       CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -g" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g -Werror"
+   CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8282,7 +8282,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
+        CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8304,7 +8304,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -g" >&5
 echo $ECHO_N "checking whether ${CC} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-g -Werror"
+   CFLAGS="-g${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8347,7 +8347,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+        CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8370,14 +8370,14 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-ggdb"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ggdb"
+       CFLAGS="-ggdb${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-ggdb${CXXFLAGS:+ }${CXXFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ggdb" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ggdb... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ggdb -Werror"
+   CXXFLAGS="-ggdb${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8420,8 +8420,8 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-ggdb"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ggdb"
+       CFLAGS="-ggdb${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-ggdb${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8441,14 +8441,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+       CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -g" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g -Werror"
+   CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8491,7 +8491,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
+        CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8513,7 +8513,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -g" >&5
 echo $ECHO_N "checking whether ${CC} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-g -Werror"
+   CFLAGS="-g${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8556,7 +8556,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+        CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8774,14 +8774,14 @@ cat >>confdefs.h <<\_ACEOF
 #define GECODE_GCC_HAS_CLASS_VISIBILITY
 _ACEOF
 
-	       CFLAGS="${CFLAGS}${CFLAGS:+ }-fvisibility=hidden"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fvisibility=hidden"
+	       CFLAGS="-fvisibility=hidden${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-fvisibility=hidden${CXXFLAGS:+ }${CXXFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fvisibility=hidden" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fvisibility=hidden... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fvisibility=hidden -Werror"
+   CXXFLAGS="-fvisibility=hidden${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8829,8 +8829,8 @@ cat >>confdefs.h <<\_ACEOF
 #define GECODE_GCC_HAS_CLASS_VISIBILITY
 _ACEOF
 
-	       CFLAGS="${CFLAGS}${CFLAGS:+ }-fvisibility=hidden"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fvisibility=hidden"
+	       CFLAGS="-fvisibility=hidden${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-fvisibility=hidden${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -8865,7 +8865,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ } -Werror"
+  CXXFLAGS="${CXXFLAGS:+ }${CXXFLAGS} -Werror"
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -8939,14 +8939,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-O3"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-O3"
+       CXXFLAGS="-O3${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-O3${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -O3... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-O3 -Werror"
+   CXXFLAGS="-O3${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -8989,7 +8989,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-O3"
+        CXXFLAGS="-O3${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9011,7 +9011,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CC} accepts -O3... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-O3 -Werror"
+   CFLAGS="-O3${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9054,7 +9054,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-O3"
+        CFLAGS="-O3${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9085,14 +9085,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-strict-aliasing"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-strict-aliasing"
+       CXXFLAGS="-fno-strict-aliasing${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fno-strict-aliasing${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-strict-aliasing -Werror"
+   CXXFLAGS="-fno-strict-aliasing${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9135,7 +9135,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-strict-aliasing"
+        CXXFLAGS="-fno-strict-aliasing${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9157,7 +9157,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-strict-aliasing -Werror"
+   CFLAGS="-fno-strict-aliasing${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9200,7 +9200,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-strict-aliasing"
+        CFLAGS="-fno-strict-aliasing${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9232,14 +9232,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ffast-math"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-ffast-math"
+       CXXFLAGS="-ffast-math${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-ffast-math${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ffast-math" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ffast-math... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ffast-math -Werror"
+   CXXFLAGS="-ffast-math${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9282,7 +9282,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ffast-math"
+        CXXFLAGS="-ffast-math${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9304,7 +9304,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -ffast-math" >&5
 echo $ECHO_N "checking whether ${CC} accepts -ffast-math... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-ffast-math -Werror"
+   CFLAGS="-ffast-math${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9347,7 +9347,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-ffast-math"
+        CFLAGS="-ffast-math${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9378,14 +9378,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-mthreads"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-mthreads"
+       CXXFLAGS="-mthreads${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-mthreads${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -mthreads" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -mthreads... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-mthreads -Werror"
+   CXXFLAGS="-mthreads${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9428,7 +9428,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-mthreads"
+        CXXFLAGS="-mthreads${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9450,7 +9450,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -mthreads" >&5
 echo $ECHO_N "checking whether ${CC} accepts -mthreads... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-mthreads -Werror"
+   CFLAGS="-mthreads${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9493,7 +9493,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-mthreads"
+        CFLAGS="-mthreads${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9531,14 +9531,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-inline-functions"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-inline-functions"
+       CXXFLAGS="-fno-inline-functions${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fno-inline-functions${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-inline-functions... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-inline-functions -Werror"
+   CXXFLAGS="-fno-inline-functions${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9581,7 +9581,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-inline-functions"
+        CXXFLAGS="-fno-inline-functions${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9603,7 +9603,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-inline-functions... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-inline-functions -Werror"
+   CFLAGS="-fno-inline-functions${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9646,7 +9646,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-inline-functions"
+        CFLAGS="-fno-inline-functions${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9677,14 +9677,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fimplement-inlines"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fimplement-inlines"
+       CXXFLAGS="-fimplement-inlines${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fimplement-inlines${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fimplement-inlines... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fimplement-inlines -Werror"
+   CXXFLAGS="-fimplement-inlines${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9727,7 +9727,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fimplement-inlines"
+        CXXFLAGS="-fimplement-inlines${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9749,7 +9749,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fimplement-inlines... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fimplement-inlines -Werror"
+   CFLAGS="-fimplement-inlines${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9792,7 +9792,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fimplement-inlines"
+        CFLAGS="-fimplement-inlines${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9822,10 +9822,10 @@ intel)
 #define forceinline __forceinline
 _ACEOF
 
-  CFLAGS="${CFLAGS}${CFLAGS:+ }-nologo"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-nologo"
-  CFLAGS="${CFLAGS}${CFLAGS:+ }-D_CRT_SECURE_NO_DEPRECATE"
-  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-EHsc"
+  CFLAGS="-nologo${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-nologo${CXXFLAGS:+ }${CXXFLAGS}"
+  CFLAGS="-D_CRT_SECURE_NO_DEPRECATE${CFLAGS:+ }${CFLAGS}"
+  CXXFLAGS="-EHsc${CXXFLAGS:+ }${CXXFLAGS}"
 
 cat >>confdefs.h <<\_ACEOF
 #define GECODE_MEMORY_ALIGNMENT sizeof(void*)
@@ -9833,8 +9833,8 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-MD -Ox -fp:fast -GS- -wd4355"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-MD -Ox -fp:fast -GS- -wd4355"
+        CFLAGS="-MD -Ox -fp:fast -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MD -Ox -fp:fast -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -arch:SSE2" >&5
@@ -9847,14 +9847,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch:SSE2"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-arch:SSE2"
+       CXXFLAGS="-arch:SSE2${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-arch:SSE2${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -arch:SSE2... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch:SSE2 -Werror"
+   CXXFLAGS="-arch:SSE2${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9897,7 +9897,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch:SSE2"
+        CXXFLAGS="-arch:SSE2${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9919,7 +9919,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CC} accepts -arch:SSE2... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-arch:SSE2 -Werror"
+   CFLAGS="-arch:SSE2${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9962,7 +9962,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-arch:SSE2"
+        CFLAGS="-arch:SSE2${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -9982,13 +9982,13 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD"
+        DLLFLAGS="${CXXFLAGS} -LD${DLLFLAGS:+ }${DLLFLAGS}"
         GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
   else
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-MDd -Zi -wd4355"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-MDd -Zi -wd4355"
+        CFLAGS="-MDd -Zi -wd4355${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MDd -Zi -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
 
-        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LDd"
+        DLLFLAGS="${CXXFLAGS} -LDd${DLLFLAGS:+ }${DLLFLAGS}"
   fi
 
   sharedlibdir="${bindir}"
@@ -10176,14 +10176,14 @@ cat >>confdefs.h <<\_ACEOF
 #define GECODE_GCC_HAS_CLASS_VISIBILITY
 _ACEOF
 
-	       CFLAGS="${CFLAGS}${CFLAGS:+ }-fvisibility=hidden"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fvisibility=hidden"
+	       CFLAGS="-fvisibility=hidden${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-fvisibility=hidden${CXXFLAGS:+ }${CXXFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fvisibility=hidden" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fvisibility=hidden... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fvisibility=hidden -Werror"
+   CXXFLAGS="-fvisibility=hidden${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10231,8 +10231,8 @@ cat >>confdefs.h <<\_ACEOF
 #define GECODE_GCC_HAS_CLASS_VISIBILITY
 _ACEOF
 
-	       CFLAGS="${CFLAGS}${CFLAGS:+ }-fvisibility=hidden"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fvisibility=hidden"
+	       CFLAGS="-fvisibility=hidden${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-fvisibility=hidden${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10262,8 +10262,8 @@ echo "${ECHO_T}no" >&6; }
      darwin*)
        need_soname="yes"
 
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-Wl,-single_module"
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-dynamiclib""
+       DLLFLAGS="-Wl,-single_module${DLLFLAGS:+ }${DLLFLAGS}"
+       DLLFLAGS=""-dynamiclib"${DLLFLAGS:+ }${DLLFLAGS}"
        DLLEXT="${ac_gecode_soversion}.0.dylib"
 
        SOSUFFIX=".${ac_gecode_soversion}.dylib"
@@ -10306,7 +10306,7 @@ echo "${ECHO_T}no" >&6; }
 echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
    { (exit 1); exit 1; }; }
        fi
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
+       DLLFLAGS=""-shared"${DLLFLAGS:+ }${DLLFLAGS}"
        DLLEXT="dll"
 
        SOSUFFIX=""
@@ -10348,7 +10348,7 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
      *)
        need_soname="yes"
 
-       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
+       DLLFLAGS=""-shared"${DLLFLAGS:+ }${DLLFLAGS}"
        DLLEXT="so.${ac_gecode_soversion}.0"
 
        SOSUFFIX=".so.${ac_gecode_soversion}"
@@ -10395,14 +10395,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fPIC"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fPIC"
+       CXXFLAGS="-fPIC${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fPIC${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fPIC... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fPIC -Werror"
+   CXXFLAGS="-fPIC${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10445,7 +10445,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fPIC"
+        CXXFLAGS="-fPIC${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10467,7 +10467,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fPIC" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fPIC... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fPIC -Werror"
+   CFLAGS="-fPIC${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10510,7 +10510,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fPIC"
+        CFLAGS="-fPIC${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10541,14 +10541,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wextra"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-Wextra"
+       CXXFLAGS="-Wextra${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-Wextra${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wextra... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wextra -Werror"
+   CXXFLAGS="-Wextra${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10591,7 +10591,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wextra"
+        CXXFLAGS="-Wextra${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10613,7 +10613,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wextra" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wextra... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-Wextra -Werror"
+   CFLAGS="-Wextra${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10656,7 +10656,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-Wextra"
+        CFLAGS="-Wextra${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10687,14 +10687,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wall"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-Wall"
+       CXXFLAGS="-Wall${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-Wall${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -Wall... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wall -Werror"
+   CXXFLAGS="-Wall${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10737,7 +10737,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Wall"
+        CXXFLAGS="-Wall${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10759,7 +10759,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -Wall" >&5
 echo $ECHO_N "checking whether ${CC} accepts -Wall... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-Wall -Werror"
+   CFLAGS="-Wall${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10802,7 +10802,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-Wall"
+        CFLAGS="-Wall${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10833,14 +10833,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pipe"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-pipe"
+       CXXFLAGS="-pipe${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-pipe${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -pipe... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pipe -Werror"
+   CXXFLAGS="-pipe${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10883,7 +10883,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-pipe"
+        CXXFLAGS="-pipe${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10905,7 +10905,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -pipe" >&5
 echo $ECHO_N "checking whether ${CC} accepts -pipe... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-pipe -Werror"
+   CFLAGS="-pipe${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10948,7 +10948,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-pipe"
+        CFLAGS="-pipe${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -10985,14 +10985,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+       CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -g" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g -Werror"
+   CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11035,7 +11035,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
+        CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11057,7 +11057,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -g" >&5
 echo $ECHO_N "checking whether ${CC} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-g -Werror"
+   CFLAGS="-g${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11100,7 +11100,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+        CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11123,14 +11123,14 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-ggdb"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ggdb"
+       CFLAGS="-ggdb${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-ggdb${CXXFLAGS:+ }${CXXFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -ggdb" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -ggdb... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ggdb -Werror"
+   CXXFLAGS="-ggdb${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11173,8 +11173,8 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-ggdb"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-ggdb"
+       CFLAGS="-ggdb${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-ggdb${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11194,14 +11194,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+       CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -g" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g -Werror"
+   CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11244,7 +11244,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-g"
+        CXXFLAGS="-g${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11266,7 +11266,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -g" >&5
 echo $ECHO_N "checking whether ${CC} accepts -g... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-g -Werror"
+   CFLAGS="-g${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11309,7 +11309,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-g"
+        CFLAGS="-g${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11512,7 +11512,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ } -Werror"
+  CXXFLAGS="${CXXFLAGS:+ }${CXXFLAGS} -Werror"
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -11586,14 +11586,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-O3"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-O3"
+       CXXFLAGS="-O3${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-O3${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -O3... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-O3 -Werror"
+   CXXFLAGS="-O3${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11636,7 +11636,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-O3"
+        CXXFLAGS="-O3${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11658,7 +11658,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -O3" >&5
 echo $ECHO_N "checking whether ${CC} accepts -O3... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-O3 -Werror"
+   CFLAGS="-O3${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11701,7 +11701,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-O3"
+        CFLAGS="-O3${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11732,14 +11732,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-strict-aliasing"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-strict-aliasing"
+       CXXFLAGS="-fno-strict-aliasing${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fno-strict-aliasing${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-strict-aliasing -Werror"
+   CXXFLAGS="-fno-strict-aliasing${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11782,7 +11782,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-strict-aliasing"
+        CXXFLAGS="-fno-strict-aliasing${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11804,7 +11804,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-strict-aliasing" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-strict-aliasing... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-strict-aliasing -Werror"
+   CFLAGS="-fno-strict-aliasing${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11847,7 +11847,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-strict-aliasing"
+        CFLAGS="-fno-strict-aliasing${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11884,14 +11884,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-inline-functions"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-inline-functions"
+       CXXFLAGS="-fno-inline-functions${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fno-inline-functions${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fno-inline-functions... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-inline-functions -Werror"
+   CXXFLAGS="-fno-inline-functions${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11934,7 +11934,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fno-inline-functions"
+        CXXFLAGS="-fno-inline-functions${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -11956,7 +11956,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fno-inline-functions" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fno-inline-functions... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-inline-functions -Werror"
+   CFLAGS="-fno-inline-functions${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -11999,7 +11999,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fno-inline-functions"
+        CFLAGS="-fno-inline-functions${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -12030,14 +12030,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fimplement-inlines"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-fimplement-inlines"
+       CXXFLAGS="-fimplement-inlines${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-fimplement-inlines${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -fimplement-inlines... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fimplement-inlines -Werror"
+   CXXFLAGS="-fimplement-inlines${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -12080,7 +12080,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-fimplement-inlines"
+        CXXFLAGS="-fimplement-inlines${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -12102,7 +12102,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -fimplement-inlines" >&5
 echo $ECHO_N "checking whether ${CC} accepts -fimplement-inlines... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-fimplement-inlines -Werror"
+   CFLAGS="-fimplement-inlines${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -12145,7 +12145,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-fimplement-inlines"
+        CFLAGS="-fimplement-inlines${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -12173,10 +12173,10 @@ microsoft)
 #define forceinline __forceinline
 _ACEOF
 
-  CFLAGS="${CFLAGS}${CFLAGS:+ }-nologo"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-nologo"
-  CFLAGS="${CFLAGS}${CFLAGS:+ }-D_CRT_SECURE_NO_DEPRECATE"
-  CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-EHsc"
+  CFLAGS="-nologo${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-nologo${CXXFLAGS:+ }${CXXFLAGS}"
+  CFLAGS="-D_CRT_SECURE_NO_DEPRECATE${CFLAGS:+ }${CFLAGS}"
+  CXXFLAGS="-EHsc${CXXFLAGS:+ }${CXXFLAGS}"
 
 cat >>confdefs.h <<\_ACEOF
 #define GECODE_MEMORY_ALIGNMENT sizeof(void*)
@@ -12184,8 +12184,8 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-MD -Ox -fp:fast -GS- -wd4355"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-MD -Ox -fp:fast -GS- -wd4355"
+        CFLAGS="-MD -Ox -fp:fast -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MD -Ox -fp:fast -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -arch:SSE2" >&5
@@ -12198,14 +12198,14 @@ echo "${ECHO_T}no" >&6; }
      { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-       CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch:SSE2"
-       CFLAGS="${CFLAGS}${CFLAGS:+ }-arch:SSE2"
+       CXXFLAGS="-arch:SSE2${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-arch:SSE2${CFLAGS:+ }${CFLAGS}"
    fi
    else
      { echo "$as_me:$LINENO: checking whether ${CXX} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CXX} accepts -arch:SSE2... $ECHO_C" >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch:SSE2 -Werror"
+   CXXFLAGS="-arch:SSE2${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -12248,7 +12248,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch:SSE2"
+        CXXFLAGS="-arch:SSE2${CXXFLAGS:+ }${CXXFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -12270,7 +12270,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    { echo "$as_me:$LINENO: checking whether ${CC} accepts -arch:SSE2" >&5
 echo $ECHO_N "checking whether ${CC} accepts -arch:SSE2... $ECHO_C" >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="${CFLAGS}${CFLAGS:+ }-arch:SSE2 -Werror"
+   CFLAGS="-arch:SSE2${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -12313,7 +12313,7 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
       { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-arch:SSE2"
+        CFLAGS="-arch:SSE2${CFLAGS:+ }${CFLAGS}"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
@@ -12333,13 +12333,13 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD"
+        DLLFLAGS="${CXXFLAGS} -LD${DLLFLAGS:+ }${DLLFLAGS}"
         GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
   else
-        CFLAGS="${CFLAGS}${CFLAGS:+ }-MDd -Zi -wd4355"
-    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-MDd -Zi -wd4355"
+        CFLAGS="-MDd -Zi -wd4355${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MDd -Zi -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
 
-        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LDd"
+        DLLFLAGS="${CXXFLAGS} -LDd${DLLFLAGS:+ }${DLLFLAGS}"
   fi
 
   sharedlibdir="${bindir}"
