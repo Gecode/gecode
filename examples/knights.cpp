@@ -88,14 +88,14 @@ protected:
 public:
   /// Check status of brancher, return true if alternatives left
   virtual bool status(const Space&) const {
-    // Follow path of assigned variables
-    while (true) {
+    // A path to follow can be at most x.size() long
+    for (int n=x.size(); n--; ) {
       if (!x[start].assigned()) 
         return true;
+      // Follow path of assigned variables
       start = x[start].val();
-      if (start == 0) 
-        return false;
     }
+    return false;
   }
   /// Return choice
   virtual Gecode::Choice* choice(Space&) {
