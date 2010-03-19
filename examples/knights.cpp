@@ -140,12 +140,11 @@ public:
 
 /// Base-class for Knights tour example
 class Knights : public Script {
-protected:
+public:
   /// Size of board
   const int n;
   /// Maps board field to successor field
   IntVarArray succ;
-public:
   /// Propagation to use for model
   enum {
     PROP_REIFIED, ///< Use reified constraints
@@ -308,6 +307,84 @@ public:
   }
 };
 
+#ifdef GECODE_HAS_GIST
+
+#include <QtGui>
+
+/// Inspector showing knight moves on a chess board
+class KnightsInspector : public Gist::Inspector {
+protected:
+  /// The graphics scene displaying the board
+  QGraphicsScene* scene;
+  /// The window containing the graphics scene
+  QMainWindow* mw;
+  /// The size of a field on the board
+  static const int unit = 30;
+public:
+  /// Constructor
+  KnightsInspector(void) : scene(NULL), mw(NULL) {}
+  /// Inspect space \a s
+  virtual void inspect(const Space& s) {
+    const Knights& k = static_cast<const Knights&>(s);
+    
+    if (!scene)
+      initialize();
+    QList <QGraphicsItem*> itemList = scene->items();
+    foreach (QGraphicsItem* i, scene->items()) {
+      scene->removeItem(i);
+      delete i;
+    }
+
+    for (int i=0; i<k.n; i++) {
+      for (int j=0; j<k.n; j++) {
+        scene->addRect(i*unit,j*unit,unit,unit);
+        
+        QPen pen(Qt::black, 2);
+        if (!k.succ[i*k.n+j].assigned()) {
+          pen.setColor(Qt::red);
+          pen.setStyle(Qt::DotLine);
+          pen.setWidth(0);
+        }
+        for (IntVarValues xv(k.succ[i*k.n+j]); xv(); ++xv) {
+          int ky = xv.val() % k.n;
+          int kx = xv.val() / k.n;
+          scene->addLine(i*unit+unit/2,j*unit+unit/2,
+                         kx*unit+unit/2,ky*unit+unit/2,
+                         pen);
+        }
+        
+      }
+    }
+    mw->show();    
+  }
+  
+  /// Set up main window
+  void initialize() {
+    mw = new QMainWindow();
+    scene = new QGraphicsScene();
+    QGraphicsView* view = new QGraphicsView(scene);
+    view->setRenderHints(QPainter::Antialiasing);
+    mw->setCentralWidget(view);
+    mw->setAttribute(Qt::WA_QuitOnClose, false);
+    mw->setAttribute(Qt::WA_DeleteOnClose, false);
+    QAction* closeWindow = new QAction("Close window", mw);
+    closeWindow->setShortcut(QKeySequence("Ctrl+W"));
+    mw->connect(closeWindow, SIGNAL(triggered()),
+                mw, SLOT(close()));
+    mw->addAction(closeWindow);
+  }
+  
+  /// Name of the inspector
+  virtual std::string name(void) { return "Board"; }
+  /// Finalize inspector
+  virtual void finalize(void) {
+    delete mw;
+    mw = NULL;
+  }
+};
+
+#endif GECODE_HAS_GIST
+
 /** \brief Main-function
  *  \relates Knights
  */
@@ -322,7 +399,14 @@ main(int argc, char* argv[]) {
   opt.branching(Knights::BRANCH_NAIVE);
   opt.branching(Knights::BRANCH_NAIVE, "reified");
   opt.branching(Knights::BRANCH_WARNSDORFF, "warnsdorff");
+
+#ifdef GECODE_HAS_GIST
+  KnightsInspector ki;
+  opt.inspect.click(&ki);
+#endif
+
   opt.parse(argc,argv);
+
   if (opt.propagation() == Knights::PROP_REIFIED) {
     Script::run<KnightsReified,DFS,SizeOptions>(opt);
   } else {

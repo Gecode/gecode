@@ -1079,10 +1079,10 @@ gecode/driver/%$(SBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
 
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cpp
-	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@COMPILEOBJ@$@ @CXXIN@$<
 examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cpp
-	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 
@@ -1369,7 +1369,7 @@ endif
 .PRECIOUS: examples/%$(OBJSUFFIX)
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
+	$(LINKALL) $(LINKQT) $(GLDFLAGS)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 $(TESTEXE): $(TESTOBJ) $(ALLLIB) 
