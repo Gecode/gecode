@@ -343,6 +343,37 @@ namespace Gecode {
     return _samples.value();
   }
 
+#ifdef GECODE_HAS_GIST
+  forceinline
+  Options::_I::_I(void) : _click(heap,1), n_click(0),
+    _solution(heap,1), n_solution(0), _move(heap,1), n_move(0) {}
+
+  forceinline void
+  Options::_I::click(Gist::Inspector* i) {
+    _click[n_click++] = i;
+  }
+  forceinline void
+  Options::_I::solution(Gist::Inspector* i) {
+    _solution[n_solution++] = i;
+  }
+  forceinline void
+  Options::_I::move(Gist::Inspector* i) {
+    _move[n_move++] = i;
+  }
+  forceinline Gist::Inspector*
+  Options::_I::click(unsigned int i) const {
+    return (i < n_click) ? _click[i] : NULL;
+  }
+  forceinline Gist::Inspector*
+  Options::_I::solution(unsigned int i) const {
+    return (i < n_solution) ? _solution[i] : NULL;
+  }
+  forceinline Gist::Inspector*
+  Options::_I::move(unsigned int i) const {
+    return (i < n_move) ? _move[i] : NULL;
+  }
+#endif
+
   /*
    * Options with additional size argument
    *

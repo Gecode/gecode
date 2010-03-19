@@ -73,11 +73,11 @@ Date: Soonish
 Yada!
 
 [ENTRY]
-Module: kernel
+Module: driver
 What:   change
-Rank:   major
+Rank:   minor
 [DESCRIPTION]
-Yada!
+You can now register Gist inspectors in the driver options.
 
 [ENTRY]
 Module: gist

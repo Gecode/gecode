@@ -435,6 +435,41 @@ namespace Gecode {
     /// Return number of samples
     unsigned int samples(void) const;
     //@}
+
+#ifdef GECODE_HAS_GIST
+    /// Helper class storing Gist inspectors
+    class _I {
+    private:
+      /// The double click inspectors
+      Support::DynamicArray<Gist::Inspector*,Heap> _click;
+      /// Number of double click inspectors
+      unsigned int n_click;
+      /// The solution inspectors
+      Support::DynamicArray<Gist::Inspector*,Heap> _solution;
+      /// Number of solution inspectors
+      unsigned int n_solution;
+      /// The move inspectors
+      Support::DynamicArray<Gist::Inspector*,Heap> _move;
+      /// Number of move inspectors
+      unsigned int n_move;
+    public:
+      /// Constructor
+      _I(void);
+      /// Add inspector that reacts on node double clicks
+      void click(Gist::Inspector* i);
+      /// Add inspector that reacts on each new solution that is found
+      void solution(Gist::Inspector* i);
+      /// Add inspector that reacts on each move of the cursor
+      void move(Gist::Inspector* i);
+      
+      /// Return click inspector number \a i, or NULL if it does not exist
+      Gist::Inspector* click(unsigned int i) const;
+      /// Return solution inspector number \a i, or NULL if it does not exist
+      Gist::Inspector* solution(unsigned int i) const;
+      /// Return move inspector number \a i, or NULL if it does not exist
+      Gist::Inspector* move(unsigned int i) const;
+    } inspect;
+#endif
   };
 
   /**
