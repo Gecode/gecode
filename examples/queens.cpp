@@ -39,6 +39,10 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+#ifdef GECODE_HAS_GIST
+#include <QtGui>
+#endif
+
 using namespace Gecode;
 
 /**
@@ -51,10 +55,9 @@ using namespace Gecode;
  *
  */
 class Queens : public Script {
-protected:
+public:
   /// Position of queens on boards
   IntVarArray q;
-public:
   /// Propagation to use for model
   enum {
     PROP_BINARY,  ///< Use only binary disequality constraints
@@ -120,6 +123,72 @@ public:
   }
 };
 
+#ifdef GECODE_HAS_GIST
+/// Inspector showing queens on a chess board
+class QueensInspector : public Gist::Inspector {
+protected:
+  /// The graphics scene displaying the board
+  QGraphicsScene* scene;
+  /// The window containing the graphics scene
+  QMainWindow* mw;
+  /// The size of a field on the board
+  static const int unit = 20;
+public:
+  /// Constructor
+  QueensInspector(void) : scene(NULL), mw(NULL) {}
+  /// Inspect space \a s
+  virtual void inspect(const Space& s) {
+    const Queens& q = static_cast<const Queens&>(s);
+    
+    if (!scene)
+      initialize();
+    QList <QGraphicsItem*> itemList = scene->items();
+    foreach (QGraphicsItem* i, scene->items()) {
+      scene->removeItem(i);
+      delete i;
+    }
+
+    for (int i=0; i<q.q.size(); i++) {
+      for (int j=0; j<q.q.size(); j++) {
+        scene->addRect(i*unit,j*unit,unit,unit);
+      }
+      QBrush b(q.q[i].assigned() ? Qt::black : Qt::red);
+      QPen p(q.q[i].assigned() ? Qt::black : Qt::white);
+      for (IntVarValues xv(q.q[i]); xv(); ++xv) {
+        scene->addEllipse(QRectF(i*unit+unit/4,xv.val()*unit+unit/4,
+                                 unit/2,unit/2), p, b);
+      } 
+    }
+    mw->show();    
+  }
+  
+  /// Set up main window
+  void initialize() {
+    mw = new QMainWindow();
+    scene = new QGraphicsScene();
+    QGraphicsView* view = new QGraphicsView(scene);
+    view->setRenderHints(QPainter::Antialiasing);
+    mw->setCentralWidget(view);
+    mw->setAttribute(Qt::WA_QuitOnClose, false);
+    mw->setAttribute(Qt::WA_DeleteOnClose, false);
+    QAction* closeWindow = new QAction("Close window", mw);
+    closeWindow->setShortcut(QKeySequence("Ctrl+W"));
+    mw->connect(closeWindow, SIGNAL(triggered()),
+                mw, SLOT(close()));
+    mw->addAction(closeWindow);
+  }
+  
+  /// Name of the inspector
+  virtual std::string name(void) { return "Board"; }
+  /// Finalize inspector
+  virtual void finalize(void) {
+    delete mw;
+    mw = NULL;
+  }
+};
+
+#endif GECODE_HAS_GIST
+
 /** \brief Main-function
  *  \relates Queens
  */
@@ -135,6 +204,12 @@ main(int argc, char* argv[]) {
                       "single distinct and binary disequality constraints");
   opt.propagation(Queens::PROP_DISTINCT, "distinct",
                       "three distinct constraints");
+
+#ifdef GECODE_HAS_GIST
+  QueensInspector ki;
+  opt.inspect.click(&ki);
+#endif
+
   opt.parse(argc,argv);
   Script::run<Queens,DFS,SizeOptions>(opt);
   return 0;

@@ -42,6 +42,10 @@
 #include <gecode/minimodel.hh>
 #include <gecode/graph.hh>
 
+#ifdef GECODE_HAS_GIST
+#include <QtGui>
+#endif
+
 using namespace Gecode;
 
 
@@ -308,9 +312,6 @@ public:
 };
 
 #ifdef GECODE_HAS_GIST
-
-#include <QtGui>
-
 /// Inspector showing knight moves on a chess board
 class KnightsInspector : public Gist::Inspector {
 protected:
@@ -382,7 +383,6 @@ public:
     mw = NULL;
   }
 };
-
 #endif GECODE_HAS_GIST
 
 /** \brief Main-function

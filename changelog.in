@@ -77,7 +77,7 @@ Module: example
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Added a Gist inspector for the Knights example.
+Added Gist inspectors for the Knights and Queens examples.
 
 [ENTRY]
 Module: driver
