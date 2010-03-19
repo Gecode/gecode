@@ -377,10 +377,13 @@ namespace Gecode { namespace Gist {
     QAction* nas;
     QAction* nad;
     QAction* nam;
-    QList<QAction*> is = solutionInspectorGroup->actions();
-    for (int i=0; i<is.size(); i++) {
-      canvas->activateSolutionInspector(i,false);
-      is[i]->setChecked(false);
+    if (doubleClickInspectorGroup->
+      actions().indexOf(nullDoubleClickInspector) == -1) {
+      QList<QAction*> is = solutionInspectorGroup->actions();
+      for (int i=0; i<is.size(); i++) {
+        canvas->activateSolutionInspector(i,false);
+        is[i]->setChecked(false);
+      }
     }
     addInspector(ins, nas,nad,nam);
     nas->setChecked(true);
@@ -392,10 +395,13 @@ namespace Gecode { namespace Gist {
     QAction* nas;
     QAction* nad;
     QAction* nam;
-    QList<QAction*> is = doubleClickInspectorGroup->actions();
-    for (int i=0; i<is.size(); i++) {
-      canvas->activateDoubleClickInspector(i,false);
-      is[i]->setChecked(false);
+    if (doubleClickInspectorGroup->
+      actions().indexOf(nullDoubleClickInspector) == -1) {
+      QList<QAction*> is = doubleClickInspectorGroup->actions();
+      for (int i=0; i<is.size(); i++) {
+        canvas->activateDoubleClickInspector(i,false);
+        is[i]->setChecked(false);
+      }
     }
     addInspector(ins, nas,nad,nam);
     nad->setChecked(true);
@@ -407,10 +413,13 @@ namespace Gecode { namespace Gist {
     QAction* nas;
     QAction* nad;
     QAction* nam;
-    QList<QAction*> is = moveInspectorGroup->actions();
-    for (int i=0; i<is.size(); i++) {
-      canvas->activateMoveInspector(i,false);
-      is[i]->setChecked(false);
+    if (doubleClickInspectorGroup->
+      actions().indexOf(nullDoubleClickInspector) == -1) {
+      QList<QAction*> is = moveInspectorGroup->actions();
+      for (int i=0; i<is.size(); i++) {
+        canvas->activateMoveInspector(i,false);
+        is[i]->setChecked(false);
+      }
     }
     addInspector(ins, nas,nad,nam);
     nam->setChecked(true);

@@ -112,6 +112,7 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::activateDoubleClickInspector(int i, bool active) {
+    assert(i < doubleClickInspectors.size());
     doubleClickInspectors[i].second = active;
   }
 
@@ -122,6 +123,7 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::activateSolutionInspector(int i, bool active) {
+    assert(i < solutionInspectors.size());
     solutionInspectors[i].second = active;
   }
 
@@ -132,6 +134,7 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::activateMoveInspector(int i, bool active) {
+    assert(i < moveInspectors.size());
     moveInspectors[i].second = active;
   }
 
