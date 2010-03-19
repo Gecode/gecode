@@ -625,6 +625,9 @@ namespace Gecode { namespace Gist {
     nextPit = 0;
     scale = 1.0;
     stats = Statistics();
+    for (int i=bookmarks.size(); i--;)
+      emit removedBookmark(i);
+    bookmarks.clear();
     root->layout();
 
     emit statusChanged(currentNode, stats, true);
