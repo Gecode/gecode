@@ -78,7 +78,7 @@ namespace Gecode {  namespace Gist {
     void statusChanged(bool);
     void scaleChanged(int);
     void solution(const Space*);
-    void finished(void);
+    void searchFinished(void);
   protected:
     void run(void);
   };
@@ -209,7 +209,7 @@ namespace Gecode {  namespace Gist {
     /// Signals that a solution has been found
     void solution(const Space*);
     /// Signals that %Gist is finished
-    void finished(void);
+    void searchFinished(void);
     /// Signals that a bookmark has been added
     void addedBookmark(const QString& id);
     /// Signals that a bookmark has been removed

@@ -192,7 +192,7 @@ namespace Gecode {  namespace Gist {
     void solution(const Space*);
 
     /// Signals that %Gist is ready to be closed
-    void finished(void);
+    void searchFinished(void);
 
   private Q_SLOTS:
     /// Displays the context menu for a node

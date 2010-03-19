@@ -65,7 +65,7 @@ namespace Gecode { namespace Gist {
     connect(canvas, SIGNAL(solution(const Space*)),
             this, SIGNAL(solution(const Space*)));
 
-    connect(canvas, SIGNAL(finished(void)), this, SIGNAL(finished(void)));
+    connect(canvas, SIGNAL(searchFinished(void)), this, SIGNAL(searchFinished(void)));
 
     QPixmap myPic;
     myPic.loadFromData(zoomToFitIcon, sizeof(zoomToFitIcon));
@@ -373,31 +373,46 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  Gist::addSolutionInspector(Inspector* i) {
+  Gist::addSolutionInspector(Inspector* ins) {
     QAction* nas;
     QAction* nad;
     QAction* nam;
-    addInspector(i, nas,nad,nam);
+    QList<QAction*> is = solutionInspectorGroup->actions();
+    for (int i=0; i<is.size(); i++) {
+      canvas->activateSolutionInspector(i,false);
+      is[i]->setChecked(false);
+    }
+    addInspector(ins, nas,nad,nam);
     nas->setChecked(true);
     selectSolutionInspector(nas);
   }
 
   void
-  Gist::addDoubleClickInspector(Inspector* i) {
+  Gist::addDoubleClickInspector(Inspector* ins) {
     QAction* nas;
     QAction* nad;
     QAction* nam;
-    addInspector(i, nas,nad,nam);
+    QList<QAction*> is = doubleClickInspectorGroup->actions();
+    for (int i=0; i<is.size(); i++) {
+      canvas->activateDoubleClickInspector(i,false);
+      is[i]->setChecked(false);
+    }
+    addInspector(ins, nas,nad,nam);
     nad->setChecked(true);
     selectDoubleClickInspector(nad);
   }
 
   void
-  Gist::addMoveInspector(Inspector* i) {
+  Gist::addMoveInspector(Inspector* ins) {
     QAction* nas;
     QAction* nad;
     QAction* nam;
-    addInspector(i, nas,nad,nam);
+    QList<QAction*> is = moveInspectorGroup->actions();
+    for (int i=0; i<is.size(); i++) {
+      canvas->activateMoveInspector(i,false);
+      is[i]->setChecked(false);
+    }
+    addInspector(ins, nas,nad,nam);
     nam->setChecked(true);
     selectMoveInspector(nam);
   }

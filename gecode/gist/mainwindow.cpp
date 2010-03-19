@@ -212,7 +212,7 @@ namespace Gecode { namespace Gist {
     connect(c,SIGNAL(statusChanged(const Statistics&,bool)),
             this,SLOT(statusChanged(const Statistics&,bool)));
 
-    connect(c,SIGNAL(finished(void)),this,SLOT(close(void)));
+    connect(c,SIGNAL(searchFinished(void)),this,SLOT(close(void)));
 
     preferences(true);
     show();

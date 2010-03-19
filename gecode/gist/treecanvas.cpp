@@ -97,7 +97,7 @@ namespace Gecode { namespace Gist {
               this, SLOT(inspectSolution(const Space*)),
               Qt::BlockingQueuedConnection);
 
-      connect(&searcher, SIGNAL(finished(void)), this, SIGNAL(finished(void)));
+      connect(&searcher, SIGNAL(searchFinished(void)), this, SIGNAL(searchFinished(void)));
 
       qRegisterMetaType<Statistics>("Statistics");
       update();
@@ -339,7 +339,7 @@ namespace Gecode { namespace Gist {
     updateCanvas();
     emit statusChanged(true);
     if (t->finishedFlag)
-      emit finished();
+      emit searchFinished();
   }
 
   void
