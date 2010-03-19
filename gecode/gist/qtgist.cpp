@@ -178,7 +178,7 @@ namespace Gecode { namespace Gist {
     connect(print, SIGNAL(triggered()), canvas,
             SLOT(print()));
 
-    bookmarkNode = new QAction("Bookmark", this);
+    bookmarkNode = new QAction("Add/remove bookmark", this);
     bookmarkNode->setShortcut(QKeySequence("Shift+B"));
     connect(bookmarkNode, SIGNAL(triggered()), canvas, SLOT(bookmarkNode()));
 
@@ -527,6 +527,7 @@ namespace Gecode { namespace Gist {
   Gist::selectBookmark(QAction* a) {
     int idx = bookmarksGroup->actions().indexOf(a);
     canvas->setCurrentNode(canvas->bookmarks[idx]);
+    canvas->centerCurrentNode();
   }
 
   void
