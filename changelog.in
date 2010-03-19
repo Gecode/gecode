@@ -73,6 +73,13 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Added a Gist inspector for the Knights example.
+
+[ENTRY]
 Module: driver
 What:   change
 Rank:   minor
