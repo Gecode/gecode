@@ -55,7 +55,7 @@ namespace Gecode { namespace Gist {
 
   forceinline
   Options::_I::_I(void) : _click(heap,1), n_click(0),
-    _solution(heap,1), n_solution(0) {}
+    _solution(heap,1), n_solution(0), _move(heap,1), n_move(0) {}
 
   forceinline void
   Options::_I::click(Inspector* i) {
@@ -65,6 +65,10 @@ namespace Gecode { namespace Gist {
   Options::_I::solution(Inspector* i) {
     _solution[n_solution++] = i;
   }
+  forceinline void
+  Options::_I::move(Inspector* i) {
+    _move[n_move++] = i;
+  }
   forceinline Inspector*
   Options::_I::click(unsigned int i) const {
     return (i < n_click) ? _click[i] : NULL;
@@ -72,6 +76,10 @@ namespace Gecode { namespace Gist {
   forceinline Inspector*
   Options::_I::solution(unsigned int i) const {
     return (i < n_solution) ? _solution[i] : NULL;
+  }
+  forceinline Inspector*
+  Options::_I::move(unsigned int i) const {
+    return (i < n_move) ? _move[i] : NULL;
   }
 
   inline int

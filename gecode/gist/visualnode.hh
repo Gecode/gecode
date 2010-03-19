@@ -128,7 +128,8 @@ namespace Gecode { namespace Gist {
       CHILDRENLAYOUTDONE,
       HIDDEN,
       MARKED,
-      ONPATH
+      ONPATH,
+      BOOKMARKED
     };
 
     /// Shape of this node
@@ -171,6 +172,10 @@ namespace Gecode { namespace Gist {
     bool isMarked(void);
     /// Set mark of this node
     void setMarked(bool m);
+    /// Return whether node is bookmarked
+    bool isBookmarked(void);
+    /// Set bookmark of this node
+    void setBookmarked(bool m);
     /// Set all nodes from the node to the root to be on the path
     void pathUp(void);
     /// Set all nodes from the node to the root not to be on the path

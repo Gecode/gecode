@@ -91,6 +91,10 @@ namespace Gecode { namespace Gist {
       while (opt.inspect.click(i)) {
         c->addDoubleClickInspector(opt.inspect.click(i++));
       }
+      i = 0;
+      while (opt.inspect.move(i)) {
+        c->addMoveInspector(opt.inspect.move(i++));
+      }
     }
     setCentralWidget(c);
     setWindowTitle(tr("Gist"));
@@ -122,6 +126,11 @@ namespace Gecode { namespace Gist {
     nodeMenu->addAction(c->setPath);
     nodeMenu->addAction(c->inspectPath);
     nodeMenu->addAction(c->showNodeStats);
+    bookmarksMenu = new QMenu("Bookmarks");
+    bookmarksMenu->addAction(c->bookmarkNode);
+    connect(bookmarksMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateBookmarks()));
+    nodeMenu->addMenu(bookmarksMenu);
     nodeMenu->addSeparator();
     nodeMenu->addAction(c->navUp);
     nodeMenu->addAction(c->navDown);
@@ -158,6 +167,10 @@ namespace Gecode { namespace Gist {
     connect(solutionInspectorsMenu, SIGNAL(aboutToShow()),
             this, SLOT(populateInspectors()));
     toolsMenu->addMenu(solutionInspectorsMenu);
+    moveInspectorsMenu = new QMenu("Move inspectors");
+    connect(moveInspectorsMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectors()));
+    toolsMenu->addMenu(moveInspectorsMenu);
 
     QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
     QAction* aboutAction = helpMenu->addAction(tr("About"));
@@ -263,6 +276,16 @@ namespace Gecode { namespace Gist {
       c->doubleClickInspectorGroup->actions());
     solutionInspectorsMenu->clear();
     solutionInspectorsMenu->addActions(c->solutionInspectorGroup->actions());
+    moveInspectorsMenu->clear();
+    moveInspectorsMenu->addActions(c->moveInspectorGroup->actions());
+  }
+
+  void
+  GistMainWindow::populateBookmarks(void) {
+    bookmarksMenu->clear();
+    bookmarksMenu->addAction(c->bookmarkNode);
+    bookmarksMenu->addSeparator();
+    bookmarksMenu->addActions(c->bookmarksGroup->actions());
   }
 
 }}

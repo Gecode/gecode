@@ -158,6 +158,8 @@ namespace Gecode {
         unsigned int n_click;
         Support::DynamicArray<Inspector*,Heap> _solution;
         unsigned int n_solution;
+        Support::DynamicArray<Inspector*,Heap> _move;
+        unsigned int n_move;
       public:
         /// Constructor
         _I(void);
@@ -165,11 +167,15 @@ namespace Gecode {
         void click(Inspector* i);
         /// Add inspector that reacts on each new solution that is found
         void solution(Inspector* i);
+        /// Add inspector that reacts on each move of the cursor
+        void move(Inspector* i);
         
         /// Return click inspector number \a i, or NULL if it does not exist
         Inspector* click(unsigned int i) const;
         /// Return solution inspector number \a i, or NULL if it does not exist
         Inspector* solution(unsigned int i) const;
+        /// Return move inspector number \a i, or NULL if it does not exist
+        Inspector* move(unsigned int i) const;
       } inspect;
       /// Default options
       GECODE_GIST_EXPORT static const Options def;

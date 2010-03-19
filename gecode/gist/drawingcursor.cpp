@@ -242,6 +242,11 @@ namespace Gecode { namespace Gist {
      painter.drawEllipse(myx, myy + 10, 10, 10);
     }
 
+    if (n->isBookmarked()) {
+     painter.setBrush(Qt::black);
+     painter.drawEllipse(myx-10, myy, 10, 10);
+    }
+
   }
 
 }}

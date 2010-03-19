@@ -105,6 +105,10 @@ namespace Gecode {  namespace Gist {
     void addSolutionInspector(Inspector* i);
     /// Set active inspector
     void activateSolutionInspector(int i, bool active);
+    /// Add inspector \a i
+    void addMoveInspector(Inspector* i);
+    /// Set active inspector
+    void activateMoveInspector(int i, bool active);
 
   public Q_SLOTS:
     /// Set scale factor to \a scale0
@@ -156,6 +160,8 @@ namespace Gecode {  namespace Gist {
     /// Recall selection of point in time \a pit
     void markCurrentNode(int pit);
 
+    /// Bookmark current node
+    void bookmarkNode(void);
     /// Set the current node to be the head of the path
     void setPath(void);
     /// Call the double click inspector for all nodes on the path from root to head of the path
@@ -204,6 +210,10 @@ namespace Gecode {  namespace Gist {
     void solution(const Space*);
     /// Signals that %Gist is finished
     void finished(void);
+    /// Signals that a bookmark has been added
+    void addedBookmark(const QString& id);
+    /// Signals that a bookmark has been removed
+    void removedBookmark(int idx);
   protected:
     /// Mutex for synchronizing acccess to the tree
     QMutex mutex;
@@ -231,6 +241,11 @@ namespace Gecode {  namespace Gist {
     QVector<QPair<Inspector*,bool> > doubleClickInspectors;
     /// The registered solution inspectors, and whether they are active
     QVector<QPair<Inspector*,bool> > solutionInspectors;
+    /// The registered move inspectors, and whether they are active
+    QVector<QPair<Inspector*,bool> > moveInspectors;
+
+    /// The bookmarks map
+    QVector<VisualNode*> bookmarks;
 
     /// The scale bar
     QSlider* scaleBar;

@@ -78,6 +78,10 @@ namespace Gecode { namespace Gist {
     QMenu* solutionInspectorsMenu;
     /// Menu for double click inspectors
     QMenu* doubleClickInspectorsMenu;
+    /// Menu for move inspectors
+    QMenu* moveInspectorsMenu;
+    /// Menu for bookmarks
+    QMenu* bookmarksMenu;
   protected:
     /// The contained %Gist object
     Gist* c;
@@ -95,6 +99,8 @@ namespace Gecode { namespace Gist {
     void preferences(bool setup=false);
     /// Populate the inspector menus from the actions found in Gist
     void populateInspectors(void);
+    /// Populate the bookmarks menus from the actions found in Gist
+    void populateBookmarks(void);
   public:
     /// Constructor
     GistMainWindow(Space* root, bool bab, const Options& opt);

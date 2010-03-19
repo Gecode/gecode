@@ -80,6 +80,20 @@ Rank:   major
 Yada!
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Nodes can now be bookmarked.
+
+[ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Added inspectors that react whenever a node is selected.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

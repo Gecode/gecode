@@ -126,6 +126,16 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvas::addMoveInspector(Inspector* i) {
+    moveInspectors.append(QPair<Inspector*,bool>(i,false));
+  }
+
+  void
+  TreeCanvas::activateMoveInspector(int i, bool active) {
+    moveInspectors[i].second = active;
+  }
+
+  void
   TreeCanvas::scaleTree(int scale0) {
     QMutexLocker locker(&layoutMutex);
     BoundingBox bb;
@@ -516,6 +526,12 @@ namespace Gecode { namespace Gist {
             currentNode->purge();
           }
           emit statusChanged(currentNode,stats,true);
+          Space* curSpace = currentNode->getSpace(curBest,c_d,a_d);
+          for (int i=0; i<moveInspectors.size(); i++) {
+            if (moveInspectors[i].second) {
+              moveInspectors[i].first->inspect(*curSpace);
+            }
+          }
         }
         break;
     case FAILED:
@@ -573,6 +589,13 @@ namespace Gecode { namespace Gist {
         solutionInspectors[i].first->inspect(*c);
       }
     }
+    for (int i=0; i<moveInspectors.size(); i++) {
+      if (moveInspectors[i].second) {
+        if (c == NULL)
+          c = s->clone();
+        moveInspectors[i].first->inspect(*c);
+      }
+    }
     delete c;
   }
 
@@ -608,6 +631,31 @@ namespace Gecode { namespace Gist {
     update();
   }
 
+  void
+  TreeCanvas::bookmarkNode(void) {
+    QMutexLocker locker(&mutex);
+    if (!currentNode->isBookmarked()) {
+      bool ok;
+      QString text =
+        QInputDialog::getText(this, "Add bookmark", "Name:", 
+                              QLineEdit::Normal,"",&ok);
+      if (ok) {
+        currentNode->setBookmarked(true);
+        bookmarks.append(currentNode);
+        if (text == "")
+          text = QString("Node ")+QString().setNum(bookmarks.size());
+        emit addedBookmark(text);
+      }
+    } else {
+      currentNode->setBookmarked(false);
+      int idx = bookmarks.indexOf(currentNode);
+      bookmarks.remove(idx);
+      emit removedBookmark(idx);
+    }
+    currentNode->dirtyUp();
+    update();
+  }
+  
   void
   TreeCanvas::setPath(void) {
     QMutexLocker locker(&mutex);
@@ -977,12 +1025,25 @@ namespace Gecode { namespace Gist {
       doubleClickInspectors[i].first->finalize();
     for (int i=0; i<solutionInspectors.size(); i++)
       solutionInspectors[i].first->finalize();
+    for (int i=0; i<moveInspectors.size(); i++)
+      moveInspectors[i].first->finalize();
     return !searcher.isRunning();
   }
 
   void
   TreeCanvas::setCurrentNode(VisualNode* n, bool update) {
     QMutexLocker locker(&mutex);
+    if (update && n != NULL && n != currentNode &&
+        n->getStatus() != UNDETERMINED && !n->isHidden()) {
+      Space* curSpace = NULL;
+      for (int i=0; i<moveInspectors.size(); i++) {
+        if (moveInspectors[i].second) {
+          if (curSpace == NULL)
+            curSpace = n->getSpace(curBest,c_d,a_d);
+          moveInspectors[i].first->inspect(*curSpace);
+        }
+      }
+    }
     if (n != NULL) {
       currentNode->setMarked(false);
       currentNode = n;

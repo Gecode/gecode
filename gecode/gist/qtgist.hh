@@ -69,6 +69,14 @@ namespace Gecode {  namespace Gist {
     QAction* nullDoubleClickInspector;
     /// Menu of double click inspectors
     QMenu* doubleClickInspectorMenu;
+    /// Action used when no double click inspector is registered
+    QAction* nullMoveInspector;
+    /// Menu of double click inspectors
+    QMenu* moveInspectorMenu;
+    /// Action used when no bookmark exists
+    QAction* nullBookmark;
+    /// Bookmark menu
+    QMenu* bookmarksMenu;
     /// Information about individual nodes
     NodeStatInspector* nodeStatInspector;
   public:
@@ -113,6 +121,8 @@ namespace Gecode {  namespace Gist {
     /// Print tree
     QAction* print;
 
+    /// Bookmark current node
+    QAction* bookmarkNode;
     /// Set path from current node to the root
     QAction* setPath;
     /// Inspect all nodes on selected path
@@ -124,6 +134,10 @@ namespace Gecode {  namespace Gist {
     QActionGroup* solutionInspectorGroup;
     /// Group of all actions for double click inspectors
     QActionGroup* doubleClickInspectorGroup;
+    /// Group of all actions for move inspectors
+    QActionGroup* moveInspectorGroup;
+    /// Group of all actions for bookmarks
+    QActionGroup* bookmarksGroup;
   public:
     /// Constructor
     Gist(Space* root, bool bab, QWidget* parent, const Options& opt);
@@ -134,6 +148,8 @@ namespace Gecode {  namespace Gist {
     void addDoubleClickInspector(Inspector* i0);
     /// Add solution inspector \a i0
     void addSolutionInspector(Inspector* i0);
+    /// Add move inspector \a i0
+    void addMoveInspector(Inspector* i0);
 
     /// Set preference whether to automatically hide failed subtrees
     void setAutoHideFailed(bool b);
@@ -187,11 +203,22 @@ namespace Gecode {  namespace Gist {
     void selectDoubleClickInspector(QAction*);
     /// Reacts on solution inspector selection
     void selectSolutionInspector(QAction*);
+    /// Reacts on move inspector selection
+    void selectMoveInspector(QAction*);
+    /// Reacts on bookmark selection
+    void selectBookmark(QAction*);
+    /// Reacts on adding a bookmark
+    void addBookmark(const QString& id);
+    /// Reacts on removing a bookmark
+    void removeBookmark(int idx);
+    /// Populate the bookmarks menu
+    void populateBookmarksMenu(void);
     /// Shows node status information
     void showStats(void);
   protected:
     /// Add inspector \a i0
-    void addInspector(Inspector* i, bool solutionInspector);
+    void addInspector(Inspector* i, QAction*& nas, QAction*& nad,
+                      QAction*& nam);
   };
 
 }}

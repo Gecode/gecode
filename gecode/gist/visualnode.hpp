@@ -148,6 +148,16 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline bool
+  VisualNode::isBookmarked(void) {
+    return getFlag(BOOKMARKED);
+  }
+
+  forceinline void
+  VisualNode::setBookmarked(bool m) {
+    setFlag(BOOKMARKED, m);
+  }
+
+  forceinline bool
   VisualNode::isOnPath(void) {
     return getFlag(ONPATH);
   }

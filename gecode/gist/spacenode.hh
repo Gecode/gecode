@@ -54,8 +54,8 @@ namespace Gecode { namespace Gist {
     STEP          ///< Node representing one propagation step
   };
 
-  static const unsigned int FIRSTBIT = 25; //< First free bit in status word
-  static const unsigned int STATUSMASK = 15<<20; //< Mask for accessing status
+  static const unsigned int FIRSTBIT = 24; //< First free bit in status word
+  static const unsigned int STATUSMASK = 7<<20; //< Mask for accessing status
   static const unsigned int MAXDISTANCE = (1<<20)-1; //< Maximum representable distance
   static const unsigned int DISTANCEMASK = (1<<20)-1; //< Mask for accessing distance
 

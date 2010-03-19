@@ -178,6 +178,29 @@ namespace Gecode { namespace Gist {
     connect(print, SIGNAL(triggered()), canvas,
             SLOT(print()));
 
+    bookmarkNode = new QAction("Bookmark", this);
+    bookmarkNode->setShortcut(QKeySequence("Shift+B"));
+    connect(bookmarkNode, SIGNAL(triggered()), canvas, SLOT(bookmarkNode()));
+
+    connect(canvas, SIGNAL(addedBookmark(const QString&)),
+            this, SLOT(addBookmark(const QString&)));
+    connect(canvas, SIGNAL(removedBookmark(int)),
+            this, SLOT(removeBookmark(int)));
+
+    nullBookmark = new QAction("<none>",this);
+    nullBookmark->setCheckable(true);
+    nullBookmark->setChecked(false);
+    nullBookmark->setEnabled(false);
+    bookmarksGroup = new QActionGroup(this);
+    bookmarksGroup->setExclusive(false);
+    bookmarksGroup->addAction(nullBookmark);
+    connect(bookmarksGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(selectBookmark(QAction*)));
+
+    bookmarksMenu = new QMenu("Bookmarks");
+    connect(bookmarksMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateBookmarksMenu()));
+
     setPath = new QAction("Set path", this);
     setPath->setShortcut(QKeySequence("Shift+P"));
     connect(setPath, SIGNAL(triggered()), canvas, SLOT(setPath()));
@@ -237,11 +260,23 @@ namespace Gecode { namespace Gist {
     connect(doubleClickInspectorGroup, SIGNAL(triggered(QAction*)),
             this, SLOT(selectDoubleClickInspector(QAction*)));
 
+    nullMoveInspector = new QAction("<none>",this);
+    nullMoveInspector->setCheckable(true);
+    nullMoveInspector->setChecked(false);
+    nullMoveInspector->setEnabled(false);
+    moveInspectorGroup = new QActionGroup(this);
+    moveInspectorGroup->setExclusive(false);
+    moveInspectorGroup->addAction(nullMoveInspector);
+    connect(moveInspectorGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(selectMoveInspector(QAction*)));
+
     solutionInspectorMenu = new QMenu("Solution inspectors");
     solutionInspectorMenu->addActions(solutionInspectorGroup->actions());
     doubleClickInspectorMenu = new QMenu("Double click inspectors");
     doubleClickInspectorMenu->addActions(
       doubleClickInspectorGroup->actions());
+    moveInspectorMenu = new QMenu("Move inspectors");
+    moveInspectorMenu->addActions(moveInspectorGroup->actions());
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(inspect);
@@ -261,6 +296,7 @@ namespace Gecode { namespace Gist {
 
     contextMenu->addSeparator();
 
+    contextMenu->addMenu(bookmarksMenu);
     contextMenu->addAction(setPath);
     contextMenu->addAction(inspectPath);
 
@@ -268,6 +304,7 @@ namespace Gecode { namespace Gist {
 
     contextMenu->addMenu(doubleClickInspectorMenu);
     contextMenu->addMenu(solutionInspectorMenu);
+    contextMenu->addMenu(moveInspectorMenu);
 
     connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
 
@@ -302,44 +339,67 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  Gist::addInspector(Inspector* i0, bool solutionInspector) {
+  Gist::addInspector(Inspector* i0, QAction*& nas, QAction*& nad,
+                     QAction*&nam) {
     if (doubleClickInspectorGroup->
       actions().indexOf(nullDoubleClickInspector) != -1) {
       doubleClickInspectorGroup->removeAction(nullDoubleClickInspector);
       solutionInspectorGroup->removeAction(nullSolutionInspector);
+      moveInspectorGroup->removeAction(nullMoveInspector);
     }
     canvas->addSolutionInspector(i0);
     canvas->addDoubleClickInspector(i0);
-    QAction* nas = new QAction(i0->name().c_str(), this);
+    canvas->addMoveInspector(i0);
+
+    nas = new QAction(i0->name().c_str(), this);
     nas->setCheckable(true);
     solutionInspectorGroup->addAction(nas);
     solutionInspectorMenu->clear();
     solutionInspectorMenu->addActions(solutionInspectorGroup->actions());
 
-    QAction* nad = new QAction(i0->name().c_str(), this);
+    nad = new QAction(i0->name().c_str(), this);
     nad->setCheckable(true);
     doubleClickInspectorGroup->addAction(nad);
     doubleClickInspectorMenu->clear();
     doubleClickInspectorMenu->addActions(
       doubleClickInspectorGroup->actions());
 
-    if (solutionInspector) {
-      nas->setChecked(true);
-      selectSolutionInspector(nas);
-    } else {
-      nad->setChecked(true);
-      selectDoubleClickInspector(nad);
-    }
+    nam = new QAction(i0->name().c_str(), this);
+    nam->setCheckable(true);
+    moveInspectorGroup->addAction(nam);
+    moveInspectorMenu->clear();
+    moveInspectorMenu->addActions(
+      moveInspectorGroup->actions());
   }
 
   void
   Gist::addSolutionInspector(Inspector* i) {
-    addInspector(i, true);
+    QAction* nas;
+    QAction* nad;
+    QAction* nam;
+    addInspector(i, nas,nad,nam);
+    nas->setChecked(true);
+    selectSolutionInspector(nas);
   }
 
   void
   Gist::addDoubleClickInspector(Inspector* i) {
-    addInspector(i, false);
+    QAction* nas;
+    QAction* nad;
+    QAction* nam;
+    addInspector(i, nas,nad,nam);
+    nad->setChecked(true);
+    selectDoubleClickInspector(nad);
+  }
+
+  void
+  Gist::addMoveInspector(Inspector* i) {
+    QAction* nas;
+    QAction* nad;
+    QAction* nam;
+    addInspector(i, nas,nad,nam);
+    nam->setChecked(true);
+    selectMoveInspector(nam);
   }
 
   Gist::~Gist(void) { delete canvas; }
@@ -457,7 +517,46 @@ namespace Gecode { namespace Gist {
       solutionInspectorGroup->actions().indexOf(a),
       a->isChecked());
   }
+  void
+  Gist::selectMoveInspector(QAction* a) {
+    canvas->activateMoveInspector(
+      moveInspectorGroup->actions().indexOf(a),
+      a->isChecked());
+  }
+  void
+  Gist::selectBookmark(QAction* a) {
+    int idx = bookmarksGroup->actions().indexOf(a);
+    canvas->setCurrentNode(canvas->bookmarks[idx]);
+  }
 
+  void
+  Gist::addBookmark(const QString& id) {
+    if (bookmarksGroup->actions().indexOf(nullBookmark) != -1) {
+      bookmarksGroup->removeAction(nullBookmark);
+    }
+
+    QAction* nb = new QAction(id, this);
+    nb->setCheckable(true);
+    bookmarksGroup->addAction(nb);
+  }
+
+  void
+  Gist::removeBookmark(int idx) {
+    QAction* a = bookmarksGroup->actions()[idx];
+    bookmarksGroup->removeAction(a);
+    if (bookmarksGroup->actions().size() == 0) {
+      bookmarksGroup->addAction(nullBookmark);
+    }
+  }
+  
+  void
+  Gist::populateBookmarksMenu(void) {
+    bookmarksMenu->clear();
+    bookmarksMenu->addAction(bookmarkNode);
+    bookmarksMenu->addSeparator();
+    bookmarksMenu->addActions(bookmarksGroup->actions());
+  }
+  
   void
   Gist::setAutoHideFailed(bool b) { canvas->setAutoHideFailed(b); }
   void
