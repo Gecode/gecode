@@ -1074,6 +1074,11 @@ namespace Gecode { namespace Gist {
     event->ignore();
   }
 
+  void
+  TreeCanvas::resizeEvent(QResizeEvent*) {
+    update();
+  }
+
   bool
   TreeCanvas::finish(void) {
     if (finishedFlag)
