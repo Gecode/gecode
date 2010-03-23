@@ -962,6 +962,12 @@ namespace Gecode { namespace Gist {
       static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
     int xoff = sa->horizontalScrollBar()->value()/scale;
     int yoff = sa->verticalScrollBar()->value()/scale;
+
+    BoundingBox bb = root->getBoundingBox();
+    int w =
+      static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
+    if (w < sa->viewport()->width())
+      xoff -= (sa->viewport()->width()-w)/2;
     
     VisualNode* n;
     n = root->findNode(static_cast<int>(x/scale-xtrans+xoff),
