@@ -1075,8 +1075,17 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::resizeEvent(QResizeEvent*) {
-    update();
+  TreeCanvas::resizeEvent(QResizeEvent* e) {
+    QAbstractScrollArea* sa =
+      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+
+    int w = sa->horizontalScrollBar()->maximum()+e->oldSize().width();
+    int h = sa->verticalScrollBar()->maximum()+e->oldSize().height();
+
+    sa->horizontalScrollBar()->setRange(0,w-e->size().width());
+    sa->verticalScrollBar()->setRange(0,h-e->size().height());
+    sa->horizontalScrollBar()->setPageStep(e->size().width());
+    sa->verticalScrollBar()->setPageStep(e->size().height());
   }
 
   bool
