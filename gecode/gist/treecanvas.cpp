@@ -141,6 +141,16 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::scaleTree(int scale0) {
     QMutexLocker locker(&layoutMutex);
+
+    QSize viewport_size = size();
+    QAbstractScrollArea* sa =
+      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+
+    int xoff =
+      (sa->horizontalScrollBar()->value()+viewport_size.width()/2)/scale;
+    int yoff =
+      (sa->verticalScrollBar()->value()+viewport_size.height()/2)/scale;
+
     BoundingBox bb;
     scale0 = std::min(std::max(scale0, LayoutConfig::minScale),
                       LayoutConfig::maxScale);
@@ -151,7 +161,20 @@ namespace Gecode { namespace Gist {
     int h =
       static_cast<int>(2*Layout::extent+
         root->getShape()->depth()*Layout::dist_y*scale);
-    resize(w,h);
+
+    sa->horizontalScrollBar()->setRange(0,w-viewport_size.width());
+    sa->verticalScrollBar()->setRange(0,h-viewport_size.height());
+    sa->horizontalScrollBar()->setPageStep(viewport_size.width());
+    sa->verticalScrollBar()->setPageStep(viewport_size.height());
+    sa->horizontalScrollBar()->setSingleStep(Layout::extent);
+    sa->verticalScrollBar()->setSingleStep(Layout::extent);
+
+    xoff *= scale;
+    yoff *= scale;
+
+    sa->horizontalScrollBar()->setValue(xoff-viewport_size.width()/2);
+    sa->verticalScrollBar()->setValue(yoff-viewport_size.height()/2);
+
     emit scaleChanged(scale0);
     QWidget::update();
   }
@@ -169,7 +192,16 @@ namespace Gecode { namespace Gist {
         static_cast<int>(2*Layout::extent+
           root->getShape()->depth()*Layout::dist_y*scale);
       xtrans = -bb.left+(Layout::extent / 2);
-      resize(w,h);
+      
+      QSize viewport_size = size();
+      QAbstractScrollArea* sa =
+        static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+      sa->horizontalScrollBar()->setRange(0,w-viewport_size.width());
+      sa->verticalScrollBar()->setRange(0,h-viewport_size.height());
+      sa->horizontalScrollBar()->setPageStep(viewport_size.width());
+      sa->verticalScrollBar()->setPageStep(viewport_size.height());
+      sa->horizontalScrollBar()->setSingleStep(Layout::extent);
+      sa->verticalScrollBar()->setSingleStep(Layout::extent);
     }
     if (autoZoom)
       zoomToFit();
@@ -396,8 +428,8 @@ namespace Gecode { namespace Gist {
         zoomTimerId = 0;
       }
     } else if (e->timerId() == scrollTimerId) {
-      QScrollArea* sa =
-        static_cast<QScrollArea*>(parentWidget()->parentWidget());
+      QAbstractScrollArea* sa =
+        static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
 
       double xoffset =
         static_cast<double>(targetScrollX - metaScrollXCurrent) / 6.0;
@@ -425,7 +457,6 @@ namespace Gecode { namespace Gist {
                               LayoutConfig::maxAutoZoomScale);
         zoomTimerId = startTimer(15);
       }
-      resize(targetW,targetH);
       QWidget::update();
       killTimer(layoutDoneTimerId);
       layoutDoneTimerId = 0;
@@ -481,23 +512,24 @@ namespace Gecode { namespace Gist {
 
     x = static_cast<int>((xtrans+x)*scale); y = static_cast<int>(y*scale);
 
-    QScrollArea* sa =
-      static_cast<QScrollArea*>(parentWidget()->parentWidget());
+    QAbstractScrollArea* sa =
+      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
 
+    x -= sa->viewport()->width() / 2;
+    y -= sa->viewport()->height() / 2;
+
+    metaScrollXCurrent = sa->horizontalScrollBar()->value();
+    metaScrollYCurrent = sa->verticalScrollBar()->value();
+    targetScrollX = std::max(sa->horizontalScrollBar()->minimum(), x);
+    targetScrollX = std::min(sa->horizontalScrollBar()->maximum(),
+                             targetScrollX);
+    targetScrollY = std::max(sa->verticalScrollBar()->minimum(), y);
+    targetScrollY = std::min(sa->verticalScrollBar()->maximum(),
+                             targetScrollY);
     if (!smoothScrollAndZoom) {
-      sa->ensureVisible(x,y);
+      sa->horizontalScrollBar()->setValue(targetScrollX);
+      sa->verticalScrollBar()->setValue(targetScrollY);
     } else {
-      x -= sa->viewport()->width() / 2;
-      y -= sa->viewport()->height() / 2;
-
-      metaScrollXCurrent = sa->horizontalScrollBar()->value();
-      metaScrollYCurrent = sa->verticalScrollBar()->value();
-      targetScrollX = std::max(sa->horizontalScrollBar()->minimum(), x);
-      targetScrollX = std::min(sa->horizontalScrollBar()->maximum(),
-                               targetScrollX);
-      targetScrollY = std::max(sa->verticalScrollBar()->minimum(), y);
-      targetScrollY = std::min(sa->verticalScrollBar()->maximum(),
-                               targetScrollY);
       scrollTimerId = startTimer(15);
     }
   }
@@ -926,9 +958,14 @@ namespace Gecode { namespace Gist {
     default:
       return NULL;
     }
+    QAbstractScrollArea* sa =
+      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+    int xoff = sa->horizontalScrollBar()->value()/scale;
+    int yoff = sa->verticalScrollBar()->value()/scale;
+    
     VisualNode* n;
-    n = root->findNode(static_cast<int>(x/scale-xtrans),
-                       static_cast<int>((y-30)/scale));
+    n = root->findNode(static_cast<int>(x/scale-xtrans+xoff),
+                       static_cast<int>((y-30)/scale+yoff));
     return n;
   }
 
@@ -963,13 +1000,23 @@ namespace Gecode { namespace Gist {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    QAbstractScrollArea* sa =
+      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+    int xoff = sa->horizontalScrollBar()->value()/scale;
+    int yoff = sa->verticalScrollBar()->value()/scale;
+
     BoundingBox bb = root->getBoundingBox();
+    int w =
+      static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
+    if (w < sa->viewport()->width())
+      xoff -= (sa->viewport()->width()-w)/2;
+
     QRect origClip = event->rect();
     painter.translate(0, 30);
     painter.scale(scale,scale);
-    painter.translate(xtrans, 0);
-    QRect clip(static_cast<int>(origClip.x()/scale-xtrans),
-               static_cast<int>(origClip.y()/scale),
+    painter.translate(xtrans-xoff, -yoff);
+    QRect clip(static_cast<int>(origClip.x()/scale-xtrans+xoff),
+               static_cast<int>(origClip.y()/scale+yoff),
                static_cast<int>(origClip.width()/scale),
                static_cast<int>(origClip.height()/scale));
     DrawingCursor dc(root, curBest, painter, clip, showCopies);

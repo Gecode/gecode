@@ -73,6 +73,16 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Scrolling and zooming have been reimplemented. The new implementation is more 
+efficient and works around problems that occurred with large trees on some 
+platforms. Zooming is now more intuitive, keeping the current center 
+centered.
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor

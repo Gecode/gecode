@@ -47,20 +47,22 @@ namespace Gecode { namespace Gist {
              const Options& opt) : QWidget(parent) {
     QGridLayout* layout = new QGridLayout(this);
 
-    QScrollArea* scrollArea = new QScrollArea(this);
+    QAbstractScrollArea* scrollArea = new QAbstractScrollArea(this);
 
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setAlignment(Qt::AlignHCenter);
     scrollArea->setAutoFillBackground(true);
     QPalette myPalette(scrollArea->palette());
     myPalette.setColor(QPalette::Window, Qt::white);
     scrollArea->setPalette(myPalette);
-    canvas = new TreeCanvas(root, bab, this,opt);
+    canvas = new TreeCanvas(root, bab, scrollArea->viewport(),opt);
     canvas->setPalette(myPalette);
     canvas->setObjectName("canvas");
 
-    scrollArea->setWidget(canvas);
+    QVBoxLayout* sa_layout = new QVBoxLayout();
+    sa_layout->setContentsMargins(0,0,0,0);
+    sa_layout->addWidget(canvas);
+    scrollArea->viewport()->setLayout(sa_layout);
 
     connect(canvas, SIGNAL(solution(const Space*)),
             this, SIGNAL(solution(const Space*)));
