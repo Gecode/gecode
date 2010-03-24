@@ -139,17 +139,20 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::scaleTree(int scale0) {
+  TreeCanvas::scaleTree(int scale0, int zoomx, int zoomy) {
     QMutexLocker locker(&layoutMutex);
 
     QSize viewport_size = size();
     QAbstractScrollArea* sa =
       static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
 
-    int xoff =
-      (sa->horizontalScrollBar()->value()+viewport_size.width()/2)/scale;
-    int yoff =
-      (sa->verticalScrollBar()->value()+viewport_size.height()/2)/scale;
+    if (zoomx==-1)
+      zoomx = viewport_size.width()/2;
+    if (zoomy==-1)
+      zoomy = viewport_size.height()/2;
+
+    int xoff = (sa->horizontalScrollBar()->value()+zoomx)/scale;
+    int yoff = (sa->verticalScrollBar()->value()+zoomy)/scale;
 
     BoundingBox bb;
     scale0 = std::min(std::max(scale0, LayoutConfig::minScale),
@@ -172,8 +175,8 @@ namespace Gecode { namespace Gist {
     xoff *= scale;
     yoff *= scale;
 
-    sa->horizontalScrollBar()->setValue(xoff-viewport_size.width()/2);
-    sa->verticalScrollBar()->setValue(yoff-viewport_size.height()/2);
+    sa->horizontalScrollBar()->setValue(xoff-zoomx);
+    sa->verticalScrollBar()->setValue(yoff-zoomy);
 
     emit scaleChanged(scale0);
     QWidget::update();
@@ -1091,6 +1094,18 @@ namespace Gecode { namespace Gist {
     sa->verticalScrollBar()->setRange(0,h-e->size().height());
     sa->horizontalScrollBar()->setPageStep(e->size().width());
     sa->verticalScrollBar()->setPageStep(e->size().height());
+  }
+
+  void
+  TreeCanvas::wheelEvent(QWheelEvent* event) {
+    if (event->modifiers() & Qt::ShiftModifier &&
+        event->orientation() == Qt::Vertical) {
+      event->accept();
+      scaleTree(scale*100+ceil(static_cast<double>(event->delta())/4.0),
+                event->x(), event->y());
+    } else {
+      event->ignore();
+    }
   }
 
   bool

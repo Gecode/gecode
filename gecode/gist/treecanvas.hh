@@ -112,7 +112,7 @@ namespace Gecode {  namespace Gist {
 
   public Q_SLOTS:
     /// Set scale factor to \a scale0
-    void scaleTree(int scale0);
+    void scaleTree(int scale0, int zoomx=-1, int zoomy=-1);
 
     /// Explore complete subtree of selected node
     void searchAll(void);
@@ -291,6 +291,8 @@ namespace Gecode {  namespace Gist {
     void contextMenuEvent(QContextMenuEvent* event);
     /// Handle resize event
     void resizeEvent(QResizeEvent* event);
+    /// Handle mouse wheel events
+    void wheelEvent(QWheelEvent* event);
     /// Set the selected node to \a n
     void setCurrentNode(VisualNode* n, bool update=true);
     /// Log the current node as new point in time

@@ -80,7 +80,7 @@ Rank:   minor
 Scrolling and zooming have been reimplemented. The new implementation is more 
 efficient and works around problems that occurred with large trees on some 
 platforms. Zooming is now more intuitive, keeping the current center 
-centered.
+centered. You can now also zoom by pressing shift while using the mouse wheel.
 
 [ENTRY]
 Module: example
