@@ -81,13 +81,6 @@ namespace Gecode { namespace Gist {
     autoZoomButton->setCheckable(true);
     autoZoomButton->setIcon(myPic);
 
-    QSlider* scaleBar = new QSlider(Qt::Vertical, this);
-    canvas->scaleBar = scaleBar;
-    scaleBar->setObjectName("scaleBar");
-    scaleBar->setMinimum(LayoutConfig::minScale);
-    scaleBar->setMaximum(LayoutConfig::maxScale);
-    scaleBar->setValue(LayoutConfig::defScale);
-
     nodeStatInspector = new NodeStatInspector(this);
     connect(canvas, SIGNAL(statusChanged(VisualNode*,const Statistics&, bool)),
             nodeStatInspector, SLOT(node(VisualNode*,const Statistics&, bool)));
@@ -313,21 +306,14 @@ namespace Gecode { namespace Gist {
     contextMenu->addMenu(solutionInspectorMenu);
     contextMenu->addMenu(moveInspectorMenu);
 
-    connect(scaleBar, SIGNAL(valueChanged(int)), canvas, SLOT(scaleTree(int)));
-
-    connect(canvas, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
-
     connect(autoZoomButton, SIGNAL(toggled(bool)), canvas,
             SLOT(setAutoZoom(bool)));
 
     connect(canvas, SIGNAL(autoZoomChanged(bool)),
             autoZoomButton, SLOT(setChecked(bool)));
 
-    connect(&canvas->searcher, SIGNAL(scaleChanged(int)),
-            scaleBar, SLOT(setValue(int)));
-
     layout->addWidget(scrollArea, 0,0,-1,1);
-    layout->addWidget(scaleBar, 1,1, Qt::AlignHCenter);
+    layout->addWidget(canvas->scaleBar, 1,1, Qt::AlignHCenter);
     layout->addWidget(autoZoomButton, 0,1, Qt::AlignHCenter);
 
     setLayout(layout);

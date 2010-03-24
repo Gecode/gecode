@@ -60,12 +60,8 @@ namespace Gecode { namespace Gist {
     , finishedFlag(false)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false), nextPit(0)
-    , targetZoom(LayoutConfig::defScale)
-    , metaZoomCurrent(static_cast<double>(LayoutConfig::defScale))
-    , zoomTimerId(0)
-    , targetScrollX(0), targetScrollY(0)
-    , metaScrollXCurrent(0.0), metaScrollYCurrent(0.0)
-    , scrollTimerId(0)
+    , zoomTimeLine(500)
+    , scrollXTimeLine(1000), scrollYTimeLine(1000)
     , targetW(0), targetH(0), targetScale(0)
     , layoutDoneTimerId(0) {
       QMutexLocker locker(&mutex);
@@ -98,6 +94,30 @@ namespace Gecode { namespace Gist {
               Qt::BlockingQueuedConnection);
 
       connect(&searcher, SIGNAL(searchFinished(void)), this, SIGNAL(searchFinished(void)));
+
+      QAbstractScrollArea* sa =
+        static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+      connect(&scrollXTimeLine, SIGNAL(frameChanged(int)),
+              sa->horizontalScrollBar(), SLOT(setValue(int)));
+      connect(&scrollYTimeLine, SIGNAL(frameChanged(int)),
+              sa->verticalScrollBar(), SLOT(setValue(int)));
+      scrollXTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
+      scrollYTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
+
+      scaleBar = new QSlider(Qt::Vertical, this);
+      scaleBar->setObjectName("scaleBar");
+      scaleBar->setMinimum(LayoutConfig::minScale);
+      scaleBar->setMaximum(LayoutConfig::maxScale);
+      scaleBar->setValue(LayoutConfig::defScale);
+      connect(scaleBar, SIGNAL(valueChanged(int)),
+              this, SLOT(scaleTree(int)));
+      connect(this, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
+      connect(&searcher, SIGNAL(scaleChanged(int)),
+              scaleBar, SLOT(setValue(int)));
+
+      connect(&zoomTimeLine, SIGNAL(frameChanged(int)),
+              scaleBar, SLOT(setValue(int)));
+      zoomTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
 
       qRegisterMetaType<Statistics>("Statistics");
       update();
@@ -427,43 +447,17 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::timerEvent(QTimerEvent* e) {
-    if (e->timerId() == zoomTimerId) {
-      double offset = static_cast<double>(targetZoom - metaZoomCurrent) / 6.0;
-      metaZoomCurrent += offset;
-      scaleBar->setValue(static_cast<int>(metaZoomCurrent));
-      if (static_cast<int>(metaZoomCurrent+.5) == targetZoom) {
-        killTimer(zoomTimerId);
-        zoomTimerId = 0;
-      }
-    } else if (e->timerId() == scrollTimerId) {
-      QAbstractScrollArea* sa =
-        static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-
-      double xoffset =
-        static_cast<double>(targetScrollX - metaScrollXCurrent) / 6.0;
-      metaScrollXCurrent += xoffset;
-      sa->horizontalScrollBar()
-        ->setValue(static_cast<int>(metaScrollXCurrent));
-      double yoffset =
-        static_cast<double>(targetScrollY - metaScrollYCurrent) / 6.0;
-      metaScrollYCurrent += yoffset;
-      sa->verticalScrollBar()
-        ->setValue(static_cast<int>(metaScrollYCurrent));
-
-      if (static_cast<int>(metaScrollXCurrent+.5) == targetScrollX &&
-          static_cast<int>(metaScrollYCurrent+.5) == targetScrollY) {
-        killTimer(scrollTimerId);
-        scrollTimerId = 0;
-      }
-    } else if (e->timerId() == layoutDoneTimerId) {
+    if (e->timerId() == layoutDoneTimerId) {
       if (!smoothScrollAndZoom) {
         scaleTree(targetScale);
       } else {
-        metaZoomCurrent = static_cast<int>(scale*100);
-        targetZoom = targetScale;
+        zoomTimeLine.stop();
+        int zoomCurrent = static_cast<int>(scale*100);
+        int targetZoom = targetScale;
         targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
                               LayoutConfig::maxAutoZoomScale);
-        zoomTimerId = startTimer(15);
+        zoomTimeLine.setFrameRange(zoomCurrent,targetZoom);
+        zoomTimeLine.start();
       }
       QWidget::update();
       killTimer(layoutDoneTimerId);
@@ -495,11 +489,13 @@ namespace Gecode { namespace Gist {
         if (!smoothScrollAndZoom) {
           scaleTree(scale0);
         } else {
-          metaZoomCurrent = static_cast<int>(scale*100);
-          targetZoom = scale0;
+          zoomTimeLine.stop();
+          int zoomCurrent = static_cast<int>(scale*100);
+          int targetZoom = scale0;
           targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
                                 LayoutConfig::maxAutoZoomScale);
-          zoomTimerId = startTimer(15);
+          zoomTimeLine.setFrameRange(zoomCurrent,targetZoom);
+          zoomTimeLine.start();
         }
       }
     }
@@ -526,19 +522,27 @@ namespace Gecode { namespace Gist {
     x -= sa->viewport()->width() / 2;
     y -= sa->viewport()->height() / 2;
 
-    metaScrollXCurrent = sa->horizontalScrollBar()->value();
-    metaScrollYCurrent = sa->verticalScrollBar()->value();
-    targetScrollX = std::max(sa->horizontalScrollBar()->minimum(), x);
+    int curScrollX = sa->horizontalScrollBar()->value();
+    int targetScrollX = std::max(sa->horizontalScrollBar()->minimum(), x);
     targetScrollX = std::min(sa->horizontalScrollBar()->maximum(),
                              targetScrollX);
-    targetScrollY = std::max(sa->verticalScrollBar()->minimum(), y);
+    int curScrollY = sa->verticalScrollBar()->value();
+    int targetScrollY = std::max(sa->verticalScrollBar()->minimum(), y);
     targetScrollY = std::min(sa->verticalScrollBar()->maximum(),
                              targetScrollY);
     if (!smoothScrollAndZoom) {
       sa->horizontalScrollBar()->setValue(targetScrollX);
       sa->verticalScrollBar()->setValue(targetScrollY);
     } else {
-      scrollTimerId = startTimer(15);
+      scrollXTimeLine.stop();
+      scrollXTimeLine.setFrameRange(curScrollX, targetScrollX);
+      scrollXTimeLine.setDuration(std::max(200,
+        std::min(1000,std::abs(curScrollX-targetScrollX))));
+      scrollYTimeLine.stop();
+      scrollYTimeLine.setFrameRange(curScrollY, targetScrollY);
+      scrollYTimeLine.setDuration(std::max(200,
+        std::min(1000,std::abs(curScrollY-targetScrollY))));
+      scrollXTimeLine.start(); scrollYTimeLine.start();
     }
   }
 
@@ -1098,10 +1102,9 @@ namespace Gecode { namespace Gist {
 
   void
   TreeCanvas::wheelEvent(QWheelEvent* event) {
-    if (event->modifiers() & Qt::ShiftModifier &&
-        event->orientation() == Qt::Vertical) {
+    if (event->modifiers() & Qt::ShiftModifier) {
       event->accept();
-      if (!autoZoom)
+      if (event->orientation() == Qt::Vertical && !autoZoom)
         scaleTree(scale*100+ceil(static_cast<double>(event->delta())/4.0),
                   event->x(), event->y());
     } else {

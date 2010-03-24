@@ -298,23 +298,12 @@ namespace Gecode {  namespace Gist {
     /// Log the current node as new point in time
     void saveCurrentNode(void);
 
-    /// Target zoom value for smooth zooming
-    int targetZoom;
-    /// Meta current zoom value
-    double metaZoomCurrent;
-    /// Timer id for smooth zooming
-    int zoomTimerId;
-
-    /// Target x coordinate for smooth scrolling
-    int targetScrollX;
-    /// Target y coordinate for smooth scrolling
-    int targetScrollY;
-    /// Meta current x coordinate
-    double metaScrollXCurrent;
-    /// Meta current y coordinate
-    double metaScrollYCurrent;
-    /// Timer id for smooth scrolling
-    int scrollTimerId;
+    /// Timer for smooth zooming
+    QTimeLine zoomTimeLine;
+    /// Timer for smooth scrolling (x axis)
+    QTimeLine scrollXTimeLine;
+    /// Timer for smooth scrolling (y axis)
+    QTimeLine scrollYTimeLine;
 
     /// Target width after layout
     int targetW;
