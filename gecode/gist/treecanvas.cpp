@@ -210,6 +210,11 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvas::scroll(void) {
+    QWidget::update();
+  }
+
+  void
   TreeCanvas::layoutDone(int w, int h, int scale0) {
     targetW = w; targetH = h; targetScale = scale0;
     if (layoutDoneTimerId == 0)

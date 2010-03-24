@@ -60,9 +60,9 @@ namespace Gecode { namespace Gist {
     canvas->setObjectName("canvas");
 
     connect(scrollArea->horizontalScrollBar(), SIGNAL(valueChanged(int)),
-            canvas, SLOT(update(void)));
+            canvas, SLOT(scroll(void)));
     connect(scrollArea->verticalScrollBar(), SIGNAL(valueChanged(int)),
-            canvas, SLOT(update(void)));
+            canvas, SLOT(scroll(void)));
 
     QVBoxLayout* sa_layout = new QVBoxLayout();
     sa_layout->setContentsMargins(0,0,0,0);

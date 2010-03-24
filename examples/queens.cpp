@@ -67,35 +67,35 @@ public:
   /// The actual problem
   Queens(const SizeOptions& opt)
     : q(*this,opt.size(),0,opt.size()-1) {
-    const int n = q.size();
-    switch (opt.propagation()) {
-    case PROP_BINARY:
-      for (int i = 0; i<n; i++)
-        for (int j = i+1; j<n; j++) {
-          post(*this, q[i] != q[j]);
-          post(*this, q[i]+i != q[j]+j);
-          post(*this, q[i]-i != q[j]-j);
-        }
-      break;
-    case PROP_MIXED:
-      for (int i = 0; i<n; i++)
-        for (int j = i+1; j<n; j++) {
-          post(*this, q[i]+i != q[j]+j);
-          post(*this, q[i]-i != q[j]-j);
-        }
-      distinct(*this, q, opt.icl());
-      break;
-    case PROP_DISTINCT:
-      {
-        IntArgs c(n);
-        for (int i = n; i--; ) c[i] = i;
-        distinct(*this, c, q, opt.icl());
-        for (int i = n; i--; ) c[i] = -i;
-        distinct(*this, c, q, opt.icl());
-      }
-      distinct(*this, q, opt.icl());
-      break;
-    }
+    // const int n = q.size();
+    // switch (opt.propagation()) {
+    // case PROP_BINARY:
+    //   for (int i = 0; i<n; i++)
+    //     for (int j = i+1; j<n; j++) {
+    //       post(*this, q[i] != q[j]);
+    //       post(*this, q[i]+i != q[j]+j);
+    //       post(*this, q[i]-i != q[j]-j);
+    //     }
+    //   break;
+    // case PROP_MIXED:
+    //   for (int i = 0; i<n; i++)
+    //     for (int j = i+1; j<n; j++) {
+    //       post(*this, q[i]+i != q[j]+j);
+    //       post(*this, q[i]-i != q[j]-j);
+    //     }
+    //   distinct(*this, q, opt.icl());
+    //   break;
+    // case PROP_DISTINCT:
+    //   {
+    //     IntArgs c(n);
+    //     for (int i = n; i--; ) c[i] = i;
+    //     distinct(*this, c, q, opt.icl());
+    //     for (int i = n; i--; ) c[i] = -i;
+    //     distinct(*this, c, q, opt.icl());
+    //   }
+    //   distinct(*this, q, opt.icl());
+    //   break;
+    // }
     branch(*this, q, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 

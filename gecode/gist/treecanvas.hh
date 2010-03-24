@@ -329,6 +329,8 @@ namespace Gecode {  namespace Gist {
   public Q_SLOTS:
     /// Update display
     void update(void);
+    /// React to scroll events
+    void scroll(void);
     /// Layout done
     void layoutDone(int w, int h, int scale0);
   private Q_SLOTS:
