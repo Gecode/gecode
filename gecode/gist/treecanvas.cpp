@@ -1101,8 +1101,9 @@ namespace Gecode { namespace Gist {
     if (event->modifiers() & Qt::ShiftModifier &&
         event->orientation() == Qt::Vertical) {
       event->accept();
-      scaleTree(scale*100+ceil(static_cast<double>(event->delta())/4.0),
-                event->x(), event->y());
+      if (!autoZoom)
+        scaleTree(scale*100+ceil(static_cast<double>(event->delta())/4.0),
+                  event->x(), event->y());
     } else {
       event->ignore();
     }
