@@ -74,6 +74,13 @@ Yada!
 
 [ENTRY]
 Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a bug where sometimes clicking on a node would select a different node.
+
+[ENTRY]
+Module: gist
 What:   change
 Rank:   minor
 [DESCRIPTION]

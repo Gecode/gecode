@@ -176,7 +176,7 @@ namespace Gecode { namespace Gist {
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
     if (x < box.left ||
         x > box.right ||
-        depth > shape->depth()) {
+        depth >= shape->depth()) {
       return false;
     }
     Extent theExtent;
