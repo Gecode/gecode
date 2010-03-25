@@ -145,17 +145,35 @@ namespace Test { namespace Int {
      OptFixUnary ofu10(p1,0);
      OptFixUnary ofu1i(p1,Gecode::Int::Limits::min);
 
+     Gecode::IntArgs p10(5, 2,2,0,2,2);
+     ManFixUnary mfu010(p10,0);
+     ManFixUnary mfu01i(p10,Gecode::Int::Limits::min);
+     OptFixUnary ofu010(p10,0);
+     OptFixUnary ofu01i(p10,Gecode::Int::Limits::min);
+
      Gecode::IntArgs p2(4, 4,3,3,5);
      ManFixUnary mfu20(p2,0);
      ManFixUnary mfu2i(p2,Gecode::Int::Limits::min);
      OptFixUnary ofu20(p2,0);
      OptFixUnary ofu2i(p2,Gecode::Int::Limits::min);
 
+     Gecode::IntArgs p20(6, 4,0,3,3,0,5);
+     ManFixUnary mfu020(p20,0);
+     ManFixUnary mfu02i(p20,Gecode::Int::Limits::min);
+     OptFixUnary ofu020(p20,0);
+     OptFixUnary ofu02i(p20,Gecode::Int::Limits::min);
+
      Gecode::IntArgs p3(6, 4,2,9,3,7,5);
      ManFixUnary mfu30(p3,0);
      ManFixUnary mfu3i(p3,Gecode::Int::Limits::min);
      OptFixUnary ofu30(p3,0);
      OptFixUnary ofu3i(p3,Gecode::Int::Limits::min);
+
+     Gecode::IntArgs p30(8, 4,0,2,9,3,7,5,0);
+     ManFixUnary mfu030(p30,0);
+     ManFixUnary mfu03i(p30,Gecode::Int::Limits::min);
+     OptFixUnary ofu030(p30,0);
+     OptFixUnary ofu03i(p30,Gecode::Int::Limits::min);
 
      //@}
 

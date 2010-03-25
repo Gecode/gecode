@@ -50,7 +50,7 @@ namespace Gecode {
     if (s.size() != p.size())
       throw Int::ArgumentSizeMismatch("Scheduling::unary");
     for (int i=p.size(); i--; ) {
-      Int::Limits::positive(p[i],"Scheduling::unary");
+      Int::Limits::nonnegative(p[i],"Scheduling::unary");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
                          "Scheduling::unary");
     }
@@ -71,7 +71,7 @@ namespace Gecode {
     if ((s.size() != p.size()) || (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::unary");
     for (int i=p.size(); i--; ) {
-      Int::Limits::positive(p[i],"Scheduling::unary");
+      Int::Limits::nonnegative(p[i],"Scheduling::unary");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
                          "Scheduling::unary");
     }

@@ -73,6 +73,13 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: scheduling
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Tasks in unary scheduling constraints may now have processing times of 0.
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor

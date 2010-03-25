@@ -62,6 +62,18 @@ namespace Gecode { namespace Int {
     }
 
     inline void
+    Limits::nonnegative(int n, const char* l) {
+      if ((n < 0) || (n > max))
+        throw OutOfLimits(l);
+    }
+
+    inline void
+    Limits::nonnegative(double n, const char* l) {
+      if ((n < 0.0) || (n > max))
+        throw OutOfLimits(l);
+    }
+
+    inline void
     Limits::double_check(double n, const char* l) {
       if ((n < double_min) || (n > double_max))
         throw OutOfLimits(l);
