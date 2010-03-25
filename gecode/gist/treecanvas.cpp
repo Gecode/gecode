@@ -59,7 +59,7 @@ namespace Gecode { namespace Gist {
     , layoutMutex(QMutex::Recursive)
     , finishedFlag(false)
     , autoHideFailed(true), autoZoom(false)
-    , refresh(500), smoothScrollAndZoom(false), nextPit(0)
+    , refresh(500), smoothScrollAndZoom(false)
     , zoomTimeLine(500)
     , scrollXTimeLine(1000), scrollYTimeLine(1000)
     , targetW(0), targetH(0), targetScale(0)
@@ -547,7 +547,7 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::inspectCurrentNode(void) {
+  TreeCanvas::inspectCurrentNode(bool fix) {
     QMutexLocker locker(&mutex);
 
     if (currentNode->isHidden()) {
@@ -598,18 +598,36 @@ namespace Gecode { namespace Gist {
         // std::cout << "Size / node: " << (pnv.getCursor().s)/nodes
         //           << std::endl;
 
-        if (currentNode->isRoot() && currentNode->getStatus() == FAILED)
-          break;
-        Space* curSpace = currentNode->getSpace(curBest,c_d,a_d);
-        if (currentNode->getStatus() == SOLVED &&
-            curSpace->status() != SS_SOLVED) {
-          // in the presence of weakly monotonic propagators, we may have to
-          // use search to find the solution here
-          Space* dfsSpace = Gecode::dfs(curSpace);
-          delete curSpace;
-          curSpace = dfsSpace;
+        Space* curSpace;
+        
+        if (fix) {
+          if (currentNode->isRoot() && currentNode->getStatus() == FAILED)
+            break;
+          curSpace = currentNode->getSpace(curBest,c_d,a_d);
+          if (currentNode->getStatus() == SOLVED &&
+              curSpace->status() != SS_SOLVED) {
+            // in the presence of weakly monotonic propagators, we may have to
+            // use search to find the solution here
+            Space* dfsSpace = Gecode::dfs(curSpace);
+            delete curSpace;
+            curSpace = dfsSpace;
+          }          
+        } else {
+          if (currentNode->isRoot())
+            break;
+          VisualNode* p = currentNode->getParent();
+          curSpace = p->getSpace(curBest,c_d,a_d);
+          switch (curSpace->status()) {
+          case SS_SOLVED:
+          case SS_FAILED:
+            break;
+          case SS_BRANCH:
+            curSpace->commit(*p->getChoice(), currentNode->getAlternative());
+            break;
+          default:
+            GECODE_NEVER;
+          }
         }
-        saveCurrentNode();
 
         for (int i=0; i<doubleClickInspectors.size(); i++) {
           if (doubleClickInspectors[i].second) {
@@ -624,6 +642,11 @@ namespace Gecode { namespace Gist {
     currentNode->dirtyUp();
     update();
     centerCurrentNode();
+  }
+  
+  void
+  TreeCanvas::inspectBeforeFixpoint(void) {
+    inspectCurrentNode(false);
   }
 
   void
@@ -668,8 +691,6 @@ namespace Gecode { namespace Gist {
     root->setMarked(true);
     currentNode = root;
     pathHead = root;
-    nodeMap.clear();
-    nextPit = 0;
     scale = 1.0;
     stats = Statistics();
     for (int i=bookmarks.size(); i--;)
@@ -829,24 +850,6 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::navPrevSol(void) {
     navNextSol(true);
-  }
-
-  void
-  TreeCanvas::markCurrentNode(int pit) {
-    QMutexLocker locker(&mutex);
-    if(nodeMap.size() > pit && nodeMap[pit] != NULL) {
-      setCurrentNode(nodeMap[pit]);
-      centerCurrentNode();
-      emit pointInTimeChanged(pit);
-    }
-  }
-
-  void
-  TreeCanvas::saveCurrentNode(void) {
-    QMutexLocker locker(&mutex);
-    assert(nextPit == nodeMap.size());
-    nodeMap << currentNode;
-    nextPit++;
   }
 
   void

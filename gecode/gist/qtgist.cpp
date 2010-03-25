@@ -90,6 +90,11 @@ namespace Gecode { namespace Gist {
     connect(inspect, SIGNAL(triggered()), canvas,
                        SLOT(inspectCurrentNode()));
 
+    inspectBeforeFixpoint = new QAction("Inspect before fixpoint", this);
+    inspectBeforeFixpoint->setShortcut(QKeySequence("Ctrl+Return"));
+    connect(inspectBeforeFixpoint, SIGNAL(triggered()), canvas,
+                       SLOT(inspectBeforeFixpoint(void)));
+
     stop = new QAction("Stop search", this);
     stop->setShortcut(QKeySequence("Esc"));
     connect(stop, SIGNAL(triggered()), canvas,
@@ -215,6 +220,7 @@ namespace Gecode { namespace Gist {
             this, SLOT(showStats()));
 
     addAction(inspect);
+    addAction(inspectBeforeFixpoint);
     addAction(stop);
     addAction(reset);
     addAction(navUp);
@@ -280,6 +286,7 @@ namespace Gecode { namespace Gist {
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(inspect);
+    contextMenu->addAction(inspectBeforeFixpoint);
     contextMenu->addAction(showNodeStats);
     contextMenu->addAction(center);
 

@@ -73,6 +73,13 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Added inspection of nodes before fixpoint computation.
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor

@@ -242,6 +242,8 @@ namespace Gecode { namespace Gist {
     SpaceNode* getChild(int i);
     /// Return alternative number of this node
     int getAlternative(void);
+    /// Return choice of this node
+    const Choice* getChoice(void);
   };
 
 }}

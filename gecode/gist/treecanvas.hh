@@ -134,8 +134,16 @@ namespace Gecode {  namespace Gist {
     void zoomToFit(void);
     /// Center the view on the currently selected node
     void centerCurrentNode(void);
-    /// Call the double click inspector for the currently selected node
-    void inspectCurrentNode(void);
+    /**
+     * \brief Call the double click inspector for the currently selected node
+     *
+     * If \a fix is true, then the node is inspected after fixpoint
+     * computation, otherwise its status after branching but before
+     * fixpoint computation is inspected.
+     */
+    void inspectCurrentNode(bool fix=true);
+    /// Calls inspectCurrentNode(false)
+    void inspectBeforeFixpoint(void);
 
     /// Stop current search
     void stopSearch(void);
@@ -157,8 +165,6 @@ namespace Gecode {  namespace Gist {
     void navNextSol(bool back = false);
     /// Move selection to previous solution (in DFS order)
     void navPrevSol(void);
-    /// Recall selection of point in time \a pit
-    void markCurrentNode(int pit);
 
     /// Bookmark current node
     void bookmarkNode(void);
@@ -204,8 +210,6 @@ namespace Gecode {  namespace Gist {
     void contextMenu(QContextMenuEvent*);
     /// Status bar update
     void statusChanged(VisualNode*,const Statistics&, bool);
-    /// The point in time changed to \a pit
-    void pointInTimeChanged(int pit);
     /// Signals that a solution has been found
     void solution(const Space*);
     /// Signals that %Gist is finished
@@ -235,8 +239,6 @@ namespace Gecode {  namespace Gist {
     VisualNode* currentNode;
     /// The head of the currently selected path
     VisualNode* pathHead;
-    /// The history of inspected nodes
-    QVector<VisualNode*> nodeMap;
     /// The registered click inspectors, and whether they are active
     QVector<QPair<Inspector*,bool> > doubleClickInspectors;
     /// The registered solution inspectors, and whether they are active
@@ -274,9 +276,6 @@ namespace Gecode {  namespace Gist {
     /// The adaptive recomputation distance
     int a_d;
 
-    /// The next point in time
-    int nextPit;
-
     /// Return the node corresponding to the \a event position
     VisualNode* eventNode(QEvent *event);
     /// General event handler, used for displaying tool tips
@@ -295,8 +294,6 @@ namespace Gecode {  namespace Gist {
     void wheelEvent(QWheelEvent* event);
     /// Set the selected node to \a n
     void setCurrentNode(VisualNode* n, bool update=true);
-    /// Log the current node as new point in time
-    void saveCurrentNode(void);
 
     /// Timer for smooth zooming
     QTimeLine zoomTimeLine;

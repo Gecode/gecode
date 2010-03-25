@@ -82,6 +82,8 @@ namespace Gecode {  namespace Gist {
   public:
     /// Inspect current node
     QAction* inspect;
+    /// Inspect current node before fixpoint
+    QAction* inspectBeforeFixpoint;
     /// Stop search
     QAction* stop;
     /// Reset %Gist

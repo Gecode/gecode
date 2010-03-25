@@ -202,6 +202,11 @@ namespace Gecode { namespace Gist {
     return -1;
   }
 
+  forceinline const Choice*
+  SpaceNode::getChoice(void) {
+    return desc.branch;
+  }
+
 }}
 
 // STATISTICS: gist-any

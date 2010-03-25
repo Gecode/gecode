@@ -123,6 +123,7 @@ namespace Gecode { namespace Gist {
 
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
     nodeMenu->addAction(c->inspect);
+    nodeMenu->addAction(c->inspectBeforeFixpoint);
     nodeMenu->addAction(c->setPath);
     nodeMenu->addAction(c->inspectPath);
     nodeMenu->addAction(c->showNodeStats);
