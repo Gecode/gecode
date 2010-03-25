@@ -77,15 +77,15 @@ namespace Gecode { namespace Set {
    * and an integer variable with propagation condition \a pci.
    */
   template<class View, PropCond pcs, PropCond pci>
-  class IntSetRePropagator : public Propagator {
+  class ReIntSetPropagator : public Propagator {
   protected:
     View x0;
     Gecode::Int::IntView x1;
     Gecode::Int::BoolView b;
     /// Constructor for cloning
-    IntSetRePropagator(Space& home,bool,IntSetRePropagator&);
+    ReIntSetPropagator(Space& home,bool,ReIntSetPropagator&);
     /// Constructor for creation
-    IntSetRePropagator(Space& home,View,Gecode::Int::IntView,
+    ReIntSetPropagator(Space& home,View,Gecode::Int::IntView,
                        Gecode::Int::BoolView);
   public:
     /// Cost function (defined as low ternary)
@@ -132,7 +132,7 @@ namespace Gecode { namespace Set {
   }
 
   template<class View, PropCond pcs, PropCond pci>
-  IntSetRePropagator<View,pcs,pci>::IntSetRePropagator
+  ReIntSetPropagator<View,pcs,pci>::ReIntSetPropagator
   (Space& home, View y0, Gecode::Int::IntView y1, Gecode::Int::BoolView b2)
     : Propagator(home), x0(y0), x1(y1), b(b2) {
     x0.subscribe(home,*this,pcs);
@@ -142,8 +142,8 @@ namespace Gecode { namespace Set {
 
   template<class View, PropCond pcs, PropCond pci>
   forceinline
-  IntSetRePropagator<View,pcs,pci>::IntSetRePropagator
-  (Space& home, bool share, IntSetRePropagator<View,pcs,pci>& p)
+  ReIntSetPropagator<View,pcs,pci>::ReIntSetPropagator
+  (Space& home, bool share, ReIntSetPropagator<View,pcs,pci>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -152,14 +152,14 @@ namespace Gecode { namespace Set {
 
   template<class View, PropCond pcs, PropCond pci>
   PropCost
-  IntSetRePropagator<View,pcs,pci>
+  ReIntSetPropagator<View,pcs,pci>
   ::cost(const Space&, const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);
   }
 
   template<class View, PropCond pcs, PropCond pci>
   size_t
-  IntSetRePropagator<View,pcs,pci>::dispose(Space& home) {
+  ReIntSetPropagator<View,pcs,pci>::dispose(Space& home) {
     if (!home.failed()) {
       x0.cancel(home,*this,pcs);
       x1.cancel(home,*this,pci);

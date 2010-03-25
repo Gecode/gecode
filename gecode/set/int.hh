@@ -107,11 +107,11 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class ReMinElement :
-    public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    public ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
   protected:
-    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
-    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
-    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
+    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
+    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
     /// Constructor for cloning \a p
     ReMinElement(Space& home, bool share,ReMinElement& p);
     /// Constructor for posting
@@ -185,11 +185,11 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class ReMaxElement :
-    public IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    public ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
   protected:
-    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
-    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
-    using IntSetRePropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
+    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
+    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
     /// Constructor for cloning \a p
     ReMaxElement(Space& home, bool share,ReMaxElement& p);
     /// Constructor for posting

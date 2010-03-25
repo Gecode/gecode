@@ -262,7 +262,7 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   ReMinElement<View>::ReMinElement(Home home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
-    : IntSetRePropagator<View,PC_SET_ANY,
+    : ReIntSetPropagator<View,PC_SET_ANY,
                          Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
 
   template<class View>
@@ -276,7 +276,7 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   ReMinElement<View>::ReMinElement(Space& home, bool share, ReMinElement& p)
-    : IntSetRePropagator<View,PC_SET_ANY,
+    : ReIntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
   template<class View>
@@ -539,13 +539,13 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   ReMaxElement<View>::ReMaxElement(Home home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
-    : IntSetRePropagator<View,PC_SET_ANY,
+    : ReIntSetPropagator<View,PC_SET_ANY,
                          Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
 
   template<class View>
   forceinline
   ReMaxElement<View>::ReMaxElement(Space& home, bool share, ReMaxElement& p)
-    : IntSetRePropagator<View,PC_SET_ANY,
+    : ReIntSetPropagator<View,PC_SET_ANY,
                        Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
   template<class View>

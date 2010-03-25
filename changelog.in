@@ -73,6 +73,13 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Renamed Set::IntSetRePropagator to the more regular Set::ReIntSetPropagator.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor
@@ -82,7 +89,7 @@ Fixed a bug where sometimes clicking on a node would select a different node.
 [ENTRY]
 Module: gist
 What:   change
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 Scrolling and zooming have been reimplemented. The new implementation is more 
 efficient and works around problems that occurred with large trees on some 
