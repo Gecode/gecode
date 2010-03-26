@@ -73,6 +73,13 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The (unused and unusable) CopiedHandle have been removed.
+
+[ENTRY]
 Module: scheduling
 What:   change
 Rank:   minor

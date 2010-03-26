@@ -400,7 +400,7 @@ namespace Gecode {
     for (int i=0; i<AllVarConf::idx_c; i++)
       pc.c.vars_u[i] = NULL;
     pc.c.vars_noidx = NULL;
-    pc.c.copied = NULL;
+    pc.c.shared = NULL;
     // Copy all propagators
     {
       ActorLink* p = &pl;
@@ -507,7 +507,7 @@ namespace Gecode {
     }
 
     // Reset links for copied objects
-    for (CopiedHandle::Object* s = c->pc.c.copied; s != NULL; s = s->next)
+    for (SharedHandle::Object* s = c->pc.c.shared; s != NULL; s = s->next)
       s->fwd = NULL;
 
     // Initialize propagator queue

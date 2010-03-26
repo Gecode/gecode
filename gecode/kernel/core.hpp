@@ -51,11 +51,7 @@ namespace Gecode {
   class Space;
 
   /**
-   * \defgroup FuncSupportShared Support for copied and shared objects and handles
-   *
-   * Copied handles provide access to objects that are updated when a space
-   * is copied, used by entities inside spaces.
-   * An update creates a single copy per space during updating.
+   * \defgroup FuncSupportShared Support for shared objects and handles
    *
    * Shared handles provide access to reference-counted objects. In
    * particular, they support updates with and without sharing.
@@ -64,74 +60,6 @@ namespace Gecode {
    *
    * \ingroup FuncSupport
    */
-
-  /**
-   * \brief The copied handle
-   *
-   * A copied handle provides access to an object that lives in a space, and
-   * is used by entities inside the space. The handle has an update mechanism
-   * that makes sure that a single copy of the object is created when the
-   * space is copied.
-   *
-   * This is the base class that all copied handles must inherit from.
-   *
-   * \ingroup FuncSupportShared
-   */
-  class CopiedHandle {
-  public:
-    /**
-     * \brief The copied object
-     *
-     * Copied objects must inherit from this base class.
-     *
-     * \ingroup FuncSupportShared
-     */
-    class Object {
-      friend class Space;
-      friend class CopiedHandle;
-    private:
-      /// The next object collected during copying
-      Object* next;
-      /// The forwarding pointer
-      Object* fwd;
-    public:
-      /// Initialize
-      Object(void);
-      /// Return fresh copy for update
-      virtual Object* copy(void) const = 0;
-      /// Delete object
-      virtual ~Object(void);
-      /// Allocate memory from space
-      static void* operator new(size_t, Space&);
-      /// Free memory
-      static void operator delete(void*, size_t);
-      /// No-op (for exceptions)
-      static void operator delete(void*, Space&);
-    private:
-      static void* operator new(size_t);
-    };
-  private:
-    /// The shared object
-    Object* o;
-  public:
-    /// Create shared handle with no object pointing to
-    CopiedHandle(void);
-    /// Create shared handle that points to shared object \a so
-    CopiedHandle(Object* so);
-    /// Copy constructor maintaining reference count
-    CopiedHandle(const CopiedHandle& sh);
-    /// Assignment operator mainitaining reference count
-    CopiedHandle& operator =(const CopiedHandle& sh);
-    /// Updating during cloning
-    void update(Space& home, bool share, CopiedHandle& sh);
-    /// Deallocate object
-    void dispose(Space& home);
-  protected:
-    /// Access to the shared object
-    Object* object(void) const;
-    /// Modify shared object
-    void object(Object* n);
-  };
 
   /**
    * \brief The shared handle
@@ -146,7 +74,7 @@ namespace Gecode {
    *
    * \ingroup FuncSupportShared
    */
-  class SharedHandle : public CopiedHandle {
+  class SharedHandle {
   public:
     /**
      * \brief The shared object
@@ -155,15 +83,21 @@ namespace Gecode {
      *
      * \ingroup FuncSupportShared
      */
-    class Object : public CopiedHandle::Object {
+    class Object {
       friend class Space;
       friend class SharedHandle;
     private:
+      /// The next object collected during copying
+      Object* next;
+      /// The forwarding pointer
+      Object* fwd;
       /// The counter used for reference counting
       unsigned int use_cnt;
     public:
       /// Initialize
       Object(void);
+      /// Return fresh copy for update
+      virtual Object* copy(void) const = 0;
       /// Delete shared object
       virtual ~Object(void);
       /// Allocate memory from heap
@@ -172,6 +106,8 @@ namespace Gecode {
       static void  operator delete(void* p);
     };
   private:
+    /// The shared object
+    Object* o;
     /// Subscribe handle to object
     void subscribe(void);
     /// Cancel subscription of handle to object
@@ -191,7 +127,7 @@ namespace Gecode {
     ~SharedHandle(void);
   protected:
     /// Access to the shared object
-    Object* object(void) const;
+    SharedHandle::Object* object(void) const;
     /// Modify shared object
     void object(SharedHandle::Object* n);
   };
@@ -1162,7 +1098,7 @@ namespace Gecode {
     friend class Advisor;
     template<class VIC> friend class VarImp;
     template<class VarType> friend class VarDisposer;
-    friend class CopiedHandle;
+    friend class SharedHandle;
     friend class Region;
   private:
     /// Manager for shared memory areas
@@ -1222,8 +1158,8 @@ namespace Gecode {
         VarImpBase* vars_u[AllVarConf::idx_c];
         /// Keep variables during copying without index structure
         VarImpBase* vars_noidx;
-        /// Linked list of copied objects
-        CopiedHandle::Object* copied;
+        /// Linked list of shared objects
+        SharedHandle::Object* shared;
       } c;
     } pc;
     /// Put propagator \a p into right queue
@@ -2214,69 +2150,13 @@ namespace Gecode {
     return home.ralloc(s);
   }
 
-  forceinline void
-  CopiedHandle::Object::operator delete(void*, size_t) {}
-  forceinline void
-  CopiedHandle::Object::operator delete(void*, Space&) {}
-  forceinline void*
-  CopiedHandle::Object::operator new(size_t s, Space& home) {
-    return home.ralloc(s);
-  }
-
-  /*
-   * Copied objects and handles
-   *
-   */
-  forceinline
-  CopiedHandle::Object::Object(void)
-    : fwd(NULL) {}
-  forceinline
-  CopiedHandle::Object::~Object(void) {}
-
-  forceinline
-  CopiedHandle::CopiedHandle(void) : o(NULL) {}
-  forceinline
-  CopiedHandle::CopiedHandle(CopiedHandle::Object* so) : o(so) {}
-  forceinline
-  CopiedHandle::CopiedHandle(const CopiedHandle& sh) : o(sh.o) {}
-  forceinline CopiedHandle&
-  CopiedHandle::operator =(const CopiedHandle& sh) {
-    o = sh.o;
-    return *this;
-  }
-  forceinline void
-  CopiedHandle::update(Space& home, bool, CopiedHandle& sh) {
-    if (sh.o == NULL) {
-      o = NULL;
-    } else if (sh.o->fwd != NULL) {
-      o = sh.o->fwd;
-    } else {
-      o = sh.o->copy();
-      sh.o->fwd = o;
-      sh.o->next = home.pc.c.copied;
-      home.pc.c.copied = sh.o;
-    }
-  }
-  forceinline void
-  CopiedHandle::dispose(Space&) {
-    (*o).~Object();
-  }
-  forceinline CopiedHandle::Object*
-  CopiedHandle::object(void) const {
-    return o;
-  }
-  forceinline void
-  CopiedHandle::object(CopiedHandle::Object* n) {
-    o=n;
-  }
-
   /*
    * Shared objects and handles
    *
    */
   forceinline
   SharedHandle::Object::Object(void)
-    : use_cnt(0) {}
+    : next(NULL), fwd(NULL), use_cnt(0) {}
   forceinline
   SharedHandle::Object::~Object(void) {
     assert(use_cnt == 0);
@@ -2284,51 +2164,56 @@ namespace Gecode {
 
   forceinline SharedHandle::Object*
   SharedHandle::object(void) const {
-    return static_cast<SharedHandle::Object*>(CopiedHandle::object());
+    return o;
   }
   forceinline void
   SharedHandle::subscribe(void) {
-    if (object() != NULL) object()->use_cnt++;
+    if (o != NULL) o->use_cnt++;
   }
   forceinline void
   SharedHandle::cancel(void) {
-    if ((object() != NULL) && (--object()->use_cnt == 0))
-      delete object();
-    CopiedHandle::object(NULL);
+    if ((o != NULL) && (--o->use_cnt == 0))
+      delete o;
+    o=NULL;
   }
   forceinline void
   SharedHandle::object(SharedHandle::Object* n) {
-    if (n != object()) {
-      cancel(); CopiedHandle::object(n); subscribe();
+    if (n != o) {
+      cancel(); o=n; subscribe();
     }
   }
   forceinline
-  SharedHandle::SharedHandle(void) {}
+  SharedHandle::SharedHandle(void) : o(NULL) {}
   forceinline
-  SharedHandle::SharedHandle(SharedHandle::Object* so) : CopiedHandle(so) {
+  SharedHandle::SharedHandle(SharedHandle::Object* so) : o(so) {
     subscribe();
   }
   forceinline
-  SharedHandle::SharedHandle(const SharedHandle& sh) : CopiedHandle(sh) {
+  SharedHandle::SharedHandle(const SharedHandle& sh) : o(sh.o) {
     subscribe();
   }
   forceinline SharedHandle&
   SharedHandle::operator =(const SharedHandle& sh) {
     if (&sh != this) {
-      cancel(); CopiedHandle::object(sh.object()); subscribe();
+      cancel(); o=sh.o; subscribe();
     }
     return *this;
   }
   forceinline void
   SharedHandle::update(Space& home, bool share, SharedHandle& sh) {
-    if (sh.object() == NULL) {
-      CopiedHandle::object(NULL);
+    if (sh.o == NULL) {
+      o=NULL; return;
     } else if (share) {
-      CopiedHandle::object(sh.object()); subscribe();
+      o=sh.o;
+    } else if (sh.o->fwd != NULL) {
+      o=sh.o->fwd;
     } else {
-      CopiedHandle::update(home, share, sh);
-      subscribe();
+      o = sh.o->copy();
+      sh.o->fwd = o;
+      sh.o->next = home.pc.c.shared;
+      home.pc.c.shared = sh.o;
     }
+    subscribe();
   }
   forceinline
   SharedHandle::~SharedHandle(void) {
