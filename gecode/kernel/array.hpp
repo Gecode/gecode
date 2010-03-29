@@ -616,9 +616,11 @@ namespace Gecode {
   forceinline void
   VarArray<Var>::resize(Space& home, int m) {
     int newsize;
+    int newn;
     if (m<n) {
       // Shrink array and leave capacity at m+1, forcing heap allocation
       newsize = m+1;
+      newn = m;
     } else if (m<capacity) {
       // As m>=n<capacity, the array is heap allocated, just resize
       n = m;
@@ -626,12 +628,13 @@ namespace Gecode {
     } else {
       // Resize, so that newsize != m forcing heap allocation
       newsize = std::max(m+1, (3*capacity)/2);
+      newn = n;
     }
 
     if (n == capacity) {
       // Array was space allocated, copy to heap with new size
       Var* oldx = x;
-      x = heap.copy<Var>(heap.alloc<Var>(newsize), x, n);
+      x = heap.copy<Var>(heap.alloc<Var>(newsize), x, newn);
       home.rfree(oldx, capacity);
     } else {
       // Array was heap allocated, just reallocate with new size

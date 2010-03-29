@@ -74,6 +74,14 @@ Yada!
 
 [ENTRY]
 Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed bug in VarArray::resize function that occurred when shrinking
+variable arrays.
+
+[ENTRY]
+Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
