@@ -450,8 +450,7 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with smallest accumulated failure count divided
-   * by degree
+   * \brief View selection class for view with smallest size divided by accumulated failure count
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
@@ -472,8 +471,7 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest accumulated failure count divided
-   * by degree
+   * \brief View selection class for view with largest size divided by accumulated failure count
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView

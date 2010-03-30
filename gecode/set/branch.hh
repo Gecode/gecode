@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * \brief Class for random value selection
    *
    * Requires
-   * \code #include <gecode/int/branch.hh> \endcode
+   * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
   template<bool inc>
