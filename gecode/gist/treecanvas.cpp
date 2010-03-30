@@ -370,6 +370,7 @@ namespace Gecode { namespace Gist {
         } else {
           VisualNode* n = si.n->getChild(si.i);
           if (n->isOpen()) {
+            bool wasUndetermined = n->getStatus() == UNDETERMINED;
             kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                             t->c_d, t->a_d);
             if (kids == 0) {
@@ -382,7 +383,8 @@ namespace Gecode { namespace Gist {
                   break;
               }
             } else {
-              stck.push(SearchItem(n,kids));
+              if ( !(wasUndetermined && n->getStatus() == STOP) )
+                stck.push(SearchItem(n,kids));
               t->stats.maxDepth =
                 std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
                          static_cast<long unsigned int>(depth+stck.size()));
@@ -582,8 +584,7 @@ namespace Gecode { namespace Gist {
         }
         break;
     case FAILED:
-    case STEP:
-    case SPECIAL:
+    case STOP:
     case BRANCH:
     case SOLVED:
       {
@@ -780,10 +781,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     if (!currentNode->isHidden()) {
       switch (currentNode->getStatus()) {
-      case STEP:
-      case SPECIAL:
-        if (currentNode->getNumberOfChildren() < 1)
-          break;
+      case STOP:
       case BRANCH:
           {
             int alt = std::max(0, currentNode->getPathAlternative());
@@ -996,7 +994,7 @@ namespace Gecode { namespace Gist {
       if (event->type() == QEvent::ToolTip) {
         VisualNode* n = eventNode(event);
         if (n != NULL && !n->isHidden() &&
-            (n->getStatus() == BRANCH)) {
+            (n->getStatus() == BRANCH || n->getStatus() == STOP)) {
           QHelpEvent* he = static_cast<QHelpEvent*>(event);
           QToolTip::showText(he->globalPos(),
                              QString(n->toolTip(curBest,c_d,a_d).c_str()));

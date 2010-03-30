@@ -62,6 +62,7 @@ namespace Gecode { namespace Gist {
   const int quarterNodeWidth = halfNodeWidth / 2;
   const int failedWidth = 14;
   const int halfFailedWidth = failedWidth / 2;
+  const float quarterFailedWidthF = static_cast<float>(failedWidth) / 4.0;
   const int shadowOffset = 3;
   const int dSolvedOffset = nodeWidth / 6;
   const int dSolvedHalfWidth = (nodeWidth-2*dSolvedOffset) / 2;
@@ -96,9 +97,14 @@ namespace Gecode { namespace Gist {
     Gist::VisualNode* n = node();
     int parentX = x - (n->getOffset());
     int parentY = y - Layout::dist_y + nodeWidth;
+    if (n->getParent() != NULL && n->getParent()->getStatus() == STOP)
+      parentY -= (nodeWidth-failedWidth)/2;
 
     int myx = x;
     int myy = y;
+
+    if (n->getStatus() == STOP)
+      myy += (nodeWidth-failedWidth)/2;
 
     if (n != startNode()) {
       if (n->isOnPath())
@@ -126,12 +132,6 @@ namespace Gecode { namespace Gist {
 
       } else {
         switch (n->getStatus()) {
-        case Gist::STEP:
-        case Gist::SPECIAL:
-                painter.drawEllipse(myx-quarterNodeWidth+shadowOffset,
-                                    myy+shadowOffset, halfNodeWidth,
-                                    nodeWidth);
-                break;
         case Gist::SOLVED:
           {
             QPoint points[4] = {QPoint(myx+shadowOffset,myy+shadowOffset),
@@ -148,6 +148,32 @@ namespace Gecode { namespace Gist {
         case Gist::FAILED:
           painter.drawRect(myx-halfFailedWidth+shadowOffset,
                            myy+shadowOffset, failedWidth, failedWidth);
+          break;
+        case Gist::STOP:
+          {
+            QPointF points[8] = {QPointF(myx+shadowOffset-quarterFailedWidthF,
+                                         myy+shadowOffset),
+                                 QPointF(myx+shadowOffset+quarterFailedWidthF,
+                                         myy+shadowOffset),
+                                 QPointF(myx+shadowOffset+halfFailedWidth,
+                                         myy+shadowOffset
+                                            +quarterFailedWidthF),
+                                 QPointF(myx+shadowOffset+halfFailedWidth,
+                                         myy+shadowOffset+halfFailedWidth+
+                                             quarterFailedWidthF),
+                                 QPointF(myx+shadowOffset+quarterFailedWidthF,
+                                         myy+shadowOffset+failedWidth),
+                                 QPointF(myx+shadowOffset-quarterFailedWidthF,
+                                         myy+shadowOffset+failedWidth),
+                                 QPointF(myx+shadowOffset-halfFailedWidth,
+                                         myy+shadowOffset+halfFailedWidth+
+                                             quarterFailedWidthF),
+                                 QPointF(myx+shadowOffset-halfFailedWidth,
+                                         myy+shadowOffset
+                                            +quarterFailedWidthF),
+                                };
+            painter.drawConvexPolygon(points, 8);
+          }
           break;
         case Gist::BRANCH:
           painter.drawEllipse(myx-halfNodeWidth+shadowOffset,
@@ -190,17 +216,6 @@ namespace Gecode { namespace Gist {
       painter.drawConvexPolygon(points, 3);
     } else {
       switch (n->getStatus()) {
-      case Gist::STEP:
-      case Gist::SPECIAL:
-        painter.setBrush(Qt::yellow);
-        painter.drawEllipse(myx-quarterNodeWidth, myy+halfNodeWidth,
-                           halfNodeWidth, halfNodeWidth);
-        if (n->isOnPath())
-          painter.setPen(Qt::red);
-        else
-          painter.setPen(Qt::black);
-        painter.drawLine(myx, myy, myx, myy+halfNodeWidth);
-        break;
       case Gist::SOLVED:
         {
           if (n->isCurrentBest(curBest)) {
@@ -219,6 +234,29 @@ namespace Gecode { namespace Gist {
       case Gist::FAILED:
         painter.setBrush(QBrush(red));
         painter.drawRect(myx-halfFailedWidth, myy, failedWidth, failedWidth);
+        break;
+      case Gist::STOP:
+        {
+          painter.setBrush(QBrush(red));
+          QPointF points[8] = {QPointF(myx-quarterFailedWidthF,myy),
+                               QPointF(myx+quarterFailedWidthF,myy),
+                               QPointF(myx+halfFailedWidth,
+                                       myy+quarterFailedWidthF),
+                               QPointF(myx+halfFailedWidth,
+                                       myy+halfFailedWidth+
+                                           quarterFailedWidthF),
+                               QPointF(myx+quarterFailedWidthF,
+                                       myy+failedWidth),
+                               QPointF(myx-quarterFailedWidthF,
+                                       myy+failedWidth),
+                               QPointF(myx-halfFailedWidth,
+                                       myy+halfFailedWidth+
+                                           quarterFailedWidthF),
+                               QPointF(myx-halfFailedWidth,
+                                       myy+quarterFailedWidthF),
+                              };
+          painter.drawConvexPolygon(points, 8);
+        }
         break;
       case Gist::BRANCH:
         painter.setBrush(QBrush(blue));

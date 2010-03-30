@@ -45,8 +45,7 @@ namespace Gecode { namespace Gist {
   void
   HideFailedCursor::processCurrentNode(void) {
     VisualNode* n = node();
-    if ((n->getStatus() == BRANCH ||
-         ((n->getStatus() == SPECIAL || n->getStatus() == STEP) && n->hasFailedChildren())) &&
+    if (n->getStatus() == BRANCH &&
         !n->hasSolvedChildren() &&
         n->getNoOfOpenChildren() == 0) {
       n->setHidden(true);

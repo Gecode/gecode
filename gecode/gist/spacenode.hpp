@@ -102,7 +102,7 @@ namespace Gecode { namespace Gist {
   forceinline
   SpaceNode::SpaceNode(void)
   : copy(NULL), workingSpace(NULL), ownBest(NULL), nstatus(0) {
-    desc.branch = NULL;
+    choice = NULL;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);
     setHasFailedChildren(false);
@@ -138,26 +138,6 @@ namespace Gecode { namespace Gist {
   forceinline bool
   SpaceNode::isCurrentBest(BestNode* curBest) {
     return curBest != NULL && curBest->s == this;
-  }
-
-  forceinline void
-  SpaceNode::setSpecialDesc(const SpecialDesc* d) {
-    desc.special = d;
-  }
-
-  forceinline void
-  SpaceNode::setStepDesc(StepDesc* d) {
-    desc.step = d;
-  }
-
-  forceinline bool
-  SpaceNode::isStepNode(void) {
-    return getStatus() == STEP;
-  }
-
-  forceinline StepDesc*
-  SpaceNode::getStepDesc(void) {
-    return (isStepNode() ? desc.step : NULL);
   }
 
   forceinline bool
@@ -204,7 +184,7 @@ namespace Gecode { namespace Gist {
 
   forceinline const Choice*
   SpaceNode::getChoice(void) {
-    return desc.branch;
+    return choice;
   }
 
 }}

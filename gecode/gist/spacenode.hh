@@ -50,32 +50,13 @@ namespace Gecode { namespace Gist {
     FAILED,       ///< Node representing failure
     BRANCH,       ///< Node representing a branch
     UNDETERMINED, ///< Node that has not been explored yet
-    SPECIAL,      ///< Node representing user controlled exploration
-    STEP          ///< Node representing one propagation step
+    STOP          ///< Node representing stop point
   };
 
   static const unsigned int FIRSTBIT = 24; //< First free bit in status word
   static const unsigned int STATUSMASK = 7<<20; //< Mask for accessing status
   static const unsigned int MAXDISTANCE = (1<<20)-1; //< Maximum representable distance
   static const unsigned int DISTANCEMASK = (1<<20)-1; //< Mask for accessing distance
-
-  /// \brief Description for step nodes
-  class StepDesc {
-  public:
-    int noOfSteps;
-    bool debug;
-    StepDesc(int steps);
-    void toggleDebug(void);
-  };
-
-  /// \brief Description for special nodes
-  class SpecialDesc {
-  public:
-    const std::string vn;
-    const int v;
-    const int rel;
-    SpecialDesc(std::string varName, int rel0, int v0);
-  };
 
   /// Statistics about the search tree
   class Statistics : public StatusStatistics {
@@ -125,14 +106,7 @@ namespace Gecode { namespace Gist {
      */
     unsigned int nstatus;
   protected:
-    union {
-      /// Choice
-      const Choice* branch;
-      /// Special branching description
-      const SpecialDesc* special;
-      /// Step description
-      StepDesc* step;
-    } desc;
+    const Choice* choice;
 
     /// Set distance from copy
     void setDistance(unsigned int d);
@@ -210,14 +184,6 @@ namespace Gecode { namespace Gist {
 
     /// Return current status of the node
     NodeStatus getStatus(void) const;
-    /// Return whether this node represents a propagation step
-    bool isStepNode(void);
-    /// Change the SpecialDesc to \a d
-    void setSpecialDesc(const SpecialDesc* d);
-    /// Change the StepDesc to \a d
-    void setStepDesc(StepDesc* d);
-    /// Return the StepDesc
-    StepDesc* getStepDesc(void);
 
     /// Return whether this node still has open children
     bool isOpen(void);

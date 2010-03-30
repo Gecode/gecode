@@ -582,13 +582,14 @@ GISTHDR0 = \
 	spacenode.hh spacenode.hpp qtgist.hh \
 	textoutput.hh treecanvas.hh zoomToFitIcon.hpp \
 	visualnode.hh visualnode.hpp nodestats.hh \
-	nodewidget.hh mainwindow.hh preferences.hh
+	nodewidget.hh mainwindow.hh preferences.hh \
+	stopbrancher.hh
 
 GISTSRC0 = \
 	drawingcursor.cpp gist.cpp gecodelogo.cpp node.cpp nodecursor.cpp \
 	layoutcursor.cpp spacenode.cpp \
 	textoutput.cpp treecanvas.cpp qtgist.cpp visualnode.cpp nodestats.cpp \
-	nodewidget.cpp mainwindow.cpp preferences.cpp
+	nodewidget.cpp mainwindow.cpp preferences.cpp stopbrancher.cpp
 
 GISTMOCSRC0 = \
 	moc_treecanvas.cpp moc_qtgist.cpp moc_mainwindow.cpp moc_textoutput.cpp\

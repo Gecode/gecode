@@ -73,6 +73,16 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: gist
+What:   new
+Rank:   major
+[DESCRIPTION]
+Gist can now stop exploration after all alternatives of a certain branching
+are exhausted. This feature can be turned on by posting a special branching
+using the Gist::stopBrancher post function. Gist will then stop whenever that 
+special branching becomes active.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor

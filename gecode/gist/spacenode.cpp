@@ -37,15 +37,11 @@
 
 #include <gecode/gist/spacenode.hh>
 #include <gecode/gist/visualnode.hh>
+#include <gecode/gist/stopbrancher.hh>
 #include <gecode/search.hh>
 #include <stack>
 
 namespace Gecode { namespace Gist {
-
-  // TODO nikopp: doxygen comments
-  enum BranchKind {
-    BK_NORMAL, BK_SPECIAL_IN, BK_SPECIAL_OUT, BK_STEP
-  };
 
   /// \brief Representation of a branch in the search tree
   class Branch {
@@ -54,41 +50,14 @@ namespace Gecode { namespace Gist {
     int alternative;
     /// The best space known when the branch was created
     SpaceNode* ownBest;
-    const BranchKind branchKind;
-    union {
-      /// Special branching description
-      const SpecialDesc* special;
-      /// Branching description
-      const Choice* branch;
-      /// Step description
-      const StepDesc* step;
-    } desc;
+    const Choice* choice;
 
     /// Constructor
-    Branch(int a, const Choice* c, 
-           SpaceNode* best = NULL, BranchKind bk = BK_NORMAL)
-      : alternative(a), ownBest(best), branchKind(bk) {
-        desc.branch = c;
-      }
-    Branch(int a, const SpecialDesc* d, BranchKind bk, SpaceNode* best = NULL)
-      : alternative(a), ownBest(best), branchKind(bk) {
-        desc.special = d;
-      }
-    Branch(int a, const StepDesc* d, BranchKind bk, SpaceNode* best = NULL)
-      : alternative(a), ownBest(best), branchKind(bk) {
-        desc.step = d;
+    Branch(int a, const Choice* c, SpaceNode* best = NULL)
+      : alternative(a), ownBest(best) {
+        choice = c;
       }
   };
-
-  StepDesc::StepDesc(int steps) : noOfSteps(steps), debug(false) { }
-
-  void
-  StepDesc::toggleDebug(void) {
-   debug = !debug;
-  }
-
-  SpecialDesc::SpecialDesc(std::string varName, int rel0, int v0)
-  : vn(varName), v(v0), rel(rel0) { }
 
   BestNode::BestNode(SpaceNode* s0) : s(s0) {}
 
@@ -100,39 +69,17 @@ namespace Gecode { namespace Gist {
       SpaceNode* curNode = this;
       SpaceNode* lastFixpoint = NULL;
 
-      if(curNode->getStatus() != SPECIAL && curNode->getStatus() != STEP) {
-        lastFixpoint = curNode;
-      }
+      lastFixpoint = curNode;
 
       std::stack<Branch> stck;
-      bool specialNodeOnPath = false;
 
       while (curNode->copy == NULL) {
         SpaceNode* parent = curNode->getParent();
         int alternative = curNode->getAlternative();
 
-        if (curNode->getStatus() == STEP) {
-          Branch b(alternative, curNode->desc.step, BK_STEP);
-          stck.push(b);
-          if (lastFixpoint == NULL && parent->getStatus() == BRANCH) {
-             lastFixpoint = parent;
-          }
-      } else if (curNode->getStatus() == SPECIAL) {
-          Branch b(alternative, curNode->desc.special, BK_SPECIAL_IN);
-          stck.push(b);
-          if(lastFixpoint == NULL && parent->getStatus() == BRANCH) {
-            lastFixpoint = parent;
-          }
-          specialNodeOnPath = true;
-          // TODO nikopp: if the root node is failed, it neither has a copy nor a parent and we are not allowed to do the following
-        } else if (parent->getStatus() == SPECIAL || parent->getStatus() == STEP) {
-           Branch b(alternative, curNode->desc.special, BK_SPECIAL_OUT);
-          stck.push(b);
-        } else {
-          Branch b(alternative, parent->desc.branch,
-                   curBest == NULL ? NULL : curNode->ownBest);
-          stck.push(b);
-        }
+        Branch b(alternative, parent->choice,
+                 curBest == NULL ? NULL : curNode->ownBest);
+        stck.push(b);
 
         curNode = parent;
         rdist++;
@@ -147,8 +94,6 @@ namespace Gecode { namespace Gist {
       while (!stck.empty()) {
         if (a_d >= 0 &&
             curDist > a_d &&
-            middleNode->getStatus() != SPECIAL &&
-            middleNode->getStatus() != STEP &&
             curDist == rdist / 2) {
             if (curSpace->status() == SS_FAILED) {
               workingSpace = curSpace;
@@ -163,24 +108,7 @@ namespace Gecode { namespace Gist {
           curSpace->status();
         }
 
-        switch (b.branchKind) {
-        case BK_NORMAL:
-            {
-              curSpace->commit(*b.desc.branch, b.alternative);
-            }
-            break;
-        case BK_STEP:
-            {
-            }
-            break;
-        case BK_SPECIAL_IN:
-            {
-            }
-            break;
-        case BK_SPECIAL_OUT:
-         // really do nothing
-          break;
-        }
+        curSpace->commit(*b.choice, b.alternative);
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
           b.ownBest->acquireSpace(curBest, c_d, a_d);
@@ -213,75 +141,69 @@ namespace Gecode { namespace Gist {
           ownBest = curBest->s;
     }
 
-    if (getStatus() != SPECIAL && getStatus() != STEP) {
-      if (workingSpace == NULL && p != NULL && p->workingSpace != NULL) {
-        // If parent has a working space, steal it
-        workingSpace = p->workingSpace;
-        p->workingSpace = NULL;
-        if (p->desc.branch != NULL)
-          workingSpace->commit(*p->desc.branch, getAlternative());
+    if (workingSpace == NULL && p != NULL && p->workingSpace != NULL) {
+      // If parent has a working space, steal it
+      workingSpace = p->workingSpace;
+      p->workingSpace = NULL;
+      if (p->choice != NULL)
+        workingSpace->commit(*p->choice, getAlternative());
 
-        if (ownBest != NULL) {
-          ownBest->acquireSpace(curBest, c_d, a_d);
-          if (ownBest->workingSpace->status() != SS_SOLVED) {
-            // in the presence of weakly monotonic propagators, we may have to
-            // use search to find the solution here
-            Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
-            delete ownBest->workingSpace;
-            ownBest->workingSpace = dfsSpace;
-          }
-          workingSpace->constrain(*ownBest->workingSpace);
+      if (ownBest != NULL) {
+        ownBest->acquireSpace(curBest, c_d, a_d);
+        if (ownBest->workingSpace->status() != SS_SOLVED) {
+          // in the presence of weakly monotonic propagators, we may have to
+          // use search to find the solution here
+          Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
+          delete ownBest->workingSpace;
+          ownBest->workingSpace = dfsSpace;
         }
-        int d = p->getDistance()+1;
-        if (d > c_d && c_d >= 0 &&
-            getStatus() != SPECIAL && getStatus() != STEP &&
-            workingSpace->status() == SS_BRANCH) {
-          copy = workingSpace->clone();
-          d = 0;
-        }
-        setDistance(d);
+        workingSpace->constrain(*ownBest->workingSpace);
       }
+      int d = p->getDistance()+1;
+      if (d > c_d && c_d >= 0 &&
+          workingSpace->status() == SS_BRANCH) {
+        copy = workingSpace->clone();
+        d = 0;
+      }
+      setDistance(d);
     }
 
     if (workingSpace == NULL) {
       if (recompute(curBest, c_d, a_d) > c_d && c_d >= 0 &&
-          getStatus() != SPECIAL && getStatus() != STEP &&
           workingSpace->status() == SS_BRANCH) {
-            copy = workingSpace->clone();
-            setDistance(0);
+        copy = workingSpace->clone();
+        setDistance(0);
       }
     }
 
-    if (getStatus() != SPECIAL && getStatus() != STEP) {
-      // always return a fixpoint
-      workingSpace->status();
-      if (copy == NULL && p != NULL && isOpen() &&
-          p->copy != NULL && p->getNoOfOpenChildren() == 1 &&
-          p->getParent() != NULL) {
-        // last alternative optimization
-        copy = p->copy;
-        p->copy = NULL;
-        setDistance(0);
-        p->setDistance(p->getParent()->getDistance()+1);
-        
-        if(p->desc.branch != NULL)
-          copy->commit(*p->desc.branch, getAlternative());
+    // always return a fixpoint
+    workingSpace->status();
+    if (copy == NULL && p != NULL && isOpen() &&
+        p->copy != NULL && p->getNoOfOpenChildren() == 1 &&
+        p->getParent() != NULL) {
+      // last alternative optimization
+      copy = p->copy;
+      p->copy = NULL;
+      setDistance(0);
+      p->setDistance(p->getParent()->getDistance()+1);
+      
+      if(p->choice != NULL)
+        copy->commit(*p->choice, getAlternative());
 
-        if (ownBest != NULL) {
-          ownBest->acquireSpace(curBest, c_d, a_d);
-          if (ownBest->workingSpace->status() != SS_SOLVED) {
-            // in the presence of weakly monotonic propagators, we may have to
-            // use search to find the solution here
-            Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
-            delete ownBest->workingSpace;
-            ownBest->workingSpace = dfsSpace;
-          }
-          copy->constrain(*ownBest->workingSpace);
+      if (ownBest != NULL) {
+        ownBest->acquireSpace(curBest, c_d, a_d);
+        if (ownBest->workingSpace->status() != SS_SOLVED) {
+          // in the presence of weakly monotonic propagators, we may have to
+          // use search to find the solution here
+          Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
+          delete ownBest->workingSpace;
+          ownBest->workingSpace = dfsSpace;
         }
-        if (copy->status() == SS_FAILED) {
-          delete copy;
-          copy = NULL;
-        }
+        copy->constrain(*ownBest->workingSpace);
+      }
+      if (copy->status() == SS_FAILED) {
+        delete copy;
+        copy = NULL;
       }
     }
   }
@@ -333,7 +255,7 @@ namespace Gecode { namespace Gist {
 
   SpaceNode::SpaceNode(Space* root)
   : workingSpace(root), ownBest(NULL), nstatus(0) {
-    desc.branch = NULL;
+    choice = NULL;
     if (root == NULL) {
       setStatus(FAILED);
       setHasSolvedChildren(false);
@@ -352,12 +274,7 @@ namespace Gecode { namespace Gist {
   }
 
   SpaceNode::~SpaceNode(void) {
-    if(getStatus() == SPECIAL)
-      delete desc.special;
-    else if (getStatus() == STEP)
-      delete desc.step;
-    else
-      delete desc.branch;
+    delete choice;
     delete copy;
     delete workingSpace;
   }
@@ -406,12 +323,18 @@ namespace Gecode { namespace Gist {
         }
         break;
       case SS_BRANCH:
-        desc.branch = workingSpace->choice();
-        kids = desc.branch->alternatives();
-        setHasOpenChildren(true);
-        setStatus(BRANCH);
-        stats.choices++;
-        stats.undetermined += kids;
+        {
+          choice = workingSpace->choice();
+          kids = choice->alternatives();
+          setHasOpenChildren(true);
+          if (dynamic_cast<const StopChoice*>(choice)) {
+            setStatus(STOP);
+          } else {
+            setStatus(BRANCH);
+            stats.choices++;
+          }
+          stats.undetermined += kids;
+        }
         break;
       }
       static_cast<VisualNode*>(this)->changedStatus();

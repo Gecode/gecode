@@ -219,7 +219,9 @@ namespace Gecode { namespace Gist {
 
   std::string
   VisualNode::toolTip(BestNode*, int, int) {
-    return "";
+    if (isOpen())
+      return "open";
+    return "closed";
   }
 
   /// \brief Helper functions for the layout algorithm
@@ -402,8 +404,7 @@ namespace Gecode { namespace Gist {
       // leftmost shape in the list.  What we want is to move the axis
       // such that it is the center of the axis of the leftmost shape in
       // the list and the axis of the rightmost shape.
-      bool left = getStatus() == STEP;
-      int halfWidth = left ? 0 : width / 2;
+      int halfWidth = false ? 0 : width / 2;
       (*mergedShape)[1].move(- halfWidth);
 
       // Finally, for the offset lists.  Now that the axis of the merged
@@ -433,12 +434,7 @@ namespace Gecode { namespace Gist {
       s += copy->allocated();
     if (workingSpace)
       s += workingSpace->allocated();
-    if (getStatus() == SPECIAL)
-      s += sizeof(SpecialDesc);
-    else if (getStatus() == STEP)
-      s += sizeof(StepDesc);
-    else
-      s += (desc.branch != NULL ? desc.branch->size() : 0);
+    s += (choice != NULL ? choice->size() : 0);
     return s;
   }
 

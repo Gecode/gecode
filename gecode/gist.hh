@@ -142,6 +142,10 @@ namespace Gecode {
       virtual void inspect(const Space& node);
     };
     
+    /// A branching that stops exploration
+    GECODE_GIST_EXPORT
+    void stopBranch(Space& home);
+    
     /**
      * \brief Options for %Gist
      *

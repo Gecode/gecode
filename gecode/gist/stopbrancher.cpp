@@ -7,8 +7,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-05-09 09:09:53 +0200 (Sat, 09 May 2009) $ by $Author: tack $
+ *     $Revision: 9052 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,73 +35,48 @@
  *
  */
 
-#include <QtGui>
-
-#include <gecode/gist.hh>
-#include <gecode/gist/textoutput.hh>
-#include <gecode/gist/mainwindow.hh>
 #include <gecode/gist/stopbrancher.hh>
 
 namespace Gecode { namespace Gist {
 
-  std::string
-  Inspector::name(void) { return "Inspector"; }
-  
-  void
-  Inspector::finalize(void) {}
-  
-  Inspector::~Inspector(void) {}
-    
-  TextInspector::TextInspector(const std::string& name)
-    : t(NULL), n(name) {}
-  
-  void
-  TextInspector::finalize(void) {
-    delete t;
-    t = NULL;
-  }
-  
-  TextInspector::~TextInspector(void) {
-    delete t;
+  StopChoice::StopChoice(const Brancher& b) : Choice(b,1) {}
+  size_t
+  StopChoice::size(void) const {
+    return sizeof(StopChoice);
   }
 
-  std::string
-  TextInspector::name(void) { return n; }
-  
+  StopBrancher::StopBrancher(Home home) : Brancher(home), done(false) {}
+
+  StopBrancher::StopBrancher(Space& home, bool share, StopBrancher& b)
+    : Brancher(home, share, b), done(b.done) {}
+
+  bool
+  StopBrancher::status(const Space&) const {
+    return !done;
+  }
+
+  Choice*
+  StopBrancher::choice(Space&) {
+    return new StopChoice(*this);
+  }
+  ExecStatus
+  StopBrancher::commit(Space&, const Choice&, unsigned int) {
+    done = true;
+    return ES_OK;
+  }
+  Actor*
+  StopBrancher::copy(Space& home, bool share) {
+    return new (home) StopBrancher(home, share, *this);
+  }
   void
-  TextInspector::init(void) {
-    if (t == NULL) {
-      t = new TextOutput(n);
-    }
-    t->setVisible(true);
+  StopBrancher::post(Home home) {
+    (void) new (home) StopBrancher(home);
   }
-
-  std::ostream&
-  TextInspector::getStream(void) {
-    return t->getStream();
+  size_t
+  StopBrancher::dispose(Space&) {
+    return sizeof(*this);
   }
   
-  void
-  TextInspector::addHtml(const char* s) {
-    t->insertHtml(s);
-  }
-
-  const Options Options::def;
-  
-  int
-  explore(Space* root, bool bab, const Options& opt) {
-    char argv0='\0'; char* argv1=&argv0;
-    int argc=0;
-    QApplication app(argc, &argv1);
-    GistMainWindow mw(root, bab, opt);
-    return app.exec();
-  }
-
-  void
-  stopBranch(Space& home) {
-    StopBrancher::post(home);
-  }
-
 }}
 
 // STATISTICS: gist-any

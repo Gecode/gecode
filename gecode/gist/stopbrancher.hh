@@ -7,8 +7,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2009-05-09 09:09:53 +0200 (Sat, 09 May 2009) $ by $Author: tack $
+ *     $Revision: 9052 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,73 +35,43 @@
  *
  */
 
-#include <QtGui>
-
+#include <gecode/kernel.hh>
 #include <gecode/gist.hh>
-#include <gecode/gist/textoutput.hh>
-#include <gecode/gist/mainwindow.hh>
-#include <gecode/gist/stopbrancher.hh>
 
 namespace Gecode { namespace Gist {
-
-  std::string
-  Inspector::name(void) { return "Inspector"; }
   
-  void
-  Inspector::finalize(void) {}
-  
-  Inspector::~Inspector(void) {}
+  class GECODE_GIST_EXPORT StopChoice : public Choice {
+  public:
+    /// Initialize choice for brancher \a b
+    StopChoice(const Brancher& b);
+    /// Report size occupied
+    virtual size_t size(void) const;
     
-  TextInspector::TextInspector(const std::string& name)
-    : t(NULL), n(name) {}
+  };
   
-  void
-  TextInspector::finalize(void) {
-    delete t;
-    t = NULL;
-  }
+  class StopBrancher : public Brancher {
+  protected:
+    /// Flag whether brancher has been executed
+    bool done;
+    /// Construct brancher
+    StopBrancher(Home home);
+    /// Copy constructor
+    StopBrancher(Space& home, bool share, StopBrancher& b);
+  public:
+    /// Check status of brancher, return true if alternatives left
+    virtual bool status(const Space&) const;
+    /// Return choice
+    virtual Choice* choice(Space&);
+    /// Perform commit for choice \a _c and alternative \a a
+    virtual ExecStatus commit(Space&, const Choice&, unsigned int);
+    /// Copy brancher
+    virtual Actor* copy(Space& home, bool share);
+    /// Post brancher
+    static void post(Home home);
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space&);
+  };
   
-  TextInspector::~TextInspector(void) {
-    delete t;
-  }
-
-  std::string
-  TextInspector::name(void) { return n; }
-  
-  void
-  TextInspector::init(void) {
-    if (t == NULL) {
-      t = new TextOutput(n);
-    }
-    t->setVisible(true);
-  }
-
-  std::ostream&
-  TextInspector::getStream(void) {
-    return t->getStream();
-  }
-  
-  void
-  TextInspector::addHtml(const char* s) {
-    t->insertHtml(s);
-  }
-
-  const Options Options::def;
-  
-  int
-  explore(Space* root, bool bab, const Options& opt) {
-    char argv0='\0'; char* argv1=&argv0;
-    int argc=0;
-    QApplication app(argc, &argv1);
-    GistMainWindow mw(root, bab, opt);
-    return app.exec();
-  }
-
-  void
-  stopBranch(Space& home) {
-    StopBrancher::post(home);
-  }
-
 }}
 
 // STATISTICS: gist-any
