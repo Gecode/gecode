@@ -160,25 +160,29 @@ public:
     BRANCH_WARNSDORFF, ///< Use Warnsdorff's rule
   };
   /// Return field at position \a x, \a y
-  int
-  field(int x, int y) const {
-    return x*n+y;
+  int f(int x, int y) const {
+    return x + y*n;
   }
-  /// Compute array of neighbours
-  void
-  neighbours(int f, int nbs[8], int& n_nbs) {
-    n_nbs=0;
-    int x = f / n;
-    int y = f % n;
-    for (int i=0;i<8;i++) {
-      static const int moves[8][2] = {
-        {-2,-1}, {-2,1}, {-1,-2}, {-1,2}, {1,-2}, {1,2}, {2,-1}, {2,1}
-      };
-      int nx=x+moves[i][0];
-      int ny=y+moves[i][1];
+  /// Return x coordinate at field \a f
+  int x(int f) const {
+    return f % n;
+  }
+  /// Return y coordinate at field \a f
+  int y(int f) const {
+    return f / n;
+  }
+  /// Compute set of neighbour fields
+  IntSet neighbours(int i) {
+    static const int moves[8][2] = {
+      {-2,-1}, {-2,1}, {-1,-2}, {-1,2}, {1,-2}, {1,2}, {2,-1}, {2,1}
+    };
+    int nbs[8]; int n_nbs = 0;
+    for (int m=0; m<8; m++) {
+      int nx = x(i) + moves[m][0], ny = y(i) + moves[m][1];
       if ((nx >= 0) && (nx < n) && (ny >= 0) && (ny < n))
-        nbs[n_nbs++]=field(nx,ny);
+        nbs[n_nbs++] = f(nx,ny);
     }
+    return IntSet(nbs,n_nbs);
   }
   /// Constructor
   Knights(const SizeOptions& opt)
@@ -210,7 +214,7 @@ public:
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
         os.width(3);
-        os << jump[field(i,j)] << " ";
+        os << jump[f(i,j)] << " ";
         }
         os << std::endl << "\t";
     }
@@ -244,24 +248,20 @@ public:
     }
 
     // Place the first two knights
-    rel(*this, jump[field(0,0)], IRT_EQ, 0);
-    rel(*this, jump[field(1,2)], IRT_EQ, 1);
+    rel(*this, jump[f(0,0)], IRT_EQ, 0);
+    rel(*this, jump[f(1,2)], IRT_EQ, 1);
 
     distinct(*this, jump, opt.icl());
     channel(*this, succ, pred, opt.icl());
 
     for (int f = 0; f < nn; f++) {
-      // Array of neighbours
-      int nbs[8]; int n_nbs = 0;
-      neighbours(f, nbs, n_nbs);
-      for (int i=n_nbs; i--; )
+      IntSet ds = neighbours(f);
+      for (IntSetValues i(ds); i(); ++i)
         rel(*this,
-            post(*this, ~(jump[nbs[i]]-jump[f] == 1)),
+            post(*this, ~(jump[i.val()]-jump[f] == 1)),
             BOT_XOR,
-            post(*this, ~(jump[nbs[i]]-jump[f] == 1-nn)),
-            post(*this, ~(succ[f] == nbs[i])));
-
-      IntSet ds(nbs, n_nbs);
+            post(*this, ~(jump[i.val()]-jump[f] == 1-nn)),
+            post(*this, ~(succ[f] == i.val())));
       dom(*this, pred[f], ds);
       dom(*this, succ[f], ds);
       rel(*this, succ[f], IRT_NQ, pred[f]);
@@ -290,17 +290,12 @@ class KnightsCircuit : public Knights {
 public:
   KnightsCircuit(const SizeOptions& opt) : Knights(opt) {
     // Fix the first move
-    rel(*this, succ[0], IRT_EQ, field(1,2));
+    rel(*this, succ[0], IRT_EQ, f(1,2));
 
     circuit(*this, succ, opt.icl());
 
-    for (int f = 0; f < n*n; f++) {
-      // Array of neighbours
-      int nbs[8]; int n_nbs = 0;
-      neighbours(f, nbs, n_nbs);
-      IntSet ds(nbs, n_nbs);
-      dom(*this, succ[f], ds);
-    }
+    for (int f = 0; f < n*n; f++)
+      dom(*this, succ[f], neighbours(f));
   }
   /// Constructor for cloning \a s
   KnightsCircuit(bool share, KnightsCircuit& s) : Knights(share,s) {}
