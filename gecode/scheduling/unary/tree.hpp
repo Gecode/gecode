@@ -88,7 +88,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OmegaTree<TaskView>::ect(int i) const {
     // Check whether task i is in?
     OmegaTree<TaskView>& o = const_cast<OmegaTree<TaskView>&>(*this);
-    if (o.leaf(i).p > 0) {
+    if (o.leaf(i).ect != -Int::Limits::infinity) {
       o.remove(i);
       int ect = o.root().ect;
       o.insert(i);
@@ -154,7 +154,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline void 
   OmegaLambdaTree<TaskView>::shift(int i) {
     // That means that i is in omega
-    assert(leaf(i).p > 0);
+    assert(leaf(i).ect > -Int::Limits::infinity);
     leaf(i).p = 0;
     leaf(i).ect = -Int::Limits::infinity;
     leaf(i).res = i;
