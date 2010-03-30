@@ -160,12 +160,12 @@ namespace Gecode { namespace Gist {
     unhideAll->setShortcut(QKeySequence("U"));
     connect(unhideAll, SIGNAL(triggered()), canvas, SLOT(unhideAll()));
 
-    toggleStop = new QAction("Do not stop", this);
-    toggleStop->setShortcut(QKeySequence("B"));
+    toggleStop = new QAction("Stop/unstop", this);
+    toggleStop->setShortcut(QKeySequence("X"));
     connect(toggleStop, SIGNAL(triggered()), canvas, SLOT(toggleStop()));
 
     unstopAll = new QAction("Do not stop in subtree", this);
-    unstopAll->setShortcut(QKeySequence("Shift+B"));
+    unstopAll->setShortcut(QKeySequence("Shift+X"));
     connect(unstopAll, SIGNAL(triggered()), canvas, SLOT(unstopAll()));
 
     zoomToFit = new QAction("Zoom to fit", this);
@@ -508,7 +508,8 @@ namespace Gecode { namespace Gist {
         unstopAll->setEnabled(false);
       }
       
-      toggleStop->setEnabled(n->getStatus() == STOP);
+      toggleStop->setEnabled(n->getStatus() == STOP ||
+        n->getStatus() == UNSTOP);
 
       VisualNode* p = n->getParent();
       if (p == NULL) {

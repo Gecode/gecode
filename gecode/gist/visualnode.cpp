@@ -171,7 +171,9 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::toggleStop(void) {
     if (getStatus() == STOP)
-      setStatus(BRANCH);
+      setStatus(UNSTOP);
+    else if (getStatus() == UNSTOP)
+      setStatus(STOP);
     dirtyUp();
   }
   

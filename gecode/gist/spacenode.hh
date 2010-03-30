@@ -50,7 +50,8 @@ namespace Gecode { namespace Gist {
     FAILED,       ///< Node representing failure
     BRANCH,       ///< Node representing a branch
     UNDETERMINED, ///< Node that has not been explored yet
-    STOP          ///< Node representing stop point
+    STOP,         ///< Node representing stop point
+    UNSTOP,       ///< Node representing ignored stop point
   };
 
   static const unsigned int FIRSTBIT = 24; //< First free bit in status word

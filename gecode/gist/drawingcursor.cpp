@@ -97,13 +97,15 @@ namespace Gecode { namespace Gist {
     Gist::VisualNode* n = node();
     int parentX = x - (n->getOffset());
     int parentY = y - Layout::dist_y + nodeWidth;
-    if (n->getParent() != NULL && n->getParent()->getStatus() == STOP)
+    if (n->getParent() != NULL &&
+        (n->getParent()->getStatus() == STOP ||
+         n->getParent()->getStatus() == UNSTOP) )
       parentY -= (nodeWidth-failedWidth)/2;
 
     int myx = x;
     int myy = y;
 
-    if (n->getStatus() == STOP)
+    if (n->getStatus() == STOP || n->getStatus() == UNSTOP)
       myy += (nodeWidth-failedWidth)/2;
 
     if (n != startNode()) {
@@ -149,6 +151,7 @@ namespace Gecode { namespace Gist {
           painter.drawRect(myx-halfFailedWidth+shadowOffset,
                            myy+shadowOffset, failedWidth, failedWidth);
           break;
+        case Gist::UNSTOP:
         case Gist::STOP:
           {
             QPointF points[8] = {QPointF(myx+shadowOffset-quarterFailedWidthF,
@@ -235,9 +238,11 @@ namespace Gecode { namespace Gist {
         painter.setBrush(QBrush(red));
         painter.drawRect(myx-halfFailedWidth, myy, failedWidth, failedWidth);
         break;
+      case Gist::UNSTOP:
       case Gist::STOP:
         {
-          painter.setBrush(QBrush(red));
+          painter.setBrush(n->getStatus() == STOP ? 
+                           QBrush(red) : QBrush(green));
           QPointF points[8] = {QPointF(myx-quarterFailedWidthF,myy),
                                QPointF(myx+quarterFailedWidthF,myy),
                                QPointF(myx+halfFailedWidth,

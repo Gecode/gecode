@@ -116,7 +116,7 @@ namespace Gecode { namespace Gist {
     if (getStatus() == BRANCH && h)
       setStatus(STOP);
     else if (getStatus() == STOP && !h)
-      setStatus(BRANCH);
+      setStatus(UNSTOP);
   }
 
   forceinline int

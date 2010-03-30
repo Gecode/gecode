@@ -605,6 +605,7 @@ namespace Gecode { namespace Gist {
         break;
     case FAILED:
     case STOP:
+    case UNSTOP:
     case BRANCH:
     case SOLVED:
       {
@@ -802,6 +803,7 @@ namespace Gecode { namespace Gist {
     if (!currentNode->isHidden()) {
       switch (currentNode->getStatus()) {
       case STOP:
+      case UNSTOP:
       case BRANCH:
           {
             int alt = std::max(0, currentNode->getPathAlternative());
