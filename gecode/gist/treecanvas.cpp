@@ -385,6 +385,8 @@ namespace Gecode { namespace Gist {
             } else {
               if ( !(wasUndetermined && n->getStatus() == STOP) )
                 stck.push(SearchItem(n,kids));
+              else if (!a)
+                break;
               t->stats.maxDepth =
                 std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
                          static_cast<long unsigned int>(depth+stck.size()));
