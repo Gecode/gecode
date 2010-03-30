@@ -47,8 +47,8 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   Card<View>::Card(Home home, View y0, Gecode::Int::IntView y1)
-    : IntSetPropagator<View,PC_SET_CARD,
-                       Gecode::Int::PC_INT_BND> (home, y0, y1) {}
+    : MixBinaryPropagator<View,PC_SET_CARD,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
   template<class View>
   forceinline ExecStatus
@@ -62,8 +62,8 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   Card<View>::Card(Space& home, bool share, Card& p)
-    : IntSetPropagator<View,PC_SET_CARD,
-                       Gecode::Int::PC_INT_BND> (home, share, p) {}
+    : MixBinaryPropagator<View,PC_SET_CARD,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, share, p) {}
 
   template<class View>
   Actor*

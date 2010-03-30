@@ -375,7 +375,7 @@ SETHDR0 =								     \
 	distinct.hh distinct/atmostOne.hpp				     \
 	sequence/seq.hpp sequence/seq-u.hpp				     \
 	sequence/common.hpp convex/conv.hpp convex/hull.hpp convex.hh	     \
-	propagator.hpp rel-op.hh					     \
+	rel-op.hh					     \
 	branch.hh branch/select-val.hpp branch/select-view.hpp		     \
 	branch/post-val.hpp
 

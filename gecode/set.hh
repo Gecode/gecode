@@ -515,7 +515,6 @@ namespace Gecode {
 }
 
 #include <gecode/set/view.hpp>
-#include <gecode/set/propagator.hpp>
 
 namespace Gecode {
   /**

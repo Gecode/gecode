@@ -57,10 +57,13 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class MinElement :
-    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
+    public MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> {
   protected:
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x0;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
     MinElement(Space& home, bool share,MinElement& p);
     /// Constructor for posting
@@ -82,10 +85,13 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class NotMinElement :
-    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    public MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> {
   protected:
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x0;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x1;
     /// Constructor for cloning \a p
     NotMinElement(Space& home, bool share,NotMinElement& p);
     /// Constructor for posting
@@ -107,11 +113,15 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class ReMinElement :
-    public ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    public Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView> {
   protected:
-    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
-    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
-    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
+    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x0;
+    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x1;
+    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::b;
     /// Constructor for cloning \a p
     ReMinElement(Space& home, bool share,ReMinElement& p);
     /// Constructor for posting
@@ -135,10 +145,12 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class MaxElement :
-    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
+    public MixBinaryPropagator<View,PC_SET_ANY,Gecode::Int::IntView,Gecode::Int::PC_INT_BND> {
   protected:
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x0;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
     MaxElement(Space& home, bool share,MaxElement& p);
     /// Constructor for posting
@@ -160,10 +172,13 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class NotMaxElement :
-    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    public MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> {
   protected:
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
-    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x0;
+    using MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x1;
     /// Constructor for cloning \a p
     NotMaxElement(Space& home, bool share,NotMaxElement& p);
     /// Constructor for posting
@@ -185,11 +200,15 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class ReMaxElement :
-    public ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM> {
+    public Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView> {
   protected:
-    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x0;
-    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::x1;
-    using ReIntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_DOM>::b;
+    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x0;
+    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x1;
+    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::b;
     /// Constructor for cloning \a p
     ReMaxElement(Space& home, bool share,ReMaxElement& p);
     /// Constructor for posting
@@ -212,10 +231,13 @@ namespace Gecode { namespace Set { namespace Int {
    */
   template<class View>
   class Card :
-    public IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND> {
+    public MixBinaryPropagator<View,PC_SET_CARD,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> {
   protected:
-    using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x0;
-    using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x1;
+    using MixBinaryPropagator<View,PC_SET_CARD,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x0;
+    using MixBinaryPropagator<View,PC_SET_CARD,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
     Card(Space& home, bool share,Card& p);
     /// Constructor for posting

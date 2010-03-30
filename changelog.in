@@ -116,7 +116,8 @@ Module: set
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Renamed Set::IntSetRePropagator to the more regular Set::ReIntSetPropagator.
+Removed Set::IntSetPropagator and Set::IntSetRePropagator because they are 
+subsumed by the MixBinaryPropagator patterns.
 
 [ENTRY]
 Module: gist

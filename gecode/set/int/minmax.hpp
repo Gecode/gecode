@@ -50,8 +50,7 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   MinElement<View>::MinElement(Home home, View y0, Gecode::Int::IntView y1)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_BND> (home, y0, y1) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
   template<class View>
   forceinline ExecStatus
@@ -64,8 +63,7 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   MinElement<View>::MinElement(Space& home, bool share, MinElement& p)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_BND> (home, share, p) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, share, p) {}
 
   template<class View>
   Actor*
@@ -137,8 +135,8 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   NotMinElement<View>::NotMinElement(Home home, View y0,
                                      Gecode::Int::IntView y1)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
 
   template<class View>
   forceinline ExecStatus
@@ -151,8 +149,8 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   NotMinElement<View>::NotMinElement(Space& home, bool share,
                                      NotMinElement& p)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_DOM> (home, share, p) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
   template<class View>
   Actor*
@@ -262,8 +260,9 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   ReMinElement<View>::ReMinElement(Home home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
-    : ReIntSetPropagator<View,PC_SET_ANY,
-                         Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
+    : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
+      Gecode::Int::BoolView> (home, y0, y1, b2) {}
 
   template<class View>
   forceinline ExecStatus
@@ -276,8 +275,9 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   ReMinElement<View>::ReMinElement(Space& home, bool share, ReMinElement& p)
-    : ReIntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_DOM> (home, share, p) {}
+    : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
+      Gecode::Int::BoolView> (home, share, p) {}
 
   template<class View>
   Actor*
@@ -384,14 +384,14 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   MaxElement<View>::MaxElement(Home home, View y0, Gecode::Int::IntView y1)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_BND> (home, y0, y1) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, y0, y1) {}
 
   template<class View>
   forceinline
   MaxElement<View>::MaxElement(Space& home, bool share, MaxElement& p)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_BND> (home, share, p) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, share, p) {}
 
   template<class View>
   ExecStatus
@@ -433,15 +433,15 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   NotMaxElement<View>::NotMaxElement(Home home, View y0,
                                      Gecode::Int::IntView y1)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> (home, y0, y1) {}
 
   template<class View>
   forceinline
   NotMaxElement<View>::NotMaxElement(Space& home, bool share,
                                      NotMaxElement& p)
-    : IntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_DOM> (home, share, p) {}
+    : MixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> (home, share, p) {}
 
   template<class View>
   ExecStatus
@@ -539,14 +539,16 @@ namespace Gecode { namespace Set { namespace Int {
   forceinline
   ReMaxElement<View>::ReMaxElement(Home home, View y0, Gecode::Int::IntView y1,
                                    Gecode::Int::BoolView b2)
-    : ReIntSetPropagator<View,PC_SET_ANY,
-                         Gecode::Int::PC_INT_DOM> (home, y0, y1, b2) {}
+    : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
+      Gecode::Int::BoolView> (home, y0, y1, b2) {}
 
   template<class View>
   forceinline
   ReMaxElement<View>::ReMaxElement(Space& home, bool share, ReMaxElement& p)
-    : ReIntSetPropagator<View,PC_SET_ANY,
-                       Gecode::Int::PC_INT_DOM> (home, share, p) {}
+    : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
+      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
+      Gecode::Int::BoolView> (home, share, p) {}
 
   template<class View>
   ExecStatus
