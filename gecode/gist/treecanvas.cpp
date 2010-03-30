@@ -340,7 +340,7 @@ namespace Gecode { namespace Gist {
       unsigned int kids = 
         node->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                     t->c_d, t->a_d);
-      if (kids == 0) {
+      if (kids == 0 || node->getStatus() == STOP) {
         t->mutex.unlock();
         updateCanvas();
         emit statusChanged(true);
@@ -370,7 +370,6 @@ namespace Gecode { namespace Gist {
         } else {
           VisualNode* n = si.n->getChild(si.i);
           if (n->isOpen()) {
-            bool wasUndetermined = n->getStatus() == UNDETERMINED;
             kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                             t->c_d, t->a_d);
             if (kids == 0) {
@@ -383,7 +382,7 @@ namespace Gecode { namespace Gist {
                   break;
               }
             } else {
-              if ( !(wasUndetermined && n->getStatus() == STOP) )
+              if ( n->getStatus() != STOP )
                 stck.push(SearchItem(n,kids));
               else if (!a)
                 break;
@@ -447,6 +446,25 @@ namespace Gecode { namespace Gist {
     update();
     centerCurrentNode();
     emit statusChanged(currentNode, stats, true);
+  }
+
+  void
+  TreeCanvas::toggleStop(void) {
+    QMutexLocker locker(&mutex);
+    currentNode->toggleStop();
+    update();
+    centerCurrentNode();
+    emit statusChanged(currentNode, stats, true);
+  }
+
+  void
+  TreeCanvas::unstopAll(void) {
+    QMutexLocker locker(&mutex);
+    QMutexLocker layoutLocker(&layoutMutex);
+    currentNode->unstopAll();
+    update();
+    centerCurrentNode();
+    emit statusChanged(currentNode, stats, true);    
   }
 
   void

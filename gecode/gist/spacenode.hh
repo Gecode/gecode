@@ -136,8 +136,6 @@ namespace Gecode { namespace Gist {
     void setHasFailedChildren(bool b);
     /// Set whether the subtree of this node is known to contain solutions
     void setHasSolvedChildren(bool b);
-    /// Set status to \a s
-    void setStatus(NodeStatus s);
 
     /// Recompute workingSpace from a copy higher up, return distance to copy
     int recompute(BestNode* curBest, int c_d, int a_d);
@@ -145,6 +143,8 @@ namespace Gecode { namespace Gist {
     /// Book-keeping of open children
     void closeChild(bool hadFailures, bool hadSolutions);
   protected:
+    /// Set status to \a s
+    void setStatus(NodeStatus s);
     /// Acquire working space, either from parent or by recomputation
     void acquireSpace(BestNode* curBest, int c_d, int a_d);
   public:

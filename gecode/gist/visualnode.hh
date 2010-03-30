@@ -152,6 +152,8 @@ namespace Gecode { namespace Gist {
     bool isHidden(void);
     /// Set hidden state to \a h
     void setHidden(bool h);
+    /// Set stop state to \a h
+    void setStop(bool h);
     /// Mark all nodes up the path to the parent as dirty
     void dirtyUp(void);
     /// Compute layout for the subtree of this node
@@ -193,6 +195,10 @@ namespace Gecode { namespace Gist {
     void hideFailed(void);
     /// Unhide all nodes in the subtree of this node
     void unhideAll(void);
+    /// Do not stop at this node
+    void toggleStop(void);
+    /// Do not stop at any stop node in the subtree of this node
+    void unstopAll(void);
 
     /// Return the shape of this node
     Shape* getShape(void);

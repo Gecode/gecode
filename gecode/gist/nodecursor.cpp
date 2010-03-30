@@ -66,6 +66,18 @@ namespace Gecode { namespace Gist {
     }
   }
 
+  UnstopAllCursor::UnstopAllCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
+
+  void
+  UnstopAllCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    if (n->getStatus() == STOP) {
+      n->setStop(false);
+      n->dirtyUp();
+    }
+  }
+
   NextSolCursor::NextSolCursor(VisualNode* theNode, bool backwards)
    : NodeCursor<VisualNode>(theNode), back(backwards) {}
 

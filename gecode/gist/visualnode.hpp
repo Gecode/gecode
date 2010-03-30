@@ -111,6 +111,14 @@ namespace Gecode { namespace Gist {
     setFlag(HIDDEN, h);
   }
 
+  forceinline void
+  VisualNode::setStop(bool h) {
+    if (getStatus() == BRANCH && h)
+      setStatus(STOP);
+    else if (getStatus() == STOP && !h)
+      setStatus(BRANCH);
+  }
+
   forceinline int
   VisualNode::getOffset(void) { return offset; }
 

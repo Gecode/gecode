@@ -168,6 +168,20 @@ namespace Gecode { namespace Gist {
     dirtyUp();
   }
 
+  void
+  VisualNode::toggleStop(void) {
+    if (getStatus() == STOP)
+      setStatus(BRANCH);
+    dirtyUp();
+  }
+  
+  void
+  VisualNode::unstopAll(void) {
+    UnstopAllCursor c(this);
+    PreorderNodeVisitor<UnstopAllCursor> v(c);
+    while (v.next()) {}
+    dirtyUp();
+  }
 
   void
   VisualNode::changedStatus() { dirtyUp(); }

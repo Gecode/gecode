@@ -124,6 +124,10 @@ namespace Gecode {  namespace Gist {
     void hideFailed(void);
     /// Unhide all nodes below selected node
     void unhideAll(void);
+    /// Do not stop at selected stop node
+    void toggleStop(void);
+    /// Do not stop at any stop node
+    void unstopAll(void);
     /// Export pdf of the current subtree
     void exportPDF(void);
     /// Export pdf of the whole tree

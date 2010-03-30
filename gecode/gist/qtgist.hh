@@ -131,6 +131,10 @@ namespace Gecode {  namespace Gist {
     QAction* inspectPath;
     /// Open node statistics inspector
     QAction* showNodeStats;
+    /// Bookmark current node
+    QAction* toggleStop;
+    /// Bookmark current node
+    QAction* unstopAll;
 
     /// Group of all actions for solution inspectors
     QActionGroup* solutionInspectorGroup;

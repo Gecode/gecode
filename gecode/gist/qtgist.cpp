@@ -160,6 +160,14 @@ namespace Gecode { namespace Gist {
     unhideAll->setShortcut(QKeySequence("U"));
     connect(unhideAll, SIGNAL(triggered()), canvas, SLOT(unhideAll()));
 
+    toggleStop = new QAction("Do not stop", this);
+    toggleStop->setShortcut(QKeySequence("B"));
+    connect(toggleStop, SIGNAL(triggered()), canvas, SLOT(toggleStop()));
+
+    unstopAll = new QAction("Do not stop in subtree", this);
+    unstopAll->setShortcut(QKeySequence("Shift+B"));
+    connect(unstopAll, SIGNAL(triggered()), canvas, SLOT(unstopAll()));
+
     zoomToFit = new QAction("Zoom to fit", this);
     zoomToFit->setShortcut(QKeySequence("Z"));
     connect(zoomToFit, SIGNAL(triggered()), canvas, SLOT(zoomToFit()));
@@ -236,6 +244,8 @@ namespace Gecode { namespace Gist {
     addAction(toggleHidden);
     addAction(hideFailed);
     addAction(unhideAll);
+    addAction(toggleStop);
+    addAction(unstopAll);
     addAction(zoomToFit);
     addAction(center);
     addAction(exportPDF);
@@ -300,6 +310,9 @@ namespace Gecode { namespace Gist {
     contextMenu->addAction(toggleHidden);
     contextMenu->addAction(hideFailed);
     contextMenu->addAction(unhideAll);
+
+    contextMenu->addAction(toggleStop);
+    contextMenu->addAction(unstopAll);
 
     contextMenu->addSeparator();
 
@@ -438,6 +451,7 @@ namespace Gecode { namespace Gist {
                                 bool finished) {
     if (!finished) {
       inspect->setEnabled(false);
+      inspectBeforeFixpoint->setEnabled(false);
       stop->setEnabled(true);
       reset->setEnabled(false);
       navUp->setEnabled(false);
@@ -453,6 +467,10 @@ namespace Gecode { namespace Gist {
       toggleHidden->setEnabled(false);
       hideFailed->setEnabled(false);
       unhideAll->setEnabled(false);
+      
+      toggleStop->setEnabled(false);
+      unstopAll->setEnabled(false);
+      
       zoomToFit->setEnabled(false);
       center->setEnabled(false);
       exportPDF->setEnabled(false);
@@ -461,8 +479,11 @@ namespace Gecode { namespace Gist {
 
       setPath->setEnabled(false);
       inspectPath->setEnabled(false);
+      bookmarkNode->setEnabled(false);
+      bookmarksGroup->setEnabled(false);
     } else {
       inspect->setEnabled(true);
+      inspectBeforeFixpoint->setEnabled(true);
       stop->setEnabled(false);
       reset->setEnabled(true);
 
@@ -478,12 +499,16 @@ namespace Gecode { namespace Gist {
         toggleHidden->setEnabled(true);
         hideFailed->setEnabled(true);
         unhideAll->setEnabled(true);
+        unstopAll->setEnabled(true);
       } else {
         navDown->setEnabled(false);
         toggleHidden->setEnabled(false);
         hideFailed->setEnabled(false);
         unhideAll->setEnabled(false);
+        unstopAll->setEnabled(false);
       }
+      
+      toggleStop->setEnabled(n->getStatus() == STOP);
 
       VisualNode* p = n->getParent();
       if (p == NULL) {
@@ -520,6 +545,9 @@ namespace Gecode { namespace Gist {
 
       setPath->setEnabled(true);
       inspectPath->setEnabled(true);
+
+      bookmarkNode->setEnabled(true);
+      bookmarksGroup->setEnabled(true);
     }
     emit statusChanged(stats,finished);
   }
