@@ -79,7 +79,7 @@ Rank:   major
 [DESCRIPTION]
 Gist can now stop exploration after all alternatives of a certain branching
 are exhausted. This feature can be turned on by posting a special branching
-using the Gist::stopBrancher post function. Gist will then stop whenever that 
+using the Gist::stopBranch post function. Gist will then stop whenever that 
 special branching becomes active.
 
 [ENTRY]
