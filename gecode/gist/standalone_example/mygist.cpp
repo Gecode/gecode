@@ -39,6 +39,7 @@
 
 #include <gecode/int.hh>
 #include <gecode/gist/qtgist.hh>
+#include <gecode/gist/mainwindow.hh>
 
 using namespace Gecode;
 
@@ -59,13 +60,18 @@ public:
 
 int main(int argc, char** argv) {
   QApplication app(argc,argv);
-  QMainWindow mw;
   Gist::Print<TestSpace> p("My Gist");
   Gist::Options o;
   o.inspect.click(&p);
-  Gist::Gist gist(new TestSpace(), false, &mw, o);
-  mw.setCentralWidget(&gist);
+
+  Gist::GistMainWindow gist_mw(new TestSpace(), false, o);
+  gist_mw.show();
+
+  QMainWindow mw;
+  Gist::Gist gist_widget(new TestSpace(), false, &mw, o);
+  mw.setCentralWidget(&gist_widget);
   mw.resize(500,300);
   mw.show();
+
   return app.exec();
 }
