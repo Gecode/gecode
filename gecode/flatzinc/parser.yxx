@@ -520,7 +520,7 @@ vardecl_item:
             yyassert(pp, false, "Invalid var int initializer.");
           }
           if (!pp->hadError)
-            addDomainConstraint(pp, "set_in",
+            addDomainConstraint(pp, "int_in",
                                 new AST::IntVar(pp->intvars.size()-1), $2);
           delete arg;
         } else {
@@ -548,7 +548,7 @@ vardecl_item:
             yyassert(pp, false, "Invalid var bool initializer.");
           }
           if (!pp->hadError)
-            addDomainConstraint(pp, "set_in",
+            addDomainConstraint(pp, "int_in",
                                 new AST::BoolVar(pp->boolvars.size()-1), $2);
           delete arg;
         } else {
@@ -662,7 +662,7 @@ vardecl_item:
                   if (!pp->hadError && $9()) {
                     Option<AST::SetLit*> opt =
                       Option<AST::SetLit*>::some(new AST::SetLit(*$9.some()));                    
-                    addDomainConstraint(pp, "set_in",
+                    addDomainConstraint(pp, "int_in",
                                         new AST::IntVar(vars[i]),
                                         opt);
                   }
@@ -718,7 +718,7 @@ vardecl_item:
                 if (!pp->hadError && $9()) {
                   Option<AST::SetLit*> opt =
                     Option<AST::SetLit*>::some(new AST::SetLit(*$9.some()));                    
-                  addDomainConstraint(pp, "set_in",
+                  addDomainConstraint(pp, "int_in",
                                       new AST::BoolVar(vars[i]),
                                       opt);
                 }

@@ -733,6 +733,24 @@ namespace Gecode { namespace FlatZinc {
       channel(s, x0, x1, ann2icl(ann));
     }
 
+    void p_int_in(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
+      IntSet d = arg2intset(s,ce[1]);
+      if (ce[0]->isBoolVar()) {
+        IntSetRanges dr(d);
+        Iter::Ranges::Singleton sr(0,1);
+        Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton> i(dr,sr);
+        IntSet d01(i);
+        if (d01.size() == 0) {
+          s.fail();
+        } else {
+          rel(s, getBoolVar(s, ce[0]), IRT_GQ, d01.min());
+          rel(s, getBoolVar(s, ce[0]), IRT_LQ, d01.max());
+        }
+      } else {
+        dom(s, getIntVar(s, ce[0]), d);
+      }
+    }
+
     /* constraints from the standard library */
   
     void p_abs(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -1122,6 +1140,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("array_bool_element", &p_array_bool_element);
         registry().add("array_var_bool_element", &p_array_bool_element);
         registry().add("bool2int", &p_bool2int);
+        registry().add("int_in", &p_int_in);
       
         registry().add("array_int_lt", &p_array_int_lt);
         registry().add("array_int_lq", &p_array_int_lq);
