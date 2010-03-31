@@ -235,9 +235,7 @@ namespace Gecode { namespace Gist {
 
   std::string
   VisualNode::toolTip(BestNode*, int, int) {
-    if (isOpen())
-      return "open";
-    return "closed";
+    return "";
   }
 
   /// \brief Helper functions for the layout algorithm
