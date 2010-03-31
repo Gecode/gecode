@@ -41,6 +41,36 @@
 #include <gecode/gist/treecanvas.hh>
 #include <gecode/gist/nodestats.hh>
 
+/*
+ * Configure linking
+ *
+ */
+
+#if !defined(GIST_STATIC_LIBS) && \
+    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+
+#ifdef GECODE_BUILD_GIST
+#define GECODE_GIST_EXPORT __declspec( dllexport )
+#else
+#define GECODE_GIST_EXPORT __declspec( dllimport )
+#endif
+
+#else
+
+#ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
+#define GECODE_GIST_EXPORT __attribute__ ((visibility("default")))
+#else
+#define GECODE_GIST_EXPORT
+#endif
+
+#endif
+
+// Configure auto-linking
+#ifndef GECODE_BUILD_GIST
+#define GECODE_LIBRARY_NAME "Gist"
+#include <gecode/support/auto-link.hpp>
+#endif
+
 namespace Gecode {  namespace Gist {
 
   /**
@@ -52,7 +82,7 @@ namespace Gecode {  namespace Gist {
    *
    * \ingroup TaskGist
    */
-  class Gist : public QWidget {
+  class GECODE_GIST_EXPORT Gist : public QWidget {
     Q_OBJECT
   private:
     /// The canvas implementation

@@ -82,20 +82,6 @@ namespace Gecode { namespace Gist {
                                  const Options& opt0)
   : opt(opt0), aboutGist(this) {
     c = new Gist(root,bab,this,opt);
-    {
-      unsigned int i = 0;
-      while (opt.inspect.solution(i)) {
-        c->addSolutionInspector(opt.inspect.solution(i++));
-      }
-      i = 0;
-      while (opt.inspect.click(i)) {
-        c->addDoubleClickInspector(opt.inspect.click(i++));
-      }
-      i = 0;
-      while (opt.inspect.move(i)) {
-        c->addMoveInspector(opt.inspect.move(i++));
-      }
-    }
     setCentralWidget(c);
     setWindowTitle(tr("Gist"));
 

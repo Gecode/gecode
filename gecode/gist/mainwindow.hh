@@ -55,7 +55,7 @@ namespace Gecode { namespace Gist {
    *
    * \ingroup TaskGist
    */
-  class GistMainWindow : public QMainWindow {
+  class GECODE_GIST_EXPORT GistMainWindow : public QMainWindow {
     Q_OBJECT
   private:
     /// Options

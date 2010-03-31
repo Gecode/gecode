@@ -332,6 +332,22 @@ namespace Gecode { namespace Gist {
     connect(canvas, SIGNAL(autoZoomChanged(bool)),
             autoZoomButton, SLOT(setChecked(bool)));
 
+    {
+      unsigned int i = 0;
+      while (opt.inspect.solution(i)) {
+        addSolutionInspector(opt.inspect.solution(i++));
+      }
+      i = 0;
+      while (opt.inspect.click(i)) {
+        addDoubleClickInspector(opt.inspect.click(i++));
+      }
+      i = 0;
+      while (opt.inspect.move(i)) {
+        addMoveInspector(opt.inspect.move(i++));
+      }
+    }
+
+
     layout->addWidget(scrollArea, 0,0,-1,1);
     layout->addWidget(canvas->scaleBar, 1,1, Qt::AlignHCenter);
     layout->addWidget(autoZoomButton, 0,1, Qt::AlignHCenter);
