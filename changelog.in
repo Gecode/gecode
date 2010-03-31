@@ -74,6 +74,15 @@ Yada!
 
 [ENTRY]
 Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Missing export declarations prevented embedding Gist as a widget. There is 
+now example code for embedding Gist in the directory 
+gecode/gist/standalone_example.
+
+[ENTRY]
+Module: gist
 What:   new
 Rank:   major
 [DESCRIPTION]
