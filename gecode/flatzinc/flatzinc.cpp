@@ -649,14 +649,14 @@ namespace Gecode { namespace FlatZinc {
       sol = next_sol;
       if (opt.print()==0) {
         sol->print(out, p);
-        out << "----------" << std::endl;
+        out << "----------" << std::endl << std::flush;
       }
       if (--findSol==0)
         goto stopped;
     }
     if (sol && opt.print()!=0) {
       sol->print(out, p);
-      out << "----------" << std::endl;
+      out << "----------" << std::endl << std::flush;
     }
     if (!se.stopped()) {
       if (sol) {
