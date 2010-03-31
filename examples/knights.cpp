@@ -107,7 +107,7 @@ public:
     int n = iv.val();
     unsigned int min = x[n].size();
     ++iv;
-    // Choose the value with the fewest neighbours
+    // Choose the value with the fewest neighbors
     while (iv()) {
       if (x[iv.val()].size() < min) {
         n = iv.val();
@@ -172,7 +172,7 @@ public:
     return f / n;
   }
   /// Compute set of neighbour fields
-  IntSet neighbours(int i) {
+  IntSet neighbors(int i) {
     static const int moves[8][2] = {
       {-2,-1}, {-2,1}, {-1,-2}, {-1,2}, {1,-2}, {1,2}, {2,-1}, {2,1}
     };
@@ -255,7 +255,7 @@ public:
     channel(*this, succ, pred, opt.icl());
 
     for (int f = 0; f < nn; f++) {
-      IntSet ds = neighbours(f);
+      IntSet ds = neighbors(f);
       for (IntSetValues i(ds); i(); ++i)
         rel(*this,
             post(*this, ~(jump[i.val()]-jump[f] == 1)),
@@ -295,7 +295,7 @@ public:
     circuit(*this, succ, opt.icl());
 
     for (int f = 0; f < n*n; f++)
-      dom(*this, succ[f], neighbours(f));
+      dom(*this, succ[f], neighbors(f));
   }
   /// Constructor for cloning \a s
   KnightsCircuit(bool share, KnightsCircuit& s) : Knights(share,s) {}
