@@ -201,7 +201,7 @@ namespace Gecode {
 
     // Last data
     d->last = heap.alloc<Tuple*>(domsize*arity);
-    for (int i = domsize+arity; i--; ) {
+    for (int i = domsize*arity; i--; ) {
       d->last[i] = d->tuple_data + (last[i]-tuple_data);
     }
 

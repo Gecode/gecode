@@ -73,6 +73,14 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The extensional constraints with tuple sets could cause crashes
+when used with parallel search.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor
