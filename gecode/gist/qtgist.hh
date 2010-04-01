@@ -107,13 +107,17 @@ namespace Gecode {  namespace Gist {
     QAction* nullBookmark;
     /// Bookmark menu
     QMenu* bookmarksMenu;
+    /// Menu for direct node inspection
+    QMenu* inspectNodeMenu;
+    /// Menu for direct node inspection before fixpoint
+    QMenu* inspectNodeBeforeFPMenu;
     /// Information about individual nodes
     NodeStatInspector* nodeStatInspector;
   public:
     /// Inspect current node
     QAction* inspect;
     /// Inspect current node before fixpoint
-    QAction* inspectBeforeFixpoint;
+    QAction* inspectBeforeFP;
     /// Stop search
     QAction* stop;
     /// Reset %Gist
@@ -174,6 +178,10 @@ namespace Gecode {  namespace Gist {
     QActionGroup* moveInspectorGroup;
     /// Group of all actions for bookmarks
     QActionGroup* bookmarksGroup;
+    /// Group of all actions for direct inspector selection
+    QActionGroup* inspectGroup;
+    /// Group of all actions for direct inspector selection
+    QActionGroup* inspectBeforeFPGroup;
   public:
     /// Constructor
     Gist(Space* root, bool bab, QWidget* parent, const Options& opt);
@@ -247,10 +255,16 @@ namespace Gecode {  namespace Gist {
     void addBookmark(const QString& id);
     /// Reacts on removing a bookmark
     void removeBookmark(int idx);
+    /// Populate the inspector menus from the actions found in Gist
+    void populateInspectors(void);
     /// Populate the bookmarks menu
     void populateBookmarksMenu(void);
     /// Shows node status information
     void showStats(void);
+    /// Inspect current node with inspector described by \a a
+    void inspectWithAction(QAction* a);
+    /// Inspect current node with inspector described by \a a
+    void inspectBeforeFPWithAction(QAction* a);
   protected:
     /// Add inspector \a i0
     void addInspector(Inspector* i, QAction*& nas, QAction*& nad,

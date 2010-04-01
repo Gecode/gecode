@@ -108,8 +108,20 @@ namespace Gecode { namespace Gist {
     connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
 
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
-    nodeMenu->addAction(c->inspect);
-    nodeMenu->addAction(c->inspectBeforeFixpoint);
+    
+    inspectNodeMenu = new QMenu("Inspect");
+    inspectNodeMenu->addAction(c->inspect);
+    connect(inspectNodeMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectors()));
+
+    inspectNodeBeforeFPMenu = new QMenu("Inspect before fixpoint");
+    inspectNodeBeforeFPMenu->addAction(c->inspectBeforeFP);
+    connect(inspectNodeBeforeFPMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectors()));
+    populateInspectors();
+    
+    nodeMenu->addMenu(inspectNodeMenu);
+    nodeMenu->addMenu(inspectNodeBeforeFPMenu);
     nodeMenu->addAction(c->setPath);
     nodeMenu->addAction(c->inspectPath);
     nodeMenu->addAction(c->showNodeStats);
@@ -150,15 +162,15 @@ namespace Gecode { namespace Gist {
     QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
     doubleClickInspectorsMenu = new QMenu("Double click Inspectors");
     connect(doubleClickInspectorsMenu, SIGNAL(aboutToShow()),
-            this, SLOT(populateInspectors()));
+            this, SLOT(populateInspectorSelection()));
     toolsMenu->addMenu(doubleClickInspectorsMenu);
     solutionInspectorsMenu = new QMenu("Solution inspectors");
     connect(solutionInspectorsMenu, SIGNAL(aboutToShow()),
-            this, SLOT(populateInspectors()));
+            this, SLOT(populateInspectorSelection()));
     toolsMenu->addMenu(solutionInspectorsMenu);
     moveInspectorsMenu = new QMenu("Move inspectors");
     connect(moveInspectorsMenu, SIGNAL(aboutToShow()),
-            this, SLOT(populateInspectors()));
+            this, SLOT(populateInspectorSelection()));
     toolsMenu->addMenu(moveInspectorsMenu);
 
     QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
@@ -259,7 +271,7 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  GistMainWindow::populateInspectors(void) {
+  GistMainWindow::populateInspectorSelection(void) {
     doubleClickInspectorsMenu->clear();
     doubleClickInspectorsMenu->addActions(
       c->doubleClickInspectorGroup->actions());
@@ -275,6 +287,18 @@ namespace Gecode { namespace Gist {
     bookmarksMenu->addAction(c->bookmarkNode);
     bookmarksMenu->addSeparator();
     bookmarksMenu->addActions(c->bookmarksGroup->actions());
+  }
+
+  void
+  GistMainWindow::populateInspectors(void) {
+    inspectNodeMenu->clear();
+    inspectNodeMenu->addAction(c->inspect);
+    inspectNodeMenu->addSeparator();
+    inspectNodeMenu->addActions(c->inspectGroup->actions());
+    inspectNodeBeforeFPMenu->clear();
+    inspectNodeBeforeFPMenu->addAction(c->inspectBeforeFP);
+    inspectNodeBeforeFPMenu->addSeparator();
+    inspectNodeBeforeFPMenu->addActions(c->inspectBeforeFPGroup->actions());
   }
 
 }}

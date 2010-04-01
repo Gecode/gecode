@@ -145,9 +145,9 @@ namespace Gecode {  namespace Gist {
      * computation, otherwise its status after branching but before
      * fixpoint computation is inspected.
      */
-    void inspectCurrentNode(bool fix=true);
+    void inspectCurrentNode(bool fix=true, int inspectorNo=-1);
     /// Calls inspectCurrentNode(false)
-    void inspectBeforeFixpoint(void);
+    void inspectBeforeFP(void);
 
     /// Stop current search
     void stopSearch(void);

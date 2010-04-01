@@ -90,10 +90,10 @@ namespace Gecode { namespace Gist {
     connect(inspect, SIGNAL(triggered()), canvas,
                        SLOT(inspectCurrentNode()));
 
-    inspectBeforeFixpoint = new QAction("Inspect before fixpoint", this);
-    inspectBeforeFixpoint->setShortcut(QKeySequence("Ctrl+Return"));
-    connect(inspectBeforeFixpoint, SIGNAL(triggered()), canvas,
-                       SLOT(inspectBeforeFixpoint(void)));
+    inspectBeforeFP = new QAction("Inspect before fixpoint", this);
+    inspectBeforeFP->setShortcut(QKeySequence("Ctrl+Return"));
+    connect(inspectBeforeFP, SIGNAL(triggered()), canvas,
+            SLOT(inspectBeforeFP(void)));
 
     stop = new QAction("Stop search", this);
     stop->setShortcut(QKeySequence("Esc"));
@@ -214,6 +214,7 @@ namespace Gecode { namespace Gist {
     connect(bookmarksMenu, SIGNAL(aboutToShow()),
             this, SLOT(populateBookmarksMenu()));
 
+
     setPath = new QAction("Set path", this);
     setPath->setShortcut(QKeySequence("Shift+P"));
     connect(setPath, SIGNAL(triggered()), canvas, SLOT(setPath()));
@@ -228,7 +229,7 @@ namespace Gecode { namespace Gist {
             this, SLOT(showStats()));
 
     addAction(inspect);
-    addAction(inspectBeforeFixpoint);
+    addAction(inspectBeforeFP);
     addAction(stop);
     addAction(reset);
     addAction(navUp);
@@ -294,9 +295,27 @@ namespace Gecode { namespace Gist {
     moveInspectorMenu = new QMenu("Move inspectors");
     moveInspectorMenu->addActions(moveInspectorGroup->actions());
 
+    inspectGroup = new QActionGroup(this);
+    connect(inspectGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(inspectWithAction(QAction*)));
+    inspectBeforeFPGroup = new QActionGroup(this);
+    connect(inspectBeforeFPGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(inspectBeforeFPWithAction(QAction*)));
+
+    inspectNodeMenu = new QMenu("Inspect");
+    inspectNodeMenu->addAction(inspect);
+    connect(inspectNodeMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectors()));
+
+    inspectNodeBeforeFPMenu = new QMenu("Inspect before fixpoint");
+    inspectNodeBeforeFPMenu->addAction(inspectBeforeFP);
+    connect(inspectNodeBeforeFPMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectors()));
+    populateInspectors();
+
     contextMenu = new QMenu(this);
-    contextMenu->addAction(inspect);
-    contextMenu->addAction(inspectBeforeFixpoint);
+    contextMenu->addMenu(inspectNodeMenu);
+    contextMenu->addMenu(inspectNodeBeforeFPMenu);
     contextMenu->addAction(showNodeStats);
     contextMenu->addAction(center);
 
@@ -399,6 +418,18 @@ namespace Gecode { namespace Gist {
     moveInspectorMenu->clear();
     moveInspectorMenu->addActions(
       moveInspectorGroup->actions());
+    
+    QAction* ia = new QAction(i0->name().c_str(), this);
+    inspectGroup->addAction(ia);
+    QAction* ibfpa = new QAction(i0->name().c_str(), this);
+    inspectBeforeFPGroup->addAction(ibfpa);
+
+    if (inspectGroup->actions().size() < 10) {
+      ia->setShortcut(QKeySequence(
+        QString("").setNum(inspectGroup->actions().size())));
+      ibfpa->setShortcut(QKeySequence(QString("Ctrl+")+
+        QString("").setNum(inspectBeforeFPGroup->actions().size())));
+    }
   }
 
   void
@@ -467,7 +498,9 @@ namespace Gecode { namespace Gist {
                                 bool finished) {
     if (!finished) {
       inspect->setEnabled(false);
-      inspectBeforeFixpoint->setEnabled(false);
+      inspectGroup->setEnabled(false);
+      inspectBeforeFP->setEnabled(false);
+      inspectBeforeFPGroup->setEnabled(false);
       stop->setEnabled(true);
       reset->setEnabled(false);
       navUp->setEnabled(false);
@@ -498,8 +531,6 @@ namespace Gecode { namespace Gist {
       bookmarkNode->setEnabled(false);
       bookmarksGroup->setEnabled(false);
     } else {
-      inspect->setEnabled(true);
-      inspectBeforeFixpoint->setEnabled(true);
       stop->setEnabled(false);
       reset->setEnabled(true);
 
@@ -527,8 +558,21 @@ namespace Gecode { namespace Gist {
       toggleStop->setEnabled(n->getStatus() == STOP ||
         n->getStatus() == UNSTOP);
 
+      inspect->setEnabled(true);
+      if (n->getStatus() == UNDETERMINED) {
+        inspectGroup->setEnabled(false);
+        inspectBeforeFP->setEnabled(false);
+        inspectBeforeFPGroup->setEnabled(false);
+      } else {
+        inspectGroup->setEnabled(true);        
+        inspectBeforeFP->setEnabled(true);
+        inspectBeforeFPGroup->setEnabled(true);
+      }
+
       VisualNode* p = n->getParent();
       if (p == NULL) {
+        inspectBeforeFP->setEnabled(false);
+        inspectBeforeFPGroup->setEnabled(false);
         navRoot->setEnabled(false);
         navUp->setEnabled(false);
         navRight->setEnabled(false);
@@ -567,6 +611,17 @@ namespace Gecode { namespace Gist {
       bookmarksGroup->setEnabled(true);
     }
     emit statusChanged(stats,finished);
+  }
+
+  void
+  Gist::inspectWithAction(QAction* a) {
+    canvas->inspectCurrentNode(true,inspectGroup->actions().indexOf(a));
+  }
+
+  void
+  Gist::inspectBeforeFPWithAction(QAction* a) {
+    canvas->inspectCurrentNode(false,
+      inspectBeforeFPGroup->actions().indexOf(a));
   }
 
   bool
@@ -625,6 +680,18 @@ namespace Gecode { namespace Gist {
     bookmarksMenu->addAction(bookmarkNode);
     bookmarksMenu->addSeparator();
     bookmarksMenu->addActions(bookmarksGroup->actions());
+  }
+
+  void
+  Gist::populateInspectors(void) {
+    inspectNodeMenu->clear();
+    inspectNodeMenu->addAction(inspect);
+    inspectNodeMenu->addSeparator();
+    inspectNodeMenu->addActions(inspectGroup->actions());
+    inspectNodeBeforeFPMenu->clear();
+    inspectNodeBeforeFPMenu->addAction(inspectBeforeFP);
+    inspectNodeBeforeFPMenu->addSeparator();
+    inspectNodeBeforeFPMenu->addActions(inspectBeforeFPGroup->actions());
   }
   
   void

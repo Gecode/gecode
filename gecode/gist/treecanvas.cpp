@@ -95,8 +95,6 @@ namespace Gecode { namespace Gist {
 
       connect(&searcher, SIGNAL(searchFinished(void)), this, SIGNAL(searchFinished(void)));
 
-      QAbstractScrollArea* sa =
-        static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
       connect(&scrollTimeLine, SIGNAL(frameChanged(int)),
               this, SLOT(scroll(int)));
       scrollTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
@@ -575,7 +573,7 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::inspectCurrentNode(bool fix) {
+  TreeCanvas::inspectCurrentNode(bool fix, int inspectorNo) {
     QMutexLocker locker(&mutex);
 
     if (currentNode->isHidden()) {
@@ -657,10 +655,14 @@ namespace Gecode { namespace Gist {
           }
         }
 
-        for (int i=0; i<doubleClickInspectors.size(); i++) {
-          if (doubleClickInspectors[i].second) {
-            doubleClickInspectors[i].first->inspect(*curSpace);
+        if (inspectorNo==-1) {
+          for (int i=0; i<doubleClickInspectors.size(); i++) {
+            if (doubleClickInspectors[i].second) {
+              doubleClickInspectors[i].first->inspect(*curSpace);
+            }
           }
+        } else {
+          doubleClickInspectors[inspectorNo].first->inspect(*curSpace);          
         }
         delete curSpace;
       }
@@ -673,7 +675,7 @@ namespace Gecode { namespace Gist {
   }
   
   void
-  TreeCanvas::inspectBeforeFixpoint(void) {
+  TreeCanvas::inspectBeforeFP(void) {
     inspectCurrentNode(false);
   }
 

@@ -82,6 +82,10 @@ namespace Gecode { namespace Gist {
     QMenu* moveInspectorsMenu;
     /// Menu for bookmarks
     QMenu* bookmarksMenu;
+    /// Menu for direct node inspection
+    QMenu* inspectNodeMenu;
+    /// Menu for direct node inspection before fixpoint
+    QMenu* inspectNodeBeforeFPMenu;
   protected:
     /// The contained %Gist object
     Gist* c;
@@ -97,6 +101,8 @@ namespace Gecode { namespace Gist {
     void about(void);
     /// Open the preferences dialog
     void preferences(bool setup=false);
+    /// Populate the inspector menus from the actions found in Gist
+    void populateInspectorSelection(void);
     /// Populate the inspector menus from the actions found in Gist
     void populateInspectors(void);
     /// Populate the bookmarks menus from the actions found in Gist
