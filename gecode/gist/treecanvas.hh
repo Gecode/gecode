@@ -301,10 +301,16 @@ namespace Gecode {  namespace Gist {
 
     /// Timer for smooth zooming
     QTimeLine zoomTimeLine;
-    /// Timer for smooth scrolling (x axis)
-    QTimeLine scrollXTimeLine;
-    /// Timer for smooth scrolling (y axis)
-    QTimeLine scrollYTimeLine;
+    /// Timer for smooth scrolling
+    QTimeLine scrollTimeLine;
+    /// Target x coordinate after smooth scrolling
+    int targetX;
+    /// Source x coordinate after smooth scrolling
+    int sourceX;
+    /// Target y coordinate after smooth scrolling
+    int targetY;
+    /// Target y coordinate after smooth scrolling
+    int sourceY;
 
     /// Target width after layout
     int targetW;
@@ -332,6 +338,8 @@ namespace Gecode {  namespace Gist {
     void exportNodePDF(VisualNode* n);
     /// A new solution \a s has been found
     void inspectSolution(const Space* s);
+    /// Scroll to \a i percent of the target
+    void scroll(int i);
   };
 
 }}

@@ -61,7 +61,7 @@ namespace Gecode { namespace Gist {
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false)
     , zoomTimeLine(500)
-    , scrollXTimeLine(1000), scrollYTimeLine(1000)
+    , scrollTimeLine(1000), targetX(0), sourceX(0), targetY(0), sourceY(0)
     , targetW(0), targetH(0), targetScale(0)
     , layoutDoneTimerId(0) {
       QMutexLocker locker(&mutex);
@@ -97,12 +97,9 @@ namespace Gecode { namespace Gist {
 
       QAbstractScrollArea* sa =
         static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-      connect(&scrollXTimeLine, SIGNAL(frameChanged(int)),
-              sa->horizontalScrollBar(), SLOT(setValue(int)));
-      connect(&scrollYTimeLine, SIGNAL(frameChanged(int)),
-              sa->verticalScrollBar(), SLOT(setValue(int)));
-      scrollXTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
-      scrollYTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
+      connect(&scrollTimeLine, SIGNAL(frameChanged(int)),
+              this, SLOT(scroll(int)));
+      scrollTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
 
       scaleBar = new QSlider(Qt::Vertical, this);
       scaleBar->setObjectName("scaleBar");
@@ -544,28 +541,37 @@ namespace Gecode { namespace Gist {
     x -= sa->viewport()->width() / 2;
     y -= sa->viewport()->height() / 2;
 
-    int curScrollX = sa->horizontalScrollBar()->value();
-    int targetScrollX = std::max(sa->horizontalScrollBar()->minimum(), x);
-    targetScrollX = std::min(sa->horizontalScrollBar()->maximum(),
-                             targetScrollX);
-    int curScrollY = sa->verticalScrollBar()->value();
-    int targetScrollY = std::max(sa->verticalScrollBar()->minimum(), y);
-    targetScrollY = std::min(sa->verticalScrollBar()->maximum(),
-                             targetScrollY);
+    sourceX = sa->horizontalScrollBar()->value();
+    targetX = std::max(sa->horizontalScrollBar()->minimum(), x);
+    targetX = std::min(sa->horizontalScrollBar()->maximum(),
+                       targetX);
+    sourceY = sa->verticalScrollBar()->value();
+    targetY = std::max(sa->verticalScrollBar()->minimum(), y);
+    targetY = std::min(sa->verticalScrollBar()->maximum(),
+                       targetY);
     if (!smoothScrollAndZoom) {
-      sa->horizontalScrollBar()->setValue(targetScrollX);
-      sa->verticalScrollBar()->setValue(targetScrollY);
+      sa->horizontalScrollBar()->setValue(targetX);
+      sa->verticalScrollBar()->setValue(targetY);
     } else {
-      scrollXTimeLine.stop();
-      scrollXTimeLine.setFrameRange(curScrollX, targetScrollX);
-      scrollXTimeLine.setDuration(std::max(200,
-        std::min(1000,std::abs(curScrollX-targetScrollX))));
-      scrollYTimeLine.stop();
-      scrollYTimeLine.setFrameRange(curScrollY, targetScrollY);
-      scrollYTimeLine.setDuration(std::max(200,
-        std::min(1000,std::abs(curScrollY-targetScrollY))));
-      scrollXTimeLine.start(); scrollYTimeLine.start();
+      scrollTimeLine.stop();
+      scrollTimeLine.setFrameRange(0,100);
+      scrollTimeLine.setDuration(std::max(200,
+        std::min(1000,
+        std::min(std::abs(sourceX-targetX),
+                 std::abs(sourceY-targetY)))));
+      scrollTimeLine.start();
     }
+  }
+
+  void
+  TreeCanvas::scroll(int i) {
+    QAbstractScrollArea* sa =
+      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+    double p = static_cast<double>(i)/100.0;
+    double xdiff = static_cast<double>(targetX-sourceX)*p;
+    double ydiff = static_cast<double>(targetY-sourceY)*p;
+    sa->horizontalScrollBar()->setValue(sourceX+static_cast<int>(xdiff));
+    sa->verticalScrollBar()->setValue(sourceY+static_cast<int>(ydiff));
   }
 
   void
