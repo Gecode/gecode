@@ -450,6 +450,7 @@ SCHEDULINGSRC0 = \
 SCHEDULINGHDR0 = \
 	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
 	task/iter.hpp task/tree.hpp task/purge.hpp task/prop.hpp \
+	task/man-to-opt.hpp \
 	unary.hh unary/task.hpp unary/task-view.hpp \
 	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
 	unary/not-first-not-last.hpp \
