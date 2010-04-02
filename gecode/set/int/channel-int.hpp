@@ -140,6 +140,9 @@ namespace Gecode { namespace Set { namespace Int {
           }
           min = xsv.max() + 1;
         }
+        for (int i=min; i<ys.size(); i++) {
+          GECODE_ME_CHECK(ys[i].exclude(home, v));
+        }
 
       }
     }

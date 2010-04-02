@@ -73,6 +73,14 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed channeling between set and integer variables which did not propagate 
+enough.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
