@@ -97,26 +97,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       if (i >= j) break;
       std::swap(t[i],t[j]);
     }
-    // No propagation possible
-    if (i < 2)
-      return ES_NOFIX;
-    // All tasks are mandatory: rewrite
-    if (i == n) {
-      // All tasks are mandatory, rewrite
-      TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,n);
-      for (int i=n; i--; )
-        mt[i].init(t[i].st(),t[i].p());
-      GECODE_REWRITE(*this,
-                     (ManProp<typename TaskTraits<OptTask>::ManTask>
-                      ::post(home(*this),mt)));
+
+    if (i > 1) {
+      // Truncate array to only contain mandatory tasks
+      t.size(i);
+      GECODE_ES_CHECK(edgefinding(home,t));
+      // Restore to also include optional tasks
+      t.size(n);
     }
-    // Truncate array to only contain mandatory tasks
-    t.size(i);
-
-    GECODE_ES_CHECK(edgefinding(home,t));
-
-    // Restore to also include optional tasks
-    t.size(n);
 
     GECODE_ES_CHECK(subsumed(home,*this,t));
 

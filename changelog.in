@@ -73,6 +73,14 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: scheduling
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The unary scheduling propagator with optional tasks missed some
+propagation sometimes.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major

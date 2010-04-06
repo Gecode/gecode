@@ -355,7 +355,7 @@ public:
   }
   
   /// Set up main window
-  void initialize() {
+  void initialize(void) {
     mw = new QMainWindow();
     scene = new QGraphicsScene();
     QGraphicsView* view = new QGraphicsView(scene);
