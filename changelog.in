@@ -73,6 +73,14 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed extensional constraint with finite automata for very
+unlikely (but apparantely possible) border case.
+
+[ENTRY]
 Module: gist
 What:   new
 Rank:   major
@@ -93,7 +101,7 @@ enough.
 [ENTRY]
 Module: int
 What:   bug
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 The extensional constraints with tuple sets could cause crashes
 when used with parallel search.

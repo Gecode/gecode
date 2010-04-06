@@ -336,11 +336,9 @@ namespace Gecode { namespace Int { namespace Extensional {
           (Gecode::Support::IntTypeTraits<Degree>::max)) {
         // Initialize map for in-states
         for (StateIdx j=max_states; j--; )
-          if (layers[n].states[j].o_deg != 0) {
+          if ((layers[n].states[j].o_deg != 0) ||
+              (layers[n].states[j].i_deg != 0))
             i_map[j]=i_n++;
-          } else {
-            assert(layers[n].states[j].i_deg == 0);
-          }
       } else {
         i_n = 1;
         for (StateIdx j=max_states; j--; ) {
@@ -364,11 +362,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         std::swap(o_map,i_map); o_n=i_n; i_n=0;
         // Initialize map for in-states
         for (StateIdx j=max_states; j--; )
-          if (layers[i].states[j].o_deg != 0) {
+          if ((layers[i].states[j].o_deg != 0) ||
+              (layers[i].states[j].i_deg != 0))
             i_map[j]=i_n++;
-          } else {
-            assert(layers[i].states[j].i_deg == 0);
-          }
         layers[i].n_states = i_n;
         n_states += i_n;
         max_s = std::max(max_s,i_n);
@@ -389,11 +385,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (int i=n+1; i--; ) {
         StateIdx k=0;
         for (StateIdx j=max_states; j--; )
-          if (layers[i].states[j].o_deg != 0) {
+          if ((layers[i].states[j].o_deg != 0) ||
+              (layers[i].states[j].i_deg != 0))
             a_states[k++] = layers[i].states[j];
-          } else {
-            assert(layers[i].states[j].i_deg == 0);
-          }
         assert(k == layers[i].n_states);
         layers[i].states = a_states;
         a_states += layers[i].n_states;
@@ -764,12 +758,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       n_states -= layers[l].n_states;
       // Initialize map for in-states and compress
       for (StateIdx j=0; j<layers[l].n_states; j++)
-        // For the last layer, o_deg can be zero even if i_deg is not!
-        if (layers[l].states[j].i_deg != 0) {
+        if ((layers[l].states[j].i_deg != 0) ||
+            (layers[l].states[j].o_deg != 0)) {
           layers[l].states[i_n]=layers[l].states[j];
           i_map[j]=i_n++;
-        } else {
-          assert(layers[l].states[j].o_deg == 0);
         }
       layers[l].n_states = i_n;
       n_states += layers[l].n_states;
@@ -790,12 +782,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Initialize map for in-states and compress
         n_states -= layers[i].n_states;
         for (StateIdx j=0; j<layers[i].n_states; j++)
-          // For the first layer, i_deg can be zero even if o_deg is not!
-          if (layers[i].states[j].o_deg != 0) {
+          if ((layers[i].states[j].o_deg != 0) ||
+              (layers[i].states[j].i_deg != 0)) {
             layers[i].states[i_n]=layers[i].states[j];
             i_map[j]=i_n++;
-          } else {
-            assert(layers[i].states[j].i_deg == 0);
           }
         layers[i].n_states = i_n;
         n_states += layers[i].n_states;
