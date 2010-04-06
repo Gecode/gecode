@@ -167,17 +167,21 @@ namespace Gecode { namespace Driver {
 #ifdef GECODE_HAS_GIST
         {
           Gist::Print<Script> pi(o.name());
+          Gist::VarComparator<Script> vc(o.name());
           Gist::Options opt;
           opt.inspect.click(&pi);
+          opt.inspect.compare(&vc);
           opt.clone = false;
           opt.c_d   = o.c_d();
           opt.a_d   = o.a_d();
           for (int i=0; o.inspect.click(i) != NULL; i++)
             opt.inspect.click(o.inspect.click(i));
           for (int i=0; o.inspect.solution(i) != NULL; i++)
-            opt.inspect.click(o.inspect.solution(i));
+            opt.inspect.solution(o.inspect.solution(i));
           for (int i=0; o.inspect.move(i) != NULL; i++)
-            opt.inspect.click(o.inspect.move(i));
+            opt.inspect.move(o.inspect.move(i));
+          for (int i=0; o.inspect.compare(i) != NULL; i++)
+            opt.inspect.compare(o.inspect.compare(i));
           Script* s = new Script(o);
           (void) GistEngine<Engine<Script> >::explore(s, opt);
         }

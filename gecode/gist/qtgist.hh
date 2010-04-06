@@ -103,6 +103,10 @@ namespace Gecode {  namespace Gist {
     QAction* nullMoveInspector;
     /// Menu of double click inspectors
     QMenu* moveInspectorMenu;
+    /// Action used when no comparator is registered
+    QAction* nullComparator;
+    /// Menu of comparators
+    QMenu* comparatorMenu;
     /// Action used when no bookmark exists
     QAction* nullBookmark;
     /// Bookmark menu
@@ -159,6 +163,10 @@ namespace Gecode {  namespace Gist {
 
     /// Bookmark current node
     QAction* bookmarkNode;
+    /// Compare current node to other node
+    QAction* compareNode;
+    /// Compare current node to other node before fixpoint
+    QAction* compareNodeBeforeFP;
     /// Set path from current node to the root
     QAction* setPath;
     /// Inspect all nodes on selected path
@@ -176,6 +184,8 @@ namespace Gecode {  namespace Gist {
     QActionGroup* doubleClickInspectorGroup;
     /// Group of all actions for move inspectors
     QActionGroup* moveInspectorGroup;
+    /// Group of all actions for comparators
+    QActionGroup* comparatorGroup;
     /// Group of all actions for bookmarks
     QActionGroup* bookmarksGroup;
     /// Group of all actions for direct inspector selection
@@ -194,6 +204,8 @@ namespace Gecode {  namespace Gist {
     void addSolutionInspector(Inspector* i0);
     /// Add move inspector \a i0
     void addMoveInspector(Inspector* i0);
+    /// Add comparator \a c0
+    void addComparator(Comparator* c0);
 
     /// Set preference whether to automatically hide failed subtrees
     void setAutoHideFailed(bool b);
@@ -249,6 +261,8 @@ namespace Gecode {  namespace Gist {
     void selectSolutionInspector(QAction*);
     /// Reacts on move inspector selection
     void selectMoveInspector(QAction*);
+    /// Reacts on comparator selection
+    void selectComparator(QAction*);
     /// Reacts on bookmark selection
     void selectBookmark(QAction*);
     /// Reacts on adding a bookmark

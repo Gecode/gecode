@@ -58,6 +58,7 @@ namespace Gecode { namespace Gist {
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
     , finishedFlag(false)
+    , compareNodes(false), compareNodesBeforeFP(false)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), smoothScrollAndZoom(false)
     , zoomTimeLine(500)
@@ -151,6 +152,17 @@ namespace Gecode { namespace Gist {
   TreeCanvas::activateMoveInspector(int i, bool active) {
     assert(i < moveInspectors.size());
     moveInspectors[i].second = active;
+  }
+
+  void
+  TreeCanvas::addComparator(Comparator* c) {
+    comparators.append(QPair<Comparator*,bool>(c,false));
+  }
+
+  void
+  TreeCanvas::activateComparator(int i, bool active) {
+    assert(i < comparators.size());
+    comparators[i].second = active;
   }
 
   void
@@ -788,6 +800,22 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvas::startCompareNodes(void) {
+    QMutexLocker locker(&mutex);
+    compareNodes = true;
+    compareNodesBeforeFP = false;
+    setCursor(QCursor(Qt::CrossCursor));
+  }
+
+  void
+  TreeCanvas::startCompareNodesBeforeFP(void) {
+    QMutexLocker locker(&mutex);
+    compareNodes = true;
+    compareNodesBeforeFP = true;
+    setCursor(QCursor(Qt::CrossCursor));
+  }
+
+  void
   TreeCanvas::emitStatusChanged(void) {
     emit statusChanged(currentNode, stats, true);
   }
@@ -1155,6 +1183,8 @@ namespace Gecode { namespace Gist {
       solutionInspectors[i].first->finalize();
     for (int i=0; i<moveInspectors.size(); i++)
       moveInspectors[i].first->finalize();
+    for (int i=0; i<comparators.size(); i++)
+      comparators[i].first->finalize();
     return !searcher.isRunning();
   }
 
@@ -1173,6 +1203,8 @@ namespace Gecode { namespace Gist {
       }
     }
     if (n != NULL) {
+      compareNodes = false;
+      setCursor(QCursor(Qt::ArrowCursor));
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
@@ -1187,7 +1219,44 @@ namespace Gecode { namespace Gist {
     if (mutex.tryLock()) {
       if (event->button() == Qt::LeftButton) {
         VisualNode* n = eventNode(event);
-        setCurrentNode(n);
+        if (compareNodes) {
+          if (n != NULL && n->getStatus() != UNDETERMINED &&
+              currentNode != NULL &&
+              currentNode->getStatus() != UNDETERMINED) {
+            Space* curSpace = NULL;
+            Space* compareSpace = NULL;
+            for (int i=0; i<comparators.size(); i++) {
+              if (comparators[i].second) {
+                if (curSpace == NULL) {
+                  curSpace = currentNode->getSpace(curBest,c_d,a_d);
+
+                  if (!compareNodesBeforeFP || n->isRoot()) {
+                    compareSpace = n->getSpace(curBest,c_d,a_d);
+                  } else {
+                    VisualNode* p = n->getParent();
+                    compareSpace = p->getSpace(curBest,c_d,a_d);
+                    switch (compareSpace->status()) {
+                    case SS_SOLVED:
+                    case SS_FAILED:
+                      break;
+                    case SS_BRANCH:
+                      compareSpace->commit(*p->getChoice(), 
+                                           n->getAlternative());
+                      break;
+                    default:
+                      GECODE_NEVER;
+                    }
+                  }
+                }
+                comparators[i].first->compare(*curSpace,*compareSpace);
+              }
+            }
+          }
+        } else {
+          setCurrentNode(n);
+        }
+        compareNodes = false;
+        setCursor(QCursor(Qt::ArrowCursor));
         if (n != NULL) {
           event->accept();
           mutex.unlock();

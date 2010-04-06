@@ -593,7 +593,8 @@ namespace Gecode { namespace FlatZinc {
 
   /// \brief An inspector for printing simple text output
   template<class S>
-  class FZPrintingInspector : public Gecode::Gist::TextInspector {
+  class FZPrintingInspector
+   : public Gecode::Gist::TextOutput, public Gecode::Gist::Inspector {
   private:
     const Printer& p;
   public:
@@ -601,11 +602,13 @@ namespace Gecode { namespace FlatZinc {
     FZPrintingInspector(const Printer& p0);
     /// Use the print method of the template class S to print a space
     virtual void inspect(const Space& node);
+    /// Finalize when Gist exits
+    virtual void finalize(void);
   };
 
   template<class S>
   FZPrintingInspector<S>::FZPrintingInspector(const Printer& p0)
-  : TextInspector("Gecode/FlatZinc"), p(p0) {}
+  : TextOutput("Gecode/FlatZinc"), p(p0) {}
 
   template<class S>
   void
@@ -613,6 +616,12 @@ namespace Gecode { namespace FlatZinc {
     init();
     dynamic_cast<const S&>(node).print(getStream(), p);
     getStream() << std::endl;
+  }
+
+  template<class S>
+  void
+  FZPrintingInspector<S>::finalize(void) {
+    Gecode::Gist::TextOutput::finalize();
   }
 
 #endif

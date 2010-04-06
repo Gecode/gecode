@@ -195,6 +195,16 @@ namespace Gecode { namespace Gist {
     bookmarkNode->setShortcut(QKeySequence("Shift+B"));
     connect(bookmarkNode, SIGNAL(triggered()), canvas, SLOT(bookmarkNode()));
 
+    compareNode = new QAction("Compare node", this);
+    compareNode->setShortcut(QKeySequence("V"));
+    connect(compareNode, SIGNAL(triggered()),
+            canvas, SLOT(startCompareNodes()));
+
+    compareNodeBeforeFP = new QAction("Compare node before fixpoint", this);
+    compareNodeBeforeFP->setShortcut(QKeySequence("Ctrl+V"));
+    connect(compareNodeBeforeFP, SIGNAL(triggered()),
+            canvas, SLOT(startCompareNodesBeforeFP()));
+
     connect(canvas, SIGNAL(addedBookmark(const QString&)),
             this, SLOT(addBookmark(const QString&)));
     connect(canvas, SIGNAL(removedBookmark(int)),
@@ -230,6 +240,8 @@ namespace Gecode { namespace Gist {
 
     addAction(inspect);
     addAction(inspectBeforeFP);
+    addAction(compareNode);
+    addAction(compareNodeBeforeFP);
     addAction(stop);
     addAction(reset);
     addAction(navUp);
@@ -287,6 +299,16 @@ namespace Gecode { namespace Gist {
     connect(moveInspectorGroup, SIGNAL(triggered(QAction*)),
             this, SLOT(selectMoveInspector(QAction*)));
 
+    nullComparator = new QAction("<none>",this);
+    nullComparator->setCheckable(true);
+    nullComparator->setChecked(false);
+    nullComparator->setEnabled(false);
+    comparatorGroup = new QActionGroup(this);
+    comparatorGroup->setExclusive(false);
+    comparatorGroup->addAction(nullComparator);
+    connect(comparatorGroup, SIGNAL(triggered(QAction*)),
+            this, SLOT(selectComparator(QAction*)));
+
     solutionInspectorMenu = new QMenu("Solution inspectors");
     solutionInspectorMenu->addActions(solutionInspectorGroup->actions());
     doubleClickInspectorMenu = new QMenu("Double click inspectors");
@@ -294,6 +316,8 @@ namespace Gecode { namespace Gist {
       doubleClickInspectorGroup->actions());
     moveInspectorMenu = new QMenu("Move inspectors");
     moveInspectorMenu->addActions(moveInspectorGroup->actions());
+    comparatorMenu = new QMenu("Comparators");
+    comparatorMenu->addActions(comparatorGroup->actions());
 
     inspectGroup = new QActionGroup(this);
     connect(inspectGroup, SIGNAL(triggered(QAction*)),
@@ -316,6 +340,8 @@ namespace Gecode { namespace Gist {
     contextMenu = new QMenu(this);
     contextMenu->addMenu(inspectNodeMenu);
     contextMenu->addMenu(inspectNodeBeforeFPMenu);
+    contextMenu->addAction(compareNode);
+    contextMenu->addAction(compareNodeBeforeFP);
     contextMenu->addAction(showNodeStats);
     contextMenu->addAction(center);
 
@@ -363,6 +389,10 @@ namespace Gecode { namespace Gist {
       i = 0;
       while (opt.inspect.move(i)) {
         addMoveInspector(opt.inspect.move(i++));
+      }
+      i = 0;
+      while (opt.inspect.compare(i)) {
+        addComparator(opt.inspect.compare(i++));
       }
     }
 
@@ -486,6 +516,28 @@ namespace Gecode { namespace Gist {
     selectMoveInspector(nam);
   }
 
+  void
+  Gist::addComparator(Comparator* c) {
+    if (comparatorGroup->actions().indexOf(nullComparator) == -1) {
+      QList<QAction*> is = comparatorGroup->actions();
+      for (int i=0; i<is.size(); i++) {
+        canvas->activateComparator(i,false);
+        is[i]->setChecked(false);
+      }
+    } else {
+      comparatorGroup->removeAction(nullComparator);
+    }
+    canvas->addComparator(c);
+
+    QAction* ncs = new QAction(c->name().c_str(), this);
+    ncs->setCheckable(true);
+    comparatorGroup->addAction(ncs);
+    comparatorMenu->clear();
+    comparatorMenu->addActions(comparatorGroup->actions());
+    ncs->setChecked(true);
+    selectComparator(ncs);
+  }
+
   Gist::~Gist(void) { delete canvas; }
 
   void
@@ -501,6 +553,8 @@ namespace Gecode { namespace Gist {
       inspectGroup->setEnabled(false);
       inspectBeforeFP->setEnabled(false);
       inspectBeforeFPGroup->setEnabled(false);
+      compareNode->setEnabled(false);
+      compareNodeBeforeFP->setEnabled(false);
       stop->setEnabled(true);
       reset->setEnabled(false);
       navUp->setEnabled(false);
@@ -563,10 +617,14 @@ namespace Gecode { namespace Gist {
         inspectGroup->setEnabled(false);
         inspectBeforeFP->setEnabled(false);
         inspectBeforeFPGroup->setEnabled(false);
+        compareNode->setEnabled(false);
+        compareNodeBeforeFP->setEnabled(false);
       } else {
         inspectGroup->setEnabled(true);        
         inspectBeforeFP->setEnabled(true);
         inspectBeforeFPGroup->setEnabled(true);
+        compareNode->setEnabled(true);
+        compareNodeBeforeFP->setEnabled(true);
       }
 
       VisualNode* p = n->getParent();
@@ -645,6 +703,11 @@ namespace Gecode { namespace Gist {
   Gist::selectMoveInspector(QAction* a) {
     canvas->activateMoveInspector(
       moveInspectorGroup->actions().indexOf(a),
+      a->isChecked());
+  }
+  void
+  Gist::selectComparator(QAction* a) {
+    canvas->activateComparator(comparatorGroup->actions().indexOf(a),
       a->isChecked());
   }
   void

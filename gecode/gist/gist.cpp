@@ -51,38 +51,46 @@ namespace Gecode { namespace Gist {
   Inspector::finalize(void) {}
   
   Inspector::~Inspector(void) {}
+
+  std::string
+  Comparator::name(void) { return "Comparator"; }
+  
+  void
+  Comparator::finalize(void) {}
+  
+  Comparator::~Comparator(void) {}
     
-  TextInspector::TextInspector(const std::string& name)
+  TextOutput::TextOutput(const std::string& name)
     : t(NULL), n(name) {}
   
   void
-  TextInspector::finalize(void) {
+  TextOutput::finalize(void) {
     delete t;
     t = NULL;
   }
   
-  TextInspector::~TextInspector(void) {
+  TextOutput::~TextOutput(void) {
     delete t;
   }
 
   std::string
-  TextInspector::name(void) { return n; }
+  TextOutput::name(void) { return n; }
   
   void
-  TextInspector::init(void) {
+  TextOutput::init(void) {
     if (t == NULL) {
-      t = new TextOutput(n);
+      t = new TextOutputI(n);
     }
     t->setVisible(true);
   }
 
   std::ostream&
-  TextInspector::getStream(void) {
+  TextOutput::getStream(void) {
     return t->getStream();
   }
   
   void
-  TextInspector::addHtml(const char* s) {
+  TextOutput::addHtml(const char* s) {
     t->insertHtml(s);
   }
 

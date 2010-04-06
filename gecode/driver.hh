@@ -452,6 +452,10 @@ namespace Gecode {
       Support::DynamicArray<Gist::Inspector*,Heap> _move;
       /// Number of move inspectors
       unsigned int n_move;
+      /// The comparators
+      Support::DynamicArray<Gist::Comparator*,Heap> _compare;
+      /// Number of comparators
+      unsigned int n_compare;
     public:
       /// Constructor
       _I(void);
@@ -461,6 +465,8 @@ namespace Gecode {
       void solution(Gist::Inspector* i);
       /// Add inspector that reacts on each move of the cursor
       void move(Gist::Inspector* i);
+      /// Add comparator
+      void compare(Gist::Comparator* i);
       
       /// Return click inspector number \a i, or NULL if it does not exist
       Gist::Inspector* click(unsigned int i) const;
@@ -468,6 +474,8 @@ namespace Gecode {
       Gist::Inspector* solution(unsigned int i) const;
       /// Return move inspector number \a i, or NULL if it does not exist
       Gist::Inspector* move(unsigned int i) const;
+      /// Return comparator number \a i, or NULL if it does not exist
+      Gist::Comparator* compare(unsigned int i) const;
     } inspect;
 #endif
   };
@@ -504,7 +512,7 @@ namespace Gecode {
      * \brief Parametric base-class for scripts
      *
      * All scripts must inherit from this class
-     *  - adds printing to scripts
+     *  - adds printing and comparison for Gist to scripts
      *  - run allows to execute scripts
      */
     template<class BaseSpace>
@@ -516,6 +524,8 @@ namespace Gecode {
       ScriptBase(bool share, ScriptBase& e) : BaseSpace(share,e) {}
       /// Print a solution to \a os
       virtual void print(std::ostream& os) const { (void) os; }
+      /// Compare with \a s
+      virtual std::string compare(const Space&) const { return ""; }
       /// Run script with search engine \a Engine and options \a opt
       template<class Script, template<class> class Engine, class Options>
       static void run(const Options& opt);

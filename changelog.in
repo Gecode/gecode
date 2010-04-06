@@ -73,6 +73,16 @@ Date: Soonish
 Yada!
 
 [ENTRY]
+Module: gist
+What:   new
+Rank:   major
+[DESCRIPTION]
+In addition to inspectors, you can now also register comparators, which can be 
+used to compare two nodes in the tree. In combination with the option to 
+compare before computing a fixpoint of the second node, this lets you see what 
+exactly was modified by a branching.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor

@@ -80,6 +80,8 @@ namespace Gecode { namespace Gist {
     QMenu* doubleClickInspectorsMenu;
     /// Menu for move inspectors
     QMenu* moveInspectorsMenu;
+    /// Menu for comparators
+    QMenu* comparatorsMenu;
     /// Menu for bookmarks
     QMenu* bookmarksMenu;
     /// Menu for direct node inspection

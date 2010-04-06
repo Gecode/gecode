@@ -77,7 +77,7 @@ namespace Gecode { namespace Gist {
     }
   };
 
-  TextOutput::TextOutput(const std::string& name, QWidget *parent)
+  TextOutputI::TextOutputI(const std::string& name, QWidget *parent)
   : QMainWindow(parent) {
     Logos logos;
 
@@ -131,17 +131,17 @@ namespace Gecode { namespace Gist {
     resize(600,300);
   }
 
-  TextOutput::~TextOutput(void) {
+  TextOutputI::~TextOutputI(void) {
     delete os;
   }
 
   std::ostream&
-  TextOutput::getStream(void) {
+  TextOutputI::getStream(void) {
     return *os;
   }
 
   void
-  TextOutput::insertHtml(const QString& s) {
+  TextOutputI::insertHtml(const QString& s) {
     QTextBlockFormat bf = editor->textCursor().blockFormat();
     bf.setBottomMargin(0);
     editor->textCursor().setBlockFormat(bf);
@@ -149,7 +149,7 @@ namespace Gecode { namespace Gist {
     editor->ensureCursorVisible();
   }
 
-  void TextOutput::changeStayOnTop(void) {
+  void TextOutputI::changeStayOnTop(void) {
     QPoint p = pos();
     if (stayOnTop->isChecked()) {
       setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);

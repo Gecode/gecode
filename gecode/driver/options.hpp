@@ -346,7 +346,8 @@ namespace Gecode {
 #ifdef GECODE_HAS_GIST
   forceinline
   Options::_I::_I(void) : _click(heap,1), n_click(0),
-    _solution(heap,1), n_solution(0), _move(heap,1), n_move(0) {}
+    _solution(heap,1), n_solution(0), _move(heap,1), n_move(0),
+    _compare(heap,1), n_compare(0) {}
 
   forceinline void
   Options::_I::click(Gist::Inspector* i) {
@@ -360,6 +361,10 @@ namespace Gecode {
   Options::_I::move(Gist::Inspector* i) {
     _move[n_move++] = i;
   }
+  forceinline void
+  Options::_I::compare(Gist::Comparator* i) {
+    _compare[n_compare++] = i;
+  }
   forceinline Gist::Inspector*
   Options::_I::click(unsigned int i) const {
     return (i < n_click) ? _click[i] : NULL;
@@ -371,6 +376,10 @@ namespace Gecode {
   forceinline Gist::Inspector*
   Options::_I::move(unsigned int i) const {
     return (i < n_move) ? _move[i] : NULL;
+  }
+  forceinline Gist::Comparator*
+  Options::_I::compare(unsigned int i) const {
+    return (i < n_compare) ? _compare[i] : NULL;
   }
 #endif
 

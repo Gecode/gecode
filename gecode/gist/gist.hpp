@@ -38,8 +38,96 @@
 namespace Gecode { namespace Gist {
 
   template<class S>
+  VarComparator<S>::VarComparator(std::string name)
+    : TextOutput(name) {}
+
+  template<class S>
+  void
+  VarComparator<S>::compare(const Space& s0, const Space& s1) {
+    std::string result =
+      dynamic_cast<const S&>(s0).compare(dynamic_cast<const S&>(s1));
+    if (result != "") {
+      init();
+      addHtml("<pre>\n");
+      addHtml(result.c_str());
+      addHtml("</pre><hr />");
+    }
+  }
+
+  template<class S>
+  std::string
+  VarComparator<S>::name(void) {
+    return TextOutput::name();
+  }
+
+  template<class S>
+  void
+  VarComparator<S>::finalize(void) {
+    TextOutput::finalize();
+  }
+  
+  inline std::string
+  Comparator::compare(std::string x_n, IntVar x, IntVar y) {
+    IntVarRanges xr(x), yr(y);
+    if (!Iter::Ranges::equal(xr,yr)) {
+      std::ostringstream ret;
+      ret << x_n << "=" << x << " -> " << y;
+      return ret.str();
+    }
+    return "";
+  }
+  inline std::string
+  Comparator::compare(std::string x_n, BoolVar x, BoolVar y) {
+    if (! (x.min() == y.min() && x.max() == y.max()) ) {
+      std::ostringstream ret;
+      ret << x_n << "=" << x << " -> " << y;
+      return ret.str();
+    }
+    return "";
+  }
+#ifdef GECODE_HAS_SET_VARS
+  inline std::string
+  Comparator::compare(std::string x_n, SetVar x, SetVar y) {
+    SetVarGlbRanges xglbr(x), yglbr(y);
+    SetVarLubRanges xlubr(x), ylubr(y);
+    if (! (Iter::Ranges::equal(xglbr,yglbr) && 
+           Iter::Ranges::equal(xlubr,ylubr) &&
+           x.cardMin() == y.cardMin() &&
+           y.cardMax() == y.cardMax()) ) {
+      std::ostringstream ret;
+      ret << x_n << "=" << x << " -> " << y;
+      return ret.str();
+    }
+    return "";
+  }
+#endif
+  template<class Var>
+  std::string
+  Comparator::compare(std::string x_n, const VarArgArray<Var>& x, 
+    const VarArgArray<Var>& y) {
+    if (x.size() != y.size())
+      return "Error: array size mismatch";
+    std::ostringstream ret;
+    bool first = true;
+    for (int i=0; i<x.size(); i++) {
+      std::ostringstream xni;
+      xni << x_n << "[" << i << "]";
+      std::string cmp = compare(xni.str(),x[i],y[i]);
+      if (cmp != "") {
+        if (!first) {
+          ret << ", ";
+        } else {
+          first = false;          
+        }
+        ret << cmp;
+      }
+    }
+    return ret.str();
+  }
+  
+  template<class S>
   Print<S>::Print(const std::string& name)
-    : TextInspector(name) {}
+    : TextOutput(name) {}
 
   template<class S>
   void
@@ -50,12 +138,19 @@ namespace Gecode { namespace Gist {
     addHtml("</pre><hr />");
   }
 
+  template<class S>
+  void
+  Print<S>::finalize(void) {
+    TextOutput::finalize();
+  }
+
   forceinline
   Options::Options(void) {} 
 
   forceinline
   Options::_I::_I(void) : _click(heap,1), n_click(0),
-    _solution(heap,1), n_solution(0), _move(heap,1), n_move(0) {}
+    _solution(heap,1), n_solution(0),
+    _move(heap,1), n_move(0), _compare(heap,1), n_compare(0) {}
 
   forceinline void
   Options::_I::click(Inspector* i) {
@@ -69,6 +164,10 @@ namespace Gecode { namespace Gist {
   Options::_I::move(Inspector* i) {
     _move[n_move++] = i;
   }
+  forceinline void
+  Options::_I::compare(Comparator* c) {
+    _compare[n_compare++] = c;
+  }
   forceinline Inspector*
   Options::_I::click(unsigned int i) const {
     return (i < n_click) ? _click[i] : NULL;
@@ -80,6 +179,10 @@ namespace Gecode { namespace Gist {
   forceinline Inspector*
   Options::_I::move(unsigned int i) const {
     return (i < n_move) ? _move[i] : NULL;
+  }
+  forceinline Comparator*
+  Options::_I::compare(unsigned int i) const {
+    return (i < n_compare) ? _compare[i] : NULL;
   }
 
   inline int

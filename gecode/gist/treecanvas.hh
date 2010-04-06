@@ -109,6 +109,10 @@ namespace Gecode {  namespace Gist {
     void addMoveInspector(Inspector* i);
     /// Set active inspector
     void activateMoveInspector(int i, bool active);
+    /// Add comparator \a c
+    void addComparator(Comparator* c);
+    /// Set active comparator
+    void activateComparator(int i, bool active);
 
   public Q_SLOTS:
     /// Set scale factor to \a scale0
@@ -176,6 +180,11 @@ namespace Gecode {  namespace Gist {
     void setPath(void);
     /// Call the double click inspector for all nodes on the path from root to head of the path
     void inspectPath(void);
+    /// Wait for click on node to compare with current node
+    void startCompareNodes(void);
+    /// Wait for click on node to compare with current node before fixpoint
+    void startCompareNodesBeforeFP(void);
+    
     /// Re-emit status change information for current node
     void emitStatusChanged(void);
 
@@ -249,9 +258,16 @@ namespace Gecode {  namespace Gist {
     QVector<QPair<Inspector*,bool> > solutionInspectors;
     /// The registered move inspectors, and whether they are active
     QVector<QPair<Inspector*,bool> > moveInspectors;
+    /// The registered comparators, and whether they are active
+    QVector<QPair<Comparator*,bool> > comparators;
 
     /// The bookmarks map
     QVector<VisualNode*> bookmarks;
+
+    /// Whether node comparison action is running
+    bool compareNodes;
+    /// Whether node comparison action computes fixpoint
+    bool compareNodesBeforeFP;
 
     /// The scale bar
     QSlider* scaleBar;

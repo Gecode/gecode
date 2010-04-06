@@ -122,6 +122,8 @@ namespace Gecode { namespace Gist {
     
     nodeMenu->addMenu(inspectNodeMenu);
     nodeMenu->addMenu(inspectNodeBeforeFPMenu);
+    nodeMenu->addAction(c->compareNode);
+    nodeMenu->addAction(c->compareNodeBeforeFP);
     nodeMenu->addAction(c->setPath);
     nodeMenu->addAction(c->inspectPath);
     nodeMenu->addAction(c->showNodeStats);
@@ -172,6 +174,10 @@ namespace Gecode { namespace Gist {
     connect(moveInspectorsMenu, SIGNAL(aboutToShow()),
             this, SLOT(populateInspectorSelection()));
     toolsMenu->addMenu(moveInspectorsMenu);
+    comparatorsMenu = new QMenu("Comparators");
+    connect(comparatorsMenu, SIGNAL(aboutToShow()),
+            this, SLOT(populateInspectorSelection()));
+    toolsMenu->addMenu(comparatorsMenu);
 
     QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
     QAction* aboutAction = helpMenu->addAction(tr("About"));
@@ -279,6 +285,8 @@ namespace Gecode { namespace Gist {
     solutionInspectorsMenu->addActions(c->solutionInspectorGroup->actions());
     moveInspectorsMenu->clear();
     moveInspectorsMenu->addActions(c->moveInspectorGroup->actions());
+    comparatorsMenu->clear();
+    comparatorsMenu->addActions(c->comparatorGroup->actions());
   }
 
   void

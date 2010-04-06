@@ -43,7 +43,7 @@
 
 namespace Gecode { namespace Gist {
   /// \brief Window with associated ostream, used for inspecting Gist nodes
-  class TextOutput : public QMainWindow {
+  class TextOutputI : public QMainWindow {
     Q_OBJECT
   private:
     /// Action used for toggling stay-on-top behavior
@@ -55,9 +55,9 @@ namespace Gecode { namespace Gist {
 
   public:
     /// Constructor
-    TextOutput(const std::string& name, QWidget *parent = 0);
+    TextOutputI(const std::string& name, QWidget *parent = 0);
     /// Destructor
-    ~TextOutput(void);
+    ~TextOutputI(void);
     /// Return stream that prints to the text display
     std::ostream& getStream(void);
     /// Add html string \a s to the output
