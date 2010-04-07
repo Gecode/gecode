@@ -68,9 +68,12 @@
 
 [RELEASE]
 Version: 3.3.1
-Date: Soonish
+Date: 2010-04-07
 [DESCRIPTION]
-Yada!
+This release adds many new features to Gist, fixes two major bugs
+in extensional constraints, and has some more cleanups to comply
+with the first release of the "Modeling and Programming with
+Gecode" document. And, as follows some small fixes and cleanups.
 
 [ENTRY]
 Module: scheduling
@@ -157,14 +160,14 @@ Tasks in unary scheduling constraints may now have processing times of 0.
 
 [ENTRY]
 Module: gist
-What:   change
+What:   new
 Rank:   minor
 [DESCRIPTION]
 Added inspection of nodes before fixpoint computation.
 
 [ENTRY]
 Module: set
-What:   change
+What:   removed
 Rank:   minor
 [DESCRIPTION]
 Removed Set::IntSetPropagator and Set::IntSetRePropagator because they are 
@@ -179,7 +182,7 @@ Fixed a bug where sometimes clicking on a node would select a different node.
 
 [ENTRY]
 Module: gist
-What:   change
+What:   performance
 Rank:   major
 [DESCRIPTION]
 Scrolling and zooming have been reimplemented. The new implementation is more 
@@ -189,28 +192,28 @@ centered. You can now also zoom by pressing shift while using the mouse wheel.
 
 [ENTRY]
 Module: example
-What:   change
+What:   new
 Rank:   minor
 [DESCRIPTION]
 Added Gist inspectors for the Knights and Queens examples.
 
 [ENTRY]
 Module: driver
-What:   change
+What:   new
 Rank:   minor
 [DESCRIPTION]
 You can now register Gist inspectors in the driver options.
 
 [ENTRY]
 Module: gist
-What:   change
+What:   new
 Rank:   minor
 [DESCRIPTION]
 Nodes can now be bookmarked.
 
 [ENTRY]
 Module: gist
-What:   change
+What:   new
 Rank:   minor
 [DESCRIPTION]
 Added inspectors that react whenever a node is selected.
@@ -224,6 +227,8 @@ Comply with MiniZinc 1.1. String literals are not allowed any longer
 except in annotations, the solver outputs UNKNOWN and UNSATISFIABLE 
 instead of just ==========, and the global constraints all_equal, 
 decreasing_int, and decreasing_bool are supported.
+
+
 
 [RELEASE]
 Version: 3.3.0
