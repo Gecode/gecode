@@ -389,14 +389,15 @@ namespace Gecode { namespace FlatZinc {
       if (isBoolArray(s,ce[1],singleIntVar)) {
         if (singleIntVar != -1) {
           if (std::abs(ia[singleIntVar]) == 1 && ce[2]->getInt() == 0) {
+            IntVar siv = getIntVar(s, ce[1]->getArray()->a[singleIntVar]);
             BoolVarArgs iv = arg2boolvarargs(s, ce[1], 0, singleIntVar);
             IntArgs ia_tmp(ia.size()-1);
             int count = 0;
             for (int i=0; i<ia.size(); i++) {
               if (i != singleIntVar)
-                ia_tmp[count++] = ia[singleIntVar] == 1 ? ia[i] : -ia[i];
+                ia_tmp[count++] = ia[singleIntVar] == -1 ? ia[i] : -ia[i];
             }
-            linear(s, ia_tmp, iv, irt, s.iv[singleIntVar], ann2icl(ann));
+            linear(s, ia_tmp, iv, irt, siv, ann2icl(ann));
           } else {
             IntVarArgs iv = arg2intvarargs(s, ce[1]);
             linear(s, ia, iv, irt, ce[2]->getInt(), ann2icl(ann));
@@ -425,15 +426,16 @@ namespace Gecode { namespace FlatZinc {
       if (isBoolArray(s,ce[1],singleIntVar)) {
         if (singleIntVar != -1) {
           if (std::abs(ia[singleIntVar]) == 1 && ce[2]->getInt() == 0) {
+            IntVar siv = getIntVar(s, ce[1]->getArray()->a[singleIntVar]);
             BoolVarArgs iv = arg2boolvarargs(s, ce[1], 0, singleIntVar);
             IntArgs ia_tmp(ia.size()-1);
             int count = 0;
             for (int i=0; i<ia.size(); i++) {
               if (i != singleIntVar)
-                ia_tmp[count++] = ia[singleIntVar] == 1 ? ia[i] : -ia[i];
+                ia_tmp[count++] = ia[singleIntVar] == -1 ? ia[i] : -ia[i];
             }
-            linear(s, ia_tmp, iv, irt, s.iv[singleIntVar],
-                   getBoolVar(s, ce[3]), ann2icl(ann));
+            linear(s, ia_tmp, iv, irt, siv, getBoolVar(s, ce[3]), 
+                   ann2icl(ann));
           } else {
             IntVarArgs iv = arg2intvarargs(s, ce[1]);
             linear(s, ia, iv, irt, ce[2]->getInt(),
