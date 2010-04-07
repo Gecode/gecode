@@ -525,7 +525,9 @@ namespace Gecode {
       /// Print a solution to \a os
       virtual void print(std::ostream& os) const { (void) os; }
       /// Compare with \a s
-      virtual std::string compare(const Space&) const { return ""; }
+      virtual void compare(const Space&, std::ostream& os) const {
+        (void) os;
+      }
       /// Run script with search engine \a Engine and options \a opt
       template<class Script, template<class> class Engine, class Options>
       static void run(const Options& opt);

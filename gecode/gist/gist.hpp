@@ -44,12 +44,12 @@ namespace Gecode { namespace Gist {
   template<class S>
   void
   VarComparator<S>::compare(const Space& s0, const Space& s1) {
-    std::string result =
-      dynamic_cast<const S&>(s0).compare(dynamic_cast<const S&>(s1));
-    if (result != "") {
+    std::ostringstream result;
+    dynamic_cast<const S&>(s0).compare(s1,result);
+    if (result.str() != "") {
       init();
       addHtml("<pre>\n");
-      addHtml(result.c_str());
+      getStream() << result.str() << std::endl;
       addHtml("</pre><hr />");
     }
   }
