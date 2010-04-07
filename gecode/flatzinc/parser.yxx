@@ -504,6 +504,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, !$2() || !$2.some()->empty(), "Empty var int domain.");
         bool print = $5->hasAtom("output_var");
+        bool introduced = $5->hasAtom("var_is_introduced");
         pp->intvarTable.put($4, pp->intvars.size());
         if (print) {
           pp->output(std::string($4), new AST::IntVar(pp->intvars.size()));
@@ -512,10 +513,10 @@ vardecl_item:
           AST::Node* arg = $6.some();
           if (arg->isInt()) {
             pp->intvars.push_back(varspec($4,
-              new IntVarSpec(arg->getInt(),!print)));
+              new IntVarSpec(arg->getInt(),introduced)));
           } else if (arg->isIntVar()) {
             pp->intvars.push_back(varspec($4,
-              new IntVarSpec(Alias(arg->getIntVar()),!print)));
+              new IntVarSpec(Alias(arg->getIntVar()),introduced)));
           } else {
             yyassert(pp, false, "Invalid var int initializer.");
           }
@@ -524,7 +525,7 @@ vardecl_item:
                                 new AST::IntVar(pp->intvars.size()-1), $2);
           delete arg;
         } else {
-          pp->intvars.push_back(varspec($4, new IntVarSpec($2,!print)));
+          pp->intvars.push_back(varspec($4, new IntVarSpec($2,introduced)));
         }
         delete $5; free($4);
       }
@@ -532,6 +533,7 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
+        bool introduced = $5->hasAtom("var_is_introduced");
         pp->boolvarTable.put($4, pp->boolvars.size());
         if (print) {
           pp->output(std::string($4), new AST::BoolVar(pp->boolvars.size()));
@@ -540,10 +542,10 @@ vardecl_item:
           AST::Node* arg = $6.some();
           if (arg->isBool()) {
             pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(arg->getBool(),!print)));            
+              new BoolVarSpec(arg->getBool(),introduced)));            
           } else if (arg->isBoolVar()) {
             pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(Alias(arg->getBoolVar()),!print)));
+              new BoolVarSpec(Alias(arg->getBoolVar()),introduced)));
           } else {
             yyassert(pp, false, "Invalid var bool initializer.");
           }
@@ -552,7 +554,7 @@ vardecl_item:
                                 new AST::BoolVar(pp->boolvars.size()-1), $2);
           delete arg;
         } else {
-          pp->boolvars.push_back(varspec($4, new BoolVarSpec($2,!print)));
+          pp->boolvars.push_back(varspec($4, new BoolVarSpec($2,introduced)));
         }
         delete $5; free($4);
       }
@@ -565,6 +567,7 @@ vardecl_item:
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $7->hasAtom("output_var");
+        bool introduced = $7->hasAtom("var_is_introduced");
         pp->setvarTable.put($6, pp->setvars.size());
         if (print) {
           pp->output(std::string($6), new AST::SetVar(pp->setvars.size()));
@@ -573,10 +576,10 @@ vardecl_item:
           AST::Node* arg = $8.some();
           if (arg->isSet()) {
             pp->setvars.push_back(varspec($6,
-              new SetVarSpec(arg->getSet(),!print)));            
+              new SetVarSpec(arg->getSet(),introduced)));
           } else if (arg->isSetVar()) {
             pp->setvars.push_back(varspec($6,
-              new SetVarSpec(Alias(arg->getSetVar()),!print)));
+              new SetVarSpec(Alias(arg->getSetVar()),introduced)));
             delete arg;
           } else {
             yyassert(pp, false, "Invalid var set initializer.");
@@ -586,7 +589,7 @@ vardecl_item:
             addDomainConstraint(pp, "set_subset",
                                 new AST::SetVar(pp->setvars.size()-1), $4);
         } else {
-          pp->setvars.push_back(varspec($6, new SetVarSpec($4,!print)));
+          pp->setvars.push_back(varspec($6, new SetVarSpec($4,introduced)));
         }
         delete $7; free($6);
       }
