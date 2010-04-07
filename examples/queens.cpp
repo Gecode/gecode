@@ -187,7 +187,7 @@ public:
   }
 };
 
-#endif GECODE_HAS_GIST
+#endif /* GECODE_HAS_GIST */
 
 /** \brief Main-function
  *  \relates Queens
