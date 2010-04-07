@@ -1702,6 +1702,7 @@ depend: $(VARIMP:%=$(top_srcdir)/%) $(GENBRANCHSRC)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
+	$(FLATZINC_GENSRC) \
 	$(TESTSRC) > Makefile.dep
 
 -include Makefile.dep
