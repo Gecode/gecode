@@ -77,7 +77,15 @@ Gecode" document. And, as follows some small fixes and cleanups.
 
 [ENTRY]
 Module: flatzinc
-What:   change
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Variables that do not have output annotations are now garbage
+collected during copying.
+
+[ENTRY]
+Module: flatzinc
+What:   performance
 Rank:   minor
 [DESCRIPTION]
 When using sums of Boolean variables using bool2int in MiniZinc,

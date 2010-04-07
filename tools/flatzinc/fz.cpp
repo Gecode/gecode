@@ -68,6 +68,7 @@ int main(int argc, char** argv) {
 
   if (fg) {
     fg->createBranchers(fg->solveAnnotations(), false, std::cerr);
+    fg->shrinkArrays(p);
     fg->run(std::cout, p, opt, t_total);
   } else {
     exit(EXIT_FAILURE);    

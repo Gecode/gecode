@@ -233,7 +233,7 @@ namespace Gecode { namespace FlatZinc {
     intVarCount = 0;
     iv = IntVarArray(*this, intVars);
     iv_introduced = std::vector<bool>(intVars);
-    iv_boolalias = alloc<int>(intVars);
+    iv_boolalias = alloc<int>(intVars+(intVars==0?1:0));
     boolVarCount = 0;
     bv = BoolVarArray(*this, boolVars);
     bv_introduced = std::vector<bool>(boolVars);
@@ -802,6 +802,15 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
+  FlatZincSpace::shrinkArrays(Printer& p) {
+    p.shrinkArrays(*this, iv, bv
+#ifdef GECODE_HAS_SET_VARS
+    , sv
+#endif
+    );
+  }
+
+  void
   Printer::init(AST::Array* output) {
     _output = output;
   }
@@ -911,40 +920,6 @@ namespace Gecode { namespace FlatZinc {
             out << ", ";
         }
         out << "]";
-      } else if (ai->isCall("ifthenelse")) {
-        AST::Array* aia = ai->getCall("ifthenelse")->getArgs(3);
-        if (aia->a[0]->isBool()) {
-          if (aia->a[0]->getBool())
-            printElem(out, aia->a[1], iv,bv
-#ifdef GECODE_HAS_SET_VARS
-            ,sv
-#endif
-            );
-          else
-            printElem(out, aia->a[2], iv,bv
-#ifdef GECODE_HAS_SET_VARS
-            ,sv
-#endif
-            );
-        } else if (aia->a[0]->isBoolVar()) {
-          BoolVar b = bv[aia->a[0]->getBoolVar()];
-          if (b.one())
-            printElem(out, aia->a[1], iv,bv
-#ifdef GECODE_HAS_SET_VARS
-            ,sv
-#endif
-            );
-          else if (b.zero())
-            printElem(out, aia->a[2], iv,bv
-#ifdef GECODE_HAS_SET_VARS
-            ,sv
-#endif
-            );
-          else
-            std::cerr << "Error: Condition not fixed." << std::endl;
-        } else {
-          std::cerr << "Error: Condition not Boolean." << std::endl;        
-        }
       } else {
         printElem(out,ai,iv,bv
 #ifdef GECODE_HAS_SET_VARS
@@ -953,6 +928,98 @@ namespace Gecode { namespace FlatZinc {
         );
       }
     }
+  }
+
+  void
+  Printer::shrinkElement(AST::Node* node,
+                         std::map<int,int>& iv, std::map<int,int>& bv, 
+                         std::map<int,int>& sv) {
+    if (node->isIntVar()) {
+      AST::IntVar* x = static_cast<AST::IntVar*>(node);
+      if (iv.find(x->i) == iv.end()) {
+        int newi = iv.size();
+        iv[x->i] = newi;
+      }
+      x->i = iv[x->i];
+    } else if (node->isBoolVar()) {
+      AST::BoolVar* x = static_cast<AST::BoolVar*>(node);
+      if (bv.find(x->i) == bv.end()) {
+        int newi = bv.size();
+        bv[x->i] = newi;
+      }
+      x->i = bv[x->i];
+    } else if (node->isSetVar()) {
+      AST::SetVar* x = static_cast<AST::SetVar*>(node);
+      if (sv.find(x->i) == sv.end()) {
+        int newi = sv.size();
+        sv[x->i] = newi;
+      }
+      x->i = sv[x->i];      
+    }
+  }
+
+  void
+  Printer::shrinkArrays(Space& home,
+                        Gecode::IntVarArray& iv,
+                        Gecode::BoolVarArray& bv
+#ifdef GECODE_HAS_SET_VARS
+                        ,
+                        Gecode::SetVarArray& sv
+#endif
+                       ) {
+    if (_output == NULL) {
+      iv.resize(home, 0);
+      bv.resize(home, 0);
+#ifdef GECODE_HAS_SET_VARS
+      sv.resize(home, 0);
+#endif
+      return;
+    }
+    std::map<int,int> iv_new;
+    std::map<int,int> bv_new;
+    std::map<int,int> sv_new;
+
+    for (unsigned int i=0; i< _output->a.size(); i++) {
+      AST::Node* ai = _output->a[i];
+      if (ai->isArray()) {
+        AST::Array* aia = ai->getArray();
+        for (unsigned int j=0; j<aia->a.size(); j++) {
+          shrinkElement(aia->a[j],iv_new,bv_new,sv_new);
+        }
+      } else {
+        shrinkElement(ai,iv_new,bv_new,sv_new);
+      }
+    }
+    if (static_cast<int>(iv_new.size()) != iv.size()) {
+      IntVarArgs iva(iv_new.size());
+      for (map<int,int>::iterator i=iv_new.begin(); i != iv_new.end(); ++i) {
+        iva[(*i).second] = iv[(*i).first];
+      }
+      for (int i=iva.size(); i--;)
+        iv[i] = iva[i];
+      iv.resize(home, iva.size());
+    }
+
+    if (static_cast<int>(bv_new.size()) != bv.size()) {
+      BoolVarArgs bva(bv_new.size());
+      for (map<int,int>::iterator i=bv_new.begin(); i != bv_new.end(); ++i) {
+        bva[(*i).second] = bv[(*i).first];
+      }
+      for (int i=bva.size(); i--;)
+        bv[i] = bva[i];
+      bv.resize(home, bva.size());
+    }
+#ifdef GECODE_HAS_SET_VARS
+    if (static_cast<int>(sv_new.size()) != sv.size()) {
+      SetVarArgs sva(sv_new.size());
+      for (map<int,int>::iterator i=sv_new.begin(); i != sv_new.end(); ++i) {
+        sva[(*i).second] = sv[(*i).first];
+      }
+      for (int i=sva.size(); i--;)
+        sv[i] = sva[i];
+      sv.resize(home, sva.size());
+    }
+#endif
   }
 
   Printer::~Printer(void) {

@@ -46,6 +46,8 @@
 #include <gecode/set.hh>
 #endif
 
+#include <map>
+
 /*
  * Support for DLLs under Windows
  *
@@ -126,6 +128,20 @@ namespace Gecode { namespace FlatZinc {
                ) const;
   
     ~Printer(void);
+    
+    void shrinkElement(AST::Node* node,
+                       std::map<int,int>& iv, std::map<int,int>& bv, 
+                       std::map<int,int>& sv);
+
+    void shrinkArrays(Space& home,
+                      Gecode::IntVarArray& iv,
+                      Gecode::BoolVarArray& bv
+#ifdef GECODE_HAS_SET_VARS
+                      ,
+                      Gecode::SetVarArray& sv
+#endif
+                     );
+    
   private:
     Printer(const Printer&);
     Printer& operator=(const Printer&);
@@ -313,6 +329,16 @@ namespace Gecode { namespace FlatZinc {
   
     /// Produce output on \a out using \a p
     void print(std::ostream& out, const Printer& p) const;
+
+    /**
+     * \brief Remove all variables not needed for output
+     *
+     * After calling this function, no new constraints can be posted through
+     * FlatZinc variable references, and the createBranchers method must
+     * not be called again.
+     *
+     */
+    void shrinkArrays(Printer& p);
 
     /// Return whether to solve a satisfaction or optimization problem
     Meth method(void) const;

@@ -125,7 +125,7 @@ namespace Gecode { namespace FlatZinc {
       pos += num;
       return num;    
     }
-  
+
     void output(std::string x, AST::Node* n) {
       _output.push_back(std::pair<std::string,AST::Node*>(x,n));
     }
