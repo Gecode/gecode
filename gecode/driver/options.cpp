@@ -294,7 +294,11 @@ namespace Gecode {
     std::cerr << std::endl
               << " - Thread support: ";
 #ifdef GECODE_HAS_THREADS
-    std::cerr << "enabled (" << Support::Thread::npu() << " processing units)";
+    if (Support::Thread::npu() == 1)
+      std::cerr << "enabled (1 processing unit)";
+    else
+      std::cerr << "enabled (" << Support::Thread::npu() 
+                << " processing units)";
 #else
     std::cerr << "disabled";
 #endif
