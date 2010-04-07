@@ -46,8 +46,8 @@ const int n_suppliers = 5;
 /// Number of stores
 const int n_stores = 10;
 
-/// Cost of building one warehouse
-const int building_cost = 30;
+/// Fixed cost for one warehouse
+const int fixed_cost = 30;
 
 /// Capacity of a single warehouse
 const int capacity[n_suppliers] = {
@@ -100,7 +100,7 @@ protected:
   /// Is a supplier open (warehouse needed)
   BoolVarArray open;
   /// Cost of a store
-  IntVarArray scost;
+  IntVarArray store;
   /// Total cost
   IntVar total;
 public:
@@ -108,30 +108,16 @@ public:
   Warehouses(const Options&)
     : supplier(*this, n_stores, 0, n_suppliers-1),
       open(*this, n_suppliers, 0, 1),
-      scost(*this, n_stores, 0, Int::Limits::max),
+      store(*this, n_stores, 0, Int::Limits::max),
       total(*this, 0, Int::Limits::max) {
+
     // Compute total cost
-    {
-      // Opening cost
-      IntArgs c(n_suppliers);
-      for (int i=0; i<n_suppliers; i++)
-        c[i]=building_cost;
-      IntVar oc(*this, 0, Int::Limits::max);
-      linear(*this, c, open, IRT_EQ, oc);
-      // Total cost of stores
-      IntVarArgs tc(n_stores+1);
-      for (int i=0; i<n_stores; i++)
-        tc[i]=scost[i];
-      tc[n_stores] = oc;
-      linear(*this, tc, IRT_EQ, total);
-    }
+    post(*this, fixed_cost*sum(open) + sum(store) == total);
 
     // Compute cost for store
     for (int i=0; i<n_stores; i++) {
-      IntArgs c(n_suppliers);
-      for (int j=0; j<n_suppliers; j++)
-        c[j] = cost_matrix[i][j];
-      element(*this, c, supplier[i], scost[i]);
+      IntArgs c(n_suppliers, cost_matrix[i]);
+      element(*this, c, supplier[i], store[i]);
     }
 
     // Do not exceed capacity
@@ -146,7 +132,7 @@ public:
       rel(*this, BOT_OR, store_by_supplier, open[i]);
     }
 
-    branch(*this, scost, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
+    branch(*this, store, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
@@ -156,7 +142,7 @@ public:
   Warehouses(bool share, Warehouses& s) : MinimizeScript(share,s) {
     supplier.update(*this, share, s.supplier);
     open.update(*this, share, s.open);
-    scost.update(*this, share, s.scost);
+    store.update(*this, share, s.store);
     total.update(*this, share, s.total);
   }
 
@@ -168,8 +154,8 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\tSupplier: " << supplier << std::endl
-       << "\tCost: " << scost << std::endl
+    os << "\tSupplier:   " << supplier << std::endl
+       << "\tStore cost: " << store << std::endl
        << "\tTotal cost: " << total << std::endl
        << std::endl;
   }
