@@ -803,7 +803,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::shrinkArrays(Printer& p) {
-    p.shrinkArrays(*this, iv, bv
+    p.shrinkArrays(*this, _optVar, iv, bv
 #ifdef GECODE_HAS_SET_VARS
     , sv
 #endif
@@ -960,6 +960,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   Printer::shrinkArrays(Space& home,
+                        int& optVar,
                         Gecode::IntVarArray& iv,
                         Gecode::BoolVarArray& bv
 #ifdef GECODE_HAS_SET_VARS
@@ -978,6 +979,11 @@ namespace Gecode { namespace FlatZinc {
     std::map<int,int> iv_new;
     std::map<int,int> bv_new;
     std::map<int,int> sv_new;
+
+    if (optVar != -1) {
+      iv_new[optVar] = 0;
+      optVar = 0;
+    }
 
     for (unsigned int i=0; i< _output->a.size(); i++) {
       AST::Node* ai = _output->a[i];

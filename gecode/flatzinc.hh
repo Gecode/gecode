@@ -134,6 +134,7 @@ namespace Gecode { namespace FlatZinc {
                        std::map<int,int>& sv);
 
     void shrinkArrays(Space& home,
+                      int& optVar,
                       Gecode::IntVarArray& iv,
                       Gecode::BoolVarArray& bv
 #ifdef GECODE_HAS_SET_VARS
