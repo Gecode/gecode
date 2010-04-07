@@ -76,6 +76,15 @@ with the first release of the "Modeling and Programming with
 Gecode" document. And, as follows some small fixes and cleanups.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+When using sums of Boolean variables using bool2int in MiniZinc,
+the FlatZinc interpreter now posts the more efficient propagators
+that work directly on the Boolean variables.
+
+[ENTRY]
 Module: scheduling
 What:   bug
 Rank:   minor

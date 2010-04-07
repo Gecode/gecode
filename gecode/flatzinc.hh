@@ -265,6 +265,8 @@ namespace Gecode { namespace FlatZinc {
     Gecode::IntVarArray iv;
     /// Indicates whether an integer variable is introduced by mzn2fzn
     std::vector<bool> iv_introduced;
+    /// Indicates whether an integer variable aliases a Boolean variable
+    int* iv_boolalias;
     /// The Boolean variables
     Gecode::BoolVarArray bv;
     /// Indicates whether a Boolean variable is introduced by mzn2fzn
@@ -286,6 +288,10 @@ namespace Gecode { namespace FlatZinc {
 
     /// Create new integer variable from specification
     void newIntVar(IntVarSpec* vs);
+    /// Link integer variable \a iv to Boolean variable \a bv
+    void aliasBool2Int(int iv, int bv);
+    /// Return linked Boolean variable for integer variable \a iv
+    int aliasBool2Int(int iv);
     /// Create new Boolean variable from specification
     void newBoolVar(BoolVarSpec* vs);
     /// Create new set variable from specification

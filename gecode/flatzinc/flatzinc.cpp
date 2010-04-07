@@ -206,7 +206,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
   FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
-    : Space(share, f), _solveAnnotations(NULL) {
+    : Space(share, f), _solveAnnotations(NULL), iv_boolalias(NULL) {
       _optVar = f._optVar;
       _method = f._method;
       iv.update(*this, share, f.iv);
@@ -233,6 +233,7 @@ namespace Gecode { namespace FlatZinc {
     intVarCount = 0;
     iv = IntVarArray(*this, intVars);
     iv_introduced = std::vector<bool>(intVars);
+    iv_boolalias = alloc<int>(intVars);
     boolVarCount = 0;
     bv = BoolVarArray(*this, boolVars);
     bv_introduced = std::vector<bool>(boolVars);
@@ -251,6 +252,16 @@ namespace Gecode { namespace FlatZinc {
       iv[intVarCount++] = IntVar(*this, vs2is(vs));
     }
     iv_introduced[intVarCount-1] = vs->introduced;
+    iv_boolalias[intVarCount-1] = -1;
+  }
+
+  void
+  FlatZincSpace::aliasBool2Int(int iv, int bv) {
+    iv_boolalias[iv] = bv;
+  }
+  int
+  FlatZincSpace::aliasBool2Int(int iv) {
+    return iv_boolalias[iv];
   }
 
   void
