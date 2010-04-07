@@ -195,12 +195,12 @@ namespace Gecode { namespace Gist {
     bookmarkNode->setShortcut(QKeySequence("Shift+B"));
     connect(bookmarkNode, SIGNAL(triggered()), canvas, SLOT(bookmarkNode()));
 
-    compareNode = new QAction("Compare node", this);
+    compareNode = new QAction("Compare", this);
     compareNode->setShortcut(QKeySequence("V"));
     connect(compareNode, SIGNAL(triggered()),
             canvas, SLOT(startCompareNodes()));
 
-    compareNodeBeforeFP = new QAction("Compare node before fixpoint", this);
+    compareNodeBeforeFP = new QAction("Compare before fixpoint", this);
     compareNodeBeforeFP->setShortcut(QKeySequence("Ctrl+V"));
     connect(compareNodeBeforeFP, SIGNAL(triggered()),
             canvas, SLOT(startCompareNodesBeforeFP()));

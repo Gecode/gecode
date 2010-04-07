@@ -186,6 +186,8 @@ namespace Gecode {
       Print(const std::string& name);
       /// Use the print method of the template class S to print a space
       virtual void inspect(const Space& node);
+      /// Return name
+      virtual std::string name(void);
       /// Clean up when Gist exits
       virtual void finalize(void);
     };
@@ -207,10 +209,10 @@ namespace Gecode {
       VarComparator(std::string name);
       /// Compare \a s0 to \a s1
       virtual void compare(const Space& s0, const Space& s1);
-      /// Finalize when Gist exits
-      virtual void finalize(void);
       /// Return name
       virtual std::string name(void);
+      /// Finalize when Gist exits
+      virtual void finalize(void);
     };
     
     /// A branching that stops exploration

@@ -139,6 +139,12 @@ namespace Gecode { namespace Gist {
   }
 
   template<class S>
+  std::string
+  Print<S>::name(void) {
+    return TextOutput::name();
+  }
+
+  template<class S>
   void
   Print<S>::finalize(void) {
     TextOutput::finalize();
