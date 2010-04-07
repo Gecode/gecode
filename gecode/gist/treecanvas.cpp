@@ -947,6 +947,8 @@ namespace Gecode { namespace Gist {
       while (v.next()) {}
       currentNode->setMarked(true);
     }
+#else
+    (void) n;
 #endif
   }
 
