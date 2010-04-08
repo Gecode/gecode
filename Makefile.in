@@ -1434,8 +1434,7 @@ DIST_FILES= \
 	misc/genstatistics.perl misc/getrevision.perl \
 	misc/genchangelog.perl misc/genvariables.perl \
 	misc/gentxtchangelog.perl misc/makedepend.perl \
-	misc/genbranch.perl \
-	misc/AppleHelpbookInfo.plist
+	misc/genbranch.perl
 
 distdir:
 	rm -rf gecode-$(VERSION) && \
@@ -1512,6 +1511,7 @@ header.html: $(top_srcdir)/misc/doxygen/header.html
 doxygen.conf.use: doxygen.conf
 	(echo "GENERATE_HTMLHELP = NO"; \
 	 echo "SEARCHENGINE = YES"; \
+	 echo "SERVER_BASED_SEARCH = YES"; \
 	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
 		cat $< - > $@
 else
@@ -1532,23 +1532,15 @@ doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
 	doxygen doxygen.conf.use
 
+ifeq "@ENABLEDOCSEARCH@" "yes"
+	# Work around a doxygen bug (a missing div screws up the layout)
+	mv doc/html/search.php doc/html/search2.php
+	sed -e 's|<div class="qindex">|<div><div class="qindex">|' \
+	  doc/html/search2.php > doc/html/search.php
+	rm doc/html/search2.php
 endif
 
-
-# Generate an indexed Apple HelpBook
-# The generated book must then be copied to
-# /Library/Documentation/Help
-doc-apple: doc
-	mkdir -p doc/Gecode.help/Contents/Resources
-	rm -rf doc/Gecode.help/Contents/Resources/English.lproj
-	cp -r doc/html doc/Gecode.help/Contents/Resources/English.lproj
-	cp misc/AppleHelpbookInfo.plist \
-	  doc/Gecode.help/Contents/Info.plist
-	sed -i -e \
-	  's|</title>|</title><META NAME="AppleTitle" CONTENT="Gecode Help">|g' \
-	  doc/Gecode.help/Contents/Resources/English.lproj/index.html
-	/Developer/Applications/Utilities/Help\ Indexer.app/Contents/MacOS/Help\ Indexer \
-	  doc/Gecode.help/Contents/Resources/English.lproj
+endif
 
 #
 # Installation
