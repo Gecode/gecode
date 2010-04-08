@@ -39,7 +39,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for count constraints
+   /// %Tests for count constraints
    namespace Count {
 
      /**
@@ -47,7 +47,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test number of equal integers equal to integer
+     /// %Test number of equal integers equal to integer
      class IntInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -56,7 +56,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntInt(Gecode::IntRelType irt0)
          : Test("Count::Int::Int::"+str(irt0),4,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=x.size(); i--; )
@@ -70,7 +70,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal integers equal to integer with duplicate variables
+     /// %Test number of equal integers equal to integer with duplicate variables
      class IntIntDup : public Test {
      protected:
        /// Integer relation type to propagate
@@ -79,7 +79,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntIntDup(Gecode::IntRelType irt0)
          : Test("Count::Int::Int::Dup::"+str(irt0),4,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=x.size(); i--; )
@@ -96,7 +96,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal integers equal to integer variable
+     /// %Test number of equal integers equal to integer variable
      class IntVar : public Test {
      protected:
        /// Integer relation type to propagate
@@ -105,7 +105,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntVar(Gecode::IntRelType irt0)
          : Test("Count::Int::Var::"+str(irt0),5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -124,7 +124,7 @@ namespace Test { namespace Int {
 
      Gecode::IntArgs ints(4, 1,0,3,2);
 
-     /// Test number of several equal integers equal to integer
+     /// %Test number of several equal integers equal to integer
      class IntArrayInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -133,7 +133,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntArrayInt(Gecode::IntRelType irt0)
          : Test("Count::IntArray::Int::"+str(irt0),5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -150,7 +150,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of several equal integers equal to integer variable
+     /// %Test number of several equal integers equal to integer variable
      class IntArrayVar : public Test {
      protected:
        /// Integer relation type to propagate
@@ -159,7 +159,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntArrayVar(Gecode::IntRelType irt0)
          : Test("Count::IntArray::Var::"+str(irt0),5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -176,7 +176,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal integers equal to integer variable with sharing
+     /// %Test number of equal integers equal to integer variable with sharing
      class IntVarShared : public Test {
      protected:
        /// Integer relation type to propagate
@@ -185,7 +185,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntVarShared(Gecode::IntRelType irt0)
          : Test("Count::Int::Var::Shared::"+str(irt0),4,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -199,7 +199,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal variables equal to integer variable
+     /// %Test number of equal variables equal to integer variable
      class VarVar : public Test {
      protected:
        /// Integer relation type to propagate
@@ -208,7 +208,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarVar(Gecode::IntRelType irt0)
          : Test("Count::Var::Var::"+str(irt0),5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<3; i++)
@@ -225,7 +225,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal variables equal to integer
+     /// %Test number of equal variables equal to integer
      class VarInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -234,7 +234,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarInt(Gecode::IntRelType irt0)
          : Test("Count::Var::Int::"+str(irt0),4,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<3; i++)
@@ -251,7 +251,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal variables equal to integer variable with sharing
+     /// %Test number of equal variables equal to integer variable with sharing
      class VarVarSharedA : public Test {
      protected:
        /// Integer relation type to propagate
@@ -260,7 +260,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarVarSharedA(Gecode::IntRelType irt0)
          : Test("Count::Var::Var::Shared::A::"+str(irt0),5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -277,7 +277,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal variables equal to integer variable with sharing
+     /// %Test number of equal variables equal to integer variable with sharing
      class VarVarSharedB : public Test {
      protected:
        /// Integer relation type to propagate
@@ -286,7 +286,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarVarSharedB(Gecode::IntRelType irt0)
          : Test("Count::Var::Var::Shared::B::"+str(irt0),5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -303,7 +303,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal variables equal to integer variable with sharing
+     /// %Test number of equal variables equal to integer variable with sharing
      class VarVarSharedC : public Test {
      protected:
        /// Integer relation type to propagate
@@ -312,7 +312,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarVarSharedC(Gecode::IntRelType irt0)
          : Test("Count::Var::Var::Shared::A::"+str(irt0),4,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)

@@ -41,7 +41,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for sequence constraints
+  /// %Tests for sequence constraints
   namespace Sequence {
 
     /**
@@ -52,13 +52,13 @@ namespace Test { namespace Set {
 
     static IntSet ds_33(-1,2);
 
-    /// Test for sequence constraint
+    /// %Test for sequence constraint
     class Sequence : public SetTest {
     public:
       /// Create and register test
       Sequence(const char* t)
         : SetTest(t,4,ds_33,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int max = Gecode::Set::Limits::min - 1;
         for (int i=0; i<4; i++) {
@@ -80,7 +80,7 @@ namespace Test { namespace Set {
     };
     Sequence _sequence("Sequence::Sequence");
 
-    /// Test for sequential-union constraint
+    /// %Test for sequential-union constraint
     class SeqU : public SetTest {
     private:
       int n;
@@ -88,7 +88,7 @@ namespace Test { namespace Set {
       /// Create and register test
       SeqU(int n0)
         : SetTest("Sequence::SeqU"+str(n0),n0+1,ds_33,false), n(n0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int max = Gecode::Set::Limits::min - 1;
         for (int i=0; i<n; i++) {

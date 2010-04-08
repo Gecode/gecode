@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   /**
-   * \brief Choice storing position and values
+   * \brief %Choice storing position and values
    *
    * The maximal number of alternatives is defined by \a alt.
    */

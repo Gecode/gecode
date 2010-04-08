@@ -76,7 +76,7 @@ protected:
   /// Start times
   IntVarArray _start;
 
-  /// Task representation for CROSH heuristic
+  /// %Task representation for CROSH heuristic
   class Task {
   public:
     int j; //< Job

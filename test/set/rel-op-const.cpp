@@ -41,7 +41,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for relation/operation constraints with constants
+  /// %Tests for relation/operation constraints with constants
   namespace RelOpConst {
 
     /**
@@ -56,7 +56,7 @@ namespace Test { namespace Set {
 
     static IntSet iss[] = {IntSet(-1,1), IntSet(-4,-4), IntSet(0,2)};
 
-    /// Test for set relation constraint with constants
+    /// %Test for set relation constraint with constants
     class RelSIS : public SetTest {
     private:
       IntSet is;
@@ -96,7 +96,7 @@ namespace Test { namespace Set {
        : SetTest("RelOp::ConstSIS::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet)+(inverse0 ? "i" :""),2,ds_22,false)
        , is(iss[intSet]), sot(sot0), srt(srt0), inverse(inverse0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         IntSetRanges isr(is);
         CountableSetRanges xr0(x.lub, x[0]);
@@ -154,7 +154,7 @@ namespace Test { namespace Set {
       }
     };
 
-    /// Test for set relation constraint with constants
+    /// %Test for set relation constraint with constants
     class RelSSI : public SetTest {
     private:
       IntSet is;
@@ -193,7 +193,7 @@ namespace Test { namespace Set {
        : SetTest("RelOp::ConstSSI::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet),2,ds_22,false)
        , is(iss[intSet]), sot(sot0), srt(srt0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         CountableSetRanges xr1(x.lub, x[1]);
@@ -241,7 +241,7 @@ namespace Test { namespace Set {
       }
     };
 
-    /// Test for set relation constraint with constants
+    /// %Test for set relation constraint with constants
     class RelISI : public SetTest {
     private:
       IntSet is0;
@@ -284,7 +284,7 @@ namespace Test { namespace Set {
                  (inverse0 ? "i" : ""),1,ds_33,false)
        , is0(iss[intSet0]), is1(iss[intSet1]), sot(sot0), srt(srt0)
        , inverse(inverse0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         IntSetRanges isr0(is0);

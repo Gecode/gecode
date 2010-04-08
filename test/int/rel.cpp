@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for relation constraints
+   /// %Tests for relation constraints
    namespace Rel {
 
      /**
@@ -49,7 +49,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for simple relation involving integer variables
+     /// %Test for simple relation involving integer variables
      class IntVarXY : public Test {
      protected:
        /// Integer relation type to propagate
@@ -60,7 +60,7 @@ namespace Test { namespace Int {
          : Test("Rel::Int::Var::XY::"+str(irt0)+"::"+str(icl)+"::"+str(n),
                 n+1,-3,3,n==1,icl),
            irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x.size() == 2) {
            return cmp(x[0],irt,x[1]);
@@ -87,7 +87,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for simple relation involving shared integer variables
+     /// %Test for simple relation involving shared integer variables
      class IntVarXX : public Test {
      protected:
        /// Integer relation type to propagate
@@ -103,7 +103,7 @@ namespace Test { namespace Int {
                     (irt != Gecode::IRT_NQ))
            ? CTL_DOMAIN : CTL_NONE;
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return cmp(x[0],irt,x[0]);
        }
@@ -118,7 +118,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for simple relation involving Boolean variables
+     /// %Test for simple relation involving Boolean variables
      class BoolVarXY : public Test {
      protected:
        /// Integer relation type to propagate
@@ -129,7 +129,7 @@ namespace Test { namespace Int {
          : Test("Rel::Bool::Var::XY::"+str(irt0)+"::"+str(n),n+1,0,1,
                 n==1),
            irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x.size() == 2) {
            return cmp(x[0],irt,x[1]);
@@ -159,7 +159,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for simple relation involving shared Boolean variables
+     /// %Test for simple relation involving shared Boolean variables
      class BoolVarXX : public Test {
      protected:
        /// Integer relation type to propagate
@@ -174,7 +174,7 @@ namespace Test { namespace Int {
                     (irt != Gecode::IRT_NQ))
            ? CTL_DOMAIN : CTL_NONE;
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return cmp(x[0],irt,x[0]);
        }
@@ -185,7 +185,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for simple relation involving integer variable and integer constant
+     /// %Test for simple relation involving integer variable and integer constant
      class IntInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -198,7 +198,7 @@ namespace Test { namespace Int {
          : Test("Rel::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),
                 n,-3,3,n==1),
            irt(irt0), c(c0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x.size() == 1)
            return cmp(x[0],irt,c);
@@ -221,7 +221,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for simple relation involving Boolean variable and integer constant
+     /// %Test for simple relation involving Boolean variable and integer constant
      class BoolInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -234,7 +234,7 @@ namespace Test { namespace Int {
          : Test("Rel::Bool::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),n,0,1,
                 n==1),
            irt(irt0), c(c0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x.size() == 1)
            return cmp(x[0],irt,c);
@@ -261,7 +261,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for pairwise relation between integer variables
+     /// %Test for pairwise relation between integer variables
      class IntPairwise : public Test {
      protected:
        /// Integer relation type to propagate
@@ -272,7 +272,7 @@ namespace Test { namespace Int {
          : Test("Rel::Int::Pairwise::"+str(irt0)+"::"+str(icl),
                    4,-3,3,false,icl),
            irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
            for (int j=i+1; j<x.size(); j++)
@@ -286,7 +286,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for pairwise relation between Boolean variables
+     /// %Test for pairwise relation between Boolean variables
      class BoolPairwise : public Test {
      protected:
        /// Integer relation type to propagate
@@ -296,7 +296,7 @@ namespace Test { namespace Int {
        BoolPairwise(Gecode::IntRelType irt0)
          : Test("Rel::Bool::Pairwise::"+str(irt0),8,0,1),
            irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
            for (int j=i+1; j<x.size(); j++)
@@ -314,7 +314,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for relation between arrays of integer variables
+     /// %Test for relation between arrays of integer variables
      class IntArray : public Test {
      protected:
        /// Integer relation type to propagate
@@ -323,7 +323,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntArray(Gecode::IntRelType irt0)
          : Test("Rel::Int::Array::"+str(irt0),6,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size() >> 1;
          for (int i=0; i<n; i++)
@@ -346,7 +346,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for relation between arrays of Boolean variables
+     /// %Test for relation between arrays of Boolean variables
      class BoolArray : public Test {
      protected:
        /// Integer relation type to propagate
@@ -355,7 +355,7 @@ namespace Test { namespace Int {
        /// Create and register test
        BoolArray(Gecode::IntRelType irt0)
          : Test("Rel::Bool::Array::"+str(irt0),10,0,1), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size() >> 1;
          for (int i=0; i<n; i++)

@@ -45,10 +45,10 @@
 
 namespace Gecode { namespace Search { namespace Parallel {
 
-  /// Parallel DFS engine
+  /// %Parallel depth-first search engine
   class Engine : public Search::Engine {
   protected:
-    /// Parallel depth-first search worker
+    /// %Parallel depth-first search worker
     class Worker : public Search::Worker, public Support::Runnable {
     protected:
       /// Reference to engine

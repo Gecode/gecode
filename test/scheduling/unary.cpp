@@ -42,7 +42,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for unary scheduling constraints
+   /// %Tests for unary scheduling constraints
    namespace Unary {
 
      /**
@@ -50,7 +50,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestScheduling
       */
      //@{
-     /// Test for unary constraint
+     /// %Test for unary constraint
      class ManFixUnary : public Test {
      protected:
        /// The processing times
@@ -75,7 +75,7 @@ namespace Test { namespace Int {
        virtual Assignment* assignment(void) const {
          return new RandomAssignment(arity,dom,500);
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
            for (int j=i+1; j<x.size(); j++)
@@ -89,7 +89,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for unary constraint with optional tasks
+     /// %Test for unary constraint with optional tasks
      class OptFixUnary : public Test {
      protected:
        /// The processing times
@@ -115,7 +115,7 @@ namespace Test { namespace Int {
        virtual Assignment* assignment(void) const {
          return new RandomAssignment(arity,dom,500);
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n = x.size() / 2;
          for (int i=0; i<n; i++)

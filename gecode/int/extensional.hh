@@ -76,13 +76,13 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Initialize with zeroes
       void init(void);
     };
-    /// Edge defined by in-state and out-state
+    /// %Edge defined by in-state and out-state
     class Edge {
     public:
       StateIdx i_state; ///< Number of in-state
       StateIdx o_state; ///< Number of out-state
     };
-    /// Support information for a value
+    /// %Support information for a value
     class Support {
     public:
       Val val; ///< Supported value
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     };
     /// Type for support size
     typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
-    /// Layer for a view in the layered graph
+    /// %Layer for a view in the layered graph
     class Layer {
     public:
       View x; ///< Integer view
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Return supported value
       int val(void) const;
     };
-    /// Advisors for views (by position in array)
+    /// %Advisors for views (by position in array)
     class Index : public Advisor {
     public:
       /// The position of the view in the view array
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   typedef Support::BitSetBase* Domain;
 
   /**
-   * \brief Base for domain consistent extensional propagation
+   * \brief %Base for domain consistent extensional propagation
    *
    * This class contains support for implementing domain consistent
    * extensional propagation algorithms that use positive tuple sets and
@@ -418,7 +418,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       static void operator delete(void* p, Space& home);
       //@}
     };
-    /// Work stack
+    /// %Work stack
     class Work {
     private:
       /// Next work entry

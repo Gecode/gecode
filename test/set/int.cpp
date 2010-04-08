@@ -43,7 +43,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for combined int/set constraints
+  /// %Tests for combined int/set constraints
   namespace Int {
 
     /**
@@ -64,13 +64,13 @@ namespace Test { namespace Set {
 
     static IntSet ds_33(-3,3);
 
-    /// Test for cardinality constraint
+    /// %Test for cardinality constraint
     class Card : public SetTest {
     public:
       /// Create and register test
       Card(const char* t)
         : SetTest(t,1,ds_33,false,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         unsigned int s = 0;
         for (CountableSetRanges xr(x.lub, x[0]);xr();++xr) s+= xr.width();
@@ -85,13 +85,13 @@ namespace Test { namespace Set {
     };
     Card _card("Int::Card");
 
-    /// Test for minimal element constraint
+    /// %Test for minimal element constraint
     class Min : public SetTest {
     public:
       /// Create and register test
       Min(const char* t)
         : SetTest(t,1,ds_33,true,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         return xr0() && xr0.min()==x.intval();
@@ -108,13 +108,13 @@ namespace Test { namespace Set {
     };
     Min _min("Int::Min");
 
-    /// Test for negated minimal element constraint
+    /// %Test for negated minimal element constraint
     class NotMin : public SetTest {
     public:
       /// Create and register test
       NotMin(const char* t)
         : SetTest(t,1,ds_33,false,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         return !(xr0() && xr0.min()==x.intval());
@@ -126,13 +126,13 @@ namespace Test { namespace Set {
     };
     NotMin _notmin("Int::NotMin");
 
-    /// Test for maximal element constraint
+    /// %Test for maximal element constraint
     class Max : public SetTest {
     public:
       /// Create and register test
       Max(const char* t)
         : SetTest(t,1,ds_33,true,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         IntSet x0(xr0);
@@ -150,13 +150,13 @@ namespace Test { namespace Set {
     };
     Max _max("Int::Max");
 
-    /// Test for negated maximal element constraint
+    /// %Test for negated maximal element constraint
     class NotMax : public SetTest {
     public:
       /// Create and register test
       NotMax(const char* t)
         : SetTest(t,1,ds_33,false,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         IntSet x0(xr0);
@@ -169,13 +169,13 @@ namespace Test { namespace Set {
     };
     NotMax _notmax("Int::NotMax");
 
-    /// Test for element constraint
+    /// %Test for element constraint
     class Elem : public SetTest {
     public:
       /// Create and register test
       Elem(const char* t)
         : SetTest(t,1,ds_33,true,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (CountableSetValues xr(x.lub, x[0]);xr();++xr)
           if (xr.val()==x.intval())
@@ -193,13 +193,13 @@ namespace Test { namespace Set {
     };
     Elem _elem("Int::Elem");
 
-    /// Test for negated element constraint
+    /// %Test for negated element constraint
     class NoElem : public SetTest {
     public:
       /// Create and register test
       NoElem(const char* t)
         : SetTest(t,1,ds_33,false,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (CountableSetValues xr(x.lub, x[0]);xr();++xr)
           if (xr.val()==x.intval())
@@ -213,7 +213,7 @@ namespace Test { namespace Set {
     };
     NoElem _noelem("Int::NoElem");
 
-    /// Test for relation constraint
+    /// %Test for relation constraint
     class Rel : public SetTest {
     private:
       Gecode::SetRelType srt;
@@ -225,7 +225,7 @@ namespace Test { namespace Set {
                   1,ds_33,true,1)
         , srt(srt0)
         , inverse(inverse0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSet is(x.intval(), x.intval());
@@ -287,7 +287,7 @@ namespace Test { namespace Set {
     Rel _rel_disji(Gecode::SRT_DISJ,true);
     Rel _rel_cmpli(Gecode::SRT_CMPL,true);
 
-    /// Test for integer relation constraint
+    /// %Test for integer relation constraint
     class IntRel : public SetTest {
     private:
       Gecode::IntRelType irt;
@@ -299,7 +299,7 @@ namespace Test { namespace Set {
                   (inverse0 ? "::i" : ""),1,ds_33,false,1)
         , irt(irt0)
         , inverse(inverse0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetValues xr(x.lub, x[0]);
         if (!xr())
@@ -373,7 +373,7 @@ namespace Test { namespace Set {
       return sum;
     }
 
-    /// Test for set weight constraint
+    /// %Test for set weight constraint
     class Weights : public SetTest {
     public:
       IntArgs elements;
@@ -385,7 +385,7 @@ namespace Test { namespace Set {
               int min = -10000, int max = 10000)
         : SetTest(t,1,ds_33,false,1),
           elements(el), weights(w), minWeight(min), maxWeight(max) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges x0(x.lub, x[0]);
         return x.intval()==weightI(elements,weights,x0) &&
@@ -414,13 +414,13 @@ namespace Test { namespace Set {
     IntArgs w4(7,w4v);
     Weights _weights4("Int::Weights::4", el1, w4);
 
-    /// Test for match constraint
+    /// %Test for match constraint
     class Match : public SetTest {
     public:
       /// Create and register test
       Match(const char* t)
         : SetTest(t,1,ds_33,false,3) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         if (x.ints()[0]>=x.ints()[1] ||
             x.ints()[1]>=x.ints()[2])
@@ -452,7 +452,7 @@ namespace Test { namespace Set {
     };
     Match _match("Int::Match");
 
-    /// Test for integer channel constraint
+    /// %Test for integer channel constraint
     class ChannelInt : public SetTest {
     private:
       int ssize, isize;
@@ -460,7 +460,7 @@ namespace Test { namespace Set {
       /// Create and register test
       ChannelInt(const char* t, const IntSet& d, int _ssize, int _isize)
         : SetTest(t,_ssize,d,false,_isize), ssize(_ssize), isize(_isize) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=0; i<isize; i++) {
           if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
@@ -489,7 +489,7 @@ namespace Test { namespace Set {
     ChannelInt _channelint1("Int::Channel::Int::1", d2, 2, 3);
     ChannelInt _channelint2("Int::Channel::Int::2", d3, 3, 3);
 
-    /// Test for Boolean channel constraint
+    /// %Test for Boolean channel constraint
     class ChannelBool : public SetTest {
     private:
       int isize;
@@ -497,7 +497,7 @@ namespace Test { namespace Set {
       /// Create and register test
       ChannelBool(const char* t, const IntSet& d, int _isize)
         : SetTest(t,1,d,false,_isize), isize(_isize) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=0; i<isize; i++) {
           if (x.ints()[i] < 0 || x.ints()[i] > 1)

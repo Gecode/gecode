@@ -87,7 +87,7 @@ namespace {
 
 
 
-/** \brief Custom brancher for black hole patience.
+/** \brief Custom brancher for black hole patience
  *
  * This class implements a custom brancher for BlackHole that
  * instantiates the variables in lexical order, and chooses the value
@@ -101,7 +101,7 @@ protected:
   ViewArray<Int::IntView> x;
   /// Cache of first unassigned variable
   mutable int start;
-  /// Choice
+  /// %Choice for black hole brancher
   class Choice : public Gecode::Choice {
   public:
     /// Position of variable

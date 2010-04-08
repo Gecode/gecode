@@ -43,7 +43,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for set element constraints
+  /// %Tests for set element constraints
   namespace Element {
 
     /**
@@ -55,13 +55,13 @@ namespace Test { namespace Set {
     static IntSet ds_12(-1,2);
     static IntSet ds_13(-1,3);
 
-    /// Test for ElementUnion constraint
+    /// %Test for ElementUnion constraint
     class ElementUnion : public SetTest {
     public:
       /// Create and register test
       ElementUnion(const char* t)
         : SetTest(t,5,ds_12,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[3]); sel2();
@@ -95,7 +95,7 @@ namespace Test { namespace Set {
     };
     ElementUnion _elementunion("Element::Union");
 
-    /// Test for ElementUnion constraint
+    /// %Test for ElementUnion constraint
     class ElementUnionConst : public SetTest {
     private:
       const IntSet i0;
@@ -105,7 +105,7 @@ namespace Test { namespace Set {
       /// Create and register test
       ElementUnionConst(const char* t)
         : SetTest(t,2,ds_13,false), i0(-3,-3), i1(-1,1), i2(0,2) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[0]); sel2();
@@ -139,13 +139,13 @@ namespace Test { namespace Set {
     };
     ElementUnionConst _elementunionconst("Element::UnionConst");
 
-    /// Test for ElementInter constraint
+    /// %Test for ElementInter constraint
     class ElementInter : public SetTest {
     public:
       /// Create and register test
       ElementInter(const char* t)
         : SetTest(t,5,ds_12,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[3]); sel2();
@@ -179,13 +179,13 @@ namespace Test { namespace Set {
     };
     ElementInter _elementinter("Element::Inter");
 
-    /// Test for ElementInter constraint
+    /// %Test for ElementInter constraint
     class ElementInterIn : public SetTest {
     public:
       /// Create and register test
       ElementInterIn(const char* t)
         : SetTest(t,5,ds_12,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[3]); sel2();
@@ -220,13 +220,13 @@ namespace Test { namespace Set {
     };
     ElementInterIn _elementinterin("Element::InterIn");
 
-    /// Test for ElementDisjoint constraint
+    /// %Test for ElementDisjoint constraint
     class ElementDisjoint : public SetTest {
     public:
       /// Create and register test
       ElementDisjoint(const char* t)
         : SetTest(t,5,ds_12,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
         for (CountableSetValues sel2(x.lub, x[3]); sel2();
@@ -269,13 +269,13 @@ namespace Test { namespace Set {
     };
     ElementDisjoint _elementdisjoint("Element::Disjoint");
 
-    /// Test for ElementElement constraint
+    /// %Test for ElementElement constraint
     class ElementSet : public SetTest {
     public:
       /// Create and register test
       ElementSet(const char* t)
         : SetTest(t,4,ds_12,false,true) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         if (x.intval() < 0 || x.intval() > 2)
           return false;
@@ -293,7 +293,7 @@ namespace Test { namespace Set {
     };
     ElementSet _elementset("Element::Set");
 
-    /// Test for ElementUnion constraint
+    /// %Test for ElementUnion constraint
     class ElementSetConst : public SetTest {
     private:
       const IntSet i0;
@@ -303,7 +303,7 @@ namespace Test { namespace Set {
       /// Create and register test
       ElementSetConst(const char* t)
         : SetTest(t,1,ds_13,false,true), i0(-3,-3), i1(-1,1), i2(0,2) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         if (x.intval() < 0 || x.intval() > 2)
           return false;
@@ -321,7 +321,7 @@ namespace Test { namespace Set {
     };
     ElementSetConst _elementsetconst("Element::SetConst");
 
-    /// Test for matrix element with integer set array and set variable
+    /// %Test for matrix element with integer set array and set variable
     class MatrixIntSet : public SetTest {
      protected:
        /// Array for test matrix
@@ -334,7 +334,7 @@ namespace Test { namespace Set {
          tm[0]=IntSet(0,0); tm[1]=IntSet(1,1);
          tm[2]=IntSet(2,2); tm[3]=IntSet(3,3);
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
          // Get integer assignment
          const Int::Assignment& y = x.ints();

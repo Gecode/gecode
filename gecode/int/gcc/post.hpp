@@ -47,6 +47,7 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
+  /// %Sort by increasing cardinality
   class CardLess : public Support::Less<Card> {
   public:
     bool operator ()(const Card& x, const Card& y) {

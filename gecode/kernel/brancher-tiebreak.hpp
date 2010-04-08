@@ -196,7 +196,7 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
-    /// Choice for tie breakers
+    /// %Choice for tie breakers
     class Choice {
     public:
       /// Number of choices

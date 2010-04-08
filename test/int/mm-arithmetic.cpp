@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-  /// Tests for minimal modelling constraints (arithmetic)
+  /// %Tests for minimal modelling constraints (arithmetic)
   namespace MiniModelArithmetic {
 
      /**
@@ -49,13 +49,13 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for multiplication constraint
+     /// %Test for multiplication constraint
      class Mult : public Test {
      public:
        /// Create and register test
        Mult(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Mult::"+s,3,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -69,13 +69,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for addition constraint
+     /// %Test for addition constraint
      class Plus : public Test {
      public:
        /// Create and register test
        Plus(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Plus::"+s,3,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -91,13 +91,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for subtraction constraint
+     /// %Test for subtraction constraint
      class Minus : public Test {
      public:
        /// Create and register test
        Minus(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Minus::"+s,3,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -113,13 +113,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for sqr constraint
+     /// %Test for sqr constraint
      class Sqr : public Test {
      public:
        /// Create and register test
        Sqr(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Sqr::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -132,13 +132,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for sqrt constraint
+     /// %Test for sqrt constraint
      class Sqrt : public Test {
      public:
        /// Create and register test
        Sqrt(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Sqrt::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -151,14 +151,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for absolute value constraint
+     /// %Test for absolute value constraint
      class Abs : public Test {
      public:
        /// Create and register test
        Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
          : Test("MiniModel::Abs::"+str(icl)+"::"+s,
                    2,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -171,13 +171,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary minimum constraint
+     /// %Test for binary minimum constraint
      class Min : public Test {
      public:
        /// Create and register test
        Min(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Min::Bin::"+s,3,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[2];
        }
@@ -188,13 +188,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary maximum constraint
+     /// %Test for binary maximum constraint
      class Max : public Test {
      public:
        /// Create and register test
        Max(const std::string& s, const Gecode::IntSet& d)
          : Test("MiniModel::Max::Bin::"+s,3,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[2];
        }
@@ -205,12 +205,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for n-ary minimmum constraint
+     /// %Test for n-ary minimmum constraint
      class MinNary : public Test {
      public:
        /// Create and register test
        MinNary(void) : Test("MiniModel::Min::Nary",4,-4,4) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[3];
        }
@@ -223,12 +223,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for n-ary maximum constraint
+     /// %Test for n-ary maximum constraint
      class MaxNary : public Test {
      public:
        /// Create and register test
        MaxNary(void) : Test("MiniModel::Max::Nary",4,-4,4) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[3];
        }

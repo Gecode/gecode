@@ -42,10 +42,10 @@
 
 namespace Gecode { namespace Search { namespace Parallel {
 
-  /// Parallel DFS engine
+  /// %Parallel depth-first search engine
   class DFS : public Engine {
   protected:
-    /// Parallel depth-first search worker
+    /// %Parallel depth-first search worker
     class Worker : public Engine::Worker {
     public:
       /// Initialize for space \a s (of size \a sz) with engine \a e

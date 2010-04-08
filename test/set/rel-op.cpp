@@ -41,7 +41,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for relation/operation constraints
+  /// %Tests for relation/operation constraints
   namespace RelOp {
 
     /**
@@ -53,7 +53,7 @@ namespace Test { namespace Set {
     static IntSet ds_22(-2,2);
     static IntSet ds_12(-1,2);
 
-    /// Test for ternary relation constraint
+    /// %Test for ternary relation constraint
     class Rel : public SetTest {
     private:
       Gecode::SetOpType  sot;
@@ -91,7 +91,7 @@ namespace Test { namespace Set {
         : SetTest("RelOp::"+str(sot0)+"::"+str(srt0)+"::S"+str(share0),
                   share0 == 0 ? 3 : 2,ds_22,false)
         , sot(sot0), srt(srt0), share(share0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int a,b,c;
         switch (share) {
@@ -173,7 +173,7 @@ namespace Test { namespace Set {
 
     Create c;
 
-    /// Test for n-ary partition constraint
+    /// %Test for n-ary partition constraint
     class RelN : public SetTest {
     private:
       Gecode::SetOpType sot;
@@ -189,7 +189,7 @@ namespace Test { namespace Set {
                   shared0 == 0 ? n0+1 : (shared0 <= 2 ? 3 : 2),ds_12,false)
         , sot(sot0), n(n0), shared(shared0), withConst(withConst0)
         , is(0,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int realN = shared == 0 ? n : 3;
 
@@ -351,7 +351,7 @@ namespace Test { namespace Set {
 
     CreateN cn;
 
-    /// Test for n-ary partition constraint
+    /// %Test for n-ary partition constraint
     class RelIntN : public SetTest {
     private:
       Gecode::SetOpType sot;
@@ -366,7 +366,7 @@ namespace Test { namespace Set {
                   1,ds_12,false,n0)
         , sot(sot0), n(n0), withConst(withConst0)
         , is(0,1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int* isrs = new int[n];
         for (int i=0; i<n; i++)

@@ -148,7 +148,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
 
 
   /**
-   * \brief Space allocator - specialization for \c void.
+   * \brief %Space allocator - specialization for \c void.
    *
    * The specialization is needed as the default instantiation fails 
    * for \c void.
@@ -158,6 +158,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     typedef void*       pointer;
     typedef const void* const_pointer;
     typedef void        value_type;
+    /// Rebinding helper (returns the type of a similar allocator for type \a U)
     template<class U> struct rebind {
       typedef space_allocator<U> other;
     };
@@ -308,7 +309,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   template<class T> struct region_allocator;
 
   /**
-   * \brief Region allocator - specialization for \c void.
+   * \brief %Region allocator - specialization for \c void.
    *
    * The specialization is needed as the default instantiation fails 
    * for \c void.
@@ -318,6 +319,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     typedef void* pointer;
     typedef const void* const_pointer;
     typedef void value_type;
+    /// Rebinding helper (returns the type of a similar allocator for type \a U)
     template<class U> struct rebind {
       typedef region_allocator<U> other;
     };

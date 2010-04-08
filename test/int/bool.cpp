@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for Boolean constraints
+   /// %Tests for Boolean constraints
    namespace Bool {
 
      inline int
@@ -63,7 +63,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for binary Boolean operation
+     /// %Test for binary Boolean operation
      class BinXYZ : public Test {
      protected:
        /// Boolean operation type for test
@@ -85,7 +85,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary Boolean operation with shared variables
+     /// %Test for binary Boolean operation with shared variables
      class BinXXY : public Test {
      protected:
        /// Boolean operation type for test
@@ -106,7 +106,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary Boolean operation with shared variables
+     /// %Test for binary Boolean operation with shared variables
      class BinXYX : public Test {
      protected:
        /// Boolean operation type for test
@@ -127,7 +127,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary Boolean operation with shared variables
+     /// %Test for binary Boolean operation with shared variables
      class BinXYY : public Test {
      protected:
        /// Boolean operation type for test
@@ -148,7 +148,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary Boolean operation with shared variables
+     /// %Test for binary Boolean operation with shared variables
      class BinXXX : public Test {
      protected:
        /// Boolean operation type for test
@@ -169,7 +169,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary Boolean operation with constant
+     /// %Test for binary Boolean operation with constant
      class BinConstXY : public Test {
      protected:
        /// Boolean operation type for test
@@ -192,7 +192,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary Boolean operation with shared variables and constant
+     /// %Test for binary Boolean operation with shared variables and constant
      class BinConstXX : public Test {
      protected:
        /// Boolean operation type for test
@@ -216,7 +216,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for Nary Boolean operation
+     /// %Test for Nary Boolean operation
      class Nary : public Test {
      protected:
        /// Boolean operation type for test
@@ -242,7 +242,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for Nary Boolean operation
+     /// %Test for Nary Boolean operation
      class NaryShared : public Test {
      protected:
        /// Boolean operation type for test
@@ -269,7 +269,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for Nary Boolean operation with constant
+     /// %Test for Nary Boolean operation with constant
      class NaryConst : public Test {
      protected:
        /// Boolean operation type for test
@@ -299,7 +299,7 @@ namespace Test { namespace Int {
      };
 
 
-     /// Test for Clause Boolean operation
+     /// %Test for Clause Boolean operation
      class ClauseXYZ : public Test {
      protected:
        /// Boolean operation type for test
@@ -334,7 +334,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for Clause Boolean operation
+     /// %Test for Clause Boolean operation
      class ClauseXXYYX : public Test {
      protected:
        /// Boolean operation type for test
@@ -370,7 +370,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for Clause Boolean operation
+     /// %Test for Clause Boolean operation
      class ClauseXXY : public Test {
      protected:
        /// Boolean operation type for test
@@ -397,7 +397,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for Clause Boolean operation with constant
+     /// %Test for Clause Boolean operation with constant
      class ClauseConst : public Test {
      protected:
        /// Boolean operation type for test

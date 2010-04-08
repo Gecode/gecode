@@ -42,10 +42,10 @@
 
 namespace Gecode { namespace Search { namespace Parallel {
 
-  /// Parallel BAB engine
+  /// %Parallel branch-and-bound engine
   class BAB : public Engine {
   protected:
-    /// Parallel BAB search worker
+    /// %Parallel branch-and-bound search worker
     class Worker : public Engine::Worker {
     protected:
       /// Number of entries not yet constrained to be better

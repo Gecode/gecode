@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for distinct constraints
+   /// %Tests for distinct constraints
    namespace Distinct {
 
      /**
@@ -138,14 +138,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Testing pathological cases
+     /// %Testing pathological cases
      class Pathological : public Base {
      protected:
        /// Number of variables
        int n;
        /// Consistency level
        Gecode::IntConLevel icl;
-       /// Test space
+       /// %Test space
        class TestSpace : public Gecode::Space {
        public:
          /// Constructor

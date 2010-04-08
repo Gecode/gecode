@@ -661,7 +661,7 @@ namespace Gecode {
       NT_EQV, ///< Equivalence
       NT_RLIN ///< Reified linear relation
     };
-    /// Node for Boolean expression
+    /// %Node for Boolean expression
     class Node {
     public:
       /// Nodes are reference counted
@@ -687,7 +687,7 @@ namespace Gecode {
       /// Memory management
       static void  operator delete(void* p, size_t size);
     };
-    /// Node for negation normalform (NNF)
+    /// %Node for negation normalform (%NNF)
     class NNF {
     public:
       /// Type of node

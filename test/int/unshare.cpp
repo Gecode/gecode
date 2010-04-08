@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for unsharing variables in arrays
+   /// %Tests for unsharing variables in arrays
    namespace Unshare {
 
      /**
@@ -49,13 +49,13 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for unsharing integer variables
+     /// %Test for unsharing integer variables
      class Int : public Test {
      public:
        /// Create and register test
        Int(Gecode::IntConLevel icl)
          : Test("Unshare::Int::"+str(icl),9,-1,1,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return ((x[0] == x[3]) &&
                  (x[1] == x[4]) && (x[1] == x[6]) &&
@@ -72,13 +72,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for unsharing Boolean variables
+     /// %Test for unsharing Boolean variables
      class Bool : public Test {
      public:
        /// Create and register test
        Bool(void)
          : Test("Unshare::Bool",9,0,1,false) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return ((x[0] == x[3]) &&
                  (x[1] == x[4]) && (x[1] == x[6]) &&

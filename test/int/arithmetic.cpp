@@ -42,7 +42,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for arithmetic constraints
+   /// %Tests for arithmetic constraints
    namespace Arithmetic {
 
      /**
@@ -50,14 +50,14 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for multiplication constraint
+     /// %Test for multiplication constraint
      class MultXYZ : public Test {
      public:
        /// Create and register test
        MultXYZ(const std::string& s, const Gecode::IntSet& d,
                Gecode::IntConLevel icl)
          : Test("Arithmetic::Mult::XYZ::"+str(icl)+"::"+s,3,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -70,14 +70,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for multiplication constraint with shared variables
+     /// %Test for multiplication constraint with shared variables
      class MultXXY : public Test {
      public:
        /// Create and register test
        MultXXY(const std::string& s, const Gecode::IntSet& d,
                Gecode::IntConLevel icl)
          : Test("Arithmetic::Mult::XXY::"+str(icl)+"::"+s,2,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[0]);
@@ -90,14 +90,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for multiplication constraint with shared variables
+     /// %Test for multiplication constraint with shared variables
      class MultXYX : public Test {
      public:
        /// Create and register test
        MultXYX(const std::string& s, const Gecode::IntSet& d,
                Gecode::IntConLevel icl)
          : Test("Arithmetic::Mult::XYX::"+str(icl)+"::"+s,2,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -110,14 +110,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for multiplication constraint with shared variables
+     /// %Test for multiplication constraint with shared variables
      class MultXYY : public Test {
      public:
        /// Create and register test
        MultXYY(const std::string& s, const Gecode::IntSet& d,
                Gecode::IntConLevel icl)
          : Test("Arithmetic::Mult::XYY::"+str(icl)+"::"+s,2,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -130,14 +130,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for multiplication constraint with shared variables
+     /// %Test for multiplication constraint with shared variables
      class MultXXX : public Test {
      public:
        /// Create and register test
        MultXXX(const std::string& s, const Gecode::IntSet& d,
                Gecode::IntConLevel icl)
          : Test("Arithmetic::Mult::XXX::"+str(icl)+"::"+s,1,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[0]);
@@ -150,14 +150,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for squaring constraint
+     /// %Test for squaring constraint
      class SqrXY : public Test {
      public:
        /// Create and register test
        SqrXY(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntConLevel icl)
          : Test("Arithmetic::Sqr::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -169,14 +169,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for squaring constraint with shared variables
+     /// %Test for squaring constraint with shared variables
      class SqrXX : public Test {
      public:
        /// Create and register test
        SqrXX(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntConLevel icl)
          : Test("Arithmetic::Sqr::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          return d0*d0 == d0;
@@ -187,14 +187,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for square root constraint
+     /// %Test for square root constraint
      class SqrtXY : public Test {
      public:
        /// Create and register test
        SqrtXY(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Sqrt::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -206,14 +206,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for square root constraint with shared variables
+     /// %Test for square root constraint with shared variables
      class SqrtXX : public Test {
      public:
        /// Create and register test
        SqrtXX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Sqrt::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          return (d0 >= 0) && (d0 >= d0*d0) && (d0 < (d0+1)*(d0+1));
@@ -224,7 +224,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for division/modulo constraint
+     /// %Test for division/modulo constraint
      class DivMod : public Test {
      private:
        static int abs(int a) { return a<0 ? -a:a; }
@@ -233,7 +233,7 @@ namespace Test { namespace Int {
        /// Create and register test
        DivMod(const std::string& s, const Gecode::IntSet& d)
          : Test("Arithmetic::DivMod::"+s,4,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return x[0] == x[1]*x[2]+x[3] &&
                 abs(x[3]) < abs(x[1]) &&
@@ -245,13 +245,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for division constraint
+     /// %Test for division constraint
      class Div : public Test {
      public:
        /// Create and register test
        Div(const std::string& s, const Gecode::IntSet& d)
          : Test("Arithmetic::Div::"+s,3,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
            return false;
@@ -268,13 +268,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for modulo constraint
+     /// %Test for modulo constraint
      class Mod : public Test {
      public:
        /// Create and register test
        Mod(const std::string& s, const Gecode::IntSet& d)
          : Test("Arithmetic::Mod::"+s,3,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
            return false;
@@ -291,14 +291,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for absolute value constraint
+     /// %Test for absolute value constraint
      class AbsXY : public Test {
      public:
        /// Create and register test
        AbsXY(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntConLevel icl)
          : Test("Arithmetic::Abs::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[1]);
@@ -310,14 +310,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for absolute value constraint with shared variables
+     /// %Test for absolute value constraint with shared variables
      class AbsXX : public Test {
      public:
        /// Create and register test
        AbsXX(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntConLevel icl)
          : Test("Arithmetic::Abs::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
          double d1 = static_cast<double>(x[0]);
@@ -329,14 +329,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary minimum constraint
+     /// %Test for binary minimum constraint
      class MinXYZ : public Test {
      public:
        /// Create and register test
        MinXYZ(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Bin::XYZ::"+str(icl)+"::"+s,3,d,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[2];
        }
@@ -346,14 +346,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary minimum constraint with shared variables
+     /// %Test for binary minimum constraint with shared variables
      class MinXXY : public Test {
      public:
        /// Create and register test
        MinXXY(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[0]) == x[1];
        }
@@ -363,14 +363,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary minimum constraint with shared variables
+     /// %Test for binary minimum constraint with shared variables
      class MinXYX : public Test {
      public:
        /// Create and register test
        MinXYX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[0];
        }
@@ -380,14 +380,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary minimum constraint with shared variables
+     /// %Test for binary minimum constraint with shared variables
      class MinXYY : public Test {
      public:
        /// Create and register test
        MinXYY(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Bin::XYY::"+str(icl)+"::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[1];
        }
@@ -397,14 +397,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary minimum constraint with shared variables
+     /// %Test for binary minimum constraint with shared variables
      class MinXXX : public Test {
      public:
        /// Create and register test
        MinXXX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Bin::XXX::"+str(icl)+"::"+s,1,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[0]) == x[0];
        }
@@ -414,7 +414,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary maximum constraint
+     /// %Test for binary maximum constraint
      class MaxXYZ : public Test {
      public:
        /// Create and register test
@@ -423,7 +423,7 @@ namespace Test { namespace Int {
          : Test("Arithmetic::Max::Bin::XYZ::"+str(icl)+"::"+s,3,d) {
          contest = CTL_BOUNDS_Z;
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[2];
        }
@@ -433,14 +433,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary maximum constraint with shared variables
+     /// %Test for binary maximum constraint with shared variables
      class MaxXXY : public Test {
      public:
        /// Create and register test
        MaxXXY(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Bin::XXY::"+str(icl)+"::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[0]) == x[1];
        }
@@ -450,14 +450,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary maximum constraint with shared variables
+     /// %Test for binary maximum constraint with shared variables
      class MaxXYX : public Test {
      public:
        /// Create and register test
        MaxXYX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[0];
        }
@@ -467,14 +467,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary maximum constraint with shared variables
+     /// %Test for binary maximum constraint with shared variables
      class MaxXYY : public Test {
      public:
        /// Create and register test
        MaxXYY(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Bin::XYY::"+str(icl)+"::"+s,2,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[1];
        }
@@ -484,14 +484,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for binary maximum constraint with shared variables
+     /// %Test for binary maximum constraint with shared variables
      class MaxXXX : public Test {
      public:
        /// Create and register test
        MaxXXX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Bin::XXX::"+str(icl)+"::"+s,1,d) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[0]) == x[0];
        }
@@ -501,13 +501,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for n-ary minimmum constraint
+     /// %Test for n-ary minimmum constraint
      class MinNary : public Test {
      public:
        /// Create and register test
        MinNary(Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Nary::"+str(icl),4,-4,4,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[3];
        }
@@ -519,13 +519,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for n-ary minimmum constraint with shared variables
+     /// %Test for n-ary minimmum constraint with shared variables
      class MinNaryShared : public Test {
      public:
        /// Create and register test
        MinNaryShared(Gecode::IntConLevel icl)
          : Test("Arithmetic::Min::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[1];
        }
@@ -537,13 +537,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for n-ary maximum constraint
+     /// %Test for n-ary maximum constraint
      class MaxNary : public Test {
      public:
        /// Create and register test
        MaxNary(Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Nary::"+str(icl),4,-4,4,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[3];
        }
@@ -555,13 +555,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for n-ary maximum constraint with shared variables
+     /// %Test for n-ary maximum constraint with shared variables
      class MaxNaryShared : public Test {
      public:
        /// Create and register test
        MaxNaryShared(Gecode::IntConLevel icl)
          : Test("Arithmetic::Max::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[1];
        }

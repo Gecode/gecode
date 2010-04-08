@@ -80,7 +80,7 @@
 
 /**
  * \namespace Gecode
- * \brief Gecode toplevel namespace
+ * \brief %Gecode toplevel namespace
  *
  * The Gecode namespace contains nested namespaces for
  * the various submodules (for example Int for the

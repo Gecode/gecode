@@ -246,7 +246,7 @@ namespace Test {
       }
     };
 
-    /// Base class for search tests
+    /// %Base class for search tests
     class Test : public Base {
     public:
       /// How to branch
@@ -292,7 +292,7 @@ namespace Test {
           htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {}
     };
 
-    /// Test for depth-first search
+    /// %Test for depth-first search
     template<class Model>
     class DFS : public Test {
     private:
@@ -335,7 +335,7 @@ namespace Test {
       }
     };
 
-    /// Test for limited discrepancy search
+    /// %Test for limited discrepancy search
     template<class Model>
     class LDS : public Test {
     private:
@@ -372,7 +372,7 @@ namespace Test {
       }
     };
 
-    /// Test for best solution search
+    /// %Test for best solution search
     template<class Model, template<class> class Engine>
     class Best : public Test {
     private:

@@ -300,7 +300,7 @@ namespace Gecode {
   };
   
   /**
-   * \brief Options for scripts
+   * \brief %Options for scripts
    * \ingroup TaskDriverCmd
    */
   class GECODE_DRIVER_EXPORT Options : public BaseOptions {
@@ -481,7 +481,7 @@ namespace Gecode {
   };
 
   /**
-   * \brief Options for scripts with additional size parameter
+   * \brief %Options for scripts with additional size parameter
    * \ingroup TaskDriverCmd
    */
   class GECODE_DRIVER_EXPORT SizeOptions : public Options {

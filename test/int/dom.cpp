@@ -39,7 +39,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for domain constraints
+   /// %Tests for domain constraints
    namespace Dom {
 
      /**
@@ -47,12 +47,12 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for domain constraint (integer)
+     /// %Test for domain constraint (integer)
      class DomInt : public Test {
      public:
        /// Create and register test
        DomInt(int n) : Test("Dom::Int::"+str(n),n,-4,4,n == 1) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=x.size(); i--; )
            if (x[i] != -2)
@@ -75,12 +75,12 @@ namespace Test { namespace Int {
      };
 
 
-     /// Test for domain constraint (range)
+     /// %Test for domain constraint (range)
      class DomRange : public Test {
      public:
        /// Create and register test
        DomRange(int n) : Test("Dom::Range::"+str(n),n,-4,4,n == 1) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=x.size(); i--; )
            if ((x[i] < -2) || (x[i] > 2))
@@ -108,12 +108,12 @@ namespace Test { namespace Int {
      };
      Gecode::IntSet d(r,4);
 
-     /// Test for domain constraint (full integer set)
+     /// %Test for domain constraint (full integer set)
      class DomDom : public Test {
      public:
        /// Create and register test
        DomDom(int n) : Test("Dom::Dom::"+str(n),n,-6,6,n == 1) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=x.size(); i--; )
            if (!(((x[i] >= -4) && (x[i] <= -3)) ||

@@ -43,6 +43,7 @@ namespace Gecode {
 
   namespace Int { namespace Element {
     template<>
+    /// VarArg type for constant %Set views
     class ViewToVarArg<Gecode::Set::ConstantView> {
     public:
       typedef IntSetArgs argtype;

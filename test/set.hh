@@ -242,7 +242,7 @@ namespace Test {
     };
 
     /**
-     * \brief Base class for tests with set constraints
+     * \brief %Base class for tests with set constraints
      *
      */
     class SetTest : public Base {

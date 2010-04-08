@@ -52,7 +52,7 @@ namespace Gecode {
    * Function brancher
    */
 
-  /// Brancher for calling a function
+  /// %Brancher for calling a function
   class GECODE_KERNEL_EXPORT FunctionBranch : public Brancher {
   protected:
     /// Minimal brancher description storing no information

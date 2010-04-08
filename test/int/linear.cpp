@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for linear constraints
+   /// %Tests for linear constraints
    namespace Linear {
 
      /// Check whether \a has only one coefficients
@@ -57,7 +57,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test linear relation over integer variables
+     /// %Test linear relation over integer variables
      class IntInt : public Test {
      protected:
        /// Coefficients
@@ -73,7 +73,7 @@ namespace Test { namespace Int {
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
                 a0.size(),d,icl != Gecode::ICL_DOM,icl),
          a(a0), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double e = 0.0;
          for (int i=0; i<x.size(); i++)
@@ -97,7 +97,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear relation over integer variables
+     /// %Test linear relation over integer variables
      class IntVar : public Test {
      protected:
        /// Coefficients
@@ -113,7 +113,7 @@ namespace Test { namespace Int {
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,icl != Gecode::ICL_DOM,icl),
            a(a0), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double e = 0.0;
          for (int i=0; i<a.size(); i++)
@@ -145,7 +145,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear relation over Boolean variables equal to constant
+     /// %Test linear relation over Boolean variables equal to constant
      class BoolInt : public Test {
      protected:
        /// Coefficients
@@ -163,7 +163,7 @@ namespace Test { namespace Int {
                 a0.size(),0,1,true,Gecode::ICL_DEF),
            a(a0), irt(irt0), c(c0) {
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double e = 0.0;
          for (int i=0; i<x.size(); i++)
@@ -193,7 +193,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear relation over Boolean variables equal to integer variable
+     /// %Test linear relation over Boolean variables equal to integer variable
      class BoolVar : public Test {
      protected:
        /// Coefficients
@@ -208,7 +208,7 @@ namespace Test { namespace Int {
          : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,
                 min,max,true),
            a(a0), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
          for (int i=0; i<n; i++)
@@ -219,7 +219,7 @@ namespace Test { namespace Int {
            e += a[i]*x[i];
          return cmp(e, irt, static_cast<double>(x[n]));
        }
-       /// Test whether \a x is to be ignore
+       /// %Test whether \a x is to be ignore
        virtual bool ignore(const Assignment& x) const {
          for (int i=x.size()-1; i--; )
            if ((x[i] < 0) || (x[i] > 1))

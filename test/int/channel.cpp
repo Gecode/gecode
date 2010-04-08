@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for channel constraints
+   /// %Tests for channel constraints
    namespace Channel {
 
      /**
@@ -125,7 +125,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test channel with shared variables
+     /// %Test channel with shared variables
      class ChannelShared : public Test {
      public:
        /// Construct and register test
@@ -147,7 +147,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test channel between integer and Boolean variable
+     /// %Test channel between integer and Boolean variable
      class ChannelLinkSingle : public Test {
      public:
        /// Construct and register test
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test channel between integer variable and array of Boolean variables
+     /// %Test channel between integer variable and array of Boolean variables
      class ChannelLinkMulti : public Test {
      private:
        int o;

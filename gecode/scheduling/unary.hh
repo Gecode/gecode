@@ -47,12 +47,12 @@
  *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
  *   Charles University, Prague, Czech Republic, 2007.
  *
- * \brief Scheduling for unary resources
+ * \brief %Scheduling for unary resources
  */
 
 namespace Gecode { namespace Scheduling { namespace Unary {
 
-  /// Unary (mandatory) task with fixed processing time
+  /// %Unary (mandatory) task with fixed processing time
   class ManFixTask {
   protected:
     /// Start time
@@ -141,7 +141,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTask& t);
 
 
-  /// Unary optional task with fixed processing time
+  /// %Unary optional task with fixed processing time
   class OptFixTask : public ManToOptTask<ManFixTask> {
   protected:
     using ManToOptTask<ManFixTask>::_m;
@@ -385,7 +385,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 
   /**
-   * \brief Scheduling propagator for unary resource with mandatory tasks
+   * \brief %Scheduling propagator for unary resource with mandatory tasks
    *
    * Requires \code #include <gecode/scheduling/unary.hh> \endcode
    * \ingroup FuncSchedulingProp
@@ -408,7 +408,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   };
 
   /**
-   * \brief Scheduling propagator for unary resource with optional tasks
+   * \brief %Scheduling propagator for unary resource with optional tasks
    *
    * Requires \code #include <gecode/scheduling/unary.hh> \endcode
    * \ingroup FuncSchedulingProp

@@ -44,7 +44,7 @@
 
 namespace Gecode { namespace Search { namespace Sequential {
 
-  /// Probe engine for %LDS
+  /// %Probe engine for %LDS
   class Probe : public Worker {
   protected:
     /// %Node in the search tree for %LDS

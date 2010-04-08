@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-  /// Tests for minimal modelling constraints (linear)
+  /// %Tests for minimal modelling constraints (linear)
    namespace MiniModelLin {
 
      /// Linear opcode
@@ -94,7 +94,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test linear expressions over integer variables
+     /// %Test linear expressions over integer variables
      class LinExprInt : public Test {
      protected:
        /// Linear instruction sequence
@@ -103,7 +103,7 @@ namespace Test { namespace Int {
        /// Create and register test
        LinExprInt(const LinInstr* lis0, const std::string& s)
          : Test("MiniModel::LinExpr::Int::"+s,4,-3,3), lis(lis0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int reg[3] = {x[0],x[1],x[2]};
          return eval(lis, reg) == x[3];
@@ -116,7 +116,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear expressions over Boolean variables
+     /// %Test linear expressions over Boolean variables
      class LinExprBool : public Test {
      protected:
        /// Linear instruction sequence
@@ -125,7 +125,7 @@ namespace Test { namespace Int {
        /// Create and register test
        LinExprBool(const LinInstr* lis0, const std::string& s)
          : Test("MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=3; i--; )
            if ((x[i] < 0) || (x[i] > 1))
@@ -143,7 +143,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear expressions over integer and Boolean variables
+     /// %Test linear expressions over integer and Boolean variables
      class LinExprMixed : public Test {
      protected:
        /// Linear instruction sequence
@@ -152,7 +152,7 @@ namespace Test { namespace Int {
        /// Create and register test
        LinExprMixed(const LinInstr* lis0, const std::string& s)
          : Test("MiniModel::LinExpr::Mixed::"+s,4,-3,3), lis(lis0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if ((x[2] < 0) || (x[2] > 1))
            return false;
@@ -170,7 +170,7 @@ namespace Test { namespace Int {
      };
 
 
-     /// Test linear relations over integer variables
+     /// %Test linear relations over integer variables
      class LinRelInt : public Test {
      protected:
        /// Linear instruction sequence for left hand side
@@ -185,7 +185,7 @@ namespace Test { namespace Int {
                  Gecode::IntRelType irt0, const std::string& s)
          : Test("MiniModel::LinRel::Int::"+s+"::"+str(irt0),3,-3,3,true),
            l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int l_reg[3] = {x[0],x[1],x[2]};
          int r_reg[3] = {x[0],x[1],x[2]};
@@ -262,7 +262,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear relations over Boolean variables
+     /// %Test linear relations over Boolean variables
      class LinRelBool : public Test {
      protected:
        /// Linear instruction sequence for left hand side
@@ -277,7 +277,7 @@ namespace Test { namespace Int {
                   Gecode::IntRelType irt0, const std::string& s)
          : Test("MiniModel::LinRel::Bool::"+s+"::"+str(irt0),3,0,1,true),
            l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int l_reg[3] = {x[0],x[1],x[2]};
          int r_reg[3] = {x[0],x[1],x[2]};
@@ -360,7 +360,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test linear relations over integer and Boolean variables
+     /// %Test linear relations over integer and Boolean variables
      class LinRelMixed : public Test {
      protected:
        /// Linear instruction sequence for left hand side
@@ -375,7 +375,7 @@ namespace Test { namespace Int {
                    Gecode::IntRelType irt0, const std::string& s)
          : Test("MiniModel::LinRel::Mixed::"+s+"::"+str(irt0),6,0,1,true),
            l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int l_reg[3] = {x[0],x[1],x[2]};
          int r_reg[3] = {x[3],x[4],x[5]};

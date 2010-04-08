@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 /**
- * \name Graph specification for graph coloring
+ * \name %Graph specification for graph coloring
  *
  * The edges are described by an array of integers with even number
  * of elements, terminated by the elements -1,-1.
@@ -52,7 +52,7 @@ using namespace Gecode;
  * \relates GraphColor
  */
 //@{
-/// Graph specification
+/// %Graph specification
 class GraphColorSpec {
 public:
   const int  n_v; ///< Number of nodes

@@ -523,10 +523,8 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  /*
-   * Traits for Boolean view negation
-   */
   template<>
+  /// Traits for Boolean negation view
   class BoolNegTraits<BoolView> {
   public:
     /// The negated view
@@ -538,6 +536,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   template<>
+  /// Traits for Boolean negation view
   class BoolNegTraits<NegBoolView> {
   public:
     /// The negated view

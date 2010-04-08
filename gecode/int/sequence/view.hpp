@@ -41,7 +41,9 @@
 
 namespace Gecode { namespace Int { namespace Sequence {
 
-  /// Advisor for view at position
+  /**
+   * \brief Class for advising the propagator
+   */
   template<class View>
   class SupportAdvisor : public Advisor {
   public:
@@ -76,6 +78,9 @@ namespace Gecode { namespace Int { namespace Sequence {
     Advisor::dispose(home,c);
   }
 
+  /**
+   * \brief Class for view value support structure
+   */
   template<class View, class Val,bool iss>
   class ViewValSupport {
   public:

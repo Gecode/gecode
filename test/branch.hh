@@ -54,7 +54,7 @@ namespace Test {
   namespace Branch {
 
     /**
-     * \brief Base class for tests for branching on integer variables
+     * \brief %Base class for tests for branching on integer variables
      *
      */
     class IntTest : public Base {
@@ -73,7 +73,7 @@ namespace Test {
     };
 
     /**
-     * \brief Base class for tests for branching on Boolean variables
+     * \brief %Base class for tests for branching on Boolean variables
      *
      */
     class BoolTest : public Base {
@@ -91,7 +91,7 @@ namespace Test {
 
 #ifdef GECODE_HAS_SET_VARS
     /**
-     * \brief Base class for tests for branching on set variables
+     * \brief %Base class for tests for branching on set variables
      *
      */
     class SetTest : public Base {

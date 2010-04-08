@@ -41,7 +41,7 @@
 
 namespace Test { namespace Branch {
 
-  /// Test brancher
+  /// %Test brancher
   class Set : public SetTest {
   public:
     /// Create and register test

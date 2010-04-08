@@ -47,7 +47,7 @@ using namespace Gecode;
  * \relates Golf
  */
 //@{
-/// Tournament parameters
+/// %Tournament parameters
 struct Tournament {
   /// Number of groups
   int groups;
@@ -67,7 +67,7 @@ static const unsigned int n_examples = sizeof(t) / sizeof(Tournament);
 //@}
 
 /**
- * \brief %Example: Golf tournament
+ * \brief %Example: %Golf tournament
  *
  * Schedule a golf tournament. This is problem 010 from csplib.
  *

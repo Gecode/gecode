@@ -41,7 +41,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for relation constraints
+  /// %Tests for relation constraints
   namespace Rel {
 
     /**
@@ -52,7 +52,7 @@ namespace Test { namespace Set {
 
     static IntSet ds_33(-3,3);
 
-    /// Test for binary set relation constraint
+    /// %Test for binary set relation constraint
     class RelBin : public SetTest {
     private:
       Gecode::SetRelType srt;
@@ -63,7 +63,7 @@ namespace Test { namespace Set {
         : SetTest("Rel::Bin::"+str(srt0)+"::S"+(shared0 ? "1":"0"),
                   shared ? 1 : 2,ds_33,true)
         , srt(srt0), shared(shared0){}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int x1 = shared ? x[0] : x[1];
         CountableSetRanges xr0(x.lub, x[0]);

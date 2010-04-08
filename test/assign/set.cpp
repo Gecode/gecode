@@ -41,7 +41,7 @@
 
 namespace Test { namespace Assign {
 
-  /// Test assignment with disjoint union propagator
+  /// %Test assignment with disjoint union propagator
   class Set : public SetTest {
   public:
     /// Create and register test

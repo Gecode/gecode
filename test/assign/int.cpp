@@ -39,7 +39,7 @@
 
 namespace Test { namespace Assign {
 
-  /// Test assignment with distinct propagator
+  /// %Test assignment with distinct propagator
   class Int : public IntTest {
   public:
     /// Create and register test

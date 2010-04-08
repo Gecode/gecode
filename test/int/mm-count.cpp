@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-  /// Tests for minimal modelling constraints (counting)
+  /// %Tests for minimal modelling constraints (counting)
    namespace MiniModelCount {
 
      /// Expand relation to abbreviation
@@ -61,7 +61,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test number of equal integers equal to integer
+     /// %Test number of equal integers equal to integer
      class IntInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -70,7 +70,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntInt(Gecode::IntRelType irt0)
          : Test("MiniModel::"+expand(irt0)+"::Int::Int",4,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=x.size(); i--; )
@@ -92,7 +92,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal integers equal to integer variable
+     /// %Test number of equal integers equal to integer variable
      class IntVar : public Test {
      protected:
        /// Integer relation type to propagate
@@ -101,7 +101,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntVar(Gecode::IntRelType irt0)
          : Test("MiniModel::"+expand(irt0)+"::Int::Var",5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -126,7 +126,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal variables equal to integer variable
+     /// %Test number of equal variables equal to integer variable
      class VarVar : public Test {
      protected:
        /// Integer relation type to propagate
@@ -135,7 +135,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarVar(Gecode::IntRelType irt0)
          : Test("MiniModel::"+expand(irt0)+"::Var::Var",5,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<3; i++)
@@ -160,7 +160,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of equal variables equal to integer
+     /// %Test number of equal variables equal to integer
      class VarInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -169,7 +169,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarInt(Gecode::IntRelType irt0)
          : Test("MiniModel::"+expand(irt0)+"::Var::Int",4,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<3; i++)
@@ -196,7 +196,7 @@ namespace Test { namespace Int {
 
      Gecode::IntArgs ints(4, 1,0,3,2);
 
-     /// Test number of several equal integers equal to integer
+     /// %Test number of several equal integers equal to integer
      class IntArrayInt : public Test {
      protected:
        /// Integer relation type to propagate
@@ -206,7 +206,7 @@ namespace Test { namespace Int {
        IntArrayInt(Gecode::IntRelType irt0)
          : Test("MiniModel::"+expand(irt0)+"::IntArray::Int",5,-2,2),
            irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)
@@ -231,7 +231,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test number of several equal integers equal to integer variable
+     /// %Test number of several equal integers equal to integer variable
      class IntArrayVar : public Test {
      protected:
        /// Integer relation type to propagate
@@ -241,7 +241,7 @@ namespace Test { namespace Int {
        IntArrayVar(Gecode::IntRelType irt0)
          : Test("MiniModel::"+expand(irt0)+"::IntArray::Var",5,-2,2),
            irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
          for (int i=0; i<4; i++)

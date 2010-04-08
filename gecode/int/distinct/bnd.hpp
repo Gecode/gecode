@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
 
-  /// Rank information
+  /// %Rank information
   class Rank {
   public:
     int min, max;

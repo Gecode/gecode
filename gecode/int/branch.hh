@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
 
   /**
-   * \brief Brancher by view and values selection
+   * \brief %Brancher by view and values selection
    *
    */
   template<class ViewSel, class View>

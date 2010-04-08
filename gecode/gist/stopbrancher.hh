@@ -40,7 +40,7 @@
 
 namespace Gecode { namespace Gist {
   
-  /// %Choice for StopBrancher
+  /// %Choice for %StopBrancher
   class GECODE_GIST_EXPORT StopChoice : public Choice {
   public:
     /// Initialize choice for brancher \a b

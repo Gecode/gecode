@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int { namespace Linear {
 
   /**
-   * \brief Set for support information
+   * \brief %Set for support information
    *
    * Records supported positions of values such that with iteration
    * the supported values can be reconstructed.

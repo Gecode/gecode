@@ -47,7 +47,7 @@
 #include <gecode/set/rel-op.hh>
 
 namespace Gecode { namespace Int { namespace Element {
-  /// VarArg type for Set views
+  /// VarArg type for %Set views
   template<>
   class ViewToVarArg<Gecode::Set::SetView> {
   public:

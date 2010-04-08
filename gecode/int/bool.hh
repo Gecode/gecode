@@ -418,7 +418,7 @@ namespace Gecode { namespace Int { namespace Bool {
     VX z;
     /// The number of views assigned to zero in \a x and \a y
     int n_zero;
-    /// Advisors for views (tagged whether for \a x or \a y)
+    /// %Advisors for views (tagged whether for \a x or \a y)
     class Tagged : public Advisor {
     public:
       /// Whether advises a view for x or y

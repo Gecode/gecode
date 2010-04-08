@@ -382,7 +382,7 @@
 
 /**
  * \namespace Gecode::Kernel
- * \brief Kernel functionality
+ * \brief %Kernel functionality
  */
 
 /**

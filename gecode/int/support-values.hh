@@ -43,7 +43,7 @@
 namespace Gecode { namespace Int {
 
   /**
-   * \brief Support value iterator and recorder
+   * \brief %Support value iterator and recorder
    *
    * Requires \code #include <gecode/int/support-values.hh> \endcode
    * \ingroup FuncIntProp

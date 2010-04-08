@@ -372,7 +372,7 @@ namespace Gecode { namespace Set {
 
 
   /**
-   * \brief A complement iterator spezialized for the BndSet limits
+   * \brief A complement iterator spezialized for the %BndSet limits
    *
    * \ingroup TaskActorSet
    */

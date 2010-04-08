@@ -50,8 +50,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   /**
-   * \brief Class for computing unreachable values in the
-   *  value GCC propagator
+   * \brief Class for computing unreachable values in the value %GCC propagator
    *
    * \ingroup GCCBndSup
    */

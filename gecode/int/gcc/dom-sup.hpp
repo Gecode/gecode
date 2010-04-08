@@ -131,7 +131,7 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   };
 
-  /// %Variable Node
+  /// %Variable node
   class VarNode : public Node {
   protected:
     /// Stores the matching edge on this node in the UBC

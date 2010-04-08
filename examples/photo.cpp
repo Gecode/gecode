@@ -41,7 +41,7 @@
 
 using namespace Gecode;
 
-/// Specifications for the Photo example
+/// Specifications for the photo example
 class PhotoSpec {
 public:
   const int  n_names; ///< Number of people on picture

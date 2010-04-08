@@ -42,7 +42,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for element constraints
+   /// %Tests for element constraints
    namespace Element {
 
      /**
@@ -50,7 +50,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for element with integer array and integer variables
+     /// %Test for element with integer array and integer variables
      class IntIntVar : public Test {
      protected:
        /// Array of integers
@@ -61,7 +61,7 @@ namespace Test { namespace Int {
                  int min, int max)
          : Test("Element::Int::Int::Var::"+s,2,min,max), 
            c(c0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
        }
@@ -71,7 +71,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with integer array and integer variables
+     /// %Test for element with integer array and integer variables
      class IntIntInt : public Test {
      protected:
        /// Array of integers
@@ -83,7 +83,7 @@ namespace Test { namespace Int {
        IntIntInt(const std::string& s, const Gecode::IntArgs& c0, int r0)
          : Test("Element::Int::Int::Int::"+s+"::"+str(r0),1,-4,8),
            c(c0), r(r0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==r;
        }
@@ -93,7 +93,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with integer array and single shared integer variable
+     /// %Test for element with integer array and single shared integer variable
      class IntIntShared : public Test {
      protected:
        /// Array of integers
@@ -103,7 +103,7 @@ namespace Test { namespace Int {
        IntIntShared(const std::string& s, const Gecode::IntArgs& c0,
                     int minDomain=-4)
          : Test("Element::Int::Int::Shared::"+s,1,minDomain,8), c(c0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[0];
        }
@@ -113,7 +113,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with integer array and integer and Boolean variable
+     /// %Test for element with integer array and integer and Boolean variable
      class IntBoolVar : public Test {
      protected:
        /// Array of integers
@@ -122,7 +122,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntBoolVar(const std::string& s, const Gecode::IntArgs& c0)
          : Test("Element::Int::Bool::Var::"+s,2,-4,8), c(c0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
        }
@@ -132,7 +132,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with integer array and integer and Boolean variable
+     /// %Test for element with integer array and integer and Boolean variable
      class IntBoolInt : public Test {
      protected:
        /// Array of integers
@@ -144,7 +144,7 @@ namespace Test { namespace Int {
        IntBoolInt(const std::string& s, const Gecode::IntArgs& c0, int r0)
          : Test("Element::Int::Bool::Int::"+s+"::"+str(r0),1,-4,8),
            c(c0), r(r0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==r;
        }
@@ -154,13 +154,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with variable array and integer variables
+     /// %Test for element with variable array and integer variables
      class VarIntVar : public Test {
      public:
        /// Create and register test
        VarIntVar(Gecode::IntConLevel icl)
          : Test("Element::Var::Int::Var::"+str(icl),6,-1,3,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<x.size()-2) && x[2+x[0]]==x[1];
        }
@@ -173,7 +173,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with variable array and integer variables
+     /// %Test for element with variable array and integer variables
      class VarIntInt : public Test {
      protected:
        /// Integer result
@@ -185,7 +185,7 @@ namespace Test { namespace Int {
                 5,-1,3,false,icl), r(r0) {
          contest = CTL_NONE;
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==r;
        }
@@ -198,7 +198,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with variable array and shared integer variable
+     /// %Test for element with variable array and shared integer variable
      class VarIntShared : public Test {
      public:
        /// Create and register test
@@ -206,7 +206,7 @@ namespace Test { namespace Int {
          : Test("Element::Var::Int::Shared::"+str(icl),5,-1,3,false,icl) {
          contest = CTL_NONE;
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==x[0];
        }
@@ -219,12 +219,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with Boolean variable array and integer variable
+     /// %Test for element with Boolean variable array and integer variable
      class VarBoolVar : public Test {
      public:
        /// Create and register test
        VarBoolVar(void) : Test("Element::Var::Bool::Var",6,-1,3,false) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size()-2; i++)
            if ((x[2+i] < 0) || (x[2+i]>1))
@@ -242,7 +242,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for element with Boolean variable array and integer variable
+     /// %Test for element with Boolean variable array and integer variable
      class VarBoolInt : public Test {
      protected:
        /// Integer result
@@ -251,7 +251,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarBoolInt(int r0)
          : Test("Element::Var::Bool::Int::"+str(r0),5,-1,3,false), r(r0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size()-1; i++)
            if ((x[1+i] < 0) || (x[1+i]>1))
@@ -269,7 +269,7 @@ namespace Test { namespace Int {
      };
 
 
-     /// Test for matrix element with integer array and integer variable
+     /// %Test for matrix element with integer array and integer variable
      class MatrixIntIntVarXY : public Test {
      protected:
        /// Array for test matrix
@@ -279,7 +279,7 @@ namespace Test { namespace Int {
        MatrixIntIntVarXY(void)
          : Test("Element::Matrix::Int::IntVar::XY",3,0,5,false), 
            tm(6, 0,1,2,3,4,5) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
          using namespace Gecode;
@@ -297,7 +297,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for matrix element with integer array and integer variable
+     /// %Test for matrix element with integer array and integer variable
      class MatrixIntIntVarXX : public Test {
      protected:
        /// Array for test matrix
@@ -307,7 +307,7 @@ namespace Test { namespace Int {
        MatrixIntIntVarXX(void)
          : Test("Element::Matrix::Int::IntVar::XX",2,0,3,false), 
            tm(4, 0,1,2,3) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
          using namespace Gecode;
@@ -325,7 +325,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for matrix element with integer array and Boolean variable
+     /// %Test for matrix element with integer array and Boolean variable
      class MatrixIntBoolVarXY : public Test {
      protected:
        /// Array for test matrix
@@ -335,7 +335,7 @@ namespace Test { namespace Int {
        MatrixIntBoolVarXY(void)
          : Test("Element::Matrix::Int::BoolVar::XY",3,0,3,false), 
            tm(4, 0,1,1,0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
          using namespace Gecode;
@@ -353,7 +353,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for matrix element with integer array and Boolean variable
+     /// %Test for matrix element with integer array and Boolean variable
      class MatrixIntBoolVarXX : public Test {
      protected:
        /// Array for test matrix
@@ -363,7 +363,7 @@ namespace Test { namespace Int {
        MatrixIntBoolVarXX(void)
          : Test("Element::Matrix::Int::BoolVar::XX",2,0,3,false), 
            tm(4, 0,1,1,0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
          using namespace Gecode;
@@ -381,13 +381,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for matrix element with integer variable array and integer variable
+     /// %Test for matrix element with integer variable array and integer variable
      class MatrixIntVarIntVarXY : public Test {
      public:
        /// Create and register test
        MatrixIntVarIntVarXY(void)
          : Test("Element::Matrix::IntVar::IntVar::XY",3+4,0,3,false) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
          // remaining: matrix
@@ -410,13 +410,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for matrix element with integer variable array and integer variable
+     /// %Test for matrix element with integer variable array and integer variable
      class MatrixIntVarIntVarXX : public Test {
      public:
        /// Create and register test
        MatrixIntVarIntVarXX(void)
          : Test("Element::Matrix::IntVar::IntVar::XX",2+4,0,3,false) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
          // remaining: matrix
@@ -439,13 +439,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for matrix element with Boolean variable array and Boolean variable
+     /// %Test for matrix element with Boolean variable array and Boolean variable
      class MatrixBoolVarBoolVarXY : public Test {
      public:
        /// Create and register test
        MatrixBoolVarBoolVarXY(void)
          : Test("Element::Matrix::BoolVar::BoolVar::XY",3+4,0,1,false) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
          // remaining: matrix
@@ -467,13 +467,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for matrix element with Boolean variable array and Boolean variable
+     /// %Test for matrix element with Boolean variable array and Boolean variable
      class MatrixBoolVarBoolVarXX : public Test {
      public:
        /// Create and register test
        MatrixBoolVarBoolVarXX(void)
          : Test("Element::Matrix::BoolVar::BoolVar::XX",2+4,0,1,false) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
          // remaining: matrix
@@ -501,7 +501,7 @@ namespace Test { namespace Int {
      /// Help class to create and register tests
      class Create {
      public:
-       /// Test size-dependent optimizations
+       /// %Test size-dependent optimizations
        void optimized(int idx, int val) {
          Gecode::IntArgs c(idx);
          for (int i=0; i<idx; i++)

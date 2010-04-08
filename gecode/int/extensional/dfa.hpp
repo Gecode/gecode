@@ -40,7 +40,7 @@
 namespace Gecode {
 
   /**
-   * \brief Data stored for a DFA
+   * \brief Data stored for a %DFA
    *
    */
   class DFA::DFAI : public SharedHandle::Object {

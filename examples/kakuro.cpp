@@ -506,7 +506,7 @@ namespace {
 
 
 /**
- * \brief %Example: Kakuro
+ * \brief %Example: %Kakuro
  *
  * Another puzzle in the style of Sudoku.
  *

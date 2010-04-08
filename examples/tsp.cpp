@@ -47,7 +47,7 @@
 
 using namespace Gecode;
 
-/// Support for TSP instances
+/// Support for %TSP instances
 namespace {
 
   /// This instance is taken from SICStus Prolog
@@ -221,7 +221,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Travelling salesman problem (TSP)
+ * \brief %Example: Travelling salesman problem (%TSP)
  *
  * Simple travelling salesman problem instances. Just meant
  * as a test for circuit.

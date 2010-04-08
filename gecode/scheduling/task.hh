@@ -399,7 +399,7 @@ namespace Gecode { namespace Scheduling {
 namespace Gecode { namespace Scheduling {
 
   /**
-   * \brief Propagator for tasks
+   * \brief %Propagator for tasks
    *
    * Requires \code #include <gecode/scheduling/task.hh> \endcode
    * \ingroup FuncSchedulingProp

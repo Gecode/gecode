@@ -71,7 +71,7 @@
 
 /**
  * \namespace Gecode::Graph
- * \brief Graph constraints
+ * \brief %Graph constraints
  *
  */
 

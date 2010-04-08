@@ -42,14 +42,14 @@
 namespace Gecode {
 
   /**
-   * \defgroup FuncMemHeap Heap-memory management
+   * \defgroup FuncMemHeap %Heap memory management
    *
    * \ingroup FuncMem
    */
 
 
   /**
-   * \brief Heap memory management class
+   * \brief %Heap memory management class
    *
    * All routines throw an exception of MemoryExhausted, if a request
    * cannot be fulfilled.

@@ -44,7 +44,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for extensional (relation) constraints
+   /// %Tests for extensional (relation) constraints
    namespace Extensional {
 
      /**
@@ -52,12 +52,12 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test with simple regular expression
+     /// %Test with simple regular expression
      class RegSimpleA : public Test {
      public:
        /// Create and register test
        RegSimpleA(void) : Test("Extensional::Reg::Simple::A",4,2,2) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (((x[0] == 0) || (x[0] == 2)) &&
                  ((x[1] == -1) || (x[1] == 1)) &&
@@ -75,12 +75,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with simple regular expression
+     /// %Test with simple regular expression
      class RegSimpleB : public Test {
      public:
        /// Create and register test
        RegSimpleB(void) : Test("Extensional::Reg::Simple::B",4,2,2) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
        }
@@ -96,12 +96,12 @@ namespace Test { namespace Int {
          }
      };
 
-     /// Test with simple regular expression
+     /// %Test with simple regular expression
      class RegSimpleC : public Test {
      public:
        /// Create and register test
        RegSimpleC(void) : Test("Extensional::Reg::Simple::C",6,0,1) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int pos = 0;
          int s = x.size();
@@ -132,12 +132,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with regular expression for distinct constraint
+     /// %Test with regular expression for distinct constraint
      class RegDistinct : public Test {
      public:
        /// Create and register test
        RegDistinct(void) : Test("Extensional::Reg::Distinct",4,-1,4) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++) {
            if ((x[i] < 0) || (x[i] > 3))
@@ -179,13 +179,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with simple regular expression from Roland Yap
+     /// %Test with simple regular expression from Roland Yap
      class RegRoland : public Test {
      public:
        /// Create and register test
        RegRoland(int n)
          : Test("Extensional::Reg::Roland::"+str(n),n,0,1) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n = x.size();
          return
@@ -201,12 +201,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with simple regular expression and shared variables (uses unsharing)
+     /// %Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedA : public Test {
      public:
        /// Create and register test
        RegSharedA(void) : Test("Extensional::Reg::Shared::A",4,2,2) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (((x[0] == 0) || (x[0] == 2)) &&
                  ((x[1] == -1) || (x[1] == 1)) &&
@@ -228,12 +228,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with simple regular expression and shared variables (uses unsharing)
+     /// %Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedB : public Test {
      public:
        /// Create and register test
        RegSharedB(void) : Test("Extensional::Reg::Shared::B",4,2,2) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (((x[0] == 0) || (x[0] == 2)) &&
                  ((x[1] == -1) || (x[1] == 1)) &&
@@ -255,12 +255,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with simple regular expression and shared variables (uses unsharing)
+     /// %Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedC : public Test {
      public:
        /// Create and register test
        RegSharedC(void) : Test("Extensional::Reg::Shared::C",4,0,1) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[1]==1) && (x[2]==0) && (x[3]==1);
        }
@@ -276,12 +276,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with simple regular expression and shared variables (uses unsharing)
+     /// %Test with simple regular expression and shared variables (uses unsharing)
      class RegSharedD : public Test {
      public:
        /// Create and register test
        RegSharedD(void) : Test("Extensional::Reg::Shared::D",4,0,1) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[1]==1) && (x[2]==0) && (x[3]==1);
        }
@@ -297,14 +297,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for empty DFA
+     /// %Test for empty DFA
      class RegEmptyDFA : public Test {
      public:
        /// Create and register test
        RegEmptyDFA(void) : Test("Extensional::Reg::Empty::DFA",1,0,0) {
          testsearch = false;
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          (void)x;
          return false;
@@ -316,14 +316,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for empty regular expression
+     /// %Test for empty regular expression
      class RegEmptyREG : public Test {
      public:
        /// Create and register test
        RegEmptyREG(void) : Test("Extensional::Reg::Empty::REG",1,0,0) {
          testsearch = false;
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          (void)x;
          return false;
@@ -335,7 +335,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for optimizations
+     /// %Test for optimizations
      class RegOpt : public Test {
      protected:
        /// DFA size characteristic
@@ -344,7 +344,7 @@ namespace Test { namespace Int {
        /// Create and register test
        RegOpt(int n0) 
          : Test("Extensional::Reg::Opt::"+str(n0),1,0,15), n(n0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0] < n) && ((x[0] & 1) == 0);
        }
@@ -374,7 +374,7 @@ namespace Test { namespace Int {
        
      };
 
-     /// Test with tuple set
+     /// %Test with tuple set
      class TupleSetA : public Test {
      protected:
        /// Extensional propagation kind
@@ -384,7 +384,7 @@ namespace Test { namespace Int {
        TupleSetA(Gecode::ExtensionalPropKind epk0)
          : Test("Extensional::TupleSet::A::"+str(epk0),
                 4,1,5,false,Gecode::ICL_DOM), epk(epk0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
                  (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
@@ -424,7 +424,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test with tuple set
+     /// %Test with tuple set
      class TupleSetB : public Test {
        mutable Gecode::TupleSet t;
      protected:
@@ -458,7 +458,7 @@ namespace Test { namespace Int {
          t.add(t10);
          t.finalize();
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          using namespace Gecode;
          for (int i = 0; i < t.tuples(); ++i) {
@@ -479,7 +479,7 @@ namespace Test { namespace Int {
 
 
 
-     /// Test with bool tuple set
+     /// %Test with bool tuple set
      class TupleSetBool : public Test {
        mutable Gecode::TupleSet t;
      protected:
@@ -503,7 +503,7 @@ namespace Test { namespace Int {
          }
          t.finalize();
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          using namespace Gecode;
          for (int i = 0; i < t.tuples(); ++i) {

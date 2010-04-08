@@ -691,7 +691,7 @@ namespace Gecode {
 
 
   /**
-   * \brief Home class for posting propagators
+   * \brief %Home class for posting propagators
    */
   class Home {
   protected:
@@ -832,7 +832,7 @@ namespace Gecode {
 
 
   /**
-   * \brief Council of advisors
+   * \brief %Council of advisors
    *
    * If a propagator uses advisors, it must maintain its advisors
    * through a council.
@@ -934,7 +934,7 @@ namespace Gecode {
   class Brancher;
 
   /**
-   * \brief Choice for path recomputation
+   * \brief %Choice for performing commit
    *
    * Must be refined by inheritance such that the information stored
    * inside a choice is sufficient to redo a commit performed by a

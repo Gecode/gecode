@@ -69,7 +69,7 @@ extern unsigned int csplib_norders;     ///< Number of orders
 //@}
 
 
-/** \brief SteelMillOptions for examples with size option and an additional
+/** \brief %SteelMillOptions for examples with size option and an additional
  * optional file name parameter.
  *
  * Used in the \ref SteelMill example.
@@ -320,7 +320,7 @@ public:
   protected:
     /// Cache of first unassigned value
     mutable int start;
-    /// Choice
+    /// %Choice
     class Choice : public Gecode::Choice {
     public:
       /// Position of variable

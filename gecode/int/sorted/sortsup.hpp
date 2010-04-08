@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   /**
-   *   \brief Item used to construct the OfflineMin sequence
+   *   \brief Item used to construct the %OfflineMin sequence
    *
    */
 
@@ -332,8 +332,17 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
   };
 
+
+  /// Pair of views
+  template<class View>
+  class ViewPair {
+  public:
+    View x;
+    View z;
+  };
+
   /**
-   * \brief Extended View comparison on ViewTuples
+   * \brief Extended view comparison on pairs of views
    *
    * Checks whether the lower domain bound of the
    * first component of \a x (the variable itself)
@@ -342,14 +351,6 @@ namespace Gecode { namespace Int { namespace Sorted {
    * it checks their upper bounds. If they are also
    * equal we sort the views by the permutation variables.
    */
-
-  template<class View>
-  class ViewPair {
-  public:
-    View x;
-    View z;
-  };
-
   template<class View>
   class TupleMinIncExt {
   public:

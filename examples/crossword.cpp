@@ -55,7 +55,7 @@ namespace {
 
 
 /**
- * \brief %Example: Crossword puzzle
+ * \brief %Example: %Crossword puzzle
  *
  *  Fill crossword grids with words, that is construct a crossword
  *  puzzle. For a recent paper on this classical problem, see:

@@ -46,7 +46,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for sequence constraints
+   /// %Tests for sequence constraints
    namespace Sequence {
 
      /**
@@ -54,7 +54,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Base test for sequence
+     /// %Base test for sequence
      class SequenceTest : public Test {
      protected:
        Gecode::IntSet s;
@@ -66,7 +66,7 @@ namespace Test { namespace Int {
                     int size, int min, int max)
          : Test("Sequence::"+s,size,min,max), s(s0), q(q0), l(l0), u(u0) {
        }
-       /// Test whether \a x is solutionin
+       /// %Test whether \a x is solutionin
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i< (x.size() - q + 1); i++ ) {
            int total = 0;
@@ -84,7 +84,7 @@ namespace Test { namespace Int {
      };
      
      
-     /// Test for sequence with boolean variables
+     /// %Test for sequence with boolean variables
      class SequenceBoolTest : public SequenceTest {
      public:
        /// Create and register test
@@ -105,7 +105,7 @@ namespace Test { namespace Int {
        }
      };
      
-     /// Test for sequence with boolean variables
+     /// %Test for sequence with boolean variables
      class SequenceIntTest : public SequenceTest {
      public:
        /// Create and register test

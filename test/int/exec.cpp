@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for synchronized execution
+   /// %Tests for synchronized execution
    namespace Exec {
 
      /**

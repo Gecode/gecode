@@ -59,7 +59,7 @@ namespace Test {
      * \ingroup TaskTestInt
      */
     //@{
-    /// Base class for assignments
+    /// %Base class for assignments
     class Assignment {
     protected:
       int n;            ///< Number of variables
@@ -180,7 +180,7 @@ namespace Test {
     };
 
     /**
-     * \brief Base class for tests with integer constraints
+     * \brief %Base class for tests with integer constraints
      *
      */
     class Test : public Base {

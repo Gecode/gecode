@@ -49,9 +49,9 @@
 using namespace Gecode;
 
 
-/** \brief Custom brancher for knights tours using Warnsdorff's rule
+/** \brief Custom brancher for knight's tours using Warnsdorff's rule
  *
- * This class implements Warnsdorff's rule for finding Knights
+ * This class implements Warnsdorff's rule for finding knight's
  * tours. The next position is choosen by taking the jump that
  * minimizes the number of alternatives in the next step.
  *
@@ -63,7 +63,7 @@ protected:
   ViewArray<Int::IntView> x;
   /// Next variable to branch on
   mutable int start;
-  /// Choice
+  /// %Choice
   class Choice : public Gecode::Choice {
   public:
     /// Position of variable
@@ -142,7 +142,7 @@ public:
 };
 
 
-/// Base-class for Knights tour example
+/// Base-class for knight's tour example
 class Knights : public Script {
 public:
   /// Size of board
@@ -224,11 +224,11 @@ public:
 };
 
 /**
- * \brief %Example: n-%Knights tour (simple model)
+ * \brief %Example: n-knight's tour (simple model)
  *
- * Fill an n times n chess board with knights such that the
- * knights do a full tour by knights move (last knight reaches
- * first knight again). The formulation is due to Gert Smolka.
+ * Fill an n times n chess board with knight's moves such that
+ * the knight does a full tour (last move reaches first move
+ * again). The formulation is due to Gert Smolka.
  *
  * \ingroup ExProblem
  *

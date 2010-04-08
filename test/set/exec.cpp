@@ -39,7 +39,7 @@
 
 namespace Test { namespace Set {
 
-   /// Tests for synchronized execution
+   /// %Tests for synchronized execution
    namespace Exec {
 
      /**

@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for minimal modelling constraints (simple relations)
+   /// %Tests for minimal modelling constraints (simple relations)
    namespace MiniModel {
 
      /**
@@ -49,7 +49,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for relation between arrays of integer variables
+     /// %Test for relation between arrays of integer variables
      class IntLex : public Test {
      protected:
        /// Integer relation type to propagate
@@ -58,7 +58,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntLex(Gecode::IntRelType irt0)
          : Test("MiniModel::Lex::Int::"+str(irt0),6,-2,2), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size() >> 1;
          for (int i=0; i<n; i++)
@@ -81,7 +81,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for relation between arrays of Boolean variables
+     /// %Test for relation between arrays of Boolean variables
      class BoolLex : public Test {
      protected:
        /// Integer relation type to propagate
@@ -90,7 +90,7 @@ namespace Test { namespace Int {
        /// Create and register test
        BoolLex(Gecode::IntRelType irt0)
          : Test("MiniModel::Lex::Bool::"+str(irt0),10,0,1), irt(irt0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size() >> 1;
          for (int i=0; i<n; i++)

@@ -76,6 +76,13 @@ with the first release of the "Modeling and Programming with
 Gecode" document. And, as always some small fixes and cleanups.
 
 [ENTRY]
+Module: other
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Removed many small documentation quirks.
+
+[ENTRY]
 Module: flatzinc
 What:   performance
 Rank:   minor

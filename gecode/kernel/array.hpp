@@ -542,7 +542,7 @@ namespace Gecode {
 
 
 
-  /** \brief Traits of arrays in Gecode
+  /** \brief Traits of arrays in %Gecode
    *
    * This class collects the traits of an array in Gecode.
    * The traits used are the following.

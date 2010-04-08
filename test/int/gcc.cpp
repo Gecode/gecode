@@ -43,7 +43,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for counting constraints (global cardinality)
+   /// %Tests for counting constraints (global cardinality)
    namespace GCC {
 
      /**
@@ -51,13 +51,13 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test for integer cardinality with min and max for all variables
+     /// %Test for integer cardinality with min and max for all variables
      class IntAllMinMax : public Test {
      public:
        /// Create and register test
        IntAllMinMax(Gecode::IntConLevel icl)
          : Test("GCC::Int::All::MinMax::"+str(icl),4,-1,3,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[5];
          for (int i=5; i--; )
@@ -85,13 +85,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for integer cardinality with min and max for all variables
+     /// %Test for integer cardinality with min and max for all variables
      class IntAllMinMaxDef : public Test {
      public:
        /// Create and register test
        IntAllMinMaxDef(Gecode::IntConLevel icl)
          : Test("GCC::Int::All::MinMaxDef::"+str(icl),4,0,3,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[4];
          for (int i=4; i--; )
@@ -118,13 +118,13 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for integer cardinality with max cardinality for all variables
+     /// %Test for integer cardinality with max cardinality for all variables
      class IntAllMax : public Test {
      public:
        /// Create and register test
        IntAllMax(Gecode::IntConLevel icl)
          : Test("GCC::Int::All::Max::"+str(icl), 4, 1,2, false, icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[2];
          for (int i=2; i--; )
@@ -143,7 +143,7 @@ namespace Test { namespace Int {
      };
 
 
-     /// Test for integer cardinality for some variables
+     /// %Test for integer cardinality for some variables
      template<bool hole>
      class IntSome : public Test {
      public:
@@ -151,7 +151,7 @@ namespace Test { namespace Int {
        IntSome(Gecode::IntConLevel icl)
          : Test(std::string("GCC::Int::Some::")+
                 (hole ? "::Hole" : "::Full")+str(icl),4,1,4,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[4];
          for (int i=4; i--; )
@@ -179,7 +179,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for variable cardinality for all cardinality values
+     /// %Test for variable cardinality for all cardinality values
      class VarAll : public Test {
      protected:
        /// Number of non-cardinality variables
@@ -188,7 +188,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarAll(Gecode::IntConLevel icl)
          : Test("GCC::Var::All::"+str(icl),7,0,2,false,icl) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // Number of cardinality variables
          int m = x.size()-n;
@@ -228,7 +228,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test for variable cardinality for some cardinality values
+     /// %Test for variable cardinality for some cardinality values
      class VarSome : public Test {
      protected:
        /// Number of non-cardinality variables
@@ -247,7 +247,7 @@ namespace Test { namespace Int {
           if (arity>randomArity)
             testsearch = false;
         }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // Number of cardinality variables
          int m = x.size()-n;

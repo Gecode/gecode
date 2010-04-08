@@ -41,7 +41,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for distinctness constraints
+  /// %Tests for distinctness constraints
   namespace Distinct {
 
     /**
@@ -53,13 +53,13 @@ namespace Test { namespace Set {
     static IntSet ds_33(-2,2);
     static IntSet ds_44(-4,4);
 
-    /// Test for the atmostone propagator
+    /// %Test for the atmostone propagator
     class AtmostOne : public SetTest {
     public:
       /// Create and register test
       AtmostOne(const char* t)
         : SetTest(t,3,ds_33,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         {
           CountableSetRanges xr0(x.lub, x[0]);

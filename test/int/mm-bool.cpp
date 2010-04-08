@@ -41,7 +41,7 @@
 
 namespace Test { namespace Int {
 
-  /// Tests for minimal modelling constraints (Boolean)
+  /// %Tests for minimal modelling constraints (Boolean)
   namespace MiniModelBoolean {
 
      /// Boolean opcode
@@ -106,7 +106,7 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
-     /// Test Boolean expressions with integer result
+     /// %Test Boolean expressions with integer result
      class BoolExprInt : public Test {
      protected:
        /// Boolean instruction sequence
@@ -118,7 +118,7 @@ namespace Test { namespace Int {
        BoolExprInt(const BoolInstr* bis0, const std::string& s, int c0)
          : Test("MiniModel::BoolExpr::Int::"+s+"::"+str(c0),4,0,1),
            bis(bis0), c(c0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int reg[4] = {(x[0] != x[2]), x[1],
                        (x[2] > 0), x[3]};
@@ -138,7 +138,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test posting Boolean expressions
+     /// %Test posting Boolean expressions
      class BoolExprVar : public Test {
      protected:
        /// Boolean instruction sequence
@@ -147,7 +147,7 @@ namespace Test { namespace Int {
        /// Create and register test
        BoolExprVar(const BoolInstr* bis0, const std::string& s)
          : Test("MiniModel::BoolExpr::Var::"+s,5,0,1), bis(bis0) {}
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int reg[4] = {(x[0] > x[2]), x[1],
                        (x[2] != 1), x[3]};

@@ -48,7 +48,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for scheduling constraints
+   /// %Tests for scheduling constraints
    namespace Cumulatives {
 
      /**
@@ -109,7 +109,7 @@ namespace Test { namespace Int {
          if (cur != NULL)
            nxt = e->next();
        }
-       /// Test whether all assignments have been iterated
+       /// %Test whether all assignments have been iterated
        virtual bool operator()(void) const {
          return nxt != NULL;
        }
@@ -130,14 +130,14 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Event to be scheduled
+     /// %Event to be scheduled
      class Event {
      public:
        int p, h; ///< Position and height of event
        bool start; ///< Whether event has just started
        /// Initialize event
        Event(int pos, int height, bool s) : p(pos), h(height), start(s) {}
-       /// Test whether this event is before event \a e
+       /// %Test whether this event is before event \a e
        bool operator<(const Event& e) const {
          return p<e.p;
        }
@@ -149,7 +149,7 @@ namespace Test { namespace Int {
        int limit; ///< limit
        /// Initialize
        Below(int l) : limit(l) {}
-       /// Test whether \a val is below limit
+       /// %Test whether \a val is below limit
        bool operator()(int val) {
          return val <= limit;
        }
@@ -160,7 +160,7 @@ namespace Test { namespace Int {
        int limit; ///< limit
        /// Initialize
        Above(int l) : limit(l) {}
-       /// Test whether \a val is above limit
+       /// %Test whether \a val is above limit
        bool operator()(int val) {
          return val >= limit;
        }
@@ -187,7 +187,7 @@ namespace Test { namespace Int {
        return true;
      }
 
-     /// Test for cumulatives constraint
+     /// %Test for cumulatives constraint
      class Cumulatives : public Test {
      protected:
        int ntasks;   ///< Number of tasks
@@ -204,7 +204,7 @@ namespace Test { namespace Int {
          assert(arity == 4*ntasks);
          return new CumulativeAssignment(arity, dom);
        }
-       /// Test whether \a x is solution
+       /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          std::vector<Event> e;
          for (int i = 0; i < ntasks; ++i) {

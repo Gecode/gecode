@@ -55,18 +55,14 @@ namespace Gecode { namespace Int { namespace Sequence {
    *
    */
 
+  template<class View> 
+  class SupportAdvisor;
+
+  template<class View,class Val,bool iss> 
+  class ViewValSupport;
+
   /**
-   * \brief Class for advising the propagator
-   *
-   */
-  template<class View> class SupportAdvisor;
-  /**
-   * \brief Class for view value support structure
-   *
-   */
-  template<class View,class Val,bool iss> class ViewValSupport;
-  /**
-   * \brief An array of ViewValSupport data structures
+   * \brief An array of %ViewValSupport data structures
    *
    */
   template<class View, class Val,bool iss>

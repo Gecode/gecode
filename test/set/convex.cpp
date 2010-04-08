@@ -41,7 +41,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for convexity constraints
+  /// %Tests for convexity constraints
   namespace Convex {
 
     /**
@@ -52,13 +52,13 @@ namespace Test { namespace Set {
 
     static IntSet ds_33(-4,4);
 
-    /// Test for convexity propagator
+    /// %Test for convexity propagator
     class Convex : public SetTest {
     public:
       /// Create and register test
       Convex(const char* t)
         : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         if (!xr0())
@@ -75,13 +75,13 @@ namespace Test { namespace Set {
     };
     Convex _convex("Convex::Convex");
 
-    /// Test for convex hull propagator
+    /// %Test for convex hull propagator
     class ConvexHull : public SetTest {
     public:
       /// Create and register test
       ConvexHull(const char* t)
         : SetTest(t,2,ds_33,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         CountableSetRanges xr1(x.lub, x[1]);
@@ -115,7 +115,7 @@ namespace Test { namespace Set {
       /// Create and register test
       ConvexHullS(const char* t)
         : SetTest(t,1,ds_33,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
         if (!xr0())

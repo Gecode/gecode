@@ -103,7 +103,7 @@ namespace Test {
   /// The options
   extern Options opt;
 
-  /// Base class for all tests to be run
+  /// %Base class for all tests to be run
   class Base {
   private:
     /// Name of the test

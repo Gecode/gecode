@@ -42,7 +42,7 @@
 
 namespace Test {
 
-  /// Test for AFC infrastructure
+  /// %Test for %AFC infrastructure
   class AFC : public Test::Base {
   protected:
     /// Test space

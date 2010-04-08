@@ -41,7 +41,7 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for domain constraints
+  /// %Tests for domain constraints
   namespace Dom {
 
     /**
@@ -70,7 +70,7 @@ namespace Test { namespace Set {
     static IntSet ds_33c(d2r,2);
     static IntSet ds_55(-5,5);
 
-    /// Test for equality with a range
+    /// %Test for equality with a range
     class DomRange : public SetTest {
     private:
       Gecode::SetRelType srt;
@@ -80,7 +80,7 @@ namespace Test { namespace Set {
       DomRange(SetRelType srt0)
         : SetTest("Dom::Range::"+str(srt0),1,ds_55,true), srt(srt0)
         , is(srt == Gecode::SRT_CMPL ? ds_33c: ds_33) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSetRanges dr(is);
@@ -120,7 +120,7 @@ namespace Test { namespace Set {
     DomRange _domrange_disj(SRT_DISJ);
     DomRange _domrange_cmpl(SRT_CMPL);
 
-    /// Test for equality with an integer range
+    /// %Test for equality with an integer range
     class DomIntRange : public SetTest {
     private:
       Gecode::SetRelType srt;
@@ -128,7 +128,7 @@ namespace Test { namespace Set {
       /// Create and register test
       DomIntRange(Gecode::SetRelType srt0)
         : SetTest("Dom::IntRange::"+str(srt0),1,ds_55,true), srt(srt0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSet is(-3,-1);
@@ -169,7 +169,7 @@ namespace Test { namespace Set {
     DomIntRange _domintrange_disj(SRT_DISJ);
     DomIntRange _domintrange_cmpl(SRT_CMPL);
 
-    /// Test for equality with an integer
+    /// %Test for equality with an integer
     class DomInt : public SetTest {
     private:
       Gecode::SetRelType srt;
@@ -177,7 +177,7 @@ namespace Test { namespace Set {
       /// Create and register test
       DomInt(Gecode::SetRelType srt0)
         : SetTest("Dom::Int::"+str(srt0),1,ds_55,true), srt(srt0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSet is(-3,-3);
@@ -218,7 +218,7 @@ namespace Test { namespace Set {
     DomInt _domint_disj(SRT_DISJ);
     DomInt _domint_cmpl(SRT_CMPL);
 
-    /// Test for equality with a domain
+    /// %Test for equality with a domain
     class DomDom : public SetTest {
     private:
       Gecode::SetRelType srt;
@@ -228,7 +228,7 @@ namespace Test { namespace Set {
       DomDom(Gecode::SetRelType srt0)
         : SetTest("Dom::Dom::"+str(srt0),1,d1,true), srt(srt0)
         , is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSetRanges dr(is);
@@ -268,13 +268,13 @@ namespace Test { namespace Set {
     DomDom _domdom_disj(SRT_DISJ);
     DomDom _domdom_cmpl(SRT_CMPL);
 
-    /// Test for cardinality range
+    /// %Test for cardinality range
     class CardRange : public SetTest {
     public:
       /// Create and register test
       CardRange(void)
         : SetTest("Dom::CardRange",1,d1,false) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         unsigned int card = Iter::Ranges::size(xr);

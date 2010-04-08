@@ -40,7 +40,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for circuit constraints
+   /// %Tests for circuit constraints
    namespace Circuit {
 
      /**

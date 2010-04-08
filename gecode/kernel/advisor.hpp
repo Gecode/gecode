@@ -40,7 +40,7 @@
 namespace Gecode {
 
   /**
-   * \brief Advisor storing a single view
+   * \brief %Advisor storing a single view
    *
    */
   template<class View>

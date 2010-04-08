@@ -357,7 +357,7 @@ namespace Gecode { namespace Set { namespace Int {
     ChannelBool(Home home,ViewArray<Gecode::Int::BoolView>&,
                 View);
 
-    /// Advisor storing a single index
+    /// %Advisor storing a single index
     class IndexAdvisor : public Advisor {
     protected:
       /// The single index

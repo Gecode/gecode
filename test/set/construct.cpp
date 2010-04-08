@@ -41,16 +41,16 @@ using namespace Gecode;
 
 namespace Test { namespace Set {
 
-  /// Tests for set variable conors
+  /// %Tests for set variable conors
   namespace Var {
 
-        /// Test for cardinality constraint
+        /// %Test for cardinality constraint
     class Construct : public SetTest {
     public:
       /// Create and register test
       Construct(void)
         : SetTest("Var::Construct",1,IntSet(0,0),false,0) {}
-      /// Test whether \a x is solution
+      /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment&) const {
         return true;
       }

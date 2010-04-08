@@ -39,7 +39,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for basic setup
+   /// %Tests for basic setup
    namespace Basic {
 
      /**
@@ -48,7 +48,7 @@ namespace Test { namespace Int {
       */
      //@{
 
-     /// Test whether testing infrastructure for integer variables works
+     /// %Test whether testing infrastructure for integer variables works
      class Basic : public Test {
      public:
        /// Initialize test

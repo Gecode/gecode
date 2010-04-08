@@ -42,12 +42,12 @@
 using namespace Gecode;
 
 /**
- * \name Graph specification for independent sets
+ * \name %Graph specification for independent sets
  *
  * \relates IndSet
  */
 //@{
-/// Graph specification
+/// %Graph specification
 class Graph {
 public:
   const int  n_v; ///< Number of vertices
@@ -83,7 +83,7 @@ const Graph g_40_20(40, 20, e_40_20);
  */
 class IndSet : public MaximizeScript {
 protected:
-  /// Graph used
+  /// %Graph used
   const Graph& g;
   /// Whether vertex included in independent set
   BoolVarArray v;

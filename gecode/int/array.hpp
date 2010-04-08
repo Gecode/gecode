@@ -37,7 +37,7 @@
 
 namespace Gecode {
 
-  /// Traits of IntVarArray
+  /// Traits of %IntVarArray
   template<>
   class ArrayTraits<IntVarArray> {
   public:
@@ -46,7 +46,7 @@ namespace Gecode {
     typedef IntVarArgs   args_type;
   };
 
-  /// Traits of IntVarArgs
+  /// Traits of %IntVarArgs
   template<>
   class ArrayTraits<IntVarArgs> {
   public:
@@ -55,7 +55,7 @@ namespace Gecode {
     typedef IntVarArgs args_type;
   };
 
-  /// Traits of IntArgs
+  /// Traits of %IntArgs
   template<>
   class ArrayTraits<IntArgs> {
   public:
@@ -64,7 +64,7 @@ namespace Gecode {
     typedef IntArgs args_type;
   };
 
-  /// Traits of IntSetArgs
+  /// Traits of %IntSetArgs
   template<>
   class ArrayTraits<IntSetArgs> {
   public:
@@ -73,7 +73,7 @@ namespace Gecode {
     typedef IntSetArgs args_type;
   };
 
-  /// Traits of BoolVarArray
+  /// Traits of %BoolVarArray
   template<>
   class ArrayTraits<BoolVarArray> {
   public:
@@ -82,7 +82,7 @@ namespace Gecode {
     typedef BoolVarArgs   args_type;
   };
 
-  /// Traits of BoolVarArgs
+  /// Traits of %BoolVarArgs
   template<>
   class ArrayTraits<BoolVarArgs> {
   public:

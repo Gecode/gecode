@@ -73,7 +73,7 @@
 
 /**
  * \namespace Gecode::Scheduling
- * \brief Scheduling constraints and branchers
+ * \brief %Scheduling constraints and branchers
  *
  */
 

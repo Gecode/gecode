@@ -43,7 +43,7 @@
 
 namespace Test { namespace Int {
 
-   /// Tests for sorted constraints
+   /// %Tests for sorted constraints
    namespace Sorted {
 
      /**
@@ -55,13 +55,13 @@ namespace Test { namespace Int {
      /// Relation for sorting integers in increasing order
      class SortIntMin {
      public:
-       /// Test whether \a x is less than \a y
+       /// %Test whether \a x is less than \a y
        bool operator()(const int x, const int y) {
          return x<y;
        }
      };
 
-     /// Test sorted without permutation variables
+     /// %Test sorted without permutation variables
      class NoVar : public Test {
      protected:
        /// Number of variables to be sorted
@@ -69,7 +69,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        NoVar(void) : Test("Sorted::NoVar",2*n,0,3) {}
-       /// Test whether \a xy is solution
+       /// %Test whether \a xy is solution
        virtual bool solution(const Assignment& xy) const {
          int x[n], y[n];
          for (int i=0;i<3; i++) {
@@ -99,7 +99,7 @@ namespace Test { namespace Int {
      };
 
 
-     /// Test sorted with permutation variables
+     /// %Test sorted with permutation variables
      class PermVar : public Test {
      protected:
        /// Number of variables to be sorted
@@ -107,7 +107,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        PermVar(void) : Test("Sorted::PermVar",3*n,0,2) {}
-       /// Test whether \a xyz is solution
+       /// %Test whether \a xyz is solution
        virtual bool solution(const Assignment& xyz) const {
          int x[n], y[n], z[n];
          for (int i=0; i<n; i++) {

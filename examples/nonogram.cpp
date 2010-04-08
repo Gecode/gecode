@@ -51,7 +51,7 @@ namespace {
 }
 
 /**
- * \brief %Example: Nonogram
+ * \brief %Example: %Nonogram
  *
  * This example solves nonograms. A nonogram is composed of a matrix of
  * markers. For each row/column there is a specification on how many groups
