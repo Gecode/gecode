@@ -220,7 +220,7 @@ namespace Gecode {
     void stopBranch(Space& home);
     
     /**
-     * \brief Options for %Gist
+     * \brief %Options for %Gist
      *
      * Note that the \a d and \a stop fields of the Search::Options class
      * are not used by Gist.

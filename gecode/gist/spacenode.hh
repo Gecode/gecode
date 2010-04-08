@@ -59,7 +59,7 @@ namespace Gecode { namespace Gist {
   static const unsigned int MAXDISTANCE = (1<<20)-1; //< Maximum representable distance
   static const unsigned int DISTANCEMASK = (1<<20)-1; //< Mask for accessing distance
 
-  /// Statistics about the search tree
+  /// %Statistics about the search tree
   class Statistics : public StatusStatistics {
   public:
     /// Number of solutions
@@ -89,7 +89,7 @@ namespace Gecode { namespace Gist {
     BestNode(SpaceNode* s0);
   };
 
-  /// \brief A node of a search tree of Gecode spaces
+  /// \brief A node of a search tree of %Gecode spaces
   class SpaceNode : public Node {
   protected:
     /// A copy used for recomputation, or NULL

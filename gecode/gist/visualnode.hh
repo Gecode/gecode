@@ -57,7 +57,7 @@ namespace Gecode { namespace Gist {
     BoundingBox(void) {}
   };
 
-  /// \brief Extent, representing shape of a tree at one depth level
+  /// \brief %Extent representing shape of a tree at one depth level
   class Extent {
   public:
     /// Left extent
@@ -119,7 +119,7 @@ namespace Gecode { namespace Gist {
     BoundingBox getBoundingBox(void);
   };
 
-  /// \brief Node class that supports visual layout
+  /// \brief %Node class that supports visual layout
   class VisualNode : public SpaceNode {
   protected:
     /// Flags for VisualNodes

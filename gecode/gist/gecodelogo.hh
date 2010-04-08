@@ -40,7 +40,7 @@
 
 namespace Gecode { namespace Gist {
 
-  /// Class holding Gecode and Gist logo icons
+  /// Class holding %Gecode and %Gist logo icons
   class Logos {
   public:
     /// The Gecode logo

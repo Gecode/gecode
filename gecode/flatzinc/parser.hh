@@ -74,7 +74,7 @@ namespace Gecode { namespace FlatZinc {
   class VarSpec;
   typedef std::pair<std::string, VarSpec*> varspec;
 
-  /// State of the FlatZinc parser
+  /// %State of the %FlatZinc parser
   class ParserState {
   public:
     ParserState(const std::string& b, std::ostream& err0,

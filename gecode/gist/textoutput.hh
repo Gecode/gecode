@@ -42,7 +42,7 @@
 #include <QTextEdit>
 
 namespace Gecode { namespace Gist {
-  /// \brief Window with associated ostream, used for inspecting Gist nodes
+  /// \brief Window with associated ostream, used for inspecting %Gist nodes
   class TextOutputI : public QMainWindow {
     Q_OBJECT
   private:

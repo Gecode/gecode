@@ -55,7 +55,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   class Atom;
   class SetLit;
   
-  /// Exception signaling type error
+  /// %Exception signaling type error
   class TypeError {
   private:
     std::string _what;
@@ -66,7 +66,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
   
   /**
-   * \brief A node in a FlatZinc abstract syntax tree
+   * \brief A node in a %FlatZinc abstract syntax tree
    */
   class Node {
   public:
@@ -161,7 +161,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "f("<<d<<")";
     }
   };
-  /// Set literal node
+  /// %Set literal node
   class SetLit : public Node {
   public:
     bool interval;
@@ -208,7 +208,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "xf("<<i<<")";
     }
   };
-  /// Set variable node
+  /// %Set variable node
   class SetVar : public Var {
   public:
     SetVar(int i0) : Var(i0) {}
@@ -217,7 +217,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   
-  /// Array node
+  /// %Array node
   class Array : public Node {
   public:
     std::vector<Node*> a;
@@ -241,7 +241,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
 
-  /// Node representing a function call
+  /// %Node representing a function call
   class Call : public Node {
   public:
     std::string id;
@@ -260,7 +260,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
 
-  /// Node representing an array access
+  /// %Node representing an array access
   class ArrayAccess : public Node {
   public:
     Node* a;
@@ -276,7 +276,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
 
-  /// Node representing an atom
+  /// %Node representing an atom
   class Atom : public Node {
   public:
     std::string id;
@@ -286,7 +286,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
 
-  /// String node
+  /// %String node
   class String : public Node {
   public:
     std::string s;

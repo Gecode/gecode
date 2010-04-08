@@ -327,11 +327,16 @@ namespace Gecode { namespace Gist {
     emit update(w,h,scale0);
   }
 
+  /// A stack item for depth first search
   class SearchItem {
   public:
+    /// The node
     VisualNode* n;
+    /// The currently explored child
     int i;
+    /// The number of children
     int noOfChildren;
+    /// Constructor
     SearchItem(VisualNode* n0, int noOfChildren0)
       : n(n0), i(-1), noOfChildren(noOfChildren0) {}
   };

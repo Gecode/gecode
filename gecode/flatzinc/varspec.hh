@@ -45,7 +45,7 @@
 
 namespace Gecode { namespace FlatZinc {
 
-  /// Alias for a variable specification
+  /// %Alias for a variable specification
   class Alias {
   public:
     const int v;

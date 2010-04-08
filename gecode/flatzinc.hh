@@ -99,7 +99,7 @@
 namespace Gecode { namespace FlatZinc {
 
   /**
-   * \brief Output support class for FlatZinc interpreter
+   * \brief Output support class for %FlatZinc interpreter
    *
    */
   class GECODE_FLATZINC_EXPORT Printer {
@@ -149,7 +149,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
   /**
-   * \brief Options for running FlatZinc models
+   * \brief %Options for running %FlatZinc models
    *
    */
   class FlatZincOptions : public Gecode::BaseOptions {
@@ -240,7 +240,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
   /**
-   * \brief A Space that can be initialized with a FlatZinc model
+   * \brief A space that can be initialized with a %FlatZinc model
    *
    */
   class GECODE_FLATZINC_EXPORT FlatZincSpace : public Space {
@@ -365,7 +365,7 @@ namespace Gecode { namespace FlatZinc {
     virtual Gecode::Space* copy(bool share);
   };
 
-  /// Exception class for FlatZinc errors
+  /// %Exception class for %FlatZinc errors
   class Error {
   private:
     const std::string msg;

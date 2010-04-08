@@ -43,7 +43,7 @@
 
 namespace Gecode { namespace Gist {
 
-  /// \brief Layout parameters
+  /// \brief %Layout parameters
   class Layout {
   public:
     static const int dist_y = 38;
