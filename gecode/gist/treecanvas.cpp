@@ -247,6 +247,13 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::layoutDone(int w, int h, int scale0) {
     targetW = w; targetH = h; targetScale = scale0;
+
+    QSize viewport_size = size();
+    QAbstractScrollArea* sa =
+      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+    sa->horizontalScrollBar()->setRange(0,w-viewport_size.width());
+    sa->verticalScrollBar()->setRange(0,h-viewport_size.height());
+
     if (layoutDoneTimerId == 0)
       layoutDoneTimerId = startTimer(15);
   }
@@ -323,6 +330,7 @@ namespace Gecode { namespace Gist {
                              t->root->getShape()->depth()*Layout::dist_y*scale);
       }
     }
+
     t->layoutMutex.unlock();
     emit update(w,h,scale0);
   }
