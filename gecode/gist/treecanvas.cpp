@@ -624,10 +624,9 @@ namespace Gecode { namespace Gist {
             currentNode->purge();
           }
           emit statusChanged(currentNode,stats,true);
-          Space* curSpace = currentNode->getSpace(curBest,c_d,a_d);
           for (int i=0; i<moveInspectors.size(); i++) {
             if (moveInspectors[i].second) {
-              moveInspectors[i].first->inspect(*curSpace);
+              moveInspectors[i].first->inspect(*currentNode->getWorkingSpace());
             }
           }
         }
