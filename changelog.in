@@ -67,6 +67,21 @@
 #
 
 [RELEASE]
+Version: 3.3.2
+Date: soon
+[DESCRIPTION]
+More fixes for more bugs.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+Thanks: David Zaremby
+[DESCRIPTION]
+Fixed bug in interactive search where every move in the tree required 
+recomputation.
+
+[RELEASE]
 Version: 3.3.1
 Date: 2010-04-09
 [DESCRIPTION]
