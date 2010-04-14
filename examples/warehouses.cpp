@@ -126,8 +126,12 @@ public:
     }
 
     // Do not exceed capacity
-    for (int i=0; i<n_warehouses; i++)
-      count(*this, warehouse, i, IRT_LQ, capacity[i]);
+    {
+      IntSetArgs c(n_warehouses);
+      for (int i=0; i<n_warehouses; i++)
+        c[i] = IntSet(0,capacity[i]);
+      count(*this, warehouse, c, ICL_DOM);
+    }
 
     // Compute total cost
     post(*this, c_fixed*sum(open) + sum(c_store) == c_total);
