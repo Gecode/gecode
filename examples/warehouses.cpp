@@ -42,20 +42,20 @@
 using namespace Gecode;
 
 /// Number of warehouses
-const int n_suppliers = 5;
+const int n_warehouses = 5;
 /// Number of stores
 const int n_stores = 10;
 
 /// Fixed cost for one warehouse
-const int fixed_cost = 30;
+const int c_fixed = 30;
 
 /// Capacity of a single warehouse
-const int capacity[n_suppliers] = {
+const int capacity[n_warehouses] = {
   1, 4, 2, 1, 3
 };
 
-/// Cost for store to warehouse
-const int cost_matrix[n_stores][n_suppliers] = {
+/// Cost for supply a store by a warehouse
+const int c_supply[n_stores][n_warehouses] = {
   {20, 24, 11, 25, 30},
   {28, 27, 82, 83, 74},
   {74, 97, 71, 96, 70},
@@ -95,55 +95,56 @@ const int cost_matrix[n_stores][n_suppliers] = {
  */
 class Warehouses : public MinimizeScript {
 protected:
-  /// Map store to the supplier
-  IntVarArray supplier;
-  /// Is a supplier open (warehouse needed)
+  /// Map store to the warehouse
+  IntVarArray warehouse;
+  /// Is a warehouse open (warehouse needed)
   BoolVarArray open;
   /// Cost of a store
-  IntVarArray store;
+  IntVarArray c_store;
   /// Total cost
-  IntVar total;
+  IntVar c_total;
 public:
   /// Actual model
   Warehouses(const Options&)
-    : supplier(*this, n_stores, 0, n_suppliers-1),
-      open(*this, n_suppliers, 0, 1),
-      store(*this, n_stores, 0, Int::Limits::max),
-      total(*this, 0, Int::Limits::max) {
+    : warehouse(*this, n_stores, 0, n_warehouses-1),
+      open(*this, n_warehouses, 0, 1),
+      c_store(*this, n_stores, 0, Int::Limits::max),
+      c_total(*this, 0, Int::Limits::max) {
 
-    // Compute total cost
-    post(*this, fixed_cost*sum(open) + sum(store) == total);
+    // A warehouse is open, if it supplies to a store
+    for (int i=0; i<n_warehouses; i++) {
+      BoolVarArgs supplied(n_stores);
+      for (int j=0; j<n_stores; j++)
+        supplied[j] = post(*this, ~(warehouse[j] == i));
+      rel(*this, BOT_OR, supplied, open[i]);
+    }
 
-    // Compute cost for store
+    // Compute cost for each warehouse
     for (int i=0; i<n_stores; i++) {
-      IntArgs c(n_suppliers, cost_matrix[i]);
-      element(*this, c, supplier[i], store[i]);
+      IntArgs c(n_warehouses, c_supply[i]);
+      element(*this, c, warehouse[i], c_store[i]);
     }
 
     // Do not exceed capacity
-    for (int i=0; i<n_suppliers; i++)
-      count(*this, supplier, i, IRT_LQ, capacity[i]);
+    for (int i=0; i<n_warehouses; i++)
+      count(*this, warehouse, i, IRT_LQ, capacity[i]);
 
-    // A warehouse is open, if it supplies to a shop
-    for (int i=0; i<n_suppliers; i++) {
-      BoolVarArgs store_by_supplier(n_stores);
-      for (int j=0; j<n_stores; j++)
-        store_by_supplier[j] = post(*this, ~(supplier[j] == i));
-      rel(*this, BOT_OR, store_by_supplier, open[i]);
-    }
+    // Compute total cost
+    post(*this, c_fixed*sum(open) + sum(c_store) == c_total);
 
-    branch(*this, store, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
+    // Branch with largest minimum regret
+    branch(*this, c_store, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
-    return total;
+    return c_total;
   }
   /// Constructor for cloning \a s
   Warehouses(bool share, Warehouses& s) : MinimizeScript(share,s) {
-    supplier.update(*this, share, s.supplier);
+    warehouse.update(*this, share, s.warehouse);
     open.update(*this, share, s.open);
-    store.update(*this, share, s.store);
-    total.update(*this, share, s.total);
+    c_store.update(*this, share, s.c_store);
+    c_total.update(*this, share, s.c_total);
   }
 
   /// Copy during cloning
@@ -154,9 +155,9 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\tSupplier:   " << supplier << std::endl
-       << "\tStore cost: " << store << std::endl
-       << "\tTotal cost: " << total << std::endl
+    os << "\tWarehouses to store: " << warehouse << std::endl
+       << "\tStore cost:          " << c_store << std::endl
+       << "\tTotal cost:          " << c_total << std::endl
        << std::endl;
   }
 };
