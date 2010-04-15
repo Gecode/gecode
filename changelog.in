@@ -76,6 +76,14 @@ More fixes for more bugs.
 Module: gist
 What:   bug
 Rank:   minor
+[DESCRIPTION]
+Fixed bug in Gist where signals were sent across threads, which
+makes Qt crash in certain situations on some platforms.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
 Thanks: David Zaremby
 [DESCRIPTION]
 Fixed bug in interactive search where every move in the tree required 

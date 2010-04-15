@@ -1217,14 +1217,15 @@ namespace Gecode { namespace Gist {
       }
     }
     if (n != NULL) {
-      compareNodes = false;
-      setCursor(QCursor(Qt::ArrowCursor));
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
       emit statusChanged(currentNode,stats,true);
-      if (update)
+      if (update) {
+        compareNodes = false;
+        setCursor(QCursor(Qt::ArrowCursor));
         QWidget::update();
+      }
     }
   }
 
