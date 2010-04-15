@@ -95,8 +95,8 @@ const int c_supply[n_stores][n_warehouses] = {
  */
 class Warehouses : public MinimizeScript {
 protected:
-  /// Map store to the warehouse
-  IntVarArray warehouse;
+  /// Which warehouse supplies a store
+  IntVarArray supplier;
   /// Is a warehouse open (warehouse needed)
   BoolVarArray open;
   /// Cost of a store
@@ -106,31 +106,27 @@ protected:
 public:
   /// Actual model
   Warehouses(const Options&)
-    : warehouse(*this, n_stores, 0, n_warehouses-1),
+    : supplier(*this, n_stores, 0, n_warehouses-1),
       open(*this, n_warehouses, 0, 1),
       c_store(*this, n_stores, 0, Int::Limits::max),
       c_total(*this, 0, Int::Limits::max) {
 
     // A warehouse is open, if it supplies to a store
-    for (int i=0; i<n_warehouses; i++) {
-      BoolVarArgs supplied(n_stores);
-      for (int j=0; j<n_stores; j++)
-        supplied[j] = post(*this, ~(warehouse[j] == i));
-      rel(*this, BOT_OR, supplied, open[i]);
-    }
+    for (int s=0; s<n_stores; s++)
+      element(*this, open, supplier[s], 1);
 
     // Compute cost for each warehouse
-    for (int i=0; i<n_stores; i++) {
-      IntArgs c(n_warehouses, c_supply[i]);
-      element(*this, c, warehouse[i], c_store[i]);
+    for (int s=0; s<n_stores; s++) {
+      IntArgs c(n_warehouses, c_supply[s]);
+      element(*this, c, supplier[s], c_store[s]);
     }
 
     // Do not exceed capacity
     {
       IntSetArgs c(n_warehouses);
-      for (int i=0; i<n_warehouses; i++)
-        c[i] = IntSet(0,capacity[i]);
-      count(*this, warehouse, c, ICL_DOM);
+      for (int w=0; w<n_warehouses; w++)
+        c[w] = IntSet(0,capacity[w]);
+      count(*this, supplier, c, ICL_DOM);
     }
 
     // Compute total cost
@@ -145,7 +141,7 @@ public:
   }
   /// Constructor for cloning \a s
   Warehouses(bool share, Warehouses& s) : MinimizeScript(share,s) {
-    warehouse.update(*this, share, s.warehouse);
+    supplier.update(*this, share, s.supplier);
     open.update(*this, share, s.open);
     c_store.update(*this, share, s.c_store);
     c_total.update(*this, share, s.c_total);
@@ -159,9 +155,10 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\tWarehouses to store: " << warehouse << std::endl
-       << "\tStore cost:          " << c_store << std::endl
-       << "\tTotal cost:          " << c_total << std::endl
+    os << "\tSupplier:        " << supplier << std::endl
+       << "\tOpen warehouses: " << open << std::endl
+       << "\tStore cost:      " << c_store << std::endl
+       << "\tTotal cost:      " << c_total << std::endl
        << std::endl;
   }
 };
