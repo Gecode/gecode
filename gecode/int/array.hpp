@@ -97,6 +97,46 @@ namespace Gecode {
    */
 
   forceinline
+  IntArgs::IntArgs(int n) : PrimArgArray<int>(n) {}
+  
+  forceinline
+  IntArgs::IntArgs(int n, int e0, ...) : PrimArgArray<int>(n) {
+    va_list args;
+    va_start(args, e0);
+    a[0] = e0;
+    for (int i = 1; i < n; i++)
+      a[i] = va_arg(args,int);
+    va_end(args);
+  }
+  
+  forceinline
+  IntArgs::IntArgs(const SharedArray<int>& x)
+    : PrimArgArray<int>(x.size()) {
+    for (int i=x.size(); i--;)
+      a[i] = x[i];
+  }
+  forceinline
+  IntArgs::IntArgs(const std::vector<int>& x)
+    : PrimArgArray<int>(x.size()) {
+    for (int i=x.size(); i--;)
+      a[i] = x[i];
+  }
+  
+  forceinline
+  IntArgs::IntArgs(int n, const int* e) : PrimArgArray<int>(n, e) {}
+  
+  forceinline
+  IntArgs::IntArgs(const PrimArgArray<int>& a) : PrimArgArray<int>(a) {}
+
+  forceinline IntArgs
+  IntArgs::create(int n, int start, int inc) {
+    IntArgs r(n);
+    for (int i=0; i<n; i++, start+=inc)
+      r[i] = start;
+    return r;
+  }
+
+  forceinline
   IntVarArray::IntVarArray(void) {}
 
   forceinline

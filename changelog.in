@@ -73,6 +73,14 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+You can now construct IntArgs from an STL vector, an IntSharedArray,
+or using simple comprehensions.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor

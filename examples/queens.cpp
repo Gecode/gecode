@@ -86,13 +86,8 @@ public:
       distinct(*this, q, opt.icl());
       break;
     case PROP_DISTINCT:
-      {
-        IntArgs c(n);
-        for (int i = n; i--; ) c[i] = i;
-        distinct(*this, c, q, opt.icl());
-        for (int i = n; i--; ) c[i] = -i;
-        distinct(*this, c, q, opt.icl());
-      }
+      distinct(*this, IntArgs::create(n,0,1), q, opt.icl());
+      distinct(*this, IntArgs::create(n,0,-1), q, opt.icl());
       distinct(*this, q, opt.icl());
       break;
     }
@@ -161,7 +156,7 @@ public:
     }
     mw->show();    
   }
-  
+    
   /// Set up main window
   void initialize(void) {
     mw = new QMainWindow();

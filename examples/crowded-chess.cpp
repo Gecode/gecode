@@ -276,11 +276,8 @@ public:
 
     // N-queens constraints
     distinct(*this, queens, ICL_DOM);
-    IntArgs koff(n);
-    for (int i = n; i--; ) koff[i] = i;
-    distinct(*this, koff, queens, ICL_DOM);
-    for (int i = n; i--; ) koff[i] = -i;
-    distinct(*this, koff, queens, ICL_DOM);
+    distinct(*this, IntArgs::create(n,0,1), queens, ICL_DOM);
+    distinct(*this, IntArgs::create(n,0,-1), queens, ICL_DOM);
 
     // N-rooks constraints
     distinct(*this,  rooks, ICL_DOM);

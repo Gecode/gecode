@@ -50,6 +50,8 @@
 #include <cfloat>
 #include <iostream>
 
+#include <vector>
+
 #include <gecode/kernel.hh>
 #include <gecode/iter.hh>
 
@@ -634,7 +636,27 @@ namespace Gecode {
 
   //@{
   /// Passing integer arguments
-  typedef PrimArgArray<int>    IntArgs;
+  class IntArgs : public PrimArgArray<int> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Allocate array with \a n elements
+    explicit IntArgs(int n);
+    /// Allocate array and copy elements from \a x
+    IntArgs(const SharedArray<int>& x);
+    /// Allocate array and copy elements from \a x
+    IntArgs(const std::vector<int>& x);
+    /// Allocate array with \a n elements and initialize with \a e0, ...
+    IntArgs(int n, int e0, ...);
+    /// Allocate array with \a n elements and initialize with elements from array \a e
+    IntArgs(int n, const int* e);
+    /// Initialize from primitive argument array \a a (copy elements)
+    IntArgs(const PrimArgArray<int>& a);
+
+    /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
+    static IntArgs create(int n, int start, int inc=1);
+    //@}    
+  };
   /** \brief Passing integer variables
    *
    * We could have used a simple typedef instead, but doxygen cannot
@@ -2298,6 +2320,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, BoolVar x, IntValBranch vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
+
   //@}
 
   /**

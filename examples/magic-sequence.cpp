@@ -82,11 +82,8 @@ public:
       count(*this, s, s, opt.icl());
       break;
     }
-    IntArgs c(n);
-    for (int j = n; j--; )
-      c[j] = j-1;
-    linear(*this, c, s, IRT_EQ, 0);
-    branch(*this, s, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
+    linear(*this, IntArgs::create(n,-1,1), s, IRT_EQ, 0);
+    branch(*this, s, INT_VAR_NONE, INT_VAL_MAX);
   }
 
   /// Constructor for cloning \a e
