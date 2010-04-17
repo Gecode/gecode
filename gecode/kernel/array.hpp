@@ -130,6 +130,9 @@ namespace Gecode {
     /// Concatenate with \a x and return result
     typename ArrayTraits<VarArgArray<Var> >::args_type
     operator +(const VarArgArray<Var>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<VarArgArray<Var> >::args_type
+    operator +(const Var& x);
     //@}
 
     /// \name Cloning
@@ -479,6 +482,9 @@ namespace Gecode {
     /// Concatenate with \a x and return result
     typename ArrayTraits<PrimArgArray<T> >::args_type
     operator +(const PrimArgArray<T>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<PrimArgArray<T> >::args_type
+    operator +(const T& x);
     //@}
   };
 
@@ -519,6 +525,9 @@ namespace Gecode {
     /// Concatenate with \a x and return result
     typename ArrayTraits<ArgArray<T> >::args_type
     operator +(const ArgArray<T>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<ArgArray<T> >::args_type
+    operator +(const T& x);
     //@}
   };
 
@@ -565,6 +574,9 @@ namespace Gecode {
     /// Concatenate with \a x and return result
     typename ArrayTraits<VarArgArray<Var> >::args_type
     operator +(const VarArgArray<Var>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<VarArgArray<Var> >::args_type
+    operator +(const Var& x);
     //@}
     /// \name Variable equality
     //@{
@@ -743,6 +755,16 @@ namespace Gecode {
       r[i] = (*this)[i];
     for (int i=x.size(); i--;)
       r[n+i] = x[i];
+    return r;
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
+  VarArray<Var>::operator +(const Var& x) {
+    typename ArrayTraits<VarArgArray<Var> >::args_type r(n+1);
+    for (int i=n; i--;)
+      r[i] = (*this)[i];
+      r[n] = x;
     return r;
   }
 
@@ -1289,6 +1311,16 @@ namespace Gecode {
     return r;
   }
 
+  template<class T>
+  forceinline typename ArrayTraits<PrimArgArray<T> >::args_type
+  PrimArgArray<T>::operator +(const T& x) {
+    typename ArrayTraits<PrimArgArray<T> >::args_type r(size()+1);
+    for (int i=size(); i--;)
+      r[i] = (*this)[i];
+    r[size()] = x;
+    return r;
+  }
+
   /*
    * Argument arrays for non-primitive types
    *
@@ -1332,6 +1364,17 @@ namespace Gecode {
     concat(r,x);
     return r;
   }
+
+  template<class T>
+  forceinline typename ArrayTraits<ArgArray<T> >::args_type
+  ArgArray<T>::operator +(const T& x) {
+    typename ArrayTraits<ArgArray<T> >::args_type r(size()+1);
+    for (int i=size(); i--;)
+      r[i] = (*this)[i];
+    r[size()] = x;
+    return r;
+  }
+
 
   /*
    * Argument arrays for variables
@@ -1377,6 +1420,16 @@ namespace Gecode {
   VarArgArray<Var>::operator +(const VarArgArray<Var>& x) {
     typename ArrayTraits<VarArgArray<Var> >::args_type r(size()+x.size());
     concat(r,x);
+    return r;
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
+  VarArgArray<Var>::operator +(const Var& x) {
+    typename ArrayTraits<VarArgArray<Var> >::args_type r(size()+1);
+    for (int i=size(); i--;)
+      r[i] = (*this)[i];
+    r[size()] = x;
     return r;
   }
 
