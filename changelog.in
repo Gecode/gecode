@@ -73,6 +73,15 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Take advantage of the better modeling support for the Golomb
+ruler, Kakuro, and Warehouse examples (nothing but dusting off
+examples that have been around for ages).
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

@@ -59,94 +59,65 @@ using namespace Gecode;
  */
 class GolombRuler : public MinimizeScript {
 protected:
-  /// Number of marks
-  const int n;
   /// Array for ruler marks
   IntVarArray m;
 public:
-  /// Model variants
-  enum {
-    MODEL_NONE, ///< No lower bound
-    MODEL_SUM,  ///< Use sum of ticks as lower bound
-    MODEL_RULER ///< Use size of smaller rulers as lower bound
-  };
   /// Search variants
   enum {
     SEARCH_BAB,    ///< Use branch and bound to optimize
     SEARCH_RESTART ///< Use restart to optimize
   };
-  /// Return index for mark difference between mark \a i and mark \a j
-  int
-  diag(int i, int j) {
-    return (i*(2*n-i-1)) / 2 + j - i - 1;
-  }
-
   /// Actual model
   GolombRuler(const SizeOptions& opt)
-    : n(opt.size()), m(*this,n,0,n*n) {
-    const int dn = (n*n-n)/2;
-
-    IntVarArgs d(dn);
+    : m(*this,opt.size(),0,opt.size()*opt.size()) {
 
     // Assume first mark to be zero
     rel(*this, m[0], IRT_EQ, 0);
 
-    // Setup difference constraints
-    for (int j=1; j<n; j++)
-      d[diag(0,j)] = m[j];
-    for (int i=1; i<n-1; i++)
-      for (int j=i+1; j<n; j++)
-        d[diag(i,j)] = minus(*this, m[j], m[i]);
-
     // Order marks
     rel(*this, m, IRT_LE);
 
-    switch (opt.model()) {
-    case MODEL_NONE:
-      break;
-    case MODEL_SUM:
-      // d[diag(i,j)] must be at least sum of first j-i integers
-      for (int i=0; i<n; i++)
-        for (int j=i+1; j<n; j++)
-          rel(*this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
-      break;
-    case MODEL_RULER:
-      {
-        static const int length[] = {
-          // Length 0-9
-          0,0,1,3,6,11,17,25,34,44,
-          // Length 10-
-          55,72,85,106,127};
-        // Marks from i to j must be ruler of length j-1+i
-        for (int i=0; i<n; i++)
-          for (int j=i+1; j<n; j++)
-            rel(*this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
-      }
-      break;
-    }
+    // Number of marks and differences
+    const int n = m.size();
+    const int n_d = (n*n-n)/2;
+
+    // Array of differences
+    IntVarArgs d(n_d);
+
+    // Setup difference constraints
+    int k=0;
+    // Exploit that m[0] is zero!
+    for (int j=1; j<n; j++)
+      d[k++] = m[j];
+    for (int i=1; i<n-1; i++)
+      for (int j=i+1; j<n; j++)
+        // d[k] must be at least sum of first j-i integers
+        rel(*this, d[k++] = minus(*this, m[j], m[i]),
+                   IRT_GQ, (j-i)*(j-i+1)/2);
 
     distinct(*this, d, opt.icl());
 
+    // Symmetry breaking
     if (n > 2)
-      rel(*this, d[diag(0,1)], IRT_LE, d[diag(n-2,n-1)]);
+      rel(*this, d[0], IRT_LE, d[n_d-1]);
 
     branch(*this, m, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Return cost
   virtual IntVar cost(void) const {
-    return m[n-1];
+    return m[m.size()-1];
   }
 
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\tm[" << n << "] = " << m << std::endl;
+    os << "\tm[" << m.size() << "] = " << m << std::endl;
   }
 
   /// Constructor for cloning \a s
   GolombRuler(bool share, GolombRuler& s)
-    : MinimizeScript(share,s), n(s.n) {
+    : MinimizeScript(share,s) {
     m.update(*this, share, s.m);
   }
   /// Copy during cloning
@@ -165,13 +136,6 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.size(10);
   opt.icl(ICL_BND);
-  opt.model(GolombRuler::MODEL_SUM);
-  opt.model(GolombRuler::MODEL_NONE, "none",
-            "no lower bound");
-  opt.model(GolombRuler::MODEL_SUM, "sum",
-            "use sum of ticks as lower bound");
-  opt.model(GolombRuler::MODEL_RULER, "ruler",
-            "use size of smaller rulers as lower bound");
   opt.search(GolombRuler::SEARCH_BAB);
   opt.search(GolombRuler::SEARCH_BAB, "bab");
   opt.search(GolombRuler::SEARCH_RESTART, "restart");
