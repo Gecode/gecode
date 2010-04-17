@@ -514,9 +514,9 @@ namespace {
  */
 class Kakuro : public Script {
 protected:
-  const int w;    ///< Width of board
-  const int h;    ///< Height of board
-  IntVarArray _b; ///< Variables for board
+  const int w;   ///< Width of board
+  const int h;   ///< Height of board
+  IntVarArray f; ///< Variables for fields of board
 public:
   /// Propagation variants
   enum {
@@ -528,20 +528,11 @@ public:
     MODEL_DECOMPOSE,///< Decompose constraints
     MODEL_COMBINE,  ///< Combine distinct and linear constraint
   };
-  /// Access the field at position \a x, \a y
-  IntVar& b(int x, int y) {
-    assert((x >= 0) && (x < w) && (y >= 0) && (y < h));
-    return _b[x+y*w];
-  }
-  /// Access the field at position \a x, \a y
-  const IntVar& b(int x, int y) const {
-    assert((x >= 0) && (x < w) && (y >= 0) && (y < h));
-    return _b[x+y*w];
-  }
-  /// Init the field at position \a x, \a y if necessary
-  void init(int x, int y) {
-    if (b(x,y).min() == 0)
-      b(x,y).init(*this,1,9);
+  /// Init the variable \a x if necessary
+  IntVar init(IntVar& x) {
+    if (x.min() == 0)
+      x.init(*this,1,9);
+    return x;
   }
   /// Post a distinct-linear constraint on variables \a x with sum \a c
   template<class Data>
@@ -598,48 +589,53 @@ public:
   /// The actual problem
   Kakuro(const SizeOptions& opt)
     : w(examples[opt.size()][0]),  h(examples[opt.size()][1]),
-      _b(*this,w*h) {
+      f(*this,w*h) {
     IntVar black(*this,0,0);
     // Initialize all fields as black (unused). Only if a field
     // is actually used in a constraint, create a fresh variable
     // for it (done via init).
     for (int i=w*h; i--; )
-      _b[i] = black;
-    const int* k = &examples[opt.size()][2];
+      f[i] = black;
+
     // Cache of computed DFAs
     Cache<DFA> dfa_cache;
     // Cache of compute tuple sets
     Cache<TupleSet> ts_cache;
-    // Process vertical constraints
+
+    // Matrix for accessing board fields
+    Matrix<IntVarArray> b(f,w,h);
+    // Access to hints
+    const int* k = &examples[opt.size()][2];
+
+    // Process vertical hints
     while (*k >= 0) {
       int x=*k++; int y=*k++; int n=*k++; int s=*k++;
       IntVarArgs col(n);
-      for (int i=n; i--; ) {
-        init(x,y+i+1); col[i]=b(x,y+i+1);
-      }
+      for (int i=n; i--; )
+        col[i]=init(b(x,y+i+1));
       if (opt.propagation() == PROP_TUPLE_SET)
         distinctlinear(ts_cache,col,s,opt);
       else
         distinctlinear(dfa_cache,col,s,opt);
     }
     k++;
-    // Process horizontal constraints
+
+    // Process horizontal hints
     while (*k >= 0) {
       int x=*k++; int y=*k++; int n=*k++; int s=*k++;
       IntVarArgs row(n);
-      for (int i=n; i--; ) {
-        init(x+i+1,y); row[i]=b(x+i+1,y);
-      }
+      for (int i=n; i--; )
+        row[i]=init(b(x+i+1,y));
       if (opt.propagation() == PROP_TUPLE_SET)
         distinctlinear(ts_cache,row,s,opt);
       else
         distinctlinear(dfa_cache,row,s,opt);
     }
-    branch(*this, _b, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+    branch(*this, f, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
   Kakuro(bool share, Kakuro& s) : Script(share,s), w(s.w), h(s.h) {
-    _b.update(*this, share, s._b);
+    f.update(*this, share, s.f);
   }
   /// Perform copying during cloning
   virtual Space*
@@ -649,6 +645,7 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
+    Matrix<IntVarArray> b(f,w,h);
     for (int y=0; y<h; y++) {
       os << '\t';
       for (int x=0; x<w; x++)
