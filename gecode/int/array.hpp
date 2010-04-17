@@ -37,60 +37,6 @@
 
 namespace Gecode {
 
-  /// Traits of %IntVarArray
-  template<>
-  class ArrayTraits<IntVarArray> {
-  public:
-    typedef IntVarArray  storage_type;
-    typedef IntVar       value_type;
-    typedef IntVarArgs   args_type;
-  };
-
-  /// Traits of %IntVarArgs
-  template<>
-  class ArrayTraits<IntVarArgs> {
-  public:
-    typedef IntVarArgs storage_type;
-    typedef IntVar     value_type;
-    typedef IntVarArgs args_type;
-  };
-
-  /// Traits of %IntArgs
-  template<>
-  class ArrayTraits<IntArgs> {
-  public:
-    typedef IntArgs storage_type;
-    typedef int     value_type;
-    typedef IntArgs args_type;
-  };
-
-  /// Traits of %IntSetArgs
-  template<>
-  class ArrayTraits<IntSetArgs> {
-  public:
-    typedef IntSetArgs storage_type;
-    typedef IntSet     value_type;
-    typedef IntSetArgs args_type;
-  };
-
-  /// Traits of %BoolVarArray
-  template<>
-  class ArrayTraits<BoolVarArray> {
-  public:
-    typedef BoolVarArray  storage_type;
-    typedef BoolVar       value_type;
-    typedef BoolVarArgs   args_type;
-  };
-
-  /// Traits of %BoolVarArgs
-  template<>
-  class ArrayTraits<BoolVarArgs> {
-  public:
-    typedef BoolVarArgs storage_type;
-    typedef BoolVar     value_type;
-    typedef BoolVarArgs args_type;
-  };
-
   /*
    * Implementation
    *

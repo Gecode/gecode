@@ -635,6 +635,15 @@ namespace Gecode {
    */
 
   //@{
+  /// Passing set arguments
+  typedef ArgArray<IntSet> IntSetArgs;
+
+}
+
+#include <gecode/int/array-traits.hpp>
+
+namespace Gecode {
+
   /// Passing integer arguments
   class IntArgs : public PrimArgArray<int> {
   public:
@@ -697,8 +706,6 @@ namespace Gecode {
     BoolVarArgs(const VarArray<BoolVar>& a) : VarArgArray<BoolVar>(a) {}
     //@}
   };
-  /// Passing set arguments
-  typedef ArgArray<IntSet> IntSetArgs;
   //@}
 
   /**

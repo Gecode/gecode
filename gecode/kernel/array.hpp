@@ -46,6 +46,21 @@ namespace Gecode {
   template<class Var> class VarArray;
   template<class Var> class VarArgArray;
 
+  /** \brief Traits of arrays in %Gecode
+   *
+   * This class collects the traits of an array in Gecode.
+   * The traits used are the following.
+   *     - <code>typedef Type storage_type</code>  where \c Type is the type
+   *       of an appropriate storage type for this array.
+   *     - <code>typedef Type value_type</code>  where \c Type is the type
+   *       of the elements of this array.
+   *     - <code>typedef Type args_type</code>  where \c Type is the type
+   *       of the appropriate Args-array type (e.g., \c BoolVarArgs if \c A is
+   *       \c BoolVarArray).
+   */
+  template<class A>
+  class ArrayTraits {};
+
   /**
    * \brief %Variable arrays
    *
@@ -104,8 +119,17 @@ namespace Gecode {
     Var& operator [](int i);
     /// Return variable at position \a i
     const Var& operator [](int i) const;
+    //@}
+
+    /// \name Appending and concatenation
+    //@{
     /// Insert a new element \a v at the end of the array (increase size by 1)
-    void add(Space& home, const Var& v);
+    VarArray<Var>& add(Space& home, const Var& v);
+    /// Append \a x to the end of the array
+    VarArray<Var>& add(Space& home, const VarArgArray<Var>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<VarArgArray<Var> >::args_type
+    operator +(const VarArgArray<Var>& x);
     //@}
 
     /// \name Cloning
@@ -350,22 +374,28 @@ namespace Gecode {
    * from the heap.
    *
    * This base-class is not to be used directly, use PrimArgArray for
-   * argument arrays of primitive types and VarArgArray for argument
-   * arrays storing variables.
+   * argument arrays of primitive types, VarArgArray for argument
+   * arrays storing variables, and ArgArray for any other type.
    */
   template<class T>
   class ArgArrayBase {
   protected:
     /// Number of elements
     int n;
+    /// Allocated size of the array
+    int capacity;
     /// Element array
     T*  a;
-    /// How much elements are possible inside array
+    /// How many elements are possible inside array
     static const int onstack_size = 16;
     /// In-array storage for elements
     T onstack[onstack_size];
     /// Allocate memory for \a n elements
     T* allocate(int n);
+    /// Resize to hold at least \a i additional elements
+    void resize(int i);
+    /// Fill \a x with this array concatenated with \a y
+    void concat(ArgArrayBase<T>& x, const ArgArrayBase<T>& y);
   public:
     /// \name Constructors and initialization
     //@{
@@ -389,6 +419,14 @@ namespace Gecode {
     T& operator [](int i);
     /// Return element at position \a i
     const T& operator [](int i) const;
+    //@}
+
+    /// \name Appending and concatenation
+    //@{
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    ArgArrayBase<T>& operator +=(const T& x);
+    /// Append \a x to the end of the array
+    ArgArrayBase<T>& operator +=(const ArgArrayBase<T>& x);
     //@}
 
     /// \name Destructor
@@ -430,6 +468,18 @@ namespace Gecode {
     /// Initialize from primitive argument array \a a (copy elements)
     PrimArgArray(const PrimArgArray<T>& a);
     //@}
+    /// \name Appending and concatenation
+    //@{
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    typename ArrayTraits<PrimArgArray<T> >::args_type&
+    operator +=(const T& x);
+    /// Append \a x to the end of the array
+    typename ArrayTraits<PrimArgArray<T> >::args_type&
+    operator +=(const PrimArgArray<T>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<PrimArgArray<T> >::args_type
+    operator +(const PrimArgArray<T>& x);
+    //@}
   };
 
   /**
@@ -457,6 +507,18 @@ namespace Gecode {
     ArgArray(int n, const T* e);
     /// Initialize from primitive argument array \a a (copy elements)
     ArgArray(const ArgArray<T>& a);
+    //@}
+    /// \name Appending and concatenation
+    //@{
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    typename ArrayTraits<ArgArray<T> >::args_type&
+    operator +=(const T& x);
+    /// Append \a x to the end of the array
+    typename ArrayTraits<ArgArray<T> >::args_type&
+    operator +=(const ArgArray<T>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<ArgArray<T> >::args_type
+    operator +(const ArgArray<T>& x);
     //@}
   };
 
@@ -491,6 +553,18 @@ namespace Gecode {
     VarArgArray(const VarArgArray<Var>& a);
     /// Initialize from variable array \a a (copy elements)
     VarArgArray(const VarArray<Var>& a);
+    //@}
+    /// \name Appending and concatenation
+    //@{
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    typename ArrayTraits<VarArgArray<Var> >::args_type&
+    operator +=(const Var& x);
+    /// Append \a x to the end of the array
+    typename ArrayTraits<VarArgArray<Var> >::args_type&
+    operator +=(const VarArgArray<Var>& x);
+    /// Concatenate with \a x and return result
+    typename ArrayTraits<VarArgArray<Var> >::args_type
+    operator +(const VarArgArray<Var>& x);
     //@}
     /// \name Variable equality
     //@{
@@ -540,22 +614,6 @@ namespace Gecode {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ArgArrayBase<T>& x);
 
-
-
-  /** \brief Traits of arrays in %Gecode
-   *
-   * This class collects the traits of an array in Gecode.
-   * The traits used are the following.
-   *     - <code>typedef Type storage_type</code>  where \c Type is the type
-   *       of an appropriate storage type for this array.
-   *     - <code>typedef Type value_type</code>  where \c Type is the type
-   *       of the elements of this array.
-   *     - <code>typedef Type args_type</code>  where \c Type is the type
-   *       of the appropriate Args-array type (e.g., \c BoolVarArgs if \c A is
-   *       \c BoolVarArray).
-   */
-  template<class A>
-  class ArrayTraits {};
 
   /*
    * Implementation
@@ -660,10 +718,32 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline void
+  forceinline VarArray<Var>&
   VarArray<Var>::add(Space& home, const Var& v) {
     resize(home, n+1);
     new (&(*this)[n-1]) Var(v);
+    return *this;
+  }
+
+  template<class Var>
+  forceinline VarArray<Var>&
+  VarArray<Var>::add(Space& home, const VarArgArray<Var>& x) {
+    int oldSize = n;
+    resize(home, n+x.size());
+    for (int i=x.size(); i--;)
+      new (&(*this)[oldSize+i]) Var(x[i]);
+    return *this;
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
+  VarArray<Var>::operator +(const VarArgArray<Var>& x) {
+    typename ArrayTraits<VarArgArray<Var> >::args_type r(n+x.size());
+    for (int i=n; i--;)
+      r[i] = (*this)[i];
+    for (int i=x.size(); i--;)
+      r[n+i] = x[i];
+    return r;
   }
 
   template<class Var>
@@ -1059,31 +1139,49 @@ namespace Gecode {
   }
 
   template<class T>
+  forceinline void
+  ArgArrayBase<T>::resize(int i) {
+    if (n+i >= capacity) {
+      assert(n+i >= onstack_size);
+      int newCapacity = (3*capacity)/2;
+      if (newCapacity <= n+i)
+        newCapacity = n+i;
+      T* newA = allocate(newCapacity);
+      heap.copy<T>(newA,a,n);
+      if (capacity > onstack_size)
+        heap.free(a,capacity);
+      capacity = newCapacity;
+      a = newA;
+    }
+  }
+
+  template<class T>
   forceinline
   ArgArrayBase<T>::ArgArrayBase(int n0)
-    : n(n0), a(allocate(n)) {}
+    : n(n0), capacity(n < onstack_size ? onstack_size : n), a(allocate(n)) {}
 
   template<class T>
   inline
   ArgArrayBase<T>::ArgArrayBase(const ArgArrayBase<T>& aa)
-    : n(aa.n), a(allocate(n)) {
+    : n(aa.n), capacity(n < onstack_size ? onstack_size : n), a(allocate(n)) {
     heap.copy<T>(a,aa.a,n);
   }
 
   template<class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
-    if (n > onstack_size)
-      heap.free(a,n);
+    if (capacity > onstack_size)
+      heap.free(a,capacity);
   }
 
   template<class T>
   forceinline const ArgArrayBase<T>&
   ArgArrayBase<T>::operator =(const ArgArrayBase<T>& aa) {
     if (&aa != this) {
-      if (n > onstack_size)
-        heap.free(a,n);
+      if (capacity > onstack_size)
+        heap.free(a,capacity);
       n = aa.n;
+      capacity = (n < onstack_size ? onstack_size : n);
       a = allocate(aa.n);
       heap.copy<T>(a,aa.a,n);
     }
@@ -1110,6 +1208,31 @@ namespace Gecode {
     return a[i];
   }
 
+  template<class T>
+  inline ArgArrayBase<T>&
+  ArgArrayBase<T>::operator +=(const T& x) {
+    resize(1);
+    a[n++] = x;
+    return *this;
+  }
+
+  template<class T>
+  inline ArgArrayBase<T>&
+  ArgArrayBase<T>::operator +=(const ArgArrayBase<T>& x) {
+    resize(x.size());
+    for (int i=x.size(); i--;)
+      a[n+i] = x[i];
+    return *this;
+  }
+
+  template<class T>
+  inline void
+  ArgArrayBase<T>::concat(ArgArrayBase<T>& x, const ArgArrayBase<T>& y) {
+    if (x.n<n+y.n)
+      x.resize(n+y.n-x.n);
+    heap.copy<T>(x.a,a,n);
+    heap.copy<T>(x.a+n,y.a,y.n);
+  }
 
   /*
    * Argument arrays for primitive types
@@ -1144,6 +1267,27 @@ namespace Gecode {
   PrimArgArray<T>::PrimArgArray(const PrimArgArray<T>& aa)
     : ArgArrayBase<T>(aa) {}
 
+  template<class T>
+  forceinline typename ArrayTraits<PrimArgArray<T> >::args_type&
+  PrimArgArray<T>::operator +=(const T& x) {
+    return static_cast<typename ArrayTraits<PrimArgArray<T> >::args_type&>
+      (ArgArrayBase<T>::operator +=(x));
+  }
+
+  template<class T>
+  forceinline typename ArrayTraits<PrimArgArray<T> >::args_type&
+  PrimArgArray<T>::operator +=(const PrimArgArray<T>& x) {
+    return static_cast<typename ArrayTraits<PrimArgArray<T> >::args_type&>
+      (ArgArrayBase<T>::operator +=(x));
+  }
+
+  template<class T>
+  forceinline typename ArrayTraits<PrimArgArray<T> >::args_type
+  PrimArgArray<T>::operator +(const PrimArgArray<T>& x) {
+    typename ArrayTraits<PrimArgArray<T> >::args_type r(size()+x.size());
+    concat(r,x);
+    return r;
+  }
 
   /*
    * Argument arrays for non-primitive types
@@ -1167,7 +1311,27 @@ namespace Gecode {
   ArgArray<T>::ArgArray(const ArgArray<T>& aa)
     : ArgArrayBase<T>(aa) {}
 
+  template<class T>
+  forceinline typename ArrayTraits<ArgArray<T> >::args_type&
+  ArgArray<T>::operator +=(const T& x) {
+    return static_cast<typename ArrayTraits<ArgArray<T> >::args_type&>
+      (ArgArrayBase<T>::operator +=(x));
+  }
 
+  template<class T>
+  forceinline typename ArrayTraits<ArgArray<T> >::args_type&
+  ArgArray<T>::operator +=(const ArgArray<T>& x) {
+    return static_cast<typename ArrayTraits<ArgArray<T> >::args_type&>
+      (ArgArrayBase<T>::operator +=(x));
+  }
+
+  template<class T>
+  forceinline typename ArrayTraits<ArgArray<T> >::args_type
+  ArgArray<T>::operator +(const ArgArray<T>& x) {
+    typename ArrayTraits<ArgArray<T> >::args_type r(size()+x.size());
+    concat(r,x);
+    return r;
+  }
 
   /*
    * Argument arrays for variables
@@ -1190,6 +1354,30 @@ namespace Gecode {
     : ArgArrayBase<Var>(x.size()) {
     for (int i=x.size(); i--; )
       a[i]=x[i];
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
+  VarArgArray<Var>::operator +=(const Var& x) {
+    return
+      static_cast<typename ArrayTraits<VarArgArray<Var> >::args_type&>
+        (ArgArrayBase<Var>::operator +=(x));
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
+  VarArgArray<Var>::operator +=(const VarArgArray<Var>& x) {
+    return
+      static_cast<typename ArrayTraits<VarArgArray<Var> >::args_type&>
+        (ArgArrayBase<Var>::operator +=(x));
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
+  VarArgArray<Var>::operator +(const VarArgArray<Var>& x) {
+    typename ArrayTraits<VarArgArray<Var> >::args_type r(size()+x.size());
+    concat(r,x);
+    return r;
   }
 
   template<class Var>

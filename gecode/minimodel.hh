@@ -162,11 +162,11 @@ namespace Gecode {
     /// Create expression
     LinExpr(const BoolVar& x, int a=1);
     /// Create sum expression
-    LinExpr(const IntVarArgs& x);
+    explicit LinExpr(const IntVarArgs& x);
     /// Create sum expression
     LinExpr(const IntArgs& a, const IntVarArgs& x);
     /// Create sum expression
-    LinExpr(const BoolVarArgs& x);
+    explicit LinExpr(const BoolVarArgs& x);
     /// Create sum expression
     LinExpr(const IntArgs& a, const BoolVarArgs& x);
     /// Copy constructor

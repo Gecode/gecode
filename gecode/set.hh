@@ -524,8 +524,15 @@ namespace Gecode {
    * with automatic memory management.
    * \ingroup TaskModelSet
    */
-
+  
   //@{
+
+}
+
+#include <gecode/set/array-traits.hpp>
+
+namespace Gecode {
+
   /** \brief Passing set variables
    *
    * We could have used a simple typedef instead, but doxygen cannot

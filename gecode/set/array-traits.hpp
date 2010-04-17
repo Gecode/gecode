@@ -13,8 +13,8 @@
  *     Gabor Szokoli, 2004
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2010-04-08 12:35:31 +0200 (Do, 08 Apr 2010) $ by $Author: schulte $
+ *     $Revision: 10684 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -43,17 +43,43 @@
 
 namespace Gecode {
 
-  /*
-   * Implementation
-   *
-   */
+  class SetVarArgs;
+  class SetVarArray;
 
-  forceinline
-  SetVarArray::SetVarArray(void) {}
+  /// Traits of %VarArgArray<SetVar>
+  template<>
+  class ArrayTraits<VarArgArray<SetVar> > {
+  public:
+    typedef SetVarArgs storage_type;
+    typedef SetVar     value_type;
+    typedef SetVarArgs args_type;
+  };
 
-  forceinline
-  SetVarArray::SetVarArray(const SetVarArray& a)
-    : VarArray<SetVar>(a) {}
+  /// Traits of %VarArray<SetVar>
+  template<>
+  class ArrayTraits<VarArray<SetVar> > {
+  public:
+    typedef SetVarArray  storage_type;
+    typedef SetVar       value_type;
+    typedef SetVarArgs   args_type;
+  };
+
+  /// Traits of %SetVarArray
+  template<>
+  class ArrayTraits<SetVarArray> {
+  public:
+    typedef SetVarArray  storage_type;
+    typedef SetVar       value_type;
+    typedef SetVarArgs   args_type;
+  };
+  /// Traits of %SetVarArgs
+  template<>
+  class ArrayTraits<SetVarArgs> {
+  public:
+    typedef SetVarArgs storage_type;
+    typedef SetVar     value_type;
+    typedef SetVarArgs args_type;
+  };
 
 }
 
