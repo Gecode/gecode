@@ -77,7 +77,7 @@ Module: example
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Take advantage of the better modeling support for the Golomb
+Take advantage of the better modeling support for the BIBD, Golomb
 ruler, Kakuro, and Warehouse examples (nothing but dusting off
 examples that have been around for ages).
 
