@@ -55,6 +55,10 @@ namespace Gecode {
   SetVarArray::SetVarArray(const SetVarArray& a)
     : VarArray<SetVar>(a) {}
 
+  forceinline
+  SetVarArray::SetVarArray(Space& home, const SetVarArgs& a)
+    : VarArray<SetVar>(home,a) {}
+
 }
 
 // STATISTICS: set-other

@@ -572,10 +572,16 @@ namespace Gecode {
    */
   class SetVarArray : public VarArray<SetVar> {
   public:
+    /// \name Creation and initialization
+    //@{
+    /// Default constructor (array of size 0)
     SetVarArray(void);
+    /// Initialize from set variable array \a a (share elements)    
     SetVarArray(const SetVarArray&);
-    /// Create an uninitialized array of size \a n
-    GECODE_SET_EXPORT SetVarArray(Space& home,int n);
+    /// Initialize from set variable argument array \a a (copy elements)
+    SetVarArray(Space& home, const SetVarArgs&);
+    /// Allocate array for \a n set variables (variables are uninitialized)
+    GECODE_SET_EXPORT SetVarArray(Space& home, int n);
     /**
      * \brief Create an array of size \a n.
      *
@@ -617,6 +623,7 @@ namespace Gecode {
                 const IntSet& glb,const IntSet& lub,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
+    //@}
   };
 
 }

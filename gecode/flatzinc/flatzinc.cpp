@@ -969,10 +969,10 @@ namespace Gecode { namespace FlatZinc {
 #endif
                        ) {
     if (_output == NULL) {
-      iv.resize(home, 0);
-      bv.resize(home, 0);
+      iv = IntVarArray(home, 0);
+      bv = BoolVarArray(home, 0);
 #ifdef GECODE_HAS_SET_VARS
-      sv.resize(home, 0);
+      sv = SetVarArray(home, 0);
 #endif
       return;
     }
@@ -1001,9 +1001,7 @@ namespace Gecode { namespace FlatZinc {
       for (map<int,int>::iterator i=iv_new.begin(); i != iv_new.end(); ++i) {
         iva[(*i).second] = iv[(*i).first];
       }
-      for (int i=iva.size(); i--;)
-        iv[i] = iva[i];
-      iv.resize(home, iva.size());
+      iv = IntVarArray(home, iva);
     }
 
     if (static_cast<int>(bv_new.size()) != bv.size()) {
@@ -1011,9 +1009,7 @@ namespace Gecode { namespace FlatZinc {
       for (map<int,int>::iterator i=bv_new.begin(); i != bv_new.end(); ++i) {
         bva[(*i).second] = bv[(*i).first];
       }
-      for (int i=bva.size(); i--;)
-        bv[i] = bva[i];
-      bv.resize(home, bva.size());
+      bv = BoolVarArray(home, bva);
     }
 #ifdef GECODE_HAS_SET_VARS
     if (static_cast<int>(sv_new.size()) != sv.size()) {
@@ -1021,9 +1017,7 @@ namespace Gecode { namespace FlatZinc {
       for (map<int,int>::iterator i=sv_new.begin(); i != sv_new.end(); ++i) {
         sva[(*i).second] = sv[(*i).first];
       }
-      for (int i=sva.size(); i--;)
-        sv[i] = sva[i];
-      sv.resize(home, sva.size());
+      sv = SetVarArray(home, sva);
     }
 #endif
   }

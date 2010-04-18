@@ -93,6 +93,10 @@ namespace Gecode {
   IntVarArray::IntVarArray(const IntVarArray& a)
     : VarArray<IntVar>(a) {}
 
+  forceinline
+  IntVarArray::IntVarArray(Space& home, const IntVarArgs& a)
+    : VarArray<IntVar>(home,a) {}
+
 
   forceinline
   BoolVarArray::BoolVarArray(void) {}
@@ -104,6 +108,10 @@ namespace Gecode {
   forceinline
   BoolVarArray::BoolVarArray(const BoolVarArray& a)
     : VarArray<BoolVar>(a) {}
+
+  forceinline
+  BoolVarArray::BoolVarArray(Space& home, const BoolVarArgs& a)
+    : VarArray<BoolVar>(home,a) {}
 
 }
 

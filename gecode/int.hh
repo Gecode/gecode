@@ -733,6 +733,8 @@ namespace Gecode {
     IntVarArray(Space& home, int n);
     /// Initialize from integer variable array \a a (share elements)
     IntVarArray(const IntVarArray& a);
+    /// Initialize from integer variable argument array \a a (copy elements)
+    IntVarArray(Space& home, const IntVarArgs& a);
     /**
      * \brief Initialize array with \a n new variables
      *
@@ -776,6 +778,8 @@ namespace Gecode {
     BoolVarArray(Space& home, int n);
     /// Initialize from Boolean variable array \a a (share elements)
     BoolVarArray(const BoolVarArray& a);
+    /// Initialize from Boolean variable argument array \a a (copy elements)
+    BoolVarArray(Space& home, const BoolVarArgs& a);
     /**
      * \brief Initialize array with \a n new variables
      *
