@@ -348,7 +348,6 @@ namespace Gecode { namespace FlatZinc {
   void
   FlatZincSpace::createBranchers(AST::Node* ann, bool ignoreUnknown,
                                  std::ostream& err) {
-    bool hadSearchAnnotation = false;
     if (ann) {
       std::vector<AST::Node*> flatAnn;
       if (ann->isArray()) {
@@ -377,7 +376,6 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = iv[vars->a[i]->getIntVar()];
           }
           branch(*this, va, ann2ivarsel(args->a[1]), ann2ivalsel(args->a[2]));
-          hadSearchAnnotation = true;
         } catch (AST::TypeError& e) {
         try {
           AST::Call *call = flatAnn[i]->getCall("int_assign");
@@ -395,7 +393,6 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = iv[vars->a[i]->getIntVar()];
           }
           assign(*this, va, ann2asnivalsel(args->a[1]));
-          hadSearchAnnotation = true;
         } catch (AST::TypeError& e) {
           (void) e;
           try {
@@ -415,7 +412,6 @@ namespace Gecode { namespace FlatZinc {
             }
             branch(*this, va, ann2ivarsel(args->a[1]), 
                    ann2ivalsel(args->a[2]));        
-            hadSearchAnnotation = true;
           } catch (AST::TypeError& e) {
             (void) e;
 #ifdef GECODE_HAS_SET_VARS
@@ -436,7 +432,6 @@ namespace Gecode { namespace FlatZinc {
               }
               branch(*this, va, ann2svarsel(args->a[1]), 
                                ann2svalsel(args->a[2]));        
-              hadSearchAnnotation = true;
             } catch (AST::TypeError& e) {
               (void) e;
               if (!ignoreUnknown) {
@@ -457,37 +452,51 @@ namespace Gecode { namespace FlatZinc {
         }
       }
     }
-    if (!hadSearchAnnotation) {
-      int countUp = 0;
-      int countDown = iv.size()-1;
-      IntVarArgs iva(iv.size());
-      for (int i=0; i<iv.size(); i++)
-        if (iv_introduced[i])
-          iva[countDown--] = iv[i];
-        else
-          iva[countUp++] = iv[i];
-      countUp = 0;
-      countDown = bv.size()-1;
-      BoolVarArgs bva(bv.size());
-      for (int i=0; i<bv.size(); i++)
-        if (bv_introduced[i])
-          bva[countDown--] = bv[i];
-        else
-          bva[countUp++] = bv[i];
-      branch(*this, iva, INT_VAR_NONE, INT_VAL_MIN);
-      branch(*this, bva, INT_VAR_NONE, INT_VAL_MIN);
+    int introduced = 0;
+    for (int i=iv.size(); i--;)
+      if (iv_introduced[i])
+        introduced++;
+    IntVarArgs iv_sol(iv.size()-introduced);
+    IntVarArgs iv_tmp(introduced);
+    for (int i=iv.size(), j=0, k=0; i--;)
+      if (iv_introduced[i])
+        iv_tmp[j++] = iv[i];
+      else
+        iv_sol[k++] = iv[i];
+
+    introduced = 0;
+    for (int i=bv.size(); i--;)
+      if (bv_introduced[i])
+        introduced++;
+    BoolVarArgs bv_sol(bv.size()-introduced);
+    BoolVarArgs bv_tmp(introduced);
+    for (int i=bv.size(), j=0, k=0; i--;)
+      if (bv_introduced[i])
+        bv_tmp[j++] = bv[i];
+      else
+        bv_sol[k++] = bv[i];
+
+    branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
+    branch(*this, bv_sol, INT_VAR_AFC_MIN, INT_VAL_MIN);
 #ifdef GECODE_HAS_SET_VARS
-      countUp = 0;
-      countDown = sv.size()-1;
-      SetVarArgs sva(sv.size());
-      for (int i=0; i<sv.size(); i++)
-        if (sv_introduced[i])
-          sva[countDown--] = sv[i];
-        else
-          sva[countUp++] = sv[i];
-      branch(*this, sva, SET_VAR_NONE, SET_VAL_MIN_INC);
+    introduced = 0;
+    for (int i=sv.size(); i--;)
+      if (sv_introduced[i])
+        introduced++;
+    SetVarArgs sv_sol(sv.size()-introduced);
+    SetVarArgs sv_tmp(introduced);
+    for (int i=sv.size(), j=0, k=0; i--;)
+      if (sv_introduced[i])
+        sv_tmp[j++] = sv[i];
+      else
+        sv_sol[k++] = sv[i];
+    branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
 #endif
-    }
+    branch(*this, iv_tmp, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
+    branch(*this, bv_tmp, INT_VAR_AFC_MIN, INT_VAL_MIN);
+#ifdef GECODE_HAS_SET_VARS
+    branch(*this, sv_tmp, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
+#endif
   }
 
   AST::Array*
