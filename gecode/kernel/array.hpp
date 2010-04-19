@@ -110,7 +110,7 @@ namespace Gecode {
     Var& operator [](int i);
     /// Return variable at position \a i
     const Var& operator [](int i) const;
-    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
     typename ArrayTraits<VarArgArray<Var> >::args_type
     slice(int n, int start, int inc);
     //@}
@@ -423,7 +423,7 @@ namespace Gecode {
     /// Append \a x to the end of the array
     template<class A>
     A& append(const ArgArrayBase<T>& x);
-    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
     template<class A>
     A slice(int n, int start, int inc);
   public:
@@ -514,7 +514,7 @@ namespace Gecode {
     //@}
     /// \name Array elements
     //@{
-    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
     typename ArrayTraits<PrimArgArray<T> >::args_type
     slice(int n, int start, int inc);
     //@}
@@ -588,7 +588,7 @@ namespace Gecode {
     //@}
     /// \name Array elements
     //@{
-    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
     typename ArrayTraits<ArgArray<T> >::args_type
     slice(int n, int start, int inc);
     //@}
@@ -668,7 +668,7 @@ namespace Gecode {
     //@}
     /// \name Array elements
     //@{
-    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
     typename ArrayTraits<VarArgArray<Var> >::args_type
     slice(int n, int start, int inc);
     //@}
