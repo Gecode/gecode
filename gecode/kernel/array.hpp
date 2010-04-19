@@ -110,9 +110,13 @@ namespace Gecode {
     Var& operator [](int i);
     /// Return variable at position \a i
     const Var& operator [](int i) const;
-    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /** Return slice \f$y\f$ of length at most \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+     *
+     * If \a n is -1, then all possible elements starting from \a start
+     * with increment \a inc are returned.
+     */
     typename ArrayTraits<VarArgArray<Var> >::args_type
-    slice(int n, int start, int inc);
+    slice(int start, int inc=1, int n=-1);
     //@}
 
     /// \name Cloning
@@ -423,9 +427,13 @@ namespace Gecode {
     /// Append \a x to the end of the array
     template<class A>
     A& append(const ArgArrayBase<T>& x);
-    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /** Return slice \f$y\f$ of length at most \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+     *
+     * If \a n is -1, then all possible elements starting from \a start
+     * with increment \a inc are returned.
+     */
     template<class A>
-    A slice(int n, int start, int inc);
+    A slice(int start, int inc=1, int n=-1);
   public:
     /// \name Constructors and initialization
     //@{
@@ -514,9 +522,13 @@ namespace Gecode {
     //@}
     /// \name Array elements
     //@{
-    /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    /** Return slice \f$y\f$ of length at most \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+     *
+     * If \a n is -1, then all possible elements starting from \a start
+     * with increment \a inc are returned.
+     */
     typename ArrayTraits<PrimArgArray<T> >::args_type
-    slice(int n, int start, int inc);
+    slice(int start, int inc=1, int n=-1);
     //@}
     /// \name Appending elements
     //@{
@@ -590,7 +602,7 @@ namespace Gecode {
     //@{
     /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
     typename ArrayTraits<ArgArray<T> >::args_type
-    slice(int n, int start, int inc);
+    slice(int start, int inc=1, int n=-1);
     //@}
     /// \name Appending elements
     //@{
@@ -670,7 +682,7 @@ namespace Gecode {
     //@{
     /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
     typename ArrayTraits<VarArgArray<Var> >::args_type
-    slice(int n, int start, int inc);
+    slice(int start, int inc=1, int n=-1);
     //@}
     /// \name Appending elements
     //@{
@@ -801,8 +813,10 @@ namespace Gecode {
 
   template<class Var>
   typename ArrayTraits<VarArgArray<Var> >::args_type
-  VarArray<Var>::slice(int maxN, int start, int inc) {
+  VarArray<Var>::slice(int start, int inc, int maxN) {
     assert(start < n);
+    if (maxN<0)
+      maxN = n;
     int s;
     if (inc == 0)
       s = n-start;
@@ -1332,8 +1346,10 @@ namespace Gecode {
 
   template<class T> template<class A>
   A
-  ArgArrayBase<T>::slice(int maxN, int start, int inc) {
+  ArgArrayBase<T>::slice(int start, int inc, int maxN) {
     assert(start < n);
+    if (maxN<0)
+      maxN = n;
     int s;
     if (inc == 0)
       s = n-start;
@@ -1420,9 +1436,10 @@ namespace Gecode {
 
   template<class T>
   forceinline typename ArrayTraits<PrimArgArray<T> >::args_type
-  PrimArgArray<T>::slice(int maxN, int start, int inc) {
-    return ArgArrayBase<T>::slice<ArrayTraits<PrimArgArray<T> >::args_type>
-      (maxN,start,inc);
+  PrimArgArray<T>::slice(int start, int inc, int maxN) {
+    return ArgArrayBase<T>::template slice
+      <typename ArrayTraits<PrimArgArray<T> >::args_type>
+        (start,inc,maxN);
   }
 
   template<class T>
@@ -1487,21 +1504,26 @@ namespace Gecode {
 
   template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::args_type
-  ArgArray<T>::slice(int maxN, int start, int inc) {
-    return ArgArrayBase<T>::slice<ArrayTraits<ArgArray<T> >::args_type>
-      (maxN,start,inc);
+  ArgArray<T>::slice(int start, int inc, int maxN) {
+    return ArgArrayBase<T>::template slice
+      <typename ArrayTraits<ArgArray<T> >::args_type>
+      (start,inc,maxN);
   }
 
   template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::args_type&
   ArgArray<T>::operator +=(const T& x) {
-    return append(x);
+    return
+      ArgArrayBase<T>::template append
+        <typename ArrayTraits<ArgArray<T> >::args_type>(x);
   }
 
   template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::args_type&
   ArgArray<T>::operator +=(const ArgArray<T>& x) {
-    return append(x);
+    return
+      ArgArrayBase<T>::template append
+        <typename ArrayTraits<ArgArray<T> >::args_type>(x);
   }
 
   template<class T>
@@ -1552,21 +1574,26 @@ namespace Gecode {
 
   template<class Var>
   forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
-  VarArgArray<Var>::slice(int maxN, int start, int inc) {
-    return ArgArrayBase<Var>::slice<ArrayTraits<VarArgArray<Var> >::args_type>
-      (maxN,start,inc);
+  VarArgArray<Var>::slice(int start, int inc, int maxN) {
+    return ArgArrayBase<Var>::template slice
+      <typename ArrayTraits<VarArgArray<Var> >::args_type>
+        (start,inc,maxN);
   }
 
   template<class Var>
   forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
   VarArgArray<Var>::operator +=(const Var& x) {
-    return append(x);
+    return
+      ArgArrayBase<Var>::template append
+        <typename ArrayTraits<VarArgArray<Var> >::args_type>(x);
   }
 
   template<class Var>
   forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
   VarArgArray<Var>::operator +=(const VarArgArray<Var>& x) {
-    return append(x);
+    return
+      ArgArrayBase<Var>::template append
+        <typename ArrayTraits<VarArgArray<Var> >::args_type>(x);
   }
 
   template<class Var>
