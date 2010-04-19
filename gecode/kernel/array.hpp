@@ -110,6 +110,9 @@ namespace Gecode {
     Var& operator [](int i);
     /// Return variable at position \a i
     const Var& operator [](int i) const;
+    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    typename ArrayTraits<VarArgArray<Var> >::args_type
+    slice(int n, int start, int inc);
     //@}
 
     /// \name Appending and concatenation
@@ -384,8 +387,21 @@ namespace Gecode {
     T* allocate(int n);
     /// Resize to hold at least \a i additional elements
     void resize(int i);
-    /// Fill \a x with this array concatenated with \a y
-    void concat(ArgArrayBase<T>& x, const ArgArrayBase<T>& y);
+    /// Return this array concatenated with \a x
+    template<template<class> class A>
+    A<T> concat(const ArgArrayBase<T>& x);
+    /// Return this array concatenated with \a x
+    template<template<class> class A>
+    A<T> concat(const T& x);
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    template<template<class> class A>
+    A<T>& append(const T& x);
+    /// Append \a x to the end of the array
+    template<template<class> class A>
+    A<T>& append(const ArgArrayBase<T>& x);
+    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    template<template<class> class A>
+    A<T> slice(int n, int start, int inc);
   public:
     /// \name Constructors and initialization
     //@{
@@ -409,14 +425,6 @@ namespace Gecode {
     T& operator [](int i);
     /// Return element at position \a i
     const T& operator [](int i) const;
-    //@}
-
-    /// \name Appending and concatenation
-    //@{
-    /// Insert a new element \a x at the end of the array (increase size by 1)
-    ArgArrayBase<T>& operator +=(const T& x);
-    /// Append \a x to the end of the array
-    ArgArrayBase<T>& operator +=(const ArgArrayBase<T>& x);
     //@}
 
     /// \name Destructor
@@ -457,6 +465,12 @@ namespace Gecode {
     PrimArgArray(int n, const T* e);
     /// Initialize from primitive argument array \a a (copy elements)
     PrimArgArray(const PrimArgArray<T>& a);
+    //@}
+    /// \name Array elements
+    //@{
+    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    typename ArrayTraits<PrimArgArray<T> >::args_type
+    slice(int n, int start, int inc);
     //@}
     /// \name Appending and concatenation
     //@{
@@ -500,6 +514,12 @@ namespace Gecode {
     ArgArray(int n, const T* e);
     /// Initialize from primitive argument array \a a (copy elements)
     ArgArray(const ArgArray<T>& a);
+    //@}
+    /// \name Array elements
+    //@{
+    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    typename ArrayTraits<ArgArray<T> >::args_type
+    slice(int n, int start, int inc);
     //@}
     /// \name Appending and concatenation
     //@{
@@ -549,6 +569,12 @@ namespace Gecode {
     VarArgArray(const VarArgArray<Var>& a);
     /// Initialize from variable array \a a (copy elements)
     VarArgArray(const VarArray<Var>& a);
+    //@}
+    /// \name Array elements
+    //@{
+    /// Return slice \f$y\f$ of length at most \a maxN such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
+    typename ArrayTraits<VarArgArray<Var> >::args_type
+    slice(int n, int start, int inc);
     //@}
     /// \name Appending and concatenation
     //@{
@@ -672,6 +698,23 @@ namespace Gecode {
   VarArray<Var>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return x[i];
+  }
+
+  template<class Var>
+  typename ArrayTraits<VarArgArray<Var> >::args_type
+  VarArray<Var>::slice(int maxN, int start, int inc) {
+    assert(start < n);
+    int s;
+    if (inc == 0)
+      s = n-start;
+    else if (inc > 0)
+      s = (n-start)/inc + ((n-start) % inc == 0 ? 0 : 1);
+    else
+      s = (start+1)/-inc + ((start+1) % -inc == 0 ? 0 : 1);
+    typename ArrayTraits<VarArgArray<Var> >::args_type r(std::min(maxN,s));
+    for (int i=0; i<r.size(); i++, start+=inc)
+      r[i] = x[start];
+    return r;
   }
 
   template<class Var>
@@ -1156,30 +1199,56 @@ namespace Gecode {
     return a[i];
   }
 
-  template<class T>
-  inline ArgArrayBase<T>&
-  ArgArrayBase<T>::operator +=(const T& x) {
+  template<class T> template<template<class> class A>
+  A<T>
+  ArgArrayBase<T>::slice(int maxN, int start, int inc) {
+    assert(start < n);
+    int s;
+    if (inc == 0)
+      s = n-start;
+    else if (inc > 0)
+      s = (n-start)/inc + ((n-start) % inc == 0 ? 0 : 1);
+    else
+      s = (start+1)/-inc + ((start+1) % -inc == 0 ? 0 : 1);
+    A<T> r(std::min(maxN,s));
+    for (int i=0; i<r.size(); i++, start+=inc)
+      new (&r[i]) T(a[start]);
+    return r;
+  }
+
+  template<class T> template<template<class> class A>
+  inline A<T>&
+  ArgArrayBase<T>::append(const T& x) {
     resize(1);
-    a[n++] = x;
+    new (&a[n++]) T(x);
     return *this;
   }
 
-  template<class T>
-  inline ArgArrayBase<T>&
-  ArgArrayBase<T>::operator +=(const ArgArrayBase<T>& x) {
+  template<class T> template<template<class> class A>
+  inline A<T>&
+  ArgArrayBase<T>::append(const ArgArrayBase<T>& x) {
     resize(x.size());
     for (int i=x.size(); i--;)
-      a[n+i] = x[i];
+      new (&a[n+i]) T(x[i]);
     return *this;
   }
 
-  template<class T>
-  inline void
-  ArgArrayBase<T>::concat(ArgArrayBase<T>& x, const ArgArrayBase<T>& y) {
-    if (x.n<n+y.n)
-      x.resize(n+y.n-x.n);
-    heap.copy<T>(x.a,a,n);
-    heap.copy<T>(x.a+n,y.a,y.n);
+  template<class T> template<template<class> class A>
+  inline A<T> 
+  ArgArrayBase<T>::concat(const ArgArrayBase<T>& x) {
+    A<T> r(n+x.n);
+    heap.copy<T>(r.a,a,n);
+    heap.copy<T>(r.a+n,x.a,x.n);
+    return r;
+  }
+
+  template<class T> template<template<class> class A>
+  inline A<T> 
+  ArgArrayBase<T>::concat(const T& x) {
+    A<T> r(n+1);
+    heap.copy<T>(r.a,a,n);
+    new (&r[n]) T(x);
+    return r;
   }
 
   /*
@@ -1216,35 +1285,34 @@ namespace Gecode {
     : ArgArrayBase<T>(aa) {}
 
   template<class T>
+  forceinline typename ArrayTraits<PrimArgArray<T> >::args_type
+  PrimArgArray<T>::slice(int maxN, int start, int inc) {
+    return ArgArrayBase<T>::slice<ArrayTraits<PrimArgArray<T> >::args_type>
+      (maxN,start,inc);
+  }
+
+  template<class T>
   forceinline typename ArrayTraits<PrimArgArray<T> >::args_type&
   PrimArgArray<T>::operator +=(const T& x) {
-    return static_cast<typename ArrayTraits<PrimArgArray<T> >::args_type&>
-      (ArgArrayBase<T>::operator +=(x));
+    return append(x);
   }
 
   template<class T>
   forceinline typename ArrayTraits<PrimArgArray<T> >::args_type&
   PrimArgArray<T>::operator +=(const PrimArgArray<T>& x) {
-    return static_cast<typename ArrayTraits<PrimArgArray<T> >::args_type&>
-      (ArgArrayBase<T>::operator +=(x));
+    return append(x);
   }
 
   template<class T>
   forceinline typename ArrayTraits<PrimArgArray<T> >::args_type
   PrimArgArray<T>::operator +(const PrimArgArray<T>& x) {
-    typename ArrayTraits<PrimArgArray<T> >::args_type r(size()+x.size());
-    concat(r,x);
-    return r;
+    return concat(x);
   }
 
   template<class T>
   forceinline typename ArrayTraits<PrimArgArray<T> >::args_type
   PrimArgArray<T>::operator +(const T& x) {
-    typename ArrayTraits<PrimArgArray<T> >::args_type r(size()+1);
-    for (int i=size(); i--;)
-      r[i] = (*this)[i];
-    r[size()] = x;
-    return r;
+    return concat(x);
   }
 
   /*
@@ -1270,35 +1338,34 @@ namespace Gecode {
     : ArgArrayBase<T>(aa) {}
 
   template<class T>
+  forceinline typename ArrayTraits<ArgArray<T> >::args_type
+  ArgArray<T>::slice(int maxN, int start, int inc) {
+    return ArgArrayBase<T>::slice<ArrayTraits<ArgArray<T> >::args_type>
+      (maxN,start,inc);
+  }
+
+  template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::args_type&
   ArgArray<T>::operator +=(const T& x) {
-    return static_cast<typename ArrayTraits<ArgArray<T> >::args_type&>
-      (ArgArrayBase<T>::operator +=(x));
+    return append(x);
   }
 
   template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::args_type&
   ArgArray<T>::operator +=(const ArgArray<T>& x) {
-    return static_cast<typename ArrayTraits<ArgArray<T> >::args_type&>
-      (ArgArrayBase<T>::operator +=(x));
+    return append(x);
   }
 
   template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::args_type
   ArgArray<T>::operator +(const ArgArray<T>& x) {
-    typename ArrayTraits<ArgArray<T> >::args_type r(size()+x.size());
-    concat(r,x);
-    return r;
+    return concat(x);
   }
 
   template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::args_type
   ArgArray<T>::operator +(const T& x) {
-    typename ArrayTraits<ArgArray<T> >::args_type r(size()+1);
-    for (int i=size(); i--;)
-      r[i] = (*this)[i];
-    r[size()] = x;
-    return r;
+    return concat(x);
   }
 
 
@@ -1326,37 +1393,34 @@ namespace Gecode {
   }
 
   template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
+  VarArgArray<Var>::slice(int maxN, int start, int inc) {
+    return ArgArrayBase<Var>::slice<ArrayTraits<VarArgArray<Var> >::args_type>
+      (maxN,start,inc);
+  }
+
+  template<class Var>
   forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
   VarArgArray<Var>::operator +=(const Var& x) {
-    return
-      static_cast<typename ArrayTraits<VarArgArray<Var> >::args_type&>
-        (ArgArrayBase<Var>::operator +=(x));
+    return append(x);
   }
 
   template<class Var>
   forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
   VarArgArray<Var>::operator +=(const VarArgArray<Var>& x) {
-    return
-      static_cast<typename ArrayTraits<VarArgArray<Var> >::args_type&>
-        (ArgArrayBase<Var>::operator +=(x));
+    return append(x);
   }
 
   template<class Var>
   forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
   VarArgArray<Var>::operator +(const VarArgArray<Var>& x) {
-    typename ArrayTraits<VarArgArray<Var> >::args_type r(size()+x.size());
-    concat(r,x);
-    return r;
+    return concat(x);
   }
 
   template<class Var>
   forceinline typename ArrayTraits<VarArgArray<Var> >::args_type
   VarArgArray<Var>::operator +(const Var& x) {
-    typename ArrayTraits<VarArgArray<Var> >::args_type r(size()+1);
-    for (int i=size(); i--;)
-      r[i] = (*this)[i];
-    r[size()] = x;
-    return r;
+    return concat(x);
   }
 
   template<class Var>
