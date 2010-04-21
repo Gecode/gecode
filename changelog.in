@@ -73,6 +73,13 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: minimodel
+What: 	change
+Rank:	minor
+[DESCRIPTION]
+Array slices can now be empty.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

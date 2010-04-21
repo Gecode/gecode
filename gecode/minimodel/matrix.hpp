@@ -49,8 +49,10 @@ namespace Gecode {
     : _r(0), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
     if (tc > a.width() || tr > a.height())
       throw MiniModel::ArgumentOutOfRange("Matrix::Slice::Slice");
-    if (fc >= tc || fr >= tr)
-      throw MiniModel::ArgumentOutOfRange("Matrix::Slice::Slice");
+    if (fc >= tc || fr >= tr) {
+      _fc=0; _tc=0; _fr=0; _tr=0;
+      return;
+    }
 
     _r = args_type((tc-fc)*(tr-fr));
 
