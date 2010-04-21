@@ -264,7 +264,8 @@ namespace Gecode { namespace Gist {
         }
         break;
       case Gist::BRANCH:
-        painter.setBrush(QBrush(blue));
+        painter.setBrush(n->childrenLayoutIsDone() ? QBrush(blue) : 
+                                                     QBrush(white));
         painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         break;
       case Gist::UNDETERMINED:

@@ -555,6 +555,7 @@ namespace Gecode { namespace Gist {
       inspectBeforeFPGroup->setEnabled(false);
       compareNode->setEnabled(false);
       compareNodeBeforeFP->setEnabled(false);
+      showNodeStats->setEnabled(false);
       stop->setEnabled(true);
       reset->setEnabled(false);
       navUp->setEnabled(false);
@@ -612,6 +613,7 @@ namespace Gecode { namespace Gist {
       toggleStop->setEnabled(n->getStatus() == STOP ||
         n->getStatus() == UNSTOP);
 
+      showNodeStats->setEnabled(true);
       inspect->setEnabled(true);
       if (n->getStatus() == UNDETERMINED) {
         inspectGroup->setEnabled(false);
