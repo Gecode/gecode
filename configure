@@ -10169,7 +10169,8 @@ $as_echo "no" >&6; }
           HAVE_FLEXBISON="no"
 
         else
-          if bison --version | grep ' 2\.[3-9]$' >/dev/null 2>&1
+          if bison --version | \
+            grep ' 2\.[3-9]\($\|\.[0-9]$\)' >/dev/null 2>&1
           then
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
