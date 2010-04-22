@@ -854,58 +854,6 @@ namespace Gecode {
   VarArray<Var>::operator delete(void*,size_t) {
   }
 
-  template<class Var>
-  typename ArrayTraits<VarArray<Var> >::args_type
-  operator +(const VarArray<Var>& x, const VarArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::args_type r(x.size()+y.size());
-    for (int i=x.size(); i--;)
-      r[i] = x[i];
-    for (int i=y.size(); i--;)
-      r[x.size()+i] = y[i];
-    return r;
-  }
-
-  template<class Var>
-  typename ArrayTraits<VarArray<Var> >::args_type
-  operator +(const VarArray<Var>& x, const VarArgArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::args_type r(x.size()+y.size());
-    for (int i=x.size(); i--;)
-      r[i] = x[i];
-    for (int i=y.size(); i--;)
-      r[x.size()+i] = y[i];
-    return r;
-  }
-
-  template<class Var>
-  typename ArrayTraits<VarArray<Var> >::args_type
-  operator +(const VarArgArray<Var>& x, const VarArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::args_type r(x.size()+y.size());
-    for (int i=x.size(); i--;)
-      r[i] = x[i];
-    for (int i=y.size(); i--;)
-      r[x.size()+i] = y[i];
-    return r;
-  }
-
-  template<class Var>
-  typename ArrayTraits<VarArray<Var> >::args_type
-  operator +(const VarArray<Var>& x, const Var& y) {
-    typename ArrayTraits<VarArray<Var> >::args_type r(x.size()+1);
-    for (int i=x.size(); i--;)
-      r[i] = x[i];
-    r[x.size()] = y;
-    return r;    
-  }
-
-  template<class Var>
-  typename ArrayTraits<VarArray<Var> >::args_type
-  operator +(const Var& x, const VarArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::args_type r(y.size()+1);
-    r[0] = x;
-    for (int i=y.size(); i--;)
-      r[1+i] = y[i];
-    return r;
-  }
 
   /*
    * View arrays
