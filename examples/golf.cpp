@@ -97,21 +97,21 @@ public:
   Golf(const GolfOptions& opt) : g(opt.g()), s(opt.s()), w(opt.w()),
     groups(*this,g*w,IntSet::empty,0,g*s-1,s,s) {
     int players = g*s;
-    Matrix<SetVarArray> schedule(groups,w,g);
+    Matrix<SetVarArray> schedule(groups,g,w);
 
     // Groups in one week must be disjoint
     SetVar allPlayers(*this, 0,players-1, 0,players-1);
     for (int i=0; i<w; i++) {
-      rel(*this,SOT_DUNION,schedule.col(i),allPlayers);
+      rel(*this,SOT_DUNION,schedule.row(i),allPlayers);
     }
 
     // No two golfers play in the same group more than once
     for (int i=0; i<w; i++) {
       for (int j=0; j<g; j++) {
-        SetVarArgs rest(schedule.slice(0,w,j+1,g));
-        rest += schedule.slice(i+1,w,j,j+1);
+        SetVarArgs rest =
+          schedule.slice(j+1,g,0,w) + schedule.slice(j,j+1,i+1,w);
         for (int k=rest.size(); k--;)
-          atMostOne(schedule(j,j),rest[k]);
+          atMostOne(schedule(j,i),rest[k]);
       }
     }
 
@@ -130,7 +130,7 @@ public:
          for (int p=0; p < players; p++) {
            BoolVarArray b(*this,g,0,1);
            for (int j=0; j<g; j++)
-             dom(*this, schedule(i,j), SRT_SUP, p, b[j]);
+             dom(*this, schedule(j,i), SRT_SUP, p, b[j]);
            linear(*this, b, IRT_EQ, 1);
          }
        }
@@ -140,8 +140,8 @@ public:
         for (int j=0; j<g-1; j++) {
           IntVar min1(*this, 0, players-1);
           IntVar min2(*this, 0, players-1);
-          min(*this, schedule(i,j), min1);
-          min(*this, schedule(i,j+1), min2);
+          min(*this, schedule(j,i), min1);
+          min(*this, schedule(j+1,i), min2);
           rel(*this, min1, IRT_LE, min2);
         }
       }
@@ -151,8 +151,8 @@ public:
       for (int i=0; i<w-1; i++) {
         SetVar g1(*this, IntSet::empty, 1, players-1);
         SetVar g2(*this, IntSet::empty, 1, players-1);
-        rel(*this, g1, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(i,0));
-        rel(*this, g2, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(i+1,0));
+        rel(*this, g1, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(0,i));
+        rel(*this, g2, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(0,i+1));
         IntVar minG1(*this, 0, players-1);
         IntVar minG2(*this, 0, players-1);
         min(*this, g1, minG1);
@@ -167,7 +167,7 @@ public:
       for (int i=0; i<w; i++) {
         for (int p=0; p<players; p++) {
           SetVar player(*this, p,p, 0, players-1);
-          element(*this, schedule.col(i), gInv(i,p),player);
+          element(*this, schedule.row(i), gInv(i,p),player);
         }
       }
       
@@ -185,20 +185,20 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << "Tournament plan" << std::endl;
-    Matrix<SetVarArray> schedule(groups,w,g);
+    Matrix<SetVarArray> schedule(groups,g,w);
     for (int i=0; i<w; i++) {
       os << "Week " << i << ": " << std::endl << "    ";
       for (int j=0; j<g; j++) {
-        if (schedule(i,j).assigned()) {
+        if (schedule(j,i).assigned()) {
           bool first = true;
           os << "(";
-          for (SetVarGlbValues glb(schedule(i,j)); glb(); ++glb) {
+          for (SetVarGlbValues glb(schedule(j,i)); glb(); ++glb) {
             if (first) first = false; else os << " ";
             os << glb.val();
           }
           os << ")";
         } else {
-          os << "(" << schedule(i,j) << ")";
+          os << "(" << schedule(j,i) << ")";
         }
         if (j < g-1) os << " ";
         if (j > 0 && j % 4 == 0) os << std::endl << "    ";

@@ -1274,6 +1274,49 @@ namespace Gecode {
 
 namespace Gecode {
 
+  template<class> class Matrix;
+
+  /** \brief A slice of a matrix.
+   *
+   * This class represents a slice of the matrix. It is used to get
+   * context-dependent behaviour. The slice will be automatically
+   * converted to an args_type Args-array or to a Matrix<args_type>
+   * depending on the context where it is used.
+   */
+  template<class A>
+  class Slice {
+  public:
+    /// The type of the Args-array type for value_type values
+    typedef typename ArrayTraits<A>::args_type args_type;
+  private:
+    args_type _r;     ///< The elements of the slice
+    unsigned int _fc, ///< From column
+      _tc,            ///< To column
+      _fr,            ///< From row
+      _tr;            ///< To row
+  public:
+    /// Construct slice
+    Slice(Matrix<A>& a, int fc, int tc, int fr, int tr);
+    /** \brief Reverses the contents of the slice, and returns a
+     *  reference to it.
+     */
+    Slice& reverse(void);
+    /// Cast to array type
+    operator args_type(void);
+    /// Cast to matrix type
+    operator Matrix<args_type>(void);
+
+    /// Cast to array type
+    operator const args_type(void) const;
+    /// Cast to matrix type
+    operator const Matrix<args_type>(void) const;
+  };
+  
+  /// Concatenate \a x and \a y
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const Slice<A>& x, const Slice<A>& y);
+
   /** \brief Matrix-interface for arrays
    *
    * This class allows for wrapping some array and accessing it as a
@@ -1291,32 +1334,6 @@ namespace Gecode {
     typedef typename ArrayTraits<A>::value_type value_type;
     /// The type of the Args-array type for value_type values
     typedef typename ArrayTraits<A>::args_type args_type;
-
-    /** \brief A slice of a matrix.
-     *
-     * This class represents a slice of the matrix. It is used to get
-     * context-dependent behaviour. The slice will be automatically
-     * converted to an args_type Args-array or to a Matrix<args_type>
-     * depending on the context where it is used.
-     */
-    class Slice {
-      args_type _r;     ///< The elements of the slice
-      unsigned int _fc, ///< From column
-        _tc,            ///< To column
-        _fr,            ///< From row
-        _tr;            ///< To row
-    public:
-      /// Construct slice
-      Slice(Matrix<A>& a, int fc, int tc, int fr, int tr);
-      /** \brief Reverses the contents of the slice, and returns a
-       *  reference to it.
-       */
-      Slice& reverse(void);
-      /// Cast to array type
-      operator typename Matrix<A>::args_type(void);
-      /// Cast to matrix type
-      operator Matrix<typename Matrix<A>::args_type>(void);
-    };
 
   private:
     /// The type of storage for this array
@@ -1377,13 +1394,13 @@ namespace Gecode {
      *
      * For further information, see Slice.
      */
-    Slice slice(int fc, int tc, int fr, int tr);
+    Slice<A> slice(int fc, int tc, int fr, int tr);
 
     /// Access row \a r.
-    Slice row(int r);
+    Slice<A> row(int r);
 
     /// Access column \a c.
-    Slice col(int c);
+    Slice<A> col(int c);
   };
 
   /** \brief Element constraint for matrix

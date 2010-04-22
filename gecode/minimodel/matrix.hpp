@@ -44,11 +44,10 @@ namespace Gecode {
 
   template<class A>
   inline
-  Matrix<A>::Slice::Slice(Matrix<A>& a,
-                          int fc, int tc, int fr, int tr)
+  Slice<A>::Slice(Matrix<A>& a, int fc, int tc, int fr, int tr)
     : _r(0), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
     if (tc > a.width() || tr > a.height())
-      throw MiniModel::ArgumentOutOfRange("Matrix::Slice::Slice");
+      throw MiniModel::ArgumentOutOfRange("Slice::Slice");
     if (fc >= tc || fr >= tr) {
       _fc=0; _tc=0; _fr=0; _tr=0;
       return;
@@ -63,8 +62,8 @@ namespace Gecode {
   }
 
   template<class A>
-  typename Matrix<A>::Slice&
-  Matrix<A>::Slice::reverse(void) {
+  Slice<A>&
+  Slice<A>::reverse(void) {
     for (int i = 0; i < _r.size()/2; i++)
       std::swap(_r[i], _r[_r.size()-i-1]);
     return *this;
@@ -72,13 +71,31 @@ namespace Gecode {
 
   template<class A>
   forceinline
-  Matrix<A>::Slice::operator typename Matrix<A>::args_type(void) {
+  Slice<A>::operator args_type(void) {
     return _r;
   }
   template<class A>
   forceinline
-  Matrix<A>::Slice::operator Matrix<typename Matrix<A>::args_type>(void) {
+  Slice<A>::operator Matrix<args_type>(void) {
     return Matrix<args_type>(_r, _tc-_fc, _tr-_fr);
+  }
+  template<class A>
+  forceinline
+  Slice<A>::operator const args_type(void) const {
+    return _r;
+  }
+  template<class A>
+  forceinline
+  Slice<A>::operator const Matrix<args_type>(void) const {
+    return Matrix<args_type>(_r, _tc-_fc, _tr-_fr);
+  }
+
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const Slice<A>& x, const Slice<A>& y) {
+    typename Slice<A>::args_type xx = x;
+    typename Slice<A>::args_type yy = y;
+    return xx+yy;
   }
 
 
@@ -119,23 +136,22 @@ namespace Gecode {
   }
 
   template<class A>
-  forceinline typename Matrix<A>::Slice
+  forceinline Slice<A>
   Matrix<A>::slice(int fc, int tc, int fr, int tr) {
-    return Slice(*this, fc, tc, fr, tr);
+    return Slice<A>(*this, fc, tc, fr, tr);
   }
 
   template<class A>
-  forceinline typename Matrix<A>::Slice
+  forceinline Slice<A>
   Matrix<A>::row(int r) {
     return slice(0, width(), r, r+1);
   }
 
   template<class A>
-  forceinline typename Matrix<A>::Slice
+  forceinline Slice<A>
   Matrix<A>::col(int c) {
     return slice(c, c+1, 0, height());
   }
-
 
   forceinline void
   element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
