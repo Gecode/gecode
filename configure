@@ -7819,9 +7819,14 @@ $as_echo "no" >&6; }
 fi
 
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether manifest tool is available" >&5
-$as_echo_n "checking whether manifest tool is available... " >&6; }
-  if test "${MANIFEST}x" = "x"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use manifest tool" >&5
+$as_echo_n "checking whether to use manifest tool... " >&6; }
+  if cl.exe 2>&1 | grep 'Version 16\.' >/dev/null 2>&1; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+    MANIFEST="@true"
+
+  elif test "${MANIFEST}x" = "x"; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
     MANIFEST="@true"
@@ -9470,9 +9475,14 @@ $as_echo "no" >&6; }
 fi
 
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether manifest tool is available" >&5
-$as_echo_n "checking whether manifest tool is available... " >&6; }
-  if test "${MANIFEST}x" = "x"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use manifest tool" >&5
+$as_echo_n "checking whether to use manifest tool... " >&6; }
+  if cl.exe 2>&1 | grep 'Version 16\.' >/dev/null 2>&1; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+    MANIFEST="@true"
+
+  elif test "${MANIFEST}x" = "x"; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
     MANIFEST="@true"

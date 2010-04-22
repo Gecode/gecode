@@ -753,8 +753,11 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   fi
 
   AC_CHECK_PROG(MANIFEST, mt.exe, [found])
-  AC_MSG_CHECKING(whether manifest tool is available)
-  if test "${MANIFEST}x" = "x"; then
+  AC_MSG_CHECKING(whether to use manifest tool)
+  if cl.exe 2>&1 | grep 'Version 16\.' >/dev/null 2>&1; then
+    AC_MSG_RESULT(no)
+    AC_SUBST(MANIFEST, "@true")
+  elif test "${MANIFEST}x" = "x"; then
     AC_MSG_RESULT(no)
     AC_SUBST(MANIFEST, "@true")
   else

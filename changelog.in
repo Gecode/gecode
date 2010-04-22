@@ -73,6 +73,13 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: other
+What: 	change
+Rank:	minor
+[DESCRIPTION]
+The build system now supports Visual C++ 2010.
+
+[ENTRY]
 Module: minimodel
 What: 	change
 Rank:	minor
