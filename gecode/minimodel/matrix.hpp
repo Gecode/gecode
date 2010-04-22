@@ -98,6 +98,33 @@ namespace Gecode {
     return xx+yy;
   }
 
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::args_type& y) {
+    typename Slice<A>::args_type xx = x;
+    return xx+y;
+  }
+
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const typename ArrayTraits<A>::args_type& x, const Slice<A>& y) {
+    typename Slice<A>::args_type yy = y;
+    return x+yy;
+  }
+
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::value_type& y) {
+    typename Slice<A>::args_type xx = x;
+    return xx+y;
+  }
+
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const typename ArrayTraits<A>::value_type& x, const Slice<A>& y) {
+    typename Slice<A>::args_type yy = y;
+    return x+yy;
+  }
 
   template<class A>
   forceinline

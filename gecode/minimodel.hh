@@ -1317,6 +1317,26 @@ namespace Gecode {
   typename Slice<A>::args_type
   operator+(const Slice<A>& x, const Slice<A>& y);
 
+  /// Concatenate \a x and \a y
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::args_type& y);
+
+  /// Concatenate \a x and \a y
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const typename ArrayTraits<A>::args_type& x, const Slice<A>& y);
+
+  /// Concatenate \a x and \a y
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::value_type& y);
+
+  /// Concatenate \a x and \a y
+  template<class A>
+  typename Slice<A>::args_type
+  operator+(const typename ArrayTraits<A>::value_type& x, const Slice<A>& y);
+
   /** \brief Matrix-interface for arrays
    *
    * This class allows for wrapping some array and accessing it as a
