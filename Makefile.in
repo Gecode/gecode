@@ -1404,6 +1404,8 @@ Makefile: $(top_srcdir)/Makefile.in config.status
 	./config.status --file $@:$<
 doxygen.hh: $(top_srcdir)/doxygen/doxygen.hh.in config.status
 	./config.status --file $@:$<
+doxygen.conf: $(top_srcdir)/doxygen/doxygen.conf.in config.status
+	./config.status --file $@:$<
 
 #
 # Source distribution
@@ -1453,6 +1455,7 @@ dist: distdir
 #
 
 export ENABLEDOCCHM	= @ENABLEDOCCHM@
+export ENABLEDOCDOCSET	= @ENABLEDOCDOCSET@
 ENABLEDOCSEARCH = @ENABLEDOCSEARCH@
 
 .PHONY: doc
@@ -1500,8 +1503,29 @@ doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 	doxygen doxygen.conf.use
 	mv doc/html/GecodeReference.chm GecodeReference.chm
 
-else
+else ifeq "@ENABLEDOCDOCSET@" "yes"
 
+DOCTARGET=org.gecode.@VERSION@.docset
+
+header.html: $(top_srcdir)/misc/doxygen/header.html
+	grep -v '<form.*form>' < $< > $@
+doxygen.conf.use: doxygen.conf
+	(echo "SEARCHENGINE = NO";\
+	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@";\
+	 echo "GENERATE_DOCSET = YES";\
+	 echo "DOCSET_BUNDLE_ID = org.gecode.@VERSION@";\
+	 echo "DOCSET_FEEDNAME = Gecode") | \
+		cat $< - > $@
+
+doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
+	mkdir -p doc/html
+	cp -f $(top_srcdir)/misc/doxygen/back.png \
+	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
+	doxygen doxygen.conf.use
+	cd doc/html && make
+	mv doc/html/$(DOCTARGET) .
+
+else
 DOCTARGET=doc/html
 
 ifeq "@ENABLEDOCSEARCH@" "yes"

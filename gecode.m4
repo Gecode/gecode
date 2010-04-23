@@ -893,7 +893,32 @@ AC_DEFUN([AC_GECODE_DOC_SWITCHES],
                AC_SUBST(ENABLEDOCCHM, "no")
            fi
     ;;
-   esac])
+   esac
+   AC_ARG_ENABLE([doc-docset],
+     AC_HELP_STRING([--enable-doc-docset],
+    [build docset documentation for XCode @<:@default=no@:>@]))
+   AC_MSG_CHECKING(whether to build docset documentation for XCode)
+   case $host_os in
+    darwin*)
+           if test "${enable_doc_docset:-no}" = "yes"; then
+          AC_MSG_RESULT(yes)
+               AC_SUBST(ENABLEDOCDOCSET, "yes")
+                  AC_SUBST(ENABLEDOCSEARCH, "no")
+           else
+               AC_MSG_RESULT(no)
+               AC_SUBST(ENABLEDOCDOCSET, "no")
+           fi
+    ;;
+    *)
+           if test "${enable_doc_docset:-no}" = "yes"; then
+          AC_MSG_ERROR([building docsets is only supported on Mac OS X.])
+           else
+               AC_MSG_RESULT(no)
+               AC_SUBST(ENABLEDOCDOCSET, "no")
+           fi
+    ;;
+   esac
+   ])
 
 dnl Macro:
 dnl   AC_GECODE_UNIVERSAL
