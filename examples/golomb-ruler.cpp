@@ -91,8 +91,8 @@ public:
       d[k++] = m[j];
     for (int i=1; i<n-1; i++)
       for (int j=i+1; j<n; j++)
-        // d[k] must be at least sum of first j-i integers
-        rel(*this, d[k++] = minus(*this, m[j], m[i]),
+        // d[k] is m[j]-m[i] and must be at least sum of first j-i integers
+        rel(*this, d[k++] = post(*this, m[j]-m[i]),
                    IRT_GQ, (j-i)*(j-i+1)/2);
 
     distinct(*this, d, opt.icl());
