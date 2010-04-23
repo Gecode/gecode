@@ -1488,7 +1488,7 @@ ifeq "@ENABLEDOCCHM@" "yes"
 
 DOCTARGET=GecodeReference.chm
 
-header.html: $(top_srcdir)/misc/doxygen/header.html
+header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
 	grep -v '<form.*form>' < $< > $@
 doxygen.conf.use: doxygen.conf
 	(echo "GENERATE_HTMLHELP = YES"; \
@@ -1507,7 +1507,7 @@ else ifeq "@ENABLEDOCDOCSET@" "yes"
 
 DOCTARGET=org.gecode.@VERSION@.docset
 
-header.html: $(top_srcdir)/misc/doxygen/header.html
+header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
 	grep -v '<form.*form>' < $< > $@
 doxygen.conf.use: doxygen.conf
 	(echo "SEARCHENGINE = NO";\
@@ -1530,7 +1530,7 @@ DOCTARGET=doc/html
 
 ifeq "@ENABLEDOCSEARCH@" "yes"
 
-header.html: $(top_srcdir)/misc/doxygen/header.html
+header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
 	cat < $< > $@
 doxygen.conf.use: doxygen.conf
 	(echo "GENERATE_HTMLHELP = NO"; \
@@ -1540,7 +1540,7 @@ doxygen.conf.use: doxygen.conf
 		cat $< - > $@
 else
 
-header.html: $(top_srcdir)/misc/doxygen/header.html
+header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
 	grep -v '<form.*form>' < $< > $@
 doxygen.conf.use: doxygen.conf
 	(echo "GENERATE_HTMLHELP = NO"; \
