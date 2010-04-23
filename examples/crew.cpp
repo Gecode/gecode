@@ -107,7 +107,7 @@ public:
     IntSet germanDS(germanSpeaking, noOfGermanSpeaking);
 
     for (int i=0; i<noOfFlights; i++) {
-      IntVarArray required(*this,5,0,noOfEmployees-1);
+      IntVarArgs required(*this,5,0,noOfEmployees-1);
       SetVar team = flight[i];
 
       int N        = requiredCrew[i].staff;

@@ -118,7 +118,7 @@ public:
       // in each week, one player plays in only one group
       for (int j=0; j<w; j++) {
          for (int p=0; p < g*s; p++) {
-           BoolVarArray b(*this,g,0,1);
+           BoolVarArgs b(*this,g,0,1);
            for (int i=0; i<g; i++)
              dom(*this, schedule(i,j), SRT_SUP, p, b[i]);
            linear(*this, b, IRT_EQ, 1);

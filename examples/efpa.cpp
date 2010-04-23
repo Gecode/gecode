@@ -238,13 +238,13 @@ public:
 
           /* Rows r1 and r2 are equal at indices not in perm */
           // uses Boolean representations pib for perm[i]
-          BoolVarArray p1b(*this, n, 0, 1);
+          BoolVarArgs p1b(*this, n, 0, 1);
           channel(*this, p1b, perm[0]);
-          BoolVarArray p2b(*this, n, 0, 1);
+          BoolVarArgs p2b(*this, n, 0, 1);
           channel(*this, p2b, perm[1]);
-          BoolVarArray p3b(*this, n, 0, 1);
+          BoolVarArgs p3b(*this, n, 0, 1);
           channel(*this, p3b, perm[2]);
-          BoolVarArray p4b(*this, n, 0, 1);
+          BoolVarArgs p4b(*this, n, 0, 1);
           channel(*this, p4b, perm[3]);
           for (int i = n; i--; ) {
             // No perm-variable uses i is equivalent to the reows

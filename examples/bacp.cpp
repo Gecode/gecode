@@ -125,7 +125,7 @@ public:
     x = IntVarArray(*this, numberOfCourses, 0, p-1);
 
     for (int j=0; j<p; j++) {
-      BoolVarArray xij(*this, numberOfCourses, 0, 1);
+      BoolVarArgs xij(*this, numberOfCourses, 0, 1);
       IntArgs t(numberOfCourses);
       for (int i=0; i<numberOfCourses; i++) {
         post(*this, tt(eqv(~(x[i]==j), xij[i])));

@@ -109,8 +109,8 @@ public:
 
     // Variables representing the coordinates of the first
     // and second half of a domino piece
-    IntVarArray p1(*this, 28, 0, (width+1)*height-1);
-    IntVarArray p2(*this, 28, 0, (width+1)*height-1);
+    IntVarArgs p1(*this, 28, 0, (width+1)*height-1);
+    IntVarArgs p2(*this, 28, 0, (width+1)*height-1);
 
 
     if (opt.propagation() == PROP_ELEMENT) {

@@ -166,7 +166,7 @@ public:
 
   /// Post incremental sum constraint 
   void incr_sum(IntVar& x, IntVarArgs& y, int mn) {
-    IntVarArray s(*this, y.size()-1, 0, mn);
+    IntVarArgs s(*this, y.size()-1, 0, mn);
     IntVarArgs t(y.size());
     t[0] = y[0];
     for (int i=1; i<y.size(); i++) {

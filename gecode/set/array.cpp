@@ -128,6 +128,83 @@ namespace Gecode {
       x[i].init(home,glb,lub,minCard,maxCard);
   }
 
+  SetVarArgs::SetVarArgs(Space& home,int n,
+                         int lbMin,int lbMax,int ubMin,int ubMax,
+                         unsigned int minCard,
+                         unsigned int maxCard)
+    : VarArgArray<SetVar>(n) {
+    Set::Limits::check(lbMin,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(lbMax,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(ubMin,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(ubMax,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(maxCard,"SetVarArgs::SetVarArgs");
+    unsigned int glbSize = (lbMin <= lbMax ? lbMax-lbMin+1 : 0);
+    unsigned int lubSize = (ubMin <= ubMax ? ubMax-ubMin+1 : 0);
+    if (minCard > maxCard || minCard > lubSize || maxCard < glbSize ||
+        lbMin < ubMin || lbMax > ubMax)
+      throw Set::VariableEmptyDomain("SetVarArgs::SetVarArgs");
+    for (int i = size(); i--; )
+      a[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);
+  }
+
+  SetVarArgs::SetVarArgs(Space& home,int n,
+                         const IntSet& glb,int ubMin,int ubMax,
+                         unsigned int minCard,unsigned int maxCard)
+    : VarArgArray<SetVar>(n) {
+    Set::Limits::check(glb,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(ubMin,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(ubMax,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(maxCard,"SetVarArgs::SetVarArgs");
+    IntSetRanges glbr(glb);
+    unsigned int glbSize = Iter::Ranges::size(glbr);
+    unsigned int lubSize = (ubMin <= ubMax ? ubMax-ubMin+1 : 0);
+    if (minCard > maxCard || minCard > lubSize || maxCard < glbSize ||
+        glb.min() < ubMin || glb.max() > ubMax)
+      throw Set::VariableEmptyDomain("SetVarArgs::SetVarArgs");
+    for (int i = size(); i--; )
+      a[i].init(home,glb,ubMin,ubMax,minCard,maxCard);
+  }
+
+  SetVarArgs::SetVarArgs(Space& home,int n,
+                         int lbMin,int lbMax,const IntSet& lub,
+                         unsigned int minCard,unsigned int maxCard)
+    : VarArgArray<SetVar>(n) {
+    Set::Limits::check(lbMin,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(lbMax,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(lub,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(maxCard,"SetVarArgs::SetVarArgs");
+    Iter::Ranges::Singleton glbr(lbMin,lbMax);
+    IntSetRanges lubr(lub);
+    IntSetRanges lubr_s(lub);
+    unsigned int glbSize = (lbMin <= lbMax ? lbMax-lbMin+1 : 0);
+    unsigned int lubSize = Iter::Ranges::size(lubr_s);
+    if (minCard > maxCard || minCard > lubSize || maxCard < glbSize ||
+        !Iter::Ranges::subset(glbr,lubr))
+      throw Set::VariableEmptyDomain("SetVarArgs::SetVarArgs");
+    for (int i = size(); i--; )
+      a[i].init(home,lbMin,lbMax,lub,minCard,maxCard);
+  }
+
+  SetVarArgs::SetVarArgs(Space& home,int n,
+                         const IntSet& glb, const IntSet& lub,
+                         unsigned int minCard, unsigned int maxCard)
+    : VarArgArray<SetVar>(n) {
+    Set::Limits::check(glb,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(lub,"SetVarArgs::SetVarArgs");
+    Set::Limits::check(maxCard,"SetVarArgs::SetVarArgs");
+    IntSetRanges glbr(glb);
+    IntSetRanges glbr_s(lub);
+    unsigned int glbSize = Iter::Ranges::size(glbr_s);
+    IntSetRanges lubr(lub);
+    IntSetRanges lubr_s(lub);
+    unsigned int lubSize = Iter::Ranges::size(lubr_s);
+    if (minCard > maxCard || minCard > lubSize || maxCard < glbSize ||
+        !Iter::Ranges::subset(glbr,lubr))
+      throw Set::VariableEmptyDomain("SetVar");
+    for (int i = size(); i--; )
+      a[i].init(home,glb,lub,minCard,maxCard);
+  }
+
 }
 
 // STATISTICS: set-other

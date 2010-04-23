@@ -128,6 +128,7 @@ namespace Gecode {
    */
   class SetVar : public VarBase<Set::SetVarImp> {
     friend class SetVarArray;
+    friend class SetVarArgs;
   private:
     using VarBase<Set::SetVarImp>::varimp;
     /// Initialize variable with empty greatest lower and full least upper bound
@@ -551,6 +552,47 @@ namespace Gecode {
     SetVarArgs(const SetVarArgs& a) : VarArgArray<SetVar>(a) {}
     /// Initialize from variable array \a a (copy elements)
     SetVarArgs(const VarArray<SetVar>& a) : VarArgArray<SetVar>(a) {}
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_SET_EXPORT
+    SetVarArgs(Space& home,int n,int glbMin,int glbMax,int lubMin,int lubMax,
+                unsigned int minCard = 0,
+                unsigned int maxCard = Set::Limits::card);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_SET_EXPORT
+    SetVarArgs(Space& home,int n,const IntSet& glb, int lubMin, int lubMax,
+                unsigned int minCard = 0,
+                unsigned int maxCard = Set::Limits::card);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_SET_EXPORT
+    SetVarArgs(Space& home,int n,int glbMin,int glbMax,const IntSet& lub,
+                unsigned int minCard = 0,
+                unsigned int maxCard = Set::Limits::card);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    GECODE_SET_EXPORT
+    SetVarArgs(Space& home,int n,
+                const IntSet& glb,const IntSet& lub,
+                unsigned int minCard = 0,
+                unsigned int maxCard = Set::Limits::card);
     //@}
   };
   //@}

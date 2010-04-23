@@ -337,6 +337,7 @@ namespace Gecode {
    */
   class IntVar : public VarBase<Int::IntVarImp> {
     friend class IntVarArray;
+    friend class IntVarArgs;
   private:
     using VarBase<Int::IntVarImp>::varimp;
     /**
@@ -510,6 +511,7 @@ namespace Gecode {
    */
   class BoolVar : public VarBase<Int::BoolVarImp> {
     friend class BoolVarArray;
+    friend class BoolVarArgs;
   private:
     using VarBase<Int::BoolVarImp>::varimp;
     /**
@@ -684,6 +686,32 @@ namespace Gecode {
     IntVarArgs(const IntVarArgs& a) : VarArgArray<IntVar>(a) {}
     /// Initialize from variable array \a a (copy elements)
     IntVarArgs(const VarArray<IntVar>& a) : VarArgArray<IntVar>(a) {}
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain ranging from \a min
+     * to \a max. The following execptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min or \a max exceed the limits for integers as defined
+     *    in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
+     */
+    GECODE_INT_EXPORT
+    IntVarArgs(Space& home, int n, int min, int max);
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain described by \a s.
+     * The following execptions might be thrown:
+     *  - If \a s is empty, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a s contains values that exceed the limits for integers
+     *    as defined in Gecode::Int::Limits, an exception of type
+     *    Gecode::Int::OutOfLimits is thrown.
+     */
+    GECODE_INT_EXPORT
+    IntVarArgs(Space& home, int n, const IntSet& s);
     //@}
   };
   /** \brief Passing Boolean variables
@@ -704,6 +732,19 @@ namespace Gecode {
     BoolVarArgs(const BoolVarArgs& a) : VarArgArray<BoolVar>(a) {}
     /// Initialize from variable array \a a (copy elements)
     BoolVarArgs(const VarArray<BoolVar>& a) : VarArgArray<BoolVar>(a) {}
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain ranging from \a min
+     * to \a max. The following execptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min is less than 0 or \a max is greater than 1,
+     *    an exception of type
+     *    Gecode::Int::NotZeroOne is thrown.
+     */
+    GECODE_INT_EXPORT
+    BoolVarArgs(Space& home, int n, int min, int max);
     //@}
   };
   //@}

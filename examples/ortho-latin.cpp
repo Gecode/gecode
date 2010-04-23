@@ -77,7 +77,7 @@ public:
     : n(opt.size()),
       x1(*this,n*n,1,n), x2(*this,n*n,1,n) {
     const int nn = n*n;
-    IntVarArray z(*this,nn,0,n*n-1);
+    IntVarArgs z(*this,nn,0,n*n-1);
 
     distinct(*this, z, opt.icl());
     // Connect

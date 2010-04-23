@@ -69,6 +69,36 @@ namespace Gecode {
       x[i]._init(home,min,max);
   }
 
+  IntVarArgs::IntVarArgs(Space& home, int n, int min, int max)
+    : VarArgArray<IntVar>(n) {
+    Int::Limits::check(min,"IntVarArgs::IntVarArgs");
+    Int::Limits::check(max,"IntVarArgs::IntVarArgs");
+    if (min > max)
+      throw Int::VariableEmptyDomain("IntVarArgs::IntVarArgs");
+    for (int i = size(); i--; )
+      a[i]._init(home,min,max);
+  }
+
+  IntVarArgs::IntVarArgs(Space& home, int n, const IntSet& s)
+    : VarArgArray<IntVar>(n) {
+    Int::Limits::check(s.min(),"IntVarArgs::IntVarArgs");
+    Int::Limits::check(s.max(),"IntVarArgs::IntVarArgs");
+    if (s.size() == 0)
+      throw Int::VariableEmptyDomain("IntVarArgs::IntVarArgs");
+    for (int i = size(); i--; )
+      a[i]._init(home,s);
+  }
+
+  BoolVarArgs::BoolVarArgs(Space& home, int n, int min, int max)
+    : VarArgArray<BoolVar>(n) {
+    if ((min < 0) || (max > 1))
+      throw Int::NotZeroOne("BoolVarArgs::BoolVarArgs");
+    if (min > max)
+      throw Int::VariableEmptyDomain("BoolVarArgs::BoolVarArgs");
+    for (int i = size(); i--; )
+      a[i]._init(home,min,max);
+  }
+
 }
 
 // STATISTICS: int-post

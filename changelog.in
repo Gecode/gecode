@@ -73,6 +73,20 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: set
+What: 	change
+Rank:	minor
+[DESCRIPTION]
+The argument arrays now have constructors that create new variables.
+
+[ENTRY]
+Module: int
+What: 	change
+Rank:	minor
+[DESCRIPTION]
+The argument arrays now have constructors that create new variables.
+
+[ENTRY]
 Module: other
 What: 	change
 Rank:	minor
