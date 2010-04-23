@@ -88,32 +88,22 @@ public:
   /// The sets representing the groups
   SetVarArray groups;
 
-  void atMostOne(SetVar x, SetVar y) {
-    SetVar z(*this,IntSet::empty,0,g*s-1,0,1);
-    rel(*this, x, SOT_INTER, y, SRT_EQ, z);
-  }
-
   /// Actual model
   Golf(const GolfOptions& opt) : g(opt.g()), s(opt.s()), w(opt.w()),
     groups(*this,g*w,IntSet::empty,0,g*s-1,s,s) {
-    int players = g*s;
     Matrix<SetVarArray> schedule(groups,g,w);
 
     // Groups in one week must be disjoint
-    SetVar allPlayers(*this, 0,players-1, 0,players-1);
-    for (int i=0; i<w; i++) {
+    SetVar allPlayers(*this, 0,g*s-1, 0,g*s-1);
+    for (int i=0; i<w; i++)
       rel(*this,SOT_DUNION,schedule.row(i),allPlayers);
-    }
 
     // No two golfers play in the same group more than once
-    for (int i=0; i<w; i++) {
-      for (int j=0; j<g; j++) {
-        SetVarArgs rest =
-          schedule.slice(j+1,g,0,w) + schedule.slice(j,j+1,i+1,w);
-        for (int k=rest.size(); k--;)
-          atMostOne(schedule(j,i),rest[k]);
+    for (int i=0; i<groups.size()-1; i++)
+      for (int j=i+1; j<groups.size(); j++) {
+        SetVar atmostOne(*this,IntSet::empty,0,g*s-1,0,1);
+        rel(*this, groups[i], SOT_INTER, groups[j], SRT_EQ, atmostOne);
       }
-    }
 
     if (opt.model() == MODEL_SYMMETRY) {
 
@@ -126,22 +116,22 @@ public:
 
       // Redundant constraint:
       // in each week, one player plays in only one group
-      for (int i=0; i<w; i++) {
-         for (int p=0; p < players; p++) {
+      for (int j=0; j<w; j++) {
+         for (int p=0; p < g*s; p++) {
            BoolVarArray b(*this,g,0,1);
-           for (int j=0; j<g; j++)
-             dom(*this, schedule(j,i), SRT_SUP, p, b[j]);
+           for (int i=0; i<g; i++)
+             dom(*this, schedule(i,j), SRT_SUP, p, b[i]);
            linear(*this, b, IRT_EQ, 1);
          }
        }
 
       // Symmetry breaking: order groups
-      for (int i=0; i<w; i++) {
-        for (int j=0; j<g-1; j++) {
-          IntVar min1(*this, 0, players-1);
-          IntVar min2(*this, 0, players-1);
-          min(*this, schedule(j,i), min1);
-          min(*this, schedule(j+1,i), min2);
+      for (int j=0; j<w; j++) {
+        for (int i=0; i<g-1; i++) {
+          IntVar min1(*this, 0, g*s-1);
+          IntVar min2(*this, 0, g*s-1);
+          min(*this, schedule(i,j), min1);
+          min(*this, schedule(i+1,j), min2);
           rel(*this, min1, IRT_LE, min2);
         }
       }
@@ -149,12 +139,12 @@ public:
       // Symmetry breaking: order weeks
       // minElem(group(w,0)\{0}) < minElem(group(w+1,0)\{0})
       for (int i=0; i<w-1; i++) {
-        SetVar g1(*this, IntSet::empty, 1, players-1);
-        SetVar g2(*this, IntSet::empty, 1, players-1);
+        SetVar g1(*this, IntSet::empty, 1, g*s-1);
+        SetVar g2(*this, IntSet::empty, 1, g*s-1);
         rel(*this, g1, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(0,i));
         rel(*this, g2, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(0,i+1));
-        IntVar minG1(*this, 0, players-1);
-        IntVar minG2(*this, 0, players-1);
+        IntVar minG1(*this, 0, g*s-1);
+        IntVar minG2(*this, 0, g*s-1);
         min(*this, g1, minG1);
         min(*this, g2, minG2);
         rel(*this, minG1, IRT_LE, minG2);
@@ -162,17 +152,15 @@ public:
 
       // Initialize the dual variables:
       // gInv(i,p) is player p's group in week i
-      Matrix<IntVarArray> gInv(IntVarArray(*this, w*players, 0, g-1),
-                               w,players);
+      Matrix<IntVarArray> gInv(IntVarArray(*this, w*g*s, 0, g-1),w,g*s);
       for (int i=0; i<w; i++) {
-        for (int p=0; p<players; p++) {
-          SetVar player(*this, p,p, 0, players-1);
+        for (int p=0; p<g*s; p++) {
+          SetVar player(*this, p,p, 0, g*s-1);
           element(*this, schedule.row(i), gInv(i,p),player);
         }
       }
       
       // Symmetry breaking: order players
-      // For all p<groups : groupsSInv[w*players+p] <= p
       for (int i=0; i<w; i++)
         for (int p=0; p<g; p++)
           rel(*this, gInv(i,p), IRT_LQ, p);
@@ -185,20 +173,20 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << "Tournament plan" << std::endl;
-    Matrix<SetVarArray> schedule(groups,g,w);
+    Matrix<SetVarArray> schedule(groups,w,g);
     for (int i=0; i<w; i++) {
       os << "Week " << i << ": " << std::endl << "    ";
       for (int j=0; j<g; j++) {
-        if (schedule(j,i).assigned()) {
+        if (schedule(i,j).assigned()) {
           bool first = true;
           os << "(";
-          for (SetVarGlbValues glb(schedule(j,i)); glb(); ++glb) {
+          for (SetVarGlbValues glb(schedule(i,j)); glb(); ++glb) {
             if (first) first = false; else os << " ";
             os << glb.val();
           }
           os << ")";
         } else {
-          os << "(" << schedule(j,i) << ")";
+          os << "(" << schedule(i,j) << ")";
         }
         if (j < g-1) os << " ";
         if (j > 0 && j % 4 == 0) os << std::endl << "    ";
