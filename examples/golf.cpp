@@ -173,10 +173,10 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << "Tournament plan" << std::endl;
-    Matrix<SetVarArray> schedule(groups,w,g);
-    for (int i=0; i<w; i++) {
-      os << "Week " << i << ": " << std::endl << "    ";
-      for (int j=0; j<g; j++) {
+    Matrix<SetVarArray> schedule(groups,g,w);
+    for (int j=0; j<w; j++) {
+      os << "Week " << j << ": " << std::endl << "    ";
+      for (int i=0; i<g; i++) {
         if (schedule(i,j).assigned()) {
           bool first = true;
           os << "(";
@@ -188,8 +188,8 @@ public:
         } else {
           os << "(" << schedule(i,j) << ")";
         }
-        if (j < g-1) os << " ";
-        if (j > 0 && j % 4 == 0) os << std::endl << "    ";
+        if (i < g-1) os << " ";
+        if (i > 0 && i % 4 == 0) os << std::endl << "    ";
       }
       os << std::endl;
     }
