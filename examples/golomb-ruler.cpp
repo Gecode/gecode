@@ -69,7 +69,7 @@ public:
   };
   /// Actual model
   GolombRuler(const SizeOptions& opt)
-    : m(*this,opt.size(),0,opt.size()*opt.size()) {
+    : m(*this,opt.size(),0,Int::Limits::max) {
 
     // Assume first mark to be zero
     rel(*this, m[0], IRT_EQ, 0);
