@@ -538,11 +538,14 @@ public:
   template<class Data>
   void distinctlinear(Cache<Data>& dc, const IntVarArgs& x, int c,
                       const SizeOptions& opt) {
+    int n=x.size();
     if (opt.model() == MODEL_DECOMPOSE) {
+      if (n < 8)
+        linear(*this, x, IRT_EQ, c, opt.icl());
+      else if (n == 8)
+        rel(*this, x, IRT_NQ, 9*(9+1)/2 - c);
       distinct(*this, x, opt.icl());
-      linear(*this, x, IRT_EQ, c, opt.icl());
     } else {
-      int n=x.size();
       switch (n) {
       case 0:
         return;
