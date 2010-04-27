@@ -54,7 +54,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Mult(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Mult::"+s,3,d) {}
+         : Test("MiniModel::Mult::"+s,3,d) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -74,7 +76,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Plus(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Plus::"+s,3,d) {}
+         : Test("MiniModel::Plus::"+s,3,d) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -96,7 +100,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Minus(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Minus::"+s,3,d) {}
+         : Test("MiniModel::Minus::"+s,3,d) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -118,7 +124,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Sqr(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Sqr::"+s,2,d) {}
+         : Test("MiniModel::Sqr::"+s,2,d) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -137,7 +145,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Sqrt(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Sqrt::"+s,2,d) {}
+         : Test("MiniModel::Sqrt::"+s,2,d) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -157,7 +167,9 @@ namespace Test { namespace Int {
        /// Create and register test
        Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
          : Test("MiniModel::Abs::"+str(icl)+"::"+s,
-                   2,d,false,icl) {}
+                   2,d,false,icl) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -176,7 +188,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Min(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Min::Bin::"+s,3,d) {}
+         : Test("MiniModel::Min::Bin::"+s,3,d) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[2];
@@ -193,7 +207,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Max(const std::string& s, const Gecode::IntSet& d)
-         : Test("MiniModel::Max::Bin::"+s,3,d) {}
+         : Test("MiniModel::Max::Bin::"+s,3,d) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[2];
@@ -209,7 +225,9 @@ namespace Test { namespace Int {
      class MinNary : public Test {
      public:
        /// Create and register test
-       MinNary(void) : Test("MiniModel::Min::Nary",4,-4,4) {}
+       MinNary(void) : Test("MiniModel::Min::Nary",4,-4,4) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[3];
@@ -227,7 +245,9 @@ namespace Test { namespace Int {
      class MaxNary : public Test {
      public:
        /// Create and register test
-       MaxNary(void) : Test("MiniModel::Max::Nary",4,-4,4) {}
+       MaxNary(void) : Test("MiniModel::Max::Nary",4,-4,4) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[3];

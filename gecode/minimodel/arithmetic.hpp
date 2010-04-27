@@ -38,22 +38,6 @@
 namespace Gecode {
 
   inline IntVar
-  abs(Home home, IntVar x, IntConLevel icl) {
-    if ((icl == ICL_DOM) && (x.min() >= 0))
-      return x;
-    IntVar y(home, Int::Limits::min, Int::Limits::max);
-    abs(home, x, y, icl);
-    return y;
-  }
-
-  inline IntVar
-  min(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    min(home, x, y, z, icl);
-    return z;
-  }
-
-  inline IntVar
   min(Home home, const IntVarArgs& x, IntConLevel icl) {
     IntVar y(home, Int::Limits::min, Int::Limits::max);
     Gecode::min(home, x, y, icl);
@@ -61,24 +45,10 @@ namespace Gecode {
   }
 
   inline IntVar
-  max(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    max(home, x, y, z, icl);
-    return z;
-  }
-
-  inline IntVar
   max(Home home, const IntVarArgs& x, IntConLevel icl) {
     IntVar y(home, Int::Limits::min, Int::Limits::max);
     Gecode::max(home, x, y, icl);
     return y;
-  }
-
-  inline IntVar
-  mult(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    mult(home, x, y, z, icl);
-    return z;
   }
 
   inline IntVar
@@ -92,38 +62,6 @@ namespace Gecode {
   mod(Home home, IntVar x, IntVar y, IntConLevel icl) {
     IntVar z(home, Int::Limits::min, Int::Limits::max);
     mod(home, x, y, z, icl);
-    return z;
-  }
-
-  inline IntVar
-  sqr(Home home, IntVar x, IntConLevel icl) {
-    IntVar y(home, 0, Int::Limits::max);
-    sqr(home, x, y, icl);
-    return y;
-  }
-
-  inline IntVar
-  sqrt(Home home, IntVar x, IntConLevel icl) {
-    IntVar y(home, 0, Int::Limits::max);
-    sqrt(home, x, y, icl);
-    return y;
-  }
-
-  inline IntVar
-  plus(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    IntVarArgs xy(2);
-    xy[0]=x; xy[1]=y;
-    linear(home, xy, IRT_EQ, z, icl);
-    return z;
-  }
-
-  inline IntVar
-  minus(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    IntVarArgs xy(2); IntArgs a(2, 1,-1);
-    xy[0]=x; xy[1]=y;
-    linear(home, a, xy, IRT_EQ, z, icl);
     return z;
   }
 

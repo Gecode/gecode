@@ -73,6 +73,14 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: minimodel
+What: 	performance
+Rank:	minor
+[DESCRIPTION]
+Arithmetic modeling functions now try to avoid creating new
+variables and posting propagators for common cases.
+
+[ENTRY]
 Module: set
 What: 	change
 Rank:	minor
@@ -144,6 +152,7 @@ Thanks: David Zaremby
 [DESCRIPTION]
 Fixed bug in interactive search where every move in the tree required 
 recomputation.
+
 
 [RELEASE]
 Version: 3.3.1

@@ -232,7 +232,7 @@ namespace Test { namespace Int {
   }
 
   bool 
-  TestSpace::prune(const Assignment& a) {
+  TestSpace::prune(const Assignment& a, bool testfix) {
     // Select variable to be pruned
     int i = Base::rand(x.size());
     while (x[i].assigned())
@@ -281,7 +281,7 @@ namespace Test { namespace Int {
       }
     }
     if (Base::fixpoint()) {
-      if (failed())
+      if (failed() || !testfix)
         return true;
       TestSpace* c = static_cast<TestSpace*>(clone());
       if (opt.log)
@@ -463,7 +463,7 @@ if (!(T)) {                                                     \
         TestSpace* s = new TestSpace(arity,dom,false,this);
         s->post();
         while (!s->failed() && !s->assigned())
-          if (!s->prune(a)) {
+          if (!s->prune(a,testfix)) {
             problem = "No fixpoint";
             delete s;
             goto failed;
@@ -534,7 +534,7 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,true,this);
           s->post();
           while (!s->failed() && (!s->assigned() || !s->b.assigned()))
-            if (!s->prune(a)) {
+            if (!s->prune(a,testfix)) {
               problem = "No fixpoint";
               delete s;
               goto failed;

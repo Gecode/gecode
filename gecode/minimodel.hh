@@ -931,7 +931,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   abs(Home home, IntVar x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x,y)\f$
@@ -939,7 +939,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   min(Home home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\min(x)\f$
@@ -955,7 +955,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   max(Home home, IntVar x, IntVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\max(x)\f$
@@ -971,7 +971,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   mult(Home home, IntVar x, IntVar y,
        IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x\ \mathrm{div}\ y\f$
@@ -993,7 +993,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   sqr(Home home, IntVar x,
       IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
@@ -1001,7 +1001,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   sqrt(Home home, IntVar x,
        IntConLevel icl=ICL_DEF);
   /** \brief Return variable constrained to \f$x+y\f$
@@ -1009,7 +1009,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   plus(Home home, IntVar x, IntVar y,
        IntConLevel icl=ICL_DEF);
   /** Return variable constrained to \f$x-y\f$
@@ -1017,7 +1017,7 @@ namespace Gecode {
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
+  GECODE_MINIMODEL_EXPORT IntVar
   minus(Home home, IntVar x, IntVar y,
         IntConLevel icl=ICL_DEF);
   //@}

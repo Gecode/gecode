@@ -176,7 +176,7 @@ namespace Test {
       /// Prune some random values for some random variable
       void prune(void);
       /// Prune values but not those in assignment \a a
-      bool prune(const Assignment& a);
+      bool prune(const Assignment& a, bool testfix);
     };
 
     /**
@@ -197,6 +197,8 @@ namespace Test {
       ConTestLevel contest;
       /// Whether to perform search test
       bool testsearch;
+      /// Whether to perform fixpoint test
+      bool testfix;
 
     public:
       /**
