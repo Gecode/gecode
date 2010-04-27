@@ -102,7 +102,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprInt(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Int::"+s,4,-3,3), lis(lis0) {}
+         : Test("MiniModel::LinExpr::Int::"+s,4,-3,3), lis(lis0) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int reg[3] = {x[0],x[1],x[2]};
@@ -124,7 +126,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprBool(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {}
+         : Test("MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=3; i--; )
@@ -151,7 +155,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprMixed(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Mixed::"+s,4,-3,3), lis(lis0) {}
+         : Test("MiniModel::LinExpr::Mixed::"+s,4,-3,3), lis(lis0) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if ((x[2] < 0) || (x[2] > 1))
@@ -184,7 +190,9 @@ namespace Test { namespace Int {
        LinRelInt(const LinInstr* l_lis0, const LinInstr* r_lis0,
                  Gecode::IntRelType irt0, const std::string& s)
          : Test("MiniModel::LinRel::Int::"+s+"::"+str(irt0),3,-3,3,true),
-           l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
+           l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int l_reg[3] = {x[0],x[1],x[2]};
@@ -276,7 +284,9 @@ namespace Test { namespace Int {
        LinRelBool(const LinInstr* l_lis0, const LinInstr* r_lis0,
                   Gecode::IntRelType irt0, const std::string& s)
          : Test("MiniModel::LinRel::Bool::"+s+"::"+str(irt0),3,0,1,true),
-           l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
+           l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int l_reg[3] = {x[0],x[1],x[2]};
@@ -374,7 +384,9 @@ namespace Test { namespace Int {
        LinRelMixed(const LinInstr* l_lis0, const LinInstr* r_lis0,
                    Gecode::IntRelType irt0, const std::string& s)
          : Test("MiniModel::LinRel::Mixed::"+s+"::"+str(irt0),6,0,1,true),
-           l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {}
+           l_lis(l_lis0), r_lis(r_lis0), irt(irt0) {
+         testfix = false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int l_reg[3] = {x[0],x[1],x[2]};

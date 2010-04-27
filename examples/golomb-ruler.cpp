@@ -85,14 +85,10 @@ public:
     IntVarArgs d(n_d);
 
     // Setup difference constraints
-    int k=0;
-    // Exploit that m[0] is zero!
-    for (int j=1; j<n; j++)
-      d[k++] = m[j];
-    for (int i=1; i<n-1; i++)
-      for (int j=i+1; j<n; j++)
+    for (int k=0, i=0; i<n-1; i++)
+      for (int j=i+1; j<n; j++, k++)
         // d[k] is m[j]-m[i] and must be at least sum of first j-i integers
-        rel(*this, d[k++] = post(*this, m[j]-m[i]),
+        rel(*this, d[k] = post(*this, m[j]-m[i]),
                    IRT_GQ, (j-i)*(j-i+1)/2);
 
     distinct(*this, d, opt.icl());

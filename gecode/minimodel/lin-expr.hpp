@@ -89,6 +89,17 @@ namespace Gecode {
   }
 
   forceinline
+  LinExpr::LinExpr(double c) :
+    n(new Node) {
+    n->n_int = n->n_bool = 0;
+    n->t = NT_CONST;
+    n->l = n->r = NULL;
+    n->a = 0;
+    Int::Limits::check(c,"MiniModel::LinExpr");
+    n->c = static_cast<int>(c);
+  }
+
+  forceinline
   LinExpr::LinExpr(const LinExpr& e)
     : n(e.n) {
     n->use++;
@@ -321,6 +332,8 @@ namespace Gecode {
       Int::Linear::Term<Int::IntView>* its =
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+1);
       int c = n->fill(its,NULL);
+      if ((n->n_int == 1) && (c == 0) && (its[0].a == 1))
+        return its[0].x;
       int min, max;
       Int::Linear::estimate(&its[0],n->n_int,c,min,max);
       IntVar x(home, min, max);

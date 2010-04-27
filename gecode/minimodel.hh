@@ -99,6 +99,7 @@ namespace Gecode {
   public:
     /// Type of linear expression
     enum NodeType {
+      NT_CONST,    ///< Integer constant
       NT_VAR_INT,  ///< Linear term with integer variable
       NT_VAR_BOOL, ///< Linear term with Boolean variable
       NT_SUM_INT,  ///< Sum of integer variables
@@ -157,6 +158,8 @@ namespace Gecode {
     /// Default constructor
     LinExpr(void);
   public:
+    /// Create expression for constant \a c
+    LinExpr(double c);
     /// Create expression
     LinExpr(const IntVar& x, int a=1);
     /// Create expression
@@ -231,7 +234,7 @@ namespace Gecode {
    * available as linear expressions.
    *
    * Linear relations are obtained from linear expressions with the normal
-   * relation operator s.
+   * relation operators.
    *
    * \ingroup TaskModelMiniModel
    */

@@ -77,6 +77,10 @@ namespace Gecode {
                       Int::Linear::Term<Int::BoolView>*& tb,
                       double m, double& d) const {
     switch (this->t) {
+    case NT_CONST:
+      Int::Limits::check(m*c,"MiniModel::LinExpr");
+      d += m*c;
+      break;
     case NT_VAR_INT:
       if (a != 0) {
         Int::Limits::check(m*a,"MiniModel::LinExpr");
@@ -137,11 +141,17 @@ namespace Gecode {
    */
   LinExpr
   operator +(int c, const IntVar& x) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(c)+x.val());
+    else
+      return LinExpr(x,LinExpr::NT_ADD,c);
   }
   LinExpr
   operator +(int c, const BoolVar& x) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(c)+x.val());
+    else
+      return LinExpr(x,LinExpr::NT_ADD,c);
   }
   LinExpr
   operator +(int c, const LinExpr& e) {
@@ -149,11 +159,17 @@ namespace Gecode {
   }
   LinExpr
   operator +(const IntVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(c)+x.val());
+    else
+      return LinExpr(x,LinExpr::NT_ADD,c);
   }
   LinExpr
   operator +(const BoolVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,c);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(c)+x.val());
+    else
+      return LinExpr(x,LinExpr::NT_ADD,c);
   }
   LinExpr
   operator +(const LinExpr& e, int c) {
@@ -161,35 +177,67 @@ namespace Gecode {
   }
   LinExpr
   operator +(const IntVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
+    if (x.assigned())
+      return x.val() + y;
+    else if (y.assigned())
+      return x + y.val();
+    else
+      return LinExpr(x,LinExpr::NT_ADD,y);
   }
   LinExpr
   operator +(const IntVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
+    if (x.assigned())
+      return x.val() + y;
+    else if (y.assigned())
+      return x + y.val();
+    else
+      return LinExpr(x,LinExpr::NT_ADD,y);
   }
   LinExpr
   operator +(const BoolVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
+    if (x.assigned())
+      return x.val() + y;
+    else if (y.assigned())
+      return x + y.val();
+    else
+      return LinExpr(x,LinExpr::NT_ADD,y);
   }
   LinExpr
   operator +(const BoolVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_ADD,y);
+    if (x.assigned())
+      return x.val() + y;
+    else if (y.assigned())
+      return x + y.val();
+    else
+      return LinExpr(x,LinExpr::NT_ADD,y);
   }
   LinExpr
   operator +(const IntVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_ADD,e);
+    if (x.assigned())
+      return x.val() + e;
+    else
+      return LinExpr(x,LinExpr::NT_ADD,e);
   }
   LinExpr
   operator +(const BoolVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_ADD,e);
+    if (x.assigned())
+      return x.val() + e;
+    else
+      return LinExpr(x,LinExpr::NT_ADD,e);
   }
   LinExpr
   operator +(const LinExpr& e, const IntVar& x) {
-    return LinExpr(e,LinExpr::NT_ADD,x);
+    if (x.assigned())
+      return e + x.val();
+    else
+      return LinExpr(e,LinExpr::NT_ADD,x);
   }
   LinExpr
   operator +(const LinExpr& e, const BoolVar& x) {
-    return LinExpr(e,LinExpr::NT_ADD,x);
+    if (x.assigned())
+      return e + x.val();
+    else
+      return LinExpr(e,LinExpr::NT_ADD,x);
   }
   LinExpr
   operator +(const LinExpr& e1, const LinExpr& e2) {
@@ -198,11 +246,17 @@ namespace Gecode {
 
   LinExpr
   operator -(int c, const IntVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,c);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(c)-x.val());
+    else
+      return LinExpr(x,LinExpr::NT_SUB,c);
   }
   LinExpr
   operator -(int c, const BoolVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,c);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(c)-x.val());
+    else
+      return LinExpr(x,LinExpr::NT_SUB,c);
   }
   LinExpr
   operator -(int c, const LinExpr& e) {
@@ -210,11 +264,17 @@ namespace Gecode {
   }
   LinExpr
   operator -(const IntVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,-c);
+    if (x.assigned())
+      return LinExpr(x.val()-static_cast<double>(c));
+    else
+      return LinExpr(x,LinExpr::NT_ADD,-c);
   }
   LinExpr
   operator -(const BoolVar& x, int c) {
-    return LinExpr(x,LinExpr::NT_ADD,-c);
+    if (x.assigned())
+      return LinExpr(x.val()-static_cast<double>(c));
+    else
+      return LinExpr(x,LinExpr::NT_ADD,-c);
   }
   LinExpr
   operator -(const LinExpr& e, int c) {
@@ -222,35 +282,67 @@ namespace Gecode {
   }
   LinExpr
   operator -(const IntVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
+    if (x.assigned())
+      return x.val() - y;
+    else if (y.assigned())
+      return x - y.val();
+    else
+      return LinExpr(x,LinExpr::NT_SUB,y);
   }
   LinExpr
   operator -(const IntVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
+    if (x.assigned())
+      return x.val() - y;
+    else if (y.assigned())
+      return x - y.val();
+    else
+      return LinExpr(x,LinExpr::NT_SUB,y);
   }
   LinExpr
   operator -(const BoolVar& x, const IntVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
+    if (x.assigned())
+      return x.val() - y;
+    else if (y.assigned())
+      return x - y.val();
+    else
+      return LinExpr(x,LinExpr::NT_SUB,y);
   }
   LinExpr
   operator -(const BoolVar& x, const BoolVar& y) {
-    return LinExpr(x,LinExpr::NT_SUB,y);
+    if (x.assigned())
+      return x.val() - y;
+    else if (y.assigned())
+      return x - y.val();
+    else
+      return LinExpr(x,LinExpr::NT_SUB,y);
   }
   LinExpr
   operator -(const IntVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_SUB,e);
+    if (x.assigned())
+      return x.val() - e;
+    else
+      return LinExpr(x,LinExpr::NT_SUB,e);
   }
   LinExpr
   operator -(const BoolVar& x, const LinExpr& e) {
-    return LinExpr(x,LinExpr::NT_SUB,e);
+    if (x.assigned())
+      return x.val() - e;
+    else
+      return LinExpr(x,LinExpr::NT_SUB,e);
   }
   LinExpr
   operator -(const LinExpr& e, const IntVar& x) {
-    return LinExpr(e,LinExpr::NT_SUB,x);
+    if (x.assigned())
+      return e - x.val();
+    else
+      return LinExpr(e,LinExpr::NT_SUB,x);
   }
   LinExpr
   operator -(const LinExpr& e, const BoolVar& x) {
-    return LinExpr(e,LinExpr::NT_SUB,x);
+    if (x.assigned())
+      return e - x.val();
+    else
+      return LinExpr(e,LinExpr::NT_SUB,x);
   }
   LinExpr
   operator -(const LinExpr& e1, const LinExpr& e2) {
@@ -259,11 +351,17 @@ namespace Gecode {
 
   LinExpr
   operator -(const IntVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,0);
+    if (x.assigned())
+      return LinExpr(-x.val());
+    else
+      return LinExpr(x,LinExpr::NT_SUB,0);
   }
   LinExpr
   operator -(const BoolVar& x) {
-    return LinExpr(x,LinExpr::NT_SUB,0);
+    if (x.assigned())
+      return LinExpr(-x.val());
+    else
+      return LinExpr(x,LinExpr::NT_SUB,0);
   }
   LinExpr
   operator -(const LinExpr& e) {
@@ -272,19 +370,31 @@ namespace Gecode {
 
   LinExpr
   operator *(int a, const IntVar& x) {
-    return LinExpr(x,a);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(a)*x.val());
+    else
+      return LinExpr(x,a);
   }
   LinExpr
   operator *(int a, const BoolVar& x) {
-    return LinExpr(x,a);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(a)*x.val());
+    else
+      return LinExpr(x,a);
   }
   LinExpr
   operator *(const IntVar& x, int a) {
-    return LinExpr(x,a);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(a)*x.val());
+    else
+      return LinExpr(x,a);
   }
   LinExpr
   operator *(const BoolVar& x, int a) {
-    return LinExpr(x,a);
+    if (x.assigned())
+      return LinExpr(static_cast<double>(a)*x.val());
+    else
+      return LinExpr(x,a);
   }
   LinExpr
   operator *(const LinExpr& e, int a) {

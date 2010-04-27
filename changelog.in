@@ -77,6 +77,14 @@ Module: minimodel
 What: 	performance
 Rank:	minor
 [DESCRIPTION]
+Posting linear expressions performs more aggressive optimizations
+for assigned variables.
+
+[ENTRY]
+Module: minimodel
+What: 	performance
+Rank:	minor
+[DESCRIPTION]
 Arithmetic modeling functions now try to avoid creating new
 variables and posting propagators for common cases.
 
