@@ -177,13 +177,13 @@ namespace Gecode {
      */
     template<class I>
     forceinline ModEvent
-    ZeroIntView::narrow_r(Space& home, I& i, bool) {
+    ZeroIntView::narrow_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template<class I>
     forceinline ModEvent
-    ZeroIntView::inter_r(Space& home, I& i, bool) {
+    ZeroIntView::inter_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       while (i() && (i.max() < 0))
         ++i;
@@ -191,7 +191,7 @@ namespace Gecode {
     }
     template<class I>
     forceinline ModEvent
-    ZeroIntView::minus_r(Space& home, I& i, bool) {
+    ZeroIntView::minus_r(Space&, I& i, bool) {
       Iter::Ranges::IsRangeIter<I>();
       while (i() && (i.max() < 0))
         ++i;
@@ -199,13 +199,13 @@ namespace Gecode {
     }
     template<class I>
     forceinline ModEvent
-    ZeroIntView::narrow_v(Space& home, I& i, bool) {
+    ZeroIntView::narrow_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template<class I>
     forceinline ModEvent
-    ZeroIntView::inter_v(Space& home, I& i, bool) {
+    ZeroIntView::inter_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       while (i() && (i.val() < 0))
         ++i;
@@ -213,7 +213,7 @@ namespace Gecode {
     }
     template<class I>
     forceinline ModEvent
-    ZeroIntView::minus_v(Space& home, I& i, bool) {
+    ZeroIntView::minus_v(Space&, I& i, bool) {
       Iter::Values::IsValueIter<I>();
       while (i() && (i.val() < 0))
         ++i;

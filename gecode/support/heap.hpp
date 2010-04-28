@@ -484,7 +484,6 @@ namespace Gecode {
   template<class T>
   forceinline T**
   Heap::realloc(T** b, unsigned int n, unsigned int m) {
-    assert((n >= 0) && (m >= 0));
     return realloc<T*>(b,static_cast<long unsigned int>(n),
                        static_cast<long unsigned int>(m));
   }

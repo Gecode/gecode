@@ -294,6 +294,7 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::count;
     using BaseView<VX,VY,VZ,shr>::atleast;
     using BaseView<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::sharing;
 
     /// Constructor for cloning \a p
     EqView(Space& home, bool share, EqView& p);
@@ -327,6 +328,7 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::count;
     using BaseView<VX,VY,VZ,shr>::atleast;
     using BaseView<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::sharing;
 
     /// Constructor for cloning \a p
     NqView(Space& home, bool share, NqView& p);
@@ -360,6 +362,7 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::count;
     using BaseView<VX,VY,VZ,shr>::atleast;
     using BaseView<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::sharing;
 
     /// Constructor for cloning \a p
     LqView(Space& home, bool share, LqView& p);
@@ -393,6 +396,7 @@ namespace Gecode { namespace Int { namespace Count {
     using BaseView<VX,VY,VZ,shr>::count;
     using BaseView<VX,VY,VZ,shr>::atleast;
     using BaseView<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::sharing;
 
     /// Constructor for cloning \a p
     GqView(Space& home, bool share, GqView& p);
