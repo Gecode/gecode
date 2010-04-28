@@ -62,6 +62,9 @@ namespace {
  *  Crossword Puzzles as a Constraint Problem, Anbulagan and Adi Botea,
  *  CP 2008, pages 550-554, Springer Verlag.
  *
+ *  Note that "Modeling and Programming with Gecode" uses this example
+ *  as a case study.
+ *
  * \ingroup ExProblem
  */
 class Crossword : public Script {
@@ -119,7 +122,7 @@ public:
       }
 
       // All words of same length must be different
-      distinct(*this, words, ICL_BND);
+      distinct(*this, words, opt.icl());
 
       for (int d=0; d<w_l; d++) {
         // Array that maps words to a letter at a certain position (shared among all element constraints)
@@ -190,6 +193,7 @@ int
 main(int argc, char* argv[]) {
   FileSizeOptions opt("Crossword");
   opt.size(0);
+  opt.icl(ICL_BND);
   opt.branching(Crossword::BRANCH_WORDS);
   opt.branching(Crossword::BRANCH_WORDS, "words");
   opt.branching(Crossword::BRANCH_LETTERS, "letters");

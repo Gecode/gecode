@@ -90,6 +90,9 @@ const int c_supply[n_stores][n_warehouses] = {
  *
  * See also problem 34 at http://www.csplib.org/.
  *
+ * Note that "Modeling and Programming with Gecode" uses this example
+ * as a case study.
+ *
  * \ingroup ExProblem
  *
  */

@@ -71,6 +71,9 @@ public:
  *
  * Schedule a golf tournament. This is problem 010 from csplib.
  *
+ * Note that "Modeling and Programming with Gecode" uses this example
+ * as a case study.
+ *
  * \ingroup ExProblem
  *
  */

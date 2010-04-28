@@ -54,6 +54,9 @@ using namespace Gecode;
  *
  * See problem 19 at http://www.csplib.org/.
  *
+ * Note that "Modeling and Programming with Gecode" uses this example
+ * as a case study.
+ *
  * \ingroup ExProblem
  *
  */

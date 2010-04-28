@@ -510,6 +510,9 @@ namespace {
  *
  * Another puzzle in the style of Sudoku.
  *
+ * Note that "Modeling and Programming with Gecode" uses this example
+ * as a case study.
+ *
  * \ingroup ExProblem
  */
 class Kakuro : public Script {
