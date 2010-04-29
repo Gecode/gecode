@@ -73,6 +73,15 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: driver
+What: 	change
+Rank:	minor
+[DESCRIPTION]
+Running a script in time mode stops all iterations and samples
+immediately if a single run reaches a limit (eases benchmarks
+with timeouts).
+
+[ENTRY]
 Module: minimodel
 What: 	performance
 Rank:	minor

@@ -289,9 +289,10 @@ namespace Gecode { namespace Driver {
           cout << o.name() << endl;
           Support::Timer t;
           double* ts = new double[o.samples()];
-          for (unsigned int s = o.samples(); s--; ) {
+          bool stopped = false;
+          for (unsigned int s = o.samples(); !stopped && s--; ) {
             t.start();
-            for (unsigned int k = o.iterations(); k--; ) {
+            for (unsigned int k = o.iterations(); !stopped && k--; ) {
               unsigned int i = o.solutions();
               Script* s = new Script(o);
               Search::Options so;
@@ -307,18 +308,24 @@ namespace Gecode { namespace Driver {
                   break;
                 delete ex;
               } while (--i != 0);
+              if (e.stopped())
+                stopped = true;
             }
             ts[s] = t.stop() / o.iterations();
           }
-          double m = am(ts,o.samples());
-          double d = dev(ts,o.samples()) * 100.0;
+          if (stopped) {
+            cout << "\tSTOPPED" << endl;
+          } else {
+            double m = am(ts,o.samples());
+            double d = dev(ts,o.samples()) * 100.0;
+            cout << "\tRuntime: "
+                 << setw(20) << right
+                 << showpoint << fixed
+                 << setprecision(6) << m << "ms"
+                 << setprecision(2) << " (" << d << "% deviation)"
+                 << endl;
+          }
           delete [] ts;
-          cout << "\tRuntime: "
-               << setw(20) << right
-               << showpoint << fixed
-               << setprecision(6) << m << "ms"
-               << setprecision(2) << " (" << d << "% deviation)"
-               << endl;
         }
         break;
       }
