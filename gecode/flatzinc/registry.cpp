@@ -1070,13 +1070,30 @@ namespace Gecode { namespace FlatZinc {
       IntVar bound = getIntVar(s, ce[3]);
 
       if (bound.assigned()) {
-        IntArgs machine(n);
-        for (int i = n; i--; ) machine[i] = 0;
-        IntArgs limit(1, bound.val());
-        IntVarArgs end(n);
-        for (int i = n; i--; ) end[i] = IntVar(s, 0, Int::Limits::max);
-        cumulatives(s, machine, start, duration, end, height, limit, true,
-                    ann2icl(ann));
+        bool fixedDuration = true;
+        for (int i=duration.size(); i--;) {
+          if (!duration[i].assigned()) {
+            fixedDuration = false;
+            break;
+          }
+        }
+        if (bound.val() <= 1 && fixedDuration) {
+          // Unary
+          for (int i=height.size(); i--;)
+            post(s, height[i] <= 1);
+          IntArgs durationI(duration.size());
+          for (int i=duration.size(); i--;)
+            durationI[i] = duration[i].val();
+          unary(s,start,durationI);
+        } else {
+          IntArgs machine(n);
+          for (int i = n; i--; ) machine[i] = 0;
+          IntArgs limit(1, bound.val());
+          IntVarArgs end(n);
+          for (int i = n; i--; ) end[i] = IntVar(s, 0, Int::Limits::max);
+          cumulatives(s, machine, start, duration, end, height, limit, true,
+                      ann2icl(ann));
+        }
       } else {
         int min = Gecode::Int::Limits::max;
         int max = Gecode::Int::Limits::min;
