@@ -386,7 +386,7 @@
  */
 
 /**
- * \mainpage Gecode Reference Documentation
+ * \mainpage %Gecode Reference Documentation
  *
  * This document provides reference information about
  * <A HREF="http://www.gecode.org">%Gecode</A>.
@@ -638,7 +638,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
 */
  
 /**
- * \page PageUsage Compiling and linking against Gecode
+ * \page PageUsage Compiling and linking against %Gecode
  *
  * \section SecUsageInclude Including header files
  *
@@ -776,7 +776,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  */
  
 /**
- * \page PageComp Compiling and installing Gecode
+ * \page PageComp Compiling and installing %Gecode
  *
  * The %Gecode library, including examples and documentation, can be built
  * on all recent versions of Windows, Linux, and MacOS X. Porting to other
@@ -1023,7 +1023,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
 
 
 /**
- * \page PageHowToChange_2 How to Change from Gecode 1.3.1 to Gecode 2.0.x
+ * \page PageHowToChange_2 How to Change from %Gecode 1.3.1 to %Gecode 2.0.x
  *
 
 As %Gecode 2.0.0 is a major revision of %Gecode, your programs that are written
@@ -1093,7 +1093,7 @@ Windows). You have to link against this library now.
 */
 
 /**
- * \page PageHowToChange_3 How to Change from Gecode 2.2.2 to Gecode 3.0.0
+ * \page PageHowToChange_3 How to Change from %Gecode 2.2.2 to %Gecode 3.0.0
  *
 
 As %Gecode 3.0.0 is a major revision, your programs that
