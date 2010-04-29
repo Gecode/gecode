@@ -268,8 +268,8 @@ namespace Gecode { namespace Driver {
           } while (--i != 0);
           Search::Statistics stat = e.statistics();
           cout << endl
-               << "\tpropagators: " << n_p << endl
-               << "\tbranchers:   " << n_b << endl
+               << "\tpropagators:  " << n_p << endl
+               << "\tbranchers:    " << n_b << endl
                << "\truntime:      ";
           stop(t, cout);
           cout << endl
