@@ -83,6 +83,14 @@ with timeouts).
 
 [ENTRY]
 Module: minimodel
+What: 	int
+Rank:	minor
+[DESCRIPTION]
+Optimized element propagator, expect a speed up of around 10% in
+most cases.
+
+[ENTRY]
+Module: minimodel
 What: 	performance
 Rank:	minor
 [DESCRIPTION]
