@@ -205,8 +205,12 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class V0, class V1, class Idx, class Val>
   PropCost
-  Int<V0,V1,Idx,Val>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::HI);
+  Int<V0,V1,Idx,Val>::cost(const Space&, const ModEventDelta& med) const {
+    if ((V0::me(med) == ME_INT_VAL) ||
+        (V1::me(med) == ME_INT_VAL))
+      return PropCost::unary(PropCost::LO);
+    else
+      return PropCost::binary(PropCost::HI);
   }
 
   template<class V0, class V1, class Idx, class Val>
