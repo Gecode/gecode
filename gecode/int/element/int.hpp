@@ -397,36 +397,20 @@ namespace Gecode { namespace Int { namespace Element {
         return Int<V0,V1,signed char,signed char>::post(home,c,x0,x1);
       case Support::IT_SHRT:
         return Int<V0,V1,signed char,signed short int>::post(home,c,x0,x1);
-      case Support::IT_INT:
-        return Int<V0,V1,signed char,signed int>::post(home,c,x0,x1);
-      default: GECODE_NEVER;
+      default: break;
       }
       break;
     case Support::IT_SHRT:
       switch (val_type) {
       case Support::IT_CHAR:
-        return Int<V0,V1,signed short int,signed char>::post(home,c,x0,x1);
       case Support::IT_SHRT:
         return Int<V0,V1,signed short int,signed short int>::post(home,c,x0,x1);
-      case Support::IT_INT:
-        return Int<V0,V1,signed short int,signed int>::post(home,c,x0,x1);
-      default: GECODE_NEVER;
+      default: break;
       }
       break;
-    case Support::IT_INT:
-      switch (val_type) {
-      case Support::IT_CHAR:
-        return Int<V0,V1,signed int,signed char>::post(home,c,x0,x1);
-      case Support::IT_SHRT:
-        return Int<V0,V1,signed int,signed short int>::post(home,c,x0,x1);
-      case Support::IT_INT:
-        return Int<V0,V1,signed int,signed int>::post(home,c,x0,x1);
-      default: GECODE_NEVER;
-      }
-      break;
-    default: GECODE_NEVER;
+    default: break;
     }
-    return ES_OK;
+    return Int<V0,V1,signed int,signed int>::post(home,c,x0,x1);
   }
 
 }}}
