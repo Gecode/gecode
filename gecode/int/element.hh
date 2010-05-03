@@ -84,13 +84,13 @@ namespace Gecode { namespace Int { namespace Element {
      * The iterator also removes marked index-value pairs.
      *
      */
-    class IterIdx {
+    class IterIdxUnmark {
     private:
       IdxVal* iv; ///< The index value data structure
       Idx i; ///< Current index value pair
     public:
       /// Initialize with start
-      IterIdx(IdxVal* iv);
+      IterIdxUnmark(IdxVal* iv);
       /// Test whether more pairs to be iterated
       bool operator ()(void) const;
       /// Move to next index value pair (next index)
@@ -118,6 +118,28 @@ namespace Gecode { namespace Int { namespace Element {
       /// Return value of current index value pair
       Val val(void) const;
     };
+    /**
+     * \brief Value iterator for values in index-value map
+     *
+     * Note that the iterated value sequence is not strictly
+     * increasing (might contain duplicates).
+     *
+     * The iterator also removes marked index-value pairs.
+     */
+    class IterValUnmark {
+    private:
+      IdxVal* iv; ///< The index value data structure
+      Idx i; ///< Current index value pair
+    public:
+      /// Initialize with start
+      IterValUnmark(IdxVal* iv);
+      /// Test whether more pairs to be iterated
+      bool operator ()(void) const;
+      /// Move to next index value pair (next value)
+      void operator ++(void);
+      /// Return value of current index value pair
+      Val val(void) const;
+    };
     /// Sorting pointers to (index,value) pairs in value order
     class ByVal {
     protected:
@@ -131,12 +153,24 @@ namespace Gecode { namespace Int { namespace Element {
 
     /// View for index
     V0 x0;
+    /// Type for index size
+    typedef typename Gecode::Support::IntTypeTraits<Idx>::utype IdxSize;
+    /// Size of \a x0 at last execution
+    IdxSize s0;
     /// View for result
     V1 x1;
+    /// Type for value size
+    typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
+    /// Size of \a x1 at last execution
+    ValSize s1;
     /// Shared array of integer values
     IntSharedArray c;
     /// The index-value data structure
     IdxVal* iv;
+    /// Prune index according to \a x0
+    void prune_idx(void);
+    /// Prune values according to \a x1
+    void prune_val(void);
     /// Constructor for cloning \a p
     Int(Space& home, bool shared, Int& p);
     /// Constructor for creation

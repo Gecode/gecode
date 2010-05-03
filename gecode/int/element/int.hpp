@@ -50,10 +50,11 @@ namespace Gecode { namespace Int { namespace Element {
     return idx<0;
   }
 
+
   // Index iterator
   template<class V0, class V1, class Idx, class Val>
   forceinline
-  Int<V0,V1,Idx,Val>::IterIdx::IterIdx(IdxVal* iv0)
+  Int<V0,V1,Idx,Val>::IterIdxUnmark::IterIdxUnmark(IdxVal* iv0)
     : iv(iv0) {
     Idx p=0;
     i = iv[p].idx_next;
@@ -63,12 +64,12 @@ namespace Gecode { namespace Int { namespace Element {
   }
   template<class V0, class V1, class Idx, class Val>
   forceinline bool
-  Int<V0,V1,Idx,Val>::IterIdx::operator ()(void) const {
+  Int<V0,V1,Idx,Val>::IterIdxUnmark::operator ()(void) const {
     return i != 0;
   }
   template<class V0, class V1, class Idx, class Val>
   forceinline void
-  Int<V0,V1,Idx,Val>::IterIdx::operator ++(void) {
+  Int<V0,V1,Idx,Val>::IterIdxUnmark::operator ++(void) {
     int p=i;
     i = iv[p].idx_next;
     while ((i != 0) && iv[i].marked())
@@ -77,7 +78,7 @@ namespace Gecode { namespace Int { namespace Element {
   }
   template<class V0, class V1, class Idx, class Val>
   forceinline Idx
-  Int<V0,V1,Idx,Val>::IterIdx::val(void) const {
+  Int<V0,V1,Idx,Val>::IterIdxUnmark::val(void) const {
     assert(!iv[i].marked());
     return iv[i].idx;
   }
@@ -107,6 +108,39 @@ namespace Gecode { namespace Int { namespace Element {
 
 
 
+  template<class V0, class V1, class Idx, class Val>
+  forceinline
+  Int<V0,V1,Idx,Val>::IterValUnmark::IterValUnmark(IdxVal* iv0)
+    : iv(iv0) {
+    Idx p=0;
+    i = iv[p].val_next;
+    while ((i != 0) && iv[i].marked())
+      i=iv[i].val_next;
+    iv[p].val_next=i;
+  }
+  template<class V0, class V1, class Idx, class Val>
+  forceinline bool
+  Int<V0,V1,Idx,Val>::IterValUnmark::operator ()(void) const {
+    return i != 0;
+  }
+  template<class V0, class V1, class Idx, class Val>
+  forceinline void
+  Int<V0,V1,Idx,Val>::IterValUnmark::operator ++(void) {
+    int p=i;
+    i = iv[p].val_next;
+    while ((i != 0) && iv[i].marked())
+      i=iv[i].val_next;
+    iv[p].val_next=i;
+  }
+  template<class V0, class V1, class Idx, class Val>
+  forceinline Val
+  Int<V0,V1,Idx,Val>::IterValUnmark::val(void) const {
+    assert(!iv[i].marked());
+    return iv[i].val;
+  }
+
+
+
   // Sort function
   template<class V0, class V1, class Idx, class Val>
   forceinline
@@ -126,7 +160,7 @@ namespace Gecode { namespace Int { namespace Element {
   template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::Int(Home home, IntSharedArray& c0, V0 y0, V1 y1)
-    : Propagator(home), x0(y0), x1(y1), c(c0), iv(NULL) {
+    : Propagator(home), x0(y0), s0(0), x1(y1), s1(0), c(c0), iv(NULL) {
     home.notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this,PC_INT_DOM);
     x1.subscribe(home,*this,PC_INT_DOM);
@@ -157,7 +191,7 @@ namespace Gecode { namespace Int { namespace Element {
   template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::Int(Space& home, bool share, Int& p)
-    : Propagator(home,share,p), iv(NULL) {
+    : Propagator(home,share,p), s0(0), s1(0), iv(NULL) {
     c.update(home,share,p.c);
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -176,13 +210,109 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template<class V0, class V1, class Idx, class Val>
+  void
+  Int<V0,V1,Idx,Val>::prune_idx(void) {
+    Idx p = 0;
+    Idx i = iv[p].idx_next;
+    ViewRanges<V0> v(x0);
+    while (v() && (i != 0)) {
+      assert(!iv[i].marked());
+      if (iv[i].idx < v.min()) {
+        iv[i].mark(); i=iv[i].idx_next; iv[p].idx_next=i;
+      } else if (iv[i].idx > v.max()) {
+        ++v;
+      } else {
+        p=i; i=iv[i].idx_next;
+      }
+    }
+    iv[p].idx_next = 0;
+    while (i != 0) { 
+      iv[i].mark(); i=iv[i].idx_next; 
+    }
+  }
+
+  template<class V0, class V1, class Idx, class Val>
+  void
+  Int<V0,V1,Idx,Val>::prune_val(void) {
+    Idx p = 0;
+    Idx i = iv[p].val_next;
+    ViewRanges<V1> v(x1);
+    while (v() && (i != 0)) {
+      if (iv[i].marked()) {
+        i=iv[i].val_next; iv[p].val_next=i;
+      } else if (iv[i].val < v.min()) {
+        iv[i].mark(); i=iv[i].val_next; iv[p].val_next=i;
+      } else if (iv[i].val > v.max()) {
+        ++v;
+      } else {
+        p=i; i=iv[i].val_next;
+      }
+    }
+    iv[p].val_next = 0;
+    while (i != 0) { 
+      iv[i].mark(); i=iv[i].val_next; 
+    }
+  }
+
+  template<class V0, class V1, class Idx, class Val>
   ExecStatus
   Int<V0,V1,Idx,Val>::propagate(Space& home, const ModEventDelta&) {
+    if (x0.assigned()) {
+      GECODE_ME_CHECK(x1.eq(home,c[x0.val()]));
+      return home.ES_SUBSUMED(*this);
+    }
+
+    if (x1.assigned() && (iv == NULL)) {
+      Region r(home);
+      int* v = r.alloc<int>(x0.size());
+      int n = 0;
+      for (ViewValues<V0> i(x0); i(); ++i)
+        if (c[i.val()] == x1.val())
+          v[n++]=i.val();
+      if (x0.size() > static_cast<unsigned int>(n)) {
+        Iter::Values::Array i(v,n);
+        GECODE_ME_CHECK(x0.narrow_v(home,i,false));
+      }
+      return home.ES_SUBSUMED(*this);
+    }
+
+    if ((static_cast<ValSize>(x1.size()) == s1) &&
+        (static_cast<IdxSize>(x0.size()) != s0)) {
+      assert(iv != NULL);
+      assert(!shared(x0,x1));
+
+      prune_idx();
+
+      IterValUnmark v(iv);
+      GECODE_ME_CHECK(x1.narrow_v(home,v,false));
+      
+      s1=static_cast<ValSize>(x1.size());
+      
+      assert(!x0.assigned());
+      return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
+
+    if ((static_cast<IdxSize>(x0.size()) == s0) &&
+        (static_cast<ValSize>(x1.size()) != s1)) {
+      assert(iv != NULL);
+      assert(!shared(x0,x1));
+
+      prune_val();
+
+      IterIdxUnmark i(iv);
+      GECODE_ME_CHECK(x0.narrow_v(home,i,false));
+      
+      s0=static_cast<IdxSize>(x0.size()); 
+      
+      return (x0.assigned() || x1.assigned()) ?
+          home.ES_SUBSUMED(*this) : ES_FIX;
+    }
+
     bool assigned = x0.assigned() && x1.assigned();
     if (iv == NULL) {
       // Initialize data structure
       iv = home.alloc<IdxVal>(x0.size() + 1);
-
+      
       // The first element in iv[0] is used as sentinel
       // Enter information sorted by idx
       IdxVal* by_idx = &iv[1];
@@ -214,54 +344,26 @@ namespace Gecode { namespace Int { namespace Element {
       iv[0].idx_next = 1;
       iv[0].val_next = by_val[0];
     } else {
-      // Prune index
-      Idx p = 0;
-      Idx i = iv[p].idx_next;
-      ViewRanges<V0> v(x0);
-      while (v() && (i != 0)) {
-        assert(!iv[i].marked());
-        if (iv[i].idx < v.min()) {
-          iv[i].mark(); i=iv[i].idx_next; iv[p].idx_next=i;
-        } else if (iv[i].idx > v.max()) {
-          ++v;
-        } else {
-          p=i; i=iv[i].idx_next;
-        }
-      }
-      iv[p].idx_next = 0;
-      while (i != 0) { iv[i].mark(); i=iv[i].idx_next; }
+      prune_idx();
     }
-
+      
     // Prune values
-    {
-      Idx p = 0;
-      Idx i = iv[p].val_next;
-      ViewRanges<V1> v(x1);
-      while (v() && (i != 0)) {
-        if (iv[i].marked()) {
-          i=iv[i].val_next; iv[p].val_next=i;
-        } else if (iv[i].val < v.min()) {
-          iv[i].mark(); i=iv[i].val_next; iv[p].val_next=i;
-        } else if (iv[i].val > v.max()) {
-          ++v;
-        } else {
-          p=i; i=iv[i].val_next;
-        }
-      }
-      iv[p].val_next = 0;
-      while (i != 0) { iv[i].mark(); i=iv[i].val_next; }
-    }
-
+    prune_val();
+    
     // Peform tell
     {
-      IterIdx i(iv);
+      IterIdxUnmark i(iv);
       GECODE_ME_CHECK(x0.narrow_v(home,i,false));
       IterVal v(iv);
       if (shared(x0,x1)) {
         GECODE_ME_CHECK(x1.inter_v(home,v,false));
+        s0=static_cast<IdxSize>(x0.size()); 
+        s1=static_cast<ValSize>(x1.size());
         return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
       } else {
         GECODE_ME_CHECK(x1.narrow_v(home,v,false));
+        s0=static_cast<IdxSize>(x0.size()); 
+        s1=static_cast<ValSize>(x1.size());
         return (x0.assigned() || x1.assigned()) ?
           home.ES_SUBSUMED(*this) : ES_FIX;
       }
