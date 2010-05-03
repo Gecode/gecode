@@ -182,6 +182,8 @@ namespace Gecode { namespace Int { namespace Element {
   Int<V0,V1,Idx,Val>::post(Home home, IntSharedArray& c, V0 x0, V1 x1) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,c[x0.val()]));
+    } else if (x1.assigned()) {
+      GECODE_ES_CHECK(assigned_val(home,c,x0,x1));
     } else {
       (void) new (home) Int<V0,V1,Idx,Val>(home,c,x0,x1);
     }
@@ -260,6 +262,23 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class V0, class V1, class Idx, class Val>
   ExecStatus
+  Int<V0,V1,Idx,Val>::assigned_val(Space& home, IntSharedArray& c, 
+                                   V0 x0, V1 x1) {
+    Region r(home);
+    int* v = r.alloc<int>(x0.size());
+    int n = 0;
+    for (ViewValues<V0> i(x0); i(); ++i)
+      if (c[i.val()] == x1.val())
+        v[n++]=i.val();
+    if (x0.size() > static_cast<unsigned int>(n)) {
+      Iter::Values::Array i(v,n);
+      GECODE_ME_CHECK(x0.narrow_v(home,i,false));
+    }
+    return ES_OK;
+  }
+
+  template<class V0, class V1, class Idx, class Val>
+  ExecStatus
   Int<V0,V1,Idx,Val>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,c[x0.val()]));
@@ -267,16 +286,7 @@ namespace Gecode { namespace Int { namespace Element {
     }
 
     if (x1.assigned() && (iv == NULL)) {
-      Region r(home);
-      int* v = r.alloc<int>(x0.size());
-      int n = 0;
-      for (ViewValues<V0> i(x0); i(); ++i)
-        if (c[i.val()] == x1.val())
-          v[n++]=i.val();
-      if (x0.size() > static_cast<unsigned int>(n)) {
-        Iter::Values::Array i(v,n);
-        GECODE_ME_CHECK(x0.narrow_v(home,i,false));
-      }
+      GECODE_ES_CHECK(assigned_val(home,c,x0,x1));
       return home.ES_SUBSUMED(*this);
     }
 

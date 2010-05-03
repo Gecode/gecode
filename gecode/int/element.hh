@@ -171,6 +171,9 @@ namespace Gecode { namespace Int { namespace Element {
     void prune_idx(void);
     /// Prune values according to \a x1
     void prune_val(void);
+    /// Prune when \a x1 is assigned
+    static ExecStatus assigned_val(Space& home, IntSharedArray& c, 
+                                   V0 x0, V1 x1);
     /// Constructor for cloning \a p
     Int(Space& home, bool shared, Int& p);
     /// Constructor for creation

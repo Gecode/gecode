@@ -86,8 +86,8 @@ Module: minimodel
 What: 	int
 Rank:	minor
 [DESCRIPTION]
-Optimized element propagator, expect a speed up of around 10% in
-most cases.
+Optimized element propagator, expect a speed up of around 25-30%
+in most cases.
 
 [ENTRY]
 Module: minimodel
