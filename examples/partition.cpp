@@ -85,7 +85,7 @@ public:
     }
     linear(*this, c, sxy, IRT_EQ, 0);
 
-    // Redundant
+    // Redundant constraints
     linear(*this, x, IRT_EQ, 2*n*(2*n+1)/4);
     linear(*this, y, IRT_EQ, 2*n*(2*n+1)/4);
     linear(*this, sx, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);

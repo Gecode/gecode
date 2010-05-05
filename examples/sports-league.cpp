@@ -54,6 +54,8 @@ public:
   int h; ///< home team
   int a; ///< away team
   int g; ///< game number
+  /// Default constructor
+  Play(void) : h(0), a(0), g(0) {}
 };
 
 /// Round robin schedule
@@ -106,11 +108,6 @@ public:
    *
    */
   RRS(int t) : teams(t), plays(new Play[periods()*weeks()])  {
-    // Initialize array
-    for (int p=0; p<periods(); p++)
-      for (int w=0; w<weeks(); w++)
-        play(p,w).h = play(p,w).a = play(p,w).g = 0;
-
     // Determine the first game (week 0 period 0)
     play(0,0).h = 1;
     play(0,0).a = 2;
@@ -126,19 +123,16 @@ public:
     // Compute the games for the subsequent weeks
     for (int w=1; w<weeks(); w++) {
       for (int p=0; p<periods(); p++) {
-        if (play(p,w-1).h == teams) {
+        if (play(p,w-1).h == teams)
           play(p,w).h = 2;
-        } else if (play(p,w-1).h == 1) {
+        else if (play(p,w-1).h == 1)
           play(p,w).h = 1;
-        } else {
+        else
           play(p,w).h = play(p,w-1).h + 1;
-        }
-
-        if (play(p,w-1).a == teams) {
+        if (play(p,w-1).a == teams)
           play(p,w).a = 2;
-        } else {
+        else
           play(p,w).a = play(p,w-1).a + 1;
-        }
 
         // maintain symmetry for (h,a): h < a
         if (play(p,w).h > play(p,w).a)

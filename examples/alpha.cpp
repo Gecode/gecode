@@ -100,13 +100,7 @@ public:
       branch(*this, le, INT_VAR_NONE, INT_VAL_MIN);
       break;
     case BRANCH_INVERSE:
-      {
-        IntVarArgs el(le.size());
-        int j=0;
-        for (int i=le.size(); i--; )
-          el[j++]=le[i];
-        branch(*this, el, INT_VAR_NONE, INT_VAL_MIN);
-      }
+      branch(*this, le.slice(le.size()-1,-1), INT_VAR_NONE, INT_VAL_MIN);
       break;
     case BRANCH_SIZE:
       branch(*this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);

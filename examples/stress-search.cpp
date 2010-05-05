@@ -56,18 +56,15 @@ public:
     : x(*this,opt.size(),0,opt.size()) {
     branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
-
   /// Constructor for cloning \a s
   StressSearch(bool share, StressSearch& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
-
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
     return new StressSearch(share,*this);
   }
-
   /// Print solution
   virtual void
   print(std::ostream&) const {}

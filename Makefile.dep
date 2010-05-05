@@ -6801,7 +6801,7 @@ examples/crossword$(OBJSUFFIX) examples/crossword$(SBJSUFFIX): \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
 	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
 	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
-examples/openshop$(OBJSUFFIX) examples/openshop$(SBJSUFFIX): \
+examples/open-shop$(OBJSUFFIX) examples/open-shop$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/gist.hh ./gecode/gist/gist.hpp ./gecode/int.hh \
 	./gecode/int/array-traits.hpp ./gecode/int/array.hpp ./gecode/int/bool.hh \

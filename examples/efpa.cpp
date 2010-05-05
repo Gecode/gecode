@@ -48,10 +48,10 @@ using namespace Gecode;
  */
 class EFPAOptions : public Options {
 private:
-  Driver::UnsignedIntOption _v;   ///< Parameter v.
-  Driver::UnsignedIntOption _q;   ///< Parameter q.
-  Driver::UnsignedIntOption _l;   ///< Parameter lambda.
-  Driver::UnsignedIntOption _d;   ///< Parameter d.
+  Driver::UnsignedIntOption _v;   ///< Parameter v
+  Driver::UnsignedIntOption _q;   ///< Parameter q
+  Driver::UnsignedIntOption _l;   ///< Parameter lambda
+  Driver::UnsignedIntOption _d;   ///< Parameter d
   Driver::StringOption _permutation; ///< Use permutation constraints if d=4
 
 public:

@@ -374,9 +374,10 @@ namespace {
    * \relates Kakuro
    */
   class DistinctLinear : public Space {
-  public:
+  protected:
     /// The variables
     IntVarArray x;
+  public:
     /// The actual problem
     DistinctLinear(int n, int s) : x(*this,n,1,9) {
       distinct(*this, x);
@@ -392,86 +393,42 @@ namespace {
     copy(bool share) {
       return new DistinctLinear(share,*this);
     }
-  };
-  /** \brief Generate specification for \a n distinct variables withm sum \a c
-   *
-   * This function should be specialised for any type of specification.
-   *
-   * \relates Kakuro
-   */
-  template<class C> C generate(int n, int c);
-
-  /** \brief Generate DFA for \a n distinct variables with sum \a c
-   * \relates Kakuro
-   */
-  template<>
-  DFA generate<DFA>(int n, int c) {
-    // Setup search engine that enumerates all solutions
-    DistinctLinear* e = new DistinctLinear(n,c);
-    DFS<DistinctLinear> d(e);
-    delete e;
-    // Remember in \a ts the previous transitions
-    DFA::Transition* ts = new DFA::Transition[n];
-    for (int i=n; i--; )
-      ts[i].symbol = 0;
-    ts[0].i_state = 0;
-    // Record all transitions in \a ts_all
-    Support::DynamicArray<DFA::Transition,Heap> ts_all(heap);
-    int ts_next = 0;
-    int n_state = 2;
-    while (DistinctLinear* s = d.next()) {
-      int i=0;
-      // Skip common prefix
-      for (; ts[i].symbol == s->x[i].val(); i++) {}
-      // Generate transitions for new suffix
-      int i_state = ts[i].i_state;
-      for (;i<n;i++) {
-        ts[i].i_state = i_state;
-        ts[i].symbol  = s->x[i].val();
-        ts[i].o_state = i_state = n_state++;
-        ts_all[ts_next++] = ts[i];
-      }
-      // Fix final state to 1
-      ts_all[ts_next-1].o_state = 1;
-      delete s;
+    /// Return a solution
+    IntArgs solution(void) const {
+      IntArgs s(x.size());
+      for (int i=0; i<x.size(); i++)
+        s[i]=x[i].val();
+      return s;
     }
-    delete [] ts;
-    ts_all[ts_next].i_state = -1;
-    int final[2] = {1,-1};
-    DFA dfa(0,&ts_all[0],final);
-    return dfa;
-  }
+  };
+
   /** \brief Generate tuple set for \a n distinct variables with sum \a c
    * \relates Kakuro
    */
-  template<>
-  TupleSet generate<TupleSet>(int n, int c) {
+  TupleSet generate(int n, int c) {
     // Setup search engine that enumerates all solutions
     DistinctLinear* e = new DistinctLinear(n,c);
     DFS<DistinctLinear> d(e);
     delete e;
     TupleSet ts;
     while (DistinctLinear* s = d.next()) {
-      IntArgs ia(n);
-      for (int i = n; i--; ) ia[i] = s->x[i].val();
-      ts.add(ia);
-      delete s;
+      ts.add(s->solution()); delete s;
     }
     ts.finalize();
     return ts;
   }
 
-  /** \brief Class to remember already computed specifications of type Data
+  /** \brief Class to remember already computed specifications
    * \relates Kakuro
    */
-  template<class Data>
   class Cache {
   private:
+    /// Cache entry
     class Entry {
     public:
       int n;       ///< Number of variables
       int c;       ///< Sum of variables
-      Data d;      ///< The previously computed DFA
+      TupleSet ts; ///< The previously computed tuple set
       Entry* next; ///< The next cache entry
     };
     Entry* cache; ///< Where all entries start
@@ -479,17 +436,17 @@ namespace {
     /// Initialize cache as empty
     Cache(void) : cache(NULL) {}
     /// Return possibly cached Data for \a n distinct variables with sum \a c
-    Data get(int n, int c) {
+    TupleSet get(int n, int c) {
       for (Entry* e = cache; e != NULL; e = e->next)
         if ((e->n == n) && (e->c == c))
-          return e->d;
+          return e->ts;
       Entry* e = new Entry;
       e->n = n;
       e->c = c;
-      e->d = generate<Data>(n,c);
+      e->ts = generate(n,c);
       e->next = cache;
       cache = e;
-      return cache->d;
+      return cache->ts;
     }
     /// Delete cache entries
     ~Cache(void) {
@@ -521,11 +478,6 @@ protected:
   const int h;   ///< Height of board
   IntVarArray f; ///< Variables for fields of board
 public:
-  /// Propagation variants
-  enum {
-    PROP_DFA,       ///< Use DFAs for extensional constraints
-    PROP_TUPLE_SET  ///< Use tuple sets for extensional constraints
-  };
   /// Model variants
   enum {
     MODEL_DECOMPOSE,///< Decompose constraints
@@ -538,8 +490,7 @@ public:
     return x;
   }
   /// Post a distinct-linear constraint on variables \a x with sum \a c
-  template<class Data>
-  void distinctlinear(Cache<Data>& dc, const IntVarArgs& x, int c,
+  void distinctlinear(Cache& dc, const IntVarArgs& x, int c,
                       const SizeOptions& opt) {
     int n=x.size();
     if (opt.model() == MODEL_DECOMPOSE) {
@@ -576,14 +527,6 @@ public:
           // sum has unique decomposition: (9-n) + (9-n+2) + ... + 9
           rel(*this, x, IRT_GQ, 9-n);
           rel(*this, x, IRT_NQ, 9-n+1);
-        } else if (n == 2) {
-          // Just use element constraint with no two equal digits
-          IntArgs e(c);
-          e[0]=0;
-          for (int i=1; i<c; i++)
-            e[i]=(c-i == i) ? 0 : c-i;
-          element(*this, e, x[0], x[1]);
-          return;
         } else {
           extensional(*this, x, dc.get(n,c));
           return;
@@ -603,10 +546,8 @@ public:
     for (int i=w*h; i--; )
       f[i] = black;
 
-    // Cache of computed DFAs
-    Cache<DFA> dfa_cache;
-    // Cache of compute tuple sets
-    Cache<TupleSet> ts_cache;
+    // Cache of already computed tuple sets
+    Cache cache;
 
     // Matrix for accessing board fields
     Matrix<IntVarArray> b(f,w,h);
@@ -619,10 +560,7 @@ public:
       IntVarArgs col(n);
       for (int i=n; i--; )
         col[i]=init(b(x,y+i+1));
-      if (opt.propagation() == PROP_TUPLE_SET)
-        distinctlinear(ts_cache,col,s,opt);
-      else
-        distinctlinear(dfa_cache,col,s,opt);
+      distinctlinear(cache,col,s,opt);
     }
     k++;
 
@@ -632,10 +570,7 @@ public:
       IntVarArgs row(n);
       for (int i=n; i--; )
         row[i]=init(b(x+i+1,y));
-      if (opt.propagation() == PROP_TUPLE_SET)
-        distinctlinear(ts_cache,row,s,opt);
-      else
-        distinctlinear(dfa_cache,row,s,opt);
+      distinctlinear(cache,row,s,opt);
     }
     branch(*this, f, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
   }
@@ -671,18 +606,11 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Kakuro");
-  opt.propagation(Kakuro::PROP_TUPLE_SET);
-  opt.propagation(Kakuro::PROP_DFA,
-                  "dfa","Use DFAs for storing combinations");
-  opt.propagation(Kakuro::PROP_TUPLE_SET,
-                  "tuple-set","Use tuple sets for storing combinations");
-
   opt.model(Kakuro::MODEL_COMBINE);
   opt.model(Kakuro::MODEL_DECOMPOSE,
                   "decompose","decompose distinct and linear constraints");
   opt.model(Kakuro::MODEL_COMBINE,
                   "combine","combine distinct and linear constraints");
-
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {

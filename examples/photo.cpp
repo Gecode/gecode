@@ -157,7 +157,7 @@ main(int argc, char* argv[]) {
   opt.iterations(10);
   opt.icl(ICL_BND);
   opt.branching(Photo::BRANCH_DEGREE);
-  opt.branching(Photo::BRANCH_NONE, "none");
+  opt.branching(Photo::BRANCH_NONE,   "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
   MaximizeScript::run<Photo,BAB,SizeOptions>(opt);

@@ -79,18 +79,15 @@ public:
     distinct(*this, x);
     branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
-
   /// Constructor for cloning \a s
   StressElement(bool share, StressElement& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
-
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
     return new StressElement(share,*this);
   }
-
   /// Print solution
   virtual void
   print(std::ostream& os) const {

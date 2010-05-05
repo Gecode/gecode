@@ -66,18 +66,15 @@ public:
     }
 
   }
-
   /// Constructor for cloning \a s
   StressExec(bool share, StressExec& s) : Script(share,s) {
     x.update(*this, share, s.x);
   }
-
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
     return new StressExec(share,*this);
   }
-
   /// Print solution
   virtual void
   print(std::ostream&) const {}

@@ -165,7 +165,7 @@ public:
    *
    * \relates QueenArmies
    */
-  class QueenBranch : Brancher {
+  class QueenBranch : public Brancher {
   private:
     /// Cache of last computed decision
     mutable int start;

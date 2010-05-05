@@ -53,10 +53,12 @@ using namespace Gecode;
  *
  * \relates Pentominoes
  */
-struct TileSpec {
-  int width, height;
-  int amount;
-  const char *tile;
+class TileSpec {
+public:
+  int width;  ///< Width of tile
+  int height; ///< Height of tile
+  int amount; ///< Number of tiles
+  const char *tile; ///< Picture of tile
 };
 
 /** \brief Board specifications

@@ -218,7 +218,7 @@ public:
     for (int i=0; i<n; i++)
       for (int j=i+1; j<n; j++)
         post(*this, tt(~(x[i]+s[i] <= x[j]) || ~(x[j]+s[j] <= x[i]) ||
-                      ~(y[i]+s[i] <= y[j]) || ~(y[j]+s[j] <= y[i])));
+                       ~(y[i]+s[i] <= y[j]) || ~(y[j]+s[j] <= y[i])));
 
     /*
      * Capacity constraints

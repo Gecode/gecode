@@ -51,14 +51,12 @@ using namespace Gecode;
  */
 class Steiner : public Script {
 public:
-
   /// Model variants
   enum {
     MODEL_NONE,   ///< Use simple relation constraint
     MODEL_MATCHING, ///< Use matching constraints
     MODEL_SEQ ///< Use sequence constraints
   };
-
   /// Order of the Steiner problem
   int n;
   /// Number of Steiner triples
@@ -99,7 +97,7 @@ public:
           rel(*this, y, SRT_SUP, y2);
           rel(*this, y, SRT_SUP, y3);
 
-        } else  if (opt.model() == MODEL_MATCHING) {
+        } else if (opt.model() == MODEL_MATCHING) {
           /* Smart alternative:
            * Using matching constraints
            */
@@ -152,7 +150,6 @@ public:
 
     branch(*this, triples, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
-
   /// Print solution
   virtual void
   print(std::ostream& os) const {
@@ -160,7 +157,6 @@ public:
       os << "\t[" << i << "] = " << triples[i] << std::endl;
     }
   }
-
   /// Constructor for copying \a s
   Steiner(bool share, Steiner& s) : Script(share,s), n(s.n), noOfTriples(s.noOfTriples) {
     triples.update(*this, share, s.triples);
@@ -170,7 +166,6 @@ public:
   copy(bool share) {
     return new Steiner(share,*this);
   }
-
 };
 
 /** \brief Main-function
