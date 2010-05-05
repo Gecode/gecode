@@ -73,6 +73,14 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The configure script now checks for qmake-qt4 and moc-qt4, which are used on 
+some Linux systems to distinguish between Qt3 and Qt4.
+
+[ENTRY]
 Module: driver
 What: 	change
 Rank:	minor
