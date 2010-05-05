@@ -9,8 +9,8 @@
 #     Guido Tack, 2006
 #
 #  Last modified:
-#     $Date$ by $Author$
-#     $Revision$
+#     $Date: 2010-05-05 12:03:33 +0200 (Mi, 05 Mai 2010) $ by $Author: tack $
+#     $Revision: 10855 $
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:
@@ -36,14 +36,6 @@
 #  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 #
-
-print <<EOF
-Changelog for Gecode
-==============================================================================
-
-EOF
-;
-
 
 # 
 # Compile changelog
@@ -80,7 +72,7 @@ $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
 @modorder = ("kernel","search","int","set","cpltset","minimodel",
-	     "iter","support","example","test","gist","other");
+         "iter","support","example","test","gist","other");
 
 @whatorder = ("new","change","bug","performance","documentation");
 
@@ -91,46 +83,45 @@ foreach $mod (@modorder) {
   }
 }
 
-while ($l = <>) {
+while ($l = <STDIN>) {
  LINE:
   next if ($l =~ /^\#/);
   $l =~ s/%Gecode/Gecode/g;
   if ($l =~ /^\[RELEASE\]/) {
     # Print previous
     if (!$first) {
-      print "Changes in Version $version ($date)\n\n";
-
-      print "Scope:$info";
-
+      print "<ul>\n";
       foreach $mod (@modorder) {
-	if ($hastext{$mod}) {
-	  print "- " . $modclear{$mod} . "\n";
-	  $hastext{$mod} = 0;
-	  foreach $what (@whatorder) {
-	    if (!($text{"$mod-$what"} eq "")) {
-	      print "  - " . $whatclear{$what} . "\n";
-	      print $text{"$mod-$what"};
-	      $text{"$mod-$what"} = "";
-	    }
-	  }
-
-	}
+        if ($hastext{$mod}) {
+          print "<li>" . $modclear{$mod} . "\n<ul>\n";
+          $hastext{$mod} = 0;
+          foreach $what (@whatorder) {
+            if (!($text{"$mod-$what"} eq "")) {
+              print "<li>" . $whatclear{$what} . "\n<ul>";
+              print $text{"$mod-$what"};
+              print "</ul></li>\n";
+              $text{"$mod-$what"} = "";
+            }
+          }
+          print "</ul></li>\n";
+        }
       }
-      print "\n------------------------------------------------------------------------------\n\n";
+      print "</ul>\n";
+      exit(0);
     }
     $first   = 0;
     $version = "";
     $info    = "";
     $date    = "";
-    while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
+    while (($l = <STDIN>) && !($l =~ /\[DESCRIPTION\]/)) {
       $l =~ s/%Gecode/Gecode/g;
       if ($l =~ /Version:[\t ]*(.*)$/) {
-	$version = $1;
+    $version = $1;
       } elsif ($l =~ /Date:[\t ]*(.*)$/) {
-	$date    = $1;
+    $date    = $1;
       }
     }
-    while (($l = <>) && !($l =~ /\[ENTRY\]/)) {
+    while (($l = <STDIN>) && !($l =~ /\[ENTRY\]/)) {
       $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
       $info = $info . " " . $l;
@@ -145,46 +136,46 @@ while ($l = <>) {
     $what = "";
     $mod = "";
     $thanks = "";
-    while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
+    while (($l = <STDIN>) && !($l =~ /\[DESCRIPTION\]/)) {
       $l =~ s/%Gecode/Gecode/g;
       if ($l =~ /Module:[\t ]*(.*)$/) {
-	$mod  = $1;
+    $mod  = $1;
       } elsif ($l =~ /What:[\t ]*(.*)$/) {
-	$what = $1;
+    $what = $1;
       } elsif ($l =~ /Rank:[\t ]*(.*)$/) {
-	$rank = $1;
+    $rank = $1;
       } elsif ($l =~ /Bug:[\t ]*(.*)$/) {
-	$bug  = $1;
+    $bug  = $1;
       } elsif ($l =~ /Thanks:[\t ]*(.*)$/) {
-	$thanks  = $1;
+    $thanks  = $1;
       }
     }
     
-    while (($l = <>) && 
-	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
+    while (($l = <STDIN>) && 
+       !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
        $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
        if (!($l =~ /\[MORE\]/)) {
-	   if ($desc eq "") {
-	       $desc = $l;
-	   } else {
-	       $desc = $desc . "      " . $l;
-	   }
+       if ($desc eq "") {
+           $desc = $l;
+       } else {
+           $desc = $desc . "      " . $l;
+       }
        }
     }
     chop $desc;
     $hastext{$mod} = 1;
     $rb = $rankclear{$rank};
     if (!($bug eq "")) {
-	$rb = $rb . ", bugzilla entry $bug";
+    $rb = $rb . ", bugzilla entry $bug";
 #      $rb = $rb . ", <a href=\"http://www.gecode.org/bugzilla/show_bug.cgi?id="
-#	. $bug . "\">bugzilla entry</a>";
+#    . $bug . "\">bugzilla entry</a>";
     }
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
     }
     $text{"$mod-$what"} = 
-      ($text{"$mod-$what"} . "    - $desc(" . $rb . ")\n");
+      ($text{"$mod-$what"} . "    <li> $desc(" . $rb . ")</li>\n");
     goto LINE;
   }
 }
