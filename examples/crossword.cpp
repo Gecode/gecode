@@ -106,42 +106,43 @@ public:
 
     // While words of length w_l to process
     while (int w_l=*g++) {
-      if (w_l > dict.len())
-        throw Exception("Crossword",
-                        "Dictionary does not have words of required length");
       // Number of words of that length in the dictionary
       int n_w = dict.words(w_l);
       // Number of words of that length in the puzzle
       int n=*g++;
 
-      // Array of all words of length w_l
-      IntVarArgs words(n);
-      for (int i=n; i--; ) {
-        words[i].init(*this,0,n_w-1);
-        allwords[aw_i++]=words[i];
-      }
-
-      // All words of same length must be different
-      distinct(*this, words, opt.icl());
-
-      for (int d=0; d<w_l; d++) {
-        // Array that maps words to a letter at a certain position (shared among all element constraints)
-        IntSharedArray w2l(n_w);
-        // Initialize word to letter map
-        for (int i=n_w; i--; )
-          w2l[i] = dict.word(w_l,i)[d];
-        // Link word to letter variable
-        for (int i=0; i<n; i++) {
-          // Get (x,y) coordinate where word begins
-          int x=g[3*i+0], y=g[3*i+1];
-          // Whether word is horizontal
-          bool h=(g[3*i+2] == 0);
-          // Constrain the letters to the words' letters
-          element(*this, w2l, words[i], h ? ml(x+d,y) : ml(x,y+d));
+      if (n > n_w) {
+        fail();
+      } else {
+        // Array of all words of length w_l
+        IntVarArgs words(n);
+        for (int i=n; i--; ) {
+          words[i].init(*this,0,n_w-1);
+          allwords[aw_i++]=words[i];
         }
+        
+        // All words of same length must be different
+        distinct(*this, words, opt.icl());
+        
+        for (int d=0; d<w_l; d++) {
+          // Array that maps words to a letter at a certain position (shared among all element constraints)
+          IntSharedArray w2l(n_w);
+          // Initialize word to letter map
+          for (int i=n_w; i--; )
+            w2l[i] = dict.word(w_l,i)[d];
+          // Link word to letter variable
+          for (int i=0; i<n; i++) {
+            // Get (x,y) coordinate where word begins
+            int x=g[3*i+0], y=g[3*i+1];
+            // Whether word is horizontal
+            bool h=(g[3*i+2] == 0);
+            // Constrain the letters to the words' letters
+            element(*this, w2l, words[i], h ? ml(x+d,y) : ml(x,y+d));
+          }
+        }
+        // Skip word coordinates
+        g += 3*n;
       }
-      // Skip word coordinates
-      g += 3*n;
     }
     switch (opt.branching()) {
     case BRANCH_WORDS:

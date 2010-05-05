@@ -13601,7 +13601,7 @@ Dictionary::words(void) const {
 }
 inline int
 Dictionary::words(int l) const {
-  return n_words[l];
+  return (l > max_len) ? 0 : n_words[l];
 }
 inline const char*
 Dictionary::word(int l, int i) const {
