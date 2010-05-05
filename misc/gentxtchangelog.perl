@@ -37,6 +37,11 @@
 #
 #
 
+$onlycurrent = 0;
+if (defined($ARGV[0]) && $ARGV[0] eq "-current") {
+    $onlycurrent = 1;
+}
+
 print <<EOF
 Changelog for Gecode
 ==============================================================================
@@ -80,7 +85,7 @@ $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
 @modorder = ("kernel","search","int","set","cpltset","minimodel",
-	     "iter","support","example","test","gist","other");
+         "iter","support","example","test","gist","other");
 
 @whatorder = ("new","change","bug","performance","documentation");
 
@@ -91,30 +96,35 @@ foreach $mod (@modorder) {
   }
 }
 
-while ($l = <>) {
+while ($l = <STDIN>) {
  LINE:
   next if ($l =~ /^\#/);
   $l =~ s/%Gecode/Gecode/g;
   if ($l =~ /^\[RELEASE\]/) {
     # Print previous
     if (!$first) {
-      print "Changes in Version $version ($date)\n\n";
+      if (!$onlycurrent) {
+          print "Changes in Version $version ($date)\n\n";
 
-      print "Scope:$info";
+          print "Scope:$info";
+      }
 
       foreach $mod (@modorder) {
-	if ($hastext{$mod}) {
-	  print "- " . $modclear{$mod} . "\n";
-	  $hastext{$mod} = 0;
-	  foreach $what (@whatorder) {
-	    if (!($text{"$mod-$what"} eq "")) {
-	      print "  - " . $whatclear{$what} . "\n";
-	      print $text{"$mod-$what"};
-	      $text{"$mod-$what"} = "";
-	    }
-	  }
+        if ($hastext{$mod}) {
+          print "- " . $modclear{$mod} . "\n";
+          $hastext{$mod} = 0;
+          foreach $what (@whatorder) {
+            if (!($text{"$mod-$what"} eq "")) {
+              print "  - " . $whatclear{$what} . "\n";
+              print $text{"$mod-$what"};
+              $text{"$mod-$what"} = "";
+            }
+          }
 
-	}
+        }
+      }
+      if ($onlycurrent) {
+          exit(0);
       }
       print "\n------------------------------------------------------------------------------\n\n";
     }
@@ -122,15 +132,15 @@ while ($l = <>) {
     $version = "";
     $info    = "";
     $date    = "";
-    while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
+    while (($l = <STDIN>) && !($l =~ /\[DESCRIPTION\]/)) {
       $l =~ s/%Gecode/Gecode/g;
       if ($l =~ /Version:[\t ]*(.*)$/) {
-	$version = $1;
+    $version = $1;
       } elsif ($l =~ /Date:[\t ]*(.*)$/) {
-	$date    = $1;
+    $date    = $1;
       }
     }
-    while (($l = <>) && !($l =~ /\[ENTRY\]/)) {
+    while (($l = <STDIN>) && !($l =~ /\[ENTRY\]/)) {
       $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
       $info = $info . " " . $l;
@@ -145,40 +155,40 @@ while ($l = <>) {
     $what = "";
     $mod = "";
     $thanks = "";
-    while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
+    while (($l = <STDIN>) && !($l =~ /\[DESCRIPTION\]/)) {
       $l =~ s/%Gecode/Gecode/g;
       if ($l =~ /Module:[\t ]*(.*)$/) {
-	$mod  = $1;
+    $mod  = $1;
       } elsif ($l =~ /What:[\t ]*(.*)$/) {
-	$what = $1;
+    $what = $1;
       } elsif ($l =~ /Rank:[\t ]*(.*)$/) {
-	$rank = $1;
+    $rank = $1;
       } elsif ($l =~ /Bug:[\t ]*(.*)$/) {
-	$bug  = $1;
+    $bug  = $1;
       } elsif ($l =~ /Thanks:[\t ]*(.*)$/) {
-	$thanks  = $1;
+    $thanks  = $1;
       }
     }
     
-    while (($l = <>) && 
-	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
+    while (($l = <STDIN>) && 
+       !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
        $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
        if (!($l =~ /\[MORE\]/)) {
-	   if ($desc eq "") {
-	       $desc = $l;
-	   } else {
-	       $desc = $desc . "      " . $l;
-	   }
+       if ($desc eq "") {
+           $desc = $l;
+       } else {
+           $desc = $desc . "      " . $l;
+       }
        }
     }
     chop $desc;
     $hastext{$mod} = 1;
     $rb = $rankclear{$rank};
     if (!($bug eq "")) {
-	$rb = $rb . ", bugzilla entry $bug";
+    $rb = $rb . ", bugzilla entry $bug";
 #      $rb = $rb . ", <a href=\"http://www.gecode.org/bugzilla/show_bug.cgi?id="
-#	. $bug . "\">bugzilla entry</a>";
+#    . $bug . "\">bugzilla entry</a>";
     }
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
