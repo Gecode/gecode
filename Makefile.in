@@ -62,7 +62,7 @@ export VERSION	= @VERSION@
 
 export CXX = @CXX@
 export CC = @CC@
-export MOC = moc
+export MOC = @MOC@
 ifeq "$(top_srcdir)" "$(top_builddir)"
 CPPFLAGS=-I$(top_srcdir)
 else

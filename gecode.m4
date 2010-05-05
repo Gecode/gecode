@@ -1036,13 +1036,14 @@ AC_DEFUN([AC_GECODE_QT],
   AC_ARG_ENABLE([qt],
     AC_HELP_STRING([--enable-qt],
       [build with Qt support, requires at least Qt 4.3 @<:@default=yes@:>@]))
-  AC_CHECK_PROG(QMAKE, qmake, [found])
+  AC_CHECK_PROGS(QMAKE, [qmake-qt4 qmake])
+  AC_CHECK_PROGS(MOC, [moc-qt4 moc])
   AC_MSG_CHECKING(whether to build with Qt support)
   if test "${enable_qt:-yes}" = "yes"; then
-    if test "${QMAKE}x" = "x"; then
+    if test "${QMAKE}x" = "x" -o "${MOC}x" = "x"; then
       AC_MSG_RESULT(no)
     else
-      ac_gecode_qt_version=`qmake -query QT_VERSION`
+      ac_gecode_qt_version=`${QMAKE} -query QT_VERSION`
       ac_gecode_qt_major=`echo ${ac_gecode_qt_version} | grep -o '^[[0-9]]*'`
       ac_gecode_qt_minor=`echo ${ac_gecode_qt_version} | sed -e 's/^[[0-9]]*\\.//g' -e 's/\\.[[0-9]]*$//g'`
       ac_gecode_qt_ok="yes"
@@ -1060,7 +1061,7 @@ AC_DEFUN([AC_GECODE_QT],
         ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
         cd ${ac_gecode_qt_tmpdir}
         echo "CONFIG += release" > a.pro
-        qmake
+        ${QMAKE}
         if test -d a.xcodeproj; then
           ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak
         elif test -d a.pbproj; then
