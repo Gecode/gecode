@@ -1375,8 +1375,8 @@ namespace Gecode {
   inline A&
   ArgArrayBase<T>::append(const ArgArrayBase<T>& x) {
     resize(x.size());
-    for (int i=x.size(); i--;)
-      new (&a[n+i]) T(x[i]);
+    for (int i=0; i<x.size(); i++)
+      new (&a[n++]) T(x[i]);
     return static_cast<A&>(*this);
   }
 
