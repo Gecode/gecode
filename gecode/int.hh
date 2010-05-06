@@ -651,6 +651,8 @@ namespace Gecode {
   public:
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    IntArgs(void);
     /// Allocate array with \a n elements
     explicit IntArgs(int n);
     /// Allocate array and copy elements from \a x
@@ -680,6 +682,8 @@ namespace Gecode {
   public:
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    IntVarArgs(void) {}
     /// Allocate array with \a n elements
     explicit IntVarArgs(int n) : VarArgArray<IntVar>(n) {}
     /// Initialize from variable argument array \a a (copy elements)
@@ -726,12 +730,15 @@ namespace Gecode {
   public:
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    BoolVarArgs(void) {}
     /// Allocate array with \a n elements
     explicit BoolVarArgs(int n) : VarArgArray<BoolVar>(n) {}
     /// Initialize from variable argument array \a a (copy elements)
     BoolVarArgs(const BoolVarArgs& a) : VarArgArray<BoolVar>(a) {}
     /// Initialize from variable array \a a (copy elements)
-    BoolVarArgs(const VarArray<BoolVar>& a) : VarArgArray<BoolVar>(a) {}
+    BoolVarArgs(const VarArray<BoolVar>& a)
+     : VarArgArray<BoolVar>(a) {}
     /**
      * \brief Initialize array with \a n new variables
      *

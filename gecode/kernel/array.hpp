@@ -437,8 +437,10 @@ namespace Gecode {
   public:
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    ArgArrayBase(void);
     /// Allocate array with \a n elements
-    ArgArrayBase(int n);
+    explicit ArgArrayBase(int n);
     /// Initialize from argument array \a a (copy elements)
     ArgArrayBase(const ArgArrayBase<T>& a);
     /// Initialize from view array \a a (copy elements)
@@ -511,6 +513,8 @@ namespace Gecode {
     using ArgArrayBase<T>::size;
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    PrimArgArray(void);
     /// Allocate array with \a n elements
     explicit PrimArgArray(int n);
     /// Allocate array with \a n elements and initialize with \a e0, ...
@@ -591,6 +595,8 @@ namespace Gecode {
     using ArgArrayBase<T>::size;
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    ArgArray(void);
     /// Allocate array with \a n elements
     explicit ArgArray(int n);
     /// Allocate array with \a n elements and initialize with elements from array \a e
@@ -671,6 +677,8 @@ namespace Gecode {
     using ArgArrayBase<Var>::size;
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    VarArgArray(void);
     /// Allocate array with \a n elements
     explicit VarArgArray(int n);
     /// Initialize from variable argument array \a a (copy elements)
@@ -1293,6 +1301,11 @@ namespace Gecode {
 
   template<class T>
   forceinline
+  ArgArrayBase<T>::ArgArrayBase(void)
+    : n(0), capacity(onstack_size), a(allocate(0)) {}
+
+  template<class T>
+  forceinline
   ArgArrayBase<T>::ArgArrayBase(int n0)
     : n(n0), capacity(n < onstack_size ? onstack_size : n), a(allocate(n)) {}
 
@@ -1408,8 +1421,11 @@ namespace Gecode {
 
   template<class T>
   forceinline
-  PrimArgArray<T>::PrimArgArray(int n)
-    : ArgArrayBase<T>(n) {}
+  PrimArgArray<T>::PrimArgArray(void) {}
+
+  template<class T>
+  forceinline
+  PrimArgArray<T>::PrimArgArray(int n) : ArgArrayBase<T>(n) {}
 
   template<class T>
   PrimArgArray<T>::PrimArgArray(int n, T a0, ...)
@@ -1487,8 +1503,11 @@ namespace Gecode {
 
   template<class T>
   forceinline
-  ArgArray<T>::ArgArray(int n)
-    : ArgArrayBase<T>(n) {}
+  ArgArray<T>::ArgArray(void) {}
+
+  template<class T>
+  forceinline
+  ArgArray<T>::ArgArray(int n) : ArgArrayBase<T>(n) {}
 
   template<class T>
   ArgArray<T>::ArgArray(int n, const T* a0)
@@ -1556,8 +1575,11 @@ namespace Gecode {
 
   template<class Var>
   forceinline
-  VarArgArray<Var>::VarArgArray(int n)
-    : ArgArrayBase<Var>(n) {}
+  VarArgArray<Var>::VarArgArray(void) {}
+
+  template<class Var>
+  forceinline
+  VarArgArray<Var>::VarArgArray(int n) : ArgArrayBase<Var>(n) {}
 
   template<class Var>
   forceinline

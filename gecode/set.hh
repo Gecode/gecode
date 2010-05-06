@@ -546,6 +546,8 @@ namespace Gecode {
   public:
     /// \name Constructors and initialization
     //@{
+    /// Allocate empty array
+    SetVarArgs(void) {}
     /// Allocate array with \a n elements
     explicit SetVarArgs(int n) : VarArgArray<SetVar>(n) {}
     /// Initialize from variable argument array \a a (copy elements)
@@ -559,9 +561,10 @@ namespace Gecode {
      * given by the arguments.
      */
     GECODE_SET_EXPORT
-    SetVarArgs(Space& home,int n,int glbMin,int glbMax,int lubMin,int lubMax,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Set::Limits::card);
+    SetVarArgs(Space& home,int n,int glbMin,int glbMax,
+               int lubMin,int lubMax,
+               unsigned int minCard = 0,
+               unsigned int maxCard = Set::Limits::card);
     /**
      * \brief Create an array of size \a n.
      *
@@ -569,9 +572,10 @@ namespace Gecode {
      * given by the arguments.
      */
     GECODE_SET_EXPORT
-    SetVarArgs(Space& home,int n,const IntSet& glb, int lubMin, int lubMax,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Set::Limits::card);
+    SetVarArgs(Space& home,int n,const IntSet& glb,
+               int lubMin, int lubMax,
+               unsigned int minCard = 0,
+               unsigned int maxCard = Set::Limits::card);
     /**
      * \brief Create an array of size \a n.
      *
@@ -579,9 +583,10 @@ namespace Gecode {
      * given by the arguments.
      */
     GECODE_SET_EXPORT
-    SetVarArgs(Space& home,int n,int glbMin,int glbMax,const IntSet& lub,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Set::Limits::card);
+    SetVarArgs(Space& home,int n,int glbMin,int glbMax,
+               const IntSet& lub,
+               unsigned int minCard = 0,
+               unsigned int maxCard = Set::Limits::card);
     /**
      * \brief Create an array of size \a n.
      *
@@ -590,9 +595,9 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT
     SetVarArgs(Space& home,int n,
-                const IntSet& glb,const IntSet& lub,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Set::Limits::card);
+               const IntSet& glb,const IntSet& lub,
+               unsigned int minCard = 0,
+               unsigned int maxCard = Set::Limits::card);
     //@}
   };
   //@}
