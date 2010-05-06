@@ -128,6 +128,14 @@ Rank:	minor
 The argument arrays now have constructors that create new variables.
 
 [ENTRY]
+Module: int
+What: 	change
+Rank:	minor
+[DESCRIPTION]
+IntArgs with simple sequences of values can now be created using the 
+IntArgs::create static member function.
+
+[ENTRY]
 Module: other
 What: 	change
 Rank:	minor
