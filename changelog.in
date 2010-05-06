@@ -156,9 +156,8 @@ Rank:   minor
 [DESCRIPTION]
 The support for dynamically resizing variable arrays has been
 removed (it was buggy and inefficient). Instead, all argument
-arrays now support adding elements using operator+= and
-operator<<. In addition, all arrays now support concatenation
-using operator+ and slicing.
+arrays now support adding elements using operator<<. In addition,
+all arrays now support concatenation using operator+ and slicing.
 
 [ENTRY]
 Module: example
