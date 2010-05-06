@@ -542,6 +542,12 @@ namespace Gecode {
     /// Append \a x to the end of the array
     typename ArrayTraits<PrimArgArray<T> >::args_type&
     operator +=(const PrimArgArray<T>& x);
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    typename ArrayTraits<PrimArgArray<T> >::args_type&
+    operator <<(const T& x);
+    /// Append \a x to the end of the array
+    typename ArrayTraits<PrimArgArray<T> >::args_type&
+    operator <<(const PrimArgArray<T>& x);
     //@}
 
     friend typename ArrayTraits<PrimArgArray<T> >::args_type
@@ -618,6 +624,12 @@ namespace Gecode {
     /// Append \a x to the end of the array
     typename ArrayTraits<ArgArray<T> >::args_type&
     operator +=(const ArgArray<T>& x);
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    typename ArrayTraits<ArgArray<T> >::args_type&
+    operator <<(const T& x);
+    /// Append \a x to the end of the array
+    typename ArrayTraits<ArgArray<T> >::args_type&
+    operator <<(const ArgArray<T>& x);
     //@}
 
     friend typename ArrayTraits<ArgArray<T> >::args_type
@@ -700,6 +712,12 @@ namespace Gecode {
     /// Append \a x to the end of the array
     typename ArrayTraits<VarArgArray<Var> >::args_type&
     operator +=(const VarArgArray<Var>& x);
+    /// Insert a new element \a x at the end of the array (increase size by 1)
+    typename ArrayTraits<VarArgArray<Var> >::args_type&
+    operator <<(const Var& x);
+    /// Append \a x to the end of the array
+    typename ArrayTraits<VarArgArray<Var> >::args_type&
+    operator <<(const VarArgArray<Var>& x);
     //@}
 
     friend typename ArrayTraits<VarArgArray<Var> >::args_type
@@ -1475,6 +1493,18 @@ namespace Gecode {
   }
 
   template<class T>
+  forceinline typename ArrayTraits<PrimArgArray<T> >::args_type&
+  PrimArgArray<T>::operator <<(const T& x) {
+    return (*this)+=x;
+  }
+
+  template<class T>
+  forceinline typename ArrayTraits<PrimArgArray<T> >::args_type&
+  PrimArgArray<T>::operator <<(const PrimArgArray<T>& x) {
+    return (*this)+=x;
+  }
+
+  template<class T>
   typename ArrayTraits<PrimArgArray<T> >::args_type
   operator +(const PrimArgArray<T>& x, const PrimArgArray<T>& y) {
     return x.template concat
@@ -1543,6 +1573,18 @@ namespace Gecode {
     return
       ArgArrayBase<T>::template append
         <typename ArrayTraits<ArgArray<T> >::args_type>(x);
+  }
+
+  template<class T>
+  forceinline typename ArrayTraits<ArgArray<T> >::args_type&
+  ArgArray<T>::operator <<(const T& x) {
+    return (*this)+=x;
+  }
+
+  template<class T>
+  forceinline typename ArrayTraits<ArgArray<T> >::args_type&
+  ArgArray<T>::operator <<(const ArgArray<T>& x) {
+    return (*this)+=x;
   }
 
   template<class T>
@@ -1616,6 +1658,18 @@ namespace Gecode {
     return
       ArgArrayBase<Var>::template append
         <typename ArrayTraits<VarArgArray<Var> >::args_type>(x);
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
+  VarArgArray<Var>::operator <<(const Var& x) {
+    return (*this)+=x;
+  }
+
+  template<class Var>
+  forceinline typename ArrayTraits<VarArgArray<Var> >::args_type&
+  VarArgArray<Var>::operator <<(const VarArgArray<Var>& x) {
+    return (*this)+=x;
   }
 
   template<class Var>
