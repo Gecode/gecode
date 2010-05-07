@@ -505,7 +505,7 @@ namespace Gecode {
   SetExpr
   setunion(const SetVarArgs& x) {
     if (x.size() == 0)
-      return SetExpr(IntSet(Set::Limits::min,Set::Limits::max));
+      return SetExpr(IntSet::empty);
     SetExpr r(x[0]);
     for (int i=1; i<x.size(); i++)
       r = (r | x[i]);
@@ -514,7 +514,7 @@ namespace Gecode {
   SetExpr
   setdunion(const SetVarArgs& x) {
     if (x.size() == 0)
-      return SetExpr(IntSet(Set::Limits::min,Set::Limits::max));
+      return SetExpr(IntSet::empty);
     SetExpr r(x[0]);
     for (int i=1; i<x.size(); i++)
       r = (r + x[i]);
