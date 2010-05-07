@@ -73,6 +73,14 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed the include and exclude tell operations of set variables so
+that they work with empty ranges.
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor

@@ -279,6 +279,8 @@ namespace Gecode { namespace Set {
 
   forceinline ModEvent
   SetVarImp::include(Space& home, int i, int j) {
+    if (j<i)
+      return ME_SET_NONE;
     BndSetRanges ub(lub);
     Iter::Ranges::Singleton sij(i,j);
     if (!Iter::Ranges::subset(sij,ub)) {
@@ -352,6 +354,8 @@ namespace Gecode { namespace Set {
 
   forceinline ModEvent
   SetVarImp::exclude(Space& home, int i, int j) {
+    if (j<i)
+      return ME_SET_NONE;
     Iter::Ranges::Singleton sij(i,j);
     BndSetRanges lb(glb);
     Iter::Ranges::Inter<Iter::Ranges::Singleton,BndSetRanges> probe(sij,lb);
