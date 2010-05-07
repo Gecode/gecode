@@ -103,10 +103,8 @@ public:
 
     // No two golfers play in the same group more than once
     for (int i=0; i<groups.size()-1; i++)
-      for (int j=i+1; j<groups.size(); j++) {
-        SetVar atmostOne(*this,IntSet::empty,0,g*s-1,0,1);
-        rel(*this, groups[i], SOT_INTER, groups[j], SRT_EQ, atmostOne);
-      }
+      for (int j=i+1; j<groups.size(); j++)
+        post(*this, cardinality(*this,groups[i] & groups[j]) <= 1);
 
     if (opt.model() == MODEL_SYMMETRY) {
 
@@ -122,8 +120,9 @@ public:
       for (int j=0; j<w; j++) {
          for (int p=0; p < g*s; p++) {
            BoolVarArgs b(*this,g,0,1);
-           for (int i=0; i<g; i++)
-             dom(*this, schedule(i,j), SRT_SUP, p, b[i]);
+           for (int i=0; i<g; i++) {
+             b[i] = post(*this, ~(singleton(p) <= schedule(i,j)));
+           }
            linear(*this, b, IRT_EQ, 1);
          }
        }
@@ -131,26 +130,16 @@ public:
       // Symmetry breaking: order groups
       for (int j=0; j<w; j++) {
         for (int i=0; i<g-1; i++) {
-          IntVar min1(*this, 0, g*s-1);
-          IntVar min2(*this, 0, g*s-1);
-          min(*this, schedule(i,j), min1);
-          min(*this, schedule(i+1,j), min2);
-          rel(*this, min1, IRT_LE, min2);
+          post(*this, min(*this,schedule(i,j)) < min(*this,schedule(i+1,j)));
         }
       }
 
       // Symmetry breaking: order weeks
       // minElem(group(w,0)\{0}) < minElem(group(w+1,0)\{0})
       for (int i=0; i<w-1; i++) {
-        SetVar g1(*this, IntSet::empty, 1, g*s-1);
-        SetVar g2(*this, IntSet::empty, 1, g*s-1);
-        rel(*this, g1, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(0,i));
-        rel(*this, g2, SOT_DUNION, IntSet(0,0), SRT_EQ, schedule(0,i+1));
-        IntVar minG1(*this, 0, g*s-1);
-        IntVar minG2(*this, 0, g*s-1);
-        min(*this, g1, minG1);
-        min(*this, g2, minG2);
-        rel(*this, minG1, IRT_LE, minG2);
+        post(*this, min(*this, schedule(0,i)-IntSet(0,0)) <
+                    min(*this, schedule(0,i+1)-IntSet(0,0)));
+        
       }
 
       // Initialize the dual variables:

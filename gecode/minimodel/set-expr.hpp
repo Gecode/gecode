@@ -35,6 +35,8 @@
  *
  */
 
+#ifdef GECODE_HAS_SET_VARS
+
 namespace Gecode {
 
   /*
@@ -42,24 +44,27 @@ namespace Gecode {
    *
    */
   forceinline
-  BoolExpr::Node::Node(void) : use(1) {}
+  SetExpr::Node::Node(void) : use(1) {}
 
   forceinline void*
-  BoolExpr::Node::operator new(size_t size) {
+  SetExpr::Node::operator new(size_t size) {
     return heap.ralloc(size);
   }
   forceinline void
-  BoolExpr::Node::operator delete(void* p, size_t) {
+  SetExpr::Node::operator delete(void* p, size_t) {
     heap.rfree(p);
   }
 
   forceinline
-  BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
+  SetExpr::SetExpr(void) : n(NULL) {}
+
+  forceinline
+  SetExpr::SetExpr(const SetExpr& e) : n(e.n) {
     n->use++;
   }
 
   forceinline
-  BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
+  SetExpr::SetExpr(const SetVar& x) : n(new Node) {
     n->same = 1;
     n->t    = NT_VAR;
     n->l    = NULL;
@@ -68,10 +73,33 @@ namespace Gecode {
   }
 
   forceinline
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
+  SetExpr::SetExpr(const IntSet& s) : n(new Node) {
+    n->same = 1;
+    n->t    = NT_CONST;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->s    = s;
+  }
+
+  forceinline
+  SetExpr::SetExpr(const LinExpr& e) : n(new Node) {
+    n->same = 1;
+    n->t    = NT_LEXP;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->e    = e;
+  }
+  
+  forceinline bool
+  SetExpr::same(NodeType t0, NodeType t1) {
+    return (t0==t1) || (t1==NT_VAR) || (t1==NT_CONST) || (t1==NT_LEXP);
+  }
+
+  forceinline
+  SetExpr::SetExpr(const SetExpr& l, NodeType t, const SetExpr& r)
     : n(new Node) {
-    unsigned int ls = ((l.n->t == t) || (l.n->t == NT_VAR)) ? l.n->same : 1;
-    unsigned int rs = ((r.n->t == t) || (r.n->t == NT_VAR)) ? r.n->same : 1;
+    unsigned int ls = same(t,l.n->t) ? l.n->same : 1;
+    unsigned int rs = same(t,r.n->t) ? r.n->same : 1;
     n->same = ls+rs;
     n->t    = t;
     n->l    = l.n;
@@ -81,56 +109,45 @@ namespace Gecode {
   }
 
   forceinline
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) {
+  SetExpr::SetExpr(const SetExpr& l, NodeType t) {
     (void) t;
-    assert(t == NT_NOT);
-    if (l.n->t == NT_NOT) {
+    assert(t == NT_CMPL);
+    if (l.n->t == NT_CMPL) {
       n = l.n->l;
       n->use++;
     } else {
       n = new Node;
       n->same = 1;
-      n->t    = NT_NOT;
+      n->t    = NT_CMPL;
       n->l    = l.n;
       n->l->use++;
       n->r    = NULL;
     }
   }
 
-  forceinline
-  BoolExpr::BoolExpr(const LinRel& rl)
-    : n(new Node) {
-    n->same = 1;
-    n->t    = NT_RLIN;
-    n->l    = NULL;
-    n->r    = NULL;
-    n->rl   = rl;
-  }
-
-#ifdef GECODE_HAS_SET_VARS
-  forceinline
-  BoolExpr::BoolExpr(const SetRel& rs)
-    : n(new Node) {
-    n->same = 1;
-    n->t    = NT_RSET;
-    n->l    = NULL;
-    n->r    = NULL;
-    n->rs   = rs;
-  }
-#endif
-
-  forceinline BoolVar
-  BoolExpr::post(Home home, IntConLevel icl) const {
+  forceinline SetVar
+  SetExpr::post(Home home) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->post(home,icl);
+    SetVar s(home,IntSet::empty,
+             IntSet(Set::Limits::min,Set::Limits::max));
+    NNF::nnf(r,n,false)->post(home,SRT_EQ,s);
+    return s;
   }
 
   forceinline void
-  BoolExpr::post(Home home, bool t, IntConLevel icl) const {
+  SetExpr::post(Home home, SetRelType srt, const SetExpr& e) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->post(home,t,icl);
+    return NNF::nnf(r,n,false)->post(home,srt,NNF::nnf(r,e.n,false));
+  }
+  forceinline void
+  SetExpr::post(Home home, BoolVar b, bool t,
+                SetRelType srt, const SetExpr& e) const {
+    Region r(home);
+    return NNF::nnf(r,n,false)->post(home,b,t,srt,NNF::nnf(r,e.n,false));                  
   }
 
 }
+
+#endif
 
 // STATISTICS: minimodel-any

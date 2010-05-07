@@ -102,6 +102,11 @@ namespace Gecode {
     case NT_RLIN:
       u.a.x->rl.post(home, b, !u.a.neg, icl);
       break;
+#ifdef GECODE_HAS_SET_VARS
+    case NT_RSET:
+      u.a.x->rs.post(home, b, !u.a.neg);
+      break;
+#endif
     case NT_AND:
       {
         BoolVarArgs bp(p), bn(n);
@@ -165,6 +170,15 @@ namespace Gecode {
           bp[ip++]=b;
         }
         break;
+#ifdef GECODE_HAS_SET_VARS
+      case NT_RSET:
+        {
+          BoolVar b(home,0,1);
+          u.a.x->rs.post(home, b, !u.a.neg);
+          bp[ip++]=b;
+        }
+        break;
+#endif
       default:
         bp[ip++] = post(home, icl);
         break;
@@ -185,6 +199,11 @@ namespace Gecode {
       case NT_RLIN:
         u.a.x->rl.post(home, !u.a.neg, icl);
         break;
+#ifdef GECODE_HAS_SET_VARS
+      case NT_RSET:
+        u.a.x->rs.post(home, !u.a.neg);
+        break;
+#endif
       case NT_AND:
         u.b.l->post(home, true, icl);
         u.b.r->post(home, true, icl);
@@ -211,6 +230,11 @@ namespace Gecode {
       case NT_RLIN:
         u.a.x->rl.post(home, u.a.neg, icl);
         break;
+#ifdef GECODE_HAS_SET_VARS
+      case NT_RSET:
+        u.a.x->rs.post(home, u.a.neg);
+        break;
+#endif
       case NT_AND:
         {
           BoolVarArgs bp(p), bn(n);
@@ -236,6 +260,9 @@ namespace Gecode {
   BoolExpr::NNF::nnf(Region& r, Node* n, bool neg) {
     switch (n->t) {
     case NT_VAR: case NT_RLIN:
+#ifdef GECODE_HAS_SET_VARS
+    case NT_RSET:
+#endif
       {
         NNF* x = new (r) NNF;
         x->t = n->t; x->u.a.neg = neg; x->u.a.x = n;
@@ -305,6 +332,12 @@ namespace Gecode {
   operator ~(const LinRel& rl) {
     return BoolExpr(rl);
   }
+#ifdef GECODE_HAS_SET_VARS
+  BoolExpr
+  operator ~(const SetRel& rs) {
+    return BoolExpr(rs);
+  }
+#endif
   BoolExpr
   operator !(const BoolExpr& e) {
     return BoolExpr(e,BoolExpr::NT_NOT);

@@ -97,27 +97,13 @@ public:
     xs(*this,opt.size(),IntSet::empty,1,opt.bits()) {
     SetVarArray cxs(*this,xs.size());
     for (int i=0; i<xs.size(); i++)
-      rel(*this, xs[i], SRT_CMPL, cxs[i]);
+      post(*this, xs[i] == -cxs[i]);
 
-    for (int i=0; i<xs.size(); i++) {
-      SetVar y = xs[i];
-      SetVar cy = cxs[i];
-      for (int j=i+1; j<xs.size(); j++) {
-        SetVar x = xs[j];
-        SetVar cx = cxs[j];
-
-        SetVar xIntCy(*this);
-        SetVar yIntCx(*this);
-
-        rel(*this, x, SOT_INTER, cy, SRT_EQ, xIntCy);
-        rel(*this, y, SOT_INTER, cx, SRT_EQ, yIntCx);
-        IntVar xIntCyCard(*this,0,x.cardMax());
-        IntVar yIntCxCard(*this,0,y.cardMax());
-        cardinality(*this, xIntCy, xIntCyCard);
-        cardinality(*this, yIntCx, yIntCxCard);
-        post(*this, xIntCyCard+yIntCxCard >= opt.distance());
-      }
-    }
+    for (int i=0; i<xs.size(); i++)
+      for (int j=i+1; j<xs.size(); j++)
+        post(*this,
+          cardinality(*this, xs[j] & cxs[i])+
+          cardinality(*this, xs[i] & cxs[j]) >= opt.distance());
 
     branch(*this, xs, SET_VAR_NONE, SET_VAL_MIN_INC);
   }

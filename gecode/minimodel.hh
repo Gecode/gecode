@@ -92,10 +92,16 @@ namespace Gecode {
   namespace MiniModel {}
 
   class LinRel;
+#ifdef GECODE_HAS_SET_VARS
+  class SetExpr;
+#endif
 
   /// Linear expressions
   class LinExpr {
     friend class LinRel;
+#ifdef GECODE_HAS_SET_VARS
+    friend class SetExpr;
+#endif
   public:
     /// Type of linear expression
     enum NodeType {
@@ -651,18 +657,221 @@ namespace Gecode {
   operator >=(const LinExpr& l, const LinExpr& r);
   //@}
 
+#ifdef GECODE_HAS_SET_VARS
+  /// %Set expressions
+  class SetExpr {
+  public:
+    /// Type of set expression
+    enum NodeType {
+      NT_VAR,    ///< Variable
+      NT_CONST,  ///< Constant
+      NT_LEXP,   ///< Linear expression
+      NT_CMPL,   ///< Complement
+      NT_INTER,  ///< Intersection
+      NT_UNION,  ///< Union
+      NT_DUNION  ///< Disjoint union
+    };
+    /// Check if types agree
+    static bool same(NodeType t0, NodeType t1);
+    /// %Node for set expression
+    class Node {
+    public:
+      /// Nodes are reference counted
+      unsigned int use;
+      /// Number of variables in subtree with same type (for INTER and UNION)
+      unsigned int same;
+      /// Type of expression
+      NodeType t;
+      /// Subexpressions
+      Node *l, *r;
+      /// Possibly a variable
+      SetVar x;
+      /// Possibly a constant
+      IntSet s;
+      /// Possibly a linear expression
+      LinExpr e;
+
+      /// Default constructor
+      Node(void);
+      /// Decrement reference count and possibly free memory
+      GECODE_MINIMODEL_EXPORT
+      bool decrement(void);
+      /// Memory management
+      static void* operator new(size_t size);
+      /// Memory management
+      static void  operator delete(void* p, size_t size);
+    };
+    /// %Node for negation normalform (%NNF)
+    class NNF {
+    public:
+      /// Type of node
+      NodeType t;
+      /// Number of positive literals for node type
+      unsigned int p;
+      /// Number of negative literals for node type
+      unsigned int n;
+      /// Union depending on nodetype \a t
+      union {
+        /// For binary nodes (and, or, eqv)
+        struct {
+          /// Left subtree
+          NNF* l;
+          /// Right subtree
+          NNF* r;
+        } b;
+        /// For atomic nodes
+        struct {
+          /// Pointer to corresponding Boolean expression node
+          Node* x;
+        } a;
+      } u;
+      /// Is formula negative
+      bool neg;
+      /// Create negation normalform
+      GECODE_MINIMODEL_EXPORT
+      static NNF* nnf(Region& r, Node* n, bool neg);
+      /// Post propagators for nested conjunctive and disjunctive expression
+      GECODE_MINIMODEL_EXPORT
+      void post(Home home, NodeType t, SetVarArgs& b, int& i) const;
+      /// Post propagators for expression
+      GECODE_MINIMODEL_EXPORT
+      void post(Home home, SetRelType srt, SetVar s) const;
+      /// Post propagators for reified expression
+      GECODE_MINIMODEL_EXPORT
+      void post(Home home, SetRelType srt, SetVar s, BoolVar b) const;
+      /// Post propagators for relation
+      GECODE_MINIMODEL_EXPORT
+      void post(Home home, SetRelType srt, const NNF* n) const;
+      /// Post reified propagators for relation (or negated relation if \a t is false)
+      GECODE_MINIMODEL_EXPORT
+      void post(Home home, BoolVar b, bool t, SetRelType srt,
+                const NNF* n) const;
+      /// Allocate memory from region
+      static void* operator new(size_t s, Region& r);
+      /// No-op (for exceptions)
+      static void operator delete(void*);
+      /// No-op
+      static void operator delete(void*, Region&);
+    };
+  private:
+    /// Pointer to node for expression
+    Node* n;
+  public:
+    /// Default constructor
+    SetExpr(void);
+    /// Copy constructor
+    SetExpr(const SetExpr& e);
+    /// Construct expression for type and subexpresssions
+    SetExpr(const SetExpr& l, NodeType t, const SetExpr& r);
+    /// Construct expression for variable
+    SetExpr(const SetVar& x);
+    /// Construct expression for integer variable
+    explicit SetExpr(const LinExpr& x);
+    /// Construct expression for constant
+    SetExpr(const IntSet& s);
+    /// Construct expression for negation
+    SetExpr(const SetExpr& e, NodeType t);
+    /// Post propagators for expression
+    SetVar post(Home home) const;
+    /// Post propagators for relation
+    void post(Home home, SetRelType srt, const SetExpr& e) const;
+    /// Post propagators for reified relation
+    void post(Home home, BoolVar b, bool t,
+              SetRelType srt, const SetExpr& e) const;
+    /// Assignment operator
+    GECODE_MINIMODEL_EXPORT
+    const SetExpr& operator =(const SetExpr& e);
+    /// Destructor
+    GECODE_MINIMODEL_EXPORT
+    ~SetExpr(void);
+  };
+
+  /// %Set relations
+  class SetRel {
+  private:
+    /// Expression
+    SetExpr _e0;
+    /// Relation
+    SetRelType _srt;
+    /// Expression
+    SetExpr _e1;
+  public:
+    /// Default constructor
+    SetRel(void);
+    /// Constructor
+    SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1);
+    /// Post propagators for relation (or negated relation if \a t is false)
+    void post(Home home, bool t) const;
+    /// Post propagators for reified relation (or negated relation if \a t is false)
+    void post(Home home, BoolVar b, bool t) const;
+  };
+
+  /**
+   * \defgroup TaskModelMiniModelSet Set expressions and relations
+   *
+   * Set expressions and relations can be freely composed of variables
+   * with the usual connectives.
+   *
+   * \ingroup TaskModelMiniModel
+   */
+
+  //@{
+  /// Singleton expression
+  GECODE_MINIMODEL_EXPORT SetExpr
+  singleton(const LinExpr&);
+  /// Complement expression
+  GECODE_MINIMODEL_EXPORT SetExpr
+  operator -(const SetExpr&);
+  /// Intersection of set expressions
+  GECODE_MINIMODEL_EXPORT SetExpr
+  operator &(const SetExpr&, const SetExpr&);
+  /// Union of set expressions
+  GECODE_MINIMODEL_EXPORT SetExpr
+  operator |(const SetExpr&, const SetExpr&);
+  /// Disjoint union of set expressions
+  GECODE_MINIMODEL_EXPORT SetExpr
+  operator +(const SetExpr&, const SetExpr&);
+  /// Difference of set expressions
+  GECODE_MINIMODEL_EXPORT SetExpr
+  operator -(const SetExpr&, const SetExpr&);
+
+  /// Cardinality of set expression
+  GECODE_MINIMODEL_EXPORT IntVar
+  cardinality(Space& home, const SetExpr&);
+  /// Minimum element of set expression
+  GECODE_MINIMODEL_EXPORT IntVar
+  min(Space& home, const SetExpr&);
+  /// Minimum element of set expression
+  GECODE_MINIMODEL_EXPORT IntVar
+  max(Space& home, const SetExpr&);
+
+  /// Equality of set expressions
+  SetRel
+  operator ==(const SetExpr&, const SetExpr&);
+  /// Subset of set expressions
+  SetRel
+  operator <=(const SetExpr&, const SetExpr&);
+  /// Superset of set expressions
+  SetRel
+  operator >=(const SetExpr&, const SetExpr&);
+  /// Disjointness of set expressions
+  SetRel
+  operator ||(const SetExpr&, const SetExpr&);
+  //@}
+#endif
 
   /// Boolean expressions
   class BoolExpr {
   public:
     /// Type of Boolean expression
     enum NodeType {
-      NT_VAR, ///< Variable
-      NT_NOT, ///< Negation
-      NT_AND, ///< Conjunction
-      NT_OR,  ///< Disjunction
-      NT_EQV, ///< Equivalence
-      NT_RLIN ///< Reified linear relation
+      NT_VAR,  ///< Variable
+      NT_NOT,  ///< Negation
+      NT_AND,  ///< Conjunction
+      NT_OR,   ///< Disjunction
+      NT_EQV,  ///< Equivalence
+      NT_RLIN, ///< Reified linear relation
+      NT_RSET  ///< Reified set relation
     };
     /// %Node for Boolean expression
     class Node {
@@ -679,6 +888,10 @@ namespace Gecode {
       BoolVar x;
       /// Possibly a reified linear relation
       LinRel rl;
+#ifdef GECODE_HAS_SET_VARS
+      /// Possibly a reified set relation
+      SetRel rs;
+#endif
 
       /// Default constructor
       Node(void);
@@ -752,6 +965,10 @@ namespace Gecode {
     BoolExpr(const BoolExpr& e, NodeType t);
     /// Construct expression for reified linear relation
     BoolExpr(const LinRel& rl);
+#ifdef GECODE_HAS_SET_VARS
+    /// Construct expression for reified set relation
+    BoolExpr(const SetRel& rs);
+#endif
     /// Post propagators for expression
     BoolVar post(Home home, IntConLevel icl) const;
     /// Post propagators for relation
@@ -807,6 +1024,11 @@ namespace Gecode {
   /// Reification of linear relations
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator ~(const LinRel&);
+#ifdef GECODE_HAS_SET_VARS
+  /// Reification of set relations
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator ~(const SetRel&);
+#endif
 
   /// Equivalence of Boolean expressions
   GECODE_MINIMODEL_EXPORT BoolExpr
@@ -836,6 +1058,14 @@ namespace Gecode {
   /// Post linear relation
   GECODE_MINIMODEL_EXPORT void 
   post(Home home, const LinRel& r, IntConLevel icl=ICL_DEF);
+#ifdef GECODE_HAS_SET_VARS
+  /// Post set expression and return its value
+  GECODE_MINIMODEL_EXPORT SetVar
+  post(Home home, const SetExpr& e);
+  /// Post set relation
+  GECODE_MINIMODEL_EXPORT void 
+  post(Home home, const SetRel& r);
+#endif
   /// Post Boolean expression and return its value
   GECODE_MINIMODEL_EXPORT BoolVar
   post(Home home, const BoolExpr& e, IntConLevel icl=ICL_DEF);
@@ -850,6 +1080,8 @@ namespace Gecode {
 #include <gecode/minimodel/lin-rel.hpp>
 #include <gecode/minimodel/bool-expr.hpp>
 #include <gecode/minimodel/bool-rel.hpp>
+#include <gecode/minimodel/set-expr.hpp>
+#include <gecode/minimodel/set-rel.hpp>
 
 namespace Gecode {
 

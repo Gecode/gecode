@@ -488,12 +488,13 @@ SCHEDULINGBUILDDIRS	= \
 #
 
 MMSRC0 = \
-	lin-expr.cpp lin-rel.cpp bool-expr.cpp bool-rel.cpp reg.cpp \
-	arithmetic.cpp
+	lin-expr.cpp lin-rel.cpp bool-expr.cpp bool-rel.cpp \
+	set-expr.cpp set-rel.cpp \
+	reg.cpp arithmetic.cpp
 MMHDR0 = \
 	lin-expr.hpp lin-rel.hpp exception.hpp matrix.hpp \
-	bool-expr.hpp bool-rel.hpp optimize.hpp arithmetic.hpp \
-	reg.hpp
+	bool-expr.hpp bool-rel.hpp set-expr.hpp set-rel.hpp \
+	optimize.hpp arithmetic.hpp reg.hpp
 
 MMSRC 		= $(MMSRC0:%=gecode/minimodel/%)
 MMHDR 		= gecode/minimodel.hh $(MMHDR0:%=gecode/minimodel/%)

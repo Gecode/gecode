@@ -76,8 +76,7 @@ public:
         SetVar y = triples[j];
 
         SetVar atmostOne(*this,IntSet::empty,1,n,0,1);
-        cardinality(*this, atmostOne,0,1);
-        rel(*this, x, SOT_INTER, y, SRT_EQ, atmostOne);
+        post(*this, (x & y) == atmostOne);
 
         IntVar x1(*this,1,n);
         IntVar x2(*this,1,n);
@@ -90,61 +89,42 @@ public:
           /* Naive alternative:
            * just including the ints in the set
            */
-          rel(*this, x, SRT_SUP, x1);
-          rel(*this, x, SRT_SUP, x2);
-          rel(*this, x, SRT_SUP, x3);
-          rel(*this, y, SRT_SUP, y1);
-          rel(*this, y, SRT_SUP, y2);
-          rel(*this, y, SRT_SUP, y3);
+          post(*this, singleton(x1) <= x);
+          post(*this, singleton(x2) <= x);
+          post(*this, singleton(x3) <= x);
+          post(*this, singleton(y1) <= x);
+          post(*this, singleton(y2) <= x);
+          post(*this, singleton(y3) <= x);
 
         } else if (opt.model() == MODEL_MATCHING) {
           /* Smart alternative:
            * Using matching constraints
            */
 
-          IntVarArgs xargs(3);
-          xargs[0] = x1; xargs[1] = x2; xargs[2] = x3;
-          channel(*this, xargs, x);
-
-          IntVarArgs yargs(3);
-          yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
-          channel(*this, yargs, y);
+          channel(*this, IntVarArgs()<<x1<<x2<<x3, x);
+          channel(*this, IntVarArgs()<<y1<<y2<<y3, y);
         } else if (opt.model() == MODEL_SEQ) {
-          SetVar tmp20(*this,IntSet::empty,1,n);
-          SetVar tmp21(*this,IntSet::empty,1,n);
-          SetVar tmp22(*this,IntSet::empty,1,n);
-          SetVar tmp23(*this,IntSet::empty,1,n);
-          SetVar tmp24(*this,IntSet::empty,1,n);
-          SetVar tmp25(*this,IntSet::empty,1,n);
-          rel(*this, tmp20, SRT_EQ, x1);
-          rel(*this, tmp21, SRT_EQ, x2);
-          rel(*this, tmp22, SRT_EQ, x3);
-          rel(*this, tmp23, SRT_EQ, y1);
-          rel(*this, tmp24, SRT_EQ, y2);
-          rel(*this, tmp25, SRT_EQ, y3);
-          SetVarArgs xargs(3);
-          xargs[0] = tmp20; xargs[1] = tmp21; xargs[2] = tmp22;
-          SetVarArgs yargs(3);
-          yargs[0] = tmp23; yargs[1] = tmp24; yargs[2] = tmp25;
-          sequence(*this,xargs,x);
-          sequence(*this,yargs,y);
+          SetVar sx1 = post(*this, singleton(x1));
+          SetVar sx2 = post(*this, singleton(x2));
+          SetVar sx3 = post(*this, singleton(x3));
+          SetVar sy1 = post(*this, singleton(y1));
+          SetVar sy2 = post(*this, singleton(y2));
+          SetVar sy3 = post(*this, singleton(y3));
+          sequence(*this,SetVarArgs()<<sx1<<sx2<<sx3,x);
+          sequence(*this,SetVarArgs()<<sy1<<sy2<<sy3,y);
         }
 
         /* Breaking symmetries */
+        post(*this, x1 < x2);
+        post(*this, x2 < x3);
+        post(*this, x1 < x3);
 
-        rel(*this, x1,IRT_LE,x2);
-        rel(*this, x2,IRT_LE,x3);
-        rel(*this, x1,IRT_LE,x3);
+        post(*this, y1 < y2);
+        post(*this, y2 < y3);
+        post(*this, y1 < y3);
 
-        rel(*this, y1,IRT_LE,y2);
-        rel(*this, y2,IRT_LE,y3);
-        rel(*this, y1,IRT_LE,y3);
-
-        IntArgs ia(6,(n+1)*(n+1),n+1,1,-(n+1)*(n+1),-(n+1),-1);
-        IntVarArgs iva(6);
-        iva[0]=x1; iva[1]=x2; iva[2]=x3;
-        iva[3]=y1; iva[4]=y2; iva[5]=y3;
-        linear(*this, ia, iva, IRT_LE, 0);
+        linear(*this, IntArgs(6,(n+1)*(n+1),n+1,1,-(n+1)*(n+1),-(n+1),-1), 
+               IntVarArgs()<<x1<<x2<<x2<<y1<<y2<<y3, IRT_LE, 0);
       }
     }
 

@@ -73,6 +73,14 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   major
+[DESCRIPTION]
+The minimodel library now provides convenient post functions
+for set constraints.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
