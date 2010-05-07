@@ -53,9 +53,9 @@ public:
 class Dictionary {
 protected:
   /// Maximal word length support
-  static const int limit_len = 64;
+  static const unsigned int limit_len = 64;
   /// Actual maximal length in dictionary
-  int max_len;
+  unsigned int max_len;
   /// Total number of words
   int n_all_words;
   /// Number of words of some length
@@ -13550,7 +13550,7 @@ Dictionary::init(const char* fn) {
     {
       // Initialize start information in chunk
       char* c = chunk;
-      for (int l=0; l<=max_len; l++) {
+      for (unsigned int l=0; l<=max_len; l++) {
         s_words[l] = c; c += (l+1)*n_words[l];
       }
     }
@@ -13571,7 +13571,7 @@ Dictionary::init(const char* fn) {
           if (!isalpha(s[i]) || !islower(s[i]))
             goto skip2;
         // Found a legal word, copy it
-        for (int i=0; i<s.size(); i++)
+        for (unsigned int i=0; i<s.size(); i++)
           *s_words[s.size()]++ = s[i];
         *s_words[s.size()]++ = 0;
       skip2: ;
@@ -13583,7 +13583,7 @@ Dictionary::init(const char* fn) {
     {
       // Re-Initialize start information in chunk
       char* c = chunk;
-      for (int l=0; l<=max_len; l++) {
+      for (unsigned int l=0; l<=max_len; l++) {
         s_words[l] = c; c += (l+1)*n_words[l];
       }
     }
@@ -13601,7 +13601,7 @@ Dictionary::words(void) const {
 }
 inline int
 Dictionary::words(int l) const {
-  return (l > max_len) ? 0 : n_words[l];
+  return (static_cast<unsigned int>(l) > max_len) ? 0 : n_words[l];
 }
 inline const char*
 Dictionary::word(int l, int i) const {

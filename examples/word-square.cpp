@@ -158,7 +158,7 @@ main(int argc, char* argv[]) {
   opt.branching(WordSquare::BRANCH_LETTERS, "letters");
   opt.parse(argc,argv);
   dict.init(opt.file());
-  if (opt.size() > dict.len()) {
+  if (opt.size() > static_cast<unsigned int>(dict.len())) {
     std::cerr << "Error: size must be between 0 and "
               << dict.len() << std::endl;
     return 1;
