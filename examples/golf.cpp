@@ -99,7 +99,7 @@ public:
     // Groups in one week must be disjoint
     SetVar allPlayers(*this, 0,g*s-1, 0,g*s-1);
     for (int i=0; i<w; i++)
-      rel(*this,SOT_DUNION,schedule.row(i),allPlayers);
+      post(*this, setdunion(schedule.row(i)) == allPlayers);
 
     // No two golfers play in the same group more than once
     for (int i=0; i<groups.size()-1; i++)

@@ -835,6 +835,16 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT SetExpr
   operator -(const SetExpr&, const SetExpr&);
 
+  /// Intersection of set variables
+  GECODE_MINIMODEL_EXPORT SetExpr
+  intersection(const SetVarArgs&);
+  /// Union of set variables
+  GECODE_MINIMODEL_EXPORT SetExpr
+  setunion(const SetVarArgs&);
+  /// Disjoint union of set variables
+  GECODE_MINIMODEL_EXPORT SetExpr
+  setdunion(const SetVarArgs&);
+
   /// Cardinality of set expression
   GECODE_MINIMODEL_EXPORT IntVar
   cardinality(Space& home, const SetExpr&);

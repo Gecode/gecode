@@ -493,6 +493,34 @@ namespace Gecode {
     return SetExpr(e);
   }
 
+  SetExpr
+  intersection(const SetVarArgs& x) {
+    if (x.size() == 0)
+      return SetExpr(IntSet(Set::Limits::min,Set::Limits::max));
+    SetExpr r(x[0]);
+    for (int i=1; i<x.size(); i++)
+      r = (r & x[i]);
+    return r;
+  }
+  SetExpr
+  setunion(const SetVarArgs& x) {
+    if (x.size() == 0)
+      return SetExpr(IntSet(Set::Limits::min,Set::Limits::max));
+    SetExpr r(x[0]);
+    for (int i=1; i<x.size(); i++)
+      r = (r | x[i]);
+    return r;    
+  }
+  SetExpr
+  setdunion(const SetVarArgs& x) {
+    if (x.size() == 0)
+      return SetExpr(IntSet(Set::Limits::min,Set::Limits::max));
+    SetExpr r(x[0]);
+    for (int i=1; i<x.size(); i++)
+      r = (r + x[i]);
+    return r;    
+  }
+
   IntVar
   cardinality(Space& home, const SetExpr& e) {
     IntVar card(home,0,Int::Limits::max);
