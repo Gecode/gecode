@@ -119,10 +119,9 @@ public:
       // in each week, one player plays in only one group
       for (int j=0; j<w; j++) {
          for (int p=0; p < g*s; p++) {
-           BoolVarArgs b(*this,g,0,1);
-           for (int i=0; i<g; i++) {
+           BoolVarArgs b(g);
+           for (int i=0; i<g; i++)
              b[i] = post(*this, ~(singleton(p) <= schedule(i,j)));
-           }
            linear(*this, b, IRT_EQ, 1);
          }
        }
