@@ -155,13 +155,13 @@ public:
 
       // Initialize the dual variables:
       // gInv(i,p) is player p's group in week i
-      Matrix<IntVarArray> gInv(IntVarArray(*this, w*g*s, 0, g-1),w,g*s);
-      for (int i=0; i<w; i++) {
+      Matrix<IntVarArgs> gInv(IntVarArgs(*this, w*g*s, 0, g-1),w,g*s);
+     
+      for (int i=0; i<w; i++)
         for (int p=0; p<g*s; p++) {
           SetVar player(*this, p,p, 0, g*s-1);
           element(*this, schedule.row(i), gInv(i,p),player);
         }
-      }
       
       // Symmetry breaking: order players
       for (int i=0; i<w; i++)
