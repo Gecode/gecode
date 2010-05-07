@@ -90,35 +90,35 @@ public:
 class Hamming : public Script {
 private:
   /// The hamming code
-  SetVarArray xs;
+  SetVarArray x;
 public:
   /// Actual model
   Hamming(const HammingOptions& opt) :
-    xs(*this,opt.size(),IntSet::empty,1,opt.bits()) {
-    SetVarArray cxs(*this,xs.size());
-    for (int i=0; i<xs.size(); i++)
-      post(*this, xs[i] == -cxs[i]);
+    x(*this,opt.size(),IntSet::empty,1,opt.bits()) {
+    SetVarArgs cx(x.size());
+    for (int i=x.size(); i--;)
+      cx[i] = post(*this, -x[i]);
 
-    for (int i=0; i<xs.size(); i++)
-      for (int j=i+1; j<xs.size(); j++)
+    for (int i=0; i<x.size(); i++)
+      for (int j=i+1; j<x.size(); j++)
         post(*this,
-          cardinality(*this, xs[j] & cxs[i])+
-          cardinality(*this, xs[i] & cxs[j]) >= opt.distance());
+          cardinality(*this, x[j] & cx[i])+
+          cardinality(*this, x[i] & cx[j]) >= opt.distance());
 
-    branch(*this, xs, SET_VAR_NONE, SET_VAL_MIN_INC);
+    branch(*this, x, SET_VAR_NONE, SET_VAL_MIN_INC);
   }
 
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    for (int i=0; i<xs.size(); i++) {
-      os << "\t[" << i << "] = " << xs[i] << std::endl;
+    for (int i=0; i<x.size(); i++) {
+      os << "\t[" << i << "] = " << x[i] << std::endl;
     }
   }
 
   /// Constructor for copying \a s
   Hamming(bool share, Hamming& s) : Script(share,s) {
-    xs.update(*this, share, s.xs);
+    x.update(*this, share, s.x);
   }
   /// Copy during cloning
   virtual Space*
