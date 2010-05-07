@@ -101,11 +101,11 @@ public:
     // Basic rules of the model
     for (int i = n*n; i--; ) {
       // w[i] means that no blacks are allowed on A[i]
-      dom(*this, U, SRT_DISJ, A[i], w[i]);
+      post(*this, tt(eqv(w[i], U || A[i])));
       // Make sure blacks and whites are disjoint.
       post(*this, tt(!w[i] || !b[i]));
       // If i in U, then b[i] has a piece.
-      dom(*this, U, SRT_SUP, i, b[i]);
+      post(*this, tt(eqv(b[i], singleton(i) <= U)));
     }
 
     // Connect optimization variable to number of pieces
@@ -113,8 +113,7 @@ public:
     linear(*this, b, IRT_GQ, q);
 
     // Connect cardinality of U to the number of black pieces.
-    IntVar unknowns(*this, 0, n*n);
-    cardinality(*this, U, unknowns);
+    IntVar unknowns = cardinality(*this, U);
     post(*this, q <= unknowns);
     linear(*this, b, IRT_EQ, unknowns);
 
