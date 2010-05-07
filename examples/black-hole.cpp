@@ -210,7 +210,7 @@ protected:
 public:
   /// Symmetry variants
   enum {
-    SYMMETRY_NONE,    ///< No symmetry breaking
+    SYMMETRY_NONE,       ///< No symmetry breaking
     SYMMETRY_CONDITIONAL ///< Breaking conditional symmetries
   };
   /// Propagation of placement-rules
@@ -263,11 +263,8 @@ public:
       }
       DFA table(expression);
 
-      for (int i = 51; i--; ) {
-        IntVarArgs iva(2);
-        iva[0] = x[i]; iva[1] = x[i+1];
-        extensional(*this, iva, table);
-      }
+      for (int i = 51; i--; )
+        extensional(*this, IntVarArgs() << x[i] << x[i+1], table);
 
     } else { // opt.propagation() == PROPAGATION_TUPLE_SET)
       // Build table for allowed tuples
@@ -276,18 +273,14 @@ public:
         for (int s1 = 4; s1--; )
           for (int s2 = 4; s2--; )
             for (int i = -1; i <= 1; i+=2) {
-              IntArgs t(2);
-              t[0] = r+13*s1;
-              t[1] = (r+i+52+13*s2)%52;
-              tupleSet.add(t);
+              tupleSet.add(IntArgs(2, r+13*s1, (r+i+52+13*s2)%52));
             }
       tupleSet.finalize();
-      for (int i = 51; i--; ) {
-        IntVarArgs iva(2);
-        iva[0] = x[i]; iva[1] = x[i+1];
-        extensional(*this, iva, tupleSet, EPK_DEF, ICL_DOM);
-      }
+
+      for (int i = 51; i--; )
+        extensional(*this, IntVarArgs() << x[i] << x[i+1], tupleSet);
     }
+
     // A card must be played before the one under it.
     for (int i = 17; i--; )
       for (int j = 2; j--; )
@@ -295,6 +288,9 @@ public:
 
     // Compute and break the conditional symmetries that are dependent
     // on the current layout.
+    // Two cards with the same rank but different suits are symmetric
+    // with respect to their placement in the black hole if changing
+    // their order does not affect any other card.
     if (opt.symmetry() == SYMMETRY_CONDITIONAL) {
       // For all ranks
       for (int r = 13; r--; ) {
@@ -307,23 +303,22 @@ public:
             if (c1 == 0 || c2 == 0) continue;
             // Piles are handled by the rules of the game
             if (pile[c1] == pile[c2]) continue;
-            // Get the right order of the cards
+            // Fix the right order of the cards
             int o1 = c1, o2 = c2;
             if (pile[c1] > pile[c2] && layer[c2] >= layer[c1])
               std::swap(o1, o2);
             // cond is the condition for the symmetry
-            BoolVarArgs ba(4);
-            int pos = 0;
+            BoolVarArgs ba;
             // Both cards played after the ones on top of them
             for (int i = 0; i < layer[o1]; ++i)
-              ba[pos++] = post(*this, ~(y[layout[pile[o1]][i]] < y[o2]));
+              ba << post(*this, ~(y[layout[pile[o1]][i]] < y[o2]));
             for (int i = 0; i < layer[o2]; ++i)
-              ba[pos++] = post(*this, ~(y[layout[pile[o2]][i]] < y[o1]));
+              ba << post(*this, ~(y[layout[pile[o2]][i]] < y[o1]));
             // Both cards played before the ones under them
             for (int i = layer[o1]+1; i < 3; ++i)
-              ba[pos++] = post(*this, ~(y[o2] < y[layout[pile[o1]][i]]));
+              ba << post(*this, ~(y[o2] < y[layout[pile[o1]][i]]));
             for (int i = layer[o2]+1; i < 3; ++i)
-              ba[pos++] = post(*this, ~(y[o1] < y[layout[pile[o2]][i]]));
+              ba << post(*this, ~(y[o1] < y[layout[pile[o2]][i]]));
             // Cond holds when all the above holds
             BoolVar cond(*this, 0, 1);
             rel(*this, BOT_AND, ba, cond);

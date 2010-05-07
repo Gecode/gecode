@@ -73,6 +73,21 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Nonogram example now uses AFC as the default branching and 
+includes some more instances.
+
+[ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+New custom branching for the BACP example using a custom value selection.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor
@@ -165,7 +180,7 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 Take advantage of the better modeling support for the BIBD, Golomb
-ruler, Kakuro, and Warehouse examples (nothing but dusting off
+ruler, Kakuro, Black Hole, and Warehouse examples (nothing but dusting off
 examples that have been around for ages).
 
 [ENTRY]

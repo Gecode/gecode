@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
  *  Copyright:
  *     Guido Tack, 2006
+ *     Mikael Lagerkvist, 2010
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,6 +42,7 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+#include <gecode/int/branch.hh>
 
 #include <map>
 #include <string>
@@ -85,6 +90,10 @@ namespace {
  *
  * This is problem 030 from http://www.csplib.org/.
  *
+ * A custom value selection from "A CP Approach to the Balanced
+ * Academic Curriculum Problem", J.N. Monette, P. Schaus, S. Zampelli,
+ * Y. Deville, and P. Dupont is available.
+ *
  * \ingroup ExProblem
  *
  */
@@ -103,6 +112,13 @@ protected:
   /// Period to which a course is assigned
   IntVarArray x;
 public:
+  /// Branching variants
+  enum {
+    BRANCHING_NAIVE,    ///< Simple fail-first branching
+    BRANCHING_LOAD,     ///< Place based on minimum-load
+    BRANCHING_LOAD_REV, ///< Place based on maximum-load
+  };
+
   /// Actual model
   BACP(const SizeOptions& opt) : curr(curriculum[opt.size()]) {
     int p = curr.p;
@@ -149,12 +165,27 @@ public:
     linear(*this, l, IRT_EQ, maxCredit);
     linear(*this, q, IRT_EQ, numberOfCourses);
 
-    branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    if (opt.branching() == BRANCHING_NAIVE) {
+      branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    } else {
+      Int::Branch::BySizeMin varsel(*this, VarBranchOptions::def);
+      ViewArray<Int::IntView> xv(*this, IntVarArgs(x));
+      if (opt.branching() == BRANCHING_LOAD) {
+        ValBestLoad<true> valsel(*this, ValBranchOptions::def);
+        ViewValBrancher<Int::Branch::BySizeMin, ValBestLoad<true> >
+          ::post(*this,xv,varsel,valsel);
+      } else { 
+        ValBestLoad<false> valsel(*this, ValBranchOptions::def);
+        ViewValBrancher<Int::Branch::BySizeMin, ValBestLoad<false> >
+          ::post(*this,xv,varsel,valsel);
+      }
+    }
   }
-
+    
   /// Constructor for copying \a bacp
   BACP(bool share, BACP& bacp) : MinimizeScript(share,bacp),
     curr(bacp.curr) {
+    l.update(*this, share, bacp.l);
     u.update(*this, share, bacp.u);
     x.update(*this, share, bacp.x);
   }
@@ -185,6 +216,47 @@ public:
     }
     os << std::endl;
   }
+
+  /** \brief Custom value selection class for a view-value branching.
+   *
+   * The value choosen is the value with the minimum load if the
+   * parameter \a minimize is true, otherwize it chooses the value for
+   * maximum load.
+   */
+  template <bool minimize>
+  class ValBestLoad : public ValSelBase<Int::IntView,int> {
+  public:
+    /// Default constructor
+    ValBestLoad(void) {}
+
+    /// Constructor for initialization
+    ValBestLoad(Space& home, const ValBranchOptions& vbo)
+      : ValSelBase<Int::IntView,int>(home,vbo) {}
+
+    /// Return minimum value of view \a x
+    int val(Space& home, Int::IntView x) const {
+      BACP& b = static_cast<BACP&>(home);
+      Int::ViewValues<Int::IntView> values(x);
+      int val = -1;
+      int best = minimize ? Int::Limits::max+1 : Int::Limits::min-1;
+      while (values()) {
+        if (minimize 
+            ? b.l[values.val()].min() < best
+            : b.l[values.val()].min() > best) {
+          val  = values.val();
+          best = b.l[val].min();
+        }
+        ++values;
+      }
+      assert(val != -1);
+      return val;
+    }
+
+    /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
+    ModEvent tell(Space& home, unsigned int a, Int::IntView x, int n) {
+      return (a == 0) ? x.eq(home,n) : x.gr(home,n);
+    }
+  };
 };
 
 /** \brief Main-function
@@ -193,6 +265,10 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("BACP");
+  opt.branching(BACP::BRANCHING_NAIVE);
+  opt.branching(BACP::BRANCHING_NAIVE,"naive");
+  opt.branching(BACP::BRANCHING_LOAD,"load");
+  opt.branching(BACP::BRANCHING_LOAD_REV,"load-reverse");
   opt.size(2);
   opt.solutions(0);
   opt.iterations(20);

@@ -253,7 +253,7 @@ public:
 
     // Add branching
     if (opt.symmetry() == SYMMETRY_BRANCHING) {
-      // Install custom branching
+      // Symmetry breaking branching
       SteelMillBranch::post(*this);
     } else { // opt.symmetry() == SYMMETRY_NONE
       branch(*this, slab, INT_VAR_MAX_MIN, INT_VAL_MIN);
@@ -409,7 +409,7 @@ public:
       (void) new (home) SteelMillBranch(home);
     }
     /// Delete brancher and return its size
-    virtual size_t dispose(Space& home) {
+    virtual size_t dispose(Space&) {
       return sizeof(*this);
     }
   };
