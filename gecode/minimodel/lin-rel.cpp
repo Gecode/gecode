@@ -414,7 +414,7 @@ namespace Gecode {
    *
    */
   void
-  post(Home home, const LinRel& r, IntConLevel icl) {
+  rel(Home home, const LinRel& r, IntConLevel icl) {
     if (home.failed()) return;
     r.post(home,true,icl);
   }

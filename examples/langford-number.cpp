@@ -117,7 +117,7 @@ public:
          */
         for (int i=n; i--; )
           for (int j=k-1; j--; )
-            post(*this, p[i*k+j] + (i+2) == p[i*k+j+1]);
+            rel(*this, p[i*k+j] + (i+2) == p[i*k+j+1]);
 
         distinct(*this, p, opt.icl());
 

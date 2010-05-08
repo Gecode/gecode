@@ -329,16 +329,6 @@ namespace Gecode {
   }
 
   BoolExpr
-  operator ~(const LinRel& rl) {
-    return BoolExpr(rl);
-  }
-#ifdef GECODE_HAS_SET_VARS
-  BoolExpr
-  operator ~(const SetRel& rs) {
-    return BoolExpr(rs);
-  }
-#endif
-  BoolExpr
   operator !(const BoolExpr& e) {
     return BoolExpr(e,BoolExpr::NT_NOT);
   }
@@ -358,7 +348,7 @@ namespace Gecode {
    *
    */
   BoolVar
-  post(Home home, const BoolExpr& e, IntConLevel icl) {
+  expr(Home home, const BoolExpr& e, IntConLevel icl) {
     if (!home.failed())
       return e.post(home,icl);
     BoolVar x(home,0,1);

@@ -74,10 +74,10 @@ namespace Test { namespace Int {
        Ass(int n, const Gecode::IntSet& d) : x(*this, n, d) {
          using namespace Gecode;
          for (int i = 0; i < n; i += 4) {
-           post(*this, x[i+0] >= 0);
-           post(*this, x[i+1] >= 0);
-           post(*this, x[i+2] >= 0);
-           post(*this, x[i] + x[i+1] == x[i+2]);
+           rel(*this, x[i+0] >= 0);
+           rel(*this, x[i+1] >= 0);
+           rel(*this, x[i+2] >= 0);
+           rel(*this, x[i] + x[i+1] == x[i+2]);
            branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
          }
        }

@@ -104,7 +104,7 @@ public:
     // Initialize the separator column in the board
     for (int i=0; i<height; i++) {
       board[i*(width+1)+8] = -1;
-      post(*this, x[i*(width+1)+8]==28);
+      rel(*this, x[i*(width+1)+8]==28);
     }
 
     // Variables representing the coordinates of the first

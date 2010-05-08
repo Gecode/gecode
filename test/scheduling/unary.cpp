@@ -133,7 +133,7 @@ namespace Test { namespace Int {
          Gecode::BoolVarArgs m(n);
          for (int i=0; i<n; i++) {
            s[i]=x[i];
-           m[i]=Gecode::post(home, ~(x[n+i] > l));
+           m[i]=Gecode::expr(home, (x[n+i] > l));
          }
          Gecode::unary(home, s, p, m);
        }

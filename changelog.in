@@ -74,6 +74,18 @@ More fixes for more bugs.
 
 [ENTRY]
 Module: minimodel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The minimodel post functions have been split into two functions, rel
+and expr. While rel posts a constraint, expr returns a new variable
+constrained to the given expression. This change makes it possible to
+get rid of the reification operator (~) as well as the tt and ff
+functions, which were previously needed to distinguish between
+relations and expressions.
+
+[ENTRY]
+Module: minimodel
 What:   new
 Rank:   major
 [DESCRIPTION]

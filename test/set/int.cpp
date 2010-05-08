@@ -393,8 +393,8 @@ namespace Test { namespace Set {
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
-        Gecode::post(home, minWeight <= y[0]);
-        Gecode::post(home, maxWeight >= y[0]);
+        Gecode::rel(home, minWeight <= y[0]);
+        Gecode::rel(home, maxWeight >= y[0]);
         Gecode::weights(home, elements, weights, x[0], y[0]);
       }
     };

@@ -118,7 +118,7 @@ public:
       for (int i2=i1+1; i2<opt.v; i2++) {
         BoolVarArgs row(opt.b);
         for (int j=0; j<opt.b; j++)
-          row[j] = post(*this, p(j,i1) && p(j,i2));
+          row[j] = expr(*this, p(j,i1) && p(j,i2));
         linear(*this, row, IRT_EQ, opt.lambda);
       }
 

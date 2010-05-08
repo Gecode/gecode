@@ -97,13 +97,13 @@ public:
     x(*this,opt.size(),IntSet::empty,1,opt.bits()) {
     SetVarArgs cx(x.size());
     for (int i=x.size(); i--;)
-      cx[i] = post(*this, -x[i]);
+      cx[i] = expr(*this, -x[i]);
 
     for (int i=0; i<x.size(); i++)
       for (int j=i+1; j<x.size(); j++)
-        post(*this,
-          cardinality(*this, x[j] & cx[i])+
-          cardinality(*this, x[i] & cx[j]) >= opt.distance());
+        rel(*this,
+            cardinality(*this, x[j] & cx[i]) +
+            cardinality(*this, x[i] & cx[j]) >= opt.distance());
 
     branch(*this, x, SET_VAR_NONE, SET_VAL_MIN_INC);
   }

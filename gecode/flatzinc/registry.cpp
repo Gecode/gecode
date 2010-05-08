@@ -565,32 +565,32 @@ namespace Gecode { namespace FlatZinc {
   
     void p_int_plus(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       if (!ce[0]->isIntVar()) {
-        post(s, ce[0]->getInt() + getIntVar(s, ce[1])
+        rel(s, ce[0]->getInt() + getIntVar(s, ce[1])
                 == getIntVar(s,ce[2]), ann2icl(ann));
       } else if (!ce[1]->isIntVar()) {
-        post(s, getIntVar(s,ce[0]) + ce[1]->getInt()
+        rel(s, getIntVar(s,ce[0]) + ce[1]->getInt()
                 == getIntVar(s,ce[2]), ann2icl(ann));
       } else if (!ce[2]->isIntVar()) {
-        post(s, getIntVar(s,ce[0]) + getIntVar(s,ce[1]) 
+        rel(s, getIntVar(s,ce[0]) + getIntVar(s,ce[1]) 
                 == ce[2]->getInt(), ann2icl(ann));
       } else {
-        post(s, getIntVar(s,ce[0]) + getIntVar(s,ce[1]) 
+        rel(s, getIntVar(s,ce[0]) + getIntVar(s,ce[1]) 
                 == getIntVar(s,ce[2]), ann2icl(ann));
       }
     }
 
     void p_int_minus(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       if (!ce[0]->isIntVar()) {
-        post(s, ce[0]->getInt() - getIntVar(s, ce[1])
+        rel(s, ce[0]->getInt() - getIntVar(s, ce[1])
                 == getIntVar(s,ce[2]), ann2icl(ann));
       } else if (!ce[1]->isIntVar()) {
-        post(s, getIntVar(s,ce[0]) - ce[1]->getInt()
+        rel(s, getIntVar(s,ce[0]) - ce[1]->getInt()
                 == getIntVar(s,ce[2]), ann2icl(ann));
       } else if (!ce[2]->isIntVar()) {
-        post(s, getIntVar(s,ce[0]) - getIntVar(s,ce[1]) 
+        rel(s, getIntVar(s,ce[0]) - getIntVar(s,ce[1]) 
                 == ce[2]->getInt(), ann2icl(ann));
       } else {
-        post(s, getIntVar(s,ce[0]) - getIntVar(s,ce[1]) 
+        rel(s, getIntVar(s,ce[0]) - getIntVar(s,ce[1]) 
                 == getIntVar(s,ce[2]), ann2icl(ann));
       }
     }
@@ -629,7 +629,7 @@ namespace Gecode { namespace FlatZinc {
     void p_int_negate(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = getIntVar(s, ce[0]);
       IntVar x1 = getIntVar(s, ce[1]);
-      post(s, x0 == -x1, ann2icl(ann));
+      rel(s, x0 == -x1, ann2icl(ann));
     }
 
     /* Boolean constraints */
@@ -771,7 +771,7 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       IntVar selector = getIntVar(s, ce[0]);
-      post(s, selector > 0);
+      rel(s, selector > 0);
       if (isConstant) {
         IntArgs ia = arg2intargs(ce[1], 1);
         element(s, ia, selector, getIntVar(s, ce[2]), ann2icl(ann));
@@ -791,7 +791,7 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       IntVar selector = getIntVar(s, ce[0]);
-      post(s, selector > 0);
+      rel(s, selector > 0);
       if (isConstant) {
         IntArgs ia = arg2boolargs(ce[1], 1);
         element(s, ia, selector, getBoolVar(s, ce[2]), ann2icl(ann));
@@ -1080,7 +1080,7 @@ namespace Gecode { namespace FlatZinc {
         if (bound.val() <= 1 && fixedDuration) {
           // Unary
           for (int i=height.size(); i--;)
-            post(s, height[i] <= 1);
+            rel(s, height[i] <= 1);
           IntArgs durationI(duration.size());
           for (int i=duration.size(); i--;)
             durationI[i] = duration[i].val();
@@ -1101,13 +1101,13 @@ namespace Gecode { namespace FlatZinc {
         for (int i = start.size(); i--; ) {
           min = std::min(min, start[i].min());
           max = std::max(max, start[i].max() + duration[i].max());
-          end[i] = post(s, start[i] + duration[i]);
+          end[i] = expr(s, start[i] + duration[i]);
         }
         for (int time = min; time < max; ++time) {
           IntVarArgs x(start.size());
           for (int i = start.size(); i--; ) {
-            IntVar overlaps = channel(s, post(s, (~(start[i] <= time) && 
-                                                  ~(time < end[i]))));
+            IntVar overlaps = channel(s, expr(s, (start[i] <= time) && 
+                                                 (time < end[i])));
             x[i] = mult(s, overlaps, height[i]);
           }
           linear(s, x, IRT_LQ, bound);
@@ -1400,13 +1400,13 @@ namespace Gecode { namespace FlatZinc {
           Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton> i(dr,sr);
           IntSet d01(i);
           if (d01.size() == 0) {
-            post(s, getBoolVar(s, ce[2]) == 0);
+            rel(s, getBoolVar(s, ce[2]) == 0);
           } else if (d01.max() == 0) {
-            post(s, tt(eqv(getBoolVar(s, ce[2]), !getBoolVar(s, ce[0]))));
+            rel(s, (eqv(getBoolVar(s, ce[2]), !getBoolVar(s, ce[0]))));
           } else if (d01.min() == 1) {
-            post(s, getBoolVar(s, ce[2]) == getBoolVar(s, ce[0]));
+            rel(s, getBoolVar(s, ce[2]) == getBoolVar(s, ce[0]));
           } else {
-            post(s, getBoolVar(s, ce[2]) == 1);
+            rel(s, getBoolVar(s, ce[2]) == 1);
           }
         } else {
           dom(s, getIntVar(s, ce[0]), d, getBoolVar(s, ce[2]));
@@ -1436,7 +1436,7 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       IntVar selector = getIntVar(s, ce[0]);
-      post(s, selector > 0);
+      rel(s, selector > 0);
       if (isConstant) {
         IntSetArgs sv = arg2intsetargs(s,ce[1],1);
         element(s, sv, selector, getSetVar(s, ce[2]));

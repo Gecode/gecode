@@ -46,7 +46,7 @@ namespace Gecode {
    *
    */
   void
-  post(Home home, const SetRel& r) {
+  rel(Home home, const SetRel& r) {
     if (home.failed()) return;
     r.post(home,true);
   }

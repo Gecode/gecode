@@ -103,9 +103,9 @@ public:
     for (int i = spec.n_prefs; i--; ) {
       int pa = spec.prefs[2*i+0];
       int pb = spec.prefs[2*i+1];
-      ful[i] = post(*this,
-                    ~(pos[pb]-pos[pa] == 1) ^
-                    ~(pos[pa]-pos[pb] == 1));
+      ful[i] = expr(*this,
+                    (pos[pb]-pos[pa] == 1) ^
+                    (pos[pa]-pos[pb] == 1));
     }
     // Sum of fulfilment
     linear(*this, ful, IRT_EQ, sat);

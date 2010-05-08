@@ -282,7 +282,7 @@ public:
     // Redundant constraint
     for (int p=0; p<periods(); p++)
       for (int w=0; w<weeks(); w ++)
-        post(*this, teams * h(p,w) + a(p,w) - g(p,w) == teams);
+        rel(*this, teams * h(p,w) + a(p,w) - g(p,w) == teams);
 
     distinct(*this, game, opt.icl());
 

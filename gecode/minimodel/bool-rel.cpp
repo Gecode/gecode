@@ -40,24 +40,11 @@
 namespace Gecode {
 
   /*
-   * Construction of linear relations
-   *
-   */
-  BoolRel
-  tt(const BoolExpr& e) {
-    return BoolRel(e,true);
-  }
-  BoolRel
-  ff(const BoolExpr& e) {
-    return BoolRel(e,false);
-  }
-
-  /*
    * Posting
    *
    */
   void
-  post(Home home, const BoolRel& r, IntConLevel icl) {
+  rel(Home home, const BoolRel& r, IntConLevel icl) {
     if (home.failed()) return;
     r.post(home,icl);
   }

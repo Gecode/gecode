@@ -545,7 +545,7 @@ namespace Gecode {
    *
    */
   SetVar
-  post(Home home, const SetExpr& e) {
+  expr(Home home, const SetExpr& e) {
     if (!home.failed())
       return e.post(home);
     SetVar x(home,IntSet::empty,IntSet::empty);

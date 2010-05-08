@@ -152,7 +152,7 @@ public:
     }
 
     _cost = IntVar(*this, 0, (rd.m*rd.n+1)*(rd.intsSum+1));
-    post(*this, _cost == beamtime*(rd.m*rd.n+1)+K);
+    rel(*this, _cost == beamtime*(rd.m*rd.n+1)+K);
 
     // First branch over beamtime and N
     IntVarArgs ba(1); ba[0] = beamtime;
@@ -170,7 +170,7 @@ public:
     IntVarArgs t(y.size());
     t[0] = y[0];
     for (int i=1; i<y.size(); i++) {
-      post(*this, s[i-1] >= y[i]-y[i-1]);
+      rel(*this, s[i-1] >= y[i]-y[i-1]);
       t[i] = s[i-1];
     }
     linear(*this, t, IRT_LQ, x);

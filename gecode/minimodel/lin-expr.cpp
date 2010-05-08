@@ -424,7 +424,7 @@ namespace Gecode {
 
 
   IntVar
-  post(Home home, const LinExpr& e, IntConLevel icl) {
+  expr(Home home, const LinExpr& e, IntConLevel icl) {
     if (!home.failed())
       return e.post(home,icl);
     IntVar x(home,Int::Limits::min,Int::Limits::max);

@@ -114,7 +114,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::LinExpr reg[3] = {x[0],x[1],x[2]};
-         rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
+         rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis,reg)));
        }
      };
 
@@ -143,7 +143,7 @@ namespace Test { namespace Int {
          Gecode::LinExpr reg[3] = {
            channel(home,x[0]),channel(home,x[1]),channel(home,x[2])
          };
-         rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
+         rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis,reg)));
        }
      };
 
@@ -171,7 +171,7 @@ namespace Test { namespace Int {
          Gecode::LinExpr reg[3] = {
            x[0],x[1],channel(home,x[2])
          };
-         rel(home, x[3], IRT_EQ, Gecode::post(home, eval(lis,reg)));
+         rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis,reg)));
        }
      };
 
@@ -207,27 +207,27 @@ namespace Test { namespace Int {
          switch (irt) {
          case IRT_EQ:
            {
-             IntVar x = Gecode::post(home,eval(l_lis,l_reg));
-             IntVar y = Gecode::post(home,eval(r_lis,r_reg));
+             IntVar x = Gecode::expr(home,eval(l_lis,l_reg));
+             IntVar y = Gecode::expr(home,eval(r_lis,r_reg));
              IntArgs a(2, 1,-1);
              IntVarArgs xy(2); xy[0]=x; xy[1]=y;
-             Gecode::post(home, tt(0 == sum(a,xy)));
+             Gecode::rel(home, 0 == sum(a,xy));
            }
            break;
          case IRT_NQ:
-           Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
+           Gecode::rel(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
            break;
          case IRT_LQ:
-           Gecode::post(home, ff(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
+           Gecode::rel(home, !(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
            break;
          case IRT_LE:
-           Gecode::post(home, tt(eval(l_lis,l_reg) < eval(r_lis,r_reg)));
+           Gecode::rel(home, eval(l_lis,l_reg) < eval(r_lis,r_reg));
            break;
          case IRT_GQ:
-           Gecode::post(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
+           Gecode::rel(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
            break;
          case IRT_GR:
-           Gecode::post(home, ff(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
+           Gecode::rel(home, !(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
            break;
          default: GECODE_NEVER;
          }
@@ -240,30 +240,30 @@ namespace Test { namespace Int {
          Gecode::LinExpr r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)==eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)==eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_NQ:
-           Gecode::post(home,
-                        tt(eqv(~(eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b)));
+           Gecode::rel(home,
+                       eqv((eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b));
            break;
          case IRT_LQ:
-           Gecode::post(home,
-                        ff(~(eval(l_lis,l_reg)<=eval(r_lis,r_reg))^b));
+           Gecode::rel(home,
+                       !((eval(l_lis,l_reg)<=eval(r_lis,r_reg))^b));
            break;
          case IRT_LE:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)<eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)<eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_GQ:
-           Gecode::post(home,
-                        tt(eqv(~(eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b)));
+           Gecode::rel(home,
+                       eqv((eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b));
            break;
          case IRT_GR:
-           Gecode::post(home,
-                        ff(~(eval(l_lis,l_reg)>eval(r_lis,r_reg))^b));
+           Gecode::rel(home,
+                       !((eval(l_lis,l_reg)>eval(r_lis,r_reg))^b));
            break;
          default: GECODE_NEVER;
          }
@@ -304,27 +304,27 @@ namespace Test { namespace Int {
          switch (irt) {
          case IRT_EQ:
            {
-             IntVar x = Gecode::post(home,eval(l_lis,l_reg));
-             IntVar y = Gecode::post(home,eval(r_lis,r_reg));
+             IntVar x = Gecode::expr(home,eval(l_lis,l_reg));
+             IntVar y = Gecode::expr(home,eval(r_lis,r_reg));
              IntArgs a(2, -2,2);
              IntVarArgs xy(2); xy[0]=x; xy[1]=y;
-             Gecode::post(home, tt(0 == sum(a,xy)));
+             Gecode::rel(home, 0 == sum(a,xy));
            }
            break;
          case IRT_NQ:
-           Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
+           Gecode::rel(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
            break;
          case IRT_LQ:
-           Gecode::post(home, ff(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
+           Gecode::rel(home, !(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
            break;
          case IRT_LE:
-           Gecode::post(home, tt(eval(l_lis,l_reg) < eval(r_lis,r_reg)));
+           Gecode::rel(home, eval(l_lis,l_reg) < eval(r_lis,r_reg));
            break;
          case IRT_GQ:
-           Gecode::post(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
+           Gecode::rel(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
            break;
          case IRT_GR:
-           Gecode::post(home, ff(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
+           Gecode::rel(home, !(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
            break;
          default: GECODE_NEVER;
          }
@@ -340,30 +340,30 @@ namespace Test { namespace Int {
          Gecode::LinExpr r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)==eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)==eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_NQ:
-           Gecode::post(home,
-                        tt(eqv(~(eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b)));
+           Gecode::rel(home,
+                       eqv((eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b));
            break;
          case IRT_LQ:
-           Gecode::post(home,
-                        ff(~(eval(l_lis,l_reg)<=eval(r_lis,r_reg))^b));
+           Gecode::rel(home,
+                       !((eval(l_lis,l_reg)<=eval(r_lis,r_reg))^b));
            break;
          case IRT_LE:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)<eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)<eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_GQ:
-           Gecode::post(home,
-                        tt(eqv(~(eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b)));
+           Gecode::rel(home,
+                       eqv((eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b));
            break;
          case IRT_GR:
-           Gecode::post(home,
-                        ff(~(eval(l_lis,l_reg)>eval(r_lis,r_reg))^b));
+           Gecode::rel(home,
+                       !((eval(l_lis,l_reg)>eval(r_lis,r_reg))^b));
            break;
          default: GECODE_NEVER;
          }
@@ -401,22 +401,22 @@ namespace Test { namespace Int {
                                      channel(home,x[5])};
          switch (irt) {
          case IRT_EQ:
-           Gecode::post(home, tt(0 == eval(l_lis,l_reg) - eval(r_lis,r_reg)));
+           Gecode::rel(home, 0 == eval(l_lis,l_reg) - eval(r_lis,r_reg));
            break;
          case IRT_NQ:
-           Gecode::post(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
+           Gecode::rel(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
            break;
          case IRT_LQ:
-           Gecode::post(home, ff(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
+           Gecode::rel(home, !(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
            break;
          case IRT_LE:
-           Gecode::post(home, tt(eval(l_lis,l_reg) < eval(r_lis,r_reg)));
+           Gecode::rel(home, eval(l_lis,l_reg) < eval(r_lis,r_reg));
            break;
          case IRT_GQ:
-           Gecode::post(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
+           Gecode::rel(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
            break;
          case IRT_GR:
-           Gecode::post(home, ff(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
+           Gecode::rel(home, !(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
            break;
          default: GECODE_NEVER;
          }
@@ -430,33 +430,33 @@ namespace Test { namespace Int {
                                      channel(home,x[5])};
          switch (irt) {
          case IRT_EQ:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)==eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)==eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_NQ:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)!=eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)!=eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_LQ:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)<=eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)<=eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_LE:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)<eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)<eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_GQ:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)>=eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)>=eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          case IRT_GR:
-           rel(home, Gecode::post(home,
-                                  ~(eval(l_lis,l_reg)>eval(r_lis,r_reg))),
+           rel(home, Gecode::expr(home,
+                                  (eval(l_lis,l_reg)>eval(r_lis,r_reg))),
                IRT_EQ, b);
            break;
          default: GECODE_NEVER;

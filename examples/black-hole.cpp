@@ -243,8 +243,8 @@ public:
         element(*this, modtable, x[i+1], x2);
         const int dr[2] = {1, 12};
         IntVar diff(*this, IntSet(dr, 2));
-        post(*this, abs(*this, minus(*this, x1, x2, ICL_DOM), ICL_DOM)
-             == diff, ICL_DOM);
+        rel(*this, abs(*this, minus(*this, x1, x2, ICL_DOM), ICL_DOM)
+            == diff, ICL_DOM);
       }
     } else if (opt.propagation() == PROPAGATION_DFA) {
       // Build table for allowed tuples
@@ -284,7 +284,7 @@ public:
     // A card must be played before the one under it.
     for (int i = 17; i--; )
       for (int j = 2; j--; )
-        post(*this, y[layout[i][j]] < y[layout[i][j+1]]);
+        rel(*this, y[layout[i][j]] < y[layout[i][j+1]]);
 
     // Compute and break the conditional symmetries that are dependent
     // on the current layout.
@@ -311,21 +311,21 @@ public:
             BoolVarArgs ba;
             // Both cards played after the ones on top of them
             for (int i = 0; i < layer[o1]; ++i)
-              ba << post(*this, ~(y[layout[pile[o1]][i]] < y[o2]));
+              ba << expr(*this, (y[layout[pile[o1]][i]] < y[o2]));
             for (int i = 0; i < layer[o2]; ++i)
-              ba << post(*this, ~(y[layout[pile[o2]][i]] < y[o1]));
+              ba << expr(*this, (y[layout[pile[o2]][i]] < y[o1]));
             // Both cards played before the ones under them
             for (int i = layer[o1]+1; i < 3; ++i)
-              ba << post(*this, ~(y[o2] < y[layout[pile[o1]][i]]));
+              ba << expr(*this, (y[o2] < y[layout[pile[o1]][i]]));
             for (int i = layer[o2]+1; i < 3; ++i)
-              ba << post(*this, ~(y[o1] < y[layout[pile[o2]][i]]));
+              ba << expr(*this, (y[o1] < y[layout[pile[o2]][i]]));
             // Cond holds when all the above holds
             BoolVar cond(*this, 0, 1);
             rel(*this, BOT_AND, ba, cond);
 
             // If cond is fulfilled, then we can order the cards
             // cond -> (y[o1] < y[o2])
-            post(*this, tt(!cond || ~(y[o1] < y[o2])));
+            rel(*this, !cond || (y[o1] < y[o2]));
           }
         }
       }

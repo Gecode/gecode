@@ -307,14 +307,14 @@ public:
     if (opt.propagation() == PROP_TUPLE_SET) {
       IntVarArgs b(s.size());
       for (int i = s.size(); i--; )
-        b[i] = channel(*this, post(*this, ~(s[i] == B)));
+        b[i] = channel(*this, expr(*this, (s[i] == B)));
       extensional(*this, b, bishops, EPK_DEF, opt.icl());
     }
 
     // Handle knigths
     // Connect knigths to board
     for(int i = n*n; i--; )
-      knights[i] = post(*this, ~(s[i] == K));
+      knights[i] = expr(*this, (s[i] == K));
     knight_constraints();
 
 

@@ -128,13 +128,13 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::BoolExpr reg[4] = {
-           ~(x[0] != x[2]),channel(home,x[1]),
-           ~(x[2] > 0),channel(home,x[3])
+           (x[0] != x[2]),channel(home,x[1]),
+           (x[2] > 0),channel(home,x[3])
          };
          if (c == 0)
-           Gecode::post(home, ff(eval(bis,reg)));
+           Gecode::rel(home, !(eval(bis,reg)));
          else
-           Gecode::post(home, tt(eval(bis,reg)));
+           Gecode::rel(home, eval(bis,reg));
        }
      };
 
@@ -157,10 +157,10 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          Gecode::BoolExpr reg[4] = {
-           ~(x[0] > x[2]),channel(home,x[1]),
-           ~(channel(home,x[2]) != 1),channel(home,x[3])
+           (x[0] > x[2]),channel(home,x[1]),
+           (channel(home,x[2]) != 1),channel(home,x[3])
          };
-         rel(home, Gecode::post(home, eval(bis,reg)), IRT_EQ,
+         rel(home, Gecode::expr(home, eval(bis,reg)), IRT_EQ,
              channel(home,x[4]));
        }
      };

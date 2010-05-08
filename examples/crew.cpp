@@ -108,27 +108,27 @@ public:
 
     for (int i=0; i<noOfFlights; i++) {
       // The flight has staff as required by the specification
-      post(*this, cardinality(*this, flight[i]) == requiredCrew[i].staff);
+      rel(*this, cardinality(*this, flight[i]) == requiredCrew[i].staff);
 
       // Enough members of different categories are on board
-      post(*this, cardinality(*this,flight[i] & stewardsDS) >= 
-           requiredCrew[i].stewards);
-      post(*this, cardinality(*this,flight[i] & hostessesDS) >=
-           requiredCrew[i].hostesses);
-      post(*this, cardinality(*this,flight[i] & spanishDS) >=
-           requiredCrew[i].spanish);
-      post(*this, cardinality(*this,flight[i] & frenchDS) >=
-           requiredCrew[i].french);
-      post(*this, cardinality(*this,flight[i] & germanDS) >=
-           requiredCrew[i].german);
+      rel(*this, cardinality(*this,flight[i] & stewardsDS) >= 
+          requiredCrew[i].stewards);
+      rel(*this, cardinality(*this,flight[i] & hostessesDS) >=
+          requiredCrew[i].hostesses);
+      rel(*this, cardinality(*this,flight[i] & spanishDS) >=
+          requiredCrew[i].spanish);
+      rel(*this, cardinality(*this,flight[i] & frenchDS) >=
+          requiredCrew[i].french);
+      rel(*this, cardinality(*this,flight[i] & germanDS) >=
+          requiredCrew[i].german);
     }
 
     // No crew member of flight i works on flights i+1 and i+2
     for (int i=0; i<noOfFlights-2; i++) {
-      post(*this, flight[i] || flight[i+1]);
-      post(*this, flight[i] || flight[i+2]);
+      rel(*this, flight[i] || flight[i+1]);
+      rel(*this, flight[i] || flight[i+2]);
     }
-    post(*this, flight[noOfFlights-2] || flight[noOfFlights-1]);
+    rel(*this, flight[noOfFlights-2] || flight[noOfFlights-1]);
 
     branch(*this, flight, SET_VAR_NONE, SET_VAL_MIN_INC);
   }

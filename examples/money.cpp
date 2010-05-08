@@ -75,7 +75,7 @@ public:
 
     switch (opt.model()) {
     case MODEL_SINGLE:
-      post(*this,            1000*s+100*e+10*n+d
+      rel(*this,            1000*s+100*e+10*n+d
                   +         1000*m+100*o+10*r+e
                  == 10000*m+1000*o+100*n+10*e+y,
            opt.icl());
@@ -83,11 +83,11 @@ public:
     case MODEL_CARRY:
       {
         IntVar c0(*this,0,1), c1(*this,0,1), c2(*this,0,1), c3(*this,0,1);
-        post(*this,    d+e == y+10*c0, opt.icl());
-        post(*this, c0+n+r == e+10*c1, opt.icl());
-        post(*this, c1+e+o == n+10*c2, opt.icl());
-        post(*this, c2+s+m == o+10*c3, opt.icl());
-        post(*this, c3     == m,       opt.icl());
+        rel(*this,    d+e == y+10*c0, opt.icl());
+        rel(*this, c0+n+r == e+10*c1, opt.icl());
+        rel(*this, c1+e+o == n+10*c2, opt.icl());
+        rel(*this, c2+s+m == o+10*c3, opt.icl());
+        rel(*this, c3     == m,       opt.icl());
       }
       break;
     default: GECODE_NEVER;

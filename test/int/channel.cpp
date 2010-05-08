@@ -76,14 +76,14 @@ namespace Test { namespace Int {
          for (int i=4; i--; ) {
            if (xoff != 0) {
              IntVar xo(home, xoff, 3+xoff);
-             Gecode::post(home, x[i] == xo-xoff);
+             Gecode::rel(home, x[i] == xo-xoff);
              xa[i] = xo;
            } else {
              xa[i] = x[i];
            }
            if (yoff != 0) {
              IntVar yo(home, yoff, 3+yoff);
-             Gecode::post(home, x[4+i] == yo-yoff);
+             Gecode::rel(home, x[4+i] == yo-yoff);
              ya[i] = yo;
            } else {
              ya[i] = x[4+i];

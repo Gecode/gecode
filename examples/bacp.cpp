@@ -144,7 +144,7 @@ public:
       BoolVarArgs xij(*this, numberOfCourses, 0, 1);
       IntArgs t(numberOfCourses);
       for (int i=0; i<numberOfCourses; i++) {
-        post(*this, tt(eqv(~(x[i]==j), xij[i])));
+        rel(*this, eqv((x[i]==j), xij[i]));
         t[i] = curr.courses[i].credit;
       }
       // sum over all t*(xi==j) is load of period i
@@ -155,7 +155,7 @@ public:
 
     // Precedence
     for (const char** prereq = curr.prereqs; *prereq != 0; prereq+=2) {
-      post(*this, x[courseMap[*prereq]] < x[courseMap[*(prereq+1)]]);
+      rel(*this, x[courseMap[*prereq]] < x[courseMap[*(prereq+1)]]);
     }
 
     // Optimization criterion: minimize u

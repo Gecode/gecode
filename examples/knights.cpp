@@ -258,10 +258,10 @@ public:
       IntSet ds = neighbors(f);
       for (IntSetValues i(ds); i(); ++i)
         rel(*this,
-            post(*this, ~(jump[i.val()]-jump[f] == 1)),
+            expr(*this, (jump[i.val()]-jump[f] == 1)),
             BOT_XOR,
-            post(*this, ~(jump[i.val()]-jump[f] == 1-nn)),
-            post(*this, ~(succ[f] == i.val())));
+            expr(*this, (jump[i.val()]-jump[f] == 1-nn)),
+            expr(*this, (succ[f] == i.val())));
       dom(*this, pred[f], ds);
       dom(*this, succ[f], ds);
       rel(*this, succ[f], IRT_NQ, pred[f]);

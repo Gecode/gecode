@@ -1000,7 +1000,7 @@ namespace Gecode {
     bool t;
   public:
     /// Constructor
-    BoolRel(const BoolExpr& e, bool t);
+    BoolRel(const BoolExpr& e, bool t=true);
     /// Post propagators for relation
     void post(Home home, IntConLevel icl) const;
   };
@@ -1031,14 +1031,6 @@ namespace Gecode {
   /// Exclusive-or of Boolean expressions
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator ^(const BoolExpr&, const BoolExpr&);
-  /// Reification of linear relations
-  GECODE_MINIMODEL_EXPORT BoolExpr
-  operator ~(const LinRel&);
-#ifdef GECODE_HAS_SET_VARS
-  /// Reification of set relations
-  GECODE_MINIMODEL_EXPORT BoolExpr
-  operator ~(const SetRel&);
-#endif
 
   /// Equivalence of Boolean expressions
   GECODE_MINIMODEL_EXPORT BoolExpr
@@ -1047,13 +1039,6 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT BoolExpr
   imp(const BoolExpr&, const BoolExpr&);
 
-  /// State that Boolean expression must be true
-  GECODE_MINIMODEL_EXPORT BoolRel
-  tt(const BoolExpr&);
-
-  /// State that Boolean expression must be false
-  GECODE_MINIMODEL_EXPORT BoolRel
-  ff(const BoolExpr&);
   //@}
 
   /**
@@ -1064,24 +1049,24 @@ namespace Gecode {
   //@{
   /// Post linear expression and return its value
   GECODE_MINIMODEL_EXPORT IntVar 
-  post(Home home, const LinExpr& e, IntConLevel icl=ICL_DEF);
+  expr(Home home, const LinExpr& e, IntConLevel icl=ICL_DEF);
   /// Post linear relation
   GECODE_MINIMODEL_EXPORT void 
-  post(Home home, const LinRel& r, IntConLevel icl=ICL_DEF);
+  rel(Home home, const LinRel& r, IntConLevel icl=ICL_DEF);
 #ifdef GECODE_HAS_SET_VARS
   /// Post set expression and return its value
   GECODE_MINIMODEL_EXPORT SetVar
-  post(Home home, const SetExpr& e);
+  expr(Home home, const SetExpr& e);
   /// Post set relation
   GECODE_MINIMODEL_EXPORT void 
-  post(Home home, const SetRel& r);
+  rel(Home home, const SetRel& r);
 #endif
   /// Post Boolean expression and return its value
   GECODE_MINIMODEL_EXPORT BoolVar
-  post(Home home, const BoolExpr& e, IntConLevel icl=ICL_DEF);
+  expr(Home home, const BoolExpr& e, IntConLevel icl=ICL_DEF);
   /// Post Boolean relation
   GECODE_MINIMODEL_EXPORT void 
-  post(Home home, const BoolRel& r, IntConLevel icl=ICL_DEF);
+  rel(Home home, const BoolRel& r, IntConLevel icl=ICL_DEF);
   //@}
 
 }

@@ -190,8 +190,8 @@ namespace Test {
               y[i].init(*this, s.x[i].val(), s.x[i].val());
             IntVar xs(*this, -18, 18);
             IntVar ys(*this, -18, 18);
-            post(*this, x[0]+x[1]+x[2]-x[3]-x[4]-x[5] == xs);
-            post(*this, y[0]+y[1]+y[2]-y[3]-y[4]-y[5] == ys);
+            rel(*this, x[0]+x[1]+x[2]-x[3]-x[4]-x[5] == xs);
+            rel(*this, y[0]+y[1]+y[2]-y[3]-y[4]-y[5] == ys);
             rel(*this,
                 abs(*this,xs),
                 (htc == HTC_BAL_LE) ? IRT_LE : IRT_GR,

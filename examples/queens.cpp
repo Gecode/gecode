@@ -72,16 +72,16 @@ public:
     case PROP_BINARY:
       for (int i = 0; i<n; i++)
         for (int j = i+1; j<n; j++) {
-          post(*this, q[i] != q[j]);
-          post(*this, q[i]+i != q[j]+j);
-          post(*this, q[i]-i != q[j]-j);
+          rel(*this, q[i] != q[j]);
+          rel(*this, q[i]+i != q[j]+j);
+          rel(*this, q[i]-i != q[j]-j);
         }
       break;
     case PROP_MIXED:
       for (int i = 0; i<n; i++)
         for (int j = i+1; j<n; j++) {
-          post(*this, q[i]+i != q[j]+j);
-          post(*this, q[i]-i != q[j]-j);
+          rel(*this, q[i]+i != q[j]+j);
+          rel(*this, q[i]-i != q[j]-j);
         }
       distinct(*this, q, opt.icl());
       break;

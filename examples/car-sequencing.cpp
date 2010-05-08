@@ -308,7 +308,7 @@ public:
     // Count number of end and stallss
     count(*this, s, stallval, IRT_EQ, nstall);
     count(*this, s,   endval, IRT_EQ,   nend);
-    post(*this, nstall+nend == maxstall);
+    rel(*this, nstall+nend == maxstall);
 
     // Make sure nothing is overloaded
     IntSet one(1, 1);
@@ -335,7 +335,7 @@ public:
       REG r = *REG(notend) + REG(notstallend) + *REG(endval);
       extensional(*this, s, r);
       for (int pos = s.size()-1, i = 0; i < maxstall; ++i, --pos) {
-        post(*this, imp(~(nend > i), ~(s[pos]==endval)));
+        rel(*this, imp((nend > i), (s[pos]==endval)));
       }
     } break;
     case PROP_CUSTOM: {

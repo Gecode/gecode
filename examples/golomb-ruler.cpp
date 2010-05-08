@@ -91,7 +91,7 @@ public:
     for (int k=0, i=0; i<n-1; i++)
       for (int j=i+1; j<n; j++, k++)
         // d[k] is m[j]-m[i] and must be at least sum of first j-i integers
-        rel(*this, d[k] = post(*this, m[j]-m[i]),
+        rel(*this, d[k] = expr(*this, m[j]-m[i]),
                    IRT_GQ, (j-i)*(j-i+1)/2);
 
     distinct(*this, d, opt.icl());

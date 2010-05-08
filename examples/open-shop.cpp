@@ -211,34 +211,34 @@ public:
     int minmakespan;
     int maxmakespan;
     crosh(dur, minmakespan, maxmakespan);
-    post(*this, makespan <= maxmakespan);
-    post(*this, makespan >= minmakespan);
+    rel(*this, makespan <= maxmakespan);
+    rel(*this, makespan >= minmakespan);
 
     int k=0;
     for (int m=0; m<spec.m; m++)
       for (int j0=0; j0<spec.n-1; j0++)
         for (int j1=j0+1; j1<spec.n; j1++) {
           // The tasks on machine m of jobs j0 and j1 must be disjoint
-          post(*this,
-            tt(eqv(b[k], ~(start(m,j0) + dur(m,j0) <= start(m,j1)))));
-          post(*this,
-            tt(eqv(b[k++], ~(start(m,j1) + dur(m,j1) > start(m,j0)))));
+          rel(*this,
+              eqv(b[k], (start(m,j0) + dur(m,j0) <= start(m,j1))));
+          rel(*this,
+              eqv(b[k++], (start(m,j1) + dur(m,j1) > start(m,j0))));
         }
     
     for (int j=0; j<spec.n; j++)
       for (int m0=0; m0<spec.m-1; m0++)
         for (int m1=m0+1; m1<spec.m; m1++) {
           // The tasks in job j on machine m0 and m1 must be disjoint
-          post(*this,
-            tt(eqv(b[k], ~(start(m0,j) + dur(m0,j) <= start(m1,j)))));
-          post(*this,
-            tt(eqv(b[k++], ~(start(m1,j) + dur(m1,j) > start(m0,j)))));
+          rel(*this,
+              eqv(b[k], (start(m0,j) + dur(m0,j) <= start(m1,j))));
+          rel(*this,
+              eqv(b[k++], (start(m1,j) + dur(m1,j) > start(m0,j))));
         }
 
     // The makespan is greater than the end time of the latest job
     for (int m=0; m<spec.m; m++) {
       for (int j=0; j<spec.n; j++) {
-        post(*this, start(m,j) + dur(m,j) <= makespan);
+        rel(*this, start(m,j) + dur(m,j) <= makespan);
       }
     }
 
