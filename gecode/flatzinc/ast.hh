@@ -302,10 +302,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   inline void
   Node::append(Node* newNode) {
     Array* a = dynamic_cast<Array*>(this);
-    if (!a) {
-      std::cerr << "type error" << std::endl;
-      std::exit(-1);
-    }
+    if (!a)
+      throw TypeError("array expected");
     a->a.push_back(newNode);
   }
 
