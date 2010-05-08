@@ -90,9 +90,9 @@ namespace Test { namespace Int {
          case BO_NOT: reg[pc->y] = !reg[pc->x]; break;
          case BO_AND: reg[pc->z] = reg[pc->x] && reg[pc->y]; break;
          case BO_OR:  reg[pc->z] = reg[pc->x] || reg[pc->y]; break;
-         case BO_IMP: reg[pc->z] = imp(reg[pc->x],reg[pc->y]); break;
+         case BO_IMP: reg[pc->z] = (reg[pc->x] >> reg[pc->y]); break;
          case BO_XOR: reg[pc->z] = reg[pc->x] ^ reg[pc->y]; break;
-         case BO_EQV: reg[pc->z] = eqv(reg[pc->x],reg[pc->y]); break;
+         case BO_EQV: reg[pc->z] = (reg[pc->x] == reg[pc->y]); break;
          case BO_HLT: return reg[pc->x];
          default: GECODE_NEVER;
          }

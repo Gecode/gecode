@@ -1402,7 +1402,7 @@ namespace Gecode { namespace FlatZinc {
           if (d01.size() == 0) {
             rel(s, getBoolVar(s, ce[2]) == 0);
           } else if (d01.max() == 0) {
-            rel(s, (eqv(getBoolVar(s, ce[2]), !getBoolVar(s, ce[0]))));
+            rel(s, getBoolVar(s, ce[2]) == !getBoolVar(s, ce[0]));
           } else if (d01.min() == 1) {
             rel(s, getBoolVar(s, ce[2]) == getBoolVar(s, ce[0]));
           } else {

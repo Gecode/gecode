@@ -335,7 +335,7 @@ public:
       REG r = *REG(notend) + REG(notstallend) + *REG(endval);
       extensional(*this, s, r);
       for (int pos = s.size()-1, i = 0; i < maxstall; ++i, --pos) {
-        rel(*this, imp((nend > i), (s[pos]==endval)));
+        rel(*this, (nend > i) >> (s[pos]==endval));
       }
     } break;
     case PROP_CUSTOM: {

@@ -249,8 +249,8 @@ public:
           for (int i = n; i--; ) {
             // No perm-variable uses i is equivalent to the reows
             // being equal at i
-            rel(*this, eqv(!p1b[i] && !p2b[i] && !p3b[i] && !p4b[i],
-                           (row1[i] == row2[i])));
+            rel(*this, (!p1b[i] && !p2b[i] && !p3b[i] && !p4b[i]) ==
+                       (row1[i] == row2[i]));
           }
           
           /* Constraints for fixing the permutation */
@@ -268,7 +268,7 @@ public:
           rel(*this, perm[0], IRT_LE, perm[2]);
           rel(*this, perm[0], IRT_LE, perm[3]);
           // Conditional ordering constraint - symmetry breaking for cform 0
-          rel(*this, imp(!cformb, (perm[2] < perm[3])));
+          rel(*this, (!cformb) >> (perm[2] < perm[3]));
         }
       }
     }

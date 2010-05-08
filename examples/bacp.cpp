@@ -144,7 +144,7 @@ public:
       BoolVarArgs xij(*this, numberOfCourses, 0, 1);
       IntArgs t(numberOfCourses);
       for (int i=0; i<numberOfCourses; i++) {
-        rel(*this, eqv((x[i]==j), xij[i]));
+        rel(*this, (x[i]==j) == xij[i]);
         t[i] = curr.courses[i].credit;
       }
       // sum over all t*(xi==j) is load of period i

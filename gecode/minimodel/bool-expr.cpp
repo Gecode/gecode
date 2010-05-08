@@ -334,13 +334,18 @@ namespace Gecode {
   }
 
   BoolExpr
-  eqv(const BoolExpr& l, const BoolExpr& r) {
+  operator ==(const BoolExpr& l, const BoolExpr& r) {
     return BoolExpr(l, BoolExpr::NT_EQV, r);
   }
   BoolExpr
-  imp(const BoolExpr& l, const BoolExpr& r) {
+  operator >>(const BoolExpr& l, const BoolExpr& r) {
     return BoolExpr(BoolExpr(l,BoolExpr::NT_NOT),
                     BoolExpr::NT_OR,r);
+  }
+  BoolExpr
+  operator <<(const BoolExpr& l, const BoolExpr& r) {
+    return BoolExpr(BoolExpr(r,BoolExpr::NT_NOT),
+                    BoolExpr::NT_OR,l);
   }
 
   /*

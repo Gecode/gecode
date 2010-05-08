@@ -246,7 +246,7 @@ namespace Test { namespace Int {
            break;
          case IRT_NQ:
            Gecode::rel(home,
-                       eqv((eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b));
+                       (eval(l_lis,l_reg)!=eval(r_lis,r_reg)) == b);
            break;
          case IRT_LQ:
            Gecode::rel(home,
@@ -259,7 +259,7 @@ namespace Test { namespace Int {
            break;
          case IRT_GQ:
            Gecode::rel(home,
-                       eqv((eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b));
+                       (eval(l_lis,l_reg)>=eval(r_lis,r_reg)) == b);
            break;
          case IRT_GR:
            Gecode::rel(home,
@@ -346,7 +346,7 @@ namespace Test { namespace Int {
            break;
          case IRT_NQ:
            Gecode::rel(home,
-                       eqv((eval(l_lis,l_reg)!=eval(r_lis,r_reg)),b));
+                       (eval(l_lis,l_reg)!=eval(r_lis,r_reg)) == b);
            break;
          case IRT_LQ:
            Gecode::rel(home,
@@ -359,7 +359,7 @@ namespace Test { namespace Int {
            break;
          case IRT_GQ:
            Gecode::rel(home,
-                       eqv((eval(l_lis,l_reg)>=eval(r_lis,r_reg)),b));
+                       (eval(l_lis,l_reg)>=eval(r_lis,r_reg)) == b);
            break;
          case IRT_GR:
            Gecode::rel(home,

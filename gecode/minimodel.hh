@@ -1034,10 +1034,13 @@ namespace Gecode {
 
   /// Equivalence of Boolean expressions
   GECODE_MINIMODEL_EXPORT BoolExpr
-  eqv(const BoolExpr&, const BoolExpr&);
+  operator ==(const BoolExpr&, const BoolExpr&);
   /// Implication of Boolean expressions
   GECODE_MINIMODEL_EXPORT BoolExpr
-  imp(const BoolExpr&, const BoolExpr&);
+  operator >>(const BoolExpr&, const BoolExpr&);
+  /// Reverse implication of Boolean expressions
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <<(const BoolExpr&, const BoolExpr&);
 
   //@}
 

@@ -101,11 +101,11 @@ public:
     // Basic rules of the model
     for (int i = n*n; i--; ) {
       // w[i] means that no blacks are allowed on A[i]
-      rel(*this, eqv(w[i], U || A[i]));
+      rel(*this, w[i] == (U || A[i]));
       // Make sure blacks and whites are disjoint.
       rel(*this, !w[i] || !b[i]);
       // If i in U, then b[i] has a piece.
-      rel(*this, eqv(b[i], singleton(i) <= U));
+      rel(*this, b[i] == (singleton(i) <= U));
     }
 
     // Connect optimization variable to number of pieces

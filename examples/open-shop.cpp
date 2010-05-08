@@ -220,9 +220,9 @@ public:
         for (int j1=j0+1; j1<spec.n; j1++) {
           // The tasks on machine m of jobs j0 and j1 must be disjoint
           rel(*this,
-              eqv(b[k], (start(m,j0) + dur(m,j0) <= start(m,j1))));
+              b[k] == (start(m,j0) + dur(m,j0) <= start(m,j1)));
           rel(*this,
-              eqv(b[k++], (start(m,j1) + dur(m,j1) > start(m,j0))));
+              b[k++] == (start(m,j1) + dur(m,j1) > start(m,j0)));
         }
     
     for (int j=0; j<spec.n; j++)
@@ -230,9 +230,9 @@ public:
         for (int m1=m0+1; m1<spec.m; m1++) {
           // The tasks in job j on machine m0 and m1 must be disjoint
           rel(*this,
-              eqv(b[k], (start(m0,j) + dur(m0,j) <= start(m1,j))));
+              b[k] == (start(m0,j) + dur(m0,j) <= start(m1,j)));
           rel(*this,
-              eqv(b[k++], (start(m1,j) + dur(m1,j) > start(m0,j))));
+              b[k++] == (start(m1,j) + dur(m1,j) > start(m0,j)));
         }
 
     // The makespan is greater than the end time of the latest job
