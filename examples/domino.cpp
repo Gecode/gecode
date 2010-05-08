@@ -128,7 +128,7 @@ public:
           // at the right border is not adjacent to the first field
           // in the next row.
           IntVar diff(*this, possibleDiffs);
-          abs(*this, minus(*this, p1[dominoCount], p2[dominoCount]),
+          abs(*this, expr(*this, p1[dominoCount]-p2[dominoCount]),
               diff, ICL_DOM);
 
           // If the piece is symmetrical, order the locations

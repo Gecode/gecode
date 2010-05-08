@@ -1108,7 +1108,7 @@ namespace Gecode { namespace FlatZinc {
           for (int i = start.size(); i--; ) {
             IntVar overlaps = channel(s, expr(s, (start[i] <= time) && 
                                                  (time < end[i])));
-            x[i] = mult(s, overlaps, height[i]);
+            x[i] = expr(s, mult(overlaps, height[i]));
           }
           linear(s, x, IRT_LQ, bound);
         }

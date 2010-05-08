@@ -75,6 +75,15 @@ More fixes for more bugs.
 [ENTRY]
 Module: minimodel
 What:   change
+Rank:   minor
+[DESCRIPTION]
+Linear expressions can now contain non-linear parts, such as
+multiplications or divisions, or set expressions such as
+cardinality.
+
+[ENTRY]
+Module: minimodel
+What:   change
 Rank:   major
 [DESCRIPTION]
 The minimodel post functions have been split into two functions, rel

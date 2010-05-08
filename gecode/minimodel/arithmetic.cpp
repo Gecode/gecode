@@ -39,92 +39,265 @@
 
 namespace Gecode {
 
-  IntVar
-  abs(Home home, IntVar x, IntConLevel icl) {
-    if (x.min() >= 0)
-      return x;
-    IntVar y(home, Int::Limits::min, Int::Limits::max);
-    abs(home, x, y, icl);
-    return y;
+  namespace MiniModel {
+    /// Non-linear arithmetic expressions
+    class GECODE_MINIMODEL_EXPORT ArithNonLinExpr : public NonLinExpr {
+    public:
+      /// The expression type
+      enum ArithNonLinExprType {
+        ANLE_ABS,   ///< Absolute value expression
+        ANLE_MIN_2, ///< Binary minimum expression
+        ANLE_MIN_N, ///< N-ary minimum expression
+        ANLE_MAX_2, ///< Binary minimum expression
+        ANLE_MAX_N, ///< N-ary minimum expression
+        ANLE_MULT,  ///< Multiplication expression
+        ANLE_DIV,   ///< Division expression
+        ANLE_MOD,   ///< Modulo expression
+        ANLE_SQR,   ///< Square expression
+        ANLE_SQRT   ///< Square root expression
+      } t;
+      /// The first expression
+      LinExpr e0;
+      /// The second expression
+      LinExpr e1;
+      /// Variable array
+      IntVar* a;
+      /// Size of variable array
+      int n;
+      /// Consistency level
+      IntConLevel _icl;
+      /// Constructor
+      ArithNonLinExpr(void) : a(NULL), n(0) {}
+      /// Destructor
+      ~ArithNonLinExpr(void) { heap.free<IntVar>(a,n); }
+      /// Post expression
+      virtual IntVar post(Home home, IntConLevel icl) const {
+        IntConLevel postIcl = _icl == ICL_DEF ? icl : _icl;
+        IntVar y;
+        switch (t) {
+        case ANLE_ABS:
+          {
+            IntVar x = e0.post(home, icl);
+            if (x.min() >= 0)
+              y = x;
+            else {
+              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              abs(home, x, y, postIcl);
+            }
+          }
+          break;
+        case ANLE_MIN_2:
+          {
+            IntVar x0 = e0.post(home, icl);
+            IntVar x1 = e1.post(home, icl);
+            if (x0.max() <= x1.min())
+              y = x0;
+            else if (x1.max() <= x0.min())
+              y = x1;
+            else {
+              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              min(home, x0, x1, y, postIcl);
+            }
+          }
+          break;
+        case ANLE_MAX_2:
+          {
+            IntVar x0 = e0.post(home, icl);
+            IntVar x1 = e1.post(home, icl);
+            if (x0.max() <= x1.min())
+              y = x1;
+            else if (x1.max() <= x0.min())
+              y = x0;
+            else {
+              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              max(home, x0, x1, y, postIcl);
+            }
+          }
+          break;
+        case ANLE_MULT:
+          {
+            IntVar x0 = e0.post(home, icl);
+            IntVar x1 = e1.post(home, icl);
+            if (x0.assigned() && (x0.val() == 0))
+              y = x0;
+            else if (x0.assigned() && (x0.val() == 1))
+              y = x1;
+            else if (x1.assigned() && (x1.val() == 0))
+              y = x1;
+            else if (x1.assigned() && (x1.val() == 1))
+              y = x0;
+            else {
+              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              mult(home, x0, x1, y, postIcl);
+            }
+          }
+          break;
+        case ANLE_DIV:
+          {
+            IntVar x0 = e0.post(home, icl);
+            IntVar x1 = e1.post(home, icl);
+            if (x1.assigned() && (x1.val() == 1))
+              y = x0;
+            else if (x0.assigned() && (x0.val() == 0))
+              y = x0;
+            else {
+              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              div(home, x0, x1, y, postIcl);
+            }
+          }
+          break;
+        case ANLE_MOD:
+          {
+            IntVar x0 = e0.post(home, icl);
+            IntVar x1 = e1.post(home, icl);
+            y = IntVar(home, Int::Limits::min, Int::Limits::max);
+            div(home, x0, x1, y, postIcl);
+          }
+          break;
+        case ANLE_SQR:
+          {
+            IntVar x = e0.post(home, icl);
+            if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
+              y = x;
+            else {
+              y = IntVar(home, 0, Int::Limits::max);
+              sqr(home, x, y, postIcl);
+            }
+          }
+          break;
+        case ANLE_SQRT:
+          {
+            IntVar x = e0.post(home, icl);
+            if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
+              y = x;
+            else {
+              y = IntVar(home, 0, Int::Limits::max);
+              sqrt(home, x, y, postIcl);
+            }
+          }
+          break;
+        default:
+          GECODE_NEVER;
+        }
+        return y;
+      }
+    };
   }
 
-  IntVar
-  min(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    if (x.max() <= y.min())
-      return x;
-    if (y.max() <= x.min())
-      return y;
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    min(home, x, y, z, icl);
-    return z;
+  LinExpr
+  abs(const LinExpr& e, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_ABS;
+    ae->e0 = e;
+    ae->_icl = icl;
+    return LinExpr(ae);
   }
 
-  IntVar
-  max(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    if (x.max() <= y.min())
-      return y;
-    if (y.max() <= x.min())
-      return x;
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    max(home, x, y, z, icl);
-    return z;
+  LinExpr
+  min(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MIN_2;
+    ae->e0 = e0;
+    ae->e1 = e1;
+    ae->_icl = icl;
+    return LinExpr(ae);
   }
 
-  IntVar
-  mult(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    if (x.assigned() && (x.val() == 0))
-      return x;
-    if (x.assigned() && (x.val() == 1))
-      return y;
-    if (y.assigned() && (y.val() == 0))
-      return y;
-    if (y.assigned() && (y.val() == 1))
-      return x;
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    mult(home, x, y, z, icl);
-    return z;
+  LinExpr
+  max(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MAX_2;
+    ae->e0 = e0;
+    ae->e1 = e1;
+    ae->_icl = icl;
+    return LinExpr(ae);
   }
 
-  IntVar
-  sqr(Home home, IntVar x, IntConLevel icl) {
-    if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
-      return x;
-    IntVar y(home, 0, Int::Limits::max);
-    sqr(home, x, y, icl);
-    return y;
+  LinExpr
+  min(const IntVarArgs& x, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MIN_N;
+    ae->a = heap.alloc<IntVar>(x.size());
+    ae->n = x.size();
+    for (int i=x.size(); i--;)
+      ae->a[i] = x[i];
+    ae->_icl = icl;
+    return LinExpr(ae);
   }
 
-  IntVar
-  sqrt(Home home, IntVar x, IntConLevel icl) {
-    if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
-      return x;
-    IntVar y(home, 0, Int::Limits::max);
-    sqrt(home, x, y, icl);
-    return y;
+  LinExpr
+  max(const IntVarArgs& x, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MAX_N;
+    ae->a = heap.alloc<IntVar>(x.size());
+    ae->n = x.size();
+    for (int i=x.size(); i--;)
+      ae->a[i] = x[i];
+    ae->_icl = icl;
+    return LinExpr(ae);
   }
 
-  IntVar
-  plus(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    if (x.assigned() && (x.val() == 0))
-      return y;
-    if (y.assigned() && (y.val() == 0))
-      return x;
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    IntVarArgs xy(2);
-    xy[0]=x; xy[1]=y;
-    linear(home, xy, IRT_EQ, z, icl);
-    return z;
+  LinExpr
+  mult(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MULT;
+    ae->e0 = e0;
+    ae->e1 = e1;
+    ae->_icl = icl;
+    return LinExpr(ae);
   }
 
-  IntVar
-  minus(Home home, IntVar x, IntVar y, IntConLevel icl) {
-    if (y.assigned() && (y.val() == 0))
-      return x;
-    IntVar z(home, Int::Limits::min, Int::Limits::max);
-    IntVarArgs xy(2); IntArgs a(2, 1,-1);
-    xy[0]=x; xy[1]=y;
-    linear(home, a, xy, IRT_EQ, z, icl);
-    return z;
+  LinExpr
+  operator *(const LinExpr& e0, const LinExpr& e1) {
+    return mult(e0,e1);
+  }
+
+  LinExpr
+  sqr(const LinExpr& e, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_SQR;
+    ae->e0 = e;
+    ae->_icl = icl;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  sqrt(const LinExpr& e, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_SQRT;
+    ae->e0 = e;
+    ae->_icl = icl;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  div(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_DIV;
+    ae->e0 = e0;
+    ae->e1 = e1;
+    ae->_icl = icl;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  operator /(const LinExpr& e0, const LinExpr& e1) {
+    return div(e0,e1);
+  }
+
+  LinExpr
+  mod(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MOD;
+    ae->e0 = e0;
+    ae->e1 = e1;
+    ae->_icl = icl;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  operator %(const LinExpr& e0, const LinExpr& e1) {
+    return mod(e0,e1);
   }
 
 }

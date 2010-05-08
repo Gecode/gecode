@@ -243,8 +243,7 @@ public:
         element(*this, modtable, x[i+1], x2);
         const int dr[2] = {1, 12};
         IntVar diff(*this, IntSet(dr, 2));
-        rel(*this, abs(*this, minus(*this, x1, x2, ICL_DOM), ICL_DOM)
-            == diff, ICL_DOM);
+        rel(*this, abs(x1-x2, ICL_DOM) == diff, ICL_DOM);
       }
     } else if (opt.propagation() == PROPAGATION_DFA) {
       // Build table for allowed tuples

@@ -73,12 +73,7 @@ public:
     rel(*this, a+b+c+d == s, opt.icl());
 
     // The product of all variables is s (corrected by scale factor)
-    rel(*this,
-        mult(*this,
-             mult(*this, a, b, opt.icl()),
-             mult(*this, c, d, opt.icl()),
-             opt.icl()),
-        IRT_EQ, p);
+    rel(*this, a*b*c*d == p, opt.icl());
 
     // Break symmetries: order the variables
     rel(*this, a, IRT_LQ, b);

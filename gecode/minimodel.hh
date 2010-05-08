@@ -96,6 +96,15 @@ namespace Gecode {
   class SetExpr;
 #endif
 
+  /// Base class for non-linear expressions
+  class NonLinExpr {
+  public:
+    /// Return variable constrained to be equal to the expression
+    virtual IntVar post(Home home, IntConLevel icl) const = 0;
+    /// Destructor
+    virtual ~NonLinExpr(void) {}
+  };
+
   /// Linear expressions
   class LinExpr {
     friend class LinRel;
@@ -108,6 +117,7 @@ namespace Gecode {
       NT_CONST,    ///< Integer constant
       NT_VAR_INT,  ///< Linear term with integer variable
       NT_VAR_BOOL, ///< Linear term with Boolean variable
+      NT_NONLIN,   ///< Non-linear expression
       NT_SUM_INT,  ///< Sum of integer variables
       NT_SUM_BOOL, ///< Sum of Boolean variables
       NT_ADD,      ///< Addition of linear terms
@@ -128,12 +138,14 @@ namespace Gecode {
       NodeType t;
       /// Subexpressions
       Node *l, *r;
-      /// Sum of integer or Boolean variables
+      /// Sum of integer or Boolean variables, or non-linear expression
       union {
         /// Integer views and coefficients
         Int::Linear::Term<Int::IntView>* ti;
         /// Bool views and coefficients
         Int::Linear::Term<Int::BoolView>* tb;
+        /// Non-linear expression
+        NonLinExpr* ne;
       } sum;
       /// Coefficient and offset
       int a, c;
@@ -145,11 +157,13 @@ namespace Gecode {
       Node(void);
       /// Generate linear terms from expression
       GECODE_MINIMODEL_EXPORT
-      void fill(Int::Linear::Term<Int::IntView>*& ti,
+      void fill(Home home, IntConLevel icl,
+                Int::Linear::Term<Int::IntView>*& ti,
                 Int::Linear::Term<Int::BoolView>*& tb,
                 double m, double& d) const;
       /// Generate linear terms for expressions
-      int fill(Int::Linear::Term<Int::IntView>* ti,
+      int fill(Home home, IntConLevel icl,
+               Int::Linear::Term<Int::IntView>* ti,
                Int::Linear::Term<Int::BoolView>* tb) const;
       /// Decrement reference count and possibly free memory
       bool decrement(void);
@@ -161,9 +175,9 @@ namespace Gecode {
       static void  operator delete(void* p,size_t size);
     };
     Node* n;
+  public:
     /// Default constructor
     LinExpr(void);
-  public:
     /// Create expression for constant \a c
     LinExpr(double c);
     /// Create expression
@@ -186,6 +200,8 @@ namespace Gecode {
     LinExpr(const LinExpr& e0, NodeType t, int c);
     /// Create expression for multiplication
     LinExpr(int a, const LinExpr& e);
+    /// Create non-linear expression
+    LinExpr(NonLinExpr* e);
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
     const LinExpr& operator =(const LinExpr& e);
@@ -846,14 +862,14 @@ namespace Gecode {
   setdunion(const SetVarArgs&);
 
   /// Cardinality of set expression
-  GECODE_MINIMODEL_EXPORT IntVar
-  cardinality(Space& home, const SetExpr&);
+  GECODE_MINIMODEL_EXPORT LinExpr
+  cardinality(const SetExpr&);
   /// Minimum element of set expression
-  GECODE_MINIMODEL_EXPORT IntVar
-  min(Space& home, const SetExpr&);
+  GECODE_MINIMODEL_EXPORT LinExpr
+  min(const SetExpr&);
   /// Minimum element of set expression
-  GECODE_MINIMODEL_EXPORT IntVar
-  max(Space& home, const SetExpr&);
+  GECODE_MINIMODEL_EXPORT LinExpr
+  max(const SetExpr&);
 
   /// Equality of set expressions
   SetRel
@@ -1159,106 +1175,90 @@ namespace Gecode {
    * \ingroup TaskModelMiniModel
    */
   //@{
-  /** \brief Return variable constrained to \f$|x|\f$
+  /** \brief Return expression for \f$|e|\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  GECODE_MINIMODEL_EXPORT IntVar
-  abs(Home home, IntVar x,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$\min(x,y)\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  abs(const LinExpr& e, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$\min(x,y)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  GECODE_MINIMODEL_EXPORT IntVar
-  min(Home home, IntVar x, IntVar y,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$\min(x)\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  min(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$\min(x)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
-  min(Home home, const IntVarArgs& x,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$\max(x,y)\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  min(const IntVarArgs& x, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$\max(x,y)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  GECODE_MINIMODEL_EXPORT IntVar
-  max(Home home, IntVar x, IntVar y,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$\max(x)\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  max(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$\max(x)\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  IntVar
-  max(Home home, const IntVarArgs& x,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$x\cdot y\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  max(const IntVarArgs& x, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$x\cdot y\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  GECODE_MINIMODEL_EXPORT IntVar
-  mult(Home home, IntVar x, IntVar y,
-       IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$x\ \mathrm{div}\ y\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  mult(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
+  /// \brief Return expression for \f$x\cdot y\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  operator *(const LinExpr& x, const LinExpr& y);
+  /** \brief Return expression for \f$x\ \mathrm{div}\ y\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
-  IntVar
-  div(Home home, IntVar x, IntVar y,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$x\ \mathrm{mod}\ y\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  div(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$x\ \mathrm{div}\ y\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
    */
-  IntVar
-  mod(Home home, IntVar x, IntVar y,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$x^2\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  operator /(const LinExpr& x, const LinExpr& y);
+  /** \brief Return expression for \f$x\ \mathrm{mod}\ y\f$
+   *
+   * Supports bounds consistency (\a icl = ICL_BND, default).
+   */
+  GECODE_MINIMODEL_EXPORT LinExpr
+  mod(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$x\ \mathrm{mod}\ y\f$
+   *
+   * Supports bounds consistency (\a icl = ICL_BND, default).
+   */
+  GECODE_MINIMODEL_EXPORT LinExpr
+  operator %(const LinExpr& x, const LinExpr& y);
+  /** \brief Return expression for \f$x^2\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  GECODE_MINIMODEL_EXPORT IntVar
-  sqr(Home home, IntVar x,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$\lfloor\sqrt{x}\rfloor\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  sqr(const LinExpr& x, IntConLevel icl=ICL_DEF);
+  /** \brief Return expression for \f$\lfloor\sqrt{x}\rfloor\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)
    * and domain consistency (\a icl = ICL_DOM).
    */
-  GECODE_MINIMODEL_EXPORT IntVar
-  sqrt(Home home, IntVar x,
-       IntConLevel icl=ICL_DEF);
-  /** \brief Return variable constrained to \f$x+y\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
-  GECODE_MINIMODEL_EXPORT IntVar
-  plus(Home home, IntVar x, IntVar y,
-       IntConLevel icl=ICL_DEF);
-  /** Return variable constrained to \f$x-y\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
-  GECODE_MINIMODEL_EXPORT IntVar
-  minus(Home home, IntVar x, IntVar y,
-        IntConLevel icl=ICL_DEF);
+  GECODE_MINIMODEL_EXPORT LinExpr
+  sqrt(const LinExpr& x, IntConLevel icl=ICL_DEF);
   //@}
-}
-
-#include <gecode/minimodel/arithmetic.hpp>
-
-namespace Gecode {
 
   /**
    * \defgroup TaskModelMiniModelChannel Channel functions

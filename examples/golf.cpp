@@ -104,7 +104,7 @@ public:
     // No two golfers play in the same group more than once
     for (int i=0; i<groups.size()-1; i++)
       for (int j=i+1; j<groups.size(); j++)
-        rel(*this, cardinality(*this,groups[i] & groups[j]) <= 1);
+        rel(*this, cardinality(groups[i] & groups[j]) <= 1);
 
     if (opt.model() == MODEL_SYMMETRY) {
 
@@ -129,15 +129,15 @@ public:
       // Symmetry breaking: order groups
       for (int j=0; j<w; j++) {
         for (int i=0; i<g-1; i++) {
-          rel(*this, min(*this,schedule(i,j)) < min(*this,schedule(i+1,j)));
+          rel(*this, min(schedule(i,j)) < min(schedule(i+1,j)));
         }
       }
 
       // Symmetry breaking: order weeks
       // minElem(group(w,0)\{0}) < minElem(group(w+1,0)\{0})
       for (int i=0; i<w-1; i++) {
-        rel(*this, min(*this, schedule(0,i)-IntSet(0,0)) <
-                   min(*this, schedule(0,i+1)-IntSet(0,0)));
+        rel(*this, min(schedule(0,i)-IntSet(0,0)) <
+                   min(schedule(0,i+1)-IntSet(0,0)));
         
       }
 

@@ -80,8 +80,8 @@ public:
     IntVarArgs sxy(2*n), sx(n), sy(n);
 
     for (int i = n; i--; ) {
-      sx[i] = sxy[i] =   sqr(*this, x[i]);
-      sy[i] = sxy[n+i] = sqr(*this, y[i]);
+      sx[i] = sxy[i] =   expr(*this, sqr(x[i]));
+      sy[i] = sxy[n+i] = expr(*this, sqr(y[i]));
     }
     linear(*this, c, sxy, IRT_EQ, 0);
 

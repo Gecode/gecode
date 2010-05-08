@@ -521,23 +521,57 @@ namespace Gecode {
     return r;    
   }
 
-  IntVar
-  cardinality(Space& home, const SetExpr& e) {
-    IntVar card(home,0,Int::Limits::max);
-    cardinality(home, e.post(home), card);
-    return card;
+  namespace MiniModel {
+    /// Integer valued set expressions
+    class GECODE_MINIMODEL_EXPORT SetNonLinExpr : public NonLinExpr {
+    public:
+      /// The expression type
+      enum SetNonLinExprType {
+        SNLE_CARD, ///< Cardinality expression
+        SNLE_MIN,  ///< Minimum element expression
+        SNLE_MAX   ///< Maximum element expression
+      } t;
+      /// The expression
+      SetExpr e;
+      /// Constructor
+      SetNonLinExpr(const SetExpr& e0, SetNonLinExprType t0)
+        : t(t0), e(e0) {}
+      /// Post expression
+      virtual IntVar post(Home home, IntConLevel icl) const {
+        IntVar m(home,Int::Limits::min,Int::Limits::max);
+        switch (t) {
+        case SNLE_CARD:
+          cardinality(home, e.post(home), m);
+          break;
+        case SNLE_MIN:
+          min(home, e.post(home), m);
+          break;
+        case SNLE_MAX:
+          max(home, e.post(home), m);
+          break;
+        default:
+          GECODE_NEVER;
+          break;
+        }
+        return m;
+      }
+    };
   }
-  IntVar
-  min(Space& home, const SetExpr& e) {
-    IntVar m(home,Int::Limits::min,Int::Limits::max);
-    min(home, e.post(home), m);
-    return m;
+
+  LinExpr
+  cardinality(const SetExpr& e) {
+    return LinExpr(new MiniModel::SetNonLinExpr(e,
+      MiniModel::SetNonLinExpr::SNLE_CARD));
   }
-  IntVar
-  max(Space& home, const SetExpr& e) {
-    IntVar m(home,Int::Limits::min,Int::Limits::max);
-    max(home, e.post(home), m);
-    return m;
+  LinExpr
+  min(const SetExpr& e) {
+    return LinExpr(new MiniModel::SetNonLinExpr(e,
+      MiniModel::SetNonLinExpr::SNLE_MIN));
+  }
+  LinExpr
+  max(const SetExpr& e) {
+    return LinExpr(new MiniModel::SetNonLinExpr(e,
+      MiniModel::SetNonLinExpr::SNLE_MAX));
   }
 
   /*

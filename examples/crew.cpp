@@ -108,18 +108,18 @@ public:
 
     for (int i=0; i<noOfFlights; i++) {
       // The flight has staff as required by the specification
-      rel(*this, cardinality(*this, flight[i]) == requiredCrew[i].staff);
+      rel(*this, cardinality(flight[i]) == requiredCrew[i].staff);
 
       // Enough members of different categories are on board
-      rel(*this, cardinality(*this,flight[i] & stewardsDS) >= 
+      rel(*this, cardinality(flight[i] & stewardsDS) >= 
           requiredCrew[i].stewards);
-      rel(*this, cardinality(*this,flight[i] & hostessesDS) >=
+      rel(*this, cardinality(flight[i] & hostessesDS) >=
           requiredCrew[i].hostesses);
-      rel(*this, cardinality(*this,flight[i] & spanishDS) >=
+      rel(*this, cardinality(flight[i] & spanishDS) >=
           requiredCrew[i].spanish);
-      rel(*this, cardinality(*this,flight[i] & frenchDS) >=
+      rel(*this, cardinality(flight[i] & frenchDS) >=
           requiredCrew[i].french);
-      rel(*this, cardinality(*this,flight[i] & germanDS) >=
+      rel(*this, cardinality(flight[i] & germanDS) >=
           requiredCrew[i].german);
     }
 

@@ -73,7 +73,8 @@ namespace Gecode {
 
 
   void
-  LinExpr::Node::fill(Int::Linear::Term<Int::IntView>*& ti, 
+  LinExpr::Node::fill(Home home, IntConLevel icl,
+                      Int::Linear::Term<Int::IntView>*& ti, 
                       Int::Linear::Term<Int::BoolView>*& tb,
                       double m, double& d) const {
     switch (this->t) {
@@ -86,6 +87,9 @@ namespace Gecode {
         Int::Limits::check(m*a,"MiniModel::LinExpr");
         ti->a=m*a; ti->x=x_int; ti++;
       }
+      break;
+    case NT_NONLIN:
+      ti->a=m; ti->x=sum.ne->post(home, icl); ti++;
       break;
     case NT_VAR_BOOL:
       if (a != 0) {
@@ -112,22 +116,22 @@ namespace Gecode {
         Int::Limits::check(m*c,"MiniModel::LinExpr");
         d += m*c;
       } else {
-        l->fill(ti,tb,m,d);
+        l->fill(home,icl,ti,tb,m,d);
       }
-      r->fill(ti,tb,m,d);
+      r->fill(home,icl,ti,tb,m,d);
       break;
     case NT_SUB:
       if (l == NULL) {
         Int::Limits::check(m*c,"MiniModel::LinExpr");
         d += m*c;
       } else {
-        l->fill(ti,tb,m,d);
+        l->fill(home,icl,ti,tb,m,d);
       }
-      r->fill(ti,tb,-m,d);
+      r->fill(home,icl,ti,tb,-m,d);
       break;
     case NT_MUL:
       Int::Limits::check(m*a,"MiniModel::LinExpr");
-      l->fill(ti,tb,m*a,d);
+      l->fill(home,icl,ti,tb,m*a,d);
       break;
     default:
       GECODE_NEVER;

@@ -77,7 +77,7 @@ public:
 
     // Set up variables for distance
     for (int i=0; i<n-1; i++)
-      d[i] = abs(*this, minus(*this,x[i+1],x[i],opt.icl()),opt.icl());
+      d[i] = expr(*this, abs(x[i+1]-x[i]), opt.icl());
 
     // Constrain them to be between 1 and n-1
     dom(*this, d, 1, n-1);

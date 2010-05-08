@@ -102,8 +102,8 @@ public:
     for (int i=0; i<x.size(); i++)
       for (int j=i+1; j<x.size(); j++)
         rel(*this,
-            cardinality(*this, x[j] & cx[i]) +
-            cardinality(*this, x[i] & cx[j]) >= opt.distance());
+            cardinality(x[j] & cx[i]) +
+            cardinality(x[i] & cx[j]) >= opt.distance());
 
     branch(*this, x, SET_VAR_NONE, SET_VAL_MIN_INC);
   }

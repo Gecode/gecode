@@ -113,7 +113,7 @@ public:
     linear(*this, b, IRT_GQ, q);
 
     // Connect cardinality of U to the number of black pieces.
-    IntVar unknowns = cardinality(*this, U);
+    IntVar unknowns = expr(*this, cardinality(U));
     rel(*this, q <= unknowns);
     linear(*this, b, IRT_EQ, unknowns);
 
