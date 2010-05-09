@@ -1175,89 +1175,36 @@ namespace Gecode {
    * \ingroup TaskModelMiniModel
    */
   //@{
-  /** \brief Return expression for \f$|e|\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
+  /// \brief Return expression for \f$|e|\f$
   GECODE_MINIMODEL_EXPORT LinExpr
-  abs(const LinExpr& e, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$\min(x,y)\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
+  abs(const LinExpr& e);
+  /// \brief Return expression for \f$\min(x,y)\f$
   GECODE_MINIMODEL_EXPORT LinExpr
-  min(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$\min(x)\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
+  min(const LinExpr& x, const LinExpr& y);
+  /// \brief Return expression for \f$\min(x)\f$
   GECODE_MINIMODEL_EXPORT LinExpr
-  min(const IntVarArgs& x, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$\max(x,y)\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
+  min(const IntVarArgs& x);
+  /// \brief Return expression for \f$\max(x,y)\f$
   GECODE_MINIMODEL_EXPORT LinExpr
-  max(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$\max(x)\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
+  max(const LinExpr& x, const LinExpr& y);
+  /// \brief Return expression for \f$\max(x)\f$
   GECODE_MINIMODEL_EXPORT LinExpr
-  max(const IntVarArgs& x, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$x\cdot y\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
-  GECODE_MINIMODEL_EXPORT LinExpr
-  mult(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
+  max(const IntVarArgs& x);
   /// \brief Return expression for \f$x\cdot y\f$
   GECODE_MINIMODEL_EXPORT LinExpr
   operator *(const LinExpr& x, const LinExpr& y);
-  /** \brief Return expression for \f$x\ \mathrm{div}\ y\f$
-   *
-   * Supports bounds consistency (\a icl = ICL_BND, default).
-   */
-  GECODE_MINIMODEL_EXPORT LinExpr
-  div(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$x\ \mathrm{div}\ y\f$
-   *
-   * Supports bounds consistency (\a icl = ICL_BND, default).
-   */
+  /// \brief Return expression for \f$x\ \mathrm{div}\ y\f$
   GECODE_MINIMODEL_EXPORT LinExpr
   operator /(const LinExpr& x, const LinExpr& y);
-  /** \brief Return expression for \f$x\ \mathrm{mod}\ y\f$
-   *
-   * Supports bounds consistency (\a icl = ICL_BND, default).
-   */
-  GECODE_MINIMODEL_EXPORT LinExpr
-  mod(const LinExpr& x, const LinExpr& y, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$x\ \mathrm{mod}\ y\f$
-   *
-   * Supports bounds consistency (\a icl = ICL_BND, default).
-   */
+  /// \brief Return expression for \f$x\ \mathrm{mod}\ y\f$
   GECODE_MINIMODEL_EXPORT LinExpr
   operator %(const LinExpr& x, const LinExpr& y);
-  /** \brief Return expression for \f$x^2\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
+  /// \brief Return expression for \f$x^2\f$
   GECODE_MINIMODEL_EXPORT LinExpr
-  sqr(const LinExpr& x, IntConLevel icl=ICL_DEF);
-  /** \brief Return expression for \f$\lfloor\sqrt{x}\rfloor\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
+  sqr(const LinExpr& x);
+  /// \brief Return expression for \f$\lfloor\sqrt{x}\rfloor\f$
   GECODE_MINIMODEL_EXPORT LinExpr
-  sqrt(const LinExpr& x, IntConLevel icl=ICL_DEF);
+  sqrt(const LinExpr& x);
   //@}
 
   /**

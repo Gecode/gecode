@@ -67,7 +67,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, mult(x[0], x[1])), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, x[0] * x[1]), IRT_EQ, x[2], ICL_DOM);
        }
      };
 
@@ -179,7 +179,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, abs(x[0], icl)), IRT_EQ, x[1], ICL_DOM);
+         rel(home, expr(home, abs(x[0]), icl), IRT_EQ, x[1], ICL_DOM);
        }
      };
 

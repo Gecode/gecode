@@ -64,15 +64,12 @@ namespace Gecode {
       IntVar* a;
       /// Size of variable array
       int n;
-      /// Consistency level
-      IntConLevel _icl;
       /// Constructor
       ArithNonLinExpr(void) : a(NULL), n(0) {}
       /// Destructor
       ~ArithNonLinExpr(void) { heap.free<IntVar>(a,n); }
       /// Post expression
       virtual IntVar post(Home home, IntConLevel icl) const {
-        IntConLevel postIcl = _icl == ICL_DEF ? icl : _icl;
         IntVar y;
         switch (t) {
         case ANLE_ABS:
@@ -82,7 +79,7 @@ namespace Gecode {
               y = x;
             else {
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
-              abs(home, x, y, postIcl);
+              abs(home, x, y, icl);
             }
           }
           break;
@@ -96,7 +93,7 @@ namespace Gecode {
               y = x1;
             else {
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
-              min(home, x0, x1, y, postIcl);
+              min(home, x0, x1, y, icl);
             }
           }
           break;
@@ -110,7 +107,7 @@ namespace Gecode {
               y = x0;
             else {
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
-              max(home, x0, x1, y, postIcl);
+              max(home, x0, x1, y, icl);
             }
           }
           break;
@@ -128,7 +125,7 @@ namespace Gecode {
               y = x0;
             else {
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
-              mult(home, x0, x1, y, postIcl);
+              mult(home, x0, x1, y, icl);
             }
           }
           break;
@@ -142,7 +139,7 @@ namespace Gecode {
               y = x0;
             else {
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
-              div(home, x0, x1, y, postIcl);
+              div(home, x0, x1, y, icl);
             }
           }
           break;
@@ -151,7 +148,7 @@ namespace Gecode {
             IntVar x0 = e0.post(home, icl);
             IntVar x1 = e1.post(home, icl);
             y = IntVar(home, Int::Limits::min, Int::Limits::max);
-            div(home, x0, x1, y, postIcl);
+            div(home, x0, x1, y, icl);
           }
           break;
         case ANLE_SQR:
@@ -161,7 +158,7 @@ namespace Gecode {
               y = x;
             else {
               y = IntVar(home, 0, Int::Limits::max);
-              sqr(home, x, y, postIcl);
+              sqr(home, x, y, icl);
             }
           }
           break;
@@ -172,7 +169,7 @@ namespace Gecode {
               y = x;
             else {
               y = IntVar(home, 0, Int::Limits::max);
-              sqrt(home, x, y, postIcl);
+              sqrt(home, x, y, icl);
             }
           }
           break;
@@ -185,119 +182,94 @@ namespace Gecode {
   }
 
   LinExpr
-  abs(const LinExpr& e, IntConLevel icl) {
+  abs(const LinExpr& e) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
     ae->t = MiniModel::ArithNonLinExpr::ANLE_ABS;
     ae->e0 = e;
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
-  min(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
+  min(const LinExpr& e0, const LinExpr& e1) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
     ae->t = MiniModel::ArithNonLinExpr::ANLE_MIN_2;
     ae->e0 = e0;
     ae->e1 = e1;
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
-  max(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
+  max(const LinExpr& e0, const LinExpr& e1) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
     ae->t = MiniModel::ArithNonLinExpr::ANLE_MAX_2;
     ae->e0 = e0;
     ae->e1 = e1;
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
-  min(const IntVarArgs& x, IntConLevel icl) {
+  min(const IntVarArgs& x) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
     ae->t = MiniModel::ArithNonLinExpr::ANLE_MIN_N;
     ae->a = heap.alloc<IntVar>(x.size());
     ae->n = x.size();
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
-  max(const IntVarArgs& x, IntConLevel icl) {
+  max(const IntVarArgs& x) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
     ae->t = MiniModel::ArithNonLinExpr::ANLE_MAX_N;
     ae->a = heap.alloc<IntVar>(x.size());
     ae->n = x.size();
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
-    ae->_icl = icl;
-    return LinExpr(ae);
-  }
-
-  LinExpr
-  mult(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MULT;
-    ae->e0 = e0;
-    ae->e1 = e1;
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
   operator *(const LinExpr& e0, const LinExpr& e1) {
-    return mult(e0,e1);
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MULT;
+    ae->e0 = e0;
+    ae->e1 = e1;
+    return LinExpr(ae);
   }
 
   LinExpr
-  sqr(const LinExpr& e, IntConLevel icl) {
+  sqr(const LinExpr& e) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
     ae->t = MiniModel::ArithNonLinExpr::ANLE_SQR;
     ae->e0 = e;
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
-  sqrt(const LinExpr& e, IntConLevel icl) {
+  sqrt(const LinExpr& e) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
     ae->t = MiniModel::ArithNonLinExpr::ANLE_SQRT;
     ae->e0 = e;
-    ae->_icl = icl;
-    return LinExpr(ae);
-  }
-
-  LinExpr
-  div(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_DIV;
-    ae->e0 = e0;
-    ae->e1 = e1;
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
   operator /(const LinExpr& e0, const LinExpr& e1) {
-    return div(e0,e1);
-  }
-
-  LinExpr
-  mod(const LinExpr& e0, const LinExpr& e1, IntConLevel icl) {
     MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MOD;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_DIV;
     ae->e0 = e0;
     ae->e1 = e1;
-    ae->_icl = icl;
     return LinExpr(ae);
   }
 
   LinExpr
   operator %(const LinExpr& e0, const LinExpr& e1) {
-    return mod(e0,e1);
+    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
+    ae->t = MiniModel::ArithNonLinExpr::ANLE_MOD;
+    ae->e0 = e0;
+    ae->e1 = e1;
+    return LinExpr(ae);
   }
 
 }

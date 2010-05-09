@@ -537,7 +537,7 @@ namespace Gecode {
       SetNonLinExpr(const SetExpr& e0, SetNonLinExprType t0)
         : t(t0), e(e0) {}
       /// Post expression
-      virtual IntVar post(Home home, IntConLevel icl) const {
+      virtual IntVar post(Home home, IntConLevel) const {
         IntVar m(home,Int::Limits::min,Int::Limits::max);
         switch (t) {
         case SNLE_CARD:
