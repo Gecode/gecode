@@ -46,35 +46,29 @@ namespace Gecode {
       /// The expression type
       enum ArithNonLinExprType {
         ANLE_ABS,   ///< Absolute value expression
-        ANLE_MIN_2, ///< Binary minimum expression
-        ANLE_MIN_N, ///< N-ary minimum expression
-        ANLE_MAX_2, ///< Binary minimum expression
-        ANLE_MAX_N, ///< N-ary minimum expression
+        ANLE_MIN,   ///< Minimum expression
+        ANLE_MAX,   ///< Maximum expression
         ANLE_MULT,  ///< Multiplication expression
         ANLE_DIV,   ///< Division expression
         ANLE_MOD,   ///< Modulo expression
         ANLE_SQR,   ///< Square expression
         ANLE_SQRT   ///< Square root expression
       } t;
-      /// The first expression
-      LinExpr e0;
-      /// The second expression
-      LinExpr e1;
       /// Variable array
-      IntVar* a;
+      LinExpr* a;
       /// Size of variable array
       int n;
       /// Constructor
       ArithNonLinExpr(void) : a(NULL), n(0) {}
       /// Destructor
-      ~ArithNonLinExpr(void) { heap.free<IntVar>(a,n); }
+      ~ArithNonLinExpr(void) { heap.free<LinExpr>(a,n); }
       /// Post expression
       virtual IntVar post(Home home, IntConLevel icl) const {
         IntVar y;
         switch (t) {
         case ANLE_ABS:
           {
-            IntVar x = e0.post(home, icl);
+            IntVar x = a[0].post(home, icl);
             if (x.min() >= 0)
               y = x;
             else {
@@ -83,10 +77,12 @@ namespace Gecode {
             }
           }
           break;
-        case ANLE_MIN_2:
-          {
-            IntVar x0 = e0.post(home, icl);
-            IntVar x1 = e1.post(home, icl);
+        case ANLE_MIN:
+          if (n==1) {
+            y = a[0].post(home, icl);
+          } else if (n==2) {
+            IntVar x0 = a[0].post(home, icl);
+            IntVar x1 = a[1].post(home, icl);
             if (x0.max() <= x1.min())
               y = x0;
             else if (x1.max() <= x0.min())
@@ -95,12 +91,20 @@ namespace Gecode {
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
               min(home, x0, x1, y, icl);
             }
+          } else {
+            IntVarArgs x(n);
+            for (int i=n; i--;)
+              x[i] = a[i].post(home, icl);
+            y = IntVar(home, Int::Limits::min, Int::Limits::max);
+            min(home, x, y, icl);
           }
           break;
-        case ANLE_MAX_2:
-          {
-            IntVar x0 = e0.post(home, icl);
-            IntVar x1 = e1.post(home, icl);
+        case ANLE_MAX:
+          if (n==1) {
+            y = a[0].post(home, icl);
+          } else if (n==2) {
+            IntVar x0 = a[0].post(home, icl);
+            IntVar x1 = a[1].post(home, icl);
             if (x0.max() <= x1.min())
               y = x1;
             else if (x1.max() <= x0.min())
@@ -109,12 +113,19 @@ namespace Gecode {
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
               max(home, x0, x1, y, icl);
             }
+          } else {
+            IntVarArgs x(n);
+            for (int i=n; i--;)
+              x[i] = a[i].post(home, icl);
+            y = IntVar(home, Int::Limits::min, Int::Limits::max);
+            max(home, x, y, icl);
           }
           break;
         case ANLE_MULT:
           {
-            IntVar x0 = e0.post(home, icl);
-            IntVar x1 = e1.post(home, icl);
+            assert(n == 2);
+            IntVar x0 = a[0].post(home, icl);
+            IntVar x1 = a[1].post(home, icl);
             if (x0.assigned() && (x0.val() == 0))
               y = x0;
             else if (x0.assigned() && (x0.val() == 1))
@@ -131,8 +142,9 @@ namespace Gecode {
           break;
         case ANLE_DIV:
           {
-            IntVar x0 = e0.post(home, icl);
-            IntVar x1 = e1.post(home, icl);
+            assert(n == 2);
+            IntVar x0 = a[0].post(home, icl);
+            IntVar x1 = a[1].post(home, icl);
             if (x1.assigned() && (x1.val() == 1))
               y = x0;
             else if (x0.assigned() && (x0.val() == 0))
@@ -145,15 +157,17 @@ namespace Gecode {
           break;
         case ANLE_MOD:
           {
-            IntVar x0 = e0.post(home, icl);
-            IntVar x1 = e1.post(home, icl);
+            assert(n == 2);
+            IntVar x0 = a[0].post(home, icl);
+            IntVar x1 = a[1].post(home, icl);
             y = IntVar(home, Int::Limits::min, Int::Limits::max);
             div(home, x0, x1, y, icl);
           }
           break;
         case ANLE_SQR:
           {
-            IntVar x = e0.post(home, icl);
+            assert(n == 1);
+            IntVar x = a[0].post(home, icl);
             if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
               y = x;
             else {
@@ -164,7 +178,8 @@ namespace Gecode {
           break;
         case ANLE_SQRT:
           {
-            IntVar x = e0.post(home, icl);
+            assert(n == 1);
+            IntVar x = a[0].post(home, icl);
             if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
               y = x;
             else {
@@ -179,39 +194,100 @@ namespace Gecode {
         return y;
       }
     };
+    /// Check if \a e is of type \a t
+    bool hasType(const LinExpr& e, ArithNonLinExpr::ArithNonLinExprType t) {
+      return e.nle() &&
+             dynamic_cast<ArithNonLinExpr*>(e.nle()) != NULL &&
+             dynamic_cast<ArithNonLinExpr*>(e.nle())->t == t;
+    }
   }
+
+  using namespace MiniModel;
 
   LinExpr
   abs(const LinExpr& e) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_ABS;
-    ae->e0 = e;
+    if (hasType(e, ArithNonLinExpr::ANLE_ABS))
+      return e;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_ABS;
+    ae->a = heap.alloc<LinExpr>(1);
+    ae->a[0] = e;
     return LinExpr(ae);
   }
 
   LinExpr
   min(const LinExpr& e0, const LinExpr& e1) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MIN_2;
-    ae->e0 = e0;
-    ae->e1 = e1;
+    int n = 0;
+    if (hasType(e0, ArithNonLinExpr::ANLE_MIN))
+      n += static_cast<ArithNonLinExpr*>(e0.nle())->n;
+    else
+      n += 1;
+    if (hasType(e1, ArithNonLinExpr::ANLE_MIN))
+      n += static_cast<ArithNonLinExpr*>(e1.nle())->n;
+    else
+      n += 1;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_MIN;
+    ae->a = heap.alloc<LinExpr>(n);
+    ae->n = n;
+    int i=0;
+    if (hasType(e0, ArithNonLinExpr::ANLE_MIN)) {
+      ArithNonLinExpr* e0e = static_cast<ArithNonLinExpr*>(e0.nle());
+      for (; i<e0e->n; i++)
+        ae->a[i] = e0e->a[i];
+    } else {
+      ae->a[i++] = e0;
+    }
+    if (hasType(e1, ArithNonLinExpr::ANLE_MIN)) {
+      ArithNonLinExpr* e1e = static_cast<ArithNonLinExpr*>(e1.nle());
+      int curN = i;
+      for (; i<curN+e1e->n; i++)
+        ae->a[i] = e1e->a[i-curN];
+    } else {
+      ae->a[i++] = e1;
+    }
     return LinExpr(ae);
   }
 
   LinExpr
   max(const LinExpr& e0, const LinExpr& e1) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MAX_2;
-    ae->e0 = e0;
-    ae->e1 = e1;
+    int n = 0;
+    if (hasType(e0, ArithNonLinExpr::ANLE_MAX))
+      n += static_cast<ArithNonLinExpr*>(e0.nle())->n;
+    else
+      n += 1;
+    if (hasType(e1, ArithNonLinExpr::ANLE_MAX))
+      n += static_cast<ArithNonLinExpr*>(e1.nle())->n;
+    else
+      n += 1;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_MAX;
+    ae->a = heap.alloc<LinExpr>(n);
+    ae->n = n;
+    int i=0;
+    if (hasType(e0, ArithNonLinExpr::ANLE_MAX)) {
+      ArithNonLinExpr* e0e = static_cast<ArithNonLinExpr*>(e0.nle());
+      for (; i<e0e->n; i++)
+        ae->a[i] = e0e->a[i];
+    } else {
+      ae->a[i++] = e0;
+    }
+    if (hasType(e1, ArithNonLinExpr::ANLE_MAX)) {
+      ArithNonLinExpr* e1e = static_cast<ArithNonLinExpr*>(e1.nle());
+      int curN = i;
+      for (; i<curN+e1e->n; i++)
+        ae->a[i] = e1e->a[i-curN];
+    } else {
+      ae->a[i++] = e1;
+    }
     return LinExpr(ae);
   }
 
   LinExpr
   min(const IntVarArgs& x) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MIN_N;
-    ae->a = heap.alloc<IntVar>(x.size());
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_MIN;
+    ae->a = heap.alloc<LinExpr>(x.size());
     ae->n = x.size();
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
@@ -220,9 +296,9 @@ namespace Gecode {
 
   LinExpr
   max(const IntVarArgs& x) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MAX_N;
-    ae->a = heap.alloc<IntVar>(x.size());
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_MAX;
+    ae->a = heap.alloc<LinExpr>(x.size());
     ae->n = x.size();
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
@@ -231,44 +307,49 @@ namespace Gecode {
 
   LinExpr
   operator *(const LinExpr& e0, const LinExpr& e1) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MULT;
-    ae->e0 = e0;
-    ae->e1 = e1;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_MULT;
+    ae->a = heap.alloc<LinExpr>(2);
+    ae->a[0] = e0;
+    ae->a[1] = e1;
     return LinExpr(ae);
   }
 
   LinExpr
   sqr(const LinExpr& e) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_SQR;
-    ae->e0 = e;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_SQR;
+    ae->a = heap.alloc<LinExpr>(1);
+    ae->a[0] = e;
     return LinExpr(ae);
   }
 
   LinExpr
   sqrt(const LinExpr& e) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_SQRT;
-    ae->e0 = e;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_SQRT;
+    ae->a = heap.alloc<LinExpr>(1);
+    ae->a[0] = e;
     return LinExpr(ae);
   }
 
   LinExpr
   operator /(const LinExpr& e0, const LinExpr& e1) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_DIV;
-    ae->e0 = e0;
-    ae->e1 = e1;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_DIV;
+    ae->a = heap.alloc<LinExpr>(2);
+    ae->a[0] = e0;
+    ae->a[1] = e1;
     return LinExpr(ae);
   }
 
   LinExpr
   operator %(const LinExpr& e0, const LinExpr& e1) {
-    MiniModel::ArithNonLinExpr* ae = new MiniModel::ArithNonLinExpr;
-    ae->t = MiniModel::ArithNonLinExpr::ANLE_MOD;
-    ae->e0 = e0;
-    ae->e1 = e1;
+    ArithNonLinExpr* ae = new ArithNonLinExpr;
+    ae->t = ArithNonLinExpr::ANLE_MOD;
+    ae->a = heap.alloc<LinExpr>(2);
+    ae->a[0] = e0;
+    ae->a[1] = e1;
     return LinExpr(ae);
   }
 

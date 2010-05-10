@@ -212,6 +212,8 @@ namespace Gecode {
               IntConLevel icl) const;
     /// Post propagator and return variable for value
     IntVar post(Home home, IntConLevel icl) const;
+    /// Return non-linear expression inside, or NULL if not non-linear
+    NonLinExpr* nle(void) const;
     /// Destructor
     GECODE_MINIMODEL_EXPORT
     ~LinExpr(void);

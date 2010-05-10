@@ -401,6 +401,11 @@ namespace Gecode {
     }
   }
 
+  forceinline NonLinExpr*
+  LinExpr::nle(void) const {
+    return n->t == NT_NONLIN ? n->sum.ne : NULL;
+  }
+
 }
 
 // STATISTICS: minimodel-any
