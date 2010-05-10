@@ -67,10 +67,18 @@
 #
 
 [RELEASE]
-Version: 3.3.2
+Version: 3.4.0
 Date: soon
 [DESCRIPTION]
 More fixes for more bugs.
+
+[ENTRY]
+Module: example
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed stress tests, the real examples are much more stressful,
+actually!
 
 [ENTRY]
 Module: minimodel

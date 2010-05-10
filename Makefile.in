@@ -686,11 +686,8 @@ INTEXAMPLESRC0 =						\
 	money ortho-latin partition photo queens sudoku kakuro  \
 	nonogram pentominoes crowded-chess black-hole		\
 	minesweeper domino steel-mill sports-league		\
-	all-interval langford-number warehouses			\
-	stress-domain stress-exec stress-search baseline	\
-	stress-element stress-min stress-distinct		\
-	stress-extensional stress-linear-bool sat radiotherapy  \
-	word-square crossword open-shop car-sequencing
+	all-interval langford-number warehouses	radiotherapy    \
+	word-square crossword open-shop car-sequencing sat
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
