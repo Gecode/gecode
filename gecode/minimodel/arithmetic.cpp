@@ -52,7 +52,8 @@ namespace Gecode {
         ANLE_DIV,   ///< Division expression
         ANLE_MOD,   ///< Modulo expression
         ANLE_SQR,   ///< Square expression
-        ANLE_SQRT   ///< Square root expression
+        ANLE_SQRT,  ///< Square root expression
+        ANLE_ELMNT  ///< Element expression
       } t;
       /// Expressions
       LinExpr* a;
@@ -186,6 +187,20 @@ namespace Gecode {
             else {
               y = IntVar(home, 0, Int::Limits::max);
               sqrt(home, x, y, icl);
+            }
+          }
+          break;
+        case ANLE_ELMNT:
+          {
+            IntVar z = a[n-1].post(home, icl);
+            if (z.assigned() && z.val() >= 0 && z.val() < n-1) {
+              y = a[z.val()].post(home, icl);
+            } else {
+              IntVarArgs x(n-1);
+              for (int i=n-1; i--;)
+                x[i] = a[i].post(home, icl);
+              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              element(home, x, z, y, icl);
             }
           }
           break;
@@ -337,6 +352,16 @@ namespace Gecode {
       new ArithNonLinExpr(ArithNonLinExpr::ANLE_MOD,2);
     ae->a[0] = e0;
     ae->a[1] = e1;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  element(const IntVarArgs& x, const LinExpr& e) {
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_ELMNT,x.size()+1);
+    for (int i=x.size(); i--;)
+      ae->a[i] = x[i];
+    ae->a[x.size()] = e;
     return LinExpr(ae);
   }
 
