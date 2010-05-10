@@ -855,7 +855,7 @@ namespace Gecode {
 
   /// Intersection of set variables
   GECODE_MINIMODEL_EXPORT SetExpr
-  intersection(const SetVarArgs&);
+  inter(const SetVarArgs&);
   /// Union of set variables
   GECODE_MINIMODEL_EXPORT SetExpr
   setunion(const SetVarArgs&);

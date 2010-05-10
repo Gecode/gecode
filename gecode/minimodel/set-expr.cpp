@@ -494,7 +494,7 @@ namespace Gecode {
   }
 
   SetExpr
-  intersection(const SetVarArgs& x) {
+  inter(const SetVarArgs& x) {
     if (x.size() == 0)
       return SetExpr(IntSet(Set::Limits::min,Set::Limits::max));
     SetExpr r(x[0]);

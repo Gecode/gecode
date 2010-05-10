@@ -54,12 +54,13 @@ namespace Gecode {
         ANLE_SQR,   ///< Square expression
         ANLE_SQRT   ///< Square root expression
       } t;
-      /// Variable array
+      /// Expressions
       LinExpr* a;
       /// Size of variable array
       int n;
       /// Constructor
-      ArithNonLinExpr(void) : a(NULL), n(0) {}
+      ArithNonLinExpr(ArithNonLinExprType t0, int n0)
+       : t(t0), a(heap.alloc<LinExpr>(n0)), n(n0) {}
       /// Destructor
       ~ArithNonLinExpr(void) { heap.free<LinExpr>(a,n); }
       /// Post expression
@@ -208,9 +209,8 @@ namespace Gecode {
   abs(const LinExpr& e) {
     if (hasType(e, ArithNonLinExpr::ANLE_ABS))
       return e;
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_ABS;
-    ae->a = heap.alloc<LinExpr>(1);
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_ABS,1);
     ae->a[0] = e;
     return LinExpr(ae);
   }
@@ -226,10 +226,8 @@ namespace Gecode {
       n += static_cast<ArithNonLinExpr*>(e1.nle())->n;
     else
       n += 1;
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_MIN;
-    ae->a = heap.alloc<LinExpr>(n);
-    ae->n = n;
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_MIN,n);
     int i=0;
     if (hasType(e0, ArithNonLinExpr::ANLE_MIN)) {
       ArithNonLinExpr* e0e = static_cast<ArithNonLinExpr*>(e0.nle());
@@ -260,10 +258,8 @@ namespace Gecode {
       n += static_cast<ArithNonLinExpr*>(e1.nle())->n;
     else
       n += 1;
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_MAX;
-    ae->a = heap.alloc<LinExpr>(n);
-    ae->n = n;
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_MAX,n);
     int i=0;
     if (hasType(e0, ArithNonLinExpr::ANLE_MAX)) {
       ArithNonLinExpr* e0e = static_cast<ArithNonLinExpr*>(e0.nle());
@@ -285,10 +281,8 @@ namespace Gecode {
 
   LinExpr
   min(const IntVarArgs& x) {
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_MIN;
-    ae->a = heap.alloc<LinExpr>(x.size());
-    ae->n = x.size();
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_MIN,x.size());
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
     return LinExpr(ae);
@@ -296,10 +290,8 @@ namespace Gecode {
 
   LinExpr
   max(const IntVarArgs& x) {
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_MAX;
-    ae->a = heap.alloc<LinExpr>(x.size());
-    ae->n = x.size();
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_MAX,x.size());
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
     return LinExpr(ae);
@@ -307,9 +299,8 @@ namespace Gecode {
 
   LinExpr
   operator *(const LinExpr& e0, const LinExpr& e1) {
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_MULT;
-    ae->a = heap.alloc<LinExpr>(2);
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_MULT,2);
     ae->a[0] = e0;
     ae->a[1] = e1;
     return LinExpr(ae);
@@ -317,27 +308,24 @@ namespace Gecode {
 
   LinExpr
   sqr(const LinExpr& e) {
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_SQR;
-    ae->a = heap.alloc<LinExpr>(1);
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_SQR,1);
     ae->a[0] = e;
     return LinExpr(ae);
   }
 
   LinExpr
   sqrt(const LinExpr& e) {
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_SQRT;
-    ae->a = heap.alloc<LinExpr>(1);
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_SQRT,1);
     ae->a[0] = e;
     return LinExpr(ae);
   }
 
   LinExpr
   operator /(const LinExpr& e0, const LinExpr& e1) {
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_DIV;
-    ae->a = heap.alloc<LinExpr>(2);
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_DIV,2);
     ae->a[0] = e0;
     ae->a[1] = e1;
     return LinExpr(ae);
@@ -345,9 +333,8 @@ namespace Gecode {
 
   LinExpr
   operator %(const LinExpr& e0, const LinExpr& e1) {
-    ArithNonLinExpr* ae = new ArithNonLinExpr;
-    ae->t = ArithNonLinExpr::ANLE_MOD;
-    ae->a = heap.alloc<LinExpr>(2);
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_MOD,2);
     ae->a[0] = e0;
     ae->a[1] = e1;
     return LinExpr(ae);
