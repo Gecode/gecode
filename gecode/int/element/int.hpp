@@ -268,12 +268,10 @@ namespace Gecode { namespace Int { namespace Element {
     int* v = r.alloc<int>(x0.size());
     int n = 0;
     for (ViewValues<V0> i(x0); i(); ++i)
-      if (c[i.val()] == x1.val())
+      if (c[i.val()] != x1.val())
         v[n++]=i.val();
-    if (x0.size() > static_cast<unsigned int>(n)) {
-      Iter::Values::Array i(v,n);
-      GECODE_ME_CHECK(x0.narrow_v(home,i,false));
-    }
+    Iter::Values::Array i(v,n);
+    GECODE_ME_CHECK(x0.minus_v(home,i,false));
     return ES_OK;
   }
 
