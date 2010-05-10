@@ -197,10 +197,21 @@ namespace Gecode {
               y = a[z.val()].post(home, icl);
             } else {
               IntVarArgs x(n-1);
-              for (int i=n-1; i--;)
+              bool assigned = true;
+              for (int i=n-1; i--;) {
                 x[i] = a[i].post(home, icl);
+                if (!x[i].assigned())
+                  assigned = false;
+              }
               y = IntVar(home, Int::Limits::min, Int::Limits::max);
-              element(home, x, z, y, icl);
+              if (assigned) {
+                IntArgs xa(n-1);
+                for (int i=n-1; i--;)
+                  xa[i] = x[i].val();
+                element(home, xa, z, y, icl);
+              } else {
+                element(home, x, z, y, icl);
+              }
             }
           }
           break;
@@ -357,6 +368,16 @@ namespace Gecode {
 
   LinExpr
   element(const IntVarArgs& x, const LinExpr& e) {
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_ELMNT,x.size()+1);
+    for (int i=x.size(); i--;)
+      ae->a[i] = x[i];
+    ae->a[x.size()] = e;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  element(const IntArgs& x, const LinExpr& e) {
     ArithNonLinExpr* ae =
       new ArithNonLinExpr(ArithNonLinExpr::ANLE_ELMNT,x.size()+1);
     for (int i=x.size(); i--;)
