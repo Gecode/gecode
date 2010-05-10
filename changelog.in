@@ -73,6 +73,14 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed garbage collection of variables that are not printed. The 
+bug lead to variables being mixed up in the output.
+
+[ENTRY]
 Module: example
 What:   removed
 Rank:   minor
