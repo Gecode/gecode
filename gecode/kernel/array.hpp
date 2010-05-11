@@ -119,6 +119,9 @@ namespace Gecode {
     slice(int start, int inc=1, int n=-1);
     //@}
 
+    /// Test if all variables are assigned
+    bool assigned(void) const;
+
     /// \name Cloning
     //@{
     /**
@@ -702,6 +705,9 @@ namespace Gecode {
     operator <<(const VarArgArray<Var>& x);
     //@}
 
+    /// Test if all variables are assigned
+    bool assigned(void) const;
+
     friend typename ArrayTraits<VarArgArray<Var> >::args_type
     operator + <>(const VarArgArray<Var>& x, const VarArgArray<Var>& y);
     friend typename ArrayTraits<VarArgArray<Var> >::args_type
@@ -851,6 +857,15 @@ namespace Gecode {
     }
   }
 
+  template<class Var>
+  forceinline bool
+  VarArray<Var>::assigned(void) const {
+    for (int i = n; i--;)
+      if (!x[i].assigned())
+        return false;
+    return true;
+  }
+  
   template<class Var>
   void*
   VarArray<Var>::operator new(size_t) {
@@ -1645,6 +1660,15 @@ namespace Gecode {
   forceinline bool
   VarArgArray<Var>::VarLess::operator ()(const Var& a, const Var& b) {
     return a.var() < b.var();
+  }
+
+  template<class Var>
+  forceinline bool
+  VarArgArray<Var>::assigned(void) const {
+    for (int i = n; i--;)
+      if (!a[i].assigned())
+        return false;
+    return true;
   }
 
   template<class Var>
