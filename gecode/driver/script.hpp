@@ -370,8 +370,9 @@ namespace Gecode { namespace Driver {
         break;
       }
     } catch (Exception e) {
-      cout << "Exception: " << e.what() << "." << endl
+      cerr << "Exception: " << e.what() << "." << endl
            << "Stopping..." << endl;
+      exit(EXIT_FAILURE);
     }
   }
 
