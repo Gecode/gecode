@@ -40,7 +40,7 @@
 
 #ifdef GECODE_THREADS_WINDOWS
 
-#ifndef NOMIMMAX
+#ifndef NOMINMAX
 #  define NOMINMAX
 #endif
 
