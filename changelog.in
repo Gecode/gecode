@@ -73,6 +73,15 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: driver
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The driver now catches SIGINT (i.e., pressing Ctrl-C) and stops
+the search properly, printing statistics up to the point where
+it stopped.
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor

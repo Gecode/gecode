@@ -665,10 +665,12 @@ namespace Gecode { namespace FlatZinc {
       n_p = propagators();
     }
     Search::Options o;
-    o.stop = Driver::Cutoff::create(opt.node(), opt.fail(), opt.time());
+    o.stop = Driver::Cutoff::create(opt.node(), opt.fail(), opt.time(), 
+                                    true);
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
     o.threads = opt.threads();
+    Driver::Cutoff::installCtrlHandler(true);
     Engine<FlatZincSpace> se(this,o);
     int noOfSolutions = _method == SAT ? opt.solutions() : 0;
     int findSol = noOfSolutions;
@@ -698,6 +700,7 @@ namespace Gecode { namespace FlatZinc {
     }
     delete sol;
     stopped:
+    Driver::Cutoff::installCtrlHandler(false);
     if (opt.mode() == SM_STAT) {
       Gecode::Search::Statistics stat = se.statistics();
       out << endl

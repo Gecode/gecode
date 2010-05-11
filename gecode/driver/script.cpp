@@ -97,6 +97,8 @@ namespace Gecode { namespace Driver {
     return ::sqrt(s / (n-1)) / m;
   }
 
+  bool Cutoff::sigint;
+
 }}
 
 // STATISTICS: driver-any
