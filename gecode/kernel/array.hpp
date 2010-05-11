@@ -341,6 +341,9 @@ namespace Gecode {
     void drop_lst(int i, Space& home, Advisor& a);
     //@}
 
+    /// Test if all variables are assigned
+    bool assigned(void) const;
+
     /// \name View equality
     //@{
     /**
@@ -1134,6 +1137,15 @@ namespace Gecode {
   ViewArray<View>::cancel(Space& home, Advisor& a) {
     for (int i = n; i--; )
       x[i].cancel(home,a);
+  }
+
+  template<class View>
+  forceinline bool
+  ViewArray<View>::assigned(void) const {
+    for (int i = n; i--;)
+      if (!x[i].assigned())
+        return false;
+    return true;
   }
 
   template<class View>

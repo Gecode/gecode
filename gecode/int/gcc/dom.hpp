@@ -215,11 +215,7 @@ namespace Gecode { namespace Int { namespace GCC {
       bool card_assigned = true;
       if (Card::propagate) {
         GECODE_ES_CHECK(prop_card<Card>(home, y, k));
-        
-        for (int i = k.size(); i--; )
-          if (!k[i].assigned()) {
-            card_assigned = false; break;
-          }
+        card_assigned = k.assigned();
       }
       
       if (card_assigned) {
