@@ -528,7 +528,13 @@ namespace Gecode {
       virtual void compare(const Space&, std::ostream& os) const {
         (void) os;
       }
-      /// Run script with search engine \a Engine and options \a opt
+      /** Run script with search engine \a Engine and options \a opt
+       *
+       * In the time and stat modes, search can be aborted by sending
+       * SIGINT to the process (i.e., pressing Ctrl-C on the command
+       * line).
+       *
+       */
       template<class Script, template<class> class Engine, class Options>
       static void run(const Options& opt);
     private:

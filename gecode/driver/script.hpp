@@ -93,6 +93,7 @@ namespace Gecode { namespace Driver {
         return new Cutoff(node,fail,time);
     }
 #ifdef GECODE_THREADS_WINDOWS
+    /// Handler for catching Ctrl-C
     static BOOL interrupt(DWORD t) {
       if (t == CTRL_C_EVENT) {
         sigint = true;
@@ -101,11 +102,13 @@ namespace Gecode { namespace Driver {
       return false;
     }
 #else
+    /// Handler for catching Ctrl-C
     static void
     interrupt(int) {
       sigint = true;
     }
 #endif
+    /// Install handler for catching Ctrl-C
     static void installCtrlHandler(bool install) {
 #ifdef GECODE_THREADS_WINDOWS
       SetConsoleCtrlHandler( (PHANDLER_ROUTINE) interrupt, install);
