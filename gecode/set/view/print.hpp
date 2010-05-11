@@ -69,7 +69,6 @@ namespace Gecode { namespace Set {
         unsigned int cardMin, unsigned int cardMax) {
     if (assigned) {
       printBound(s, ub);
-      s << "#(" << cardMin << ")";
     } else {
       printBound(s,lb);
       s << "..";
