@@ -390,6 +390,10 @@ namespace Gecode {
   }
 
   BoolExpr
+  operator !=(const BoolExpr& l, const BoolExpr& r) {
+    return !BoolExpr(l, BoolExpr::NT_EQV, r);
+  }
+  BoolExpr
   operator ==(const BoolExpr& l, const BoolExpr& r) {
     return BoolExpr(l, BoolExpr::NT_EQV, r);
   }

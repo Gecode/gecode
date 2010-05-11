@@ -44,11 +44,19 @@ namespace Gecode {
    *
    */
   forceinline
+  SetCmpRel::SetCmpRel(const SetExpr& l0, SetRelType srt0, const SetExpr& r0)
+    : l(l0), r(r0), srt(srt0) {}
+
+  forceinline
   SetRel::SetRel(void) {}
    
   forceinline
   SetRel::SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1)
     : _e0(e0), _srt(srt), _e1(e1) {}
+
+  forceinline
+  SetRel::SetRel(const SetCmpRel& r)
+    : _e0(r.l), _srt(r.srt), _e1(r.r) {}
 
   forceinline void
   SetRel::post(Home home, bool t) const {
@@ -73,13 +81,21 @@ namespace Gecode {
   operator ==(const SetExpr& e0, const SetExpr& e1) {
     return SetRel(e0, SRT_EQ, e1);
   }
-  forceinline SetRel
+  forceinline SetCmpRel
   operator <=(const SetExpr& e0, const SetExpr& e1) {
-    return SetRel(e0, SRT_SUB, e1);
+    return SetCmpRel(e0, SRT_SUB, e1);
   }
-  forceinline SetRel
+  forceinline BoolExpr
+  operator <=(const SetCmpRel& r, const SetExpr& l) {
+    return BoolExpr(r) && BoolExpr(r.r <= l);
+  }
+  forceinline SetCmpRel
   operator >=(const SetExpr& e0, const SetExpr& e1) {
-    return SetRel(e0, SRT_SUP, e1);
+    return SetCmpRel(e0, SRT_SUP, e1);
+  }
+  forceinline BoolExpr
+  operator >=(const SetCmpRel& r, const SetExpr& l) {
+    return BoolExpr(r) && BoolExpr(r.r >= l);
   }
   forceinline SetRel
   operator ||(const SetExpr& e0, const SetExpr& e1) {

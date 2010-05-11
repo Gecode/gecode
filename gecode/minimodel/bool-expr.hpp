@@ -117,6 +117,16 @@ namespace Gecode {
     n->r    = NULL;
     n->rs   = rs;
   }
+
+  forceinline
+  BoolExpr::BoolExpr(const SetCmpRel& rs)
+    : n(new Node) {
+    n->same = 1;
+    n->t    = NT_RSET;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->rs   = rs;
+  }
 #endif
 
   forceinline BoolVar

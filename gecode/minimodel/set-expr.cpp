@@ -123,6 +123,11 @@ namespace Gecode {
         } else {
           ss = u.a.x->s;
         }
+        switch (srt) {
+        case SRT_SUB: srt = SRT_SUP; break;
+        case SRT_SUP: srt = SRT_SUB; break;
+        default: break;
+        }
         dom(home, s, srt, ss);
       }
       break;

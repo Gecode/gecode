@@ -822,6 +822,19 @@ namespace Gecode {
     ~SetExpr(void);
   };
 
+  /// Comparison relation (for two-sided comparisons)
+  class SetCmpRel {
+  public:
+    /// Left side of relation
+    SetExpr l;
+    /// Right side of relation
+    SetExpr r;
+    /// Which relation
+    SetRelType srt;
+    /// Constructor
+    SetCmpRel(const SetExpr& l, SetRelType srt, const SetExpr& r);
+  };
+
   /// %Set relations
   class SetRel {
   private:
@@ -836,6 +849,8 @@ namespace Gecode {
     SetRel(void);
     /// Constructor
     SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1);
+    /// Constructor
+    SetRel(const SetCmpRel& r);
     /// Post propagators for relation (or negated relation if \a t is false)
     void post(Home home, bool t) const;
     /// Post propagators for reified relation (or negated relation if \a t is false)
@@ -895,11 +910,17 @@ namespace Gecode {
   SetRel
   operator ==(const SetExpr&, const SetExpr&);
   /// Subset of set expressions
-  SetRel
+  SetCmpRel
   operator <=(const SetExpr&, const SetExpr&);
+  /// Subset of set expressions
+  BoolExpr
+  operator <=(const SetCmpRel&, const SetExpr&);
   /// Superset of set expressions
-  SetRel
+  SetCmpRel
   operator >=(const SetExpr&, const SetExpr&);
+  /// Superset of set expressions
+  BoolExpr
+  operator >=(const SetCmpRel&, const SetExpr&);
   /// Disjointness of set expressions
   SetRel
   operator ||(const SetExpr&, const SetExpr&);
@@ -1014,6 +1035,8 @@ namespace Gecode {
 #ifdef GECODE_HAS_SET_VARS
     /// Construct expression for reified set relation
     BoolExpr(const SetRel& rs);
+    /// Construct expression for reified set relation
+    BoolExpr(const SetCmpRel& rs);
 #endif
     /// Post propagators for expression
     BoolVar post(Home home, IntConLevel icl) const;
@@ -1068,6 +1091,9 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator ^(const BoolExpr&, const BoolExpr&);
 
+  /// Non-equivalence of Boolean expressions
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator !=(const BoolExpr&, const BoolExpr&);
   /// Equivalence of Boolean expressions
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator ==(const BoolExpr&, const BoolExpr&);
