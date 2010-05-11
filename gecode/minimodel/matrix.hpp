@@ -44,7 +44,7 @@ namespace Gecode {
 
   template<class A>
   inline
-  Slice<A>::Slice(Matrix<A>& a, int fc, int tc, int fr, int tr)
+  Slice<A>::Slice(const Matrix<A>& a, int fc, int tc, int fr, int tr)
     : _r(0), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
     if (tc > a.width() || tr > a.height())
       throw MiniModel::ArgumentOutOfRange("Slice::Slice");
@@ -163,21 +163,49 @@ namespace Gecode {
   }
 
   template<class A>
+  forceinline const typename Matrix<A>::value_type&
+  Matrix<A>::operator ()(int c, int r) const {
+    if ((c >= _w) || (r >= _h))
+      throw MiniModel::ArgumentOutOfRange("Matrix::operator ()");
+    return _a[r*_w + c];
+  }
+
+  template<class A>
   forceinline Slice<A>
-  Matrix<A>::slice(int fc, int tc, int fr, int tr) {
+  Matrix<A>::slice(int fc, int tc, int fr, int tr) const {
     return Slice<A>(*this, fc, tc, fr, tr);
   }
 
   template<class A>
   forceinline Slice<A>
-  Matrix<A>::row(int r) {
+  Matrix<A>::row(int r) const {
     return slice(0, width(), r, r+1);
   }
 
   template<class A>
   forceinline Slice<A>
-  Matrix<A>::col(int c) {
+  Matrix<A>::col(int c) const {
     return slice(c, c+1, 0, height());
+  }
+
+  template<class Char, class Traits, class A>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Matrix<A>& m) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    for (int i=0; i<m.height(); i++) {
+      for (int j=0; j<m.width(); j++) {
+        s << m(j,i) << "\t";
+      }
+      s << std::endl;
+    }
+    return os << s.str();
+  }
+
+  template<class Char, class Traits, class A>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Slice<A>& s) {
+    return os << static_cast<typename Slice<A>::args_type>(s);
   }
 
   forceinline void

@@ -167,22 +167,7 @@ public:
     Matrix<SetVarArray> schedule(groups,g,w);
     for (int j=0; j<w; j++) {
       os << "Week " << j << ": " << std::endl << "    ";
-      for (int i=0; i<g; i++) {
-        if (schedule(i,j).assigned()) {
-          bool first = true;
-          os << "(";
-          for (SetVarGlbValues glb(schedule(i,j)); glb(); ++glb) {
-            if (first) first = false; else os << " ";
-            os << glb.val();
-          }
-          os << ")";
-        } else {
-          os << "(" << schedule(i,j) << ")";
-        }
-        if (i < g-1) os << " ";
-        if (i > 0 && i % 4 == 0) os << std::endl << "    ";
-      }
-      os << std::endl;
+      os << schedule.row(j) << std::endl;
     }
   }
 

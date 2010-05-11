@@ -1484,7 +1484,7 @@ namespace Gecode {
       _tr;            ///< To row
   public:
     /// Construct slice
-    Slice(Matrix<A>& a, int fc, int tc, int fr, int tr);
+    Slice(const Matrix<A>& a, int fc, int tc, int fr, int tr);
     /** \brief Reverses the contents of the slice, and returns a
      *  reference to it.
      */
@@ -1593,6 +1593,13 @@ namespace Gecode {
      */
     value_type& operator ()(int c, int r);
 
+    /** \brief Access element (\a c, \a r) of the matrix
+     *
+     * \exception MiniModel::ArgumentOutOfRange Raised if \a c or \a r
+     *            are out of range.
+     */
+    const value_type& operator ()(int c, int r) const;
+
     /** \brief Access slice of the matrix
      *
      * This function allows accessing a slice of the matrix, located at
@@ -1602,14 +1609,28 @@ namespace Gecode {
      *
      * For further information, see Slice.
      */
-    Slice<A> slice(int fc, int tc, int fr, int tr);
+    Slice<A> slice(int fc, int tc, int fr, int tr) const;
 
     /// Access row \a r.
-    Slice<A> row(int r);
+    Slice<A> row(int r) const;
 
     /// Access column \a c.
-    Slice<A> col(int c);
+    Slice<A> col(int c) const;
   };
+
+  /** \relates Gecode::Matrix
+   * Print matrix \a m
+   */
+  template<class Char, class Traits, class A>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Matrix<A>& m);
+
+  /** \relates Gecode::Matrix
+   * Print slice \a s
+   */
+  template<class Char, class Traits, class A>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Slice<A>& s);
 
   /** \brief Element constraint for matrix
    *
