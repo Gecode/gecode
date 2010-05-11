@@ -73,6 +73,16 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+If an inspector throws an exception, an error message is 
+printed indicating which inspector caused the problem.
+Previously, Gist would crash with a Qt error that was difficult
+to trace.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
@@ -87,6 +97,14 @@ Rank:   minor
 [DESCRIPTION]
 Removed stress tests, the real examples are much more stressful,
 actually!
+
+[ENTRY]
+Module: minimodel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Matrix class now supports const operations and has an output
+operator.
 
 [ENTRY]
 Module: minimodel
@@ -226,7 +244,9 @@ Rank:   minor
 The support for dynamically resizing variable arrays has been
 removed (it was buggy and inefficient). Instead, all argument
 arrays now support adding elements using operator<<. In addition,
-all arrays now support concatenation using operator+ and slicing.
+all arrays now support concatenation using operator+ and slicing,
+and variable arrays, view arrays, and variable argument arrays
+include a test whether all variables are assigned.
 
 [ENTRY]
 Module: example
