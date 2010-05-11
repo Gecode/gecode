@@ -39,6 +39,10 @@
 #include <iostream>
 #include <iomanip>
 
+#ifndef GECODE_THREADS_WINDOWS
+#include <csignal>
+#endif
+
 namespace Gecode { namespace Driver {
 
   /**
@@ -113,7 +117,7 @@ namespace Gecode { namespace Driver {
 #ifdef GECODE_THREADS_WINDOWS
       SetConsoleCtrlHandler( (PHANDLER_ROUTINE) interrupt, install);
 #else
-      signal(SIGINT, install ? interrupt : SIG_DFL);
+      std::signal(SIGINT, install ? interrupt : SIG_DFL);
 #endif
     }
     /// Destructor
