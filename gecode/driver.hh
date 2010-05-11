@@ -530,7 +530,7 @@ namespace Gecode {
       }
       /** Run script with search engine \a Engine and options \a opt
        *
-       * In the time and stat modes, search can be aborted by sending
+       * In the solution and stat modes, search can be aborted by sending
        * SIGINT to the process (i.e., pressing Ctrl-C on the command
        * line).
        *
