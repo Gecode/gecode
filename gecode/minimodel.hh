@@ -100,9 +100,27 @@ namespace Gecode {
   class NonLinExpr {
   public:
     /// Return variable constrained to be equal to the expression
-    virtual IntVar post(Home home, IntConLevel icl) const = 0;
+    virtual IntVar post(Home home, IntVar* ret, IntConLevel icl) const = 0;
+    /// Post expression to be in relation \a irt with \a c
+    virtual void post(Home home, IntRelType irt, int c,
+                      IntConLevel icl) const = 0;
+    /// Post reified expression to be in relation \a irt with \a c
+    virtual void post(Home home, IntRelType irt, int c,
+                      BoolVar b, IntConLevel icl) const = 0;
     /// Destructor
     virtual ~NonLinExpr(void) {}
+    /// Return fresh variable if \a x is NULL, \a x otherwise
+    static IntVar result(Home home, IntVar* x) {
+      if (x==NULL)
+        return IntVar(home,Int::Limits::min,Int::Limits::max);
+      return *x;
+    }
+    /// Constrain \a x to be equal to \a y if \a x is not NULL
+    static IntVar result(Home home, IntVar* x, IntVar y) {
+      if (x!=NULL)
+        rel(home,*x,IRT_EQ,y);
+      return y;
+    }
   };
 
   /// Linear expressions

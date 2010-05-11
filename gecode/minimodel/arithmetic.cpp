@@ -65,61 +65,61 @@ namespace Gecode {
       /// Destructor
       ~ArithNonLinExpr(void) { heap.free<LinExpr>(a,n); }
       /// Post expression
-      virtual IntVar post(Home home, IntConLevel icl) const {
+      virtual IntVar post(Home home, IntVar* ret, IntConLevel icl) const {
         IntVar y;
         switch (t) {
         case ANLE_ABS:
           {
             IntVar x = a[0].post(home, icl);
             if (x.min() >= 0)
-              y = x;
+              y = result(home,ret,x);
             else {
-              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              y = result(home,ret);
               abs(home, x, y, icl);
             }
           }
           break;
         case ANLE_MIN:
           if (n==1) {
-            y = a[0].post(home, icl);
+            y = result(home,ret, a[0].post(home, icl));
           } else if (n==2) {
             IntVar x0 = a[0].post(home, icl);
             IntVar x1 = a[1].post(home, icl);
             if (x0.max() <= x1.min())
-              y = x0;
+              y = result(home,ret,x0);
             else if (x1.max() <= x0.min())
-              y = x1;
+              y = result(home,ret,x1);
             else {
-              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              y = result(home,ret);
               min(home, x0, x1, y, icl);
             }
           } else {
             IntVarArgs x(n);
             for (int i=n; i--;)
               x[i] = a[i].post(home, icl);
-            y = IntVar(home, Int::Limits::min, Int::Limits::max);
+            y = result(home,ret);
             min(home, x, y, icl);
           }
           break;
         case ANLE_MAX:
           if (n==1) {
-            y = a[0].post(home, icl);
+            y = result(home,ret,a[0].post(home, icl));
           } else if (n==2) {
             IntVar x0 = a[0].post(home, icl);
             IntVar x1 = a[1].post(home, icl);
             if (x0.max() <= x1.min())
-              y = x1;
+              y = result(home,ret,x1);
             else if (x1.max() <= x0.min())
-              y = x0;
+              y = result(home,ret,x0);
             else {
-              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              y = result(home,ret);
               max(home, x0, x1, y, icl);
             }
           } else {
             IntVarArgs x(n);
             for (int i=n; i--;)
               x[i] = a[i].post(home, icl);
-            y = IntVar(home, Int::Limits::min, Int::Limits::max);
+            y = result(home,ret);
             max(home, x, y, icl);
           }
           break;
@@ -129,15 +129,15 @@ namespace Gecode {
             IntVar x0 = a[0].post(home, icl);
             IntVar x1 = a[1].post(home, icl);
             if (x0.assigned() && (x0.val() == 0))
-              y = x0;
+              y = result(home,ret,x0);
             else if (x0.assigned() && (x0.val() == 1))
-              y = x1;
+              y = result(home,ret,x1);
             else if (x1.assigned() && (x1.val() == 0))
-              y = x1;
+              y = result(home,ret,x1);
             else if (x1.assigned() && (x1.val() == 1))
-              y = x0;
+              y = result(home,ret,x0);
             else {
-              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              y = result(home,ret);
               mult(home, x0, x1, y, icl);
             }
           }
@@ -148,11 +148,11 @@ namespace Gecode {
             IntVar x0 = a[0].post(home, icl);
             IntVar x1 = a[1].post(home, icl);
             if (x1.assigned() && (x1.val() == 1))
-              y = x0;
+              y = result(home,ret,x0);
             else if (x0.assigned() && (x0.val() == 0))
-              y = x0;
+              y = result(home,ret,x0);
             else {
-              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              y = result(home,ret);
               div(home, x0, x1, y, icl);
             }
           }
@@ -162,7 +162,7 @@ namespace Gecode {
             assert(n == 2);
             IntVar x0 = a[0].post(home, icl);
             IntVar x1 = a[1].post(home, icl);
-            y = IntVar(home, Int::Limits::min, Int::Limits::max);
+            y = result(home,ret);
             div(home, x0, x1, y, icl);
           }
           break;
@@ -173,7 +173,7 @@ namespace Gecode {
             if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
               y = x;
             else {
-              y = IntVar(home, 0, Int::Limits::max);
+              y = result(home,ret);
               sqr(home, x, y, icl);
             }
           }
@@ -183,9 +183,9 @@ namespace Gecode {
             assert(n == 1);
             IntVar x = a[0].post(home, icl);
             if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
-              y = x;
+              y = result(home,ret,x);
             else {
-              y = IntVar(home, 0, Int::Limits::max);
+              y = result(home,ret);
               sqrt(home, x, y, icl);
             }
           }
@@ -194,7 +194,7 @@ namespace Gecode {
           {
             IntVar z = a[n-1].post(home, icl);
             if (z.assigned() && z.val() >= 0 && z.val() < n-1) {
-              y = a[z.val()].post(home, icl);
+              y = result(home,ret,a[z.val()].post(home, icl));
             } else {
               IntVarArgs x(n-1);
               bool assigned = true;
@@ -203,7 +203,7 @@ namespace Gecode {
                 if (!x[i].assigned())
                   assigned = false;
               }
-              y = IntVar(home, Int::Limits::min, Int::Limits::max);
+              y = result(home,ret);
               if (assigned) {
                 IntArgs xa(n-1);
                 for (int i=n-1; i--;)
@@ -219,6 +219,14 @@ namespace Gecode {
           GECODE_NEVER;
         }
         return y;
+      }
+      virtual void post(Home home, IntRelType irt, int c,
+                        IntConLevel icl) const {
+        rel(home, post(home,NULL,icl), irt, c);
+      }
+      virtual void post(Home home, IntRelType irt, int c,
+                        BoolVar b, IntConLevel icl) const {
+        rel(home, post(home,NULL,icl), irt, c, b);
       }
     };
     /// Check if \a e is of type \a t

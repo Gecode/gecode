@@ -89,7 +89,7 @@ namespace Gecode {
       }
       break;
     case NT_NONLIN:
-      ti->a=m; ti->x=sum.ne->post(home, icl); ti++;
+      ti->a=m; ti->x=sum.ne->post(home, NULL, icl); ti++;
       break;
     case NT_VAR_BOOL:
       if (a != 0) {

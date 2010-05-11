@@ -217,7 +217,35 @@ namespace Gecode {
         }
         break;
       case NT_EQV:
-        rel(home, post(home, icl), IRT_EQ, 1);
+        if (u.b.l->t==NT_VAR && u.b.r->t==NT_RLIN) {
+          u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
+                                u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
+        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RLIN) {
+          u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
+                                u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
+        } else if (u.b.l->t==NT_RLIN) {
+          u.b.l->u.a.x->rl.post(home, u.b.r->post(home,icl),
+                                !u.b.l->u.a.neg,icl);
+        } else if (u.b.r->t==NT_RLIN) {
+          u.b.r->u.a.x->rl.post(home, u.b.l->post(home,icl),
+                                !u.b.r->u.a.neg,icl);
+#ifdef GECODE_HAS_SET_VARS
+        } else if (u.b.l->t==NT_VAR && u.b.r->t==NT_RSET) {
+          u.b.r->u.a.x->rs.post(home, u.b.l->u.a.x->x,
+                                u.b.l->u.a.neg==u.b.r->u.a.neg);
+        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RSET) {
+          u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
+                                u.b.l->u.a.neg==u.b.r->u.a.neg);
+        } else if (u.b.l->t==NT_RSET) {
+          u.b.l->u.a.x->rs.post(home, u.b.r->post(home,icl),
+                                !u.b.l->u.a.neg);
+        } else if (u.b.r->t==NT_RSET) {
+          u.b.r->u.a.x->rs.post(home, u.b.l->post(home,icl),
+                                !u.b.r->u.a.neg);
+#endif
+        } else {
+          rel(home, post(home, icl), IRT_EQ, 1);
+        }
         break;
       default:
         GECODE_NEVER;
@@ -248,7 +276,35 @@ namespace Gecode {
         u.b.r->post(home, false, icl);
         break;
       case NT_EQV:
-        rel(home, post(home, icl), IRT_EQ, 0);
+        if (u.b.l->t==NT_VAR && u.b.r->t==NT_RLIN) {
+          u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
+                                u.b.l->u.a.neg!=u.b.r->u.a.neg, icl);
+        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RLIN) {
+          u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
+                                u.b.l->u.a.neg!=u.b.r->u.a.neg, icl);
+        } else if (u.b.l->t==NT_RLIN) {
+          u.b.l->u.a.x->rl.post(home, u.b.r->post(home,icl),
+                                u.b.l->u.a.neg,icl);
+        } else if (u.b.r->t==NT_RLIN) {
+          u.b.r->u.a.x->rl.post(home, u.b.l->post(home,icl),
+                                u.b.r->u.a.neg,icl);
+#ifdef GECODE_HAS_SET_VARS
+        } else if (u.b.l->t==NT_VAR && u.b.r->t==NT_RSET) {
+          u.b.r->u.a.x->rs.post(home, u.b.l->u.a.x->x,
+                                u.b.l->u.a.neg!=u.b.r->u.a.neg);
+        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RSET) {
+          u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
+                                u.b.l->u.a.neg!=u.b.r->u.a.neg);
+        } else if (u.b.l->t==NT_RSET) {
+          u.b.l->u.a.x->rs.post(home, u.b.r->post(home,icl),
+                                u.b.l->u.a.neg);
+        } else if (u.b.r->t==NT_RSET) {
+          u.b.r->u.a.x->rs.post(home, u.b.l->post(home,icl),
+                                u.b.r->u.a.neg);
+#endif
+        } else {
+          rel(home, post(home, icl), IRT_EQ, 0);
+        }
         break;
       default:
         GECODE_NEVER;

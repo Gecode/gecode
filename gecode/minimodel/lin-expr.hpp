@@ -256,10 +256,29 @@ namespace Gecode {
     Region r(home);
     if (n->n_bool == 0) {
       // Only integer variables
-      Int::Linear::Term<Int::IntView>* its =
-        r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
-      int c = n->fill(home,icl,its,NULL);
-      Int::Linear::post(home, its, n->n_int, irt, -c, icl);
+      if (n->t==NT_ADD && n->l == NULL && n->r->t==NT_NONLIN) {
+        n->r->sum.ne->post(home,irt,-n->c,icl);
+      } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==NULL) {
+        switch (irt) {
+        case IRT_LQ: irt=IRT_GQ; break;
+        case IRT_LE: irt=IRT_GR; break;
+        case IRT_GQ: irt=IRT_LQ; break;
+        case IRT_GR: irt=IRT_LE; break;
+        default: break;
+        }
+        n->r->sum.ne->post(home,irt,n->c,icl);
+      } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l->t==NT_VAR_INT
+                 && n->l->a==1) {
+        (void) n->r->sum.ne->post(home,&n->l->x_int,icl);
+      } else if (n->t==NT_SUB && n->l->t==NT_NONLIN && n->r->t==NT_VAR_INT
+                 && n->r->a==1) {
+        (void) n->l->sum.ne->post(home,&n->r->x_int,icl);
+      } else {
+        Int::Linear::Term<Int::IntView>* its =
+          r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
+        int c = n->fill(home,icl,its,NULL);
+        Int::Linear::post(home, its, n->n_int, irt, -c, icl);
+      }
     } else if (n->n_int == 0) {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =
@@ -300,10 +319,23 @@ namespace Gecode {
     Region r(home);
     if (n->n_bool == 0) {
       // Only integer variables
-      Int::Linear::Term<Int::IntView>* its =
-        r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
-      int c = n->fill(home,icl,its,NULL);
-      Int::Linear::post(home, its, n->n_int, irt, -c, b, icl);
+      if (n->t==NT_ADD && n->l==NULL && n->r->t==NT_NONLIN) {
+        n->r->sum.ne->post(home,irt,-n->c,b,icl);
+      } else if (n->t==NT_SUB && n->l==NULL && n->r->t==NT_NONLIN) {
+        switch (irt) {
+        case IRT_LQ: irt=IRT_GQ; break;
+        case IRT_LE: irt=IRT_GR; break;
+        case IRT_GQ: irt=IRT_LQ; break;
+        case IRT_GR: irt=IRT_LE; break;
+        default: break;
+        }
+        n->r->sum.ne->post(home,irt,n->c,b,icl);
+      } else {
+        Int::Linear::Term<Int::IntView>* its =
+          r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
+        int c = n->fill(home,icl,its,NULL);
+        Int::Linear::post(home, its, n->n_int, irt, -c, b, icl);
+      }
     } else if (n->n_int == 0) {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =

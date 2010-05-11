@@ -537,8 +537,8 @@ namespace Gecode {
       SetNonLinExpr(const SetExpr& e0, SetNonLinExprType t0)
         : t(t0), e(e0) {}
       /// Post expression
-      virtual IntVar post(Home home, IntConLevel) const {
-        IntVar m(home,Int::Limits::min,Int::Limits::max);
+      virtual IntVar post(Home home, IntVar* ret, IntConLevel) const {
+        IntVar m = result(home,ret);
         switch (t) {
         case SNLE_CARD:
           cardinality(home, e.post(home), m);
@@ -554,6 +554,50 @@ namespace Gecode {
           break;
         }
         return m;
+      }
+      virtual void post(Home home, IntRelType irt, int c,
+                        IntConLevel icl) const {
+        if (t==SNLE_CARD && irt!=IRT_NQ) {
+          switch (irt) {
+          case IRT_LQ:
+            cardinality(home, e.post(home), 0, c);
+            break;
+          case IRT_LE:
+            cardinality(home, e.post(home), 0, c-1);
+            break;
+          case IRT_GQ:
+            cardinality(home, e.post(home), c, Set::Limits::card);
+            break;
+          case IRT_GR:
+            cardinality(home, e.post(home), c+1, Set::Limits::card);
+            break;
+          case IRT_EQ:
+            cardinality(home, e.post(home), c,c);
+            break;
+          default:
+            GECODE_NEVER;
+          }
+        } else if (t==SNLE_MIN && (irt==IRT_GR || irt==IRT_GQ)) {
+          c = (irt==IRT_GQ ? c : c+1);
+          dom(home, e.post(home), SRT_SUB, c, Set::Limits::max);
+        } else if (t==SNLE_MAX && (irt==IRT_LE || irt==IRT_LQ)) {
+          c = (irt==IRT_LQ ? c : c-1);
+          dom(home, e.post(home), SRT_SUB, Set::Limits::min, c);
+        } else {
+          rel(home, post(home,NULL,icl), irt, c);
+        }
+      }
+      virtual void post(Home home, IntRelType irt, int c,
+                        BoolVar b, IntConLevel icl) const {
+        if (t==SNLE_MIN && (irt==IRT_GR || irt==IRT_GQ)) {
+          c = (irt==IRT_GQ ? c : c+1);
+          dom(home, e.post(home), SRT_SUB, c, Set::Limits::max, b);
+        } else if (t==SNLE_MAX && (irt==IRT_LE || irt==IRT_LQ)) {
+          c = (irt==IRT_LQ ? c : c-1);
+          dom(home, e.post(home), SRT_SUB, Set::Limits::min, c, b);
+        } else {
+          rel(home, post(home,NULL,icl), irt, c, b);
+        }
       }
     };
   }
