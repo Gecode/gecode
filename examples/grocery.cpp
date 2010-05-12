@@ -69,16 +69,15 @@ public:
   /// The actual model
   Grocery(const Options& opt) : abcd(*this,4,0,s) {
     IntVar a(abcd[0]), b(abcd[1]), c(abcd[2]), d(abcd[3]);
+
     // The sum of all variables is s
     rel(*this, a+b+c+d == s, opt.icl());
 
     // The product of all variables is s (corrected by scale factor)
-    rel(*this, a*b*c*d == p, opt.icl());
+    rel(*this, (a*b)*(c*d) == p, opt.icl());
 
     // Break symmetries: order the variables
-    rel(*this, a, IRT_LQ, b);
-    rel(*this, b, IRT_LQ, c);
-    rel(*this, c, IRT_LQ, d);
+    rel(*this, abcd, IRT_LQ);
 
     branch(*this, abcd, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
   }
