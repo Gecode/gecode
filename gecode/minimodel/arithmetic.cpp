@@ -222,7 +222,15 @@ namespace Gecode {
       }
       virtual void post(Home home, IntRelType irt, int c,
                         IntConLevel icl) const {
-        rel(home, post(home,NULL,icl), irt, c);
+        if ( (t == ANLE_MIN && (irt == IRT_GQ || irt == IRT_GR)) ||
+             (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LE)) ) {
+          IntVarArgs x(n);
+          for (int i=n; i--;)
+            x[i] = a[i].post(home, icl);
+          rel(home, x, irt, c);
+        } else {
+          rel(home, post(home,NULL,icl), irt, c);
+        }
       }
       virtual void post(Home home, IntRelType irt, int c,
                         BoolVar b, IntConLevel icl) const {
