@@ -267,10 +267,12 @@ namespace Gecode {
         default: break;
         }
         n->r->sum.ne->post(home,irt,n->c,icl);
-      } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l->t==NT_VAR_INT
+      } else if (n->t==NT_SUB && n->r->t==NT_NONLIN &&
+                 n->l != NULL && n->l->t==NT_VAR_INT
                  && n->l->a==1) {
         (void) n->r->sum.ne->post(home,&n->l->x_int,icl);
-      } else if (n->t==NT_SUB && n->l->t==NT_NONLIN && n->r->t==NT_VAR_INT
+      } else if (n->t==NT_SUB && n->r->t==NT_VAR_INT &&
+                 n->l != NULL && n->l->t==NT_NONLIN
                  && n->r->a==1) {
         (void) n->l->sum.ne->post(home,&n->r->x_int,icl);
       } else {
