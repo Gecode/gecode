@@ -157,7 +157,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   struct space_allocator<void> {
     typedef void*       pointer;
     typedef const void* const_pointer;
-    typedef void        ValueType;
+    typedef void        value_type;
     /// Rebinding helper (returns the type of a similar allocator for type \a U)
     template<class U> struct rebind {
       typedef space_allocator<U> other;
@@ -176,7 +176,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   template<class T> 
   struct space_allocator {
     /// Type of objects the allocator creates. This is identical to \a T.
-    typedef T ValueType;
+    typedef T value_type;
     /// Type that can represent the size of the largest object.
     typedef size_t size_type;
     /// Type that can represent the difference between any two pointers.
@@ -318,7 +318,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   struct region_allocator<void> {
     typedef void* pointer;
     typedef const void* const_pointer;
-    typedef void ValueType;
+    typedef void value_type;
     /// Rebinding helper (returns the type of a similar allocator for type \a U)
     template<class U> struct rebind {
       typedef region_allocator<U> other;
@@ -336,7 +336,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   template<class T> 
   struct region_allocator {
     /// Type of objects the allocator creates. This is identical to \a T.
-    typedef T ValueType;
+    typedef T value_type;
     /// Type that can represent the size of the largest object.
     typedef size_t size_type;
     /// Type that can represent the difference between any two pointers.
