@@ -1512,16 +1512,16 @@ namespace Gecode {
    *
    * This class represents a slice of the matrix. It is used to get
    * context-dependent behaviour. The slice will be automatically
-   * converted to an args_type Args-array or to a Matrix<args_type>
+   * converted to an ArgsType Args-array or to a Matrix<ArgsType>
    * depending on the context where it is used.
    */
   template<class A>
   class Slice {
   public:
-    /// The type of the Args-array type for value_type values
-    typedef typename ArrayTraits<A>::args_type args_type;
+    /// The type of the Args-array type for ValueType values
+    typedef typename ArrayTraits<A>::ArgsType ArgsType;
   private:
-    args_type _r;     ///< The elements of the slice
+    ArgsType _r;     ///< The elements of the slice
     unsigned int _fc, ///< From column
       _tc,            ///< To column
       _fr,            ///< From row
@@ -1534,40 +1534,40 @@ namespace Gecode {
      */
     Slice& reverse(void);
     /// Cast to array type
-    operator args_type(void);
+    operator ArgsType(void);
     /// Cast to matrix type
-    operator Matrix<args_type>(void);
+    operator Matrix<ArgsType>(void);
 
     /// Cast to array type
-    operator const args_type(void) const;
+    operator const ArgsType(void) const;
     /// Cast to matrix type
-    operator const Matrix<args_type>(void) const;
+    operator const Matrix<ArgsType>(void) const;
   };
   
   /// Concatenate \a x and \a y
   template<class A>
-  typename Slice<A>::args_type
+  typename Slice<A>::ArgsType
   operator+(const Slice<A>& x, const Slice<A>& y);
 
   /// Concatenate \a x and \a y
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const Slice<A>& x, const typename ArrayTraits<A>::args_type& y);
+  typename Slice<A>::ArgsType
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::ArgsType& y);
 
   /// Concatenate \a x and \a y
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const typename ArrayTraits<A>::args_type& x, const Slice<A>& y);
+  typename Slice<A>::ArgsType
+  operator+(const typename ArrayTraits<A>::ArgsType& x, const Slice<A>& y);
 
   /// Concatenate \a x and \a y
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const Slice<A>& x, const typename ArrayTraits<A>::value_type& y);
+  typename Slice<A>::ArgsType
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::ValueType& y);
 
   /// Concatenate \a x and \a y
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const typename ArrayTraits<A>::value_type& x, const Slice<A>& y);
+  typename Slice<A>::ArgsType
+  operator+(const typename ArrayTraits<A>::ValueType& x, const Slice<A>& y);
 
   /** \brief Matrix-interface for arrays
    *
@@ -1583,14 +1583,14 @@ namespace Gecode {
   class Matrix {
   public:
     /// The type of elements of this array
-    typedef typename ArrayTraits<A>::value_type value_type;
-    /// The type of the Args-array type for value_type values
-    typedef typename ArrayTraits<A>::args_type args_type;
+    typedef typename ArrayTraits<A>::ValueType ValueType;
+    /// The type of the Args-array type for ValueType values
+    typedef typename ArrayTraits<A>::ArgsType ArgsType;
 
   private:
     /// The type of storage for this array
-    typedef typename ArrayTraits<A>::storage_type storage_type;
-    storage_type _a; ///< The array wrapped
+    typedef typename ArrayTraits<A>::StorageType StorageType;
+    StorageType _a; ///< The array wrapped
     int _w; ///< The width of the matrix
     int _h; ///< The height of the matrix
 
@@ -1628,28 +1628,28 @@ namespace Gecode {
     /// Return the height of the matrix
     int height(void) const;
     /// Return an Args-array of the contents of the matrix
-    args_type const get_array(void) const;
+    ArgsType const get_array(void) const;
 
     /** \brief Access element (\a c, \a r) of the matrix
      *
      * \exception MiniModel::ArgumentOutOfRange Raised if \a c or \a r
      *            are out of range.
      */
-    value_type& operator ()(int c, int r);
+    ValueType& operator ()(int c, int r);
 
     /** \brief Access element (\a c, \a r) of the matrix
      *
      * \exception MiniModel::ArgumentOutOfRange Raised if \a c or \a r
      *            are out of range.
      */
-    const value_type& operator ()(int c, int r) const;
+    const ValueType& operator ()(int c, int r) const;
 
     /** \brief Access slice of the matrix
      *
      * This function allows accessing a slice of the matrix, located at
      * columns \f$[fc,tc)\f$ and rows \f$[fr,tr)\f$. The result of this
      * function is an object that can be converted into either a
-     * Matrix<args_type> or into args_type.
+     * Matrix<ArgsType> or into ArgsType.
      *
      * For further information, see Slice.
      */

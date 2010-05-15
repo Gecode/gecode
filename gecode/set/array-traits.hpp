@@ -50,35 +50,35 @@ namespace Gecode {
   template<>
   class ArrayTraits<VarArgArray<SetVar> > {
   public:
-    typedef SetVarArgs storage_type;
-    typedef SetVar     value_type;
-    typedef SetVarArgs args_type;
+    typedef SetVarArgs StorageType;
+    typedef SetVar     ValueType;
+    typedef SetVarArgs ArgsType;
   };
 
   /// Traits of %VarArray<SetVar>
   template<>
   class ArrayTraits<VarArray<SetVar> > {
   public:
-    typedef SetVarArray  storage_type;
-    typedef SetVar       value_type;
-    typedef SetVarArgs   args_type;
+    typedef SetVarArray  StorageType;
+    typedef SetVar       ValueType;
+    typedef SetVarArgs   ArgsType;
   };
 
   /// Traits of %SetVarArray
   template<>
   class ArrayTraits<SetVarArray> {
   public:
-    typedef SetVarArray  storage_type;
-    typedef SetVar       value_type;
-    typedef SetVarArgs   args_type;
+    typedef SetVarArray  StorageType;
+    typedef SetVar       ValueType;
+    typedef SetVarArgs   ArgsType;
   };
   /// Traits of %SetVarArgs
   template<>
   class ArrayTraits<SetVarArgs> {
   public:
-    typedef SetVarArgs storage_type;
-    typedef SetVar     value_type;
-    typedef SetVarArgs args_type;
+    typedef SetVarArgs StorageType;
+    typedef SetVar     ValueType;
+    typedef SetVarArgs ArgsType;
   };
 
 }

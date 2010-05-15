@@ -898,7 +898,7 @@ static const char *const yytname[] =
   "model", "preddecl_items", "preddecl_items_head", "vardecl_items",
   "vardecl_items_head", "constraint_items", "constraint_items_head",
   "preddecl_item", "pred_arg_list", "pred_arg_list_head", "pred_arg",
-  "pred_arg_type", "pred_arg_simple_type", "pred_array_init",
+  "pred_ArgType", "pred_arg_simple_type", "pred_array_init",
   "pred_array_init_arg", "vardecl_item", "int_init", "int_init_list",
   "int_init_list_head", "list_tail", "int_var_array_literal", "float_init",
   "float_init_list", "float_init_list_head", "float_var_array_literal",

@@ -53,7 +53,7 @@ namespace Gecode {
       return;
     }
 
-    _r = args_type((tc-fc)*(tr-fr));
+    _r = ArgsType((tc-fc)*(tr-fr));
 
     int i = 0;
     for (int h = fr; h < tr; h++)
@@ -71,58 +71,58 @@ namespace Gecode {
 
   template<class A>
   forceinline
-  Slice<A>::operator args_type(void) {
+  Slice<A>::operator ArgsType(void) {
     return _r;
   }
   template<class A>
   forceinline
-  Slice<A>::operator Matrix<typename Slice<A>::args_type>(void) {
-    return Matrix<args_type>(_r, _tc-_fc, _tr-_fr);
+  Slice<A>::operator Matrix<typename Slice<A>::ArgsType>(void) {
+    return Matrix<ArgsType>(_r, _tc-_fc, _tr-_fr);
   }
   template<class A>
   forceinline
-  Slice<A>::operator const typename Slice<A>::args_type(void) const {
+  Slice<A>::operator const typename Slice<A>::ArgsType(void) const {
     return _r;
   }
   template<class A>
   forceinline
-  Slice<A>::operator const Matrix<typename Slice<A>::args_type>(void) const {
-    return Matrix<args_type>(_r, _tc-_fc, _tr-_fr);
+  Slice<A>::operator const Matrix<typename Slice<A>::ArgsType>(void) const {
+    return Matrix<ArgsType>(_r, _tc-_fc, _tr-_fr);
   }
 
   template<class A>
-  typename Slice<A>::args_type
+  typename Slice<A>::ArgsType
   operator+(const Slice<A>& x, const Slice<A>& y) {
-    typename Slice<A>::args_type xx = x;
-    typename Slice<A>::args_type yy = y;
+    typename Slice<A>::ArgsType xx = x;
+    typename Slice<A>::ArgsType yy = y;
     return xx+yy;
   }
 
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const Slice<A>& x, const typename ArrayTraits<A>::args_type& y) {
-    typename Slice<A>::args_type xx = x;
+  typename Slice<A>::ArgsType
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::ArgsType& y) {
+    typename Slice<A>::ArgsType xx = x;
     return xx+y;
   }
 
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const typename ArrayTraits<A>::args_type& x, const Slice<A>& y) {
-    typename Slice<A>::args_type yy = y;
+  typename Slice<A>::ArgsType
+  operator+(const typename ArrayTraits<A>::ArgsType& x, const Slice<A>& y) {
+    typename Slice<A>::ArgsType yy = y;
     return x+yy;
   }
 
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const Slice<A>& x, const typename ArrayTraits<A>::value_type& y) {
-    typename Slice<A>::args_type xx = x;
+  typename Slice<A>::ArgsType
+  operator+(const Slice<A>& x, const typename ArrayTraits<A>::ValueType& y) {
+    typename Slice<A>::ArgsType xx = x;
     return xx+y;
   }
 
   template<class A>
-  typename Slice<A>::args_type
-  operator+(const typename ArrayTraits<A>::value_type& x, const Slice<A>& y) {
-    typename Slice<A>::args_type yy = y;
+  typename Slice<A>::ArgsType
+  operator+(const typename ArrayTraits<A>::ValueType& x, const Slice<A>& y) {
+    typename Slice<A>::ArgsType yy = y;
     return x+yy;
   }
 
@@ -149,13 +149,13 @@ namespace Gecode {
   forceinline int
   Matrix<A>::height(void) const { return _h; }
   template<class A>
-  inline typename Matrix<A>::args_type const
+  inline typename Matrix<A>::ArgsType const
   Matrix<A>::get_array(void) const {
-    return args_type(_a);
+    return ArgsType(_a);
   }
 
   template<class A>
-  forceinline typename Matrix<A>::value_type&
+  forceinline typename Matrix<A>::ValueType&
   Matrix<A>::operator ()(int c, int r) {
     if ((c >= _w) || (r >= _h))
       throw MiniModel::ArgumentOutOfRange("Matrix::operator ()");
@@ -163,7 +163,7 @@ namespace Gecode {
   }
 
   template<class A>
-  forceinline const typename Matrix<A>::value_type&
+  forceinline const typename Matrix<A>::ValueType&
   Matrix<A>::operator ()(int c, int r) const {
     if ((c >= _w) || (r >= _h))
       throw MiniModel::ArgumentOutOfRange("Matrix::operator ()");
@@ -205,7 +205,7 @@ namespace Gecode {
   template<class Char, class Traits, class A>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const Slice<A>& s) {
-    return os << static_cast<typename Slice<A>::args_type>(s);
+    return os << static_cast<typename Slice<A>::ArgsType>(s);
   }
 
   forceinline void
