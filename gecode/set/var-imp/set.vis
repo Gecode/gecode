@@ -39,8 +39,10 @@
 
 [General]
 Name:		Set
-Ifdef:		GECODE_HAS_SET_VARS
 Namespace:	Gecode::Set
+Ifdef:		GECODE_HAS_SET_VARS
+Bits:		0
+Dispose:	false
 [ModEventHeader]
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
@@ -126,6 +128,8 @@ Combine:	VAL=VAL,CARD=CBB,LUB=CBB,GLB=CBB,BB=CBB,CLUB=CBB,CGLB=CBB,CBB=CBB
    * assuming a ME_SET_CBB modification event.
    *
    */
+[ModEventFooter]
+[PropCondHeader]
 [PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL

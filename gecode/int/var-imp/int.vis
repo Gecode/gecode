@@ -33,62 +33,12 @@
 #  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-##
-## General settings
-##
-## Defines the name (Name), the variable type identifier (uppercase Name),
-## and the namespace (Namespace) of the variable implementation to be
-## generated.
-##
-## Ifdef defines a macro that is define if the variable type
-## is enabled.
-##
-## Dispose defines whether this variable type provides a dispose
-## function that must be called for all variables in a space when the
-## space is destroyed. If it is omitted, false is assumed.
-##
-## Bits defines the number of bits that should be reserved for use by the
-## variable implementation. The number of bits reduces the number of
-## propagators that can subscribe to the variable implementation.
 [General]
 Name:		Int
-Ifdef:		GECODE_HAS_INT_VARS
 Namespace:	Gecode::Int
-##
-## Definition of modification events
-##
-##
-## ModEventHeader: give some text that precedes the definition
-## of the modification events.
-##
-## ModEventFooter: give some text that comes after the definition
-## of the modification events.
-##
-## ModEvent: defines a modification event
-## The definition must always contain a Name line, either in the form
-##	Name: <name>
-## or
-##	Name: <name> = <special>
-## where <special> must be one of
-##  - FAILED: this is the modification event used when an operation
-##    resulted in failure.
-##  - NONE: this is the modification event used when an operation
-##    does nothing.
-##  - ASSIGNED: when the operation assigned the variable.
-##  - SUBSCRIBE: when a propagator subscribes to a variable, the
-##    propagator will be processed with that event initially.
-##
-## Note that at least the special cases "FAILED", "NONE", and "ASSIGNED"
-## must be present. In case there are more events defined, then also
-## "SUBSCRIBE" must be present.
-##
-## Additionally, for all modfication events but the special cases
-## "FAILED" and "NONE" one needs to define the combination of
-## modification events by
-##	Combine: <me1>=<me2>, ... (repeated)
-## This means that the combination of the currently defined
-## modification event together with <me1> results in <me2>.
-##
+Ifdef:		GECODE_HAS_INT_VARS
+Bits:		0
+Dispose:	false
 [ModEventHeader]
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -125,36 +75,8 @@ Combine:	VAL=VAL, BND=BND, DOM=DOM
    * Note that this implies that the domain has not resulted in a value
    * and that also the minimum and maximum of the domain have not changed.
    */
-# [ModEventFooter]: Nothing
-##
-## Definition of propagation conditions
-##
-##
-## PropCondHeader: give some text that precedes the definition
-## of the propagation conditions. One can rely on the fact that
-## the definitions of the propgation conditions come immediately
-## after the definitions of the modification events.
-##
-## PropCondFooter: give some text that comes after the definition
-## of the propagation conditions.
-##
-## PropCond: defines a propagation condition
-## The definition must always contain a Name line, either in the form
-##	Name: <name>
-## or
-##	Name: <name> = <special>
-## where <special> must be
-##  - ASSIGNED: the condition corresponding to executing a
-##    propagator when a variable becomes assigned.
-##
-## Note that this special case must be present!
-##
-## Additionally, for all propagation conditions one must define
-## the modification events that trigger execution of a propagator
-## with the defined propagation condition. This is done by:
-##	ModEvents: <me>, ... (repeeated)
-##
-# [PropCondHeader]: Nothing
+[ModEventFooter]
+[PropCondHeader]
 [PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL
@@ -189,7 +111,4 @@ ModEvents:	VAL, BND, DOM
    */
 [PropCondFooter]
   //@}
-##
-## At the end of the file there must be an [End] section.
-##
 [End]

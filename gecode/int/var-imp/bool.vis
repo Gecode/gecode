@@ -35,9 +35,10 @@
 
 [General]
 Name:		Bool
-Ifdef:		GECODE_HAS_INT_VARS
 Namespace:	Gecode::Int
+Ifdef:		GECODE_HAS_INT_VARS
 Bits:		2
+Dispose:	false
 [ModEventHeader]
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -54,6 +55,8 @@ Name:		NONE=NONE
 Name:		VAL=ASSIGNED
 Combine:	VAL=VAL
   /// Domain operation has resulted in a value (assigned variable)
+[ModEventFooter]
+[PropCondHeader]
 [PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL
