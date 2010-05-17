@@ -35,8 +35,6 @@
 #
 #
 
-use File::Basename;
-
 while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   $i++;
   if ($arg eq "-header") {
@@ -46,27 +44,17 @@ while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
   }
 }
 
-$varfile = $ARGV[$i];
-
-my ($filename, $directory, $suffix) = fileparse($varfile);
-
-open VARFILE, $varfile;
-
 $n_files = 0;
-while ($l = <VARFILE>) {
-  if ($l =~ /^File:\s*([^ \t\r\n]+)/io) {
-    $files[$n_files] = $1;
-    $n_files++;
-  }
+while ($arg = $ARGV[$i]) {
+  $files[$n_files] = $arg;
+  $n_files++; $i++;
 }
-close VARFILE;
 
 print <<EOF
 /*
  *  CAUTION:
  *    This file has been automatically generated. Do not edit,
- *    edit the specification file "variable.vsl" and the following
- *    files instead:
+ *    edit the following files instead:
 EOF
 ;
 
@@ -114,7 +102,7 @@ EOF
 ;
 
 for ($f=0; $f<$n_files; $f++) {
-  open (FILE, $directory.$files[$f]) || die "Could not open ".$files[$f];
+  open (FILE, $files[$f]) || die "Could not open ".$files[$f];
 
   ## General values
   $name[$f]    = "";

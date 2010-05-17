@@ -968,20 +968,18 @@ compilesubdirs:
 # Generated variable implementations
 #
 
-ALLVIS0 = \
+VIS0 = \
 	gecode/int/var-imp/int \
 	gecode/int/var-imp/bool \
 	gecode/set/var-imp/set
-ALLVIS = \
-	$(ALLVIS0:%=$(top_srcdir)/%.vis) \
+VIS = $(VIS0:%=$(top_srcdir)/%.vis)
+ALLVIS = $(VIS) \
 	$(top_srcdir)/misc/genvariables.perl
 
-$(top_srcdir)/gecode/kernel/var-type.hpp: $(top_srcdir)/variables.vsl $(ALLVIS)
-	perl $(top_srcdir)/misc/genvariables.perl -typehpp $< > $@
-$(top_srcdir)/gecode/kernel/var-type.cpp: $(top_srcdir)/variables.vsl $(ALLVIS)
-	perl $(top_srcdir)/misc/genvariables.perl -typecpp $< > $@
-$(top_srcdir)/gecode/kernel/var-imp.hpp: $(top_srcdir)/variables.vsl $(ALLVIS)
-	perl $(top_srcdir)/misc/genvariables.perl -header $< > $@
+$(top_srcdir)/gecode/kernel/var-type.hpp: $(ALLVIS)
+	perl $(top_srcdir)/misc/genvariables.perl -typehpp $(VIS) > $@
+$(top_srcdir)/gecode/kernel/var-imp.hpp: $(ALLVIS)
+	perl $(top_srcdir)/misc/genvariables.perl -header $(VIS) > $@
 
 #
 # Generated branchers
