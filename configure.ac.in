@@ -210,9 +210,13 @@ dnl Definition of variable types
 dnl Include contributor's vtis
 dnl @VTIS@
 
+AC_GECODE_VIS
+
 AC_GECODE_VTI(float,
         [float variable library (requires boost interval library)],
-        no,[
+        no,
+				[\$(top_srcdir)/contribs/float/var-imp/float.vis]],
+				[
 	ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
    	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
 	AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
@@ -223,6 +227,7 @@ AC_GECODE_VTI(float,
 AC_GECODE_VTI(set,
 	[finite set library (implies --enable-int-vars)],
 	yes,
+	[\$(top_srcdir)/gecode/set/var-imp/set.vis],
 	[enable_int_vars="yes";
 	 AC_SUBST(LINKSET,[${LINKLIBDIR}${LINKPREFIX}${SET}${DLL_ARCH}${LINKSUFFIX}])
 	],
@@ -231,7 +236,9 @@ AC_GECODE_VTI(set,
 	]
 	)
 
-AC_GECODE_VTI(int, finite domain library, yes, [
+AC_GECODE_VTI(int, finite domain library, yes,
+	[\$(top_srcdir)/gecode/int/var-imp/int.vis \$(top_srcdir)/gecode/int/var-imp/bool.vis],
+	[
   	 AC_SUBST(LINKINT,[${LINKLIBDIR}${LINKPREFIX}${INT}${DLL_ARCH}${LINKSUFFIX}])
 	],
 	[
@@ -297,6 +304,7 @@ dnl @SUBDIRS@
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
+AC_SUBST(ALLVIS, ${ac_gecode_vis})
 
 VERSION_DASHES=`echo $PACKAGE_VERSION | sed -e s/\\\\./-/g`
 AC_DEFINE_UNQUOTED(GECODE_VERSION,

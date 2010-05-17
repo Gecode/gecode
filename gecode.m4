@@ -320,7 +320,7 @@ AC_DEFUN([AC_CHECK_GCC_VERSION],
     ])
 
 dnl Macro:
-dnl   AC_GECODE_VTI (vartype, help-string, default,
+dnl   AC_GECODE_VTI (vartype, help-string, default, vtidef,
 dnl             [ACTION-IF-ENABLED], [ACTION-IF-DISABLED])
 dnl
 dnl Description:
@@ -334,6 +334,14 @@ dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_ADD_VTI],
    [AC_DEFINE(GECODE_HAS_$1_VARS, [], [Whether to build $1 variables])])
+AC_DEFUN([AC_GECODE_VIS],[
+  AC_ARG_WITH([vis],
+    AC_HELP_STRING([--with-vis],
+    [additional variable implementation specifications]))
+    if test "${with_vis:-no}" != "no"; then
+      with_vis=${with_vis//,/ }
+      ac_gecode_vis="${with_vis}${ac_gecode_vis:+ }${ac_gecode_vis}"
+    fi])
 AC_DEFUN([AC_GECODE_VTI],
    [
    AC_ARG_ENABLE([$1-vars],
@@ -342,11 +350,12 @@ AC_DEFUN([AC_GECODE_VTI],
    if test "${enable_$1_vars:-$3}" = "yes"; then
      AC_MSG_RESULT(yes)
      enable_$1_vars="yes";
-     $4
+     ac_gecode_vis="$4${ac_gecode_vis:+ }${ac_gecode_vis}"
+     $5
      AC_GECODE_ADD_VTI(translit($1,`a-z', `A-Z'))
    else
      enable_$1_vars="no";
-     $5
+     $6
      AC_MSG_RESULT(no)
    fi
    AC_SUBST(enable_$1_vars, ${enable_$1_vars})

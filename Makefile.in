@@ -905,7 +905,7 @@ all: compilelib
 	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs
-	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
+	@$(MAKE) $(VARIMP) $(LIBTARGETS)
 	@$(MAKE) compilesubdirs
 	@$(MAKE) framework
 	@$(MAKE) flatzinc
@@ -913,7 +913,7 @@ compilelib: mkcompiledirs
 compileexamples: $(EXAMPLEEXE)
 
 test: mkcompiledirs
-	@$(MAKE) $(VARIMP:%=$(top_srcdir)/%) $(TESTEXE)
+	@$(MAKE) $(VARIMP) $(TESTEXE)
 
 # A basic integrity test
 check: test
@@ -968,17 +968,13 @@ compilesubdirs:
 # Generated variable implementations
 #
 
-VIS0 = \
-	gecode/int/var-imp/int \
-	gecode/int/var-imp/bool \
-	gecode/set/var-imp/set
-VIS = $(VIS0:%=$(top_srcdir)/%.vis)
-ALLVIS = $(VIS) \
-	$(top_srcdir)/misc/genvariables.perl
+VIS = @ALLVIS@
+VISDEP = $(VIS) \
+	$(top_srcdir)/misc/genvariables.perl Makefile
 
-$(top_srcdir)/gecode/kernel/var-type.hpp: $(ALLVIS)
+gecode/kernel/var-type.hpp: $(VISDEP)
 	perl $(top_srcdir)/misc/genvariables.perl -typehpp $(VIS) > $@
-$(top_srcdir)/gecode/kernel/var-imp.hpp: $(ALLVIS)
+gecode/kernel/var-imp.hpp: $(VISDEP)
 	perl $(top_srcdir)/misc/genvariables.perl -header $(VIS) > $@
 
 #
@@ -1705,13 +1701,14 @@ veryclean: clean
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
 
 distclean: veryclean
-	$(RMF) $(VARIMP:%=$(top_srcdir)/%)
+	$(RMF) $(VARIMP)
 	$(RMF) $(GENBRANCHSRC)
 	$(RMF) Makefile doxygen.conf
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 
-depend: $(VARIMP:%=$(top_srcdir)/%) $(GENBRANCHSRC)
+depend: mkcompiledirs
+	@$(MAKE) $(VARIMP) $(GENBRANCHSRC)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
