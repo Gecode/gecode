@@ -232,7 +232,7 @@ namespace Gecode {
      */
     forceinline void
     ConstIntView::schedule(Space& home, Propagator& p, ModEvent me) {
-      return IntView::schedule(home,p,me);
+      IntView::schedule(home,p,me);
     }
     forceinline ModEvent
     ConstIntView::me(const ModEventDelta&) {
