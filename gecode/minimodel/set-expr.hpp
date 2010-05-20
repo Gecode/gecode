@@ -4,7 +4,7 @@
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2004
+ *     Guido Tack, 2010
  *
  *  Last modified:
  *     $Date$ by $Author$

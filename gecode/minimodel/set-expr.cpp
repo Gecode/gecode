@@ -5,7 +5,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2004
+ *     Guido Tack, 2010
  *     Christian Schulte, 2004
  *
  *  Last modified:
