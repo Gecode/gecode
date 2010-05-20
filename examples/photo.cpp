@@ -72,19 +72,19 @@ const PhotoSpec p_large(9,17, l_prefs);
  * A group of people wants to take a group photo. Each person can give
  * preferences next to whom he or she wants to be placed on the
  * photo. The problem to be solved is to find a placement that
- * satisfies as many preferences as possible.
+ * violates as few preferences as possible.
  *
  * \ingroup ExProblem
  *
  */
-class Photo : public MaximizeScript {
+class Photo : public MinimizeScript {
 protected:
   /// Photo specification
   const PhotoSpec& spec;
   /// Person's position on photo
   IntVarArray      pos;
-  /// Number of satisfied preferences
-  IntVar           sat;
+  /// Number of violated preferences
+  IntVar           violations;
 
 public:
   /// Branching to use for model
@@ -96,24 +96,21 @@ public:
   Photo(const SizeOptions& opt) :
     spec(opt.size() == 0 ? p_small : p_large),
     pos(*this,spec.n_names, 0, spec.n_names-1),
-    sat(*this,0,spec.n_prefs)
+    violations(*this,0,spec.n_prefs)
   {
-    BoolVarArgs ful(spec.n_prefs);
-    // Map preferences to fulfilment
-    for (int i = spec.n_prefs; i--; ) {
+    // Map preferences to violation
+    BoolVarArgs viol(spec.n_prefs);
+    for (int i=0; i<spec.n_prefs; i++) {
       int pa = spec.prefs[2*i+0];
       int pb = spec.prefs[2*i+1];
-      ful[i] = expr(*this,
-                    (pos[pb]-pos[pa] == 1) ^
-                    (pos[pa]-pos[pb] == 1));
+      viol[i] = expr(*this, abs(pos[pa]-pos[pb]) > 1);
     }
-    // Sum of fulfilment
-    linear(*this, ful, IRT_EQ, sat);
+    rel(*this, violations == sum(viol));
 
     distinct(*this, pos, opt.icl());
 
     // Break some symmetries
-    rel(*this, pos[0], IRT_LE, pos[1]);
+    rel(*this, pos[0] < pos[1]);
 
     if (opt.branching() == BRANCH_NONE) {
       branch(*this, pos, INT_VAR_NONE, INT_VAL_MIN);
@@ -125,9 +122,9 @@ public:
 
   /// Constructor for cloning \a s
   Photo(bool share, Photo& s) :
-    MaximizeScript(share,s), spec(s.spec) {
+    MinimizeScript(share,s), spec(s.spec) {
     pos.update(*this, share, s.pos);
-    sat.update(*this, share, s.sat);
+    violations.update(*this, share, s.violations);
   }
   /// Copy during cloning
   virtual Space*
@@ -138,11 +135,11 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << "\tpos[] = " << pos << std::endl
-       << "\tsat: " << sat << std::endl;
+       << "\tviolations: " << violations << std::endl;
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
-    return sat;
+    return violations;
   }
 };
 
