@@ -129,54 +129,7 @@ namespace Gecode {
   class SetVar : public VarBase<Set::SetVarImp> {
     friend class SetVarArray;
     friend class SetVarArgs;
-  private:
     using VarBase<Set::SetVarImp>::varimp;
-    /// Initialize variable with empty greatest lower and full least upper bound
-    void init(Space& home);
-    /**
-     * \brief Initialize variable with given bounds and cardinality
-     *
-     * The variable is created with
-     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
-     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
-     * cardinality minimum \a cardMin and maximum \a cardMax.
-     */
-    void init(Space& home,int glbMin,int glbMax,int lubMin,int lubMax,
-              unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card);
-    /**
-     * \brief Initialize variable with given bounds and cardinality
-     *
-     * The variable is created with
-     * greatest lower bound \a glbD,
-     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
-     * cardinality minimum \a cardMin and maximum \a cardMax.
-     */
-    void init(Space& home,const IntSet& glbD,int lubMin,int lubMax,
-              unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card);
-    /**
-     * \brief Initialize variable with given bounds and cardinality
-     *
-     * The variable is created with
-     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
-     * least upper bound \a lubD, and
-     * cardinality minimum \a cardMin and maximum \a cardMax.
-     */
-    void init(Space& home,int glbMin,int glbMax,const IntSet& lubD,
-              unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card);
-    /**
-     * \brief Initialize variable with given bounds and cardinality
-     *
-     * The variable is created with
-     * greatest lower bound \a glbD,
-     * least upper bound \a lubD, and
-     * cardinality minimum \a cardMin and maximum \a cardMax.
-     */
-    void init(Space& home,const IntSet& glbD,const IntSet& lubD,
-              unsigned int cardMin = 0,
-              unsigned int cardMax = Set::Limits::card);
   public:
     /// \name Constructors and initialization
     //@{
@@ -204,7 +157,7 @@ namespace Gecode {
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::OutOfLimits is
      *    thrown.
-     *  - If \a minCard > \a maxCard, an exception of type
+     *  - If \a cardMin > \a cardMax, an exception of type
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
     GECODE_SET_EXPORT
@@ -215,8 +168,7 @@ namespace Gecode {
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
-     * The variable is created with
-     * greatest lower bound \a glbD,
+     * The variable is created with greatest lower bound \a glbD,
      * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
      * cardinality minimum \a cardMin and maximum \a cardMax.
      * The following exceptions might be thrown:
@@ -226,7 +178,7 @@ namespace Gecode {
      *  - If the cardinality is greater than Set::Limits::max_set_size, an
      *    exception of type Gecode::Set::OutOfLimits is
      *    thrown.
-     *  - If \a minCard > \a maxCard, an exception of type
+     *  - If \a cardMin > \a cardMax, an exception of type
      *    Gecode::Set::VariableEmptyDomain is thrown.
      */
     GECODE_SET_EXPORT
@@ -277,6 +229,93 @@ namespace Gecode {
     SetVar(Space& home,const IntSet& glbD,const IntSet& lubD,
            unsigned int cardMin = 0,
            unsigned int cardMax = Set::Limits::card);
+    /// Initialize variable with empty greatest lower and full least upper bound
+    GECODE_SET_EXPORT
+    void init(Space& home);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
+     *    Gecode::Set::OutOfLimits is thrown.
+     *  - If the cardinality is greater than Set::Limits::max_set_size, an
+     *    exception of type Gecode::Set::OutOfLimits is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableEmptyDomain is thrown.
+     */
+    GECODE_SET_EXPORT
+    void init(Space& home,int glbMin,int glbMax,int lubMin,int lubMax,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Set::Limits::card);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
+     *    Gecode::Set::OutOfLimits is thrown.
+     *  - If the cardinality is greater than Set::Limits::max_set_size, an
+     *    exception of type Gecode::Set::OutOfLimits is
+     *    thrown.
+     *  - If \a cardMin > \a cardMax, an exception of type
+     *    Gecode::Set::VariableEmptyDomain is thrown.
+     */
+    GECODE_SET_EXPORT
+    void init(Space& home,const IntSet& glbD,int lubMin,int lubMax,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Set::Limits::card);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
+     *    Gecode::Set::OutOfLimits is thrown.
+     *  - If the cardinality is greater than Set::Limits::max_set_size, an
+     *    exception of type Gecode::Set::OutOfLimits is
+     *    thrown.
+     *  - If \a cardMin > \a cardMax, an exception of type
+     *    Gecode::Set::VariableEmptyDomain is thrown.
+     */
+    GECODE_SET_EXPORT
+    void init(Space& home,int glbMin,int glbMax,const IntSet& lubD,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Set::Limits::card);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Set::Limits::min
+     *    and Set::Limits::max), an exception of type
+     *    Gecode::Set::OutOfLimits is thrown.
+     *  - If the cardinality is greater than Set::Limits::max_set_size, an
+     *    exception of type Gecode::Set::OutOfLimits is
+     *    thrown.
+     *  - If \a cardMin > \a cardMax, an exception of type
+     *    Gecode::Set::VariableEmptyDomain is thrown.
+     */
+    GECODE_SET_EXPORT
+    void init(Space& home,const IntSet& glbD,const IntSet& lubD,
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Set::Limits::card);
     //@}
 
     /// \name Value access

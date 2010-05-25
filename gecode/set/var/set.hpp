@@ -62,34 +62,6 @@ namespace Gecode {
     varimp = new (home) Set::SetVarImp(home);
   }
 
-  forceinline void
-  SetVar::init(Space& home,int lbMin,int lbMax,int ubMin,int ubMax,
-               unsigned int cardMin, unsigned int cardMax) {
-    varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, ubMin, ubMax,
-                                       cardMin, cardMax);
-  }
-
-  forceinline void
-  SetVar::init(Space& home, const IntSet& glb,int ubMin,int ubMax,
-               unsigned int cardMin, unsigned int cardMax) {
-    varimp = new (home) Set::SetVarImp(home, glb, ubMin, ubMax,
-                                       cardMin, cardMax);
-  }
-
-  forceinline void
-  SetVar::init(Space& home, int lbMin,int lbMax,const IntSet& lub,
-               unsigned int cardMin, unsigned int cardMax) {
-    varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, lub,
-                                       cardMin, cardMax);
-  }
-
-  forceinline void
-  SetVar::init(Space& home, const IntSet& glb, const IntSet& lub,
-               unsigned int cardMin, unsigned int cardMax) {
-    varimp = new (home) Set::SetVarImp(home, glb, lub, cardMin, cardMax);
-  }
-
-
 
   /*
    * Variable information

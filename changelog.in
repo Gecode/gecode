@@ -73,6 +73,13 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: set
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The set variables now have public init methods.
+
+[ENTRY]
 Module: driver
 What:   change
 Rank:   minor
