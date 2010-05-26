@@ -43,6 +43,9 @@ namespace Gecode {
    */
 
   forceinline
+  IntArgs::IntArgs(void) : PrimArgArray<int>(0) {}
+
+  forceinline
   IntArgs::IntArgs(int n) : PrimArgArray<int>(n) {}
   
   forceinline

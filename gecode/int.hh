@@ -670,14 +670,8 @@ namespace Gecode {
     static IntArgs create(int n, int start, int inc=1);
     //@}    
   };
-  /** \brief Passing integer variables
-   *
-   * We could have used a simple typedef instead, but doxygen cannot
-   * resolve some overloading then, leading to unusable documentation for
-   * important parts of the library. As long as there is no fix for this,
-   * we will keep this workaround.
-   *
-   */
+
+  /// \brief Passing integer variables
   class IntVarArgs : public VarArgArray<IntVar> {
   public:
     /// \name Constructors and initialization
