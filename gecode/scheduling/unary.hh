@@ -310,7 +310,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Earliest completion times for subtree
     int lect;
     /// Node which is responsible for lect
-    int res;
+    int resEct;
+    /// Node which is responsible for lp
+    int resLp;
     /// Initialize node from left child \a l and right child \a r
     void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
     /// Update node from left child \a l and right child \a r

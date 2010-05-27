@@ -107,22 +107,28 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline void
   OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
     OmegaNode::init(l,r);
-    lp = p; lect = ect; res = undef;
+    lp = p; lect = ect; resEct = undef; resLp = undef;
   }
 
   forceinline void
   OmegaLambdaNode::update(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
     OmegaNode::update(l,r);
-    lp = std::max(l.lp + r.p, l.p + r.lp);
+    if (l.lp + r.p > l.p + r.lp) {
+      resLp = l.resLp;
+      lp = l.lp + r.p;
+    } else {
+      resLp = r.resLp;
+      lp = l.p + r.lp;      
+    }
     if ((r.lect >= plus(l.ect,r.lp)) && (r.lect >= plus(l.lect,r.p))) {
-      lect = r.lect; res = r.res;
+      lect = r.lect; resEct = r.resEct;
     } else if (plus(l.ect,r.lp) >= plus(l.lect,r.p)) {
       assert(plus(l.ect,r.lp) > r.lect);
-      lect = plus(l.ect,r.lp); res = r.res;
+      lect = plus(l.ect,r.lp); resEct = r.resLp;
     } else {
       assert((plus(l.lect,r.p) > r.lect) && 
              (plus(l.lect,r.p) > plus(l.ect,r.lp)));
-      lect = plus(l.lect,r.p); res = l.res;
+      lect = plus(l.lect,r.p); resEct = l.resEct;
     }
   }
 
@@ -137,14 +143,16 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       for (int i=tasks.size(); i--; ) {
         leaf(i).p = leaf(i).lp = tasks[i].p();
         leaf(i).ect = leaf(i).lect = tasks[i].ect();
-        leaf(i).res = OmegaLambdaNode::undef;
+        leaf(i).resEct = OmegaLambdaNode::undef;
+        leaf(i).resLp = OmegaLambdaNode::undef;
       }
     } else {
       // Enter no tasks into tree (omega = empty, lambda = empty)
       for (int i=tasks.size(); i--; ) {
         leaf(i).p = leaf(i).lp = 0;
         leaf(i).ect = leaf(i).lect = -Int::Limits::infinity;
-        leaf(i).res = OmegaLambdaNode::undef;
+        leaf(i).resEct = OmegaLambdaNode::undef;
+        leaf(i).resLp = OmegaLambdaNode::undef;
       }
      }
     init();
@@ -157,7 +165,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     assert(leaf(i).ect > -Int::Limits::infinity);
     leaf(i).p = 0;
     leaf(i).ect = -Int::Limits::infinity;
-    leaf(i).res = i;
+    leaf(i).resEct = i;
+    leaf(i).resLp = i;
     update(i);
   }
 
@@ -174,7 +183,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OmegaLambdaTree<TaskView>::linsert(int i) {
     leaf(i).lp = tasks[i].p(); 
     leaf(i).lect = tasks[i].ect();
-    leaf(i).res = i;
+    leaf(i).resEct = i;
+    leaf(i).resLp = i;
     update(i);
   }
 
@@ -183,20 +193,21 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OmegaLambdaTree<TaskView>::lremove(int i) {
     leaf(i).lp = 0; 
     leaf(i).lect = -Int::Limits::infinity;
-    leaf(i).res = OmegaLambdaNode::undef;
+    leaf(i).resEct = OmegaLambdaNode::undef;
+    leaf(i).resLp = OmegaLambdaNode::undef;
     update(i);
   }
 
   template<class TaskView>
   forceinline bool
   OmegaLambdaTree<TaskView>::lempty(void) const {
-    return root().res < 0;
+    return root().resEct < 0;
   }
   
   template<class TaskView>
   forceinline int 
   OmegaLambdaTree<TaskView>::responsible(void) const {
-    return root().res;
+    return root().resEct;
   }
   
   template<class TaskView>
