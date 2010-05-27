@@ -88,30 +88,37 @@ namespace Gecode { namespace Scheduling {
   forceinline bool
   StoEst<TaskView,inc>::operator ()
     (const TaskView& t1, const TaskView& t2) const {
-    return inc ? (t1.est() < t2.est()) : (t2.est() < t1.est());
+    return inc ?
+      (t1.est() < t2.est() || (t1.est()==t2.est() && t1.lct() < t2.lct()))
+    : (t2.est() < t1.est() || (t2.est()==t1.est() && t2.lct() < t1.lct()));
   }
-
+  
   template<class TaskView, bool inc>
   forceinline bool
   StoEct<TaskView,inc>::operator ()
     (const TaskView& t1, const TaskView& t2) const {
-    return inc ? (t1.ect() < t2.ect()) : (t2.ect() < t1.ect());
+    return inc ?
+      (t1.ect() < t2.ect() || (t1.ect()==t2.ect() && t1.lst() < t2.lst()))
+    : (t2.ect() < t1.ect() || (t2.ect()==t1.ect() && t2.lst() < t1.lst()));
   }
-
+  
   template<class TaskView, bool inc>
   forceinline bool
   StoLst<TaskView,inc>::operator ()
     (const TaskView& t1, const TaskView& t2) const {
-    return inc ? (t1.lst() < t2.lst()) : (t2.lst() < t1.lst());
+    return inc ?
+      (t1.lst() < t2.lst() || (t1.lst()==t2.lst() && t1.ect() < t2.ect()))
+    : (t2.lst() < t1.lst() || (t2.lst()==t1.lst() && t2.ect() < t1.ect()));
   }
-
+  
   template<class TaskView, bool inc>
   forceinline bool
   StoLct<TaskView,inc>::operator ()
     (const TaskView& t1, const TaskView& t2) const {
-    return inc ? (t1.lct() < t2.lct()) : (t2.lct() < t1.lct());
+    return inc ?
+      (t1.lct() < t2.lct() || (t1.lct()==t2.lct() && t1.est() < t2.est()))
+    : (t2.lct() < t1.lct() || (t2.lct()==t1.lct() && t2.est() < t1.est()));
   }
-
 
   template<class TaskView, template<class,bool> class STO, bool inc>
   forceinline

@@ -60,6 +60,16 @@ namespace Gecode { namespace Scheduling {
   FwdToBwd<TaskView>::lct(void) const {
     return -TaskView::est();
   }
+  template<class TaskView>
+  forceinline int
+  FwdToBwd<TaskView>::pmin(void) const {
+    return TaskView::pmin();
+  }
+  template<class TaskView>
+  forceinline int
+  FwdToBwd<TaskView>::pmax(void) const {
+    return TaskView::pmax();
+  }
 
   template<class TaskView>
   forceinline ModEvent 

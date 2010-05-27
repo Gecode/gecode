@@ -66,7 +66,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
-    leaf(i).p = tasks[i].p(); leaf(i).ect = tasks[i].ect();
+    leaf(i).p = tasks[i].pmin();
+    leaf(i).ect = tasks[i].est()+tasks[i].pmin();
     update(i);
   }
 
@@ -141,8 +142,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     if (inc) {
       // Enter all tasks into tree (omega = all tasks, lambda = empty)
       for (int i=tasks.size(); i--; ) {
-        leaf(i).p = leaf(i).lp = tasks[i].p();
-        leaf(i).ect = leaf(i).lect = tasks[i].ect();
+        leaf(i).p = leaf(i).lp = tasks[i].pmin();
+        leaf(i).ect = leaf(i).lect = tasks[i].est()+tasks[i].pmin();
         leaf(i).resEct = OmegaLambdaNode::undef;
         leaf(i).resLp = OmegaLambdaNode::undef;
       }
@@ -173,16 +174,16 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::oinsert(int i) {
-    leaf(i).p = tasks[i].p(); 
-    leaf(i).ect = tasks[i].ect();
+    leaf(i).p = tasks[i].pmin(); 
+    leaf(i).ect = tasks[i].est()+tasks[i].pmin();
     update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::linsert(int i) {
-    leaf(i).lp = tasks[i].p(); 
-    leaf(i).lect = tasks[i].ect();
+    leaf(i).lp = tasks[i].pmin(); 
+    leaf(i).lect = tasks[i].est()+tasks[i].pmin();
     leaf(i).resEct = i;
     leaf(i).resLp = i;
     update(i);

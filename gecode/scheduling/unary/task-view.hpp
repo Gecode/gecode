@@ -55,6 +55,27 @@ namespace Gecode { namespace Scheduling { namespace Unary {
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTaskBwd& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.lst() << ':' << t.pmin() << ':'
+      << t.pmax() << ':' << t.ect() << ':' << t.lct();
+    return os << s.str();
+  }
+    
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTaskBwd& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.lst() << ':' << t.pmin() << ':'
+      << t.pmax() << ':' << t.ect() << ':' << t.lct() << ':'
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
+    return os << s.str();
+  }
     
 }}}
 

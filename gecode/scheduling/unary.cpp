@@ -82,6 +82,45 @@ namespace Gecode {
     GECODE_ES_FAIL(OptProp<OptFixTask>::post(home,t));
   }
 
+  void
+  unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
+        const IntVarArgs& e) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Unary;
+    if (s.same(home,p+e))
+      throw Int::ArgumentSame("Scheduling::unary");
+    if ((s.size() != p.size()) || (s.size() != e.size()))
+      throw Int::ArgumentSizeMismatch("Scheduling::unary");
+    if (home.failed()) return;
+    for (int i=p.size(); i--; ) {
+      rel(home, p[i], IRT_GQ, 0);
+    }
+    TaskArray<ManFlexTask> t(home,s.size());
+    for (int i=s.size(); i--; )
+      t[i].init(s[i],p[i],e[i]);
+    GECODE_ES_FAIL(ManProp<ManFlexTask>::post(home,t));
+  }
+
+  void
+  unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
+        const IntVarArgs& e, const BoolVarArgs& m) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Unary;
+    if (s.same(home,p+e))
+      throw Int::ArgumentSame("Scheduling::unary");
+    if ((s.size() != p.size()) || (s.size() != m.size()) ||
+        (s.size() != e.size()))
+      throw Int::ArgumentSizeMismatch("Scheduling::unary");
+    if (home.failed()) return;
+    for (int i=p.size(); i--; ) {
+      rel(home, p[i], IRT_GQ, 0);
+    }
+    TaskArray<OptFlexTask> t(home,s.size());
+    for (int i=s.size(); i--; )
+      t[i].init(s[i],p[i],e[i],m[i]);
+    GECODE_ES_FAIL(OptProp<OptFlexTask>::post(home,t));
+  }
+
 }
 
 // STATISTICS: scheduling-post

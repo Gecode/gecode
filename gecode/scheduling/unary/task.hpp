@@ -49,6 +49,10 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ManFixTask::init(IntVar s, int p) {
     _s=s; _p=p;
   }
+  forceinline void
+  ManFixTask::init(const OptFixTask& t) {
+    _s=t._s; _p=t._p;
+  }
 
   forceinline int 
   ManFixTask::est(void) const {
@@ -65,6 +69,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline int
   ManFixTask::lct(void) const {
     return _s.max()+_p;
+  }
+  forceinline int
+  ManFixTask::pmin(void) const {
+    return _p;
+  }
+  forceinline int
+  ManFixTask::pmax(void) const {
+    return _p;
   }
   forceinline IntVar
   ManFixTask::st(void) const {
@@ -149,6 +161,143 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     return os << s.str();
   }
     
+  /*
+   * Mandatory flexible task
+   */
+
+  forceinline
+  ManFlexTask::ManFlexTask(void) {}
+  forceinline
+  ManFlexTask::ManFlexTask(IntVar s, IntVar p, IntVar e)
+    : _s(s), _p(p), _e(e) {}
+  forceinline void
+  ManFlexTask::init(IntVar s, IntVar p, IntVar e) {
+    _s=s; _p=p; _e=e;
+  }
+  forceinline void
+  ManFlexTask::init(const OptFlexTask& t) {
+    _s=t._s; _p=t._p; _e=t._e;
+  }
+
+  forceinline int 
+  ManFlexTask::est(void) const {
+    return _s.min();
+  }
+  forceinline int
+  ManFlexTask::ect(void) const {
+    return _e.min();
+  }
+  forceinline int
+  ManFlexTask::lst(void) const {
+    return _s.max();
+  }
+  forceinline int
+  ManFlexTask::lct(void) const {
+    return _e.max();
+  }
+  forceinline int
+  ManFlexTask::pmin(void) const {
+    return _p.min();
+  }
+  forceinline int
+  ManFlexTask::pmax(void) const {
+    return _p.max();
+  }
+  forceinline IntVar
+  ManFlexTask::st(void) const {
+    return _s;
+  }
+  forceinline IntVar
+  ManFlexTask::p(void) const {
+    return _p;
+  }
+  forceinline IntVar
+  ManFlexTask::e(void) const {
+    return _e;
+  }
+
+  forceinline bool
+  ManFlexTask::mandatory(void) const {
+    return true;
+  }
+  forceinline bool
+  ManFlexTask::excluded(void) const {
+    return false;
+  }
+  forceinline bool
+  ManFlexTask::optional(void) const {
+    return false;
+  }
+
+  forceinline bool
+  ManFlexTask::assigned(void) const {
+    return _s.assigned() && _p.assigned();
+  }
+
+  forceinline ModEvent 
+  ManFlexTask::est(Space& home, int n) {
+    return _s.gq(home,n);
+  }
+  forceinline ModEvent
+  ManFlexTask::ect(Space& home, int n) {
+    return _e.gq(home,n);
+  }
+  forceinline ModEvent
+  ManFlexTask::lst(Space& home, int n) {
+    return _s.lq(home,n);
+  }
+  forceinline ModEvent
+  ManFlexTask::lct(Space& home, int n) {
+    return _e.lq(home,n);
+  }
+  forceinline ModEvent
+  ManFlexTask::norun(Space& home, int e, int l) {
+    assert(e <= l);
+    Iter::Ranges::Singleton sr(e-_p.min()+1,l);
+    GECODE_ME_CHECK(_s.minus_r(home,sr,false));
+    Iter::Ranges::Singleton er(e+1,_p.min()+l);
+    return _e.minus_r(home,er,false);
+  }
+
+
+  forceinline ModEvent
+  ManFlexTask::mandatory(Space&) {
+    return Int::ME_INT_NONE;
+  }
+  forceinline ModEvent
+  ManFlexTask::excluded(Space&) {
+    return Int::ME_INT_FAILED;
+  }
+
+  forceinline void
+  ManFlexTask::update(Space& home, bool share, ManFlexTask& t) {
+    _s.update(home,share,t._s);
+    _p.update(home,share,t._p);
+    _e.update(home,share,t._e);
+  }
+
+  forceinline void
+  ManFlexTask::subscribe(Space& home, Propagator& p, PropCond pc) {
+    _s.subscribe(home, p, pc);
+    _p.subscribe(home, p, pc);
+    _e.subscribe(home, p, pc);
+  }
+  forceinline void
+  ManFlexTask::cancel(Space& home, Propagator& p, PropCond pc) {
+    _s.cancel(home, p, pc);
+    _p.cancel(home, p, pc);
+    _e.cancel(home, p, pc);
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.lst() << ':' << t.pmin() << ':'
+      << t.pmax() << ':' << t.ect() << ':' << t.lct();
+    return os << s.str();
+  }
 
   /*
    * Optional fixed task
@@ -171,6 +320,32 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.p() << ':' << t.lct() << ':'
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
+    return os << s.str();
+  }
+
+  /*
+   * Optional flexible task
+   */
+
+  forceinline
+  OptFlexTask::OptFlexTask(void) {}
+  forceinline
+  OptFlexTask::OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m) {
+    ManFlexTask::init(s,p,e); _m=m;
+  }
+  forceinline void
+  OptFlexTask::init(IntVar s, IntVar p, IntVar e, BoolVar m) {
+    ManFlexTask::init(s,p,e); _m=m;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.lst() << ':' << t.pmin() << ':'
+      << t.pmax() << ':' << t.ect() << ':' << t.lct() << ':'
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }

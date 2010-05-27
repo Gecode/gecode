@@ -215,7 +215,7 @@ namespace Gecode {
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
    *    the same unassigned variable multiply.
    *  - Throws an exception of type Int::OutOfLimits, if \a p contains
-   *    an integer that is not strictly positive or that could generate
+   *    an integer that is negative or that could generate
    *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
@@ -238,12 +238,64 @@ namespace Gecode {
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
    *    the same unassigned variable multiply.
    *  - Throws an exception of type Int::OutOfLimits, if \a p contains
-   *    an integer that is not strictly positive or that could generate
+   *    an integer that is negative or that could generate
    *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntArgs& p, 
         const BoolVarArgs& m);
+
+  /** \brief Post propagators for scheduling tasks on unary resources
+   *
+   * Schedule tasks with start times \a s, processing times \a p, and
+   * end times \a e
+   * on a unary resource. The propagator uses the algorithms from:
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Charles University, Prague, Czech Republic, 2007.
+   * 
+   * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
+   * has to be posted in addition to ensure consistency of the task bounds.
+   *
+   * The propagator performs overload checking, detectable precendence
+   * propagation, not-first-not-last propagation, and edge finding.
+   *
+   * The processing times are constrained to be non-negative.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *    and \a p are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s and/or
+   *    \a p contains the same unassigned variable multiply.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
+        const IntVarArgs& e);
+
+  /** \brief Post propagators for scheduling optional tasks on unary resources
+   *
+   * Schedule optional tasks with start times \a s, processing times \a p,
+   * end times \a e,
+   * and whether a task is mandatory \a m (a task is mandatory if the
+   * Boolean variable is 1) on a unary resource. The propagator uses the 
+   * algorithms from:
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Charles University, Prague, Czech Republic, 2007.
+   * 
+   * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
+   * has to be posted in addition to ensure consistency of the task bounds.
+   *
+   * The processing times are constrained to be non-negative.
+   *
+   * The propagator performs overload checking, detectable precendence
+   * propagation, not-first-not-last propagation, and edge finding.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   *    \a p, or \a m are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s and/or
+   *    \a p contains the same unassigned variable multiply.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
+        const IntVarArgs& e, const BoolVarArgs& m);
   //@}
 
 }

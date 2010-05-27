@@ -113,6 +113,10 @@ namespace Gecode { namespace Scheduling {
     int lst(void) const;
     /// Return latest completion time
     int lct(void) const;
+    /// Return minimum processing time
+    int pmin(void) const;
+    /// Return maximum processing time
+    int pmax(void) const;
     //@}
 
     /// \name Value update

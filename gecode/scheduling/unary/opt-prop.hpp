@@ -62,7 +62,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
-        mt[i].init(t[i].st(),t[i].p());
+        mt[i].init(t[i]);
       return ManProp<typename TaskTraits<OptTask>::ManTask>::post(home,mt);
     }
     if (o+m > 1)
