@@ -62,7 +62,7 @@ namespace Gecode { namespace Scheduling {
   template<class TaskView, class Node>
   forceinline bool 
   TaskTree<TaskView,Node>::n_leaf(int i) const {
-    return i > n_inner();
+    return i >= n_inner();
   }
   template<class TaskView, class Node>
   forceinline int 
