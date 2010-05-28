@@ -328,23 +328,39 @@ namespace Gecode { namespace Int { namespace Element {
       // The first element in iv[0] is used as sentinel
       // Enter information sorted by idx
       IdxVal* by_idx = &iv[1];
-      {
-        Idx i = 0;
-        ViewValues<V0> v(x0);
-        while (v()) {
-          by_idx[i].idx = static_cast<Idx>(v.val());
-          by_idx[i].val = static_cast<Val>(c[v.val()]);
-          ++i; ++v;
+      Idx size = 0;
+      for (ViewValues<V0> v(x0); v(); ++v)
+        if ((x1.min() <= c[v.val()]) && (x1.max() >= c[v.val()])) {
+          by_idx[size].idx = static_cast<Idx>(v.val());
+          by_idx[size].val = static_cast<Val>(c[v.val()]);
+          size++;
         }
-      }
-      Idx size = static_cast<Idx>(x0.size());
+      if (size == 0)
+        return ES_FAILED;
       // Create val links sorted by val
       Region r(home);
       Idx* by_val = r.alloc<Idx>(size);
-      for (Idx i = size; i--; )
-        by_val[i] = i+1;
-      ByVal less(iv);
-      Support::quicksort<Idx>(by_val,size,less);
+      if (x1.width() <= 128) {
+        int n_buckets = static_cast<int>(x1.width());
+        int* pos = r.alloc<int>(n_buckets);
+        int* buckets = pos - x1.min(); 
+        for (int i=n_buckets; i--; )
+          pos[i]=0;
+        for (Idx i=size; i--; )
+          buckets[by_idx[i].val]++;
+        int p=0;
+        for (int i=0; i<n_buckets; i++) {
+          int n=pos[i]; pos[i]=p; p+=n;
+        }
+        assert(p == size);
+        for (Idx i=size; i--; )
+          by_val[buckets[by_idx[i].val]++] = i+1;
+      } else {
+        for (Idx i = size; i--; )
+          by_val[i] = i+1;
+        ByVal less(iv);
+        Support::quicksort<Idx>(by_val,size,less);
+      }
       // Create val links
       for (Idx i = size-1; i--; ) {
         by_idx[i].idx_next = i+2;
