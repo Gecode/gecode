@@ -1012,8 +1012,8 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  IntVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool process) {
-    IntVarImpBase::subscribe(home,p,pc,dom.min()==dom.max(),process);
+  IntVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
+    IntVarImpBase::subscribe(home,p,pc,dom.min()==dom.max(),schedule);
   }
   forceinline void
   IntVarImp::cancel(Space& home, Propagator& p, PropCond pc) {

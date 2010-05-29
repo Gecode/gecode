@@ -275,8 +275,8 @@ namespace Gecode {
     template<class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::subscribe(Space& home, Propagator& p, PropCond pc,
-                                     bool process) {
-      view.subscribe(home,p,pc,process);
+                                     bool schedule) {
+      view.subscribe(home,p,pc,schedule);
     }
     template<class Val, class UnsVal>
     forceinline void

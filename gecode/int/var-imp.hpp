@@ -337,12 +337,12 @@ namespace Gecode { namespace Int {
     /**
      * \brief Subscribe propagator \a p with propagation condition \a pc to variable
      *
-     * In case \a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      *
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to variable
@@ -653,14 +653,14 @@ namespace Gecode { namespace Int {
     /**
      * \brief Subscribe propagator \a p to variable with propagation condition \a pc
      *
-     * In case \a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      *
      * The propagation condition \a pc can be a propagation condition
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /**
      * \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *

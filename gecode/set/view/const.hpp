@@ -244,8 +244,8 @@ namespace Gecode { namespace Set {
 
   forceinline void
   ConstantView::subscribe(Space& home, Propagator& p, PropCond,
-                          bool process) {
-    if (process)
+                          bool _schedule) {
+    if (_schedule)
       schedule(home,p,ME_SET_VAL);
   }
   forceinline void

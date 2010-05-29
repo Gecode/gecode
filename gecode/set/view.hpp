@@ -338,11 +338,11 @@ namespace Gecode {
       /**
        * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
-       * In case \a process is false, the propagator is just subscribed but
-       * not processed for execution (this must be used when creating
+       * In case \a schedule is false, the propagator is just subscribed but
+       * not scheduled for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
       void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
@@ -518,11 +518,11 @@ namespace Gecode {
       /**
        * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
-       * In case \a process is false, the propagator is just subscribed but
-       * not processed for execution (this must be used when creating
+       * In case \a schedule is false, the propagator is just subscribed but
+       * not scheduled for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
       void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
@@ -701,11 +701,11 @@ namespace Gecode {
       /**
        * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
-       * In case \a process is false, the propagator is just subscribed but
-       * not processed for execution (this must be used when creating
+       * In case \a schedule is false, the propagator is just subscribed but
+       * not scheduled for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
       void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
@@ -898,11 +898,11 @@ namespace Gecode {
       /**
        * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
-       * In case \a process is false, the propagator is just subscribed but
-       * not processed for execution (this must be used when creating
+       * In case \a schedule is false, the propagator is just subscribed but
+       * not scheduled for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
       void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
@@ -1095,11 +1095,11 @@ namespace Gecode {
       /**
        * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
-       * In case \a process is false, the propagator is just subscribed but
-       * not processed for execution (this must be used when creating
+       * In case \a schedule is false, the propagator is just subscribed but
+       * not scheduled for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
       void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view
@@ -1293,11 +1293,11 @@ namespace Gecode {
       /**
        * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
-       * In case \a process is false, the propagator is just subscribed but
-       * not processed for execution (this must be used when creating
+       * In case \a schedule is false, the propagator is just subscribed but
+       * not scheduled for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
       void cancel(Space& home, Propagator& p, PropCond pc);
       /// Subscribe advisor \a a to view

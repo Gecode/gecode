@@ -517,8 +517,8 @@ namespace Gecode { namespace Set {
    *
    */
   forceinline void
-  SetVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool process) {
-    SetVarImpBase::subscribe(home,p,pc,assigned(),process);
+  SetVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
+    SetVarImpBase::subscribe(home,p,pc,assigned(),schedule);
   }
   forceinline void
   SetVarImp::cancel(Space& home, Propagator& p, PropCond pc) {

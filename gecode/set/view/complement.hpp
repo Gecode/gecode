@@ -246,8 +246,8 @@ namespace Gecode {
     template<class View>
     forceinline void
     ComplementView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
-                                    bool process) {
-      view.subscribe(home,p, pc_negateset(pc),process);
+                                    bool schedule) {
+      view.subscribe(home,p, pc_negateset(pc),schedule);
     }
 
     template<class View>

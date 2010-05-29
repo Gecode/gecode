@@ -230,8 +230,8 @@ namespace Gecode {
 
     forceinline void
     SingletonView::subscribe(Space& home, Propagator& p, PropCond pc,
-                             bool process) {
-      view.subscribe(home,p,pc_settoint(pc),process);
+                             bool schedule) {
+      view.subscribe(home,p,pc_settoint(pc),schedule);
     }
     forceinline void
     SingletonView::cancel(Space& home, Propagator& p, PropCond pc) {

@@ -210,8 +210,8 @@ namespace Gecode {
     template<class View>
     forceinline void
     OffsetSetView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
-                                   bool process) {
-      view.subscribe(home,p, pc,process);
+                                   bool schedule) {
+      view.subscribe(home,p, pc,schedule);
     }
 
     template<class View>
