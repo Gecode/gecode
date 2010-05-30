@@ -310,6 +310,14 @@ namespace Gecode {
     return _time.value();
   }
   
+  inline void
+  Options::interrupt(bool b) {
+    _interrupt.value(b);
+  }
+  inline bool
+  Options::interrupt(void) const {
+    return _interrupt.value();
+  }
   
   
   /*

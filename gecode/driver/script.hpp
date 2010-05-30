@@ -237,9 +237,11 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
-          so.stop    = Cutoff::create(o.node(),o.fail(), o.time(), true);
+          so.stop    = Cutoff::create(o.node(),o.fail(), o.time(), 
+                                      o.interrupt());
           so.clone   = false;
-          Cutoff::installCtrlHandler(true);
+          if (o.interrupt())
+            Cutoff::installCtrlHandler(true);
           Engine<Script> e(s,so);
           do {
             Script* ex = e.next();
@@ -248,7 +250,8 @@ namespace Gecode { namespace Driver {
             ex->print(std::cout);
             delete ex;
           } while (--i != 0);
-          Cutoff::installCtrlHandler(false);
+          if (o.interrupt())
+            Cutoff::installCtrlHandler(false);
           Search::Statistics stat = e.statistics();
           cout << endl;
           if (e.stopped()) {
@@ -300,8 +303,10 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
-          so.stop    = Cutoff::create(o.node(),o.fail(), o.time(), true);
-          Cutoff::installCtrlHandler(true);
+          so.stop    = Cutoff::create(o.node(),o.fail(), o.time(),
+                                      o.interrupt());
+          if (o.interrupt())
+            Cutoff::installCtrlHandler(true);
           Engine<Script> e(s,so);
           do {
             Script* ex = e.next();
@@ -309,7 +314,8 @@ namespace Gecode { namespace Driver {
               break;
             delete ex;
           } while (--i != 0);
-          Cutoff::installCtrlHandler(false);
+          if (o.interrupt())
+            Cutoff::installCtrlHandler(false);
           Search::Statistics stat = e.statistics();
           cout << endl
                << "\tpropagators:  " << n_p << endl

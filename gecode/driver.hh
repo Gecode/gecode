@@ -324,6 +324,7 @@ namespace Gecode {
     Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
     Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;      ///< Cutoff for time
+    Driver::StringOption      _interrupt; ///< Whether to catch SIGINT
     //@}
     
     /// \name Execution options
@@ -416,6 +417,11 @@ namespace Gecode {
     void time(unsigned int t);
     /// Return time cutoff
     unsigned int time(void) const;
+    
+    /// Set default interrupt behavior
+    void interrupt(bool b);
+    /// Return interrupt behavior
+    bool interrupt(void) const;
     //@}
 
     /// \name Execution options
