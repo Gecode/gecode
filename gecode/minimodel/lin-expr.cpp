@@ -83,19 +83,15 @@ namespace Gecode {
       d += m*c;
       break;
     case NT_VAR_INT:
-      if (a != 0) {
-        Int::Limits::check(m*a,"MiniModel::LinExpr");
-        ti->a=m*a; ti->x=x_int; ti++;
-      }
+      Int::Limits::check(m*a,"MiniModel::LinExpr");
+      ti->a=m*a; ti->x=x_int; ti++;
       break;
     case NT_NONLIN:
       ti->a=m; ti->x=sum.ne->post(home, NULL, icl); ti++;
       break;
     case NT_VAR_BOOL:
-      if (a != 0) {
-        Int::Limits::check(m*a,"MiniModel::LinExpr");
-        tb->a=m*a; tb->x=x_bool; tb++;
-      }
+      Int::Limits::check(m*a,"MiniModel::LinExpr");
+      tb->a=m*a; tb->x=x_bool; tb++;
       break;
     case NT_SUM_INT:
       for (int i=n_int; i--; ) {

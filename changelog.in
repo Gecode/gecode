@@ -73,6 +73,15 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Fixed a bug in minimodel, which could crash when using zero
+coefficients.
+
+[ENTRY]
 Module: set
 What:   change
 Rank:   minor
