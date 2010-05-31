@@ -55,7 +55,7 @@ namespace Test { namespace Set {
     static IntSet ds_12(-1,2);
     static IntSet ds_13(-1,3);
 
-    /// %Test for ElementUnion constraint
+    /// %Test for %ElementUnion constraint
     class ElementUnion : public SetTest {
     public:
       /// Create and register test
@@ -95,7 +95,7 @@ namespace Test { namespace Set {
     };
     ElementUnion _elementunion("Element::Union");
 
-    /// %Test for ElementUnion constraint
+    /// %Test for %ElementUnionConst constraint
     class ElementUnionConst : public SetTest {
     private:
       const IntSet i0;
@@ -139,7 +139,7 @@ namespace Test { namespace Set {
     };
     ElementUnionConst _elementunionconst("Element::UnionConst");
 
-    /// %Test for ElementInter constraint
+    /// %Test for %ElementInter constraint
     class ElementInter : public SetTest {
     public:
       /// Create and register test
@@ -179,7 +179,7 @@ namespace Test { namespace Set {
     };
     ElementInter _elementinter("Element::Inter");
 
-    /// %Test for ElementInter constraint
+    /// %Test for %ElementInter constraint
     class ElementInterIn : public SetTest {
     public:
       /// Create and register test
@@ -220,7 +220,7 @@ namespace Test { namespace Set {
     };
     ElementInterIn _elementinterin("Element::InterIn");
 
-    /// %Test for ElementDisjoint constraint
+    /// %Test for %ElementDisjoint constraint
     class ElementDisjoint : public SetTest {
     public:
       /// Create and register test
@@ -269,7 +269,7 @@ namespace Test { namespace Set {
     };
     ElementDisjoint _elementdisjoint("Element::Disjoint");
 
-    /// %Test for ElementElement constraint
+    /// %Test for %ElementSet constraint
     class ElementSet : public SetTest {
     public:
       /// Create and register test
@@ -293,7 +293,7 @@ namespace Test { namespace Set {
     };
     ElementSet _elementset("Element::Set");
 
-    /// %Test for ElementUnion constraint
+    /// %Test for %ElementSetConst constraint
     class ElementSetConst : public SetTest {
     private:
       const IntSet i0;

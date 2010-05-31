@@ -509,6 +509,8 @@ EXCLUDE_PATTERNS       = \
 	*.svn/* \
 	*moc_* \
 	*contribs/* \
+	*gecode/gist/standalone-example/* \
+	*gecode/flatzinc/exampleplugin/* \
 	*gecode/flatzinc/parser.tab.* *gecode/flatzinc/lexer.*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
