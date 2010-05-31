@@ -370,39 +370,53 @@ namespace Gecode {
 
   LinExpr
   operator *(int a, const IntVar& x) {
-    if (x.assigned())
+    if (a == 0)
+      return LinExpr(0.0);
+    else if (x.assigned())
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
   }
   LinExpr
   operator *(int a, const BoolVar& x) {
-    if (x.assigned())
+    if (a == 0)
+      return LinExpr(0.0);
+    else if (x.assigned())
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
   }
   LinExpr
   operator *(const IntVar& x, int a) {
-    if (x.assigned())
+    if (a == 0)
+      return LinExpr(0.0);
+    else if (x.assigned())
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
   }
   LinExpr
   operator *(const BoolVar& x, int a) {
-    if (x.assigned())
+    if (a == 0)
+      return LinExpr(0.0);
+    else if (x.assigned())
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
   }
   LinExpr
   operator *(const LinExpr& e, int a) {
-    return LinExpr(a,e);
+    if (a == 0)
+      return LinExpr(0.0);
+    else
+      return LinExpr(a,e);
   }
   LinExpr
   operator *(int a, const LinExpr& e) {
-    return LinExpr(a,e);
+    if (a == 0)
+      return LinExpr(0.0);
+    else
+      return LinExpr(a,e);
   }
 
   LinExpr
