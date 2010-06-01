@@ -101,6 +101,7 @@ namespace Gecode { namespace Driver {
     static BOOL interrupt(DWORD t) {
       if (t == CTRL_C_EVENT) {
         sigint = true;
+        installCtrlHandler(false,true);
         return true;
       }
       return false;
@@ -110,15 +111,18 @@ namespace Gecode { namespace Driver {
     static void
     interrupt(int) {
       sigint = true;
+      installCtrlHandler(false,true);
     }
 #endif
     /// Install handler for catching Ctrl-C
-    static void installCtrlHandler(bool install) {
+    static void installCtrlHandler(bool install, bool force=false) {
+      if (force || !sigint) {
 #ifdef GECODE_THREADS_WINDOWS
-      SetConsoleCtrlHandler( (PHANDLER_ROUTINE) interrupt, install);
+        SetConsoleCtrlHandler( (PHANDLER_ROUTINE) interrupt, install);
 #else
-      std::signal(SIGINT, install ? interrupt : SIG_DFL);
+        std::signal(SIGINT, install ? interrupt : SIG_DFL);
 #endif
+      }
     }
     /// Destructor
     ~Cutoff(void) {
