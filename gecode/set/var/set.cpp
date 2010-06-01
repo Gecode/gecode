@@ -113,7 +113,9 @@ namespace Gecode {
     Set::Limits::check(ubMin,"SetVar::SetVar");
     Set::Limits::check(ubMax,"SetVar::SetVar");
     Set::Limits::check(cardMax,"SetVar::SetVar");
-    if (cardMin > cardMax || cardMin > lubSize() || cardMax < glbSize() ||
+    unsigned int _glbSize = (lbMin<lbMax) ? lbMax-lbMin : 0;
+    unsigned int _lubSize = (ubMin<ubMax) ? ubMax-ubMin : 0;
+    if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         lbMin < ubMin || lbMax > ubMax)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
     varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, ubMin, ubMax,
@@ -127,7 +129,9 @@ namespace Gecode {
     Set::Limits::check(ubMin,"SetVar::SetVar");
     Set::Limits::check(ubMax,"SetVar::SetVar");
     Set::Limits::check(cardMax,"SetVar::SetVar");
-    if (cardMin > cardMax || cardMin > lubSize() || cardMax < glbSize() ||
+    unsigned int _glbSize = glb.size();
+    unsigned int _lubSize = (ubMin<ubMax) ? ubMax-ubMin : 0;
+    if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         glb.min() < ubMin || glb.max() > ubMax)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
     varimp = new (home) Set::SetVarImp(home, glb, ubMin, ubMax,
@@ -143,7 +147,9 @@ namespace Gecode {
     Set::Limits::check(cardMax,"SetVar::SetVar");
     Iter::Ranges::Singleton glbr(lbMin,lbMax);
     IntSetRanges lubr(lub);
-    if (cardMin > cardMax || cardMin > lubSize() || cardMax < glbSize() ||
+    unsigned int _glbSize = (lbMin<lbMax) ? lbMax-lbMin : 0;
+    unsigned int _lubSize = lub.size();
+    if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar::SetVar");
     varimp = new (home) Set::SetVarImp(home, lbMin, lbMax, lub,
@@ -158,7 +164,9 @@ namespace Gecode {
     Set::Limits::check(cardMax,"SetVar::SetVar");
     IntSetRanges glbr(glb);
     IntSetRanges lubr(lub);
-    if (cardMin > cardMax || cardMin > lubSize() || cardMax < glbSize() ||
+    unsigned int _glbSize = glb.size();
+    unsigned int _lubSize = lub.size();
+    if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar::SetVar");
     varimp = new (home) Set::SetVarImp(home, glb, lub, cardMin, cardMax);
