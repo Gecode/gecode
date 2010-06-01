@@ -98,11 +98,6 @@ namespace Gecode { namespace Int {
     return varimp->range();
   }
   forceinline bool
-  IntView::assigned(void) const {
-    return varimp->assigned();
-  }
-
-  forceinline bool
   IntView::in(int n) const {
     return varimp->in(n);
   }

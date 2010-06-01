@@ -54,6 +54,12 @@ namespace Gecode {
     /// Return dummy variable implementation of view
     VarImpBase* var(void) const;
     //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether view is assigned
+    bool assigned(void) const;
+    //@}
   };
 
 
@@ -82,6 +88,12 @@ namespace Gecode {
     unsigned int degree(void) const;
     /// Return accumulated failure count (plus degree)
     double afc(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether view is assigned
+    bool assigned(void) const;
     //@}
 
     /// \name View-dependent propagator support
@@ -158,6 +170,12 @@ namespace Gecode {
     unsigned int degree(void) const;
     /// Return accumulated failure count (plus degree)
     double afc(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether view is assigned
+    bool assigned(void) const;
     //@}
   };
 
@@ -268,6 +286,10 @@ namespace Gecode {
   ConstViewBase::var(void) const {
     return NULL;
   }
+  forceinline bool
+  ConstViewBase::assigned(void) const {
+    return true;
+  }
 
   /*
    * Variable view: contains a pointer to a variable implementation
@@ -300,6 +322,11 @@ namespace Gecode {
   forceinline double
   VarViewBase<VarImp>::afc(void) const {
     return varimp->afc();
+  }
+  template<class VarImp>
+  forceinline bool
+  VarViewBase<VarImp>::assigned(void) const {
+    return varimp->assigned();
   }
   template<class VarImp>
   forceinline void
@@ -396,7 +423,11 @@ namespace Gecode {
   DerivedViewBase<View>::afc(void) const {
     return view.afc();
   }
-
+  template<class View>
+  forceinline bool
+  DerivedViewBase<View>::assigned(void) const {
+    return view.assigned();
+  }
 
   /*
    * Testing whether two views share the same variable

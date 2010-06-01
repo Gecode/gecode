@@ -92,9 +92,6 @@ namespace Gecode {
       }
     }
 
-    forceinline bool
-    SingletonView::assigned(void) const { return view.assigned(); }
-
     forceinline unsigned int
     SingletonView::glbSize(void) const { 
       return view.assigned() ? 1U : 0U; 

@@ -98,10 +98,6 @@ namespace Gecode {
       return view.range();
     }
     forceinline bool
-    MinusView::assigned(void) const {
-      return view.assigned();
-    }
-    forceinline bool
     MinusView::in(int n) const {
       return view.in(-n);
     }

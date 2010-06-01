@@ -104,11 +104,6 @@ namespace Gecode {
       return varimp->range();
     }
     forceinline bool
-    BoolView::assigned(void) const {
-      return varimp->assigned();
-    }
-
-    forceinline bool
     BoolView::in(int n) const {
       return varimp->in(n);
     }

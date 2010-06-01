@@ -105,11 +105,6 @@ namespace Gecode {
       return view.range();
     }
     forceinline bool
-    OffsetView::assigned(void) const {
-      return view.assigned();
-    }
-
-    forceinline bool
     OffsetView::in(int n) const {
       return view.in(n-c);
     }

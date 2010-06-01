@@ -108,9 +108,6 @@ namespace Gecode { namespace Set {
     init(home, dom);
   }
 
-  forceinline bool
-  ConstantView::assigned(void) const { return true; }
-
   forceinline unsigned int
   ConstantView::glbSize(void) const { return domSize; }
 
@@ -329,9 +326,6 @@ namespace Gecode { namespace Set {
 
 
 
-  forceinline bool
-  EmptyView::assigned(void) const { return true; }
-
   forceinline unsigned int
   EmptyView::glbSize(void) const { return 0; }
 
@@ -497,9 +491,6 @@ namespace Gecode { namespace Set {
 
   forceinline
   UniverseView::UniverseView(void) {}
-
-  forceinline bool
-  UniverseView::assigned(void) const { return true; }
 
   forceinline unsigned int
   UniverseView::glbSize(void) const { return Set::Limits::card; }

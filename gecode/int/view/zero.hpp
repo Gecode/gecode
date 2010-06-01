@@ -97,11 +97,6 @@ namespace Gecode {
       return true;
     }
     forceinline bool
-    ZeroIntView::assigned(void) const {
-      return true;
-    }
-
-    forceinline bool
     ZeroIntView::in(int n) const {
       return n == 0;
     }

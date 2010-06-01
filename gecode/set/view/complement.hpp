@@ -77,10 +77,6 @@ namespace Gecode {
     }
 
     template<class View>
-    forceinline bool
-    ComplementView<View>::assigned(void) const { return view.assigned(); }
-
-    template<class View>
     forceinline unsigned int
     ComplementView<View>::glbSize(void) const {
       return Limits::card - view.lubSize();

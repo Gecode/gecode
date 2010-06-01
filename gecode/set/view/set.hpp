@@ -62,11 +62,6 @@ namespace Gecode { namespace Set {
    *
    */
 
-  forceinline bool
-  SetView::assigned(void)  const {
-    return varimp->assigned();
-  }
-
   forceinline unsigned int
   SetView::glbSize(void) const { return varimp->glbSize(); }
 

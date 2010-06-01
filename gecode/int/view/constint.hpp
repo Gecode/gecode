@@ -101,11 +101,6 @@ namespace Gecode {
       return true;
     }
     forceinline bool
-    ConstIntView::assigned(void) const {
-      return true;
-    }
-
-    forceinline bool
     ConstIntView::in(int n) const {
       return n == x;
     }

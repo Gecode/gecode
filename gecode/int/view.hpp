@@ -173,8 +173,6 @@ namespace Gecode {
       //@{
       /// Test whether domain is a range
       bool range(void) const;
-      /// Test whether view is assigned
-      bool assigned(void) const;
 
       /// Test whether \a n is contained in domain
       bool in(int n) const;
@@ -357,8 +355,6 @@ namespace Gecode {
       //@{
       /// Test whether domain is a range
       bool range(void) const;
-      /// Test whether view is assigned
-      bool assigned(void) const;
 
       /// Test whether \a n is contained in domain
       bool in(int n) const;
@@ -563,8 +559,6 @@ namespace Gecode {
       //@{
       /// Test whether domain is a range
       bool range(void) const;
-      /// Test whether view is assigned
-      bool assigned(void) const;
 
       /// Test whether \a n is contained in domain
       bool in(int n) const;
@@ -808,8 +802,6 @@ namespace Gecode {
       //@{
       /// Test whether domain is a range
       bool range(void) const;
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a n is contained in domain
       bool in(Val n) const;
       //@}
@@ -985,9 +977,6 @@ namespace Gecode {
       //@{
       /// Test whether domain is a range
       bool range(void) const;
-      /// Test whether view is assigned
-      bool assigned(void) const;
-
       /// Test whether \a n is contained in domain
       bool in(int n) const;
       /// Test whether \a n is contained in domain
@@ -1182,9 +1171,6 @@ namespace Gecode {
       //@{
       /// Test whether domain is a range
       bool range(void) const;
-      /// Test whether view is assigned
-      bool assigned(void) const;
-
       /// Test whether \a n is contained in domain
       bool in(int n) const;
       /// Test whether \a n is contained in domain
@@ -1396,9 +1382,6 @@ namespace Gecode {
       //@{
       /// Test whether domain is a range
       bool range(void) const;
-      /// Test whether view is assigned
-      bool assigned(void) const;
-
       /// Test whether \a n is contained in domain
       bool in(int n) const;
       /// Test whether \a n is contained in domain
@@ -1627,12 +1610,6 @@ namespace Gecode {
       int max(void) const;
       /// Return assigned value (only if assigned)
       int val(void) const;
-      //@}
-
-      /// \name Domain tests
-      //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       //@}
 
       /// \name View-dependent propagator support

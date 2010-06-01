@@ -101,8 +101,6 @@ namespace Gecode {
 
       /// \name Domain tests
       //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a i is in the greatest lower bound
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound
@@ -274,8 +272,6 @@ namespace Gecode {
 
       /// \name Domain tests
       //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a i is in the greatest lower bound
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound
@@ -454,8 +450,6 @@ namespace Gecode {
 
       /// \name Domain tests
       //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a i is in the greatest lower bound
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound
@@ -637,8 +631,6 @@ namespace Gecode {
 
       /// \name Domain tests
       //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a i is in the greatest lower bound
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound
@@ -834,8 +826,6 @@ namespace Gecode {
 
       /// \name Domain tests
       //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a i is in the greatest lower bound
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound
@@ -1031,8 +1021,6 @@ namespace Gecode {
 
       /// \name Domain tests
       //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a i is in the greatest lower bound
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound
@@ -1229,8 +1217,6 @@ namespace Gecode {
 
       /// \name Domain tests
       //@{
-      /// Test whether view is assigned
-      bool assigned(void) const;
       /// Test whether \a i is in the greatest lower bound
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound

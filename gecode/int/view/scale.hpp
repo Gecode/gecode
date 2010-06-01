@@ -183,13 +183,6 @@ namespace Gecode {
     ScaleView<Val,UnsVal>::range(void) const {
       return view.range();
     }
-
-    template<class Val, class UnsVal>
-    forceinline bool
-    ScaleView<Val,UnsVal>::assigned(void) const {
-      return view.assigned();
-    }
-
     template<class Val, class UnsVal>
     forceinline bool
     ScaleView<Val,UnsVal>::in(Val n) const {

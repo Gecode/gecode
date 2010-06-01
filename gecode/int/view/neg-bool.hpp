@@ -123,15 +123,6 @@ namespace Gecode {
 
 
     /*
-     * Domain tests
-     *
-     */
-    forceinline bool
-    NegBoolView::assigned(void) const {
-      return view.assigned();
-    }
-
-    /*
      * Propagator modification events
      *
      */

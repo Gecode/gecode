@@ -55,10 +55,6 @@ namespace Gecode {
       : DerivedViewBase<View>(s0), k(k0) {}
 
     template<class View>
-    forceinline bool
-    OffsetSetView<View>::assigned(void) const { return view.assigned(); }
-
-    template<class View>
     forceinline unsigned int
     OffsetSetView<View>::glbSize(void) const {
       return view.glbSize();
