@@ -123,47 +123,6 @@ namespace Gecode {
 
 
     /*
-     * Propagator modification events
-     *
-     */
-    forceinline void
-    NegBoolView::schedule(Space& home, Propagator& p, ModEvent me) {
-      return BoolView::schedule(home,p,me);
-    }
-    forceinline ModEvent
-    NegBoolView::me(const ModEventDelta& med) {
-      return BoolView::me(med);
-    }
-    forceinline ModEventDelta
-    NegBoolView::med(ModEvent me) {
-      return BoolView::med(me);
-    }
-
-
-    /*
-     * Dependencies
-     *
-     */
-    forceinline void
-    NegBoolView::subscribe(Space& home, Propagator& p, PropCond pc,
-                           bool schedule) {
-      view.subscribe(home,p,pc,schedule);
-    }
-    forceinline void
-    NegBoolView::cancel(Space& home, Propagator& p, PropCond pc) {
-      view.cancel(home,p,pc);
-    }
-    forceinline void
-    NegBoolView::subscribe(Space& home, Advisor& a) {
-      view.subscribe(home,a);
-    }
-    forceinline void
-    NegBoolView::cancel(Space& home, Advisor& a) {
-      view.cancel(home,a);
-    }
-
-
-    /*
      * Delta information for advisors
      *
      */

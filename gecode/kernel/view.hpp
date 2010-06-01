@@ -113,11 +113,11 @@ namespace Gecode {
     /**
      * \brief Subscribe propagator \a p with propagation condition \a pc to view
      *
-     * In case \a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
@@ -176,6 +176,36 @@ namespace Gecode {
     //@{
     /// Test whether view is assigned
     bool assigned(void) const;
+    //@}
+
+    /// \name View-dependent propagator support
+    //@{
+    /// Schedule propagator \a p with modification event \a me
+    static void schedule(Space& home, Propagator& p, ModEvent me);
+    /// Return modification event for view type in \a med
+    static ModEvent me(const ModEventDelta& med);
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent);
+    /// Combine modifications events \a me1 and \a me2
+    static ModEvent me_combine(ModEvent me1, ModEvent me2);
+    //@}
+
+    /// \name Dependencies
+    //@{
+    /**
+     * \brief Subscribe propagator \a p with propagation condition \a pc to view
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     */
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Subscribe advisor \a a to view
+    void subscribe(Space& home, Advisor& a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space& home, Advisor& a);
     //@}
   };
 
@@ -428,6 +458,50 @@ namespace Gecode {
   DerivedViewBase<View>::assigned(void) const {
     return view.assigned();
   }
+
+  template<class View>
+  forceinline void
+  DerivedViewBase<View>::schedule(Space& home, Propagator& p, ModEvent me) {
+    return View::schedule(home,p,me);
+  }
+  template<class View>
+  forceinline ModEvent
+  DerivedViewBase<View>::me(const ModEventDelta& med) {
+    return View::me(med);
+  }
+  template<class View>
+  forceinline ModEventDelta
+  DerivedViewBase<View>::med(ModEvent me) {
+    return View::med(me);
+  }
+  template<class View>
+  forceinline ModEvent
+  DerivedViewBase<View>::me_combine(ModEvent me1, ModEvent me2) {
+    return View::me_combine(me1,me2);
+  }
+
+  template<class View>
+  forceinline void
+  DerivedViewBase<View>::subscribe(Space& home, Propagator& p, PropCond pc,
+                                   bool schedule) {
+    view.subscribe(home,p,pc,schedule);
+  }
+  template<class View>
+  forceinline void
+  DerivedViewBase<View>::cancel(Space& home, Propagator& p, PropCond pc) {
+    view.cancel(home,p,pc);
+  }
+  template<class View>
+  forceinline void
+  DerivedViewBase<View>::subscribe(Space& home, Advisor& a) {
+    view.subscribe(home,a);
+  }
+  template<class View>
+  forceinline void
+  DerivedViewBase<View>::cancel(Space& home, Advisor& a) {
+    view.cancel(home,a);
+  }
+
 
   /*
    * Testing whether two views share the same variable

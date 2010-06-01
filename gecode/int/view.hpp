@@ -427,30 +427,8 @@ namespace Gecode {
 
       /// \name View-dependent propagator support
       //@{
-      /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator& p, ModEvent me);
-      /// Return modification event for view type in \a med
-      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Dependencies
-      //@{
-      /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to view
-       *
-       * In case \a schedule is false, the propagator is just subscribed but
-       * not scheduled for execution (this must be used when creating
-       * subscriptions during propagation).
-       */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator& p, PropCond pc);
-      /// Subscribe advisor \a a to view
-      void subscribe(Space& home, Advisor& a);
-      /// Cancel subscription of advisor \a a
-      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -631,30 +609,8 @@ namespace Gecode {
 
       /// \name View-dependent propagator support
       //@{
-      /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator& p, ModEvent me);
-      /// Return modification event for view type in \a med
-      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Dependencies
-      //@{
-      /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to view
-       *
-       * In case \a schedule is false, the propagator is just subscribed but
-       * not scheduled for execution (this must be used when creating
-       * subscriptions during propagation).
-       */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator& p, PropCond pc);
-      /// Subscribe advisor \a a to view
-      void subscribe(Space& home, Advisor& a);
-      /// Cancel subscription of advisor \a a
-      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -824,30 +780,8 @@ namespace Gecode {
 
       /// \name View-dependent propagator support
       //@{
-      /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator& p, ModEvent me);
-      /// Return modification event for view type in \a med
-      static ModEvent me(const ModEventDelta& med);
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Dependencies
-      //@{
-      /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to view
-       *
-       * In case \a schedule is false, the propagator is just subscribed but
-       * not scheduled for execution (this must be used when creating
-       * subscriptions during propagation).
-       */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator& p, PropCond pc);
-      /// Subscribe advisor \a a to view
-      void subscribe(Space& home, Advisor& a);
-      /// Cancel subscription of advisor \a a
-      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors
@@ -1610,34 +1544,6 @@ namespace Gecode {
       int max(void) const;
       /// Return assigned value (only if assigned)
       int val(void) const;
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator& p, ModEvent me);
-      /// Return modification event for view type in \a med
-      static ModEvent me(const ModEventDelta& med);
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Dependencies
-      //@{
-      /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to view
-       *
-       * In case \a schedule is false, the propagator is just subscribed but
-       * not scheduled for execution (this must be used when creating
-       * subscriptions during propagation).
-       */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator& p, PropCond pc);
-      /// Subscribe advisor \a a to view
-      void subscribe(Space& home, Advisor& a);
-      /// Cancel subscription of advisor \a a
-      void cancel(Space& home, Advisor& a);
       //@}
 
       /// \name Delta information for advisors

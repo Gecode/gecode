@@ -207,40 +207,9 @@ namespace Gecode {
      * Propagator modification events
      *
      */
-    forceinline void
-    MinusView::schedule(Space& home, Propagator& p, ModEvent me) {
-      return IntView::schedule(home,p,me);
-    }
-    forceinline ModEvent
-    MinusView::me(const ModEventDelta& med) {
-      return IntView::me(med);
-    }
     forceinline ModEventDelta
     MinusView::med(ModEvent me) {
       return IntView::med(me);
-    }
-
-
-    /*
-     * Dependencies
-     *
-     */
-    forceinline void
-    MinusView::subscribe(Space& home, Propagator& p, PropCond pc,
-                         bool schedule) {
-      view.subscribe(home,p,pc,schedule);
-    }
-    forceinline void
-    MinusView::cancel(Space& home, Propagator& p, PropCond pc) {
-      view.cancel(home,p,pc);
-    }
-    forceinline void
-    MinusView::subscribe(Space& home, Advisor& a) {
-      view.subscribe(home,a);
-    }
-    forceinline void
-    MinusView::cancel(Space& home, Advisor& a) {
-      view.cancel(home,a);
     }
 
 

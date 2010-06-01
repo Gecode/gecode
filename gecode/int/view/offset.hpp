@@ -215,40 +215,9 @@ namespace Gecode {
      * Propagator modification events
      *
      */
-    forceinline void
-    OffsetView::schedule(Space& home, Propagator& p, ModEvent me) {
-      return IntView::schedule(home,p,me);
-    }
-    forceinline ModEvent
-    OffsetView::me(const ModEventDelta& med) {
-      return IntView::me(med);
-    }
     forceinline ModEventDelta
     OffsetView::med(ModEvent me) {
       return IntView::med(me);
-    }
-
-
-    /*
-     * Dependencies
-     *
-     */
-    forceinline void
-    OffsetView::subscribe(Space& home, Propagator& p, PropCond pc,
-                          bool schedule) {
-      view.subscribe(home,p,pc,schedule);
-    }
-    forceinline void
-    OffsetView::cancel(Space& home, Propagator& p, PropCond pc) {
-      view.cancel(home,p,pc);
-    }
-    forceinline void
-    OffsetView::subscribe(Space& home, Advisor& a) {
-      view.subscribe(home,a);
-    }
-    forceinline void
-    OffsetView::cancel(Space& home, Advisor& a) {
-      view.cancel(home,a);
     }
 
 
