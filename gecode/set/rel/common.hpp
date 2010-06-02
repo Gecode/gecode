@@ -58,17 +58,17 @@ namespace Gecode { namespace Set { namespace Rel {
 
   forceinline
   bool subsumesME(ModEvent me0, ModEvent me1, ModEvent me2, ModEvent me) {
-    ModEvent cme = SetView::me_combine(me0,SetView::me_combine(me1, me2));
-    return SetView::me_combine(cme, me)==cme;
+    ModEvent cme = SetVarImp::me_combine(me0,SetVarImp::me_combine(me1, me2));
+    return SetVarImp::me_combine(cme, me)==cme;
   }
   forceinline
   bool subsumesME(ModEvent me0, ModEvent me1, ModEvent me) {
-    ModEvent cme = SetView::me_combine(me0, me1);
-    return SetView::me_combine(cme, me)==cme;
+    ModEvent cme = SetVarImp::me_combine(me0, me1);
+    return SetVarImp::me_combine(cme, me)==cme;
   }
   forceinline
   bool subsumesME(ModEvent me0, ModEvent me) {
-    return SetView::me_combine(me0, me)==me0;
+    return SetVarImp::me_combine(me0, me)==me0;
   }
 
   forceinline
