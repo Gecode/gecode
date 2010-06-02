@@ -92,9 +92,9 @@ public:
           rel(*this, singleton(x1) <= x);
           rel(*this, singleton(x2) <= x);
           rel(*this, singleton(x3) <= x);
-          rel(*this, singleton(y1) <= x);
-          rel(*this, singleton(y2) <= x);
-          rel(*this, singleton(y3) <= x);
+          rel(*this, singleton(y1) <= y);
+          rel(*this, singleton(y2) <= y);
+          rel(*this, singleton(y3) <= y);
 
         } else if (opt.model() == MODEL_MATCHING) {
           /* Smart alternative:
