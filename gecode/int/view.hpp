@@ -249,8 +249,6 @@ namespace Gecode {
 
       /// \name Delta information for advisors
       //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
       /// Return minimum value just pruned
       int min(const Delta& d) const;
       /// Return maximum value just pruned
@@ -433,8 +431,6 @@ namespace Gecode {
 
       /// \name Delta information for advisors
       //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
       /// Return minimum value just pruned
       int min(const Delta& d) const;
       /// Return maximum value just pruned
@@ -615,8 +611,6 @@ namespace Gecode {
 
       /// \name Delta information for advisors
       //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
       /// Return minimum value just pruned
       int min(const Delta& d) const;
       /// Return maximum value just pruned
@@ -786,8 +780,6 @@ namespace Gecode {
 
       /// \name Delta information for advisors
       //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
       /// Return minimum value just pruned
       Val min(const Delta& d) const;
       /// Return maximum value just pruned
@@ -1414,8 +1406,6 @@ namespace Gecode {
 
       /// \name Delta information for advisors
       //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
       /// Return minimum value just pruned
       int min(const Delta& d) const;
       /// Return maximum value just pruned
@@ -1548,8 +1538,6 @@ namespace Gecode {
 
       /// \name Delta information for advisors
       //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
       /// Return minimum value just pruned
       int min(const Delta& d) const;
       /// Return maximum value just pruned

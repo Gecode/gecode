@@ -214,10 +214,6 @@ namespace Gecode { namespace Int {
    * Delta information for advisors
    *
    */
-  forceinline ModEvent
-  IntView::modevent(const Delta& d) {
-    return IntVarImp::modevent(d);
-  }
   forceinline int
   IntView::min(const Delta& d) const {
     return IntVarImp::min(d);

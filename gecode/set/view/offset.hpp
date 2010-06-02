@@ -217,12 +217,6 @@ namespace Gecode {
      */
 
     template<class View>
-    forceinline ModEvent
-    OffsetSetView<View>::modevent(const Delta& d) {
-      return View::modevent(d);
-    }
-
-    template<class View>
     forceinline int
     OffsetSetView<View>::glbMin(const Delta& d) const {
       return view.glbMin(d)+k;

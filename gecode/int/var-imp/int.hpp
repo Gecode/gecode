@@ -321,10 +321,6 @@ namespace Gecode { namespace Int {
    * Support for delta information
    *
    */
-  forceinline ModEvent
-  IntVarImp::modevent(const Delta& d) {
-    return d.modevent();
-  }
   forceinline int
   IntVarImp::min(const Delta& d) {
     return static_cast<const IntDelta&>(d).min();

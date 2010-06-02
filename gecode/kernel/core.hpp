@@ -272,9 +272,6 @@ namespace Gecode {
   private:
     /// Modification event
     ModEvent me;
-  public:
-    /// Return modification event
-    ModEvent modevent(void) const;
   };
 
   /**
@@ -471,10 +468,19 @@ namespace Gecode {
     static ModEvent me_combine(ModEvent me1, ModEvent me2);
     //@}
 
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta& d);
+    //@}
+
+    /// \name Bit management
+    //@{
     /// Provide access to free bits
     unsigned int bits(void) const;
     /// Provide access to free bits
     unsigned int& bits(void);
+    //@}
 
   protected:
     /// Schedule subscribed propagators
@@ -2548,17 +2554,6 @@ namespace Gecode {
 
 
   /*
-   * Delta information for advisors
-   *
-   */
-  forceinline ModEvent
-  Delta::modevent(void) const {
-    return me;
-  }
-
-
-
-  /*
    * Advisor
    *
    */
@@ -2862,6 +2857,12 @@ namespace Gecode {
       }
     }
     return d;
+  }
+
+  template<class VIC>
+  forceinline ModEvent
+  VarImp<VIC>::modevent(const Delta& d) {
+    return d.me;
   }
 
   template<class VIC>

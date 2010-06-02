@@ -136,10 +136,6 @@ namespace Gecode { namespace Set {
    * Support for delta information
    *
    */
-  forceinline ModEvent
-  SetVarImp::modevent(const Delta& d) {
-    return d.modevent();
-  }
   forceinline int
   SetVarImp::glbMin(const Delta& d) {
     return static_cast<const SetDelta&>(d).glbMin();

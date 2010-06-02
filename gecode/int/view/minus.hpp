@@ -217,10 +217,6 @@ namespace Gecode {
      * Delta information for advisors
      *
      */
-    forceinline ModEvent
-    MinusView::modevent(const Delta& d) {
-      return IntView::modevent(d);
-    }
     forceinline int
     MinusView::min(const Delta& d) const {
       return -view.max(d);

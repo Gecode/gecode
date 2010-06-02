@@ -123,6 +123,12 @@ namespace Gecode {
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
     //@}
+
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta& d);
+    //@}
   };
 
   /** \name View comparison
@@ -202,6 +208,12 @@ namespace Gecode {
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
+    //@}
+
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta& d);
     //@}
   };
 
@@ -392,6 +404,12 @@ namespace Gecode {
   }
 
   template<class VarImp>
+  forceinline ModEvent
+  VarViewBase<VarImp>::modevent(const Delta& d) {
+    return VarImp::modevent(d);
+  }
+
+  template<class VarImp>
   forceinline bool
   same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
     return x.var() == y.var();
@@ -488,6 +506,11 @@ namespace Gecode {
     view.cancel(home,a);
   }
 
+  template<class View>
+  forceinline ModEvent
+  DerivedViewBase<View>::modevent(const Delta& d) {
+    return View::modevent(d);
+  }
 
   /*
    * Testing whether two views share the same variable

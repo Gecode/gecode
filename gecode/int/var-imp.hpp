@@ -370,8 +370,6 @@ namespace Gecode { namespace Int {
 
     /// \name Delta information for advisors
     //@{
-    /// Return modification event
-    static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned
     static int min(const Delta& d);
     /// Return maximum value just pruned

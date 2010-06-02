@@ -225,10 +225,6 @@ namespace Gecode {
      * Delta information for advisors
      *
      */
-    forceinline ModEvent
-    OffsetView::modevent(const Delta& d) {
-      return IntView::modevent(d);
-    }
     forceinline int
     OffsetView::min(const Delta& d) const {
       return view.min(d)+c;

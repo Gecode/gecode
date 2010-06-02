@@ -255,11 +255,6 @@ namespace Gecode {
      *
      */
     template<class Val, class UnsVal>
-    forceinline ModEvent
-    ScaleView<Val,UnsVal>::modevent(const Delta& d) {
-      return IntView::modevent(d);
-    }
-    template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::min(const Delta& d) const {
       Val c = view.min(d); c *= a; return c;
