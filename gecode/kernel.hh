@@ -136,14 +136,6 @@
 
 
 /*
- * Traits linking variables, views, and variable implementations
- *
- */
-
-#include <gecode/kernel/var-traits.hpp>
-
-
-/*
  * Variables and testing for shared variables
  *
  */

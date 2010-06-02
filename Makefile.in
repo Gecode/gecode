@@ -176,7 +176,7 @@ KERNELSRC0 = \
 KERNELHDR0 = \
 	array shared-array core exception \
 	macros memory-config memory-manager region modevent \
-	propagator advisor view var var-traits \
+	propagator advisor view var \
 	branch brancher brancher-view brancher-tiebreak \
 	brancher-val allocators global-prop-info 
 

@@ -184,13 +184,13 @@ namespace Gecode {
   }
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for SetView.
+   * This class specializes the ViewTraits for SetView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarImpTraits<Set::SetView> {
+  class ViewTraits<Set::SetView> {
   public:
     /// The variable type of a SetView
     typedef Set::SetVarImp VarImp;
@@ -198,12 +198,12 @@ namespace Gecode {
 
 
   /**
-   * \brief Traits class mapping variables to views
+   * \brief Traits class for variables
    *
-   * This class specializes the VarViewTraits for set variables.
+   * This class specializes the VarTraits for set variables.
    */
   template<>
-  class VarViewTraits<SetVar> {
+  class VarTraits<SetVar> {
   public:
     /// The variable type of an IntView
     typedef Set::SetView View;
@@ -393,13 +393,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for ConstantView.
+   * This class specializes the ViewTraits for ConstantView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarImpTraits<Set::ConstantView> {
+  class ViewTraits<Set::ConstantView> {
   public:
     /// The variable type of a ConstantView
     typedef VarImpBase VarImp;
@@ -572,13 +572,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for EmptyView.
+   * This class specializes the ViewTraits for EmptyView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarImpTraits<Set::EmptyView> {
+  class ViewTraits<Set::EmptyView> {
   public:
     /// The variable type of an EmptyView
     typedef VarImpBase VarImp;
@@ -753,13 +753,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for UniverseView.
+   * This class specializes the ViewTraits for UniverseView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarImpTraits<Set::UniverseView> {
+  class ViewTraits<Set::UniverseView> {
   public:
     /// The variable type of a UniverseView
     typedef VarImpBase VarImp;
@@ -949,13 +949,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for SingletonView.
+   * This class specializes the ViewTraits for SingletonView.
    * \ingroup TaskActorSetView
    */
   template<>
-  class ViewVarImpTraits<Set::SingletonView> {
+  class ViewTraits<Set::SingletonView> {
   public:
     /// The variable type of a SingletonView
     typedef Int::IntVarImp VarImp;
@@ -1149,16 +1149,16 @@ namespace Gecode {
 
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for ComplementView.
+   * This class specializes the ViewTraits for ComplementView.
    * \ingroup TaskActorSetView
    */
   template<class View>
-  class ViewVarImpTraits<Set::ComplementView<View> > {
+  class ViewTraits<Set::ComplementView<View> > {
   public:
     /// The variable type of a ComplementView
-    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+    typedef typename ViewTraits<View>::VarImp VarImp;
   };
 
 
@@ -1314,16 +1314,16 @@ namespace Gecode {
 
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for ComplementView.
+   * This class specializes the ViewTraits for ComplementView.
    * \ingroup TaskActorSetView
    */
   template<class View>
-  class ViewVarImpTraits<Set::OffsetSetView<View> > {
+  class ViewTraits<Set::OffsetSetView<View> > {
   public:
     /// The variable type of a ComplementView
-    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+    typedef typename ViewTraits<View>::VarImp VarImp;
   };
 
 

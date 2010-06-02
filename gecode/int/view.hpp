@@ -281,25 +281,25 @@ namespace Gecode {
   }
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for IntView
+   * This class specializes the ViewTraits for IntView
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarImpTraits<Int::IntView> {
+  class ViewTraits<Int::IntView> {
   public:
     /// The variable type of an IntView
     typedef Int::IntVarImp VarImp;
   };
 
   /**
-   * \brief Traits class mapping variables to views
+   * \brief Traits class for variables
    *
-   * This class specializes the VarViewTraits for integer variables.
+   * This class specializes the VarTraits for integer variables.
    */
   template<>
-  class VarViewTraits<IntVar> {
+  class VarTraits<IntVar> {
   public:
     /// The variable type of an IntView
     typedef Int::IntView View;
@@ -467,13 +467,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for MinusView.
+   * This class specializes the ViewTraits for MinusView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarImpTraits<Int::MinusView> {
+  class ViewTraits<Int::MinusView> {
   public:
     /// The variable type of a MinusView
     typedef Int::IntVarImp VarImp;
@@ -647,13 +647,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for OffsetView.
+   * This class specializes the ViewTraits for OffsetView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarImpTraits<Int::OffsetView> {
+  class ViewTraits<Int::OffsetView> {
   public:
     /// The variable type of an OffsetView
     typedef Int::IntVarImp VarImp;
@@ -841,13 +841,13 @@ namespace Gecode {
 
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for ScaleView.
+   * This class specializes the ViewTraits for ScaleView.
    * \ingroup TaskActorIntView
    */
   template<class Val, class UnsVal>
-  class ViewVarImpTraits<Int::ScaleView<Val,UnsVal> > {
+  class ViewTraits<Int::ScaleView<Val,UnsVal> > {
   public:
     /// The variable type of a ScaleView
     typedef Int::IntVarImp VarImp;
@@ -1041,13 +1041,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for ConstIntView.
+   * This class specializes the ViewTraits for ConstIntView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarImpTraits<Int::ConstIntView> {
+  class ViewTraits<Int::ConstIntView> {
   public:
     /// The variable type of a ConstIntView
     typedef VarImpBase VarImp;
@@ -1235,13 +1235,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for ZeroIntView.
+   * This class specializes the ViewTraits for ZeroIntView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarImpTraits<Int::ZeroIntView> {
+  class ViewTraits<Int::ZeroIntView> {
   public:
     /// The variable type of a ZeroIntView
     typedef VarImpBase VarImp;
@@ -1442,25 +1442,25 @@ namespace Gecode {
   }
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for BoolView
+   * This class specializes the ViewTraits for BoolView
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarImpTraits<Int::BoolView> {
+  class ViewTraits<Int::BoolView> {
   public:
     /// The variable type of a BoolView
     typedef Int::BoolVarImp VarImp;
   };
 
   /**
-   * \brief Traits class mapping variables to views
+   * \brief Traits class for variables
    *
-   * This class specializes the VarViewTraits for Boolean variables.
+   * This class specializes the VarTraits for Boolean variables.
    */
   template<>
-  class VarViewTraits<BoolVar> {
+  class VarTraits<BoolVar> {
   public:
     /// The variable type of an IntView
     typedef Int::BoolView View;
@@ -1579,13 +1579,13 @@ namespace Gecode {
   //@}
 
   /**
-   * \brief Traits class for views and variable implementations
+   * \brief Traits class for views
    *
-   * This class specializes the ViewVarImpTraits for NegBoolView.
+   * This class specializes the ViewTraits for NegBoolView.
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewVarImpTraits<Int::NegBoolView> {
+  class ViewTraits<Int::NegBoolView> {
   public:
     /// The variable type of a NegBoolView
     typedef Int::BoolVarImp VarImp;

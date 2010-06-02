@@ -38,6 +38,18 @@
 namespace Gecode {
 
   /**
+   * \brief Traits class for views
+   *
+   * Each view must specialize this traits class and add a \code
+   * typedef \endcode for the variable implementation \a VarImp belonging to
+   * this view.
+   *
+   * \ingroup TaskVarView
+   */
+  template<class View>
+  class ViewTraits {};
+
+  /**
    * \brief Base-class for constant views
    * \ingroup TaskVarView
    */
@@ -160,7 +172,7 @@ namespace Gecode {
 
   public:
     /// The variable type belonging to the \a View
-    typedef typename ViewVarImpTraits<View>::VarImp VarImp;
+    typedef typename ViewTraits<View>::VarImp VarImp;
 
     /// \name Generic view information
     //@{
@@ -441,7 +453,7 @@ namespace Gecode {
   }
 
   template<class View>
-  forceinline typename ViewVarImpTraits<View>::VarImp*
+  forceinline typename ViewTraits<View>::VarImp*
   DerivedViewBase<View>::var(void) const {
     return view.var();
   }

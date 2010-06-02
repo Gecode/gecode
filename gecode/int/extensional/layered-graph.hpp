@@ -658,7 +658,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(x.size() > 0);
     for (int i=x.size(); i--; ) {
       DFA::Symbols s(dfa);
-      typename VarViewTraits<Var>::View xi(x[i]);
+      typename VarTraits<Var>::View xi(x[i]);
       GECODE_ME_CHECK(xi.inter_v(home,s,false));
     }
     LayeredGraph<View,Val,Degree,StateIdx>* p =
@@ -835,15 +835,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned char,unsigned char>
+            <typename VarTraits<Var>::View,short int,unsigned char,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned short int,unsigned char>
+            <typename VarTraits<Var>::View,short int,unsigned short int,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned int,unsigned char>
+            <typename VarTraits<Var>::View,short int,unsigned int,unsigned char>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -852,15 +852,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned char,unsigned short int>
+            <typename VarTraits<Var>::View,short int,unsigned char,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned short int,unsigned short int>
+            <typename VarTraits<Var>::View,short int,unsigned short int,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned int,unsigned short int>
+            <typename VarTraits<Var>::View,short int,unsigned int,unsigned short int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -869,15 +869,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned char,unsigned int>
+            <typename VarTraits<Var>::View,short int,unsigned char,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned short int,unsigned int>
+            <typename VarTraits<Var>::View,short int,unsigned short int,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,short int,unsigned int,unsigned int>
+            <typename VarTraits<Var>::View,short int,unsigned int,unsigned int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -891,15 +891,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned char,unsigned char>
+            <typename VarTraits<Var>::View,int,unsigned char,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned short int,unsigned char>
+            <typename VarTraits<Var>::View,int,unsigned short int,unsigned char>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned int,unsigned char>
+            <typename VarTraits<Var>::View,int,unsigned int,unsigned char>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -908,15 +908,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned char,unsigned short int>
+            <typename VarTraits<Var>::View,int,unsigned char,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned short int,unsigned short int>
+            <typename VarTraits<Var>::View,int,unsigned short int,unsigned short int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned int,unsigned short int>
+            <typename VarTraits<Var>::View,int,unsigned int,unsigned short int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }
@@ -925,15 +925,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_degree) {
         case Gecode::Support::IT_CHAR:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned char,unsigned int>
+            <typename VarTraits<Var>::View,int,unsigned char,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_SHRT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned short int,unsigned int>
+            <typename VarTraits<Var>::View,int,unsigned short int,unsigned int>
             ::post(home,x,dfa);
         case Gecode::Support::IT_INT:
           return Extensional::LayeredGraph
-            <typename VarViewTraits<Var>::View,int,unsigned int,unsigned int>
+            <typename VarTraits<Var>::View,int,unsigned int,unsigned int>
             ::post(home,x,dfa);
         default: GECODE_NEVER;
         }

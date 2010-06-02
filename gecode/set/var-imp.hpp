@@ -715,16 +715,4 @@ namespace Gecode { namespace Set {
 
 #include <gecode/set/var-imp/set.hpp>
 
-namespace Gecode {
-
-  class SetVar;
-
-  /** \brief Traits class for variable implementations and variables */
-  template<>
-  class VarImpVarTraits<Set::SetVarImp> {
-  public:
-    typedef SetVar Var;
-  };
-}
-
 // STATISTICS: set-var

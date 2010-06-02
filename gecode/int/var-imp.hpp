@@ -470,14 +470,6 @@ namespace Gecode { namespace Int {
 namespace Gecode {
 
   class IntVar;
-
-  /** \brief Traits class for variable implementations and variables */
-  template<>
-  class VarImpVarTraits<Int::IntVarImp> {
-  public:
-    typedef IntVar Var;
-  };
-
   class BoolVar;
 }
 
@@ -713,15 +705,6 @@ namespace Gecode { namespace Int {
 }}
 
 #include <gecode/int/var-imp/bool.hpp>
-
-namespace Gecode {
-  /** \brief Traits class for variable implementations and variables */
-  template<>
-  class VarImpVarTraits<Int::BoolVarImp> {
-  public:
-    typedef BoolVar Var;
-  };
-}
 
 // STATISTICS: int-var
 
