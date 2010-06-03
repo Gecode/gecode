@@ -109,7 +109,44 @@ namespace Test { namespace Int {
     delete [] vals;
   }
 
+  forceinline int
+  RandomMixAssignment::randval(const Gecode::IntSet& d) {
+    unsigned int skip = Base::rand(d.size());
+    for (Gecode::IntSetRanges it(d); true; ++it) {
+      if (it.width() > skip)
+        return it.min() + static_cast<int>(skip);
+      skip -= it.width();
+    }
+    GECODE_NEVER;
+    return 0;
+  }
 
+  inline
+  RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0,
+                                           int n1, const Gecode::IntSet& d1, 
+                                           int a0)
+    : Assignment(n0+n1,d0),vals(new int[n0+n1]),a(a0),_n1(n1),_d1(d1) {
+    for (int i=n0; i--; )
+      vals[i] = randval(d);
+    for (int i=n1; i--; )
+      vals[n0+i] = randval(_d1);
+  }
+
+  inline bool
+  RandomMixAssignment::operator()(void) const {
+    return a>0;
+  }
+
+  inline int
+  RandomMixAssignment::operator[](int i) const {
+    assert((i>=0) && (i<n));
+    return vals[i];
+  }
+
+  inline
+  RandomMixAssignment::~RandomMixAssignment(void) {
+    delete [] vals;
+  }
 
   /*
    * Tests with integer constraints

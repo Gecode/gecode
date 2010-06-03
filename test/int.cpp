@@ -70,6 +70,15 @@ namespace Test { namespace Int {
     a--;
   }
 
+  void
+  RandomMixAssignment::operator++(void) {
+    for (int i=n-_n1; i--; )
+      vals[i] = randval(d);
+    for (int i=_n1; i--; )
+      vals[n-_n1+i] = randval(_d1);
+    a--;
+  }
+
 }}
 
 std::ostream&

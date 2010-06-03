@@ -354,9 +354,16 @@ namespace Gecode { namespace Scheduling {
   /// Safe addition in case \a x is -Int::Limits::infinity
   int plus(int x, int y);
 
+  /// Safe addition in case \a x is -Int::Limits::double_infinity
+  double plus(double x, double y);
+  
+  /// Safe division in case \a x is -Int::Limits::double_infinity
+  double div(double x, double y);
+
   /// Task trees for task views with node type \a Node
   template<class TaskView, class Node>
   class TaskTree {
+    template<class,class> friend class TaskTree;
   protected:
     /// The tasks from which the tree is computed
     const TaskViewArray<TaskView>& tasks;
@@ -394,6 +401,9 @@ namespace Gecode { namespace Scheduling {
     void init(void);
     /// Initialize tree for tasks \a t
     TaskTree(Region& r, const TaskViewArray<TaskView>& t);
+    /// Initialize tree using tree \a t
+    template<class Node2> TaskTree(Region& r,
+                                   const TaskTree<TaskView,Node2>& t);
   };
 
 }}

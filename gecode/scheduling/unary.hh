@@ -71,7 +71,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Initialize with start time \a s and processing time \a p
     void init(IntVar s, int p);
     /// Initialize from task \a t
-    void init(const OptFixTask& t);
+    void init(const ManFixTask& t);
     //@}
 
     /// \name Value access
@@ -90,8 +90,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     int pmax(void) const;
     /// Return start time
     IntVar st(void) const;
-    /// Return processing time
-    int p(void) const;
     /// Whether task is mandatory
     bool mandatory(void) const;
     /// Whether task is excluded
@@ -173,8 +171,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTask& t);
 
-  class OptFlexTask;
-
   /// %Unary (mandatory) task with flexible processing time
   class ManFlexTask {
   protected:
@@ -194,7 +190,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /// Initialize with start time \a s, processing time \a p, end time \a e
     void init(IntVar s, IntVar p, IntVar e);
     /// Initialize from task \a t
-    void init(const OptFlexTask& t);
+    void init(const ManFlexTask& t);
     //@}
 
     /// \name Value access
@@ -273,15 +269,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTask& t);
 
-  /**
-   * \brief Print optional task in format est:lst:pmin:pmax:ect:lct:m
-   * \relates OptFlexTask
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTask& t);
-
-
   /// %Unary optional task with flexible processing time
   class OptFlexTask : public ManToOptTask<ManFlexTask> {
   protected:
@@ -297,6 +284,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     void init(IntVar s, IntVar p, IntVar e, BoolVar m);
     //@}
   };
+
+  /**
+   * \brief Print optional task in format est:lst:pmin:pmax:ect:lct:m
+   * \relates OptFlexTask
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTask& t);
 
 }}}
 

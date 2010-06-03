@@ -139,65 +139,6 @@ namespace Test { namespace Int {
        }
      };
 
-    /// Generate random selection of assignments
-    class RandomMixAssignment : public Assignment {
-    protected:
-      int* vals; ///< The current values for the variables
-      int  a;    ///< How many assigments still to be generated
-      int _n1;
-      Gecode::IntSet _d1; ///< Domain for second set of variables
-      /// Generate new value according to domain \a d
-      int randval(const Gecode::IntSet& d) {
-        unsigned int skip = Base::rand(d.size());
-        for (Gecode::IntSetRanges it(d); true; ++it) {
-          if (it.width() > skip)
-            return it.min() + static_cast<int>(skip);
-          skip -= it.width();
-        }
-        GECODE_NEVER;
-        return 0;
-      }
-    public:
-      /// Initialize for \a a assignments for \a n0 variables and values \a d0
-      RandomMixAssignment(int n0, const Gecode::IntSet& d0,
-                          int n1, const Gecode::IntSet& d1, int a0)
-        : Assignment(n0+n1,d0),vals(new int[n0+n1]),a(a0),_n1(n1),_d1(d1) {
-        // std::cerr << "randmix " << _d1 << std::endl;
-        for (int i=n0; i--; )
-          vals[i] = randval(d);
-        for (int i=n1; i--; )
-          vals[n0+i] = randval(_d1);
-        // for (int i=0; i<n; i++)
-        //   std::cerr << vals[i] << " ";
-        // std::cerr << std::endl;
-      }
-      /// Test whether all assignments have been iterated
-      virtual bool operator()(void) const {
-        return a>0;
-      }
-      /// Move to next assignment
-      virtual void operator++(void) {
-        for (int i=n-_n1; i--; )
-          vals[i] = randval(d);
-        for (int i=_n1; i--; )
-          vals[n-_n1+i] = randval(_d1);
-        a--;
-        // std::cerr << "asn ";
-        // for (int i=0; i<n; i++)
-        //   std::cerr << vals[i] << " ";
-        // std::cerr << std::endl;
-      }
-      /// Return value for variable \a i
-      virtual int operator[](int i) const {
-        assert((i>=0) && (i<n));
-        return vals[i];
-      }
-      /// Destructor
-      virtual ~RandomMixAssignment(void) {
-        delete [] vals;
-      }
-    };
-
 
      /// %Test for unary constraint
      class ManFlexUnary : public Test {
@@ -208,13 +149,6 @@ namespace Test { namespace Int {
        int _maxP;
        /// Offset for start times
        int off;
-       /// Get a reasonable maximal start time
-       static int st(const Gecode::IntArgs& p) {
-         int t = 0;
-         for (int i=p.size(); i--; )
-           t += p[i];
-         return t;
-       }
      public:
        /// Create and register test
        ManFlexUnary(int n, int minP, int maxP, int o)

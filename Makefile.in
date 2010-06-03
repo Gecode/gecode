@@ -445,7 +445,7 @@ GRAPHBUILDDIRS	= \
 #
 
 SCHEDULINGSRC0 = \
-	 unary.cpp cumulatives.cpp
+	 unary.cpp cumulative.cpp cumulatives.cpp
 
 SCHEDULINGHDR0 = \
 	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
@@ -456,6 +456,10 @@ SCHEDULINGHDR0 = \
 	unary/not-first-not-last.hpp \
 	unary/edge-finding.hpp unary/subsumption.hpp \
 	unary/man-prop.hpp unary/opt-prop.hpp \
+	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
+	cumulative/task-view.hpp cumulative/overload.hpp \
+	cumulative/basic.hpp cumulative/task.hpp cumulative/edge-finding.hpp \
+	cumulative/tree.hpp \
 	cumulatives.hh cumulatives/val.hpp
 
 SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
@@ -480,7 +484,8 @@ export SCHEDULINGLIB		=
 export LINKSCHEDULING      	=
 endif
 SCHEDULINGBUILDDIRS	= \
-	scheduling
+	scheduling scheduling/unary scheduling/cumulative scheduling/cumulatives \
+	scheduling/task
 
 
 #
@@ -833,7 +838,7 @@ SETTESTOBJ=
 endif
 
 SCHEDULINGTESTSRC00 = \
-	unary cumulatives
+	unary cumulative cumulatives
 SCHEDULINGTESTSRC0 = $(SCHEDULINGTESTSRC00:%=test/scheduling/%.cpp)
 
 ifeq "@enable_scheduling@" "yes"

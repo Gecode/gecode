@@ -204,7 +204,7 @@ namespace Gecode {
    *
    * Schedule tasks with start times \a s and processing times \a p
    * on a unary resource. The propagator uses the algorithms from:
-   *   Petr Vil�m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
@@ -227,7 +227,7 @@ namespace Gecode {
    * and whether a task is mandatory \a m (a task is mandatory if the
    * Boolean variable is 1) on a unary resource. The propagator uses the 
    * algorithms from:
-   *   Petr Vil�m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
@@ -250,7 +250,7 @@ namespace Gecode {
    * Schedule tasks with start times \a s, processing times \a p, and
    * end times \a e
    * on a unary resource. The propagator uses the algorithms from:
-   *   Petr Vil�m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
@@ -277,7 +277,7 @@ namespace Gecode {
    * and whether a task is mandatory \a m (a task is mandatory if the
    * Boolean variable is 1) on a unary resource. The propagator uses the 
    * algorithms from:
-   *   Petr Vil�m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
@@ -296,6 +296,138 @@ namespace Gecode {
   GECODE_SCHEDULING_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
         const IntVarArgs& e, const BoolVarArgs& m);
+
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   *
+   * Schedule tasks with start times \a s, processing times \a p, and
+   * use capacity \a u on a cumulative resource with capacity \a c.
+   *
+   * The propagator performs time-tabling, overload checking, and 
+   * edge-finding. It uses algorithms taken from:
+   *
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * 5547 of LNCS, pages 294-308. Springer, 2009.
+   *
+   * and
+   *
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * pages 802-816. Springer, 2009.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *    \a p, or \a u are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
+   *    contain an integer that is not strictly positive
+   *    (nonnegative for \a p), or that could generate an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p,
+             const IntArgs& u);
+
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   *
+   * Schedule optional tasks with start times \a s, processing times \a p,
+   * used capacity \a u, and whether a task is mandatory \a m (a task is 
+   * mandatory if the Boolean variable is 1) on a cumulative resource 
+   * with capacity \a c.
+   * 
+   * The propagator performs time-tabling, overload checking, and 
+   * edge-finding. It uses algorithms taken from:
+   *
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * 5547 of LNCS, pages 294-308. Springer, 2009.
+   *
+   * and
+   *
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * pages 802-816. Springer, 2009.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   *    \a p, \a u, or \a m are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
+   *    the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
+   *    contain an integer that is not strictly positive
+   *    (nonnegative for \a p), or that could generate an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
+             const IntArgs& u, const BoolVarArgs& m);
+
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   *
+   * Schedule tasks with start times \a s, processing times \a p,
+   * end times \a e, and
+   * use capacity \a u on a cumulative resource with capacity \a c.
+   *
+   * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
+   * has to be posted in addition to ensure consistency of the task bounds.
+   *
+   * The propagator performs time-tabling, overload checking, and 
+   * edge-finding. It uses algorithms taken from:
+   *
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * 5547 of LNCS, pages 294-308. Springer, 2009.
+   *
+   * and
+   *
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * pages 802-816. Springer, 2009.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *    \a p, or \a u are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if the variable arrays 
+   *    contain the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a u or \a c
+   *    contain an integer that is not strictly positive or that could 
+   *    generate an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
+             const IntVarArgs& e, const IntArgs& u);
+
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   *
+   * Schedule optional tasks with start times \a s, processing times \a p,
+   * end times \a e,
+   * used capacity \a u, and whether a task is mandatory \a m (a task is 
+   * mandatory if the Boolean variable is 1) on a cumulative resource 
+   * with capacity \a c.
+   * 
+   * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
+   * has to be posted in addition to ensure consistency of the task bounds.
+   *
+   * The propagator performs time-tabling, overload checking, and 
+   * edge-finding. It uses algorithms taken from:
+   *
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * 5547 of LNCS, pages 294-308. Springer, 2009.
+   *
+   * and
+   *
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * pages 802-816. Springer, 2009.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   *    \a p, \a u, or \a m are of different size.
+   *  - Throws an exception of type Int::ArgumentSame, if the variable arrays 
+   *    contain the same unassigned variable multiply.
+   *  - Throws an exception of type Int::OutOfLimits, if \a u or \a c
+   *    contain an integer that is not strictly positive or that could 
+   *    generate an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p, 
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m);
   //@}
 
 }

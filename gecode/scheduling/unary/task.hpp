@@ -50,7 +50,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     _s=s; _p=p;
   }
   forceinline void
-  ManFixTask::init(const OptFixTask& t) {
+  ManFixTask::init(const ManFixTask& t) {
     _s=t._s; _p=t._p;
   }
 
@@ -81,10 +81,6 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   forceinline IntVar
   ManFixTask::st(void) const {
     return _s;
-  }
-  forceinline int
-  ManFixTask::p(void) const {
-    return _p;
   }
 
   forceinline bool
@@ -123,9 +119,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
   forceinline ModEvent
   ManFixTask::norun(Space& home, int e, int l) {
-    assert(e <= l);
-    Iter::Ranges::Singleton r(e-_p+1,l);
-    return _s.minus_r(home,r,false);
+    if (e <= l) {
+      Iter::Ranges::Singleton r(e-_p+1,l);
+      return _s.minus_r(home,r,false);
+    } else {
+      return Int::ME_INT_NONE;
+    }
   }
 
 
@@ -157,7 +156,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct();
+    s << t.est() << ':' << t.pmin() << ':' << t.lct();
     return os << s.str();
   }
     
@@ -175,7 +174,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     _s=s; _p=p; _e=e;
   }
   forceinline void
-  ManFlexTask::init(const OptFlexTask& t) {
+  ManFlexTask::init(const ManFlexTask& t) {
     _s=t._s; _p=t._p; _e=t._e;
   }
 
@@ -231,7 +230,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   forceinline bool
   ManFlexTask::assigned(void) const {
-    return _s.assigned() && _p.assigned();
+    return _s.assigned() && _p.assigned() && _e.assigned();
   }
 
   forceinline ModEvent 
@@ -252,11 +251,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   }
   forceinline ModEvent
   ManFlexTask::norun(Space& home, int e, int l) {
-    assert(e <= l);
-    Iter::Ranges::Singleton sr(e-_p.min()+1,l);
-    GECODE_ME_CHECK(_s.minus_r(home,sr,false));
-    Iter::Ranges::Singleton er(e+1,_p.min()+l);
-    return _e.minus_r(home,er,false);
+    if (e <= l) {
+      Iter::Ranges::Singleton sr(e-_p.min()+1,l);
+      GECODE_ME_CHECK(_s.minus_r(home,sr,false));
+      Iter::Ranges::Singleton er(e+1,_p.min()+l);
+      return _e.minus_r(home,er,false);
+    } else {
+      return Int::ME_INT_NONE;
+    }
   }
 
 
@@ -319,7 +321,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
-    s << t.est() << ':' << t.p() << ':' << t.lct() << ':'
+    s << t.est() << ':' << t.pmin() << ':' << t.lct() << ':'
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }

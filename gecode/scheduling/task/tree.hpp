@@ -43,6 +43,18 @@ namespace Gecode { namespace Scheduling {
     return (x == -Int::Limits::infinity) ? x : x+y;
   }
 
+  forceinline double 
+  plus(double x, double y) {
+    assert(y != -Int::Limits::double_infinity);
+    return (x == -Int::Limits::double_infinity) ? x : x+y;
+  }
+
+  forceinline double 
+  div(double x, double y) {
+    assert(y != -Int::Limits::double_infinity);
+    return (x == -Int::Limits::double_infinity) ? x : x / y;
+  }
+
   template<class TaskView, class Node>
   forceinline int 
   TaskTree<TaskView,Node>::n_inner(void) const {
@@ -150,6 +162,17 @@ namespace Gecode { namespace Scheduling {
         _leaf[i] += fst - tasks.size();
       else
         _leaf[i] += fst;
+  }
+
+  template<class TaskView, class Node> template<class Node2>
+  forceinline
+  TaskTree<TaskView,Node>::TaskTree(Region& r, 
+                                    const TaskTree<TaskView,Node2>& t)
+    : tasks(t.tasks), 
+      node(r.alloc<Node>(n_nodes())),
+      _leaf(r.alloc<int>(tasks.size())) {
+    for (int i=tasks.size(); i--; )
+      _leaf[i] = t._leaf[i];
   }
 
 }}

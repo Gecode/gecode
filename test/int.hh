@@ -116,6 +116,29 @@ namespace Test {
       virtual ~RandomAssignment(void);
     };
 
+    /// Generate random selection of assignments
+    class RandomMixAssignment : public Assignment {
+    protected:
+      int* vals; ///< The current values for the variables
+      int  a;    ///< How many assigments still to be generated
+      int _n1;   ///< How many variables in the second set
+      Gecode::IntSet _d1; ///< Domain for second set of variables
+      /// Generate new value according to domain \a d
+      int randval(const Gecode::IntSet& d);
+    public:
+      /// Initialize for \a a assignments for \a n0 variables and values \a d0
+      RandomMixAssignment(int n0, const Gecode::IntSet& d0,
+                          int n1, const Gecode::IntSet& d1, int a0);
+      /// Test whether all assignments have been iterated
+      virtual bool operator()(void) const;
+      /// Move to next assignment
+      virtual void operator++(void);
+      /// Return value for variable \a i
+      virtual int operator[](int i) const;
+      /// Destructor
+      virtual ~RandomMixAssignment(void);
+    };
+
     /// Level of consistency to test for
     enum ConTestLevel {
       CTL_NONE,     ///< No consistency-test
