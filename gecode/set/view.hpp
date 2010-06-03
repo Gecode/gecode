@@ -216,8 +216,6 @@ namespace Gecode {
       int *ranges;
       int size;
       unsigned int domSize;
-      /// Initialize with constant \a s
-      void init(Space& home, const IntSet& s);
     public:
       /// \name Constructors and initialization
       //@{

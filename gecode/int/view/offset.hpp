@@ -48,20 +48,16 @@ namespace Gecode {
     forceinline
     OffsetView::OffsetView(const IntView& y, int d)
       : DerivedViewBase<IntView>(y), c(d) {}
-    forceinline void
-    OffsetView::init(const IntView& y, int d) {
-      x=y; c=d;
-    }
-    forceinline int
-    OffsetView::offset(void) const {
-      return c;
-    }
 
 
     /*
      * Value access
      *
      */
+    forceinline int
+    OffsetView::offset(void) const {
+      return c;
+    }
     forceinline int
     OffsetView::min(void) const {
       return x.min()+c;

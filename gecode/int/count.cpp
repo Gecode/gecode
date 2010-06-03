@@ -126,7 +126,7 @@ namespace Gecode {
 
     ViewArray<OffsetView> xy(home,x.size());
     for (int i=x.size(); i--; )
-      xy[i].init(x[i],-y[i]);
+      xy[i] = OffsetView(x[i],-y[i]);
 
     ZeroIntView z;
     switch (r) {
@@ -243,7 +243,7 @@ namespace Gecode {
 
     ViewArray<OffsetView> xy(home,x.size());
     for (int i=x.size(); i--; )
-      xy[i].init(x[i],-y[i]);
+      xy[i] = OffsetView(x[i],-y[i]);
 
     ZeroIntView u;
     switch (r) {

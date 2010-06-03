@@ -107,24 +107,16 @@ namespace Gecode {
     ScaleView<Val,UnsVal>::ScaleView(int b, const IntView& y)
       : DerivedViewBase<IntView>(y), a(b) {}
 
-    template<class Val, class UnsVal>
-    forceinline void
-    ScaleView<Val,UnsVal>::init(int b, const IntView& y) {
-      x=y; a=b;
-    }
-
-    template<class Val, class UnsVal>
-    forceinline int
-    ScaleView<Val,UnsVal>::scale(void) const {
-      return a;
-    }
-
-
 
     /*
      * Value access
      *
      */
+    template<class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::scale(void) const {
+      return a;
+    }
     template<class Val, class UnsVal>
     forceinline Val
     ScaleView<Val,UnsVal>::min(void) const {

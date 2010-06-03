@@ -78,7 +78,7 @@ namespace Gecode {
       Limits::check(c[i],"Int::distinct");
       Limits::check(cx_min,"Int::distinct");
       Limits::check(cx_max,"Int::distinct");
-      cx[i].init(x[i],c[i]);
+      cx[i] = OffsetView(x[i],c[i]);
     }
     switch (icl) {
     case ICL_BND:

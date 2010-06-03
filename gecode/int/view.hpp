@@ -306,8 +306,6 @@ namespace Gecode {
       MinusView(void);
       /// Initialize with integer view \a y
       explicit MinusView(const IntView& y);
-      /// Initialize with integer view \a y
-      void init(const IntView& y);
       //@}
 
       /// \name Value access
@@ -478,14 +476,12 @@ namespace Gecode {
       OffsetView(void);
       /// Initialize with integer view \a y and offset \a c
       OffsetView(const IntView& y, int c);
-      /// Initialize with integer view \a y and offset \a c
-      void init(const IntView& y, int c);
-      /// Return offset
-      int offset(void) const;
       //@}
 
       /// \name Value access
       //@{
+      /// Return offset
+      int offset(void) const;
       /// Return minimum of domain
       int min(void) const;
       /// Return maximum of domain
@@ -695,15 +691,13 @@ namespace Gecode {
       ScaleView(void);
       /// Initialize as \f$b\cdot y\f$
       ScaleView(int b, const IntView& y);
-      /// Initialize as \f$b\cdot y\f$
-      void init(int b, const IntView& y);
-      /// Return scale factor of scale view
-      int scale(void) const;
       //@}
 
 
       /// \name Value access
       //@{
+      /// Return scale factor of scale view
+      int scale(void) const;
       /// Return minimum of domain
       Val min(void) const;
       /// Return maximum of domain
@@ -849,8 +843,6 @@ namespace Gecode {
       ConstIntView(void);
       /// Initialize with integer value \a n
       ConstIntView(int n);
-      /// Initialize with integer value \a n
-      void init(int n);
       //@}
 
       /// \name Value access
@@ -1043,8 +1035,6 @@ namespace Gecode {
       //@{
       /// Default constructor
       ZeroIntView(void);
-      /// Initialize
-      void init(void);
       //@}
 
       /// \name Value access
@@ -1437,8 +1427,6 @@ namespace Gecode {
       NegBoolView(void);
       /// Initialize with Boolean view \a y
       explicit NegBoolView(const BoolView& y);
-      /// Initialize with Boolean view \a y
-      void init(const BoolView& y);
       //@}
 
       /// \name Domain status access

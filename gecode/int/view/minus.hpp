@@ -48,10 +48,6 @@ namespace Gecode {
     forceinline
     MinusView::MinusView(const IntView& y)
       : DerivedViewBase<IntView>(y) {}
-    forceinline void
-    MinusView::init(const IntView& y) {
-      x = y;
-    }
 
 
     /*

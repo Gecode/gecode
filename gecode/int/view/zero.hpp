@@ -45,9 +45,6 @@ namespace Gecode {
      */
     forceinline
     ZeroIntView::ZeroIntView(void) {}
-    forceinline void
-    ZeroIntView::init(void) {}
-
 
     /*
      * Value access

@@ -98,7 +98,7 @@ namespace Gecode {
     if (home.failed()) return;
     ViewArray<MinusView> m(home,x.size());
     for (int i=x.size(); i--; )
-      m[i].init(x[i]);
+      m[i] = MinusView(x[i]);
     MinusView my(y);
     if (icl == ICL_DOM) {
       GECODE_ES_FAIL(Arithmetic::NaryMaxDom<MinusView>::post(home,m,my));

@@ -85,8 +85,7 @@ namespace Gecode { namespace Set {
   ConstantView::ConstantView(void) : ranges(NULL), size(0), domSize(0) {}
 
   forceinline
-  void
-  ConstantView::init(Space& home, const IntSet& dom) {
+  ConstantView::ConstantView(Space& home, const IntSet& dom) {
     size = dom.ranges();
     domSize = 0;
     if (size > 0) {
@@ -101,11 +100,6 @@ namespace Gecode { namespace Set {
     } else {
       ranges = NULL;
     }
-  }
-
-  forceinline
-  ConstantView::ConstantView(Space& home, const IntSet& dom) {
-    init(home, dom);
   }
 
   forceinline unsigned int

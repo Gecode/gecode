@@ -47,11 +47,6 @@ namespace Gecode {
     ConstIntView::ConstIntView(void) {}
     forceinline
     ConstIntView::ConstIntView(int n) : x(n) {}
-    forceinline void
-    ConstIntView::init(int n) {
-      x=n;
-    }
-
 
     /*
      * Value access

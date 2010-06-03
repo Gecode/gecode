@@ -273,10 +273,10 @@ namespace Gecode { namespace Int { namespace Linear {
       c = static_cast<int>(d);
       ViewArray<IntScaleView> x(home,n_p);
       for (int i = n_p; i--; )
-        x[i].init(t_p[i].a,t_p[i].x);
+        x[i] = IntScaleView(t_p[i].a,t_p[i].x);
       ViewArray<IntScaleView> y(home,n_n);
       for (int i = n_n; i--; )
-        y[i].init(t_n[i].a,t_n[i].x);
+        y[i] = IntScaleView(t_n[i].a,t_n[i].x);
       if ((icl == ICL_DOM) && (r == IRT_EQ)) {
         GECODE_ES_FAIL((DomEq<int,IntScaleView>::post(home,x,y,c)));
       } else {
@@ -286,10 +286,10 @@ namespace Gecode { namespace Int { namespace Linear {
       // Arbitrary coefficients with double precision
       ViewArray<DoubleScaleView> x(home,n_p);
       for (int i = n_p; i--; )
-        x[i].init(t_p[i].a,t_p[i].x);
+        x[i] = DoubleScaleView(t_p[i].a,t_p[i].x);
       ViewArray<DoubleScaleView> y(home,n_n);
       for (int i = n_n; i--; )
-        y[i].init(t_n[i].a,t_n[i].x);
+        y[i] = DoubleScaleView(t_n[i].a,t_n[i].x);
       if ((icl == ICL_DOM) && (r == IRT_EQ)) {
         GECODE_ES_FAIL((DomEq<double,DoubleScaleView>::post(home,x,y,d)));
       } else {
@@ -475,19 +475,19 @@ namespace Gecode { namespace Int { namespace Linear {
       c = static_cast<int>(d);
       ViewArray<IntScaleView> x(home,n_p);
       for (int i = n_p; i--; )
-        x[i].init(t_p[i].a,t_p[i].x);
+        x[i] = IntScaleView(t_p[i].a,t_p[i].x);
       ViewArray<IntScaleView> y(home,n_n);
       for (int i = n_n; i--; )
-        y[i].init(t_n[i].a,t_n[i].x);
+        y[i] = IntScaleView(t_n[i].a,t_n[i].x);
       post_nary<int,IntScaleView>(home,x,y,r,c,b);
     } else {
       // Arbitrary coefficients with double precision
       ViewArray<DoubleScaleView> x(home,n_p);
       for (int i = n_p; i--; )
-        x[i].init(t_p[i].a,t_p[i].x);
+        x[i] = DoubleScaleView(t_p[i].a,t_p[i].x);
       ViewArray<DoubleScaleView> y(home,n_n);
       for (int i = n_n; i--; )
-        y[i].init(t_n[i].a,t_n[i].x);
+        y[i] = DoubleScaleView(t_n[i].a,t_n[i].x);
       post_nary<double,DoubleScaleView>(home,x,y,r,d,b);
     }
   }
