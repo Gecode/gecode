@@ -115,11 +115,9 @@ public:
         fail();
       } else {
         // Array of all words of length w_l
-        IntVarArgs words(n);
-        for (int i=n; i--; ) {
-          words[i].init(*this,0,n_w-1);
+        IntVarArgs words(*this,n,0,n_w-1);
+        for (int i=n; i--; )
           allwords[aw_i++]=words[i];
-        }
         
         // All words of same length must be different
         distinct(*this, words, opt.icl());

@@ -254,11 +254,7 @@ public:
           rel(*this, succ[i], IRT_NQ, j);
 
     // Cost of each edge
-    IntVarArgs costs(n);
-
-    // Initialize cost variables for edges
-    for (int i=n; i--; )
-      costs[i].init(*this, Int::Limits::min, Int::Limits::max);
+    IntVarArgs costs(*this, n, Int::Limits::min, Int::Limits::max);
 
     // Enforce that the succesors yield a tour with appropriate costs
     circuit(*this, c, succ, costs, total, opt.icl());

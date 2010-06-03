@@ -86,9 +86,7 @@ public:
     const int n_w = dict.words(w_l);
 
     // Initialize word array
-    IntVarArgs words(w_l);
-    for (int i=0; i<w_l; i++)
-      words[i].init(*this,0,n_w-1);
+    IntVarArgs words(*this, w_l, 0, n_w-1);
 
     // All words must be different
     distinct(*this, words);

@@ -229,10 +229,8 @@ public:
     // Domain for gamenumber of period
     for (int w=0; w<weeks(); w++) {
       IntArgs rh(periods()), ra(periods()), rg(periods());
-      IntVarArgs n(periods());
+      IntVarArgs n(*this,periods(),0,periods()-1);
 
-      for (int p=0; p<periods(); p++)
-        n[p].init(*this,0,periods()-1);
       distinct(*this, n, opt.icl());
 
       r.hag(w,rh,ra,rg);

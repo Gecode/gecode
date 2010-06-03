@@ -486,7 +486,7 @@ public:
   /// Init the variable \a x if necessary
   IntVar init(IntVar& x) {
     if (x.min() == 0)
-      x.init(*this,1,9);
+      x = IntVar(*this,1,9);
     return x;
   }
   /// Post a distinct-linear constraint on variables \a x with sum \a c

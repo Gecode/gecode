@@ -386,9 +386,7 @@ public:
     } else { // opt.propagation() == PROPAGATION_BOOLEAN
       int ncolors = ntiles + 2;
       // Boolean variables for channeling
-      BoolVarArgs p(ncolors * board.size());
-      for (int i=p.size(); i--; )
-        p[i].init(*this,0,1);
+      BoolVarArgs p(*this,ncolors * board.size(),0,1);
 
       // Post channel constraints
       for (int i=board.size(); i--; ) {
