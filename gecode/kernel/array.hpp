@@ -1671,7 +1671,7 @@ namespace Gecode {
   template<class Var>
   forceinline bool
   VarArgArray<Var>::VarLess::operator ()(const Var& a, const Var& b) {
-    return a.var() < b.var();
+    return a.varimp() < b.varimp();
   }
 
   template<class Var>
@@ -1695,7 +1695,7 @@ namespace Gecode {
     VarLess vl;
     Support::quicksort<Var,VarLess>(y,n,vl);
     for (int i = n-1; i--; )
-      if (!y[i].assigned() && (y[i+1].var() == y[i].var())) {
+      if (!y[i].assigned() && (y[i+1].varimp() == y[i].varimp())) {
         r.free<Var>(y,n);
         return true;
       }
@@ -1718,7 +1718,7 @@ namespace Gecode {
     VarLess vl;
     Support::quicksort<Var,VarLess>(z,m,vl);
     for (int i = m-1; i--; )
-      if (!z[i].assigned() && (z[i+1].var() == z[i].var())) {
+      if (!z[i].assigned() && (z[i+1].varimp() == z[i].varimp())) {
         r.free<Var>(z,m);
         return true;
       }
@@ -1732,7 +1732,7 @@ namespace Gecode {
     if (y.assigned())
       return false;
     for (int i = n; i--; )
-      if (a[i].var() == y.var())
+      if (a[i].varimp() == y.varimp())
         return true;
     return false;
   }

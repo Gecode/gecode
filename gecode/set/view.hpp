@@ -61,7 +61,7 @@ namespace Gecode {
 
     class SetView : public VarViewBase<SetVarImp> {
     protected:
-      using VarViewBase<SetVarImp>::varimp;
+      using VarViewBase<SetVarImp>::vi;
     public:
       /// \name Constructors and initialization
       //@{

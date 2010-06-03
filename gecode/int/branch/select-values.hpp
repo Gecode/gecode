@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Branch {
   const Choice*
   ViewValuesBrancher<ViewSel,View>::choice(Space& home) {
     Pos p = ViewBrancher<ViewSel>::pos(home);
-    View v(ViewBrancher<ViewSel>::view(p).var());
+    View v(ViewBrancher<ViewSel>::view(p).varimp());
     return new PosValuesChoice<ViewSel,View>
       (*this,p,viewsel.choice(home),v);
   }
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ::commit(Space& home, const Choice& c, unsigned int a) {
     const PosValuesChoice<ViewSel,View>& pvc
       = static_cast<const PosValuesChoice<ViewSel,View>&>(c);
-    View v(ViewBrancher<ViewSel>::view(pvc.pos()).var());
+    View v(ViewBrancher<ViewSel>::view(pvc.pos()).varimp());
     viewsel.commit(home, pvc.viewchoice(), a);
     return me_failed(v.eq(home,pvc.val(a))) ? ES_FAILED : ES_OK;
   }

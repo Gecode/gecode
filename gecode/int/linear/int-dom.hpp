@@ -246,7 +246,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (d + static_cast<Val>(a)*x.max() < u)
       return false;
     // Restart iterator and position of values
-    i.init(x.var()); p = 0;
+    i.init(x.varimp()); p = 0;
     // Skip all ranges which are too small
     while (d + static_cast<Val>(a)*i.max() < u) {
       p += i.width(); ++i;
@@ -303,7 +303,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (d + static_cast<Val>(a)*x.min() < u)
       return false;
     // Restart iterator and position of values
-    i.init(x.var()); p = x.size()-1;
+    i.init(x.varimp()); p = x.size()-1;
     // Skip all ranges which are too small
     while (d + static_cast<Val>(a)*i.min() < u) {
       p -= i.width(); ++i;

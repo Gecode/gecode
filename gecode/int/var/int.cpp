@@ -61,7 +61,7 @@ namespace Gecode {
     Int::Limits::check(max,"IntVar::IntVar");
     if (min > max)
       throw Int::VariableEmptyDomain("IntVar::init");
-    varimp = new (home) Int::IntVarImp(home,min,max);
+    vi = new (home) Int::IntVarImp(home,min,max);
   }
 
   void
@@ -70,7 +70,7 @@ namespace Gecode {
     Int::Limits::check(ds.max(),"IntVar::IntVar");
     if (ds.size() == 0)
       throw Int::VariableEmptyDomain("IntVar::init");
-    varimp = new (home) Int::IntVarImp(home,ds);
+    vi = new (home) Int::IntVarImp(home,ds);
   }
 
 }

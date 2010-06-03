@@ -357,7 +357,7 @@ namespace Gecode {
   const Choice*
   ViewValBrancher<ViewSel,ValSel>::choice(Space& home) {
     Pos p = ViewBrancher<ViewSel>::pos(home);
-    typename ValSel::View v(ViewBrancher<ViewSel>::view(p).var());
+    typename ValSel::View v(ViewBrancher<ViewSel>::view(p).varimp());
     typename ValSel::Val val(valsel.val(home,v));
     return new PosValChoice<ViewSel,ValSel>
       (*this,p,
@@ -371,7 +371,7 @@ namespace Gecode {
     const PosValChoice<ViewSel,ValSel>& pvc
       = static_cast<const PosValChoice<ViewSel,ValSel>&>(c);
     typename ValSel::View
-      v(ViewBrancher<ViewSel>::view(pvc.pos()).var());
+      v(ViewBrancher<ViewSel>::view(pvc.pos()).varimp());
     viewsel.commit(home, pvc.viewchoice(), a);
     valsel.commit(home, pvc.valchoice(), a);
     return me_failed(valsel.tell(home,a,v,pvc.val())) ? ES_FAILED : ES_OK;

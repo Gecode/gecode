@@ -41,79 +41,79 @@ namespace Gecode {
   BoolVar::_init(Space& home, int min, int max) {
     assert((min >= 0) && (max <= 1) && (min <= max));
     if (min > 0)
-      varimp = &Int::BoolVarImp::s_one;
+      vi = &Int::BoolVarImp::s_one;
     else if (max == 0)
-      varimp = &Int::BoolVarImp::s_zero;
+      vi = &Int::BoolVarImp::s_zero;
     else
-      varimp = new (home) Int::BoolVarImp(home,0,1);
+      vi = new (home) Int::BoolVarImp(home,0,1);
   }
 
   forceinline
   BoolVar::BoolVar(void) {}
   forceinline
   BoolVar::BoolVar(const BoolVar& x)
-    : VarBase<Int::BoolVarImp>(x.varimp) {}
+    : VarBase<Int::BoolVarImp>(x.varimp()) {}
   forceinline
   BoolVar::BoolVar(const Int::BoolView& x)
-    : VarBase<Int::BoolVarImp>(x.var()) {}
+    : VarBase<Int::BoolVarImp>(x.varimp()) {}
 
   forceinline int
   BoolVar::val(void) const {
-    if (!varimp->assigned())
+    if (!vi->assigned())
       throw Int::ValOfUnassignedVar("BoolVar::val");
-    return varimp->val();
+    return vi->val();
   }
   forceinline int
   BoolVar::min(void) const {
-    return varimp->min();
+    return vi->min();
   }
   forceinline int
   BoolVar::med(void) const {
-    return varimp->med();
+    return vi->med();
   }
   forceinline int
   BoolVar::max(void) const {
-    return varimp->max();
+    return vi->max();
   }
 
 
   forceinline unsigned int
   BoolVar::width(void) const {
-    return varimp->width();
+    return vi->width();
   }
   forceinline unsigned int
   BoolVar::size(void) const {
-    return varimp->size();
+    return vi->size();
   }
   forceinline unsigned int
   BoolVar::regret_min(void) const {
-    return varimp->regret_min();
+    return vi->regret_min();
   }
   forceinline unsigned int
   BoolVar::regret_max(void) const {
-    return varimp->regret_max();
+    return vi->regret_max();
   }
 
   forceinline bool
   BoolVar::range(void) const {
-    return varimp->range();
+    return vi->range();
   }
   forceinline bool
   BoolVar::in(int n) const {
-    return varimp->in(n);
+    return vi->in(n);
   }
 
   forceinline bool
   BoolVar::zero(void) const {
-    return varimp->zero();
+    return vi->zero();
   }
   forceinline bool
   BoolVar::one(void) const {
-    return varimp->one();
+    return vi->one();
   }
   forceinline bool
   BoolVar::none(void) const {
-    return varimp->none();
+    return vi->none();
   }
 
 }

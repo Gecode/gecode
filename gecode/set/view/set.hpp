@@ -52,7 +52,7 @@ namespace Gecode { namespace Set {
   SetView::SetView(void) {}
   forceinline
   SetView::SetView(const SetVar& y)
-    : VarViewBase<SetVarImp>(y.var()) {}
+    : VarViewBase<SetVarImp>(y.varimp()) {}
   forceinline
   SetView::SetView(SetVarImp* y)
     : VarViewBase<SetVarImp>(y) {}
@@ -63,40 +63,53 @@ namespace Gecode { namespace Set {
    */
 
   forceinline unsigned int
-  SetView::glbSize(void) const { return varimp->glbSize(); }
-
+  SetView::glbSize(void) const { 
+    return vi->glbSize(); 
+  }
   forceinline unsigned int
-  SetView::lubSize(void) const { return varimp->lubSize(); }
-
+  SetView::lubSize(void) const { 
+    return vi->lubSize(); 
+  }
   forceinline unsigned int
-  SetView::unknownSize(void) const { return varimp->lubSize() - varimp->glbSize(); }
-
+  SetView::unknownSize(void) const { 
+    return vi->lubSize() - vi->glbSize(); 
+  }
   forceinline bool
-  SetView::contains(int i) const { return (varimp->knownIn(i)); }
-
+  SetView::contains(int i) const { 
+    return vi->knownIn(i); 
+  }
   forceinline bool
-  SetView::notContains(int i) const { return (varimp->knownOut(i)); }
-
+  SetView::notContains(int i) const { 
+    return vi->knownOut(i); 
+  }
   forceinline unsigned int
-  SetView::cardMin(void) const { return varimp->cardMin(); }
-
+  SetView::cardMin(void) const { 
+    return vi->cardMin(); 
+  }
   forceinline unsigned int
-  SetView::cardMax(void) const { return varimp->cardMax(); }
-
+  SetView::cardMax(void) const { 
+    return vi->cardMax(); 
+  }
   forceinline int
-  SetView::lubMin(void) const { return varimp->lubMin(); }
-
+  SetView::lubMin(void) const { 
+    return vi->lubMin(); 
+  }
   forceinline int
-  SetView::lubMax(void) const { return varimp->lubMax(); }
-
+  SetView::lubMax(void) const { 
+    return vi->lubMax(); 
+  }
   forceinline int
-  SetView::lubMinN(unsigned int n) const { return varimp->lubMinN(n); }
-
+  SetView::lubMinN(unsigned int n) const { 
+    return vi->lubMinN(n); 
+  }
   forceinline int
-  SetView::glbMin(void) const { return varimp->glbMin(); }
-
+  SetView::glbMin(void) const { 
+    return vi->glbMin(); 
+  }
   forceinline int
-  SetView::glbMax(void) const { return varimp->glbMax(); }
+  SetView::glbMax(void) const { 
+    return vi->glbMax(); 
+  }
 
   /*
    * Tells
@@ -105,59 +118,58 @@ namespace Gecode { namespace Set {
 
   forceinline ModEvent
   SetView::cardMin(Space& home, unsigned int m) {
-    return varimp-> cardMin(home, m);
+    return vi->cardMin(home, m);
   }
 
   forceinline ModEvent
   SetView::cardMax(Space& home, unsigned int m) {
-    return varimp-> cardMax(home, m);
+    return vi->cardMax(home, m);
   }
 
   forceinline ModEvent
-  SetView::include (Space& home,int from, int to) {
-    return (varimp->include(home,from,to));
+  SetView::include (Space& home, int from, int to) {
+    return vi->include(home,from,to);
   }
 
   forceinline ModEvent
-  SetView::include (Space& home,int n) {
-    return (varimp->include(home,n));
+  SetView::include (Space& home, int n) {
+    return vi->include(home,n);
   }
 
   forceinline ModEvent
-  SetView::exclude (Space& home,int n) {
-    return (varimp->exclude(home, n));
+  SetView::exclude (Space& home, int n) {
+    return vi->exclude(home, n);
   }
 
   forceinline ModEvent
-  SetView::intersect (Space& home,int from, int to) {
-    return (varimp->intersect(home,from,to));
+  SetView::intersect (Space& home, int from, int to) {
+    return vi->intersect(home,from,to);
   }
 
   forceinline ModEvent
-  SetView::intersect (Space& home,int n) {
-    return (varimp->intersect(home,n));
+  SetView::intersect (Space& home, int n) {
+    return vi->intersect(home,n);
   }
 
   template<class I> ModEvent
   SetView::includeI (Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
-    return (varimp->includeI(home, iter));
+    return vi->includeI(home, iter);
   }
 
   forceinline ModEvent
-  SetView::exclude (Space& home,int from, int to)
-  { return (varimp->exclude(home,from,to)); }
-
+  SetView::exclude (Space& home, int from, int to) { 
+    return vi->exclude(home,from,to); 
+  }
   template<class I> ModEvent
   SetView::excludeI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
-    return varimp->excludeI(home, iter);
+    return vi->excludeI(home, iter);
   }
-
   template<class I> ModEvent
   SetView::intersectI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
-    return varimp->intersectI(home, iter);
+    return vi->intersectI(home, iter);
   }
 
 
@@ -211,11 +223,11 @@ namespace Gecode { namespace Set {
 
   forceinline
   LubRanges<SetView>::LubRanges(const SetView& x)
-    : LubRanges<SetVarImp*>(x.var()) {}
+    : LubRanges<SetVarImp*>(x.varimp()) {}
 
   forceinline void
   LubRanges<SetView>::init(const SetView& x) {
-    LubRanges<SetVarImp*>::init(x.var());
+    LubRanges<SetVarImp*>::init(x.varimp());
   }
 
 
@@ -241,11 +253,11 @@ namespace Gecode { namespace Set {
 
   forceinline
   GlbRanges<SetView>::GlbRanges(const SetView& x)
-    : GlbRanges<SetVarImp*>(x.var()) {}
+    : GlbRanges<SetVarImp*>(x.varimp()) {}
 
   forceinline void
   GlbRanges<SetView>::init(const SetView& x) {
-    GlbRanges<SetVarImp*>::init(x.var());
+    GlbRanges<SetVarImp*>::init(x.varimp());
   }
 
 }}

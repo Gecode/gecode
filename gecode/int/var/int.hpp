@@ -39,67 +39,67 @@ namespace Gecode {
 
   forceinline void
   IntVar::_init(Space& home, int min, int max) {
-    varimp = new (home) Int::IntVarImp(home,min,max);
+    vi = new (home) Int::IntVarImp(home,min,max);
   }
 
   forceinline void
   IntVar::_init(Space& home, const IntSet& ds) {
-    varimp = new (home) Int::IntVarImp(home,ds);
+    vi = new (home) Int::IntVarImp(home,ds);
   }
 
   forceinline
   IntVar::IntVar(void) {}
   forceinline
   IntVar::IntVar(const IntVar& x)
-    : VarBase<Int::IntVarImp>(x.varimp) {}
+    : VarBase<Int::IntVarImp>(x.varimp()) {}
   forceinline
   IntVar::IntVar(const Int::IntView& x)
-    : VarBase<Int::IntVarImp>(x.var()) {}
+    : VarBase<Int::IntVarImp>(x.varimp()) {}
 
   forceinline int
   IntVar::val(void) const {
-    if (!varimp->assigned())
+    if (!vi->assigned())
       throw Int::ValOfUnassignedVar("IntVar::val");
-    return varimp->val();
+    return vi->val();
   }
   forceinline int
   IntVar::min(void) const {
-    return varimp->min();
+    return vi->min();
   }
   forceinline int
   IntVar::med(void) const {
-    return varimp->med();
+    return vi->med();
   }
   forceinline int
   IntVar::max(void) const {
-    return varimp->max();
+    return vi->max();
   }
 
 
   forceinline unsigned int
   IntVar::width(void) const {
-    return varimp->width();
+    return vi->width();
   }
   forceinline unsigned int
   IntVar::size(void) const {
-    return varimp->size();
+    return vi->size();
   }
   forceinline unsigned int
   IntVar::regret_min(void) const {
-    return varimp->regret_min();
+    return vi->regret_min();
   }
   forceinline unsigned int
   IntVar::regret_max(void) const {
-    return varimp->regret_max();
+    return vi->regret_max();
   }
 
   forceinline bool
   IntVar::range(void) const {
-    return varimp->range();
+    return vi->range();
   }
   forceinline bool
   IntVar::in(int n) const {
-    return varimp->in(n);
+    return vi->in(n);
   }
 
   /*
@@ -111,11 +111,11 @@ namespace Gecode {
 
   forceinline
   IntVarRanges::IntVarRanges(const IntVar& x)
-    : Int::IntVarImpFwd(x.var()) {}
+    : Int::IntVarImpFwd(x.varimp()) {}
 
   forceinline void
   IntVarRanges::init(const IntVar& x) {
-    Int::IntVarImpFwd::init(x.var());
+    Int::IntVarImpFwd::init(x.varimp());
   }
 
 

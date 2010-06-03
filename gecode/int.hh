@@ -339,7 +339,7 @@ namespace Gecode {
     friend class IntVarArray;
     friend class IntVarArgs;
   private:
-    using VarBase<Int::IntVarImp>::varimp;
+    using VarBase<Int::IntVarImp>::vi;
     /**
      * \brief Initialize variable with range domain
      *
@@ -504,7 +504,7 @@ namespace Gecode {
     friend class BoolVarArray;
     friend class BoolVarArgs;
   private:
-    using VarBase<Int::BoolVarImp>::varimp;
+    using VarBase<Int::BoolVarImp>::vi;
     /**
      * \brief Initialize Boolean variable with range domain
      *

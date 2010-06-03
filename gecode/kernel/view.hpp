@@ -64,7 +64,7 @@ namespace Gecode {
     /// Return whether this view is derived from a VarViewBase
     static bool varderived(void);
     /// Return dummy variable implementation of view
-    VarImpBase* var(void) const;
+    VarImpBase* varimp(void) const;
     //@}
 
     /// \name Domain tests
@@ -90,7 +90,7 @@ namespace Gecode {
   class VarViewBase {
   protected:
     /// Pointer to variable implementation
-    VarImp* varimp;
+    VarImp* vi;
     /// Default constructor
     VarViewBase(void);
     /// Initialize with variable implementation x
@@ -101,7 +101,7 @@ namespace Gecode {
     /// Return whether this view is derived from a VarViewBase
     static bool varderived(void);
     /// Return variable implementation of view
-    VarImp* var(void) const;
+    VarImp* varimp(void) const;
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return accumulated failure count (plus degree)
@@ -177,21 +177,19 @@ namespace Gecode {
   protected:
     /// View from which this view is derived
     View view;
+    /// The variable type belonging to the \a View
+    typedef typename ViewTraits<View>::VarImp VarImp;
     /// Default constructor
     DerivedViewBase(void);
     /// Initialize with view x
     DerivedViewBase(const View& x);
-
   public:
-    /// The variable type belonging to the \a View
-    typedef typename ViewTraits<View>::VarImp VarImp;
-
     /// \name Generic view information
     //@{
     /// Return whether this view is derived from a VarViewBase
     static bool varderived(void);
     /// Return variable implementation of view
-    VarImp* var(void) const;
+    VarImp* varimp(void) const;
     /// Return view from which this view is derived
     View base(void) const;
     /// Return degree (number of subscribed propagators)
@@ -351,7 +349,7 @@ namespace Gecode {
     return false;
   }
   forceinline VarImpBase*
-  ConstViewBase::var(void) const {
+  ConstViewBase::varimp(void) const {
     return NULL;
   }
   forceinline bool
@@ -369,11 +367,11 @@ namespace Gecode {
   template<class VarImp>
   forceinline
   VarViewBase<VarImp>::VarViewBase(void)
-    : varimp(NULL) {}
+    : vi(NULL) {}
   template<class VarImp>
   forceinline
   VarViewBase<VarImp>::VarViewBase(VarImp* x)
-    : varimp(x) {}
+    : vi(x) {}
   template<class VarImp>
   forceinline bool
   VarViewBase<VarImp>::varderived(void) {
@@ -381,44 +379,44 @@ namespace Gecode {
   }
   template<class VarImp>
   forceinline VarImp*
-  VarViewBase<VarImp>::var(void) const {
-    return varimp;
+  VarViewBase<VarImp>::varimp(void) const {
+    return vi;
   }
   template<class VarImp>
   forceinline unsigned int
   VarViewBase<VarImp>::degree(void) const {
-    return varimp->degree();
+    return vi->degree();
   }
   template<class VarImp>
   forceinline double
   VarViewBase<VarImp>::afc(void) const {
-    return varimp->afc();
+    return vi->afc();
   }
   template<class VarImp>
   forceinline bool
   VarViewBase<VarImp>::assigned(void) const {
-    return varimp->assigned();
+    return vi->assigned();
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::subscribe(Space& home, Propagator& p, PropCond pc,
                                  bool process) {
-    varimp->subscribe(home,p,pc,process);
+    vi->subscribe(home,p,pc,process);
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::cancel(Space& home, Propagator& p, PropCond pc) {
-    varimp->cancel(home,p,pc);
+    vi->cancel(home,p,pc);
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::subscribe(Space& home, Advisor& a) {
-    varimp->subscribe(home,a);
+    vi->subscribe(home,a);
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::cancel(Space& home, Advisor& a) {
-    varimp->cancel(home,a);
+    vi->cancel(home,a);
   }
   template<class VarImp>
   forceinline void
@@ -444,18 +442,18 @@ namespace Gecode {
   forceinline void
   VarViewBase<VarImp>::update(Space& home, bool share, 
                               VarViewBase<VarImp>& x) {
-    varimp = x.varimp->copy(home,share);
+    vi = x.vi->copy(home,share);
   }
 
   template<class VarImp>
   forceinline bool
   same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
-    return x.var() == y.var();
+    return x.varimp() == y.varimp();
   }
   template<class ViewA, class ViewB>
   forceinline bool
   before(const ViewA& x, const ViewB& y) {
-    return x.var() < y.var();
+    return x.varimp() < y.varimp();
   }
 
   /*
@@ -480,8 +478,8 @@ namespace Gecode {
 
   template<class View>
   forceinline typename ViewTraits<View>::VarImp*
-  DerivedViewBase<View>::var(void) const {
-    return view.var();
+  DerivedViewBase<View>::varimp(void) const {
+    return view.varimp();
   }
 
   template<class View>
@@ -592,29 +590,29 @@ namespace Gecode {
   template<class VarImpA, class VarImpB>
   forceinline bool
   shared(const VarViewBase<VarImpA>& x, const VarViewBase<VarImpB>& y) {
-    return (static_cast<VarImpBase*>(x.var()) ==
-            static_cast<VarImpBase*>(y.var()));
+    return (static_cast<VarImpBase*>(x.varimp()) ==
+            static_cast<VarImpBase*>(y.varimp()));
   }
   template<class VarImpA, class ViewB>
   forceinline bool
   shared(const VarViewBase<VarImpA>& x, const DerivedViewBase<ViewB>& y) {
     return (ViewB::varderived() &&
-            static_cast<VarImpBase*>(x.var()) ==
-            static_cast<VarImpBase*>(y.var()));
+            static_cast<VarImpBase*>(x.varimp()) ==
+            static_cast<VarImpBase*>(y.varimp()));
   }
   template<class ViewA, class VarImpB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x, const VarViewBase<VarImpB>& y) {
     return (ViewA::varderived() &&
-            static_cast<VarImpBase*>(x.var()) ==
-            static_cast<VarImpBase*>(y.var()));
+            static_cast<VarImpBase*>(x.varimp()) ==
+            static_cast<VarImpBase*>(y.varimp()));
   }
   template<class ViewA, class ViewB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x, const DerivedViewBase<ViewB>& y) {
     return (ViewA::varderived() && ViewB::varderived() &&
-            static_cast<VarImpBase*>(x.var()) ==
-            static_cast<VarImpBase*>(y.var()));
+            static_cast<VarImpBase*>(x.varimp()) ==
+            static_cast<VarImpBase*>(y.varimp()));
   }
 
 }

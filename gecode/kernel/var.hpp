@@ -45,7 +45,7 @@ namespace Gecode {
   class VarBase {
   protected:
     /// Pointer to variable implementation
-    VarImp* varimp;
+    VarImp* vi;
     /// Default constructor
     VarBase(void);
     /// Initialize with variable implementation \a x
@@ -54,7 +54,7 @@ namespace Gecode {
     /// \name Generic variable information
     //@{
     /// Return variable implementation of variable
-    VarImp* var(void) const;
+    VarImp* varimp(void) const;
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return accumulated failure count (plus degree)
@@ -90,45 +90,45 @@ namespace Gecode {
   template<class VarImp>
   forceinline
   VarBase<VarImp>::VarBase(void)
-    : varimp(NULL) {}
+    : vi(NULL) {}
   template<class VarImp>
   forceinline
   VarBase<VarImp>::VarBase(VarImp* x)
-    : varimp(x) {}
+    : vi(x) {}
   template<class VarImp>
   forceinline VarImp*
-  VarBase<VarImp>::var(void) const {
-    return varimp;
+  VarBase<VarImp>::varimp(void) const {
+    return vi;
   }
   template<class VarImp>
   forceinline unsigned int
   VarBase<VarImp>::degree(void) const {
-    return varimp->degree();
+    return vi->degree();
   }
   template<class VarImp>
   forceinline double
   VarBase<VarImp>::afc(void) const {
-    return varimp->afc();
+    return vi->afc();
   }
   template<class VarImp>
   forceinline bool
   VarBase<VarImp>::assigned(void) const {
-    return varimp->assigned();
+    return vi->assigned();
   }
   template<class VarImp>
   forceinline void
   VarBase<VarImp>::update(Space& home, bool share, VarBase<VarImp>& x) {
-    varimp = x.varimp->copy(home,share);
+    vi = x.vi->copy(home,share);
   }
   template<class VarImp>
   forceinline bool
   VarBase<VarImp>::same(const VarBase<VarImp>& y) const {
-    return var() == y.var();
+    return varimp() == y.varimp();
   }
   template<class VarImp>
   forceinline bool
   VarBase<VarImp>::before(const VarBase<VarImp>& y) const {
-    return var() < y.var();
+    return varimp() < y.varimp();
   }
 
 }

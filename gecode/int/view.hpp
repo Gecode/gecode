@@ -136,7 +136,7 @@ namespace Gecode {
      */
     class IntView : public VarViewBase<IntVarImp> {
     protected:
-      using VarViewBase<IntVarImp>::varimp;
+      using VarViewBase<IntVarImp>::vi;
     public:
       /// \name Constructors and initialization
       //@{
@@ -1227,7 +1227,7 @@ namespace Gecode {
      */
     class BoolView : public VarViewBase<BoolVarImp> {
     protected:
-      using VarViewBase<BoolVarImp>::varimp;
+      using VarViewBase<BoolVarImp>::vi;
     public:
       /// \name Constructors and initialization
       //@{

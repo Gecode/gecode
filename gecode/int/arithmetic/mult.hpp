@@ -542,7 +542,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ES_CHECK((prop_mult_plus_bnd<Val,VA,VB,VC>(home,*this,x0,x1,x2)));
       return home.ES_FIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
-    IntView y0(x0.var()), y1(x1.var()), y2(x2.var());
+    IntView y0(x0.varimp()), y1(x1.varimp()), y2(x2.varimp());
     return prop_mult_dom<Val,IntView>(home,*this,y0,y1,y2);
   }
 

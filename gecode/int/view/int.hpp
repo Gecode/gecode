@@ -45,7 +45,7 @@ namespace Gecode { namespace Int {
   IntView::IntView(void) {}
   forceinline
   IntView::IntView(const IntVar& x)
-    : VarViewBase<IntVarImp>(x.var()) {}
+    : VarViewBase<IntVarImp>(x.varimp()) {}
   forceinline
   IntView::IntView(IntVarImp* x)
     : VarViewBase<IntVarImp>(x) {}
@@ -56,36 +56,36 @@ namespace Gecode { namespace Int {
    */
   forceinline int
   IntView::min(void) const {
-    return varimp->min();
+    return vi->min();
   }
   forceinline int
   IntView::max(void) const {
-    return varimp->max();
+    return vi->max();
   }
   forceinline int
   IntView::med(void) const {
-    return varimp->med();
+    return vi->med();
   }
   forceinline int
   IntView::val(void) const {
-    return varimp->val();
+    return vi->val();
   }
 
   forceinline unsigned int
   IntView::size(void) const {
-    return varimp->size();
+    return vi->size();
   }
   forceinline unsigned int
   IntView::width(void) const {
-    return varimp->width();
+    return vi->width();
   }
   forceinline unsigned int
   IntView::regret_min(void) const {
-    return varimp->regret_min();
+    return vi->regret_min();
   }
   forceinline unsigned int
   IntView::regret_max(void) const {
-    return varimp->regret_max();
+    return vi->regret_max();
   }
 
 
@@ -95,15 +95,15 @@ namespace Gecode { namespace Int {
    */
   forceinline bool
   IntView::range(void) const {
-    return varimp->range();
+    return vi->range();
   }
   forceinline bool
   IntView::in(int n) const {
-    return varimp->in(n);
+    return vi->in(n);
   }
   forceinline bool
   IntView::in(double n) const {
-    return varimp->in(n);
+    return vi->in(n);
   }
 
 
@@ -113,16 +113,16 @@ namespace Gecode { namespace Int {
    */
   forceinline ModEvent
   IntView::lq(Space& home, int n) {
-    return varimp->lq(home,n);
+    return vi->lq(home,n);
   }
   forceinline ModEvent
   IntView::lq(Space& home, double n) {
-    return varimp->lq(home,n);
+    return vi->lq(home,n);
   }
 
   forceinline ModEvent
   IntView::le(Space& home, int n) {
-    return varimp->lq(home,n-1);
+    return vi->lq(home,n-1);
   }
   forceinline ModEvent
   IntView::le(Space& home, double n) {
@@ -131,16 +131,16 @@ namespace Gecode { namespace Int {
 
   forceinline ModEvent
   IntView::gq(Space& home, int n) {
-    return varimp->gq(home,n);
+    return vi->gq(home,n);
   }
   forceinline ModEvent
   IntView::gq(Space& home, double n) {
-    return varimp->gq(home,n);
+    return vi->gq(home,n);
   }
 
   forceinline ModEvent
   IntView::gr(Space& home, int n) {
-    return varimp->gq(home,n+1);
+    return vi->gq(home,n+1);
   }
   forceinline ModEvent
   IntView::gr(Space& home, double n) {
@@ -149,20 +149,20 @@ namespace Gecode { namespace Int {
 
   forceinline ModEvent
   IntView::nq(Space& home, int n) {
-    return varimp->nq(home,n);
+    return vi->nq(home,n);
   }
   forceinline ModEvent
   IntView::nq(Space& home, double n) {
-    return varimp->nq(home,n);
+    return vi->nq(home,n);
   }
 
   forceinline ModEvent
   IntView::eq(Space& home, int n) {
-    return varimp->eq(home,n);
+    return vi->eq(home,n);
   }
   forceinline ModEvent
   IntView::eq(Space& home, double n) {
-    return varimp->eq(home,n);
+    return vi->eq(home,n);
   }
 
 
@@ -174,37 +174,37 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   IntView::narrow_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
-    return varimp->narrow_r(home,i,depend);
+    return vi->narrow_r(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   IntView::inter_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
-    return varimp->inter_r(home,i,depend);
+    return vi->inter_r(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   IntView::minus_r(Space& home, I& i, bool depend) {
     Iter::Ranges::IsRangeIter<I>();
-    return varimp->minus_r(home,i,depend);
+    return vi->minus_r(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   IntView::narrow_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
-    return varimp->narrow_v(home,i,depend);
+    return vi->narrow_v(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   IntView::inter_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
-    return varimp->inter_v(home,i,depend);
+    return vi->inter_v(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   IntView::minus_v(Space& home, I& i, bool depend) {
     Iter::Values::IsValueIter<I>();
-    return varimp->minus_v(home,i,depend);
+    return vi->minus_v(home,i,depend);
   }
 
 
@@ -257,11 +257,11 @@ namespace Gecode { namespace Int {
 
   forceinline
   ViewRanges<IntView>::ViewRanges(const IntView& x)
-    : IntVarImpFwd(x.var()) {}
+    : IntVarImpFwd(x.varimp()) {}
 
   forceinline void
   ViewRanges<IntView>::init(const IntView& x) {
-    IntVarImpFwd::init(x.var());
+    IntVarImpFwd::init(x.varimp());
   }
 
 }}

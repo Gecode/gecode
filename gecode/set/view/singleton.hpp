@@ -318,11 +318,11 @@ namespace Gecode {
 
     forceinline
     LubRanges<SingletonView>::LubRanges(const SingletonView& s) :
-      Gecode::Int::IntVarImpFwd(s.base().var()) {}
+      Gecode::Int::IntVarImpFwd(s.base().varimp()) {}
 
     forceinline void
     LubRanges<SingletonView>::init(const SingletonView& s) {
-      Gecode::Int::IntVarImpFwd::init(s.base().var());
+      Gecode::Int::IntVarImpFwd::init(s.base().varimp());
     }
 
     /**

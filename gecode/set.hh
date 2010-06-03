@@ -129,7 +129,7 @@ namespace Gecode {
   class SetVar : public VarBase<Set::SetVarImp> {
     friend class SetVarArray;
     friend class SetVarArgs;
-    using VarBase<Set::SetVarImp>::varimp;
+    using VarBase<Set::SetVarImp>::vi;
   public:
     /// \name Constructors and initialization
     //@{

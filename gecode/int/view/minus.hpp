@@ -262,11 +262,11 @@ namespace Gecode {
 
     forceinline
     ViewRanges<MinusView>::ViewRanges(const MinusView& x)
-      : IntVarImpBwd(x.base().var()) {}
+      : IntVarImpBwd(x.base().varimp()) {}
 
     forceinline void
     ViewRanges<MinusView>::init(const MinusView& x) {
-      IntVarImpBwd::init(x.base().var());
+      IntVarImpBwd::init(x.base().varimp());
     }
 
     forceinline int

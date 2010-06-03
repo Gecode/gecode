@@ -51,15 +51,15 @@ namespace Gecode {
 
   forceinline
   SetVar::SetVar(const SetVar& x)
-    : VarBase<Set::SetVarImp>(x.varimp) {}
+    : VarBase<Set::SetVarImp>(x.varimp()) {}
 
   forceinline
   SetVar::SetVar(const Set::SetView& x)
-    : VarBase<Set::SetVarImp>(x.var()) {}
+    : VarBase<Set::SetVarImp>(x.varimp()) {}
 
   forceinline void
   SetVar::init(Space& home) {
-    varimp = new (home) Set::SetVarImp(home);
+    vi = new (home) Set::SetVarImp(home);
   }
 
 
@@ -69,37 +69,37 @@ namespace Gecode {
    */
 
   forceinline unsigned int
-  SetVar::glbSize(void) const { return varimp->glbSize(); }
+  SetVar::glbSize(void) const { return vi->glbSize(); }
 
   forceinline unsigned int
-  SetVar::lubSize(void) const { return varimp->lubSize(); }
+  SetVar::lubSize(void) const { return vi->lubSize(); }
 
   forceinline unsigned int
-  SetVar::unknownSize(void) const { return varimp->lubSize()-varimp->glbSize(); }
+  SetVar::unknownSize(void) const { return vi->lubSize()-vi->glbSize(); }
 
   forceinline bool
-  SetVar::contains(int i) const { return varimp->knownIn(i); }
+  SetVar::contains(int i) const { return vi->knownIn(i); }
 
   forceinline bool
-  SetVar::notContains(int i) const { return varimp->knownOut(i); }
+  SetVar::notContains(int i) const { return vi->knownOut(i); }
 
   forceinline unsigned int
-  SetVar::cardMin(void) const { return varimp->cardMin(); }
+  SetVar::cardMin(void) const { return vi->cardMin(); }
 
   forceinline unsigned int
-  SetVar::cardMax(void) const { return varimp->cardMax(); }
+  SetVar::cardMax(void) const { return vi->cardMax(); }
 
   forceinline int
-  SetVar::lubMin(void) const { return varimp->lubMin(); }
+  SetVar::lubMin(void) const { return vi->lubMin(); }
 
   forceinline int
-  SetVar::lubMax(void) const { return varimp->lubMax(); }
+  SetVar::lubMax(void) const { return vi->lubMax(); }
 
   forceinline int
-  SetVar::glbMin(void) const { return varimp->glbMin(); }
+  SetVar::glbMin(void) const { return vi->glbMin(); }
 
   forceinline int
-  SetVar::glbMax(void) const { return varimp->glbMax(); }
+  SetVar::glbMax(void) const { return vi->glbMax(); }
 
 
 
@@ -113,7 +113,7 @@ namespace Gecode {
 
   forceinline
   SetVarGlbRanges::SetVarGlbRanges(const SetVar& s)
-    : iter(s.var()) {}
+    : iter(s.varimp()) {}
 
   forceinline
   bool
@@ -140,7 +140,7 @@ namespace Gecode {
 
   forceinline
   SetVarLubRanges::SetVarLubRanges(const SetVar& s)
-    : iter(s.var()) {}
+    : iter(s.varimp()) {}
 
   forceinline
   bool
@@ -167,7 +167,7 @@ namespace Gecode {
 
   forceinline
   SetVarUnknownRanges::SetVarUnknownRanges(const SetVar& s) {
-    iter.init(s.var());
+    iter.init(s.varimp());
   }
 
   forceinline
