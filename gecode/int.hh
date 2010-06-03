@@ -339,7 +339,7 @@ namespace Gecode {
     friend class IntVarArray;
     friend class IntVarArgs;
   private:
-    using VarBase<Int::IntVarImp>::vi;
+    using VarBase<Int::IntVarImp>::x;
     /**
      * \brief Initialize variable with range domain
      *
@@ -359,10 +359,10 @@ namespace Gecode {
     //@{
     /// Default constructor
     IntVar(void);
-    /// Initialize from integer variable \a x
-    IntVar(const IntVar& x);
-    /// Initialize from integer view \a x
-    IntVar(const Int::IntView& x);
+    /// Initialize from integer variable \a y
+    IntVar(const IntVar& y);
+    /// Initialize from integer view \a y
+    IntVar(const Int::IntView& y);
     /**
      * \brief Initialize variable with range domain
      *
@@ -374,7 +374,7 @@ namespace Gecode {
      *    in Gecode::Int::Limits, an exception of type
      *    Gecode::Int::OutOfLimits is thrown.
      */
-    GECODE_INT_EXPORT IntVar(Space& home, int min ,int max);
+    GECODE_INT_EXPORT IntVar(Space& home, int min, int max);
     /**
      * \brief Initialize variable with arbitrary domain
      *
@@ -504,7 +504,7 @@ namespace Gecode {
     friend class BoolVarArray;
     friend class BoolVarArgs;
   private:
-    using VarBase<Int::BoolVarImp>::vi;
+    using VarBase<Int::BoolVarImp>::x;
     /**
      * \brief Initialize Boolean variable with range domain
      *
@@ -517,10 +517,10 @@ namespace Gecode {
     //@{
     /// Default constructor
     BoolVar(void);
-    /// Initialize from Boolean variable \a x
-    BoolVar(const BoolVar& x);
-    /// Initialize from Boolean view \a x
-    BoolVar(const Int::BoolView& x);
+    /// Initialize from Boolean variable \a y
+    BoolVar(const BoolVar& y);
+    /// Initialize from Boolean view \a y
+    BoolVar(const Int::BoolView& y);
     /**
      * \brief Initialize Boolean variable with range domain
      *

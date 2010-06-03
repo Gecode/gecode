@@ -46,11 +46,11 @@ namespace Gecode {
     forceinline
     MinusView::MinusView(void) {}
     forceinline
-    MinusView::MinusView(const IntView& x)
-      : DerivedViewBase<IntView>(x) {}
+    MinusView::MinusView(const IntView& y)
+      : DerivedViewBase<IntView>(y) {}
     forceinline void
-    MinusView::init(const IntView& x) {
-      view = x;
+    MinusView::init(const IntView& y) {
+      x = y;
     }
 
 
@@ -60,32 +60,32 @@ namespace Gecode {
      */
     forceinline int
     MinusView::min(void) const {
-      return -view.max();
+      return -x.max();
     }
     forceinline int
     MinusView::max(void) const {
-      return -view.min();
+      return -x.min();
     }
     forceinline int
     MinusView::val(void) const {
-      return -view.val();
+      return -x.val();
     }
 
     forceinline unsigned int
     MinusView::width(void) const {
-      return view.width();
+      return x.width();
     }
     forceinline unsigned int
     MinusView::size(void) const {
-      return view.size();
+      return x.size();
     }
     forceinline unsigned int
     MinusView::regret_min(void) const {
-      return view.regret_max();
+      return x.regret_max();
     }
     forceinline unsigned int
     MinusView::regret_max(void) const {
-      return view.regret_min();
+      return x.regret_min();
     }
 
 
@@ -95,15 +95,15 @@ namespace Gecode {
      */
     forceinline bool
     MinusView::range(void) const {
-      return view.range();
+      return x.range();
     }
     forceinline bool
     MinusView::in(int n) const {
-      return view.in(-n);
+      return x.in(-n);
     }
     forceinline bool
     MinusView::in(double n) const {
-      return view.in(-n);
+      return x.in(-n);
     }
 
 
@@ -113,51 +113,51 @@ namespace Gecode {
      */
     forceinline ModEvent
     MinusView::lq(Space& home, int n) {
-      return view.gq(home,-n);
+      return x.gq(home,-n);
     }
     forceinline ModEvent
     MinusView::lq(Space& home, double n) {
-      return view.gq(home,-n);
+      return x.gq(home,-n);
     }
     forceinline ModEvent
     MinusView::le(Space& home, int n) {
-      return view.gr(home,-n);
+      return x.gr(home,-n);
     }
     forceinline ModEvent
     MinusView::le(Space& home, double n) {
-      return view.gr(home,-n);
+      return x.gr(home,-n);
     }
     forceinline ModEvent
     MinusView::gq(Space& home, int n) {
-      return view.lq(home,-n);
+      return x.lq(home,-n);
     }
     forceinline ModEvent
     MinusView::gq(Space& home, double n) {
-      return view.lq(home,-n);
+      return x.lq(home,-n);
     }
     forceinline ModEvent
     MinusView::gr(Space& home, int n) {
-      return view.le(home,-n);
+      return x.le(home,-n);
     }
     forceinline ModEvent
     MinusView::gr(Space& home, double n) {
-      return view.le(home,-n);
+      return x.le(home,-n);
     }
     forceinline ModEvent
     MinusView::nq(Space& home, int n) {
-      return view.nq(home,-n);
+      return x.nq(home,-n);
     }
     forceinline ModEvent
     MinusView::nq(Space& home, double n) {
-      return view.nq(home,-n);
+      return x.nq(home,-n);
     }
     forceinline ModEvent
     MinusView::eq(Space& home, int n) {
-      return view.eq(home,-n);
+      return x.eq(home,-n);
     }
     forceinline ModEvent
     MinusView::eq(Space& home, double n) {
-      return view.eq(home,-n);
+      return x.eq(home,-n);
     }
 
 
@@ -169,37 +169,37 @@ namespace Gecode {
     forceinline ModEvent
     MinusView::narrow_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i);
-      return view.narrow_r(home,mi,false);
+      return x.narrow_r(home,mi,false);
     }
     template<class I>
     forceinline ModEvent
     MinusView::inter_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i);
-      return view.inter_r(home,mi,false);
+      return x.inter_r(home,mi,false);
     }
     template<class I>
     forceinline ModEvent
     MinusView::minus_r(Space& home, I& i, bool) {
       Iter::Ranges::Minus<I> mi(i);
-      return view.minus_r(home,mi,false);
+      return x.minus_r(home,mi,false);
     }
     template<class I>
     forceinline ModEvent
     MinusView::narrow_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i);
-      return view.narrow_v(home,mi,false);
+      return x.narrow_v(home,mi,false);
     }
     template<class I>
     forceinline ModEvent
     MinusView::inter_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i);
-      return view.inter_v(home,mi,false);
+      return x.inter_v(home,mi,false);
     }
     template<class I>
     forceinline ModEvent
     MinusView::minus_v(Space& home, I& i, bool) {
       Iter::Values::Minus<I> mi(i);
-      return view.minus_v(home,mi,false);
+      return x.minus_v(home,mi,false);
     }
 
 
@@ -219,15 +219,15 @@ namespace Gecode {
      */
     forceinline int
     MinusView::min(const Delta& d) const {
-      return -view.max(d);
+      return -x.max(d);
     }
     forceinline int
     MinusView::max(const Delta& d) const {
-      return -view.min(d);
+      return -x.min(d);
     }
     forceinline bool
     MinusView::any(const Delta& d) const {
-      return view.any(d);
+      return x.any(d);
     }
 
 
@@ -280,10 +280,10 @@ namespace Gecode {
 
     inline int
     MinusView::med(void) const {
-      if (view.range())
+      if (x.range())
         return (min()+max())/2 - ((min()+max())%2 < 0 ? 1 : 0);
 
-      unsigned int i = view.size() / 2;
+      unsigned int i = x.size() / 2;
       if (size() % 2 == 0)
         i--;
       ViewRanges<MinusView> r(*this);

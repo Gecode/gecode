@@ -45,11 +45,11 @@ namespace Gecode {
   class VarBase {
   protected:
     /// Pointer to variable implementation
-    VarImp* vi;
+    VarImp* x;
     /// Default constructor
     VarBase(void);
-    /// Initialize with variable implementation \a x
-    VarBase(VarImp* x);
+    /// Initialize with variable implementation \a y
+    VarBase(VarImp* y);
   public:
     /// \name Generic variable information
     //@{
@@ -69,8 +69,8 @@ namespace Gecode {
 
     /// \name Cloning
     //@{
-    /// Update this variable to be a clone of variable \a x
-    void update(Space& home, bool share, VarBase<VarImp>& x);
+    /// Update this variable to be a clone of variable \a y
+    void update(Space& home, bool share, VarBase<VarImp>& y);
     //@}
 
     /// \name Variable comparison
@@ -90,35 +90,35 @@ namespace Gecode {
   template<class VarImp>
   forceinline
   VarBase<VarImp>::VarBase(void)
-    : vi(NULL) {}
+    : x(NULL) {}
   template<class VarImp>
   forceinline
-  VarBase<VarImp>::VarBase(VarImp* x)
-    : vi(x) {}
+  VarBase<VarImp>::VarBase(VarImp* y)
+    : x(y) {}
   template<class VarImp>
   forceinline VarImp*
   VarBase<VarImp>::varimp(void) const {
-    return vi;
+    return x;
   }
   template<class VarImp>
   forceinline unsigned int
   VarBase<VarImp>::degree(void) const {
-    return vi->degree();
+    return x->degree();
   }
   template<class VarImp>
   forceinline double
   VarBase<VarImp>::afc(void) const {
-    return vi->afc();
+    return x->afc();
   }
   template<class VarImp>
   forceinline bool
   VarBase<VarImp>::assigned(void) const {
-    return vi->assigned();
+    return x->assigned();
   }
   template<class VarImp>
   forceinline void
-  VarBase<VarImp>::update(Space& home, bool share, VarBase<VarImp>& x) {
-    vi = x.vi->copy(home,share);
+  VarBase<VarImp>::update(Space& home, bool share, VarBase<VarImp>& y) {
+    x = y.x->copy(home,share);
   }
   template<class VarImp>
   forceinline bool

@@ -47,8 +47,8 @@ namespace Gecode {
     SingletonView::SingletonView(void) {}
 
     forceinline
-    SingletonView::SingletonView(Gecode::Int::IntView& i0)
-      : DerivedViewBase<Gecode::Int::IntView>(i0) {}
+    SingletonView::SingletonView(Gecode::Int::IntView& y)
+      : DerivedViewBase<Gecode::Int::IntView>(y) {}
 
     forceinline PropCond
     SingletonView::pc_settoint(PropCond pc) {
@@ -94,11 +94,11 @@ namespace Gecode {
 
     forceinline unsigned int
     SingletonView::glbSize(void) const { 
-      return view.assigned() ? 1U : 0U; 
+      return x.assigned() ? 1U : 0U; 
     }
 
     forceinline unsigned int
-    SingletonView::lubSize(void) const { return view.size(); }
+    SingletonView::lubSize(void) const { return x.size(); }
 
     forceinline unsigned int
     SingletonView::unknownSize(void) const {
@@ -106,11 +106,11 @@ namespace Gecode {
     }
 
     forceinline bool
-    SingletonView::contains(int n) const { return view.assigned() ?
-                                             (view.val()==n) : false; }
+    SingletonView::contains(int n) const { return x.assigned() ?
+                                             (x.val()==n) : false; }
 
     forceinline bool
-    SingletonView::notContains(int n) const { return !view.in(n); }
+    SingletonView::notContains(int n) const { return !x.in(n); }
 
     forceinline unsigned int
     SingletonView::cardMin() const { return 1; }
@@ -119,18 +119,18 @@ namespace Gecode {
     SingletonView::cardMax() const { return 1; }
 
     forceinline int
-    SingletonView::lubMin() const { return view.min(); }
+    SingletonView::lubMin() const { return x.min(); }
 
     forceinline int
-    SingletonView::lubMax() const { return view.max(); }
+    SingletonView::lubMax() const { return x.max(); }
 
     forceinline int
-    SingletonView::glbMin() const { return view.assigned() ?
-                                      view.val() : BndSet::MIN_OF_EMPTY; }
+    SingletonView::glbMin() const { return x.assigned() ?
+                                      x.val() : BndSet::MIN_OF_EMPTY; }
 
     forceinline int
-    SingletonView::glbMax() const { return view.assigned() ?
-                                      view.val() : BndSet::MAX_OF_EMPTY; }
+    SingletonView::glbMax() const { return x.assigned() ?
+                                      x.val() : BndSet::MAX_OF_EMPTY; }
 
     forceinline ModEvent
     SingletonView::cardMin(Space&, unsigned int c) {
@@ -144,18 +144,18 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonView::include(Space& home,int c) {
-      return me_inttoset(view.eq(home,c));
+      return me_inttoset(x.eq(home,c));
     }
 
     forceinline ModEvent
     SingletonView::intersect(Space& home,int c) {
-      return me_inttoset(view.eq(home,c));
+      return me_inttoset(x.eq(home,c));
     }
 
     forceinline ModEvent
     SingletonView::intersect(Space& home,int i, int j) {
-      ModEvent me1 = me_inttoset(view.gq(home,i));
-      ModEvent me2 = me_inttoset(view.lq(home,j));
+      ModEvent me1 = me_inttoset(x.gq(home,i));
+      ModEvent me2 = me_inttoset(x.lq(home,j));
       if (me_failed(me1) || me_failed(me2))
         return ME_SET_FAILED;
       switch (me1) {
@@ -172,18 +172,18 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonView::exclude(Space& home,int c) {
-      return me_inttoset(view.nq(home,c));
+      return me_inttoset(x.nq(home,c));
     }
 
     forceinline ModEvent
     SingletonView::include(Space& home, int j, int k) {
-      return j==k ? me_inttoset(view.eq(home,j)) : ME_SET_FAILED ;
+      return j==k ? me_inttoset(x.eq(home,j)) : ME_SET_FAILED ;
     }
 
     forceinline ModEvent
     SingletonView::exclude(Space& home, int j, int k) {
-      ModEvent me1 = me_inttoset(view.gr(home,j));
-      ModEvent me2 = me_inttoset(view.le(home,k));
+      ModEvent me1 = me_inttoset(x.gr(home,j));
+      ModEvent me2 = me_inttoset(x.le(home,k));
       if (me_failed(me1) || me_failed(me2))
         return ME_SET_FAILED;
       switch (me1) {
@@ -200,7 +200,7 @@ namespace Gecode {
 
     template<class I> ModEvent
     SingletonView::excludeI(Space& home, I& iter) {
-      return me_inttoset(view.minus_r(home,iter));
+      return me_inttoset(x.minus_r(home,iter));
     }
 
     template<class I> ModEvent
@@ -217,31 +217,31 @@ namespace Gecode {
       if ( iter() )
         return ME_SET_FAILED;
 
-      return me_inttoset(view.eq(home, val));
+      return me_inttoset(x.eq(home, val));
     }
 
     template<class I> ModEvent
     SingletonView::intersectI(Space& home, I& iter) {
-      return me_inttoset(view.inter_r(home,iter));
+      return me_inttoset(x.inter_r(home,iter));
     }
 
     forceinline void
     SingletonView::subscribe(Space& home, Propagator& p, PropCond pc,
                              bool schedule) {
-      view.subscribe(home,p,pc_settoint(pc),schedule);
+      x.subscribe(home,p,pc_settoint(pc),schedule);
     }
     forceinline void
     SingletonView::cancel(Space& home, Propagator& p, PropCond pc) {
-      view.cancel(home,p,pc_settoint(pc));
+      x.cancel(home,p,pc_settoint(pc));
     }
 
     forceinline void
     SingletonView::subscribe(Space& home, Advisor& a) {
-      view.subscribe(home,a);
+      x.subscribe(home,a);
     }
     forceinline void
     SingletonView::cancel(Space& home, Advisor& a) {
-      view.cancel(home,a);
+      x.cancel(home,a);
     }
 
 
@@ -273,22 +273,22 @@ namespace Gecode {
     }
 
     forceinline int
-    SingletonView::glbMin(const Delta& d) const { return view.min(d); }
+    SingletonView::glbMin(const Delta& d) const { return x.min(d); }
 
     forceinline int
-    SingletonView::glbMax(const Delta& d) const { return view.max(d); }
+    SingletonView::glbMax(const Delta& d) const { return x.max(d); }
 
     forceinline bool
-    SingletonView::glbAny(const Delta& d) const { return view.any(d); }
+    SingletonView::glbAny(const Delta& d) const { return x.any(d); }
 
     forceinline int
-    SingletonView::lubMin(const Delta& d) const { return view.min(d); }
+    SingletonView::lubMin(const Delta& d) const { return x.min(d); }
 
     forceinline int
-    SingletonView::lubMax(const Delta& d) const { return view.max(d); }
+    SingletonView::lubMax(const Delta& d) const { return x.max(d); }
 
     forceinline bool
-    SingletonView::lubAny(const Delta& d) const { return view.any(d); }
+    SingletonView::lubAny(const Delta& d) const { return x.any(d); }
 
     /*
      * Iterators

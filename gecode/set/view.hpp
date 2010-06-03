@@ -61,16 +61,16 @@ namespace Gecode {
 
     class SetView : public VarViewBase<SetVarImp> {
     protected:
-      using VarViewBase<SetVarImp>::vi;
+      using VarViewBase<SetVarImp>::x;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       SetView(void);
-      /// Initialize from set variable \a x
-      SetView(const SetVar& x);
-      /// Initialize from set variable \a x
-      SetView(SetVarImp* x);
+      /// Initialize from set variable \a y
+      SetView(const SetVar& y);
+      /// Initialize from set variable implementation \a y
+      SetView(SetVarImp* y);
       //@}
 
       /// \name Value access
@@ -331,8 +331,8 @@ namespace Gecode {
 
       /// \name Cloning
       //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, ConstantView& x);
+      /// Update this view to be a clone of view \a y
+      void update(Space& home, bool share, ConstantView& y);
       //@}
 
       /// \name Delta information for advisors
@@ -750,7 +750,7 @@ namespace Gecode {
     class SingletonView :
       public DerivedViewBase<Gecode::Int::IntView> {
     protected:
-      using DerivedViewBase<Gecode::Int::IntView>::view;
+      using DerivedViewBase<Gecode::Int::IntView>::x;
 
       /// Convert set variable PropCond \a pc to a PropCond for integer variables
       static PropCond pc_settoint(PropCond pc);
@@ -764,8 +764,8 @@ namespace Gecode {
       //@{
       /// Default constructor
       SingletonView(void);
-      /// Initialize with integer view \a x
-      SingletonView(Gecode::Int::IntView& x);
+      /// Initialize with integer view \a y
+      SingletonView(Gecode::Int::IntView& y);
       //@}
 
       /// \name Value access
@@ -940,7 +940,7 @@ namespace Gecode {
     class ComplementView
       : public DerivedViewBase<View> {
     protected:
-      using DerivedViewBase<View>::view;
+      using DerivedViewBase<View>::x;
 
     public:
       /// Negate the propagation condition \a pc
@@ -952,8 +952,8 @@ namespace Gecode {
       //@{
       /// Default constructor
       ComplementView(void);
-      /// Initialize with set view x
-      explicit ComplementView(View& x);
+      /// Initialize with set view \a y
+      explicit ComplementView(View& y);
       //@}
 
       /// \name Value access
@@ -967,7 +967,7 @@ namespace Gecode {
       int lubMin(void) const;
       /// Return maximum of the least upper bound
       int lubMax(void) const;
-      /// Return n-th smallest element of the least upper bound
+      /// Return \a n-th smallest element of the least upper bound
       int lubMinN(unsigned int n) const;
       /// Return minimum of the greatest lower bound
       int glbMin(void) const;
@@ -1132,7 +1132,7 @@ namespace Gecode {
     template<class View>
     class OffsetSetView : public DerivedViewBase<View> {
     protected:
-      using DerivedViewBase<View>::view;
+      using DerivedViewBase<View>::x;
       /// The offset
       int k;
     public:
@@ -1140,8 +1140,8 @@ namespace Gecode {
       //@{
       /// Default constructor
       OffsetSetView(void);
-      /// Initialize with set view \a x and offset \a k0
-      OffsetSetView(View& x, int k0);
+      /// Initialize with set view \a y and offset \a k0
+      OffsetSetView(View& y, int k0);
       //@}
 
       /// \name Value access
@@ -1222,8 +1222,8 @@ namespace Gecode {
 
       /// \name Cloning
       //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, OffsetSetView& x);
+      /// Update this view to be a clone of view \a y
+      void update(Space& home, bool share, OffsetSetView& y);
       //@}
 
       /// \name Delta information for advisors

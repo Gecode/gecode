@@ -51,25 +51,25 @@ namespace Gecode {
 
     template<class View>
     forceinline
-    OffsetSetView<View>::OffsetSetView(View& s0, int k0)
-      : DerivedViewBase<View>(s0), k(k0) {}
+    OffsetSetView<View>::OffsetSetView(View& y, int k0)
+      : DerivedViewBase<View>(y), k(k0) {}
 
     template<class View>
     forceinline unsigned int
     OffsetSetView<View>::glbSize(void) const {
-      return view.glbSize();
+      return x.glbSize();
     }
 
     template<class View>
     forceinline unsigned int
     OffsetSetView<View>::lubSize(void) const {
-      return view.lubSize();
+      return x.lubSize();
     }
 
     template<class View>
     forceinline unsigned int
     OffsetSetView<View>::unknownSize(void) const {
-      return view.unknownSize();
+      return x.unknownSize();
     }
 
     template<class View>
@@ -81,126 +81,126 @@ namespace Gecode {
     template<class View>
     forceinline bool
     OffsetSetView<View>::contains(int n) const {
-      return view.contains(n-k);
+      return x.contains(n-k);
     }
 
     template<class View>
     forceinline bool
     OffsetSetView<View>::notContains(int n) const {
-      return view.notContains(n-k);
+      return x.notContains(n-k);
     }
 
     template<class View>
     forceinline unsigned int
     OffsetSetView<View>::cardMin() const {
-      return view.cardMin();
+      return x.cardMin();
     }
 
     template<class View>
     forceinline unsigned int
     OffsetSetView<View>::cardMax() const {
-      return view.cardMax();
+      return x.cardMax();
     }
 
     template<class View>
     forceinline int
     OffsetSetView<View>::lubMin() const {
-      if (view.cardMax() == 0)
-        return view.lubMin();
-      return view.lubMin() + k;
+      if (x.cardMax() == 0)
+        return x.lubMin();
+      return x.lubMin() + k;
     }
 
     template<class View>
     forceinline int
     OffsetSetView<View>::lubMax() const {
-      if (view.cardMax() == 0)
-        return view.lubMax();
-      return view.lubMax() + k;
+      if (x.cardMax() == 0)
+        return x.lubMax();
+      return x.lubMax() + k;
     }
 
     template<class View>
     forceinline int
     OffsetSetView<View>::glbMin() const {
-      if (view.cardMax() == 0)
-        return view.glbMin();
-      return view.glbMin() + k;
+      if (x.cardMax() == 0)
+        return x.glbMin();
+      return x.glbMin() + k;
     }
 
     template<class View>
     forceinline int
     OffsetSetView<View>::glbMax() const {
-      if (view.cardMax() == 0)
-        return view.glbMax();
-      return view.glbMax() + k;
+      if (x.cardMax() == 0)
+        return x.glbMax();
+      return x.glbMax() + k;
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::cardMin(Space& home, unsigned int c) {
-      return view.cardMin(home, c);
+      return x.cardMin(home, c);
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::cardMax(Space& home, unsigned int c) {
-      return view.cardMax(home, c);
+      return x.cardMax(home, c);
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::include(Space& home, int c) {
-      return view.include(home, c-k);
+      return x.include(home, c-k);
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::exclude(Space& home, int c) {
-      return view.exclude(home, c-k);
+      return x.exclude(home, c-k);
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::intersect(Space& home, int c) {
-      return view.intersect(home, c-k);
+      return x.intersect(home, c-k);
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::intersect(Space& home, int i, int j) {
-      return view.intersect(home, i-k, j-k);
+      return x.intersect(home, i-k, j-k);
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::include(Space& home, int i, int j) {
-      return view.include(home, i-k, j-k);
+      return x.include(home, i-k, j-k);
     }
 
     template<class View>
     forceinline ModEvent
     OffsetSetView<View>::exclude(Space& home, int i, int j) {
-      return view.exclude(home, i-k, j-k);
+      return x.exclude(home, i-k, j-k);
     }
 
     template<class View>
     template<class I> ModEvent
     OffsetSetView<View>::excludeI(Space& home,I& iter) {
       Iter::Ranges::Offset<I> off(iter, -k);
-      return view.excludeI(home, off);
+      return x.excludeI(home, off);
     }
 
     template<class View>
     template<class I> ModEvent
     OffsetSetView<View>::includeI(Space& home,I& iter) {
       Iter::Ranges::Offset<I> off(iter, -k);
-      return view.includeI(home, off);
+      return x.includeI(home, off);
     }
 
     template<class View>
     template<class I> ModEvent
     OffsetSetView<View>::intersectI(Space& home,I& iter) {
       Iter::Ranges::Offset<I> off(iter, -k);
-      return view.intersectI(home, off);
+      return x.intersectI(home, off);
     }
 
     template<class View>
@@ -219,37 +219,37 @@ namespace Gecode {
     template<class View>
     forceinline int
     OffsetSetView<View>::glbMin(const Delta& d) const {
-      return view.glbMin(d)+k;
+      return x.glbMin(d)+k;
     }
 
     template<class View>
     forceinline int
     OffsetSetView<View>::glbMax(const Delta& d) const {
-      return view.glbMax(d)+k;
+      return x.glbMax(d)+k;
     }
 
     template<class View>
     forceinline bool
     OffsetSetView<View>::glbAny(const Delta& d) const {
-      return view.glbAny(d);
+      return x.glbAny(d);
     }
 
     template<class View>
     forceinline int
     OffsetSetView<View>::lubMin(const Delta& d) const {
-      return view.lubMin(d)+k;
+      return x.lubMin(d)+k;
     }
 
     template<class View>
     forceinline int
     OffsetSetView<View>::lubMax(const Delta& d) const {
-      return view.lubMax(d)+k;
+      return x.lubMax(d)+k;
     }
 
     template<class View>
     forceinline bool
     OffsetSetView<View>::lubAny(const Delta& d) const {
-      return view.lubAny(d);
+      return x.lubAny(d);
     }
 
     /**

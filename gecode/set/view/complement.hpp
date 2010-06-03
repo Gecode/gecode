@@ -51,8 +51,8 @@ namespace Gecode {
 
     template<class View>
     forceinline
-    ComplementView<View>::ComplementView(View& s0)
-      : DerivedViewBase<View>(s0) {}
+    ComplementView<View>::ComplementView(View& y)
+      : DerivedViewBase<View>(y) {}
 
     template<class View>
     forceinline ModEvent
@@ -79,13 +79,13 @@ namespace Gecode {
     template<class View>
     forceinline unsigned int
     ComplementView<View>::glbSize(void) const {
-      return Limits::card - view.lubSize();
+      return Limits::card - x.lubSize();
     }
 
     template<class View>
     forceinline unsigned int
     ComplementView<View>::lubSize(void) const {
-      return Limits::card - view.glbSize();
+      return Limits::card - x.glbSize();
     }
 
     template<class View>
@@ -96,22 +96,22 @@ namespace Gecode {
 
     template<class View>
     forceinline bool
-    ComplementView<View>::contains(int n) const { return view.notContains(n); }
+    ComplementView<View>::contains(int n) const { return x.notContains(n); }
 
     template<class View>
     forceinline bool
-    ComplementView<View>::notContains(int n) const { return view.contains(n); }
+    ComplementView<View>::notContains(int n) const { return x.contains(n); }
 
     template<class View>
     forceinline unsigned int
     ComplementView<View>::cardMin() const {
-      return Limits::card - view.cardMax();
+      return Limits::card - x.cardMax();
     }
 
     template<class View>
     forceinline unsigned int
     ComplementView<View>::cardMax() const {
-      return Limits::card - view.cardMin();
+      return Limits::card - x.cardMin();
     }
 
     template<class View>
@@ -168,7 +168,7 @@ namespace Gecode {
     forceinline ModEvent
     ComplementView<View>::cardMin(Space& home, unsigned int c) {
       if (c < Limits::card)
-        return me_negateset(view.cardMax(home, Limits::card - c));
+        return me_negateset(x.cardMax(home, Limits::card - c));
       return ME_SET_NONE;
     }
 
@@ -176,20 +176,20 @@ namespace Gecode {
     forceinline ModEvent
     ComplementView<View>::cardMax(Space& home, unsigned int c) {
       if (c < Limits::card)
-        return me_negateset(view.cardMin(home, Limits::card - c));
+        return me_negateset(x.cardMin(home, Limits::card - c));
       return ME_SET_NONE;
     }
 
     template<class View>
     forceinline ModEvent
     ComplementView<View>::include(Space& home, int c) {
-      return me_negateset((view.exclude(home, c)));
+      return me_negateset((x.exclude(home, c)));
     }
 
     template<class View>
     forceinline ModEvent
     ComplementView<View>::exclude(Space& home, int c) {
-      return me_negateset((view.include(home, c)));
+      return me_negateset((x.include(home, c)));
     }
 
     template<class View>
@@ -197,7 +197,7 @@ namespace Gecode {
     ComplementView<View>::intersect(Space& home, int c) {
       Iter::Ranges::Singleton si(c,c);
       RangesCompl<Iter::Ranges::Singleton> csi(si);
-      return me_negateset((view.includeI(home, csi)));
+      return me_negateset((x.includeI(home, csi)));
     }
 
     template<class View>
@@ -205,63 +205,63 @@ namespace Gecode {
     ComplementView<View>::intersect(Space& home, int i, int j) {
       Iter::Ranges::Singleton si(i,j);
       RangesCompl<Iter::Ranges::Singleton> csi(si);
-      return me_negateset((view.includeI(home, csi)));
+      return me_negateset((x.includeI(home, csi)));
     }
 
     template<class View>
     forceinline ModEvent
     ComplementView<View>::include(Space& home, int j, int k) {
-      return me_negateset(view.exclude(home,j,k));
+      return me_negateset(x.exclude(home,j,k));
     }
 
     template<class View>
     forceinline ModEvent
     ComplementView<View>::exclude(Space& home, int j, int k) {
-      return me_negateset(view.include(home,j,k));
+      return me_negateset(x.include(home,j,k));
     }
 
     template<class View>
     template<class I> ModEvent
     ComplementView<View>::excludeI(Space& home,I& iter) {
-      return me_negateset(view.includeI(home,iter));
+      return me_negateset(x.includeI(home,iter));
     }
 
     template<class View>
     template<class I> ModEvent
     ComplementView<View>::includeI(Space& home,I& iter) {
-      return me_negateset(view.excludeI(home,iter));
+      return me_negateset(x.excludeI(home,iter));
     }
 
     template<class View>
     template<class I> ModEvent
     ComplementView<View>::intersectI(Space& home,I& iter) {
       RangesCompl<I> c(iter);
-      return me_negateset(view.includeI(home,c));
+      return me_negateset(x.includeI(home,c));
     }
 
     template<class View>
     forceinline void
     ComplementView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                     bool schedule) {
-      view.subscribe(home,p, pc_negateset(pc),schedule);
+      x.subscribe(home,p, pc_negateset(pc),schedule);
     }
 
     template<class View>
     forceinline void
     ComplementView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
-      view.cancel(home,p, pc_negateset(pc));
+      x.cancel(home,p, pc_negateset(pc));
     }
 
     template<class View>
     forceinline void
     ComplementView<View>::subscribe(Space& home, Advisor& a) {
-      view.subscribe(home,a);
+      x.subscribe(home,a);
     }
 
     template<class View>
     forceinline void
     ComplementView<View>::cancel(Space& home, Advisor& a) {
-      view.cancel(home,a);
+      x.cancel(home,a);
     }
 
     template<class View>
@@ -295,37 +295,37 @@ namespace Gecode {
     template<class View>
     forceinline int
     ComplementView<View>::glbMin(const Delta& d) const {
-      return view.lubMin(d);
+      return x.lubMin(d);
     }
 
     template<class View>
     forceinline int
     ComplementView<View>::glbMax(const Delta& d) const {
-      return view.lubMax(d);
+      return x.lubMax(d);
     }
 
     template<class View>
     forceinline bool
     ComplementView<View>::glbAny(const Delta& d) const {
-      return view.lubAny(d);
+      return x.lubAny(d);
     }
 
     template<class View>
     forceinline int
     ComplementView<View>::lubMin(const Delta& d) const {
-      return view.glbMin(d);
+      return x.glbMin(d);
     }
 
     template<class View>
     forceinline int
     ComplementView<View>::lubMax(const Delta& d) const {
-      return view.glbMax(d);
+      return x.glbMax(d);
     }
 
     template<class View>
     forceinline bool
     ComplementView<View>::lubAny(const Delta& d) const {
-      return view.glbAny(d);
+      return x.glbAny(d);
     }
 
 

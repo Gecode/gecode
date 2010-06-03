@@ -64,51 +64,51 @@ namespace Gecode { namespace Set {
 
   forceinline unsigned int
   SetView::glbSize(void) const { 
-    return vi->glbSize(); 
+    return x->glbSize(); 
   }
   forceinline unsigned int
   SetView::lubSize(void) const { 
-    return vi->lubSize(); 
+    return x->lubSize(); 
   }
   forceinline unsigned int
   SetView::unknownSize(void) const { 
-    return vi->lubSize() - vi->glbSize(); 
+    return x->lubSize() - x->glbSize(); 
   }
   forceinline bool
   SetView::contains(int i) const { 
-    return vi->knownIn(i); 
+    return x->knownIn(i); 
   }
   forceinline bool
   SetView::notContains(int i) const { 
-    return vi->knownOut(i); 
+    return x->knownOut(i); 
   }
   forceinline unsigned int
   SetView::cardMin(void) const { 
-    return vi->cardMin(); 
+    return x->cardMin(); 
   }
   forceinline unsigned int
   SetView::cardMax(void) const { 
-    return vi->cardMax(); 
+    return x->cardMax(); 
   }
   forceinline int
   SetView::lubMin(void) const { 
-    return vi->lubMin(); 
+    return x->lubMin(); 
   }
   forceinline int
   SetView::lubMax(void) const { 
-    return vi->lubMax(); 
+    return x->lubMax(); 
   }
   forceinline int
   SetView::lubMinN(unsigned int n) const { 
-    return vi->lubMinN(n); 
+    return x->lubMinN(n); 
   }
   forceinline int
   SetView::glbMin(void) const { 
-    return vi->glbMin(); 
+    return x->glbMin(); 
   }
   forceinline int
   SetView::glbMax(void) const { 
-    return vi->glbMax(); 
+    return x->glbMax(); 
   }
 
   /*
@@ -118,58 +118,58 @@ namespace Gecode { namespace Set {
 
   forceinline ModEvent
   SetView::cardMin(Space& home, unsigned int m) {
-    return vi->cardMin(home, m);
+    return x->cardMin(home, m);
   }
 
   forceinline ModEvent
   SetView::cardMax(Space& home, unsigned int m) {
-    return vi->cardMax(home, m);
+    return x->cardMax(home, m);
   }
 
   forceinline ModEvent
   SetView::include (Space& home, int from, int to) {
-    return vi->include(home,from,to);
+    return x->include(home,from,to);
   }
 
   forceinline ModEvent
   SetView::include (Space& home, int n) {
-    return vi->include(home,n);
+    return x->include(home,n);
   }
 
   forceinline ModEvent
   SetView::exclude (Space& home, int n) {
-    return vi->exclude(home, n);
+    return x->exclude(home, n);
   }
 
   forceinline ModEvent
   SetView::intersect (Space& home, int from, int to) {
-    return vi->intersect(home,from,to);
+    return x->intersect(home,from,to);
   }
 
   forceinline ModEvent
   SetView::intersect (Space& home, int n) {
-    return vi->intersect(home,n);
+    return x->intersect(home,n);
   }
 
   template<class I> ModEvent
   SetView::includeI (Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
-    return vi->includeI(home, iter);
+    return x->includeI(home, iter);
   }
 
   forceinline ModEvent
   SetView::exclude (Space& home, int from, int to) { 
-    return vi->exclude(home,from,to); 
+    return x->exclude(home,from,to); 
   }
   template<class I> ModEvent
   SetView::excludeI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
-    return vi->excludeI(home, iter);
+    return x->excludeI(home, iter);
   }
   template<class I> ModEvent
   SetView::intersectI(Space& home, I& iter) {
     Iter::Ranges::IsRangeIter<I>();
-    return vi->intersectI(home, iter);
+    return x->intersectI(home, iter);
   }
 
 

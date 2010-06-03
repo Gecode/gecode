@@ -136,16 +136,16 @@ namespace Gecode {
      */
     class IntView : public VarViewBase<IntVarImp> {
     protected:
-      using VarViewBase<IntVarImp>::vi;
+      using VarViewBase<IntVarImp>::x;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       IntView(void);
-      /// Initialize from integer variable \a x
-      IntView(const IntVar& x);
-      /// Initialize from integer variable \a x
-      IntView(IntVarImp* x);
+      /// Initialize from integer variable \a y
+      IntView(const IntVar& y);
+      /// Initialize from integer variable \a y
+      IntView(IntVarImp* y);
       //@}
 
       /// \name Value access
@@ -298,16 +298,16 @@ namespace Gecode {
      */
     class MinusView : public DerivedViewBase<IntView> {
     protected:
-      using DerivedViewBase<IntView>::view;
+      using DerivedViewBase<IntView>::x;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       MinusView(void);
-      /// Initialize with integer view \a x
-      explicit MinusView(const IntView& x);
-      /// Initialize with integer view \a x
-      void init(const IntView& x);
+      /// Initialize with integer view \a y
+      explicit MinusView(const IntView& y);
+      /// Initialize with integer view \a y
+      void init(const IntView& y);
       //@}
 
       /// \name Value access
@@ -470,16 +470,16 @@ namespace Gecode {
     protected:
       /// Offset
       int c;
-      using DerivedViewBase<IntView>::view;
+      using DerivedViewBase<IntView>::x;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       OffsetView(void);
-      /// Initialize with integer view \a x and offset \a c
-      OffsetView(const IntView& x, int c);
-      /// Initialize with integer view \a x and offset \a c
-      void init(const IntView& x, int c);
+      /// Initialize with integer view \a y and offset \a c
+      OffsetView(const IntView& y, int c);
+      /// Initialize with integer view \a y and offset \a c
+      void init(const IntView& y, int c);
       /// Return offset
       int offset(void) const;
       //@}
@@ -597,8 +597,8 @@ namespace Gecode {
 
       /// \name Cloning
       //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, OffsetView& x);
+      /// Update this view to be a clone of view \a y
+      void update(Space& home, bool share, OffsetView& y);
       //@}
     };
 
@@ -667,25 +667,24 @@ namespace Gecode {
     template<class Val, class UnsVal>
     class ScaleView : public DerivedViewBase<IntView> {
     protected:
+      using DerivedViewBase<IntView>::x;
       /// Scale factor
       int a;
-      using DerivedViewBase<IntView>::view;
-
       /// \name Support functions for division
       //@{
-      /// Return \f$\lfloor x/a\rfloor\f$
-      int floor_div(double x) const;
-      /// Return \f$\lceil x/a\rceil\f$
-      int ceil_div(double x) const;
-      /// Return \f$x/a\f$ and set \a exact to true if \a x is multiple of \a a
-      int exact_div(double x, bool& exact) const;
+      /// Return \f$\lfloor y/a\rfloor\f$
+      int floor_div(double y) const;
+      /// Return \f$\lceil y/a\rceil\f$
+      int ceil_div(double y) const;
+      /// Return \f$y/a\f$ and set \a exact to true if \a y is multiple of \a a
+      int exact_div(double y, bool& exact) const;
 #if GECODE_INT_RND_TWDS_ZERO
-      /// Return \f$\lfloor x/a\rfloor\f$
-      int floor_div(int) const;
-      /// Return \f$\lceil x/a\rceil\f$
-      int ceil_div(int) const;
-      /// Return \f$x/a\f$ and set \a exact to true if \a x is multiple of \a a
-      int exact_div(int, bool&) const;
+      /// Return \f$\lfloor y/a\rfloor\f$
+      int floor_div(int y) const;
+      /// Return \f$\lceil y/a\rceil\f$
+      int ceil_div(int y) const;
+      /// Return \f$y/a\f$ and set \a exact to true if \a y is multiple of \a a
+      int exact_div(int y, bool& exact) const;
 #endif
       //@}
 
@@ -766,8 +765,8 @@ namespace Gecode {
 
       /// \name Cloning
       //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, ScaleView<Val,UnsVal>& x);
+      /// Update this view to be a clone of view \a y
+      void update(Space& home, bool share, ScaleView<Val,UnsVal>& y);
       //@}
     };
 
@@ -990,8 +989,8 @@ namespace Gecode {
 
       /// \name Cloning
       //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, ConstIntView& x);
+      /// Update this view to be a clone of view \a y
+      void update(Space& home, bool share, ConstIntView& y);
       //@}
     };
 
@@ -1227,16 +1226,16 @@ namespace Gecode {
      */
     class BoolView : public VarViewBase<BoolVarImp> {
     protected:
-      using VarViewBase<BoolVarImp>::vi;
+      using VarViewBase<BoolVarImp>::x;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       BoolView(void);
-      /// Initialize from Boolean variable \a x
-      BoolView(const BoolVar& x);
-      /// Initialize from Boolean variable \a x
-      BoolView(BoolVarImp* x);
+      /// Initialize from Boolean variable \a y
+      BoolView(const BoolVar& y);
+      /// Initialize from Boolean variable implementation \a y
+      BoolView(BoolVarImp* y);
       //@}
 
       /// \name Domain status access
@@ -1430,16 +1429,16 @@ namespace Gecode {
      */
     class NegBoolView : public DerivedViewBase<BoolView> {
     protected:
-      using DerivedViewBase<BoolView>::view;
+      using DerivedViewBase<BoolView>::x;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       NegBoolView(void);
-      /// Initialize with Boolean view \a b
-      explicit NegBoolView(const BoolView& b);
-      /// Initialize with Boolean view \a b
-      void init(const BoolView& b);
+      /// Initialize with Boolean view \a y
+      explicit NegBoolView(const BoolView& y);
+      /// Initialize with Boolean view \a y
+      void init(const BoolView& y);
       //@}
 
       /// \name Domain status access

@@ -45,11 +45,11 @@ namespace Gecode {
     if (min > max)
       throw Int::VariableEmptyDomain("BoolVar::BoolVar");
     if (min > 0)
-      vi = &Int::BoolVarImp::s_one;
+      x = &Int::BoolVarImp::s_one;
     else if (max == 0)
-      vi = &Int::BoolVarImp::s_zero;
+      x = &Int::BoolVarImp::s_zero;
     else
-      vi = new (home) Int::BoolVarImp(home,0,1);
+      x = new (home) Int::BoolVarImp(home,0,1);
   }
 
   void
@@ -59,11 +59,11 @@ namespace Gecode {
     if (min > max)
       throw Int::VariableEmptyDomain("BoolVar::init");
     if (min > 0)
-      vi = &Int::BoolVarImp::s_one;
+      x = &Int::BoolVarImp::s_one;
     else if (max == 0)
-      vi = &Int::BoolVarImp::s_zero;
+      x = &Int::BoolVarImp::s_zero;
     else
-      vi = new (home) Int::BoolVarImp(home,0,1);
+      x = new (home) Int::BoolVarImp(home,0,1);
   }
 
 }

@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /// Cardinality integer view
   class CardView : public DerivedViewBase<IntView> {
   protected:
-    using DerivedViewBase<IntView>::view;
+    using DerivedViewBase<IntView>::x;
     /// Cardinality
     int _card;
     /// Counter
@@ -152,8 +152,8 @@ namespace Gecode { namespace Int { namespace GCC {
     //@{
     /// Default constructor
     CardView(void);
-    /// Initialize with integer view \a x and value \a c
-    void init(const IntView& x, int c);
+    /// Initialize with integer view \a y and value \a c
+    void init(const IntView& y, int c);
     /// Initialize for set \a s and cardinality \a c
     void init(Space& home, const IntSet& s, int c);
     //@}
@@ -170,12 +170,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int counter(void) const;
     /// Return cardinality
     int card(void) const;
-    ///@}
-
-    /// \name Domain tests
-    ///@{
-    /// Test whether view is assigned
-    bool assigned(void) const;
     ///@}
 
     /// \name Domain update by value
@@ -204,14 +198,6 @@ namespace Gecode { namespace Int { namespace GCC {
     template<class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
-
-    /// \name Dependencies
-    ///@{
-    /// Subscribe propagator \a p with propagation condition \a pc to view
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    ///@}
 
     /// \name Cloning
     ///@{
@@ -309,13 +295,12 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   CardView::CardView(void) {}
   forceinline void
-  CardView::init(const IntView& x, int c) {
-    view = x; _card = c; _counter = 0;
+  CardView::init(const IntView& y, int c) {
+    x = y; _card = c; _counter = 0;
   }
   forceinline void
   CardView::init(Space& home, const IntSet& s, int c) {
-    IntVar x(home,s);
-    view = x; _card = c;  _counter = 0;
+    x = IntVar(home,s); _card = c; _counter = 0;
   }
 
   forceinline int
@@ -328,20 +313,15 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   forceinline int
   CardView::min(void) const {
-    return view.min();
+    return x.min();
   }
   forceinline int
   CardView::max(void) const {
-    return view.max();
+    return x.max();
   }
   forceinline unsigned int
   CardView::size(void) const {
-    return view.size();
-  }
-
-  forceinline bool
-  CardView::assigned(void) const {
-    return view.assigned();
+    return x.size();
   }
 
   forceinline void
@@ -356,46 +336,37 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   forceinline ModEvent
   CardView::lq(Space& home, int n) {
-    return view.lq(home,n);
+    return x.lq(home,n);
   }
   forceinline ModEvent
   CardView::gq(Space& home, int n) {
-    return view.gq(home,n);
+    return x.gq(home,n);
   }
   forceinline ModEvent
   CardView::eq(Space& home, int n) {
-    return view.eq(home,n);
+    return x.eq(home,n);
   }
 
   template<class I>
   forceinline ModEvent
   CardView::narrow_v(Space& home, I& i, bool depends) {
-    return view.narrow_v(home,i,depends);
+    return x.narrow_v(home,i,depends);
   }
   template<class I>
   forceinline ModEvent
   CardView::inter_v(Space& home, I& i, bool depends) {
-    return view.inter_v(home,i,depends);
+    return x.inter_v(home,i,depends);
   }
   template<class I>
   forceinline ModEvent
   CardView::minus_v(Space& home, I& i, bool depends) {
-    return view.minus_v(home,i,depends);
+    return x.minus_v(home,i,depends);
   }
 
   forceinline void
-  CardView::subscribe(Space& home, Propagator& p, PropCond pc, bool process) {
-    view.subscribe(home, p, pc, process);
-  }
-  forceinline void
-  CardView::cancel(Space& home, Propagator& p, PropCond pc) {
-    view.cancel(home,p, pc);
-  }
-
-  forceinline void
-  CardView::update(Space& home, bool share, CardView& x) {
-    view.update(home,share,x.view);
-    _card = x._card; _counter = x._counter;
+  CardView::update(Space& home, bool share, CardView& y) {
+    x.update(home,share,y.x);
+    _card = y._card; _counter = y._counter;
   }
 
 }

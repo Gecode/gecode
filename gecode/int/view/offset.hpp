@@ -46,11 +46,11 @@ namespace Gecode {
     forceinline
     OffsetView::OffsetView(void) {}
     forceinline
-    OffsetView::OffsetView(const IntView& x, int d)
-      : DerivedViewBase<IntView>(x), c(d) {}
+    OffsetView::OffsetView(const IntView& y, int d)
+      : DerivedViewBase<IntView>(y), c(d) {}
     forceinline void
-    OffsetView::init(const IntView& x, int d) {
-      view=x; c=d;
+    OffsetView::init(const IntView& y, int d) {
+      x=y; c=d;
     }
     forceinline int
     OffsetView::offset(void) const {
@@ -64,36 +64,36 @@ namespace Gecode {
      */
     forceinline int
     OffsetView::min(void) const {
-      return view.min()+c;
+      return x.min()+c;
     }
     forceinline int
     OffsetView::max(void) const {
-      return view.max()+c;
+      return x.max()+c;
     }
     forceinline int
     OffsetView::med(void) const {
-      return view.med()+c;
+      return x.med()+c;
     }
     forceinline int
     OffsetView::val(void) const {
-      return view.val()+c;
+      return x.val()+c;
     }
 
     forceinline unsigned int
     OffsetView::width(void) const {
-      return view.width();
+      return x.width();
     }
     forceinline unsigned int
     OffsetView::size(void) const {
-      return view.size();
+      return x.size();
     }
     forceinline unsigned int
     OffsetView::regret_min(void) const {
-      return view.regret_min();
+      return x.regret_min();
     }
     forceinline unsigned int
     OffsetView::regret_max(void) const {
-      return view.regret_max();
+      return x.regret_max();
     }
 
     /*
@@ -102,15 +102,15 @@ namespace Gecode {
      */
     forceinline bool
     OffsetView::range(void) const {
-      return view.range();
+      return x.range();
     }
     forceinline bool
     OffsetView::in(int n) const {
-      return view.in(n-c);
+      return x.in(n-c);
     }
     forceinline bool
     OffsetView::in(double n) const {
-      return view.in(n-c);
+      return x.in(n-c);
     }
 
 
@@ -120,51 +120,51 @@ namespace Gecode {
      */
     forceinline ModEvent
     OffsetView::lq(Space& home, int n) {
-      return view.lq(home,n-c);
+      return x.lq(home,n-c);
     }
     forceinline ModEvent
     OffsetView::lq(Space& home, double n) {
-      return view.lq(home,n-c);
+      return x.lq(home,n-c);
     }
     forceinline ModEvent
     OffsetView::le(Space& home, int n) {
-      return view.le(home,n-c);
+      return x.le(home,n-c);
     }
     forceinline ModEvent
     OffsetView::le(Space& home, double n) {
-      return view.le(home,n-c);
+      return x.le(home,n-c);
     }
     forceinline ModEvent
     OffsetView::gq(Space& home, int n) {
-      return view.gq(home,n-c);
+      return x.gq(home,n-c);
     }
     forceinline ModEvent
     OffsetView::gq(Space& home, double n) {
-      return view.gq(home,n-c);
+      return x.gq(home,n-c);
     }
     forceinline ModEvent
     OffsetView::gr(Space& home, int n) {
-      return view.gr(home,n-c);
+      return x.gr(home,n-c);
     }
     forceinline ModEvent
     OffsetView::gr(Space& home, double n) {
-      return view.gr(home,n-c);
+      return x.gr(home,n-c);
     }
     forceinline ModEvent
     OffsetView::nq(Space& home, int n) {
-      return view.nq(home,n-c);
+      return x.nq(home,n-c);
     }
     forceinline ModEvent
     OffsetView::nq(Space& home, double n) {
-      return view.nq(home,n-c);
+      return x.nq(home,n-c);
     }
     forceinline ModEvent
     OffsetView::eq(Space& home, int n) {
-      return view.eq(home,n-c);
+      return x.eq(home,n-c);
     }
     forceinline ModEvent
     OffsetView::eq(Space& home, double n) {
-      return view.eq(home,n-c);
+      return x.eq(home,n-c);
     }
 
 
@@ -176,37 +176,37 @@ namespace Gecode {
     forceinline ModEvent
     OffsetView::narrow_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c);
-      return view.narrow_r(home,oi,depend);
+      return x.narrow_r(home,oi,depend);
     }
     template<class I>
     forceinline ModEvent
     OffsetView::inter_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c);
-      return view.inter_r(home,oi,depend);
+      return x.inter_r(home,oi,depend);
     }
     template<class I>
     forceinline ModEvent
     OffsetView::minus_r(Space& home, I& i, bool depend) {
       Iter::Ranges::Offset<I> oi(i,-c);
-      return view.minus_r(home,oi,depend);
+      return x.minus_r(home,oi,depend);
     }
     template<class I>
     forceinline ModEvent
     OffsetView::narrow_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c);
-      return view.narrow_v(home,oi,depend);
+      return x.narrow_v(home,oi,depend);
     }
     template<class I>
     forceinline ModEvent
     OffsetView::inter_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c);
-      return view.inter_v(home,oi,depend);
+      return x.inter_v(home,oi,depend);
     }
     template<class I>
     forceinline ModEvent
     OffsetView::minus_v(Space& home, I& i, bool depend) {
       Iter::Values::Offset<I> oi(i,-c);
-      return view.minus_v(home,oi,depend);
+      return x.minus_v(home,oi,depend);
     }
 
 
@@ -227,15 +227,15 @@ namespace Gecode {
      */
     forceinline int
     OffsetView::min(const Delta& d) const {
-      return view.min(d)+c;
+      return x.min(d)+c;
     }
     forceinline int
     OffsetView::max(const Delta& d) const {
-      return view.max(d)+c;
+      return x.max(d)+c;
     }
     forceinline bool
     OffsetView::any(const Delta& d) const {
-      return view.any(d);
+      return x.any(d);
     }
 
 
@@ -245,9 +245,9 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::update(Space& home, bool share, OffsetView& x) {
-      DerivedViewBase<IntView>::update(home,share,x);
-      c=x.c;
+    OffsetView::update(Space& home, bool share, OffsetView& y) {
+      DerivedViewBase<IntView>::update(home,share,y);
+      c=y.c;
     }
 
 

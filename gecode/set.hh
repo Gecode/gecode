@@ -129,16 +129,16 @@ namespace Gecode {
   class SetVar : public VarBase<Set::SetVarImp> {
     friend class SetVarArray;
     friend class SetVarArgs;
-    using VarBase<Set::SetVarImp>::vi;
+    using VarBase<Set::SetVarImp>::x;
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     SetVar(void);
-    /// Initialize from set variable \a x0
-    SetVar(const SetVar& x0);
-    /// Initialize from set view \a x0
-    SetVar(const Set::SetView& x0);
+    /// Initialize from set variable \a y
+    SetVar(const SetVar& y);
+    /// Initialize from set view \a y
+    SetVar(const Set::SetView& y);
 
     /// Initialize variable with empty greatest lower and full least upper bound
     GECODE_SET_EXPORT SetVar(Space& home);

@@ -50,16 +50,16 @@ namespace Gecode {
   SetVar::SetVar(void) {}
 
   forceinline
-  SetVar::SetVar(const SetVar& x)
-    : VarBase<Set::SetVarImp>(x.varimp()) {}
+  SetVar::SetVar(const SetVar& y)
+    : VarBase<Set::SetVarImp>(y.varimp()) {}
 
   forceinline
-  SetVar::SetVar(const Set::SetView& x)
-    : VarBase<Set::SetVarImp>(x.varimp()) {}
+  SetVar::SetVar(const Set::SetView& y)
+    : VarBase<Set::SetVarImp>(y.varimp()) {}
 
   forceinline void
   SetVar::init(Space& home) {
-    vi = new (home) Set::SetVarImp(home);
+    x = new (home) Set::SetVarImp(home);
   }
 
 
@@ -69,37 +69,37 @@ namespace Gecode {
    */
 
   forceinline unsigned int
-  SetVar::glbSize(void) const { return vi->glbSize(); }
+  SetVar::glbSize(void) const { return x->glbSize(); }
 
   forceinline unsigned int
-  SetVar::lubSize(void) const { return vi->lubSize(); }
+  SetVar::lubSize(void) const { return x->lubSize(); }
 
   forceinline unsigned int
-  SetVar::unknownSize(void) const { return vi->lubSize()-vi->glbSize(); }
+  SetVar::unknownSize(void) const { return x->lubSize()-x->glbSize(); }
 
   forceinline bool
-  SetVar::contains(int i) const { return vi->knownIn(i); }
+  SetVar::contains(int i) const { return x->knownIn(i); }
 
   forceinline bool
-  SetVar::notContains(int i) const { return vi->knownOut(i); }
+  SetVar::notContains(int i) const { return x->knownOut(i); }
 
   forceinline unsigned int
-  SetVar::cardMin(void) const { return vi->cardMin(); }
+  SetVar::cardMin(void) const { return x->cardMin(); }
 
   forceinline unsigned int
-  SetVar::cardMax(void) const { return vi->cardMax(); }
+  SetVar::cardMax(void) const { return x->cardMax(); }
 
   forceinline int
-  SetVar::lubMin(void) const { return vi->lubMin(); }
+  SetVar::lubMin(void) const { return x->lubMin(); }
 
   forceinline int
-  SetVar::lubMax(void) const { return vi->lubMax(); }
+  SetVar::lubMax(void) const { return x->lubMax(); }
 
   forceinline int
-  SetVar::glbMin(void) const { return vi->glbMin(); }
+  SetVar::glbMin(void) const { return x->glbMin(); }
 
   forceinline int
-  SetVar::glbMax(void) const { return vi->glbMax(); }
+  SetVar::glbMax(void) const { return x->glbMax(); }
 
 
 

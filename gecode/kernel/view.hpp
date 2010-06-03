@@ -75,8 +75,8 @@ namespace Gecode {
 
     /// \name Cloning
     //@{
-    /// Update this view to be a clone of view \a x
-    void update(Space& home, bool share, ConstViewBase& x);
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, ConstViewBase& y);
     //@}
   };
 
@@ -90,11 +90,11 @@ namespace Gecode {
   class VarViewBase {
   protected:
     /// Pointer to variable implementation
-    VarImp* vi;
+    VarImp* x;
     /// Default constructor
     VarViewBase(void);
-    /// Initialize with variable implementation x
-    VarViewBase(VarImp* x);
+    /// Initialize with variable implementation \a y
+    VarViewBase(VarImp* y);
   public:
     /// \name Generic view information
     //@{
@@ -150,8 +150,8 @@ namespace Gecode {
 
     /// \name Cloning
     //@{
-    /// Update this view to be a clone of view \a x
-    void update(Space& home, bool share, VarViewBase<VarImp>& x);
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, VarViewBase<VarImp>& y);
     //@}
   };
 
@@ -176,13 +176,13 @@ namespace Gecode {
   class DerivedViewBase {
   protected:
     /// View from which this view is derived
-    View view;
+    View x;
     /// The variable type belonging to the \a View
     typedef typename ViewTraits<View>::VarImp VarImp;
     /// Default constructor
     DerivedViewBase(void);
-    /// Initialize with view x
-    DerivedViewBase(const View& x);
+    /// Initialize with view \a y
+    DerivedViewBase(const View& y);
   public:
     /// \name Generic view information
     //@{
@@ -240,8 +240,8 @@ namespace Gecode {
 
     /// \name Cloning
     //@{
-    /// Update this view to be a clone of view \a x
-    void update(Space& home, bool share, DerivedViewBase<View>& x);
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, DerivedViewBase<View>& y);
     //@}
   };
 
@@ -367,11 +367,11 @@ namespace Gecode {
   template<class VarImp>
   forceinline
   VarViewBase<VarImp>::VarViewBase(void)
-    : vi(NULL) {}
+    : x(NULL) {}
   template<class VarImp>
   forceinline
-  VarViewBase<VarImp>::VarViewBase(VarImp* x)
-    : vi(x) {}
+  VarViewBase<VarImp>::VarViewBase(VarImp* y)
+    : x(y) {}
   template<class VarImp>
   forceinline bool
   VarViewBase<VarImp>::varderived(void) {
@@ -380,43 +380,43 @@ namespace Gecode {
   template<class VarImp>
   forceinline VarImp*
   VarViewBase<VarImp>::varimp(void) const {
-    return vi;
+    return x;
   }
   template<class VarImp>
   forceinline unsigned int
   VarViewBase<VarImp>::degree(void) const {
-    return vi->degree();
+    return x->degree();
   }
   template<class VarImp>
   forceinline double
   VarViewBase<VarImp>::afc(void) const {
-    return vi->afc();
+    return x->afc();
   }
   template<class VarImp>
   forceinline bool
   VarViewBase<VarImp>::assigned(void) const {
-    return vi->assigned();
+    return x->assigned();
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::subscribe(Space& home, Propagator& p, PropCond pc,
                                  bool process) {
-    vi->subscribe(home,p,pc,process);
+    x->subscribe(home,p,pc,process);
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::cancel(Space& home, Propagator& p, PropCond pc) {
-    vi->cancel(home,p,pc);
+    x->cancel(home,p,pc);
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::subscribe(Space& home, Advisor& a) {
-    vi->subscribe(home,a);
+    x->subscribe(home,a);
   }
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::cancel(Space& home, Advisor& a) {
-    vi->cancel(home,a);
+    x->cancel(home,a);
   }
   template<class VarImp>
   forceinline void
@@ -441,8 +441,8 @@ namespace Gecode {
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::update(Space& home, bool share, 
-                              VarViewBase<VarImp>& x) {
-    vi = x.vi->copy(home,share);
+                              VarViewBase<VarImp>& y) {
+    x = y.x->copy(home,share);
   }
 
   template<class VarImp>
@@ -467,8 +467,8 @@ namespace Gecode {
 
   template<class View>
   forceinline
-  DerivedViewBase<View>::DerivedViewBase(const View& x)
-    : view(x) {}
+  DerivedViewBase<View>::DerivedViewBase(const View& y)
+    : x(y) {}
 
   template<class View>
   forceinline bool
@@ -479,29 +479,29 @@ namespace Gecode {
   template<class View>
   forceinline typename ViewTraits<View>::VarImp*
   DerivedViewBase<View>::varimp(void) const {
-    return view.varimp();
+    return x.varimp();
   }
 
   template<class View>
   forceinline View
   DerivedViewBase<View>::base(void) const {
-    return view;
+    return x;
   }
 
   template<class View>
   forceinline unsigned int
   DerivedViewBase<View>::degree(void) const {
-    return view.degree();
+    return x.degree();
   }
   template<class View>
   forceinline double
   DerivedViewBase<View>::afc(void) const {
-    return view.afc();
+    return x.afc();
   }
   template<class View>
   forceinline bool
   DerivedViewBase<View>::assigned(void) const {
-    return view.assigned();
+    return x.assigned();
   }
 
   template<class View>
@@ -524,22 +524,22 @@ namespace Gecode {
   forceinline void
   DerivedViewBase<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                    bool schedule) {
-    view.subscribe(home,p,pc,schedule);
+    x.subscribe(home,p,pc,schedule);
   }
   template<class View>
   forceinline void
   DerivedViewBase<View>::cancel(Space& home, Propagator& p, PropCond pc) {
-    view.cancel(home,p,pc);
+    x.cancel(home,p,pc);
   }
   template<class View>
   forceinline void
   DerivedViewBase<View>::subscribe(Space& home, Advisor& a) {
-    view.subscribe(home,a);
+    x.subscribe(home,a);
   }
   template<class View>
   forceinline void
   DerivedViewBase<View>::cancel(Space& home, Advisor& a) {
-    view.cancel(home,a);
+    x.cancel(home,a);
   }
   template<class View>
   forceinline ModEvent
@@ -549,8 +549,8 @@ namespace Gecode {
   template<class View>
   forceinline void
   DerivedViewBase<View>::update(Space& home, bool share, 
-                                DerivedViewBase<View>& x) {
-    view.update(home,share,x.view);
+                                DerivedViewBase<View>& y) {
+    x.update(home,share,y.x);
   }
 
   /*

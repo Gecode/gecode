@@ -51,11 +51,11 @@ namespace Gecode {
     forceinline
     NegBoolView::NegBoolView(void) {}
     forceinline
-    NegBoolView::NegBoolView(const BoolView& b)
-      : DerivedViewBase<BoolView>(b) {}
+    NegBoolView::NegBoolView(const BoolView& y)
+      : DerivedViewBase<BoolView>(y) {}
     forceinline void
-    NegBoolView::init(const BoolView& b) {
-      view = b;
+    NegBoolView::init(const BoolView& y) {
+      x = y;
     }
 
 
@@ -65,19 +65,19 @@ namespace Gecode {
      */
     forceinline BoolStatus
     NegBoolView::status(void) const {
-      return view.status();
+      return x.status();
     }
     forceinline bool
     NegBoolView::zero(void) const {
-      return view.one();
+      return x.one();
     }
     forceinline bool
     NegBoolView::one(void) const {
-      return view.zero();
+      return x.zero();
     }
     forceinline bool
     NegBoolView::none(void) const {
-      return view.none();
+      return x.none();
     }
 
 
@@ -87,20 +87,20 @@ namespace Gecode {
      */
     forceinline ModEvent
     NegBoolView::zero_none(Space& home) {
-      return view.one_none(home);
+      return x.one_none(home);
     }
     forceinline ModEvent
     NegBoolView::one_none(Space& home) {
-      return view.zero_none(home);
+      return x.zero_none(home);
     }
 
     forceinline ModEvent
     NegBoolView::zero(Space& home) {
-      return view.one(home);
+      return x.one(home);
     }
     forceinline ModEvent
     NegBoolView::one(Space& home) {
-      return view.zero(home);
+      return x.zero(home);
     }
 
 
@@ -110,15 +110,15 @@ namespace Gecode {
      */
     forceinline int
     NegBoolView::min(void) const {
-      return view.max();
+      return x.max();
     }
     forceinline int
     NegBoolView::max(void) const {
-      return view.min();
+      return x.min();
     }
     forceinline int
     NegBoolView::val(void) const {
-      return 1-view.val();
+      return 1-x.val();
     }
 
 
@@ -128,15 +128,15 @@ namespace Gecode {
      */
     forceinline int
     NegBoolView::min(const Delta& d) const {
-      return view.max(d);
+      return x.max(d);
     }
     forceinline int
     NegBoolView::max(const Delta& d) const {
-      return view.min(d);
+      return x.min(d);
     }
     forceinline bool
     NegBoolView::any(const Delta& d) const {
-      return view.any(d);
+      return x.any(d);
     }
     forceinline bool
     NegBoolView::zero(const Delta& d) {

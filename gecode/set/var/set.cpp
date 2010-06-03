@@ -118,8 +118,8 @@ namespace Gecode {
     if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         lbMin < ubMin || lbMax > ubMax)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
-    vi = new (home) Set::SetVarImp(home, lbMin, lbMax, ubMin, ubMax,
-                                   cardMin, cardMax);
+    x = new (home) Set::SetVarImp(home, lbMin, lbMax, ubMin, ubMax,
+                                  cardMin, cardMax);
   }
 
   void
@@ -134,8 +134,8 @@ namespace Gecode {
     if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         glb.min() < ubMin || glb.max() > ubMax)
       throw Set::VariableEmptyDomain("SetVar::SetVar");
-    vi = new (home) Set::SetVarImp(home, glb, ubMin, ubMax,
-                                   cardMin, cardMax);
+    x = new (home) Set::SetVarImp(home, glb, ubMin, ubMax,
+                                  cardMin, cardMax);
   }
 
   void
@@ -152,8 +152,8 @@ namespace Gecode {
     if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar::SetVar");
-    vi = new (home) Set::SetVarImp(home, lbMin, lbMax, lub,
-                                   cardMin, cardMax);
+    x = new (home) Set::SetVarImp(home, lbMin, lbMax, lub,
+                                  cardMin, cardMax);
   }
 
   void
@@ -169,7 +169,7 @@ namespace Gecode {
     if (cardMin > cardMax || cardMin > _lubSize || cardMax < _glbSize ||
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar::SetVar");
-    vi = new (home) Set::SetVarImp(home, glb, lub, cardMin, cardMax);
+    x = new (home) Set::SetVarImp(home, glb, lub, cardMin, cardMax);
   }
 
 }

@@ -39,67 +39,67 @@ namespace Gecode {
 
   forceinline void
   IntVar::_init(Space& home, int min, int max) {
-    vi = new (home) Int::IntVarImp(home,min,max);
+    x = new (home) Int::IntVarImp(home,min,max);
   }
 
   forceinline void
   IntVar::_init(Space& home, const IntSet& ds) {
-    vi = new (home) Int::IntVarImp(home,ds);
+    x = new (home) Int::IntVarImp(home,ds);
   }
 
   forceinline
   IntVar::IntVar(void) {}
   forceinline
-  IntVar::IntVar(const IntVar& x)
-    : VarBase<Int::IntVarImp>(x.varimp()) {}
+  IntVar::IntVar(const IntVar& y)
+    : VarBase<Int::IntVarImp>(y.varimp()) {}
   forceinline
-  IntVar::IntVar(const Int::IntView& x)
-    : VarBase<Int::IntVarImp>(x.varimp()) {}
+  IntVar::IntVar(const Int::IntView& y)
+    : VarBase<Int::IntVarImp>(y.varimp()) {}
 
   forceinline int
   IntVar::val(void) const {
-    if (!vi->assigned())
+    if (!x->assigned())
       throw Int::ValOfUnassignedVar("IntVar::val");
-    return vi->val();
+    return x->val();
   }
   forceinline int
   IntVar::min(void) const {
-    return vi->min();
+    return x->min();
   }
   forceinline int
   IntVar::med(void) const {
-    return vi->med();
+    return x->med();
   }
   forceinline int
   IntVar::max(void) const {
-    return vi->max();
+    return x->max();
   }
 
 
   forceinline unsigned int
   IntVar::width(void) const {
-    return vi->width();
+    return x->width();
   }
   forceinline unsigned int
   IntVar::size(void) const {
-    return vi->size();
+    return x->size();
   }
   forceinline unsigned int
   IntVar::regret_min(void) const {
-    return vi->regret_min();
+    return x->regret_min();
   }
   forceinline unsigned int
   IntVar::regret_max(void) const {
-    return vi->regret_max();
+    return x->regret_max();
   }
 
   forceinline bool
   IntVar::range(void) const {
-    return vi->range();
+    return x->range();
   }
   forceinline bool
   IntVar::in(int n) const {
-    return vi->in(n);
+    return x->in(n);
   }
 
   /*

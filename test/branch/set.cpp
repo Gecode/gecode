@@ -62,9 +62,7 @@ namespace Test { namespace Branch {
     Gecode::IntSet d_sparse(v_sparse,6);
 
     Set d_3("Dense::3",d_dense,3);
-    Set d_5("Dense::5",d_dense,5);
     Set s_3("Sparse::3",d_sparse,3);
-    Set s_5("Sparse::5",d_sparse,5);
   }
 
 }}
