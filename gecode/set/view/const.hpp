@@ -254,7 +254,8 @@ namespace Gecode { namespace Set {
   ConstantView::cancel(Space&,Advisor&) {}
 
   forceinline void
-  ConstantView::update(Space& home, bool, ConstantView& p) {
+  ConstantView::update(Space& home, bool share, ConstantView& p) {
+    ConstViewBase::update(home,share,p);
     // dispose old ranges
     if (size > 0)
       home.free<int>(ranges, 2);
@@ -436,10 +437,6 @@ namespace Gecode { namespace Set {
   EmptyView::cancel(Space&,Advisor&) {}
 
 
-  forceinline void
-  EmptyView::update(Space&, bool, EmptyView&) {}
-
-
   /*
    * Delta information for advisors
    *
@@ -606,9 +603,6 @@ namespace Gecode { namespace Set {
   forceinline void
   UniverseView::cancel(Space&,Advisor&) {}
 
-
-  forceinline void
-  UniverseView::update(Space&, bool, UniverseView&) {}
 
 
   /*

@@ -262,12 +262,6 @@ namespace Gecode {
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, IntView& x);
-      //@}
     };
 
     /**
@@ -425,12 +419,6 @@ namespace Gecode {
       int max(const Delta& d) const;
       /// Test whether arbitrary values got pruned
       bool any(const Delta& d) const;
-      //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, MinusView& x);
       //@}
     };
 
@@ -1193,12 +1181,6 @@ namespace Gecode {
       /// Test whether arbitrary values got pruned
       bool any(const Delta& d) const;
       //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, ZeroIntView& x);
-      //@}
     };
 
     /**
@@ -1411,12 +1393,6 @@ namespace Gecode {
       /// Translate modification event \a me to modification event delta for view
       static ModEventDelta med(ModEvent me);
       //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, BoolView& x);
-      //@}
     };
 
     /**
@@ -1524,12 +1500,6 @@ namespace Gecode {
       static bool zero(const Delta& d);
       /// Test whether a view has been assigned to one
       static bool one(const Delta& d);
-      //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, NegBoolView& x);
       //@}
     };
 

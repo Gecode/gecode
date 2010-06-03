@@ -275,15 +275,6 @@ namespace Gecode {
     }
 
 
-
-    /*
-     * Cloning
-     *
-     */
-    forceinline void
-    ZeroIntView::update(Space&, bool, ZeroIntView&) {}
-
-
     /**
      * \brief %Range iterator for constant integer views
      * \ingroup TaskActorIntView

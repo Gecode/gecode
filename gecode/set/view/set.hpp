@@ -161,18 +161,6 @@ namespace Gecode { namespace Set {
   }
 
 
-
-  /*
-   * Cloning
-   *
-   */
-
-  forceinline void
-  SetView::update(Space& home, bool share, SetView& y) {
-    varimp = y.varimp->copy(home,share);
-  }
-
-
   /*
    * Delta information for advisors
    *

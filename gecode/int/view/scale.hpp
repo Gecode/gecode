@@ -280,7 +280,8 @@ namespace Gecode {
     forceinline void
     ScaleView<Val,UnsVal>::update(Space& home, bool share,
                                   ScaleView<Val,UnsVal>& x) {
-      a=x.a; view.update(home,share,x.view);
+      DerivedViewBase<IntView>::update(home,share,x);
+      a=x.a;
     }
 
 

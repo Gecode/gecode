@@ -287,16 +287,6 @@ namespace Gecode {
       return VarViewBase<BoolVarImp>::med(me);
     }
 
-
-    /*
-     * Cloning
-     *
-     */
-    forceinline void
-    BoolView::update(Space& home, bool share, BoolView& x) {
-      varimp = x.varimp->copy(home,share);
-    }
-
     /**
      * \brief %Range iterator for Boolean variable views
      * \ingroup TaskActorIntView

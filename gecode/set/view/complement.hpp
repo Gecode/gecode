@@ -281,14 +281,6 @@ namespace Gecode {
       return me_negateset(View::med(me));
     }
 
-    template<class View>
-    forceinline void
-    ComplementView<View>::update(Space& home, bool share,
-                                 ComplementView& y) {
-      view.update(home,share,y.view);
-    }
-
-
     /*
      * Delta information for advisors
      *

@@ -234,17 +234,6 @@ namespace Gecode { namespace Int {
   }
 
 
-
-  /*
-   * Cloning
-   *
-   */
-  forceinline void
-  IntView::update(Space& home, bool share, IntView& x) {
-    varimp = x.varimp->copy(home,share);
-  }
-
-
   /**
    * \brief %Range iterator for integer variable views
    * \ingroup TaskActorIntView

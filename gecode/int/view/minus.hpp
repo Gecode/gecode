@@ -231,18 +231,6 @@ namespace Gecode {
     }
 
 
-
-    /*
-     * Cloning
-     *
-     */
-
-    forceinline void
-    MinusView::update(Space& home, bool share, MinusView& x) {
-      view.update(home,share,x.view);
-    }
-
-
     /**
      * \brief %Range iterator for minus integer views
      * \ingroup TaskActorIntView

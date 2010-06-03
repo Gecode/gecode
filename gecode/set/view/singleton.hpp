@@ -258,11 +258,6 @@ namespace Gecode {
       return SetView::med(me_settoint(me));
     }
 
-    forceinline void
-    SingletonView::update(Space& home, bool share, SingletonView& y) {
-      view.update(home,share,y.view);
-    }
-
 
     /*
      * Delta information for advisors

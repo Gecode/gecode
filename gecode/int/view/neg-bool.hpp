@@ -148,17 +148,6 @@ namespace Gecode {
     }
 
 
-
-    /*
-     * Cloning
-     *
-     */
-    forceinline void
-    NegBoolView::update(Space& home, bool share, NegBoolView& b) {
-      view.update(home,share,b.view);
-    }
-
-
     /**
      * \brief %Range iterator for negated Boolean variable views
      * \ingroup TaskActorIntView

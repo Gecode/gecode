@@ -72,6 +72,12 @@ namespace Gecode {
     /// Test whether view is assigned
     bool assigned(void) const;
     //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a x
+    void update(Space& home, bool share, ConstViewBase& x);
+    //@}
   };
 
 
@@ -140,6 +146,12 @@ namespace Gecode {
     //@{
     /// Return modification event
     static ModEvent modevent(const Delta& d);
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a x
+    void update(Space& home, bool share, VarViewBase<VarImp>& x);
     //@}
   };
 
@@ -226,6 +238,12 @@ namespace Gecode {
     //@{
     /// Return modification event
     static ModEvent modevent(const Delta& d);
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a x
+    void update(Space& home, bool share, DerivedViewBase<View>& x);
     //@}
   };
 
@@ -340,6 +358,9 @@ namespace Gecode {
   ConstViewBase::assigned(void) const {
     return true;
   }
+  forceinline void
+  ConstViewBase::update(Space&, bool, ConstViewBase& ) {
+  }
 
   /*
    * Variable view: contains a pointer to a variable implementation
@@ -414,11 +435,16 @@ namespace Gecode {
   VarViewBase<VarImp>::med(ModEvent me) {
     return VarImp::med(me);
   }
-
   template<class VarImp>
   forceinline ModEvent
   VarViewBase<VarImp>::modevent(const Delta& d) {
     return VarImp::modevent(d);
+  }
+  template<class VarImp>
+  forceinline void
+  VarViewBase<VarImp>::update(Space& home, bool share, 
+                              VarViewBase<VarImp>& x) {
+    varimp = x.varimp->copy(home,share);
   }
 
   template<class VarImp>
@@ -517,11 +543,16 @@ namespace Gecode {
   DerivedViewBase<View>::cancel(Space& home, Advisor& a) {
     view.cancel(home,a);
   }
-
   template<class View>
   forceinline ModEvent
   DerivedViewBase<View>::modevent(const Delta& d) {
     return View::modevent(d);
+  }
+  template<class View>
+  forceinline void
+  DerivedViewBase<View>::update(Space& home, bool share, 
+                                DerivedViewBase<View>& x) {
+    view.update(home,share,x.view);
   }
 
   /*

@@ -148,12 +148,6 @@ namespace Gecode {
       template<class I> ModEvent intersectI(Space& home, I& iter);
       //@}
 
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, SetView& x);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -513,12 +507,6 @@ namespace Gecode {
       void cancel(Space& home, Advisor& a);
       //@}
 
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, EmptyView& x);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -692,12 +680,6 @@ namespace Gecode {
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
       void cancel(Space& home, Advisor& a);
-      //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, UniverseView& x);
       //@}
 
       /// \name Delta information for advisors
@@ -889,13 +871,6 @@ namespace Gecode {
       void cancel(Space& home, Advisor& a);
       //@}
 
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, SingletonView& x);
-      //@}
-
       /// \name Delta information for advisors
       //@{
       /// Return modification event
@@ -1082,13 +1057,6 @@ namespace Gecode {
       void subscribe(Space& home, Advisor& a);
       /// Cancel subscription of advisor \a a
       void cancel(Space& home, Advisor& a);
-      //@}
-
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, ComplementView& x);
       //@}
 
       /// \name Delta information for advisors

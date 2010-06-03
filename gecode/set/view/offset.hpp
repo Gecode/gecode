@@ -206,8 +206,8 @@ namespace Gecode {
     template<class View>
     forceinline void
     OffsetSetView<View>::update(Space& home, bool share, OffsetSetView& y) {
+      DerivedViewBase<View>::update(home,share,y);
       k = y.k;
-      view.update(home,share,y.view);
     }
 
 
