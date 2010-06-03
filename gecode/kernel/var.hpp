@@ -38,15 +38,6 @@
 namespace Gecode {
 
   /**
-   * \brief Traits class for variables
-   *
-   * Each variable must specialize this traits class and add a \code
-   * typedef \endcode for the view \a View corresponding to this variable.
-   */
-  template<class Var>
-  class VarTraits {};
-
-  /**
    * \brief Base-class for variables
    * \ingroup TaskVarView
    */

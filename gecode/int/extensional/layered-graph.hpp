@@ -40,6 +40,40 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
+  /**
+   * \brief Traits class for variables
+   *
+   * Each variable must specialize this traits class and add a \code
+   * typedef \endcode for the view \a View corresponding to this variable.
+   */
+  template<class Var>
+  class VarTraits {};
+
+  /**
+   * \brief Traits class for variables
+   *
+   * This class specializes the VarTraits for integer variables.
+   */
+  template<>
+  class VarTraits<IntVar> {
+  public:
+    /// The variable type of an IntView
+    typedef Int::IntView View;
+  };
+
+  /**
+   * \brief Traits class for variables
+   *
+   * This class specializes the VarTraits for Boolean variables.
+   */
+  template<>
+  class VarTraits<BoolVar> {
+  public:
+    /// The variable type of an IntView
+    typedef Int::BoolView View;
+  };
+
+
   /*
    * States
    */

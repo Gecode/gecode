@@ -293,18 +293,6 @@ namespace Gecode {
     typedef Int::IntVarImp VarImp;
   };
 
-  /**
-   * \brief Traits class for variables
-   *
-   * This class specializes the VarTraits for integer variables.
-   */
-  template<>
-  class VarTraits<IntVar> {
-  public:
-    /// The variable type of an IntView
-    typedef Int::IntView View;
-  };
-
   namespace Int {
 
     /**
@@ -1452,18 +1440,6 @@ namespace Gecode {
   public:
     /// The variable type of a BoolView
     typedef Int::BoolVarImp VarImp;
-  };
-
-  /**
-   * \brief Traits class for variables
-   *
-   * This class specializes the VarTraits for Boolean variables.
-   */
-  template<>
-  class VarTraits<BoolVar> {
-  public:
-    /// The variable type of an IntView
-    typedef Int::BoolView View;
   };
 
   namespace Int {

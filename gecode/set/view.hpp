@@ -197,18 +197,6 @@ namespace Gecode {
   };
 
 
-  /**
-   * \brief Traits class for variables
-   *
-   * This class specializes the VarTraits for set variables.
-   */
-  template<>
-  class VarTraits<SetVar> {
-  public:
-    /// The variable type of an IntView
-    typedef Set::SetView View;
-  };
-
   // Forward declarations for friends
   namespace Set { class ConstantView;  }
   bool same(const Set::ConstantView&, const Set::ConstantView&);
