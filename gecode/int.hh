@@ -444,17 +444,8 @@ namespace Gecode {
     //@{
     /// Test whether domain is a range
     bool range(void) const;
-    /// Test whether view is assigned
-    bool assigned(void) const;
-
     /// Test whether \a n is contained in domain
     bool in(int n) const;
-    //@}
-
-    /// \name Cloning
-    //@{
-    /// Update this variable to be a clone of variable \a x
-    void update(Space& home, bool share, IntVar& x);
     //@}
   };
 
@@ -587,9 +578,6 @@ namespace Gecode {
     //@{
     /// Test whether domain is a range
     bool range(void) const;
-    /// Test whether view is assigned
-    bool assigned(void) const;
-
     /// Test whether \a n is contained in domain
     bool in(int n) const;
     //@}
@@ -603,13 +591,6 @@ namespace Gecode {
     /// Test whether domain is neither zero nor one
     bool none(void) const;
     //@}
-
-    /// \name Cloning
-    //@{
-    /// Update this variable to be a clone of variable \a x
-    void update(Space& home, bool share, BoolVar& x);
-    //@}
-
   };
 
   /**

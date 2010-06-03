@@ -94,12 +94,6 @@ namespace Gecode {
     return varimp->regret_max();
   }
 
-
-
-  forceinline bool
-  BoolVar::assigned(void) const {
-    return varimp->assigned();
-  }
   forceinline bool
   BoolVar::range(void) const {
     return varimp->range();
@@ -107,12 +101,6 @@ namespace Gecode {
   forceinline bool
   BoolVar::in(int n) const {
     return varimp->in(n);
-  }
-
-
-  forceinline void
-  BoolVar::update(Space& home, bool share, BoolVar& x) {
-    varimp = x.varimp->copy(home,share);
   }
 
   forceinline bool

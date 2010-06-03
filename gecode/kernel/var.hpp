@@ -60,11 +60,24 @@ namespace Gecode {
     /// Return accumulated failure count (plus degree)
     double afc(void) const;
     //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether view is assigned
+    bool assigned(void) const;
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this variable to be a clone of variable \a x
+    void update(Space& home, bool share, VarBase<VarImp>& x);
+    //@}
+
     /// \name Variable comparison
     //@{
-    /// Test whether view is the same as \a y
+    /// Test whether variable is the same as \a y
     bool same(const VarBase<VarImp>& y) const;
-    /// Test whether view comes before \a y (arbitrary order)
+    /// Test whether variable comes before \a y (arbitrary order)
     bool before(const VarBase<VarImp>& y) const;
     //@}
   };
@@ -96,6 +109,16 @@ namespace Gecode {
   forceinline double
   VarBase<VarImp>::afc(void) const {
     return varimp->afc();
+  }
+  template<class VarImp>
+  forceinline bool
+  VarBase<VarImp>::assigned(void) const {
+    return varimp->assigned();
+  }
+  template<class VarImp>
+  forceinline void
+  VarBase<VarImp>::update(Space& home, bool share, VarBase<VarImp>& x) {
+    varimp = x.varimp->copy(home,share);
   }
   template<class VarImp>
   forceinline bool

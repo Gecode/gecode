@@ -78,9 +78,6 @@ namespace Gecode {
   SetVar::unknownSize(void) const { return varimp->lubSize()-varimp->glbSize(); }
 
   forceinline bool
-  SetVar::assigned(void)  const { return varimp->assigned(); }
-
-  forceinline bool
   SetVar::contains(int i) const { return varimp->knownIn(i); }
 
   forceinline bool
@@ -104,15 +101,6 @@ namespace Gecode {
   forceinline int
   SetVar::glbMax(void) const { return varimp->glbMax(); }
 
-  /*
-   * Cloning
-   *
-   */
-
-  forceinline void
-  SetVar::update(Space& home, bool share, SetVar& y) {
-    varimp = y.varimp->copy(home,share);
-  }
 
 
   /*

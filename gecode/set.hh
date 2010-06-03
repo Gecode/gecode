@@ -346,13 +346,6 @@ namespace Gecode {
     bool contains(int i) const;
     /// Test whether \a i is not in the least upper bound
     bool notContains(int i) const;
-    /// Test whether this variable is assigned
-    bool assigned(void) const;
-
-    /// \name Cloning
-    //@{
-    /// Update this variable to be a clone of variable \a x
-    void update(Space& home, bool, SetVar& x);
     //@}
   };
 
