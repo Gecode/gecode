@@ -229,20 +229,18 @@ public:
       {
         IntArgs sa(n,s);
         {
-          BoolVarArgs bx(*this,n,0,1);
           for (int cx=0; cx<w; cx++) {
+            BoolVarArgs bx(*this,n,0,1);
             for (int i=0; i<n; i++) {
-              // b[i].init(...)
               dom(*this, x[i], cx-s[i]+1, cx, bx[i]);
             }
             linear(*this, sa, bx, IRT_EQ, w);
           }
         }
         {
-          BoolVarArgs by(*this,n,0,1);
           for (int cy=0; cy<w; cy++) {
+            BoolVarArgs by(*this,n,0,1);
             for (int i=0; i<n; i++) {
-              // b[i].init(...)
               dom(*this, y[i], cy-s[i]+1, cy, by[i]);
             }
             linear(*this, sa, by, IRT_EQ, w);
