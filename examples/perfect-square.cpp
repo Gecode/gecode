@@ -228,20 +228,25 @@ public:
     case PROP_REIFIED:
       {
         IntArgs sa(n,s);
-        BoolVarArgs b(n);
-        for (int cx=0; cx<w; cx++) {
-          for (int i=0; i<n; i++) {
-            b[i].init(*this,0,1);
-            dom(*this, x[i], cx-s[i]+1, cx, b[i]);
+        {
+          BoolVarArgs bx(*this,n,0,1);
+          for (int cx=0; cx<w; cx++) {
+            for (int i=0; i<n; i++) {
+              // b[i].init(...)
+              dom(*this, x[i], cx-s[i]+1, cx, bx[i]);
+            }
+            linear(*this, sa, bx, IRT_EQ, w);
           }
-          linear(*this, sa, b, IRT_EQ, w);
         }
-        for (int cy=0; cy<w; cy++) {
-          for (int i=0; i<n; i++) {
-            b[i].init(*this,0,1);
-            dom(*this, y[i], cy-s[i]+1, cy, b[i]);
+        {
+          BoolVarArgs by(*this,n,0,1);
+          for (int cy=0; cy<w; cy++) {
+            for (int i=0; i<n; i++) {
+              // b[i].init(...)
+              dom(*this, y[i], cy-s[i]+1, cy, by[i]);
+            }
+            linear(*this, sa, by, IRT_EQ, w);
           }
-          linear(*this, sa, b, IRT_EQ, w);
         }
       }
       break;
@@ -251,21 +256,16 @@ public:
         for (int i = n; i--; ) {
           m[i]=0; dh[i]=s[i];
         }
-        IntVarArgs e(n);
-        IntArgs limit(1);
+        IntArgs limit(1, w);
         {
           // x-direction
-          for (int i = n; i--; )
-            e[i].init(*this, 0, w);
-          limit[0] = w;
+          IntVarArgs e(*this, n, 0, w);
           cumulatives(*this, m, x, dh, e, dh, limit, true);
           cumulatives(*this, m, x, dh, e, dh, limit, false);
         }
         {
           // y-direction
-          for (int i = n; i--; )
-            e[i].init(*this, 0, w);
-          limit[0] = w;
+          IntVarArgs e(*this, n, 0, w);
           cumulatives(*this, m, y, dh, e, dh, limit, true);
           cumulatives(*this, m, y, dh, e, dh, limit, false);
         }
