@@ -101,8 +101,7 @@ public:
     }
 
     // Array of all words
-    IntVarArgs allwords(*g++);
-    int aw_i=0;
+    IntVarArgs allwords;
 
     // While words of length w_l to process
     while (int w_l=*g++) {
@@ -116,8 +115,7 @@ public:
       } else {
         // Array of all words of length w_l
         IntVarArgs words(*this,n,0,n_w-1);
-        for (int i=n; i--; )
-          allwords[aw_i++]=words[i];
+        allwords << words;
         
         // All words of same length must be different
         distinct(*this, words, opt.icl());
@@ -261,8 +259,6 @@ namespace {
     0,
     // Black field coordinates
     
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 10,
     // Coordinates where words start and direction (0 = horizontal)
@@ -287,8 +283,6 @@ namespace {
     2,
     // Black field coordinates
     0,4, 4,0, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 6,
     // Coordinates where words start and direction (0 = horizontal)
@@ -317,8 +311,6 @@ namespace {
     4,
     // Black field coordinates
     0,3, 0,4, 4,0, 4,1, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -351,8 +343,6 @@ namespace {
     6,
     // Black field coordinates
     0,3, 0,4, 1,4, 3,0, 4,0, 4,1, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -385,8 +375,6 @@ namespace {
     8,
     // Black field coordinates
     0,3, 0,4, 1,3, 1,4, 3,0, 3,1, 4,0, 4,1, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -415,8 +403,6 @@ namespace {
     2,
     // Black field coordinates
     0,0, 4,4, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 6,
     // Coordinates where words start and direction (0 = horizontal)
@@ -445,8 +431,6 @@ namespace {
     4,
     // Black field coordinates
     0,0, 0,1, 4,3, 4,4, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -479,8 +463,6 @@ namespace {
     4,
     // Black field coordinates
     0,0, 0,4, 4,0, 4,4, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 6,
     // Coordinates where words start and direction (0 = horizontal)
@@ -509,8 +491,6 @@ namespace {
     6,
     // Black field coordinates
     0,0, 0,1, 1,0, 3,4, 4,3, 4,4, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -543,8 +523,6 @@ namespace {
     8,
     // Black field coordinates
     0,0, 0,1, 1,0, 1,1, 3,3, 3,4, 4,3, 4,4, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -583,8 +561,6 @@ namespace {
     36,
     // Black field coordinates
     0,4, 0,10, 1,4, 1,10, 2,4, 3,6, 3,7, 4,0, 4,1, 4,8, 4,12, 4,13, 4,14, 5,5, 5,9, 6,4, 6,11, 7,3, 7,11, 8,3, 8,10, 9,5, 9,9, 10,0, 10,1, 10,2, 10,6, 10,13, 10,14, 11,7, 11,8, 12,10, 13,4, 13,10, 14,4, 14,10, 
-    // Total number of words in grid
-    78,
     // Length and number of words of that length
     10, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -639,8 +615,6 @@ namespace {
     34,
     // Black field coordinates
     0,5, 0,10, 1,5, 1,10, 2,5, 2,10, 3,4, 3,9, 4,3, 4,8, 4,13, 4,14, 5,0, 5,7, 6,6, 6,10, 7,5, 7,9, 8,4, 8,8, 9,7, 9,14, 10,0, 10,1, 10,6, 10,11, 11,5, 11,10, 12,4, 12,9, 13,4, 13,9, 14,4, 14,9, 
-    // Total number of words in grid
-    80,
     // Length and number of words of that length
     15, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -699,8 +673,6 @@ namespace {
     36,
     // Black field coordinates
     0,4, 0,10, 1,4, 1,10, 2,4, 2,10, 3,8, 4,0, 4,1, 4,2, 4,7, 4,12, 4,13, 4,14, 5,6, 6,5, 6,11, 7,4, 7,10, 8,3, 8,9, 9,8, 10,0, 10,1, 10,2, 10,7, 10,12, 10,13, 10,14, 11,6, 12,4, 12,10, 13,4, 13,10, 14,4, 14,10, 
-    // Total number of words in grid
-    78,
     // Length and number of words of that length
     8, 8,
     // Coordinates where words start and direction (0 = horizontal)
@@ -751,8 +723,6 @@ namespace {
     32,
     // Black field coordinates
     0,4, 0,10, 1,4, 1,10, 2,4, 2,10, 3,0, 3,5, 3,11, 4,6, 5,3, 5,9, 6,4, 6,8, 6,13, 6,14, 8,0, 8,1, 8,6, 8,10, 9,5, 9,11, 10,8, 11,3, 11,9, 11,14, 12,4, 12,10, 13,4, 13,10, 14,4, 14,10, 
-    // Total number of words in grid
-    76,
     // Length and number of words of that length
     15, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -807,8 +777,6 @@ namespace {
     44,
     // Black field coordinates
     0,4, 0,8, 0,9, 1,4, 1,9, 2,4, 2,9, 3,4, 3,9, 4,3, 4,11, 4,12, 4,13, 4,14, 5,0, 5,1, 5,6, 5,10, 6,5, 6,6, 6,10, 7,4, 7,10, 8,4, 8,8, 8,9, 9,4, 9,8, 9,13, 9,14, 10,0, 10,1, 10,2, 10,3, 10,11, 11,5, 11,10, 12,5, 12,10, 13,5, 13,10, 14,5, 14,6, 14,10, 
-    // Total number of words in grid
-    78,
     // Length and number of words of that length
     15, 1,
     // Coordinates where words start and direction (0 = horizontal)
@@ -867,8 +835,6 @@ namespace {
     30,
     // Black field coordinates
     0,4, 0,10, 1,4, 1,10, 2,4, 2,10, 3,7, 4,3, 4,11, 5,8, 6,4, 6,9, 7,0, 7,1, 7,2, 7,12, 7,13, 7,14, 8,5, 8,10, 9,6, 10,3, 10,11, 11,7, 12,4, 12,10, 13,4, 13,10, 14,4, 14,10, 
-    // Total number of words in grid
-    72,
     // Length and number of words of that length
     9, 3,
     // Coordinates where words start and direction (0 = horizontal)
@@ -927,8 +893,6 @@ namespace {
     32,
     // Black field coordinates
     0,4, 0,9, 1,4, 1,9, 2,9, 3,7, 4,0, 4,1, 4,6, 4,10, 5,5, 5,12, 5,13, 5,14, 6,4, 7,3, 7,11, 8,10, 9,0, 9,1, 9,2, 9,9, 10,4, 10,8, 10,13, 10,14, 11,7, 12,5, 13,5, 13,10, 14,5, 14,10, 
-    // Total number of words in grid
-    74,
     // Length and number of words of that length
     10, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -987,8 +951,6 @@ namespace {
     39,
     // Black field coordinates
     0,4, 0,9, 1,4, 1,9, 2,4, 2,9, 3,5, 3,11, 4,0, 4,1, 4,2, 4,6, 4,10, 5,3, 5,12, 5,13, 5,14, 6,4, 6,8, 7,7, 8,6, 8,10, 9,0, 9,1, 9,2, 9,11, 10,4, 10,8, 10,12, 10,13, 10,14, 11,3, 11,9, 12,5, 12,10, 13,5, 13,10, 14,5, 14,10, 
-    // Total number of words in grid
-    84,
     // Length and number of words of that length
     8, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1043,8 +1005,6 @@ namespace {
     38,
     // Black field coordinates
     0,4, 0,10, 1,4, 1,10, 2,4, 2,10, 3,7, 4,0, 4,1, 4,2, 4,6, 4,12, 4,13, 4,14, 5,5, 5,9, 6,4, 6,8, 7,3, 7,11, 8,6, 8,10, 9,5, 9,9, 10,0, 10,1, 10,2, 10,8, 10,12, 10,13, 10,14, 11,7, 12,4, 12,10, 13,4, 13,10, 14,4, 14,10, 
-    // Total number of words in grid
-    82,
     // Length and number of words of that length
     7, 10,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1095,8 +1055,6 @@ namespace {
     35,
     // Black field coordinates
     0,4, 0,9, 1,4, 1,9, 2,4, 2,9, 3,4, 4,0, 4,1, 4,6, 4,11, 4,12, 4,13, 4,14, 5,5, 6,5, 6,10, 7,7, 8,4, 8,9, 9,9, 10,0, 10,1, 10,2, 10,3, 10,8, 10,13, 10,14, 11,10, 12,5, 12,10, 13,5, 13,10, 14,5, 14,10, 
-    // Total number of words in grid
-    72,
     // Length and number of words of that length
     10, 8,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1155,8 +1113,6 @@ namespace {
     60,
     // Black field coordinates
     0,4, 0,9, 0,14, 1,4, 1,9, 1,14, 2,4, 2,14, 3,7, 3,12, 4,0, 4,1, 4,6, 4,11, 4,17, 4,18, 5,5, 5,10, 6,4, 6,9, 6,15, 7,3, 7,8, 7,14, 8,7, 8,13, 9,0, 9,1, 9,2, 9,6, 9,12, 9,16, 9,17, 9,18, 10,5, 10,11, 11,4, 11,10, 11,15, 12,3, 12,9, 12,14, 13,8, 13,13, 14,0, 14,1, 14,7, 14,12, 14,17, 14,18, 15,6, 15,11, 16,4, 16,14, 17,4, 17,9, 17,14, 18,4, 18,9, 18,14, 
-    // Total number of words in grid
-    128,
     // Length and number of words of that length
     9, 6,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1219,8 +1175,6 @@ namespace {
     65,
     // Black field coordinates
     0,4, 0,9, 0,14, 1,4, 1,9, 1,14, 2,4, 3,7, 3,12, 4,3, 4,7, 4,8, 4,12, 4,13, 5,0, 5,1, 5,6, 5,11, 5,16, 5,17, 5,18, 6,0, 6,6, 6,10, 6,18, 7,5, 7,10, 7,15, 8,5, 8,10, 8,15, 9,4, 9,9, 9,14, 10,3, 10,8, 10,13, 11,3, 11,8, 11,13, 12,0, 12,8, 12,12, 12,18, 13,0, 13,1, 13,2, 13,7, 13,12, 13,17, 13,18, 14,5, 14,6, 14,10, 14,11, 14,15, 15,6, 15,11, 16,14, 17,4, 17,9, 17,14, 18,4, 18,9, 18,14, 
-    // Total number of words in grid
-    118,
     // Length and number of words of that length
     14, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1287,8 +1241,6 @@ namespace {
     54,
     // Black field coordinates
     0,6, 0,12, 1,6, 1,12, 2,6, 2,12, 3,3, 3,9, 3,15, 4,4, 4,9, 4,14, 5,5, 5,13, 6,0, 6,1, 6,2, 6,8, 6,16, 6,17, 6,18, 7,7, 7,11, 8,6, 8,10, 9,3, 9,4, 9,14, 9,15, 10,8, 10,12, 11,7, 11,11, 12,0, 12,1, 12,2, 12,10, 12,16, 12,17, 12,18, 13,5, 13,13, 14,4, 14,9, 14,14, 15,3, 15,9, 15,15, 16,6, 16,12, 17,6, 17,12, 18,6, 18,12, 
-    // Total number of words in grid
-    118,
     // Length and number of words of that length
     9, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1351,8 +1303,6 @@ namespace {
     65,
     // Black field coordinates
     0,5, 0,13, 1,5, 1,13, 2,5, 2,13, 3,3, 3,7, 3,11, 3,15, 4,4, 4,8, 4,9, 4,10, 4,14, 5,0, 5,1, 5,2, 5,16, 5,17, 5,18, 6,6, 6,12, 7,3, 7,7, 7,11, 7,15, 8,4, 8,9, 8,14, 9,4, 9,8, 9,9, 9,10, 9,14, 10,4, 10,9, 10,14, 11,3, 11,7, 11,11, 11,15, 12,6, 12,12, 13,0, 13,1, 13,2, 13,16, 13,17, 13,18, 14,4, 14,8, 14,9, 14,10, 14,14, 15,3, 15,7, 15,11, 15,15, 16,5, 16,13, 17,5, 17,13, 18,5, 18,13, 
-    // Total number of words in grid
-    132,
     // Length and number of words of that length
     13, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1411,8 +1361,6 @@ namespace {
     70,
     // Black field coordinates
     0,4, 0,10, 0,15, 1,4, 1,10, 1,15, 2,4, 2,10, 2,15, 3,6, 3,11, 4,0, 4,1, 4,2, 4,7, 4,8, 4,12, 4,16, 4,17, 4,18, 5,0, 5,8, 5,12, 5,13, 6,5, 6,13, 7,3, 7,10, 7,15, 8,6, 8,11, 9,0, 9,1, 9,2, 9,7, 9,11, 9,16, 9,17, 9,18, 10,7, 10,12, 11,3, 11,8, 11,15, 12,5, 12,13, 13,5, 13,6, 13,10, 13,18, 14,0, 14,1, 14,2, 14,6, 14,10, 14,11, 14,16, 14,17, 14,18, 15,7, 15,12, 16,3, 16,8, 16,14, 17,3, 17,8, 17,14, 18,3, 18,8, 18,14, 
-    // Total number of words in grid
-    126,
     // Length and number of words of that length
     19, 1,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1475,8 +1423,6 @@ namespace {
     74,
     // Black field coordinates
     0,3, 0,4, 0,9, 0,14, 0,15, 1,4, 1,9, 1,14, 1,15, 2,4, 2,15, 3,11, 3,12, 4,0, 4,1, 4,2, 4,3, 4,7, 4,11, 4,16, 4,17, 4,18, 5,5, 5,6, 5,10, 6,4, 6,9, 6,14, 7,4, 7,8, 7,14, 8,7, 8,13, 9,0, 9,1, 9,2, 9,6, 9,12, 9,16, 9,17, 9,18, 10,5, 10,11, 11,4, 11,10, 11,14, 12,4, 12,9, 12,14, 13,8, 13,12, 13,13, 14,0, 14,1, 14,2, 14,7, 14,11, 14,15, 14,16, 14,17, 14,18, 15,6, 15,7, 16,3, 16,14, 17,3, 17,4, 17,9, 17,14, 18,3, 18,4, 18,9, 18,14, 18,15, 
-    // Total number of words in grid
-    128,
     // Length and number of words of that length
     11, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1543,8 +1489,6 @@ namespace {
     70,
     // Black field coordinates
     0,4, 0,9, 0,14, 1,4, 1,9, 1,14, 2,4, 2,9, 2,14, 3,3, 3,4, 3,16, 3,17, 3,18, 4,7, 4,11, 4,15, 5,0, 5,1, 5,6, 5,11, 5,15, 6,5, 6,10, 6,14, 7,4, 7,8, 7,9, 7,13, 8,3, 8,7, 8,12, 8,17, 8,18, 9,7, 9,11, 10,0, 10,1, 10,6, 10,11, 10,15, 11,5, 11,9, 11,10, 11,14, 12,4, 12,8, 12,13, 13,3, 13,7, 13,12, 13,17, 13,18, 14,3, 14,7, 14,11, 15,0, 15,1, 15,2, 15,14, 15,15, 16,4, 16,9, 16,14, 17,4, 17,9, 17,14, 18,4, 18,9, 18,14, 
-    // Total number of words in grid
-    134,
     // Length and number of words of that length
     15, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1611,8 +1555,6 @@ namespace {
     66,
     // Black field coordinates
     0,4, 0,9, 0,14, 1,4, 1,9, 1,14, 2,4, 2,9, 2,14, 3,6, 4,0, 4,1, 4,2, 4,7, 4,11, 4,12, 4,16, 4,17, 4,18, 5,8, 5,13, 6,4, 6,9, 6,14, 7,4, 7,10, 8,5, 8,11, 8,15, 9,0, 9,1, 9,2, 9,6, 9,12, 9,16, 9,17, 9,18, 10,3, 10,7, 10,13, 11,8, 11,14, 12,4, 12,9, 12,14, 13,5, 13,10, 14,0, 14,1, 14,2, 14,6, 14,7, 14,11, 14,16, 14,17, 14,18, 15,12, 16,4, 16,9, 16,14, 17,4, 17,9, 17,14, 18,4, 18,9, 18,14, 
-    // Total number of words in grid
-    130,
     // Length and number of words of that length
     12, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1679,8 +1621,6 @@ namespace {
     66,
     // Black field coordinates
     0,4, 0,9, 0,14, 1,4, 1,9, 1,14, 2,4, 3,7, 3,11, 3,15, 4,0, 4,1, 4,2, 4,7, 4,11, 4,12, 4,16, 4,17, 4,18, 5,6, 5,10, 6,5, 6,9, 6,14, 7,4, 7,8, 7,14, 8,7, 8,13, 9,0, 9,1, 9,2, 9,6, 9,12, 9,16, 9,17, 9,18, 10,5, 10,11, 11,4, 11,10, 11,14, 12,4, 12,9, 12,13, 13,8, 13,12, 14,0, 14,1, 14,2, 14,6, 14,7, 14,11, 14,16, 14,17, 14,18, 15,3, 15,7, 15,11, 16,14, 17,4, 17,9, 17,14, 18,4, 18,9, 18,14, 
-    // Total number of words in grid
-    130,
     // Length and number of words of that length
     15, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1747,8 +1687,6 @@ namespace {
     70,
     // Black field coordinates
     0,4, 0,8, 0,9, 0,14, 0,15, 1,4, 1,9, 1,14, 2,4, 2,9, 2,14, 3,0, 3,7, 3,12, 4,0, 4,1, 4,6, 4,11, 4,12, 4,17, 4,18, 5,5, 5,10, 5,15, 6,4, 6,10, 6,15, 7,3, 7,8, 7,14, 8,7, 8,13, 9,0, 9,1, 9,6, 9,12, 9,17, 9,18, 10,5, 10,11, 11,4, 11,10, 11,15, 12,3, 12,8, 12,14, 13,3, 13,8, 13,13, 14,0, 14,1, 14,6, 14,7, 14,12, 14,17, 14,18, 15,6, 15,11, 15,18, 16,4, 16,9, 16,14, 17,4, 17,9, 17,14, 18,3, 18,4, 18,9, 18,10, 18,14, 
-    // Total number of words in grid
-    128,
     // Length and number of words of that length
     19, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1817,8 +1755,6 @@ namespace {
     68,
     // Black field coordinates
     0,4, 0,10, 0,16, 1,4, 1,10, 1,16, 2,4, 2,16, 3,8, 3,14, 4,0, 4,1, 4,7, 4,13, 5,6, 5,19, 5,20, 6,5, 6,11, 6,17, 7,4, 7,10, 7,11, 7,12, 7,16, 8,3, 8,9, 8,15, 9,7, 9,13, 10,0, 10,1, 10,2, 10,7, 10,13, 10,18, 10,19, 10,20, 11,7, 11,13, 12,5, 12,11, 12,17, 13,4, 13,8, 13,9, 13,10, 13,16, 14,3, 14,9, 14,15, 15,0, 15,1, 15,14, 16,7, 16,13, 16,19, 16,20, 17,6, 17,12, 18,4, 18,16, 19,4, 19,10, 19,16, 20,4, 20,10, 20,16, 
-    // Total number of words in grid
-    138,
     // Length and number of words of that length
     12, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1895,8 +1831,6 @@ namespace {
     72,
     // Black field coordinates
     0,4, 0,10, 0,16, 1,4, 1,10, 1,16, 2,4, 2,10, 2,16, 3,9, 3,15, 4,0, 4,1, 4,2, 4,8, 4,12, 4,18, 4,19, 4,20, 5,3, 5,7, 5,13, 6,6, 6,14, 7,5, 7,10, 7,15, 8,4, 8,9, 8,16, 9,8, 9,17, 10,0, 10,1, 10,2, 10,7, 10,13, 10,18, 10,19, 10,20, 11,3, 11,12, 12,4, 12,11, 12,16, 13,5, 13,10, 13,15, 14,6, 14,14, 15,7, 15,13, 15,17, 16,0, 16,1, 16,2, 16,8, 16,12, 16,18, 16,19, 16,20, 17,5, 17,11, 18,4, 18,10, 18,16, 19,4, 19,10, 19,16, 20,4, 20,10, 20,16, 
-    // Total number of words in grid
-    150,
     // Length and number of words of that length
     12, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -1965,8 +1899,6 @@ namespace {
     79,
     // Black field coordinates
     0,5, 0,11, 0,12, 0,17, 1,5, 1,11, 1,17, 2,11, 3,3, 3,10, 3,15, 3,16, 4,0, 4,1, 4,2, 4,8, 4,9, 4,15, 5,0, 5,4, 5,5, 5,14, 5,18, 5,19, 5,20, 6,6, 6,13, 7,7, 7,12, 8,8, 8,16, 9,0, 9,1, 9,2, 9,3, 9,9, 9,15, 9,16, 10,3, 10,10, 10,17, 11,4, 11,5, 11,11, 11,17, 11,18, 11,19, 11,20, 12,4, 12,12, 13,8, 13,13, 14,7, 14,14, 15,0, 15,1, 15,2, 15,6, 15,15, 15,16, 15,20, 16,5, 16,11, 16,12, 16,18, 16,19, 16,20, 17,4, 17,5, 17,10, 17,17, 18,9, 19,3, 19,9, 19,15, 20,3, 20,8, 20,9, 20,15, 
-    // Total number of words in grid
-    144,
     // Length and number of words of that length
     11, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2035,8 +1967,6 @@ namespace {
     63,
     // Black field coordinates
     0,7, 0,13, 1,7, 1,13, 2,7, 2,13, 3,3, 3,11, 3,17, 4,4, 4,10, 4,16, 5,5, 5,9, 5,15, 6,8, 6,12, 7,0, 7,1, 7,2, 7,7, 7,13, 7,18, 7,19, 7,20, 8,6, 8,14, 9,5, 9,11, 9,17, 10,4, 10,10, 10,16, 11,3, 11,9, 11,15, 12,6, 12,14, 13,0, 13,1, 13,2, 13,7, 13,13, 13,18, 13,19, 13,20, 14,8, 14,12, 15,5, 15,11, 15,15, 16,4, 16,10, 16,16, 17,3, 17,9, 17,17, 18,7, 18,13, 19,7, 19,13, 20,7, 20,13, 
-    // Total number of words in grid
-    144,
     // Length and number of words of that length
     8, 8,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2097,8 +2027,6 @@ namespace {
     73,
     // Black field coordinates
     0,6, 0,14, 1,6, 1,14, 2,6, 2,14, 3,3, 3,9, 3,17, 4,4, 4,10, 4,16, 5,5, 5,11, 5,15, 6,0, 6,1, 6,2, 6,6, 6,7, 6,8, 6,12, 6,13, 6,14, 6,18, 6,19, 6,20, 7,6, 7,14, 8,6, 8,14, 9,5, 9,10, 9,17, 10,4, 10,9, 10,10, 10,11, 10,16, 11,3, 11,10, 11,15, 12,6, 12,14, 13,6, 13,14, 14,0, 14,1, 14,2, 14,6, 14,7, 14,8, 14,12, 14,13, 14,14, 14,18, 14,19, 14,20, 15,5, 15,9, 15,15, 16,4, 16,10, 16,16, 17,3, 17,11, 17,17, 18,6, 18,14, 19,6, 19,14, 20,6, 20,14, 
-    // Total number of words in grid
-    144,
     // Length and number of words of that length
     7, 24,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2155,8 +2083,6 @@ namespace {
     68,
     // Black field coordinates
     0,4, 0,10, 0,16, 1,4, 1,10, 1,16, 2,4, 2,16, 3,8, 3,12, 4,0, 4,1, 4,2, 4,7, 4,13, 4,18, 4,19, 4,20, 5,6, 5,14, 6,5, 6,11, 6,15, 7,4, 7,10, 7,16, 8,3, 8,9, 8,17, 9,6, 9,12, 10,0, 10,1, 10,7, 10,13, 10,19, 10,20, 11,8, 11,14, 12,3, 12,11, 12,17, 13,4, 13,10, 13,16, 14,5, 14,9, 14,15, 15,6, 15,14, 16,0, 16,1, 16,2, 16,7, 16,13, 16,18, 16,19, 16,20, 17,8, 17,12, 18,4, 18,16, 19,4, 19,10, 19,16, 20,4, 20,10, 20,16, 
-    // Total number of words in grid
-    146,
     // Length and number of words of that length
     11, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2221,8 +2147,6 @@ namespace {
     73,
     // Black field coordinates
     0,4, 0,10, 0,16, 1,4, 1,10, 1,16, 2,10, 3,5, 3,9, 3,15, 4,0, 4,1, 4,6, 4,14, 4,19, 4,20, 5,3, 5,11, 5,17, 6,4, 6,8, 6,12, 6,16, 7,7, 7,13, 8,6, 8,10, 8,14, 9,3, 9,10, 9,15, 10,0, 10,1, 10,2, 10,8, 10,9, 10,10, 10,11, 10,12, 10,18, 10,19, 10,20, 11,5, 11,10, 11,17, 12,6, 12,10, 12,14, 13,7, 13,13, 14,4, 14,8, 14,12, 14,16, 15,3, 15,9, 15,17, 16,0, 16,1, 16,6, 16,14, 16,19, 16,20, 17,5, 17,11, 17,15, 18,10, 19,4, 19,10, 19,16, 20,4, 20,10, 20,16, 
-    // Total number of words in grid
-    152,
     // Length and number of words of that length
     10, 8,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2283,8 +2207,6 @@ namespace {
     76,
     // Black field coordinates
     0,4, 0,10, 0,16, 1,4, 1,10, 1,16, 2,4, 2,10, 2,16, 3,8, 3,14, 4,0, 4,1, 4,2, 4,7, 4,13, 4,18, 4,19, 4,20, 5,6, 5,12, 6,5, 6,6, 6,11, 6,17, 7,4, 7,10, 7,16, 8,3, 8,10, 8,15, 9,8, 9,9, 9,14, 10,0, 10,1, 10,2, 10,7, 10,13, 10,18, 10,19, 10,20, 11,6, 11,11, 11,12, 12,5, 12,10, 12,17, 13,4, 13,10, 13,16, 14,3, 14,9, 14,14, 14,15, 15,8, 15,14, 16,0, 16,1, 16,2, 16,7, 16,13, 16,18, 16,19, 16,20, 17,6, 17,12, 18,4, 18,10, 18,16, 19,4, 19,10, 19,16, 20,4, 20,10, 20,16, 
-    // Total number of words in grid
-    150,
     // Length and number of words of that length
     9, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2345,8 +2267,6 @@ namespace {
     75,
     // Black field coordinates
     0,0, 0,1, 0,7, 0,13, 0,19, 0,20, 1,0, 1,7, 1,13, 1,20, 2,7, 2,13, 3,3, 3,11, 3,17, 4,4, 4,10, 4,16, 5,5, 5,9, 5,15, 6,8, 6,14, 7,0, 7,1, 7,2, 7,7, 7,13, 7,18, 7,19, 7,20, 8,6, 8,12, 9,5, 9,11, 9,17, 10,4, 10,10, 10,16, 11,3, 11,9, 11,15, 12,8, 12,14, 13,0, 13,1, 13,2, 13,7, 13,13, 13,18, 13,19, 13,20, 14,6, 14,12, 15,5, 15,11, 15,15, 16,4, 16,10, 16,16, 17,3, 17,9, 17,17, 18,7, 18,13, 19,0, 19,7, 19,13, 19,20, 20,0, 20,1, 20,7, 20,13, 20,19, 20,20, 
-    // Total number of words in grid
-    144,
     // Length and number of words of that length
     8, 8,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2407,8 +2327,6 @@ namespace {
     58,
     // Black field coordinates
     0,7, 0,13, 1,7, 1,13, 2,7, 2,13, 3,3, 3,17, 4,4, 4,12, 4,16, 5,5, 5,11, 5,15, 6,6, 6,10, 6,14, 7,0, 7,1, 7,2, 7,9, 7,18, 7,19, 7,20, 8,8, 8,16, 9,7, 9,15, 10,6, 10,14, 11,5, 11,13, 12,4, 12,12, 13,0, 13,1, 13,2, 13,11, 13,18, 13,19, 13,20, 14,6, 14,10, 14,14, 15,5, 15,9, 15,15, 16,4, 16,8, 16,16, 17,3, 17,17, 18,7, 18,13, 19,7, 19,13, 20,7, 20,13, 
-    // Total number of words in grid
-    134,
     // Length and number of words of that length
     13, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2475,8 +2393,6 @@ namespace {
     89,
     // Black field coordinates
     0,5, 0,11, 0,17, 1,5, 1,11, 1,17, 2,5, 2,11, 2,17, 3,4, 3,5, 4,3, 4,8, 4,12, 4,16, 4,21, 4,22, 5,7, 5,15, 6,0, 6,1, 6,6, 6,10, 6,14, 6,18, 7,5, 7,9, 7,13, 7,17, 7,18, 8,3, 8,8, 8,12, 8,19, 9,3, 9,8, 9,21, 9,22, 10,6, 10,11, 10,16, 11,5, 11,6, 11,7, 11,11, 11,15, 11,16, 11,17, 12,6, 12,11, 12,16, 13,0, 13,1, 13,14, 13,19, 14,3, 14,10, 14,14, 14,19, 15,4, 15,5, 15,9, 15,13, 15,17, 16,4, 16,8, 16,12, 16,16, 16,21, 16,22, 17,7, 17,15, 18,0, 18,1, 18,6, 18,10, 18,14, 18,19, 19,17, 19,18, 20,5, 20,11, 20,17, 21,5, 21,11, 21,17, 22,5, 22,11, 22,17, 
-    // Total number of words in grid
-    172,
     // Length and number of words of that length
     23, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2555,8 +2471,6 @@ namespace {
     94,
     // Black field coordinates
     0,5, 0,10, 0,16, 0,22, 1,5, 1,10, 1,16, 2,5, 2,16, 3,3, 3,9, 3,14, 3,19, 4,3, 4,7, 4,8, 4,13, 4,18, 5,0, 5,1, 5,6, 5,12, 5,17, 6,5, 6,17, 6,21, 6,22, 7,4, 7,10, 7,11, 7,15, 7,16, 8,4, 8,9, 8,19, 9,8, 9,13, 9,14, 9,18, 10,0, 10,1, 10,2, 10,6, 10,7, 10,12, 10,17, 11,5, 11,17, 12,5, 12,10, 12,15, 12,16, 12,20, 12,21, 12,22, 13,4, 13,8, 13,9, 13,14, 14,3, 14,13, 14,18, 15,6, 15,7, 15,11, 15,12, 15,18, 16,0, 16,1, 16,5, 16,17, 17,5, 17,10, 17,16, 17,21, 17,22, 18,4, 18,9, 18,14, 18,15, 18,19, 19,3, 19,8, 19,13, 19,19, 20,6, 20,17, 21,6, 21,12, 21,17, 22,0, 22,6, 22,12, 22,17, 
-    // Total number of words in grid
-    182,
     // Length and number of words of that length
     12, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2635,8 +2549,6 @@ namespace {
     89,
     // Black field coordinates
     0,5, 0,11, 0,16, 1,5, 1,11, 1,16, 2,5, 2,16, 3,4, 3,10, 3,15, 4,4, 4,8, 4,13, 4,14, 4,18, 4,19, 5,11, 5,17, 5,21, 5,22, 6,0, 6,1, 6,6, 6,7, 6,12, 6,17, 7,3, 7,9, 7,16, 8,4, 8,9, 9,4, 9,10, 9,14, 9,19, 10,4, 10,5, 10,10, 10,15, 10,20, 10,21, 10,22, 11,6, 11,11, 11,16, 12,0, 12,1, 12,2, 12,7, 12,12, 12,17, 12,18, 13,3, 13,8, 13,12, 13,18, 14,13, 14,18, 15,6, 15,13, 15,19, 16,5, 16,10, 16,15, 16,16, 16,21, 16,22, 17,0, 17,1, 17,5, 17,11, 18,3, 18,4, 18,8, 18,9, 18,14, 18,18, 19,7, 19,12, 19,18, 20,6, 20,17, 21,6, 21,11, 21,17, 22,6, 22,11, 22,17, 
-    // Total number of words in grid
-    174,
     // Length and number of words of that length
     13, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2719,8 +2631,6 @@ namespace {
     80,
     // Black field coordinates
     0,5, 0,11, 0,17, 1,5, 1,11, 1,17, 2,5, 2,11, 2,17, 3,9, 3,13, 4,8, 4,14, 5,0, 5,1, 5,2, 5,7, 5,15, 5,20, 5,21, 5,22, 6,6, 6,10, 6,16, 7,5, 7,11, 7,17, 8,4, 8,12, 8,18, 9,3, 9,9, 9,13, 9,19, 10,8, 10,16, 11,0, 11,1, 11,2, 11,7, 11,15, 11,20, 11,21, 11,22, 12,6, 12,14, 13,3, 13,9, 13,13, 13,19, 14,4, 14,10, 14,18, 15,5, 15,11, 15,17, 16,6, 16,12, 16,16, 17,0, 17,1, 17,2, 17,7, 17,15, 17,20, 17,21, 17,22, 18,8, 18,14, 19,9, 19,13, 20,5, 20,11, 20,17, 21,5, 21,11, 21,17, 22,5, 22,11, 22,17, 
-    // Total number of words in grid
-    170,
     // Length and number of words of that length
     9, 8,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2787,8 +2697,6 @@ namespace {
     84,
     // Black field coordinates
     0,5, 0,11, 0,17, 1,5, 1,11, 1,17, 2,5, 2,11, 2,17, 3,3, 3,8, 3,14, 3,19, 4,7, 4,15, 5,0, 5,1, 5,6, 5,12, 5,16, 5,20, 5,21, 5,22, 6,5, 6,11, 6,17, 7,4, 7,10, 7,18, 8,3, 8,9, 8,14, 8,19, 9,8, 9,13, 10,7, 10,12, 10,17, 11,0, 11,1, 11,2, 11,6, 11,16, 11,20, 11,21, 11,22, 12,5, 12,10, 12,15, 13,9, 13,14, 14,3, 14,8, 14,13, 14,19, 15,4, 15,12, 15,18, 16,5, 16,11, 16,17, 17,0, 17,1, 17,2, 17,6, 17,10, 17,16, 17,21, 17,22, 18,7, 18,15, 19,3, 19,8, 19,14, 19,19, 20,5, 20,11, 20,17, 21,5, 21,11, 21,17, 22,5, 22,11, 22,17, 
-    // Total number of words in grid
-    180,
     // Length and number of words of that length
     11, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2855,8 +2763,6 @@ namespace {
     69,
     // Black field coordinates
     0,7, 0,15, 1,7, 1,15, 2,7, 2,15, 3,3, 3,12, 3,19, 4,4, 4,11, 4,18, 5,5, 5,10, 5,17, 6,8, 6,14, 7,0, 7,1, 7,2, 7,7, 7,15, 7,20, 7,21, 7,22, 8,6, 8,16, 9,9, 9,13, 10,3, 10,11, 10,17, 11,4, 11,10, 11,11, 11,12, 11,18, 12,5, 12,11, 12,19, 13,9, 13,13, 14,6, 14,16, 15,0, 15,1, 15,2, 15,7, 15,15, 15,20, 15,21, 15,22, 16,8, 16,14, 17,5, 17,12, 17,17, 18,4, 18,11, 18,18, 19,3, 19,10, 19,19, 20,7, 20,15, 21,7, 21,15, 22,7, 22,15, 
-    // Total number of words in grid
-    156,
     // Length and number of words of that length
     9, 12,
     // Coordinates where words start and direction (0 = horizontal)
@@ -2923,8 +2829,6 @@ namespace {
     83,
     // Black field coordinates
     0,4, 0,10, 0,16, 0,22, 1,4, 1,10, 1,16, 2,4, 2,16, 3,8, 3,14, 3,19, 4,0, 4,1, 4,7, 4,13, 4,18, 5,6, 5,12, 5,17, 6,5, 6,10, 6,11, 6,16, 6,21, 6,22, 7,4, 7,15, 8,3, 8,9, 8,14, 8,19, 9,8, 9,18, 10,0, 10,1, 10,2, 10,6, 10,12, 10,17, 11,6, 11,11, 11,16, 12,5, 12,10, 12,16, 12,20, 12,21, 12,22, 13,4, 13,14, 14,3, 14,8, 14,13, 14,19, 15,7, 15,18, 16,0, 16,1, 16,6, 16,11, 16,12, 16,17, 17,5, 17,10, 17,16, 18,4, 18,9, 18,15, 18,21, 18,22, 19,3, 19,8, 19,14, 20,6, 20,18, 21,6, 21,12, 21,18, 22,0, 22,6, 22,12, 22,18, 
-    // Total number of words in grid
-    174,
     // Length and number of words of that length
     12, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3003,8 +2907,6 @@ namespace {
     75,
     // Black field coordinates
     0,7, 0,15, 1,7, 1,15, 2,7, 2,15, 3,3, 3,8, 3,13, 3,19, 4,4, 4,12, 4,18, 5,5, 5,10, 5,17, 6,6, 6,11, 6,16, 7,0, 7,1, 7,2, 7,9, 7,15, 7,20, 7,21, 7,22, 8,3, 8,8, 8,14, 9,7, 9,13, 9,19, 10,5, 10,12, 10,18, 11,6, 11,11, 11,16, 12,4, 12,10, 12,17, 13,3, 13,9, 13,15, 14,8, 14,14, 14,19, 15,0, 15,1, 15,2, 15,7, 15,13, 15,20, 15,21, 15,22, 16,6, 16,11, 16,16, 17,5, 17,12, 17,17, 18,4, 18,10, 18,18, 19,3, 19,9, 19,14, 19,19, 20,7, 20,15, 21,7, 21,15, 22,7, 22,15, 
-    // Total number of words in grid
-    172,
     // Length and number of words of that length
     8, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3067,8 +2969,6 @@ namespace {
     76,
     // Black field coordinates
     0,5, 0,11, 0,17, 1,5, 1,11, 2,5, 3,6, 3,12, 3,18, 4,3, 4,9, 4,13, 4,17, 5,0, 5,4, 5,8, 5,14, 5,20, 5,21, 5,22, 6,7, 6,15, 6,19, 7,6, 7,10, 7,16, 8,5, 8,11, 8,17, 9,4, 9,12, 9,18, 10,3, 10,9, 10,15, 11,0, 11,1, 11,8, 11,14, 11,21, 11,22, 12,7, 12,13, 12,19, 13,4, 13,10, 13,18, 14,5, 14,11, 14,17, 15,6, 15,12, 15,16, 16,3, 16,7, 16,15, 17,0, 17,1, 17,2, 17,8, 17,14, 17,18, 17,22, 18,5, 18,9, 18,13, 18,19, 19,4, 19,10, 19,16, 20,17, 21,11, 21,17, 22,5, 22,11, 22,17, 
-    // Total number of words in grid
-    174,
     // Length and number of words of that length
     17, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3135,8 +3035,6 @@ namespace {
     67,
     // Black field coordinates
     0,6, 0,13, 0,17, 1,6, 1,13, 2,13, 3,3, 3,12, 3,19, 4,5, 4,11, 4,17, 5,4, 5,10, 5,18, 5,22, 6,0, 6,1, 6,6, 6,16, 7,7, 7,15, 8,8, 8,14, 9,9, 9,13, 9,20, 9,21, 9,22, 10,5, 10,12, 10,19, 11,4, 11,11, 11,18, 12,3, 12,10, 12,17, 13,0, 13,1, 13,2, 13,9, 13,13, 14,8, 14,14, 15,7, 15,15, 16,6, 16,16, 16,21, 16,22, 17,0, 17,4, 17,12, 17,18, 18,5, 18,11, 18,17, 19,3, 19,10, 19,19, 20,9, 21,9, 21,16, 22,5, 22,9, 22,16, 
-    // Total number of words in grid
-    156,
     // Length and number of words of that length
     13, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3186,8 +3084,6 @@ namespace {
     1,
     // Black field coordinates
     1,0, 
-    // Total number of words in grid
-    4,
     // Length and number of words of that length
     2, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3214,8 +3110,6 @@ namespace {
     1,
     // Black field coordinates
     0,0, 
-    // Total number of words in grid
-    6,
     // Length and number of words of that length
     3, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3243,8 +3137,6 @@ namespace {
     2,
     // Black field coordinates
     0,3, 3,0, 
-    // Total number of words in grid
-    8,
     // Length and number of words of that length
     4, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3273,8 +3165,6 @@ namespace {
     6,
     // Black field coordinates
     0,3, 0,4, 1,4, 3,0, 4,0, 4,1, 
-    // Total number of words in grid
-    10,
     // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3307,8 +3197,6 @@ namespace {
     4,
     // Black field coordinates
     0,4, 1,3, 3,1, 4,0, 
-    // Total number of words in grid
-    14,
     // Length and number of words of that length
     5, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3345,8 +3233,6 @@ namespace {
     2,
     // Black field coordinates
     1,3, 3,1, 
-    // Total number of words in grid
-    14,
     // Length and number of words of that length
     5, 6,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3380,8 +3266,6 @@ namespace {
     6,
     // Black field coordinates
     0,5, 1,1, 2,3, 3,2, 4,4, 5,0, 
-    // Total number of words in grid
-    20,
     // Length and number of words of that length
     5, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3424,8 +3308,6 @@ namespace {
     8,
     // Black field coordinates
     0,4, 2,2, 2,6, 3,1, 3,5, 4,0, 4,4, 6,2, 
-    // Total number of words in grid
-    26,
     // Length and number of words of that length
     7, 3,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3468,8 +3350,6 @@ namespace {
     14,
     // Black field coordinates
     0,0, 0,1, 0,5, 0,6, 1,0, 1,6, 3,2, 3,4, 5,0, 5,6, 6,0, 6,1, 6,5, 6,6, 
-    // Total number of words in grid
-    18,
     // Length and number of words of that length
     7, 3,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3512,8 +3392,6 @@ namespace {
     9,
     // Black field coordinates
     0,3, 1,3, 3,0, 3,1, 3,3, 3,5, 3,6, 5,3, 6,3, 
-    // Total number of words in grid
-    24,
     // Length and number of words of that length
     7, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3548,8 +3426,6 @@ namespace {
     11,
     // Black field coordinates
     0,0, 0,1, 0,6, 1,0, 3,2, 3,3, 3,4, 5,6, 6,0, 6,5, 6,6, 
-    // Total number of words in grid
-    18,
     // Length and number of words of that length
     7, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3593,8 +3469,6 @@ namespace {
     12,
     // Black field coordinates
     0,3, 1,3, 2,3, 3,5, 3,6, 3,7, 4,0, 4,1, 4,2, 5,4, 6,4, 7,4, 
-    // Total number of words in grid
-    28,
     // Length and number of words of that length
     5, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3631,8 +3505,6 @@ namespace {
     16,
     // Black field coordinates
     0,4, 1,4, 2,4, 3,2, 3,6, 4,0, 4,1, 4,2, 4,6, 4,7, 4,8, 5,2, 5,6, 6,4, 7,4, 8,4, 
-    // Total number of words in grid
-    34,
     // Length and number of words of that length
     9, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3674,8 +3546,6 @@ namespace {
     38,
     // Black field coordinates
     0,0, 0,1, 0,2, 0,7, 0,8, 0,9, 1,0, 1,1, 1,7, 1,8, 1,9, 2,0, 2,8, 2,9, 3,5, 3,6, 4,4, 4,5, 4,6, 5,3, 5,4, 5,5, 6,3, 6,4, 7,0, 7,1, 7,9, 8,0, 8,1, 8,2, 8,8, 8,9, 9,0, 9,1, 9,2, 9,7, 9,8, 9,9, 
-    // Total number of words in grid
-    28,
     // Length and number of words of that length
     7, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3718,8 +3588,6 @@ namespace {
     26,
     // Black field coordinates
     0,4, 0,5, 0,6, 1,5, 2,5, 3,3, 3,7, 4,0, 4,6, 4,10, 5,0, 5,1, 5,2, 5,8, 5,9, 5,10, 6,0, 6,4, 6,10, 7,3, 7,7, 8,5, 9,5, 10,4, 10,5, 10,6, 
-    // Total number of words in grid
-    46,
     // Length and number of words of that length
     5, 22,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3760,8 +3628,6 @@ namespace {
     34,
     // Black field coordinates
     0,4, 0,9, 1,4, 1,9, 2,4, 2,9, 3,0, 3,1, 3,2, 3,7, 4,6, 4,10, 4,11, 4,12, 5,5, 6,3, 6,4, 6,8, 6,9, 7,7, 8,0, 8,1, 8,2, 8,6, 9,5, 9,10, 9,11, 9,12, 10,3, 10,8, 11,3, 11,8, 12,3, 12,8, 
-    // Total number of words in grid
-    68,
     // Length and number of words of that length
     7, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3812,8 +3678,6 @@ namespace {
     45,
     // Black field coordinates
     0,3, 0,7, 0,11, 1,3, 1,7, 1,11, 2,7, 3,0, 3,1, 3,8, 3,13, 3,14, 4,5, 4,9, 5,4, 5,10, 6,3, 6,7, 7,0, 7,1, 7,2, 7,6, 7,7, 7,8, 7,12, 7,13, 7,14, 8,7, 8,11, 9,4, 9,10, 10,5, 10,9, 11,0, 11,1, 11,6, 11,13, 11,14, 12,7, 13,3, 13,7, 13,11, 14,3, 14,7, 14,11, 
-    // Total number of words in grid
-    88,
     // Length and number of words of that length
     7, 12,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3864,8 +3728,6 @@ namespace {
     48,
     // Black field coordinates
     0,4, 0,10, 1,4, 1,10, 2,4, 2,10, 3,4, 3,5, 3,9, 4,0, 4,1, 4,2, 4,6, 4,7, 4,11, 4,12, 4,13, 4,14, 5,3, 5,7, 5,11, 6,10, 7,4, 7,5, 7,9, 7,10, 8,4, 9,3, 9,7, 9,11, 10,0, 10,1, 10,2, 10,3, 10,7, 10,8, 10,12, 10,13, 10,14, 11,5, 11,9, 11,10, 12,4, 12,10, 13,4, 13,10, 14,4, 14,10, 
-    // Total number of words in grid
-    86,
     // Length and number of words of that length
     10, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3912,8 +3774,6 @@ namespace {
     38,
     // Black field coordinates
     0,4, 0,10, 1,4, 1,10, 2,4, 2,10, 3,8, 4,0, 4,1, 4,2, 4,6, 4,7, 4,12, 4,13, 4,14, 5,5, 5,9, 6,4, 7,3, 7,11, 8,10, 9,5, 9,9, 10,0, 10,1, 10,2, 10,7, 10,8, 10,12, 10,13, 10,14, 11,6, 12,4, 12,10, 13,4, 13,10, 14,4, 14,10, 
-    // Total number of words in grid
-    80,
     // Length and number of words of that length
     10, 2,
     // Coordinates where words start and direction (0 = horizontal)
@@ -3966,8 +3826,6 @@ namespace {
     29,
     // Black field coordinates
     0,0, 0,1, 0,2, 0,6, 0,7, 0,8, 1,0, 1,1, 1,7, 1,8, 2,0, 2,8, 3,4, 4,3, 4,4, 4,5, 5,4, 6,0, 6,8, 7,0, 7,1, 7,7, 7,8, 8,0, 8,1, 8,2, 8,6, 8,7, 8,8, 
-    // Total number of words in grid
-    24,
     // Length and number of words of that length
     7, 4,
     // Coordinates where words start and direction (0 = horizontal)
@@ -4012,8 +3870,6 @@ namespace {
     41,
     // Black field coordinates
     0,4, 0,8, 1,4, 1,8, 2,4, 2,8, 3,6, 4,0, 4,1, 4,2, 4,6, 4,10, 4,11, 4,12, 5,5, 5,6, 5,7, 6,3, 6,4, 6,5, 6,6, 6,7, 6,8, 6,9, 7,5, 7,6, 7,7, 8,0, 8,1, 8,2, 8,6, 8,10, 8,11, 8,12, 9,6, 10,4, 10,8, 11,4, 11,8, 12,4, 12,8, 
-    // Total number of words in grid
-    64,
     // Length and number of words of that length
     6, 8,
     // Coordinates where words start and direction (0 = horizontal)
@@ -4058,8 +3914,6 @@ namespace {
     37,
     // Black field coordinates
     0,4, 0,8, 1,4, 1,8, 2,4, 2,8, 4,0, 4,1, 4,2, 4,6, 4,10, 4,11, 4,12, 5,5, 5,6, 5,7, 6,4, 6,5, 6,6, 6,7, 6,8, 7,5, 7,6, 7,7, 8,0, 8,1, 8,2, 8,6, 8,10, 8,11, 8,12, 10,4, 10,8, 11,4, 11,8, 12,4, 12,8, 
-    // Total number of words in grid
-    60,
     // Length and number of words of that length
     13, 4,
     // Coordinates where words start and direction (0 = horizontal)
