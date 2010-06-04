@@ -171,7 +171,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   forceinline void
   OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
     OmegaNode::init(l,r);
-    le = -Int::Limits::double_infinity; lenv = -Int::Limits::double_infinity;
+    le = 0.0; lenv = -Int::Limits::double_infinity;
     resLe = undef; resLenv = undef;
   }
 
