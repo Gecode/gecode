@@ -104,20 +104,20 @@ namespace Gecode {
 
     template<class View>
     forceinline unsigned int
-    ComplementView<View>::cardMin() const {
+    ComplementView<View>::cardMin(void) const {
       return Limits::card - x.cardMax();
     }
 
     template<class View>
     forceinline unsigned int
-    ComplementView<View>::cardMax() const {
+    ComplementView<View>::cardMax(void) const {
       return Limits::card - x.cardMin();
     }
 
     template<class View>
     forceinline int
-    ComplementView<View>::lubMin() const {
-      GlbRanges<View> lb(view);
+    ComplementView<View>::lubMin(void) const {
+      GlbRanges<View> lb(x);
       RangesCompl<GlbRanges<View> > lbc(lb);
       if (lbc()) {
         return lbc.min();
@@ -128,8 +128,8 @@ namespace Gecode {
 
     template<class View>
     forceinline int
-    ComplementView<View>::lubMax() const {
-      GlbRanges<View> lb(view);
+    ComplementView<View>::lubMax(void) const {
+      GlbRanges<View> lb(x);
       RangesCompl<GlbRanges<View> > lbc(lb);
       if (lbc()) {
         while(lbc()) ++lbc;
@@ -141,8 +141,8 @@ namespace Gecode {
 
     template<class View>
     forceinline int
-    ComplementView<View>::glbMin() const {
-      LubRanges<View> ub(view);
+    ComplementView<View>::glbMin(void) const {
+      LubRanges<View> ub(x);
       RangesCompl<LubRanges<View> > ubc(ub);
       if (ubc()) {
         return ubc.min();
@@ -153,8 +153,8 @@ namespace Gecode {
 
     template<class View>
     forceinline int
-    ComplementView<View>::glbMax() const {
-      LubRanges<View> ub(view);
+    ComplementView<View>::glbMax(void) const {
+      LubRanges<View> ub(x);
       RangesCompl<LubRanges<View> > ubc(ub);
       if (ubc()) {
         while(ubc()) ++ubc;
