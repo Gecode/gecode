@@ -44,26 +44,7 @@ namespace Gecode {
       throw Int::NotZeroOne("BoolVar::BoolVar");
     if (min > max)
       throw Int::VariableEmptyDomain("BoolVar::BoolVar");
-    if (min > 0)
-      x = &Int::BoolVarImp::s_one;
-    else if (max == 0)
-      x = &Int::BoolVarImp::s_zero;
-    else
-      x = new (home) Int::BoolVarImp(home,0,1);
-  }
-
-  void
-  BoolVar::init(Space& home, int min, int max) {
-    if ((min < 0) || (max > 1))
-      throw Int::NotZeroOne("BoolVar::init");
-    if (min > max)
-      throw Int::VariableEmptyDomain("BoolVar::init");
-    if (min > 0)
-      x = &Int::BoolVarImp::s_one;
-    else if (max == 0)
-      x = &Int::BoolVarImp::s_zero;
-    else
-      x = new (home) Int::BoolVarImp(home,0,1);
+    _init(home,min,max);
   }
 
 }

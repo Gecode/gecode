@@ -48,7 +48,7 @@ namespace Gecode {
   SetVarArray::SetVarArray(Space& home, int n)
     : VarArray<SetVar>(home,n) {
     for (int i = size(); i--; )
-      x[i].init(home);
+      x[i] = SetVar(home);
   }
 
   SetVarArray::SetVarArray(Space& home,int n,
@@ -67,7 +67,7 @@ namespace Gecode {
         lbMin < ubMin || lbMax > ubMax)
       throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
     for (int i = size(); i--; )
-      x[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);
+      x[i] = SetVar(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);
   }
 
   SetVarArray::SetVarArray(Space& home,int n,
@@ -85,7 +85,7 @@ namespace Gecode {
         glb.min() < ubMin || glb.max() > ubMax)
       throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
     for (int i = size(); i--; )
-      x[i].init(home,glb,ubMin,ubMax,minCard,maxCard);
+      x[i] = SetVar(home,glb,ubMin,ubMax,minCard,maxCard);
   }
 
   SetVarArray::SetVarArray(Space& home,int n,
@@ -105,7 +105,7 @@ namespace Gecode {
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVarArray::SetVarArray");
     for (int i = size(); i--; )
-      x[i].init(home,lbMin,lbMax,lub,minCard,maxCard);
+      x[i] = SetVar(home,lbMin,lbMax,lub,minCard,maxCard);
   }
 
   SetVarArray::SetVarArray(Space& home,int n,
@@ -125,7 +125,7 @@ namespace Gecode {
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar");
     for (int i = size(); i--; )
-      x[i].init(home,glb,lub,minCard,maxCard);
+      x[i] = SetVar(home,glb,lub,minCard,maxCard);
   }
 
   SetVarArgs::SetVarArgs(Space& home,int n,
@@ -144,7 +144,7 @@ namespace Gecode {
         lbMin < ubMin || lbMax > ubMax)
       throw Set::VariableEmptyDomain("SetVarArgs::SetVarArgs");
     for (int i = size(); i--; )
-      a[i].init(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);
+      a[i] = SetVar(home,lbMin,lbMax,ubMin,ubMax,minCard,maxCard);
   }
 
   SetVarArgs::SetVarArgs(Space& home,int n,
@@ -162,7 +162,7 @@ namespace Gecode {
         glb.min() < ubMin || glb.max() > ubMax)
       throw Set::VariableEmptyDomain("SetVarArgs::SetVarArgs");
     for (int i = size(); i--; )
-      a[i].init(home,glb,ubMin,ubMax,minCard,maxCard);
+      a[i] = SetVar(home,glb,ubMin,ubMax,minCard,maxCard);
   }
 
   SetVarArgs::SetVarArgs(Space& home,int n,
@@ -182,7 +182,7 @@ namespace Gecode {
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVarArgs::SetVarArgs");
     for (int i = size(); i--; )
-      a[i].init(home,lbMin,lbMax,lub,minCard,maxCard);
+      a[i] = SetVar(home,lbMin,lbMax,lub,minCard,maxCard);
   }
 
   SetVarArgs::SetVarArgs(Space& home,int n,
@@ -202,7 +202,7 @@ namespace Gecode {
         !Iter::Ranges::subset(glbr,lubr))
       throw Set::VariableEmptyDomain("SetVar");
     for (int i = size(); i--; )
-      a[i].init(home,glb,lub,minCard,maxCard);
+      a[i] = SetVar(home,glb,lub,minCard,maxCard);
   }
 
 }

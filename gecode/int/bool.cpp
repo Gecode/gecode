@@ -581,7 +581,7 @@ namespace Gecode {
         BoolVar* z = r.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
-          z[i].init(home,0,1);
+          z[i] = BoolVar(home,0,1);
         for (int i=1; i<m; i++)
           post_imp(home,z[i-1],x[i],z[i]);
       }
@@ -593,7 +593,7 @@ namespace Gecode {
         BoolVar* z = r.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
-          z[i].init(home,0,1);
+          z[i] = BoolVar(home,0,1);
         for (int i=1; i<m; i++)
           post_eqv(home,z[i-1],x[i],z[i]);
       }
@@ -605,7 +605,7 @@ namespace Gecode {
         BoolVar* z = r.alloc<BoolVar>(m);
         z[0]=x[0]; z[m-1]=y;
         for (int i=1; i<m-1; i++)
-          z[i].init(home,0,1);
+          z[i] = BoolVar(home,0,1);
         for (int i=1; i<m; i++)
           post_xor(home,z[i-1],x[i],z[i]);
       }
@@ -655,9 +655,9 @@ namespace Gecode {
         throw TooFewArguments("Int::rel");
       } else {
         BoolVar* z = r.alloc<BoolVar>(m);
-        z[0]=x[0]; z[m-1].init(home,n,n);;
+        z[0]=x[0]; z[m-1] = BoolVar(home,n,n);;
         for (int i=1; i<m-1; i++)
-          z[i].init(home,0,1);
+          z[i] = BoolVar(home,0,1);
         for (int i=1; i<m; i++)
           post_imp(home,z[i-1],x[i],z[i]);
       }
@@ -667,9 +667,9 @@ namespace Gecode {
         throw TooFewArguments("Int::rel");
       } else {
         BoolVar* z = r.alloc<BoolVar>(m);
-        z[0]=x[0]; z[m-1].init(home,n,n);
+        z[0]=x[0]; z[m-1] = BoolVar(home,n,n);
         for (int i=1; i<m-1; i++)
-          z[i].init(home,0,1);
+          z[i] = BoolVar(home,0,1);
         for (int i=1; i<m; i++)
           post_eqv(home,z[i-1],x[i],z[i]);
       }
@@ -679,9 +679,9 @@ namespace Gecode {
         throw TooFewArguments("Int::rel");
       } else {
         BoolVar* z = r.alloc<BoolVar>(m);
-        z[0]=x[0]; z[m-1].init(home,n,n);
+        z[0]=x[0]; z[m-1] = BoolVar(home,n,n);
         for (int i=1; i<m-1; i++)
-          z[i].init(home,0,1);
+          z[i] = BoolVar(home,0,1);
         for (int i=1; i<m; i++)
           post_xor(home,z[i-1],x[i],z[i]);
       }

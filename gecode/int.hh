@@ -387,30 +387,6 @@ namespace Gecode {
      *    Gecode::Int::OutOfLimits is thrown.
      */
     GECODE_INT_EXPORT IntVar(Space& home, const IntSet& d);
-    /**
-     * \brief Initialize variable with range domain
-     *
-     * The variable is created with a domain ranging from \a min
-     * to \a max. The following exceptions might be thrown:
-     *  - If \a min is greater than \a max, an exception of type
-     *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a min or \a max exceed the limits for integers as defined
-     *    in Gecode::Int::Limits, an exception of type
-     *    Gecode::Int::OutOfLimits is thrown.
-     */
-    GECODE_INT_EXPORT void init(Space& home, int min, int max);
-    /**
-     * \brief Initialize variable with arbitrary domain
-     *
-     * The variable is created with a domain described by \a d.
-     * The following exceptions might be thrown:
-     *  - If \a d is empty, an exception of type
-     *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a d contains values that exceed the limits for integers
-     *    as defined in Gecode::Int::Limits, an exception of type
-     *    Gecode::Int::OutOfLimits is thrown.
-     */
-    GECODE_INT_EXPORT void init(Space& home, const IntSet& d);
     //@}
 
     /// \name Value access
@@ -533,18 +509,6 @@ namespace Gecode {
      *    Gecode::Int::NotZeroOne is thrown.
      */
     GECODE_INT_EXPORT BoolVar(Space& home, int min, int max);
-    /**
-     * \brief Initialize Boolean variable with range domain
-     *
-     * The variable is created with a domain ranging from \a min
-     * to \a max. The following exceptions might be thrown:
-     *  - If \a min is greater than \a max, an exception of type
-     *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a min is less than 0 or \a max is greater than 1,
-     *    an exception of type
-     *    Gecode::Int::NotZerOne is thrown.
-     */
-    GECODE_INT_EXPORT void init(Space& home, int min, int max);
     //@}
 
     /// \name Value access

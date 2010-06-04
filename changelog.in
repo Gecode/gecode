@@ -73,6 +73,14 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: other
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Variables do not have init functions any longer as they are not
+needed, see MPG for discussion.
+
+[ENTRY]
 Module: scheduling
 What:   new
 Rank:   major

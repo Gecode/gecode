@@ -55,24 +55,6 @@ namespace Gecode {
       throw Int::VariableEmptyDomain("IntVar::IntVar");
   }
 
-  void
-  IntVar::init(Space& home, int min, int max) {
-    Int::Limits::check(min,"IntVar::IntVar");
-    Int::Limits::check(max,"IntVar::IntVar");
-    if (min > max)
-      throw Int::VariableEmptyDomain("IntVar::init");
-    x = new (home) Int::IntVarImp(home,min,max);
-  }
-
-  void
-  IntVar::init(Space& home, const IntSet& ds) {
-    Int::Limits::check(ds.min(),"IntVar::IntVar");
-    Int::Limits::check(ds.max(),"IntVar::IntVar");
-    if (ds.size() == 0)
-      throw Int::VariableEmptyDomain("IntVar::init");
-    x = new (home) Int::IntVarImp(home,ds);
-  }
-
 }
 
 // STATISTICS: int-var

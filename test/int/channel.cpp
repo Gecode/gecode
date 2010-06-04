@@ -112,9 +112,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::IntVarArgs y(6);
-         for (int i=0; i<6; i++)
-           y[i].init(home,dom);
+         Gecode::IntVarArgs y(home,6,dom);
          for (int i=0; i<6; i++)
            for (int j=0; j<6; j++) {
              Gecode::BoolVar b(home,0,1);

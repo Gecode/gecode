@@ -57,11 +57,6 @@ namespace Gecode {
   SetVar::SetVar(const Set::SetView& y)
     : VarBase<Set::SetVarImp>(y.varimp()) {}
 
-  forceinline void
-  SetVar::init(Space& home) {
-    x = new (home) Set::SetVarImp(home);
-  }
-
 
   /*
    * Variable information

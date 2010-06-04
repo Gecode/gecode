@@ -64,17 +64,15 @@ namespace Gecode {
       if (n > 2) {
         ViewArray<IntView> y(home,n);
         y[0]=*x[0];
-        for (int i=1; i<n; i++) {
-          x[i]->init(home,x[0]->min(),x[0]->max()); y[i]=*x[i];
-        }
+        for (int i=1; i<n; i++)
+          y[i]=*x[i]=IntVar(home,x[0]->min(),x[0]->max());
         if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
           GECODE_ES_CHECK(Rel::NaryEqDom<IntView>::post(home,y));
         } else {
           GECODE_ES_CHECK(Rel::NaryEqBnd<IntView>::post(home,y));
         }
       } else if (n == 2) {
-        IntVar z(home,x[0]->min(),x[0]->max());
-        *x[1]=z;
+        *x[1]=IntVar(home,x[0]->min(),x[0]->max());
         if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
           GECODE_ES_CHECK((Rel::EqDom<IntView,IntView>::post
                            (home,*x[0],*x[1])));
@@ -92,12 +90,11 @@ namespace Gecode {
       if (n > 2) {
         ViewArray<BoolView> y(home,n);
         y[0]=*x[0];
-        for (int i=1; i<n; i++) {
-          x[i]->init(home,0,1); y[i]=*x[i];
-        }
+        for (int i=1; i<n; i++)
+          y[i]=*x[i]=BoolVar(home,0,1);
         GECODE_ES_CHECK(Bool::NaryEq<BoolView>::post(home,y));
       } else if (n == 2) {
-        x[1]->init(home,0,1);
+        *x[1] = BoolVar(home,0,1);
         GECODE_ES_CHECK((Bool::Eq<BoolView,BoolView>::post(home,*x[0],*x[1])));
       }
       return ES_OK;

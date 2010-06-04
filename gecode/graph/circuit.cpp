@@ -77,9 +77,7 @@ namespace Gecode {
           const IntVarArgs& x, IntVar z, 
           IntConLevel icl) {
     if (home.failed()) return;
-    IntVarArgs y(x.size());
-    for (int i=x.size(); i--; )
-      y[i].init(home, Int::Limits::min, Int::Limits::max);
+    IntVarArgs y(home, x.size(), Int::Limits::min, Int::Limits::max);
     circuit(home, c, x, y, z, icl);
   }
 

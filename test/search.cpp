@@ -178,7 +178,7 @@ namespace Test {
           {
             IntVarArgs y(6);
             for (int i=0; i<6; i++)
-              y[i].init(*this, s.x[i].val(), s.x[i].val());
+              y[i] = IntVar(*this, s.x[i].val(), s.x[i].val());
             lex(*this, x, (htc == HTC_LEX_LE) ? IRT_LE : IRT_GR, y);
             break;
           }
@@ -187,7 +187,7 @@ namespace Test {
           {
             IntVarArgs y(6);
             for (int i=0; i<6; i++)
-              y[i].init(*this, s.x[i].val(), s.x[i].val());
+              y[i] = IntVar(*this, s.x[i].val(), s.x[i].val());
             IntVar xs(*this, -18, 18);
             IntVar ys(*this, -18, 18);
             rel(*this, x[0]+x[1]+x[2]-x[3]-x[4]-x[5] == xs);
