@@ -549,35 +549,6 @@ namespace Gecode { namespace Set {
     return os << s.str();
   }
 
-  /*
-   * Testing
-   *
-   */
-  template<class View>
-  forceinline bool
-  same(const ComplementView<View>& x,
-       const ComplementView<View>& y) {
-    return same(x.base(),y.base());
-  }
-  template<class View>
-  forceinline bool
-  before(const ComplementView<View>& x,
-         const ComplementView<View>& y) {
-    return before(x.base(),y.base());
-  }
-  template<class View>
-  forceinline bool
-  same(const ComplementView<ComplementView<View> >& x,
-       const ComplementView<ComplementView<View> >& y) {
-    return same(x,y);
-  }
-  template<class View>
-  forceinline bool
-  before(const ComplementView<ComplementView<View> >& x,
-         const ComplementView<ComplementView<View> >& y) {
-    return before(x,y);
-  }
-
 }}
 
 // STATISTICS: set-var
