@@ -281,34 +281,6 @@ namespace Gecode { namespace Set {
     template<class I> ModEvent intersectI(Space& home, I& iter);
     //@}
 
-    /// \name View-dependent propagator support
-    //@{
-    /// Schedule propagator \a p with modification event \a me
-    static void schedule(Space& home, Propagator& p, ModEvent me);
-    /// Return modification event for view type in \a med
-    static ModEvent me(const ModEventDelta& med);
-    /// Translate modification event \a me to modification event delta for view
-    static ModEventDelta med(ModEvent);
-    //@}
-
-    /// \name Dependencies
-    //@{
-    /**
-     * \brief Subscribe propagator \a p with propagation condition \a pc to view
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
-    /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
-    //@}
-
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
@@ -317,8 +289,6 @@ namespace Gecode { namespace Set {
 
     /// \name Delta information for advisors
     //@{
-    /// Return modification event
-    static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned from glb
     int glbMin(const Delta& d) const;
     /// Return maximum value just pruned from glb
@@ -444,38 +414,8 @@ namespace Gecode { namespace Set {
     template<class I> ModEvent intersectI(Space& home, I& iter);
     //@}
 
-    /// \name View-dependent propagator support
-    //@{
-    /// Schedule propagator \a p with modification event \a me
-    static void schedule(Space& home, Propagator& p, ModEvent me);
-    /// Return modification event for view type in \a med
-    static ModEvent me(const ModEventDelta& med);
-    /// Translate modification event \a me to modification event delta for view
-    static ModEventDelta med(ModEvent);
-    //@}
-
-    /// \name Dependencies
-    //@{
-    /**
-     * \brief Subscribe propagator \a p with propagation condition \a pc to view
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
-    /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
-    //@}
-
     /// \name Delta information for advisors
     //@{
-    /// Return modification event
-    static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned from glb
     int glbMin(const Delta& d) const;
     /// Return maximum value just pruned from glb
@@ -603,38 +543,8 @@ namespace Gecode { namespace Set {
     template<class I> ModEvent intersectI(Space& home, I& iter);
     //@}
 
-    /// \name View-dependent propagator support
-    //@{
-    /// Schedule propagator \a p with modification event \a me
-    static void schedule(Space& home, Propagator& p, ModEvent me);
-    /// Return modification event for view type in \a med
-    static ModEvent me(const ModEventDelta& med);
-    /// Translate modification event \a me to modification event delta for view
-    static ModEventDelta med(ModEvent);
-    //@}
-
-    /// \name Dependencies
-    //@{
-    /**
-     * \brief Subscribe propagator \a p with propagation condition \a pc to view
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
-    /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
-    //@}
-
     /// \name Delta information for advisors
     //@{
-    /// Return modification event
-    static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned from glb
     int glbMin(const Delta& d) const;
     /// Return maximum value just pruned from glb

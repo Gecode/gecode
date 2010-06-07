@@ -221,33 +221,6 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  ConstantView::schedule(Space& home, Propagator& p, ModEvent me) {
-    return SetView::schedule(home,p,me);
-  }
-  forceinline ModEvent
-  ConstantView::me(const ModEventDelta&) {
-    return ME_SET_NONE;
-  }
-  forceinline ModEventDelta
-  ConstantView::med(ModEvent me) {
-    return SetVarImp::med(me);
-  }
-
-  forceinline void
-  ConstantView::subscribe(Space& home, Propagator& p, PropCond,
-                          bool _schedule) {
-    if (_schedule)
-      schedule(home,p,ME_SET_VAL);
-  }
-  forceinline void
-  ConstantView::cancel(Space&,Propagator&,PropCond) {}
-
-  forceinline void
-  ConstantView::subscribe(Space&, Advisor&) {}
-  forceinline void
-  ConstantView::cancel(Space&,Advisor&) {}
-
-  forceinline void
   ConstantView::update(Space& home, bool share, ConstantView& p) {
     ConstViewBase<SetView>::update(home,share,p);
     // dispose old ranges
@@ -273,43 +246,31 @@ namespace Gecode { namespace Set {
    * Delta information for advisors
    *
    */
-
-  forceinline ModEvent
-  ConstantView::modevent(const Delta&) {
-    GECODE_NEVER;
-    return ME_GEN_NONE;
-  }
-
   forceinline int
   ConstantView::glbMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
-
   forceinline int
   ConstantView::glbMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
-
   forceinline bool
   ConstantView::glbAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
-
   forceinline int
   ConstantView::lubMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
-
   forceinline int
   ConstantView::lubMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
-
   forceinline bool
   ConstantView::lubAny(const Delta&) const {
     GECODE_NEVER;
@@ -404,44 +365,10 @@ namespace Gecode { namespace Set {
     return ME_SET_NONE;
   }
 
-  forceinline void
-  EmptyView::schedule(Space& home, Propagator& p, ModEvent me) {
-    return SetView::schedule(home,p,me);
-  }
-  forceinline ModEvent
-  EmptyView::me(const ModEventDelta&) {
-    return ME_SET_NONE;
-  }
-  forceinline ModEventDelta
-  EmptyView::med(ModEvent me) {
-    return SetVarImp::med(me);
-  }
-
-  forceinline void
-  EmptyView::subscribe(Space& home, Propagator& p, PropCond,
-                       bool process) {
-    if (process)
-      schedule(home,p,ME_SET_VAL);
-  }
-  forceinline void
-  EmptyView::cancel(Space&,Propagator&,PropCond) {}
-  forceinline void
-  EmptyView::subscribe(Space&, Advisor&) {}
-  forceinline void
-  EmptyView::cancel(Space&,Advisor&) {}
-
-
   /*
    * Delta information for advisors
    *
    */
-
-  forceinline ModEvent
-  EmptyView::modevent(const Delta&) {
-    GECODE_NEVER;
-    return ME_GEN_NONE;
-  }
-
   forceinline int
   EmptyView::glbMin(const Delta&) const {
     GECODE_NEVER;
@@ -571,45 +498,11 @@ namespace Gecode { namespace Set {
       ME_SET_FAILED : ME_SET_NONE;
   }
 
-  forceinline void
-  UniverseView::schedule(Space& home, Propagator& p, ModEvent me) {
-    return SetView::schedule(home,p,me);
-  }
-  forceinline ModEvent
-  UniverseView::me(const ModEventDelta&) {
-    return ME_SET_NONE;
-  }
-  forceinline ModEventDelta
-  UniverseView::med(ModEvent me) {
-    return SetVarImp::med(me);
-  }
-  forceinline void
-  UniverseView::subscribe(Space& home, Propagator& p, PropCond,
-                          bool process) {
-    if (process)
-      schedule(home,p,ME_SET_VAL);
-  }
-  forceinline void
-  UniverseView::cancel(Space&,Propagator&,PropCond) {}
-
-  forceinline void
-  UniverseView::subscribe(Space&,Advisor&) {}
-  forceinline void
-  UniverseView::cancel(Space&,Advisor&) {}
-
-
 
   /*
    * Delta information for advisors
    *
    */
-
-  forceinline ModEvent
-  UniverseView::modevent(const Delta&) {
-    GECODE_NEVER;
-    return ME_GEN_NONE;
-  }
-
   forceinline int
   UniverseView::glbMin(const Delta&) const {
     GECODE_NEVER;

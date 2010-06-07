@@ -400,7 +400,7 @@ namespace Gecode {
   ConstViewBase<View>::subscribe(Space& home, Propagator& p, PropCond, 
                            bool schedule) {
     if (schedule)
-      VarImp::schedule(home,p,PC_GEN_ASSIGNED);
+      View::schedule(home,p,PC_GEN_ASSIGNED);
   }
   template<class View>
   forceinline void
@@ -417,22 +417,22 @@ namespace Gecode {
   template<class View>
   forceinline void
   ConstViewBase<View>::schedule(Space& home, Propagator& p, ModEvent me) {
-    VarImp::schedule(home,p,me);
+    View::schedule(home,p,me);
   }
   template<class View>
   forceinline ModEvent
   ConstViewBase<View>::me(const ModEventDelta& med) {
-    return VarImp::me(med);
+    return View::me(med);
   }
   template<class View>
   forceinline ModEventDelta
   ConstViewBase<View>::med(ModEvent me) {
-    return VarImp::med(me);
+    return View::med(me);
   }
   template<class View>
   forceinline ModEvent
   ConstViewBase<View>::modevent(const Delta& d) {
-    return VarImp::modevent(d);
+    return ME_GEN_NONE;
   }
   template<class View>
   forceinline void

@@ -213,52 +213,10 @@ namespace Gecode { namespace Int {
   }
 
 
-
-  /*
-   * Propagator modification events
-   *
-   */
-  forceinline void
-  ConstIntView::schedule(Space& home, Propagator& p, ModEvent me) {
-    IntView::schedule(home,p,me);
-  }
-  forceinline ModEvent
-  ConstIntView::me(const ModEventDelta&) {
-    return ME_INT_NONE;
-  }
-  forceinline ModEventDelta
-  ConstIntView::med(ModEvent me) {
-    return static_cast<ModEventDelta>(me);
-  }
-
-
-  /*
-   * Dependencies
-   *
-   */
-  forceinline void
-  ConstIntView::subscribe(Space& home, Propagator& p, PropCond,
-                          bool _schedule) {
-    if (_schedule)
-      schedule(home,p,ME_INT_VAL);
-  }
-  forceinline void
-  ConstIntView::cancel(Space&,Propagator&,PropCond) {}
-  forceinline void
-  ConstIntView::subscribe(Space&, Advisor&) {}
-  forceinline void
-  ConstIntView::cancel(Space&,Advisor&) {}
-
-
-
   /*
    * Delta information for advisors
    *
    */
-  forceinline ModEvent
-  ConstIntView::modevent(const Delta&) {
-    return ME_INT_NONE;
-  }
   forceinline int
   ConstIntView::min(const Delta&) const {
     return 1;
