@@ -114,308 +114,301 @@ namespace Gecode { namespace Int {
 
 #include <gecode/int/view/iter.hpp>
 
-namespace Gecode {
+namespace Gecode { namespace Int {
 
-  namespace Int {
+  /**
+   * \defgroup TaskActorIntView Integer views
+   *
+   * Integer propagators and branchers compute with integer views.
+   * Integer views provide views on integer variable implementations,
+   * integer constants, and also allow to scale, translate, and negate
+   * variables. Additionally, a special Boolean view is provided that
+   * offers convenient and efficient operations for Boolean (0/1)
+   * views.
+   * \ingroup TaskActorInt
+   */
+  
+  /**
+   * \brief Integer view for integer variables
+   * \ingroup TaskActorIntView
+   */
+  class IntView : public VarViewBase<IntVarImp> {
+  protected:
+    using VarViewBase<IntVarImp>::x;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    IntView(void);
+    /// Initialize from integer variable \a y
+    IntView(const IntVar& y);
+    /// Initialize from integer variable \a y
+    IntView(IntVarImp* y);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain (greatest element not greater than the median)
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
+    //@}
+    
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether \a n is contained in domain
+    bool in(double n) const;
+    //@}
+    
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, double n);
+    
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, double n);
+    
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, double n);
+    
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, double n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, double n);
+
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, double n);
+    //@}
 
     /**
-     * \defgroup TaskActorIntView Integer views
+     * \name Domain update by iterator
      *
-     * Integer propagators and branchers compute with integer views.
-     * Integer views provide views on integer variable implementations,
-     * integer constants, and also allow to scale, translate, and negate
-     * variables. Additionally, a special Boolean view is provided that
-     * offers convenient and efficient operations for Boolean (0/1)
-     * views.
-     * \ingroup TaskActorInt
-     */
-
-    /**
-     * \brief Integer view for integer variables
-     * \ingroup TaskActorIntView
-     */
-    class IntView : public VarViewBase<IntVarImp> {
-    protected:
-      using VarViewBase<IntVarImp>::x;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      IntView(void);
-      /// Initialize from integer variable \a y
-      IntView(const IntVar& y);
-      /// Initialize from integer variable \a y
-      IntView(IntVarImp* y);
-      //@}
-
-      /// \name Value access
-      //@{
-      /// Return minimum of domain
-      int min(void) const;
-      /// Return maximum of domain
-      int max(void) const;
-      /// Return median of domain (greatest element not greater than the median)
-      int med(void) const;
-      /// Return assigned value (only if assigned)
-      int val(void) const;
-
-      /// Return size (cardinality) of domain
-      unsigned int size(void) const;
-      /// Return width of domain (distance between maximum and minimum)
-      unsigned int width(void) const;
-      /// Return regret of domain minimum (distance to next larger value)
-      unsigned int regret_min(void) const;
-      /// Return regret of domain maximum (distance to next smaller value)
-      unsigned int regret_max(void) const;
-      //@}
-
-      /// \name Domain tests
-      //@{
-      /// Test whether domain is a range
-      bool range(void) const;
-
-      /// Test whether \a n is contained in domain
-      bool in(int n) const;
-      /// Test whether \a n is contained in domain
-      bool in(double n) const;
-      //@}
-
-      /// \name Domain update by value
-      //@{
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, int n);
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, double n);
-
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, int n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, double n);
-
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, int n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, double n);
-
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, int n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, double n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, int n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, double n);
-
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, int n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, double n);
-      //@}
-
-      /**
-       * \name Domain update by iterator
-       *
-       * Views can be both updated by range and value iterators.
-       * Value iterators do not need to be strict in that the same value
-       * is allowed to occur more than once in the iterated sequence.
-       *
-       * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation
-       * is invoked. In this case, the view is only updated after the
-       * iterator has been consumed. Otherwise, the domain might be updated
-       * concurrently while following the iterator.
-       *
-       */
-      //@{
-      /// Replace domain by ranges described by \a i
-      template<class I>
-      ModEvent narrow_r(Space& home, I& i, bool depends=true);
-      /// Intersect domain with ranges described by \a i
-      template<class I>
-      ModEvent inter_r(Space& home, I& i, bool depends=true);
-      /// Remove from domain the ranges described by \a i
-      template<class I>
-      ModEvent minus_r(Space& home, I& i, bool depends=true);
-      /// Replace domain by values described by \a i
-      template<class I>
-      ModEvent narrow_v(Space& home, I& i, bool depends=true);
-      /// Intersect domain with values described by \a i
-      template<class I>
-      ModEvent inter_v(Space& home, I& i, bool depends=true);
-      /// Remove from domain the values described by \a i
-      template<class I>
-      ModEvent minus_v(Space& home, I& i, bool depends=true);
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return minimum value just pruned
-      int min(const Delta& d) const;
-      /// Return maximum value just pruned
-      int max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-    };
-
-    /**
-     * \brief Print integer variable view
-     * \relates Gecode::Int::IntView
-     */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const IntView& x);
-
-  }
-
-  namespace Int {
-
-    /**
-     * \brief Minus integer view
+     * Views can be both updated by range and value iterators.
+     * Value iterators do not need to be strict in that the same value
+     * is allowed to occur more than once in the iterated sequence.
      *
-     * A minus integer view \f$m\f$ for an integer view \f$x\f$ provides
-     * operations such that \f$m\f$ behaves as \f$-x\f$.
-     * \ingroup TaskActorIntView
+     * The argument \a depends must be true, if the iterator
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
+     * concurrently while following the iterator.
+     *
      */
-    class MinusView : public DerivedViewBase<IntView> {
-    protected:
-      using DerivedViewBase<IntView>::x;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      MinusView(void);
-      /// Initialize with integer view \a y
-      explicit MinusView(const IntView& y);
-      //@}
+    //@{
+    /// Replace domain by ranges described by \a i
+    template<class I>
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
+    /// Intersect domain with ranges described by \a i
+    template<class I>
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
+    /// Remove from domain the ranges described by \a i
+    template<class I>
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
+    /// Replace domain by values described by \a i
+    template<class I>
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
+    /// Intersect domain with values described by \a i
+    template<class I>
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
+    /// Remove from domain the values described by \a i
+    template<class I>
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
+    //@}
 
-      /// \name Value access
-      //@{
-      /// Return minimum of domain
-      int min(void) const;
-      /// Return maximum of domain
-      int max(void) const;
-      /// Return median of domain
-      int med(void) const;
-      /// Return assigned value (only if assigned)
-      int val(void) const;
+    /// \name Delta information for advisors
+    //@{
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    //@}
 
-      /// Return size (cardinality) of domain
-      unsigned int size(void) const;
-      /// Return width of domain (distance between maximum and minimum)
-      unsigned int width(void) const;
-      /// Return regret of domain minimum (distance to next larger value)
-      unsigned int regret_min(void) const;
-      /// Return regret of domain maximum (distance to next smaller value)
-      unsigned int regret_max(void) const;
-      //@}
+    /// \name View-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
+  };
 
-      /// \name Domain tests
-      //@{
-      /// Test whether domain is a range
-      bool range(void) const;
+  /**
+   * \brief Print integer variable view
+   * \relates Gecode::Int::IntView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const IntView& x);
+  
 
-      /// Test whether \a n is contained in domain
-      bool in(int n) const;
-      /// Test whether \a n is contained in domain
-      bool in(double n) const;
-      //@}
-
-      /// \name Domain update by value
-      //@{
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, int n);
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, double n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, int n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, double n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, int n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, double n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, int n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, double n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, int n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, double n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, int n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, double n);
-      //@}
-
-      /**
-       * \name Domain update by iterator
-       *
-       * Views can be both updated by range and value iterators.
-       * Value iterators do not need to be strict in that the same value
-       * is allowed to occur more than once in the iterated sequence.
-       *
-       * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation
-       * is invoked. In this case, the view is only updated after the
-       * iterator has been consumed. Otherwise, the domain might be updated
-       * concurrently while following the iterator.
-       *
-       */
-      //@{
-      /// Replace domain by ranges described by \a i
-      template<class I>
-      ModEvent narrow_r(Space& home, I& i, bool depends=true);
-      /// Intersect domain with ranges described by \a i
-      template<class I>
-      ModEvent inter_r(Space& home, I& i, bool depends=true);
-      /// Remove from domain the ranges described by \a i
-      template<class I>
-      ModEvent minus_r(Space& home, I& i, bool depends=true);
-      /// Replace domain by values described by \a i
-      template<class I>
-      ModEvent narrow_v(Space& home, I& i, bool depends=true);
-      /// Intersect domain with values described by \a i
-      template<class I>
-      ModEvent inter_v(Space& home, I& i, bool depends=true);
-      /// Remove from domain the values described by \a i
-      template<class I>
-      ModEvent minus_v(Space& home, I& i, bool depends=true);
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return minimum value just pruned
-      int min(const Delta& d) const;
-      /// Return maximum value just pruned
-      int max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      //@}
-    };
+  /**
+   * \brief Minus integer view
+   *
+   * A minus integer view \f$m\f$ for an integer view \f$x\f$ provides
+   * operations such that \f$m\f$ behaves as \f$-x\f$.
+   * \ingroup TaskActorIntView
+   */
+  class MinusView : public DerivedViewBase<IntView> {
+  protected:
+    using DerivedViewBase<IntView>::x;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    MinusView(void);
+    /// Initialize with integer view \a y
+    explicit MinusView(const IntView& y);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+    
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
+    //@}
+    
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether \a n is contained in domain
+    bool in(double n) const;
+    //@}
+    
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, double n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, double n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, double n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, double n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, double n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, double n);
+    //@}
 
     /**
-     * \brief Print integer minus view
-     * \relates Gecode::Int::MinusView
+     * \name Domain update by iterator
+     *
+     * Views can be both updated by range and value iterators.
+     * Value iterators do not need to be strict in that the same value
+     * is allowed to occur more than once in the iterated sequence.
+     *
+     * The argument \a depends must be true, if the iterator
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
+     * concurrently while following the iterator.
+     *
      */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
+    //@{
+    /// Replace domain by ranges described by \a i
+    template<class I>
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
+    /// Intersect domain with ranges described by \a i
+    template<class I>
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
+    /// Remove from domain the ranges described by \a i
+    template<class I>
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
+    /// Replace domain by values described by \a i
+    template<class I>
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
+    /// Intersect domain with values described by \a i
+    template<class I>
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
+    /// Remove from domain the values described by \a i
+    template<class I>
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
+    //@}
+    
+    /// \name View-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
+    
+    /// \name Delta information for advisors
+    //@{
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    //@}
+  };
 
-  }
+  /**
+   * \brief Print integer minus view
+   * \relates Gecode::Int::MinusView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
 
   /** \name View comparison
    *  \relates Gecode::Int::MinusView
@@ -427,160 +420,157 @@ namespace Gecode {
   bool before(const Int::MinusView& x, const Int::MinusView& y);
   //@}
 
-  namespace Int {
 
+  /**
+   * \brief Offset integer view
+   *
+   * An offset integer view \f$o\f$ for an integer view \f$x\f$ and
+   * an integer \f$c\f$ provides operations such that \f$o\f$
+   * behaves as \f$x+c\f$.
+   * \ingroup TaskActorIntView
+   */
+  class OffsetView : public DerivedViewBase<IntView> {
+  protected:
+    /// Offset
+    int c;
+    using DerivedViewBase<IntView>::x;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    OffsetView(void);
+    /// Initialize with integer view \a y and offset \a c
+    OffsetView(const IntView& y, int c);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return offset
+    int offset(void) const;
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain (greatest element not greater than the median)
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+    
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
+    //@}
+    
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether \a n is contained in domain
+    bool in(double n) const;
+    //@}
+    
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, double n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, double n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, double n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, double n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, double n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, double n);
+    //@}
+    
     /**
-     * \brief Offset integer view
+     * \name Domain update by iterator
      *
-     * An offset integer view \f$o\f$ for an integer view \f$x\f$ and
-     * an integer \f$c\f$ provides operations such that \f$o\f$
-     * behaves as \f$x+c\f$.
-     * \ingroup TaskActorIntView
+     * Views can be both updated by range and value iterators.
+     * Value iterators do not need to be strict in that the same value
+     * is allowed to occur more than once in the iterated sequence.
+     *
+     * The argument \a depends must be true, if the iterator
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
+     * concurrently while following the iterator.
+     *
      */
-    class OffsetView : public DerivedViewBase<IntView> {
-    protected:
-      /// Offset
-      int c;
-      using DerivedViewBase<IntView>::x;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      OffsetView(void);
-      /// Initialize with integer view \a y and offset \a c
-      OffsetView(const IntView& y, int c);
-      //@}
+    //@{
+    /// Replace domain by ranges described by \a i
+    template<class I>
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
+    /// Intersect domain with ranges described by \a i
+    template<class I>
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
+    /// Remove from domain the ranges described by \a i
+    template<class I>
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
+    /// Replace domain by values described by \a i
+    template<class I>
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
+    /// Intersect domain with values described by \a i
+    template<class I>
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
+    /// Remove from domain the values described by \a i
+    template<class I>
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
+    //@}
 
-      /// \name Value access
-      //@{
-      /// Return offset
-      int offset(void) const;
-      /// Return minimum of domain
-      int min(void) const;
-      /// Return maximum of domain
-      int max(void) const;
-      /// Return median of domain (greatest element not greater than the median)
-      int med(void) const;
-      /// Return assigned value (only if assigned)
-      int val(void) const;
+    /// \name View-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
 
-      /// Return size (cardinality) of domain
-      unsigned int size(void) const;
-      /// Return width of domain (distance between maximum and minimum)
-      unsigned int width(void) const;
-      /// Return regret of domain minimum (distance to next larger value)
-      unsigned int regret_min(void) const;
-      /// Return regret of domain maximum (distance to next smaller value)
-      unsigned int regret_max(void) const;
-      //@}
+    /// \name Delta information for advisors
+    //@{
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    //@}
+    
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, OffsetView& y);
+    //@}
+  };
 
-      /// \name Domain tests
-      //@{
-      /// Test whether domain is a range
-      bool range(void) const;
-
-      /// Test whether \a n is contained in domain
-      bool in(int n) const;
-      /// Test whether \a n is contained in domain
-      bool in(double n) const;
-      //@}
-
-      /// \name Domain update by value
-      //@{
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, int n);
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, double n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, int n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, double n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, int n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, double n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, int n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, double n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, int n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, double n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, int n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, double n);
-      //@}
-
-      /**
-       * \name Domain update by iterator
-       *
-       * Views can be both updated by range and value iterators.
-       * Value iterators do not need to be strict in that the same value
-       * is allowed to occur more than once in the iterated sequence.
-       *
-       * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation
-       * is invoked. In this case, the view is only updated after the
-       * iterator has been consumed. Otherwise, the domain might be updated
-       * concurrently while following the iterator.
-       *
-       */
-      //@{
-      /// Replace domain by ranges described by \a i
-      template<class I>
-      ModEvent narrow_r(Space& home, I& i, bool depends=true);
-      /// Intersect domain with ranges described by \a i
-      template<class I>
-      ModEvent inter_r(Space& home, I& i, bool depends=true);
-      /// Remove from domain the ranges described by \a i
-      template<class I>
-      ModEvent minus_r(Space& home, I& i, bool depends=true);
-      /// Replace domain by values described by \a i
-      template<class I>
-      ModEvent narrow_v(Space& home, I& i, bool depends=true);
-      /// Intersect domain with values described by \a i
-      template<class I>
-      ModEvent inter_v(Space& home, I& i, bool depends=true);
-      /// Remove from domain the values described by \a i
-      template<class I>
-      ModEvent minus_v(Space& home, I& i, bool depends=true);
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return minimum value just pruned
-      int min(const Delta& d) const;
-      /// Return maximum value just pruned
-      int max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a y
-      void update(Space& home, bool share, OffsetView& y);
-      //@}
-    };
-
-    /**
-     * \brief Print integer offset view
-     * \relates Gecode::Int::OffsetView
-     */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
-
-  }
-
+  /**
+   * \brief Print integer offset view
+   * \relates Gecode::Int::OffsetView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
+  
   /** \name View comparison
    *  \relates Gecode::Int::OffsetView
    */
@@ -591,166 +581,162 @@ namespace Gecode {
   bool before(const Int::OffsetView& x, const Int::OffsetView& y);
   //@}
 
-  namespace Int {
 
-    /**
-     * \brief Scale integer view (template)
-     *
-     * A scale integer view \f$s\f$ for an integer view \f$x\f$ and
-     * a non-negative integer \f$a\f$ provides operations such that \f$s\f$
-     * behaves as \f$a\cdot x\f$.
-     *
-     * The precision of a scale integer view is defined by the value types
-     * \a Val and \a UnsVal. \a Val can be either \c int or \c double where
-     * \a UnsVal must be the unsigned variant of \a Val (that is, if \a Val
-     * is \c int, then \a UnsVal must be \c unsigned \c int; if \a Val is
-     * \c double, then \a UnsVal must be \c double as well). The range which is
-     * allowed for the two types is defined by the values in
-     * Gecode::Limits.
-     *
-     * Note that scale integer views currently do not provide operations
-     * for updating domains by range iterators.
-     *
-     * The template is not to be used directly (as it is very clumsy). Use
-     * the following instead:
-     *  - IntScaleView for scale views with integer precision
-     *  - DoubleScaleView for scale views with double precision
-     *
-     * \ingroup TaskActorIntView
-     */
-    template<class Val, class UnsVal>
-    class ScaleView : public DerivedViewBase<IntView> {
-    protected:
-      using DerivedViewBase<IntView>::x;
-      /// Scale factor
-      int a;
-      /// \name Support functions for division
-      //@{
-      /// Return \f$\lfloor y/a\rfloor\f$
-      int floor_div(double y) const;
-      /// Return \f$\lceil y/a\rceil\f$
-      int ceil_div(double y) const;
-      /// Return \f$y/a\f$ and set \a exact to true if \a y is multiple of \a a
-      int exact_div(double y, bool& exact) const;
+  /**
+   * \brief Scale integer view (template)
+   *
+   * A scale integer view \f$s\f$ for an integer view \f$x\f$ and
+   * a non-negative integer \f$a\f$ provides operations such that \f$s\f$
+   * behaves as \f$a\cdot x\f$.
+   *
+   * The precision of a scale integer view is defined by the value types
+   * \a Val and \a UnsVal. \a Val can be either \c int or \c double where
+   * \a UnsVal must be the unsigned variant of \a Val (that is, if \a Val
+   * is \c int, then \a UnsVal must be \c unsigned \c int; if \a Val is
+   * \c double, then \a UnsVal must be \c double as well). The range which is
+   * allowed for the two types is defined by the values in
+   * Gecode::Limits.
+   *
+   * Note that scale integer views currently do not provide operations
+   * for updating domains by range iterators.
+   *
+   * The template is not to be used directly (as it is very clumsy). Use
+   * the following instead:
+   *  - IntScaleView for scale views with integer precision
+   *  - DoubleScaleView for scale views with double precision
+   *
+   * \ingroup TaskActorIntView
+   */
+  template<class Val, class UnsVal>
+  class ScaleView : public DerivedViewBase<IntView> {
+  protected:
+    using DerivedViewBase<IntView>::x;
+    /// Scale factor
+    int a;
+    /// \name Support functions for division
+    //@{
+    /// Return \f$\lfloor y/a\rfloor\f$
+    int floor_div(double y) const;
+    /// Return \f$\lceil y/a\rceil\f$
+    int ceil_div(double y) const;
+    /// Return \f$y/a\f$ and set \a exact to true if \a y is multiple of \a a
+    int exact_div(double y, bool& exact) const;
 #if GECODE_INT_RND_TWDS_ZERO
-      /// Return \f$\lfloor y/a\rfloor\f$
-      int floor_div(int y) const;
-      /// Return \f$\lceil y/a\rceil\f$
-      int ceil_div(int y) const;
-      /// Return \f$y/a\f$ and set \a exact to true if \a y is multiple of \a a
-      int exact_div(int y, bool& exact) const;
+    /// Return \f$\lfloor y/a\rfloor\f$
+    int floor_div(int y) const;
+    /// Return \f$\lceil y/a\rceil\f$
+    int ceil_div(int y) const;
+    /// Return \f$y/a\f$ and set \a exact to true if \a y is multiple of \a a
+    int exact_div(int y, bool& exact) const;
 #endif
-      //@}
+    //@}
 
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ScaleView(void);
-      /// Initialize as \f$b\cdot y\f$
-      ScaleView(int b, const IntView& y);
-      //@}
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ScaleView(void);
+    /// Initialize as \f$b\cdot y\f$
+    ScaleView(int b, const IntView& y);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return scale factor of scale view
+    int scale(void) const;
+    /// Return minimum of domain
+    Val min(void) const;
+    /// Return maximum of domain
+    Val max(void) const;
+    /// Return median of domain (greatest element not greater than the median)
+    Val med(void) const;
+    /// Return assigned value (only if assigned)
+    Val val(void) const;
+    
+    /// Return size (cardinality) of domain
+    UnsVal size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    UnsVal width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    UnsVal regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    UnsVal regret_max(void) const;
+    //@}
 
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    /// Test whether \a n is contained in domain
+    bool in(Val n) const;
+    //@}
+    
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, Val n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, Val n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, Val n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, Val n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, Val n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, Val n);
+    //@}
+    
+    /// \name View-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
 
-      /// \name Value access
-      //@{
-      /// Return scale factor of scale view
-      int scale(void) const;
-      /// Return minimum of domain
-      Val min(void) const;
-      /// Return maximum of domain
-      Val max(void) const;
-      /// Return median of domain (greatest element not greater than the median)
-      Val med(void) const;
-      /// Return assigned value (only if assigned)
-      Val val(void) const;
+    /// \name Delta information for advisors
+    //@{
+    /// Return minimum value just pruned
+    Val min(const Delta& d) const;
+    /// Return maximum value just pruned
+    Val max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    //@}
+    
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, ScaleView<Val,UnsVal>& y);
+    //@}
+  };
 
-      /// Return size (cardinality) of domain
-      UnsVal size(void) const;
-      /// Return width of domain (distance between maximum and minimum)
-      UnsVal width(void) const;
-      /// Return regret of domain minimum (distance to next larger value)
-      UnsVal regret_min(void) const;
-      /// Return regret of domain maximum (distance to next smaller value)
-      UnsVal regret_max(void) const;
-      //@}
+  /**
+   * \brief Integer-precision integer scale view
+   * \ingroup TaskActorIntView
+   */
+  typedef ScaleView<int,unsigned int> IntScaleView;
 
-      /// \name Domain tests
-      //@{
-      /// Test whether domain is a range
-      bool range(void) const;
-      /// Test whether \a n is contained in domain
-      bool in(Val n) const;
-      //@}
-
-      /// \name Domain update by value
-      //@{
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, Val n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, Val n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, Val n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, Val n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, Val n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, Val n);
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return minimum value just pruned
-      Val min(const Delta& d) const;
-      /// Return maximum value just pruned
-      Val max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a y
-      void update(Space& home, bool share, ScaleView<Val,UnsVal>& y);
-      //@}
-    };
-
-    /**
-     * \brief Integer-precision integer scale view
-     * \ingroup TaskActorIntView
-     */
-    typedef ScaleView<int,unsigned int> IntScaleView;
-
-    /**
-     * \brief Double-precision integer scale view
-     * \ingroup TaskActorIntView
-     */
-    typedef ScaleView<double,double> DoubleScaleView;
-
-    /**
-     * \brief Print integer-precision integer scale view
-     * \relates Gecode::Int::ScaleView
-     */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x);
-
-    /**
-     * \brief Print double-precision integer scale view
-     * \relates Gecode::Int::ScaleView
-     */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x);
-
-  }
+  /**
+   * \brief Double-precision integer scale view
+   * \ingroup TaskActorIntView
+   */
+  typedef ScaleView<double,double> DoubleScaleView;
+  
+  /**
+   * \brief Print integer-precision integer scale view
+   * \relates Gecode::Int::ScaleView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x);
+  
+  /**
+   * \brief Print double-precision integer scale view
+   * \relates Gecode::Int::ScaleView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x);
 
   /** \name View comparison
    *  \relates Gecode::Int::ScaleView
@@ -766,177 +752,175 @@ namespace Gecode {
               const Int::ScaleView<Val,UnsVal>& y);
   //@}
 
-  namespace Int {
+
+
+  /**
+   * \brief Constant integer view
+   *
+   * A constant integer view \f$x\f$ for an integer \f$c\f$ provides
+   * operations such that \f$x\f$ behaves as a view assigned to \f$c\f$.
+   * \ingroup TaskActorIntView
+   */
+  class ConstIntView : public ConstViewBase<IntView> {
+  protected:
+    int x;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ConstIntView(void);
+    /// Initialize with integer value \a n
+    ConstIntView(int n);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain (greatest element not greater than the median)
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+    
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether \a n is contained in domain
+    bool in(double n) const;
+    //@}
+    
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, double n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, double n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, double n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, double n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, double n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, double n);
+    //@}
 
     /**
-     * \brief Constant integer view
+     * \name Domain update by iterator
      *
-     * A constant integer view \f$x\f$ for an integer \f$c\f$ provides
-     * operations such that \f$x\f$ behaves as a view assigned to \f$c\f$.
-     * \ingroup TaskActorIntView
+     * Views can be both updated by range and value iterators.
+     * Value iterators do not need to be strict in that the same value
+     * is allowed to occur more than once in the iterated sequence.
+     *
+     * The argument \a depends must be true, if the iterator
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
+     * concurrently while following the iterator.
+     *
      */
-    class ConstIntView : public ConstViewBase<IntView> {
-    protected:
-      int x;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ConstIntView(void);
-      /// Initialize with integer value \a n
-      ConstIntView(int n);
-      //@}
+    //@{
+    /// Replace domain by ranges described by \a i
+    template<class I>
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
+    /// Intersect domain with ranges described by \a i
+    template<class I>
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
+    /// Remove from domain the ranges described by \a i
+    template<class I>
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
+    /// Replace domain by values described by \a i
+    template<class I>
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
+    /// Intersect domain with values described by \a i
+    template<class I>
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
+    /// Remove from domain the values described by \a i
+    template<class I>
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
+    //@}
 
-      /// \name Value access
-      //@{
-      /// Return minimum of domain
-      int min(void) const;
-      /// Return maximum of domain
-      int max(void) const;
-      /// Return median of domain (greatest element not greater than the median)
-      int med(void) const;
-      /// Return assigned value (only if assigned)
-      int val(void) const;
+    /// \name View-dependent propagator support
+    //@{
+    /// Schedule propagator \a p with modification event \a me
+    static void schedule(Space& home, Propagator& p, ModEvent me);
+    /// Return modification event for view type in \a med
+    static ModEvent me(const ModEventDelta& med);
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
 
-      /// Return size (cardinality) of domain
-      unsigned int size(void) const;
-      /// Return width of domain (distance between maximum and minimum)
-      unsigned int width(void) const;
-      /// Return regret of domain minimum (distance to next larger value)
-      unsigned int regret_min(void) const;
-      /// Return regret of domain maximum (distance to next smaller value)
-      unsigned int regret_max(void) const;
-      //@}
-
-      /// \name Domain tests
-      //@{
-      /// Test whether domain is a range
-      bool range(void) const;
-      /// Test whether \a n is contained in domain
-      bool in(int n) const;
-      /// Test whether \a n is contained in domain
-      bool in(double n) const;
-      //@}
-
-      /// \name Domain update by value
-      //@{
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, int n);
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, double n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, int n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, double n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, int n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, double n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, int n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, double n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, int n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, double n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, int n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, double n);
-      //@}
-
-      /**
-       * \name Domain update by iterator
-       *
-       * Views can be both updated by range and value iterators.
-       * Value iterators do not need to be strict in that the same value
-       * is allowed to occur more than once in the iterated sequence.
-       *
-       * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation
-       * is invoked. In this case, the view is only updated after the
-       * iterator has been consumed. Otherwise, the domain might be updated
-       * concurrently while following the iterator.
-       *
-       */
-      //@{
-      /// Replace domain by ranges described by \a i
-      template<class I>
-      ModEvent narrow_r(Space& home, I& i, bool depends=true);
-      /// Intersect domain with ranges described by \a i
-      template<class I>
-      ModEvent inter_r(Space& home, I& i, bool depends=true);
-      /// Remove from domain the ranges described by \a i
-      template<class I>
-      ModEvent minus_r(Space& home, I& i, bool depends=true);
-      /// Replace domain by values described by \a i
-      template<class I>
-      ModEvent narrow_v(Space& home, I& i, bool depends=true);
-      /// Intersect domain with values described by \a i
-      template<class I>
-      ModEvent inter_v(Space& home, I& i, bool depends=true);
-      /// Remove from domain the values described by \a i
-      template<class I>
-      ModEvent minus_v(Space& home, I& i, bool depends=true);
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator& p, ModEvent me);
-      /// Return modification event for view type in \a med
-      static ModEvent me(const ModEventDelta& med);
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Dependencies
-      //@{
-      /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to view
-       *
-       * In case \a schedule is false, the propagator is just subscribed but
-       * not scheduled for execution (this must be used when creating
-       * subscriptions during propagation).
-       */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator& p, PropCond pc);
-      /// Subscribe advisor \a a to view
-      void subscribe(Space& home, Advisor& a);
-      /// Cancel subscription of advisor \a a
-      void cancel(Space& home, Advisor& a);
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
-      /// Return minimum value just pruned
-      int min(const Delta& d) const;
-      /// Return maximum value just pruned
-      int max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a y
-      void update(Space& home, bool share, ConstIntView& y);
-      //@}
-    };
-
+    /// \name Dependencies
+    //@{
     /**
-     * \brief Print integer constant integer view
-     * \relates Gecode::Int::ConstIntView
+     * \brief Subscribe propagator \a p with propagation condition \a pc to view
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
      */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Subscribe advisor \a a to view
+    void subscribe(Space& home, Advisor& a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space& home, Advisor& a);
+    //@}
+    
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta& d);
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    //@}
 
-  }
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, ConstIntView& y);
+    //@}
+  };
+
+  /**
+   * \brief Print integer constant integer view
+   * \relates Gecode::Int::ConstIntView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x);
 
   /**
    * \name View comparison
@@ -949,167 +933,164 @@ namespace Gecode {
   bool before(const Int::ConstIntView& x, const Int::ConstIntView& y);
   //@}
 
-  namespace Int {
+
+  /**
+   * \brief Zero integer view
+   *
+   * A zero integer view \f$x\f$ for provides
+   * operations such that \f$x\f$ behaves as a view assigned to \f$0\f$.
+   * \ingroup TaskActorIntView
+   */
+  class ZeroIntView : public ConstViewBase<IntView> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ZeroIntView(void);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain (greatest element not greater than the median)
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+    
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether \a n is contained in domain
+    bool in(double n) const;
+    //@}
+    
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, double n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, double n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, double n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, double n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, double n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, double n);
+    //@}
 
     /**
-     * \brief Zero integer view
+     * \name Domain update by iterator
      *
-     * A zero integer view \f$x\f$ for provides
-     * operations such that \f$x\f$ behaves as a view assigned to \f$0\f$.
-     * \ingroup TaskActorIntView
+     * Views can be both updated by range and value iterators.
+     * Value iterators do not need to be strict in that the same value
+     * is allowed to occur more than once in the iterated sequence.
+     *
+     * The argument \a depends must be true, if the iterator
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
+     * concurrently while following the iterator.
+     *
      */
-    class ZeroIntView : public ConstViewBase<IntView> {
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ZeroIntView(void);
-      //@}
+    //@{
+    /// Replace domain by ranges described by \a i
+    template<class I>
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
+    /// Intersect domain with ranges described by \a i
+    template<class I>
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
+    /// Remove from domain the ranges described by \a i
+    template<class I>
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
+    /// Replace domain by values described by \a i
+    template<class I>
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
+    /// Intersect domain with values described by \a i
+    template<class I>
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
+    /// Remove from domain the values described by \a i
+    template<class I>
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
+    //@}
 
-      /// \name Value access
-      //@{
-      /// Return minimum of domain
-      int min(void) const;
-      /// Return maximum of domain
-      int max(void) const;
-      /// Return median of domain (greatest element not greater than the median)
-      int med(void) const;
-      /// Return assigned value (only if assigned)
-      int val(void) const;
-
-      /// Return size (cardinality) of domain
-      unsigned int size(void) const;
-      /// Return width of domain (distance between maximum and minimum)
-      unsigned int width(void) const;
-      /// Return regret of domain minimum (distance to next larger value)
-      unsigned int regret_min(void) const;
-      /// Return regret of domain maximum (distance to next smaller value)
-      unsigned int regret_max(void) const;
-      //@}
-
-      /// \name Domain tests
-      //@{
-      /// Test whether domain is a range
-      bool range(void) const;
-      /// Test whether \a n is contained in domain
-      bool in(int n) const;
-      /// Test whether \a n is contained in domain
-      bool in(double n) const;
-      //@}
-
-      /// \name Domain update by value
-      //@{
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, int n);
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, double n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, int n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, double n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, int n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, double n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, int n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, double n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, int n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, double n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, int n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, double n);
-      //@}
-
-      /**
-       * \name Domain update by iterator
-       *
-       * Views can be both updated by range and value iterators.
-       * Value iterators do not need to be strict in that the same value
-       * is allowed to occur more than once in the iterated sequence.
-       *
-       * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation
-       * is invoked. In this case, the view is only updated after the
-       * iterator has been consumed. Otherwise, the domain might be updated
-       * concurrently while following the iterator.
-       *
-       */
-      //@{
-      /// Replace domain by ranges described by \a i
-      template<class I>
-      ModEvent narrow_r(Space& home, I& i, bool depends=true);
-      /// Intersect domain with ranges described by \a i
-      template<class I>
-      ModEvent inter_r(Space& home, I& i, bool depends=true);
-      /// Remove from domain the ranges described by \a i
-      template<class I>
-      ModEvent minus_r(Space& home, I& i, bool depends=true);
-      /// Replace domain by values described by \a i
-      template<class I>
-      ModEvent narrow_v(Space& home, I& i, bool depends=true);
-      /// Intersect domain with values described by \a i
-      template<class I>
-      ModEvent inter_v(Space& home, I& i, bool depends=true);
-      /// Remove from domain the values described by \a i
-      template<class I>
-      ModEvent minus_v(Space& home, I& i, bool depends=true);
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator& p, ModEvent me);
-      /// Return modification event for view type in \a med
-      static ModEvent me(const ModEventDelta& med);
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-
-      /// \name Dependencies
-      //@{
-      /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to view
-       *
-       * In case \a schedule is false, the propagator is just subscribed but
-       * not scheduled for execution (this must be used when creating
-       * subscriptions during propagation).
-       */
-      void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator& p, PropCond pc);
-      /// Subscribe advisor \a a to view
-      void subscribe(Space& home, Advisor& a);
-      /// Cancel subscription of advisor \a a
-      void cancel(Space& home, Advisor& a);
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return modification event
-      static ModEvent modevent(const Delta& d);
-      /// Return minimum value just pruned
-      int min(const Delta& d) const;
-      /// Return maximum value just pruned
-      int max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      //@}
-    };
-
+    /// \name View-dependent propagator support
+    //@{
+    /// Schedule propagator \a p with modification event \a me
+    static void schedule(Space& home, Propagator& p, ModEvent me);
+    /// Return modification event for view type in \a med
+    static ModEvent me(const ModEventDelta& med);
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
+    
+    /// \name Dependencies
+    //@{
     /**
-     * \brief Print integer zero view
-     * \relates Gecode::Int::ScaleView
+     * \brief Subscribe propagator \a p with propagation condition \a pc to view
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
      */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x);
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Subscribe advisor \a a to view
+    void subscribe(Space& home, Advisor& a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space& home, Advisor& a);
+    //@}
 
-  }
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta& d);
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    //@}
+  };
+
+  /**
+   * \brief Print integer zero view
+   * \relates Gecode::Int::ZeroView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x);
 
   /**
    * \name View comparison
@@ -1122,287 +1103,282 @@ namespace Gecode {
   bool before(const Int::ZeroIntView& x, const Int::ZeroIntView& y);
   //@}
 
-  namespace Int {
 
+
+  /**
+   * \brief Boolean view for Boolean variables
+   *
+   * Provides convenient and efficient operations for Boolean views.
+   * \ingroup TaskActorIntView
+   */
+  class BoolView : public VarViewBase<BoolVarImp> {
+  protected:
+    using VarViewBase<BoolVarImp>::x;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    BoolView(void);
+    /// Initialize from Boolean variable \a y
+    BoolView(const BoolVar& y);
+    /// Initialize from Boolean variable implementation \a y
+    BoolView(BoolVarImp* y);
+    //@}
+    
+    /// \name Domain status access
+    //@{
+    /// How many bits does the status have
+    static const int BITS = BoolVarImp::BITS;
+    /// Status of domain assigned to zero
+    static const BoolStatus ZERO = BoolVarImp::ZERO;
+    /// Status of domain assigned to one
+    static const BoolStatus ONE  = BoolVarImp::ONE;
+    /// Status of domain not yet assigned
+    static const BoolStatus NONE = BoolVarImp::NONE;
+    /// Return current domain status
+    BoolStatus status(void) const;
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain (greatest element not greater than the median)
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+    
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
+    //@}
+    
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether \a n is contained in domain
+    bool in(double n) const;
+    //@}
+
+    /// \name Boolean domain tests
+    //@{
+    /// Test whether view is assigned to be zero
+    bool zero(void) const;
+    /// Test whether view is assigned to be one
+    bool one(void) const;
+    /// Test whether view is not yet assigned
+    bool none(void) const;
+    //@}
+    
+    /// \name Boolean assignment operations
+    //@{
+    /// Try to assign view to one
+    ModEvent one(Space& home);
+    /// Try to assign view to zero
+    ModEvent zero(Space& home);
+    /// Assign not yet assigned view to one
+    ModEvent one_none(Space& home);
+    /// Assign not yet assigned view to zero
+    ModEvent zero_none(Space& home);
+    //@}
+
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, double n);
+
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, double n);
+    
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, double n);
+
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, double n);
+    
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, double n);
+
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, double n);
+    //@}
+    
     /**
-     * \brief Boolean view for Boolean variables
+     * \name Domain update by iterator
      *
-     * Provides convenient and efficient operations for Boolean views.
-     * \ingroup TaskActorIntView
-     */
-    class BoolView : public VarViewBase<BoolVarImp> {
-    protected:
-      using VarViewBase<BoolVarImp>::x;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      BoolView(void);
-      /// Initialize from Boolean variable \a y
-      BoolView(const BoolVar& y);
-      /// Initialize from Boolean variable implementation \a y
-      BoolView(BoolVarImp* y);
-      //@}
-
-      /// \name Domain status access
-      //@{
-      /// How many bits does the status have
-      static const int BITS = BoolVarImp::BITS;
-      /// Status of domain assigned to zero
-      static const BoolStatus ZERO = BoolVarImp::ZERO;
-      /// Status of domain assigned to one
-      static const BoolStatus ONE  = BoolVarImp::ONE;
-      /// Status of domain not yet assigned
-      static const BoolStatus NONE = BoolVarImp::NONE;
-      /// Return current domain status
-      BoolStatus status(void) const;
-      //@}
-
-      /// \name Value access
-      //@{
-      /// Return minimum of domain
-      int min(void) const;
-      /// Return maximum of domain
-      int max(void) const;
-      /// Return median of domain (greatest element not greater than the median)
-      int med(void) const;
-      /// Return assigned value (only if assigned)
-      int val(void) const;
-
-      /// Return size (cardinality) of domain
-      unsigned int size(void) const;
-      /// Return width of domain (distance between maximum and minimum)
-      unsigned int width(void) const;
-      /// Return regret of domain minimum (distance to next larger value)
-      unsigned int regret_min(void) const;
-      /// Return regret of domain maximum (distance to next smaller value)
-      unsigned int regret_max(void) const;
-      //@}
-
-      /// \name Domain tests
-      //@{
-      /// Test whether domain is a range
-      bool range(void) const;
-      /// Test whether \a n is contained in domain
-      bool in(int n) const;
-      /// Test whether \a n is contained in domain
-      bool in(double n) const;
-      //@}
-
-      /// \name Boolean domain tests
-      //@{
-      /// Test whether view is assigned to be zero
-      bool zero(void) const;
-      /// Test whether view is assigned to be one
-      bool one(void) const;
-      /// Test whether view is not yet assigned
-      bool none(void) const;
-      //@}
-
-      /// \name Boolean assignment operations
-      //@{
-      /// Try to assign view to one
-      ModEvent one(Space& home);
-      /// Try to assign view to zero
-      ModEvent zero(Space& home);
-      /// Assign not yet assigned view to one
-      ModEvent one_none(Space& home);
-      /// Assign not yet assigned view to zero
-      ModEvent zero_none(Space& home);
-      //@}
-
-      /// \name Domain update by value
-      //@{
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, int n);
-      /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, double n);
-
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, int n);
-      /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, double n);
-
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, int n);
-      /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, double n);
-
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, int n);
-      /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, double n);
-
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, int n);
-      /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, double n);
-
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, int n);
-      /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, double n);
-      //@}
-
-      /**
-       * \name Domain update by iterator
-       *
-       * Views can be both updated by range and value iterators.
-       * Value iterators do not need to be strict in that the same value
-       * is allowed to occur more than once in the iterated sequence.
-       *
-       * The argument \a depends must be true, if the iterator
-       * passed as argument depends on the view on which the operation
-       * is invoked. In this case, the view is only updated after the
-       * iterator has been consumed. Otherwise, the domain might be updated
-       * concurrently while following the iterator.
-       *
-       */
-      //@{
-      /// Replace domain by ranges described by \a i
-      template<class I>
-      ModEvent narrow_r(Space& home, I& i, bool depends=true);
-      /// Intersect domain with ranges described by \a i
-      template<class I>
-      ModEvent inter_r(Space& home, I& i, bool depends=true);
-      /// Remove from domain the ranges described by \a i
-      template<class I>
-      ModEvent minus_r(Space& home, I& i, bool depends=true);
-      /// Replace domain by values described by \a i
-      template<class I>
-      ModEvent narrow_v(Space& home, I& i, bool depends=true);
-      /// Intersect domain with values described by \a i
-      template<class I>
-      ModEvent inter_v(Space& home, I& i, bool depends=true);
-      /// Remove from domain the values described by \a i
-      template<class I>
-      ModEvent minus_v(Space& home, I& i, bool depends=true);
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return minimum value just pruned
-      int min(const Delta& d) const;
-      /// Return maximum value just pruned
-      int max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      /// Test whether a view has been assigned to zero
-      static bool zero(const Delta& d);
-      /// Test whether a view has been assigned to one
-      static bool one(const Delta& d);
-      //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me);
-      //@}
-    };
-
-    /**
-     * \brief Print Boolean view
-     * \relates Gecode::Int::BoolView
-     */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const BoolView& x);
-
-  }
-
-  namespace Int {
-
-    /**
-     * \brief Negated Boolean view
+     * Views can be both updated by range and value iterators.
+     * Value iterators do not need to be strict in that the same value
+     * is allowed to occur more than once in the iterated sequence.
      *
-     * A negated Boolean view \f$n\f$ for a Boolean view \f$b\f$
-     * provides operations such that \f$n\f$
-     * behaves as \f$\neg b\f$.
-     * \ingroup TaskActorIntView
+     * The argument \a depends must be true, if the iterator
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
+     * concurrently while following the iterator.
+     *
      */
-    class NegBoolView : public DerivedViewBase<BoolView> {
-    protected:
-      using DerivedViewBase<BoolView>::x;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      NegBoolView(void);
-      /// Initialize with Boolean view \a y
-      explicit NegBoolView(const BoolView& y);
-      //@}
+    //@{
+    /// Replace domain by ranges described by \a i
+    template<class I>
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
+    /// Intersect domain with ranges described by \a i
+    template<class I>
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
+    /// Remove from domain the ranges described by \a i
+    template<class I>
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
+    /// Replace domain by values described by \a i
+    template<class I>
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
+    /// Intersect domain with values described by \a i
+    template<class I>
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
+    /// Remove from domain the values described by \a i
+    template<class I>
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
+    //@}
 
-      /// \name Domain status access
-      //@{
-      /// How many bits does the status have
-      static const int BITS = BoolView::BITS;
-      /// Status of domain assigned to zero
-      static const BoolStatus ZERO = BoolView::ONE;
-      /// Status of domain assigned to one
-      static const BoolStatus ONE  = BoolView::ZERO;
-      /// Status of domain not yet assigned
-      static const BoolStatus NONE = BoolView::NONE;
-      /// Return current domain status
-      BoolStatus status(void) const;
-      //@}
+    /// \name Delta information for advisors
+    //@{
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    /// Test whether a view has been assigned to zero
+    static bool zero(const Delta& d);
+    /// Test whether a view has been assigned to one
+    static bool one(const Delta& d);
+    //@}
+    
+    /// \name View-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
+  };
 
-      /// \name Boolean domain tests
-      //@{
-      /// Test whether view is assigned to be zero
-      bool zero(void) const;
-      /// Test whether view is assigned to be one
-      bool one(void) const;
-      /// Test whether view is not yet assigned
-      bool none(void) const;
-      //@}
-
-      /// \name Boolean assignment operations
-      //@{
-      /// Try to assign view to one
-      ModEvent one(Space& home);
-      /// Try to assign view to zero
-      ModEvent zero(Space& home);
-      /// Assign not yet assigned view to one
-      ModEvent one_none(Space& home);
-      /// Assign not yet assigned view to zero
-      ModEvent zero_none(Space& home);
-      //@}
-
-      /// \name Value access
-      //@{
-      /// Return minimum of domain
-      int min(void) const;
-      /// Return maximum of domain
-      int max(void) const;
-      /// Return assigned value (only if assigned)
-      int val(void) const;
-      //@}
-
-      /// \name Delta information for advisors
-      //@{
-      /// Return minimum value just pruned
-      int min(const Delta& d) const;
-      /// Return maximum value just pruned
-      int max(const Delta& d) const;
-      /// Test whether arbitrary values got pruned
-      bool any(const Delta& d) const;
-      /// Test whether a view has been assigned to zero
-      static bool zero(const Delta& d);
-      /// Test whether a view has been assigned to one
-      static bool one(const Delta& d);
-      //@}
-    };
-
-    /**
-     * \brief Print negated Boolean view
-     * \relates Gecode::Int::NegBoolView
-     */
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    operator <<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
+  /**
+   * \brief Print Boolean view
+   * \relates Gecode::Int::BoolView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const BoolView& x);
+  
 
 
-  }
+  /**
+   * \brief Negated Boolean view
+   *
+   * A negated Boolean view \f$n\f$ for a Boolean view \f$b\f$
+   * provides operations such that \f$n\f$
+   * behaves as \f$\neg b\f$.
+   * \ingroup TaskActorIntView
+   */
+  class NegBoolView : public DerivedViewBase<BoolView> {
+  protected:
+    using DerivedViewBase<BoolView>::x;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    NegBoolView(void);
+    /// Initialize with Boolean view \a y
+    explicit NegBoolView(const BoolView& y);
+    //@}
+    
+    /// \name Domain status access
+    //@{
+    /// How many bits does the status have
+    static const int BITS = BoolView::BITS;
+    /// Status of domain assigned to zero
+    static const BoolStatus ZERO = BoolView::ONE;
+    /// Status of domain assigned to one
+    static const BoolStatus ONE  = BoolView::ZERO;
+    /// Status of domain not yet assigned
+    static const BoolStatus NONE = BoolView::NONE;
+    /// Return current domain status
+    BoolStatus status(void) const;
+    //@}
+    
+    /// \name Boolean domain tests
+    //@{
+    /// Test whether view is assigned to be zero
+    bool zero(void) const;
+    /// Test whether view is assigned to be one
+    bool one(void) const;
+    /// Test whether view is not yet assigned
+    bool none(void) const;
+    //@}
+    
+    /// \name Boolean assignment operations
+    //@{
+    /// Try to assign view to one
+    ModEvent one(Space& home);
+    /// Try to assign view to zero
+    ModEvent zero(Space& home);
+    /// Assign not yet assigned view to one
+    ModEvent one_none(Space& home);
+    /// Assign not yet assigned view to zero
+    ModEvent zero_none(Space& home);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+    //@}
+    
+    /// \name Delta information for advisors
+    //@{
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    /// Test whether a view has been assigned to zero
+    static bool zero(const Delta& d);
+    /// Test whether a view has been assigned to one
+    static bool one(const Delta& d);
+    //@}
+  };
+
+  /**
+   * \brief Print negated Boolean view
+   * \relates Gecode::Int::NegBoolView
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
 
   /** \name View comparison
    *  \relates Gecode::Int::NegBoolView
@@ -1414,7 +1390,7 @@ namespace Gecode {
   bool before(const Int::NegBoolView& x, const Int::NegBoolView& y);
   //@}
 
-}
+}}
 
 #include <gecode/int/var/int.hpp>
 #include <gecode/int/var/bool.hpp>
@@ -1434,91 +1410,87 @@ namespace Gecode {
 #include <gecode/int/view/print.hpp>
 #include <gecode/int/var/print.hpp>
 
-namespace Gecode {
+namespace Gecode { namespace Int {
 
-  namespace Int {
+  /**
+   * \defgroup TaskActorIntTest Testing relations between integer views
+   * \ingroup TaskActorInt
+   */
 
-    /**
-     * \defgroup TaskActorIntTest Testing relations between integer views
-     * \ingroup TaskActorInt
+  //@{
+  /// Result of testing relation
+  enum RelTest {
+    RT_FALSE = 0, ///< Relation does not hold
+    RT_MAYBE = 1, ///< Relation may hold or not
+    RT_TRUE  = 2  ///< Relation does hold
+  };
+  
+  /// Test whether views \a x and \a y are equal (use bounds information)
+  template<class View> RelTest rtest_eq_bnd(View x, View y);
+  /// Test whether views \a x and \a y are equal (use full domain information)
+  template<class View> RelTest rtest_eq_dom(View x, View y);
+  /// Test whether view \a x and integer \a n are equal (use bounds information)
+  template<class View> RelTest rtest_eq_bnd(View x, int n);
+  /// Test whether view \a x and integer \a n are equal (use full domain information)
+  template<class View> RelTest rtest_eq_dom(View x, int n);
+  
+  /// Test whether views \a x and \a y are different (use bounds information)
+  template<class View> RelTest rtest_nq_bnd(View x, View y);
+  /// Test whether views \a x and \a y are different (use full domain information)
+  template<class View> RelTest rtest_nq_dom(View x, View y);
+  /// Test whether view \a x and integer \a n are different (use bounds information)
+  template<class View> RelTest rtest_nq_bnd(View x, int n);
+  /// Test whether view \a x and integer \a n are different (use full domain information)
+  template<class View> RelTest rtest_nq_dom(View x, int n);
+
+  /// Test whether view \a x is less or equal than view \a y
+  template<class View> RelTest rtest_lq(View x, View y);
+  /// Test whether view \a x is less or equal than integer \a n
+  template<class View> RelTest rtest_lq(View x, int n);
+  
+  /// Test whether view \a x is less than view \a y
+  template<class View> RelTest rtest_le(View x, View y);
+  /// Test whether view \a x is less than integer \a n
+  template<class View> RelTest rtest_le(View x, int n);
+  
+  /// Test whether view \a x is greater or equal than view \a y
+  template<class View> RelTest rtest_gq(View x, View y);
+  /// Test whether view \a x is greater or equal than integer \a n
+  template<class View> RelTest rtest_gq(View x, int n);
+  
+  /// Test whether view \a x is greater than view \a y
+  template<class View> RelTest rtest_gr(View x, View y);
+  /// Test whether view \a x is greater than integer \a n
+  template<class View> RelTest rtest_gr(View x, int n);
+  //@}
+
+
+  /**
+   * \brief Boolean tests
+   *
+   */
+  enum BoolTest {
+    BT_NONE, ///< No sharing
+    BT_SAME, ///< Same variable
+    BT_COMP  ///< Same variable but complement
+  };
+  
+  /**
+   * \name Test sharing between Boolean and negated Boolean views
+   * \relates BoolView NegBoolView
      */
-
-    //@{
-    /// Result of testing relation
-    enum RelTest {
-      RT_FALSE = 0, ///< Relation does not hold
-      RT_MAYBE = 1, ///< Relation may hold or not
-      RT_TRUE  = 2  ///< Relation does hold
-    };
-
-    /// Test whether views \a x and \a y are equal (use bounds information)
-    template<class View> RelTest rtest_eq_bnd(View x, View y);
-    /// Test whether views \a x and \a y are equal (use full domain information)
-    template<class View> RelTest rtest_eq_dom(View x, View y);
-    /// Test whether view \a x and integer \a n are equal (use bounds information)
-    template<class View> RelTest rtest_eq_bnd(View x, int n);
-    /// Test whether view \a x and integer \a n are equal (use full domain information)
-    template<class View> RelTest rtest_eq_dom(View x, int n);
-
-    /// Test whether views \a x and \a y are different (use bounds information)
-    template<class View> RelTest rtest_nq_bnd(View x, View y);
-    /// Test whether views \a x and \a y are different (use full domain information)
-    template<class View> RelTest rtest_nq_dom(View x, View y);
-    /// Test whether view \a x and integer \a n are different (use bounds information)
-    template<class View> RelTest rtest_nq_bnd(View x, int n);
-    /// Test whether view \a x and integer \a n are different (use full domain information)
-    template<class View> RelTest rtest_nq_dom(View x, int n);
-
-    /// Test whether view \a x is less or equal than view \a y
-    template<class View> RelTest rtest_lq(View x, View y);
-    /// Test whether view \a x is less or equal than integer \a n
-    template<class View> RelTest rtest_lq(View x, int n);
-
-    /// Test whether view \a x is less than view \a y
-    template<class View> RelTest rtest_le(View x, View y);
-    /// Test whether view \a x is less than integer \a n
-    template<class View> RelTest rtest_le(View x, int n);
-
-    /// Test whether view \a x is greater or equal than view \a y
-    template<class View> RelTest rtest_gq(View x, View y);
-    /// Test whether view \a x is greater or equal than integer \a n
-    template<class View> RelTest rtest_gq(View x, int n);
-
-    /// Test whether view \a x is greater than view \a y
-    template<class View> RelTest rtest_gr(View x, View y);
-    /// Test whether view \a x is greater than integer \a n
-    template<class View> RelTest rtest_gr(View x, int n);
-    //@}
-
-
-    /**
-     * \brief Boolean tests
-     *
-     */
-    enum BoolTest {
-      BT_NONE, ///< No sharing
-      BT_SAME, ///< Same variable
-      BT_COMP  ///< Same variable but complement
-    };
-
-    /**
-     * \name Test sharing between Boolean and negated Boolean views
-     * \relates BoolView NegBoolView
-     */
-    //@{
-    /// Test whether views \a b0 and \a b1 are the same
-    BoolTest bool_test(const BoolView& b0, const BoolView& b1);
-    /// Test whether views \a b0 and \a b1 are complementary
-    BoolTest bool_test(const BoolView& b0, const NegBoolView& b1);
-    /// Test whether views \a b0 and \a b1 are complementary
-    BoolTest bool_test(const NegBoolView& b0, const BoolView& b1);
-    /// Test whether views \a b0 and \a b1 are the same
-    BoolTest bool_test(const NegBoolView& b0, const NegBoolView& b1);
-    //@}
-
-  }
-
-}
+  //@{
+  /// Test whether views \a b0 and \a b1 are the same
+  BoolTest bool_test(const BoolView& b0, const BoolView& b1);
+  /// Test whether views \a b0 and \a b1 are complementary
+  BoolTest bool_test(const BoolView& b0, const NegBoolView& b1);
+  /// Test whether views \a b0 and \a b1 are complementary
+  BoolTest bool_test(const NegBoolView& b0, const BoolView& b1);
+  /// Test whether views \a b0 and \a b1 are the same
+  BoolTest bool_test(const NegBoolView& b0, const NegBoolView& b1);
+  //@}
+  
+}}
 
 #include <gecode/int/view/rel-test.hpp>
 #include <gecode/int/view/bool-test.hpp>

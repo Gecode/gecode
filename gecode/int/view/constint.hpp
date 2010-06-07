@@ -35,326 +35,322 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Int {
 
-  namespace Int {
+  /*
+   * Constructors and initialization
+   *
+   */
+  forceinline
+  ConstIntView::ConstIntView(void) {}
+  forceinline
+  ConstIntView::ConstIntView(int n) : x(n) {}
 
-    /*
-     * Constructors and initialization
-     *
-     */
-    forceinline
-    ConstIntView::ConstIntView(void) {}
-    forceinline
-    ConstIntView::ConstIntView(int n) : x(n) {}
+  /*
+   * Value access
+   *
+   */
+  forceinline int
+  ConstIntView::min(void) const {
+    return x;
+  }
+  forceinline int
+  ConstIntView::max(void) const {
+    return x;
+  }
+  forceinline int
+  ConstIntView::med(void) const {
+    return x;
+  }
+  forceinline int
+  ConstIntView::val(void) const {
+    return x;
+  }
 
-    /*
-     * Value access
-     *
-     */
-    forceinline int
-    ConstIntView::min(void) const {
-      return x;
-    }
-    forceinline int
-    ConstIntView::max(void) const {
-      return x;
-    }
-    forceinline int
-    ConstIntView::med(void) const {
-      return x;
-    }
-    forceinline int
-    ConstIntView::val(void) const {
-      return x;
-    }
-
-    forceinline unsigned int
-    ConstIntView::size(void) const {
-      return 1;
-    }
-    forceinline unsigned int
-    ConstIntView::width(void) const {
-      return 1;
-    }
-    forceinline unsigned int
-    ConstIntView::regret_min(void) const {
-      return 0;
-    }
-    forceinline unsigned int
-    ConstIntView::regret_max(void) const {
-      return 0;
-    }
+  forceinline unsigned int
+  ConstIntView::size(void) const {
+    return 1;
+  }
+  forceinline unsigned int
+  ConstIntView::width(void) const {
+    return 1;
+  }
+  forceinline unsigned int
+  ConstIntView::regret_min(void) const {
+    return 0;
+  }
+  forceinline unsigned int
+  ConstIntView::regret_max(void) const {
+    return 0;
+  }
 
 
-    /*
-     * Domain tests
-     *
-     */
-    forceinline bool
-    ConstIntView::range(void) const {
-      return true;
-    }
-    forceinline bool
-    ConstIntView::in(int n) const {
-      return n == x;
-    }
-    forceinline bool
-    ConstIntView::in(double n) const {
-      return n == x;
-    }
+  /*
+   * Domain tests
+   *
+   */
+  forceinline bool
+  ConstIntView::range(void) const {
+    return true;
+  }
+  forceinline bool
+  ConstIntView::in(int n) const {
+    return n == x;
+  }
+  forceinline bool
+  ConstIntView::in(double n) const {
+    return n == x;
+  }
 
 
-    /*
-     * Domain update by value
-     *
-     */
-    forceinline ModEvent
-    ConstIntView::lq(Space&, int n) {
-      return (x <= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ConstIntView::lq(Space&, double n) {
-      return (x <= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  /*
+   * Domain update by value
+   *
+   */
+  forceinline ModEvent
+  ConstIntView::lq(Space&, int n) {
+    return (x <= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ConstIntView::lq(Space&, double n) {
+    return (x <= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ConstIntView::le(Space&, int n) {
-      return (x < n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ConstIntView::le(Space&, double n) {
-      return (x < n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ConstIntView::le(Space&, int n) {
+    return (x < n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ConstIntView::le(Space&, double n) {
+    return (x < n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ConstIntView::gq(Space&, int n) {
-      return (x >= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ConstIntView::gq(Space&, double n) {
-      return (x >= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ConstIntView::gq(Space&, int n) {
+    return (x >= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ConstIntView::gq(Space&, double n) {
+    return (x >= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ConstIntView::gr(Space&, int n) {
-      return (x > n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ConstIntView::gr(Space&, double n) {
-      return (x > n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ConstIntView::gr(Space&, int n) {
+    return (x > n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ConstIntView::gr(Space&, double n) {
+    return (x > n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ConstIntView::nq(Space&, int n) {
-      return (x != n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ConstIntView::nq(Space&, double n) {
-      return (x != n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ConstIntView::nq(Space&, int n) {
+    return (x != n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ConstIntView::nq(Space&, double n) {
+    return (x != n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ConstIntView::eq(Space&, int n) {
-      return (x == n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ConstIntView::eq(Space&, double n) {
-      return (x == n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ConstIntView::eq(Space&, int n) {
+    return (x == n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ConstIntView::eq(Space&, double n) {
+    return (x == n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
 
 
-    /*
-     * Iterator-based domain update
-     *
-     */
-    template<class I>
-    forceinline ModEvent
-    ConstIntView::narrow_r(Space&, I& i, bool) {
-      Iter::Ranges::IsRangeIter<I>();
-      return i() ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ConstIntView::inter_r(Space&, I& i, bool) {
-      Iter::Ranges::IsRangeIter<I>();
-      while (i() && (i.max() < x))
-        ++i;
-      return (i() && (i.min() <= x)) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ConstIntView::minus_r(Space&, I& i, bool) {
-      Iter::Ranges::IsRangeIter<I>();
-      while (i() && (i.max() < x))
-        ++i;
-      return (i() && (i.min() <= x)) ? ME_INT_FAILED : ME_INT_NONE;
-    }
-    template<class I>
-    forceinline ModEvent
-    ConstIntView::narrow_v(Space&, I& i, bool) {
-      Iter::Values::IsValueIter<I>();
-      return i() ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ConstIntView::inter_v(Space&, I& i, bool) {
-      Iter::Values::IsValueIter<I>();
-      while (i() && (i.val() < x))
-        ++i;
-      return (i() && (i.val() == x)) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ConstIntView::minus_v(Space&, I& i, bool) {
-      Iter::Values::IsValueIter<I>();
-      while (i() && (i.val() < x))
-        ++i;
-      return (i() && (i.val() == x)) ? ME_INT_FAILED : ME_INT_NONE;
-    }
+  /*
+   * Iterator-based domain update
+   *
+   */
+  template<class I>
+  forceinline ModEvent
+  ConstIntView::narrow_r(Space&, I& i, bool) {
+    Iter::Ranges::IsRangeIter<I>();
+    return i() ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ConstIntView::inter_r(Space&, I& i, bool) {
+    Iter::Ranges::IsRangeIter<I>();
+    while (i() && (i.max() < x))
+      ++i;
+    return (i() && (i.min() <= x)) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ConstIntView::minus_r(Space&, I& i, bool) {
+    Iter::Ranges::IsRangeIter<I>();
+    while (i() && (i.max() < x))
+      ++i;
+    return (i() && (i.min() <= x)) ? ME_INT_FAILED : ME_INT_NONE;
+  }
+  template<class I>
+  forceinline ModEvent
+  ConstIntView::narrow_v(Space&, I& i, bool) {
+    Iter::Values::IsValueIter<I>();
+    return i() ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ConstIntView::inter_v(Space&, I& i, bool) {
+    Iter::Values::IsValueIter<I>();
+    while (i() && (i.val() < x))
+      ++i;
+    return (i() && (i.val() == x)) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ConstIntView::minus_v(Space&, I& i, bool) {
+    Iter::Values::IsValueIter<I>();
+    while (i() && (i.val() < x))
+      ++i;
+    return (i() && (i.val() == x)) ? ME_INT_FAILED : ME_INT_NONE;
+  }
 
 
 
-    /*
-     * Propagator modification events
-     *
-     */
-    forceinline void
-    ConstIntView::schedule(Space& home, Propagator& p, ModEvent me) {
-      IntView::schedule(home,p,me);
-    }
-    forceinline ModEvent
-    ConstIntView::me(const ModEventDelta&) {
-      return ME_INT_NONE;
-    }
-    forceinline ModEventDelta
-    ConstIntView::med(ModEvent me) {
-      return static_cast<ModEventDelta>(me);
-    }
+  /*
+   * Propagator modification events
+   *
+   */
+  forceinline void
+  ConstIntView::schedule(Space& home, Propagator& p, ModEvent me) {
+    IntView::schedule(home,p,me);
+  }
+  forceinline ModEvent
+  ConstIntView::me(const ModEventDelta&) {
+    return ME_INT_NONE;
+  }
+  forceinline ModEventDelta
+  ConstIntView::med(ModEvent me) {
+    return static_cast<ModEventDelta>(me);
+  }
 
 
-    /*
-     * Dependencies
-     *
-     */
-    forceinline void
-    ConstIntView::subscribe(Space& home, Propagator& p, PropCond,
-                            bool _schedule) {
-      if (_schedule)
-        schedule(home,p,ME_INT_VAL);
-    }
-    forceinline void
-    ConstIntView::cancel(Space&,Propagator&,PropCond) {}
-    forceinline void
-    ConstIntView::subscribe(Space&, Advisor&) {}
-    forceinline void
-    ConstIntView::cancel(Space&,Advisor&) {}
-
-
-
-    /*
-     * Delta information for advisors
-     *
-     */
-    forceinline ModEvent
-    ConstIntView::modevent(const Delta&) {
-      return ME_INT_NONE;
-    }
-    forceinline int
-    ConstIntView::min(const Delta&) const {
-      return 1;
-    }
-    forceinline int
-    ConstIntView::max(const Delta&) const {
-      return 0;
-    }
-    forceinline bool
-    ConstIntView::any(const Delta&) const {
-      return true;
-    }
+  /*
+   * Dependencies
+   *
+   */
+  forceinline void
+  ConstIntView::subscribe(Space& home, Propagator& p, PropCond,
+                          bool _schedule) {
+    if (_schedule)
+      schedule(home,p,ME_INT_VAL);
+  }
+  forceinline void
+  ConstIntView::cancel(Space&,Propagator&,PropCond) {}
+  forceinline void
+  ConstIntView::subscribe(Space&, Advisor&) {}
+  forceinline void
+  ConstIntView::cancel(Space&,Advisor&) {}
 
 
 
-    /*
-     * Cloning
-     *
-     */
-    forceinline void
-    ConstIntView::update(Space& home, bool share, ConstIntView& y) {
-      ConstViewBase<IntView>::update(home,share,y);
-      x = y.x;
-    }
+  /*
+   * Delta information for advisors
+   *
+   */
+  forceinline ModEvent
+  ConstIntView::modevent(const Delta&) {
+    return ME_INT_NONE;
+  }
+  forceinline int
+  ConstIntView::min(const Delta&) const {
+    return 1;
+  }
+  forceinline int
+  ConstIntView::max(const Delta&) const {
+    return 0;
+  }
+  forceinline bool
+  ConstIntView::any(const Delta&) const {
+    return true;
+  }
 
 
-    /**
-     * \brief %Range iterator for constant integer views
-     * \ingroup TaskActorIntView
-     */
-    template<>
-    class ViewRanges<ConstIntView> {
-    private:
-      /// The single integer to iterate
-      int n;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ViewRanges(void);
-      /// Initialize with ranges for view \a x
-      ViewRanges(const ConstIntView& x);
-      /// Initialize with ranges for view \a x
-      void init(const ConstIntView& x);
-      //@}
 
-      /// \name Iteration control
-      //@{
-      /// Test whether iterator is still at a range or done
-      bool operator ()(void) const;
-      /// Move iterator to next range (if possible)
-      void operator ++(void);
-      //@}
+  /*
+   * Cloning
+   *
+   */
+  forceinline void
+  ConstIntView::update(Space& home, bool share, ConstIntView& y) {
+    ConstViewBase<IntView>::update(home,share,y);
+    x = y.x;
+  }
 
-      /// \name Range access
-      //@{
-      /// Return smallest value of range
-      int min(void) const;
-      /// Return largest value of range
-      int max(void) const;
-      /// Return width of ranges (distance between minimum and maximum)
-      unsigned int width(void) const;
-      //@}
-    };
 
-    forceinline
-    ViewRanges<ConstIntView>::ViewRanges(void) {}
+  /**
+   * \brief %Range iterator for constant integer views
+   * \ingroup TaskActorIntView
+   */
+  template<>
+  class ViewRanges<ConstIntView> {
+  private:
+    /// The single integer to iterate
+    int n;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ViewRanges(void);
+    /// Initialize with ranges for view \a x
+    ViewRanges(const ConstIntView& x);
+    /// Initialize with ranges for view \a x
+    void init(const ConstIntView& x);
+    //@}
 
-    forceinline
-    ViewRanges<ConstIntView>::ViewRanges(const ConstIntView& x)
-      : n(x.val()) {}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator ()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator ++(void);
+    //@}
 
-    forceinline bool
-    ViewRanges<ConstIntView>::operator ()(void) const {
-      return n <= Limits::max;
-    }
-    forceinline void
-    ViewRanges<ConstIntView>::operator ++(void) {
-      n = Limits::max+1;
-    }
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of ranges (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
 
-    forceinline int
-    ViewRanges<ConstIntView>::min(void) const {
-      return n;
-    }
-    forceinline int
-    ViewRanges<ConstIntView>::max(void) const {
-      return n;
-    }
-    forceinline unsigned int
-    ViewRanges<ConstIntView>::width(void) const {
-      return 1;
-    }
+  forceinline
+  ViewRanges<ConstIntView>::ViewRanges(void) {}
 
+  forceinline
+  ViewRanges<ConstIntView>::ViewRanges(const ConstIntView& x)
+    : n(x.val()) {}
+
+  forceinline bool
+  ViewRanges<ConstIntView>::operator ()(void) const {
+    return n <= Limits::max;
+  }
+  forceinline void
+  ViewRanges<ConstIntView>::operator ++(void) {
+    n = Limits::max+1;
+  }
+
+  forceinline int
+  ViewRanges<ConstIntView>::min(void) const {
+    return n;
+  }
+  forceinline int
+  ViewRanges<ConstIntView>::max(void) const {
+    return n;
+  }
+  forceinline unsigned int
+  ViewRanges<ConstIntView>::width(void) const {
+    return 1;
   }
 
   /*
@@ -378,7 +374,7 @@ namespace Gecode {
     return x.min() < y.min();
   }
 
-}
+}}
 
 // STATISTICS: int-var
 

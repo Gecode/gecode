@@ -35,251 +35,248 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Int {
 
-  namespace Int {
-
-    /*
-     * Constructors and initialization
-     *
-     */
-    forceinline
-    OffsetView::OffsetView(void) {}
-    forceinline
-    OffsetView::OffsetView(const IntView& y, int d)
-      : DerivedViewBase<IntView>(y), c(d) {}
+  /*
+   * Constructors and initialization
+   *
+   */
+  forceinline
+  OffsetView::OffsetView(void) {}
+  forceinline
+  OffsetView::OffsetView(const IntView& y, int d)
+    : DerivedViewBase<IntView>(y), c(d) {}
 
 
-    /*
-     * Value access
-     *
-     */
-    forceinline int
-    OffsetView::offset(void) const {
-      return c;
-    }
-    forceinline int
-    OffsetView::min(void) const {
-      return x.min()+c;
-    }
-    forceinline int
-    OffsetView::max(void) const {
-      return x.max()+c;
-    }
-    forceinline int
-    OffsetView::med(void) const {
-      return x.med()+c;
-    }
-    forceinline int
-    OffsetView::val(void) const {
-      return x.val()+c;
-    }
+  /*
+   * Value access
+   *
+   */
+  forceinline int
+  OffsetView::offset(void) const {
+    return c;
+  }
+  forceinline int
+  OffsetView::min(void) const {
+    return x.min()+c;
+  }
+  forceinline int
+  OffsetView::max(void) const {
+    return x.max()+c;
+  }
+  forceinline int
+  OffsetView::med(void) const {
+    return x.med()+c;
+  }
+  forceinline int
+  OffsetView::val(void) const {
+    return x.val()+c;
+  }
 
-    forceinline unsigned int
-    OffsetView::width(void) const {
-      return x.width();
-    }
-    forceinline unsigned int
-    OffsetView::size(void) const {
-      return x.size();
-    }
-    forceinline unsigned int
-    OffsetView::regret_min(void) const {
-      return x.regret_min();
-    }
-    forceinline unsigned int
-    OffsetView::regret_max(void) const {
-      return x.regret_max();
-    }
+  forceinline unsigned int
+  OffsetView::width(void) const {
+    return x.width();
+  }
+  forceinline unsigned int
+  OffsetView::size(void) const {
+    return x.size();
+  }
+  forceinline unsigned int
+  OffsetView::regret_min(void) const {
+    return x.regret_min();
+  }
+  forceinline unsigned int
+  OffsetView::regret_max(void) const {
+    return x.regret_max();
+  }
 
-    /*
-     * Domain tests
-     *
-     */
-    forceinline bool
-    OffsetView::range(void) const {
-      return x.range();
-    }
-    forceinline bool
-    OffsetView::in(int n) const {
-      return x.in(n-c);
-    }
-    forceinline bool
-    OffsetView::in(double n) const {
-      return x.in(n-c);
-    }
-
-
-    /*
-     * Domain update by value
-     *
-     */
-    forceinline ModEvent
-    OffsetView::lq(Space& home, int n) {
-      return x.lq(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::lq(Space& home, double n) {
-      return x.lq(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::le(Space& home, int n) {
-      return x.le(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::le(Space& home, double n) {
-      return x.le(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::gq(Space& home, int n) {
-      return x.gq(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::gq(Space& home, double n) {
-      return x.gq(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::gr(Space& home, int n) {
-      return x.gr(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::gr(Space& home, double n) {
-      return x.gr(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::nq(Space& home, int n) {
-      return x.nq(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::nq(Space& home, double n) {
-      return x.nq(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::eq(Space& home, int n) {
-      return x.eq(home,n-c);
-    }
-    forceinline ModEvent
-    OffsetView::eq(Space& home, double n) {
-      return x.eq(home,n-c);
-    }
+  /*
+   * Domain tests
+   *
+   */
+  forceinline bool
+  OffsetView::range(void) const {
+    return x.range();
+  }
+  forceinline bool
+  OffsetView::in(int n) const {
+    return x.in(n-c);
+  }
+  forceinline bool
+  OffsetView::in(double n) const {
+    return x.in(n-c);
+  }
 
 
-    /*
-     * Iterator-based domain update
-     *
-     */
-    template<class I>
-    forceinline ModEvent
-    OffsetView::narrow_r(Space& home, I& i, bool depend) {
-      Iter::Ranges::Offset<I> oi(i,-c);
-      return x.narrow_r(home,oi,depend);
-    }
-    template<class I>
-    forceinline ModEvent
-    OffsetView::inter_r(Space& home, I& i, bool depend) {
-      Iter::Ranges::Offset<I> oi(i,-c);
-      return x.inter_r(home,oi,depend);
-    }
-    template<class I>
-    forceinline ModEvent
-    OffsetView::minus_r(Space& home, I& i, bool depend) {
-      Iter::Ranges::Offset<I> oi(i,-c);
-      return x.minus_r(home,oi,depend);
-    }
-    template<class I>
-    forceinline ModEvent
-    OffsetView::narrow_v(Space& home, I& i, bool depend) {
-      Iter::Values::Offset<I> oi(i,-c);
-      return x.narrow_v(home,oi,depend);
-    }
-    template<class I>
-    forceinline ModEvent
-    OffsetView::inter_v(Space& home, I& i, bool depend) {
-      Iter::Values::Offset<I> oi(i,-c);
-      return x.inter_v(home,oi,depend);
-    }
-    template<class I>
-    forceinline ModEvent
-    OffsetView::minus_v(Space& home, I& i, bool depend) {
-      Iter::Values::Offset<I> oi(i,-c);
-      return x.minus_v(home,oi,depend);
-    }
+  /*
+   * Domain update by value
+   *
+   */
+  forceinline ModEvent
+  OffsetView::lq(Space& home, int n) {
+    return x.lq(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::lq(Space& home, double n) {
+    return x.lq(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::le(Space& home, int n) {
+    return x.le(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::le(Space& home, double n) {
+    return x.le(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::gq(Space& home, int n) {
+    return x.gq(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::gq(Space& home, double n) {
+    return x.gq(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::gr(Space& home, int n) {
+    return x.gr(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::gr(Space& home, double n) {
+    return x.gr(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::nq(Space& home, int n) {
+    return x.nq(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::nq(Space& home, double n) {
+    return x.nq(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::eq(Space& home, int n) {
+    return x.eq(home,n-c);
+  }
+  forceinline ModEvent
+  OffsetView::eq(Space& home, double n) {
+    return x.eq(home,n-c);
+  }
+
+
+  /*
+   * Iterator-based domain update
+   *
+   */
+  template<class I>
+  forceinline ModEvent
+  OffsetView::narrow_r(Space& home, I& i, bool depend) {
+    Iter::Ranges::Offset<I> oi(i,-c);
+    return x.narrow_r(home,oi,depend);
+  }
+  template<class I>
+  forceinline ModEvent
+  OffsetView::inter_r(Space& home, I& i, bool depend) {
+    Iter::Ranges::Offset<I> oi(i,-c);
+    return x.inter_r(home,oi,depend);
+  }
+  template<class I>
+  forceinline ModEvent
+  OffsetView::minus_r(Space& home, I& i, bool depend) {
+    Iter::Ranges::Offset<I> oi(i,-c);
+    return x.minus_r(home,oi,depend);
+  }
+  template<class I>
+  forceinline ModEvent
+  OffsetView::narrow_v(Space& home, I& i, bool depend) {
+    Iter::Values::Offset<I> oi(i,-c);
+    return x.narrow_v(home,oi,depend);
+  }
+  template<class I>
+  forceinline ModEvent
+  OffsetView::inter_v(Space& home, I& i, bool depend) {
+    Iter::Values::Offset<I> oi(i,-c);
+    return x.inter_v(home,oi,depend);
+  }
+  template<class I>
+  forceinline ModEvent
+  OffsetView::minus_v(Space& home, I& i, bool depend) {
+    Iter::Values::Offset<I> oi(i,-c);
+    return x.minus_v(home,oi,depend);
+  }
 
 
 
-    /*
-     * Propagator modification events
-     *
-     */
-    forceinline ModEventDelta
-    OffsetView::med(ModEvent me) {
-      return IntView::med(me);
-    }
+  /*
+   * Propagator modification events
+   *
+   */
+  forceinline ModEventDelta
+  OffsetView::med(ModEvent me) {
+    return IntView::med(me);
+  }
 
 
-    /*
-     * Delta information for advisors
-     *
-     */
-    forceinline int
-    OffsetView::min(const Delta& d) const {
-      return x.min(d)+c;
-    }
-    forceinline int
-    OffsetView::max(const Delta& d) const {
-      return x.max(d)+c;
-    }
-    forceinline bool
-    OffsetView::any(const Delta& d) const {
-      return x.any(d);
-    }
+  /*
+   * Delta information for advisors
+   *
+   */
+  forceinline int
+  OffsetView::min(const Delta& d) const {
+    return x.min(d)+c;
+  }
+  forceinline int
+  OffsetView::max(const Delta& d) const {
+    return x.max(d)+c;
+  }
+  forceinline bool
+  OffsetView::any(const Delta& d) const {
+    return x.any(d);
+  }
 
 
 
-    /*
-     * Cloning
-     *
-     */
-    forceinline void
-    OffsetView::update(Space& home, bool share, OffsetView& y) {
-      DerivedViewBase<IntView>::update(home,share,y);
-      c=y.c;
-    }
+  /*
+   * Cloning
+   *
+   */
+  forceinline void
+  OffsetView::update(Space& home, bool share, OffsetView& y) {
+    DerivedViewBase<IntView>::update(home,share,y);
+    c=y.c;
+  }
 
 
-    /**
-     * \brief %Range iterator for offset integer views
-     * \ingroup TaskActorIntView
-     */
-    template<>
-    class ViewRanges<OffsetView>
-      : public Iter::Ranges::Offset<ViewRanges<IntView> > {
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ViewRanges(void);
-      /// Initialize with ranges for view \a x
-      ViewRanges(const OffsetView& x);
-      /// Initialize with ranges for view \a x
-      void init(const OffsetView& x);
-      //@}
-    };
+  /**
+   * \brief %Range iterator for offset integer views
+   * \ingroup TaskActorIntView
+   */
+  template<>
+  class ViewRanges<OffsetView>
+    : public Iter::Ranges::Offset<ViewRanges<IntView> > {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ViewRanges(void);
+    /// Initialize with ranges for view \a x
+    ViewRanges(const OffsetView& x);
+    /// Initialize with ranges for view \a x
+    void init(const OffsetView& x);
+    //@}
+  };
 
-    forceinline
-    ViewRanges<OffsetView>::ViewRanges(void) {}
+  forceinline
+  ViewRanges<OffsetView>::ViewRanges(void) {}
 
-    forceinline
-    ViewRanges<OffsetView>::ViewRanges(const OffsetView& x) {
-      ViewRanges<IntView> xi(x.base());
-      Iter::Ranges::Offset<ViewRanges<IntView> >::init(xi,x.offset());
-    }
+  forceinline
+  ViewRanges<OffsetView>::ViewRanges(const OffsetView& x) {
+    ViewRanges<IntView> xi(x.base());
+    Iter::Ranges::Offset<ViewRanges<IntView> >::init(xi,x.offset());
+  }
 
-    forceinline void
-    ViewRanges<OffsetView>::init(const OffsetView& x) {
-      ViewRanges<IntView> xi(x.base());
-      Iter::Ranges::Offset<ViewRanges<IntView> >::init(xi,x.offset());
-    }
+  forceinline void
+  ViewRanges<OffsetView>::init(const OffsetView& x) {
+    ViewRanges<IntView> xi(x.base());
+    Iter::Ranges::Offset<ViewRanges<IntView> >::init(xi,x.offset());
   }
 
   /*
@@ -296,7 +293,7 @@ namespace Gecode {
       || (same(x.base(),y.base()) && (x.offset() < y.offset()));
   }
 
-}
+}}
 
 // STATISTICS: int-var
 

@@ -35,145 +35,141 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Int {
 
-  namespace Int {
+  /*
+   * Negated Boolean views
+   *
+   */
 
-    /*
-     * Negated Boolean views
-     *
-     */
-
-    /*
-     * Constructors and initialization
-     *
-     */
-    forceinline
-    NegBoolView::NegBoolView(void) {}
-    forceinline
-    NegBoolView::NegBoolView(const BoolView& y)
-      : DerivedViewBase<BoolView>(y) {}
+  /*
+   * Constructors and initialization
+   *
+   */
+  forceinline
+  NegBoolView::NegBoolView(void) {}
+  forceinline
+  NegBoolView::NegBoolView(const BoolView& y)
+    : DerivedViewBase<BoolView>(y) {}
 
 
-    /*
-     * Boolean domain tests
-     *
-     */
-    forceinline BoolStatus
-    NegBoolView::status(void) const {
-      return x.status();
-    }
-    forceinline bool
-    NegBoolView::zero(void) const {
-      return x.one();
-    }
-    forceinline bool
-    NegBoolView::one(void) const {
-      return x.zero();
-    }
-    forceinline bool
-    NegBoolView::none(void) const {
-      return x.none();
-    }
+  /*
+   * Boolean domain tests
+   *
+   */
+  forceinline BoolStatus
+  NegBoolView::status(void) const {
+    return x.status();
+  }
+  forceinline bool
+  NegBoolView::zero(void) const {
+    return x.one();
+  }
+  forceinline bool
+  NegBoolView::one(void) const {
+    return x.zero();
+  }
+  forceinline bool
+  NegBoolView::none(void) const {
+    return x.none();
+  }
 
 
-    /*
-     * Boolean assignment operations
-     *
-     */
-    forceinline ModEvent
-    NegBoolView::zero_none(Space& home) {
-      return x.one_none(home);
-    }
-    forceinline ModEvent
-    NegBoolView::one_none(Space& home) {
-      return x.zero_none(home);
-    }
+  /*
+   * Boolean assignment operations
+   *
+   */
+  forceinline ModEvent
+  NegBoolView::zero_none(Space& home) {
+    return x.one_none(home);
+  }
+  forceinline ModEvent
+  NegBoolView::one_none(Space& home) {
+    return x.zero_none(home);
+  }
 
-    forceinline ModEvent
-    NegBoolView::zero(Space& home) {
-      return x.one(home);
-    }
-    forceinline ModEvent
-    NegBoolView::one(Space& home) {
-      return x.zero(home);
-    }
-
-
-    /*
-     * Value access
-     *
-     */
-    forceinline int
-    NegBoolView::min(void) const {
-      return x.max();
-    }
-    forceinline int
-    NegBoolView::max(void) const {
-      return x.min();
-    }
-    forceinline int
-    NegBoolView::val(void) const {
-      return 1-x.val();
-    }
+  forceinline ModEvent
+  NegBoolView::zero(Space& home) {
+    return x.one(home);
+  }
+  forceinline ModEvent
+  NegBoolView::one(Space& home) {
+    return x.zero(home);
+  }
 
 
-    /*
-     * Delta information for advisors
-     *
-     */
-    forceinline int
-    NegBoolView::min(const Delta& d) const {
-      return x.max(d);
-    }
-    forceinline int
-    NegBoolView::max(const Delta& d) const {
-      return x.min(d);
-    }
-    forceinline bool
-    NegBoolView::any(const Delta& d) const {
-      return x.any(d);
-    }
-    forceinline bool
-    NegBoolView::zero(const Delta& d) {
-      return BoolView::one(d);
-    }
-    forceinline bool
-    NegBoolView::one(const Delta& d) {
-      return BoolView::zero(d);
-    }
+  /*
+   * Value access
+   *
+   */
+  forceinline int
+  NegBoolView::min(void) const {
+    return x.max();
+  }
+  forceinline int
+  NegBoolView::max(void) const {
+    return x.min();
+  }
+  forceinline int
+  NegBoolView::val(void) const {
+    return 1-x.val();
+  }
 
 
-    /**
-     * \brief %Range iterator for negated Boolean variable views
-     * \ingroup TaskActorIntView
-     */
-    template<>
-    class ViewRanges<NegBoolView> : public Iter::Ranges::Singleton {
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ViewRanges(void);
-      /// Initialize with ranges for view \a x
-      ViewRanges(const NegBoolView& x);
-      /// Initialize with ranges for view \a x
-      void init(const NegBoolView& x);
-      //@}
-    };
+  /*
+   * Delta information for advisors
+   *
+   */
+  forceinline int
+  NegBoolView::min(const Delta& d) const {
+    return x.max(d);
+  }
+  forceinline int
+  NegBoolView::max(const Delta& d) const {
+    return x.min(d);
+  }
+  forceinline bool
+  NegBoolView::any(const Delta& d) const {
+    return x.any(d);
+  }
+  forceinline bool
+  NegBoolView::zero(const Delta& d) {
+    return BoolView::one(d);
+  }
+  forceinline bool
+  NegBoolView::one(const Delta& d) {
+    return BoolView::zero(d);
+  }
 
-    forceinline
-    ViewRanges<NegBoolView>::ViewRanges(void) {}
 
-    forceinline
-    ViewRanges<NegBoolView>::ViewRanges(const NegBoolView& x)
-      : Iter::Ranges::Singleton(x.min(),x.max()) {}
+  /**
+   * \brief %Range iterator for negated Boolean variable views
+   * \ingroup TaskActorIntView
+   */
+  template<>
+  class ViewRanges<NegBoolView> : public Iter::Ranges::Singleton {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ViewRanges(void);
+    /// Initialize with ranges for view \a x
+    ViewRanges(const NegBoolView& x);
+    /// Initialize with ranges for view \a x
+    void init(const NegBoolView& x);
+    //@}
+  };
 
-    forceinline void
-    ViewRanges<NegBoolView>::init(const NegBoolView& x) {
-      Iter::Ranges::Singleton::init(x.min(),x.max());
-    }
+  forceinline
+  ViewRanges<NegBoolView>::ViewRanges(void) {}
 
+  forceinline
+  ViewRanges<NegBoolView>::ViewRanges(const NegBoolView& x)
+    : Iter::Ranges::Singleton(x.min(),x.max()) {}
+
+  forceinline void
+  ViewRanges<NegBoolView>::init(const NegBoolView& x) {
+    Iter::Ranges::Singleton::init(x.min(),x.max());
   }
 
 
@@ -190,6 +186,6 @@ namespace Gecode {
     return before(x.base(),y.base());
   }
 
-}
+}}
 
 // STATISTICS: int-var
