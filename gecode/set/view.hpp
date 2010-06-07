@@ -447,8 +447,6 @@ namespace Gecode { namespace Set {
   //@{
   /// Test whether views \a x and \a y are the same
   bool same(const EmptyView& x, const EmptyView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const EmptyView& x, const EmptyView& y);
   //@}
 
 
@@ -576,8 +574,6 @@ namespace Gecode { namespace Set {
   //@{
   /// Test whether views \a x and \a y are the same
   bool same(const UniverseView& x, const UniverseView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const UniverseView& x, const UniverseView& y);
   //@}
 
 
@@ -743,17 +739,6 @@ namespace Gecode { namespace Set {
   operator <<(std::basic_ostream<Char,Traits>& os, const SingletonView& x);
 
 
-  /** \name View comparison
-   *  \relates Gecode::Set::SingletonView
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  bool same(const SingletonView& x, const SingletonView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const SingletonView& x, const SingletonView& y);
-  //@}
-
-
   /**
    * \brief Complement set view
    *
@@ -914,21 +899,6 @@ namespace Gecode { namespace Set {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
               const ComplementView<View>& x);
-
-  /** \name View comparison
-   *  \relates Gecode::Set::ComplementView
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  template<class View>
-  bool same(const ComplementView<View>& x,
-            const ComplementView<View>& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  template<class View>
-  bool before(const ComplementView<View>& x,
-              const ComplementView<View>& y);
-  //@}
-
 
   /**
    * \brief Offset set view

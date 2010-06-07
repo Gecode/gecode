@@ -722,17 +722,8 @@ namespace Gecode { namespace Set {
     return true;
   }
   forceinline bool
-  before(const EmptyView&, const EmptyView&) {
-    return false;
-  }
-
-  forceinline bool
   same(const UniverseView&, const UniverseView&) {
     return true;
-  }
-  forceinline bool
-  before(const UniverseView&, const UniverseView&) {
-    return false;
   }
 
 }}

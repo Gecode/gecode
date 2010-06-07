@@ -393,19 +393,6 @@ namespace Gecode { namespace Set {
   forceinline unsigned int
   GlbRanges<SingletonView>::width(void) const { return 1; }
 
-  /*
-   * Testing
-   *
-   */
-  forceinline bool
-  same(const SingletonView& x, const SingletonView& y) {
-    return same(x.base(),y.base());
-  }
-  forceinline bool
-  before(const SingletonView& x, const SingletonView& y) {
-    return before(x.base(),y.base());
-  }
-
 }}
 
 // STATISTICS: set-var

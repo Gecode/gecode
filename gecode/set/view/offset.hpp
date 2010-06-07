@@ -408,12 +408,13 @@ namespace Gecode { namespace Set {
   template<class View>
   forceinline bool
   same(const OffsetSetView<View>& x, const OffsetSetView<View>& y) {
-    return same(x.base(),y.base());
+    return same(x.base(),y.base()) && (x.offset() == y.offset());
   }
   template<class View>
   forceinline bool
   before(const OffsetSetView<View>& x, const OffsetSetView<View>& y) {
-    return before(x.base(),y.base());
+    return before(x.base(),y.base()) 
+      || (same(x.base(),y.base()) && (x.offset() < y.offset()));
   }
 
 }}

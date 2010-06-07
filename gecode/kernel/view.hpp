@@ -329,43 +329,6 @@ namespace Gecode {
   bool shared(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&);
 
 
-  /// Test whether two views are the same
-  template<class ViewA, class ViewB>
-  forceinline bool 
-  same(const ConstViewBase<ViewA>&, const ConstViewBase<ViewB>&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class VarImp, class View>
-  forceinline bool 
-  same(const VarViewBase<VarImp>&, const ConstViewBase<View>&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class ViewA, class ViewB>
-  forceinline bool 
-  same(const ConstViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class VarImpA, class ViewB>
-  forceinline bool 
-  same(const VarViewBase<VarImpA>&, const DerivedViewBase<ViewB>&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class ViewA, class VarImpB>
-  forceinline bool 
-  same(const DerivedViewBase<ViewA>&, const VarViewBase<VarImpB>&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class ViewA, class ViewB>
-  forceinline bool 
-  same(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
-    return false;
-  }
-
   /*
    * Constant view: has no variable implementation
    *
@@ -524,17 +487,6 @@ namespace Gecode {
     x = y.x->copy(home,share);
   }
 
-  template<class VarImp>
-  forceinline bool
-  same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
-    return x.varimp() == y.varimp();
-  }
-  template<class ViewA, class ViewB>
-  forceinline bool
-  before(const ViewA& x, const ViewB& y) {
-    return x.varimp() < y.varimp();
-  }
-
   /*
    * Derived view: contain the base view from which they are derived
    *
@@ -632,6 +584,67 @@ namespace Gecode {
     x.update(home,share,y.x);
   }
 
+
+  /*
+   * Tests whether two views are the same
+   *
+   */
+
+  /// Test whether two views are the same
+  template<class ViewA, class ViewB>
+  forceinline bool 
+  same(const ConstViewBase<ViewA>&, const ConstViewBase<ViewB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class VarImp, class View>
+  forceinline bool 
+  same(const VarViewBase<VarImp>&, const ConstViewBase<View>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class ViewA, class ViewB>
+  forceinline bool 
+  same(const ConstViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class VarImpA, class ViewB>
+  forceinline bool 
+  same(const VarViewBase<VarImpA>&, const DerivedViewBase<ViewB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class ViewA, class VarImpB>
+  forceinline bool 
+  same(const DerivedViewBase<ViewA>&, const VarViewBase<VarImpB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class VarImp>
+  forceinline bool
+  same(const VarViewBase<VarImp>& x, const VarViewBase<VarImp>& y) {
+    return x.varimp() == y.varimp();
+  }
+  /// Test whether two views are the same
+  template<class ViewA, class ViewB>
+  forceinline bool 
+  same(const DerivedViewBase<ViewA>& x, const DerivedViewBase<ViewB>& y) {
+    return same(x.base(),y.base());
+  }
+
+
+  /*
+   * Tests whether one view is before the other
+   *
+   */
+  template<class ViewA, class ViewB>
+  forceinline bool
+  before(const ViewA& x, const ViewB& y) {
+    return x.varimp() < y.varimp();
+  }
+
+
   /*
    * Testing whether two views share the same variable
    *
@@ -642,31 +655,26 @@ namespace Gecode {
   shared(const ConstViewBase<ViewA>&, const ConstViewBase<ViewB>&) {
     return false;
   }
-
   template<class VarImp, class View>
   forceinline bool
   shared(const VarViewBase<VarImp>&, const ConstViewBase<View>&) {
     return false;
   }
-
   template<class ViewA, class ViewB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>&, const ConstViewBase<ViewB>&) {
     return false;
   }
-
   template<class View, class VarImp>
   forceinline bool
   shared(const ConstViewBase<View>&, const VarViewBase<VarImp>&) {
     return false;
   }
-
   template<class ViewA, class ViewB>
   forceinline bool
   shared(const ConstViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
     return false;
   }
-
   template<class VarImpA, class VarImpB>
   forceinline bool
   shared(const VarViewBase<VarImpA>& x, const VarViewBase<VarImpB>& y) {

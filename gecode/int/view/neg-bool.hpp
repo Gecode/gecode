@@ -172,20 +172,6 @@ namespace Gecode { namespace Int {
     Iter::Ranges::Singleton::init(x.min(),x.max());
   }
 
-
-  /*
-   * View comparison
-   *
-   */
-  forceinline bool
-  same(const NegBoolView& x, const NegBoolView& y) {
-    return same(x.base(),y.base());
-  }
-  forceinline bool
-  before(const NegBoolView& x, const NegBoolView& y) {
-    return before(x.base(),y.base());
-  }
-
 }}
 
 // STATISTICS: int-var

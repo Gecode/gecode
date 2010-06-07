@@ -288,20 +288,6 @@ namespace Gecode { namespace Int {
     return r.min() + static_cast<int>(i);
   }
 
-
-  /*
-   * View comparison
-   *
-   */
-  forceinline bool
-  same(const MinusView& x, const MinusView& y) {
-    return same(x.base(),y.base());
-  }
-  forceinline bool
-  before(const MinusView& x, const MinusView& y) {
-    return before(x.base(),y.base());
-  }
-
 }}
 
 // STATISTICS: int-var

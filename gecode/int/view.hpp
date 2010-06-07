@@ -410,16 +410,6 @@ namespace Gecode { namespace Int {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Int::MinusView
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  bool same(const MinusView& x, const MinusView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const MinusView& x, const MinusView& y);
-  //@}
-
 
   /**
    * \brief Offset integer view
@@ -744,12 +734,10 @@ namespace Gecode { namespace Int {
   //@{
   /// Test whether views \a x and \a y are the same
   template<class Val, class UnsVal>
-  bool same(const ScaleView<Val,UnsVal>& x,
-            const ScaleView<Val,UnsVal>& y);
+  bool same(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template<class Val, class UnsVal>
-  bool before(const ScaleView<Val,UnsVal>& x,
-              const ScaleView<Val,UnsVal>& y);
+  bool before(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y);
   //@}
 
 
@@ -1039,8 +1027,6 @@ namespace Gecode { namespace Int {
   //@{
   /// Test whether views \a x and \a y are the same
   bool same(const ZeroIntView& x, const ZeroIntView& y);
-  /// Test whether view \a x is before \a y (arbitrary order)
-  bool before(const ZeroIntView& x, const ZeroIntView& y);
   //@}
 
 
@@ -1319,16 +1305,6 @@ namespace Gecode { namespace Int {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const NegBoolView& x);
-
-  /** \name View comparison
-   *  \relates Gecode::Int::NegBoolView
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  bool same(const NegBoolView& x, const NegBoolView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const NegBoolView& x, const NegBoolView& y);
-  //@}
 
 }}
 

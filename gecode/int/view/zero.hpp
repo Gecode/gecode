@@ -304,10 +304,6 @@ namespace Gecode { namespace Int {
   same(const ZeroIntView&, const ZeroIntView&) {
     return true;
   }
-  forceinline bool
-  before(const ZeroIntView&, const ZeroIntView&) {
-    return false;
-  }
 
 }}
 
