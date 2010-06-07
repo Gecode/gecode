@@ -294,11 +294,11 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline bool
-  same(const Int::MinusView& x, const Int::MinusView& y) {
+  same(const MinusView& x, const MinusView& y) {
     return same(x.base(),y.base());
   }
   forceinline bool
-  before(const Int::MinusView& x, const Int::MinusView& y) {
+  before(const MinusView& x, const MinusView& y) {
     return before(x.base(),y.base());
   }
 

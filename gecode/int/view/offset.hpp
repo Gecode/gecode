@@ -284,11 +284,11 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline bool
-  same(const Int::OffsetView& x, const Int::OffsetView& y) {
+  same(const OffsetView& x, const OffsetView& y) {
     return same(x.base(),y.base()) && (x.offset() == y.offset());
   }
   forceinline bool
-  before(const Int::OffsetView& x, const Int::OffsetView& y) {
+  before(const OffsetView& x, const OffsetView& y) {
     return before(x.base(),y.base())
       || (same(x.base(),y.base()) && (x.offset() < y.offset()));
   }

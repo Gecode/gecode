@@ -358,19 +358,19 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline bool
-  same(const Int::ConstIntView& x, const Int::ConstIntView& y) {
+  same(const ConstIntView& x, const ConstIntView& y) {
     return x.min() == y.min();
   }
   forceinline bool
-  same(const Int::IntView&, const Int::ConstIntView&) {
+  same(const IntView&, const ConstIntView&) {
     return false;
   }
   forceinline bool
-  same(const Int::BoolView&, const Int::ConstIntView&) {
+  same(const BoolView&, const ConstIntView&) {
     return false;
   }
   forceinline bool
-  before(const Int::ConstIntView& x, const Int::ConstIntView& y) {
+  before(const ConstIntView& x, const ConstIntView& y) {
     return x.min() < y.min();
   }
 

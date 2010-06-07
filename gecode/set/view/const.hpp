@@ -795,15 +795,13 @@ namespace Gecode { namespace Set {
     }
     //@}
   };
-}
-
 
   /*
    * Testing
    *
    */
   forceinline bool
-  same(const Set::ConstantView& x, const Set::ConstantView& y) {
+  same(const ConstantView& x, const ConstantView& y) {
     if ((x.size != y.size) || (x.domSize != y.domSize))
       return false;
     for (int i=x.size; i--; )
@@ -813,7 +811,7 @@ namespace Gecode { namespace Set {
     return true;
   }
   forceinline bool
-  before(const Set::ConstantView& x, const Set::ConstantView& y) {
+  before(const ConstantView& x, const ConstantView& y) {
     if (x.size < y.size)
       return true;
     if (x.domSize < y.domSize)
@@ -827,24 +825,24 @@ namespace Gecode { namespace Set {
 
 
   forceinline bool
-  same(const Set::EmptyView&, const Set::EmptyView&) {
+  same(const EmptyView&, const EmptyView&) {
     return true;
   }
   forceinline bool
-  before(const Set::EmptyView&, const Set::EmptyView&) {
+  before(const EmptyView&, const EmptyView&) {
     return false;
   }
 
   forceinline bool
-  same(const Set::UniverseView&, const Set::UniverseView&) {
+  same(const UniverseView&, const UniverseView&) {
     return true;
   }
   forceinline bool
-  before(const Set::UniverseView&, const Set::UniverseView&) {
+  before(const UniverseView&, const UniverseView&) {
     return false;
   }
 
-}
+}}
 
 // STATISTICS: set-var
 

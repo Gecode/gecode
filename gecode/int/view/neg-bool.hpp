@@ -178,11 +178,11 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline bool
-  same(const Int::NegBoolView& x, const Int::NegBoolView& y) {
+  same(const NegBoolView& x, const NegBoolView& y) {
     return same(x.base(),y.base());
   }
   forceinline bool
-  before(const Int::NegBoolView& x, const Int::NegBoolView& y) {
+  before(const NegBoolView& x, const NegBoolView& y) {
     return before(x.base(),y.base());
   }
 

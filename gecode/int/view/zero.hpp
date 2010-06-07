@@ -35,311 +35,307 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Int {
 
-  namespace Int {
+  /*
+   * Constructors and initialization
+   *
+   */
+  forceinline
+  ZeroIntView::ZeroIntView(void) {}
 
-    /*
-     * Constructors and initialization
-     *
-     */
-    forceinline
-    ZeroIntView::ZeroIntView(void) {}
+  /*
+   * Value access
+   *
+   */
+  forceinline int
+  ZeroIntView::min(void) const {
+    return 0;
+  }
+  forceinline int
+  ZeroIntView::max(void) const {
+    return 0;
+  }
+  forceinline int
+  ZeroIntView::med(void) const {
+    return 0;
+  }
+  forceinline int
+  ZeroIntView::val(void) const {
+    return 0;
+  }
 
-    /*
-     * Value access
-     *
-     */
-    forceinline int
-    ZeroIntView::min(void) const {
-      return 0;
-    }
-    forceinline int
-    ZeroIntView::max(void) const {
-      return 0;
-    }
-    forceinline int
-    ZeroIntView::med(void) const {
-      return 0;
-    }
-    forceinline int
-    ZeroIntView::val(void) const {
-      return 0;
-    }
-
-    forceinline unsigned int
-    ZeroIntView::size(void) const {
-      return 1;
-    }
-    forceinline unsigned int
-    ZeroIntView::width(void) const {
-      return 1;
-    }
-    forceinline unsigned int
-    ZeroIntView::regret_min(void) const {
-      return 0;
-    }
-    forceinline unsigned int
-    ZeroIntView::regret_max(void) const {
-      return 0;
-    }
+  forceinline unsigned int
+  ZeroIntView::size(void) const {
+    return 1;
+  }
+  forceinline unsigned int
+  ZeroIntView::width(void) const {
+    return 1;
+  }
+  forceinline unsigned int
+  ZeroIntView::regret_min(void) const {
+    return 0;
+  }
+  forceinline unsigned int
+  ZeroIntView::regret_max(void) const {
+    return 0;
+  }
 
 
-    /*
-     * Domain tests
-     *
-     */
-    forceinline bool
-    ZeroIntView::range(void) const {
-      return true;
-    }
-    forceinline bool
-    ZeroIntView::in(int n) const {
-      return n == 0;
-    }
-    forceinline bool
-    ZeroIntView::in(double n) const {
-      return n == 0;
-    }
+  /*
+   * Domain tests
+   *
+   */
+  forceinline bool
+  ZeroIntView::range(void) const {
+    return true;
+  }
+  forceinline bool
+  ZeroIntView::in(int n) const {
+    return n == 0;
+  }
+  forceinline bool
+  ZeroIntView::in(double n) const {
+    return n == 0;
+  }
 
 
-    /*
-     * Domain update by value
-     *
-     */
-    forceinline ModEvent
-    ZeroIntView::lq(Space&, int n) {
-      return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ZeroIntView::lq(Space&, double n) {
-      return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  /*
+   * Domain update by value
+   *
+   */
+  forceinline ModEvent
+  ZeroIntView::lq(Space&, int n) {
+    return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ZeroIntView::lq(Space&, double n) {
+    return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ZeroIntView::le(Space&, int n) {
-      return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ZeroIntView::le(Space&, double n) {
-      return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ZeroIntView::le(Space&, int n) {
+    return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ZeroIntView::le(Space&, double n) {
+    return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ZeroIntView::gq(Space&, int n) {
-      return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ZeroIntView::gq(Space&, double n) {
-      return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ZeroIntView::gq(Space&, int n) {
+    return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ZeroIntView::gq(Space&, double n) {
+    return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ZeroIntView::gr(Space&, int n) {
-      return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ZeroIntView::gr(Space&, double n) {
-      return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ZeroIntView::gr(Space&, int n) {
+    return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ZeroIntView::gr(Space&, double n) {
+    return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ZeroIntView::nq(Space&, int n) {
-      return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ZeroIntView::nq(Space&, double n) {
-      return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ZeroIntView::nq(Space&, int n) {
+    return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ZeroIntView::nq(Space&, double n) {
+    return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
-    forceinline ModEvent
-    ZeroIntView::eq(Space&, int n) {
-      return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    forceinline ModEvent
-    ZeroIntView::eq(Space&, double n) {
-      return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
-    }
+  forceinline ModEvent
+  ZeroIntView::eq(Space&, int n) {
+    return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  forceinline ModEvent
+  ZeroIntView::eq(Space&, double n) {
+    return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
+  }
 
 
 
-    /*
-     * Iterator-based domain update
-     *
-     */
-    template<class I>
-    forceinline ModEvent
-    ZeroIntView::narrow_r(Space&, I& i, bool) {
-      Iter::Ranges::IsRangeIter<I>();
-      return i() ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ZeroIntView::inter_r(Space&, I& i, bool) {
-      Iter::Ranges::IsRangeIter<I>();
-      while (i() && (i.max() < 0))
-        ++i;
-      return (i() && (i.min() <= 0)) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ZeroIntView::minus_r(Space&, I& i, bool) {
-      Iter::Ranges::IsRangeIter<I>();
-      while (i() && (i.max() < 0))
-        ++i;
-      return (i() && (i.min() <= 0)) ? ME_INT_FAILED : ME_INT_NONE;
-    }
-    template<class I>
-    forceinline ModEvent
-    ZeroIntView::narrow_v(Space&, I& i, bool) {
-      Iter::Values::IsValueIter<I>();
-      return i() ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ZeroIntView::inter_v(Space&, I& i, bool) {
-      Iter::Values::IsValueIter<I>();
-      while (i() && (i.val() < 0))
-        ++i;
-      return (i() && (i.val() == 0)) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-    template<class I>
-    forceinline ModEvent
-    ZeroIntView::minus_v(Space&, I& i, bool) {
-      Iter::Values::IsValueIter<I>();
-      while (i() && (i.val() < 0))
-        ++i;
-      return (i() && (i.val() == 0)) ? ME_INT_FAILED : ME_INT_NONE;
-    }
+  /*
+   * Iterator-based domain update
+   *
+   */
+  template<class I>
+  forceinline ModEvent
+  ZeroIntView::narrow_r(Space&, I& i, bool) {
+    Iter::Ranges::IsRangeIter<I>();
+    return i() ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ZeroIntView::inter_r(Space&, I& i, bool) {
+    Iter::Ranges::IsRangeIter<I>();
+    while (i() && (i.max() < 0))
+      ++i;
+    return (i() && (i.min() <= 0)) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ZeroIntView::minus_r(Space&, I& i, bool) {
+    Iter::Ranges::IsRangeIter<I>();
+    while (i() && (i.max() < 0))
+      ++i;
+    return (i() && (i.min() <= 0)) ? ME_INT_FAILED : ME_INT_NONE;
+  }
+  template<class I>
+  forceinline ModEvent
+  ZeroIntView::narrow_v(Space&, I& i, bool) {
+    Iter::Values::IsValueIter<I>();
+    return i() ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ZeroIntView::inter_v(Space&, I& i, bool) {
+    Iter::Values::IsValueIter<I>();
+    while (i() && (i.val() < 0))
+      ++i;
+    return (i() && (i.val() == 0)) ? ME_INT_NONE : ME_INT_FAILED;
+  }
+  template<class I>
+  forceinline ModEvent
+  ZeroIntView::minus_v(Space&, I& i, bool) {
+    Iter::Values::IsValueIter<I>();
+    while (i() && (i.val() < 0))
+      ++i;
+    return (i() && (i.val() == 0)) ? ME_INT_FAILED : ME_INT_NONE;
+  }
 
 
-    /*
-     * Propagator modification events
-     *
-     */
-    forceinline void
-    ZeroIntView::schedule(Space& home, Propagator& p, ModEvent me) {
-      return IntView::schedule(home,p,me);
-    }
-    forceinline ModEvent
-    ZeroIntView::me(const ModEventDelta&) {
-      return ME_INT_NONE;
-    }
-    forceinline ModEventDelta
-    ZeroIntView::med(ModEvent me) {
-      return static_cast<ModEventDelta>(me);
-    }
+  /*
+   * Propagator modification events
+   *
+   */
+  forceinline void
+  ZeroIntView::schedule(Space& home, Propagator& p, ModEvent me) {
+    return IntView::schedule(home,p,me);
+  }
+  forceinline ModEvent
+  ZeroIntView::me(const ModEventDelta&) {
+    return ME_INT_NONE;
+  }
+  forceinline ModEventDelta
+  ZeroIntView::med(ModEvent me) {
+    return static_cast<ModEventDelta>(me);
+  }
 
 
-    /*
-     * Dependencies
-     *
-     */
-    forceinline void
-    ZeroIntView::subscribe(Space& home, Propagator& p, PropCond,
-                           bool _schedule) {
-      if (_schedule)
-        schedule(home,p,ME_INT_VAL);
-    }
-    forceinline void
-    ZeroIntView::cancel(Space&,Propagator&,PropCond) {}
-    forceinline void
-    ZeroIntView::subscribe(Space&, Advisor&) {}
-    forceinline void
-    ZeroIntView::cancel(Space&,Advisor&) {}
+  /*
+   * Dependencies
+   *
+   */
+  forceinline void
+  ZeroIntView::subscribe(Space& home, Propagator& p, PropCond,
+                         bool _schedule) {
+    if (_schedule)
+      schedule(home,p,ME_INT_VAL);
+  }
+  forceinline void
+  ZeroIntView::cancel(Space&,Propagator&,PropCond) {}
+  forceinline void
+  ZeroIntView::subscribe(Space&, Advisor&) {}
+  forceinline void
+  ZeroIntView::cancel(Space&,Advisor&) {}
 
 
 
-    /*
-     * Delta information for advisors
-     *
-     */
-    forceinline ModEvent
-    ZeroIntView::modevent(const Delta&) {
-      return ME_INT_NONE;
-    }
-    forceinline int
-    ZeroIntView::min(const Delta&) const {
-      return 1;
-    }
-    forceinline int
-    ZeroIntView::max(const Delta&) const {
-      return 0;
-    }
-    forceinline bool
-    ZeroIntView::any(const Delta&) const {
-      return true;
-    }
+  /*
+   * Delta information for advisors
+   *
+   */
+  forceinline ModEvent
+  ZeroIntView::modevent(const Delta&) {
+    return ME_INT_NONE;
+  }
+  forceinline int
+  ZeroIntView::min(const Delta&) const {
+    return 1;
+  }
+  forceinline int
+  ZeroIntView::max(const Delta&) const {
+    return 0;
+  }
+  forceinline bool
+  ZeroIntView::any(const Delta&) const {
+    return true;
+  }
 
 
-    /**
-     * \brief %Range iterator for constant integer views
-     * \ingroup TaskActorIntView
-     */
-    template<>
-    class ViewRanges<ZeroIntView> {
-    private:
-      /// Whether the iterator is done
-      bool done;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Default constructor
-      ViewRanges(void);
-      /// Initialize with ranges for view \a x
-      ViewRanges(const ZeroIntView& x);
-      /// Initialize with ranges for view \a x
-      void init(const ZeroIntView& x);
-      //@}
+  /**
+   * \brief %Range iterator for constant integer views
+   * \ingroup TaskActorIntView
+   */
+  template<>
+  class ViewRanges<ZeroIntView> {
+  private:
+    /// Whether the iterator is done
+    bool done;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ViewRanges(void);
+    /// Initialize with ranges for view \a x
+    ViewRanges(const ZeroIntView& x);
+    /// Initialize with ranges for view \a x
+    void init(const ZeroIntView& x);
+    //@}
 
-      /// \name Iteration control
-      //@{
-      /// Test whether iterator is still at a range or done
-      bool operator ()(void) const;
-      /// Move iterator to next range (if possible)
-      void operator ++(void);
-      //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator ()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator ++(void);
+    //@}
 
-      /// \name Range access
-      //@{
-      /// Return smallest value of range
-      int min(void) const;
-      /// Return largest value of range
-      int max(void) const;
-      /// Return width of ranges (distance between minimum and maximum)
-      unsigned int width(void) const;
-      //@}
-    };
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of ranges (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
 
-    forceinline
-    ViewRanges<ZeroIntView>::ViewRanges(void) {}
+  forceinline
+  ViewRanges<ZeroIntView>::ViewRanges(void) {}
 
-    forceinline
-    ViewRanges<ZeroIntView>::ViewRanges(const ZeroIntView&)
-      : done(false) {}
+  forceinline
+  ViewRanges<ZeroIntView>::ViewRanges(const ZeroIntView&)
+    : done(false) {}
 
-    forceinline bool
-    ViewRanges<ZeroIntView>::operator ()(void) const {
-      return !done;
-    }
-    forceinline void
-    ViewRanges<ZeroIntView>::operator ++(void) {
-      done=true;
-    }
+  forceinline bool
+  ViewRanges<ZeroIntView>::operator ()(void) const {
+    return !done;
+  }
+  forceinline void
+  ViewRanges<ZeroIntView>::operator ++(void) {
+    done=true;
+  }
 
-    forceinline int
-    ViewRanges<ZeroIntView>::min(void) const {
-      return 0;
-    }
-    forceinline int
-    ViewRanges<ZeroIntView>::max(void) const {
-      return 0;
-    }
-    forceinline unsigned int
-    ViewRanges<ZeroIntView>::width(void) const {
-      return 1;
-    }
-
+  forceinline int
+  ViewRanges<ZeroIntView>::min(void) const {
+    return 0;
+  }
+  forceinline int
+  ViewRanges<ZeroIntView>::max(void) const {
+    return 0;
+  }
+  forceinline unsigned int
+  ViewRanges<ZeroIntView>::width(void) const {
+    return 1;
   }
 
   /*
@@ -347,15 +343,15 @@ namespace Gecode {
    *
    */
   forceinline bool
-  same(const Int::ZeroIntView&, const Int::ZeroIntView&) {
+  same(const ZeroIntView&, const ZeroIntView&) {
     return true;
   }
   forceinline bool
-  before(const Int::ZeroIntView&, const Int::ZeroIntView&) {
+  before(const ZeroIntView&, const ZeroIntView&) {
     return false;
   }
 
-}
+}}
 
 // STATISTICS: int-var
 

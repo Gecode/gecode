@@ -415,9 +415,9 @@ namespace Gecode { namespace Int {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Int::MinusView& x, const Int::MinusView& y);
+  bool same(const MinusView& x, const MinusView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Int::MinusView& x, const Int::MinusView& y);
+  bool before(const MinusView& x, const MinusView& y);
   //@}
 
 
@@ -576,9 +576,9 @@ namespace Gecode { namespace Int {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Int::OffsetView& x, const Int::OffsetView& y);
+  bool same(const OffsetView& x, const OffsetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Int::OffsetView& x, const Int::OffsetView& y);
+  bool before(const OffsetView& x, const OffsetView& y);
   //@}
 
 
@@ -744,12 +744,12 @@ namespace Gecode { namespace Int {
   //@{
   /// Test whether views \a x and \a y are the same
   template<class Val, class UnsVal>
-  bool same(const Int::ScaleView<Val,UnsVal>& x,
-            const Int::ScaleView<Val,UnsVal>& y);
+  bool same(const ScaleView<Val,UnsVal>& x,
+            const ScaleView<Val,UnsVal>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template<class Val, class UnsVal>
-  bool before(const Int::ScaleView<Val,UnsVal>& x,
-              const Int::ScaleView<Val,UnsVal>& y);
+  bool before(const ScaleView<Val,UnsVal>& x,
+              const ScaleView<Val,UnsVal>& y);
   //@}
 
 
@@ -928,9 +928,9 @@ namespace Gecode { namespace Int {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Int::ConstIntView& x, const Int::ConstIntView& y);
+  bool same(const ConstIntView& x, const ConstIntView& y);
   /// Test whether view \a x is before \a y (arbitrary order)
-  bool before(const Int::ConstIntView& x, const Int::ConstIntView& y);
+  bool before(const ConstIntView& x, const ConstIntView& y);
   //@}
 
 
@@ -1098,9 +1098,9 @@ namespace Gecode { namespace Int {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Int::ZeroIntView& x, const Int::ZeroIntView& y);
+  bool same(const ZeroIntView& x, const ZeroIntView& y);
   /// Test whether view \a x is before \a y (arbitrary order)
-  bool before(const Int::ZeroIntView& x, const Int::ZeroIntView& y);
+  bool before(const ZeroIntView& x, const ZeroIntView& y);
   //@}
 
 
@@ -1385,9 +1385,9 @@ namespace Gecode { namespace Int {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Int::NegBoolView& x, const Int::NegBoolView& y);
+  bool same(const NegBoolView& x, const NegBoolView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Int::NegBoolView& x, const Int::NegBoolView& y);
+  bool before(const NegBoolView& x, const NegBoolView& y);
   //@}
 
 }}
