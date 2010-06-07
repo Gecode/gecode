@@ -51,7 +51,7 @@ namespace Gecode {
   rel(Home home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
       SetVar z) {
     Set::Limits::check(x, "Set::rel");
-    ConstantView xv(home, x);
+    ConstSetView xv(home, x);
     if (home.failed()) return;
     if (r == SRT_CMPL) {
       post_compl(home, xv, op, y, z);

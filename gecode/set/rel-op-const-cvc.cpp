@@ -52,8 +52,8 @@ namespace Gecode {
       const IntSet& z) {
     Set::Limits::check(x, "Set::rel");
     Set::Limits::check(z, "Set::rel");
-    ConstantView xv(home, x);
-    ConstantView zv(home, z);
+    ConstSetView xv(home, x);
+    ConstSetView zv(home, z);
     if (r == SRT_CMPL) {
       post_compl(home, xv, op, y, zv);
     } else {

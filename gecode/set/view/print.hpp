@@ -111,10 +111,10 @@ namespace Gecode { namespace Set {
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ConstantView& x) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ConstSetView& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
-    LubRanges<ConstantView> ub(x);
+    LubRanges<ConstSetView> ub(x);
     printBound(s, ub);
     s << "#(" << x.cardMin() << ")";
     return os << s.str();

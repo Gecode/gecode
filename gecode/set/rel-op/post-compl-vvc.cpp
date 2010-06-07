@@ -44,12 +44,12 @@
 namespace Gecode { namespace Set { namespace RelOp {
 
   void
-  post_compl(Home home, SetView x, SetOpType op, SetView y, ConstantView z) {
-    GlbRanges<ConstantView> zr(z);
-    RangesCompl<GlbRanges<ConstantView> > zrc(zr);
+  post_compl(Home home, SetView x, SetOpType op, SetView y, ConstSetView z) {
+    GlbRanges<ConstSetView> zr(z);
+    RangesCompl<GlbRanges<ConstSetView> > zrc(zr);
     IntSet zc(zrc);
-    ConstantView cz(home, zc);
-    rel_eq<SetView,SetView,ConstantView>(home, x, op, y, cz);
+    ConstSetView cz(home, zc);
+    rel_eq<SetView,SetView,ConstSetView>(home, x, op, y, cz);
   }
 
 }}}

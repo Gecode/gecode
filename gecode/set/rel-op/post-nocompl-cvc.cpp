@@ -44,9 +44,9 @@
 namespace Gecode { namespace Set { namespace RelOp {
 
   void
-  post_nocompl(Home home, ConstantView x, SetOpType op, SetView y,
-               SetRelType r, ConstantView z) {
-    rel_op_post_nocompl<ConstantView,SetView,ConstantView>(home,
+  post_nocompl(Home home, ConstSetView x, SetOpType op, SetView y,
+               SetRelType r, ConstSetView z) {
+    rel_op_post_nocompl<ConstSetView,SetView,ConstSetView>(home,
       x, op, y, r, z);
   }
 

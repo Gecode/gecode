@@ -91,7 +91,7 @@ namespace Gecode {
       break;
     case SRT_NQ:
       {
-        Set::ConstantView cv(home, is);
+        Set::ConstSetView cv(home, is);
         GECODE_ES_FAIL(
                        (Set::Rel::DistinctDoit<Set::SetView>::post(home, s,
                                                                    cv)));
@@ -165,35 +165,35 @@ namespace Gecode {
     switch (r) {
     case SRT_EQ:
       {
-        Set::ConstantView cv(home, is);
+        Set::ConstSetView cv(home, is);
         GECODE_ES_FAIL(
                        (Set::Rel::ReEq<Set::SetView,
-                        Set::ConstantView>::post(home, s, cv, b)));
+                        Set::ConstSetView>::post(home, s, cv, b)));
       }
       break;
     case SRT_NQ:
       {
         BoolVar notb(home,0,1);
         rel(home, b, IRT_NQ, notb);
-        Set::ConstantView cv(home, is);
+        Set::ConstSetView cv(home, is);
         GECODE_ES_FAIL(
                        (Set::Rel::ReEq<Set::SetView,
-                        Set::ConstantView>::post(home, s, cv, notb)));
+                        Set::ConstSetView>::post(home, s, cv, notb)));
       }
       break;
     case SRT_SUB:
       {
-        Set::ConstantView cv(home, is);
+        Set::ConstSetView cv(home, is);
         GECODE_ES_FAIL(
-                       (Set::Rel::ReSubset<Set::SetView,Set::ConstantView>
+                       (Set::Rel::ReSubset<Set::SetView,Set::ConstSetView>
                         ::post(home, s, cv, b)));
       }
       break;
     case SRT_SUP:
       {
-        Set::ConstantView cv(home, is);
+        Set::ConstSetView cv(home, is);
         GECODE_ES_FAIL(
-                       (Set::Rel::ReSubset<Set::ConstantView,Set::SetView>
+                       (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView>
                         ::post(home, cv, s, b)));
       }
       break;
@@ -206,9 +206,9 @@ namespace Gecode {
         IntSetRanges dr1(is);
         Set::RangesCompl<IntSetRanges > dc1(dr1);
         IntSet dcompl(dc1);
-        Set::ConstantView cvcompl(home, dcompl);
+        Set::ConstSetView cvcompl(home, dcompl);
         GECODE_ES_FAIL(
-                       (Set::Rel::ReSubset<Set::SetView,Set::ConstantView>
+                       (Set::Rel::ReSubset<Set::SetView,Set::ConstSetView>
                         ::post(home, s, cvcompl, b)));
       }
       break;
@@ -219,10 +219,10 @@ namespace Gecode {
         IntSetRanges dr1(is);
         Set::RangesCompl<IntSetRanges> dc1(dr1);
         IntSet dcompl(dc1);
-        Set::ConstantView cvcompl(home, dcompl);
+        Set::ConstSetView cvcompl(home, dcompl);
 
         GECODE_ES_FAIL(
-                       (Set::Rel::ReEq<Set::SetView,Set::ConstantView>
+                       (Set::Rel::ReEq<Set::SetView,Set::ConstSetView>
                         ::post(home, sv, cvcompl, b)));
       }
       break;

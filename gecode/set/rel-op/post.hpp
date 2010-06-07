@@ -209,29 +209,29 @@ namespace Gecode { namespace Set { namespace RelOp {
   post_nocompl(Home home, SetView x, SetOpType op, SetView y,
                SetRelType r, SetView z);
   GECODE_SET_EXPORT void
-  post_nocompl(Home home, ConstantView x, SetOpType op, SetView y,
+  post_nocompl(Home home, ConstSetView x, SetOpType op, SetView y,
                SetRelType r, SetView z);
 
   GECODE_SET_EXPORT void
   post_nocompl(Home home, SetView x, SetOpType op, SetView y,
-               SetRelType r, ConstantView z);
+               SetRelType r, ConstSetView z);
 
   GECODE_SET_EXPORT void
-  post_nocompl(Home home, ConstantView x, SetOpType op, SetView y,
-               SetRelType r, ConstantView z);
+  post_nocompl(Home home, ConstSetView x, SetOpType op, SetView y,
+               SetRelType r, ConstSetView z);
 
   GECODE_SET_EXPORT void
   post_compl(Home home, SetView x, SetOpType op, SetView y, SetView z);
 
   GECODE_SET_EXPORT void
-  post_compl(Home home, ConstantView x, SetOpType op, SetView y, SetView z);
+  post_compl(Home home, ConstSetView x, SetOpType op, SetView y, SetView z);
 
   GECODE_SET_EXPORT void
-  post_compl(Home home, SetView x, SetOpType op, SetView y, ConstantView z);
+  post_compl(Home home, SetView x, SetOpType op, SetView y, ConstSetView z);
 
   GECODE_SET_EXPORT void
-  post_compl(Home home, ConstantView x, SetOpType op, SetView y,
-             ConstantView z);
+  post_compl(Home home, ConstSetView x, SetOpType op, SetView y,
+             ConstSetView z);
 
 }}}
 

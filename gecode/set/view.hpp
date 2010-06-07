@@ -176,9 +176,9 @@ namespace Gecode { namespace Set {
 
 
   // Forward declarations for friends
-  class ConstantView;
-  bool same(const ConstantView&, const ConstantView&);
-  bool before(const ConstantView&, const ConstantView&);
+  class ConstSetView;
+  bool same(const ConstSetView&, const ConstSetView&);
+  bool before(const ConstSetView&, const ConstSetView&);
 
   /**
    * \brief Constant view
@@ -187,13 +187,13 @@ namespace Gecode { namespace Set {
    * that \f$x\f$ behaves like \f$s\f$.
    * \ingroup TaskActorSetView
    */
-  class ConstantView : public ConstViewBase<SetView> {
-    friend class LubRanges<ConstantView>;
-    friend class GlbRanges<ConstantView>;
-    friend bool Gecode::Set::same(const Gecode::Set::ConstantView&,
-                                  const Gecode::Set::ConstantView&);
-    friend bool Gecode::Set::before(const Gecode::Set::ConstantView&,
-                                    const Gecode::Set::ConstantView&);
+  class ConstSetView : public ConstViewBase<SetView> {
+    friend class LubRanges<ConstSetView>;
+    friend class GlbRanges<ConstSetView>;
+    friend bool Gecode::Set::same(const Gecode::Set::ConstSetView&,
+                                  const Gecode::Set::ConstSetView&);
+    friend bool Gecode::Set::before(const Gecode::Set::ConstSetView&,
+                                    const Gecode::Set::ConstSetView&);
   private:
     int *ranges;
     int size;
@@ -202,9 +202,9 @@ namespace Gecode { namespace Set {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    ConstantView(void);
+    ConstSetView(void);
     /// Construct with \a s as the domain
-    ConstantView(Space& home, const IntSet& s);
+    ConstSetView(Space& home, const IntSet& s);
     //@}
 
     /// \name Value access
@@ -284,7 +284,7 @@ namespace Gecode { namespace Set {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, ConstantView& y);
+    void update(Space& home, bool share, ConstSetView& y);
     //@}
 
     /// \name Delta information for advisors
@@ -307,20 +307,20 @@ namespace Gecode { namespace Set {
 
   /**
    * \brief Print constant set view
-   * \relates Gecode::Set::ConstantView
+   * \relates Gecode::Set::ConstSetView
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ConstantView& x);
+  operator <<(std::basic_ostream<Char,Traits>& os, const ConstSetView& x);
 
   /** \name View comparison
-   *  \relates Gecode::Set::ConstantView
+   *  \relates Gecode::Set::ConstSetView
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const ConstantView& x, const ConstantView& y);
+  bool same(const ConstSetView& x, const ConstSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const ConstantView& x, const ConstantView& y);
+  bool before(const ConstSetView& x, const ConstSetView& y);
   //@}
 
 

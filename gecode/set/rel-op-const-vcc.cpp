@@ -52,20 +52,20 @@ namespace Gecode {
       const IntSet& z) {
     Set::Limits::check(y, "Set::rel");
     Set::Limits::check(z, "Set::rel");
-    ConstantView yv(home, y);
-    ConstantView zv(home, z);
+    ConstSetView yv(home, y);
+    ConstSetView zv(home, z);
 
     if (op==SOT_MINUS) {
       switch (r) {
       case SRT_EQ:
         {
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
+          GlbRanges<ConstSetView> yr(yv);
+          RangesCompl<GlbRanges<ConstSetView> > yrc(yr);
           IntSet yc(yrc);
-          ConstantView cy(home, yc);
+          ConstSetView cy(home, yc);
           GECODE_ES_FAIL(
-                         (Intersection<ConstantView,
-                          SetView,ConstantView>
+                         (Intersection<ConstSetView,
+                          SetView,ConstSetView>
                           ::post(home,cy,x,zv)));
         }
         break;
@@ -73,26 +73,26 @@ namespace Gecode {
         {
           SetVar tmp(home);
           GECODE_ES_FAIL(
-                         (Distinct<SetView,ConstantView>
+                         (Distinct<SetView,ConstSetView>
                           ::post(home,tmp,zv)));
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
+          GlbRanges<ConstSetView> yr(yv);
+          RangesCompl<GlbRanges<ConstSetView> > yrc(yr);
           IntSet yc(yrc);
-          ConstantView cy(home, yc);
+          ConstSetView cy(home, yc);
           GECODE_ES_FAIL(
-                         (Intersection<ConstantView,
+                         (Intersection<ConstSetView,
                           SetView,SetView>
                           ::post(home,cy,x,tmp)));
         }
         break;
       case SRT_SUB:
         {
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
+          GlbRanges<ConstSetView> yr(yv);
+          RangesCompl<GlbRanges<ConstSetView> > yrc(yr);
           IntSet yc(yrc);
-          ConstantView cy(home, yc);
+          ConstSetView cy(home, yc);
           GECODE_ES_FAIL(
-                         (SuperOfInter<ConstantView,SetView,ConstantView>
+                         (SuperOfInter<ConstSetView,SetView,ConstSetView>
                           ::post(home,cy,x,zv)));
 
         }
@@ -103,13 +103,13 @@ namespace Gecode {
           SetVar tmp(home,z,Limits::min, Limits::max);
           SetView xv(x);
 
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
+          GlbRanges<ConstSetView> yr(yv);
+          RangesCompl<GlbRanges<ConstSetView> > yrc(yr);
           IntSet yc(yrc);
-          ConstantView cy(home, yc);
+          ConstSetView cy(home, yc);
 
           GECODE_ES_FAIL(
-                         (Intersection<ConstantView,
+                         (Intersection<ConstSetView,
                           SetView,SetView>
                           ::post(home,cy,xv,tmp)));
         }
@@ -121,12 +121,12 @@ namespace Gecode {
           IntSetRanges zi(z);
           GECODE_ME_FAIL( tmpv.excludeI(home, zi));
 
-          GlbRanges<ConstantView> yr(yv);
-          RangesCompl<GlbRanges<ConstantView> > yrc(yr);
+          GlbRanges<ConstSetView> yr(yv);
+          RangesCompl<GlbRanges<ConstSetView> > yrc(yr);
           IntSet yc(yrc);
-          ConstantView cy(home, yc);
+          ConstSetView cy(home, yc);
           GECODE_ES_FAIL(
-                         (Intersection<ConstantView,
+                         (Intersection<ConstSetView,
                           SetView,SetView>
                           ::post(home,cy,x,tmp)));
         }
@@ -136,9 +136,9 @@ namespace Gecode {
           SetView xv(x);
           ComplementView<SetView> cx(xv);
           GECODE_ES_FAIL(
-                         (Union<ConstantView,
+                         (Union<ConstSetView,
                           ComplementView<SetView>,
-                          ConstantView>::post(home, yv, cx, zv)));
+                          ConstSetView>::post(home, yv, cx, zv)));
         }
         break;
       default:

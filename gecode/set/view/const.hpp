@@ -82,10 +82,10 @@ namespace Gecode { namespace Set {
   };
 
   forceinline
-  ConstantView::ConstantView(void) : ranges(NULL), size(0), domSize(0) {}
+  ConstSetView::ConstSetView(void) : ranges(NULL), size(0), domSize(0) {}
 
   forceinline
-  ConstantView::ConstantView(Space& home, const IntSet& dom) {
+  ConstSetView::ConstSetView(Space& home, const IntSet& dom) {
     size = dom.ranges();
     domSize = 0;
     if (size > 0) {
@@ -103,16 +103,16 @@ namespace Gecode { namespace Set {
   }
 
   forceinline unsigned int
-  ConstantView::glbSize(void) const { return domSize; }
+  ConstSetView::glbSize(void) const { return domSize; }
 
   forceinline unsigned int
-  ConstantView::lubSize(void) const { return domSize; }
+  ConstSetView::lubSize(void) const { return domSize; }
 
   forceinline unsigned int
-  ConstantView::unknownSize(void) const { return 0; }
+  ConstSetView::unknownSize(void) const { return 0; }
 
   forceinline bool
-  ConstantView::contains(int i) const {
+  ConstSetView::contains(int i) const {
     for (int j=size; j--; ) {
       if (ranges[2*j+1] < i)
         return false;
@@ -123,54 +123,54 @@ namespace Gecode { namespace Set {
   }
 
   forceinline bool
-  ConstantView::notContains(int i) const {
+  ConstSetView::notContains(int i) const {
     return !contains(i);
   }
 
   forceinline unsigned int
-  ConstantView::cardMin(void) const { return domSize; }
+  ConstSetView::cardMin(void) const { return domSize; }
 
   forceinline unsigned int
-  ConstantView::cardMax(void) const { return domSize; }
+  ConstSetView::cardMax(void) const { return domSize; }
 
   forceinline int
-  ConstantView::lubMin(void) const {
+  ConstSetView::lubMin(void) const {
     return size==0 ? BndSet::MIN_OF_EMPTY : ranges[0];
   }
 
   forceinline int
-  ConstantView::lubMax(void) const {
+  ConstSetView::lubMax(void) const {
     return size==0 ? BndSet::MAX_OF_EMPTY : ranges[size*2-1];
   }
 
   forceinline int
-  ConstantView::glbMin(void) const { return lubMin(); }
+  ConstSetView::glbMin(void) const { return lubMin(); }
 
   forceinline int
-  ConstantView::glbMax(void) const { return lubMax(); }
+  ConstSetView::glbMax(void) const { return lubMax(); }
 
   forceinline ModEvent
-  ConstantView::cardMin(Space&,unsigned int c) {
+  ConstSetView::cardMin(Space&,unsigned int c) {
     return c<=domSize ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::cardMax(Space&,unsigned int c) {
+  ConstSetView::cardMax(Space&,unsigned int c) {
     return c>=domSize ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::include(Space&,int c) {
+  ConstSetView::include(Space&,int c) {
     return contains(c) ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::exclude(Space&,int c) {
+  ConstSetView::exclude(Space&,int c) {
     return contains(c) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   forceinline ModEvent
-  ConstantView::intersect(Space&,int c) {
+  ConstSetView::intersect(Space&,int c) {
     return (size==0 ||
             (size==1 &&
              ranges[0]==ranges[1] && ranges[0]==c)) ?
@@ -178,13 +178,13 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  ConstantView::intersect(Space&,int i,int j) {
+  ConstSetView::intersect(Space&,int i,int j) {
     return (glbMin()>=i && glbMax()<=j) ?
       ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline ModEvent
-  ConstantView::include(Space&,int i,int j) {
+  ConstSetView::include(Space&,int i,int j) {
     Iter::Ranges::Singleton single(i,j);
     ArrayRanges ar(ranges, size);
     return (single() && Iter::Ranges::subset(single, ar)) ?
@@ -192,7 +192,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  ConstantView::exclude(Space&,int i,int j) {
+  ConstSetView::exclude(Space&,int i,int j) {
     Iter::Ranges::Singleton single(i,j);
     ArrayRanges ar(ranges, size);
     return (single() && Iter::Ranges::subset(single, ar)) ?
@@ -200,28 +200,28 @@ namespace Gecode { namespace Set {
   }
 
   template<class I> ModEvent
-  ConstantView::excludeI(Space&,I& i) {
+  ConstSetView::excludeI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return (i() && Iter::Ranges::subset(i, ar)) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template<class I> ModEvent
-  ConstantView::includeI(Space&,I& i) {
+  ConstSetView::includeI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return Iter::Ranges::subset(i, ar) ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   template<class I> ModEvent
-  ConstantView::intersectI(Space&,I& i) {
+  ConstSetView::intersectI(Space&,I& i) {
     Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return Iter::Ranges::subset(ar, i) ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   forceinline void
-  ConstantView::update(Space& home, bool share, ConstantView& p) {
+  ConstSetView::update(Space& home, bool share, ConstSetView& p) {
     ConstViewBase<SetView>::update(home,share,p);
     // dispose old ranges
     if (size > 0)
@@ -247,32 +247,32 @@ namespace Gecode { namespace Set {
    *
    */
   forceinline int
-  ConstantView::glbMin(const Delta&) const {
+  ConstSetView::glbMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
   forceinline int
-  ConstantView::glbMax(const Delta&) const {
+  ConstSetView::glbMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
   forceinline bool
-  ConstantView::glbAny(const Delta&) const {
+  ConstSetView::glbAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
   forceinline int
-  ConstantView::lubMin(const Delta&) const {
+  ConstSetView::lubMin(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
   forceinline int
-  ConstantView::lubMax(const Delta&) const {
+  ConstSetView::lubMax(const Delta&) const {
     GECODE_NEVER;
     return 0;
   }
   forceinline bool
-  ConstantView::lubAny(const Delta&) const {
+  ConstSetView::lubAny(const Delta&) const {
     GECODE_NEVER;
     return false;
   }
@@ -634,7 +634,7 @@ namespace Gecode { namespace Set {
    * \ingroup TaskActorSetView
    */
   template<>
-  class LubRanges<ConstantView> {
+  class LubRanges<ConstSetView> {
   private:
     ArrayRanges ar;
   public:
@@ -643,9 +643,9 @@ namespace Gecode { namespace Set {
     /// Default constructor
     LubRanges(void) {}
     /// Initialize with ranges for view \a x
-    LubRanges(const ConstantView& x) : ar(x.ranges,x.size) {}
+    LubRanges(const ConstSetView& x) : ar(x.ranges,x.size) {}
     /// Initialize with ranges for view \a x
-    void init(const ConstantView& x) {
+    void init(const ConstSetView& x) {
       ar.init(x.ranges,x.size);
     }
     //@}
@@ -674,17 +674,17 @@ namespace Gecode { namespace Set {
    * \ingroup TaskActorSetView
    */
   template<>
-  class GlbRanges<ConstantView> : public LubRanges<ConstantView> {
+  class GlbRanges<ConstSetView> : public LubRanges<ConstSetView> {
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     GlbRanges(void) {}
     /// Initialize with ranges for view \a x
-    GlbRanges(const ConstantView& x) : LubRanges<ConstantView>(x) {}
+    GlbRanges(const ConstSetView& x) : LubRanges<ConstSetView>(x) {}
     /// Initialize with ranges for view \a x
-    void init(const ConstantView& x) {
-      LubRanges<ConstantView>::init(x);
+    void init(const ConstSetView& x) {
+      LubRanges<ConstSetView>::init(x);
     }
     //@}
   };
@@ -694,7 +694,7 @@ namespace Gecode { namespace Set {
    *
    */
   forceinline bool
-  same(const ConstantView& x, const ConstantView& y) {
+  same(const ConstSetView& x, const ConstSetView& y) {
     if ((x.size != y.size) || (x.domSize != y.domSize))
       return false;
     for (int i=x.size; i--; )
@@ -704,7 +704,7 @@ namespace Gecode { namespace Set {
     return true;
   }
   forceinline bool
-  before(const ConstantView& x, const ConstantView& y) {
+  before(const ConstSetView& x, const ConstSetView& y) {
     if (x.size < y.size)
       return true;
     if (x.domSize < y.domSize)

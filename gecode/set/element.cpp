@@ -44,7 +44,7 @@ namespace Gecode {
   namespace Int { namespace Element {
     template<>
     /// VarArg type for constant %Set views
-    class ViewToVarArg<Gecode::Set::ConstantView> {
+    class ViewToVarArg<Gecode::Set::ConstSetView> {
     public:
       typedef IntSetArgs argtype;
     };
@@ -99,12 +99,12 @@ namespace Gecode {
     switch (op) {
     case SOT_DUNION:
       {
-        Set::Element::ElementDisjoint<ConstantView,SetView>::IdxViewArray
+        Set::Element::ElementDisjoint<ConstSetView,SetView>::IdxViewArray
           iv(home, x.size());
         for (int i=x.size(); i--;) {
-          iv[i].idx = i; iv[i].view = ConstantView(home, x[i]);
+          iv[i].idx = i; iv[i].view = ConstSetView(home, x[i]);
         }
-        GECODE_ES_FAIL((Element::ElementDisjoint<ConstantView,SetView>::
+        GECODE_ES_FAIL((Element::ElementDisjoint<ConstSetView,SetView>::
                         post(home,iv,y)));
       }
       // fall through
@@ -120,13 +120,13 @@ namespace Gecode {
       break;
     case SOT_INTER:
       {
-        Set::Element::ElementIntersection<ConstantView,SetView>::IdxViewArray
+        Set::Element::ElementIntersection<ConstSetView,SetView>::IdxViewArray
           iv(home, x.size());
         for (int i=x.size(); i--;) {
-          iv[i].idx = i; iv[i].view = ConstantView(home, x[i]);
+          iv[i].idx = i; iv[i].view = ConstSetView(home, x[i]);
         }
         GECODE_ES_FAIL(
-                       (Element::ElementIntersection<ConstantView,SetView>::
+                       (Element::ElementIntersection<ConstSetView,SetView>::
                         post(home,z,iv,y,universe)));
       }
       break;

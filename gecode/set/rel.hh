@@ -233,18 +233,18 @@ namespace Gecode { namespace Set { namespace Rel {
   protected:
     using UnaryPropagator<View0,PC_SET_ANY>::x0;
     /// The view that is already assigned
-    ConstantView y;
+    ConstSetView y;
     /// Constructor for cloning \a p
     DistinctDoit(Space& home, bool share,DistinctDoit&);
     /// Constructor for posting
-    DistinctDoit(Home home, View0, ConstantView);
+    DistinctDoit(Home home, View0, ConstSetView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space& home, bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y \f$
-    static ExecStatus post(Home home, View0, ConstantView);
+    static ExecStatus post(Home home, View0, ConstSetView);
   };
 
 }}}

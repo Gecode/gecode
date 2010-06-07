@@ -60,13 +60,13 @@ namespace Gecode { namespace Set { namespace Rel {
     if (x.assigned()) {
       GlbRanges<View0> xr(x);
       IntSet xs(xr);
-      ConstantView cv(home, xs);
+      ConstSetView cv(home, xs);
       GECODE_ES_CHECK((DistinctDoit<View1>::post(home,y,cv)));
     }
     if (y.assigned()) {
       GlbRanges<View1> yr(y);
       IntSet ys(yr);
-      ConstantView cv(home, ys);
+      ConstSetView cv(home, ys);
       GECODE_ES_CHECK((DistinctDoit<View0>::post(home,x,cv)));
     }
     (void) new (home) Distinct<View0,View1>(home,x,y);
@@ -86,19 +86,19 @@ namespace Gecode { namespace Set { namespace Rel {
     if (x0.assigned()) {
       GlbRanges<View0> xr(x0);
       IntSet xs(xr);
-      ConstantView cv(home, xs);
+      ConstSetView cv(home, xs);
       GECODE_REWRITE(*this,(DistinctDoit<View1>::post(home(*this),x1,cv)));
     } else {
       GlbRanges<View1> yr(x1);
       IntSet ys(yr);
-      ConstantView cv(home, ys);
+      ConstSetView cv(home, ys);
       GECODE_REWRITE(*this,(DistinctDoit<View0>::post(home(*this),x0,cv)));
     }
   }
 
   template<class View0>
   ExecStatus
-  DistinctDoit<View0>::post(Home home, View0 x, ConstantView y) {
+  DistinctDoit<View0>::post(Home home, View0 x, ConstSetView y) {
     (void) new (home) DistinctDoit<View0>(home,x,y);
     return ES_OK;
   }
@@ -114,7 +114,7 @@ namespace Gecode { namespace Set { namespace Rel {
   DistinctDoit<View0>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned()) {
       GlbRanges<View0> xi(x0);
-      GlbRanges<ConstantView> yi(y);
+      GlbRanges<ConstSetView> yi(y);
       if (Iter::Ranges::equal(xi,yi)) { return ES_FAILED; }
       else { return home.ES_SUBSUMED(*this); }
     }
@@ -124,10 +124,10 @@ namespace Gecode { namespace Set { namespace Rel {
     //These tests are too expensive, we should only do them
     //in the 1 unknown left case.
     GlbRanges<View0> xi1(x0);
-    LubRanges<ConstantView> yi1(y);
+    LubRanges<ConstSetView> yi1(y);
     if (!Iter::Ranges::subset(xi1,yi1)){ return home.ES_SUBSUMED(*this); }
     LubRanges<View0> xi2(x0);
-    GlbRanges<ConstantView> yi2(y);
+    GlbRanges<ConstSetView> yi2(y);
     if (!Iter::Ranges::subset(yi2,xi2)){ return home.ES_SUBSUMED(*this); }
     // from here, we know y\subseteq lub(x) and glb(x)\subseteq y
 
@@ -144,7 +144,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0>
   forceinline
-  DistinctDoit<View0>::DistinctDoit(Home home, View0 _x, ConstantView _y)
+  DistinctDoit<View0>::DistinctDoit(Home home, View0 _x, ConstSetView _y)
     : UnaryPropagator<View0, PC_SET_ANY>(home,_x), y(_y)  {}
 
   template<class View0>

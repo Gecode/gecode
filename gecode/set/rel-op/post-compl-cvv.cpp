@@ -44,9 +44,9 @@
 namespace Gecode { namespace Set { namespace RelOp {
 
   void
-  post_compl(Home home, ConstantView x, SetOpType op, SetView y, SetView z) {
+  post_compl(Home home, ConstSetView x, SetOpType op, SetView y, SetView z) {
     ComplementView<SetView> cz(z);
-    rel_eq<ConstantView,SetView,ComplementView<SetView> >(home, x, op, y, cz);
+    rel_eq<ConstSetView,SetView,ComplementView<SetView> >(home, x, op, y, cz);
   }
 
 }}}
