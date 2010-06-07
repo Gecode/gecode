@@ -177,19 +177,6 @@ namespace Gecode {
 
   }
 
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for SetView.
-   * \ingroup TaskActorSetView
-   */
-  template<>
-  class ViewTraits<Set::SetView> {
-  public:
-    /// The variable type of a SetView
-    typedef Set::SetVarImp VarImp;
-  };
-
 
   // Forward declarations for friends
   namespace Set { class ConstantView;  }
@@ -372,18 +359,6 @@ namespace Gecode {
   bool before(const Set::ConstantView& x, const Set::ConstantView& y);
   //@}
 
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for ConstantView.
-   * \ingroup TaskActorSetView
-   */
-  template<>
-  class ViewTraits<Set::ConstantView> {
-  public:
-    /// The variable type of a ConstantView
-    typedef VarImpBase VarImp;
-  };
 
   namespace Set {
 
@@ -544,19 +519,6 @@ namespace Gecode {
   /// Test whether view \a x comes before \a y (arbitrary order)
   bool before(const Set::EmptyView& x, const Set::EmptyView& y);
   //@}
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for EmptyView.
-   * \ingroup TaskActorSetView
-   */
-  template<>
-  class ViewTraits<Set::EmptyView> {
-  public:
-    /// The variable type of an EmptyView
-    typedef VarImpBase VarImp;
-  };
 
   namespace Set {
 
@@ -719,19 +681,6 @@ namespace Gecode {
   /// Test whether view \a x comes before \a y (arbitrary order)
   bool before(const Set::UniverseView& x, const Set::UniverseView& y);
   //@}
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for UniverseView.
-   * \ingroup TaskActorSetView
-   */
-  template<>
-  class ViewTraits<Set::UniverseView> {
-  public:
-    /// The variable type of a UniverseView
-    typedef VarImpBase VarImp;
-  };
 
   namespace Set {
 
@@ -908,19 +857,6 @@ namespace Gecode {
   /// Test whether view \a x comes before \a y (arbitrary order)
   bool before(const Set::SingletonView& x, const Set::SingletonView& y);
   //@}
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for SingletonView.
-   * \ingroup TaskActorSetView
-   */
-  template<>
-  class ViewTraits<Set::SingletonView> {
-  public:
-    /// The variable type of a SingletonView
-    typedef Int::IntVarImp VarImp;
-  };
 
   namespace Set {
 
@@ -1101,21 +1037,6 @@ namespace Gecode {
               const Set::ComplementView<View>& y);
   //@}
 
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for ComplementView.
-   * \ingroup TaskActorSetView
-   */
-  template<class View>
-  class ViewTraits<Set::ComplementView<View> > {
-  public:
-    /// The variable type of a ComplementView
-    typedef typename ViewTraits<View>::VarImp VarImp;
-  };
-
-
   namespace Set {
 
 
@@ -1265,21 +1186,6 @@ namespace Gecode {
   bool before(const Set::OffsetSetView<View>& x,
               const Set::OffsetSetView<View>& y);
   //@}
-
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for ComplementView.
-   * \ingroup TaskActorSetView
-   */
-  template<class View>
-  class ViewTraits<Set::OffsetSetView<View> > {
-  public:
-    /// The variable type of a ComplementView
-    typedef typename ViewTraits<View>::VarImp VarImp;
-  };
-
 
 }
 

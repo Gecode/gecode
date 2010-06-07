@@ -274,19 +274,6 @@ namespace Gecode {
 
   }
 
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for IntView
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewTraits<Int::IntView> {
-  public:
-    /// The variable type of an IntView
-    typedef Int::IntVarImp VarImp;
-  };
-
   namespace Int {
 
     /**
@@ -439,20 +426,6 @@ namespace Gecode {
   /// Test whether view \a x comes before \a y (arbitrary order)
   bool before(const Int::MinusView& x, const Int::MinusView& y);
   //@}
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for MinusView.
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewTraits<Int::MinusView> {
-  public:
-    /// The variable type of a MinusView
-    typedef Int::IntVarImp VarImp;
-  };
-
 
   namespace Int {
 
@@ -617,21 +590,6 @@ namespace Gecode {
   /// Test whether view \a x comes before \a y (arbitrary order)
   bool before(const Int::OffsetView& x, const Int::OffsetView& y);
   //@}
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for OffsetView.
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewTraits<Int::OffsetView> {
-  public:
-    /// The variable type of an OffsetView
-    typedef Int::IntVarImp VarImp;
-  };
-
-
 
   namespace Int {
 
@@ -807,22 +765,6 @@ namespace Gecode {
   bool before(const Int::ScaleView<Val,UnsVal>& x,
               const Int::ScaleView<Val,UnsVal>& y);
   //@}
-
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for ScaleView.
-   * \ingroup TaskActorIntView
-   */
-  template<class Val, class UnsVal>
-  class ViewTraits<Int::ScaleView<Val,UnsVal> > {
-  public:
-    /// The variable type of a ScaleView
-    typedef Int::IntVarImp VarImp;
-  };
-
-
 
   namespace Int {
 
@@ -1007,19 +949,6 @@ namespace Gecode {
   bool before(const Int::ConstIntView& x, const Int::ConstIntView& y);
   //@}
 
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for ConstIntView.
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewTraits<Int::ConstIntView> {
-  public:
-    /// The variable type of a ConstIntView
-    typedef Int::IntVarImp VarImp;
-  };
-
   namespace Int {
 
     /**
@@ -1192,19 +1121,6 @@ namespace Gecode {
   /// Test whether view \a x is before \a y (arbitrary order)
   bool before(const Int::ZeroIntView& x, const Int::ZeroIntView& y);
   //@}
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for ZeroIntView.
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewTraits<Int::ZeroIntView> {
-  public:
-    /// The variable type of a ZeroIntView
-    typedef Int::IntVarImp VarImp;
-  };
 
   namespace Int {
 
@@ -1394,19 +1310,6 @@ namespace Gecode {
 
   }
 
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for BoolView
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewTraits<Int::BoolView> {
-  public:
-    /// The variable type of a BoolView
-    typedef Int::BoolVarImp VarImp;
-  };
-
   namespace Int {
 
     /**
@@ -1510,19 +1413,6 @@ namespace Gecode {
   /// Test whether view \a x comes before \a y (arbitrary order)
   bool before(const Int::NegBoolView& x, const Int::NegBoolView& y);
   //@}
-
-  /**
-   * \brief Traits class for views
-   *
-   * This class specializes the ViewTraits for NegBoolView.
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewTraits<Int::NegBoolView> {
-  public:
-    /// The variable type of a NegBoolView
-    typedef Int::BoolVarImp VarImp;
-  };
 
 }
 

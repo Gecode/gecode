@@ -38,27 +38,14 @@
 namespace Gecode {
 
   /**
-   * \brief Traits class for views
-   *
-   * Each view must specialize this traits class and add a \code
-   * typedef \endcode for the variable implementation \a VarImp belonging to
-   * this view.
-   *
-   * \ingroup TaskVarView
-   */
-  template<class View>
-  class ViewTraits {};
-
-  /**
    * \brief Base-class for constant views
    * \ingroup TaskVarView
    */
   template<class View>
   class ConstViewBase {
-  protected:
-    /// The variable type corresponding to the constant view
-    typedef typename ViewTraits<View>::VarImp VarImp;
   public:
+    /// The variable type corresponding to the constant view
+    typedef typename View::VarImpType VarImpType;
     /// \name Generic view information
     //@{
     /// Return degree (number of subscribed propagators and advisors)
@@ -68,7 +55,7 @@ namespace Gecode {
     /// Return whether this view is derived from a VarViewBase
     static bool varderived(void);
     /// Return dummy variable implementation of view
-    VarImpBase* varimp(void) const;
+    VarImpType* varimp(void) const;
     //@}
 
     /// \name Domain tests
@@ -134,6 +121,8 @@ namespace Gecode {
     /// Initialize with variable implementation \a y
     VarViewBase(VarImp* y);
   public:
+    /// The variable implementation type corresponding to the view
+    typedef VarImp VarImpType;
     /// \name Generic view information
     //@{
     /// Return whether this view is derived from a VarViewBase
@@ -215,19 +204,19 @@ namespace Gecode {
   protected:
     /// View from which this view is derived
     View x;
-    /// The variable type belonging to the \a View
-    typedef typename ViewTraits<View>::VarImp VarImp;
     /// Default constructor
     DerivedViewBase(void);
     /// Initialize with view \a y
     DerivedViewBase(const View& y);
   public:
+    /// The variable implementation type belonging to the \a View
+    typedef typename View::VarImpType VarImpType;
     /// \name Generic view information
     //@{
     /// Return whether this view is derived from a VarViewBase
     static bool varderived(void);
     /// Return variable implementation of view
-    VarImp* varimp(void) const;
+    VarImpType* varimp(void) const;
     /// Return view from which this view is derived
     View base(void) const;
     /// Return degree (number of subscribed propagators)
@@ -397,7 +386,7 @@ namespace Gecode {
     return false;
   }
   template<class View>
-  forceinline VarImpBase*
+  forceinline typename View::VarImpType*
   ConstViewBase<View>::varimp(void) const {
     return NULL;
   }
@@ -567,7 +556,7 @@ namespace Gecode {
   }
 
   template<class View>
-  forceinline typename ViewTraits<View>::VarImp*
+  forceinline typename View::VarImpType*
   DerivedViewBase<View>::varimp(void) const {
     return x.varimp();
   }
