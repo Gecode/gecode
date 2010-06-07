@@ -366,7 +366,7 @@ SETHDR0 =								     \
 	var-imp/delta.hpp var-imp/iter.hpp 				     \
 	var/set.hpp var/print.hpp					     \
 	view/complement.hpp view/const.hpp view/set.hpp view/singleton.hpp   \
-	view/offset.hpp view/print.hpp                                       \
+	view/print.hpp                                       \
 	rel/subset.hpp rel/re-subset.hpp rel/eq.hpp rel/nq.hpp rel/re-eq.hpp \
 	rel/common.hpp rel/nosubset.hpp sequence.hh	                     \
 	rel-op/union.hpp rel-op/partition.hpp rel-op/subofunion.hpp	     \
