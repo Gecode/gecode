@@ -205,7 +205,7 @@ namespace Gecode {
      * that \f$x\f$ behaves like \f$s\f$.
      * \ingroup TaskActorSetView
      */
-    class ConstantView : public ConstViewBase {
+    class ConstantView : public ConstViewBase<SetView> {
       friend class LubRanges<ConstantView>;
       friend class GlbRanges<ConstantView>;
       friend bool Gecode::same(const Gecode::Set::ConstantView&,
@@ -395,7 +395,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    class EmptyView : public ConstViewBase {
+    class EmptyView : public ConstViewBase<SetView> {
     public:
       /// \name Constructors and initialization
       //@{
@@ -569,7 +569,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    class UniverseView : public ConstViewBase {
+    class UniverseView : public ConstViewBase<SetView> {
     public:
       /// \name Constructors and initialization
       //@{

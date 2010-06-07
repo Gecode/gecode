@@ -833,7 +833,7 @@ namespace Gecode {
      * operations such that \f$x\f$ behaves as a view assigned to \f$c\f$.
      * \ingroup TaskActorIntView
      */
-    class ConstIntView : public ConstViewBase {
+    class ConstIntView : public ConstViewBase<IntView> {
     protected:
       int x;
     public:
@@ -1029,7 +1029,7 @@ namespace Gecode {
      * operations such that \f$x\f$ behaves as a view assigned to \f$0\f$.
      * \ingroup TaskActorIntView
      */
-    class ZeroIntView : public ConstViewBase {
+    class ZeroIntView : public ConstViewBase<IntView> {
     public:
       /// \name Constructors and initialization
       //@{

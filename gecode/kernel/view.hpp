@@ -53,7 +53,11 @@ namespace Gecode {
    * \brief Base-class for constant views
    * \ingroup TaskVarView
    */
+  template<class View>
   class ConstViewBase {
+  protected:
+    /// The variable type corresponding to the constant view
+    typedef typename ViewTraits<View>::VarImp VarImp;
   public:
     /// \name Generic view information
     //@{
@@ -71,6 +75,40 @@ namespace Gecode {
     //@{
     /// Test whether view is assigned
     bool assigned(void) const;
+    //@}
+
+    /// \name View-dependent propagator support
+    //@{
+    /// Schedule propagator \a p with modification event \a me
+    static void schedule(Space& home, Propagator& p, ModEvent me);
+    /// Return modification event for view type in \a med
+    static ModEvent me(const ModEventDelta& med);
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
+
+    /// \name Dependencies
+    //@{
+    /**
+     * \brief Subscribe propagator \a p with propagation condition \a pc to view
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     */
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Subscribe advisor \a a to view
+    void subscribe(Space& home, Advisor& a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space& home, Advisor& a);
+    //@}
+
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta& d);
     //@}
 
     /// \name Cloning
@@ -250,31 +288,32 @@ namespace Gecode {
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  bool shared(const ConstViewBase&, const ConstViewBase&);
+  template<class ViewA, class ViewB>
+  bool shared(const ConstViewBase<ViewA>&, const ConstViewBase<ViewB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template<class VarImp>
-  bool shared(const VarViewBase<VarImp>&, const ConstViewBase&);
+  template<class VarImp, class View>
+  bool shared(const VarViewBase<VarImp>&, const ConstViewBase<View>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template<class ViewA>
-  bool shared(const DerivedViewBase<ViewA>&, const ConstViewBase&);
+  template<class ViewA, class ViewB>
+  bool shared(const DerivedViewBase<ViewA>&, const ConstViewBase<ViewB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template<class VarImp>
-  bool shared(const ConstViewBase&, const VarViewBase<VarImp>&);
+  template<class View, class VarImp>
+  bool shared(const ConstViewBase<View>&, const VarViewBase<VarImp>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
-  template<class ViewA>
-  bool shared(const ConstViewBase&, const DerivedViewBase<ViewA>&);
+  template<class ViewA, class ViewB>
+  bool shared(const ConstViewBase<ViewA>&, const DerivedViewBase<ViewB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
@@ -302,33 +341,39 @@ namespace Gecode {
 
 
   /// Test whether two views are the same
-  inline
-  bool same(const ConstViewBase&, const ConstViewBase&) {
+  template<class ViewA, class ViewB>
+  forceinline bool 
+  same(const ConstViewBase<ViewA>&, const ConstViewBase<ViewB>&) {
     return false;
   }
   /// Test whether two views are the same
-  template<class VarImp>
-  bool same(const VarViewBase<VarImp>&, const ConstViewBase&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class ViewA>
-  bool same(const ConstViewBase&, const DerivedViewBase<ViewA>&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class VarImpA, class ViewB>
-  bool same(const VarViewBase<VarImpA>&, const DerivedViewBase<ViewB>&) {
-    return false;
-  }
-  /// Test whether two views are the same
-  template<class ViewA, class VarImpB>
-  bool same(const DerivedViewBase<ViewA>&, const VarViewBase<VarImpB>&) {
+  template<class VarImp, class View>
+  forceinline bool 
+  same(const VarViewBase<VarImp>&, const ConstViewBase<View>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
-  bool same(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
+  forceinline bool 
+  same(const ConstViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class VarImpA, class ViewB>
+  forceinline bool 
+  same(const VarViewBase<VarImpA>&, const DerivedViewBase<ViewB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class ViewA, class VarImpB>
+  forceinline bool 
+  same(const DerivedViewBase<ViewA>&, const VarViewBase<VarImpB>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class ViewA, class ViewB>
+  forceinline bool 
+  same(const DerivedViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
     return false;
   }
 
@@ -336,28 +381,73 @@ namespace Gecode {
    * Constant view: has no variable implementation
    *
    */
+  template<class View>
   forceinline unsigned int
-  ConstViewBase::degree(void) const {
+  ConstViewBase<View>::degree(void) const {
     return 0;
   }
+  template<class View>
   forceinline double
-  ConstViewBase::afc(void) const {
+  ConstViewBase<View>::afc(void) const {
     return 0.0;
   }
+  template<class View>
   forceinline bool
-  ConstViewBase::varderived(void) {
+  ConstViewBase<View>::varderived(void) {
     return false;
   }
+  template<class View>
   forceinline VarImpBase*
-  ConstViewBase::varimp(void) const {
+  ConstViewBase<View>::varimp(void) const {
     return NULL;
   }
+  template<class View>
   forceinline bool
-  ConstViewBase::assigned(void) const {
+  ConstViewBase<View>::assigned(void) const {
     return true;
   }
+  template<class View>
   forceinline void
-  ConstViewBase::update(Space&, bool, ConstViewBase& ) {
+  ConstViewBase<View>::subscribe(Space& home, Propagator& p, PropCond, 
+                           bool schedule) {
+    if (schedule)
+      VarImp::schedule(home,p,PC_GEN_ASSIGNED);
+  }
+  template<class View>
+  forceinline void
+  ConstViewBase<View>::cancel(Space&, Propagator&, PropCond) {
+  }
+  template<class View>
+  forceinline void
+  ConstViewBase<View>::subscribe(Space&, Advisor&) {
+  }
+  template<class View>
+  forceinline void
+  ConstViewBase<View>::cancel(Space&, Advisor&) {
+  }
+  template<class View>
+  forceinline void
+  ConstViewBase<View>::schedule(Space& home, Propagator& p, ModEvent me) {
+    VarImp::schedule(home,p,me);
+  }
+  template<class View>
+  forceinline ModEvent
+  ConstViewBase<View>::me(const ModEventDelta& med) {
+    return VarImp::me(med);
+  }
+  template<class View>
+  forceinline ModEventDelta
+  ConstViewBase<View>::med(ModEvent me) {
+    return VarImp::med(me);
+  }
+  template<class View>
+  forceinline ModEvent
+  ConstViewBase<View>::modevent(const Delta& d) {
+    return VarImp::modevent(d);
+  }
+  template<class View>
+  forceinline void
+  ConstViewBase<View>::update(Space&, bool, ConstViewBase&) {
   }
 
   /*
@@ -400,8 +490,8 @@ namespace Gecode {
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::subscribe(Space& home, Propagator& p, PropCond pc,
-                                 bool process) {
-    x->subscribe(home,p,pc,process);
+                                 bool schedule) {
+    x->subscribe(home,p,pc,schedule);
   }
   template<class VarImp>
   forceinline void
@@ -421,7 +511,7 @@ namespace Gecode {
   template<class VarImp>
   forceinline void
   VarViewBase<VarImp>::schedule(Space& home, Propagator& p, ModEvent me) {
-    return VarImp::schedule(home,p,me);
+    VarImp::schedule(home,p,me);
   }
   template<class VarImp>
   forceinline ModEvent
@@ -558,32 +648,33 @@ namespace Gecode {
    *
    */
 
+  template<class ViewA, class ViewB>
   forceinline bool
-  shared(const ConstViewBase&, const ConstViewBase&) {
+  shared(const ConstViewBase<ViewA>&, const ConstViewBase<ViewB>&) {
     return false;
   }
 
-  template<class VarImp>
+  template<class VarImp, class View>
   forceinline bool
-  shared(const VarViewBase<VarImp>&, const ConstViewBase&) {
+  shared(const VarViewBase<VarImp>&, const ConstViewBase<View>&) {
     return false;
   }
 
-  template<class View>
+  template<class ViewA, class ViewB>
   forceinline bool
-  shared(const DerivedViewBase<View>&, const ConstViewBase&) {
+  shared(const DerivedViewBase<ViewA>&, const ConstViewBase<ViewB>&) {
     return false;
   }
 
-  template<class VarImp>
+  template<class View, class VarImp>
   forceinline bool
-  shared(const ConstViewBase&, const VarViewBase<VarImp>&) {
+  shared(const ConstViewBase<View>&, const VarViewBase<VarImp>&) {
     return false;
   }
 
-  template<class View>
+  template<class ViewA, class ViewB>
   forceinline bool
-  shared(const ConstViewBase&, const DerivedViewBase<View>&) {
+  shared(const ConstViewBase<ViewA>&, const DerivedViewBase<ViewB>&) {
     return false;
   }
 

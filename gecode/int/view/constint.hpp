@@ -282,7 +282,7 @@ namespace Gecode {
      */
     forceinline void
     ConstIntView::update(Space& home, bool share, ConstIntView& y) {
-      ConstViewBase::update(home,share,y);
+      ConstViewBase<IntView>::update(home,share,y);
       x = y.x;
     }
 
