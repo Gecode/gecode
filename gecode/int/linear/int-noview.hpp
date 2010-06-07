@@ -148,61 +148,6 @@ namespace Gecode {
         return ME_INT_NONE;
       }
       //@}
-
-      /// \name View-dependent propagator support
-      //@{
-      /// Schedule propagator \a p with modification event \a me
-      static void schedule(Space& home, Propagator& p, ModEvent me) {
-        (void) home; (void) p; (void) me;
-      }
-      /// Return modification event of propagator \a p for view
-      static ModEvent med(const Propagator& p) {
-        (void) p;
-        return ME_INT_NONE;
-      }
-      /// Translate modification event \a me to modification event delta for view
-      static ModEventDelta med(ModEvent me) {
-        (void) me;
-        return ME_INT_NONE;
-      }
-      //@}
-
-      /// \name Dependencies
-      //@{
-      /// Subscribe propagator \a p with propagation condition \a pc to view
-      void subscribe(Space& home, Propagator& p, PropCond pc,
-                     bool process=true) {
-        (void) home; (void) p; (void)  pc; (void) process;
-      }
-      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space& home, Propagator& p, PropCond pc) {
-        (void) home; (void) p; (void)  pc;
-      }
-      /// Subscribe advisor to view
-      void subscribe(Space&, Advisor&) {};
-      /// Cancel subscription of advisor
-      void cancel(Space&, Advisor&) {};
-      //@}
-
-      /// \name Cloning
-      //@{
-      /// Update this view to be a clone of view \a x
-      void update(Space& home, bool share, NoView& x) {
-        (void) home; (void) share; (void) x;
-      }
-      //@}
-
-      /// \name View comparison
-      //@{
-      /// Test whether this view is the same as \a x
-      bool operator ==(const NoView& x) const { (void) x; return true; }
-      /// Test whether this view is not the same as \a x
-      bool operator !=(const NoView& x) const { (void) x; return false; }
-      /// Test whether this view is smaller than \a x (arbitrary order)
-      bool operator < (const NoView& x) const { (void) x; return false; }
-      /// Test whether this view is larger than \a x (arbitrary order)
-      bool operator > (const NoView& x) const { (void) x; return false; }
-      //@}
     };
 
   }}
@@ -279,73 +224,7 @@ namespace Gecode {
     void move_fst(int i) { (void) i; }
     /// Move assigned view from position \c size()-1 to position \a i (truncate array by one)
     void move_lst(int i) { (void) i; }
-    /** \brief Move view from position 0 to position \a i (shift elements to the left)
-     *
-     * Before moving, cancel subscription of propagator \a p with
-     * propagation condition \a pc to view at position \a i.
-     */
-    void move_fst(int i, Propagator& p, PropCond pc) {
-      (void) i; (void) p; (void) pc;
-    }
-    /** \brief Move view from position \c size()-1 to position \a i (truncate array by one)
-     *
-     * Before moving, cancel subscription of propagator \a p with
-     * propagation condition \a pc to view at position \a i.
-     */
-    void move_lst(int i, Propagator& p, PropCond pc) {
-      (void) i; (void) p; (void) pc;
-    }
     //@}
-
-    /// \name Dropping elements
-    //@{
-    /// Drop assigned views from positions 0 to \a i-1 from array
-    void drop_fst(int i);
-    /// Drop assigned views from positions \a i+1 to \c size()-1 from array
-    void drop_lst(int i);
-    /** \brief Drop views from positions 0 to \a i-1 from array
-     *
-     * Before moving, cancel subscription of propagator \a p with
-     * propagation condition \a pc to views at positions 0 to \a i-1.
-     */
-    void drop_fst(int i, Propagator& p, PropCond pc) {
-      (void) i; (void) p; (void) pc;
-    }
-    /** \brief Drop assigned views from positions \a i+1 to \c size()-1 from array
-     *
-     * Before moving, cancel subscription of propagator \a p with
-     * propagation condition \a pc to views at positions \a i+1 to
-     * \c size()-1.
-     */
-    void drop_lst(int i, Propagator& p, PropCond pc) {
-      (void) i; (void) p; (void) pc;
-    }
-    //@}
-
-    /// \name View equality
-    //@{
-    /// Test whether array has equal views
-    bool equal(void) const { return false; }
-    /// Test whether array contains view equal to \a y
-    bool equal(const Int::Linear::NoView& y) const {
-      (void) y;
-      return false;
-    }
-    /// Remove all duplicate views from array (changes element order)
-    void unique(void) {}
-    //@}
-
-    /// \name View sharing
-    //@{
-    /// Test whether array has shared views
-    bool shared(void) const { return false; }
-    /// Test whether array contains view shared with \a y
-    bool shared(const Int::Linear::NoView& y) const {
-      (void) y;
-      return false;
-    }
-    //@}
-
   private:
     static void* operator new(size_t);
     static void  operator delete(void*,size_t);
