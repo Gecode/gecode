@@ -39,7 +39,17 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTaskBwd& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPTaskBwd& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.pmin() << ':' << t.lct();
+    return os << s.str();
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
+              const ManFixPSETaskBwd& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.pmin() << ':' << t.lct();
@@ -48,7 +58,18 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTaskBwd& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPTaskBwd& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.pmin() << ':' << t.lct() << ":"
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
+    return os << s.str();
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
+              const OptFixPSETaskBwd& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.pmin() << ':' << t.lct() << ":"

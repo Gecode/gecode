@@ -84,6 +84,25 @@ namespace Gecode {
    * \ingroup TaskModel
    */
   //@{
+
+  /// Type of task for scheduling constraints
+  enum TaskType {
+    TT_FIXP, //< Task with fixed processing time
+    TT_FIXS, //< Task with fixed start time
+    TT_FIXE  //< Task with fixed end time
+  };
+  
+  /// Passing task type arguments
+  typedef PrimArgArray<TaskType> TaskTypeArgs;
+  /// Traits of %TaskTypeArgs
+  template<>
+  class ArrayTraits<PrimArgArray<TaskType> > {
+  public:
+    typedef TaskTypeArgs StorageType;
+    typedef TaskType     ValueType;
+    typedef TaskTypeArgs ArgsType;
+  };
+
   /**
    * \brief Post propagators for the cumulatives constraint
    *
@@ -247,6 +266,72 @@ namespace Gecode {
 
   /** \brief Post propagators for scheduling tasks on unary resources
    *
+   * Schedule tasks with flexible times \a flex and fixed times \a fix
+   * on a unary resource. For each
+   * task, it depends on \a t how the flexible and fix times are interpreted:
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    processing time.
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
+   *    start time.
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    end time.
+   *
+   * The propagator uses the algorithms from:
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Charles University, Prague, Czech Republic, 2007.
+   * 
+   * The propagator performs overload checking, detectable precendence
+   * propagation, not-first-not-last propagation, and edge finding.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *    and \a p are of different size.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p contains
+   *    an integer that is negative for a task with type <code>TT_FIXP</code>
+   *    or that could generate an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  unary(Home home, const TaskTypeArgs& t,
+        const IntVarArgs& s, const IntArgs& p);
+
+  /** \brief Post propagators for scheduling optional tasks on unary resources
+   *
+   * Schedule optional tasks with flexible times \a flex, fixed times \a fix,
+   * and whether a task is mandatory \a m (a task is mandatory if the
+   * Boolean variable is 1) on a unary resource. For each
+   * task, it depends on \a t how the flexible and fix times are interpreted:
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    processing time.
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
+   *    start time.
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    end time.
+   *
+   * The propagator uses the 
+   * algorithms from:
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Charles University, Prague, Czech Republic, 2007.
+   * 
+   * The propagator performs overload checking, detectable precendence
+   * propagation, not-first-not-last propagation, and edge finding.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   *    \a p, or \a m are of different size.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p contains
+   *    an integer that is negative for a task with type <code>TT_FIXP</code>
+   *    or that could generate an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  unary(Home home, const TaskTypeArgs& t,
+        const IntVarArgs& s, const IntArgs& p, const BoolVarArgs& m);
+
+  /** \brief Post propagators for scheduling tasks on unary resources
+   *
    * Schedule tasks with start times \a s, processing times \a p, and
    * end times \a e
    * on a unary resource. The propagator uses the algorithms from:
@@ -261,10 +346,8 @@ namespace Gecode {
    *
    * The processing times are constrained to be non-negative.
    *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
-   *    and \a p are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if \a s and/or
-   *    \a p contains the same unassigned variable multiply.
+   * Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   * and \a p are of different size.
    */
   GECODE_SCHEDULING_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
@@ -288,14 +371,91 @@ namespace Gecode {
    * The propagator performs overload checking, detectable precendence
    * propagation, not-first-not-last propagation, and edge finding.
    *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
-   *    \a p, or \a m are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if \a s and/or
-   *    \a p contains the same unassigned variable multiply.
+   * Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
+   * \a p, or \a m are of different size.
    */
   GECODE_SCHEDULING_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
         const IntVarArgs& e, const BoolVarArgs& m);
+
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   *
+   * Schedule tasks with flexible times \a flex, fixed times \a fix, and
+   * use capacity \a u on a cumulative resource with capacity \a c. For each
+   * task, it depends on \a t how the flexible and fix times are interpreted:
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    processing time.
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
+   *    start time.
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    end time.
+   *
+   * The propagator performs time-tabling, overload checking, and 
+   * edge-finding. It uses algorithms taken from:
+   *
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * 5547 of LNCS, pages 294-308. Springer, 2009.
+   *
+   * and
+   *
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * pages 802-816. Springer, 2009.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s 
+   *    \a p, or \a u are of different size.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
+   *    contain an integer that is not nonnegative, or that could generate
+   *    an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u);
+
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   *
+   * Schedule tasks with flexible times \a flex, fixed times \a fix,
+   * use capacity \a u, and whether a task is mandatory \a m (a task is 
+   * mandatory if the Boolean variable is 1) on a cumulative resource with 
+   * capacity \a c. For each
+   * task, it depends on \a t how the flexible and fix times are interpreted:
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    processing time.
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
+   *    start time.
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
+   *    end time.
+   *
+   * The propagator performs time-tabling, overload checking, and 
+   * edge-finding. It uses algorithms taken from:
+   *
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * 5547 of LNCS, pages 294-308. Springer, 2009.
+   *
+   * and
+   *
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * pages 802-816. Springer, 2009.
+   *
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s 
+   *    \a p, or \a u are of different size.
+   *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
+   *    contain an integer that is not nonnegative, or that could generate
+   *    an overflow.
+   */
+  GECODE_SCHEDULING_EXPORT void
+  cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             const BoolVarArgs& m);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
@@ -317,11 +477,9 @@ namespace Gecode {
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
    *    \a p, or \a u are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
-   *    the same unassigned variable multiply.
    *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
-   *    contain an integer that is not strictly positive
-   *    (nonnegative for \a p), or that could generate an overflow.
+   *    contain an integer that is not nonnegative, or that could generate
+   *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p,
@@ -349,11 +507,9 @@ namespace Gecode {
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    *    \a p, \a u, or \a m are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if \a s contains
-   *    the same unassigned variable multiply.
    *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
-   *    contain an integer that is not strictly positive
-   *    (nonnegative for \a p), or that could generate an overflow.
+   *    contain an integer that is not nonnegative, or that could generate
+   *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
@@ -383,11 +539,9 @@ namespace Gecode {
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
    *    \a p, or \a u are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if the variable arrays 
-   *    contain the same unassigned variable multiply.
    *  - Throws an exception of type Int::OutOfLimits, if \a u or \a c
-   *    contain an integer that is not strictly positive or that could 
-   *    generate an overflow.
+   *    contain an integer that is not nonnegative, or that could generate
+   *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
@@ -419,11 +573,9 @@ namespace Gecode {
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    *    \a p, \a u, or \a m are of different size.
-   *  - Throws an exception of type Int::ArgumentSame, if the variable arrays 
-   *    contain the same unassigned variable multiply.
    *  - Throws an exception of type Int::OutOfLimits, if \a u or \a c
-   *    contain an integer that is not strictly positive or that could 
-   *    generate an overflow.
+   *    contain an integer that is not nonnegative, or that could generate
+   *    an overflow.
    */
   GECODE_SCHEDULING_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p, 

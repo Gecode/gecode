@@ -42,83 +42,83 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
 
   forceinline
-  ManFixTask::ManFixTask(void) {}
+  ManFixPTask::ManFixPTask(void) {}
   forceinline
-  ManFixTask::ManFixTask(IntVar s, int p) : _s(s), _p(p) {}
+  ManFixPTask::ManFixPTask(IntVar s, int p) : _s(s), _p(p) {}
   forceinline void
-  ManFixTask::init(IntVar s, int p) {
+  ManFixPTask::init(IntVar s, int p) {
     _s=s; _p=p;
   }
   forceinline void
-  ManFixTask::init(const ManFixTask& t) {
+  ManFixPTask::init(const ManFixPTask& t) {
     _s=t._s; _p=t._p;
   }
 
   forceinline int 
-  ManFixTask::est(void) const {
+  ManFixPTask::est(void) const {
     return _s.min();
   }
   forceinline int
-  ManFixTask::ect(void) const {
+  ManFixPTask::ect(void) const {
     return _s.min()+_p;
   }
   forceinline int
-  ManFixTask::lst(void) const {
+  ManFixPTask::lst(void) const {
     return _s.max();
   }
   forceinline int
-  ManFixTask::lct(void) const {
+  ManFixPTask::lct(void) const {
     return _s.max()+_p;
   }
   forceinline int
-  ManFixTask::pmin(void) const {
+  ManFixPTask::pmin(void) const {
     return _p;
   }
   forceinline int
-  ManFixTask::pmax(void) const {
+  ManFixPTask::pmax(void) const {
     return _p;
   }
   forceinline IntVar
-  ManFixTask::st(void) const {
+  ManFixPTask::st(void) const {
     return _s;
   }
 
   forceinline bool
-  ManFixTask::mandatory(void) const {
+  ManFixPTask::mandatory(void) const {
     return true;
   }
   forceinline bool
-  ManFixTask::excluded(void) const {
+  ManFixPTask::excluded(void) const {
     return false;
   }
   forceinline bool
-  ManFixTask::optional(void) const {
+  ManFixPTask::optional(void) const {
     return false;
   }
 
   forceinline bool
-  ManFixTask::assigned(void) const {
+  ManFixPTask::assigned(void) const {
     return _s.assigned();
   }
 
   forceinline ModEvent 
-  ManFixTask::est(Space& home, int n) {
+  ManFixPTask::est(Space& home, int n) {
     return _s.gq(home,n);
   }
   forceinline ModEvent
-  ManFixTask::ect(Space& home, int n) {
+  ManFixPTask::ect(Space& home, int n) {
     return _s.gq(home,n-_p);
   }
   forceinline ModEvent
-  ManFixTask::lst(Space& home, int n) {
+  ManFixPTask::lst(Space& home, int n) {
     return _s.lq(home,n);
   }
   forceinline ModEvent
-  ManFixTask::lct(Space& home, int n) {
+  ManFixPTask::lct(Space& home, int n) {
     return _s.lq(home,n-_p);
   }
   forceinline ModEvent
-  ManFixTask::norun(Space& home, int e, int l) {
+  ManFixPTask::norun(Space& home, int e, int l) {
     if (e <= l) {
       Iter::Ranges::Singleton r(e-_p+1,l);
       return _s.minus_r(home,r,false);
@@ -129,37 +129,184 @@ namespace Gecode { namespace Scheduling { namespace Unary {
 
 
   forceinline ModEvent
-  ManFixTask::mandatory(Space&) {
+  ManFixPTask::mandatory(Space&) {
     return Int::ME_INT_NONE;
   }
   forceinline ModEvent
-  ManFixTask::excluded(Space&) {
+  ManFixPTask::excluded(Space&) {
     return Int::ME_INT_FAILED;
   }
 
   forceinline void
-  ManFixTask::update(Space& home, bool share, ManFixTask& t) {
+  ManFixPTask::update(Space& home, bool share, ManFixPTask& t) {
     _s.update(home,share,t._s); _p=t._p;
   }
 
   forceinline void
-  ManFixTask::subscribe(Space& home, Propagator& p, PropCond pc) {
+  ManFixPTask::subscribe(Space& home, Propagator& p, PropCond pc) {
     _s.subscribe(home, p, pc);
   }
   forceinline void
-  ManFixTask::cancel(Space& home, Propagator& p, PropCond pc) {
+  ManFixPTask::cancel(Space& home, Propagator& p, PropCond pc) {
     _s.cancel(home, p, pc);
   }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTask& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPTask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.pmin() << ':' << t.lct();
     return os << s.str();
   }
-    
+
+  /*
+   * Mandatory fixed task with fixed processing, start or end time
+   */
+
+  forceinline
+  ManFixPSETask::ManFixPSETask(void) {}
+  forceinline
+  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p) 
+    : ManFixPTask(s,p), _t(t) {}
+  forceinline void
+  ManFixPSETask::init(TaskType t, IntVar s, int p) {
+    ManFixPTask::init(s,p); _t=t;
+  }
+  forceinline void
+  ManFixPSETask::init(const ManFixPSETask& t0) {
+    ManFixPTask::init(t0); _t = t0._t;
+  }
+
+  forceinline int 
+  ManFixPSETask::est(void) const {
+    return (_t == TT_FIXS) ? _p : _s.min();
+  }
+  forceinline int
+  ManFixPSETask::ect(void) const {
+    switch (_t) {
+    case TT_FIXP: return _s.min()+_p;
+    case TT_FIXS: return _s.min();
+    case TT_FIXE: return _p;
+    default: GECODE_NEVER;
+    }
+    return 0;
+  }
+  forceinline int
+  ManFixPSETask::lst(void) const {
+    return (_t == TT_FIXS) ? _p : _s.max();
+  }
+  forceinline int
+  ManFixPSETask::lct(void) const {
+    switch (_t) {
+    case TT_FIXP: return _s.max()+_p;
+    case TT_FIXS: return _s.max();
+    case TT_FIXE: return _p;
+    default: GECODE_NEVER;
+    }
+    return 0;
+  }
+  forceinline int
+  ManFixPSETask::pmin(void) const {
+    switch (_t) {
+    case TT_FIXP: return _p;
+    case TT_FIXS: return _s.min()-_p;
+    case TT_FIXE: return _p-_s.max();
+    default: GECODE_NEVER;
+    }
+    return 0;
+  }
+  forceinline int
+  ManFixPSETask::pmax(void) const {
+    switch (_t) {
+    case TT_FIXP: return _p;
+    case TT_FIXS: return _s.max()-_p;
+    case TT_FIXE: return _p-_s.min();
+    default: GECODE_NEVER;
+    }
+    return 0;
+  }
+
+  forceinline ModEvent 
+  ManFixPSETask::est(Space& home, int n) {
+    switch (_t) {
+    case TT_FIXE: // fall through
+    case TT_FIXP: return _s.gq(home,n);
+    case TT_FIXS: return (n <= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    default: GECODE_NEVER;
+    }
+    return Int::ME_INT_NONE;
+  }
+  forceinline ModEvent
+  ManFixPSETask::ect(Space& home, int n) {
+    switch (_t) {
+    case TT_FIXE: return (n <= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXP: return _s.gq(home,n-_p);
+    case TT_FIXS: return _s.gq(home,n);
+    default: GECODE_NEVER;
+    }
+    return Int::ME_INT_NONE;
+  }
+  forceinline ModEvent
+  ManFixPSETask::lst(Space& home, int n) {
+    switch (_t) {
+    case TT_FIXE: // fall through
+    case TT_FIXP: return _s.lq(home,n);
+    case TT_FIXS: return (n >= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    default: GECODE_NEVER;
+    }
+    return Int::ME_INT_NONE;
+  }
+  forceinline ModEvent
+  ManFixPSETask::lct(Space& home, int n) {
+    switch (_t) {
+    case TT_FIXE: return (n >= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXP: return _s.lq(home,n-_p);
+    case TT_FIXS: return _s.lq(home,n);
+    default: GECODE_NEVER;
+    }
+    return Int::ME_INT_NONE;
+  }
+  forceinline ModEvent
+  ManFixPSETask::norun(Space& home, int e, int l) {
+    if (e <= l) {
+      switch (_t) {
+      case TT_FIXP:
+        {
+          Iter::Ranges::Singleton r(e-_p+1,l);
+          return _s.minus_r(home,r,false);
+        }
+      case TT_FIXE:
+        if (e <= _p)
+          return _s.gr(home,l);
+        break;
+      case TT_FIXS:
+        if (l >= _p)
+          return _s.lq(home,e);
+        break;
+      default:
+        GECODE_NEVER;
+      }
+      return Int::ME_INT_NONE;
+    } else {
+      return Int::ME_INT_NONE;
+    }
+  }
+
+  forceinline void
+  ManFixPSETask::update(Space& home, bool share, ManFixPSETask& t) {
+    ManFixPTask::update(home,share,t); _t=t._t;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPSETask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.pmin() << ':' << t.lct();
+    return os << s.str();
+  }
+
   /*
    * Mandatory flexible task
    */
@@ -306,19 +453,44 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    */
 
   forceinline
-  OptFixTask::OptFixTask(void) {}
+  OptFixPTask::OptFixPTask(void) {}
   forceinline
-  OptFixTask::OptFixTask(IntVar s, int p, BoolVar m) {
-    ManFixTask::init(s,p); _m=m;
+  OptFixPTask::OptFixPTask(IntVar s, int p, BoolVar m) {
+    ManFixPTask::init(s,p); _m=m;
   }
   forceinline void
-  OptFixTask::init(IntVar s, int p, BoolVar m) {
-    ManFixTask::init(s,p); _m=m;
+  OptFixPTask::init(IntVar s, int p, BoolVar m) {
+    ManFixPTask::init(s,p); _m=m;
   }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTask& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPTask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ':' << t.pmin() << ':' << t.lct() << ':'
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
+    return os << s.str();
+  }
+
+  /*
+   * Optional fixed task
+   */
+
+  forceinline
+  OptFixPSETask::OptFixPSETask(void) {}
+  forceinline
+  OptFixPSETask::OptFixPSETask(TaskType t,IntVar s,int p,BoolVar m) {
+    ManFixPSETask::init(t,s,p); _m=m;
+  }
+  forceinline void
+  OptFixPSETask::init(TaskType t, IntVar s, int p, BoolVar m) {
+    ManFixPSETask::init(t,s,p); _m=m;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPSETask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ':' << t.pmin() << ':' << t.lct() << ':'

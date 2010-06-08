@@ -51,7 +51,7 @@ namespace Test { namespace Int {
       */
      //@{
      /// %Test for unary constraint
-     class ManFixUnary : public Test {
+     class ManFixPUnary : public Test {
      protected:
        /// The processing times
        Gecode::IntArgs p;
@@ -64,7 +64,7 @@ namespace Test { namespace Int {
        }
      public:
        /// Create and register test
-       ManFixUnary(const Gecode::IntArgs& p0, int o)
+       ManFixPUnary(const Gecode::IntArgs& p0, int o)
          : Test("Scheduling::Unary::Man::Fix::"+str(o)+"::"+str(p0),
                 p0.size(),o,o+st(p0)), 
            p(p0) {
@@ -90,7 +90,7 @@ namespace Test { namespace Int {
      };
 
      /// %Test for unary constraint with optional tasks
-     class OptFixUnary : public Test {
+     class OptFixPUnary : public Test {
      protected:
        /// The processing times
        Gecode::IntArgs p;
@@ -105,7 +105,7 @@ namespace Test { namespace Int {
        }
      public:
        /// Create and register test
-       OptFixUnary(const Gecode::IntArgs& p0, int o)
+       OptFixPUnary(const Gecode::IntArgs& p0, int o)
          : Test("Scheduling::Unary::Opt::Fix::"+str(o)+"::"+str(p0),
                 2*p0.size(),o,o+st(p0)), p(p0), l(o+st(p)/2) {
          testsearch = false;
@@ -259,10 +259,10 @@ namespace Test { namespace Int {
      };
 
      Gecode::IntArgs p1(4, 2,2,2,2);
-     ManFixUnary mfu10(p1,0);
-     ManFixUnary mfu1i(p1,Gecode::Int::Limits::min);
-     OptFixUnary ofu10(p1,0);
-     OptFixUnary ofu1i(p1,Gecode::Int::Limits::min);
+     ManFixPUnary mfu10(p1,0);
+     ManFixPUnary mfu1i(p1,Gecode::Int::Limits::min);
+     OptFixPUnary ofu10(p1,0);
+     OptFixPUnary ofu1i(p1,Gecode::Int::Limits::min);
      ManFlexUnary mflu10(4,0,2,0);
      ManFlexUnary mflu1i(4,0,2,Gecode::Int::Limits::min);
      ManFlexUnary mflu101(4,1,3,0);
@@ -271,50 +271,50 @@ namespace Test { namespace Int {
      OptFlexUnary oflu1i(4,0,2,Gecode::Int::Limits::min);
 
      Gecode::IntArgs p10(5, 2,2,0,2,2);
-     ManFixUnary mfu010(p10,0);
-     ManFixUnary mfu01i(p10,Gecode::Int::Limits::min);
-     OptFixUnary ofu010(p10,0);
-     OptFixUnary ofu01i(p10,Gecode::Int::Limits::min);
+     ManFixPUnary mfu010(p10,0);
+     ManFixPUnary mfu01i(p10,Gecode::Int::Limits::min);
+     OptFixPUnary ofu010(p10,0);
+     OptFixPUnary ofu01i(p10,Gecode::Int::Limits::min);
      ManFlexUnary mflu010(5,0,2,0);
      ManFlexUnary mflu01i(5,0,2,Gecode::Int::Limits::min);
      OptFlexUnary oflu010(5,0,2,0);
      OptFlexUnary oflu01i(5,0,2,Gecode::Int::Limits::min);
 
      Gecode::IntArgs p2(4, 4,3,3,5);
-     ManFixUnary mfu20(p2,0);
-     ManFixUnary mfu2i(p2,Gecode::Int::Limits::min);
-     OptFixUnary ofu20(p2,0);
-     OptFixUnary ofu2i(p2,Gecode::Int::Limits::min);
+     ManFixPUnary mfu20(p2,0);
+     ManFixPUnary mfu2i(p2,Gecode::Int::Limits::min);
+     OptFixPUnary ofu20(p2,0);
+     OptFixPUnary ofu2i(p2,Gecode::Int::Limits::min);
      ManFlexUnary mflu20(4,3,5,0);
      ManFlexUnary mflu2i(4,3,5,Gecode::Int::Limits::min);
      OptFlexUnary oflu20(4,3,5,0);
      OptFlexUnary oflu2i(4,3,5,Gecode::Int::Limits::min);
 
      Gecode::IntArgs p20(6, 4,0,3,3,0,5);
-     ManFixUnary mfu020(p20,0);
-     ManFixUnary mfu02i(p20,Gecode::Int::Limits::min);
-     OptFixUnary ofu020(p20,0);
-     OptFixUnary ofu02i(p20,Gecode::Int::Limits::min);
+     ManFixPUnary mfu020(p20,0);
+     ManFixPUnary mfu02i(p20,Gecode::Int::Limits::min);
+     OptFixPUnary ofu020(p20,0);
+     OptFixPUnary ofu02i(p20,Gecode::Int::Limits::min);
      ManFlexUnary mflu020(6,0,5,0);
      ManFlexUnary mflu02i(6,0,5,Gecode::Int::Limits::min);
      OptFlexUnary oflu020(6,0,5,0);
      OptFlexUnary oflu02i(6,0,5,Gecode::Int::Limits::min);
 
      Gecode::IntArgs p3(6, 4,2,9,3,7,5);
-     ManFixUnary mfu30(p3,0);
-     ManFixUnary mfu3i(p3,Gecode::Int::Limits::min);
-     OptFixUnary ofu30(p3,0);
-     OptFixUnary ofu3i(p3,Gecode::Int::Limits::min);
+     ManFixPUnary mfu30(p3,0);
+     ManFixPUnary mfu3i(p3,Gecode::Int::Limits::min);
+     OptFixPUnary ofu30(p3,0);
+     OptFixPUnary ofu3i(p3,Gecode::Int::Limits::min);
      ManFlexUnary mflu30(6,2,7,0);
      ManFlexUnary mflu3i(6,2,7,Gecode::Int::Limits::min);
      OptFlexUnary oflu30(6,2,7,0);
      OptFlexUnary oflu3i(6,2,7,Gecode::Int::Limits::min);
 
      Gecode::IntArgs p30(8, 4,0,2,9,3,7,5,0);
-     ManFixUnary mfu030(p30,0);
-     ManFixUnary mfu03i(p30,Gecode::Int::Limits::min);
-     OptFixUnary ofu030(p30,0);
-     OptFixUnary ofu03i(p30,Gecode::Int::Limits::min);
+     ManFixPUnary mfu030(p30,0);
+     ManFixPUnary mfu03i(p30,Gecode::Int::Limits::min);
+     OptFixPUnary ofu030(p30,0);
+     OptFixPUnary ofu03i(p30,Gecode::Int::Limits::min);
      ManFlexUnary mflu030(8,0,9,0);
      ManFlexUnary mflu03i(8,0,9,Gecode::Int::Limits::min);
      OptFlexUnary oflu030(8,0,9,0);

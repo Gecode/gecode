@@ -42,42 +42,83 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
    */
 
   forceinline
-  ManFixTask::ManFixTask(void) {}
+  ManFixPTask::ManFixPTask(void) {}
   forceinline
-  ManFixTask::ManFixTask(IntVar s, int p, int c) 
-    : Unary::ManFixTask(s,p), _c(c) {}
+  ManFixPTask::ManFixPTask(IntVar s, int p, int c) 
+    : Unary::ManFixPTask(s,p), _c(c) {}
   forceinline void
-  ManFixTask::init(IntVar s, int p, int c) {
-    Unary::ManFixTask::init(s,p); _c=c;
+  ManFixPTask::init(IntVar s, int p, int c) {
+    Unary::ManFixPTask::init(s,p); _c=c;
   }
   forceinline void
-  ManFixTask::init(const ManFixTask& t) {
-    Unary::ManFixTask::init(t); _c=t._c;
+  ManFixPTask::init(const ManFixPTask& t) {
+    Unary::ManFixPTask::init(t); _c=t._c;
   }
 
   forceinline int
-  ManFixTask::c(void) const {
+  ManFixPTask::c(void) const {
     return _c;
   }
   forceinline double
-  ManFixTask::e(void) const {
+  ManFixPTask::e(void) const {
     return static_cast<double>(pmin())*c();
   }
 
   forceinline void
-  ManFixTask::update(Space& home, bool share, ManFixTask& t) {
-    Unary::ManFixTask::update(home,share,t); _c=t._c;
+  ManFixPTask::update(Space& home, bool share, ManFixPTask& t) {
+    Unary::ManFixPTask::update(home,share,t); _c=t._c;
   }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixTask& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPTask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ":[" << t.pmin() << ',' << t.c() << "]:" << t.lct();
     return os << s.str();
   }
-    
+
+  /*
+   * Mandatory fixed task with fixed processing, start or end time
+   */
+
+  forceinline
+  ManFixPSETask::ManFixPSETask(void) {}
+  forceinline
+  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p, int c) 
+    : Unary::ManFixPSETask(t,s,p), _c(c) {}
+  forceinline void
+  ManFixPSETask::init(TaskType t, IntVar s, int p, int c) {
+    Unary::ManFixPSETask::init(t,s,p); _c=c;
+  }
+  forceinline void
+  ManFixPSETask::init(const ManFixPSETask& t0) {
+    Unary::ManFixPSETask::init(t0); _c=t0._c;
+  }
+
+  forceinline int
+  ManFixPSETask::c(void) const {
+    return _c;
+  }
+  forceinline double
+  ManFixPSETask::e(void) const {
+    return static_cast<double>(pmin())*c();
+  }
+
+  forceinline void
+  ManFixPSETask::update(Space& home, bool share, ManFixPSETask& t) {
+    Unary::ManFixPSETask::update(home,share,t); _c=t._c;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,const ManFixPSETask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ":[" << t.pmin() << ',' << t.c() << "]:" << t.lct();
+    return os << s.str();
+  }
+ 
   /*
    * Mandatory flexible task
    */
@@ -125,19 +166,44 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
    */
 
   forceinline
-  OptFixTask::OptFixTask(void) {}
+  OptFixPTask::OptFixPTask(void) {}
   forceinline
-  OptFixTask::OptFixTask(IntVar s, int p, int c, BoolVar m) {
-    ManFixTask::init(s,p,c); _m=m;
+  OptFixPTask::OptFixPTask(IntVar s, int p, int c, BoolVar m) {
+    ManFixPTask::init(s,p,c); _m=m;
   }
   forceinline void
-  OptFixTask::init(IntVar s, int p, int c, BoolVar m) {
-    ManFixTask::init(s,p,c); _m=m;
+  OptFixPTask::init(IntVar s, int p, int c, BoolVar m) {
+    ManFixPTask::init(s,p,c); _m=m;
   }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixTask& t) {
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPTask& t) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << t.est() << ":[" << t.pmin() << ',' << t.c() << "]:" << t.lct() << ':'
+      << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
+    return os << s.str();
+  }
+
+  /*
+   * Optional fixed task
+   */
+
+  forceinline
+  OptFixPSETask::OptFixPSETask(void) {}
+  forceinline
+  OptFixPSETask::OptFixPSETask(TaskType t,IntVar s,int p,int c,BoolVar m) {
+    ManFixPSETask::init(t,s,p,c); _m=m;
+  }
+  forceinline void
+  OptFixPSETask::init(TaskType t, IntVar s, int p, int c, BoolVar m) {
+    ManFixPSETask::init(t,s,p,c); _m=m;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPSETask& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << t.est() << ":[" << t.pmin() << ',' << t.c() << "]:" << t.lct() << ':'

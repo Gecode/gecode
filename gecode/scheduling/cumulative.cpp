@@ -42,18 +42,17 @@
 namespace Gecode {
 
   void
-  cumulative(Home home, int c, const IntVarArgs& s, 
-             const IntArgs& p, const IntArgs& u) {
+  cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Cumulative;
-    if (s.same(home))
-      throw Int::ArgumentSame("Scheduling::cumulative");
-    if ((s.size() != p.size()) || (s.size() != u.size()))
+    if ((s.size() != p.size()) || (s.size() != u.size()) ||
+        (s.size() != t.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
     double w = 0.0;
     for (int i=p.size(); i--; ) {
       Int::Limits::nonnegative(p[i],"Scheduling::cumulative");
-      Int::Limits::positive(u[i],"Scheduling::cumulative");
+      Int::Limits::nonnegative(u[i],"Scheduling::cumulative");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
                          "Scheduling::cumulative");
       Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
@@ -63,10 +62,88 @@ namespace Gecode {
     Int::Limits::double_check(c * w * s.size(),
                               "Scheduling::cumulative");
     if (home.failed()) return;
-    TaskArray<ManFixTask> t(home,s.size());
-    for (int i=s.size(); i--; )
+    bool fixp = true;
+    for (int i=t.size(); i--;)
+      if (t[i] != TT_FIXP) {
+        fixp = false; break;
+      }
+    if (fixp) {
+      TaskArray<ManFixPTask> tasks(home,s.size());
+      for (int i=0; i<s.size(); i++)
+        tasks[i].init(s[i],p[i],u[i]);
+      GECODE_ES_FAIL(ManProp<ManFixPTask>::post(home,c,tasks));
+    } else {
+      TaskArray<ManFixPSETask> tasks(home,s.size());
+      for (int i=s.size(); i--;)
+        tasks[i].init(t[i],s[i],p[i],u[i]);
+      GECODE_ES_FAIL(ManProp<ManFixPSETask>::post(home,c,tasks));
+    }
+  }
+
+  void
+  cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             const BoolVarArgs& m) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Cumulative;
+    if ((s.size() != p.size()) || (s.size() != u.size()) ||
+        (s.size() != t.size()) || (s.size() != m.size()))
+      throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
+    double w = 0.0;
+    for (int i=p.size(); i--; ) {
+      Int::Limits::nonnegative(p[i],"Scheduling::cumulative");
+      Int::Limits::nonnegative(u[i],"Scheduling::cumulative");
+      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
+                         "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
+                                "Scheduling::cumulative");
+      w += s[i].width();
+    }
+    Int::Limits::double_check(c * w * s.size(),
+                              "Scheduling::cumulative");
+    if (home.failed()) return;
+    bool fixp = true;
+    for (int i=t.size(); i--;)
+      if (t[i] != TT_FIXP) {
+        fixp = false; break;
+      }
+    if (fixp) {
+      TaskArray<OptFixPTask> tasks(home,s.size());
+      for (int i=0; i<s.size(); i++)
+        tasks[i].init(s[i],p[i],u[i],m[i]);
+      GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,c,tasks));
+    } else {
+      TaskArray<OptFixPSETask> tasks(home,s.size());
+      for (int i=s.size(); i--;)
+        tasks[i].init(t[i],s[i],p[i],u[i],m[i]);
+      GECODE_ES_FAIL(OptProp<OptFixPSETask>::post(home,c,tasks));
+    }
+  }
+  void
+  cumulative(Home home, int c, const IntVarArgs& s, 
+             const IntArgs& p, const IntArgs& u) {
+    using namespace Gecode::Scheduling;
+    using namespace Gecode::Scheduling::Cumulative;
+    if ((s.size() != p.size()) || (s.size() != u.size()))
+      throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
+    double w = 0.0;
+    for (int i=p.size(); i--; ) {
+      Int::Limits::nonnegative(p[i],"Scheduling::cumulative");
+      Int::Limits::nonnegative(u[i],"Scheduling::cumulative");
+      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
+                         "Scheduling::cumulative");
+      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
+                                "Scheduling::cumulative");
+      w += s[i].width();
+    }
+    Int::Limits::double_check(c * w * s.size(),
+                              "Scheduling::cumulative");
+    if (home.failed()) return;
+    TaskArray<ManFixPTask> t(home,s.size());
+    for (int i=0; i<s.size(); i++) {
       t[i].init(s[i],p[i],u[i]);
-    GECODE_ES_FAIL(ManProp<ManFixTask>::post(home,c,t));
+    }
+    GECODE_ES_FAIL(ManProp<ManFixPTask>::post(home,c,t));
   }
 
   void
@@ -74,15 +151,13 @@ namespace Gecode {
              const IntArgs& u, const BoolVarArgs& m) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Cumulative;
-    if (s.same(home))
-      throw Int::ArgumentSame("Scheduling::cumulative");
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
         (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
     double w = 0.0;
     for (int i=p.size(); i--; ) {
       Int::Limits::nonnegative(p[i],"Scheduling::cumulative");
-      Int::Limits::positive(u[i],"Scheduling::cumulative");
+      Int::Limits::nonnegative(u[i],"Scheduling::cumulative");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
                          "Scheduling::cumulative");
       Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
@@ -92,10 +167,11 @@ namespace Gecode {
     Int::Limits::double_check(c * w * s.size(),
                               "Scheduling::cumulative");
     if (home.failed()) return;
-    TaskArray<OptFixTask> t(home,s.size());
-    for (int i=s.size(); i--; )
+    TaskArray<OptFixPTask> t(home,s.size());
+    for (int i=0; i<s.size(); i++) {
       t[i].init(s[i],p[i],u[i],m[i]);
-    GECODE_ES_FAIL(OptProp<OptFixTask>::post(home,c,t));
+    }
+    GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,c,t));
   }
 
   void
@@ -104,8 +180,6 @@ namespace Gecode {
              const IntArgs& u) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Cumulative;
-    if (s.same(home,p+e))
-      throw Int::ArgumentSame("Scheduling::cumulative");
     if ((s.size() != p.size()) || (s.size() != e.size()) ||
         (s.size() != u.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
@@ -114,7 +188,7 @@ namespace Gecode {
       rel(home, p[i], IRT_GQ, 0);
     }
     for (int i=p.size(); i--; ) {
-      Int::Limits::positive(u[i],"Scheduling::cumulative");
+      Int::Limits::nonnegative(u[i],"Scheduling::cumulative");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i].max(),
                          "Scheduling::cumulative");
       Int::Limits::double_check(static_cast<double>(p[i].max()) * u[i],
@@ -135,8 +209,6 @@ namespace Gecode {
              const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m) {
     using namespace Gecode::Scheduling;
     using namespace Gecode::Scheduling::Cumulative;
-    if (s.same(home,p+e))
-      throw Int::ArgumentSame("Scheduling::cumulative");
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
         (s.size() != e.size()) || (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Scheduling::cumulative");
@@ -145,7 +217,7 @@ namespace Gecode {
     }
     double w = 0.0;
     for (int i=p.size(); i--; ) {
-      Int::Limits::positive(u[i],"Scheduling::cumulative");
+      Int::Limits::nonnegative(u[i],"Scheduling::cumulative");
       Int::Limits::check(static_cast<double>(s[i].max()) + p[i].max(),
                          "Scheduling::cumulative");
       Int::Limits::double_check(static_cast<double>(p[i].max()) * u[i],

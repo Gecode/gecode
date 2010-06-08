@@ -51,7 +51,7 @@ namespace Test { namespace Int {
      */
     //@{
     /// Test for cumulative constraint with mandatory tasks
-    class ManFixCumulative : public Test {
+    class ManFixPCumulative : public Test {
     protected:
       /// Capacity of resource
       int c;
@@ -71,7 +71,7 @@ namespace Test { namespace Int {
       int o;
     public:
       /// Create and register test
-      ManFixCumulative(int c0, 
+      ManFixPCumulative(int c0, 
                        const Gecode::IntArgs& p0,
                        const Gecode::IntArgs& u0,
                        int o0)
@@ -109,9 +109,11 @@ namespace Test { namespace Int {
         // Compute resource usage (only internal)
         for (int i=0; i<t; i++)
           used[i] = 0;
-        for (int i=0; i<x.size(); i++)
-          for (int t=1; t<p[i]; t++)
+        for (int i=0; i<x.size(); i++) {
+          for (int t=1; t<p[i]; t++) {
             used[x[i]-o+t] += u[i];
+          }
+        }
         // Check resource usage at start times
         for (int i=0; i<x.size(); i++)
           if (used[x[i]-o]+u[i] > c) {
@@ -129,7 +131,7 @@ namespace Test { namespace Int {
 
 
     /// Test for cumulative constraint with optional tasks
-    class OptFixCumulative : public Test {
+    class OptFixPCumulative : public Test {
     protected:
       /// Capacity of resource
       int c;
@@ -151,7 +153,7 @@ namespace Test { namespace Int {
       }
     public:
       /// Create and register test
-      OptFixCumulative(int c0, 
+      OptFixPCumulative(int c0, 
                        const Gecode::IntArgs& p0,
                        const Gecode::IntArgs& u0,
                        int o0)
@@ -183,18 +185,20 @@ namespace Test { namespace Int {
             for (int t=0; t<p[i]; t++)
               used[x[i]-o+t] += u[i];
         // Check resource usage
-        for (int i=0; i<t; i++)
+        for (int i=0; i<t; i++) {
           if (used[i] > c) {
             delete [] used;
             return false;
           }
+        }
         // Compute resource usage (only internal)
         for (int i=0; i<t; i++)
           used[i] = 0;
         for (int i=0; i<n; i++)
-          if (x[n+i] > l)
+          if (x[n+i] > l) {
             for (int t=1; t<p[i]; t++)
               used[x[i]-o+t] += u[i];
+          }
         // Check resource usage at start times
         for (int i=0; i<n; i++)
           if (x[n+i] > l)
@@ -280,9 +284,10 @@ namespace Test { namespace Int {
         // Compute resource usage (only internal)
         for (int i=0; i<t; i++)
           used[i] = 0;
-        for (int i=0; i<n; i++)
+        for (int i=0; i<n; i++) {
           for (int t=1; t<x[n+i]; t++)
             used[x[i]+t] += u[i];
+        }
         // Check resource usage at start times
         for (int i=0; i<n; i++)
           if (used[x[i]]+u[i] > c) {
@@ -428,18 +433,18 @@ namespace Test { namespace Int {
         for (int c=1; c<8; c++) {
           int off = 0;
           for (int coff=0; coff<2; coff++) {
-            (void) new ManFixCumulative(c,p1,u1,off);
-            (void) new ManFixCumulative(c,p1,u2,off);
-            (void) new ManFixCumulative(c,p1,u3,off);
-            (void) new ManFixCumulative(c,p2,u1,off);
-            (void) new ManFixCumulative(c,p2,u2,off);
-            (void) new ManFixCumulative(c,p2,u3,off);
-            (void) new ManFixCumulative(c,p3,u1,off);
-            (void) new ManFixCumulative(c,p3,u2,off);
-            (void) new ManFixCumulative(c,p3,u3,off);
-            (void) new ManFixCumulative(c,p4,u1,off);
-            (void) new ManFixCumulative(c,p4,u2,off);
-            (void) new ManFixCumulative(c,p4,u3,off);
+            (void) new ManFixPCumulative(c,p1,u1,off);
+            (void) new ManFixPCumulative(c,p1,u2,off);
+            (void) new ManFixPCumulative(c,p1,u3,off);
+            (void) new ManFixPCumulative(c,p2,u1,off);
+            (void) new ManFixPCumulative(c,p2,u2,off);
+            (void) new ManFixPCumulative(c,p2,u3,off);
+            (void) new ManFixPCumulative(c,p3,u1,off);
+            (void) new ManFixPCumulative(c,p3,u2,off);
+            (void) new ManFixPCumulative(c,p3,u3,off);
+            (void) new ManFixPCumulative(c,p4,u1,off);
+            (void) new ManFixPCumulative(c,p4,u2,off);
+            (void) new ManFixPCumulative(c,p4,u3,off);
 
             (void) new ManFlexCumulative(c,0,1,u1,off);
             (void) new ManFlexCumulative(c,0,1,u2,off);
@@ -451,19 +456,19 @@ namespace Test { namespace Int {
             (void) new ManFlexCumulative(c,3,5,u2,off);
             (void) new ManFlexCumulative(c,3,5,u3,off);
 
-            (void) new OptFixCumulative(c,p1,u1,off);
-            (void) new OptFixCumulative(c,p1,u2,off);
-            (void) new OptFixCumulative(c,p1,u3,off);
-            (void) new OptFixCumulative(c,p2,u1,off);
-            (void) new OptFixCumulative(c,p2,u2,off);
-            (void) new OptFixCumulative(c,p2,u3,off);
-            (void) new OptFixCumulative(c,p3,u1,off);
-            (void) new OptFixCumulative(c,p3,u2,off);
-            (void) new OptFixCumulative(c,p3,u3,off);
-            (void) new OptFixCumulative(c,p4,u1,off);
-            (void) new OptFixCumulative(c,p4,u2,off);
-            (void) new OptFixCumulative(c,p4,u3,off);
-
+            (void) new OptFixPCumulative(c,p1,u1,off);
+            (void) new OptFixPCumulative(c,p1,u2,off);
+            (void) new OptFixPCumulative(c,p1,u3,off);
+            (void) new OptFixPCumulative(c,p2,u1,off);
+            (void) new OptFixPCumulative(c,p2,u2,off);
+            (void) new OptFixPCumulative(c,p2,u3,off);
+            (void) new OptFixPCumulative(c,p3,u1,off);
+            (void) new OptFixPCumulative(c,p3,u2,off);
+            (void) new OptFixPCumulative(c,p3,u3,off);
+            (void) new OptFixPCumulative(c,p4,u1,off);
+            (void) new OptFixPCumulative(c,p4,u2,off);
+            (void) new OptFixPCumulative(c,p4,u3,off);
+            
             (void) new OptFlexCumulative(c,0,1,u1,off);
             (void) new OptFlexCumulative(c,0,1,u2,off);
             (void) new OptFlexCumulative(c,0,1,u3,off);
@@ -473,6 +478,7 @@ namespace Test { namespace Int {
             (void) new OptFlexCumulative(c,3,5,u1,off);
             (void) new OptFlexCumulative(c,3,5,u2,off);
             (void) new OptFlexCumulative(c,3,5,u3,off);
+
             off = Gecode::Int::Limits::min;
           }
         }
