@@ -132,7 +132,6 @@ namespace Gecode {
     void object(SharedHandle::Object* n);
   };
 
-
   /**
    * \defgroup TaskVarMEPC Generic modification events and propagation conditions
    *
@@ -217,6 +216,7 @@ namespace Gecode {
   class ActorLink;
   class Actor;
   class Propagator;
+  class LocalObject;
   class Advisor;
   template<class A> class Council;
   template<class A> class Advisors;
@@ -615,6 +615,7 @@ namespace Gecode {
     friend class Propagator;
     friend class Advisor;
     friend class Brancher;
+    friend class LocalObject;
     friend class Space;
     template<class VIC> friend class VarImp;
   private:
@@ -654,6 +655,7 @@ namespace Gecode {
     friend class Propagator;
     friend class Advisor;
     friend class Brancher;
+    friend class LocalObject;
     template<class VIC> friend class VarImp;
     template<class A> friend class Council;
   private:
@@ -1030,6 +1032,57 @@ namespace Gecode {
     //@}
   };
 
+  /**
+   * \brief Local (space-shared) object
+   *
+   * Local objects must inherit from this base class.
+   *
+   * \ingroup FuncSupportShared
+   */
+  class LocalObject : public Actor {
+    friend class ActorLink;
+    friend class Space;
+    friend class LocalHandle;
+  protected:
+    /// Constructor for creation
+    LocalObject(Home home);
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static LocalObject* cast(ActorLink* al);
+    /// Static cast for a non-null pointer (to give a hint to optimizer)
+    static const LocalObject* cast(const ActorLink* al);
+  public:
+    /// Return forwarding pointer
+    LocalObject* fwd(Space& home, bool share);
+  };
+
+  /**
+   * \brief Handles for local (space-shared) objects
+   *
+   */
+  class LocalHandle {
+  private:
+    /// The local object
+    LocalObject* o;
+  protected:
+    /// Create local handle with no object pointing to
+    LocalHandle(void);
+    /// Create local handle that points to local object \a lo
+    LocalHandle(LocalObject* lo);
+    /// Copy constructor
+    LocalHandle(const LocalHandle& lh);
+  public:
+    /// Assignment operator
+    LocalHandle& operator =(const LocalHandle& lh);
+    /// Updating during cloning
+    void update(Space& home, bool share, LocalHandle& lh);
+    /// Destructor
+    ~LocalHandle(void);
+  protected:
+    /// Access to the local object
+    LocalObject* object(void) const;
+    /// Modify local object
+    void object(LocalObject* n);
+  };
 
 
   /**
@@ -1105,6 +1158,7 @@ namespace Gecode {
     template<class VIC> friend class VarImp;
     template<class VarType> friend class VarDisposer;
     friend class SharedHandle;
+    friend class LocalObject;
     friend class Region;
   private:
     /// Manager for shared memory areas
@@ -1166,6 +1220,8 @@ namespace Gecode {
         VarImpBase* vars_noidx;
         /// Linked list of shared objects
         SharedHandle::Object* shared;
+        /// Linked list of local objects
+        LocalObject* local;
       } c;
     } pc;
     /// Put propagator \a p into right queue
@@ -2528,6 +2584,64 @@ namespace Gecode {
     return _id;
   }
 
+  /*
+   * Local objects
+   *
+   */
+
+  forceinline LocalObject*
+  LocalObject::cast(ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    ActorLink& t = *al;
+    return static_cast<LocalObject*>(&t);
+  }
+
+  forceinline const LocalObject*
+  LocalObject::cast(const ActorLink* al) {
+    // Turning al into a reference is for gcc, assume is for MSVC
+    GECODE_NOT_NULL(al);
+    const ActorLink& t = *al;
+    return static_cast<const LocalObject*>(&t);
+  }
+
+  forceinline
+  LocalObject::LocalObject(Home) {
+    ActorLink::cast(this)->prev(NULL);
+  }
+
+  forceinline LocalObject*
+  LocalObject::fwd(Space& home, bool share) {
+    if (prev() == NULL) {
+      Actor* o = copy(home,share);
+      ActorLink::cast(this)->prev(o);
+      next(home.pc.c.local);
+      home.pc.c.local = this;
+    }
+    return LocalObject::cast(prev());
+  }
+
+  forceinline
+  LocalHandle::LocalHandle(void) : o(NULL) {}
+  forceinline
+  LocalHandle::LocalHandle(LocalObject* lo) : o(lo) {}
+  forceinline
+  LocalHandle::LocalHandle(const LocalHandle& lh) : o(lh.o) {}
+  forceinline LocalHandle&
+  LocalHandle::operator =(const LocalHandle& lh) {
+    o = lh.o;
+    return *this;
+  }
+  forceinline
+  LocalHandle::~LocalHandle(void) {}
+  forceinline LocalObject*
+  LocalHandle::object(void) const { return o; }
+  forceinline void
+  LocalHandle::object(LocalObject* n) { o = n; }
+  forceinline void
+  LocalHandle::update(Space& home, bool share, LocalHandle& lh) {
+    object(lh.object()->fwd(home,share));
+  }
 
 
   /*

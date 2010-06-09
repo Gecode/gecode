@@ -401,6 +401,7 @@ namespace Gecode {
       pc.c.vars_u[i] = NULL;
     pc.c.vars_noidx = NULL;
     pc.c.shared = NULL;
+    pc.c.local = NULL;
     // Copy all propagators
     {
       ActorLink* p = &pl;
@@ -429,23 +430,6 @@ namespace Gecode {
       // Link last actor
       p->next(&bl); bl.prev(p);
     }
-    // Setup array for actor disposal
-    {
-      unsigned int n = static_cast<unsigned int>(s.d_cur - s.d_fst);
-      if (n == 0) {
-        // No actors
-        d_fst = d_cur = d_lst = NULL;
-      } else {
-        // Leave one entry free
-        d_fst = alloc<Actor*>(n+1);
-        d_cur = d_fst+n;
-        d_lst = d_cur+1;
-        do {
-          n--;
-          d_fst[n] = Actor::cast(s.d_fst[n]->prev());
-        } while (n != 0);
-      }
-    }
     // Setup brancher pointers
     if (s.b_status == &s.bl) {
       b_status = Brancher::cast(&bl);
@@ -468,6 +452,24 @@ namespace Gecode {
 
     // Copy all data structures (which in turn will invoke the constructor)
     Space* c = copy(share);
+
+    // Setup array for actor disposal in c
+    {
+      unsigned int n = static_cast<unsigned int>(d_cur - d_fst);
+      if (n == 0) {
+        // No actors
+        c->d_fst = c->d_cur = c->d_lst = NULL;
+      } else {
+        // Leave one entry free
+        c->d_fst = c->alloc<Actor*>(n+1);
+        c->d_cur = c->d_fst;
+        c->d_lst = c->d_fst+n+1;
+        for (Actor** d_fst_iter = d_fst; d_fst_iter != d_cur; d_fst_iter++) {
+          if ((*d_fst_iter)->prev())
+            *(c->d_cur++) = Actor::cast((*d_fst_iter)->prev());
+        }
+      }
+    }
 
     // Update variables without indexing structure
     VarImp<NoIdxVarImpConf>* x =
@@ -506,9 +508,13 @@ namespace Gecode {
       }
     }
 
-    // Reset links for copied objects
+    // Reset links for shared objects
     for (SharedHandle::Object* s = c->pc.c.shared; s != NULL; s = s->next)
       s->fwd = NULL;
+
+    // Reset links for local objects
+    for (ActorLink* l = c->pc.c.local; l != NULL; l = l->next())
+      l->prev(NULL);
 
     // Initialize propagator queue
     c->pc.p.active = &c->pc.p.queue[0]-1;
