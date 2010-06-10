@@ -73,6 +73,15 @@ Date: soon
 More fixes for more bugs.
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added LocalObject and LocalHandle classes that can be used for
+space-allocated objects that are shared within a space, for
+example among several propagators or propagators and branchers.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major

@@ -1050,6 +1050,9 @@ namespace Gecode {
     static LocalObject* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static const LocalObject* cast(const ActorLink* al);
+  private:
+    /// Make copy and set forwarding pointer
+    GECODE_KERNEL_EXPORT void fwdcopy(Space& home, bool share);
   public:
     /// Return forwarding pointer
     LocalObject* fwd(Space& home, bool share);
@@ -1058,13 +1061,15 @@ namespace Gecode {
   /**
    * \brief Handles for local (space-shared) objects
    *
+   * \ingroup FuncSupportShared
+   *
    */
   class LocalHandle {
   private:
     /// The local object
     LocalObject* o;
   protected:
-    /// Create local handle with no object pointing to
+    /// Create local handle pointing to NULL object
     LocalHandle(void);
     /// Create local handle that points to local object \a lo
     LocalHandle(LocalObject* lo);
@@ -2612,12 +2617,8 @@ namespace Gecode {
 
   forceinline LocalObject*
   LocalObject::fwd(Space& home, bool share) {
-    if (prev() == NULL) {
-      Actor* o = copy(home,share);
-      ActorLink::cast(this)->prev(o);
-      next(home.pc.c.local);
-      home.pc.c.local = this;
-    }
+    if (prev() == NULL)
+      fwdcopy(home,share);
     return LocalObject::cast(prev());
   }
 

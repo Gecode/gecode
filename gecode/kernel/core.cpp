@@ -531,6 +531,14 @@ namespace Gecode {
     throw SpaceConstrainUndefined();
   }
 
+  void
+  LocalObject::fwdcopy(Space& home, bool share) {
+    ActorLink::cast(this)->prev(copy(home,share));
+    next(home.pc.c.local);
+    home.pc.c.local = this;
+  }
+
+
 }
 
 // STATISTICS: kernel-core
