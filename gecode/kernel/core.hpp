@@ -1046,6 +1046,8 @@ namespace Gecode {
   protected:
     /// Constructor for creation
     LocalObject(Home home);
+    /// Copy constructor
+    LocalObject(Space& home, bool share, LocalObject& l);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static LocalObject* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -2612,6 +2614,11 @@ namespace Gecode {
 
   forceinline
   LocalObject::LocalObject(Home) {
+    ActorLink::cast(this)->prev(NULL);
+  }
+
+  forceinline
+  LocalObject::LocalObject(Space&,bool,LocalObject&) {
     ActorLink::cast(this)->prev(NULL);
   }
 
