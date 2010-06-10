@@ -54,6 +54,9 @@ using namespace Gecode;
  *
  * See also problem 6 at http://www.csplib.org/.
  *
+ * The upper bound used is from the trivial construction where
+ * distances between consecutive marks are increasing powers of two.
+ *
  * Note that "Modeling and Programming with Gecode" uses this example
  * as a case study.
  *
@@ -72,7 +75,8 @@ public:
   };
   /// Actual model
   GolombRuler(const SizeOptions& opt)
-    : m(*this,opt.size(),0,Int::Limits::max) {
+    : m(*this,opt.size(),0,
+        opt.size() < 30 ? 1 << (opt.size()+1) : Int::Limits::max) {
 
     // Assume first mark to be zero
     rel(*this, m[0], IRT_EQ, 0);
