@@ -146,6 +146,9 @@ namespace Gecode { namespace Support {
     unsigned int next(unsigned int i) const;
     /// Return status of bitset
     BitSetStatus status(void) const;
+    /// Resize bitset to \a n elememts
+    template<class A>
+    void resize(A& a, unsigned int n, bool set=false);
     /// Dispose memory for bit set
     template<class A>
     void dispose(A& a);
@@ -238,6 +241,25 @@ namespace Gecode { namespace Support {
   forceinline void
   BitSetBase::_set(unsigned int i) {
     data[i / bpb].set(i % bpb);
+  }
+
+  template<class A>
+  void
+  BitSetBase::resize(A& a, unsigned int n, bool set) {
+    if (n>sz) {
+      data = a.template realloc<BitSetData>(data,BitSetData::data(sz+1),
+                                            BitSetData::data(n+1));
+      for (unsigned int i=BitSetData::data(sz)+1;
+           i<BitSetData::data(n+1); i++) {
+        data[i].init(set);
+      }
+      for (unsigned int i=(sz%bpb); i<bpb; i++)
+        if (set)
+          data[sz / bpb].set(i);
+        else
+          data[sz / bpb].clear(i);
+    }
+    sz = n; _set(sz);
   }
 
   template<class A>
