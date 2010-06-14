@@ -71,7 +71,7 @@ $whatclear{"change"} = "Other changes";
 $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
-@modorder = ("kernel","search","int","set","cpltset","minimodel",
+@modorder = ("kernel","search","int","set","cpltset","scheduling","minimodel",
          "iter","support","example","test","gist","other");
 
 @whatorder = ("new","change","bug","performance","documentation");
