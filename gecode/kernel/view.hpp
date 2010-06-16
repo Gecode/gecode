@@ -363,7 +363,7 @@ namespace Gecode {
   ConstViewBase<View>::subscribe(Space& home, Propagator& p, PropCond, 
                            bool schedule) {
     if (schedule)
-      View::schedule(home,p,PC_GEN_ASSIGNED);
+      View::schedule(home,p,ME_GEN_ASSIGNED);
   }
   template<class View>
   forceinline void

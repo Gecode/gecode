@@ -4,7 +4,6 @@
  *    edit the following files instead:
  *     - ./gecode/int/var-imp/int.vis
  *     - ./gecode/int/var-imp/bool.vis
- *     - ./gecode/set/var-imp/set.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -110,41 +109,6 @@ namespace Gecode { namespace Int {
   };
 }}
 #endif
-#ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
-  /// Base-class for Set-variable implementations
-  class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
-  protected:
-    /// Constructor for cloning \a x
-    SetVarImpBase(Gecode::Space& home, bool share, SetVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    SetVarImpBase(void);
-    /// Constructor for creating variable
-    SetVarImpBase(Gecode::Space& home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_SET_VAL.
-     */
-    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
-    //@}
-  };
-}}
-#endif
 #ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
 
@@ -231,89 +195,6 @@ namespace Gecode { namespace Int {
 
 }}
 #endif
-#ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
-
-  forceinline
-  SetVarImpBase::SetVarImpBase(void) {}
-
-  forceinline
-  SetVarImpBase::SetVarImpBase(Gecode::Space& home)
-    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home) {}
-
-  forceinline
-  SetVarImpBase::SetVarImpBase(Gecode::Space& home, bool share, SetVarImpBase& x)
-    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home,share,x) {}
-
-  forceinline void
-  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,schedule);
-  }
-  forceinline void
-  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned);
-  }
-
-  forceinline Gecode::ModEvent
-  SetVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
-    switch (me) {
-    case ME_SET_VAL:
-      // Conditions: VAL, CARD, CLUB, CGLB, ANY
-      schedule(home,PC_SET_VAL,PC_SET_ANY,ME_SET_VAL);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_VAL,d))
-        return ME_SET_FAILED;
-      cancel(home);
-      break;
-    case ME_SET_CARD:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CARD);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CARD,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_LUB:
-      // Conditions: CLUB, ANY
-      schedule(home,PC_SET_CLUB,PC_SET_CLUB,ME_SET_LUB);
-      schedule(home,PC_SET_ANY,PC_SET_ANY,ME_SET_LUB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_LUB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_GLB:
-      // Conditions: CGLB, ANY
-      schedule(home,PC_SET_CGLB,PC_SET_ANY,ME_SET_GLB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_GLB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_BB:
-      // Conditions: CLUB, CGLB, ANY
-      schedule(home,PC_SET_CLUB,PC_SET_ANY,ME_SET_BB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_BB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_CLUB:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CLUB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CLUB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_CGLB:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CGLB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CGLB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_CBB:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CBB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CBB,d))
-        return ME_SET_FAILED;
-      break;
-    default: GECODE_NEVER;
-    }
-    return me;
-  }
-
-}}
-#endif
 namespace Gecode {
 
   forceinline void
@@ -323,9 +204,6 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_INT_VARS
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::update(*this,sub);
-#endif
-#ifdef GECODE_HAS_SET_VARS
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::update(*this,sub);
 #endif
   }
 }
