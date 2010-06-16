@@ -111,8 +111,7 @@ public:
   Warehouses(const Options&)
     : supplier(*this, n_stores, 0, n_warehouses-1),
       open(*this, n_warehouses, 0, 1),
-      c_store(*this, n_stores, 0, Int::Limits::max),
-      c_total(*this, 0, Int::Limits::max) {
+      c_store(*this, n_stores) {
 
     // A warehouse is open, if it supplies to a store
     for (int s=0; s<n_stores; s++)
@@ -121,7 +120,7 @@ public:
     // Compute cost for each warehouse
     for (int s=0; s<n_stores; s++) {
       IntArgs c(n_warehouses, c_supply[s]);
-      element(*this, c, supplier[s], c_store[s]);
+      c_store[s] = expr(*this, element(c, supplier[s]));
     }
 
     // Do not exceed capacity
@@ -133,7 +132,7 @@ public:
     }
 
     // Compute total cost
-    rel(*this, c_fixed*sum(open) + sum(c_store) == c_total);
+    c_total = expr(*this, c_fixed*sum(open) + sum(c_store));
 
     // Branch with largest minimum regret on store cost
     branch(*this, c_store, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
