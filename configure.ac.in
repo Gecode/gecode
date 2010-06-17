@@ -212,17 +212,17 @@ dnl @VTIS@
 
 AC_GECODE_VIS
 
-AC_GECODE_VTI(float,
-        [float variable library (requires boost interval library)],
-        no,
-				[\$(top_srcdir)/contribs/float/var-imp/float.vis]],
-				[
-	ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
-   	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
-	AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
-	AC_MSG_ERROR([The boost interval library could not be found.])])
-	CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
-        ],[])
+dnl AC_GECODE_VTI(float,
+dnl        [float variable library (requires boost interval library)],
+dnl        no,
+dnl				[\$(top_srcdir)/contribs/float/var-imp/float.vis]],
+dnl				[
+dnl	ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
+dnl   	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
+dnl	AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
+dnl	AC_MSG_ERROR([The boost interval library could not be found.])])
+dnl	CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
+dnl        ],[])
 
 AC_GECODE_VTI(set,
 	[finite set library (implies --enable-int-vars)],

@@ -346,11 +346,11 @@ AC_DEFUN([AC_GECODE_VTI],
    [
    AC_ARG_ENABLE([$1-vars],
      AC_HELP_STRING([--enable-$1-vars],[build $2 @<:@default=$3@:>@]))
+   ac_gecode_vis="$4${ac_gecode_vis:+ }${ac_gecode_vis}"
    AC_MSG_CHECKING(whether to build the $1 variables library)
    if test "${enable_$1_vars:-$3}" = "yes"; then
      AC_MSG_RESULT(yes)
      enable_$1_vars="yes";
-     ac_gecode_vis="$4${ac_gecode_vis:+ }${ac_gecode_vis}"
      $5
      AC_GECODE_ADD_VTI(translit($1,`a-z', `A-Z'))
    else
