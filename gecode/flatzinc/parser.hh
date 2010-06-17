@@ -59,6 +59,7 @@ extern "C" int isatty(int);
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #include <gecode/flatzinc/option.hh>
 #include <gecode/flatzinc/varspec.hh>
@@ -73,6 +74,16 @@ namespace Gecode { namespace FlatZinc {
 
   class VarSpec;
   typedef std::pair<std::string, VarSpec*> varspec;
+
+  /// Strict weak ordering for output items
+  class OutputOrder {
+  public:
+    /// Return if \a x is less than \a y, based on first component
+    bool operator ()(const std::pair<std::string,AST::Node*>& x,
+                     const std::pair<std::string,AST::Node*>& y) {
+      return x.first < y.first;
+    }
+  };
 
   /// %State of the %FlatZinc parser
   class ParserState {
@@ -129,8 +140,10 @@ namespace Gecode { namespace FlatZinc {
     void output(std::string x, AST::Node* n) {
       _output.push_back(std::pair<std::string,AST::Node*>(x,n));
     }
-  
+    
     AST::Array* getOutput(void) {
+      OutputOrder oo;
+      std::sort(_output.begin(),_output.end(),oo);
       AST::Array* a = new AST::Array();
       for (unsigned int i=0; i<_output.size(); i++) {
         a->a.push_back(new AST::String(_output[i].first+" = "));
