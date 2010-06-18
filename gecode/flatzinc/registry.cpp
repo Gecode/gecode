@@ -1069,31 +1069,53 @@ namespace Gecode { namespace FlatZinc {
       int n = start.size();
       IntVar bound = getIntVar(s, ce[3]);
 
-      if (bound.assigned()) {
-        bool fixedDuration = true;
-        for (int i=duration.size(); i--;) {
-          if (!duration[i].assigned()) {
-            fixedDuration = false;
-            break;
-          }
-        }
-        if (bound.val() <= 1 && fixedDuration) {
-          // Unary
-          for (int i=height.size(); i--;)
-            rel(s, height[i] <= 1);
-          IntArgs durationI(duration.size());
-          for (int i=duration.size(); i--;)
+      int minHeight = INT_MAX; int minHeight2 = INT_MAX;
+      for (int i=n; i--;)
+        if (height[i].min() < minHeight)
+          minHeight = height[i].min();
+        else if (height[i].min() < minHeight2)
+          minHeight2 = height[i].min();
+      bool disjunctive =
+       (minHeight > bound.max()/2) ||
+       (minHeight2 > bound.max()/2 && minHeight+minHeight2>bound.max());
+      if (disjunctive) {
+        rel(s, bound >= max(height));
+        // Unary
+        if (duration.assigned()) {
+          IntArgs durationI(n);
+          for (int i=n; i--;)
             durationI[i] = duration[i].val();
           unary(s,start,durationI);
         } else {
-          IntArgs machine(n);
-          for (int i = n; i--; ) machine[i] = 0;
+          IntVarArgs end(s,n,Int::Limits::min,Int::Limits::max);
+          for (int i=n; i--;)
+            rel(s,start[i]+duration[i]==end[i]);
+          unary(s,start,duration,end);
+        }
+      } else if (bound.assigned()) {
+        if (height.assigned()) {
+          IntArgs heightI(n);
+          for (int i=n; i--;)
+            heightI[i] = height[i].val();
+          if (duration.assigned()) {
+            IntArgs durationI(n);
+            for (int i=n; i--;)
+              durationI[i] = duration[i].val();
+            cumulative(s, bound.val(), start, durationI, heightI);
+          } else {
+            IntVarArgs end(n);
+            for (int i = n; i--; )
+              end[i] = expr(s, start[i]+duration[i]);
+            cumulative(s, bound.val(), start, duration, end, heightI);
+          }
+        } else {
+          IntArgs machine = IntArgs::create(n,0,0);
           IntArgs limit(1, bound.val());
           IntVarArgs end(n);
           for (int i = n; i--; ) end[i] = IntVar(s, 0, Int::Limits::max);
           cumulatives(s, machine, start, duration, end, height, limit, true,
                       ann2icl(ann));
-        }
+        }        
       } else {
         int min = Gecode::Int::Limits::max;
         int max = Gecode::Int::Limits::min;
