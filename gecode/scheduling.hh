@@ -223,7 +223,7 @@ namespace Gecode {
    *
    * Schedule tasks with start times \a s and processing times \a p
    * on a unary resource. The propagator uses the algorithms from:
-   *   Petr VilÃ­m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
@@ -246,7 +246,7 @@ namespace Gecode {
    * and whether a task is mandatory \a m (a task is mandatory if the
    * Boolean variable is 1) on a unary resource. The propagator uses the 
    * algorithms from:
-   *   Petr VilÃ­m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
@@ -280,7 +280,7 @@ namespace Gecode {
    *    end time.
    *
    * The propagator uses the algorithms from:
-   *   Petr VilÃ­m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
@@ -314,7 +314,7 @@ namespace Gecode {
    *
    * The propagator uses the 
    * algorithms from:
-   *   Petr VilÃ­m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator performs overload checking, detectable precendence
@@ -335,7 +335,7 @@ namespace Gecode {
    * Schedule tasks with start times \a s, processing times \a p, and
    * end times \a e
    * on a unary resource. The propagator uses the algorithms from:
-   *   Petr VilÃ­m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
@@ -360,7 +360,7 @@ namespace Gecode {
    * and whether a task is mandatory \a m (a task is mandatory if the
    * Boolean variable is 1) on a unary resource. The propagator uses the 
    * algorithms from:
-   *   Petr VilÃ­m, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
@@ -396,13 +396,13 @@ namespace Gecode {
    * The propagator performs time-tabling, overload checking, and 
    * edge-finding. It uses algorithms taken from:
    *
-   * Petr VilÃ­m, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr VilÃ­m, Edge finding filtering algorithm for discrete cumulative 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
    * pages 802-816. Springer, 2009.
    *
@@ -436,13 +436,13 @@ namespace Gecode {
    * The propagator performs time-tabling, overload checking, and 
    * edge-finding. It uses algorithms taken from:
    *
-   * Petr VilÃ­m, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr VilÃ­m, Edge finding filtering algorithm for discrete cumulative 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
    * pages 802-816. Springer, 2009.
    *
@@ -465,13 +465,13 @@ namespace Gecode {
    * The propagator performs time-tabling, overload checking, and 
    * edge-finding. It uses algorithms taken from:
    *
-   * Petr VilÃ­m, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr VilÃ­m, Edge finding filtering algorithm for discrete cumulative 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
    * pages 802-816. Springer, 2009.
    *
@@ -495,13 +495,13 @@ namespace Gecode {
    * The propagator performs time-tabling, overload checking, and 
    * edge-finding. It uses algorithms taken from:
    *
-   * Petr VilÃ­m, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr VilÃ­m, Edge finding filtering algorithm for discrete cumulative 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
    * pages 802-816. Springer, 2009.
    *
@@ -527,13 +527,13 @@ namespace Gecode {
    * The propagator performs time-tabling, overload checking, and 
    * edge-finding. It uses algorithms taken from:
    *
-   * Petr VilÃ­m, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr VilÃ­m, Edge finding filtering algorithm for discrete cumulative 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
    * pages 802-816. Springer, 2009.
    *
@@ -561,13 +561,13 @@ namespace Gecode {
    * The propagator performs time-tabling, overload checking, and 
    * edge-finding. It uses algorithms taken from:
    *
-   * Petr VilÃ­m, Max Energy Filtering Algorithm for Discrete Cumulative 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr VilÃ­m, Edge finding filtering algorithm for discrete cumulative 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
    * pages 802-816. Springer, 2009.
    *
