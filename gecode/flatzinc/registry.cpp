@@ -1090,7 +1090,7 @@ namespace Gecode { namespace FlatZinc {
               allone = false;
           }
           if (allone) {
-            distinct(s,start);
+            distinct(s,start,ann2icl(ann));
           } else {
             unary(s,start,durationI);
           }
