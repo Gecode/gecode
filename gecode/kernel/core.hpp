@@ -243,25 +243,25 @@ namespace Gecode {
    * Controls disposal of variable implementations.
    * \ingroup TaskVar
    */
-  class GECODE_VTABLE_EXPORT VarDisposerBase {
+  class GECODE_VTABLE_EXPORT VarImpDisposerBase {
   public:
     /// Dispose list of variable implementations starting at \a x
     GECODE_KERNEL_EXPORT virtual void dispose(Space& home, VarImpBase* x);
     /// Destructor (not used)
-    GECODE_KERNEL_EXPORT virtual ~VarDisposerBase(void);
+    GECODE_KERNEL_EXPORT virtual ~VarImpDisposerBase(void);
   };
 
   /**
-   * \brief %Variable type disposer
+   * \brief %Variable implementation disposer
    *
-   * Controls disposal of variables.
+   * Controls disposal of variable implementations.
    * \ingroup TaskVar
    */
-  template<class VarType>
-  class VarDisposer : public VarDisposerBase {
+  template<class VarImp>
+  class VarImpDisposer : public VarImpDisposerBase {
   public:
     /// Constructor (registers disposer with kernel)
-    VarDisposer(void);
+    VarImpDisposer(void);
     /// Dispose list of variable implementations starting at \a x
     virtual void dispose(Space& home, VarImpBase* x);
   };
@@ -285,7 +285,7 @@ namespace Gecode {
   class VarImp : public VarImpBase {
     friend class Space;
     friend class Propagator;
-    template<class VarType> friend class VarDisposer;
+    template<class VarImp> friend class VarImpDisposer;
   private:
     /**
      * \brief Subscribed actors
@@ -364,7 +364,16 @@ namespace Gecode {
     /// Remove advisor from subscription array
     void remove(Space& home, Advisor* a);
 
+
   protected:
+    /// Cancel all subscriptions when variable implementation is assigned
+    void cancel(Space& home);
+    /**
+     * \brief Run advisors when variable implementation has been modified with modification event \a me and domain change \a d
+     *
+     * Returns false if an advisor has failed.
+     */
+    bool advise(Space& home, ModEvent me, Delta& d);
 #ifdef GECODE_HAS_VAR_DISPOSE
     /// Return reference to variables (dispose)
     static VarImp<VIC>* vars_d(Space& home);
@@ -413,8 +422,7 @@ namespace Gecode {
      *
      */
     void cancel(Space& home, Advisor& a, bool assigned);
-    /// Cancel all subscriptions when variable implementation is assigned
-    void cancel(Space& home);
+
     /**
      * \brief Return degree (number of subscribed propagators and advisors)
      *
@@ -429,12 +437,6 @@ namespace Gecode {
      * is not available during cloning.
      */
     double afc(void) const;
-    /**
-     * \brief Run advisors when variable implementation has been modified with modification event \a me and domain change \a d
-     *
-     * Returns false if an advisor has failed.
-     */
-    bool advise(Space& home, ModEvent me, Delta& d);
     //@}
 
     /// \name Cloning variables
@@ -1163,7 +1165,7 @@ namespace Gecode {
     friend class Brancher;
     friend class Advisor;
     template<class VIC> friend class VarImp;
-    template<class VarType> friend class VarDisposer;
+    template<class VarImp> friend class VarImpDisposer;
     friend class SharedHandle;
     friend class LocalObject;
     friend class Region;
@@ -1239,7 +1241,7 @@ namespace Gecode {
     //@{
 #ifdef GECODE_HAS_VAR_DISPOSE
     /// Registered variable type disposers
-    GECODE_KERNEL_EXPORT static VarDisposerBase* vd[AllVarConf::idx_d];
+    GECODE_KERNEL_EXPORT static VarImpDisposerBase* vd[AllVarConf::idx_d];
     /// Entries for disposing variables
     VarImpBase* _vars_d[AllVarConf::idx_d];
     /// Return reference to variables (dispose)
@@ -3358,19 +3360,19 @@ namespace Gecode {
    * Variable disposer
    *
    */
-  template<class VarType>
-  VarDisposer<VarType>::VarDisposer(void) {
+  template<class VarImp>
+  VarImpDisposer<VarImp>::VarImpDisposer(void) {
 #ifdef GECODE_HAS_VAR_DISPOSE
-    Space::vd[VarType::idx_d] = this;
+    Space::vd[VarImp::idx_d] = this;
 #endif
   }
 
-  template<class VarType>
+  template<class VarImp>
   void
-  VarDisposer<VarType>::dispose(Space& home, VarImpBase* _x) {
-    VarType* x = static_cast<VarType*>(_x);
+  VarImpDisposer<VarImp>::dispose(Space& home, VarImpBase* _x) {
+    VarImp* x = static_cast<VarImp*>(_x);
     do {
-      x->dispose(home); x = static_cast<VarType*>(x->next_d());
+      x->dispose(home); x = static_cast<VarImp*>(x->next_d());
     } while (x != NULL);
   }
 

@@ -44,9 +44,9 @@ namespace Gecode {
    *
    */
   void
-  VarDisposerBase::dispose(Space&,VarImpBase*) {}
+  VarImpDisposerBase::dispose(Space&,VarImpBase*) {}
 
-  VarDisposerBase::~VarDisposerBase(void) {}
+  VarImpDisposerBase::~VarImpDisposerBase(void) {}
 
 
 
@@ -89,7 +89,7 @@ namespace Gecode {
   CommitStatistics Space::unused_commit;
 
 #ifdef GECODE_HAS_VAR_DISPOSE
-  VarDisposerBase* Space::vd[AllVarConf::idx_d];
+  VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
   Space::Space(void)
