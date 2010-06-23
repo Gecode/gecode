@@ -131,6 +131,9 @@ Combine:	VAL=VAL,CARD=CBB,LUB=CBB,GLB=CBB,BB=CBB,CLUB=CBB,CGLB=CBB,CBB=CBB
 [ModEventFooter]
 [PropCondHeader]
 [PropCond]
+Name:		NONE=NONE
+  /// Propagation condition to be ignored (convenience)
+[PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL
   /**

@@ -231,12 +231,15 @@ for ($f=0; $f<$n_files; $f++) {
 	if ($l =~ /^Name:\s*(\w+)\s*=\s*(\w+)/io) {
 	  # Found a special propagation condition
 	  $lhs = $1; $rhs = $2;
-	  if (!($rhs eq "ASSIGNED")) {
+	  if (!($rhs eq "ASSIGNED") && !($rhs eq "NONE")) {
 	    die "Unknown special propagation condition: $rhs\n";
 	  }
 	  $pcspecial{$f}{$lhs} = $rhs;
 	  if ($rhs eq "ASSIGNED") {
 	    $pc_assigned[$f] = "PC_$vti[$f]_$lhs";
+	  }
+	  if ($rhs eq "NONE") {
+	    $pc_none[$f] = "PC_$vti[$f]_$lhs";
 	  }
 	  $n = $lhs;
 	} elsif ($l =~ /^Name:\s*(\w+)/io) {
@@ -340,15 +343,12 @@ if ($gen_typehpp) {
     print $meftr[$f];
     print $pchdr[$f];
 
-    print "  /// Propagation condition to be ignored (convenience)\n";
-    print "  const Gecode::PropCond PC_$vti[$f]_NONE = Gecode::PC_GEN_NONE;\n";
     $o = 1;
     for ($i=0; $i<$pc_n[$f]; $i++) {
       $n = $pcn[$f][$i];
       print $pch[$f][$i];
       print "  const Gecode::PropCond PC_$vti[$f]_${n} = ";
       if ($pcspecial{$f}{$n}) {
-	$pc_assigned[$f] = "PC_$vti[$f]_${n}";
 	print "Gecode::PC_GEN_" . $pcspecial{$f}{$n};
       } else {
 	print "Gecode::PC_GEN_ASSIGNED + " . $o;
@@ -792,7 +792,8 @@ EOF
   }
   $o = 1;
   for ($i=0; $i<$pc_n[$f]; $i++) {
-     if (!($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED")) {
+     if (!($pcspecial{$f}{$pcn[$f][$i]} eq "ASSIGNED") &&
+	 !($pcspecial{$f}{$pcn[$f][$i]} eq "NONE")) {
        $val2pc[$f][$o] = $pcn[$f][$i]; $o++;
      }
   }

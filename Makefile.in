@@ -975,12 +975,12 @@ compilesubdirs:
 
 VIS = @ALLVIS@
 VISDEP = $(VIS) \
-	$(top_srcdir)/misc/genvariables.perl Makefile
+	$(top_srcdir)/misc/genvarimp.perl Makefile
 
 gecode/kernel/var-type.hpp: $(VISDEP)
-	perl $(top_srcdir)/misc/genvariables.perl -typehpp $(VIS) > $@
+	perl $(top_srcdir)/misc/genvarimp.perl -typehpp $(VIS) > $@
 gecode/kernel/var-imp.hpp: $(VISDEP)
-	perl $(top_srcdir)/misc/genvariables.perl -header $(VIS) > $@
+	perl $(top_srcdir)/misc/genvarimp.perl -header $(VIS) > $@
 
 #
 # Generated branchers
@@ -1432,7 +1432,7 @@ DIST_FILES= \
 	misc/doxygen/stylesheet.css misc/doxygen/footer.html \
 	misc/doxygen/header.html misc/genlicense.perl \
 	misc/genstatistics.perl misc/getrevision.perl \
-	misc/genchangelog.perl misc/genvariables.perl \
+	misc/genchangelog.perl misc/genvarimp.perl \
 	misc/gentxtchangelog.perl misc/makedepend.perl \
 	misc/genbranch.perl
 

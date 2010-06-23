@@ -78,6 +78,9 @@ Combine:	VAL=VAL, BND=BND, DOM=DOM
 [ModEventFooter]
 [PropCondHeader]
 [PropCond]
+Name:		NONE=NONE
+  /// Propagation condition to be ignored (convenience)
+[PropCond]
 Name:		VAL=ASSIGNED
 ModEvents:	VAL
   /**
