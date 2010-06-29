@@ -34,11 +34,11 @@
 #
 
 [General]
-Name:		Bool
-Namespace:	Gecode::Int
-Ifdef:		GECODE_HAS_INT_VARS
-Bits:		2
-Dispose:	false
+Name:           Bool
+Namespace:      Gecode::Int
+Ifdef:          GECODE_HAS_INT_VARS
+Bits:           2
+Dispose:        false
 [ModEventHeader]
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -46,23 +46,23 @@ Dispose:	false
    */
   //@{
 [ModEvent]
-Name:		FAILED=FAILED
+Name:           FAILED=FAILED
   /// Domain operation has resulted in failure
 [ModEvent]
-Name:		NONE=NONE
+Name:           NONE=NONE
   /// Domain operation has not changed domain
 [ModEvent]
-Name:		VAL=ASSIGNED
-Combine:	VAL=VAL
+Name:           VAL=ASSIGNED
+Combine:        VAL=VAL
   /// Domain operation has resulted in a value (assigned variable)
 [ModEventFooter]
 [PropCondHeader]
 [PropCond]
-Name:		NONE=NONE
+Name:           NONE=NONE
   /// Propagation condition to be ignored (convenience)
 [PropCond]
-Name:		VAL=ASSIGNED
-ModEvents:	VAL
+Name:           VAL=ASSIGNED
+ScheduledBy:    VAL
   /**
    * \brief Propagate when a view becomes assigned (single value)
    *

@@ -38,11 +38,11 @@
 #
 
 [General]
-Name:		Set
-Namespace:	Gecode::Set
-Ifdef:		GECODE_HAS_SET_VARS
-Bits:		0
-Dispose:	false
+Name:           Set
+Namespace:      Gecode::Set
+Ifdef:          GECODE_HAS_SET_VARS
+Bits:           0
+Dispose:        false
 [ModEventHeader]
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
@@ -50,26 +50,26 @@ Dispose:	false
    */
   //@{
 [ModEvent]
-Name:		FAILED=FAILED
+Name:           FAILED=FAILED
   /// Domain operation has resulted in failure
 [ModEvent]
-Name:		NONE=NONE
+Name:           NONE=NONE
   /// Domain operation has not changed domain
 [ModEvent]
-Name:		VAL=ASSIGNED
-Combine:	VAL=VAL,CARD=VAL,LUB=VAL,GLB=VAL,BB=VAL,CLUB=VAL,CGLB=VAL,CBB=VAL
+Name:           VAL=ASSIGNED
+Combine:        VAL=VAL,CARD=VAL,LUB=VAL,GLB=VAL,BB=VAL,CLUB=VAL,CGLB=VAL,CBB=VAL
   /// Domain operation has resulted in a value (assigned variable)
 [ModEvent]
-Name:		CARD
-Combine:	VAL=VAL,CARD=CARD,LUB=CLUB,GLB=CGLB,BB=CBB,CLUB=CLUB,CGLB=CGLB,CBB=CBB
+Name:           CARD
+Combine:        VAL=VAL,CARD=CARD,LUB=CLUB,GLB=CGLB,BB=CBB,CLUB=CLUB,CGLB=CGLB,CBB=CBB
   /**
    * \brief Domain operation has changed the variable cardinality
    *
    * Note that this implies that the domain has not resulted in a value.
    */
 [ModEvent]
-Name:		LUB
-Combine:	VAL=VAL,CARD=CLUB,LUB=LUB,GLB=BB,BB=BB,CLUB=CLUB,CGLB=CGLB,CBB=CBB
+Name:           LUB
+Combine:        VAL=VAL,CARD=CLUB,LUB=LUB,GLB=BB,BB=BB,CLUB=CLUB,CGLB=CGLB,CBB=CBB
   /**
    * \brief Domain operation has changed the least upper bound
    *
@@ -78,8 +78,8 @@ Combine:	VAL=VAL,CARD=CLUB,LUB=LUB,GLB=BB,BB=BB,CLUB=CLUB,CGLB=CGLB,CBB=CBB
    * have changed.
    */
 [ModEvent]
-Name:		GLB
-Combine:	VAL=VAL,CARD=CGLB,LUB=BB,GLB=GLB,BB=BB,CLUB=CBB,CGLB=CGLB,CBB=CBB
+Name:           GLB
+Combine:        VAL=VAL,CARD=CGLB,LUB=BB,GLB=GLB,BB=BB,CLUB=CBB,CGLB=CGLB,CBB=CBB
   /**
    * \brief Domain operation has changed the greatest lower bound
    *
@@ -88,8 +88,8 @@ Combine:	VAL=VAL,CARD=CGLB,LUB=BB,GLB=GLB,BB=BB,CLUB=CBB,CGLB=CGLB,CBB=CBB
    * have changed.
    */
 [ModEvent]
-Name:		BB
-Combine:	VAL=VAL,CARD=CBB,LUB=BB,GLB=BB,BB=BB,CLUB=CBB,CGLB=CBB,CBB=CBB
+Name:           BB
+Combine:        VAL=VAL,CARD=CBB,LUB=BB,GLB=BB,BB=BB,CLUB=CBB,CGLB=CBB,CBB=CBB
   /**
    * \brief Domain operation has changed both greatest lower and least
    * upper bound
@@ -98,8 +98,8 @@ Combine:	VAL=VAL,CARD=CBB,LUB=BB,GLB=BB,BB=BB,CLUB=CBB,CGLB=CBB,CBB=CBB
    * and that also the cardinality has not changed.
    */
 [ModEvent]
-Name:		CLUB
-Combine:	VAL=VAL,CARD=CLUB,LUB=CLUB,GLB=CBB,BB=CBB,CLUB=CLUB,CGLB=CBB,CBB=CBB
+Name:           CLUB
+Combine:        VAL=VAL,CARD=CLUB,LUB=CLUB,GLB=CBB,BB=CBB,CLUB=CLUB,CGLB=CBB,CBB=CBB
   /**
    * \brief Domain operation has changed the least upper bound and the cardinality
    *
@@ -107,8 +107,8 @@ Combine:	VAL=VAL,CARD=CLUB,LUB=CLUB,GLB=CBB,BB=CBB,CLUB=CLUB,CGLB=CBB,CBB=CBB
    * and that also the greatest lower bound has not changed.
    */
 [ModEvent]
-Name:		CGLB
-Combine:	VAL=VAL,CARD=CGLB,LUB=CBB,GLB=CGLB,BB=CBB,CLUB=CBB,CGLB=CGLB,CBB=CBB
+Name:           CGLB
+Combine:        VAL=VAL,CARD=CGLB,LUB=CBB,GLB=CGLB,BB=CBB,CLUB=CBB,CGLB=CGLB,CBB=CBB
   /**
    * \brief Domain operation has changed the greatest lower bound and the cardinality
    *
@@ -116,8 +116,8 @@ Combine:	VAL=VAL,CARD=CGLB,LUB=CBB,GLB=CGLB,BB=CBB,CLUB=CBB,CGLB=CGLB,CBB=CBB
    * and that also the least upper bound has not changed.
    */
 [ModEvent]
-Name:		CBB=SUBSCRIBE
-Combine:	VAL=VAL,CARD=CBB,LUB=CBB,GLB=CBB,BB=CBB,CLUB=CBB,CGLB=CBB,CBB=CBB
+Name:           CBB=SUBSCRIBE
+Combine:        VAL=VAL,CARD=CBB,LUB=CBB,GLB=CBB,BB=CBB,CLUB=CBB,CGLB=CBB,CBB=CBB
   /**
    * \brief Domain operation has changed both the greatest lower bound and
    * the least upper bound, as well as the cardinality
@@ -131,11 +131,11 @@ Combine:	VAL=VAL,CARD=CBB,LUB=CBB,GLB=CBB,BB=CBB,CLUB=CBB,CGLB=CBB,CBB=CBB
 [ModEventFooter]
 [PropCondHeader]
 [PropCond]
-Name:		NONE=NONE
+Name:           NONE=NONE
   /// Propagation condition to be ignored (convenience)
 [PropCond]
-Name:		VAL=ASSIGNED
-ModEvents:	VAL
+Name:           VAL=ASSIGNED
+ScheduledBy:    VAL
   /**
    * \brief Propagate when a view becomes assigned (single value)
    *
@@ -144,8 +144,8 @@ ModEvents:	VAL
    * update operation on \a x returns the modification event ME_SET_VAL.
    */
 [PropCond]
-Name:		CARD
-ModEvents:	VAL,CARD,CGLB,CLUB,CBB
+Name:           CARD
+ScheduledBy:    VAL,CARD,CGLB,CLUB,CBB
   /**
    * \brief Propagate when the cardinality of a view changes
    *
@@ -155,8 +155,8 @@ ModEvents:	VAL,CARD,CGLB,CLUB,CBB
    * ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB, or ME_SET_CBB.
    */
 [PropCond]
-Name:		CLUB
-ModEvents:	VAL,CARD,LUB,BB,CLUB,CGLB,CBB
+Name:           CLUB
+ScheduledBy:    VAL,CARD,LUB,BB,CLUB,CGLB,CBB
   /**
    * \brief Propagate when the cardinality or the least upper bound
    * of a view changes
@@ -168,8 +168,8 @@ ModEvents:	VAL,CARD,LUB,BB,CLUB,CGLB,CBB
    * or ME_SET_CBB.
    */
 [PropCond]
-Name:		CGLB
-ModEvents:	VAL,CARD,GLB,BB,CLUB,CGLB,CBB
+Name:           CGLB
+ScheduledBy:    VAL,CARD,GLB,BB,CLUB,CGLB,CBB
   /**
    * \brief Propagate when the cardinality or the greatest lower bound
    * of a view changes
@@ -181,8 +181,8 @@ ModEvents:	VAL,CARD,GLB,BB,CLUB,CGLB,CBB
    * or ME_SET_CBB.
    */
 [PropCond]
-Name:		ANY
-ModEvents:	VAL,CARD,LUB,GLB,BB,CLUB,CGLB,CBB
+Name:           ANY
+ScheduledBy:    VAL,CARD,LUB,GLB,BB,CLUB,CGLB,CBB
   /**
    * \brief Propagate when any bound or the cardinality
    * of a view changes

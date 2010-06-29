@@ -34,11 +34,11 @@
 #
 
 [General]
-Name:		Int
-Namespace:	Gecode::Int
-Ifdef:		GECODE_HAS_INT_VARS
-Bits:		0
-Dispose:	false
+Name:           Int
+Namespace:      Gecode::Int
+Ifdef:          GECODE_HAS_INT_VARS
+Bits:           0
+Dispose:        false
 [ModEventHeader]
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
@@ -46,18 +46,18 @@ Dispose:	false
    */
   //@{
 [ModEvent]
-Name:		FAILED=FAILED
+Name:           FAILED=FAILED
   /// Domain operation has resulted in failure
 [ModEvent]
-Name:		NONE=NONE
+Name:           NONE=NONE
   /// Domain operation has not changed domain
 [ModEvent]
-Name:		VAL=ASSIGNED
-Combine:	VAL=VAL, BND=VAL, DOM=VAL
+Name:           VAL=ASSIGNED
+Combine:        VAL=VAL, BND=VAL, DOM=VAL
   /// Domain operation has resulted in a value (assigned variable)
 [ModEvent]
-Name:		BND=SUBSCRIBE
-Combine:	VAL=VAL, BND=BND, DOM=BND
+Name:           BND=SUBSCRIBE
+Combine:        VAL=VAL, BND=BND, DOM=BND
   /** 
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
@@ -67,8 +67,8 @@ Combine:	VAL=VAL, BND=BND, DOM=BND
    * assuming a ME_INT_BND modification event.
    */
 [ModEvent]
-Name:		DOM
-Combine:	VAL=VAL, BND=BND, DOM=DOM
+Name:           DOM
+Combine:        VAL=VAL, BND=BND, DOM=DOM
   /** 
    * \brief Domain operation has changed the domain
    *
@@ -78,11 +78,11 @@ Combine:	VAL=VAL, BND=BND, DOM=DOM
 [ModEventFooter]
 [PropCondHeader]
 [PropCond]
-Name:		NONE=NONE
+Name:           NONE=NONE
   /// Propagation condition to be ignored (convenience)
 [PropCond]
-Name:		VAL=ASSIGNED
-ModEvents:	VAL
+Name:           VAL=ASSIGNED
+ScheduledBy:    VAL
   /**
    * \brief Propagate when a view becomes assigned (single value)
    *
@@ -91,8 +91,8 @@ ModEvents:	VAL
    * update operation on \a x returns the modification event ME_INT_VAL.
    */
 [PropCond]
-Name:		BND
-ModEvents:	VAL, BND
+Name:           BND
+ScheduledBy:    VAL, BND
   /**
    * \brief Propagate when minimum or maximum of a view changes
    *
@@ -102,8 +102,8 @@ ModEvents:	VAL, BND
    * or ME_INT_BND.
    */
 [PropCond]
-Name:		DOM
-ModEvents:	VAL, BND, DOM
+Name:           DOM
+ScheduledBy:    VAL, BND, DOM
   /**
    * \brief Propagate when domain changes
    *

@@ -245,7 +245,7 @@ for ($f=0; $f<$n_files; $f++) {
 	} elsif ($l =~ /^Name:\s*(\w+)/io) {
 	  # Found a normal modification event
 	  $n = $1;
-	} elsif ($l =~ /^ModEvents:\s*(.+)/io) {
+	} elsif ($l =~ /^ScheduledBy:\s*(.+)/io) {
 	  # Found relation to modification events
 	  $events = $1;
 	  while ($events =~ /(\w+)/g) {
