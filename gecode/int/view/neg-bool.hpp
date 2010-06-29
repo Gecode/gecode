@@ -50,7 +50,7 @@ namespace Gecode { namespace Int {
   NegBoolView::NegBoolView(void) {}
   forceinline
   NegBoolView::NegBoolView(const BoolView& y)
-    : DerivedViewBase<BoolView>(y) {}
+    : DerivedView<BoolView>(y) {}
 
 
   /*

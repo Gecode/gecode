@@ -57,9 +57,9 @@ namespace Gecode { namespace Set {
    * \ingroup TaskActorSetView
    */
 
-  class SetView : public VarViewBase<SetVarImp> {
+  class SetView : public VarImpView<SetVarImp> {
   protected:
-    using VarViewBase<SetVarImp>::x;
+    using VarImpView<SetVarImp>::x;
   public:
     /// \name Constructors and initialization
     //@{
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set {
    * that \f$x\f$ behaves like \f$s\f$.
    * \ingroup TaskActorSetView
    */
-  class ConstSetView : public ConstViewBase<SetView> {
+  class ConstSetView : public ConstView<SetView> {
     friend class LubRanges<ConstSetView>;
     friend class GlbRanges<ConstSetView>;
     friend bool Gecode::Set::same(const Gecode::Set::ConstSetView&,
@@ -332,7 +332,7 @@ namespace Gecode { namespace Set {
    * \ingroup TaskActorSetView
    */
 
-  class EmptyView : public ConstViewBase<SetView> {
+  class EmptyView : public ConstView<SetView> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -458,7 +458,7 @@ namespace Gecode { namespace Set {
    * \ingroup TaskActorSetView
    */
 
-  class UniverseView : public ConstViewBase<SetView> {
+  class UniverseView : public ConstView<SetView> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -587,9 +587,9 @@ namespace Gecode { namespace Set {
    */
 
   class SingletonView :
-    public DerivedViewBase<Gecode::Int::IntView> {
+    public DerivedView<Gecode::Int::IntView> {
   protected:
-    using DerivedViewBase<Gecode::Int::IntView>::x;
+    using DerivedView<Gecode::Int::IntView>::x;
 
     /// Convert set variable PropCond \a pc to a PropCond for integer variables
     static PropCond pc_settoint(PropCond pc);
@@ -750,9 +750,9 @@ namespace Gecode { namespace Set {
 
   template<class View>
   class ComplementView
-    : public DerivedViewBase<View> {
+    : public DerivedView<View> {
   protected:
-    using DerivedViewBase<View>::x;
+    using DerivedView<View>::x;
 
   public:
     /// Negate the propagation condition \a pc

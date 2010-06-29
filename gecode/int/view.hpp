@@ -132,9 +132,9 @@ namespace Gecode { namespace Int {
    * \brief Integer view for integer variables
    * \ingroup TaskActorIntView
    */
-  class IntView : public VarViewBase<IntVarImp> {
+  class IntView : public VarImpView<IntVarImp> {
   protected:
-    using VarViewBase<IntVarImp>::x;
+    using VarImpView<IntVarImp>::x;
   public:
     /// \name Constructors and initialization
     //@{
@@ -278,9 +278,9 @@ namespace Gecode { namespace Int {
    * operations such that \f$m\f$ behaves as \f$-x\f$.
    * \ingroup TaskActorIntView
    */
-  class MinusView : public DerivedViewBase<IntView> {
+  class MinusView : public DerivedView<IntView> {
   protected:
-    using DerivedViewBase<IntView>::x;
+    using DerivedView<IntView>::x;
   public:
     /// \name Constructors and initialization
     //@{
@@ -419,11 +419,11 @@ namespace Gecode { namespace Int {
    * behaves as \f$x+c\f$.
    * \ingroup TaskActorIntView
    */
-  class OffsetView : public DerivedViewBase<IntView> {
+  class OffsetView : public DerivedView<IntView> {
   protected:
     /// Offset
     int c;
-    using DerivedViewBase<IntView>::x;
+    using DerivedView<IntView>::x;
   public:
     /// \name Constructors and initialization
     //@{
@@ -598,9 +598,9 @@ namespace Gecode { namespace Int {
    * \ingroup TaskActorIntView
    */
   template<class Val, class UnsVal>
-  class ScaleView : public DerivedViewBase<IntView> {
+  class ScaleView : public DerivedView<IntView> {
   protected:
-    using DerivedViewBase<IntView>::x;
+    using DerivedView<IntView>::x;
     /// Scale factor
     int a;
     /// \name Support functions for division
@@ -749,7 +749,7 @@ namespace Gecode { namespace Int {
    * operations such that \f$x\f$ behaves as a view assigned to \f$c\f$.
    * \ingroup TaskActorIntView
    */
-  class ConstIntView : public ConstViewBase<IntView> {
+  class ConstIntView : public ConstView<IntView> {
   protected:
     int x;
   public:
@@ -899,7 +899,7 @@ namespace Gecode { namespace Int {
    * operations such that \f$x\f$ behaves as a view assigned to \f$0\f$.
    * \ingroup TaskActorIntView
    */
-  class ZeroIntView : public ConstViewBase<IntView> {
+  class ZeroIntView : public ConstView<IntView> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -1037,9 +1037,9 @@ namespace Gecode { namespace Int {
    * Provides convenient and efficient operations for Boolean views.
    * \ingroup TaskActorIntView
    */
-  class BoolView : public VarViewBase<BoolVarImp> {
+  class BoolView : public VarImpView<BoolVarImp> {
   protected:
-    using VarViewBase<BoolVarImp>::x;
+    using VarImpView<BoolVarImp>::x;
   public:
     /// \name Constructors and initialization
     //@{
@@ -1225,9 +1225,9 @@ namespace Gecode { namespace Int {
    * behaves as \f$\neg b\f$.
    * \ingroup TaskActorIntView
    */
-  class NegBoolView : public DerivedViewBase<BoolView> {
+  class NegBoolView : public DerivedView<BoolView> {
   protected:
-    using DerivedViewBase<BoolView>::x;
+    using DerivedView<BoolView>::x;
   public:
     /// \name Constructors and initialization
     //@{

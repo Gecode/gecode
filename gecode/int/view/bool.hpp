@@ -45,10 +45,10 @@ namespace Gecode { namespace Int {
   BoolView::BoolView(void) {}
   forceinline
   BoolView::BoolView(const BoolVar& y)
-    : VarViewBase<BoolVarImp>(y.varimp()) {}
+    : VarImpView<BoolVarImp>(y.varimp()) {}
   forceinline
   BoolView::BoolView(BoolVarImp* y)
-    : VarViewBase<BoolVarImp>(y) {}
+    : VarImpView<BoolVarImp>(y) {}
 
   /*
    * Value access
@@ -282,7 +282,7 @@ namespace Gecode { namespace Int {
 
   forceinline ModEventDelta
   BoolView::med(ModEvent me) {
-    return VarViewBase<BoolVarImp>::med(me);
+    return VarImpView<BoolVarImp>::med(me);
   }
 
   /**

@@ -45,10 +45,10 @@ namespace Gecode { namespace Int {
   IntView::IntView(void) {}
   forceinline
   IntView::IntView(const IntVar& y)
-    : VarViewBase<IntVarImp>(y.varimp()) {}
+    : VarImpView<IntVarImp>(y.varimp()) {}
   forceinline
   IntView::IntView(IntVarImp* y)
-    : VarViewBase<IntVarImp>(y) {}
+    : VarImpView<IntVarImp>(y) {}
 
   /*
    * Value access
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int {
 
   forceinline ModEventDelta
   IntView::med(ModEvent me) {
-    return VarViewBase<IntVarImp>::med(me);
+    return VarImpView<IntVarImp>::med(me);
   }
 
 

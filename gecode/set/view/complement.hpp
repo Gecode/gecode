@@ -50,7 +50,7 @@ namespace Gecode { namespace Set {
   template<class View>
   forceinline
   ComplementView<View>::ComplementView(View& y)
-    : DerivedViewBase<View>(y) {}
+    : DerivedView<View>(y) {}
   
   template<class View>
   forceinline ModEvent

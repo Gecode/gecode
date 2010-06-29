@@ -138,9 +138,9 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /// Cardinality integer view
-  class CardView : public DerivedViewBase<IntView> {
+  class CardView : public DerivedView<IntView> {
   protected:
-    using DerivedViewBase<IntView>::x;
+    using DerivedView<IntView>::x;
     /// Cardinality
     int _card;
     /// Counter

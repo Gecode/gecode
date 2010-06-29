@@ -45,7 +45,7 @@ namespace Gecode { namespace Int {
   OffsetView::OffsetView(void) {}
   forceinline
   OffsetView::OffsetView(const IntView& y, int d)
-    : DerivedViewBase<IntView>(y), c(d) {}
+    : DerivedView<IntView>(y), c(d) {}
 
 
   /*
@@ -240,7 +240,7 @@ namespace Gecode { namespace Int {
    */
   forceinline void
   OffsetView::update(Space& home, bool share, OffsetView& y) {
-    DerivedViewBase<IntView>::update(home,share,y);
+    DerivedView<IntView>::update(home,share,y);
     c=y.c;
   }
 

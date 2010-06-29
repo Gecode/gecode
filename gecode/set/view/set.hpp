@@ -52,10 +52,10 @@ namespace Gecode { namespace Set {
   SetView::SetView(void) {}
   forceinline
   SetView::SetView(const SetVar& y)
-    : VarViewBase<SetVarImp>(y.varimp()) {}
+    : VarImpView<SetVarImp>(y.varimp()) {}
   forceinline
   SetView::SetView(SetVarImp* y)
-    : VarViewBase<SetVarImp>(y) {}
+    : VarImpView<SetVarImp>(y) {}
 
   /*
    * Variable information

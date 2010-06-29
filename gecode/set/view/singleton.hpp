@@ -46,7 +46,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   SingletonView::SingletonView(Gecode::Int::IntView& y)
-    : DerivedViewBase<Gecode::Int::IntView>(y) {}
+    : DerivedView<Gecode::Int::IntView>(y) {}
 
   forceinline PropCond
   SingletonView::pc_settoint(PropCond pc) {

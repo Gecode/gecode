@@ -222,7 +222,7 @@ namespace Gecode { namespace Set {
 
   forceinline void
   ConstSetView::update(Space& home, bool share, ConstSetView& p) {
-    ConstViewBase<SetView>::update(home,share,p);
+    ConstView<SetView>::update(home,share,p);
     // dispose old ranges
     if (size > 0)
       home.free<int>(ranges, 2);

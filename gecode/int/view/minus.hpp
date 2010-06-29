@@ -45,7 +45,7 @@ namespace Gecode { namespace Int {
   MinusView::MinusView(void) {}
   forceinline
   MinusView::MinusView(const IntView& y)
-    : DerivedViewBase<IntView>(y) {}
+    : DerivedView<IntView>(y) {}
 
 
   /*

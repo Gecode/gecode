@@ -103,7 +103,7 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   forceinline
   ScaleView<Val,UnsVal>::ScaleView(int b, const IntView& y)
-    : DerivedViewBase<IntView>(y), a(b) {}
+    : DerivedView<IntView>(y), a(b) {}
 
 
   /*
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int {
   forceinline void
   ScaleView<Val,UnsVal>::update(Space& home, bool share,
                                 ScaleView<Val,UnsVal>& y) {
-    DerivedViewBase<IntView>::update(home,share,y);
+    DerivedView<IntView>::update(home,share,y);
     a=y.a;
   }
 
