@@ -51,10 +51,10 @@ namespace Gecode {
   IntVar::IntVar(void) {}
   forceinline
   IntVar::IntVar(const IntVar& y)
-    : VarBase<Int::IntVarImp>(y.varimp()) {}
+    : Var<Int::IntVarImp>(y.varimp()) {}
   forceinline
   IntVar::IntVar(const Int::IntView& y)
-    : VarBase<Int::IntVarImp>(y.varimp()) {}
+    : Var<Int::IntVarImp>(y.varimp()) {}
 
   forceinline int
   IntVar::val(void) const {

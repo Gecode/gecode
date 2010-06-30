@@ -52,10 +52,10 @@ namespace Gecode {
   BoolVar::BoolVar(void) {}
   forceinline
   BoolVar::BoolVar(const BoolVar& y)
-    : VarBase<Int::BoolVarImp>(y.varimp()) {}
+    : Var<Int::BoolVarImp>(y.varimp()) {}
   forceinline
   BoolVar::BoolVar(const Int::BoolView& y)
-    : VarBase<Int::BoolVarImp>(y.varimp()) {}
+    : Var<Int::BoolVarImp>(y.varimp()) {}
 
   forceinline int
   BoolVar::val(void) const {

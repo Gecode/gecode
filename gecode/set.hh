@@ -126,10 +126,10 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetVars
    */
-  class SetVar : public VarBase<Set::SetVarImp> {
+  class SetVar : public Var<Set::SetVarImp> {
     friend class SetVarArray;
     friend class SetVarArgs;
-    using VarBase<Set::SetVarImp>::x;
+    using Var<Set::SetVarImp>::x;
   public:
     /// \name Constructors and initialization
     //@{

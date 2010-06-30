@@ -42,14 +42,14 @@ namespace Gecode {
    * \ingroup TaskVarView
    */
   template<class VarImp>
-  class VarBase {
+  class Var {
   protected:
     /// Pointer to variable implementation
     VarImp* x;
     /// Default constructor
-    VarBase(void);
+    Var(void);
     /// Initialize with variable implementation \a y
-    VarBase(VarImp* y);
+    Var(VarImp* y);
   public:
     /// \name Generic variable information
     //@{
@@ -70,15 +70,15 @@ namespace Gecode {
     /// \name Cloning
     //@{
     /// Update this variable to be a clone of variable \a y
-    void update(Space& home, bool share, VarBase<VarImp>& y);
+    void update(Space& home, bool share, Var<VarImp>& y);
     //@}
 
     /// \name Variable comparison
     //@{
     /// Test whether variable is the same as \a y
-    bool same(const VarBase<VarImp>& y) const;
+    bool same(const Var<VarImp>& y) const;
     /// Test whether variable comes before \a y (arbitrary order)
-    bool before(const VarBase<VarImp>& y) const;
+    bool before(const Var<VarImp>& y) const;
     //@}
   };
 
@@ -89,45 +89,45 @@ namespace Gecode {
    */
   template<class VarImp>
   forceinline
-  VarBase<VarImp>::VarBase(void)
+  Var<VarImp>::Var(void)
     : x(NULL) {}
   template<class VarImp>
   forceinline
-  VarBase<VarImp>::VarBase(VarImp* y)
+  Var<VarImp>::Var(VarImp* y)
     : x(y) {}
   template<class VarImp>
   forceinline VarImp*
-  VarBase<VarImp>::varimp(void) const {
+  Var<VarImp>::varimp(void) const {
     return x;
   }
   template<class VarImp>
   forceinline unsigned int
-  VarBase<VarImp>::degree(void) const {
+  Var<VarImp>::degree(void) const {
     return x->degree();
   }
   template<class VarImp>
   forceinline double
-  VarBase<VarImp>::afc(void) const {
+  Var<VarImp>::afc(void) const {
     return x->afc();
   }
   template<class VarImp>
   forceinline bool
-  VarBase<VarImp>::assigned(void) const {
+  Var<VarImp>::assigned(void) const {
     return x->assigned();
   }
   template<class VarImp>
   forceinline void
-  VarBase<VarImp>::update(Space& home, bool share, VarBase<VarImp>& y) {
+  Var<VarImp>::update(Space& home, bool share, Var<VarImp>& y) {
     x = y.x->copy(home,share);
   }
   template<class VarImp>
   forceinline bool
-  VarBase<VarImp>::same(const VarBase<VarImp>& y) const {
+  Var<VarImp>::same(const Var<VarImp>& y) const {
     return varimp() == y.varimp();
   }
   template<class VarImp>
   forceinline bool
-  VarBase<VarImp>::before(const VarBase<VarImp>& y) const {
+  Var<VarImp>::before(const Var<VarImp>& y) const {
     return varimp() < y.varimp();
   }
 
