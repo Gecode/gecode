@@ -224,7 +224,7 @@ public:
 };
 
 /**
- * \brief %Example: n-knight's tour (simple model)
+ * \brief %Example: n-Knight's tour (simple model)
  *
  * Fill an n times n chess board with knight's moves such that
  * the knight does a full tour (last move reaches first move
