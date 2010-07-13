@@ -113,6 +113,10 @@ namespace Gecode { namespace Int {
     const int min = -max;
     /// Infinity
     const int infinity = max + 1;
+    /// Return whether integer \a n is in range
+    bool valid(int n);
+    /// Return whether double \a n is in range
+    bool valid(double n);
     /// Check whether integer \a n is in range, otherwise throw out of limits with information \a l
     void check(int n, const char* l);
     /// Check whether double \a n is in integer range, otherwise throw out of limits exception with information \a l

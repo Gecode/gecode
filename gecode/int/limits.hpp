@@ -37,6 +37,16 @@
 
 namespace Gecode { namespace Int {
 
+    inline bool
+    Limits::valid(int n) {
+      return ((n >= min) && (n <= max));
+    }
+
+    inline bool
+    Limits::valid(double n) {
+      return ((n >= min) && (n <= max));
+    }
+
     inline void
     Limits::check(int n, const char* l) {
       if ((n < min) || (n > max))

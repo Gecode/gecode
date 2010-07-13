@@ -55,7 +55,11 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     if (min < Limits::min)
       min = Limits::min;
+    if (min > Limits::max)
+      min = Limits::max;
     l = static_cast<int>(min);
+    if (max < Limits::min)
+      max = Limits::min;
     if (max > Limits::max)
       max = Limits::max;
     u = static_cast<int>(max);

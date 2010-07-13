@@ -141,14 +141,14 @@ namespace Gecode {
    */
   LinExpr
   operator +(int c, const IntVar& x) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
       return LinExpr(static_cast<double>(c)+x.val());
     else
       return LinExpr(x,LinExpr::NT_ADD,c);
   }
   LinExpr
   operator +(int c, const BoolVar& x) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
       return LinExpr(static_cast<double>(c)+x.val());
     else
       return LinExpr(x,LinExpr::NT_ADD,c);
@@ -159,14 +159,14 @@ namespace Gecode {
   }
   LinExpr
   operator +(const IntVar& x, int c) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
       return LinExpr(static_cast<double>(c)+x.val());
     else
       return LinExpr(x,LinExpr::NT_ADD,c);
   }
   LinExpr
   operator +(const BoolVar& x, int c) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
       return LinExpr(static_cast<double>(c)+x.val());
     else
       return LinExpr(x,LinExpr::NT_ADD,c);
@@ -246,14 +246,14 @@ namespace Gecode {
 
   LinExpr
   operator -(int c, const IntVar& x) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(static_cast<double>(c)-x.val()))
       return LinExpr(static_cast<double>(c)-x.val());
     else
       return LinExpr(x,LinExpr::NT_SUB,c);
   }
   LinExpr
   operator -(int c, const BoolVar& x) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(static_cast<double>(c)-x.val()))
       return LinExpr(static_cast<double>(c)-x.val());
     else
       return LinExpr(x,LinExpr::NT_SUB,c);
@@ -264,14 +264,14 @@ namespace Gecode {
   }
   LinExpr
   operator -(const IntVar& x, int c) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(x.val()-static_cast<double>(c)))
       return LinExpr(x.val()-static_cast<double>(c));
     else
       return LinExpr(x,LinExpr::NT_ADD,-c);
   }
   LinExpr
   operator -(const BoolVar& x, int c) {
-    if (x.assigned())
+    if (x.assigned() && Int::Limits::valid(x.val()-static_cast<double>(c)))
       return LinExpr(x.val()-static_cast<double>(c));
     else
       return LinExpr(x,LinExpr::NT_ADD,-c);
@@ -372,7 +372,8 @@ namespace Gecode {
   operator *(int a, const IntVar& x) {
     if (a == 0)
       return LinExpr(0.0);
-    else if (x.assigned())
+    else if (x.assigned() && 
+             Int::Limits::valid(static_cast<double>(a)*x.val()))
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
@@ -381,7 +382,8 @@ namespace Gecode {
   operator *(int a, const BoolVar& x) {
     if (a == 0)
       return LinExpr(0.0);
-    else if (x.assigned())
+    else if (x.assigned() && 
+             Int::Limits::valid(static_cast<double>(a)*x.val()))
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
@@ -390,7 +392,8 @@ namespace Gecode {
   operator *(const IntVar& x, int a) {
     if (a == 0)
       return LinExpr(0.0);
-    else if (x.assigned())
+    else if (x.assigned() && 
+             Int::Limits::valid(static_cast<double>(a)*x.val()))
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
@@ -399,7 +402,8 @@ namespace Gecode {
   operator *(const BoolVar& x, int a) {
     if (a == 0)
       return LinExpr(0.0);
-    else if (x.assigned())
+    else if (x.assigned() && 
+             Int::Limits::valid(static_cast<double>(a)*x.val()))
       return LinExpr(static_cast<double>(a)*x.val());
     else
       return LinExpr(x,a);
