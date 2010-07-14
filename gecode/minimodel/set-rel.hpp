@@ -81,6 +81,10 @@ namespace Gecode {
   operator ==(const SetExpr& e0, const SetExpr& e1) {
     return SetRel(e0, SRT_EQ, e1);
   }
+  forceinline SetRel
+  operator !=(const SetExpr& e0, const SetExpr& e1) {
+    return SetRel(e0, SRT_NQ, e1);
+  }
   forceinline SetCmpRel
   operator <=(const SetExpr& e0, const SetExpr& e1) {
     return SetCmpRel(e0, SRT_SUB, e1);
