@@ -105,21 +105,6 @@ namespace Gecode {
   operator ||(const SetExpr& e0, const SetExpr& e1) {
     return SetRel(e0, SRT_DISJ, e1);
   }
-  
-  forceinline BoolExpr
-  universe(Space& home, const SetExpr& e) {
-    BoolVar b(home,0,1);
-    dom(home, e.post(home), SRT_EQ,
-        IntSet(Set::Limits::min,Set::Limits::max), b);
-    return BoolExpr(b);
-  }
-
-  forceinline BoolExpr
-  empty(Space& home, const SetExpr& e) {
-    BoolVar b(home,0,1);
-    dom(home, e.post(home), SRT_EQ, IntSet::empty, b);
-    return BoolExpr(b);
-  }
 
 }
 
