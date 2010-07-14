@@ -150,7 +150,7 @@ public:
 int
 main(int argc, char* argv[]) {
   FileSizeOptions opt("WordSquare");
-  opt.size(4);
+  opt.size(6);
   opt.branching(WordSquare::BRANCH_LETTERS);
   opt.branching(WordSquare::BRANCH_WORDS,   "words");
   opt.branching(WordSquare::BRANCH_LETTERS, "letters");

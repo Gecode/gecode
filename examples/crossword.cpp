@@ -189,7 +189,7 @@ public:
 int
 main(int argc, char* argv[]) {
   FileSizeOptions opt("Crossword");
-  opt.size(0);
+  opt.size(10);
   opt.icl(ICL_VAL);
   opt.branching(Crossword::BRANCH_WORDS);
   opt.branching(Crossword::BRANCH_WORDS, "words");
