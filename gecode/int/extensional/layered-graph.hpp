@@ -278,7 +278,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Allocate temporary memory for all possible states
     State* states = r.alloc<State>(max_states*(n+1));
-    for (int i=max_states*(n+1); i--; )
+    for (int i=static_cast<int>(max_states)*(n+1); i--; )
       states[i].init();
     for (int i=n+1; i--; )
       layers[i].states = states + i*max_states;
@@ -321,8 +321,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Mark final states as reachable
     for (int s=dfa.final_fst(); s<dfa.final_lst(); s++)
-      if (o_state(n-1,s).i_deg != 0)
-        o_state(n-1,s).o_deg = 1;
+      if (o_state(n-1,static_cast<StateIdx>(s)).i_deg != 0)
+        o_state(n-1,static_cast<StateIdx>(s)).o_deg = 1;
 
     // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Check whether state information has already been created
     if (layers[0].states == NULL) {
       State* states = home.alloc<State>(n_states);
-      for (int i=n_states; i--; )
+      for (unsigned int i=n_states; i--; )
         states[i].init();
       layers[n].states = states;
       states += layers[n].n_states;

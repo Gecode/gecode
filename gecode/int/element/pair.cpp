@@ -103,17 +103,20 @@ namespace Gecode { namespace Int { namespace Element {
     
     if (x0.assigned()) {
       // Bitset for supported div and mod values
-      Support::BitSet<Region> d(r,(x2.max() / w)+1);
+      Support::BitSet<Region> d(r,static_cast<unsigned int>((x2.max() / w)+1));
       for (ViewValues<IntView> i(x2); i(); ++i) {
-        d.set(i.val() / w);
+        d.set(static_cast<unsigned int>(i.val() / w));
       }
       Iter::Values::BitSet<Support::BitSet<Region> > id(d,x1.min(),x1.max());
       GECODE_ME_CHECK(x1.inter_v(home,id,false));
     } else {
       // Bitset for supported div and mod values
-      Support::BitSet<Region> d(r,(x2.max() / w)+1), m(r,w);
+      Support::BitSet<Region> 
+        d(r,static_cast<unsigned int>((x2.max() / w)+1)), 
+        m(r,static_cast<unsigned int>(w));
       for (ViewValues<IntView> i(x2); i(); ++i) {
-        d.set(i.val() / w); m.set(i.val() % w);
+        d.set(static_cast<unsigned int>(i.val() / w)); 
+        m.set(static_cast<unsigned int>(i.val() % w));
       }
       Iter::Values::BitSet<Support::BitSet<Region> > im(m,x0.min(),x0.max());
       GECODE_ME_CHECK(x0.inter_v(home,im,false));

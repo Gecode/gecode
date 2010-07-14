@@ -512,7 +512,8 @@ namespace Gecode { namespace Int { namespace GCC {
   Node::Node(void) {}
   forceinline
   Node::Node(NodeFlag nf0, int i) 
-    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i), nf(nf0), noe(0) {}
+    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i), 
+      nf(static_cast<unsigned char>(nf0)), noe(0) {}
 
   forceinline Edge**
   Node::adj(void) {
@@ -1424,7 +1425,7 @@ namespace Gecode { namespace Int { namespace GCC {
   VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
     Region r(home);
     NodeStack ns(r,n_node);
-    BitSet visited(r,n_node);
+    BitSet visited(r,static_cast<unsigned int>(n_node));
     Edge** start = r.alloc<Edge*>(n_node);
 
     // keep track of the nodes that have already been visited
@@ -1447,7 +1448,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     v->inedge(NULL);
     ns.push(v);
-    visited.set(v->index());
+    visited.set(static_cast<unsigned int>(v->index()));
     while (!ns.empty()) {
       Node* v = ns.top();
       Edge* e = NULL;
@@ -1464,7 +1465,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if (e != NULL) {
         start[v->index()] = e->next(v->type());
         Node* w = e->getMate(v->type());
-        if (!visited.get(w->index())) {
+        if (!visited.get(static_cast<unsigned int>(w->index()))) {
           // unexplored path
           bool m = w->type() ? 
             static_cast<ValNode*>(w)->matched(bc) :
@@ -1482,7 +1483,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
           } else {
             w->inedge(e);
-            visited.set(w->index());
+            visited.set(static_cast<unsigned int>(w->index()));
             // find matching edge m incident with w
             ns.push(w);
           }
@@ -1580,7 +1581,7 @@ namespace Gecode { namespace Int { namespace GCC {
   VarValGraph<Card>::free_alternating_paths(Space& home) {
     Region r(home);
     NodeStack ns(r,n_node);
-    BitSet visited(r,n_node);
+    BitSet visited(r,static_cast<unsigned int>(n_node));
 
     switch (bc) {
     case LBC:
@@ -1589,11 +1590,13 @@ namespace Gecode { namespace Int { namespace GCC {
       // they are the starting point of an even alternating path in G
       for (int i = n_var; i--; )
         if (!vars[i]->matched(LBC)) {
-          ns.push(vars[i]); visited.set(vars[i]->index());
+          ns.push(vars[i]); 
+          visited.set(static_cast<unsigned int>(vars[i]->index()));
         }
       for (int i = n_val; i--; )
         if (!vals[i]->matched(LBC)) {
-          ns.push(vals[i]); visited.set(vals[i]->index());
+          ns.push(vals[i]); 
+          visited.set(static_cast<unsigned int>(vals[i]->index()));
         }
       break;
     case UBC:
@@ -1601,7 +1604,8 @@ namespace Gecode { namespace Int { namespace GCC {
       // corresponding to a set cover on x there are NO free var nodes
       for (int i = n_val; i--; )
         if (!vals[i]->matched(UBC)) {
-          ns.push(vals[i]); visited.set(vals[i]->index());
+          ns.push(vals[i]); 
+          visited.set(static_cast<unsigned int>(vals[i]->index()));
         }
       break;
     default: GECODE_NEVER;
@@ -1620,8 +1624,9 @@ namespace Gecode { namespace Int { namespace GCC {
             if (cur->matched(LBC)) {
               // mark the edge
               cur->use(LBC);
-              if (!visited.get(mate->index())) {
-                ns.push(mate); visited.set(mate->index());
+              if (!visited.get(static_cast<unsigned int>(mate->index()))) {
+                ns.push(mate); 
+                visited.set(static_cast<unsigned int>(mate->index()));
               }
             }
             break;
@@ -1629,8 +1634,9 @@ namespace Gecode { namespace Int { namespace GCC {
             if (!cur->matched(UBC)) {
               // mark the edge
               cur->use(UBC);
-              if (!visited.get(mate->index())) {
-                ns.push(mate); visited.set(mate->index());
+              if (!visited.get(static_cast<unsigned int>(mate->index()))) {
+                ns.push(mate); 
+                visited.set(static_cast<unsigned int>(mate->index()));
               }
             }
             break;
@@ -1649,8 +1655,9 @@ namespace Gecode { namespace Int { namespace GCC {
             ValNode* mate = cur->getVal();
             if (!cur->matched(LBC)) {
               cur->use(LBC);
-              if (!visited.get(mate->index())) {
-                ns.push(mate); visited.set(mate->index());
+              if (!visited.get(static_cast<unsigned int>(mate->index()))) {
+                ns.push(mate); 
+                visited.set(static_cast<unsigned int>(mate->index()));
               }
             }
           }
@@ -1662,8 +1669,9 @@ namespace Gecode { namespace Int { namespace GCC {
             if (cur != NULL) {
               cur->use(UBC);
               ValNode* mate = cur->getVal();
-              if (!visited.get(mate->index())) {
-                ns.push(mate); visited.set(mate->index());
+              if (!visited.get(static_cast<unsigned int>(mate->index()))) {
+                ns.push(mate); 
+                visited.set(static_cast<unsigned int>(mate->index()));
               }
             }
           }
@@ -1683,8 +1691,8 @@ namespace Gecode { namespace Int { namespace GCC {
     count++;
     int v_index            = v->index();
     dfsnum[v_index]        = count;
-    inscc.set(v_index);
-    in_unfinished.set(v_index);
+    inscc.set(static_cast<unsigned int>(v_index));
+    in_unfinished.set(static_cast<unsigned int>(v_index));
 
     unfinished.push(v);
     roots.push(v);
@@ -1704,12 +1712,12 @@ namespace Gecode { namespace Int { namespace GCC {
         int w_index = w->index();
 
         assert(w_index < n_node);
-        if (!inscc.get(w_index)) {
+        if (!inscc.get(static_cast<unsigned int>(w_index))) {
           // w is an uncompleted scc
           w->inedge(e);
           dfs<bc>(w, inscc, in_unfinished, dfsnum,
                   roots, unfinished, count);
-        } else if (in_unfinished.get(w_index)) {
+        } else if (in_unfinished.get(static_cast<unsigned int>(w_index))) {
           // even alternating cycle found mark the edge closing the cycle,
           // completing the scc
           e->use(bc);
@@ -1728,11 +1736,11 @@ namespace Gecode { namespace Int { namespace GCC {
         // w belongs to the scc with root v
         Node* w = unfinished.top();
         w->inedge()->use(bc);
-        in_unfinished.clear(w->index());
+        in_unfinished.clear(static_cast<unsigned int>(w->index()));
         unfinished.pop();
       }
       assert(v == unfinished.top());
-      in_unfinished.clear(v_index);
+      in_unfinished.clear(static_cast<unsigned int>(v_index));
       roots.pop();
       unfinished.pop();
     }
@@ -1742,8 +1750,8 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   VarValGraph<Card>::strongly_connected_components(Space& home) {
     Region r(home);
-    BitSet inscc(r,n_node);
-    BitSet in_unfinished(r,n_node);
+    BitSet inscc(r,static_cast<unsigned int>(n_node));
+    BitSet in_unfinished(r,static_cast<unsigned int>(n_node));
     int* dfsnum = r.alloc<int>(n_node);
 
     for (int i = n_node; i--; )

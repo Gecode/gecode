@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val,bool iss>
   forceinline void 
   ViewValSupport<View,Val,iss>::potential_violation(int k) {
-    v.add(static_cast<int>(k));
+    v.add(static_cast<unsigned int>(k));
   }
   
 
@@ -175,6 +175,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline bool
   ViewValSupport<View,Val,iss>::alternative_not_possible
   (ViewArray<View>& a, Val s, int i, int idx) const {
+    (void) i;
     return includes(a[idx-1],s) || (iss && (idx-1 == i));
   }
 
@@ -182,6 +183,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   forceinline bool
   ViewValSupport<View,Val,iss>::s_not_possible
   (ViewArray<View>& a, Val s, int i, int idx) const {
+    (void) i;
     return excludes(a[idx-1],s) || (!iss && (i == idx-1));
   }
  

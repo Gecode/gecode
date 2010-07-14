@@ -52,7 +52,7 @@ namespace Gecode { namespace Support {
     A& a;
   public:
     /// Bit set with space for \a s bits
-    BitSet(A& a, int s);
+    BitSet(A& a, unsigned int s);
     /// Copy bit set \a bs
     BitSet(A& a, const BitSet& bs);
     /// Destructor
@@ -61,7 +61,7 @@ namespace Gecode { namespace Support {
 
   template<class A>
   forceinline
-  BitSet<A>::BitSet(A& a0, int s)
+  BitSet<A>::BitSet(A& a0, unsigned int s)
     : BitSetBase(a0,s), a(a0) {}
 
   template<class A>

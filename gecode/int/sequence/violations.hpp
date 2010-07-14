@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
   
   forceinline void
-  Violations::update(Space& home, bool share, Violations& v) {
+  Violations::update(Space& home, bool, Violations& v) {
     assert(v.empty());
     init(home,v.size());
   }

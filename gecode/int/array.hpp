@@ -66,8 +66,8 @@ namespace Gecode {
   }
   forceinline
   IntArgs::IntArgs(const std::vector<int>& x)
-    : PrimArgArray<int>(x.size()) {
-    for (int i=x.size(); i--;)
+    : PrimArgArray<int>(static_cast<int>(x.size())) {
+    for (unsigned int i=x.size(); i--;)
       a[i] = x[i];
   }
   

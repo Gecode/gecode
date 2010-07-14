@@ -66,10 +66,10 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline ExecStatus
   Match<View>::post(Home home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
-    unsigned int xs_size = xs.size();
+    unsigned int xs_size = static_cast<unsigned int>(xs.size());
     GECODE_ME_CHECK(x0.cardMin(home,xs_size));
     GECODE_ME_CHECK(x0.cardMax(home,xs_size));
-    if (xs_size==1) {
+    if (xs_size == 1) {
       SingletonView sv(xs[0]);
       GECODE_ES_CHECK((Rel::Eq<View,
                        SingletonView>::post(home,x0, sv)));

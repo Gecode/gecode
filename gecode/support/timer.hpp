@@ -52,7 +52,7 @@ namespace Gecode { namespace Support {
    *
    * \ingroup FuncSupport
    */
-  class Timer {
+  class GECODE_SUPPORT_EXPORT Timer {
   private:
 #if   defined(GECODE_USE_GETTIMEOFDAY)
     timeval t0; ///< Start time

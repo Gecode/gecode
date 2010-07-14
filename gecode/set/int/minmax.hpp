@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Int {
 
     {
       /// Compute n-th largest element in x0.lub for n = x0.cardMin()-1
-      int size = 0;
+      unsigned int size = 0;
       int maxN = BndSet::MAX_OF_EMPTY;
       for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++size) {}
       Region r(home);
@@ -105,11 +105,11 @@ namespace Gecode { namespace Set { namespace Int {
         ub[2*i]   = ubr.min();
         ub[2*i+1] = ubr.max();
       }
-      int x0cm = x0.cardMin()-1;
-      for (int i=size; i--;) {
-        int width = ub[2*i+1]-ub[2*i]+1;
+      unsigned int x0cm = x0.cardMin()-1;
+      for (unsigned int i=size; i--;) {
+        unsigned int width = static_cast<unsigned int>(ub[2*i+1]-ub[2*i]+1);
         if (width > x0cm) {
-          maxN = ub[2*i+1]-x0cm;
+          maxN = static_cast<int>(ub[2*i+1]-x0cm);
           break;
         }
         x0cm -= width;
@@ -235,15 +235,15 @@ namespace Gecode { namespace Set { namespace Int {
       }
       // now we search from the top the range that contains the
       // nth largest value.
-      int n = x0.cardMin();
+      unsigned int n = x0.cardMin();
       int nth_largest = BndSet::MAX_OF_EMPTY;
       for (int i=num_ranges; i--; ) {
         // number of values in range
-        int num_values = _ur[2*i+1]-_ur[2*i]+1;
+        unsigned int num_values = static_cast<unsigned int>(_ur[2*i+1]-_ur[2*i]+1);
         // does the range contain the value?
         if (num_values >= n) {
           // record it and exit the loop
-          nth_largest = _ur[2*i+1]-n+1;
+          nth_largest = static_cast<int>(_ur[2*i+1]-n+1);
           break;
         }
         // otherwise, we skipped num_values
@@ -522,7 +522,7 @@ namespace Gecode { namespace Set { namespace Int {
       for (LubRanges<View> ur(x0); ur(); ++ur) {
         if (ur.width() >= n) {
           // record it and exit the loop
-          nth_smallest = ur.min() + n - 1;
+          nth_smallest = static_cast<int>(ur.min() + n - 1);
           break;
         }
         // otherwise, we skipped ur.width() values
@@ -625,7 +625,7 @@ namespace Gecode { namespace Set { namespace Int {
         if (ur.width() >= n)
           {
             // record it and exit the loop
-            nth_smallest = ur.min() + n - 1;
+            nth_smallest = static_cast<int>(ur.min() + n - 1);
             break;
           }
         // otherwise, we skipped ur.width() values

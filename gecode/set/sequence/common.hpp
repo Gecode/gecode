@@ -74,11 +74,11 @@ namespace Gecode { namespace Set { namespace Sequence {
           for (LubRanges<SetView> ubr(x[lastElem-i]); ubr(); ++ubr, ++j) {
             ub[2*j]=ubr.min(); ub[2*j+1]=ubr.max();
           }
-          int xcm = x[lastElem-i].cardMin()-1;
+          unsigned int xcm = x[lastElem-i].cardMin()-1;
           while (j--) {
-            int width = ub[2*j+1]-ub[2*j]+1;
+            unsigned int width = static_cast<unsigned int>(ub[2*j+1]-ub[2*j]+1);
             if (width > xcm) {
-              maxN = ub[2*j+1]-xcm;
+              maxN = static_cast<int>(ub[2*j+1]-xcm);
               break;
             }
             xcm -= width;

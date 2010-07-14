@@ -268,6 +268,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
+  protected:
+    /// Unused destructor (to avoid warnings)
+    virtual ~Base(void) {}
   };
 }}}
 

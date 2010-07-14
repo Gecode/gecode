@@ -91,7 +91,7 @@ namespace Gecode { namespace Set { namespace Distinct {
       }
 
       // maxa is the maximum number of sets that can contain a
-      int maxa = (bigTa.size() - 1) / (c - 1);
+      int maxa = static_cast<int>((bigTa.size() - 1) / (c - 1));
       bigTa.dispose(home);
 
       // Conditional Rule A:

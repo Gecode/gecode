@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
     // Values to prune
-    Support::StaticStack<int,Region> nq(r,ts()->domsize);
+    Support::StaticStack<int,Region> nq(r,static_cast<int>(ts()->domsize));
 
     // Run algorithm
 
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (ViewValues<View> vv(x[i]); vv(); ++vv) {
         // Value offset for indexing
         int val = vv.val() - ts()->min;
-        if (!has_support[i].get(val)) {
+        if (!has_support[i].get(static_cast<unsigned int>(val))) {
           // Find support for value vv.val() in view
           Tuple l = find_support(dom, i, val);
           if (l == NULL) {
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             // Only forward direction marking is needed since all
             // previous values have been checked
             for (int j = i; j--; ) {
-              has_support[j].set(l[j]- ts()->min);
+              has_support[j].set(static_cast<unsigned int>(l[j]- ts()->min));
               assert(has_support[j].get(l[j] - ts()->min));
             }
           }

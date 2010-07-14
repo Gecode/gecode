@@ -91,18 +91,18 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// The array of iterators to be appended
     I* r;
     /// Number of iterators
-    unsigned int n;
+    int n;
     /// Number of current iterator being processed
-    unsigned int active;
+    int active;
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     NaryAppend(void);
     /// Initialize with \a n iterators in \a i
-    NaryAppend(I* i, unsigned int n);
+    NaryAppend(I* i, int n);
     /// Initialize with \a n iterators in \a i
-    void init(I* i, unsigned int n);
+    void init(I* i, int n);
     //@}
 
     /// \name Iteration control
@@ -196,7 +196,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template<class I>
   inline
-  NaryAppend<I>::NaryAppend(I* r0, unsigned int n0)
+  NaryAppend<I>::NaryAppend(I* r0, int n0)
     : r(r0), n(n0), active(0) {
     while (active < n && !r[active]())
       active++;
@@ -209,7 +209,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template<class I>
   inline void
-  NaryAppend<I>::init(I* r0, unsigned int n0) {
+  NaryAppend<I>::init(I* r0, int n0) {
     r = r0; n = n0; active = 0;
     while (active < n && !r[active]())
       active++;

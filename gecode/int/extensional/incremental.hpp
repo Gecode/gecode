@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   Incremental<View>::init_support(Space& home) {
     assert(support_data == NULL);
-    int literals = ts()->domsize*x.size();
+    int literals = static_cast<int>(ts()->domsize*x.size());
     support_data = home.alloc<SupportEntry*>(literals);
     for (int i = literals; i--; )
       support_data[i] = NULL;
@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   Incremental<View>::add_support(Space& home, Tuple l) {
     for (int i = x.size(); i--; ) {
-      int pos = (i*ts()->domsize) + (l[i] - ts()->min);
+      int pos = (i*static_cast<int>(ts()->domsize)) + (l[i] - ts()->min);
       support_data[pos] = new (home) SupportEntry(l, support_data[pos]);
     }
   }
@@ -246,7 +246,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int j = x.size(); j--; ) {
       int v = l[j];
       int ov = v - ts()->min;
-      int pos = (j*(ts()->domsize)) + ov;
+      int pos = (j*(static_cast<int>(ts()->domsize))) + ov;
 
       assert(support_data[pos] != NULL);
 
@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     ac.update(home,share,p.ac);
 
     init_support(home);
-    for (int i = ts()->domsize*x.size(); i--; ) {
+    for (int i = static_cast<int>(ts()->domsize*x.size()); i--; ) {
       SupportEntry** n = &(support_data[i]);
       SupportEntry*  o = p.support_data[i];
       while (o != NULL) {
@@ -356,7 +356,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline size_t
   Incremental<View>::dispose(Space& home) {
     if (!home.failed()) {
-      int literals = ts()->domsize*x.size();
+      int literals = static_cast<int>(ts()->domsize*x.size());
       for (int i = literals; i--; )
         if (support_data[i]) {
           SupportEntry* lastse = support_data[i];
@@ -388,16 +388,16 @@ namespace Gecode { namespace Int { namespace Extensional {
         int i, n;
         w_remove.pop(home,i,n);
         // Work is still relevant
-        if (dom[i].get(n-ts()->min)) {
+        if (dom[i].get(static_cast<unsigned int>(n-ts()->min))) {
           GECODE_ME_CHECK(x[i].nq(home,n));
-          dom[i].clear(n-ts()->min);
+          dom[i].clear(static_cast<unsigned int>(n-ts()->min));
         }
       }
       while (!w_support.empty()) {
         int i, n;
         w_support.pop(home,i,n);
         // Work is still relevant
-        if (dom[i].get(n-ts()->min))
+        if (dom[i].get(static_cast<unsigned int>(n-ts()->min)))
           find_support(home, dom, i, n);
       }
     }

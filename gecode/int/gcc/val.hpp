@@ -172,13 +172,13 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     // Bitset for indexes that can be removed
-    Support::BitSet<Region> rem(r,k.size());
+    Support::BitSet<Region> rem(r,static_cast<unsigned int>(k.size()));
 
     for (int i = k.size(); i--; ) {
       int ci = count[i] + k[i].counter();
       if (ci == k[i].max()) {
         assert(!rem.get(i));
-        rem.set(i);
+        rem.set(static_cast<unsigned int>(i));
         k[i].counter(ci);
         // the solution contains ci occurences of value k[i].card();
         GECODE_ME_CHECK(k[i].eq(home, ci));
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace GCC {
           if (!lookupValue(k,x[i].val(),idx)) {
             return ES_FAILED;
           }
-          if (rem.get(idx))
+          if (rem.get(static_cast<unsigned int>(idx)))
             x[i]=x[--n_x];
         }
       }

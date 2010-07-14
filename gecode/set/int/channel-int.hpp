@@ -68,13 +68,13 @@ namespace Gecode { namespace Set { namespace Int {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables
     // result in failure.
-    unsigned int xssize = xs.size();
+    int xssize = xs.size();
     for (int i=ys.size(); i--;) {
       GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::max));
       GECODE_ME_CHECK(ys[i].exclude(home, Limits::min, -1));
     }
-    unsigned int yssize = ys.size();
-    if (yssize > static_cast<unsigned int>(Gecode::Int::Limits::max))
+    int yssize = ys.size();
+    if (yssize > Gecode::Int::Limits::max)
       return ES_FAILED;
     for (int i=xs.size(); i--;) {
       GECODE_ME_CHECK(xs[i].gq(home, 0));

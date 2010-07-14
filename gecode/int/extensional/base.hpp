@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   Base<View,subscribe>::init_last(Space& home, Tuple** source) {
     if (last_data == NULL) {
-      int literals = ts()->domsize*x.size();
+      int literals = static_cast<int>(ts()->domsize*x.size());
       last_data = home.alloc<Tuple*>(literals);
       for (int i = literals; i--; )
         last_data[i] = source[i];
@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   Base<View,subscribe>::last_next(int i, int n) {
     assert(last(i,n) != NULL);
     assert(last(i,n)[i] == n+ts()->min);
-    int pos = (i*ts()->domsize) + n;
+    int pos = (i*static_cast<int>(ts()->domsize)) + n;
     ++(last_data[pos]);
     if (last(i,n)[i] != (n+ts()->min))
       last_data[pos] = ts()->nullpointer;
@@ -116,11 +116,11 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, bool subscribe>
   forceinline void
   Base<View,subscribe>::init_dom(Space& home, Domain dom) {
-    int domsize = ts()->domsize;
+    unsigned int domsize = ts()->domsize;
     for (int i = x.size(); i--; ) {
       dom[i].init(home, domsize);
       for (ViewValues<View> vv(x[i]); vv(); ++vv)
-        dom[i].set(vv.val()-ts()->min);
+        dom[i].set(static_cast<unsigned int>(vv.val()-ts()->min));
     }
   }
 
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline bool
   Base<View,subscribe>::valid(Tuple t, Domain dom) {
     for (int i = x.size(); i--; )
-      if (!dom[i].get(t[i]-ts()->min))
+      if (!dom[i].get(static_cast<unsigned int>(t[i]-ts()->min)))
         return false;
     return true;
   }
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (subscribe)
       x.cancel(home,*this,PC_INT_DOM);
     // take care of last_data
-    int literals = ts()->domsize*x.size();
+    unsigned int literals = ts()->domsize*x.size();
     home.rfree(last_data, sizeof(Tuple*)*literals);
     (void) tupleSet.~TupleSet();
     return sizeof(*this);

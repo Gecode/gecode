@@ -303,7 +303,7 @@ namespace Gecode { namespace Set { namespace Element {
 
     // Test whether we determined x1 without determining x0
     if (x1.assigned() && !x0.assigned()) {
-      int ubsize = x1.lubSize();
+      int ubsize = static_cast<int>(x1.lubSize());
       if (ubsize > 2) {
         assert(ubsize==n);
         ViewArray<SView> is(home,ubsize);

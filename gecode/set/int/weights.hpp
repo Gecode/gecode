@@ -266,7 +266,7 @@ namespace Gecode { namespace Set { namespace Int {
       Support::quicksort<int>(currentWeights, size, il);
 
       // The maximum number of elements that can still be added to x
-      int delta = std::min(x.unknownSize(), x.cardMax() - x.glbSize());
+      int delta = static_cast<int>(std::min(x.unknownSize(), x.cardMax() - x.glbSize()));
 
       // The weight of the elements already in x
       GlbRanges<View> glb(x);
