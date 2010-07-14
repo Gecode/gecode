@@ -51,7 +51,7 @@
  *   Petr Vilím, Edge Finding Filtering Algorithm for Discrete
  *   Cumulative Resources in O(kn log n), CP, 2009.
  *
- * \brief Scheduling for cumulative resources
+ * \brief %Scheduling for cumulative resources
  */
 
 namespace Gecode { namespace Scheduling { namespace Cumulative {
