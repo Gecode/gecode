@@ -828,7 +828,7 @@ INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 
 SETTESTSRC00 = \
 	construct dom rel rel-op rel-op-const convex sequence int element \
-	distinct exec
+	distinct exec mm-set
 SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
 
 ifeq "@enable_set_vars@" "yes"
