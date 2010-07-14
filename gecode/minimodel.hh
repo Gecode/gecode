@@ -909,6 +909,9 @@ namespace Gecode {
   /// Equality of set expressions
   GECODE_MINIMODEL_EXPORT SetRel
   operator ==(const SetExpr&, const SetExpr&);
+  /// Disequality of set expressions
+  GECODE_MINIMODEL_EXPORT SetRel
+  operator !=(const SetExpr&, const SetExpr&);
   /// Subset of set expressions
   GECODE_MINIMODEL_EXPORT SetCmpRel
   operator <=(const SetExpr&, const SetExpr&);
