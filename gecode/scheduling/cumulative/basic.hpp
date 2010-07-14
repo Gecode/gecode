@@ -137,7 +137,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     }
 
     // Set of current but not required tasks
-    Support::BitSet<Region> tasks(r,t.size());
+    Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
 
     // Process events, use c as the capacity that is still free
     while (e->e != Event::END) {
@@ -147,14 +147,14 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       // Process events for completion of required part
       for ( ; (e->t == time) && (e->e == Event::LRT); e++) 
         if (t[e->i].mandatory()) {
-          tasks.set(e->i); c += t[e->i].c();
+          tasks.set(static_cast<unsigned int>(e->i)); c += t[e->i].c();
         }
       // Process events for completion of task
       for ( ; (e->t == time) && (e->e == Event::LCT); e++)
-        tasks.clear(e->i);
+        tasks.clear(static_cast<unsigned int>(e->i));
       // Process events for start of task
       for ( ; (e->t == time) && (e->e == Event::EST); e++)
-        tasks.set(e->i);
+        tasks.set(static_cast<unsigned int>(e->i));
       // Process events for zero-length task
       for ( ; (e->t == time) && (e->e == Event::ZRO); e++)
         if (c < t[e->i].c())
@@ -165,7 +165,8 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       // Process events for start of required part
       for ( ; (e->t == time) && (e->e == Event::ERT); e++) 
         if (t[e->i].mandatory()) {
-          tasks.clear(e->i); c -= t[e->i].c(); zltime = time+1;
+          tasks.clear(static_cast<unsigned int>(e->i)); 
+          c -= t[e->i].c(); zltime = time+1;
           if (c < 0)
             return ES_FAILED;
         } else if (t[e->i].optional() && (t[e->i].c() > c)) {

@@ -84,26 +84,26 @@ namespace Gecode {
       break;
     case NT_VAR_INT:
       Int::Limits::check(m*a,"MiniModel::LinExpr");
-      ti->a=m*a; ti->x=x_int; ti++;
+      ti->a=static_cast<int>(m*a); ti->x=x_int; ti++;
       break;
     case NT_NONLIN:
-      ti->a=m; ti->x=sum.ne->post(home, NULL, icl); ti++;
+      ti->a=static_cast<int>(m); ti->x=sum.ne->post(home, NULL, icl); ti++;
       break;
     case NT_VAR_BOOL:
       Int::Limits::check(m*a,"MiniModel::LinExpr");
-      tb->a=m*a; tb->x=x_bool; tb++;
+      tb->a=static_cast<int>(m*a); tb->x=x_bool; tb++;
       break;
     case NT_SUM_INT:
       for (int i=n_int; i--; ) {
         Int::Limits::check(m*sum.ti[i].a,"MiniModel::LinExpr");
-        ti[i].x = sum.ti[i].x; ti[i].a = m*sum.ti[i].a;
+        ti[i].x = sum.ti[i].x; ti[i].a = static_cast<int>(m*sum.ti[i].a);
       }
       ti += n_int;
       break;
     case NT_SUM_BOOL:
       for (int i=n_bool; i--; ) {
         Int::Limits::check(m*sum.tb[i].a,"MiniModel::LinExpr");
-        tb[i].x = sum.tb[i].x; tb[i].a = m*sum.tb[i].a;
+        tb[i].x = sum.tb[i].x; tb[i].a = static_cast<int>(m*sum.tb[i].a);
       }
       tb += n_bool;
       break;

@@ -70,8 +70,8 @@ namespace Gecode {
   forceinline
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
     : n(new Node) {
-    unsigned int ls = ((l.n->t == t) || (l.n->t == NT_VAR)) ? l.n->same : 1;
-    unsigned int rs = ((r.n->t == t) || (r.n->t == NT_VAR)) ? r.n->same : 1;
+    int ls = ((l.n->t == t) || (l.n->t == NT_VAR)) ? l.n->same : 1;
+    int rs = ((r.n->t == t) || (r.n->t == NT_VAR)) ? r.n->same : 1;
     n->same = ls+rs;
     n->t    = t;
     n->l    = l.n;
@@ -129,13 +129,13 @@ namespace Gecode {
   }
 #endif
 
-  forceinline BoolVar
+  inline BoolVar
   BoolExpr::post(Home home, IntConLevel icl) const {
     Region r(home);
     return NNF::nnf(r,n,false)->post(home,icl);
   }
 
-  forceinline void
+  inline void
   BoolExpr::post(Home home, bool t, IntConLevel icl) const {
     Region r(home);
     return NNF::nnf(r,n,false)->post(home,t,icl);

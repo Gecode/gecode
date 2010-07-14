@@ -98,8 +98,8 @@ namespace Gecode {
   forceinline
   SetExpr::SetExpr(const SetExpr& l, NodeType t, const SetExpr& r)
     : n(new Node) {
-    unsigned int ls = same(t,l.n->t) ? l.n->same : 1;
-    unsigned int rs = same(t,r.n->t) ? r.n->same : 1;
+    int ls = same(t,l.n->t) ? l.n->same : 1;
+    int rs = same(t,r.n->t) ? r.n->same : 1;
     n->same = ls+rs;
     n->t    = t;
     n->l    = l.n;
@@ -125,7 +125,7 @@ namespace Gecode {
     }
   }
 
-  forceinline SetVar
+  inline SetVar
   SetExpr::post(Home home) const {
     Region r(home);
     SetVar s(home,IntSet::empty,
@@ -134,12 +134,12 @@ namespace Gecode {
     return s;
   }
 
-  forceinline void
+  inline void
   SetExpr::post(Home home, SetRelType srt, const SetExpr& e) const {
     Region r(home);
     return NNF::nnf(r,n,false)->post(home,srt,NNF::nnf(r,e.n,false));
   }
-  forceinline void
+  inline void
   SetExpr::post(Home home, BoolVar b, bool t,
                 SetRelType srt, const SetExpr& e) const {
     Region r(home);

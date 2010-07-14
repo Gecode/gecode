@@ -449,13 +449,13 @@ namespace Gecode {
         x->t = t;
         x->u.b.l = nnf(r,n->l,neg);
         x->u.b.r = nnf(r,n->r,neg);
-        unsigned int p_l, n_l;
+        int p_l, n_l;
         if ((x->u.b.l->t == t) || (x->u.b.l->t == NT_VAR)) {
           p_l=x->u.b.l->p; n_l=x->u.b.l->n;
         } else {
           p_l=1; n_l=0;
         }
-        unsigned int p_r, n_r;
+        int p_r, n_r;
         if ((x->u.b.r->t == t) || (x->u.b.r->t == NT_VAR)) {
           p_r=x->u.b.r->p; n_r=x->u.b.r->n;
         } else {
@@ -565,19 +565,29 @@ namespace Gecode {
         if (t==SNLE_CARD && irt!=IRT_NQ) {
           switch (irt) {
           case IRT_LQ:
-            cardinality(home, e.post(home), 0, c);
+            cardinality(home, e.post(home), 
+                        0U, 
+                        static_cast<unsigned int>(c));
             break;
           case IRT_LE:
-            cardinality(home, e.post(home), 0, c-1);
+            cardinality(home, e.post(home), 
+                        0U, 
+                        static_cast<unsigned int>(c-1));
             break;
           case IRT_GQ:
-            cardinality(home, e.post(home), c, Set::Limits::card);
+            cardinality(home, e.post(home), 
+                        static_cast<unsigned int>(c), 
+                        Set::Limits::card);
             break;
           case IRT_GR:
-            cardinality(home, e.post(home), c+1, Set::Limits::card);
+            cardinality(home, e.post(home), 
+                        static_cast<unsigned int>(c+1), 
+                        Set::Limits::card);
             break;
           case IRT_EQ:
-            cardinality(home, e.post(home), c,c);
+            cardinality(home, e.post(home), 
+                        static_cast<unsigned int>(c),
+                        static_cast<unsigned int>(c));
             break;
           default:
             GECODE_NEVER;

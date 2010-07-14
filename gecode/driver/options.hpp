@@ -316,7 +316,7 @@ namespace Gecode {
   }
   inline bool
   Options::interrupt(void) const {
-    return _interrupt.value();
+    return static_cast<bool>(_interrupt.value());
   }
   
   

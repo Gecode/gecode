@@ -209,7 +209,7 @@ namespace Gecode {
         std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
         exit(EXIT_FAILURE);
       }
-      cur = atoi(argv[2]);
+      cur = static_cast<unsigned int>(atoi(argv[2]));
       // Remove options
       argc -= 2;
       for (int i=1; i<argc; i++)
@@ -397,7 +397,7 @@ namespace Gecode {
     Options::parse(argc,argv);
     if (argc < 2)
       return;
-    size(atoi(argv[1]));
+    size(static_cast<unsigned int>(atoi(argv[1])));
   }
 
 }

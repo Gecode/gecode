@@ -57,7 +57,8 @@ namespace Gecode {
   public:
     /// Reference counter
     unsigned int use_cnt;
-    unsigned int _n_pos;
+    /// Number of positions
+    int _n_pos;
     /**
      * \brief Type of regular expression
      */
@@ -81,7 +82,7 @@ namespace Gecode {
     followpos(MiniModel::PosSetAllocator&,MiniModel::PosInfo*);
     void inc(void);
     void dec(void);
-    unsigned int n_pos(void) const;
+    int n_pos(void) const;
     /// Print expression
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>&
@@ -141,7 +142,7 @@ namespace Gecode {
   }
 
 
-  forceinline unsigned int
+  forceinline int
   REG::Exp::n_pos(void) const {
     return (this != NULL) ? _n_pos : 0;
   }
@@ -304,7 +305,7 @@ namespace Gecode {
     if ((n>m) || (m == 0))
       return r;
     if (n>0) {
-      int i = n;
+      unsigned int i = n;
       REG r0 = *this;
       while (i>0)
         if (i & 1) {
@@ -314,7 +315,7 @@ namespace Gecode {
         }
     }
     if (m > n) {
-      int i = m-n;
+      unsigned int i = m-n;
       REG s0;
       s0 = s0 | *this;
       REG s;
@@ -334,7 +335,7 @@ namespace Gecode {
     REG r;
     if (n > 0) {
       REG r0 = *this;
-      int i = n;
+      unsigned int i = n;
       while (i>0)
         if (i & 1) {
           r = r0+r; i--;

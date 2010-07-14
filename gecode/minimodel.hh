@@ -149,9 +149,9 @@ namespace Gecode {
       /// Nodes are reference counted
       unsigned int use;
       /// Integer variables in tree
-      unsigned int n_int;
+      int n_int;
       /// Boolean variables in tree
-      unsigned int n_bool;
+      int n_bool;
       /// Type of expression
       NodeType t;
       /// Subexpressions
@@ -715,7 +715,7 @@ namespace Gecode {
       /// Nodes are reference counted
       unsigned int use;
       /// Number of variables in subtree with same type (for INTER and UNION)
-      unsigned int same;
+      int same;
       /// Type of expression
       NodeType t;
       /// Subexpressions
@@ -743,9 +743,9 @@ namespace Gecode {
       /// Type of node
       NodeType t;
       /// Number of positive literals for node type
-      unsigned int p;
+      int p;
       /// Number of negative literals for node type
-      unsigned int n;
+      int n;
       /// Union depending on nodetype \a t
       union {
         /// For binary nodes (and, or, eqv)
@@ -907,22 +907,22 @@ namespace Gecode {
   max(const SetExpr&);
 
   /// Equality of set expressions
-  SetRel
+  GECODE_MINIMODEL_EXPORT SetRel
   operator ==(const SetExpr&, const SetExpr&);
   /// Subset of set expressions
-  SetCmpRel
+  GECODE_MINIMODEL_EXPORT SetCmpRel
   operator <=(const SetExpr&, const SetExpr&);
   /// Subset of set expressions
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   operator <=(const SetCmpRel&, const SetExpr&);
   /// Superset of set expressions
-  SetCmpRel
+  GECODE_MINIMODEL_EXPORT SetCmpRel
   operator >=(const SetExpr&, const SetExpr&);
   /// Superset of set expressions
-  BoolExpr
+  GECODE_MINIMODEL_EXPORT BoolExpr
   operator >=(const SetCmpRel&, const SetExpr&);
   /// Disjointness of set expressions
-  SetRel
+  GECODE_MINIMODEL_EXPORT SetRel
   operator ||(const SetExpr&, const SetExpr&);
   //@}
 #endif
@@ -946,7 +946,7 @@ namespace Gecode {
       /// Nodes are reference counted
       unsigned int use;
       /// Number of variables in subtree with same type (for AND and OR)
-      unsigned int same;
+      int same;
       /// Type of expression
       NodeType t;
       /// Subexpressions
@@ -976,9 +976,9 @@ namespace Gecode {
       /// Type of node
       NodeType t;
       /// Number of positive literals for node type
-      unsigned int p;
+      int p;
       /// Number of negative literals for node type
-      unsigned int n;
+      int n;
       /// Union depending on nodetype \a t
       union {
         /// For binary nodes (and, or, eqv)

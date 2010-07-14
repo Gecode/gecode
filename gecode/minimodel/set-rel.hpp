@@ -77,35 +77,6 @@ namespace Gecode {
     _e0.post(home,b,t,_srt,_e1);
   }
 
-  forceinline SetRel
-  operator ==(const SetExpr& e0, const SetExpr& e1) {
-    return SetRel(e0, SRT_EQ, e1);
-  }
-  forceinline SetRel
-  operator !=(const SetExpr& e0, const SetExpr& e1) {
-    return SetRel(e0, SRT_NQ, e1);
-  }
-  forceinline SetCmpRel
-  operator <=(const SetExpr& e0, const SetExpr& e1) {
-    return SetCmpRel(e0, SRT_SUB, e1);
-  }
-  forceinline BoolExpr
-  operator <=(const SetCmpRel& r, const SetExpr& l) {
-    return BoolExpr(r) && BoolExpr(r.r <= l);
-  }
-  forceinline SetCmpRel
-  operator >=(const SetExpr& e0, const SetExpr& e1) {
-    return SetCmpRel(e0, SRT_SUP, e1);
-  }
-  forceinline BoolExpr
-  operator >=(const SetCmpRel& r, const SetExpr& l) {
-    return BoolExpr(r) && BoolExpr(r.r >= l);
-  }
-  forceinline SetRel
-  operator ||(const SetExpr& e0, const SetExpr& e1) {
-    return SetRel(e0, SRT_DISJ, e1);
-  }
-
 }
 
 #endif

@@ -251,7 +251,7 @@ namespace Gecode {
     return static_cast<int>(d);
   }
 
-  forceinline void
+  inline void
   LinExpr::post(Home home, IntRelType irt, IntConLevel icl) const {
     if (home.failed()) return;
     Region r(home);
@@ -318,7 +318,7 @@ namespace Gecode {
     }
   }
 
-  forceinline void
+  inline void
   LinExpr::post(Home home, IntRelType irt, const BoolVar& b,
                 IntConLevel icl) const {
     if (home.failed()) return;
@@ -376,7 +376,7 @@ namespace Gecode {
     }
   }
 
-  forceinline IntVar
+  inline IntVar
   LinExpr::post(Home home, IntConLevel icl) const {
     if (home.failed()) return IntVar(home,0,0);
     Region r(home);
