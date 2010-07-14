@@ -104,8 +104,9 @@ namespace Gecode {
     b_status = b_commit = Brancher::cast(&bl);
     // Initialize array for forced deletion to be empty
     d_fst = d_cur = d_lst = NULL;
-    // Initialize propagator queues
+    // Initialize space as stable but not failed
     pc.p.active = &pc.p.queue[0]-1;
+    // Initialize propagator queues
     for (int i=0; i<=PropCost::AC_MAX; i++)
       pc.p.queue[i].init();
     pc.p.branch_id = 0;
@@ -191,11 +192,13 @@ namespace Gecode {
   SpaceStatus
   Space::status(StatusStatistics& stat) {
     SpaceStatus s = SS_FAILED;
+    // Check whether space is failed
     if (failed()) {
       s = SS_FAILED; goto exit;
     }
-    if (!stable()) {
-      assert(pc.p.active >= &pc.p.queue[0]);
+    assert(pc.p.active <= &pc.p.queue[PropCost::AC_MAX+1]);
+    // Check whether space is stable but not failed
+    if (pc.p.active >= &pc.p.queue[0]) {
       Propagator* p;
       ModEventDelta med_o;
       goto unstable;

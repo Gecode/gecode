@@ -1209,9 +1209,9 @@ namespace Gecode {
          *  - If active points to a queue, this queue might contain
          *    a propagator. However, there will be at least one queue
          *    containing a propagator.
-         *  - Otherwise, active is smaller than the beginning of
-         *    the queues. Then, the space is stable.
-         *  - If active is NULL, the space is failed.
+         *  - Otherwise, active is smaller than the first queue
+         *    or larger than the last queue. Then, the space is stable.
+         *  - If active is larger than the last queue, the space is failed.
          */
         ActorLink* active;
         /// Scheduled propagators according to cost
@@ -2878,7 +2878,12 @@ namespace Gecode {
 
   forceinline void
   Space::fail(void) {
-    pc.p.active = NULL;
+    /*
+     * Now active points beyond the last queue. This is essential as
+     * enqueuing a propagator in a failed space keeps the space
+     * failed.
+     */
+    pc.p.active = &pc.p.queue[PropCost::AC_MAX+2];
   }
   forceinline void
   Home::fail(void) {
@@ -2887,7 +2892,7 @@ namespace Gecode {
 
   forceinline bool
   Space::failed(void) const {
-    return pc.p.active == NULL;
+    return pc.p.active > &pc.p.queue[PropCost::AC_MAX+1];
   }
   forceinline bool
   Home::failed(void) const {
@@ -2896,7 +2901,8 @@ namespace Gecode {
 
   forceinline bool
   Space::stable(void) const {
-    return pc.p.active < &pc.p.queue[0];
+    return ((pc.p.active < &pc.p.queue[0]) ||
+            (pc.p.active > &pc.p.queue[PropCost::AC_MAX+1]));
   }
 
 

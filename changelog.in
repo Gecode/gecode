@@ -74,6 +74,14 @@ More fixes for more bugs.
 
 [ENTRY]
 Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Posting a propagator in a failed space could make the space
+non-failed again.
+
+[ENTRY]
+Module: kernel
 What:   new
 Rank:   minor
 [DESCRIPTION]
