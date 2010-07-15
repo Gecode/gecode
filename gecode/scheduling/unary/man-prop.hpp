@@ -40,13 +40,13 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class ManTask>
   forceinline
   ManProp<ManTask>::ManProp(Home home, TaskArray<ManTask>& t)
-    : TaskProp<ManTask>(home,t) {}
+    : TaskProp<ManTask,Int::PC_INT_BND>(home,t) {}
 
   template<class ManTask>
   forceinline
   ManProp<ManTask>::ManProp(Space& home, bool shared, 
                                 ManProp<ManTask>& p) 
-    : TaskProp<ManTask>(home,shared,p) {}
+    : TaskProp<ManTask,Int::PC_INT_BND>(home,shared,p) {}
 
   template<class ManTask>
   forceinline ExecStatus 

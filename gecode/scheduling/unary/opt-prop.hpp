@@ -42,12 +42,12 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Home home, TaskArray<OptTask>& t)
-    : TaskProp<OptTask>(home,t) {}
+    : TaskProp<OptTask,Int::PC_INT_BND>(home,t) {}
 
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Space& home, bool shared, OptProp<OptTask>& p) 
-    : TaskProp<OptTask>(home,shared,p) {}
+    : TaskProp<OptTask,Int::PC_INT_BND>(home,shared,p) {}
 
   template<class OptTask>
   forceinline ExecStatus 

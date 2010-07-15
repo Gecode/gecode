@@ -37,38 +37,32 @@
 
 namespace Gecode { namespace Scheduling {
 
-  template<class Task>  
+  template<class Task, PropCond pc>  
   forceinline
-  TaskProp<Task>::TaskProp(Home home, TaskArray<Task>& t0, PropCond pc)
+  TaskProp<Task,pc>::TaskProp(Home home, TaskArray<Task>& t0)
     : Propagator(home), t(t0) {
     t.subscribe(home,*this,pc);
   }
 
-  template<class Task>  
+  template<class Task, PropCond pc>  
   forceinline
-  TaskProp<Task>::TaskProp(Space& home, bool shared, TaskProp<Task>& p) 
+  TaskProp<Task,pc>::TaskProp(Space& home, bool shared, TaskProp<Task,pc>& p) 
     : Propagator(home,shared,p) {
     t.update(home,shared,p.t);
   }
 
-  template<class Task>  
+  template<class Task, PropCond pc>  
   PropCost 
-  TaskProp<Task>::cost(const Space&, const ModEventDelta&) const {
+  TaskProp<Task,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI,t.size());
   }
 
-  template<class Task>  
+  template<class Task, PropCond pc>  
   forceinline size_t 
-  TaskProp<Task>::dispose(Space& home, PropCond pc) {
+  TaskProp<Task,pc>::dispose(Space& home) {
     t.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
-  }
-
-  template<class Task>  
-  forceinline size_t 
-  TaskProp<Task>::dispose(Space& home) {
-    return dispose(home,Int::PC_INT_BND);
   }
 
 }}

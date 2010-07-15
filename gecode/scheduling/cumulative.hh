@@ -665,9 +665,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
    * \ingroup FuncSchedulingProp
    */
   template<class ManTask>
-  class ManProp : public TaskProp<ManTask> {
+  class ManProp : public TaskProp<ManTask,Int::PC_INT_DOM> {
   protected:
-    using TaskProp<ManTask>::t;
+    using TaskProp<ManTask,Int::PC_INT_DOM>::t;
     /// Resource capacity
     int c;
     /// Constructor for creation
@@ -692,9 +692,9 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
    * \ingroup FuncSchedulingProp
    */
   template<class OptTask>
-  class OptProp : public TaskProp<OptTask> {
+  class OptProp : public TaskProp<OptTask,Int::PC_INT_DOM> {
   protected:
-    using TaskProp<OptTask>::t;
+    using TaskProp<OptTask,Int::PC_INT_DOM>::t;
     /// Resource capacity
     int c;
     /// Constructor for creation

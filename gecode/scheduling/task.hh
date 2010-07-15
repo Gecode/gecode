@@ -418,20 +418,18 @@ namespace Gecode { namespace Scheduling {
    * Requires \code #include <gecode/scheduling/task.hh> \endcode
    * \ingroup FuncSchedulingProp
    */
-  template<class Task>
+  template<class Task, PropCond pc>
   class TaskProp : public Propagator {
   protected:
     /// Tasks
     TaskArray<Task> t;
     /// Constructor for creation
-    TaskProp(Home home, TaskArray<Task>& t, PropCond pc=Int::PC_INT_BND);
+    TaskProp(Home home, TaskArray<Task>& t);
     /// Constructor for cloning \a p
-    TaskProp(Space& home, bool shared, TaskProp<Task>& p);
+    TaskProp(Space& home, bool shared, TaskProp<Task,pc>& p);
   public:
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Delete propagator and return its size
-    size_t dispose(Space& home, PropCond pc);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

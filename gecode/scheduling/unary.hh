@@ -781,9 +781,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * \ingroup FuncSchedulingProp
    */
   template<class ManTask>
-  class ManProp : public TaskProp<ManTask> {
+  class ManProp : public TaskProp<ManTask,Int::PC_INT_BND> {
   protected:
-    using TaskProp<ManTask>::t;
+    using TaskProp<ManTask,Int::PC_INT_BND>::t;
     /// Constructor for creation
     ManProp(Home home, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
@@ -804,9 +804,9 @@ namespace Gecode { namespace Scheduling { namespace Unary {
    * \ingroup FuncSchedulingProp
    */
   template<class OptTask>
-  class OptProp : public TaskProp<OptTask> {
+  class OptProp : public TaskProp<OptTask,Int::PC_INT_BND> {
   protected:
-    using TaskProp<OptTask>::t;
+    using TaskProp<OptTask,Int::PC_INT_BND>::t;
     /// Constructor for creation
     OptProp(Home home, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p

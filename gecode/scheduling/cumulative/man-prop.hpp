@@ -40,13 +40,13 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>
   forceinline
   ManProp<ManTask>::ManProp(Home home, int c0, TaskArray<ManTask>& t)
-    : TaskProp<ManTask>(home,t,Int::PC_INT_DOM), c(c0) {}
+    : TaskProp<ManTask,Int::PC_INT_DOM>(home,t), c(c0) {}
 
   template<class ManTask>
   forceinline
   ManProp<ManTask>::ManProp(Space& home, bool shared, 
                             ManProp<ManTask>& p) 
-    : TaskProp<ManTask>(home,shared,p), c(p.c) {}
+    : TaskProp<ManTask,Int::PC_INT_DOM>(home,shared,p), c(p.c) {}
 
   template<class ManTask>
   forceinline ExecStatus 
@@ -69,7 +69,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class ManTask>  
   forceinline size_t 
   ManProp<ManTask>::dispose(Space& home) {
-    (void) TaskProp<ManTask>::dispose(home,Int::PC_INT_DOM);
+    (void) TaskProp<ManTask,Int::PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
 

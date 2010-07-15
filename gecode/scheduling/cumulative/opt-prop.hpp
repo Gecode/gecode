@@ -42,12 +42,12 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Home home, int c0, TaskArray<OptTask>& t)
-    : TaskProp<OptTask>(home,t,Int::PC_INT_DOM), c(c0) {}
+    : TaskProp<OptTask,Int::PC_INT_DOM>(home,t), c(c0) {}
 
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Space& home, bool shared, OptProp<OptTask>& p) 
-    : TaskProp<OptTask>(home,shared,p), c(p.c) {}
+    : TaskProp<OptTask,Int::PC_INT_DOM>(home,shared,p), c(p.c) {}
 
   template<class OptTask>
   forceinline ExecStatus 
@@ -84,7 +84,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   template<class OptTask>  
   forceinline size_t 
   OptProp<OptTask>::dispose(Space& home) {
-    (void) TaskProp<OptTask>::dispose(home,Int::PC_INT_DOM);
+    (void) TaskProp<OptTask,Int::PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
 
