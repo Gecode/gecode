@@ -178,10 +178,11 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
            j() && (t[j.val()].c() > c); ++j) 
         // Task j cannot run from time to next time - 1
         if (t[j.val()].mandatory())
-          if (t[j.val()].pmin() > 0)
+          if (t[j.val()].pmin() > 0) {
             GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
-          else
+          } else {
             GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->t - 1));
+          }
     }
     
     return assigned ? home.ES_SUBSUMED(p) : ES_NOFIX;
