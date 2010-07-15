@@ -163,7 +163,7 @@ namespace Gecode {
             IntVar x0 = a[0].post(home, icl);
             IntVar x1 = a[1].post(home, icl);
             y = result(home,ret);
-            div(home, x0, x1, y, icl);
+            mod(home, x0, x1, y, icl);
           }
           break;
         case ANLE_SQR:
