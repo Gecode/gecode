@@ -147,6 +147,7 @@ namespace Gecode {
             assert(n == 2);
             IntVar x0 = a[0].post(home, icl);
             IntVar x1 = a[1].post(home, icl);
+            rel(home, x1, IRT_NQ, 0);
             if (x1.assigned() && (x1.val() == 1))
               y = result(home,ret,x0);
             else if (x0.assigned() && (x0.val() == 0))

@@ -71,6 +71,44 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for division constraint
+     class Div : public Test {
+     public:
+       /// Create and register test
+       Div(const std::string& s, const Gecode::IntSet& d)
+         : Test("MiniModel::Div::"+s,3,d) {
+         testfix = false;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[1] != 0) && (x[0] / x[1] == x[2]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         rel(home, expr(home, x[0] / x[1]), IRT_EQ, x[2], ICL_DOM);
+       }
+     };
+
+     /// %Test for division constraint
+     class Mod : public Test {
+     public:
+       /// Create and register test
+       Mod(const std::string& s, const Gecode::IntSet& d)
+         : Test("MiniModel::Mod::"+s,3,d) {
+         testfix = false;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[1] != 0) && (x[0] % x[1] == x[2]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         rel(home, expr(home, x[0] % x[1]), IRT_EQ, x[2], ICL_DOM);
+       }
+     };
+
      /// %Test for addition constraint
      class Plus : public Test {
      public:
@@ -279,6 +317,14 @@ namespace Test { namespace Int {
      Mult mult_max("A",d1);
      Mult mult_med("B",d2);
      Mult mult_min("C",d3);
+
+     Div div_max("A",d1);
+     Div div_med("B",d2);
+     Div div_min("C",d3);
+
+     Mod mod_max("A",d1);
+     Mod mod_med("B",d2);
+     Mod mod_min("C",d3);
 
      Plus plus_max("A",d1);
      Plus plus_med("B",d2);
