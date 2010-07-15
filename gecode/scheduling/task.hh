@@ -87,9 +87,9 @@ namespace Gecode { namespace Scheduling {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void subscribe(Space& home, Propagator& p, PropCond pc);
     /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void cancel(Space& home, Propagator& p, PropCond pc);
     //@}
   };
 
@@ -435,7 +435,7 @@ namespace Gecode { namespace Scheduling {
   };
 
   /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask>
+  template<class OptTask,PropCond pc>
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
 }}

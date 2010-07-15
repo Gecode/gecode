@@ -81,7 +81,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK(purge(home,*this,t));
+      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_BND>(home,*this,t)));
 
     GECODE_ES_CHECK(overload(home,*this,t));
 

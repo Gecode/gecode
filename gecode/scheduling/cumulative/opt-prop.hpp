@@ -93,7 +93,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
   OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK(purge(home,*this,t));
+      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_DOM>(home,*this,t)));
     // Only bounds changes?
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c,t));

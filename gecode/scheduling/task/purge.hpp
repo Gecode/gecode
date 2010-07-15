@@ -37,13 +37,13 @@
 
 namespace Gecode { namespace Scheduling {
 
-  template<class OptTask>
+  template<class OptTask, PropCond pc>
   ExecStatus
   purge(Space& home, Propagator& p, TaskArray<OptTask>& t) {
     int n=t.size();
     for (int i=n; i--; )
       if (t[i].excluded()) {
-        t[i].cancel(home,p); t[i]=t[--n];
+        t[i].cancel(home,p,pc); t[i]=t[--n];
       }
     t.size(n);
 

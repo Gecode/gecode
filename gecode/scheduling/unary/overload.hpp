@@ -84,7 +84,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     }
 
     if (to_purge)
-      GECODE_ES_CHECK(purge(home,p,t));
+      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_BND>(home,p,t)));
     return ES_OK;
   }
   
