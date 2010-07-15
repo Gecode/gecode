@@ -68,9 +68,21 @@
 
 [RELEASE]
 Version: 3.4.0
-Date: soon
+Date: 2010-07-19
 [DESCRIPTION]
-More fixes for more bugs.
+This release includes: considerably improved support for posting
+expressions and relations (also including set and full arithmetic
+expressions); other improvements for modeling (array
+initialization and element addition to arrays); state-of-the-art
+unary and cumulative scheduling propagators (including optional
+and flexible tasks); major cleanups of the variable and view
+infrastructure (now also documented in MPG); cleanups of the
+examples; several other fixes and performance improvements. 
+
+This release is the first to be accompanied by a complete version
+of "Modeling and Programming in Gecode" which has been extended
+by many new case studies and parts on programming search engines
+and variables.
 
 [ENTRY]
 Module: kernel
@@ -305,7 +317,7 @@ Array slices can now be empty.
 [ENTRY]
 Module: kernel
 What:   change
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 The support for dynamically resizing variable arrays has been
 removed (it was buggy and inefficient). Instead, all argument
