@@ -4302,6 +4302,28 @@ namespace Test { namespace Int {
       {SO_MINUS,0,1,0},{SO_CMPL,0,0,0},
       {SO_HLT,0,0,0}
     };
+    const SetInstr si875[] = {
+      {SO_CMPL,0,0,0},
+      {SO_HLT,0,0,0}
+    };
+    const SetInstr si876[] = {
+      {SO_INTER,0,1,0},
+      {SO_HLT,0,0,0}
+    };
+    const SetInstr si877[] = {
+      {SO_UNION,0,1,0},
+      {SO_HLT,0,0,0}
+    };
+    const SetInstr si878[] = {
+      {SO_DUNION,0,1,0},
+      {SO_HLT,0,0,0}
+    };
+    const SetInstr si879[] = {
+      {SO_MINUS,0,1,0},
+      {SO_HLT,0,0,0}
+    };
+    
+    
     
     const SetInstr* si[] = {
       &si000[0],&si001[0],&si002[0],&si003[0],&si004[0],&si005[0],
@@ -4449,7 +4471,8 @@ namespace Test { namespace Int {
       &si852[0],&si853[0],&si854[0],&si855[0],&si856[0],&si857[0],
       &si858[0],&si859[0],&si860[0],&si861[0],&si862[0],&si863[0],
       &si864[0],&si865[0],&si866[0],&si867[0],&si868[0],&si869[0],
-      &si870[0],&si871[0],&si872[0],&si873[0],&si874[0]
+      &si870[0],&si871[0],&si872[0],&si873[0],&si874[0],&si875[0],
+      &si876[0],&si877[0],&si878[0],&si879[0]
     };
 
     
