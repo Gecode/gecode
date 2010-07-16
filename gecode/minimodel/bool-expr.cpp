@@ -90,14 +90,14 @@ namespace Gecode {
   }
 
   BoolVar
-  BoolExpr::NNF::post(Home home, IntConLevel icl) const {
+  BoolExpr::NNF::expr(Home home, IntConLevel icl) const {
     if ((t == NT_VAR) && !u.a.neg)
       return u.a.x->x;
     BoolVar b(home,0,1);
     switch (t) {
     case NT_VAR:
       assert(u.a.neg);
-      rel(home, u.a.x->x, IRT_NQ, b);
+      Gecode::rel(home, u.a.x->x, IRT_NQ, b);
       break;
     case NT_RLIN:
       u.a.x->rl.post(home, b, !u.a.neg, icl);
@@ -131,16 +131,16 @@ namespace Gecode {
           l = u.b.l->u.a.x->x;
           if (u.b.l->u.a.neg) n = !n;
         } else {
-          l = u.b.l->post(home,icl);
+          l = u.b.l->expr(home,icl);
         }
         BoolVar r;
         if (u.b.r->t == NT_VAR) {
           r = u.b.r->u.a.x->x;
           if (u.b.r->u.a.neg) n = !n;
         } else {
-          r = u.b.r->post(home,icl);
+          r = u.b.r->expr(home,icl);
         }
-        rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, icl);
+        Gecode::rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, icl);
       }
       break;
     default:
@@ -180,7 +180,7 @@ namespace Gecode {
         break;
 #endif
       default:
-        bp[ip++] = post(home, icl);
+        bp[ip++] = expr(home, icl);
         break;
       }
     } else {
@@ -190,125 +190,64 @@ namespace Gecode {
   }
 
   void
-  BoolExpr::NNF::post(Home home, bool b, IntConLevel icl) const {
-    if (b) {
-      switch (t) {
-      case NT_VAR:
-        rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
-        break;
-      case NT_RLIN:
-        u.a.x->rl.post(home, !u.a.neg, icl);
-        break;
+  BoolExpr::NNF::rel(Home home, IntConLevel icl) const {
+    switch (t) {
+    case NT_VAR:
+      Gecode::rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
+      break;
+    case NT_RLIN:
+      u.a.x->rl.post(home, !u.a.neg, icl);
+      break;
 #ifdef GECODE_HAS_SET_VARS
-      case NT_RSET:
-        u.a.x->rs.post(home, !u.a.neg);
-        break;
+    case NT_RSET:
+      u.a.x->rs.post(home, !u.a.neg);
+      break;
 #endif
-      case NT_AND:
-        u.b.l->post(home, true, icl);
-        u.b.r->post(home, true, icl);
-        break;
-      case NT_OR:
-        {
-          BoolVarArgs bp(p), bn(n);
-          int ip=0, in=0;
-          post(home, NT_OR, bp, bn, ip, in, icl);
-          clause(home, BOT_OR, bp, bn, 1);
-        }
-        break;
-      case NT_EQV:
-        if (u.b.l->t==NT_VAR && u.b.r->t==NT_RLIN) {
-          u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
-        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RLIN) {
-          u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
-        } else if (u.b.l->t==NT_RLIN) {
-          u.b.l->u.a.x->rl.post(home, u.b.r->post(home,icl),
-                                !u.b.l->u.a.neg,icl);
-        } else if (u.b.r->t==NT_RLIN) {
-          u.b.r->u.a.x->rl.post(home, u.b.l->post(home,icl),
-                                !u.b.r->u.a.neg,icl);
-#ifdef GECODE_HAS_SET_VARS
-        } else if (u.b.l->t==NT_VAR && u.b.r->t==NT_RSET) {
-          u.b.r->u.a.x->rs.post(home, u.b.l->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg);
-        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RSET) {
-          u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg);
-        } else if (u.b.l->t==NT_RSET) {
-          u.b.l->u.a.x->rs.post(home, u.b.r->post(home,icl),
-                                !u.b.l->u.a.neg);
-        } else if (u.b.r->t==NT_RSET) {
-          u.b.r->u.a.x->rs.post(home, u.b.l->post(home,icl),
-                                !u.b.r->u.a.neg);
-#endif
-        } else {
-          rel(home, post(home, icl), IRT_EQ, 1);
-        }
-        break;
-      default:
-        GECODE_NEVER;
+    case NT_AND:
+      u.b.l->rel(home, icl);
+      u.b.r->rel(home, icl);
+      break;
+    case NT_OR:
+      {
+        BoolVarArgs bp(p), bn(n);
+        int ip=0, in=0;
+        post(home, NT_OR, bp, bn, ip, in, icl);
+        clause(home, BOT_OR, bp, bn, 1);
       }
-    } else {
-      switch (t) {
-      case NT_VAR:
-        rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 1 : 0);
-        break;
-      case NT_RLIN:
-        u.a.x->rl.post(home, u.a.neg, icl);
-        break;
+      break;
+    case NT_EQV:
+      if (u.b.l->t==NT_VAR && u.b.r->t==NT_RLIN) {
+        u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
+                              u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
+      } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RLIN) {
+        u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
+                              u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
+      } else if (u.b.l->t==NT_RLIN) {
+        u.b.l->u.a.x->rl.post(home, u.b.r->expr(home,icl),
+                              !u.b.l->u.a.neg,icl);
+      } else if (u.b.r->t==NT_RLIN) {
+        u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,icl),
+                              !u.b.r->u.a.neg,icl);
 #ifdef GECODE_HAS_SET_VARS
-      case NT_RSET:
-        u.a.x->rs.post(home, u.a.neg);
-        break;
+      } else if (u.b.l->t==NT_VAR && u.b.r->t==NT_RSET) {
+        u.b.r->u.a.x->rs.post(home, u.b.l->u.a.x->x,
+                              u.b.l->u.a.neg==u.b.r->u.a.neg);
+      } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RSET) {
+        u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
+                              u.b.l->u.a.neg==u.b.r->u.a.neg);
+      } else if (u.b.l->t==NT_RSET) {
+        u.b.l->u.a.x->rs.post(home, u.b.r->expr(home,icl),
+                              !u.b.l->u.a.neg);
+      } else if (u.b.r->t==NT_RSET) {
+        u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,icl),
+                              !u.b.r->u.a.neg);
 #endif
-      case NT_AND:
-        {
-          BoolVarArgs bp(p), bn(n);
-          int ip=0, in=0;
-          post(home, NT_AND, bp, bn, ip, in, icl);
-          clause(home, BOT_AND, bp, bn, 0);
-        }
-        break;
-      case NT_OR:
-        u.b.l->post(home, false, icl);
-        u.b.r->post(home, false, icl);
-        break;
-      case NT_EQV:
-        if (u.b.l->t==NT_VAR && u.b.r->t==NT_RLIN) {
-          u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
-                                u.b.l->u.a.neg!=u.b.r->u.a.neg, icl);
-        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RLIN) {
-          u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
-                                u.b.l->u.a.neg!=u.b.r->u.a.neg, icl);
-        } else if (u.b.l->t==NT_RLIN) {
-          u.b.l->u.a.x->rl.post(home, u.b.r->post(home,icl),
-                                u.b.l->u.a.neg,icl);
-        } else if (u.b.r->t==NT_RLIN) {
-          u.b.r->u.a.x->rl.post(home, u.b.l->post(home,icl),
-                                u.b.r->u.a.neg,icl);
-#ifdef GECODE_HAS_SET_VARS
-        } else if (u.b.l->t==NT_VAR && u.b.r->t==NT_RSET) {
-          u.b.r->u.a.x->rs.post(home, u.b.l->u.a.x->x,
-                                u.b.l->u.a.neg!=u.b.r->u.a.neg);
-        } else if (u.b.r->t==NT_VAR && u.b.l->t==NT_RSET) {
-          u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
-                                u.b.l->u.a.neg!=u.b.r->u.a.neg);
-        } else if (u.b.l->t==NT_RSET) {
-          u.b.l->u.a.x->rs.post(home, u.b.r->post(home,icl),
-                                u.b.l->u.a.neg);
-        } else if (u.b.r->t==NT_RSET) {
-          u.b.r->u.a.x->rs.post(home, u.b.l->post(home,icl),
-                                u.b.r->u.a.neg);
-#endif
-        } else {
-          rel(home, post(home, icl), IRT_EQ, 0);
-        }
-        break;
-      default:
-        GECODE_NEVER;
+      } else {
+        Gecode::rel(home, expr(home, icl), IRT_EQ, 1);
       }
+      break;
+    default:
+      GECODE_NEVER;
     }
   }
 
@@ -409,15 +348,21 @@ namespace Gecode {
   }
 
   /*
-   * Posting Boolean expressions
+   * Posting Boolean expressions and relations
    *
    */
   BoolVar
   expr(Home home, const BoolExpr& e, IntConLevel icl) {
     if (!home.failed())
-      return e.post(home,icl);
+      return e.expr(home,icl);
     BoolVar x(home,0,1);
     return x;
+  }
+
+  void
+  rel(Home home, const BoolExpr& e, IntConLevel icl) {
+    if (home.failed()) return;
+    e.rel(home,icl);
   }
 
 }

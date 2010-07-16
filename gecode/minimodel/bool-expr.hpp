@@ -130,15 +130,15 @@ namespace Gecode {
 #endif
 
   inline BoolVar
-  BoolExpr::post(Home home, IntConLevel icl) const {
+  BoolExpr::expr(Home home, IntConLevel icl) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->post(home,icl);
+    return NNF::nnf(r,n,false)->expr(home,icl);
   }
 
   inline void
-  BoolExpr::post(Home home, bool t, IntConLevel icl) const {
+  BoolExpr::rel(Home home, IntConLevel icl) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->post(home,t,icl);
+    return NNF::nnf(r,n,false)->rel(home,icl);
   }
 
 }

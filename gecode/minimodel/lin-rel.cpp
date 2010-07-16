@@ -409,16 +409,6 @@ namespace Gecode {
     return LinRel(l,IRT_GQ,r);
   }
 
-  /*
-   * Posting
-   *
-   */
-  void
-  rel(Home home, const LinRel& r, IntConLevel icl) {
-    if (home.failed()) return;
-    r.post(home,true,icl);
-  }
-
 }
 
 // STATISTICS: minimodel-any
