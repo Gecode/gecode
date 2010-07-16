@@ -44,200 +44,263 @@ namespace Test { namespace Int {
   /// %Tests for minimal modelling constraints (%Set)
   namespace MiniModelSet {
 
-     /// Set opcode
-     enum SetOpcode {
-       SO_CMPL,   ///< Complement
-       SO_UNION,  ///< Union
-       SO_DUNION, ///< Disjoint union
-       SO_INTER,  ///< Intersection
-       SO_MINUS,  ///< Difference
-       SO_HLT     ///< Stop execution
-     };
-
-     /// Type for representing a set instruction
-     class SetInstr {
-     public:
-       SetOpcode o; ///< Which instruction to execute
-       unsigned char x, y, z;  ///< Instruction arguments, \a z is destination (or \a y for complement)
-     };
-
-     /// Executes set instruction for evaluation (checking)
-     int
-     eval(const SetInstr* pc, int reg[], bool& failed) {
-       failed = false;
-       while (true) {
-         switch (pc->o) {
-         case SO_CMPL: reg[pc->y] = !reg[pc->x]; break;
-         case SO_INTER: reg[pc->z] = reg[pc->x] & reg[pc->y]; break;
-         case SO_UNION:  reg[pc->z] = reg[pc->x] | reg[pc->y]; break;
-         case SO_DUNION: 
-           if (reg[pc->x] && reg[pc->y])
-             failed = true;
-           reg[pc->z] = reg[pc->x] | reg[pc->y]; break;
-         case SO_MINUS: reg[pc->z] = reg[pc->x] & (!reg[pc->y]); break;
-         case SO_HLT: return reg[pc->x];
-         default: GECODE_NEVER;
-         }
-         pc++;
-       }
-       GECODE_NEVER;
-     }
-
-     /// Executes set instruction for constructing set expressions
-     Gecode::SetExpr
-     eval(const SetInstr* pc, Gecode::SetExpr reg[]) {
-       using namespace Gecode;
-       while (true) {
-         switch (pc->o) {
-         case SO_CMPL:   reg[pc->y] = ((-reg[pc->x]) & singleton(1)); break;
-         case SO_INTER:  reg[pc->z] = (reg[pc->x] & reg[pc->y]); break;
-         case SO_UNION:  reg[pc->z] = (reg[pc->x] | reg[pc->y]); break;
-         case SO_DUNION: reg[pc->z] = reg[pc->x] + reg[pc->y]; break;
-         case SO_MINUS:  reg[pc->z] = reg[pc->x] - reg[pc->y]; break;
-         case SO_HLT: return reg[pc->x];
-         default: GECODE_NEVER;
-         }
-         pc++;
-       }
-       GECODE_NEVER;
-     }
-
-     /**
-      * \defgroup TaskTestSetMiniModelSet Minimal modelling constraints (%Set constraints)
-      * \ingroup TaskTestSet
-      */
-     //@{
-     /// %Test set expressions with constant result
-     class SetExprConst : public Test {
-     protected:
-       /// %Set instruction sequence
-       const SetInstr* bis;
-       /// Result of expression
-       int c;
-       /// %Set relation
-       Gecode::SetRelType srt;
-     public:
-       /// Create and register test
-       SetExprConst(const SetInstr* bis0, const std::string& s, 
-                    Gecode::SetRelType srt0, int c0)
-         : Test("MiniModel::SetExpr::Const::"+s+"::"+str(srt0)+"::"+str(c0),
-                4,0,1),
-           bis(bis0), c(c0), srt(srt0) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int reg[4] = {(x[0] != x[2]), x[1],
+    /// Set opcode
+    enum SetOpcode {
+      SO_CMPL,   ///< Complement
+      SO_UNION,  ///< Union
+      SO_DUNION, ///< Disjoint union
+      SO_INTER,  ///< Intersection
+      SO_MINUS,  ///< Difference
+      SO_HLT     ///< Stop execution
+    };
+    
+    /// Type for representing a set instruction
+    class SetInstr {
+    public:
+      SetOpcode o; ///< Which instruction to execute
+      unsigned char x, y, z;  ///< Instruction arguments, \a z is destination (or \a y for complement)
+    };
+    
+    /// Executes set instruction for evaluation (checking)
+    int
+    eval(const SetInstr* pc, int reg[], bool& failed) {
+      failed = false;
+      while (true) {
+        switch (pc->o) {
+        case SO_CMPL: reg[pc->y] = !reg[pc->x]; break;
+        case SO_INTER: reg[pc->z] = reg[pc->x] & reg[pc->y]; break;
+        case SO_UNION:  reg[pc->z] = reg[pc->x] | reg[pc->y]; break;
+        case SO_DUNION: 
+          if (reg[pc->x] && reg[pc->y])
+            failed = true;
+          reg[pc->z] = reg[pc->x] | reg[pc->y]; break;
+        case SO_MINUS: reg[pc->z] = reg[pc->x] & (!reg[pc->y]); break;
+        case SO_HLT: return reg[pc->x];
+        default: GECODE_NEVER;
+        }
+        pc++;
+      }
+      GECODE_NEVER;
+    }
+    
+    /// Executes set instruction for constructing set expressions
+    Gecode::SetExpr
+    eval(const SetInstr* pc, Gecode::SetExpr reg[]) {
+      using namespace Gecode;
+      while (true) {
+        switch (pc->o) {
+        case SO_CMPL:   reg[pc->y] = ((-reg[pc->x]) & singleton(1)); break;
+        case SO_INTER:  reg[pc->z] = (reg[pc->x] & reg[pc->y]); break;
+        case SO_UNION:  reg[pc->z] = (reg[pc->x] | reg[pc->y]); break;
+        case SO_DUNION: reg[pc->z] = reg[pc->x] + reg[pc->y]; break;
+        case SO_MINUS:  reg[pc->z] = reg[pc->x] - reg[pc->y]; break;
+        case SO_HLT: return reg[pc->x];
+        default: GECODE_NEVER;
+        }
+        pc++;
+      }
+      GECODE_NEVER;
+    }
+    
+    bool
+    simpleReifiedSemantics(const SetInstr* pc) {
+      while (pc->o != SO_HLT) {
+        if (pc->o == SO_DUNION)
+          return false;
+        pc++;
+      }
+      return true;
+    }
+    
+    /**
+     * \defgroup TaskTestSetMiniModelSet Minimal modelling constraints (%Set constraints)
+     * \ingroup TaskTestSet
+     */
+    //@{
+    /// %Test set expressions with constant result
+    class SetExprConst : public Test {
+    protected:
+      /// %Set instruction sequence
+      const SetInstr* bis;
+      /// Result of expression
+      int c;
+      /// %Set relation
+      Gecode::SetRelType srt;
+    public:
+      /// Create and register test
+      SetExprConst(const SetInstr* bis0, const std::string& s, 
+                   Gecode::SetRelType srt0, int c0)
+        : Test("MiniModel::SetExpr::Const::"+s+"::"+str(srt0)+"::"+str(c0),
+               4,0,1,simpleReifiedSemantics(bis0)),
+          bis(bis0), c(c0), srt(srt0) {}
+      /// %Test whether \a x is solution
+      virtual bool solution(const Assignment& x) const {
+        int reg[4] = {(x[0] != x[2]), x[1],
+                      (x[2] > 0), x[3]};
+        bool failed;
+        int ret = eval(bis, reg, failed);
+        if (failed)
+          return false;
+        switch (srt) {
+          case Gecode::SRT_EQ: return ret == c;
+          case Gecode::SRT_NQ: return ret != c;
+          case Gecode::SRT_SUB: return ret <= c;
+          case Gecode::SRT_SUP: return ret >= c;
+          case Gecode::SRT_DISJ: return ret+c != 2;
+          case Gecode::SRT_CMPL: return ret != c;
+        }
+        GECODE_NEVER;
+        return false;
+      }
+      /// Post constraint on \a x
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        using namespace Gecode;
+        SetVarArgs s(home,4,IntSet::empty,1,1);
+        Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
+        Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
+        Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
+        Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
+        Gecode::SetExpr reg[4] = {s[0],s[1],s[2],s[3]};
+        Gecode::SetExpr res = (c==0) ? IntSet::empty : singleton(1);
+        Gecode::SetExpr e = eval(bis,reg);
+        switch (srt) {
+          case Gecode::SRT_EQ: Gecode::rel(home, e == res); break;
+          case Gecode::SRT_NQ: Gecode::rel(home, e != res); break;
+          case Gecode::SRT_SUB: Gecode::rel(home, e <= res); break;
+          case Gecode::SRT_SUP: Gecode::rel(home, e >= res); break;
+          case Gecode::SRT_DISJ: Gecode::rel(home, e || res); break;
+          case Gecode::SRT_CMPL: Gecode::rel(home, e == -res); break;
+        }
+      }
+      /// Post reified constraint on \a x
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+                        Gecode::BoolVar b) {
+        using namespace Gecode;
+        SetVarArgs s(home,4,IntSet::empty,1,1);
+        Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
+        Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
+        Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
+        Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
+        Gecode::SetExpr reg[4] = {s[0],s[1],s[2],s[3]};
+        Gecode::SetExpr res = (c==0) ? IntSet::empty : singleton(1);
+        Gecode::SetExpr e = eval(bis,reg);
+        switch (srt) {
+          case Gecode::SRT_EQ: Gecode::rel(home, (e == res)==b); break;
+          case Gecode::SRT_NQ: Gecode::rel(home, (e != res)==b); break;
+          case Gecode::SRT_SUB: Gecode::rel(home, (e <= res)==b); break;
+          case Gecode::SRT_SUP: Gecode::rel(home, (e >= res)==b); break;
+          case Gecode::SRT_DISJ: Gecode::rel(home, (e || res)==b); break;
+          case Gecode::SRT_CMPL: Gecode::rel(home, (e == -res)==b); break;
+        }
+      }
+    };
+    
+    /// %Test set expressions with expression result
+    class SetExprExpr : public Test {
+    protected:
+      /// %First set instruction sequence
+      const SetInstr* bis0;
+      /// %Second set instruction sequence
+      const SetInstr* bis1;
+      /// %Set relation
+      Gecode::SetRelType srt;
+    public:
+      /// Create and register test
+      SetExprExpr(const SetInstr* bis00, const SetInstr* bis10,
+                  const std::string& s, Gecode::SetRelType srt0)
+        : Test("MiniModel::SetExpr::Expr::"+s+"::"+str(srt0),
+               8,0,1,
+               simpleReifiedSemantics(bis00) && 
+               simpleReifiedSemantics(bis10)),
+          bis0(bis00), bis1(bis10), srt(srt0) {}
+      /// %Test whether \a x is solution
+      virtual bool solution(const Assignment& x) const {
+        int reg0[4] = {(x[0] != x[2]), x[1],
                        (x[2] > 0), x[3]};
-         bool failed;
-         int ret = eval(bis, reg, failed);
-         if (failed)
-           return false;
-         switch (srt) {
-           case Gecode::SRT_EQ: return ret == c;
-           case Gecode::SRT_NQ: return ret != c;
-           case Gecode::SRT_SUB: return ret <= c;
-           case Gecode::SRT_SUP: return ret >= c;
-           case Gecode::SRT_DISJ: return ret+c != 2;
-           case Gecode::SRT_CMPL: return ret != c;
-         }
-         GECODE_NEVER;
-         return false;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         SetVarArgs s(home,4,IntSet::empty,1,1);
-         Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
-         Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
-         Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
-         Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
-         Gecode::SetExpr reg[4] = {s[0],s[1],s[2],s[3]};
-         Gecode::SetExpr res = (c==0) ? IntSet::empty : singleton(1);
-         Gecode::SetExpr e = eval(bis,reg);
-         switch (srt) {
-           case Gecode::SRT_EQ: Gecode::rel(home, e == res); break;
-           case Gecode::SRT_NQ: Gecode::rel(home, e != res); break;
-           case Gecode::SRT_SUB: Gecode::rel(home, e <= res); break;
-           case Gecode::SRT_SUP: Gecode::rel(home, e >= res); break;
-           case Gecode::SRT_DISJ: Gecode::rel(home, e || res); break;
-           case Gecode::SRT_CMPL: Gecode::rel(home, e == -res); break;
-         }
-       }
-     };
-
-     /// %Test set expressions with expression result
-     class SetExprExpr : public Test {
-     protected:
-       /// %First set instruction sequence
-       const SetInstr* bis0;
-       /// %Second set instruction sequence
-       const SetInstr* bis1;
-       /// %Set relation
-       Gecode::SetRelType srt;
-     public:
-       /// Create and register test
-       SetExprExpr(const SetInstr* bis00, const SetInstr* bis10,
-                   const std::string& s, Gecode::SetRelType srt0)
-         : Test("MiniModel::SetExpr::Expr::"+s+"::"+str(srt0),
-                8,0,1),
-           bis0(bis00), bis1(bis10), srt(srt0) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int reg0[4] = {(x[0] != x[2]), x[1],
-                        (x[2] > 0), x[3]};
-         bool failed0;
-         int ret0 = eval(bis0, reg0, failed0);
-         if (failed0)
-           return false;
-
-         int reg1[4] = {(x[4] != x[6]), x[5],
-                        (x[6] > 0), x[7]};
-         bool failed1;
-         int ret1 = eval(bis1, reg1, failed1);
-
-         if (failed1)
-           return false;
-
-         switch (srt) {
-           case Gecode::SRT_EQ: return ret0 == ret1;
-           case Gecode::SRT_NQ: return ret0 != ret1;
-           case Gecode::SRT_SUB: return ret0 <= ret1;
-           case Gecode::SRT_SUP: return ret0 >= ret1;
-           case Gecode::SRT_DISJ: return ret0+ret1 != 2;
-           case Gecode::SRT_CMPL: return ret0 != ret1;
-         }
-         GECODE_NEVER;
-         return false;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         SetVarArgs s(home,8,IntSet::empty,1,1);
-         Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
-         Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
-         Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
-         Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
-
-         Gecode::rel(home, (singleton(1) == s[4]) == (x[4] != x[6]));
-         Gecode::rel(home, (singleton(1) == s[5]) == (x[5] == 1));
-         Gecode::rel(home, (singleton(1) == s[6]) == (x[6] > 0));
-         Gecode::rel(home, (singleton(1) == s[7]) == (x[7] == 1));
-
-         Gecode::SetExpr reg0[4] = {s[0],s[1],s[2],s[3]};
-         Gecode::SetExpr e0 = eval(bis0,reg0);
-
-         Gecode::SetExpr reg1[4] = {s[4],s[5],s[6],s[7]};
-         Gecode::SetExpr e1 = eval(bis1,reg1);
-
-         switch (srt) {
-           case Gecode::SRT_EQ: Gecode::rel(home, e0 == e1); break;
-           case Gecode::SRT_NQ: Gecode::rel(home, e0 != e1); break;
-           case Gecode::SRT_SUB: Gecode::rel(home, e0 <= e1); break;
-           case Gecode::SRT_SUP: Gecode::rel(home, e0 >= e1); break;
-           case Gecode::SRT_DISJ: Gecode::rel(home, e0 || e1); break;
-           case Gecode::SRT_CMPL: Gecode::rel(home, e0 == -e1); break;
-         }
-       }
-     };
+        bool failed0;
+        int ret0 = eval(bis0, reg0, failed0);
+        if (failed0)
+          return false;
+    
+        int reg1[4] = {(x[4] != x[6]), x[5],
+                       (x[6] > 0), x[7]};
+        bool failed1;
+        int ret1 = eval(bis1, reg1, failed1);
+    
+        if (failed1)
+          return false;
+    
+        switch (srt) {
+          case Gecode::SRT_EQ: return ret0 == ret1;
+          case Gecode::SRT_NQ: return ret0 != ret1;
+          case Gecode::SRT_SUB: return ret0 <= ret1;
+          case Gecode::SRT_SUP: return ret0 >= ret1;
+          case Gecode::SRT_DISJ: return ret0+ret1 != 2;
+          case Gecode::SRT_CMPL: return ret0 != ret1;
+        }
+        GECODE_NEVER;
+        return false;
+      }
+      /// Post constraint on \a x
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        using namespace Gecode;
+        SetVarArgs s(home,8,IntSet::empty,1,1);
+        Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
+        Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
+        Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
+        Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
+    
+        Gecode::rel(home, (singleton(1) == s[4]) == (x[4] != x[6]));
+        Gecode::rel(home, (singleton(1) == s[5]) == (x[5] == 1));
+        Gecode::rel(home, (singleton(1) == s[6]) == (x[6] > 0));
+        Gecode::rel(home, (singleton(1) == s[7]) == (x[7] == 1));
+    
+        Gecode::SetExpr reg0[4] = {s[0],s[1],s[2],s[3]};
+        Gecode::SetExpr e0 = eval(bis0,reg0);
+    
+        Gecode::SetExpr reg1[4] = {s[4],s[5],s[6],s[7]};
+        Gecode::SetExpr e1 = eval(bis1,reg1);
+    
+        switch (srt) {
+          case Gecode::SRT_EQ: Gecode::rel(home, e0 == e1); break;
+          case Gecode::SRT_NQ: Gecode::rel(home, e0 != e1); break;
+          case Gecode::SRT_SUB: Gecode::rel(home, e0 <= e1); break;
+          case Gecode::SRT_SUP: Gecode::rel(home, e0 >= e1); break;
+          case Gecode::SRT_DISJ: Gecode::rel(home, e0 || e1); break;
+          case Gecode::SRT_CMPL: Gecode::rel(home, e0 == -e1); break;
+        }
+      }
+      /// Post reified constraint on \a x
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                        Gecode::BoolVar b) {
+        using namespace Gecode;
+        SetVarArgs s(home,8,IntSet::empty,1,1);
+        Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
+        Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
+        Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
+        Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
+    
+        Gecode::rel(home, (singleton(1) == s[4]) == (x[4] != x[6]));
+        Gecode::rel(home, (singleton(1) == s[5]) == (x[5] == 1));
+        Gecode::rel(home, (singleton(1) == s[6]) == (x[6] > 0));
+        Gecode::rel(home, (singleton(1) == s[7]) == (x[7] == 1));
+    
+        Gecode::SetExpr reg0[4] = {s[0],s[1],s[2],s[3]};
+        Gecode::SetExpr e0 = eval(bis0,reg0);
+    
+        Gecode::SetExpr reg1[4] = {s[4],s[5],s[6],s[7]};
+        Gecode::SetExpr e1 = eval(bis1,reg1);
+    
+        switch (srt) {
+          case Gecode::SRT_EQ: Gecode::rel(home, (e0 == e1)==b); break;
+          case Gecode::SRT_NQ: Gecode::rel(home, (e0 != e1)==b); break;
+          case Gecode::SRT_SUB: Gecode::rel(home, (e0 <= e1)==b); break;
+          case Gecode::SRT_SUP: Gecode::rel(home, (e0 >= e1)==b); break;
+          case Gecode::SRT_DISJ: Gecode::rel(home, (e0 || e1)==b); break;
+          case Gecode::SRT_CMPL: Gecode::rel(home, (e0 == -e1)==b); break;
+        }
+      }
+    };
 
     const SetInstr si000[] = {
       {SO_INTER,0,1,0},{SO_INTER,2,3,1},{SO_INTER,0,1,0},
@@ -4424,7 +4487,12 @@ namespace Test { namespace Int {
                 } else if (j < 100) {
                   ss = "0" + ss;
                 }
-                (void) new SetExprExpr(si[i],si[j],s+"::"+ss,Gecode::SRT_EQ);
+                ss=s+"::"+ss;
+                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_EQ);
+                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_NQ);
+                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_SUB);
+                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_SUP);
+                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_DISJ);
               }
             }
           }
