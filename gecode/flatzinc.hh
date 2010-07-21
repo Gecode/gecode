@@ -159,7 +159,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::UnsignedIntOption _solutions; ///< How many solutions
       Gecode::Driver::BoolOption        _allSolutions; ///< Return all solutions
       Gecode::Driver::DoubleOption      _threads;   ///< How many threads to use
-      Gecode::Driver::BoolOption        _parallel; ///< Use all cores
+      Gecode::Driver::DoubleOption      _parallel; ///< Use all cores
       Gecode::Driver::BoolOption        _free; ///< Use free search
       Gecode::Driver::StringOption      _search; ///< Search engine variant
       Gecode::Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
@@ -186,7 +186,8 @@ namespace Gecode { namespace FlatZinc {
       _allSolutions("--all", "return all solutions (equal to -solutions 0)"),
       _threads("-threads","number of threads (0 = #processing units)",
                Gecode::Search::Config::threads),
-      _parallel("--parallel", "use parallel search (equal to -threads 0)"),
+      _parallel("--parallel", "equivalent to -threads",
+               Gecode::Search::Config::threads),
       _free("--free", "no need to follow search-specification"),
       _search("-search","search engine variant", FZ_SEARCH_BAB),
       _c_d("-c-d","recomputation commit distance",Gecode::Search::Config::c_d),
@@ -218,8 +219,9 @@ namespace Gecode { namespace FlatZinc {
       Gecode::BaseOptions::parse(argc,argv);
       if (_allSolutions.value())
         _solutions.value(0);
-      if (_parallel.value())
-        _threads.value(0);
+      if (_parallel.value() != Gecode::Search::Config::threads &&
+          _threads.value() == Gecode::Search::Config::threads)
+        _threads.value(_parallel.value());
     }
   
     unsigned int solutions(void) const { return _solutions.value(); }
