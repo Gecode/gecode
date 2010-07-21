@@ -85,6 +85,13 @@ by many new case studies and parts on programming search engines
 and variables.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Boolean relations were incorrect on assigned arguments.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor
