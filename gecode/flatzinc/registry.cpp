@@ -635,27 +635,13 @@ namespace Gecode { namespace FlatZinc {
     /* Boolean constraints */
     void p_bool_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
                    AST::Node* ann) {
-      if (ce[0]->isBoolVar()) {
-        if (ce[1]->isBoolVar()) {
-          rel(s, getBoolVar(s, ce[0]), irt, getBoolVar(s, ce[1]), 
-              ann2icl(ann));
-        } else {
-          rel(s, getBoolVar(s, ce[0]), irt, ce[1]->getBool(), ann2icl(ann));
-        }
-      } else {
-        if (ce[1]->isBoolVar()) {
-          rel(s, getBoolVar(s, ce[1]), swap(irt), ce[0]->getBool(), 
-              ann2icl(ann));
-        } else {
-          if (ce[0]->getBool() != ce[1]->getBool())
-            s.fail();
-        }
-      }
+      rel(s, getBoolVar(s, ce[0]), irt, getBoolVar(s, ce[1]), 
+          ann2icl(ann));
     }
     void p_bool_CMP_reif(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
                    AST::Node* ann) {
       rel(s, getBoolVar(s, ce[0]), irt, getBoolVar(s, ce[1]),
-            getBoolVar(s, ce[2]), ann2icl(ann));
+          getBoolVar(s, ce[2]), ann2icl(ann));
     }
     void p_bool_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_CMP(s, IRT_EQ, ce, ann);
