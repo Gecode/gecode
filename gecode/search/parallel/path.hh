@@ -43,7 +43,7 @@
 namespace Gecode { namespace Search { namespace Parallel {
 
   /**
-   * \brief Depth-first path (stack of nodes) supporting recomputation
+   * \brief Depth-first path (stack of edges) supporting recomputation
    *
    * Maintains the invariant that it contains
    * the path of the node being currently explored. This
@@ -57,10 +57,10 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   class Path {
   public:
-    /// %Search tree node for recomputation
-    class Node {
+    /// %Search tree edge for recomputation
+    class Edge {
     protected:
-      /// Space corresponding to this node (might be NULL)
+      /// Space corresponding to this edge (might be NULL)
       Space* _space;
       /// Current alternative
       unsigned int _alt;
@@ -70,11 +70,11 @@ namespace Gecode { namespace Search { namespace Parallel {
       const Choice* _choice;
     public:
       /// Default constructor
-      Node(void);
-      /// Node for space \a s with clone \a c (possibly NULL)
-      Node(Space* s, Space* c);
+      Edge(void);
+      /// Edge for space \a s with clone \a c (possibly NULL)
+      Edge(Space* s, Space* c);
       
-      /// Return space for node
+      /// Return space for edge
       Space* space(void) const;
       /// Set space to \a s
       void space(Space* s);
@@ -93,13 +93,13 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Steal rightmost alternative and return its number
       unsigned int steal(void);
       
-      /// Free memory for node
+      /// Free memory for edge
       void dispose(void);
     };
   protected:
-    /// Stack to store node information
-    Support::DynamicStack<Node,Heap> ds;
-    /// Number of nodes that have work for stealing
+    /// Stack to store edge information
+    Support::DynamicStack<Edge,Heap> ds;
+    /// Number of edges that have work for stealing
     unsigned int n_work;
   public:
     /// Initialize
@@ -108,8 +108,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     const Choice* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
     bool next(Worker& s);
-    /// Provide access to topmost node
-    Node& top(void) const;
+    /// Provide access to topmost edge
+    Edge& top(void) const;
     /// Test whether path is empty
     bool empty(void) const;
     /// Return position on stack of last copy
@@ -137,56 +137,56 @@ namespace Gecode { namespace Search { namespace Parallel {
 
 
   /*
-   * Node for recomputation
+   * Edge for recomputation
    *
    */
   forceinline
-  Path::Node::Node(void) {}
+  Path::Edge::Edge(void) {}
 
   forceinline
-  Path::Node::Node(Space* s, Space* c)
+  Path::Edge::Edge(Space* s, Space* c)
     : _space(c), _alt(0), _choice(s->choice()) {
     _alt_max = _choice->alternatives()-1;
   }
 
   forceinline Space*
-  Path::Node::space(void) const {
+  Path::Edge::space(void) const {
     return _space;
   }
   forceinline void
-  Path::Node::space(Space* s) {
+  Path::Edge::space(Space* s) {
     _space = s;
   }
 
   forceinline unsigned int
-  Path::Node::alt(void) const {
+  Path::Edge::alt(void) const {
     return _alt;
   }
   forceinline bool
-  Path::Node::rightmost(void) const {
+  Path::Edge::rightmost(void) const {
     return _alt == _alt_max;
   }
   forceinline bool
-  Path::Node::work(void) const {
+  Path::Edge::work(void) const {
     return _alt != _alt_max;
   }
   forceinline void
-  Path::Node::next(void) {
+  Path::Edge::next(void) {
     _alt++;
   }
   forceinline unsigned int
-  Path::Node::steal(void) {
+  Path::Edge::steal(void) {
     assert(work());
     return _alt_max--;
   }
 
   forceinline const Choice*
-  Path::Node::choice(void) const {
+  Path::Edge::choice(void) const {
     return _choice;
   }
 
   forceinline void
-  Path::Node::dispose(void) {
+  Path::Edge::dispose(void) {
     delete _space;
     delete _choice;
   }
@@ -203,7 +203,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
-    Node sn(s,c);
+    Edge sn(s,c);
     if (sn.work())
       n_work++;
     ds.push(sn);
@@ -213,7 +213,6 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline bool
   Path::next(Worker& stat) {
-    // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
         stat.pop(ds.top().space(),ds.top().choice());
@@ -228,7 +227,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     return false;
   }
 
-  forceinline Path::Node&
+  forceinline Path::Edge&
   Path::top(void) const {
     assert(!ds.empty());
     return ds.top();
@@ -241,7 +240,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline void
   Path::commit(Space* s, int i) const {
-    const Node& n = ds[i];
+    const Edge& n = ds[i];
     s->commit(*n.choice(),n.alt());
   }
 
