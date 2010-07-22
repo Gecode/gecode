@@ -43,10 +43,10 @@
 namespace Gecode { namespace Search { namespace Sequential {
 
   /**
-   * \brief Depth-first path (stack of nodes) supporting recomputation
+   * \brief Depth-first path (stack of edges) supporting recomputation
    *
    * Maintains the invariant that it contains
-   * the path of the node being currently explored. This
+   * the path of the space being currently explored. This
    * is required to support recomputation, of course.
    *
    * The path supports adaptive recomputation controlled
@@ -57,10 +57,10 @@ namespace Gecode { namespace Search { namespace Sequential {
    */
   class Path {
   public:
-    /// %Search tree node for recomputation
-    class Node {
+    /// %Search tree edge for recomputation
+    class Edge {
     protected:
-      /// Space corresponding to this node (might be NULL)
+      /// Space corresponding to this edge (might be NULL)
       Space* _space;
       /// Current alternative
       unsigned int _alt;
@@ -68,11 +68,11 @@ namespace Gecode { namespace Search { namespace Sequential {
       const Choice* _choice;
     public:
       /// Default constructor
-      Node(void);
-      /// Node for space \a s with clone \a c (possibly NULL)
-      Node(Space* s, Space* c);
+      Edge(void);
+      /// Edge for space \a s with clone \a c (possibly NULL)
+      Edge(Space* s, Space* c);
       
-      /// Return space for node
+      /// Return space for edge
       Space* space(void) const;
       /// Set space to \a s
       void space(Space* s);
@@ -87,12 +87,12 @@ namespace Gecode { namespace Search { namespace Sequential {
       /// Move to next alternative
       void next(void);
       
-      /// Free memory for node
+      /// Free memory for edge
       void dispose(void);
     };
   protected:
-    /// Stack to store node information
-    Support::DynamicStack<Node,Heap> ds;
+    /// Stack to store edge information
+    Support::DynamicStack<Edge,Heap> ds;
   public:
     /// Initialize
     Path(void);
@@ -100,8 +100,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     const Choice* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
     bool next(Worker& s);
-    /// Provide access to topmost node
-    Node& top(void) const;
+    /// Provide access to topmost edge
+    Edge& top(void) const;
     /// Test whether path is empty
     bool empty(void) const;
     /// Return position on stack of last copy
@@ -125,45 +125,45 @@ namespace Gecode { namespace Search { namespace Sequential {
 
 
   /*
-   * Node for recomputation
+   * Edge for recomputation
    *
    */
   forceinline
-  Path::Node::Node(void) {}
+  Path::Edge::Edge(void) {}
 
   forceinline
-  Path::Node::Node(Space* s, Space* c)
+  Path::Edge::Edge(Space* s, Space* c)
     : _space(c), _alt(0), _choice(s->choice()) {}
 
   forceinline Space*
-  Path::Node::space(void) const {
+  Path::Edge::space(void) const {
     return _space;
   }
   forceinline void
-  Path::Node::space(Space* s) {
+  Path::Edge::space(Space* s) {
     _space = s;
   }
 
   forceinline unsigned int
-  Path::Node::alt(void) const {
+  Path::Edge::alt(void) const {
     return _alt;
   }
   forceinline bool
-  Path::Node::rightmost(void) const {
+  Path::Edge::rightmost(void) const {
     return _alt+1 == _choice->alternatives();
   }
   forceinline void
-  Path::Node::next(void) {
+  Path::Edge::next(void) {
     _alt++;
   }
 
   forceinline const Choice*
-  Path::Node::choice(void) const {
+  Path::Edge::choice(void) const {
     return _choice;
   }
 
   forceinline void
-  Path::Node::dispose(void) {
+  Path::Edge::dispose(void) {
     delete _space;
     delete _choice;
   }
@@ -180,7 +180,7 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
-    Node sn(s,c);
+    Edge sn(s,c);
     ds.push(sn);
     stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
     return sn.choice();
@@ -188,7 +188,6 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline bool
   Path::next(Worker& stat) {
-    // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
         stat.pop(ds.top().space(),ds.top().choice());
@@ -200,7 +199,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     return false;
   }
 
-  forceinline Path::Node&
+  forceinline Path::Edge&
   Path::top(void) const {
     assert(!ds.empty());
     return ds.top();
@@ -213,7 +212,7 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline void
   Path::commit(Space* s, int i) const {
-    const Node& n = ds[i];
+    const Edge& n = ds[i];
     s->commit(*n.choice(),n.alt());
   }
 
