@@ -48,10 +48,10 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
     for (int i=0;i<assignments.size();i++) {
         switch (g->type_of_v[i]) {
             case VTYPE_INT : 
-                post(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
+                rel(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
                 break;
             case VTYPE_BOOL :
-                post(*g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
+                rel(*g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
                 break;
             default :
                 cout<<"1Unknown variable type"<<endl;
@@ -77,10 +77,10 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
         for (int i=0;i<assignments.size();i++) {
             switch (espace->type_of_v[i]) {
                 case VTYPE_INT : 
-                    post(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
+                    rel(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
-                    post(*espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
+                    rel(*espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
                     break;
                 default :
                     cout<<"2Unknown variable type"<<endl;
@@ -250,10 +250,10 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
     for (int i=0;i<assignments.size();i++) {
         switch (g->type_of_v[i]) {
             case VTYPE_INT : 
-                post(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
+                rel(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
                 break;
             case VTYPE_BOOL :
-                post(*g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
+                rel(*g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
                 break;
             default :
                 cout<<"1Unknown variable type"<<endl;
@@ -279,10 +279,10 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
         for (int i=0;i<assignments.size();i++) {
             switch (espace->type_of_v[i]) {
                 case VTYPE_INT : 
-                    post(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
+                    rel(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
-                    post(*espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
+                    rel(*espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
                     break;
                 default :
                     cout<<"2Unknown variable type"<<endl;

@@ -1,5 +1,5 @@
-/****   , [ StrategyNode.cc ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+  /****   , [ Worker.hh ], 
+Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,40 +20,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
 
-#include "StrategyNode.hh"
+#ifndef __QECODE_ABSTRACT_WORKER__
+#define __QECODE_ABSTRACT_WORKER__
+#include "qecode.hh"
+#include<vector>
+#include "gecode/support.hh"
 
-StrategyNode::StrategyNode() {
-    type=0;
-    quantifier=true;
-    Vmin=-1;
-    Vmax=-1;
-    scope=-1;
-}
+using namespace Gecode::Support;
 
-StrategyNode::StrategyNode(int typ,bool qt,int min, int max, int sco) {
-    type=typ;
-    quantifier=qt;
-    Vmin=min;
-    Vmax=max;
-    scope=sco;
-}
+class QECODE_VTABLE_EXPORT AQWorker : public Runnable {
 
-/*
-StrategyNode::StrategyNode(const StrategyNode& st) {
-    cout<<"Strategynode copy constructor"<<endl;
-    type=st.type;
-    quantifier=st.quantifier;
-    Vmin=st.Vmin;
-    Vmax=st.Vmax;
-    if (type == 2) {
-        valeurs=new int[Vmax-Vmin];
-        for (int i=0;i<Vmax-Vmin;i++)
-            valeurs[i]=st.valeurs[i];
-    }
-}
-*/
+public:
+	QECODE_EXPORT virtual void stopAndReturn()=0;
+  QECODE_EXPORT virtual void stopAndForget()=0;
+  QECODE_EXPORT virtual vector<int> workPosition()=0;
+  QECODE_EXPORT virtual bool mustStop()=0;
+  QECODE_EXPORT virtual void wake()=0;
+//	QECODE_EXPORT	Strategy solve();
+};
 
-StrategyNode::~StrategyNode() {
-
-}
-
+#endif

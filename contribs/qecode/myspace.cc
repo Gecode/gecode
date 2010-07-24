@@ -62,11 +62,11 @@ MySpace::MySpace(bool share,MySpace& ms) : Space(share,ms) {
         switch (type_of_v[i]) {
             case VTYPE_INT :
                 v[i] = new IntVar(*(static_cast<IntVar*>(ms.v[i])));
-                (static_cast<IntVar*>(v[i]))->update(*this,true,*(static_cast<IntVar*>(ms.v[i])));
+                (static_cast<IntVar*>(v[i]))->update(*this,share,*(static_cast<IntVar*>(ms.v[i])));
                 break;
             case VTYPE_BOOL :
                 v[i] = new BoolVar(*(static_cast<BoolVar*>(ms.v[i])));
-                (static_cast<BoolVar*>(v[i]))->update(*this,true,*(static_cast<BoolVar*>(ms.v[i])));
+                (static_cast<BoolVar*>(v[i]))->update(*this,share,*(static_cast<BoolVar*>(ms.v[i])));
                 break;
             default:
                 cout<<"Unsupported variable type"<<endl;

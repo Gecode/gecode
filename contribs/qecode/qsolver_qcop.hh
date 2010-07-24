@@ -1,4 +1,4 @@
-/****   , [ StrategyNode.cc ], 
+/****   , [ qsolver.hh ], 
 Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,41 +19,38 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
+#ifndef __QECODE_QSOLVER_OPT__
+#define __QECODE_QSOLVER_OPT__
 
-#include "StrategyNode.hh"
+#include "QCOPPlus.hh"
+#include <iostream>
+#include <cstdlib>
+#include "gecode/minimodel.hh"
+#include "gecode/search.hh"
+#include "Strategy.hh"
+#include "qecode.hh"
 
-StrategyNode::StrategyNode() {
-    type=0;
-    quantifier=true;
-    Vmin=-1;
-    Vmax=-1;
-    scope=-1;
-}
-
-StrategyNode::StrategyNode(int typ,bool qt,int min, int max, int sco) {
-    type=typ;
-    quantifier=qt;
-    Vmin=min;
-    Vmax=max;
-    scope=sco;
-}
-
-/*
-StrategyNode::StrategyNode(const StrategyNode& st) {
-    cout<<"Strategynode copy constructor"<<endl;
-    type=st.type;
-    quantifier=st.quantifier;
-    Vmin=st.Vmin;
-    Vmax=st.Vmax;
-    if (type == 2) {
-        valeurs=new int[Vmax-Vmin];
-        for (int i=0;i<Vmax-Vmin;i++)
-            valeurs[i]=st.valeurs[i];
-    }
-}
+using namespace Gecode;
+/** General QCSP+ / QCOP+ Solver.
+  * This class is the search engine for Qcop objects. 
 */
+class QECODE_VTABLE_EXPORT QCOP_solver {
+    
+private:
+    int n;
+    Qcop* sp;
+    int* nbRanges;
+    Strategy rSolve(Qcop* qs,int scope,vector<int> assignments,unsigned long int& nodes);
+public:
+        /** Public constructor.
+        @param sp The problem to solve
+        */
+    QECODE_EXPORT QCOP_solver(Qcop* sp); 
+    
+    /** Solves the problem and returns a corresponding winning strategy. 
+        @param nodes A reference that is increased by the number of nodes encountered in the search tree.
+        */
+    QECODE_EXPORT Strategy solve(unsigned long int& nodes);
+};
 
-StrategyNode::~StrategyNode() {
-
-}
-
+#endif

@@ -21,13 +21,12 @@ THE SOFTWARE.
  *************************************************************************/
 #ifndef __QECODE_STRATEGY_NODE__
 #define __QECODE_STRATEGY_NODE__
-#include "qecode.hh"
-#include <iostream>
+ #include "qecode.hh"
 #include <vector>
 using namespace std;
 class QECODE_VTABLE_EXPORT StrategyNode {
 public:
-    int type; // 0 = dummy, 1 = empty, 2 = normal.
+    int type; // 0 = dummy, 1 = empty, 2 = normal, 3 = Todo.
     bool quantifier;
     int Vmin;
     int Vmax;
@@ -40,9 +39,11 @@ public:
     QECODE_EXPORT static StrategyNode STrue() { return StrategyNode(1,true,-1,-1,-1);}
     QECODE_EXPORT static StrategyNode SFalse() { return StrategyNode(1,false,-1,-1,-1);}
     QECODE_EXPORT static StrategyNode Dummy() { return StrategyNode(0,true,-1,-1,-1);}
-    QECODE_EXPORT bool isFalse() { return ( (type==1) && (quantifier == false) );}
-    QECODE_EXPORT bool isTrue() { return ( (type==1) && (quantifier == true) );}
-    QECODE_EXPORT bool isDummy() { return (type==0);}
+  	QECODE_EXPORT static StrategyNode Todo() { return StrategyNode(3,false,-1,-1,-1);}
+    QECODE_EXPORT forceinline bool isFalse() { return ( (type==1) && (quantifier == false) );}
+    QECODE_EXPORT forceinline bool isTrue() { return ( (type==1) && (quantifier == true) );}
+    QECODE_EXPORT forceinline bool isDummy() { return (type==0);}
+	QECODE_EXPORT forceinline bool isTodo() { return (type==3);}
 };
 #endif
 

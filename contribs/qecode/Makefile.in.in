@@ -33,7 +33,7 @@ endif
 # QECODE COMPONENTS
 #
 
-QECODESRC0 = QCOPPlus.cc myspace.cc OptVar.cc qsolver_general.cc Strategy.cc StrategyNode.cc QCSPPlusUnblockable.cc qsolver_unblockable.cc UnblockableViewValBranching.cc
+QECODESRC0 = QCOPPlus.cc myspace.cc OptVar.cc qsolver_qcop.cc qsolver_qcsp.cc Strategy.cc StrategyNode.cc QCSPPlusUnblockable.cc qsolver_unblockable.cc UnblockableViewValBranching.cc Work.cc Worker.cc WorkManager.cc qsolver_parallel.cc
 QECODEHDR0 = 
 
 

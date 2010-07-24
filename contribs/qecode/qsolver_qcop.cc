@@ -1,5 +1,5 @@
-/****   , [ QSolver.cc ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ qsolver_qcop.cc ], 
+Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  *************************************************************************/
 
-#include "qsolver_general.hh"
+#include "qsolver_qcop.hh"
 #include <climits>
 
-QSolver::QSolver(Qcop* sp) {
+QCOP_solver::QCOP_solver(Qcop* sp) {
     this->sp = sp;
     nbRanges=new int;
 }
 
-Strategy QSolver::solve(unsigned long int& nodes) {
+Strategy QCOP_solver::solve(unsigned long int& nodes) {
     vector<int> plop;
-    plop.clear();
+    plop.clear(); 
     return rSolve(sp,0,plop,nodes);
 }
 
-Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned long int& nodes) {
+Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned long int& nodes) {
     nodes++;
 //    cout<<"rSolve for scope "<<scope<<" with assignments ";
 //    for (int i=0;i<assignments.size();i++) cout<<assignments[i]<<" ";
@@ -45,14 +45,14 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
     if (scope == qs->spaces()) {
 //        cout<<"First case"<<endl;
         MySpace* g = qs->getGoal();
-        if (g == NULL) {/*cout<<"the goal was null"<<endl;*/return Strategy(StrategyNode::SFalse());}
+        if (g == NULL) {/*cout<<"the goal was null"<<endl;*/return Strategy::SFalse();}
         for (int i=0;i<g->nbVars();i++) {
             switch (g->type_of_v[i]) {
                 case VTYPE_INT : 
-                    post(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
+                    rel(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
-                    post(*g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
+                    rel(*g,*(static_cast<BoolVar*>(g->v[i])) == assignments[i]);
                     break;
                 default :
                     cout<<"1Unknown variable type"<<endl;
@@ -62,7 +62,7 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
         if (g->status() == SS_FAILED) {
 //            cout<<"goal failed after assignments"<<endl;
             delete g;
-            return Strategy(StrategyNode::SFalse());
+            return Strategy::SFalse();
         }
 //        cout<<"goal OK"<<endl;
         delete g;
@@ -81,10 +81,10 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
 //            cout<<"I assign variable "<<i<<" with value "<<assignments[i]<<endl; cout.flush();
             switch (espace->type_of_v[i]) {
                 case VTYPE_INT : 
-                    post(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
+                    rel(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
-                    post(*espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
+                    rel(*espace,*(static_cast<BoolVar*>(espace->v[i])) == assignments[i]);
                     break;
                 default :
                     cout<<"2Unknown variable type"<<endl;
@@ -100,7 +100,7 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
             if (espace->status() == SS_FAILED) {
 //                cout<<"the scope is failed"<<endl;
                 delete espace;
-                return Strategy(StrategyNode::STrue());
+                return Strategy::STrue();
             }
             
             DFS<MySpace> solutions(espace);
@@ -108,10 +108,10 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
             if (sol == NULL) {
 //                cout<<"first sol is null"<<endl;
                 delete espace;
-                return Strategy(StrategyNode::STrue());
+                return Strategy::STrue();
             }
             
-            Strategy retour = StrategyNode::Dummy();
+            Strategy retour = Strategy::Dummy();
             while (sol != NULL) {
 //                cout<<"a solution"<<endl;
                 vector<int> assign;
@@ -152,7 +152,7 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
 //                    cout<<"the son is false"<<endl;
                     delete sol;
                     delete espace;
-                    return Strategy(StrategyNode::SFalse());
+                    return Strategy::SFalse();
                 }
 //                cout<<"the son is true"<<endl;
                 toAttach.attach(son);
@@ -171,7 +171,7 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
             if ((espace->status()) == SS_FAILED) {
 //                cout<<"the Espace is failed"<<endl;
                 delete espace;
-                return Strategy(StrategyNode::SFalse());
+                return Strategy::SFalse();
             }
             
             DFS<MySpace> solutions(espace);
@@ -179,7 +179,7 @@ Strategy QSolver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsigned l
             if (sol == NULL) {
 //                cout<<"the first sol is null"<<endl;
                 delete espace;
-                return Strategy(StrategyNode::SFalse());
+                return Strategy::SFalse();
             }
             
             OptVar* opt = qs->getOptVar(scope);
