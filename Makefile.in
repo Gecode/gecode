@@ -1663,7 +1663,7 @@ endif
 
 distdoc: doc
 	rm -rf gecode-doc-$(DOCSUFFIX) && \
-	cp -r doc/html . && mv html gecode-doc-$(DOCSUFFIX) && \
+	mv doc/html gecode-doc-$(DOCSUFFIX) && \
 	$(TAR) cf - gecode-doc-$(DOCSUFFIX) | \
 		gzip -9 > gecode-doc-$(DOCSUFFIX).tar.gz && \
 	7z a -mx9 gecode-doc-$(DOCSUFFIX).7z gecode-doc-$(DOCSUFFIX) && \
