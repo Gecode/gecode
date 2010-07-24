@@ -1,0 +1,5 @@
+rm -rf *.o
+rm -rf lib*
+rm -f Makefile
+rm -f Makefile.in
+

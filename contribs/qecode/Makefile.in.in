@@ -1,0 +1,162 @@
+# Qecode Makefile
+# Largely inspired from the map makefile by Gregoire Dooms
+#
+# Jeremie Vautard, Universite d'Orleans
+
+#
+gecode_top_srcdir = ../../$(top_srcdir)
+gecode_top_builddir = ../..
+
+qecode_top_srcdir = $(gecode_top_srcdir)/contribs/qecode
+qecode_top_builddir = .
+
+KERNELDLL := $(KERNELDLL:%=../../%)
+INTDLL := $(INTDLL:%=../../%)
+MMDLL := $(MMDLL:%=../../%)
+SEARCHDLL := $(SEARCHDLL:%=../../%)
+SUPPORTDLL := $(SUPPORTDLL:%=../../%)
+SUPPORTOBJ := $(SUPPORTOBJ:%=../../%)
+
+
+ifeq "$(LIBPREFIX)" "$(LINKPREFIX)"
+LINKSUPPORT:=../../$(LINKSUPPORT)
+LINKKERNEL:=../../$(LINKKERNEL)
+LINKINT:=../../$(LINKINT)
+LINKMM:=../../$(LINKMM)
+LINKSEARCH:=../../$(LINKSEARCH)
+LINKALL := $(LINKMM) $(LINKINT) $(LINKSEARCH) $(LINKKERNEL)
+else
+EXTRALINKFLAGS := -L../..
+endif
+
+#
+# QECODE COMPONENTS
+#
+
+QECODESRC0 = QCOPPlus.cc myspace.cc OptVar.cc qsolver_qcop.cc qsolver_qcsp.cc Strategy.cc StrategyNode.cc QCSPPlusUnblockable.cc qsolver_unblockable.cc UnblockableViewValBranching.cc Work.cc Worker.cc WorkManager.cc qsolver_parallel.cc
+QECODEHDR0 = 
+
+
+QECODESRC	= $(QECODESRC0)
+QECODEHDR	= qecode.hh $(QECODEHDR0)
+QECODEOBJ	= $(QECODESRC:%.cc=%$(OBJSUFFIX))
+QECODEFLAGS	= \
+	-I$(gecode_top_srcdir) -I$(gecode_top_builddir) \
+	-I$(qecode_top_srcdir) -I$(qecode_top_builddir) \
+	-L$(gecode_top_builddir) -L$(qecode_top_builddir)
+QECODEDLL	= $(LIBPREFIX)@QECODE@$(DLLSUFFIX)
+QECODESTATICLIB	= $(LIBPREFIX)@QECODE@$(STATICLIBSUFFIX)
+QECODELIB	= $(LIBPREFIX)@QECODE@$(LIBSUFFIX)
+LINKQECODE	= $(LINKPREFIX)@QECODE@$(LINKSUFFIX)
+
+LINKALL := $(LINKALL) $(LINKQECODE)
+
+ALLLIB :=  $(ALLLIB) $(QECODELIB) 
+
+
+ifeq "@BUILDDLL@" "yes"
+DLLTARGETS = $(QECODEDLL)
+else
+DLTARGETS= 
+endif
+
+ifeq "@BUILDSTATIC@" "yes"
+STATICTARGETS = \
+	$(QECODESTATICLIB)
+else
+STATICTARGETS=
+endif
+
+LIBTARGETS= $(DLLTARGETS) $(STATICTARGETS)
+
+
+all : $(LIBTARGETS) 
+
+#
+# Object targets
+#
+
+%$(OBJSUFFIX): $(qecode_top_srcdir)/%.cc
+	$(CXX) $(CXXFLAGS)  $(QECODEFLAGS) \
+	@COMPILEOBJ@$@ @CXXIN@ $<
+%$(SBJSUFFIX): $(qecode_top_srcdir)/%.cc
+	$(CXX) $(CXXFLAGS)   $(QECODEFLAGS) \
+	@COMPILESBJ@$@ @CXXIN@ $<
+
+
+
+
+#
+# DLL Targets
+#
+
+ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
+#linux
+$(QECODEDLL): $(QECODEOBJ) $(KERNELDLL) $(INTDLL) $(SEARCHDLL) $(SUPPORTDLL) $(MMDLL)
+	$(CXX) $(DLLFLAGS) $(QECODEOBJ)  $(QECODEFLAGS) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKSUPPORT) \
+		@LINKOUTPUT@$(QECODEDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+else
+#win
+$(QECODEDLL) $(QECODELIB): $(QECODEOBJ) $(KERNELDLL) $(INTDLL) $(SEARCHDLL) $(SUPPORTDLL) $(MMDLL)
+	$(CXX) $(DLLFLAGS) $(QECODEOBJ)  $(QECODEFLAGS)\
+		@DLLPATH@ $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKSUPPORT)  \
+		@LINKOUTPUT@$(QECODEDLL)
+endif
+
+
+#
+# Static libraries
+#
+
+$(QECODESTATICLIB): $(QECODEOBJ)
+	$(AR) $(ARFLAGS) $@ $(QECODEOBJ)
+	$(RANLIB) $@
+
+# 
+# EXE targets
+#
+#
+
+
+#for linux: ?
+CXXFLAGS := $(CXXFLAGS) $(QECODEFLAGS) 
+
+#
+# Autoconf
+#
+
+$(qecode_top_srcdir)/configure: $(qecode_top_srcdir)/configure.ac 
+	(cd $(qecode_top_srcdir) && autoconf)
+config.status: $(qecode_top_srcdir)/configure
+	../../config.status --recheck
+	./config.status --recheck
+# use the sustitutions from gecode to generate the Makefile.in
+Makefile.in: $(qecode_top_srcdir)/Makefile.in.in ../../config.status 
+	../../config.status \
+	  --file Makefile.in:$(qecode_top_srcdir)/Makefile.in.in
+
+# use the sustitutions from configure to generate the Makefile
+Makefile: Makefile.in ./config.status 
+	./config.status --file ./Makefile:./Makefile.in
+
+
+.PHONY: clean veryclean distclean
+clean:
+	$(RMF) $(QECODEOBJ) $(QECODESBJ)
+
+veryclean: clean
+	$(RMF) $(LIBTARGETS)
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.exp) $(LIBTARGETS:%$(DLLSUFFIX)=%.lib)
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) $(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
+	$(RMF) $(QECODEDLL)
+
+distclean: veryclean
+	$(RMF) config.log config.status
+
+.PHONY: doc
+doc: $(QECODEHDR) $(QECODESRC) 
+	mkdir -p doc/html
+	doxygen doxygen.conf
