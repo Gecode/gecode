@@ -262,8 +262,8 @@ immediately if a single run reaches a limit (eases benchmarks
 with timeouts).
 
 [ENTRY]
-Module: minimodel
-What: 	int
+Module: int
+What: 	performance
 Rank:	minor
 [DESCRIPTION]
 Optimized element propagator, expect a speed up of around 35-50%
