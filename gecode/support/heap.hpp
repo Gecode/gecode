@@ -296,6 +296,8 @@ namespace Gecode {
     void* ralloc(size_t s);
     /// Free memory block starting at \a p
     void  rfree(void* p);
+    /// Free memory block starting at \a p with size \a s
+    void  rfree(void* p, size_t s);
     /// Change memory block starting at \a p to size \a s
     void* rrealloc(void* p, size_t s);
     //@}
@@ -327,6 +329,11 @@ namespace Gecode {
 
   forceinline void
   Heap::rfree(void* p) {
+    ::free(p);
+  }
+
+  forceinline void
+  Heap::rfree(void* p, size_t) {
     ::free(p);
   }
 

@@ -72,7 +72,7 @@ namespace Gecode { namespace Gist {
       } else {
         rootSpace = Gecode::Search::snapshot(rootSpace,opt);
       }
-      na = new Node::NodeAllocator();
+      na = new Node::NodeAllocator(heap);
       root = new (*na) VisualNode(rootSpace);
       root->layout();
       root->setMarked(true);
@@ -798,7 +798,7 @@ namespace Gecode { namespace Gist {
     }
     delete root;
     delete na;
-    na = new Node::NodeAllocator();
+    na = new Node::NodeAllocator(heap);
     root = new (*na) VisualNode(rootSpace);
     root->setMarked(true);
     currentNode = root;

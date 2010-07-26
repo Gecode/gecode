@@ -45,7 +45,7 @@ namespace Gecode {
     /**
      * \brief Allocator for position sets
      */
-    typedef Support::BlockAllocator<PosSet> PosSetAllocator;
+    typedef Support::BlockAllocator<PosSet,Heap> PosSetAllocator;
 
     class NodeInfo;
     class PosInfo;
@@ -371,7 +371,7 @@ namespace Gecode {
     /**
      * \brief Sets of positions
      */
-    class PosSet : public Support::BlockClient<PosSet> {
+    class PosSet : public Support::BlockClient<PosSet,Heap> {
       // Maintain sets of positions in inverse order
       // This makes the check whether the last position is included
       // more efficient.
@@ -575,12 +575,12 @@ namespace Gecode {
     /**
      * \brief Allocator for state nodes
      */
-    typedef Support::BlockAllocator<StateNode> StatePoolAllocator;
+    typedef Support::BlockAllocator<StateNode,Heap> StatePoolAllocator;
 
     /**
      * \brief %Node together with state information
      */
-    class StateNode : public Support::BlockClient<StateNode> {
+    class StateNode : public Support::BlockClient<StateNode,Heap> {
     public:
       PosSet*    pos;
       int        state;
@@ -761,8 +761,8 @@ namespace Gecode {
 
     using MiniModel::SymbolsInc;
 
-    PosSetAllocator    psm;
-    StatePoolAllocator spm;
+    PosSetAllocator    psm(heap);
+    StatePoolAllocator spm(heap);
     REG r = *this + REG(Int::Limits::max+1);
     int n_pos = r.e->n_pos();
 

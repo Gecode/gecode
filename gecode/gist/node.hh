@@ -47,7 +47,7 @@ namespace Gecode { namespace Gist {
   static const int NodeBlockSize = 10000;
 
   /// \brief Base class for nodes of the search tree
-  class Node : public Support::BlockClient<VisualNode,NodeBlockSize> {
+  class Node : public Support::BlockClient<VisualNode,Heap,NodeBlockSize> {
   private:
     /// The parent of this node, or NULL for the root
     Node* parent;
@@ -82,7 +82,8 @@ namespace Gecode { namespace Gist {
     bool isUndetermined(void) const;
 
   public:
-    typedef Support::BlockAllocator<VisualNode,NodeBlockSize> NodeAllocator;
+    typedef Support::BlockAllocator<VisualNode,Heap,NodeBlockSize> 
+      NodeAllocator;
 
     /// Default constructor
     Node(void);
