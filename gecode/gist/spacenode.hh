@@ -94,8 +94,6 @@ namespace Gecode { namespace Gist {
   protected:
     /// A copy used for recomputation, or NULL
     Space* copy;
-    /// Working space used for computing the status
-    Space* workingSpace;
   private:
     /// Reference to best space when the node was created
     SpaceNode* ownBest;

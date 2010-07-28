@@ -73,6 +73,13 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: gist
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Saved one pointer for each node in Gist.
+
+[ENTRY]
 Module: iter
 What: 	performance
 Rank:	minor

@@ -445,9 +445,7 @@ namespace Gecode { namespace Gist {
       s += sizeof(Shape)+sizeof(Extent)*(shape->depth()-1);
     }
     if (copy)
-      s += copy->allocated();
-    if (workingSpace)
-      s += workingSpace->allocated();
+      s += static_cast<Space*>(Support::funmark(copy))->allocated();
     s += (choice != NULL ? choice->size() : 0);
     return s;
   }

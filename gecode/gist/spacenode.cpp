@@ -65,7 +65,7 @@ namespace Gecode { namespace Gist {
   SpaceNode::recompute(BestNode* curBest, int c_d, int a_d) {
     int rdist = 0;
 
-    if (workingSpace == NULL) {
+    if (copy == NULL) {
       SpaceNode* curNode = this;
       SpaceNode* lastFixpoint = NULL;
 
@@ -96,7 +96,7 @@ namespace Gecode { namespace Gist {
             curDist > a_d &&
             curDist == rdist / 2) {
             if (curSpace->status() == SS_FAILED) {
-              workingSpace = curSpace;
+              copy = static_cast<Space*>(Support::mark(curSpace));
               return rdist;
             } else {
               middleNode->copy = curSpace->clone();
@@ -112,21 +112,29 @@ namespace Gecode { namespace Gist {
 
         if (b.ownBest != NULL && b.ownBest != lastBest) {
           b.ownBest->acquireSpace(curBest, c_d, a_d);
-          if (b.ownBest->workingSpace->status() != SS_SOLVED) {
+          Space* ownBestSpace =
+            static_cast<Space*>(Support::funmark(b.ownBest->copy));
+          if (ownBestSpace->status() != SS_SOLVED) {
             // in the presence of weakly monotonic propagators, we may have to
             // use search to find the solution here
-            Space* dfsSpace = Gecode::dfs(b.ownBest->workingSpace);
-            delete b.ownBest->workingSpace;
-            b.ownBest->workingSpace = dfsSpace;
+            ownBestSpace = Gecode::dfs(ownBestSpace);
+            if (Support::marked(b.ownBest->copy)) {
+              delete static_cast<Space*>(Support::unmark(b.ownBest->copy));
+              b.ownBest->copy = 
+                static_cast<Space*>(Support::mark(ownBestSpace));
+            } else {
+              delete b.ownBest->copy;
+              b.ownBest->copy = ownBestSpace;
+            }
           }
-          curSpace->constrain(*b.ownBest->workingSpace);
+          curSpace->constrain(*ownBestSpace);
           lastBest = b.ownBest;
         }
         curDist++;
         middleNode = middleNode->getChild(b.alternative);
         middleNode->setDistance(curDist);
       }
-      workingSpace = curSpace;
+      copy = static_cast<Space*>(Support::mark(curSpace));
 
     }
     return rdist;
@@ -141,70 +149,67 @@ namespace Gecode { namespace Gist {
           ownBest = curBest->s;
     }
 
-    if (workingSpace == NULL && p != NULL && p->workingSpace != NULL) {
+    if (copy == NULL && p != NULL && p->copy != NULL && 
+        Support::marked(p->copy)) {
       // If parent has a working space, steal it
-      workingSpace = p->workingSpace;
-      p->workingSpace = NULL;
+      copy = p->copy;
+      p->copy = NULL;
       if (p->choice != NULL)
-        workingSpace->commit(*p->choice, getAlternative());
+        static_cast<Space*>(Support::unmark(copy))->
+          commit(*p->choice, getAlternative());
 
       if (ownBest != NULL) {
         ownBest->acquireSpace(curBest, c_d, a_d);
-        if (ownBest->workingSpace->status() != SS_SOLVED) {
+        Space* ownBestSpace = 
+          static_cast<Space*>(Support::funmark(ownBest->copy));
+        if (ownBestSpace->status() != SS_SOLVED) {
           // in the presence of weakly monotonic propagators, we may have to
           // use search to find the solution here
-          Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
-          delete ownBest->workingSpace;
-          ownBest->workingSpace = dfsSpace;
+
+          ownBestSpace = Gecode::dfs(ownBestSpace);
+          if (Support::marked(ownBest->copy)) {
+            delete static_cast<Space*>(Support::unmark(ownBest->copy));
+            ownBest->copy =
+              static_cast<Space*>(Support::mark(ownBestSpace));
+          } else {
+            delete ownBest->copy;
+            ownBest->copy = ownBestSpace;
+          }
         }
-        workingSpace->constrain(*ownBest->workingSpace);
+        static_cast<Space*>(Support::unmark(copy))->constrain(*ownBestSpace);
       }
       int d = p->getDistance()+1;
       if (d > c_d && c_d >= 0 &&
-          workingSpace->status() == SS_BRANCH) {
-        copy = workingSpace->clone();
+          static_cast<Space*>(Support::unmark(copy))->status() == SS_BRANCH) {
+        copy = static_cast<Space*>(Support::unmark(copy));
         d = 0;
       }
       setDistance(d);
     }
 
-    if (workingSpace == NULL) {
+    if (copy == NULL) {
       if (recompute(curBest, c_d, a_d) > c_d && c_d >= 0 &&
-          workingSpace->status() == SS_BRANCH) {
-        copy = workingSpace->clone();
+          static_cast<Space*>(Support::unmark(copy))->status() == SS_BRANCH) {
+        copy = static_cast<Space*>(Support::unmark(copy));
         setDistance(0);
       }
     }
 
     // always return a fixpoint
-    workingSpace->status();
-    if (copy == NULL && p != NULL && isOpen() &&
+    static_cast<Space*>(Support::funmark(copy))->status();
+    if (Support::marked(copy) && p != NULL && isOpen() &&
         p->copy != NULL && p->getNoOfOpenChildren() == 1 &&
         p->getParent() != NULL) {
       // last alternative optimization
-      copy = p->copy;
+
+      // If p->copy was a working space, we would have stolen it by now
+      assert(!Support::marked(p->copy));
+
+      copy = static_cast<Space*>(Support::unmark(copy));
+      delete p->copy;
       p->copy = NULL;
       setDistance(0);
       p->setDistance(p->getParent()->getDistance()+1);
-      
-      if(p->choice != NULL)
-        copy->commit(*p->choice, getAlternative());
-
-      if (ownBest != NULL) {
-        ownBest->acquireSpace(curBest, c_d, a_d);
-        if (ownBest->workingSpace->status() != SS_SOLVED) {
-          // in the presence of weakly monotonic propagators, we may have to
-          // use search to find the solution here
-          Space* dfsSpace = Gecode::dfs(ownBest->workingSpace);
-          delete ownBest->workingSpace;
-          ownBest->workingSpace = dfsSpace;
-        }
-        copy->constrain(*ownBest->workingSpace);
-      }
-      if (copy->status() == SS_FAILED) {
-        delete copy;
-        copy = NULL;
-      }
     }
   }
 
@@ -254,20 +259,15 @@ namespace Gecode { namespace Gist {
   }
 
   SpaceNode::SpaceNode(Space* root)
-  : workingSpace(root), ownBest(NULL), nstatus(0) {
+  : copy(root), ownBest(NULL), nstatus(0) {
     choice = NULL;
     if (root == NULL) {
       setStatus(FAILED);
       setHasSolvedChildren(false);
       setHasFailedChildren(true);
       setNumberOfChildren(0);
-      copy = root;
       return;
     }
-    if (!root->failed())
-      copy = root->clone();
-    else
-      copy = root;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);
     setHasFailedChildren(false);
@@ -275,8 +275,7 @@ namespace Gecode { namespace Gist {
 
   SpaceNode::~SpaceNode(void) {
     delete choice;
-    delete copy;
-    delete workingSpace;
+    delete static_cast<Space*>(Support::funmark(copy));
   }
 
 
@@ -288,7 +287,7 @@ namespace Gecode { namespace Gist {
     if (isUndetermined()) {
       stats.undetermined--;
       acquireSpace(curBest, c_d, a_d);
-      switch (workingSpace->status(stats)) {
+      switch (static_cast<Space*>(Support::funmark(copy))->status(stats)) {
       case SS_FAILED:
         {
           purge();
@@ -307,7 +306,7 @@ namespace Gecode { namespace Gist {
       case SS_SOLVED:
         {
           // Deletes all pending branchers
-          (void) workingSpace->choice();
+          (void) static_cast<Space*>(Support::funmark(copy))->choice();
           kids = 0;
           setStatus(SOLVED);
           setHasOpenChildren(false);
@@ -324,7 +323,7 @@ namespace Gecode { namespace Gist {
         break;
       case SS_BRANCH:
         {
-          choice = workingSpace->choice();
+          choice = static_cast<Space*>(Support::funmark(copy))->choice();
           kids = choice->alternatives();
           setHasOpenChildren(true);
           if (dynamic_cast<const StopChoice*>(choice)) {

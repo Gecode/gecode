@@ -101,7 +101,7 @@ namespace Gecode { namespace Gist {
 
   forceinline
   SpaceNode::SpaceNode(void)
-  : copy(NULL), workingSpace(NULL), ownBest(NULL), nstatus(0) {
+  : copy(NULL), ownBest(NULL), nstatus(0) {
     choice = NULL;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);
@@ -111,25 +111,32 @@ namespace Gecode { namespace Gist {
   forceinline Space*
   SpaceNode::getSpace(BestNode* curBest, int c_d, int a_d) {
     acquireSpace(curBest,c_d,a_d);
-    Space* ret = workingSpace;
-    workingSpace = NULL;
+    Space* ret;
+    if (Support::marked(copy)) {
+      ret = static_cast<Space*>(Support::unmark(copy));
+      copy = NULL;
+    } else {
+      ret = copy->clone();
+    }
     return ret;
   }
 
   forceinline const Space*
   SpaceNode::getWorkingSpace(void) const {
-    return workingSpace;
+    assert(copy != NULL);
+    if (Support::marked(copy))
+      return static_cast<Space*>(Support::unmark(copy));
+    return copy;
   }
 
   forceinline void
   SpaceNode::purge(void) {
-    if (getStatus() != SOLVED || ownBest == NULL) {
-      // only delete working spaces from solutions if we are not in BAB
-      delete workingSpace;
-      workingSpace = NULL;
-    }
-    if (!isRoot()) {
-      delete copy;
+    if (!isRoot() && (getStatus() != SOLVED || ownBest == NULL)) {
+      // only delete copies from solutions if we are not in BAB
+      if (Support::marked(copy))
+        delete static_cast<Space*>(Support::unmark(copy));
+      else
+        delete copy;
       copy = NULL;
     }
   }
@@ -168,7 +175,7 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   SpaceNode::hasWorkingSpace(void) {
-    return workingSpace != NULL;
+    return copy != NULL && Support::marked(copy);
   }
 
   forceinline int

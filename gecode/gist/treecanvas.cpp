@@ -394,7 +394,7 @@ namespace Gecode { namespace Gist {
                                             t->c_d, t->a_d);
             if (kids == 0) {
               if (n->getStatus() == SOLVED) {
-                assert(n->hasWorkingSpace());
+                assert(n->hasCopy());
                 emit solution(n->getWorkingSpace());
                 n->purge();
                 sol = n;
@@ -622,7 +622,7 @@ namespace Gecode { namespace Gist {
             stats.maxDepth =
               std::max(stats.maxDepth, depth);
             if (currentNode->getStatus() == SOLVED) {
-              assert(currentNode->hasWorkingSpace());
+              assert(currentNode->hasCopy());
               emit solution(currentNode->getWorkingSpace());
               currentNode->purge();
             }

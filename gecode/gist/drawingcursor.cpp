@@ -276,7 +276,7 @@ namespace Gecode { namespace Gist {
     	
     }
 
-    if (copies && n->hasCopy()) {
+    if (copies && (n->hasCopy() && !n->hasWorkingSpace())) {
      painter.setBrush(Qt::darkRed);
      painter.drawEllipse(myx, myy, 10, 10);
     }
