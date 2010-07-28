@@ -51,9 +51,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template<int UMIN, int UMAX, class I>
   class Compl : public MinMax {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Iterator to compute complement for
     I i;
@@ -90,9 +87,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template<class I>
   class ComplVal : public MinMax {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Values describing the universe set
     int UMIN, UMAX;

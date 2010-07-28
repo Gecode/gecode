@@ -168,13 +168,11 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   ZeroIntView::narrow_r(Space&, I& i, bool) {
-    Iter::Ranges::IsRangeIter<I>();
     return i() ? ME_INT_NONE : ME_INT_FAILED;
   }
   template<class I>
   forceinline ModEvent
   ZeroIntView::inter_r(Space&, I& i, bool) {
-    Iter::Ranges::IsRangeIter<I>();
     while (i() && (i.max() < 0))
       ++i;
     return (i() && (i.min() <= 0)) ? ME_INT_NONE : ME_INT_FAILED;
@@ -182,7 +180,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   ZeroIntView::minus_r(Space&, I& i, bool) {
-    Iter::Ranges::IsRangeIter<I>();
     while (i() && (i.max() < 0))
       ++i;
     return (i() && (i.min() <= 0)) ? ME_INT_FAILED : ME_INT_NONE;
@@ -190,13 +187,11 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   ZeroIntView::narrow_v(Space&, I& i, bool) {
-    Iter::Values::IsValueIter<I>();
     return i() ? ME_INT_NONE : ME_INT_FAILED;
   }
   template<class I>
   forceinline ModEvent
   ZeroIntView::inter_v(Space&, I& i, bool) {
-    Iter::Values::IsValueIter<I>();
     while (i() && (i.val() < 0))
       ++i;
     return (i() && (i.val() == 0)) ? ME_INT_NONE : ME_INT_FAILED;
@@ -204,7 +199,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   ZeroIntView::minus_v(Space&, I& i, bool) {
-    Iter::Values::IsValueIter<I>();
     while (i() && (i.val() < 0))
       ++i;
     return (i() && (i.val() == 0)) ? ME_INT_FAILED : ME_INT_NONE;

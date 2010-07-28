@@ -214,7 +214,6 @@ namespace Gecode { namespace Set {
   template<class I>
   inline ModEvent
   SetVarImp::intersectI(Space& home, I& iterator) {
-    Iter::Ranges::IsRangeIter<I>();
     if (assigned()) {
       BndSetRanges lbi(glb);
       Iter::Ranges::Diff<BndSetRanges,I> probe(lbi,iterator);
@@ -295,7 +294,6 @@ namespace Gecode { namespace Set {
 
   template<class I> forceinline ModEvent
   SetVarImp::includeI(Space& home, I& iterator) {
-    Iter::Ranges::IsRangeIter<I>();
     if (!iterator()) {
       return ME_SET_NONE;
     }
@@ -371,7 +369,6 @@ namespace Gecode { namespace Set {
   template<class I>
   inline ModEvent
   SetVarImp::excludeI(Space& home, I& iterator) {
-    Iter::Ranges::IsRangeIter<I>();
     if (!iterator())
       return ME_SET_NONE;
     if (assigned()) {

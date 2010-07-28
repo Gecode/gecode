@@ -45,15 +45,13 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template<class I, class J>
   class Inter  {
-  private:
+  protected:
     /// First iterator
     I i;
     /// Second iterator
     J j;
     /// Find next element from intersection
     void next(void);
-  private:
-    IsValueIter<I> constraintI; IsValueIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{

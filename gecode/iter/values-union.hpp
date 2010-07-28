@@ -45,7 +45,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template<class I, class J>
   class Union  {
-  private:
+  protected:
     /// First iterator
     I i;
     /// Second iterator
@@ -54,8 +54,6 @@ namespace Gecode { namespace Iter { namespace Values {
     int v;
     /// Whether iterator is done
     bool done;
-  private:
-    IsValueIter<I> constraintI; IsValueIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{

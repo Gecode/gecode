@@ -277,7 +277,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   BoolVarImp::narrow_r(Space& home, I& i, bool) {
-    Iter::Ranges::IsRangeIter<I>();
     // Is new domain empty?
     if (!i())
       return ME_INT_FAILED;
@@ -299,7 +298,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   BoolVarImp::inter_r(Space& home, I& i, bool) {
-    Iter::Ranges::IsRangeIter<I>();
     // Skip all ranges that are too small
     while (i() && (i.max() < 0))
       ++i;
@@ -317,7 +315,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   BoolVarImp::minus_r(Space& home, I& i, bool) {
-    Iter::Ranges::IsRangeIter<I>();
     // Skip all ranges that are too small
     while (i() && (i.max() < 0))
       ++i;
@@ -336,7 +333,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   BoolVarImp::narrow_v(Space& home, I& i, bool) {
-    Iter::Values::IsValueIter<I>();
     if (!i())
       return ME_INT_FAILED;
     if (!none())
@@ -356,7 +352,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   BoolVarImp::inter_v(Space& home, I& i, bool) {
-    Iter::Values::IsValueIter<I>();
     while (i() && (i.val() < 0))
       ++i;
     if (!i() || (i.val() > 1))
@@ -376,7 +371,6 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   BoolVarImp::minus_v(Space& home, I& i, bool) {
-    Iter::Values::IsValueIter<I>();
     while (i() && (i.val() < 0))
       ++i;
     if (!i() || (i.val() > 1))

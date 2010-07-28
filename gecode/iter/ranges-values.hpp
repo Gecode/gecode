@@ -44,9 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I>
   class ToValues {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Range iterator used
     I i;

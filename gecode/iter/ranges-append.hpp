@@ -53,8 +53,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
     I i;
     /// Iterator to be appended
     J j;
-  private:
-    IsRangeIter<I> constraintI; IsRangeIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{
@@ -85,8 +83,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template<class I>
   class NaryAppend  :  public MinMax {
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// The array of iterators to be appended
     I* r;

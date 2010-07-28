@@ -45,9 +45,6 @@ namespace Gecode { namespace Iter { namespace Values {
    */
   template<class I, bool strict=false>
   class Positive {
-  private:
-    /// Check that \a I is a value iterator;
-    IsValueIter<I> _checkI;
   protected:
     /// Input iterator
     I i;

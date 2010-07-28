@@ -153,7 +153,6 @@ namespace Gecode { namespace Set {
 
   template<class I> ModEvent
   SetView::includeI (Space& home, I& iter) {
-    Iter::Ranges::IsRangeIter<I>();
     return x->includeI(home, iter);
   }
 
@@ -163,12 +162,10 @@ namespace Gecode { namespace Set {
   }
   template<class I> ModEvent
   SetView::excludeI(Space& home, I& iter) {
-    Iter::Ranges::IsRangeIter<I>();
     return x->excludeI(home, iter);
   }
   template<class I> ModEvent
   SetView::intersectI(Space& home, I& iter) {
-    Iter::Ranges::IsRangeIter<I>();
     return x->intersectI(home, iter);
   }
 

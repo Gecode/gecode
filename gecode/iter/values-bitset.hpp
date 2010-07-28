@@ -44,7 +44,7 @@ namespace Gecode { namespace Iter { namespace Values {
    */
   template<class BS>
   class BitSet {
-  private:
+  protected:
     /// Bitset
     const BS& bs;
     /// Current value

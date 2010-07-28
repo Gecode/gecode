@@ -203,7 +203,6 @@ namespace Gecode { namespace Set {
 
   template<class I> ModEvent
   SingletonView::includeI(Space& home, I& iter) {
-    Iter::Ranges::IsRangeIter<I>();
     if (!iter())
       return ME_SET_NONE;
 

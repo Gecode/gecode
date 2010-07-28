@@ -177,37 +177,31 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   BoolView::narrow_r(Space& home, I& i, bool depend) {
-    Iter::Ranges::IsRangeIter<I>();
     return x->narrow_r(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   BoolView::inter_r(Space& home, I& i, bool depend) {
-    Iter::Ranges::IsRangeIter<I>();
     return x->inter_r(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   BoolView::minus_r(Space& home, I& i, bool depend) {
-    Iter::Ranges::IsRangeIter<I>();
     return x->minus_r(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   BoolView::narrow_v(Space& home, I& i, bool depend) {
-    Iter::Values::IsValueIter<I>();
     return x->narrow_v(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   BoolView::inter_v(Space& home, I& i, bool depend) {
-    Iter::Values::IsValueIter<I>();
     return x->inter_v(home,i,depend);
   }
   template<class I>
   forceinline ModEvent
   BoolView::minus_v(Space& home, I& i, bool depend) {
-    Iter::Values::IsValueIter<I>();
     return x->minus_v(home,i,depend);
   }
 

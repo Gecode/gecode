@@ -47,9 +47,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I, class M, bool strict=true>
   class Map {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   public:
     /// \name Constructors and initialization
     //@{
@@ -87,9 +84,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /// Specialized mapping of ranges for non-strict maps
   template<class I, class M>
   class Map<I,M,false> : public MinMax {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Input range
     I i;
@@ -122,9 +116,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /// Specialized mapping of ranges for strict maps
   template<class I, class M>
   class Map<I,M,true> {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Input range iterator
     I i;

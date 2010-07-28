@@ -44,9 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I>
   class Offset {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Input range
     I i;

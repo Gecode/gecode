@@ -48,9 +48,6 @@ namespace Gecode { namespace Iter { namespace Values {
    */
   template<class I>
   class Unique {
-  private:
-    /// Check that \a I is a value iterator;
-    IsValueIter<I> _checkI;
   protected:
     /// Value iterator used
     I i;

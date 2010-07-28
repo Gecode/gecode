@@ -76,7 +76,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I>
   inline unsigned int
   size(I& i) {
-    IsRangeIter<I>();
     unsigned int s = 0;
     while (i()) {
       s += i.width(); ++i;
@@ -87,8 +86,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I, class J>
   forceinline bool
   equal(I& i, J& j) {
-    IsRangeIter<I>();
-    IsRangeIter<J>();
     // Are i and j equal?
     while (i() && j())
       if ((i.min() == j.min()) && (i.max() == j.max())) {
@@ -102,8 +99,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I, class J>
   forceinline bool
   subset(I& i, J& j) {
-    IsRangeIter<I>();
-    IsRangeIter<J>();
     // Is i subset of j?
     while (i() && j())
       if (j.max() < i.min()) {
@@ -119,8 +114,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I, class J>
   forceinline bool
   disjoint(I& i, J& j) {
-    IsRangeIter<I>();
-    IsRangeIter<J>();
     // Are i and j disjoint?
     while (i() && j())
       if (j.max() < i.min()) {
@@ -136,8 +129,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I, class J>
   forceinline CompareStatus
   compare(I& i, J& j) {
-    IsRangeIter<I>();
-    IsRangeIter<J>();
     bool subset = true;
     bool disjoint = true;
     while (i() && j()) {

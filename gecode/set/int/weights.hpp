@@ -46,7 +46,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   /// Value Iterator for values above a certain weight
   template<class I>
-  class OverweightValues : public Iter::Values::IsValueIter<I> {
+  class OverweightValues {
   private:
     /// The threshold above which values should be iterated
     int threshold;

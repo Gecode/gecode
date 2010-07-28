@@ -44,9 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I>
   class AddRange : public MinMax {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Iterator to which the range is to be added
     I i;

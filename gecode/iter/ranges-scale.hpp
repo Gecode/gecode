@@ -51,9 +51,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class Val, class UnsVal, class I>
   class ScaleUp {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Iterator to be scaled
     I i;
@@ -100,9 +97,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I>
   class ScaleDown : public MinMax {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Iterator to be scaled down
     I i;

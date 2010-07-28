@@ -50,8 +50,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
     I i;
     /// Iterator to be subtracted
     J j;
-  private:
-    IsRangeIter<I> constraintI; IsRangeIter<J> constraintJ;
   public:
     /// \name Constructors and initialization
     //@{

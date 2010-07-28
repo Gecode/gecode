@@ -201,21 +201,18 @@ namespace Gecode { namespace Set {
 
   template<class I> ModEvent
   ConstSetView::excludeI(Space&,I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return (i() && Iter::Ranges::subset(i, ar)) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template<class I> ModEvent
   ConstSetView::includeI(Space&,I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return Iter::Ranges::subset(i, ar) ? ME_SET_NONE : ME_SET_FAILED;
   }
 
   template<class I> ModEvent
   ConstSetView::intersectI(Space&,I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     ArrayRanges ar(ranges, size);
     return Iter::Ranges::subset(ar, i) ? ME_SET_NONE : ME_SET_FAILED;
   }
@@ -349,19 +346,16 @@ namespace Gecode { namespace Set {
 
   template<class I> ModEvent
   EmptyView::excludeI(Space&,I&) {
-    Iter::Ranges::IsRangeIter<I>();
     return ME_SET_NONE;
   }
 
   template<class I> ModEvent
   EmptyView::includeI(Space&,I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     return i() ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template<class I> ModEvent
   EmptyView::intersectI(Space&,I&) {
-    Iter::Ranges::IsRangeIter<I>();
     return ME_SET_NONE;
   }
 
@@ -473,13 +467,11 @@ namespace Gecode { namespace Set {
 
   template<class I> ModEvent
   UniverseView::excludeI(Space&,I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     return i() ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template<class I> forceinline ModEvent
   UniverseView::includeI(Space&,I&) {
-    Iter::Ranges::IsRangeIter<I>();
     return ME_SET_NONE;
   }
 
@@ -491,7 +483,6 @@ namespace Gecode { namespace Set {
 
   template<class I> forceinline ModEvent
   UniverseView::intersectI(Space&,I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     return (i() &&
             (i.min()>Limits::min ||
              i.max()<Limits::max) ) ?

@@ -46,11 +46,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I, class J>
   class Inter : public MinMax {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
-    /// Check that \a J is a range iterator;
-    IsRangeIter<J> _checkJ;
   protected:
     /// First iterator
     I i;
@@ -82,9 +77,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I>
   class NaryInter : public MinMax {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Array of iterators
     I* is;

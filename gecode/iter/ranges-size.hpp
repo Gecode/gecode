@@ -48,9 +48,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   template<class I>
   class Size {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
   protected:
     /// Iterator to compute size of
     I i;

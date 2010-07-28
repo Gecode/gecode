@@ -123,25 +123,37 @@ void yyassert(ParserState* pp, bool cond, const char* str)
  *
  */
 
-AST::Node* getArrayElement(ParserState* pp, string id, unsigned int offset) {
+AST::Node* getArrayElement(ParserState* pp, string id, int offset) {
   if (offset > 0) {
-    vector<int> tmp;
-    if (pp->intvararrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::IntVar(tmp[offset-1]);
-    if (pp->boolvararrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::BoolVar(tmp[offset-1]);
-    if (pp->setvararrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::SetVar(tmp[offset-1]);
-
-    if (pp->intvalarrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::IntLit(tmp[offset-1]);
-    if (pp->boolvalarrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::BoolLit(tmp[offset-1]);
-    vector<AST::SetLit> tmpS;
-    if (pp->setvalarrays.get(id, tmpS) && offset<=tmpS.size())
-      return new AST::SetLit(tmpS[offset-1]);    
+    SymbolEntry e;
+    if (pp->symbols.get(id,e)) {
+      switch (e.t) {
+      case ST_INTVARARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::IntVar(pp->arrays[e.i+offset]);
+      case ST_BOOLVARARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::BoolVar(pp->arrays[e.i+offset]);
+      case ST_SETVARARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::SetVar(pp->arrays[e.i+offset]);
+      case ST_INTVALARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::IntLit(pp->arrays[e.i+offset]);
+      case ST_SETVALARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::SetLit(pp->setvals[pp->arrays[e.i+1]+offset-1]);
+      default:
+        break;
+      }
+    }
   }
-
+error:
   pp->err << "Error: array access to " << id << " invalid"
           << " in line no. "
           << yyget_lineno(pp->yyscanner) << std::endl;
@@ -149,13 +161,16 @@ AST::Node* getArrayElement(ParserState* pp, string id, unsigned int offset) {
   return new AST::IntVar(0); // keep things consistent
 }
 AST::Node* getVarRefArg(ParserState* pp, string id, bool annotation = false) {
-  int tmp;
-  if (pp->intvarTable.get(id, tmp))
-    return new AST::IntVar(tmp);
-  if (pp->boolvarTable.get(id, tmp))
-    return new AST::BoolVar(tmp);
-  if (pp->setvarTable.get(id, tmp))
-    return new AST::SetVar(tmp);
+  SymbolEntry e;
+  if (pp->symbols.get(id, e)) {
+    switch (e.t) {
+    case ST_INTVAR: return new AST::IntVar(e.i);
+    case ST_BOOLVAR: return new AST::BoolVar(e.i);
+    case ST_SETVAR: return new AST::SetVar(e.i);
+    default: break;
+    }
+  }
+  
   if (annotation)
     return new AST::Atom(id);
   pp->err << "Error: undefined variable " << id
@@ -361,7 +376,7 @@ namespace Gecode { namespace FlatZinc {
 
 
 /* Line 189 of yacc.c  */
-#line 365 "gecode/flatzinc/parser.tab.cpp"
+#line 380 "gecode/flatzinc/parser.tab.cpp"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -442,7 +457,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 332 "gecode/flatzinc/parser.yxx"
+#line 347 "gecode/flatzinc/parser.yxx"
  int iValue; char* sValue; bool bValue; double dValue;
          std::vector<int>* setValue;
          Gecode::FlatZinc::AST::SetLit* setLit;
@@ -459,7 +474,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 463 "gecode/flatzinc/parser.tab.cpp"
+#line 478 "gecode/flatzinc/parser.tab.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -471,7 +486,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 475 "gecode/flatzinc/parser.tab.cpp"
+#line 490 "gecode/flatzinc/parser.tab.cpp"
 
 #ifdef short
 # undef short
@@ -829,22 +844,22 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   431,   431,   433,   435,   438,   439,   443,   444,   448,
-     449,   451,   453,   456,   457,   464,   466,   468,   471,   472,
-     475,   478,   479,   480,   481,   484,   485,   486,   487,   490,
-     491,   494,   495,   502,   532,   561,   566,   596,   620,   629,
-     641,   700,   752,   759,   814,   827,   840,   847,   861,   865,
-     880,   904,   905,   909,   911,   914,   914,   916,   920,   922,
-     937,   961,   962,   966,   968,   972,   976,   978,   993,  1017,
-    1018,  1022,  1024,  1027,  1030,  1032,  1047,  1071,  1072,  1076,
-    1078,  1081,  1086,  1087,  1092,  1093,  1098,  1099,  1104,  1105,
-    1109,  1123,  1136,  1158,  1160,  1162,  1168,  1170,  1183,  1184,
-    1191,  1193,  1200,  1201,  1205,  1207,  1212,  1213,  1217,  1219,
-    1224,  1225,  1229,  1231,  1236,  1237,  1241,  1243,  1251,  1253,
-    1257,  1259,  1264,  1265,  1269,  1271,  1273,  1275,  1277,  1326,
-    1340,  1341,  1345,  1347,  1355,  1366,  1388,  1389,  1397,  1398,
-    1402,  1404,  1408,  1412,  1416,  1418,  1422,  1424,  1428,  1430,
-    1432,  1434,  1436,  1479,  1490
+       0,   446,   446,   448,   450,   453,   454,   458,   459,   463,
+     464,   466,   468,   471,   472,   479,   481,   483,   486,   487,
+     490,   493,   494,   495,   496,   499,   500,   501,   502,   505,
+     506,   509,   510,   517,   549,   580,   585,   617,   643,   654,
+     667,   732,   790,   797,   858,   879,   899,   906,   929,   933,
+     948,   972,   973,   977,   979,   982,   982,   984,   988,   990,
+    1005,  1028,  1029,  1033,  1035,  1039,  1043,  1045,  1060,  1083,
+    1084,  1088,  1090,  1093,  1096,  1098,  1113,  1136,  1137,  1141,
+    1143,  1146,  1151,  1152,  1157,  1158,  1163,  1164,  1169,  1170,
+    1174,  1188,  1201,  1223,  1225,  1227,  1233,  1235,  1248,  1249,
+    1256,  1258,  1265,  1266,  1270,  1272,  1277,  1278,  1282,  1284,
+    1289,  1290,  1294,  1296,  1301,  1302,  1306,  1308,  1316,  1318,
+    1322,  1324,  1329,  1330,  1334,  1336,  1338,  1340,  1342,  1412,
+    1426,  1427,  1431,  1433,  1441,  1455,  1477,  1478,  1486,  1487,
+    1491,  1493,  1497,  1501,  1505,  1507,  1511,  1513,  1517,  1519,
+    1521,  1523,  1525,  1599,  1610
 };
 #endif
 
@@ -1992,27 +2007,29 @@ yyreduce:
         case 7:
 
 /* Line 1464 of yacc.c  */
-#line 443 "gecode/flatzinc/parser.yxx"
+#line 458 "gecode/flatzinc/parser.yxx"
     { initfg(static_cast<ParserState*>(parm)); ;}
     break;
 
   case 8:
 
 /* Line 1464 of yacc.c  */
-#line 445 "gecode/flatzinc/parser.yxx"
+#line 460 "gecode/flatzinc/parser.yxx"
     { initfg(static_cast<ParserState*>(parm)); ;}
     break;
 
   case 33:
 
 /* Line 1464 of yacc.c  */
-#line 503 "gecode/flatzinc/parser.yxx"
+#line 518 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !(yyvsp[(2) - (6)].oSet)() || !(yyvsp[(2) - (6)].oSet).some()->empty(), "Empty var int domain.");
+        yyassert(pp, !(yyvsp[(2) - (6)].oSet)() || !(yyvsp[(2) - (6)].oSet).some()->empty(), "Empty var int domain");
         bool print = (yyvsp[(5) - (6)].argVec)->hasAtom("output_var");
         bool introduced = (yyvsp[(5) - (6)].argVec)->hasAtom("var_is_introduced");
-        pp->intvarTable.put((yyvsp[(4) - (6)].sValue), pp->intvars.size());
+        yyassert(pp,
+          pp->symbols.put((yyvsp[(4) - (6)].sValue), se_iv(pp->intvars.size())),
+          "Duplicate symbol");
         if (print) {
           pp->output(std::string((yyvsp[(4) - (6)].sValue)), new AST::IntVar(pp->intvars.size()));
         }
@@ -2025,7 +2042,7 @@ yyreduce:
             pp->intvars.push_back(varspec((yyvsp[(4) - (6)].sValue),
               new IntVarSpec(Alias(arg->getIntVar()),introduced)));
           } else {
-            yyassert(pp, false, "Invalid var int initializer.");
+            yyassert(pp, false, "Invalid var int initializer");
           }
           if (!pp->hadError)
             addDomainConstraint(pp, "int_in",
@@ -2041,12 +2058,14 @@ yyreduce:
   case 34:
 
 /* Line 1464 of yacc.c  */
-#line 533 "gecode/flatzinc/parser.yxx"
+#line 550 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = (yyvsp[(5) - (6)].argVec)->hasAtom("output_var");
         bool introduced = (yyvsp[(5) - (6)].argVec)->hasAtom("var_is_introduced");
-        pp->boolvarTable.put((yyvsp[(4) - (6)].sValue), pp->boolvars.size());
+        yyassert(pp,
+          pp->symbols.put((yyvsp[(4) - (6)].sValue), se_bv(pp->boolvars.size())),
+          "Duplicate symbol");
         if (print) {
           pp->output(std::string((yyvsp[(4) - (6)].sValue)), new AST::BoolVar(pp->boolvars.size()));
         }
@@ -2059,7 +2078,7 @@ yyreduce:
             pp->boolvars.push_back(varspec((yyvsp[(4) - (6)].sValue),
               new BoolVarSpec(Alias(arg->getBoolVar()),introduced)));
           } else {
-            yyassert(pp, false, "Invalid var bool initializer.");
+            yyassert(pp, false, "Invalid var bool initializer");
           }
           if (!pp->hadError)
             addDomainConstraint(pp, "int_in",
@@ -2075,9 +2094,9 @@ yyreduce:
   case 35:
 
 /* Line 1464 of yacc.c  */
-#line 562 "gecode/flatzinc/parser.yxx"
+#line 581 "gecode/flatzinc/parser.yxx"
     { ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported.");
+        yyassert(pp, false, "Floats not supported");
         delete (yyvsp[(5) - (6)].argVec); free((yyvsp[(4) - (6)].sValue));
       ;}
     break;
@@ -2085,12 +2104,14 @@ yyreduce:
   case 36:
 
 /* Line 1464 of yacc.c  */
-#line 567 "gecode/flatzinc/parser.yxx"
+#line 586 "gecode/flatzinc/parser.yxx"
     { 
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = (yyvsp[(7) - (8)].argVec)->hasAtom("output_var");
         bool introduced = (yyvsp[(7) - (8)].argVec)->hasAtom("var_is_introduced");
-        pp->setvarTable.put((yyvsp[(6) - (8)].sValue), pp->setvars.size());
+        yyassert(pp,
+          pp->symbols.put((yyvsp[(6) - (8)].sValue), se_sv(pp->setvars.size())),
+          "Duplicate symbol");
         if (print) {
           pp->output(std::string((yyvsp[(6) - (8)].sValue)), new AST::SetVar(pp->setvars.size()));
         }
@@ -2104,7 +2125,7 @@ yyreduce:
               new SetVarSpec(Alias(arg->getSetVar()),introduced)));
             delete arg;
           } else {
-            yyassert(pp, false, "Invalid var set initializer.");
+            yyassert(pp, false, "Invalid var set initializer");
             delete arg;
           }
           if (!pp->hadError)
@@ -2120,17 +2141,17 @@ yyreduce:
   case 37:
 
 /* Line 1464 of yacc.c  */
-#line 597 "gecode/flatzinc/parser.yxx"
+#line 618 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !(yyvsp[(1) - (6)].oSet)() || !(yyvsp[(1) - (6)].oSet).some()->empty(), "Empty int domain.");
-        yyassert(pp, (yyvsp[(6) - (6)].arg)->isInt(), "Invalid int initializer.");
+        yyassert(pp, !(yyvsp[(1) - (6)].oSet)() || !(yyvsp[(1) - (6)].oSet).some()->empty(), "Empty int domain");
+        yyassert(pp, (yyvsp[(6) - (6)].arg)->isInt(), "Invalid int initializer");
         int i = -1;
         bool isInt = (yyvsp[(6) - (6)].arg)->isInt(i);
         if ((yyvsp[(1) - (6)].oSet)() && isInt) {
           AST::SetLit* sl = (yyvsp[(1) - (6)].oSet).some();
           if (sl->interval) {
-            yyassert(pp, i >= sl->min && i <= sl->max, "Empty int domain.");
+            yyassert(pp, i >= sl->min && i <= sl->max, "Empty int domain");
           } else {
             bool found = false;
             for (unsigned int j=0; j<sl->s.size(); j++)
@@ -2138,10 +2159,12 @@ yyreduce:
                 found = true;
                 break;
               }
-            yyassert(pp, found, "Empty int domain.");
+            yyassert(pp, found, "Empty int domain");
           }
         }
-        pp->intvals.put((yyvsp[(3) - (6)].sValue), i);
+        yyassert(pp,
+          pp->symbols.put((yyvsp[(3) - (6)].sValue), se_i(i)),
+          "Duplicate symbol");
         delete (yyvsp[(4) - (6)].argVec); free((yyvsp[(3) - (6)].sValue));        
       ;}
     break;
@@ -2149,12 +2172,14 @@ yyreduce:
   case 38:
 
 /* Line 1464 of yacc.c  */
-#line 621 "gecode/flatzinc/parser.yxx"
+#line 644 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[(6) - (6)].arg)->isBool(), "Invalid bool initializer.");
+        yyassert(pp, (yyvsp[(6) - (6)].arg)->isBool(), "Invalid bool initializer");
         if ((yyvsp[(6) - (6)].arg)->isBool()) {
-          pp->boolvals.put((yyvsp[(3) - (6)].sValue), (yyvsp[(6) - (6)].arg)->getBool());
+          yyassert(pp,
+            pp->symbols.put((yyvsp[(3) - (6)].sValue), se_b((yyvsp[(6) - (6)].arg)->getBool())),
+            "Duplicate symbol");
         }
         delete (yyvsp[(4) - (6)].argVec); free((yyvsp[(3) - (6)].sValue));        
       ;}
@@ -2163,15 +2188,16 @@ yyreduce:
   case 39:
 
 /* Line 1464 of yacc.c  */
-#line 630 "gecode/flatzinc/parser.yxx"
+#line 655 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !(yyvsp[(3) - (8)].oSet)() || !(yyvsp[(3) - (8)].oSet).some()->empty(), "Empty set domain.");
-        yyassert(pp, (yyvsp[(8) - (8)].arg)->isSet(), "Invalid set initializer.");
-        AST::SetLit* set = NULL;
-        if ((yyvsp[(8) - (8)].arg)->isSet())
-          set = (yyvsp[(8) - (8)].arg)->getSet();
-        pp->setvals.put((yyvsp[(5) - (8)].sValue), *set);
+        yyassert(pp, !(yyvsp[(3) - (8)].oSet)() || !(yyvsp[(3) - (8)].oSet).some()->empty(), "Empty set domain");
+        yyassert(pp, (yyvsp[(8) - (8)].arg)->isSet(), "Invalid set initializer");
+        AST::SetLit* set = (yyvsp[(8) - (8)].arg)->getSet();
+        pp->setvals.push_back(*set);
+        yyassert(pp,
+          pp->symbols.put((yyvsp[(5) - (8)].sValue), se_s(pp->setvals.size()-1)),
+          "Duplicate symbol");
         delete set;
         delete (yyvsp[(6) - (8)].argVec); free((yyvsp[(5) - (8)].sValue));        
       ;}
@@ -2180,7 +2206,7 @@ yyreduce:
   case 40:
 
 /* Line 1464 of yacc.c  */
-#line 643 "gecode/flatzinc/parser.yxx"
+#line 669 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[(3) - (13)].iValue)==1, "Arrays must start at 1");
@@ -2188,7 +2214,7 @@ yyreduce:
           bool print = (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
           vector<int> vars((yyvsp[(5) - (13)].iValue));
           yyassert(pp, !(yyvsp[(9) - (13)].oSet)() || !(yyvsp[(9) - (13)].oSet).some()->empty(),
-                   "Empty var int domain.");
+                   "Empty var int domain");
           if (!pp->hadError) {
             if ((yyvsp[(13) - (13)].oVarSpecVec)()) {
               vector<VarSpec*>* vsv = (yyvsp[(13) - (13)].oVarSpecVec).some();
@@ -2234,7 +2260,13 @@ yyreduce:
             a->a.push_back(new AST::String(")"));
             pp->output(std::string((yyvsp[(11) - (13)].sValue)), a);
           }
-          pp->intvararrays.put((yyvsp[(11) - (13)].sValue), vars);
+          int iva = pp->arrays.size();
+          pp->arrays.push_back(vars.size());
+          for (unsigned int i=0; i<vars.size(); i++)
+            pp->arrays.push_back(vars[i]);
+          yyassert(pp,
+            pp->symbols.put((yyvsp[(11) - (13)].sValue), se_iva(iva)),
+            "Duplicate symbol");
         }
         delete (yyvsp[(12) - (13)].argVec); free((yyvsp[(11) - (13)].sValue));
       ;}
@@ -2243,7 +2275,7 @@ yyreduce:
   case 41:
 
 /* Line 1464 of yacc.c  */
-#line 702 "gecode/flatzinc/parser.yxx"
+#line 734 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
@@ -2290,7 +2322,13 @@ yyreduce:
             a->a.push_back(new AST::String(")"));
             pp->output(std::string((yyvsp[(11) - (13)].sValue)), a);
           }
-          pp->boolvararrays.put((yyvsp[(11) - (13)].sValue), vars);
+          int bva = pp->arrays.size();
+          pp->arrays.push_back(vars.size());
+          for (unsigned int i=0; i<vars.size(); i++)
+            pp->arrays.push_back(vars[i]);
+          yyassert(pp,
+            pp->symbols.put((yyvsp[(11) - (13)].sValue), se_bva(bva)),
+            "Duplicate symbol");
         }
         delete (yyvsp[(12) - (13)].argVec); free((yyvsp[(11) - (13)].sValue));
       ;}
@@ -2299,10 +2337,10 @@ yyreduce:
   case 42:
 
 /* Line 1464 of yacc.c  */
-#line 754 "gecode/flatzinc/parser.yxx"
+#line 792 "gecode/flatzinc/parser.yxx"
     { 
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported.");
+        yyassert(pp, false, "Floats not supported");
         delete (yyvsp[(12) - (13)].argVec); free((yyvsp[(11) - (13)].sValue));
       ;}
     break;
@@ -2310,7 +2348,7 @@ yyreduce:
   case 43:
 
 /* Line 1464 of yacc.c  */
-#line 761 "gecode/flatzinc/parser.yxx"
+#line 799 "gecode/flatzinc/parser.yxx"
     { 
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = (yyvsp[(14) - (15)].argVec)->hasCall("output_array");
@@ -2360,7 +2398,13 @@ yyreduce:
             a->a.push_back(new AST::String(")"));
             pp->output(std::string((yyvsp[(13) - (15)].sValue)), a);
           }
-          pp->setvararrays.put((yyvsp[(13) - (15)].sValue), vars);
+          int sva = pp->arrays.size();
+          pp->arrays.push_back(vars.size());
+          for (unsigned int i=0; i<vars.size(); i++)
+            pp->arrays.push_back(vars[i]);
+          yyassert(pp,
+            pp->symbols.put((yyvsp[(13) - (15)].sValue), se_sva(sva)),
+            "Duplicate symbol");
         }
         delete (yyvsp[(14) - (15)].argVec); free((yyvsp[(13) - (15)].sValue));
       ;}
@@ -2369,14 +2413,22 @@ yyreduce:
   case 44:
 
 /* Line 1464 of yacc.c  */
-#line 816 "gecode/flatzinc/parser.yxx"
+#line 860 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[(3) - (15)].iValue)==1, "Arrays must start at 1");
         yyassert(pp, (yyvsp[(14) - (15)].setValue)->size() == static_cast<unsigned int>((yyvsp[(5) - (15)].iValue)),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError)
-          pp->intvalarrays.put((yyvsp[(10) - (15)].sValue), *(yyvsp[(14) - (15)].setValue));
+
+        if (!pp->hadError) {
+          int ia = pp->arrays.size();
+          pp->arrays.push_back((yyvsp[(14) - (15)].setValue)->size());
+          for (unsigned int i=0; i<(yyvsp[(14) - (15)].setValue)->size(); i++)
+            pp->arrays.push_back((*(yyvsp[(14) - (15)].setValue))[i]);
+          yyassert(pp,
+            pp->symbols.put((yyvsp[(10) - (15)].sValue), se_ia(ia)),
+            "Duplicate symbol");
+        }
         delete (yyvsp[(14) - (15)].setValue);
         free((yyvsp[(10) - (15)].sValue));
         delete (yyvsp[(11) - (15)].argVec);
@@ -2386,14 +2438,21 @@ yyreduce:
   case 45:
 
 /* Line 1464 of yacc.c  */
-#line 829 "gecode/flatzinc/parser.yxx"
+#line 881 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[(3) - (15)].iValue)==1, "Arrays must start at 1");
         yyassert(pp, (yyvsp[(14) - (15)].setValue)->size() == static_cast<unsigned int>((yyvsp[(5) - (15)].iValue)),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError)
-          pp->boolvalarrays.put((yyvsp[(10) - (15)].sValue), *(yyvsp[(14) - (15)].setValue));
+        if (!pp->hadError) {
+          int ia = pp->arrays.size();
+          pp->arrays.push_back((yyvsp[(14) - (15)].setValue)->size());
+          for (unsigned int i=0; i<(yyvsp[(14) - (15)].setValue)->size(); i++)
+            pp->arrays.push_back((*(yyvsp[(14) - (15)].setValue))[i]);
+          yyassert(pp,
+            pp->symbols.put((yyvsp[(10) - (15)].sValue), se_ba(ia)),
+            "Duplicate symbol");
+        }
         delete (yyvsp[(14) - (15)].setValue);
         free((yyvsp[(10) - (15)].sValue));
         delete (yyvsp[(11) - (15)].argVec);
@@ -2403,10 +2462,10 @@ yyreduce:
   case 46:
 
 /* Line 1464 of yacc.c  */
-#line 842 "gecode/flatzinc/parser.yxx"
+#line 901 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported.");
+        yyassert(pp, false, "Floats not supported");
         delete (yyvsp[(11) - (15)].argVec); free((yyvsp[(10) - (15)].sValue));
       ;}
     break;
@@ -2414,14 +2473,23 @@ yyreduce:
   case 47:
 
 /* Line 1464 of yacc.c  */
-#line 849 "gecode/flatzinc/parser.yxx"
+#line 908 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[(3) - (17)].iValue)==1, "Arrays must start at 1");
         yyassert(pp, (yyvsp[(16) - (17)].setValueList)->size() == static_cast<unsigned int>((yyvsp[(5) - (17)].iValue)),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError)
-          pp->setvalarrays.put((yyvsp[(12) - (17)].sValue), *(yyvsp[(16) - (17)].setValueList));
+        if (!pp->hadError) {
+          int sa = pp->arrays.size();
+          pp->arrays.push_back((yyvsp[(16) - (17)].setValueList)->size());
+          pp->arrays.push_back(pp->setvals.size());
+          for (unsigned int i=0; i<(yyvsp[(16) - (17)].setValueList)->size(); i++)
+            pp->setvals.push_back((*(yyvsp[(16) - (17)].setValueList))[i]);
+          yyassert(pp,
+            pp->symbols.put((yyvsp[(12) - (17)].sValue), se_sa(sa)),
+            "Duplicate symbol");
+        }
+
         delete (yyvsp[(16) - (17)].setValueList);
         delete (yyvsp[(13) - (17)].argVec); free((yyvsp[(12) - (17)].sValue));
       ;}
@@ -2430,7 +2498,7 @@ yyreduce:
   case 48:
 
 /* Line 1464 of yacc.c  */
-#line 862 "gecode/flatzinc/parser.yxx"
+#line 930 "gecode/flatzinc/parser.yxx"
     { 
         (yyval.varSpec) = new IntVarSpec((yyvsp[(1) - (1)].iValue),false);
       ;}
@@ -2439,12 +2507,12 @@ yyreduce:
   case 49:
 
 /* Line 1464 of yacc.c  */
-#line 866 "gecode/flatzinc/parser.yxx"
+#line 934 "gecode/flatzinc/parser.yxx"
     { 
-        int v = 0;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvarTable.get((yyvsp[(1) - (1)].sValue), v))
-          (yyval.varSpec) = new IntVarSpec(Alias(v),false);
+        if (pp->symbols.get((yyvsp[(1) - (1)].sValue), e) && e.t == ST_INTVAR)
+          (yyval.varSpec) = new IntVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << (yyvsp[(1) - (1)].sValue)
                   << " in line no. "
@@ -2459,16 +2527,16 @@ yyreduce:
   case 50:
 
 /* Line 1464 of yacc.c  */
-#line 881 "gecode/flatzinc/parser.yxx"
+#line 949 "gecode/flatzinc/parser.yxx"
     { 
         vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvararrays.get((yyvsp[(1) - (4)].sValue), v)) {
-          yyassert(pp,static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) > 0 && 
-                      static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) <= v.size(),
+        if (pp->symbols.get((yyvsp[(1) - (4)].sValue), e) && e.t == ST_INTVARARRAY) {
+          yyassert(pp,(yyvsp[(3) - (4)].iValue) > 0 && (yyvsp[(3) - (4)].iValue) <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            (yyval.varSpec) = new IntVarSpec(Alias(v[(yyvsp[(3) - (4)].iValue)-1]),false);
+            (yyval.varSpec) = new IntVarSpec(Alias(pp->arrays[e.i+(yyvsp[(3) - (4)].iValue)]),false);
           else
             (yyval.varSpec) = new IntVarSpec(0,false); // keep things consistent
         } else {
@@ -2485,54 +2553,54 @@ yyreduce:
   case 51:
 
 /* Line 1464 of yacc.c  */
-#line 904 "gecode/flatzinc/parser.yxx"
+#line 972 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(0); ;}
     break;
 
   case 52:
 
 /* Line 1464 of yacc.c  */
-#line 906 "gecode/flatzinc/parser.yxx"
+#line 974 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (2)].varSpecVec); ;}
     break;
 
   case 53:
 
 /* Line 1464 of yacc.c  */
-#line 910 "gecode/flatzinc/parser.yxx"
+#line 978 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[(1) - (1)].varSpec); ;}
     break;
 
   case 54:
 
 /* Line 1464 of yacc.c  */
-#line 912 "gecode/flatzinc/parser.yxx"
+#line 980 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (3)].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[(3) - (3)].varSpec)); ;}
     break;
 
   case 57:
 
 /* Line 1464 of yacc.c  */
-#line 917 "gecode/flatzinc/parser.yxx"
+#line 985 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(2) - (3)].varSpecVec); ;}
     break;
 
   case 58:
 
 /* Line 1464 of yacc.c  */
-#line 921 "gecode/flatzinc/parser.yxx"
+#line 989 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpec) = new FloatVarSpec((yyvsp[(1) - (1)].dValue),false); ;}
     break;
 
   case 59:
 
 /* Line 1464 of yacc.c  */
-#line 923 "gecode/flatzinc/parser.yxx"
+#line 991 "gecode/flatzinc/parser.yxx"
     { 
-        int v = 0;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->floatvarTable.get((yyvsp[(1) - (1)].sValue), v))
-          (yyval.varSpec) = new FloatVarSpec(Alias(v),false);
+        if (pp->symbols.get((yyvsp[(1) - (1)].sValue), e) && e.t == ST_FLOATVAR)
+          (yyval.varSpec) = new FloatVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << (yyvsp[(1) - (1)].sValue)
                   << " in line no. "
@@ -2547,16 +2615,15 @@ yyreduce:
   case 60:
 
 /* Line 1464 of yacc.c  */
-#line 938 "gecode/flatzinc/parser.yxx"
+#line 1006 "gecode/flatzinc/parser.yxx"
     { 
-        vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->floatvararrays.get((yyvsp[(1) - (4)].sValue), v)) {
-          yyassert(pp,static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) > 0 && 
-                      static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) <= v.size(),
+        if (pp->symbols.get((yyvsp[(1) - (4)].sValue), e) && e.t == ST_FLOATVARARRAY) {
+          yyassert(pp,(yyvsp[(3) - (4)].iValue) > 0 && (yyvsp[(3) - (4)].iValue) <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            (yyval.varSpec) = new FloatVarSpec(Alias(v[(yyvsp[(3) - (4)].iValue)-1]),false);
+            (yyval.varSpec) = new FloatVarSpec(Alias(pp->arrays[e.i+(yyvsp[(3) - (4)].iValue)]),false);
           else
             (yyval.varSpec) = new FloatVarSpec(0.0,false);
         } else {
@@ -2573,54 +2640,54 @@ yyreduce:
   case 61:
 
 /* Line 1464 of yacc.c  */
-#line 961 "gecode/flatzinc/parser.yxx"
+#line 1028 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(0); ;}
     break;
 
   case 62:
 
 /* Line 1464 of yacc.c  */
-#line 963 "gecode/flatzinc/parser.yxx"
+#line 1030 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (2)].varSpecVec); ;}
     break;
 
   case 63:
 
 /* Line 1464 of yacc.c  */
-#line 967 "gecode/flatzinc/parser.yxx"
+#line 1034 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[(1) - (1)].varSpec); ;}
     break;
 
   case 64:
 
 /* Line 1464 of yacc.c  */
-#line 969 "gecode/flatzinc/parser.yxx"
+#line 1036 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (3)].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[(3) - (3)].varSpec)); ;}
     break;
 
   case 65:
 
 /* Line 1464 of yacc.c  */
-#line 973 "gecode/flatzinc/parser.yxx"
+#line 1040 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(2) - (3)].varSpecVec); ;}
     break;
 
   case 66:
 
 /* Line 1464 of yacc.c  */
-#line 977 "gecode/flatzinc/parser.yxx"
+#line 1044 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpec) = new BoolVarSpec((yyvsp[(1) - (1)].iValue),false); ;}
     break;
 
   case 67:
 
 /* Line 1464 of yacc.c  */
-#line 979 "gecode/flatzinc/parser.yxx"
+#line 1046 "gecode/flatzinc/parser.yxx"
     { 
-        int v = 0;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->boolvarTable.get((yyvsp[(1) - (1)].sValue), v))
-          (yyval.varSpec) = new BoolVarSpec(Alias(v),false);
+        if (pp->symbols.get((yyvsp[(1) - (1)].sValue), e) && e.t == ST_BOOLVAR)
+          (yyval.varSpec) = new BoolVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << (yyvsp[(1) - (1)].sValue)
                   << " in line no. "
@@ -2635,16 +2702,15 @@ yyreduce:
   case 68:
 
 /* Line 1464 of yacc.c  */
-#line 994 "gecode/flatzinc/parser.yxx"
+#line 1061 "gecode/flatzinc/parser.yxx"
     { 
-        vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->boolvararrays.get((yyvsp[(1) - (4)].sValue), v)) {
-          yyassert(pp,static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) > 0 && 
-                      static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) <= v.size(),
+        if (pp->symbols.get((yyvsp[(1) - (4)].sValue), e) && e.t == ST_BOOLVARARRAY) {
+          yyassert(pp,(yyvsp[(3) - (4)].iValue) > 0 && (yyvsp[(3) - (4)].iValue) <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            (yyval.varSpec) = new BoolVarSpec(Alias(v[(yyvsp[(3) - (4)].iValue)-1]),false);
+            (yyval.varSpec) = new BoolVarSpec(Alias(pp->arrays[e.i+(yyvsp[(3) - (4)].iValue)]),false);
           else
             (yyval.varSpec) = new BoolVarSpec(false,false);
         } else {
@@ -2661,54 +2727,54 @@ yyreduce:
   case 69:
 
 /* Line 1464 of yacc.c  */
-#line 1017 "gecode/flatzinc/parser.yxx"
+#line 1083 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(0); ;}
     break;
 
   case 70:
 
 /* Line 1464 of yacc.c  */
-#line 1019 "gecode/flatzinc/parser.yxx"
+#line 1085 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (2)].varSpecVec); ;}
     break;
 
   case 71:
 
 /* Line 1464 of yacc.c  */
-#line 1023 "gecode/flatzinc/parser.yxx"
+#line 1089 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[(1) - (1)].varSpec); ;}
     break;
 
   case 72:
 
 /* Line 1464 of yacc.c  */
-#line 1025 "gecode/flatzinc/parser.yxx"
+#line 1091 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (3)].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[(3) - (3)].varSpec)); ;}
     break;
 
   case 73:
 
 /* Line 1464 of yacc.c  */
-#line 1027 "gecode/flatzinc/parser.yxx"
+#line 1093 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(2) - (3)].varSpecVec); ;}
     break;
 
   case 74:
 
 /* Line 1464 of yacc.c  */
-#line 1031 "gecode/flatzinc/parser.yxx"
+#line 1097 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpec) = new SetVarSpec(Option<AST::SetLit*>::some((yyvsp[(1) - (1)].setLit)),false); ;}
     break;
 
   case 75:
 
 /* Line 1464 of yacc.c  */
-#line 1033 "gecode/flatzinc/parser.yxx"
+#line 1099 "gecode/flatzinc/parser.yxx"
     { 
         ParserState* pp = static_cast<ParserState*>(parm);
-        int v = 0;
-        if (pp->setvarTable.get((yyvsp[(1) - (1)].sValue), v))
-          (yyval.varSpec) = new SetVarSpec(Alias(v),false);
+        SymbolEntry e;
+        if (pp->symbols.get((yyvsp[(1) - (1)].sValue), e) && e.t == ST_SETVAR)
+          (yyval.varSpec) = new SetVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << (yyvsp[(1) - (1)].sValue)
                   << " in line no. "
@@ -2723,16 +2789,15 @@ yyreduce:
   case 76:
 
 /* Line 1464 of yacc.c  */
-#line 1048 "gecode/flatzinc/parser.yxx"
+#line 1114 "gecode/flatzinc/parser.yxx"
     { 
-        vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->setvararrays.get((yyvsp[(1) - (4)].sValue), v)) {
-          yyassert(pp,static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) > 0 && 
-                      static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) <= v.size(),
+        if (pp->symbols.get((yyvsp[(1) - (4)].sValue), e) && e.t == ST_SETVARARRAY) {
+          yyassert(pp,(yyvsp[(3) - (4)].iValue) > 0 && (yyvsp[(3) - (4)].iValue) <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            (yyval.varSpec) = new SetVarSpec(Alias(v[(yyvsp[(3) - (4)].iValue)-1]),false);
+            (yyval.varSpec) = new SetVarSpec(Alias(pp->arrays[e.i+(yyvsp[(3) - (4)].iValue)]),false);
           else
             (yyval.varSpec) = new SetVarSpec(Alias(0),false);
         } else {
@@ -2749,102 +2814,102 @@ yyreduce:
   case 77:
 
 /* Line 1464 of yacc.c  */
-#line 1071 "gecode/flatzinc/parser.yxx"
+#line 1136 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(0); ;}
     break;
 
   case 78:
 
 /* Line 1464 of yacc.c  */
-#line 1073 "gecode/flatzinc/parser.yxx"
+#line 1138 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (2)].varSpecVec); ;}
     break;
 
   case 79:
 
 /* Line 1464 of yacc.c  */
-#line 1077 "gecode/flatzinc/parser.yxx"
+#line 1142 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[(1) - (1)].varSpec); ;}
     break;
 
   case 80:
 
 /* Line 1464 of yacc.c  */
-#line 1079 "gecode/flatzinc/parser.yxx"
+#line 1144 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(1) - (3)].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[(3) - (3)].varSpec)); ;}
     break;
 
   case 81:
 
 /* Line 1464 of yacc.c  */
-#line 1082 "gecode/flatzinc/parser.yxx"
+#line 1147 "gecode/flatzinc/parser.yxx"
     { (yyval.varSpecVec) = (yyvsp[(2) - (3)].varSpecVec); ;}
     break;
 
   case 82:
 
 /* Line 1464 of yacc.c  */
-#line 1086 "gecode/flatzinc/parser.yxx"
+#line 1151 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); ;}
     break;
 
   case 83:
 
 /* Line 1464 of yacc.c  */
-#line 1088 "gecode/flatzinc/parser.yxx"
+#line 1153 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[(2) - (2)].varSpecVec)); ;}
     break;
 
   case 84:
 
 /* Line 1464 of yacc.c  */
-#line 1092 "gecode/flatzinc/parser.yxx"
+#line 1157 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); ;}
     break;
 
   case 85:
 
 /* Line 1464 of yacc.c  */
-#line 1094 "gecode/flatzinc/parser.yxx"
+#line 1159 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[(2) - (2)].varSpecVec)); ;}
     break;
 
   case 86:
 
 /* Line 1464 of yacc.c  */
-#line 1098 "gecode/flatzinc/parser.yxx"
+#line 1163 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); ;}
     break;
 
   case 87:
 
 /* Line 1464 of yacc.c  */
-#line 1100 "gecode/flatzinc/parser.yxx"
+#line 1165 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[(2) - (2)].varSpecVec)); ;}
     break;
 
   case 88:
 
 /* Line 1464 of yacc.c  */
-#line 1104 "gecode/flatzinc/parser.yxx"
+#line 1169 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); ;}
     break;
 
   case 89:
 
 /* Line 1464 of yacc.c  */
-#line 1106 "gecode/flatzinc/parser.yxx"
+#line 1171 "gecode/flatzinc/parser.yxx"
     { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[(2) - (2)].varSpecVec)); ;}
     break;
 
   case 90:
 
 /* Line 1464 of yacc.c  */
-#line 1110 "gecode/flatzinc/parser.yxx"
+#line 1175 "gecode/flatzinc/parser.yxx"
     { 
-        ConExpr c((yyvsp[(2) - (6)].sValue), (yyvsp[(4) - (6)].argVec));
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
+          ConExpr c((yyvsp[(2) - (6)].sValue), (yyvsp[(4) - (6)].argVec));
           try {
             pp->fg->postConstraint(c, (yyvsp[(6) - (6)].argVec));
           } catch (Gecode::FlatZinc::Error& e) {
@@ -2858,7 +2923,7 @@ yyreduce:
   case 91:
 
 /* Line 1464 of yacc.c  */
-#line 1124 "gecode/flatzinc/parser.yxx"
+#line 1189 "gecode/flatzinc/parser.yxx"
     { 
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
@@ -2876,7 +2941,7 @@ yyreduce:
   case 92:
 
 /* Line 1464 of yacc.c  */
-#line 1137 "gecode/flatzinc/parser.yxx"
+#line 1202 "gecode/flatzinc/parser.yxx"
     { 
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
@@ -2897,21 +2962,21 @@ yyreduce:
   case 93:
 
 /* Line 1464 of yacc.c  */
-#line 1159 "gecode/flatzinc/parser.yxx"
+#line 1224 "gecode/flatzinc/parser.yxx"
     { (yyval.oSet) = Option<AST::SetLit* >::none(); ;}
     break;
 
   case 94:
 
 /* Line 1464 of yacc.c  */
-#line 1161 "gecode/flatzinc/parser.yxx"
+#line 1226 "gecode/flatzinc/parser.yxx"
     { (yyval.oSet) = Option<AST::SetLit* >::some(new AST::SetLit(*(yyvsp[(2) - (3)].setValue))); ;}
     break;
 
   case 95:
 
 /* Line 1464 of yacc.c  */
-#line 1163 "gecode/flatzinc/parser.yxx"
+#line 1228 "gecode/flatzinc/parser.yxx"
     { 
         (yyval.oSet) = Option<AST::SetLit* >::some(new AST::SetLit((yyvsp[(1) - (3)].iValue), (yyvsp[(3) - (3)].iValue)));
       ;}
@@ -2920,14 +2985,14 @@ yyreduce:
   case 96:
 
 /* Line 1464 of yacc.c  */
-#line 1169 "gecode/flatzinc/parser.yxx"
+#line 1234 "gecode/flatzinc/parser.yxx"
     { (yyval.oSet) = Option<AST::SetLit* >::none(); ;}
     break;
 
   case 97:
 
 /* Line 1464 of yacc.c  */
-#line 1171 "gecode/flatzinc/parser.yxx"
+#line 1236 "gecode/flatzinc/parser.yxx"
     { bool haveTrue = false;
         bool haveFalse = false;
         for (int i=(yyvsp[(2) - (4)].setValue)->size(); i--;) {
@@ -2943,246 +3008,267 @@ yyreduce:
   case 100:
 
 /* Line 1464 of yacc.c  */
-#line 1192 "gecode/flatzinc/parser.yxx"
+#line 1257 "gecode/flatzinc/parser.yxx"
     { (yyval.setLit) = new AST::SetLit(*(yyvsp[(2) - (3)].setValue)); ;}
     break;
 
   case 101:
 
 /* Line 1464 of yacc.c  */
-#line 1194 "gecode/flatzinc/parser.yxx"
+#line 1259 "gecode/flatzinc/parser.yxx"
     { (yyval.setLit) = new AST::SetLit((yyvsp[(1) - (3)].iValue), (yyvsp[(3) - (3)].iValue)); ;}
     break;
 
   case 102:
 
 /* Line 1464 of yacc.c  */
-#line 1200 "gecode/flatzinc/parser.yxx"
+#line 1265 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = new vector<int>(0); ;}
     break;
 
   case 103:
 
 /* Line 1464 of yacc.c  */
-#line 1202 "gecode/flatzinc/parser.yxx"
+#line 1267 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = (yyvsp[(1) - (2)].setValue); ;}
     break;
 
   case 104:
 
 /* Line 1464 of yacc.c  */
-#line 1206 "gecode/flatzinc/parser.yxx"
+#line 1271 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = new vector<int>(1); (*(yyval.setValue))[0] = (yyvsp[(1) - (1)].iValue); ;}
     break;
 
   case 105:
 
 /* Line 1464 of yacc.c  */
-#line 1208 "gecode/flatzinc/parser.yxx"
+#line 1273 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = (yyvsp[(1) - (3)].setValue); (yyval.setValue)->push_back((yyvsp[(3) - (3)].iValue)); ;}
     break;
 
   case 106:
 
 /* Line 1464 of yacc.c  */
-#line 1212 "gecode/flatzinc/parser.yxx"
+#line 1277 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = new vector<int>(0); ;}
     break;
 
   case 107:
 
 /* Line 1464 of yacc.c  */
-#line 1214 "gecode/flatzinc/parser.yxx"
+#line 1279 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = (yyvsp[(1) - (2)].setValue); ;}
     break;
 
   case 108:
 
 /* Line 1464 of yacc.c  */
-#line 1218 "gecode/flatzinc/parser.yxx"
+#line 1283 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = new vector<int>(1); (*(yyval.setValue))[0] = (yyvsp[(1) - (1)].iValue); ;}
     break;
 
   case 109:
 
 /* Line 1464 of yacc.c  */
-#line 1220 "gecode/flatzinc/parser.yxx"
+#line 1285 "gecode/flatzinc/parser.yxx"
     { (yyval.setValue) = (yyvsp[(1) - (3)].setValue); (yyval.setValue)->push_back((yyvsp[(3) - (3)].iValue)); ;}
     break;
 
   case 110:
 
 /* Line 1464 of yacc.c  */
-#line 1224 "gecode/flatzinc/parser.yxx"
+#line 1289 "gecode/flatzinc/parser.yxx"
     { (yyval.floatSetValue) = new vector<double>(0); ;}
     break;
 
   case 111:
 
 /* Line 1464 of yacc.c  */
-#line 1226 "gecode/flatzinc/parser.yxx"
+#line 1291 "gecode/flatzinc/parser.yxx"
     { (yyval.floatSetValue) = (yyvsp[(1) - (2)].floatSetValue); ;}
     break;
 
   case 112:
 
 /* Line 1464 of yacc.c  */
-#line 1230 "gecode/flatzinc/parser.yxx"
+#line 1295 "gecode/flatzinc/parser.yxx"
     { (yyval.floatSetValue) = new vector<double>(1); (*(yyval.floatSetValue))[0] = (yyvsp[(1) - (1)].dValue); ;}
     break;
 
   case 113:
 
 /* Line 1464 of yacc.c  */
-#line 1232 "gecode/flatzinc/parser.yxx"
+#line 1297 "gecode/flatzinc/parser.yxx"
     { (yyval.floatSetValue) = (yyvsp[(1) - (3)].floatSetValue); (yyval.floatSetValue)->push_back((yyvsp[(3) - (3)].dValue)); ;}
     break;
 
   case 114:
 
 /* Line 1464 of yacc.c  */
-#line 1236 "gecode/flatzinc/parser.yxx"
+#line 1301 "gecode/flatzinc/parser.yxx"
     { (yyval.setValueList) = new vector<AST::SetLit>(0); ;}
     break;
 
   case 115:
 
 /* Line 1464 of yacc.c  */
-#line 1238 "gecode/flatzinc/parser.yxx"
+#line 1303 "gecode/flatzinc/parser.yxx"
     { (yyval.setValueList) = (yyvsp[(1) - (2)].setValueList); ;}
     break;
 
   case 116:
 
 /* Line 1464 of yacc.c  */
-#line 1242 "gecode/flatzinc/parser.yxx"
+#line 1307 "gecode/flatzinc/parser.yxx"
     { (yyval.setValueList) = new vector<AST::SetLit>(1); (*(yyval.setValueList))[0] = *(yyvsp[(1) - (1)].setLit); delete (yyvsp[(1) - (1)].setLit); ;}
     break;
 
   case 117:
 
 /* Line 1464 of yacc.c  */
-#line 1244 "gecode/flatzinc/parser.yxx"
+#line 1309 "gecode/flatzinc/parser.yxx"
     { (yyval.setValueList) = (yyvsp[(1) - (3)].setValueList); (yyval.setValueList)->push_back(*(yyvsp[(3) - (3)].setLit)); delete (yyvsp[(3) - (3)].setLit); ;}
     break;
 
   case 118:
 
 /* Line 1464 of yacc.c  */
-#line 1252 "gecode/flatzinc/parser.yxx"
+#line 1317 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = new AST::Array((yyvsp[(1) - (1)].arg)); ;}
     break;
 
   case 119:
 
 /* Line 1464 of yacc.c  */
-#line 1254 "gecode/flatzinc/parser.yxx"
+#line 1319 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = (yyvsp[(1) - (3)].argVec); (yyval.argVec)->append((yyvsp[(3) - (3)].arg)); ;}
     break;
 
   case 120:
 
 /* Line 1464 of yacc.c  */
-#line 1258 "gecode/flatzinc/parser.yxx"
+#line 1323 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(1) - (1)].arg); ;}
     break;
 
   case 121:
 
 /* Line 1464 of yacc.c  */
-#line 1260 "gecode/flatzinc/parser.yxx"
+#line 1325 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(2) - (3)].argVec); ;}
     break;
 
   case 122:
 
 /* Line 1464 of yacc.c  */
-#line 1264 "gecode/flatzinc/parser.yxx"
+#line 1329 "gecode/flatzinc/parser.yxx"
     { (yyval.oArg) = Option<AST::Node*>::none(); ;}
     break;
 
   case 123:
 
 /* Line 1464 of yacc.c  */
-#line 1266 "gecode/flatzinc/parser.yxx"
+#line 1331 "gecode/flatzinc/parser.yxx"
     { (yyval.oArg) = Option<AST::Node*>::some((yyvsp[(2) - (2)].arg)); ;}
     break;
 
   case 124:
 
 /* Line 1464 of yacc.c  */
-#line 1270 "gecode/flatzinc/parser.yxx"
+#line 1335 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = new AST::BoolLit((yyvsp[(1) - (1)].iValue)); ;}
     break;
 
   case 125:
 
 /* Line 1464 of yacc.c  */
-#line 1272 "gecode/flatzinc/parser.yxx"
+#line 1337 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = new AST::IntLit((yyvsp[(1) - (1)].iValue)); ;}
     break;
 
   case 126:
 
 /* Line 1464 of yacc.c  */
-#line 1274 "gecode/flatzinc/parser.yxx"
+#line 1339 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = new AST::FloatLit((yyvsp[(1) - (1)].dValue)); ;}
     break;
 
   case 127:
 
 /* Line 1464 of yacc.c  */
-#line 1276 "gecode/flatzinc/parser.yxx"
+#line 1341 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(1) - (1)].setLit); ;}
     break;
 
   case 128:
 
 /* Line 1464 of yacc.c  */
-#line 1278 "gecode/flatzinc/parser.yxx"
+#line 1343 "gecode/flatzinc/parser.yxx"
     { 
-        vector<int> as;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvararrays.get((yyvsp[(1) - (1)].sValue), as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::IntVar(as[i]);
-          (yyval.arg) = ia;
-        } else if (pp->boolvararrays.get((yyvsp[(1) - (1)].sValue), as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::BoolVar(as[i]);
-          (yyval.arg) = ia;
-        } else if (pp->setvararrays.get((yyvsp[(1) - (1)].sValue), as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::SetVar(as[i]);
-          (yyval.arg) = ia;
-        } else {
-          std::vector<int> is;
-          std::vector<AST::SetLit> isS;
-          int ival = 0;
-          bool bval = false;
-          if (pp->intvalarrays.get((yyvsp[(1) - (1)].sValue), is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::IntLit(is[i]);
-            (yyval.arg) = v;
-          } else if (pp->boolvalarrays.get((yyvsp[(1) - (1)].sValue), is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::BoolLit(is[i]);
-            (yyval.arg) = v;
-          } else if (pp->setvalarrays.get((yyvsp[(1) - (1)].sValue), isS)) {
-            AST::Array *v = new AST::Array(isS.size());
-            for (int i=isS.size(); i--;)
-              v->a[i] = new AST::SetLit(isS[i]);
-            (yyval.arg) = v;            
-          } else if (pp->intvals.get((yyvsp[(1) - (1)].sValue), ival)) {
-            (yyval.arg) = new AST::IntLit(ival);
-          } else if (pp->boolvals.get((yyvsp[(1) - (1)].sValue), bval)) {
-            (yyval.arg) = new AST::BoolLit(bval);
-          } else {
+        SymbolEntry e;
+        if (pp->symbols.get((yyvsp[(1) - (1)].sValue), e)) {
+          switch (e.t) {
+          case ST_INTVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntVar(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_BOOLVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolVar(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_SETVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetVar(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_INTVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntLit(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_BOOLVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolLit(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_SETVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              int idx = pp->arrays[e.i+1];
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_INT:
+            (yyval.arg) = new AST::IntLit(e.i);
+            break;
+          case ST_BOOL:
+            (yyval.arg) = new AST::BoolLit(e.i);
+            break;
+          case ST_SET:
+            (yyval.arg) = new AST::SetLit(pp->setvals[e.i]);
+            break;
+          default:
             (yyval.arg) = getVarRefArg(pp,(yyvsp[(1) - (1)].sValue));
           }
         }
@@ -3193,11 +3279,11 @@ yyreduce:
   case 129:
 
 /* Line 1464 of yacc.c  */
-#line 1327 "gecode/flatzinc/parser.yxx"
+#line 1413 "gecode/flatzinc/parser.yxx"
     { 
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, (yyvsp[(3) - (4)].arg)->isInt(i), "Non-integer array index.");
+        yyassert(pp, (yyvsp[(3) - (4)].arg)->isInt(i), "Non-integer array index");
         if (!pp->hadError)
           (yyval.arg) = getArrayElement(static_cast<ParserState*>(parm),(yyvsp[(1) - (4)].sValue),i);
         else
@@ -3209,38 +3295,41 @@ yyreduce:
   case 130:
 
 /* Line 1464 of yacc.c  */
-#line 1340 "gecode/flatzinc/parser.yxx"
+#line 1426 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = new AST::Array(0); ;}
     break;
 
   case 131:
 
 /* Line 1464 of yacc.c  */
-#line 1342 "gecode/flatzinc/parser.yxx"
+#line 1428 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = (yyvsp[(1) - (2)].argVec); ;}
     break;
 
   case 132:
 
 /* Line 1464 of yacc.c  */
-#line 1346 "gecode/flatzinc/parser.yxx"
+#line 1432 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = new AST::Array((yyvsp[(1) - (1)].arg)); ;}
     break;
 
   case 133:
 
 /* Line 1464 of yacc.c  */
-#line 1348 "gecode/flatzinc/parser.yxx"
+#line 1434 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = (yyvsp[(1) - (3)].argVec); (yyval.argVec)->append((yyvsp[(3) - (3)].arg)); ;}
     break;
 
   case 134:
 
 /* Line 1464 of yacc.c  */
-#line 1356 "gecode/flatzinc/parser.yxx"
+#line 1442 "gecode/flatzinc/parser.yxx"
     { 
         ParserState *pp = static_cast<ParserState*>(parm);
-        if (!pp->intvarTable.get((yyvsp[(1) - (1)].sValue), (yyval.iValue))) {
+        SymbolEntry e;
+        if (pp->symbols.get((yyvsp[(1) - (1)].sValue),e) && e.t == ST_INTVAR) {
+          (yyval.iValue) = e.i;
+        } else {
           pp->err << "Error: unknown integer variable " << (yyvsp[(1) - (1)].sValue)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
@@ -3253,23 +3342,23 @@ yyreduce:
   case 135:
 
 /* Line 1464 of yacc.c  */
-#line 1367 "gecode/flatzinc/parser.yxx"
+#line 1456 "gecode/flatzinc/parser.yxx"
     {
-        vector<int> tmp;
+        SymbolEntry e;
         ParserState *pp = static_cast<ParserState*>(parm);
-        if (!pp->intvararrays.get((yyvsp[(1) - (4)].sValue), tmp)) {
+        if ( (!pp->symbols.get((yyvsp[(1) - (4)].sValue), e)) || e.t != ST_INTVARARRAY) {
           pp->err << "Error: unknown integer variable array " << (yyvsp[(1) - (4)].sValue)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
         }
-        if ((yyvsp[(3) - (4)].iValue) == 0 || static_cast<unsigned int>((yyvsp[(3) - (4)].iValue)) > tmp.size()) {
+        if ((yyvsp[(3) - (4)].iValue) == 0 || (yyvsp[(3) - (4)].iValue) > pp->arrays[e.i]) {
           pp->err << "Error: array index out of bounds for array " << (yyvsp[(1) - (4)].sValue)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
         } else {
-          (yyval.iValue) = tmp[(yyvsp[(3) - (4)].iValue)-1];
+          (yyval.iValue) = pp->arrays[e.i+(yyvsp[(3) - (4)].iValue)];
         }
         free((yyvsp[(1) - (4)].sValue));
       ;}
@@ -3278,35 +3367,35 @@ yyreduce:
   case 138:
 
 /* Line 1464 of yacc.c  */
-#line 1397 "gecode/flatzinc/parser.yxx"
+#line 1486 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = NULL; ;}
     break;
 
   case 139:
 
 /* Line 1464 of yacc.c  */
-#line 1399 "gecode/flatzinc/parser.yxx"
+#line 1488 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = (yyvsp[(1) - (1)].argVec); ;}
     break;
 
   case 140:
 
 /* Line 1464 of yacc.c  */
-#line 1403 "gecode/flatzinc/parser.yxx"
+#line 1492 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = new AST::Array((yyvsp[(2) - (2)].arg)); ;}
     break;
 
   case 141:
 
 /* Line 1464 of yacc.c  */
-#line 1405 "gecode/flatzinc/parser.yxx"
+#line 1494 "gecode/flatzinc/parser.yxx"
     { (yyval.argVec) = (yyvsp[(1) - (3)].argVec); (yyval.argVec)->append((yyvsp[(3) - (3)].arg)); ;}
     break;
 
   case 142:
 
 /* Line 1464 of yacc.c  */
-#line 1409 "gecode/flatzinc/parser.yxx"
+#line 1498 "gecode/flatzinc/parser.yxx"
     { 
         (yyval.arg) = new AST::Call((yyvsp[(1) - (4)].sValue), AST::extractSingleton((yyvsp[(3) - (4)].arg))); free((yyvsp[(1) - (4)].sValue));
       ;}
@@ -3315,110 +3404,141 @@ yyreduce:
   case 143:
 
 /* Line 1464 of yacc.c  */
-#line 1413 "gecode/flatzinc/parser.yxx"
+#line 1502 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(1) - (1)].arg); ;}
     break;
 
   case 144:
 
 /* Line 1464 of yacc.c  */
-#line 1417 "gecode/flatzinc/parser.yxx"
+#line 1506 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = new AST::Array((yyvsp[(1) - (1)].arg)); ;}
     break;
 
   case 145:
 
 /* Line 1464 of yacc.c  */
-#line 1419 "gecode/flatzinc/parser.yxx"
+#line 1508 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(1) - (3)].arg); (yyval.arg)->append((yyvsp[(3) - (3)].arg)); ;}
     break;
 
   case 146:
 
 /* Line 1464 of yacc.c  */
-#line 1423 "gecode/flatzinc/parser.yxx"
+#line 1512 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(1) - (1)].arg); ;}
     break;
 
   case 147:
 
 /* Line 1464 of yacc.c  */
-#line 1425 "gecode/flatzinc/parser.yxx"
+#line 1514 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(2) - (3)].arg); ;}
     break;
 
   case 148:
 
 /* Line 1464 of yacc.c  */
-#line 1429 "gecode/flatzinc/parser.yxx"
+#line 1518 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = new AST::BoolLit((yyvsp[(1) - (1)].iValue)); ;}
     break;
 
   case 149:
 
 /* Line 1464 of yacc.c  */
-#line 1431 "gecode/flatzinc/parser.yxx"
+#line 1520 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = new AST::IntLit((yyvsp[(1) - (1)].iValue)); ;}
     break;
 
   case 150:
 
 /* Line 1464 of yacc.c  */
-#line 1433 "gecode/flatzinc/parser.yxx"
+#line 1522 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = new AST::FloatLit((yyvsp[(1) - (1)].dValue)); ;}
     break;
 
   case 151:
 
 /* Line 1464 of yacc.c  */
-#line 1435 "gecode/flatzinc/parser.yxx"
+#line 1524 "gecode/flatzinc/parser.yxx"
     { (yyval.arg) = (yyvsp[(1) - (1)].setLit); ;}
     break;
 
   case 152:
 
 /* Line 1464 of yacc.c  */
-#line 1437 "gecode/flatzinc/parser.yxx"
+#line 1526 "gecode/flatzinc/parser.yxx"
     { 
-        vector<int> as;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvararrays.get((yyvsp[(1) - (1)].sValue), as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::IntVar(as[i]);
-          (yyval.arg) = ia;
-        } else if (pp->boolvararrays.get((yyvsp[(1) - (1)].sValue), as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::BoolVar(as[i]);
-          (yyval.arg) = ia;
-        } else if (pp->setvararrays.get((yyvsp[(1) - (1)].sValue), as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::SetVar(as[i]);
-          (yyval.arg) = ia;
-        } else {
-          std::vector<int> is;
-          int ival = 0;
-          bool bval = false;
-          if (pp->intvalarrays.get((yyvsp[(1) - (1)].sValue), is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::IntLit(is[i]);
-            (yyval.arg) = v;
-          } else if (pp->boolvalarrays.get((yyvsp[(1) - (1)].sValue), is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::BoolLit(is[i]);
-            (yyval.arg) = v;
-          } else if (pp->intvals.get((yyvsp[(1) - (1)].sValue), ival)) {
-            (yyval.arg) = new AST::IntLit(ival);
-          } else if (pp->boolvals.get((yyvsp[(1) - (1)].sValue), bval)) {
-            (yyval.arg) = new AST::BoolLit(bval);
-          } else {
-            (yyval.arg) = getVarRefArg(pp,(yyvsp[(1) - (1)].sValue),true);
+        SymbolEntry e;
+        bool gotSymbol = false;
+        if (pp->symbols.get((yyvsp[(1) - (1)].sValue), e)) {
+          gotSymbol = true;
+          switch (e.t) {
+          case ST_INTVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntVar(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_BOOLVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolVar(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_SETVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetVar(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_INTVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntLit(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_BOOLVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolLit(pp->arrays[e.i+i+1]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_SETVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              int idx = pp->arrays[e.i+1];
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+              (yyval.arg) = v;
+            }
+            break;
+          case ST_INT:
+            (yyval.arg) = new AST::IntLit(e.i);
+            break;
+          case ST_BOOL:
+            (yyval.arg) = new AST::BoolLit(e.i);
+            break;
+          case ST_SET:
+            (yyval.arg) = new AST::SetLit(pp->setvals[e.i]);
+            break;
+          default:
+            gotSymbol = false;
           }
         }
+        if (!gotSymbol)
+          (yyval.arg) = getVarRefArg(pp,(yyvsp[(1) - (1)].sValue),true);
         free((yyvsp[(1) - (1)].sValue));
       ;}
     break;
@@ -3426,11 +3546,11 @@ yyreduce:
   case 153:
 
 /* Line 1464 of yacc.c  */
-#line 1480 "gecode/flatzinc/parser.yxx"
+#line 1600 "gecode/flatzinc/parser.yxx"
     { 
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, (yyvsp[(3) - (4)].arg)->isInt(i), "Non-integer array index.");
+        yyassert(pp, (yyvsp[(3) - (4)].arg)->isInt(i), "Non-integer array index");
         if (!pp->hadError)
           (yyval.arg) = getArrayElement(static_cast<ParserState*>(parm),(yyvsp[(1) - (4)].sValue),i);
         else
@@ -3442,7 +3562,7 @@ yyreduce:
   case 154:
 
 /* Line 1464 of yacc.c  */
-#line 1491 "gecode/flatzinc/parser.yxx"
+#line 1611 "gecode/flatzinc/parser.yxx"
     {
         (yyval.arg) = new AST::String((yyvsp[(1) - (1)].sValue));
         free((yyvsp[(1) - (1)].sValue));
@@ -3452,7 +3572,7 @@ yyreduce:
 
 
 /* Line 1464 of yacc.c  */
-#line 3456 "gecode/flatzinc/parser.tab.cpp"
+#line 3576 "gecode/flatzinc/parser.tab.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

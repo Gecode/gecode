@@ -244,7 +244,6 @@ namespace Gecode { namespace Set {
 
   template<class I> forceinline bool
   BndSet::overwrite(Space& home, I& ri) {
-    Iter::Ranges::IsRangeIter<I>();
     // Is new domain empty?
     if (!ri()) {
       //Was it empty?
@@ -388,7 +387,6 @@ namespace Gecode { namespace Set {
 
   template<class I> bool
   GLBndSet::includeI(Space& home, I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     if (!i())
       return false;
     BndSetRanges j(*this);
@@ -463,7 +461,6 @@ namespace Gecode { namespace Set {
 
   template<class I> bool
   LUBndSet::intersectI(Space& home, I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     if (fst()==NULL) { return false; }
     if (!i()) {
       fst()->dispose(home,lst()); fst(NULL); lst(NULL);
@@ -479,7 +476,6 @@ namespace Gecode { namespace Set {
 
   template<class I> bool
   LUBndSet::excludeI(Space& home, I& i) {
-    Iter::Ranges::IsRangeIter<I>();
     if (!i()) { return false; }
     BndSetRanges j(*this);
     Iter::Ranges::Diff<BndSetRanges,I> ij(j,i);
