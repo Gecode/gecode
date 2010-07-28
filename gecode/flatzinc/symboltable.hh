@@ -66,15 +66,18 @@ namespace Gecode { namespace FlatZinc {
     mymap m;
   public:
     /// Insert \a val with \a key
-    void put(const std::string& key, const Val& val);
+    bool put(const std::string& key, const Val& val);
     /// Return whether \a key exists, and set \a val if it does exist
     bool get(const std::string& key, Val& val) const;
   };
 
   template<class Val>
-  void
+  bool
   SymbolTable<Val>::put(const std::string& key, const Val& val) {
+    typename mymap::const_iterator i = m.find(key);
+    bool fresh = (i == m.end());
     m[key] = val;
+    return fresh;
   }
 
   template<class Val>

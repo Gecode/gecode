@@ -86,6 +86,9 @@ Rank:   minor
 [DESCRIPTION]
 The FlatZinc parser now uses hash maps instead of STL maps, which 
 significantly increases parsing performance for larger files.
+Furthermore, a single symbol table is used, also increasing
+performance and allowing to report duplicate symbol errors,
+which were previously ignored.
 
 
 [RELEASE]

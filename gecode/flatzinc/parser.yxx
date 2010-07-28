@@ -92,25 +92,37 @@ void yyassert(ParserState* pp, bool cond, const char* str)
  *
  */
 
-AST::Node* getArrayElement(ParserState* pp, string id, unsigned int offset) {
+AST::Node* getArrayElement(ParserState* pp, string id, int offset) {
   if (offset > 0) {
-    vector<int> tmp;
-    if (pp->intvararrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::IntVar(tmp[offset-1]);
-    if (pp->boolvararrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::BoolVar(tmp[offset-1]);
-    if (pp->setvararrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::SetVar(tmp[offset-1]);
-
-    if (pp->intvalarrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::IntLit(tmp[offset-1]);
-    if (pp->boolvalarrays.get(id, tmp) && offset<=tmp.size())
-      return new AST::BoolLit(tmp[offset-1]);
-    vector<AST::SetLit> tmpS;
-    if (pp->setvalarrays.get(id, tmpS) && offset<=tmpS.size())
-      return new AST::SetLit(tmpS[offset-1]);    
+    SymbolEntry e;
+    if (pp->symbols.get(id,e)) {
+      switch (e.t) {
+      case ST_INTVARARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::IntVar(pp->arrays[e.i+offset]);
+      case ST_BOOLVARARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::BoolVar(pp->arrays[e.i+offset]);
+      case ST_SETVARARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::SetVar(pp->arrays[e.i+offset]);
+      case ST_INTVALARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::IntLit(pp->arrays[e.i+offset]);
+      case ST_SETVALARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::SetLit(pp->setvals[pp->arrays[e.i+1]+offset-1]);
+      default:
+        break;
+      }
+    }
   }
-
+error:
   pp->err << "Error: array access to " << id << " invalid"
           << " in line no. "
           << yyget_lineno(pp->yyscanner) << std::endl;
@@ -118,13 +130,16 @@ AST::Node* getArrayElement(ParserState* pp, string id, unsigned int offset) {
   return new AST::IntVar(0); // keep things consistent
 }
 AST::Node* getVarRefArg(ParserState* pp, string id, bool annotation = false) {
-  int tmp;
-  if (pp->intvarTable.get(id, tmp))
-    return new AST::IntVar(tmp);
-  if (pp->boolvarTable.get(id, tmp))
-    return new AST::BoolVar(tmp);
-  if (pp->setvarTable.get(id, tmp))
-    return new AST::SetVar(tmp);
+  SymbolEntry e;
+  if (pp->symbols.get(id, e)) {
+    switch (e.t) {
+    case ST_INTVAR: return new AST::IntVar(e.i);
+    case ST_BOOLVAR: return new AST::BoolVar(e.i);
+    case ST_SETVAR: return new AST::SetVar(e.i);
+    default: break;
+    }
+  }
+  
   if (annotation)
     return new AST::Atom(id);
   pp->err << "Error: undefined variable " << id
@@ -502,10 +517,12 @@ vardecl_item:
       FZ_VAR int_ti_expr_tail ':' FZ_ID annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$2() || !$2.some()->empty(), "Empty var int domain.");
+        yyassert(pp, !$2() || !$2.some()->empty(), "Empty var int domain");
         bool print = $5->hasAtom("output_var");
         bool introduced = $5->hasAtom("var_is_introduced");
-        pp->intvarTable.put($4, pp->intvars.size());
+        yyassert(pp,
+          pp->symbols.put($4, se_iv(pp->intvars.size())),
+          "Duplicate symbol");
         if (print) {
           pp->output(std::string($4), new AST::IntVar(pp->intvars.size()));
         }
@@ -518,7 +535,7 @@ vardecl_item:
             pp->intvars.push_back(varspec($4,
               new IntVarSpec(Alias(arg->getIntVar()),introduced)));
           } else {
-            yyassert(pp, false, "Invalid var int initializer.");
+            yyassert(pp, false, "Invalid var int initializer");
           }
           if (!pp->hadError)
             addDomainConstraint(pp, "int_in",
@@ -534,7 +551,9 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
         bool introduced = $5->hasAtom("var_is_introduced");
-        pp->boolvarTable.put($4, pp->boolvars.size());
+        yyassert(pp,
+          pp->symbols.put($4, se_bv(pp->boolvars.size())),
+          "Duplicate symbol");
         if (print) {
           pp->output(std::string($4), new AST::BoolVar(pp->boolvars.size()));
         }
@@ -547,7 +566,7 @@ vardecl_item:
             pp->boolvars.push_back(varspec($4,
               new BoolVarSpec(Alias(arg->getBoolVar()),introduced)));
           } else {
-            yyassert(pp, false, "Invalid var bool initializer.");
+            yyassert(pp, false, "Invalid var bool initializer");
           }
           if (!pp->hadError)
             addDomainConstraint(pp, "int_in",
@@ -560,7 +579,7 @@ vardecl_item:
       }
     | FZ_VAR float_ti_expr_tail ':' FZ_ID annotations non_array_expr_opt
       { ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported.");
+        yyassert(pp, false, "Floats not supported");
         delete $5; free($4);
       }
     | FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':' FZ_ID annotations non_array_expr_opt
@@ -568,7 +587,9 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $7->hasAtom("output_var");
         bool introduced = $7->hasAtom("var_is_introduced");
-        pp->setvarTable.put($6, pp->setvars.size());
+        yyassert(pp,
+          pp->symbols.put($6, se_sv(pp->setvars.size())),
+          "Duplicate symbol");
         if (print) {
           pp->output(std::string($6), new AST::SetVar(pp->setvars.size()));
         }
@@ -582,7 +603,7 @@ vardecl_item:
               new SetVarSpec(Alias(arg->getSetVar()),introduced)));
             delete arg;
           } else {
-            yyassert(pp, false, "Invalid var set initializer.");
+            yyassert(pp, false, "Invalid var set initializer");
             delete arg;
           }
           if (!pp->hadError)
@@ -596,14 +617,14 @@ vardecl_item:
     | int_ti_expr_tail ':' FZ_ID annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$1() || !$1.some()->empty(), "Empty int domain.");
-        yyassert(pp, $6->isInt(), "Invalid int initializer.");
+        yyassert(pp, !$1() || !$1.some()->empty(), "Empty int domain");
+        yyassert(pp, $6->isInt(), "Invalid int initializer");
         int i = -1;
         bool isInt = $6->isInt(i);
         if ($1() && isInt) {
           AST::SetLit* sl = $1.some();
           if (sl->interval) {
-            yyassert(pp, i >= sl->min && i <= sl->max, "Empty int domain.");
+            yyassert(pp, i >= sl->min && i <= sl->max, "Empty int domain");
           } else {
             bool found = false;
             for (unsigned int j=0; j<sl->s.size(); j++)
@@ -611,30 +632,35 @@ vardecl_item:
                 found = true;
                 break;
               }
-            yyassert(pp, found, "Empty int domain.");
+            yyassert(pp, found, "Empty int domain");
           }
         }
-        pp->intvals.put($3, i);
+        yyassert(pp,
+          pp->symbols.put($3, se_i(i)),
+          "Duplicate symbol");
         delete $4; free($3);        
       }
     | FZ_BOOL ':' FZ_ID annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, $6->isBool(), "Invalid bool initializer.");
+        yyassert(pp, $6->isBool(), "Invalid bool initializer");
         if ($6->isBool()) {
-          pp->boolvals.put($3, $6->getBool());
+          yyassert(pp,
+            pp->symbols.put($3, se_b($6->getBool())),
+            "Duplicate symbol");
         }
         delete $4; free($3);        
       }    
     | FZ_SET FZ_OF int_ti_expr_tail ':' FZ_ID annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$3() || !$3.some()->empty(), "Empty set domain.");
-        yyassert(pp, $8->isSet(), "Invalid set initializer.");
-        AST::SetLit* set = NULL;
-        if ($8->isSet())
-          set = $8->getSet();
-        pp->setvals.put($5, *set);
+        yyassert(pp, !$3() || !$3.some()->empty(), "Empty set domain");
+        yyassert(pp, $8->isSet(), "Invalid set initializer");
+        AST::SetLit* set = $8->getSet();
+        pp->setvals.push_back(*set);
+        yyassert(pp,
+          pp->symbols.put($5, se_s(pp->setvals.size()-1)),
+          "Duplicate symbol");
         delete set;
         delete $6; free($5);        
       }
@@ -647,7 +673,7 @@ vardecl_item:
           bool print = $12->hasCall("output_array");
           vector<int> vars($5);
           yyassert(pp, !$9() || !$9.some()->empty(),
-                   "Empty var int domain.");
+                   "Empty var int domain");
           if (!pp->hadError) {
             if ($13()) {
               vector<VarSpec*>* vsv = $13.some();
@@ -693,7 +719,13 @@ vardecl_item:
             a->a.push_back(new AST::String(")"));
             pp->output(std::string($11), a);
           }
-          pp->intvararrays.put($11, vars);
+          int iva = pp->arrays.size();
+          pp->arrays.push_back(vars.size());
+          for (unsigned int i=0; i<vars.size(); i++)
+            pp->arrays.push_back(vars[i]);
+          yyassert(pp,
+            pp->symbols.put($11, se_iva(iva)),
+            "Duplicate symbol");
         }
         delete $12; free($11);
       }
@@ -745,7 +777,13 @@ vardecl_item:
             a->a.push_back(new AST::String(")"));
             pp->output(std::string($11), a);
           }
-          pp->boolvararrays.put($11, vars);
+          int bva = pp->arrays.size();
+          pp->arrays.push_back(vars.size());
+          for (unsigned int i=0; i<vars.size(); i++)
+            pp->arrays.push_back(vars[i]);
+          yyassert(pp,
+            pp->symbols.put($11, se_bva(bva)),
+            "Duplicate symbol");
         }
         delete $12; free($11);
       }
@@ -753,7 +791,7 @@ vardecl_item:
         FZ_ID annotations vardecl_float_var_array_init
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported.");
+        yyassert(pp, false, "Floats not supported");
         delete $12; free($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':'
@@ -807,7 +845,13 @@ vardecl_item:
             a->a.push_back(new AST::String(")"));
             pp->output(std::string($13), a);
           }
-          pp->setvararrays.put($13, vars);
+          int sva = pp->arrays.size();
+          pp->arrays.push_back(vars.size());
+          for (unsigned int i=0; i<vars.size(); i++)
+            pp->arrays.push_back(vars[i]);
+          yyassert(pp,
+            pp->symbols.put($13, se_sva(sva)),
+            "Duplicate symbol");
         }
         delete $14; free($13);
       }
@@ -818,8 +862,16 @@ vardecl_item:
         yyassert(pp, $3==1, "Arrays must start at 1");
         yyassert(pp, $14->size() == static_cast<unsigned int>($5),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError)
-          pp->intvalarrays.put($10, *$14);
+
+        if (!pp->hadError) {
+          int ia = pp->arrays.size();
+          pp->arrays.push_back($14->size());
+          for (unsigned int i=0; i<$14->size(); i++)
+            pp->arrays.push_back((*$14)[i]);
+          yyassert(pp,
+            pp->symbols.put($10, se_ia(ia)),
+            "Duplicate symbol");
+        }
         delete $14;
         free($10);
         delete $11;
@@ -831,8 +883,15 @@ vardecl_item:
         yyassert(pp, $3==1, "Arrays must start at 1");
         yyassert(pp, $14->size() == static_cast<unsigned int>($5),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError)
-          pp->boolvalarrays.put($10, *$14);
+        if (!pp->hadError) {
+          int ia = pp->arrays.size();
+          pp->arrays.push_back($14->size());
+          for (unsigned int i=0; i<$14->size(); i++)
+            pp->arrays.push_back((*$14)[i]);
+          yyassert(pp,
+            pp->symbols.put($10, se_ba(ia)),
+            "Duplicate symbol");
+        }
         delete $14;
         free($10);
         delete $11;
@@ -841,7 +900,7 @@ vardecl_item:
         FZ_ID annotations '=' '[' float_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported.");
+        yyassert(pp, false, "Floats not supported");
         delete $11; free($10);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF int_ti_expr_tail ':'
@@ -851,8 +910,17 @@ vardecl_item:
         yyassert(pp, $3==1, "Arrays must start at 1");
         yyassert(pp, $16->size() == static_cast<unsigned int>($5),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError)
-          pp->setvalarrays.put($12, *$16);
+        if (!pp->hadError) {
+          int sa = pp->arrays.size();
+          pp->arrays.push_back($16->size());
+          pp->arrays.push_back(pp->setvals.size());
+          for (unsigned int i=0; i<$16->size(); i++)
+            pp->setvals.push_back((*$16)[i]);
+          yyassert(pp,
+            pp->symbols.put($12, se_sa(sa)),
+            "Duplicate symbol");
+        }
+
         delete $16;
         delete $13; free($12);
       }
@@ -864,10 +932,10 @@ int_init :
       }
     | FZ_ID
       { 
-        int v = 0;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvarTable.get($1, v))
-          $$ = new IntVarSpec(Alias(v),false);
+        if (pp->symbols.get($1, e) && e.t == ST_INTVAR)
+          $$ = new IntVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
@@ -880,13 +948,13 @@ int_init :
     | FZ_ID '[' FZ_INT_LIT ']'
       { 
         vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvararrays.get($1, v)) {
-          yyassert(pp,static_cast<unsigned int>($3) > 0 && 
-                      static_cast<unsigned int>($3) <= v.size(),
+        if (pp->symbols.get($1, e) && e.t == ST_INTVARARRAY) {
+          yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new IntVarSpec(Alias(v[$3-1]),false);
+            $$ = new IntVarSpec(Alias(pp->arrays[e.i+$3]),false);
           else
             $$ = new IntVarSpec(0,false); // keep things consistent
         } else {
@@ -921,10 +989,10 @@ float_init :
       { $$ = new FloatVarSpec($1,false); }
     | FZ_ID
       { 
-        int v = 0;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->floatvarTable.get($1, v))
-          $$ = new FloatVarSpec(Alias(v),false);
+        if (pp->symbols.get($1, e) && e.t == ST_FLOATVAR)
+          $$ = new FloatVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
@@ -936,14 +1004,13 @@ float_init :
       }
     | FZ_ID '[' FZ_INT_LIT ']'
       { 
-        vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->floatvararrays.get($1, v)) {
-          yyassert(pp,static_cast<unsigned int>($3) > 0 && 
-                      static_cast<unsigned int>($3) <= v.size(),
+        if (pp->symbols.get($1, e) && e.t == ST_FLOATVARARRAY) {
+          yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new FloatVarSpec(Alias(v[$3-1]),false);
+            $$ = new FloatVarSpec(Alias(pp->arrays[e.i+$3]),false);
           else
             $$ = new FloatVarSpec(0.0,false);
         } else {
@@ -977,10 +1044,10 @@ bool_init :
       { $$ = new BoolVarSpec($1,false); }
     | FZ_ID
       { 
-        int v = 0;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->boolvarTable.get($1, v))
-          $$ = new BoolVarSpec(Alias(v),false);
+        if (pp->symbols.get($1, e) && e.t == ST_BOOLVAR)
+          $$ = new BoolVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
@@ -992,14 +1059,13 @@ bool_init :
       }
     | FZ_ID '[' FZ_INT_LIT ']'
       { 
-        vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->boolvararrays.get($1, v)) {
-          yyassert(pp,static_cast<unsigned int>($3) > 0 && 
-                      static_cast<unsigned int>($3) <= v.size(),
+        if (pp->symbols.get($1, e) && e.t == ST_BOOLVARARRAY) {
+          yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new BoolVarSpec(Alias(v[$3-1]),false);
+            $$ = new BoolVarSpec(Alias(pp->arrays[e.i+$3]),false);
           else
             $$ = new BoolVarSpec(false,false);
         } else {
@@ -1032,9 +1098,9 @@ set_init :
     | FZ_ID
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
-        int v = 0;
-        if (pp->setvarTable.get($1, v))
-          $$ = new SetVarSpec(Alias(v),false);
+        SymbolEntry e;
+        if (pp->symbols.get($1, e) && e.t == ST_SETVAR)
+          $$ = new SetVarSpec(Alias(e.i),false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
@@ -1046,14 +1112,13 @@ set_init :
       }
     | FZ_ID '[' FZ_INT_LIT ']'
       { 
-        vector<int> v;
+        SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->setvararrays.get($1, v)) {
-          yyassert(pp,static_cast<unsigned int>($3) > 0 && 
-                      static_cast<unsigned int>($3) <= v.size(),
+        if (pp->symbols.get($1, e) && e.t == ST_SETVARARRAY) {
+          yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new SetVarSpec(Alias(v[$3-1]),false);
+            $$ = new SetVarSpec(Alias(pp->arrays[e.i+$3]),false);
           else
             $$ = new SetVarSpec(Alias(0),false);
         } else {
@@ -1108,9 +1173,9 @@ vardecl_set_var_array_init :
 constraint_item :
       FZ_CONSTRAINT FZ_ID '(' flat_expr_list ')' annotations
       { 
-        ConExpr c($2, $4);
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
+          ConExpr c($2, $4);
           try {
             pp->fg->postConstraint(c, $6);
           } catch (Gecode::FlatZinc::Error& e) {
@@ -1276,48 +1341,69 @@ non_array_expr :
       { $$ = $1; }
     | FZ_ID /* variable, possibly array */
       { 
-        vector<int> as;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvararrays.get($1, as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::IntVar(as[i]);
-          $$ = ia;
-        } else if (pp->boolvararrays.get($1, as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::BoolVar(as[i]);
-          $$ = ia;
-        } else if (pp->setvararrays.get($1, as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::SetVar(as[i]);
-          $$ = ia;
-        } else {
-          std::vector<int> is;
-          std::vector<AST::SetLit> isS;
-          int ival = 0;
-          bool bval = false;
-          if (pp->intvalarrays.get($1, is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::IntLit(is[i]);
-            $$ = v;
-          } else if (pp->boolvalarrays.get($1, is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::BoolLit(is[i]);
-            $$ = v;
-          } else if (pp->setvalarrays.get($1, isS)) {
-            AST::Array *v = new AST::Array(isS.size());
-            for (int i=isS.size(); i--;)
-              v->a[i] = new AST::SetLit(isS[i]);
-            $$ = v;            
-          } else if (pp->intvals.get($1, ival)) {
-            $$ = new AST::IntLit(ival);
-          } else if (pp->boolvals.get($1, bval)) {
-            $$ = new AST::BoolLit(bval);
-          } else {
+        SymbolEntry e;
+        if (pp->symbols.get($1, e)) {
+          switch (e.t) {
+          case ST_INTVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_BOOLVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_SETVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_INTVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntLit(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_BOOLVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolLit(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_SETVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              int idx = pp->arrays[e.i+1];
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+              $$ = v;
+            }
+            break;
+          case ST_INT:
+            $$ = new AST::IntLit(e.i);
+            break;
+          case ST_BOOL:
+            $$ = new AST::BoolLit(e.i);
+            break;
+          case ST_SET:
+            $$ = new AST::SetLit(pp->setvals[e.i]);
+            break;
+          default:
             $$ = getVarRefArg(pp,$1);
           }
         }
@@ -1327,7 +1413,7 @@ non_array_expr :
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, $3->isInt(i), "Non-integer array index.");
+        yyassert(pp, $3->isInt(i), "Non-integer array index");
         if (!pp->hadError)
           $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i);
         else
@@ -1355,7 +1441,10 @@ solve_expr:
       FZ_ID
       { 
         ParserState *pp = static_cast<ParserState*>(parm);
-        if (!pp->intvarTable.get($1, $$)) {
+        SymbolEntry e;
+        if (pp->symbols.get($1,e) && e.t == ST_INTVAR) {
+          $$ = e.i;
+        } else {
           pp->err << "Error: unknown integer variable " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
@@ -1365,21 +1454,21 @@ solve_expr:
       }
     | FZ_ID '[' FZ_INT_LIT ']'
       {
-        vector<int> tmp;
+        SymbolEntry e;
         ParserState *pp = static_cast<ParserState*>(parm);
-        if (!pp->intvararrays.get($1, tmp)) {
+        if ( (!pp->symbols.get($1, e)) || e.t != ST_INTVARARRAY) {
           pp->err << "Error: unknown integer variable array " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
         }
-        if ($3 == 0 || static_cast<unsigned int>($3) > tmp.size()) {
+        if ($3 == 0 || $3 > pp->arrays[e.i]) {
           pp->err << "Error: array index out of bounds for array " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
         } else {
-          $$ = tmp[$3-1];
+          $$ = pp->arrays[e.i+$3];
         }
         free($1);
       }
@@ -1435,52 +1524,83 @@ ann_non_array_expr :
       { $$ = $1; }
     | FZ_ID /* variable, possibly array */
       { 
-        vector<int> as;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->intvararrays.get($1, as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::IntVar(as[i]);
-          $$ = ia;
-        } else if (pp->boolvararrays.get($1, as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::BoolVar(as[i]);
-          $$ = ia;
-        } else if (pp->setvararrays.get($1, as)) {
-          AST::Array *ia = new AST::Array(as.size());
-          for (int i=as.size(); i--;)
-            ia->a[i] = new AST::SetVar(as[i]);
-          $$ = ia;
-        } else {
-          std::vector<int> is;
-          int ival = 0;
-          bool bval = false;
-          if (pp->intvalarrays.get($1, is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::IntLit(is[i]);
-            $$ = v;
-          } else if (pp->boolvalarrays.get($1, is)) {
-            AST::Array *v = new AST::Array(is.size());
-            for (int i=is.size(); i--;)
-              v->a[i] = new AST::BoolLit(is[i]);
-            $$ = v;
-          } else if (pp->intvals.get($1, ival)) {
-            $$ = new AST::IntLit(ival);
-          } else if (pp->boolvals.get($1, bval)) {
-            $$ = new AST::BoolLit(bval);
-          } else {
-            $$ = getVarRefArg(pp,$1,true);
+        SymbolEntry e;
+        bool gotSymbol = false;
+        if (pp->symbols.get($1, e)) {
+          gotSymbol = true;
+          switch (e.t) {
+          case ST_INTVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_BOOLVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_SETVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_INTVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::IntLit(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_BOOLVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::BoolLit(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
+          case ST_SETVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              int idx = pp->arrays[e.i+1];
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+              $$ = v;
+            }
+            break;
+          case ST_INT:
+            $$ = new AST::IntLit(e.i);
+            break;
+          case ST_BOOL:
+            $$ = new AST::BoolLit(e.i);
+            break;
+          case ST_SET:
+            $$ = new AST::SetLit(pp->setvals[e.i]);
+            break;
+          default:
+            gotSymbol = false;
           }
         }
+        if (!gotSymbol)
+          $$ = getVarRefArg(pp,$1,true);
         free($1);
       }
     | FZ_ID '[' ann_non_array_expr ']' /* array access */
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, $3->isInt(i), "Non-integer array index.");
+        yyassert(pp, $3->isInt(i), "Non-integer array index");
         if (!pp->hadError)
           $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i);
         else
