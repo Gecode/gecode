@@ -130,7 +130,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline
   RangeListIter::RangeListIter(const RangeListIter& i) 
-    : rlio(i.rlio), c(i.c), h(i.h)  {
+    : rlio(i.rlio), h(i.h), c(i.c)  {
     rlio->use_cnt++;
   }
 

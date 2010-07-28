@@ -126,7 +126,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
   forceinline
   ValueListIter::ValueListIter(const ValueListIter& i) 
-    : vlio(i.vlio), c(i.c), h(i.h)  {
+    : vlio(i.vlio), h(i.h), c(i.c)  {
     vlio->use_cnt++;
   }
 
