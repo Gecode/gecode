@@ -38,8 +38,13 @@
 #ifndef __GECODE_FLATZINC_SYMBOLTABLE_HH__
 #define __GECODE_FLATZINC_SYMBOLTABLE_HH__
 
-#include <map>
 #include <vector>
+
+#ifdef GECODE_HAS_GNU_HASH_MAP
+#include <ext/hash_map>
+#else
+#include <map>
+#endif
 
 namespace Gecode { namespace FlatZinc {
 
@@ -47,7 +52,18 @@ namespace Gecode { namespace FlatZinc {
   template<class Val>
   class SymbolTable {
   private:
-    std::map<std::string,Val> m;
+#ifdef GECODE_HAS_GNU_HASH_MAP
+    class hashString {
+    public:
+      size_t operator ()(const std::string& x) const {
+        return __gnu_cxx::hash<const char*>()(x.c_str());
+      }
+    };
+    typedef __gnu_cxx::hash_map<std::string,Val,hashString> mymap;
+#else
+    typedef std::map<std::string,Val> mymap;
+#endif
+    mymap m;
   public:
     /// Insert \a val with \a key
     void put(const std::string& key, const Val& val);
@@ -64,8 +80,7 @@ namespace Gecode { namespace FlatZinc {
   template<class Val>
   bool
   SymbolTable<Val>::get(const std::string& key, Val& val) const {
-    typename std::map<std::string,Val>::const_iterator i = 
-      m.find(key);
+    typename mymap::const_iterator i = m.find(key);
     if (i == m.end())
       return false;
     val = i->second;
