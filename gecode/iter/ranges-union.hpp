@@ -39,17 +39,8 @@
 
 namespace Gecode { namespace Iter { namespace Ranges {
 
-  /**
-   * \brief Simple fixed-size priority queue
-   *
-   * The order is implemented by an instance of the class \a Less which
-   * must provide the single member function
-   * \code bool operator ()(const T&, const T&) \endcode
-   * for comparing elements.
-   *
-   * \ingroup FuncSupport
-   */
-  template<class T, class Less>
+  /// Simple fixed-size priority queue for iterators
+  template<class I>
   class PriorityQueue  {
   protected:
     /// The class holding the shared queue (organized as heap)
@@ -61,13 +52,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
       int size;
       /// How many references to shared queue exist
       unsigned int ref;
-      /// Order used for elements
-      Less l;
       /// Elements (will be most likely more than one)
-      T pq[1];
+      I pq[1];
 
       /// Allocate queue with \a n elements
-      static SharedPriorityQueue* allocate(int n, const Less& l);
+      static SharedPriorityQueue* allocate(int n);
       /// Reorganize after smallest element has changed
       void fixdown(void);
       /// Reorganize after element at position \a n has changed
@@ -79,10 +68,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
   public:
     /// Default constructor (creates empty queue)
     PriorityQueue(void);
-    /// Create for \a n elements and order \a l
-    PriorityQueue(int n, const Less& l);
-    /// Initialize for \a n elements and order \a l
-    void init(int, const Less&);
+    /// Create for \a n iter<ators
+    PriorityQueue(int n);
+    /// Initialize for \a n iterators
+    void init(int n);
     /// Assign queue from queue \a p (elements are shared)
     PriorityQueue(const PriorityQueue& p);
     /// Assign queue from queue \a p (elements are shared)
@@ -93,82 +82,78 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Test whether queue is empty
     bool empty(void) const;
     /// Insert element \a x according to order
-    void insert(const T& x);
+    void insert(const I& x);
     /// Remove smallest element
     void remove(void);
     /// Provide access to smallest element
-    T& top(void);
+    I& top(void);
     /// Reorder queue after smallest element has changed (might not be smallest any longer)
     void fix(void);
-
-    /// Update this queue from queue \a p (share elements if \a share is true)
-    void update(const PriorityQueue<T,Less>& p, bool share);
   };
 
-  template<class T, class Less>
-  forceinline typename PriorityQueue<T,Less>::SharedPriorityQueue*
-  PriorityQueue<T,Less>::SharedPriorityQueue::allocate(int n, const Less& l) {
+  template<class I>
+  forceinline typename PriorityQueue<I>::SharedPriorityQueue*
+  PriorityQueue<I>::SharedPriorityQueue::allocate(int n) {
     SharedPriorityQueue* spq
       = static_cast<SharedPriorityQueue*>
-      (heap.ralloc(sizeof(SharedPriorityQueue) + (n-1)*sizeof(T)));
+      (heap.ralloc(sizeof(SharedPriorityQueue) + (n-1)*sizeof(I)));
     spq->size = n;
     spq->n    = 0;
     spq->ref  = 1;
-    spq->l    = l;
     return spq;
   }
 
-  template<class T, class Less>
+  template<class I>
   forceinline void
-  PriorityQueue<T,Less>::SharedPriorityQueue::fixdown(void) {
+  PriorityQueue<I>::SharedPriorityQueue::fixdown(void) {
     int k = 0;
     while ((k << 1) < n) {
       int j = k << 1;
-      if (j < n-1 && l(pq[j],pq[j+1]))
+      if ((j < n-1) && (pq[j].min() > pq[j+1].min()))
         j++;
-      if (!l(pq[k],pq[j]))
+      if (pq[k].min() <= pq[j].min())
         break;
       std::swap(pq[k], pq[j]);
       k = j;
     }
   }
 
-  template<class T, class Less>
+  template<class I>
   forceinline void
-  PriorityQueue<T,Less>::SharedPriorityQueue::fixup(int k) {
-    while (k > 0 && l(pq[k >> 1],pq[k])) {
+  PriorityQueue<I>::SharedPriorityQueue::fixup(int k) {
+    while ((k > 0) && (pq[k >> 1].min() > pq[k].min())) {
       std::swap(pq[k],pq[k >> 1]);
       k >>= 1;
     }
   }
 
-  template<class T, class Less>
+  template<class I>
   forceinline
-  PriorityQueue<T,Less>::PriorityQueue(void)
+  PriorityQueue<I>::PriorityQueue(void)
     : spq(NULL) {}
 
-  template<class T, class Less>
+  template<class I>
   forceinline
-  PriorityQueue<T,Less>::PriorityQueue(int n, const Less& l)
-    : spq(SharedPriorityQueue::allocate(n,l)) {}
+  PriorityQueue<I>::PriorityQueue(int n)
+    : spq(SharedPriorityQueue::allocate(n)) {}
 
-  template<class T, class Less>
+  template<class I>
   forceinline void
-  PriorityQueue<T,Less>::init(int n, const Less& l) {
-    spq = SharedPriorityQueue::allocate(n,l);
+  PriorityQueue<I>::init(int n) {
+    spq = SharedPriorityQueue::allocate(n);
   }
 
-  template<class T, class Less>
+  template<class I>
   forceinline
-  PriorityQueue<T,Less>::PriorityQueue(const PriorityQueue<T,Less>& p)
+  PriorityQueue<I>::PriorityQueue(const PriorityQueue<I>& p)
     : spq(p.spq) {
     if (spq != NULL)
       spq->ref++;
   }
 
-  template<class T, class Less>
-  forceinline const PriorityQueue<T,Less>&
-  PriorityQueue<T,Less>::operator =(const PriorityQueue<T,Less>& p) {
+  template<class I>
+  forceinline const PriorityQueue<I>&
+  PriorityQueue<I>::operator =(const PriorityQueue<I>& p) {
     if (this != &p) {
       if ((spq != NULL) && (--spq->ref == 0))
         heap.rfree(spq);
@@ -179,59 +164,43 @@ namespace Gecode { namespace Iter { namespace Ranges {
     return *this;
   }
 
-  template<class T, class Less>
-  forceinline void
-  PriorityQueue<T,Less>::update(const PriorityQueue<T,Less>& p, bool share) {
-    if (share) {
-      spq = p.spq;
-      if (spq != NULL)
-        spq->ref++;
-    } else {
-      if (p.spq != NULL) {
-        spq = allocate(p.spq->n,p.spq->l);
-      } else {
-        spq = NULL;
-      }
-    }
-  }
-
-  template<class T, class Less>
+  template<class I>
   forceinline
-  PriorityQueue<T,Less>::~PriorityQueue(void) {
-    if ((spq != NULL) && (--spq->ref == 0))
+  PriorityQueue<I>::~PriorityQueue(void) {
+    if (--spq->ref == 0)
       heap.rfree(spq);
   }
 
-  template<class T, class Less>
+  template<class I>
   forceinline bool
-  PriorityQueue<T,Less>::empty(void) const {
+  PriorityQueue<I>::empty(void) const {
     return (spq == NULL) || (spq->n == 0);
   }
 
 
-  template<class T, class Less>
+  template<class I>
   forceinline void
-  PriorityQueue<T,Less>::insert(const T& x) {
+  PriorityQueue<I>::insert(const I& x) {
     spq->pq[spq->n++] = x;
     spq->fixup(spq->n-1);
   }
 
-  template<class T, class Less>
+  template<class I>
   forceinline void
-  PriorityQueue<T,Less>::remove(void) {
+  PriorityQueue<I>::remove(void) {
     spq->pq[0] = spq->pq[--spq->n];
     spq->fixdown();
   }
 
-  template<class T, class Less>
-  forceinline T&
-  PriorityQueue<T,Less>::top(void) {
+  template<class I>
+  forceinline I&
+  PriorityQueue<I>::top(void) {
     return spq->pq[0];
   }
 
-  template<class T, class Less>
+  template<class I>
   forceinline void
-  PriorityQueue<T,Less>::fix(void) {
+  PriorityQueue<I>::fix(void) {
     spq->fixdown();
   }
 
@@ -275,15 +244,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I>
   class NaryUnion : public MinMax {
   protected:
-    /// Order for iterators: by increasing minimum of next range
-    class RangeUnionOrder {
-    public:
-      bool operator ()(const I&, const I&) const;
-    };
-    /// Instance for order
-    RangeUnionOrder order;
     /// Priority queue to give access to next range
-    PriorityQueue<I,RangeUnionOrder> r;
+    PriorityQueue<I> r;
   public:
     /// \name Constructors and initialization
     //@{
@@ -365,12 +327,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template<class I>
-  forceinline bool
-  NaryUnion<I>::RangeUnionOrder::operator ()(const I& a, const I& b) const {
-    return a.min() > b.min();
-  }
-
-  template<class I>
   inline void
   NaryUnion<I>::operator ++(void) {
     if (r.empty()) {
@@ -400,7 +356,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I>
   inline
   NaryUnion<I>::NaryUnion(I* r0, int n)
-    : order(), r(n,order) {
+    : r(n) {
     for (int i = n; i--; )
       if (r0[i]())
         r.insert(r0[i]);
@@ -410,7 +366,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I>
   inline void
   NaryUnion<I>::init(I* r0, int n) {
-    r.init(n,order);
+    r.init(n);
     for (int i = n; i--; )
       if (r0[i]())
         r.insert(r0[i]);
