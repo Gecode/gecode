@@ -73,12 +73,20 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: iter
+What: 	performance
+Rank:	minor
+[DESCRIPTION]
+Reimplemented minus and cache iterators for much better efficiency.
+
+[ENTRY]
 Module: flatzinc
 What:   performance
 Rank:   minor
 [DESCRIPTION]
 The FlatZinc parser now uses hash maps instead of STL maps, which 
 significantly increases parsing performance for larger files.
+
 
 [RELEASE]
 Version: 3.4.0

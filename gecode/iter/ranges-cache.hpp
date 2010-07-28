@@ -47,49 +47,20 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \ingroup FuncIterRanges
    */
   template<class I>
-  class Cache {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
-  protected:
-    /// %Ranges stored in cache
-    class Range {
-    public:
-      int min; int max;
-    };
-    /// Array for ranges
-    SharedArray<Range> r;
-    /// Current range
-    int c;
+  class Cache : public RangeListIter {
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     Cache(void);
+    /// Copy constructor
+    Cache(const Cache& m);
     /// Initialize with ranges from \a i
-    Cache(I& i);
+    Cache(Region& r, I& i);
     /// Initialize with ranges from \a i
-    void init(I& i);
-    //@}
-
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    /// Reset iterator to start from beginning
-    void reset(void);
-    //@}
-
-    /// \name %Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    unsigned int width(void) const;
+    void init(Region& r, I& i);
+    /// Assignment operator
+    Cache& operator =(const Cache& m);
     //@}
   };
 
@@ -99,57 +70,36 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Cache<I>::Cache(void) {}
 
   template<class I>
-  inline void
-  Cache<I>::init(I& i) {
-    Support::DynamicArray<Range,Heap> d(heap);
-    int n=0;
-    while (i()) {
-      d[n].min = i.min(); d[n].max = i.max();
-      ++n; ++i;
+  forceinline
+  Cache<I>::Cache(const Cache& m) 
+    : RangeListIter(m) {}
+
+  template<class I>
+  void
+  Cache<I>::init(Region& r, I& i) {
+    RangeListIter::init(r);
+    RangeList* h = NULL;
+    RangeList** p = &h;
+    for (; i(); ++i) {
+      RangeList* t = new (*rlio) RangeList;
+      *p = t; p = &t->next;
+      t->min = i.min();
+      t->max = i.max();
     }
-    r.init(n);
-    for (int j=n; j--; )
-      r[j]=d[j];
-    c = 0;
+    *p = NULL;
+    RangeListIter::set(h);
   }
 
   template<class I>
-  inline
-  Cache<I>::Cache(I& i) {
-    init(i);
+  forceinline
+  Cache<I>::Cache(Region& r, I& i) {
+    init(r,i);
   }
 
   template<class I>
-  forceinline void
-  Cache<I>::operator ++(void) {
-    c++;
-  }
-  template<class I>
-  forceinline bool
-  Cache<I>::operator ()(void) const {
-    return c < r.size();
-  }
-
-  template<class I>
-  forceinline void
-  Cache<I>::reset(void) {
-    c = 0;
-  }
-
-  template<class I>
-  forceinline int
-  Cache<I>::min(void) const {
-    return r[c].min;
-  }
-  template<class I>
-  forceinline int
-  Cache<I>::max(void) const {
-    return r[c].max;
-  }
-  template<class I>
-  forceinline unsigned int
-  Cache<I>::width(void) const {
-    return static_cast<unsigned int>(r[c].max-r[c].min+1);
+  forceinline Cache<I>&
+  Cache<I>::operator =(const Cache<I>& m) {
+    return static_cast<Cache&>(RangeListIter::operator =(m));
   }
 
 }}}

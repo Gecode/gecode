@@ -99,6 +99,8 @@ namespace Gecode { namespace Set { namespace Element {
   ElementDisjoint<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     int n = iv.size();
 
+    Region r(home);
+
     bool fix_flag = false;
     do {
       fix_flag = false;
@@ -140,7 +142,7 @@ namespace Gecode { namespace Set { namespace Element {
 
       {
       UnknownRanges<RView> x1u(x1);
-      Iter::Ranges::Cache<UnknownRanges<RView> > x1uc(x1u);
+      Iter::Ranges::Cache<UnknownRanges<RView> > x1uc(r,x1u);
       Iter::Ranges::ToValues<Iter::Ranges::Cache<UnknownRanges<RView> > >
         vx1u(x1uc);
       int i=0;
@@ -219,7 +221,7 @@ namespace Gecode { namespace Set { namespace Element {
       // at least two more elements need to be selected
       if (x1.cardMin()-x1.glbSize() > 1) {
         UnknownRanges<RView> x1u(x1);
-        Iter::Ranges::Cache<UnknownRanges<RView> > x1uc(x1u);
+        Iter::Ranges::Cache<UnknownRanges<RView> > x1uc(r,x1u);
         Iter::Ranges::ToValues<Iter::Ranges::Cache<UnknownRanges<RView> > >
           vx1u(x1uc);
 
@@ -259,7 +261,7 @@ namespace Gecode { namespace Set { namespace Element {
       // and there is a possible element i such that all other pairs of
       // elements overlap, select i
       UnknownRanges<RView> x1u(x1);
-      Iter::Ranges::Cache<UnknownRanges<RView> > x1uc(x1u);
+      Iter::Ranges::Cache<UnknownRanges<RView> > x1uc(r,x1u);
       Iter::Ranges::ToValues<Iter::Ranges::Cache<UnknownRanges<RView> > >
         vx1u(x1uc);
 

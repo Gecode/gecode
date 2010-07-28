@@ -43,54 +43,26 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * This iterator in effect changes the order of how ranges
    * are iterated: the first range of the input iterator defines
    * the last range of the Minus iterator. Upon initialization
-   * all ranges of the input iterator are stored in an array
+   * all ranges of the input iterator are stored 
    * which later allows iteration in inverse direction.
    *
    * \ingroup FuncIterRanges
    */
-
   template<class I>
-  class Minus {
-  private:
-    /// Check that \a I is a range iterator;
-    IsRangeIter<I> _checkI;
-  private:
-    /// %Range for storage in array
-    class Range {
-    public:
-      int min; int max;
-    };
-    /// %Ranges stored
-    SharedArray<Range> r;
-    /// Current range
-    int c;
+  class Minus : public RangeListIter {
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     Minus(void);
+    /// Copy constructor
+    Minus(const Minus& m);
     /// Initialize with ranges from \a i
-    Minus(I& i);
+    Minus(Region& r, I& i);
     /// Initialize with ranges from \a i
-    void init(I& i);
-    //@}
-
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
-
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    unsigned int width(void) const;
+    void init(Region& r, I& i);
+    /// Assignment operator
+    Minus& operator =(const Minus& m);
     //@}
   };
 
@@ -100,51 +72,35 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Minus<I>::Minus(void) {}
 
   template<class I>
-  inline void
-  Minus<I>::init(I& i) {
-    Support::DynamicArray<Range,Heap> d(heap);
-    int n=0;
-    while (i()) {
-      d[n].min = -i.max(); d[n].max = -i.min();
-      ++n; ++i;
+  forceinline
+  Minus<I>::Minus(const Minus& m) 
+    : RangeListIter(m) {}
+
+  template<class I>
+  void
+  Minus<I>::init(Region& r, I& i) {
+    RangeListIter::init(r);
+    RangeList* p = NULL;
+    for (; i(); ++i) {
+      RangeList* t = new (*rlio) RangeList;
+      t->next = p;
+      t->min = -i.max();
+      t->max = -i.min();
+      p = t;
     }
-    r.init(n);
-    for (int j=n; j--; )
-      r[j]=d[j];
-    c = n-1;
+    RangeListIter::set(p);
   }
 
   template<class I>
-  inline
-  Minus<I>::Minus(I& i) {
-    init(i);
+  forceinline
+  Minus<I>::Minus(Region& r, I& i) {
+    init(r,i);
   }
 
   template<class I>
-  forceinline void
-  Minus<I>::operator ++(void) {
-    c--;
-  }
-  template<class I>
-  forceinline bool
-  Minus<I>::operator ()(void) const {
-    return c >= 0;
-  }
-
-  template<class I>
-  forceinline int
-  Minus<I>::min(void) const {
-    return r[c].min;
-  }
-  template<class I>
-  forceinline int
-  Minus<I>::max(void) const {
-    return r[c].max;
-  }
-  template<class I>
-  forceinline unsigned int
-  Minus<I>::width(void) const {
-    return static_cast<unsigned int>(r[c].max-r[c].min+1);
+  forceinline Minus<I>&
+  Minus<I>::operator =(const Minus<I>& m) {
+    return static_cast<Minus&>(RangeListIter::operator =(m));
   }
 
 }}}

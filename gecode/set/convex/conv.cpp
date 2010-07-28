@@ -75,9 +75,11 @@ namespace Gecode { namespace Set { namespace Convex {
 
     //I + III
 
+    Region r(home);
     LubRanges<SetView> ubRangeIt(x0);
-    Iter::Ranges::Cache< LubRanges<SetView> > ubRangeItC(ubRangeIt);
-    for (;ubRangeItC();++ubRangeItC){
+    Iter::Ranges::Cache< LubRanges<SetView> > ubRangeItC(r,ubRangeIt);
+
+    for (; ubRangeItC(); ++ubRangeItC) {
       if (ubRangeItC.width() < (unsigned int) x0.cardMin()
           || ubRangeItC.min() > x0.glbMin() //No need to test for empty lb.
           || ubRangeItC.max() < x0.glbMax()
@@ -85,7 +87,8 @@ namespace Gecode { namespace Set { namespace Convex {
         GECODE_ME_CHECK( x0.exclude(home,ubRangeItC.min(), ubRangeItC.max()) );
       }
     }
-    if (x0.assigned()) {return home.ES_SUBSUMED(*this);}
+    if (x0.assigned()) 
+      return home.ES_SUBSUMED(*this);
     return ES_FIX;
   }
 

@@ -310,7 +310,8 @@ namespace Gecode { namespace Int { namespace Rel {
       i_x[i] = i_xi;
     }
     Iter::Ranges::NaryInter<ViewRanges<View> > r(i_x,n);
-    Iter::Ranges::Cache<Iter::Ranges::NaryInter<ViewRanges<View> > > rc(r);
+    Iter::Ranges::Cache<Iter::Ranges::NaryInter<ViewRanges<View> > > 
+      rc(re,r);
 
     if (!rc())
       return ES_FAILED;

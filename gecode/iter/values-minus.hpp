@@ -48,40 +48,21 @@ namespace Gecode { namespace Iter { namespace Values {
    *
    * \ingroup FuncIterValues
    */
-
   template<class I>
-  class Minus {
-  private:
-    /// Check that \a I is a value iterator;
-    IsValueIter<I> _checkI;
-  private:
-    /// %Values stored
-    SharedArray<int> v;
-    /// Current value position
-    int c;
+  class Minus : public ValueListIter {
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     Minus(void);
+    /// Copy constructor
+    Minus(const Minus& m);
     /// Initialize with values from \a i
-    Minus(I& i);
+    Minus(Region& r, I& i);
     /// Initialize with values from \a i
-    void init(I& i);
-    //@}
-
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
-
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
+    void init(Region& r, I& i);
+    /// Assignment operator
+    Minus& operator =(const Minus& m);
     //@}
   };
 
@@ -91,41 +72,34 @@ namespace Gecode { namespace Iter { namespace Values {
   Minus<I>::Minus(void) {}
 
   template<class I>
-  inline void
-  Minus<I>::init(I& i) {
-    Support::DynamicArray<int,Heap> d(heap);
-    int n=0;
-    while (i()) {
-      d[n] = -i.val();
-      ++n; ++i;
+  forceinline
+  Minus<I>::Minus(const Minus& m) 
+    : ValueListIter(m) {}
+
+  template<class I>
+  void
+  Minus<I>::init(Region& r, I& i) {
+    ValueListIter::init(r);
+    ValueList* p = NULL;
+    for (; i(); ++i) {
+      ValueList* t = new (*vlio) ValueList;
+      t->next = p;
+      t->val = -i.val();
+      p = t;
     }
-    v.init(n);
-    for (int j=n; j--; )
-      v[j]=d[j];
-    c = n-1;
+    ValueListIter::set(p);
   }
 
   template<class I>
   forceinline
-  Minus<I>::Minus(I& i) {
-    init(i);
+  Minus<I>::Minus(Region& r, I& i) {
+    init(r,i);
   }
 
   template<class I>
-  forceinline void
-  Minus<I>::operator ++(void) {
-    c--;
-  }
-  template<class I>
-  forceinline bool
-  Minus<I>::operator ()(void) const {
-    return c >= 0;
-  }
-
-  template<class I>
-  forceinline int
-  Minus<I>::val(void) const {
-    return v[c];
+  forceinline Minus<I>&
+  Minus<I>::operator =(const Minus<I>& m) {
+    return static_cast<Minus&>(ValueListIter::operator =(m));
   }
 
 }}}

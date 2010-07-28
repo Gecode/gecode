@@ -69,6 +69,8 @@ namespace Gecode { namespace Support {
     BlockAllocator(A& a);
     /// Free all allocated blocks
     ~BlockAllocator(void);
+    /// Return allocator used
+    A& allocator(void);
     /// Return memory of size required by \a T
     T* operator ()(void);
     /// Return size of memory required by allocator
@@ -111,6 +113,12 @@ namespace Gecode { namespace Support {
       Block* f = b; b = b->next;
       a.rfree(f,sizeof(Block));
     }
+  }
+
+  template<class T, class A, int blocksize>
+  forceinline A&
+  BlockAllocator<T,A,blocksize>::allocator(void) {
+    return a;
   }
 
   template<class T, class A, int blocksize>

@@ -220,6 +220,14 @@ namespace Test { namespace Set {
     };
     ElementInterIn _elementinterin("Element::InterIn");
 
+    class FakeSpace : public Space {
+    public:
+      FakeSpace(void) {}
+      virtual Space* copy(bool share) {
+        return NULL;
+      }
+    };
+
     /// %Test for %ElementDisjoint constraint
     class ElementDisjoint : public SetTest {
     public:
@@ -250,12 +258,19 @@ namespace Test { namespace Set {
           cardsum += Iter::Ranges::size(xicard);
         }
         Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
-        Iter::Ranges::Cache<Iter::Ranges::NaryUnion<CountableSetRanges> >
-          uc(u);
-        bool ret = Iter::Ranges::size(uc) == cardsum;
-        uc.reset();
-        CountableSetRanges z(x.lub, x[4]);
-        ret &= Iter::Ranges::equal(uc, z);
+        
+        FakeSpace* fs = new FakeSpace;
+        bool ret;
+        {
+          Region r(*fs);
+          Iter::Ranges::Cache<Iter::Ranges::NaryUnion<CountableSetRanges> >
+            uc(r,u);
+          ret = Iter::Ranges::size(uc) == cardsum;
+          uc.reset();
+          CountableSetRanges z(x.lub, x[4]);
+          ret &= Iter::Ranges::equal(uc, z);
+        }
+        delete fs;
         delete[] sel;
         return ret;
       }

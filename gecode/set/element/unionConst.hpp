@@ -119,12 +119,12 @@ namespace Gecode { namespace Set { namespace Element {
       // Cache the upper bound iterator, as we have to
       // modify the upper bound while iterating
       LubRanges<RView> x1ub(x1);
-      Iter::Ranges::Cache<LubRanges<RView> > x1ubc(x1ub);
+      Iter::Ranges::Cache<LubRanges<RView> > x1ubc(r,x1ub);
       Iter::Ranges::ToValues<Iter::Ranges::Cache<LubRanges<RView> > >
         vx1ub(x1ubc);
 
       GlbRanges<RView> x1lb(x1);
-      Iter::Ranges::Cache<GlbRanges<RView> > x1lbc(x1lb);
+      Iter::Ranges::Cache<GlbRanges<RView> > x1lbc(r,x1lb);
       Iter::Ranges::ToValues<Iter::Ranges::Cache<GlbRanges<RView> > >
         vx1(x1lbc);
 

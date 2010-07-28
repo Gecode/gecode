@@ -343,12 +343,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     }
 
+    Region r(home);
     {
       ViewValues<View> i(x0), j(x0);
       using namespace Iter::Values;
       Positive<ViewValues<View> > p(i);
       Negative<ViewValues<View> > n(j);
-      Minus<Negative<ViewValues<View> > > m(n);
+      Minus<Negative<ViewValues<View> > > m(r,n);
 
       Map<Positive<ViewValues<View> >,ValuesMapSqr,true> sp(p);
       Map<Minus<Negative<ViewValues<View> > >,ValuesMapSqr,true> sm(m);
@@ -361,7 +362,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       ViewValues<View> i(x1), j(x1);
       using namespace Iter::Values;
       Map<ViewValues<View>,ValuesMapSqrt,true> si(i), sj(j);
-      Minus<Map<ViewValues<View>,ValuesMapSqrt,true> > mi(si);
+      Minus<Map<ViewValues<View>,ValuesMapSqrt,true> > mi(r,si);
       Union<Minus<Map<ViewValues<View>,ValuesMapSqrt,true> >,
         Map<ViewValues<View>,ValuesMapSqrt,true> > u(mi,sj);
       GECODE_ME_CHECK(x0.inter_v(home,u,false));

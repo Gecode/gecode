@@ -188,6 +188,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
+    Region r(home);
+
     {
       ViewRanges<View> i(x0), j(x0);
 
@@ -195,7 +197,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       Positive<ViewRanges<View> > p(i);
       Negative<ViewRanges<View> > n(j);
 
-      Minus<Negative<ViewRanges<View> > > m(n);
+      Minus<Negative<ViewRanges<View> > > m(r,n);
 
       Union<Positive<ViewRanges<View> >,
         Minus<Negative<ViewRanges<View> > > > u(p,m);
@@ -208,7 +210,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       ViewRanges<View> i(x1), j(x1);
 
       using namespace Iter::Ranges;
-      Minus<ViewRanges<View> > m(j);
+      Minus<ViewRanges<View> > m(r,j);
 
       Union<ViewRanges<View>,Minus<ViewRanges<View> > > u(i,m);
 

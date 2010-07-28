@@ -73,26 +73,28 @@ namespace Gecode { namespace Set { namespace Rel {
     ModEvent me0 = View0::me(med);
     ModEvent me1 = View1::me(med);
 
-    if ( testSetEventLB(me0,me1) ) {
+    Region r(home);
+
+    if (testSetEventLB(me0,me1)) {
       GlbRanges<View0> x0lb(x0);
       GlbRanges<View1> x1lb(x1);
       Iter::Ranges::Union<GlbRanges<View0>,GlbRanges<View1> > lbu(x0lb,x1lb);
       Iter::Ranges::Cache<Iter::Ranges::Union
-        <GlbRanges<View0>, GlbRanges<View1> > > lbuc(lbu);
-      GECODE_ME_CHECK ( x0.includeI(home,lbuc) );
+        <GlbRanges<View0>, GlbRanges<View1> > > lbuc(r,lbu);
+      GECODE_ME_CHECK(x0.includeI(home,lbuc));
       lbuc.reset();
-      GECODE_ME_CHECK ( x1.includeI(home,lbuc) );
+      GECODE_ME_CHECK(x1.includeI(home,lbuc));
     }
 
-    if (testSetEventUB(me0,me1) ) {
+    if (testSetEventUB(me0,me1)) {
       LubRanges<View0> x0ub(x0);
       LubRanges<View1> x1ub(x1);
       Iter::Ranges::Inter<LubRanges<View0>,LubRanges<View1> > ubi(x0ub,x1ub);
       Iter::Ranges::Cache<Iter::Ranges::Inter
-        <LubRanges<View0>,LubRanges<View1> > > ubic(ubi);
-      GECODE_ME_CHECK ( x0.intersectI(home,ubic) );
+        <LubRanges<View0>,LubRanges<View1> > > ubic(r,ubi);
+      GECODE_ME_CHECK(x0.intersectI(home,ubic));
       ubic.reset();
-      GECODE_ME_CHECK ( x1.intersectI(home,ubic) );
+      GECODE_ME_CHECK(x1.intersectI(home,ubic));
     }
 
     if (testSetEventCard(me0,me1) ) {

@@ -81,6 +81,7 @@ namespace Gecode {
 
 #include <gecode/iter/ranges-operations.hpp>
 #include <gecode/iter/ranges-minmax.hpp>
+#include <gecode/iter/ranges-list.hpp>
 
 #include <gecode/iter/ranges-append.hpp>
 #include <gecode/iter/ranges-array.hpp>
@@ -103,6 +104,8 @@ namespace Gecode {
 
 #include <gecode/iter/values-array.hpp>
 #include <gecode/iter/values-bitset.hpp>
+#include <gecode/iter/values-list.hpp>
+
 #include <gecode/iter/values-inter.hpp>
 #include <gecode/iter/values-map.hpp>
 #include <gecode/iter/values-minus.hpp>

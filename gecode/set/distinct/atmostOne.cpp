@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Distinct {
     }
     Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT(lubs, x.size());
     Iter::Ranges::Cache<Iter::Ranges::NaryUnion<LubRanges<SetView> > >
-      bigTC(bigT);
+      bigTC(r,bigT);
 
     Iter::Ranges::ToValues<Iter::Ranges::Cache<Iter::Ranges::NaryUnion<LubRanges<SetView> > > >
       as(bigTC);
@@ -128,7 +128,7 @@ namespace Gecode { namespace Set { namespace Distinct {
           Iter::Ranges::NaryUnion<GlbRanges<SetView> > > deltaA(bigT2, glbsa);
         Iter::Ranges::Cache<
         Iter::Ranges::Diff<Iter::Ranges::NaryUnion<LubRanges<SetView> >,
-          Iter::Ranges::NaryUnion<GlbRanges<SetView> > > > deltaAC(deltaA);
+          Iter::Ranges::NaryUnion<GlbRanges<SetView> > > > deltaAC(r,deltaA);
         // deltaAC contains all elements that are not yet known to be
         // in a set together with a.
         // Formally: \cup_i lub(x_i) - \cup_i {glb(s_i) | a\in glb(s_i)}
