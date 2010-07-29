@@ -178,11 +178,8 @@ namespace Gecode { namespace Gist {
   forceinline Shape*
   VisualNode::getShape(void) { return shape; }
 
-  forceinline void
-  VisualNode::setBoundingBox(BoundingBox b) { box = b; }
-
   forceinline BoundingBox
-  VisualNode::getBoundingBox(void) { return box; }
+  VisualNode::getBoundingBox(void) { return shape->getBoundingBox(); }
 
   forceinline VisualNode*
   VisualNode::getParent() {

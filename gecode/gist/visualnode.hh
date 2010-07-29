@@ -136,8 +136,6 @@ namespace Gecode { namespace Gist {
     Shape* shape;
     /// Relative offset from the parent node
     int offset;
-    /// Bounding box of this node
-    BoundingBox box;
     /// Check if the \a x at depth \a depth lies in this subtree
     bool containsCoordinateAtDepth(int x, int depth);
   public:
@@ -206,8 +204,6 @@ namespace Gecode { namespace Gist {
     void setShape(Shape* s);
     /// Compute the shape according to the shapes of the children
     void computeShape(VisualNode* root);
-    /// Set the bounding box
-    void setBoundingBox(BoundingBox b);
     /// Return the bounding box
     BoundingBox getBoundingBox(void);
     /// Signal that the status has changed

@@ -67,7 +67,6 @@ namespace Gecode { namespace Gist {
   VisualNode::VisualNode(void)
   : shape(NULL)
   , offset(0)
-  , box(0,0)
   {
     setDirty(true);
     setChildrenLayoutDone(false);
@@ -81,7 +80,6 @@ namespace Gecode { namespace Gist {
   : SpaceNode(root)
   , shape(NULL)
   , offset(0)
-  , box(0,0)
   {
     setDirty(true);
     setChildrenLayoutDone(false);
@@ -190,6 +188,7 @@ namespace Gecode { namespace Gist {
 
   bool
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
+    BoundingBox box = shape->getBoundingBox();
     if (x < box.left ||
         x > box.right ||
         depth >= shape->depth()) {
@@ -334,7 +333,6 @@ namespace Gecode { namespace Gist {
   VisualNode::setShape(Shape* s) {
     Shape::deallocate(shape);
     shape = s;
-    setBoundingBox(shape->getBoundingBox());
   }
 
   void
