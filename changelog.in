@@ -84,7 +84,8 @@ Module: iter
 What: 	performance
 Rank:	minor
 [DESCRIPTION]
-Reimplemented minus and cache iterators for much better efficiency.
+Reimplemented n-ary union, minus, and cache iterators for much
+better efficiency.
 
 [ENTRY]
 Module: flatzinc

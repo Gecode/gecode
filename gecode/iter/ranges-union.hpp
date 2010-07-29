@@ -39,171 +39,6 @@
 
 namespace Gecode { namespace Iter { namespace Ranges {
 
-  /// Simple fixed-size priority queue for iterators
-  template<class I>
-  class PriorityQueue  {
-  protected:
-    /// The class holding the shared queue (organized as heap)
-    class SharedPriorityQueue  {
-    public:
-      /// Number of elements currently in queue
-      int n;
-      /// Maximal size
-      int size;
-      /// How many references to shared queue exist
-      unsigned int ref;
-      /// Elements (will be most likely more than one)
-      I pq[1];
-
-      /// Allocate queue with \a n elements
-      static SharedPriorityQueue* allocate(int n);
-      /// Reorganize after smallest element has changed
-      void fixdown(void);
-      /// Reorganize after element at position \a n has changed
-      void fixup(int n);
-    };
-    /// Handle to shared queue
-    SharedPriorityQueue* spq;
-
-  public:
-    /// Default constructor (creates empty queue)
-    PriorityQueue(void);
-    /// Create for \a n iter<ators
-    PriorityQueue(int n);
-    /// Initialize for \a n iterators
-    void init(int n);
-    /// Assign queue from queue \a p (elements are shared)
-    PriorityQueue(const PriorityQueue& p);
-    /// Assign queue from queue \a p (elements are shared)
-    const PriorityQueue& operator =(const PriorityQueue&);
-    /// Release queue
-    ~PriorityQueue(void);
-
-    /// Test whether queue is empty
-    bool empty(void) const;
-    /// Insert element \a x according to order
-    void insert(const I& x);
-    /// Remove smallest element
-    void remove(void);
-    /// Provide access to smallest element
-    I& top(void);
-    /// Reorder queue after smallest element has changed (might not be smallest any longer)
-    void fix(void);
-  };
-
-  template<class I>
-  forceinline typename PriorityQueue<I>::SharedPriorityQueue*
-  PriorityQueue<I>::SharedPriorityQueue::allocate(int n) {
-    SharedPriorityQueue* spq
-      = static_cast<SharedPriorityQueue*>
-      (heap.ralloc(sizeof(SharedPriorityQueue) + (n-1)*sizeof(I)));
-    spq->size = n;
-    spq->n    = 0;
-    spq->ref  = 1;
-    return spq;
-  }
-
-  template<class I>
-  forceinline void
-  PriorityQueue<I>::SharedPriorityQueue::fixdown(void) {
-    int k = 0;
-    while ((k << 1) < n) {
-      int j = k << 1;
-      if ((j < n-1) && (pq[j].min() > pq[j+1].min()))
-        j++;
-      if (pq[k].min() <= pq[j].min())
-        break;
-      std::swap(pq[k], pq[j]);
-      k = j;
-    }
-  }
-
-  template<class I>
-  forceinline void
-  PriorityQueue<I>::SharedPriorityQueue::fixup(int k) {
-    while ((k > 0) && (pq[k >> 1].min() > pq[k].min())) {
-      std::swap(pq[k],pq[k >> 1]);
-      k >>= 1;
-    }
-  }
-
-  template<class I>
-  forceinline
-  PriorityQueue<I>::PriorityQueue(void)
-    : spq(NULL) {}
-
-  template<class I>
-  forceinline
-  PriorityQueue<I>::PriorityQueue(int n)
-    : spq(SharedPriorityQueue::allocate(n)) {}
-
-  template<class I>
-  forceinline void
-  PriorityQueue<I>::init(int n) {
-    spq = SharedPriorityQueue::allocate(n);
-  }
-
-  template<class I>
-  forceinline
-  PriorityQueue<I>::PriorityQueue(const PriorityQueue<I>& p)
-    : spq(p.spq) {
-    if (spq != NULL)
-      spq->ref++;
-  }
-
-  template<class I>
-  forceinline const PriorityQueue<I>&
-  PriorityQueue<I>::operator =(const PriorityQueue<I>& p) {
-    if (this != &p) {
-      if ((spq != NULL) && (--spq->ref == 0))
-        heap.rfree(spq);
-      spq = p.spq;
-      if (spq != NULL)
-        spq->ref++;
-    }
-    return *this;
-  }
-
-  template<class I>
-  forceinline
-  PriorityQueue<I>::~PriorityQueue(void) {
-    if (--spq->ref == 0)
-      heap.rfree(spq);
-  }
-
-  template<class I>
-  forceinline bool
-  PriorityQueue<I>::empty(void) const {
-    return (spq == NULL) || (spq->n == 0);
-  }
-
-
-  template<class I>
-  forceinline void
-  PriorityQueue<I>::insert(const I& x) {
-    spq->pq[spq->n++] = x;
-    spq->fixup(spq->n-1);
-  }
-
-  template<class I>
-  forceinline void
-  PriorityQueue<I>::remove(void) {
-    spq->pq[0] = spq->pq[--spq->n];
-    spq->fixdown();
-  }
-
-  template<class I>
-  forceinline I&
-  PriorityQueue<I>::top(void) {
-    return spq->pq[0];
-  }
-
-  template<class I>
-  forceinline void
-  PriorityQueue<I>::fix(void) {
-    spq->fixdown();
-  }
-
   /**
    * \brief Range iterator for computing union (binary)
    *
@@ -244,8 +79,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I>
   class NaryUnion : public MinMax {
   protected:
-    /// Priority queue to give access to next range
-    PriorityQueue<I> r;
+    /// Iterators
+    I* i;
+    /// Number of still active iterators
+    int n;
   public:
     /// \name Constructors and initialization
     //@{
@@ -327,25 +164,33 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template<class I>
-  inline void
+  forceinline void
   NaryUnion<I>::operator ++(void) {
-    if (r.empty()) {
+    if (n == 0) {
       finish(); return;
     }
-    mi = r.top().min();
-    ma = r.top().max();
+    mi = i[0].min();
+    ma = i[0].max();
     do {
-      if (ma < r.top().max())
-        ma = r.top().max();
-      ++(r.top());
-      if (!(r.top())()) {
-        r.remove();
-        if (r.empty())
+      if (ma < i[0].max())
+        ma = i[0].max();
+      ++i[0];
+      if (!i[0]()) {
+        if (--n == 0)
           return;
-      } else {
-        r.fix();
+        i[0] = i[n];
       }
-    } while (ma+1 >= r.top().min());
+      int k = 0;
+      while ((k << 1) < n) {
+        int j = k << 1;
+        if ((j < n-1) && (i[j].min() > i[j+1].min()))
+          j++;
+        if (i[k].min() <= i[j].min())
+          break;
+        std::swap(i[k],i[j]);
+        k = j;
+      }
+    } while (ma+1 >= i[0].min());
   }
 
 
@@ -354,23 +199,25 @@ namespace Gecode { namespace Iter { namespace Ranges {
   NaryUnion<I>::NaryUnion(void) {}
 
   template<class I>
-  inline
-  NaryUnion<I>::NaryUnion(I* r0, int n)
-    : r(n) {
-    for (int i = n; i--; )
-      if (r0[i]())
-        r.insert(r0[i]);
+  void
+  NaryUnion<I>::init(I* i0, int n0) {
+    i=i0; n=n0;
+    while ((n > 0) && !i[0]())
+      i[0] = i[--n];
+    int j=1;
+    while (j < n)
+      if (!i[j]())
+        i[j] = i[--n];
+      else
+        for (int k=j++; (k > 0) && (i[k >> 1].min() > i[k].min()); k >>= 1)
+          std::swap(i[k],i[k >> 1]);
     operator ++();
   }
 
   template<class I>
-  inline void
-  NaryUnion<I>::init(I* r0, int n) {
-    r.init(n);
-    for (int i = n; i--; )
-      if (r0[i]())
-        r.insert(r0[i]);
-    operator ++();
+  forceinline
+  NaryUnion<I>::NaryUnion(I* i0, int n0) {
+    init(i0,n0);
   }
 
 }}}
