@@ -92,14 +92,18 @@ namespace Gecode { namespace Gist {
   /// \brief A node of a search tree of %Gecode spaces
   class SpaceNode : public Node {
   protected:
-    /// A copy used for recomputation, or NULL
+    /** \brief A copy used for recomputation, or NULL
+     *
+     * If the copy is marked, it is a working copy, i.e.,
+     * it does not have to be kept for recomputation.
+     */
     Space* copy;
   private:
     /// Reference to best space when the node was created
     SpaceNode* ownBest;
     /** \brief Status of the node
      *
-     * If the node has a workingSpace, the first 20 bits encode the distance
+     * If the node has a working copy, the first 20 bits encode the distance
      * to the closest copy. The next 5 bits encode the NodeStatus, and the
      * remaining bits are used by the VisualNode class for further flags.
      */
