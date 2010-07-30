@@ -38,18 +38,19 @@
 namespace Gecode { namespace Gist {
 
   template<class Cursor>
+  forceinline
   NodeVisitor<Cursor>::NodeVisitor(const Cursor& c0) : c(c0) {}
 
   template<class Cursor>
-  void
+  forceinline void
   NodeVisitor<Cursor>::setCursor(const Cursor& c0) { c = c0; }
 
   template<class Cursor>
-  Cursor&
+  forceinline Cursor&
   NodeVisitor<Cursor>::getCursor(void) { return c; }
 
   template<class Cursor>
-  void
+  forceinline void
   PostorderNodeVisitor<Cursor>::moveToLeaf(void) {
     while (c.mayMoveDownwards()) {
         c.moveDownwards();
@@ -63,7 +64,7 @@ namespace Gecode { namespace Gist {
   }
 
   template<class Cursor>
-  bool
+  forceinline bool
   PostorderNodeVisitor<Cursor>::next(void) {
     c.processCurrentNode();
     if (c.mayMoveSidewards()) {
@@ -78,13 +79,13 @@ namespace Gecode { namespace Gist {
   }
 
   template<class Cursor>
-  void
+  forceinline void
   PostorderNodeVisitor<Cursor>::run(void) {
     while (next()) {}
   }
 
   template<class Cursor>
-  bool
+  forceinline bool
   PreorderNodeVisitor<Cursor>::backtrack(void) {
     while (! c.mayMoveSidewards() && c.mayMoveUpwards()) {
       c.moveUpwards();
@@ -102,7 +103,7 @@ namespace Gecode { namespace Gist {
     : NodeVisitor<Cursor>(c0) {}
 
   template<class Cursor>
-  bool
+  forceinline bool
   PreorderNodeVisitor<Cursor>::next(void) {
     c.processCurrentNode();
     if (c.mayMoveDownwards()) {
@@ -116,7 +117,7 @@ namespace Gecode { namespace Gist {
   }
 
   template<class Cursor>
-  void
+  forceinline void
   PreorderNodeVisitor<Cursor>::run(void) {
     while (next()) {}
   }

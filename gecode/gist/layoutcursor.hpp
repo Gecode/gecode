@@ -44,6 +44,27 @@ namespace Gecode { namespace Gist {
            (! n->isHidden() )*/;
   }
 
+  inline
+  LayoutCursor::LayoutCursor(VisualNode* theNode)
+   : NodeCursor<VisualNode>(theNode) {}
+
+  forceinline void
+  LayoutCursor::processCurrentNode() {
+    VisualNode* currentNode = node();
+    if (currentNode->isDirty()) {
+      if (currentNode->isHidden()) {
+        currentNode->setShape(Shape::hidden);
+      } else if (currentNode->getNumberOfChildren() < 1) {
+        currentNode->setShape(Shape::leaf);
+      } else {
+        currentNode->computeShape(startNode());
+      }
+      currentNode->setDirty(false);
+    }
+    if (currentNode->getNumberOfChildren() >= 1)
+      currentNode->setChildrenLayoutDone(true);
+  }
+
 }}
 
 // STATISTICS: gist-any

@@ -118,6 +118,140 @@ namespace Gecode { namespace Gist {
            (! n->isHidden());
   }
 
+  forceinline
+  HideFailedCursor::HideFailedCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
+
+  forceinline void
+  HideFailedCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    if (n->getStatus() == BRANCH &&
+        !n->hasSolvedChildren() &&
+        n->getNoOfOpenChildren() == 0) {
+      n->setHidden(true);
+      n->setChildrenLayoutDone(false);
+      n->dirtyUp();
+    }
+  }
+
+  forceinline
+  UnhideAllCursor::UnhideAllCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
+
+  forceinline void
+  UnhideAllCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    if (n->isHidden()) {
+      n->setHidden(false);
+      n->dirtyUp();
+    }
+  }
+
+  forceinline
+  UnstopAllCursor::UnstopAllCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
+
+  forceinline void
+  UnstopAllCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    if (n->getStatus() == STOP) {
+      n->setStop(false);
+      n->dirtyUp();
+    }
+  }
+
+  forceinline
+  NextSolCursor::NextSolCursor(VisualNode* theNode, bool backwards)
+   : NodeCursor<VisualNode>(theNode), back(backwards) {}
+
+  forceinline void
+  NextSolCursor::processCurrentNode(void) {}
+
+  forceinline bool
+  NextSolCursor::notOnSol(void) {
+    return node() == startNode() || node()->getStatus() != SOLVED;
+  }
+
+  forceinline bool
+  NextSolCursor::mayMoveUpwards(void) {
+    return notOnSol() && !node()->isRoot();
+  }
+
+  forceinline bool
+  NextSolCursor::mayMoveDownwards(void) {
+    return notOnSol() && !(back && node() == startNode())
+           && node()->hasSolvedChildren()
+           && NodeCursor<VisualNode>::mayMoveDownwards();
+  }
+
+  forceinline void
+  NextSolCursor::moveDownwards(void) {
+    NodeCursor<VisualNode>::moveDownwards();
+    if (back) {
+      while (NodeCursor<VisualNode>::mayMoveSidewards())
+        NodeCursor<VisualNode>::moveSidewards();
+    }
+  }
+
+  forceinline bool
+  NextSolCursor::mayMoveSidewards(void) {
+    if (back) {
+      return notOnSol() && !node()->isRoot() && alternative() > 0;
+    } else {
+      return notOnSol() && !node()->isRoot() &&
+             (alternative() < node()->getParent()->getNumberOfChildren() - 1);
+    }
+  }
+
+  forceinline void
+  NextSolCursor::moveSidewards(void) {
+    if (back) {
+      alternative(alternative()-1);
+      node(node()->getParent()->getChild(alternative()));
+    } else {
+      NodeCursor<VisualNode>::moveSidewards();
+    }
+  }
+
+  forceinline
+  StatCursor::StatCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root),
+     curDepth(0), depth(0), failed(0), solved(0), choice(0), open(0) {}
+
+  forceinline void
+  StatCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    switch (n->getStatus()) {
+    case SOLVED: solved++; break;
+    case FAILED: failed++; break;
+    case BRANCH: choice++; break;
+    case UNDETERMINED: open++; break;
+    default: break;
+    }
+  }
+
+  forceinline void
+  StatCursor::moveDownwards(void) {
+    curDepth++;
+    depth = std::max(depth,curDepth); 
+    NodeCursor<VisualNode>::moveDownwards();
+  }
+
+  forceinline void
+  StatCursor::moveUpwards(void) {
+    curDepth--;
+    NodeCursor<VisualNode>::moveUpwards();
+  }
+
+  forceinline
+  DisposeCursor::DisposeCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
+
+  forceinline void
+  DisposeCursor::processCurrentNode(void) {
+    node()->dispose();
+  }
+
 }}
 
 // STATISTICS: gist-any

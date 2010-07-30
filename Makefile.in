@@ -592,8 +592,8 @@ GISTHDR0 = \
 	stopbrancher.hh
 
 GISTSRC0 = \
-	drawingcursor.cpp gist.cpp gecodelogo.cpp node.cpp nodecursor.cpp \
-	layoutcursor.cpp spacenode.cpp \
+	drawingcursor.cpp gist.cpp gecodelogo.cpp node.cpp \
+	spacenode.cpp \
 	textoutput.cpp treecanvas.cpp qtgist.cpp visualnode.cpp nodestats.cpp \
 	nodewidget.cpp mainwindow.cpp preferences.cpp stopbrancher.cpp
 

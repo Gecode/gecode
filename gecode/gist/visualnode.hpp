@@ -94,6 +94,49 @@ namespace Gecode { namespace Gist {
       heap.rfree(shape);
   }
 
+  forceinline Shape*
+  Shape::allocate(Extent e, const Shape* subShape) {
+    Shape* shape = Shape::allocate(subShape->depth() + 1);
+    (*shape)[0] = e;
+    Heap::copy<Extent>(&(*shape)[1],&(*subShape)[0],subShape->depth());
+    return shape;
+  }
+
+  forceinline Shape*
+  Shape::allocate(const Shape* subShape) {
+    Shape* shape = Shape::allocate(subShape->depth());
+    Heap::copy<Extent>(&(*shape)[0],&(*subShape)[0],subShape->depth());
+    return shape;
+  }
+
+  forceinline bool
+  Shape::getExtentAtDepth(int depth, Extent& extent) {
+    if (depth > _depth)
+      return false;
+    extent = Extent(0,0);
+    for (int i=0; i <= depth; i++) {
+      Extent currentExtent = shape[i];
+      extent.l += currentExtent.l;
+      extent.r += currentExtent.r;
+    }
+    return true;
+  }
+
+  forceinline BoundingBox
+  Shape::getBoundingBox(void) {
+    int lastLeft = 0;
+    int lastRight = 0;
+    int left = 0;
+    int right = 0;
+    for (int i=0; i<_depth; i++) {
+      lastLeft = lastLeft + shape[i].l;
+      lastRight = lastRight + shape[i].r;
+      left = std::min(left,lastLeft);
+      right = std::max(right,lastRight);
+    }
+    return BoundingBox(left, right);
+  }
+  
   forceinline int
   Shape::depth(void) const { return _depth; }
 
