@@ -249,17 +249,18 @@ namespace Gecode { namespace Gist {
       double h = std::floor(m / 60.0);
       m -= h*60.0;
 
-      QString t;
-      if (static_cast<int>(h) != 0)
-        t += QString().setNum(static_cast<int>(h))+"h ";
-      if (static_cast<int>(m) != 0)
-        t += QString().setNum(static_cast<int>(m))+"m ";
-      if (static_cast<int>(s) != 0)
-        t += QString().setNum(static_cast<int>(s));
-      else
-        t += "0";
-      t += "."+QString().setNum(static_cast<int>(ms))+"s";
-      statusBar()->showMessage(QString("Ready (search time ")+t+")");
+      // QString t;
+      // if (static_cast<int>(h) != 0)
+      //   t += QString().setNum(static_cast<int>(h))+"h ";
+      // if (static_cast<int>(m) != 0)
+      //   t += QString().setNum(static_cast<int>(m))+"m ";
+      // if (static_cast<int>(s) != 0)
+      //   t += QString().setNum(static_cast<int>(s));
+      // else
+      //   t += "0";
+      // t += "."+QString().setNum(static_cast<int>(ms))+"s";
+      // statusBar()->showMessage(QString("Ready (search time ")+t+")");
+      statusBar()->showMessage("Ready");
     } else if (!isSearching && !finished) {
       statusBar()->showMessage("Searching");
       isSearching = true;
