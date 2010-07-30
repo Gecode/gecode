@@ -62,6 +62,8 @@ namespace Gecode { namespace Gist {
     Options opt;
     /// Whether search is currently running
     bool isSearching;
+    /// Measure search time
+    Support::Timer searchTimer;
     /// Status bar label for maximum depth indicator
     QLabel* depthLabel;
     /// Status bar label for weakly monotonic propagator indicator
