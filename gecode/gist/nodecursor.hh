@@ -125,8 +125,6 @@ namespace Gecode { namespace Gist {
   /// \brief A cursor that finds the next solution
   class NextSolCursor : public NodeCursor<VisualNode> {
   private:
-    /// The root node
-    VisualNode* root;
     /// Whether to search backwards
     bool back;
     /// Whether the current node is not a solution
@@ -179,6 +177,20 @@ namespace Gecode { namespace Gist {
     void moveDownwards(void);
     /// Move cursor to the parent node
     void moveUpwards(void);
+    //@}
+    
+  };
+
+  /// \brief A cursor that frees all memory
+  class DisposeCursor : public NodeCursor<VisualNode> {
+  public:
+    /// Constructor
+    DisposeCursor(VisualNode* theNode);
+    
+    /// \name Cursor interface
+    //@{
+    /// Dispose node
+    void processCurrentNode(void);
     //@}
     
   };

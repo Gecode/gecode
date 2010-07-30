@@ -159,6 +159,14 @@ namespace Gecode { namespace Gist {
     NodeCursor<VisualNode>::moveUpwards();
   }
 
+  DisposeCursor::DisposeCursor(VisualNode* root)
+   : NodeCursor<VisualNode>(root) {}
+
+  void
+  DisposeCursor::processCurrentNode(void) {
+    node()->dispose();
+  }
+
 }}
 
 // STATISTICS: gist-any

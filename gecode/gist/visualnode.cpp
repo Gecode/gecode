@@ -89,8 +89,10 @@ namespace Gecode { namespace Gist {
     setBookmarked(false);
   }
 
-  VisualNode::~VisualNode(void) {
+  void
+  VisualNode::dispose(void) {
     Shape::deallocate(shape);
+    SpaceNode::dispose();
   }
 
   void
@@ -107,10 +109,10 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::layout(void) {
     LayoutCursor l(this);
-    PostorderNodeVisitor<LayoutCursor> p(l);
+    PostorderNodeVisitor<LayoutCursor>(l).run();
     // int nodesLayouted = 1;
     // clock_t t0 = clock();
-    while (p.next()) {}
+    // while (p.next()) {}
     // while (p.next()) { nodesLayouted++; }
     // double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
     // double nps = static_cast<double>(nodesLayouted) /
@@ -153,16 +155,14 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::hideFailed(void) {
     HideFailedCursor c(this);
-    PreorderNodeVisitor<HideFailedCursor> v(c);
-    while (v.next()) {}
+    PreorderNodeVisitor<HideFailedCursor>(c).run();
     dirtyUp();
   }
 
   void
   VisualNode::unhideAll(void) {
     UnhideAllCursor c(this);
-    PreorderNodeVisitor<UnhideAllCursor> v(c);
-    while (v.next()) {}
+    PreorderNodeVisitor<UnhideAllCursor>(c).run();
     dirtyUp();
   }
 
@@ -178,8 +178,7 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::unstopAll(void) {
     UnstopAllCursor c(this);
-    PreorderNodeVisitor<UnstopAllCursor> v(c);
-    while (v.next()) {}
+    PreorderNodeVisitor<UnstopAllCursor>(c).run();
     dirtyUp();
   }
 

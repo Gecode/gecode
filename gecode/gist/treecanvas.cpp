@@ -119,7 +119,13 @@ namespace Gecode { namespace Gist {
       update();
   }
 
-  TreeCanvas::~TreeCanvas(void) { delete root; delete na; }
+  TreeCanvas::~TreeCanvas(void) {
+    if (root) {
+      DisposeCursor dc(root);
+      PreorderNodeVisitor<DisposeCursor>(dc).run();
+    }
+    delete na;
+  }
 
   void
   TreeCanvas::addDoubleClickInspector(Inspector* i) {
@@ -796,7 +802,10 @@ namespace Gecode { namespace Gist {
       delete curBest;
       curBest = new BestNode(NULL);
     }
-    delete root;
+    if (root) {
+      DisposeCursor dc(root);
+      PreorderNodeVisitor<DisposeCursor>(dc).run();
+    }
     delete na;
     na = new Node::NodeAllocator(heap);
     root = new (*na) VisualNode(rootSpace);
@@ -964,11 +973,12 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::navNextSol(bool back) {
     QMutexLocker locker(&mutex);
-    NextSolCursor nsc(currentNode, back);
+    NextSolCursor nsc(currentNode,back);
     PreorderNodeVisitor<NextSolCursor> nsv(nsc);
-    while (nsv.next()) {}
-    if (nsv.getCursor().node() != root) {
-      setCurrentNode(nsv.getCursor().node());
+    nsv.run();
+    VisualNode* n = nsv.getCursor().node();
+    if (n != root) {
+      setCurrentNode(n);
       centerCurrentNode();
     }
   }
@@ -1013,8 +1023,7 @@ namespace Gecode { namespace Gist {
       QRect clip(0,0,0,0);
       DrawingCursor dc(n, curBest, painter, clip, showCopies);
       currentNode->setMarked(false);
-      PreorderNodeVisitor<DrawingCursor> v(dc);
-      while (v.next()) {}
+      PreorderNodeVisitor<DrawingCursor>(dc).run();
       currentNode->setMarked(true);
     }
 #else
@@ -1064,8 +1073,7 @@ namespace Gecode { namespace Gist {
       painter.translate(xtrans, 0);
       QRect clip(0,0,0,0);
       DrawingCursor dc(root, curBest, painter, clip, showCopies);
-      PreorderNodeVisitor<DrawingCursor> v(dc);
-      while (v.next()) {}
+      PreorderNodeVisitor<DrawingCursor>(dc).run();
     }
   }
 
@@ -1169,9 +1177,7 @@ namespace Gecode { namespace Gist {
                static_cast<int>(origClip.width()/scale),
                static_cast<int>(origClip.height()/scale));
     DrawingCursor dc(root, curBest, painter, clip, showCopies);
-    PreorderNodeVisitor<DrawingCursor> v(dc);
-
-    while (v.next()) {}
+    PreorderNodeVisitor<DrawingCursor>(dc).run();
 
     // int nodesLayouted = 1;
     // clock_t t0 = clock();

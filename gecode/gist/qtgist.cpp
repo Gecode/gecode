@@ -650,12 +650,12 @@ namespace Gecode { namespace Gist {
         root = root->getParent();
       NextSolCursor nsc(n, false);
       PreorderNodeVisitor<NextSolCursor> nsv(nsc);
-      while (nsv.next()) {}
+      nsv.run();
       navNextSol->setEnabled(nsv.getCursor().node() != root);
 
       NextSolCursor psc(n, true);
       PreorderNodeVisitor<NextSolCursor> psv(psc);
-      while (psv.next()) {}
+      psv.run();
       navPrevSol->setEnabled(psv.getCursor().node() != root);
 
       zoomToFit->setEnabled(true);

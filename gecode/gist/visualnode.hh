@@ -143,8 +143,6 @@ namespace Gecode { namespace Gist {
     VisualNode(void);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root);
-    /// Destructor
-    ~VisualNode(void);
 
     /// Return if node is hidden
     bool isHidden(void);
@@ -220,6 +218,9 @@ namespace Gecode { namespace Gist {
 
     /// Return size information
     size_t size(void) const;
+    
+    /// Free allocated memory
+    void dispose(void);
   };
 
 }}

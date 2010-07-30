@@ -273,7 +273,8 @@ namespace Gecode { namespace Gist {
     setHasFailedChildren(false);
   }
 
-  SpaceNode::~SpaceNode(void) {
+  void
+  SpaceNode::dispose(void) {
     delete choice;
     delete static_cast<Space*>(Support::funmark(copy));
   }

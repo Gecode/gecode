@@ -155,8 +155,6 @@ namespace Gecode { namespace Gist {
     SpaceNode(void);
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root);
-    /// Destructor
-    ~SpaceNode(void);
 
     /// Return working space.  Receiver must delete the space.
     Space* getSpace(BestNode* curBest, int c_d, int a_d);
@@ -166,6 +164,9 @@ namespace Gecode { namespace Gist {
 
     /// Clear working space and copy (if present and this is not the root).
     void purge(void);
+
+    /// Free allocated memory
+    void dispose(void);
 
     /// Return whether this node is the currently best solution
     bool isCurrentBest(BestNode* curBest);

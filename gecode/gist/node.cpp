@@ -42,23 +42,6 @@
 
 namespace Gecode { namespace Gist {
 
-  Node::~Node(void) {
-    switch (getTag()) {
-    case UNDET:
-    case LEAF:
-      return;
-    case TWO_CHILDREN:
-      delete static_cast<VisualNode*>(getPtr());
-      if (Support::marked(c.secondChild))
-        delete static_cast<VisualNode*>(Support::unmark(c.secondChild));
-      break;
-    case MORE_CHILDREN:
-      for (int i=c.noOfChildren; i--;)
-        delete static_cast<VisualNode**>(getPtr())[i];
-      heap.free<Node*>(static_cast<Node**>(getPtr()),c.noOfChildren);
-    }
-  }
-
   void
   Node::setNumberOfChildren(unsigned int n) {
     assert(getTag() == UNDET);
