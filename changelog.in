@@ -74,6 +74,13 @@ The best is still to come!
 
 [ENTRY]
 Module: gist
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The status bar now displays the time Gist took for the last search.
+
+[ENTRY]
+Module: gist
 What:   performance
 Rank:   minor
 [DESCRIPTION]
