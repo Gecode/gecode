@@ -73,6 +73,16 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Using ICL_DOM for binary linear equations with unit coefficients (such as x = 
+y+3) is now implemented using the much more efficient binary equality 
+propagator instead of the linear equation propagator (which has worst case 
+exponential runtime).
+
+[ENTRY]
 Module: gist
 What:   performance
 Rank:   minor

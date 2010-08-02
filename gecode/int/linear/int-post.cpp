@@ -269,18 +269,76 @@ namespace Gecode { namespace Int { namespace Linear {
         post_nary<int,IntView>(home,x,y,r,c);
       }
     } else if (is_ip) {
-      // Arbitrary coefficients with integer precision
-      c = static_cast<int>(d);
-      ViewArray<IntScaleView> x(home,n_p);
-      for (int i = n_p; i--; )
-        x[i] = IntScaleView(t_p[i].a,t_p[i].x);
-      ViewArray<IntScaleView> y(home,n_n);
-      for (int i = n_n; i--; )
-        y[i] = IntScaleView(t_n[i].a,t_n[i].x);
-      if ((icl == ICL_DOM) && (r == IRT_EQ)) {
-        GECODE_ES_FAIL((DomEq<int,IntScaleView>::post(home,x,y,c)));
+      if (n==2 && is_unit && icl == ICL_DOM && r == IRT_EQ) {
+        // Binary domain-consistent equality
+        c = static_cast<int>(d);
+        if (c==0) {
+          switch (n_p) {
+          case 2: {
+            IntView x(t_p[0].x);
+            MinusView y(t_p[1].x);
+            GECODE_ES_FAIL(
+              (Rel::EqDom<IntView,MinusView>::post(home,x,y)));
+            break;
+          }
+          case 1: {
+            IntView x(t_p[0].x);
+            IntView y(t_n[0].x);
+            GECODE_ES_FAIL(
+              (Rel::EqDom<IntView,IntView>::post(home,x,y)));
+            break;
+          }
+          case 0: {
+            IntView x(t_n[0].x);
+            MinusView y(t_n[1].x);
+            GECODE_ES_FAIL(
+              (Rel::EqDom<IntView,MinusView>::post(home,x,y)));
+            break;
+          }
+          default:
+            GECODE_NEVER;
+          }
+        } else {
+          switch (n_p) {
+          case 2: {
+            MinusView x(t_p[0].x);
+            OffsetView y(t_p[1].x, -c);
+            GECODE_ES_FAIL(
+              (Rel::EqDom<MinusView,OffsetView>::post(home,x,y)));
+            break;
+          }
+          case 1: {
+            IntView x(t_p[0].x);
+            OffsetView y(t_n[0].x, c);
+            GECODE_ES_FAIL(
+              (Rel::EqDom<IntView,OffsetView>::post(home,x,y)));
+            break;
+          }
+          case 0: {
+            MinusView x(t_n[0].x);
+            OffsetView y(t_n[1].x, c);
+            GECODE_ES_FAIL(
+              (Rel::EqDom<MinusView,OffsetView>::post(home,x,y)));
+            break;
+          }
+          default:
+            GECODE_NEVER;
+          }          
+        }
       } else {
-        post_nary<int,IntScaleView>(home,x,y,r,c);
+        // Arbitrary coefficients with integer precision
+        c = static_cast<int>(d);
+        ViewArray<IntScaleView> x(home,n_p);
+        for (int i = n_p; i--; )
+          x[i] = IntScaleView(t_p[i].a,t_p[i].x);
+        ViewArray<IntScaleView> y(home,n_n);
+        for (int i = n_n; i--; )
+          y[i] = IntScaleView(t_n[i].a,t_n[i].x);
+        if ((icl == ICL_DOM) && (r == IRT_EQ)) {
+          GECODE_ES_FAIL((DomEq<int,IntScaleView>::post(home,x,y,c)));
+        } else {
+          post_nary<int,IntScaleView>(home,x,y,r,c);
+        }
       }
     } else {
       // Arbitrary coefficients with double precision
