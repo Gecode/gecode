@@ -1562,6 +1562,7 @@ ifeq "@ENABLEDOCSEARCH@" "yes"
 endif
 
 endif
+endif
 
 #
 # Installation
