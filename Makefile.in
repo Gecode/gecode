@@ -1499,7 +1499,8 @@ doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 	doxygen doxygen.conf.use
 	mv doc/html/GecodeReference.chm GecodeReference.chm
 
-else ifeq "@ENABLEDOCDOCSET@" "yes"
+else
+ifeq "@ENABLEDOCDOCSET@" "yes"
 
 DOCTARGET=org.gecode.@VERSION@.docset
 
