@@ -1193,6 +1193,10 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
    *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y.
+   *
    * Throws an exception of type Int::OutOfLimits, if
    * the integers in \a n exceed the limits in Int::Limits.
    *
@@ -1205,6 +1209,10 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
    *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y.
+   *
    * Throws an exception of type Int::OutOfLimits, if
    * the integers in \a n exceed the limits in Int::Limits.
    *
@@ -1216,6 +1224,10 @@ namespace Gecode {
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y.
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
@@ -1231,6 +1243,10 @@ namespace Gecode {
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+   *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y.
    *
    * Throws an exception of type Int::OutOfLimits, if
    * the integers in \a n exceed the limits in Int::Limits.
