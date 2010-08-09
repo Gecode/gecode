@@ -60,24 +60,32 @@ namespace Gecode { namespace Gist {
     l += delta; r += delta;
   }
 
+  forceinline int
+  Shape::depth(void) const { return _depth+1; }
+
   forceinline const Extent&
   Shape::operator [](int i) const {
-    assert(i < _depth);
-    return shape[i];
+    assert(i < _depth+1);
+    return i == 0 ? leaf->shape[0] : shape[i-1];
   }
 
   forceinline Extent&
   Shape::operator [](int i) {
-    assert(i < _depth);
-    return shape[i];
+    assert(i < _depth+1);
+    return i == 0 ? leaf->shape[0] : shape[i-1];
   }
 
   inline Shape*
   Shape::allocate(int d) {
-    Shape* ret =
-      static_cast<Shape*>(heap.ralloc(sizeof(Shape) +
-                                         (d-1)*sizeof(Extent)));
-    ret->_depth = d;
+    Shape* ret;
+    if (d == 1) {
+      ret = static_cast<Shape*>(heap.ralloc(sizeof(Shape)));
+      ret->shape[0] = Extent(Layout::extent);      
+    } else {
+      ret = static_cast<Shape*>(heap.ralloc(sizeof(Shape) +
+                                            (d-2)*sizeof(Extent)));
+    }
+    ret->_depth = d-1;
     return ret;
   }
 
@@ -88,12 +96,12 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline bool
-  Shape::getExtentAtDepth(int depth, Extent& extent) {
-    if (depth > _depth)
+  Shape::getExtentAtDepth(int d, Extent& extent) {
+    if (d > depth())
       return false;
     extent = Extent(0,0);
-    for (int i=0; i <= depth; i++) {
-      Extent currentExtent = shape[i];
+    for (int i=0; i <= d; i++) {
+      Extent currentExtent = (*this)[i];
       extent.l += currentExtent.l;
       extent.r += currentExtent.r;
     }
@@ -106,17 +114,14 @@ namespace Gecode { namespace Gist {
     int lastRight = 0;
     int left = 0;
     int right = 0;
-    for (int i=0; i<_depth; i++) {
-      lastLeft = lastLeft + shape[i].l;
-      lastRight = lastRight + shape[i].r;
+    for (int i=0; i<depth(); i++) {
+      lastLeft = lastLeft + (*this)[i].l;
+      lastRight = lastRight + (*this)[i].r;
       left = std::min(left,lastLeft);
       right = std::max(right,lastRight);
     }
     return BoundingBox(left, right);
   }
-  
-  forceinline int
-  Shape::depth(void) const { return _depth; }
 
   forceinline
   BoundingBox::BoundingBox(int l, int r)

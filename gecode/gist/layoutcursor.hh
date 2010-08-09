@@ -43,14 +43,6 @@
 
 namespace Gecode { namespace Gist {
 
-  /// \brief %Layout parameters
-  class Layout {
-  public:
-    static const int dist_y = 38;
-    static const int extent = 20;
-    static const int minimalSeparation = 10;
-  };
-
 
   /// \brief A cursor that computes a tree layout for VisualNodes
   class LayoutCursor : public NodeCursor<VisualNode> {

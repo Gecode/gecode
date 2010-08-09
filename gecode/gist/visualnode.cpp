@@ -53,9 +53,7 @@ namespace Gecode { namespace Gist {
     /// Constructor
     ShapeAllocator(void) {
       Shape::leaf = Shape::allocate(1);
-      (*Shape::leaf)[0] = Extent(Layout::extent);
       Shape::hidden = Shape::allocate(2);
-      (*Shape::hidden)[0] = Extent(Layout::extent);
       (*Shape::hidden)[1] = Extent(Layout::extent);
     }
     ~ShapeAllocator(void) {
@@ -243,17 +241,20 @@ namespace Gecode { namespace Gist {
   class Layouter {
   public:
     /// Compute distance needed between \a shape1 and \a shape2
-    static int getAlpha(Extent* shape1, int depth1,
-                        Extent* shape2, int depth2);
+    template<class S1, class S2>
+    static int getAlpha(const S1& shape1, int depth1,
+                        const S2& shape2, int depth2);
     /// Merge \a shape1 and \a shape2 into \a result with distance \a alpha
+    template<class S1, class S2>
     static void merge(Extent* result,
-                      Extent* shape1, int depth1,
-                      Extent* shape2, int depth2, int alpha);
+                      const S1& shape1, int depth1,
+                      const S2& shape2, int depth2, int alpha);
   };
 
+  template<class S1, class S2>
   int
-  Layouter::getAlpha(Extent* shape1, int depth1,
-                     Extent* shape2, int depth2) {
+  Layouter::getAlpha(const S1& shape1, int depth1,
+                     const S2& shape2, int depth2) {
     int alpha = Layout::minimalSeparation;
     int extentR = 0;
     int extentL = 0;
@@ -265,10 +266,11 @@ namespace Gecode { namespace Gist {
     return alpha;
   }
 
+  template<class S1, class S2>
   void
   Layouter::merge(Extent* result,
-                  Extent* shape1, int depth1,
-                  Extent* shape2, int depth2, int alpha) {
+                  const S1& shape1, int depth1,
+                  const S2& shape2, int depth2, int alpha) {
     if (depth1 == 0) {
       for (int i=depth2; i--;)
         result[i] = shape2[i];
@@ -340,9 +342,9 @@ namespace Gecode { namespace Gist {
 
   void
   VisualNode::computeShape(VisualNode* root) {
-    Extent extent(Layout::extent);
     int numberOfShapes = getNumberOfChildren();
-    
+    Extent extent(Layout::extent);
+
     int maxDepth = 0;
     for (int i = numberOfShapes; i--;)
       maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
@@ -355,10 +357,9 @@ namespace Gecode { namespace Gist {
 
     if (numberOfShapes == 1) {
       getChild(0)->setOffset(0);
-      (*mergedShape)[0] = extent;
-      Shape* childShape = getChild(0)->getShape();
-      Heap::copy<Extent>(&(*mergedShape)[1],&(*childShape)[0],
-                         childShape->depth());
+      const Shape* childShape = getChild(0)->getShape();
+      for (int i=childShape->depth(); i--;)
+        (*mergedShape)[i+1] = (*childShape)[i];
       (*mergedShape)[1].extend(- extent.l, - extent.r);
       setShape(mergedShape);
     } else {
@@ -383,7 +384,6 @@ namespace Gecode { namespace Gist {
 
       // After merging, we can pick the result of either merging left or right
       // Here we chose the result of merging right
-      (*mergedShape)[0] = extent;
       Shape* rShape = getChild(numberOfShapes-1)->getShape();
       int rdepth = rShape->depth();
       for (int i=rdepth; i--;)
@@ -400,10 +400,12 @@ namespace Gecode { namespace Gist {
 
         Shape* nextShapeL = getChild(i)->getShape();
         int nextAlphaL =
-          Layouter::getAlpha(&currentShapeL[0], ldepth,
-                             &(*nextShapeL)[0], nextShapeL->depth());
-        Layouter::merge(&currentShapeL[0], &currentShapeL[0], ldepth,
-                        &(*nextShapeL)[0], nextShapeL->depth(), nextAlphaL);
+          Layouter::getAlpha<Extent*,Shape>(&currentShapeL[0], ldepth,
+                             *nextShapeL, nextShapeL->depth());
+        Layouter::merge<Extent*,Shape>(&currentShapeL[0],
+                                       &currentShapeL[0], ldepth,
+                                       *nextShapeL, nextShapeL->depth(), 
+                                       nextAlphaL);
         ldepth = std::max(ldepth,nextShapeL->depth());
         alpha[i].first = nextAlphaL - width;
         width = nextAlphaL;
@@ -412,11 +414,12 @@ namespace Gecode { namespace Gist {
         // not required.
         Shape* nextShapeR = getChild(numberOfShapes-1-i)->getShape();
         int nextAlphaR =
-          Layouter::getAlpha(&(*nextShapeR)[0], nextShapeR->depth(),
+          Layouter::getAlpha<Shape,Extent*>(*nextShapeR, nextShapeR->depth(),
                                &currentShapeR[0], rdepth);
-        Layouter::merge(&currentShapeR[0],
-                        &(*nextShapeR)[0], nextShapeR->depth(),
-                        &currentShapeR[0], rdepth, nextAlphaR);
+        Layouter::merge<Shape,Extent*>(&currentShapeR[0],
+                                       *nextShapeR, nextShapeR->depth(),
+                                       &currentShapeR[0], rdepth,
+                                       nextAlphaR);
         rdepth = std::max(rdepth,nextShapeR->depth());
         alpha[numberOfShapes - i].second = nextAlphaR;
       }
