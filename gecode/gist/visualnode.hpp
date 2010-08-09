@@ -81,32 +81,10 @@ namespace Gecode { namespace Gist {
     return ret;
   }
 
-  inline Shape*
-  Shape::allocate(Extent e) {
-    Shape* ret = Shape::allocate(1);
-    (*ret)[0] = e;
-    return ret;
-  }
-
   forceinline void
   Shape::deallocate(Shape* shape) {
     if (shape != hidden && shape != leaf)
       heap.rfree(shape);
-  }
-
-  forceinline Shape*
-  Shape::allocate(Extent e, const Shape* subShape) {
-    Shape* shape = Shape::allocate(subShape->depth() + 1);
-    (*shape)[0] = e;
-    Heap::copy<Extent>(&(*shape)[1],&(*subShape)[0],subShape->depth());
-    return shape;
-  }
-
-  forceinline Shape*
-  Shape::allocate(const Shape* subShape) {
-    Shape* shape = Shape::allocate(subShape->depth());
-    Heap::copy<Extent>(&(*shape)[0],&(*subShape)[0],subShape->depth());
-    return shape;
   }
 
   forceinline bool

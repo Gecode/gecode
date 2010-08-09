@@ -52,8 +52,11 @@ namespace Gecode { namespace Gist {
   public:
     /// Constructor
     ShapeAllocator(void) {
-      Shape::leaf = Shape::allocate(Extent(Layout::extent));
-      Shape::hidden = Shape::allocate(Extent(Layout::extent), Shape::leaf);
+      Shape::leaf = Shape::allocate(1);
+      (*Shape::leaf)[0] = Extent(Layout::extent);
+      Shape::hidden = Shape::allocate(2);
+      (*Shape::hidden)[0] = Extent(Layout::extent);
+      (*Shape::hidden)[1] = Extent(Layout::extent);
     }
     ~ShapeAllocator(void) {
       Shape::deallocate(Shape::leaf);
@@ -330,7 +333,8 @@ namespace Gecode { namespace Gist {
 
   void
   VisualNode::setShape(Shape* s) {
-    Shape::deallocate(shape);
+    if (shape != s)
+      Shape::deallocate(shape);
     shape = s;
   }
 
@@ -338,11 +342,25 @@ namespace Gecode { namespace Gist {
   VisualNode::computeShape(VisualNode* root) {
     Extent extent(Layout::extent);
     int numberOfShapes = getNumberOfChildren();
+    
+    int maxDepth = 0;
+    for (int i = numberOfShapes; i--;)
+      maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
+    Shape* mergedShape;
+    if (getShape() && getShape()->depth() >= maxDepth+1) {
+      mergedShape = getShape();
+    } else {
+      mergedShape = Shape::allocate(maxDepth+1);
+    }
+
     if (numberOfShapes == 1) {
       getChild(0)->setOffset(0);
-      Shape* result = Shape::allocate(extent, getChild(0)->getShape());
-      (*result)[1].extend(- extent.l, - extent.r);
-      setShape(result);
+      (*mergedShape)[0] = extent;
+      Shape* childShape = getChild(0)->getShape();
+      Heap::copy<Extent>(&(*mergedShape)[1],&(*childShape)[0],
+                         childShape->depth());
+      (*mergedShape)[1].extend(- extent.l, - extent.r);
+      setShape(mergedShape);
     } else {
       // alpha stores the necessary distances between the
       // axes of the shapes in the list: alpha[i].first gives the distance
@@ -358,10 +376,6 @@ namespace Gecode { namespace Gist {
       // distance between the leftmost and the rightmost axis in the list
       int width = 0;
 
-      int maxDepth = 0;
-      for (int i = numberOfShapes; i--;)
-        maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
-
       Extent* currentShapeL = r.alloc<Extent>(maxDepth);
       int ldepth = getChild(0)->getShape()->depth();
       for (int i=ldepth; i--;)
@@ -369,7 +383,6 @@ namespace Gecode { namespace Gist {
 
       // After merging, we can pick the result of either merging left or right
       // Here we chose the result of merging right
-      Shape* mergedShape = Shape::allocate(maxDepth+1);
       (*mergedShape)[0] = extent;
       Shape* rShape = getChild(numberOfShapes-1)->getShape();
       int rdepth = rShape->depth();

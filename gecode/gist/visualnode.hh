@@ -93,12 +93,6 @@ namespace Gecode { namespace Gist {
   public:
     /// Construct shape of depth \a d
     static Shape* allocate(int d);
-    /// Construct with single extent \a e
-    static Shape* allocate(Extent e);
-    /// Construct with \e for the root and \a subShape for the children
-    static Shape* allocate(Extent e, const Shape* subShape);
-    /// Construct from \a subShape
-    static Shape* allocate(const Shape* subShape);
     // Destruct
     static void deallocate(Shape*);
 
