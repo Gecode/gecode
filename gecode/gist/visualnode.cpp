@@ -150,7 +150,13 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::toggleHidden(void) {
     setHidden(!isHidden());
-    dirtyUp();
+    if (shape != NULL) {
+      if (getParent()) {
+        getParent()->dirtyUp();
+      }
+    } else {
+      dirtyUp();
+    }
   }
 
   void
@@ -188,14 +194,14 @@ namespace Gecode { namespace Gist {
 
   bool
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
-    BoundingBox box = shape->getBoundingBox();
+    BoundingBox box = getShape()->getBoundingBox();
     if (x < box.left ||
         x > box.right ||
-        depth >= shape->depth()) {
+        depth >= getShape()->depth()) {
       return false;
     }
     Extent theExtent;
-    if (shape->getExtentAtDepth(depth, theExtent)) {
+    if (getShape()->getExtentAtDepth(depth, theExtent)) {
       return (theExtent.l <= x && x <= theExtent.r);
     } else {
       return false;

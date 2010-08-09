@@ -40,8 +40,7 @@ namespace Gecode { namespace Gist {
   forceinline bool
   LayoutCursor::mayMoveDownwards(void) {
     return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           node()->isDirty() /*&&
-           (! n->isHidden() )*/;
+           node()->isDirty();
   }
 
   inline
@@ -53,7 +52,7 @@ namespace Gecode { namespace Gist {
     VisualNode* currentNode = node();
     if (currentNode->isDirty()) {
       if (currentNode->isHidden()) {
-        currentNode->setShape(Shape::hidden);
+        // do nothing
       } else if (currentNode->getNumberOfChildren() < 1) {
         currentNode->setShape(Shape::leaf);
       } else {

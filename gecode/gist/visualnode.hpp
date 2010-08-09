@@ -202,10 +202,12 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline Shape*
-  VisualNode::getShape(void) { return shape; }
+  VisualNode::getShape(void) {
+    return isHidden() ? Shape::hidden : shape;
+  }
 
   forceinline BoundingBox
-  VisualNode::getBoundingBox(void) { return shape->getBoundingBox(); }
+  VisualNode::getBoundingBox(void) { return getShape()->getBoundingBox(); }
 
   forceinline VisualNode*
   VisualNode::getParent() {
