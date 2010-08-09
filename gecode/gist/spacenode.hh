@@ -151,8 +151,8 @@ namespace Gecode { namespace Gist {
     /// Acquire working space, either from parent or by recomputation
     void acquireSpace(BestNode* curBest, int c_d, int a_d);
   public:
-    /// Construct node
-    SpaceNode(void);
+    /// Construct node with parent \a p
+    SpaceNode(Node* p);
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root);
 

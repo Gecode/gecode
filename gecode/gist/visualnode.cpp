@@ -65,8 +65,9 @@ namespace Gecode { namespace Gist {
   /// Allocate shapes statically
   ShapeAllocator shapeAllocator;
 
-  VisualNode::VisualNode(void)
-  : shape(NULL)
+  VisualNode::VisualNode(Node* p)
+  : SpaceNode(p)
+  , shape(NULL)
   , offset(0)
   {
     setDirty(true);

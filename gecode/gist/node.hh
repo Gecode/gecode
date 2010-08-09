@@ -85,8 +85,8 @@ namespace Gecode { namespace Gist {
     typedef Support::BlockAllocator<VisualNode,Heap,NodeBlockSize> 
       NodeAllocator;
 
-    /// Default constructor
-    Node(void);
+    /// Construct node with parent \a p
+    Node(Node* p, bool failed = false);
 
     /// Return the parent
     Node* getParent(void);
@@ -96,13 +96,8 @@ namespace Gecode { namespace Gist {
     /// Check if this node is the root of a tree
     bool isRoot(void) const;
 
-    /// Set the number of children to \a n
-    void setNumberOfChildren(unsigned int n);
-    /// Set child number \a n to be \a child
-    void setChild(unsigned int n, Node* child);
-
-    /// Add new child node
-    void addChild(Node* child);
+    /// Set the number of children to \a n and initialize children
+    void setNumberOfChildren(unsigned int n, NodeAllocator& na);
 
     /// Return the number of children
     unsigned int getNumberOfChildren(void) const;

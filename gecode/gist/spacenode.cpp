@@ -259,18 +259,17 @@ namespace Gecode { namespace Gist {
   }
 
   SpaceNode::SpaceNode(Space* root)
-  : copy(root), ownBest(NULL), nstatus(0) {
-    choice = NULL;
+  : Node(NULL, root==NULL),
+    copy(root), ownBest(NULL), nstatus(0), choice(NULL) {
     if (root == NULL) {
       setStatus(FAILED);
       setHasSolvedChildren(false);
       setHasFailedChildren(true);
-      setNumberOfChildren(0);
-      return;
+    } else {
+      setStatus(UNDETERMINED);
+      setHasSolvedChildren(false);
+      setHasFailedChildren(false);
     }
-    setStatus(UNDETERMINED);
-    setHasSolvedChildren(false);
-    setHasFailedChildren(false);
   }
 
   void
@@ -298,7 +297,6 @@ namespace Gecode { namespace Gist {
           setHasFailedChildren(true);
           setStatus(FAILED);
           stats.failures++;
-          // stats.newDepth(getDepth());
           SpaceNode* p = getParent();
           if (p != NULL)
             p->closeChild(true, false);
@@ -338,10 +336,7 @@ namespace Gecode { namespace Gist {
         break;
       }
       static_cast<VisualNode*>(this)->changedStatus();
-      setNumberOfChildren(kids);
-      for (int i=kids; i--;) {
-        setChild(i, new (na) VisualNode());
-      }
+      setNumberOfChildren(kids, na);
     } else {
       kids = getNumberOfChildren();
     }

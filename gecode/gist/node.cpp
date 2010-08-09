@@ -43,19 +43,22 @@
 namespace Gecode { namespace Gist {
 
   void
-  Node::setNumberOfChildren(unsigned int n) {
+  Node::setNumberOfChildren(unsigned int n, NodeAllocator& na) {
     assert(getTag() == UNDET);
     switch (n) {
     case 0:
       setTag(LEAF);
       break;
     case 1:
-      setTag(TWO_CHILDREN);
+      childrenOrFirstChild = new (na) VisualNode(this);
       c.secondChild = NULL;
+      setTag(TWO_CHILDREN);
       break;
     case 2:
+      childrenOrFirstChild = new (na) VisualNode(this);
+      c.secondChild =
+        static_cast<Node*>(Support::mark(new (na) VisualNode(this)));
       setTag(TWO_CHILDREN);
-      c.secondChild = static_cast<Node*>(Support::mark(NULL));
       break;
     default:
       c.noOfChildren = n;
@@ -63,68 +66,8 @@ namespace Gecode { namespace Gist {
       Node** children = static_cast<Node**>(childrenOrFirstChild);
       setTag(MORE_CHILDREN);
       for (unsigned int i=n; i--;)
-        children[i] = NULL;
+        children[i] = new (na) VisualNode(this);
     }
-  }
-
-  void
-  Node::setChild(unsigned int n, Node* child) {
-    assert(getNumberOfChildren() > n);
-    if (getTag() == TWO_CHILDREN) {
-      if (n == 0) {
-        unsigned int tag = getTag();
-        childrenOrFirstChild = child;
-        setTag(tag);
-      } else {
-        c.secondChild = static_cast<Node*>(Support::mark(child));
-      }
-    } else {
-      static_cast<Node**>(getPtr())[n] = child;
-    }
-    child->parent = this;
-  }
-
-  void
-  Node::addChild(Node* child) {
-    child->parent = this;
-
-    unsigned int newNoOfChildren = 0;
-    switch (getTag()) {
-    case UNDET:
-      setNumberOfChildren(1);
-      newNoOfChildren = 1;
-      break;
-    case LEAF:
-      setTag(TWO_CHILDREN);
-      c.secondChild = NULL;
-      newNoOfChildren = 1;
-      break;
-    case TWO_CHILDREN:
-      if (Support::marked(c.secondChild)) {
-        Node** newChildren = heap.alloc<Node*>(c.noOfChildren+1);
-        newChildren[0] = static_cast<Node*>(getPtr());
-        newChildren[1] = static_cast<Node*>(Support::unmark(c.secondChild));
-        newNoOfChildren = 3;
-      } else {
-        c.secondChild = static_cast<Node*>(Support::mark(NULL));
-        newNoOfChildren = 2;
-      }
-      break;
-    case MORE_CHILDREN:
-      {
-        Node** newChildren = heap.alloc<Node*>(c.noOfChildren+1);
-        Node** children = static_cast<Node**>(getPtr());
-        for (unsigned int i=c.noOfChildren; i--;)
-          newChildren[i] = children[i];
-        heap.free<Node*>(children,c.noOfChildren);
-        childrenOrFirstChild = newChildren;
-        setTag(MORE_CHILDREN);
-        c.noOfChildren++;
-        newNoOfChildren = c.noOfChildren;
-      }
-      break;
-    }
-    setChild(newNoOfChildren-1, child);
   }
 
 }}

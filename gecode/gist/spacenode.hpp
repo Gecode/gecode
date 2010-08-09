@@ -100,8 +100,8 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline
-  SpaceNode::SpaceNode(void)
-  : copy(NULL), ownBest(NULL), nstatus(0) {
+  SpaceNode::SpaceNode(Node* p)
+  : Node(p), copy(NULL), ownBest(NULL), nstatus(0) {
     choice = NULL;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);

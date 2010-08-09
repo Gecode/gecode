@@ -58,10 +58,10 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline
-  Node::Node(void) : parent(NULL) {
+  Node::Node(Node* p, bool failed) : parent(p) {
     childrenOrFirstChild = NULL;
     c.secondChild = NULL;
-    setTag(UNDET);
+    setTag(failed ? LEAF : UNDET);
   }
 
   forceinline Node*

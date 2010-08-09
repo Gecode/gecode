@@ -141,8 +141,8 @@ namespace Gecode { namespace Gist {
     /// Check if the \a x at depth \a depth lies in this subtree
     bool containsCoordinateAtDepth(int x, int depth);
   public:
-    /// Constructor
-    VisualNode(void);
+    /// Construct with parent \a p
+    VisualNode(Node* p);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root);
 
