@@ -44,12 +44,12 @@ namespace Gecode { namespace Gist {
 
   class VisualNode;
 
-  static const int NodeBlockSize = 1<<14;
-
   /// Node allocator
   template<class T>
   class NodeAllocator {
   private:
+    /// Size of each block of nodes
+    static const int NodeBlockSize = 1<<14;
     /// Blocks of nodes
     class Block {
     public:
