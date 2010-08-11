@@ -91,7 +91,7 @@ namespace Gecode { namespace Gist {
 
   forceinline
   SpaceNode::SpaceNode(int p)
-  : Node(p), copy(NULL), ownBest(NULL), nstatus(0) {
+  : Node(p), copy(NULL), nstatus(0) {
     choice = NULL;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);
@@ -99,7 +99,7 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline Space*
-  SpaceNode::getSpace(const NodeAllocator& na,
+  SpaceNode::getSpace(NodeAllocator& na,
                       BestNode* curBest, int c_d, int a_d) {
     acquireSpace(na,curBest,c_d,a_d);
     Space* ret;
@@ -121,8 +121,9 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline void
-  SpaceNode::purge(void) {
-    if (!isRoot() && (getStatus() != SOLVED || ownBest == NULL)) {
+  SpaceNode::purge(const NodeAllocator& na) {
+    if (!isRoot() && (getStatus() != SOLVED ||
+        na.best(getIndex(na)) == NULL)) {
       // only delete copies from solutions if we are not in BAB
       if (Support::marked(copy))
         delete static_cast<Space*>(Support::unmark(copy));

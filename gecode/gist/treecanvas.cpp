@@ -403,7 +403,7 @@ namespace Gecode { namespace Gist {
               if (n->getStatus() == SOLVED) {
                 assert(n->hasCopy());
                 emit solution(n->getWorkingSpace());
-                n->purge();
+                n->purge(*t->na);
                 sol = n;
                 if (!a)
                   break;
@@ -631,7 +631,7 @@ namespace Gecode { namespace Gist {
             if (currentNode->getStatus() == SOLVED) {
               assert(currentNode->hasCopy());
               emit solution(currentNode->getWorkingSpace());
-              currentNode->purge();
+              currentNode->purge(*na);
             }
             emit statusChanged(currentNode,stats,true);
             for (int i=0; i<moveInspectors.size(); i++) {

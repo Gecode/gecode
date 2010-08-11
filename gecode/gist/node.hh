@@ -53,7 +53,10 @@ namespace Gecode { namespace Gist {
     /// Blocks of nodes
     class Block {
     public:
+      /// The actual nodes
       T b[NodeBlockSize];
+      /// The index of the best known previous solution for each node
+      int best[NodeBlockSize];
     };
     /// Array of blocks
     Block** b;
@@ -76,6 +79,10 @@ namespace Gecode { namespace Gist {
     int allocate(Space* root);
     /// Return node for index \a i
     T* operator [](int i) const;
+    /// Return index of best node before \a i
+    T* best(int i) const;
+    /// Set index of best node before \a i to \a b
+    void setBest(int i, int b);
   };
 
   /// \brief Base class for nodes of the search tree
@@ -121,6 +128,8 @@ namespace Gecode { namespace Gist {
     /// Construct node with parent \a p
     Node(int p, bool failed = false);
 
+    /// Return the parent
+    int getParent(void) const;
     /// Return the parent
     VisualNode* getParent(const NodeAllocator& na) const;
     /// Return child no \a n

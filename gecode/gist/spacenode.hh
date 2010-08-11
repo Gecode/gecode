@@ -98,9 +98,6 @@ namespace Gecode { namespace Gist {
      * it does not have to be kept for recomputation.
      */
     Space* copy;
-  private:
-    /// Reference to best space when the node was created
-    SpaceNode* ownBest;
   protected:
     const Choice* choice;
 
@@ -142,7 +139,7 @@ namespace Gecode { namespace Gist {
     void setHasSolvedChildren(bool b);
 
     /// Recompute workingSpace from a copy higher up, return distance to copy
-    int recompute(const NodeAllocator& na,
+    int recompute(NodeAllocator& na,
                   BestNode* curBest, int c_d, int a_d);
 
     /// Book-keeping of open children
@@ -152,7 +149,7 @@ namespace Gecode { namespace Gist {
     /// Set status to \a s
     void setStatus(NodeStatus s);
     /// Acquire working space, either from parent or by recomputation
-    void acquireSpace(const NodeAllocator& na,
+    void acquireSpace(NodeAllocator& na,
                       BestNode* curBest, int c_d, int a_d);
   public:
     /// Construct node with parent \a p
@@ -161,14 +158,14 @@ namespace Gecode { namespace Gist {
     SpaceNode(Space* root);
 
     /// Return working space.  Receiver must delete the space.
-    Space* getSpace(const NodeAllocator& na,
+    Space* getSpace(NodeAllocator& na,
                     BestNode* curBest, int c_d, int a_d);
 
     /// Return working space (if present).
     const Space* getWorkingSpace(void) const;
 
     /// Clear working space and copy (if present and this is not the root).
-    void purge(void);
+    void purge(const NodeAllocator& na);
 
     /// Free allocated memory
     void dispose(void);

@@ -62,7 +62,7 @@ namespace Gecode { namespace Gist {
   BestNode::BestNode(SpaceNode* s0) : s(s0) {}
 
   int
-  SpaceNode::recompute(const NodeAllocator& na,
+  SpaceNode::recompute(NodeAllocator& na,
                        BestNode* curBest, int c_d, int a_d) {
     int rdist = 0;
 
@@ -74,15 +74,19 @@ namespace Gecode { namespace Gist {
 
       std::stack<Branch> stck;
 
+      int idx = getIndex(na);
       while (curNode->copy == NULL) {
         SpaceNode* parent = curNode->getParent(na);
+        int parentIdx = curNode->getParent();
         int alternative = curNode->getAlternative(na);
 
+        SpaceNode* ownBest = na.best(idx);
         Branch b(alternative, parent->choice,
-                 curBest == NULL ? NULL : curNode->ownBest);
+                 curBest == NULL ? NULL : ownBest);
         stck.push(b);
 
         curNode = parent;
+        idx = parentIdx;
         rdist++;
       }
       Space* curSpace = curNode->copy->clone();
@@ -142,14 +146,18 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  SpaceNode::acquireSpace(const NodeAllocator& na,
+  SpaceNode::acquireSpace(NodeAllocator& na,
                           BestNode* curBest, int c_d, int a_d) {
     SpaceNode* p = getParent(na);
+    int parentIdx = getParent();
+    int idx = getIndex(na);
 
-    if (getStatus() == UNDETERMINED && curBest != NULL && ownBest == NULL &&
-        p != NULL && curBest->s != p->ownBest) {
-      ownBest = curBest->s;
+    if (getStatus() == UNDETERMINED && curBest != NULL &&
+        na.best(idx) == NULL &&
+        p != NULL && curBest->s != na.best(parentIdx)) {
+      na.setBest(idx, curBest->s->getIndex(na));
     }
+    SpaceNode* ownBest = na.best(idx);
 
     if (copy == NULL && p != NULL && p->copy != NULL && 
         Support::marked(p->copy)) {
@@ -263,7 +271,7 @@ namespace Gecode { namespace Gist {
 
   SpaceNode::SpaceNode(Space* root)
   : Node(-1, root==NULL),
-    copy(root), ownBest(NULL), choice(NULL), nstatus(0) {
+    copy(root), choice(NULL), nstatus(0) {
     if (root == NULL) {
       setStatus(FAILED);
       setHasSolvedChildren(false);
@@ -293,7 +301,7 @@ namespace Gecode { namespace Gist {
       switch (static_cast<Space*>(Support::funmark(copy))->status(stats)) {
       case SS_FAILED:
         {
-          purge();
+          purge(na);
           kids = 0;
           setHasOpenChildren(false);
           setHasSolvedChildren(false);
