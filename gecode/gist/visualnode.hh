@@ -136,6 +136,9 @@ namespace Gecode { namespace Gist {
 
     /// Relative offset from the parent node
     int offset;
+    /// Shape of this node
+    Shape* shape;
+
     /// Check if the \a x at depth \a depth lies in this subtree
     bool containsCoordinateAtDepth(int x, int depth);
   public:

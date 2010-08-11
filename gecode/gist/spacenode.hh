@@ -89,8 +89,6 @@ namespace Gecode { namespace Gist {
     BestNode(SpaceNode* s0);
   };
 
-  class Shape;
-
   /// \brief A node of a search tree of %Gecode spaces
   class SpaceNode : public Node {
   protected:
@@ -105,14 +103,6 @@ namespace Gecode { namespace Gist {
     SpaceNode* ownBest;
   protected:
     const Choice* choice;
-
-    /** \brief Shape of this node
-     *
-     * The shape should really be a member of VisualNode, but
-     * is defined here in order to improve alignment (saves
-     * 4 bytes per node on 64 bit machines).
-     */
-    Shape* shape;
 
     /** \brief Status of the node
      *
