@@ -71,9 +71,11 @@ namespace Gecode { namespace Gist {
       } else {
         rootSpace = Gecode::Search::snapshot(rootSpace,opt);
       }
-      na = new Node::NodeAllocator(heap);
-      root = new (*na) VisualNode(rootSpace);
-      root->layout();
+      na = new Node::NodeAllocator();
+      int rootIdx = na->allocate(rootSpace);
+      assert(rootIdx == 0); (void) rootIdx;
+      root = (*na)[0];
+      root->layout(*na);
       root->setMarked(true);
       currentNode = root;
       pathHead = root;
@@ -120,7 +122,7 @@ namespace Gecode { namespace Gist {
 
   TreeCanvas::~TreeCanvas(void) {
     if (root) {
-      DisposeCursor dc(root);
+      DisposeCursor dc(root,*na);
       PreorderNodeVisitor<DisposeCursor>(dc).run();
     }
     delete na;
@@ -219,7 +221,7 @@ namespace Gecode { namespace Gist {
     QMutexLocker locker(&mutex);
     layoutMutex.lock();
     if (root != NULL) {
-      root->layout();
+      root->layout(*na);
       BoundingBox bb = root->getBoundingBox();
 
       int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
@@ -277,7 +279,7 @@ namespace Gecode { namespace Gist {
     node = n;
     
     depth = -1;
-    for (VisualNode* p = n; p != NULL; p = p->getParent())
+    for (VisualNode* p = n; p != NULL; p = p->getParent(*ti->na))
       depth++;
     
     a = all;
@@ -292,9 +294,9 @@ namespace Gecode { namespace Gist {
       return;
 
     if (t->autoHideFailed) {
-      t->root->hideFailed();
+      t->root->hideFailed(*t->na);
     }
-    for (VisualNode* n = t->currentNode; n != NULL; n = n->getParent()) {
+    for (VisualNode* n = t->currentNode; n != NULL; n=n->getParent(*t->na)) {
       if (n->isHidden()) {
         t->currentNode->setMarked(false);
         t->currentNode = n;
@@ -303,7 +305,7 @@ namespace Gecode { namespace Gist {
       }
     }
     
-    t->root->layout();
+    t->root->layout(*t->na);
     BoundingBox bb = t->root->getBoundingBox();
 
     int w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
@@ -383,7 +385,7 @@ namespace Gecode { namespace Gist {
       t->stopSearchFlag = false;
       while (!stck.empty() && !t->stopSearchFlag) {
         if (t->refresh > 0 && ++nodeCount > t->refresh) {
-          node->dirtyUp();
+          node->dirtyUp(*t->na);
           updateCanvas();
           emit statusChanged(false);
           nodeCount = 0;
@@ -393,7 +395,7 @@ namespace Gecode { namespace Gist {
         if (si.i == si.noOfChildren) {
           stck.pop();
         } else {
-          VisualNode* n = si.n->getChild(si.i);
+          VisualNode* n = si.n->getChild(*t->na,si.i);
           if (n->isOpen()) {
             kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                             t->c_d, t->a_d);
@@ -418,7 +420,7 @@ namespace Gecode { namespace Gist {
           }
         }
       }
-      node->dirtyUp();
+      node->dirtyUp(*t->na);
       t->stopSearchFlag = false;
       t->mutex.unlock();
       if (sol != NULL) {
@@ -448,7 +450,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::toggleHidden(void) {
     QMutexLocker locker(&mutex);
-    currentNode->toggleHidden();
+    currentNode->toggleHidden(*na);
     update();
     centerCurrentNode();
     emit statusChanged(currentNode, stats, true);
@@ -457,7 +459,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::hideFailed(void) {
     QMutexLocker locker(&mutex);
-    currentNode->hideFailed();
+    currentNode->hideFailed(*na);
     update();
     centerCurrentNode();
     emit statusChanged(currentNode, stats, true);
@@ -467,7 +469,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::unhideAll(void) {
     QMutexLocker locker(&mutex);
     QMutexLocker layoutLocker(&layoutMutex);
-    currentNode->unhideAll();
+    currentNode->unhideAll(*na);
     update();
     centerCurrentNode();
     emit statusChanged(currentNode, stats, true);
@@ -476,7 +478,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::toggleStop(void) {
     QMutexLocker locker(&mutex);
-    currentNode->toggleStop();
+    currentNode->toggleStop(*na);
     update();
     centerCurrentNode();
     emit statusChanged(currentNode, stats, true);
@@ -486,7 +488,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::unstopAll(void) {
     QMutexLocker locker(&mutex);
     QMutexLocker layoutLocker(&layoutMutex);
-    currentNode->unstopAll();
+    currentNode->unstopAll(*na);
     update();
     centerCurrentNode();
     emit statusChanged(currentNode, stats, true);    
@@ -558,7 +560,7 @@ namespace Gecode { namespace Gist {
     while (c != NULL) {
       x += c->getOffset();
       y += Layout::dist_y;
-      c = c->getParent();
+      c = c->getParent(*na);
     }
 
     x = static_cast<int>((xtrans+x)*scale); y = static_cast<int>(y*scale);
@@ -620,7 +622,7 @@ namespace Gecode { namespace Gist {
             unsigned int kids =  
               currentNode->getNumberOfChildNodes(*na,curBest,stats,c_d,a_d);
             int depth = -1;
-            for (VisualNode* p = currentNode; p != NULL; p = p->getParent())
+            for (VisualNode* p = currentNode; p != NULL; p=p->getParent(*na))
               depth++;
             if (kids > 0)
               depth++;
@@ -665,7 +667,7 @@ namespace Gecode { namespace Gist {
           if (fix) {
             if (currentNode->isRoot() && currentNode->getStatus() == FAILED)
               break;
-            curSpace = currentNode->getSpace(curBest,c_d,a_d);
+            curSpace = currentNode->getSpace(*na,curBest,c_d,a_d);
             if (currentNode->getStatus() == SOLVED &&
                 curSpace->status() != SS_SOLVED) {
               // in the presence of weakly monotonic propagators, we may have to
@@ -677,14 +679,15 @@ namespace Gecode { namespace Gist {
           } else {
             if (currentNode->isRoot())
               break;
-            VisualNode* p = currentNode->getParent();
-            curSpace = p->getSpace(curBest,c_d,a_d);
+            VisualNode* p = currentNode->getParent(*na);
+            curSpace = p->getSpace(*na,curBest,c_d,a_d);
             switch (curSpace->status()) {
             case SS_SOLVED:
             case SS_FAILED:
               break;
             case SS_BRANCH:
-              curSpace->commit(*p->getChoice(), currentNode->getAlternative());
+              curSpace->commit(*p->getChoice(), 
+                               currentNode->getAlternative(*na));
               break;
             default:
               GECODE_NEVER;
@@ -729,7 +732,7 @@ namespace Gecode { namespace Gist {
       std::exit(EXIT_FAILURE);
     }
 
-    currentNode->dirtyUp();
+    currentNode->dirtyUp(*na);
     update();
     centerCurrentNode();
   }
@@ -796,18 +799,21 @@ namespace Gecode { namespace Gist {
   TreeCanvas::reset(void) {
     QMutexLocker locker(&mutex);
     Space* rootSpace =
-      root->getStatus() == FAILED ? NULL : root->getSpace(curBest,c_d,a_d);
+      root->getStatus() == FAILED ? NULL : 
+                           root->getSpace(*na,curBest,c_d,a_d);
     if (curBest != NULL) {
       delete curBest;
       curBest = new BestNode(NULL);
     }
     if (root) {
-      DisposeCursor dc(root);
+      DisposeCursor dc(root,*na);
       PreorderNodeVisitor<DisposeCursor>(dc).run();
     }
     delete na;
-    na = new Node::NodeAllocator(heap);
-    root = new (*na) VisualNode(rootSpace);
+    na = new Node::NodeAllocator();
+    int rootIdx = na->allocate(rootSpace);
+    assert(rootIdx == 0); (void) rootIdx;
+    root = (*na)[0];
     root->setMarked(true);
     currentNode = root;
     pathHead = root;
@@ -816,7 +822,7 @@ namespace Gecode { namespace Gist {
     for (int i=bookmarks.size(); i--;)
       emit removedBookmark(i);
     bookmarks.clear();
-    root->layout();
+    root->layout(*na);
 
     emit statusChanged(currentNode, stats, true);
     update();
@@ -843,7 +849,7 @@ namespace Gecode { namespace Gist {
       bookmarks.remove(idx);
       emit removedBookmark(idx);
     }
-    currentNode->dirtyUp();
+    currentNode->dirtyUp(*na);
     update();
   }
   
@@ -853,11 +859,11 @@ namespace Gecode { namespace Gist {
     if(currentNode == pathHead)
       return;
 
-    pathHead->unPathUp();
+    pathHead->unPathUp(*na);
     pathHead = currentNode;
 
-    currentNode->pathUp();
-    currentNode->dirtyUp();
+    currentNode->pathUp(*na);
+    currentNode->dirtyUp(*na);
     update();
   }
 
@@ -867,11 +873,11 @@ namespace Gecode { namespace Gist {
     setCurrentNode(root);
     if (currentNode->isOnPath()) {
       inspectCurrentNode();
-      int nextAlt = currentNode->getPathAlternative();
+      int nextAlt = currentNode->getPathAlternative(*na);
       while (nextAlt >= 0) {
-        setCurrentNode(currentNode->getChild(nextAlt));
+        setCurrentNode(currentNode->getChild(*na,nextAlt));
         inspectCurrentNode();
-        nextAlt = currentNode->getPathAlternative();
+        nextAlt = currentNode->getPathAlternative(*na);
       }
     }
     update();
@@ -902,7 +908,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::navUp(void) {
     QMutexLocker locker(&mutex);
 
-    VisualNode* p = currentNode->getParent();
+    VisualNode* p = currentNode->getParent(*na);
 
     setCurrentNode(p);
 
@@ -920,8 +926,8 @@ namespace Gecode { namespace Gist {
       case UNSTOP:
       case BRANCH:
           {
-            int alt = std::max(0, currentNode->getPathAlternative());
-            VisualNode* n = currentNode->getChild(alt);
+            int alt = std::max(0, currentNode->getPathAlternative(*na));
+            VisualNode* n = currentNode->getChild(*na,alt);
             setCurrentNode(n);
             centerCurrentNode();
             break;
@@ -937,11 +943,11 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::navLeft(void) {
     QMutexLocker locker(&mutex);
-    VisualNode* p = currentNode->getParent();
+    VisualNode* p = currentNode->getParent(*na);
     if (p != NULL) {
-      int alt = currentNode->getAlternative();
+      int alt = currentNode->getAlternative(*na);
       if (alt > 0) {
-        VisualNode* n = p->getChild(alt-1);
+        VisualNode* n = p->getChild(*na,alt-1);
         setCurrentNode(n);
         centerCurrentNode();
       }
@@ -951,11 +957,11 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::navRight(void) {
     QMutexLocker locker(&mutex);
-    VisualNode* p = currentNode->getParent();
+    VisualNode* p = currentNode->getParent(*na);
     if (p != NULL) {
-      unsigned int alt = currentNode->getAlternative();
+      unsigned int alt = currentNode->getAlternative(*na);
       if (alt + 1 < p->getNumberOfChildren()) {
-        VisualNode* n = p->getChild(alt+1);
+        VisualNode* n = p->getChild(*na,alt+1);
         setCurrentNode(n);
         centerCurrentNode();
       }
@@ -972,7 +978,7 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::navNextSol(bool back) {
     QMutexLocker locker(&mutex);
-    NextSolCursor nsc(currentNode,back);
+    NextSolCursor nsc(currentNode,back,*na);
     PreorderNodeVisitor<NextSolCursor> nsv(nsc);
     nsv.run();
     VisualNode* n = nsv.getCursor().node();
@@ -1020,7 +1026,7 @@ namespace Gecode { namespace Gist {
 
       painter.translate(printxtrans, Layout::dist_y / 2);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(n, curBest, painter, clip, showCopies);
+      DrawingCursor dc(n, *na, curBest, painter, clip, showCopies);
       currentNode->setMarked(false);
       PreorderNodeVisitor<DrawingCursor>(dc).run();
       currentNode->setMarked(true);
@@ -1071,7 +1077,7 @@ namespace Gecode { namespace Gist {
       painter.scale(printScale,printScale);
       painter.translate(xtrans, 0);
       QRect clip(0,0,0,0);
-      DrawingCursor dc(root, curBest, painter, clip, showCopies);
+      DrawingCursor dc(root, *na, curBest, painter, clip, showCopies);
       PreorderNodeVisitor<DrawingCursor>(dc).run();
     }
   }
@@ -1120,7 +1126,8 @@ namespace Gecode { namespace Gist {
       xoff -= (sa->viewport()->width()-w)/2;
     
     VisualNode* n;
-    n = root->findNode(static_cast<int>(x/scale-xtrans+xoff),
+    n = root->findNode(*na,
+                       static_cast<int>(x/scale-xtrans+xoff),
                        static_cast<int>((y-30)/scale+yoff));
     return n;
   }
@@ -1175,7 +1182,7 @@ namespace Gecode { namespace Gist {
                static_cast<int>(origClip.y()/scale+yoff),
                static_cast<int>(origClip.width()/scale),
                static_cast<int>(origClip.height()/scale));
-    DrawingCursor dc(root, curBest, painter, clip, showCopies);
+    DrawingCursor dc(root, *na, curBest, painter, clip, showCopies);
     PreorderNodeVisitor<DrawingCursor>(dc).run();
 
     // int nodesLayouted = 1;
@@ -1274,7 +1281,7 @@ namespace Gecode { namespace Gist {
       for (int i=0; i<moveInspectors.size(); i++) {
         if (moveInspectors[i].second) {
           if (curSpace == NULL)
-            curSpace = n->getSpace(curBest,c_d,a_d);
+            curSpace = n->getSpace(*na,curBest,c_d,a_d);
           try {
             moveInspectors[i].first->inspect(*curSpace);
           } catch (Exception e) {
@@ -1313,20 +1320,20 @@ namespace Gecode { namespace Gist {
             for (int i=0; i<comparators.size(); i++) {
               if (comparators[i].second) {
                 if (curSpace == NULL) {
-                  curSpace = currentNode->getSpace(curBest,c_d,a_d);
+                  curSpace = currentNode->getSpace(*na,curBest,c_d,a_d);
 
                   if (!compareNodesBeforeFP || n->isRoot()) {
-                    compareSpace = n->getSpace(curBest,c_d,a_d);
+                    compareSpace = n->getSpace(*na,curBest,c_d,a_d);
                   } else {
-                    VisualNode* p = n->getParent();
-                    compareSpace = p->getSpace(curBest,c_d,a_d);
+                    VisualNode* p = n->getParent(*na);
+                    compareSpace = p->getSpace(*na,curBest,c_d,a_d);
                     switch (compareSpace->status()) {
                     case SS_SOLVED:
                     case SS_FAILED:
                       break;
                     case SS_BRANCH:
                       compareSpace->commit(*p->getChoice(), 
-                                           n->getAlternative());
+                                           n->getAlternative(*na));
                       break;
                     default:
                       GECODE_NEVER;

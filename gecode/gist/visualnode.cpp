@@ -65,11 +65,11 @@ namespace Gecode { namespace Gist {
   /// Allocate shapes statically
   ShapeAllocator shapeAllocator;
 
-  VisualNode::VisualNode(Node* p)
+  VisualNode::VisualNode(int p)
   : SpaceNode(p)
-  , shape(NULL)
   , offset(0)
   {
+    shape = NULL;
     setDirty(true);
     setChildrenLayoutDone(false);
     setHidden(false);
@@ -80,9 +80,9 @@ namespace Gecode { namespace Gist {
 
   VisualNode::VisualNode(Space* root)
   : SpaceNode(root)
-  , shape(NULL)
   , offset(0)
   {
+    shape = NULL;
     setDirty(true);
     setChildrenLayoutDone(false);
     setHidden(false);
@@ -98,19 +98,19 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  VisualNode::dirtyUp(void) {
+  VisualNode::dirtyUp(const NodeAllocator& na) {
     VisualNode* cur = this;
     while (!cur->isDirty()) {
       cur->setDirty(true);
       if (! cur->isRoot()) {
-        cur = cur->getParent();
+        cur = cur->getParent(na);
       }
     }
   }
 
   void
-  VisualNode::layout(void) {
-    LayoutCursor l(this);
+  VisualNode::layout(const NodeAllocator& na) {
+    LayoutCursor l(this,na);
     PostorderNodeVisitor<LayoutCursor>(l).run();
     // int nodesLayouted = 1;
     // clock_t t0 = clock();
@@ -123,75 +123,75 @@ namespace Gecode { namespace Gist {
     //   << t << " ms. " << nps << " nodes/s." << std::endl;
   }
 
-  void VisualNode::pathUp(void) {
+  void VisualNode::pathUp(const NodeAllocator& na) {
     VisualNode* cur = this;
     while (cur) {
       cur->setOnPath(true);
-      cur = cur->getParent();
+      cur = cur->getParent(na);
     }
   }
 
-  void VisualNode::unPathUp(void) {
+  void VisualNode::unPathUp(const NodeAllocator& na) {
     VisualNode* cur = this;
     while (!cur->isRoot()) {
       cur->setOnPath(false);
-      cur = cur->getParent();
+      cur = cur->getParent(na);
     }
   }
 
   int
-  VisualNode::getPathAlternative(void) {
+  VisualNode::getPathAlternative(const NodeAllocator& na) {
     for (int i=getNumberOfChildren(); i--;) {
-      if (getChild(i)->isOnPath())
+      if (getChild(na,i)->isOnPath())
         return i;
     }
     return -1;
   }
 
   void
-  VisualNode::toggleHidden(void) {
+  VisualNode::toggleHidden(const NodeAllocator& na) {
     setHidden(!isHidden());
     if (shape != NULL) {
-      if (getParent()) {
-        getParent()->dirtyUp();
+      if (getParent(na)) {
+        getParent(na)->dirtyUp(na);
       }
     } else {
-      dirtyUp();
+      dirtyUp(na);
     }
   }
 
   void
-  VisualNode::hideFailed(void) {
-    HideFailedCursor c(this);
+  VisualNode::hideFailed(const NodeAllocator& na) {
+    HideFailedCursor c(this,na);
     PreorderNodeVisitor<HideFailedCursor>(c).run();
-    dirtyUp();
+    dirtyUp(na);
   }
 
   void
-  VisualNode::unhideAll(void) {
-    UnhideAllCursor c(this);
+  VisualNode::unhideAll(const NodeAllocator& na) {
+    UnhideAllCursor c(this,na);
     PreorderNodeVisitor<UnhideAllCursor>(c).run();
-    dirtyUp();
+    dirtyUp(na);
   }
 
   void
-  VisualNode::toggleStop(void) {
+  VisualNode::toggleStop(const NodeAllocator& na) {
     if (getStatus() == STOP)
       setStatus(UNSTOP);
     else if (getStatus() == UNSTOP)
       setStatus(STOP);
-    dirtyUp();
+    dirtyUp(na);
   }
   
   void
-  VisualNode::unstopAll(void) {
-    UnstopAllCursor c(this);
+  VisualNode::unstopAll(const NodeAllocator& na) {
+    UnstopAllCursor c(this,na);
     PreorderNodeVisitor<UnstopAllCursor>(c).run();
-    dirtyUp();
+    dirtyUp(na);
   }
 
   void
-  VisualNode::changedStatus() { dirtyUp(); }
+  VisualNode::changedStatus(const NodeAllocator& na) { dirtyUp(na); }
 
   bool
   VisualNode::containsCoordinateAtDepth(int x, int depth) {
@@ -210,7 +210,7 @@ namespace Gecode { namespace Gist {
   }
 
   VisualNode*
-  VisualNode::findNode(int x, int y) {
+  VisualNode::findNode(const NodeAllocator& na, int x, int y) {
     VisualNode* cur = this;
     int depth = y / Layout::dist_y;
 
@@ -221,7 +221,7 @@ namespace Gecode { namespace Gist {
       VisualNode* oldCur = cur;
       cur = NULL;
       for (unsigned int i=0; i<oldCur->getNumberOfChildren(); i++) {
-        VisualNode* nextChild = oldCur->getChild(i);
+        VisualNode* nextChild = oldCur->getChild(na,i);
         int newX = x - nextChild->getOffset();
         if (nextChild->containsCoordinateAtDepth(newX, depth - 1)) {
           cur = nextChild;
@@ -348,13 +348,13 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  VisualNode::computeShape(VisualNode* root) {
+  VisualNode::computeShape(const NodeAllocator& na, VisualNode* root) {
     int numberOfShapes = getNumberOfChildren();
     Extent extent(Layout::extent);
 
     int maxDepth = 0;
     for (int i = numberOfShapes; i--;)
-      maxDepth = std::max(maxDepth, getChild(i)->getShape()->depth());
+      maxDepth = std::max(maxDepth, getChild(na,i)->getShape()->depth());
     Shape* mergedShape;
     if (getShape() && getShape()->depth() >= maxDepth+1) {
       mergedShape = getShape();
@@ -363,8 +363,8 @@ namespace Gecode { namespace Gist {
     }
 
     if (numberOfShapes == 1) {
-      getChild(0)->setOffset(0);
-      const Shape* childShape = getChild(0)->getShape();
+      getChild(na,0)->setOffset(0);
+      const Shape* childShape = getChild(na,0)->getShape();
       for (int i=childShape->depth(); i--;)
         (*mergedShape)[i+1] = (*childShape)[i];
       (*mergedShape)[1].extend(- extent.l, - extent.r);
@@ -385,13 +385,13 @@ namespace Gecode { namespace Gist {
       int width = 0;
 
       Extent* currentShapeL = r.alloc<Extent>(maxDepth);
-      int ldepth = getChild(0)->getShape()->depth();
+      int ldepth = getChild(na,0)->getShape()->depth();
       for (int i=ldepth; i--;)
-        currentShapeL[i] = (*getChild(0)->getShape())[i];
+        currentShapeL[i] = (*getChild(na,0)->getShape())[i];
 
       // After merging, we can pick the result of either merging left or right
       // Here we chose the result of merging right
-      Shape* rShape = getChild(numberOfShapes-1)->getShape();
+      Shape* rShape = getChild(na,numberOfShapes-1)->getShape();
       int rdepth = rShape->depth();
       for (int i=rdepth; i--;)
         (*mergedShape)[i+1] = (*rShape)[i];
@@ -405,7 +405,7 @@ namespace Gecode { namespace Gist {
         // between the *previous* axis and the axis of nextShapeL.
         // This explains the correction.
 
-        Shape* nextShapeL = getChild(i)->getShape();
+        Shape* nextShapeL = getChild(na,i)->getShape();
         int nextAlphaL =
           Layouter::getAlpha<Extent*,Shape>(&currentShapeL[0], ldepth,
                              *nextShapeL, nextShapeL->depth());
@@ -419,7 +419,7 @@ namespace Gecode { namespace Gist {
 
         // Merge right-to-left.  Here, a correction of nextAlphaR is
         // not required.
-        Shape* nextShapeR = getChild(numberOfShapes-1-i)->getShape();
+        Shape* nextShapeR = getChild(na,numberOfShapes-1-i)->getShape();
         int nextAlphaR =
           Layouter::getAlpha<Shape,Extent*>(*nextShapeR, nextShapeR->depth(),
                                &currentShapeR[0], rdepth);
@@ -448,10 +448,10 @@ namespace Gecode { namespace Gist {
       // median of the alphaL and alphaR values, as suggested in
       // Kennedy's paper.
       int offset = - halfWidth;
-      getChild(0)->setOffset(offset);
+      getChild(na,0)->setOffset(offset);
       for (int i = 1; i < numberOfShapes; i++) {
         offset += (alpha[i].first + alpha[i].second) / 2;
-        getChild(i)->setOffset(offset);
+        getChild(na,i)->setOffset(offset);
       }
       setShape(mergedShape);
     }

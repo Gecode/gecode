@@ -68,10 +68,12 @@ namespace Gecode { namespace Gist {
   const int dSolvedHalfWidth = (nodeWidth-2*dSolvedOffset) / 2;
   const int hiddenDepth = Layout::dist_y + failedWidth;
 
-  DrawingCursor::DrawingCursor(Gist::VisualNode* root, BestNode* curBest0,
+  DrawingCursor::DrawingCursor(VisualNode* root,
+                               const VisualNode::NodeAllocator& na,
+                               BestNode* curBest0,
                                QPainter& painter0,
                                const QRect& clippingRect0, bool showCopies)
-    : NodeCursor<VisualNode>(root), painter(painter0),
+    : NodeCursor<VisualNode>(root,na), painter(painter0),
       clippingRect(clippingRect0), curBest(curBest0),
       x(0), y(0), copies(showCopies) {
     QPen pen = painter.pen();
@@ -97,9 +99,9 @@ namespace Gecode { namespace Gist {
     Gist::VisualNode* n = node();
     int parentX = x - (n->getOffset());
     int parentY = y - Layout::dist_y + nodeWidth;
-    if (n->getParent() != NULL &&
-        (n->getParent()->getStatus() == STOP ||
-         n->getParent()->getStatus() == UNSTOP) )
+    if (!n->isRoot() &&
+        (n->getParent(na)->getStatus() == STOP ||
+         n->getParent(na)->getStatus() == UNSTOP) )
       parentY -= (nodeWidth-failedWidth)/2;
 
     int myx = x;

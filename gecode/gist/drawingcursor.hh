@@ -80,7 +80,9 @@ namespace Gecode { namespace Gist {
     static const QColor lightBlue;
 
     /// Constructor
-    DrawingCursor(VisualNode* root, BestNode* curBest0,
+    DrawingCursor(VisualNode* root,
+                  const VisualNode::NodeAllocator& na,
+                  BestNode* curBest0,
                   QPainter& painter0,
                   const QRect& clippingRect0, bool showCopies);
 

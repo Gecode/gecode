@@ -38,7 +38,7 @@
 #ifndef GECODE_GIST_NODE_HH
 #define GECODE_GIST_NODE_HH
 
-#include <gecode/support.hh>
+#include <gecode/kernel.hh>
 
 namespace Gecode { namespace Gist {
 
@@ -46,12 +46,41 @@ namespace Gecode { namespace Gist {
 
   static const int NodeBlockSize = 10000;
 
-  /// \brief Base class for nodes of the search tree
-  class Node : public Support::BlockClient<VisualNode,Heap,NodeBlockSize> {
+  /// Node allocator
+  template<class T>
+  class NodeAllocator {
   private:
-    /// The parent of this node, or NULL for the root
-    Node* parent;
+    /// Blocks of nodes
+    class Block {
+    public:
+      T b[NodeBlockSize];
+    };
+    /// Array of blocks
+    Block** b;
+    /// Size of the array
+    int n;
+    /// Current block number
+    int cur_b;
+    /// Current node number in current block
+    int cur_t;
+    /// Allocate new block, potentially reallocate block array
+    void allocate(void);
+  public:
+    /// Constructor
+    NodeAllocator(void);
+    /// Destructor
+    ~NodeAllocator(void);
+    /// Allocate new node with parent \a p
+    int allocate(int p);
+    /// Allocate new root node for space \a root
+    int allocate(Space* root);
+    /// Return node for index \a i
+    T* operator [](int i) const;
+  };
 
+  /// \brief Base class for nodes of the search tree
+  class Node {
+  private:
     /// Tags that are used to encode the number of children
     enum {
       UNDET, //< Number of children not determined
@@ -63,12 +92,13 @@ namespace Gecode { namespace Gist {
     /// The children, or in case there are at most two, the first child
     void* childrenOrFirstChild;
 
-    union {
-      /// The second child or NULL, in case of at most two children
-      Node* secondChild;
-      /// The number of children, in case it is greater than 2
-      unsigned int noOfChildren;
-    } c;
+    /** The number of children, in case it is greater than 2, or the first
+     *  child (if negative)
+     */
+    int noOfChildren;
+
+    /// The parent of this node, or NULL for the root
+    int parent;
 
     /// Read the tag of childrenOrFirstChild
     unsigned int getTag(void) const;
@@ -76,22 +106,28 @@ namespace Gecode { namespace Gist {
     void setTag(unsigned int tag);
     /// Return childrenOrFirstChild without tag
     void* getPtr(void) const;
+    /// Return childrenOrFirstChild as integer
+    int getFirstChild(void) const;
 
   protected:
     /// Return whether this node is undetermined
     bool isUndetermined(void) const;
 
+    /// Return index of child no \a n
+    int getChild(int n) const;
   public:
-    typedef Support::BlockAllocator<VisualNode,Heap,NodeBlockSize> 
-      NodeAllocator;
+    typedef NodeAllocator<VisualNode> NodeAllocator;
 
     /// Construct node with parent \a p
-    Node(Node* p, bool failed = false);
+    Node(int p, bool failed = false);
 
     /// Return the parent
-    Node* getParent(void);
+    VisualNode* getParent(const NodeAllocator& na) const;
     /// Return child no \a n
-    Node* getChild(unsigned int n);
+    VisualNode* getChild(const NodeAllocator& na, int n) const;
+
+    /// Return index of this node
+    int getIndex(const NodeAllocator& na) const;
 
     /// Check if this node is the root of a tree
     bool isRoot(void) const;
@@ -105,8 +141,6 @@ namespace Gecode { namespace Gist {
   };
 
 }}
-
-#include <gecode/gist/node.hpp>
 
 #endif
 

@@ -37,16 +37,6 @@
 
 namespace Gecode { namespace Gist {
 
-  forceinline SpaceNode*
-  SpaceNode::getParent() {
-    return static_cast<SpaceNode*>(Node::getParent());
-  }
-
-  forceinline SpaceNode*
-  SpaceNode::getChild(int i) {
-    return static_cast<SpaceNode*>(Node::getChild(i));
-  }
-
   forceinline void
   SpaceNode::setFlag(int flag, bool value) {
     if (value)
@@ -100,7 +90,7 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline
-  SpaceNode::SpaceNode(Node* p)
+  SpaceNode::SpaceNode(int p)
   : Node(p), copy(NULL), ownBest(NULL), nstatus(0) {
     choice = NULL;
     setStatus(UNDETERMINED);
@@ -109,8 +99,9 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline Space*
-  SpaceNode::getSpace(BestNode* curBest, int c_d, int a_d) {
-    acquireSpace(curBest,c_d,a_d);
+  SpaceNode::getSpace(const NodeAllocator& na,
+                      BestNode* curBest, int c_d, int a_d) {
+    acquireSpace(na,curBest,c_d,a_d);
     Space* ret;
     if (Support::marked(copy)) {
       ret = static_cast<Space*>(Support::unmark(copy));
@@ -179,13 +170,14 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline int
-  SpaceNode::getAlternative(void) {
-    SpaceNode* p = getParent();
-    if (p) {
-      for (int i=p->getNumberOfChildren(); i--;)
-        if (p->getChild(i) == this)
-          return i;
-    }
+  SpaceNode::getAlternative(const NodeAllocator& na) const {
+    SpaceNode* p = getParent(na);
+    if (p == NULL)
+      return -1;
+    for (int i=p->getNumberOfChildren(); i--;)
+      if (p->getChild(na,i) == this)
+        return i;
+    GECODE_NEVER;
     return -1;
   }
 

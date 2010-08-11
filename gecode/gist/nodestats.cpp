@@ -43,7 +43,8 @@
 
 namespace Gecode { namespace Gist {
 
-  NodeStatInspector::NodeStatInspector(QWidget* parent) : QWidget(parent) {
+  NodeStatInspector::NodeStatInspector(QWidget* parent)
+    : QWidget(parent) {
     setWindowFlags(Qt::Tool);
     QGraphicsScene* scene = new QGraphicsScene();
     
@@ -103,13 +104,14 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  NodeStatInspector::node(VisualNode* n,const Statistics&, bool) {
+  NodeStatInspector::node(const VisualNode::NodeAllocator& na,
+                          VisualNode* n, const Statistics&, bool) {
     if (isVisible()) {
       int nd = -1;
-      for (VisualNode* p = n; p != NULL; p = p->getParent())
+      for (VisualNode* p = n; p != NULL; p = p->getParent(na))
         nd++;
       nodeDepthLabel->setPlainText(QString("%1").arg(nd));;
-      StatCursor sc(n);
+      StatCursor sc(n,na);
       PreorderNodeVisitor<StatCursor> pnv(sc);
       pnv.run();
       

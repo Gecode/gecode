@@ -89,6 +89,8 @@ namespace Gecode { namespace Gist {
     BestNode(SpaceNode* s0);
   };
 
+  class Shape;
+
   /// \brief A node of a search tree of %Gecode spaces
   class SpaceNode : public Node {
   protected:
@@ -101,6 +103,17 @@ namespace Gecode { namespace Gist {
   private:
     /// Reference to best space when the node was created
     SpaceNode* ownBest;
+  protected:
+    const Choice* choice;
+
+    /** \brief Shape of this node
+     *
+     * The shape should really be a member of VisualNode, but
+     * is defined here in order to improve alignment (saves
+     * 4 bytes per node on 64 bit machines).
+     */
+    Shape* shape;
+
     /** \brief Status of the node
      *
      * If the node has a working copy, the first 20 bits encode the distance
@@ -108,8 +121,6 @@ namespace Gecode { namespace Gist {
      * remaining bits are used by the VisualNode class for further flags.
      */
     unsigned int nstatus;
-  protected:
-    const Choice* choice;
 
     /// Set distance from copy
     void setDistance(unsigned int d);
@@ -141,23 +152,27 @@ namespace Gecode { namespace Gist {
     void setHasSolvedChildren(bool b);
 
     /// Recompute workingSpace from a copy higher up, return distance to copy
-    int recompute(BestNode* curBest, int c_d, int a_d);
+    int recompute(const NodeAllocator& na,
+                  BestNode* curBest, int c_d, int a_d);
 
     /// Book-keeping of open children
-    void closeChild(bool hadFailures, bool hadSolutions);
+    void closeChild(const NodeAllocator& na,
+                    bool hadFailures, bool hadSolutions);
   protected:
     /// Set status to \a s
     void setStatus(NodeStatus s);
     /// Acquire working space, either from parent or by recomputation
-    void acquireSpace(BestNode* curBest, int c_d, int a_d);
+    void acquireSpace(const NodeAllocator& na,
+                      BestNode* curBest, int c_d, int a_d);
   public:
     /// Construct node with parent \a p
-    SpaceNode(Node* p);
+    SpaceNode(int p);
     /// Construct root node from Space \a root and branch-and-bound object \a better
     SpaceNode(Space* root);
 
     /// Return working space.  Receiver must delete the space.
-    Space* getSpace(BestNode* curBest, int c_d, int a_d);
+    Space* getSpace(const NodeAllocator& na,
+                    BestNode* curBest, int c_d, int a_d);
 
     /// Return working space (if present).
     const Space* getWorkingSpace(void) const;
@@ -198,7 +213,7 @@ namespace Gecode { namespace Gist {
     /// Return whether the subtree of this node has any open children
     bool hasOpenChildren(void);
     /// Return number of open children
-    int getNoOfOpenChildren(void);
+    int getNoOfOpenChildren(const NodeAllocator& na);
     /// Set number of open children to \a n
     void setNoOfOpenChildren(int n);
     /// Return whether the node has a copy
@@ -206,19 +221,13 @@ namespace Gecode { namespace Gist {
     /// Return whether the node has a working space
     bool hasWorkingSpace(void);
 
-    /// Return the parent
-    SpaceNode* getParent(void);
-    /// Return child \a i
-    SpaceNode* getChild(int i);
     /// Return alternative number of this node
-    int getAlternative(void);
+    int getAlternative(const NodeAllocator& na) const;
     /// Return choice of this node
     const Choice* getChoice(void);
   };
 
 }}
-
-#include <gecode/gist/spacenode.hpp>
 
 #endif
 

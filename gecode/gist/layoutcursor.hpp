@@ -44,8 +44,9 @@ namespace Gecode { namespace Gist {
   }
 
   inline
-  LayoutCursor::LayoutCursor(VisualNode* theNode)
-   : NodeCursor<VisualNode>(theNode) {}
+  LayoutCursor::LayoutCursor(VisualNode* theNode,
+                             const VisualNode::NodeAllocator& na)
+   : NodeCursor<VisualNode>(theNode,na) {}
 
   forceinline void
   LayoutCursor::processCurrentNode() {
@@ -56,7 +57,7 @@ namespace Gecode { namespace Gist {
       } else if (currentNode->getNumberOfChildren() < 1) {
         currentNode->setShape(Shape::leaf);
       } else {
-        currentNode->computeShape(startNode());
+        currentNode->computeShape(na,startNode());
       }
       currentNode->setDirty(false);
     }

@@ -48,7 +48,8 @@ namespace Gecode { namespace Gist {
   class LayoutCursor : public NodeCursor<VisualNode> {
   public:
     /// Constructor
-    LayoutCursor(VisualNode* theNode);
+    LayoutCursor(VisualNode* theNode,
+                 const VisualNode::NodeAllocator& na);
 
     /// \name Cursor interface
     //@{

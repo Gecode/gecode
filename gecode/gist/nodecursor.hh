@@ -53,13 +53,15 @@ namespace Gecode { namespace Gist {
     /// The current alternative
     unsigned int _alternative;
   protected:
+    /// The node allocator
+    const typename Node::NodeAllocator& na;
     /// Set current node to \a n
     void node(Node* n);
     /// Return start node
     Node* startNode(void);
   public:
     /// Construct cursor, initially set to \a theNode
-    NodeCursor(Node* theNode);
+    NodeCursor(Node* theNode, const typename Node::NodeAllocator& na);
     /// Return current node
     Node* node(void);
     /// Return current alternative
@@ -88,7 +90,8 @@ namespace Gecode { namespace Gist {
   class HideFailedCursor : public NodeCursor<VisualNode> {
   public:
     /// Constructor
-    HideFailedCursor(VisualNode* theNode);
+    HideFailedCursor(VisualNode* theNode,
+                     const VisualNode::NodeAllocator& na);
     /// \name Cursor interface
     //@{
     /// Test if the cursor may move to the first child node
@@ -102,7 +105,8 @@ namespace Gecode { namespace Gist {
   class UnhideAllCursor : public NodeCursor<VisualNode> {
   public:
     /// Constructor
-    UnhideAllCursor(VisualNode* theNode);
+    UnhideAllCursor(VisualNode* theNode,
+                    const VisualNode::NodeAllocator& na);
     /// \name Cursor interface
     //@{
     /// Process node
@@ -114,7 +118,8 @@ namespace Gecode { namespace Gist {
   class UnstopAllCursor : public NodeCursor<VisualNode> {
   public:
     /// Constructor
-    UnstopAllCursor(VisualNode* theNode);
+    UnstopAllCursor(VisualNode* theNode,
+                    const VisualNode::NodeAllocator& na);
     /// \name Cursor interface
     //@{
     /// Process node
@@ -131,7 +136,8 @@ namespace Gecode { namespace Gist {
     bool notOnSol(void);
   public:
     /// Constructor
-    NextSolCursor(VisualNode* theNode, bool backwards);
+    NextSolCursor(VisualNode* theNode, bool backwards,
+                  const VisualNode::NodeAllocator& na);
     /// \name Cursor interface
     //@{
     /// Do nothing
@@ -167,7 +173,8 @@ namespace Gecode { namespace Gist {
     int open;
 
     /// Constructor
-    StatCursor(VisualNode* theNode);
+    StatCursor(VisualNode* theNode,
+               const VisualNode::NodeAllocator& na);
     
     /// \name Cursor interface
     //@{
@@ -185,7 +192,8 @@ namespace Gecode { namespace Gist {
   class DisposeCursor : public NodeCursor<VisualNode> {
   public:
     /// Constructor
-    DisposeCursor(VisualNode* theNode);
+    DisposeCursor(VisualNode* theNode,
+                  const VisualNode::NodeAllocator& na);
     
     /// \name Cursor interface
     //@{

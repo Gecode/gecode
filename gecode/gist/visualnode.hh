@@ -134,15 +134,13 @@ namespace Gecode { namespace Gist {
       BOOKMARKED
     };
 
-    /// Shape of this node
-    Shape* shape;
     /// Relative offset from the parent node
     int offset;
     /// Check if the \a x at depth \a depth lies in this subtree
     bool containsCoordinateAtDepth(int x, int depth);
   public:
     /// Construct with parent \a p
-    VisualNode(Node* p);
+    VisualNode(int p);
     /// Constructor for root node from \a root and \a b
     VisualNode(Space* root);
 
@@ -153,9 +151,9 @@ namespace Gecode { namespace Gist {
     /// Set stop state to \a h
     void setStop(bool h);
     /// Mark all nodes up the path to the parent as dirty
-    void dirtyUp(void);
+    void dirtyUp(const NodeAllocator& na);
     /// Compute layout for the subtree of this node
-    void layout(void);
+    void layout(const NodeAllocator& na);
     /// Return offset off this node from its parent
     int getOffset(void);
     /// Set offset of this node, relative to its parent
@@ -177,43 +175,39 @@ namespace Gecode { namespace Gist {
     /// Set bookmark of this node
     void setBookmarked(bool m);
     /// Set all nodes from the node to the root to be on the path
-    void pathUp(void);
+    void pathUp(const NodeAllocator& na);
     /// Set all nodes from the node to the root not to be on the path
-    void unPathUp(void);
+    void unPathUp(const NodeAllocator& na);
     /// Return whether node is on the path
     bool isOnPath(void);
     /// Return the alternative of the child that is on the path (-1 if none)
-    int getPathAlternative(void);
+    int getPathAlternative(const NodeAllocator& na);
     /// Set whether node is on the path
     void setOnPath(bool onPath0);
 
     /// Toggle whether this node is hidden
-    void toggleHidden(void);
+    void toggleHidden(const NodeAllocator& na);
     /// Hide all failed subtrees of this node
-    void hideFailed(void);
+    void hideFailed(const NodeAllocator& na);
     /// Unhide all nodes in the subtree of this node
-    void unhideAll(void);
+    void unhideAll(const NodeAllocator& na);
     /// Do not stop at this node
-    void toggleStop(void);
+    void toggleStop(const NodeAllocator& na);
     /// Do not stop at any stop node in the subtree of this node
-    void unstopAll(void);
+    void unstopAll(const NodeAllocator& na);
 
     /// Return the shape of this node
     Shape* getShape(void);
     /// Set the shape of this node
     void setShape(Shape* s);
     /// Compute the shape according to the shapes of the children
-    void computeShape(VisualNode* root);
+    void computeShape(const NodeAllocator& na, VisualNode* root);
     /// Return the bounding box
     BoundingBox getBoundingBox(void);
     /// Signal that the status has changed
-    void changedStatus();
-    /// Return the parent
-    VisualNode* getParent(void);
-    /// Return child \a i
-    VisualNode* getChild(int i);
+    void changedStatus(const NodeAllocator& na);
     /// Find a node in this subtree at coordinates \a x, \a y
-    VisualNode* findNode(int x, int y);
+    VisualNode* findNode(const NodeAllocator& na, int x, int y);
 
     /// Return string that is used as a tool tip
     std::string toolTip(BestNode* curBest, int c_d, int a_d);
@@ -227,6 +221,8 @@ namespace Gecode { namespace Gist {
 
 }}
 
+#include <gecode/gist/node.hpp>
+#include <gecode/gist/spacenode.hpp>
 #include <gecode/gist/visualnode.hpp>
 
 #endif

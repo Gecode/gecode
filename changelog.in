@@ -87,9 +87,10 @@ Module: gist
 What:   performance
 Rank:   minor
 [DESCRIPTION]
-Saved some memory for each node in Gist (one pointer per node +
-two integers per inner node), and speeded up deallocation
-of the tree (e.g. when resetting or closing Gist).
+Saved some memory for each node in Gist (one pointer per node, two integers
+per inner node, and some additional memory on 64 bit platforms due to optimizing
+alignment), and speeded up deallocation of the tree (e.g. when resetting or
+closing Gist).
 
 [ENTRY]
 Module: iter

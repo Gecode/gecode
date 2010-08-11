@@ -82,8 +82,6 @@ namespace Gecode { namespace Gist {
     autoZoomButton->setIcon(myPic);
 
     nodeStatInspector = new NodeStatInspector(this);
-    connect(canvas, SIGNAL(statusChanged(VisualNode*,const Statistics&, bool)),
-            nodeStatInspector, SLOT(node(VisualNode*,const Statistics&, bool)));
 
     inspect = new QAction("Inspect", this);
     inspect->setShortcut(QKeySequence("Return"));
@@ -548,6 +546,7 @@ namespace Gecode { namespace Gist {
   void
   Gist::on_canvas_statusChanged(VisualNode* n, const Statistics& stats,
                                 bool finished) {
+    nodeStatInspector->node(*canvas->na,n,stats,finished);
     if (!finished) {
       inspect->setEnabled(false);
       inspectGroup->setEnabled(false);
@@ -629,7 +628,7 @@ namespace Gecode { namespace Gist {
         compareNodeBeforeFP->setEnabled(true);
       }
 
-      VisualNode* p = n->getParent();
+      VisualNode* p = n->getParent(*canvas->na);
       if (p == NULL) {
         inspectBeforeFP->setEnabled(false);
         inspectBeforeFPGroup->setEnabled(false);
@@ -640,20 +639,20 @@ namespace Gecode { namespace Gist {
       } else {
         navRoot->setEnabled(true);
         navUp->setEnabled(true);
-        unsigned int alt = n->getAlternative();
+        unsigned int alt = n->getAlternative(*canvas->na);
         navRight->setEnabled(alt + 1 < p->getNumberOfChildren());
         navLeft->setEnabled(alt > 0);
       }
 
       VisualNode* root = n;
       while (!root->isRoot())
-        root = root->getParent();
-      NextSolCursor nsc(n, false);
+        root = root->getParent(*canvas->na);
+      NextSolCursor nsc(n, false, *canvas->na);
       PreorderNodeVisitor<NextSolCursor> nsv(nsc);
       nsv.run();
       navNextSol->setEnabled(nsv.getCursor().node() != root);
 
-      NextSolCursor psc(n, true);
+      NextSolCursor psc(n, true, *canvas->na);
       PreorderNodeVisitor<NextSolCursor> psv(psc);
       psv.run();
       navPrevSol->setEnabled(psv.getCursor().node() != root);

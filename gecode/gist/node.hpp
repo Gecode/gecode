@@ -37,6 +37,62 @@
 
 namespace Gecode { namespace Gist {
 
+  template<class T>
+  void
+  NodeAllocator<T>::allocate(void) {
+    cur_b++;
+    cur_t = 0;
+    if (cur_b==n) {
+      int oldn = n;
+      n *= 1.5;
+      b = heap.realloc<Block*>(b,oldn,n);
+    }
+    b[cur_b] = static_cast<Block*>(heap.ralloc(sizeof(Block)));
+  }
+
+  template<class T>
+  NodeAllocator<T>::NodeAllocator(void) {
+    b = heap.alloc<Block*>(10);
+    n = 10;
+    cur_b = -1;
+    cur_t = NodeBlockSize-1;
+  }
+
+  template<class T>
+  NodeAllocator<T>::~NodeAllocator(void) {
+    for (int i=cur_b+1; i--;)
+      heap.rfree(b[i]);
+    heap.free<Block*>(b,n);
+  }
+
+  template<class T>
+  forceinline int
+  NodeAllocator<T>::allocate(int p) {
+    cur_t++;
+    if (cur_t==NodeBlockSize)
+      allocate();
+    new (&b[cur_b]->b[cur_t]) T(p);
+    return cur_b*NodeBlockSize+cur_t;
+  }
+
+  template<class T>
+  forceinline int
+  NodeAllocator<T>::allocate(Space* root) {
+    cur_t++;
+    if (cur_t==NodeBlockSize)
+      allocate();
+    new (&b[cur_b]->b[cur_t]) T(root);
+    return cur_b*NodeBlockSize+cur_t;
+  }
+
+  template<class T>
+  forceinline T*
+  NodeAllocator<T>::operator [](int i) const {
+    assert(i/NodeBlockSize < n);
+    assert(i/NodeBlockSize < cur_b || i%NodeBlockSize <= cur_t);
+    return &(b[i/NodeBlockSize]->b[i%NodeBlockSize]);
+  }
+  
   forceinline unsigned int
   Node::getTag(void) const {
     return static_cast<unsigned int>
@@ -57,42 +113,66 @@ namespace Gecode { namespace Gist {
       (reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & ~(3));
   }
 
+  forceinline int
+  Node::getFirstChild(void) const {
+    return static_cast<int>
+      ((reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & ~(3)) >> 2);
+  }
+
   forceinline
-  Node::Node(Node* p, bool failed) : parent(p) {
+  Node::Node(int p, bool failed) : parent(p) {
     childrenOrFirstChild = NULL;
-    c.secondChild = NULL;
+    noOfChildren = NULL;
     setTag(failed ? LEAF : UNDET);
   }
 
-  forceinline Node*
-  Node::getParent(void) { return parent; }
+  forceinline VisualNode*
+  Node::getParent(const NodeAllocator& na) const {
+    return parent < 0 ? NULL : na[parent];
+  }
 
   forceinline bool
   Node::isUndetermined(void) const { return getTag() == UNDET; }
 
-  forceinline Node*
-  Node::getChild(unsigned int n) {
+  forceinline int
+  Node::getChild(int n) const {
     assert(getTag() != UNDET && getTag() != LEAF);
     if (getTag() == TWO_CHILDREN) {
-      assert(n != 1 || Support::marked(c.secondChild));
-      return n == 0 ? static_cast<Node*>(getPtr()) :
-        static_cast<Node*>(Support::unmark(c.secondChild));
+      assert(n != 1 || noOfChildren <= 0);
+      return n == 0 ? getFirstChild() : -noOfChildren;
     }
-    assert(n < c.noOfChildren);
-    return static_cast<Node**>(getPtr())[n];
+    assert(n < noOfChildren);
+    return static_cast<int*>(getPtr())[n];
+  }
+
+  forceinline VisualNode*
+  Node::getChild(const NodeAllocator& na, int n) const {
+    return na[getChild(n)];
   }
 
   forceinline bool
-  Node::isRoot(void) const { return parent == NULL; }
+  Node::isRoot(void) const { return parent == -1; }
 
   forceinline unsigned int
   Node::getNumberOfChildren(void) const {
     switch (getTag()) {
     case UNDET: return 0;
     case LEAF:  return 0;
-    case TWO_CHILDREN: return 1+Support::marked(c.secondChild);
-    default: return c.noOfChildren;
+    case TWO_CHILDREN: return 1+(noOfChildren <= 0);
+    default: return noOfChildren;
     }
+  }
+
+  inline int
+  Node::getIndex(const NodeAllocator& na) const {
+    if (parent==-1)
+      return 0;
+    Node* p = na[parent];
+    for (int i=p->getNumberOfChildren(); i--;)
+      if (p->getChild(na,i) == this)
+        return p->getChild(i);
+    GECODE_NEVER;
+    return -1;
   }
 
 }}

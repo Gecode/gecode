@@ -66,9 +66,10 @@ namespace Gecode { namespace Gist {
     QVBoxLayout* boxLayout;
   public:
     NodeStatInspector(QWidget* parent);
-  public Q_SLOTS:
     /// Update display to reflect information about \a n
-    void node(VisualNode*,const Statistics&, bool);
+    void node(const VisualNode::NodeAllocator&, VisualNode* n,
+              const Statistics& stat, bool finished);
+  public Q_SLOTS:
     /// Show this window and bring it to the front
     void showStats(void);
   };

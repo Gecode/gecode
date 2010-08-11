@@ -50,23 +50,30 @@ namespace Gecode { namespace Gist {
       setTag(LEAF);
       break;
     case 1:
-      childrenOrFirstChild = new (na) VisualNode(this);
-      c.secondChild = NULL;
+      childrenOrFirstChild = 
+        reinterpret_cast<void*>(na.allocate(getIndex(na)) << 2);
+      noOfChildren = 1;
       setTag(TWO_CHILDREN);
       break;
     case 2:
-      childrenOrFirstChild = new (na) VisualNode(this);
-      c.secondChild =
-        static_cast<Node*>(Support::mark(new (na) VisualNode(this)));
-      setTag(TWO_CHILDREN);
+      {
+        int idx = getIndex(na);
+        childrenOrFirstChild =
+          reinterpret_cast<void*>(na.allocate(idx) << 2);
+        noOfChildren = -na.allocate(idx);
+        setTag(TWO_CHILDREN);
+      }
       break;
     default:
-      c.noOfChildren = n;
-      childrenOrFirstChild = heap.alloc<Node*>(n);
-      Node** children = static_cast<Node**>(childrenOrFirstChild);
-      setTag(MORE_CHILDREN);
-      for (unsigned int i=n; i--;)
-        children[i] = new (na) VisualNode(this);
+      {
+        int idx = getIndex(na);
+        noOfChildren = n;
+        int* children = heap.alloc<int>(n);
+        childrenOrFirstChild = static_cast<void*>(children);
+        setTag(MORE_CHILDREN);
+        for (unsigned int i=n; i--;)
+          children[i] = na.allocate(idx);
+      }
     }
   }
 
