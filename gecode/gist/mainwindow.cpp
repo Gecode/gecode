@@ -104,7 +104,7 @@ namespace Gecode { namespace Gist {
     quitAction->setShortcut(QKeySequence("Ctrl+Q"));
     connect(quitAction, SIGNAL(triggered()),
             this, SLOT(close()));
-    QAction* prefAction = fileMenu->addAction(tr("Preferences"));
+    prefAction = fileMenu->addAction(tr("Preferences"));
     connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
 
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
@@ -239,6 +239,7 @@ namespace Gecode { namespace Gist {
     if (stats.maxDepth==0) {
       isSearching = false;
       statusBar()->showMessage("Ready");
+      prefAction->setEnabled(true);
     } else if (isSearching && finished) {
       isSearching = false;
       double ms = searchTimer.stop();
@@ -261,7 +262,9 @@ namespace Gecode { namespace Gist {
       // t += "."+QString().setNum(static_cast<int>(ms))+"s";
       // statusBar()->showMessage(QString("Ready (search time ")+t+")");
       statusBar()->showMessage("Ready");
+      prefAction->setEnabled(true);
     } else if (!isSearching && !finished) {
+      prefAction->setEnabled(false);
       statusBar()->showMessage("Searching");
       isSearching = true;
       searchTimer.start();

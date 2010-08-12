@@ -399,7 +399,8 @@ namespace Gecode { namespace Gist {
         } else {
           VisualNode* n = si.n->getChild(*t->na,si.i);
           if (n->isOpen()) {
-            nodeCount++;
+            if (n->getStatus() == UNDETERMINED)
+              nodeCount++;
             kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                             t->c_d, t->a_d);
             if (kids == 0) {

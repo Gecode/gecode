@@ -90,6 +90,8 @@ namespace Gecode { namespace Gist {
     QMenu* inspectNodeMenu;
     /// Menu for direct node inspection before fixpoint
     QMenu* inspectNodeBeforeFPMenu;
+    /// Action for activating the preferences menu
+    QAction* prefAction;
   protected:
     /// The contained %Gist object
     Gist* c;
