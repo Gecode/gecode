@@ -44,6 +44,19 @@ namespace Gecode { namespace Gist {
     NodeCursor<VisualNode>::moveUpwards();
   }
 
+  forceinline bool
+  DrawingCursor::isClipped(void) {
+    if (clippingRect.width() == 0 && clippingRect.x() == 0
+        && clippingRect.height() == 0 && clippingRect.y() == 0)
+      return false;
+    BoundingBox b = node()->getBoundingBox();
+    return (x + b.left > clippingRect.x() + clippingRect.width() ||
+            x + b.right < clippingRect.x() ||
+            y > clippingRect.y() + clippingRect.height() ||
+            y + (node()->getShape()->depth()+1) * Layout::dist_y < 
+            clippingRect.y());
+  }
+
   inline bool
   DrawingCursor::mayMoveDownwards(void) {
     return NodeCursor<VisualNode>::mayMoveDownwards() &&

@@ -57,16 +57,15 @@ namespace Gecode { namespace Gist {
   /// Blue color for expanded choice nodes
   const QColor DrawingCursor::lightBlue(0, 92, 161, 120);
 
-  const int nodeWidth = 20;
-  const int halfNodeWidth = nodeWidth / 2;
-  const int quarterNodeWidth = halfNodeWidth / 2;
-  const int failedWidth = 14;
-  const int halfFailedWidth = failedWidth / 2;
-  const float quarterFailedWidthF = static_cast<float>(failedWidth) / 4.0;
-  const int shadowOffset = 3;
-  const int dSolvedOffset = nodeWidth / 6;
-  const int dSolvedHalfWidth = (nodeWidth-2*dSolvedOffset) / 2;
-  const int hiddenDepth = Layout::dist_y + failedWidth;
+  const double nodeWidth = 20.0;
+  const double halfNodeWidth = nodeWidth / 2.0;
+  const double quarterNodeWidth = halfNodeWidth / 2.0;
+  const double failedWidth = 14.0;
+  const double halfFailedWidth = failedWidth / 2.0;
+  const double quarterFailedWidthF = failedWidth / 4.0;
+  const double shadowOffset = 3.0;
+  const double hiddenDepth =
+    static_cast<double>(Layout::dist_y) + failedWidth;
 
   DrawingCursor::DrawingCursor(VisualNode* root,
                                const VisualNode::NodeAllocator& na,
@@ -75,37 +74,24 @@ namespace Gecode { namespace Gist {
                                const QRect& clippingRect0, bool showCopies)
     : NodeCursor<VisualNode>(root,na), painter(painter0),
       clippingRect(clippingRect0), curBest(curBest0),
-      x(0), y(0), copies(showCopies) {
+      x(0.0), y(0.0), copies(showCopies) {
     QPen pen = painter.pen();
-      pen.setWidth(1);
-      painter.setPen(pen);
-}
-
-  bool
-  DrawingCursor::isClipped(void) {
-    if (clippingRect.width() == 0 && clippingRect.x() == 0
-        && clippingRect.height() == 0 && clippingRect.y() == 0)
-      return false;
-    BoundingBox b = node()->getBoundingBox();
-    return (x + b.left > clippingRect.x() + clippingRect.width() ||
-            x + b.right < clippingRect.x() ||
-            y > clippingRect.y() + clippingRect.height() ||
-            y + (node()->getShape()->depth()+1) * Layout::dist_y < 
-            clippingRect.y());
+    pen.setWidth(1);
+    painter.setPen(pen);
   }
 
   void
   DrawingCursor::processCurrentNode(void) {
     Gist::VisualNode* n = node();
-    int parentX = x - (n->getOffset());
-    int parentY = y - Layout::dist_y + nodeWidth;
+    double parentX = x - static_cast<double>(n->getOffset());
+    double parentY = y - static_cast<double>(Layout::dist_y) + nodeWidth;
     if (!n->isRoot() &&
         (n->getParent(na)->getStatus() == STOP ||
          n->getParent(na)->getStatus() == UNSTOP) )
       parentY -= (nodeWidth-failedWidth)/2;
 
-    int myx = x;
-    int myy = y;
+    double myx = x;
+    double myy = y;
 
     if (n->getStatus() == STOP || n->getStatus() == UNSTOP)
       myy += (nodeWidth-failedWidth)/2;
@@ -115,6 +101,8 @@ namespace Gecode { namespace Gist {
         painter.setPen(Qt::red);
       else
         painter.setPen(Qt::black);
+      // Here we use drawPath instead of drawLine in order to
+      // workaround a strange redraw artefact on Windows
       QPainterPath path;
       path.moveTo(myx,myy);
       path.lineTo(parentX,parentY);
@@ -126,26 +114,26 @@ namespace Gecode { namespace Gist {
       painter.setBrush(Qt::gray);
       painter.setPen(Qt::NoPen);
       if (n->isHidden()) {
-        QPoint points[3] = {QPoint(myx+shadowOffset,myy+shadowOffset),
-                            QPoint(myx+nodeWidth+shadowOffset,
-                                   myy+hiddenDepth+shadowOffset),
-                            QPoint(myx-nodeWidth+shadowOffset,
-                                   myy+hiddenDepth+shadowOffset),
-                           };
+        QPointF points[3] = {QPointF(myx+shadowOffset,myy+shadowOffset),
+                             QPointF(myx+nodeWidth+shadowOffset,
+                                     myy+hiddenDepth+shadowOffset),
+                             QPointF(myx-nodeWidth+shadowOffset,
+                                     myy+hiddenDepth+shadowOffset),
+                            };
         painter.drawConvexPolygon(points, 3);
 
       } else {
         switch (n->getStatus()) {
         case Gist::SOLVED:
           {
-            QPoint points[4] = {QPoint(myx+shadowOffset,myy+shadowOffset),
-                                QPoint(myx+halfNodeWidth+shadowOffset,
-                                       myy+halfNodeWidth+shadowOffset),
-                                QPoint(myx+shadowOffset,
-                                       myy+nodeWidth+shadowOffset),
-                                QPoint(myx-halfNodeWidth+shadowOffset,
-                                       myy+halfNodeWidth+shadowOffset)
-                               };
+            QPointF points[4] = {QPointF(myx+shadowOffset,myy+shadowOffset),
+                                 QPointF(myx+halfNodeWidth+shadowOffset,
+                                         myy+halfNodeWidth+shadowOffset),
+                                 QPointF(myx+shadowOffset,
+                                         myy+nodeWidth+shadowOffset),
+                                 QPointF(myx-halfNodeWidth+shadowOffset,
+                                         myy+halfNodeWidth+shadowOffset)
+                                };
             painter.drawConvexPolygon(points, 4);
           }
           break;
@@ -195,7 +183,8 @@ namespace Gecode { namespace Gist {
     painter.setPen(Qt::SolidLine);
     if (n->isHidden()) {
       if (n->hasOpenChildren()) {
-        QLinearGradient gradient(myx-nodeWidth,myy,myx+nodeWidth*1.3,myy+hiddenDepth*1.3);
+        QLinearGradient gradient(myx-nodeWidth,myy,
+                                 myx+nodeWidth*1.3,myy+hiddenDepth*1.3);
         if (n->hasSolvedChildren()) {
           gradient.setColorAt(0, white);
           gradient.setColorAt(1, green);
@@ -214,10 +203,10 @@ namespace Gecode { namespace Gist {
           painter.setBrush(QBrush(red));
       }
       
-      QPoint points[3] = {QPoint(myx,myy),
-                          QPoint(myx+nodeWidth,myy+hiddenDepth),
-                          QPoint(myx-nodeWidth,myy+hiddenDepth),
-                         };
+      QPointF points[3] = {QPointF(myx,myy),
+                           QPointF(myx+nodeWidth,myy+hiddenDepth),
+                           QPointF(myx-nodeWidth,myy+hiddenDepth),
+                          };
       painter.drawConvexPolygon(points, 3);
     } else {
       switch (n->getStatus()) {
@@ -228,11 +217,11 @@ namespace Gecode { namespace Gist {
           } else {
             painter.setBrush(QBrush(green));
           }
-          QPoint points[4] = {QPoint(myx,myy),
-                              QPoint(myx+halfNodeWidth,myy+halfNodeWidth),
-                              QPoint(myx,myy+nodeWidth),
-                              QPoint(myx-halfNodeWidth,myy+halfNodeWidth)
-                             };
+          QPointF points[4] = {QPointF(myx,myy),
+                               QPointF(myx+halfNodeWidth,myy+halfNodeWidth),
+                               QPointF(myx,myy+nodeWidth),
+                               QPointF(myx-halfNodeWidth,myy+halfNodeWidth)
+                              };
           painter.drawConvexPolygon(points, 4);
         }
         break;
@@ -275,22 +264,21 @@ namespace Gecode { namespace Gist {
         painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         break;
       }
-    	
     }
 
     if (copies && (n->hasCopy() && !n->hasWorkingSpace())) {
      painter.setBrush(Qt::darkRed);
-     painter.drawEllipse(myx, myy, 10, 10);
+     painter.drawEllipse(myx, myy, 10.0, 10.0);
     }
 
     if (copies && n->hasWorkingSpace()) {
      painter.setBrush(Qt::darkYellow);
-     painter.drawEllipse(myx, myy + 10, 10, 10);
+     painter.drawEllipse(myx, myy + 10.0, 10.0, 10.0);
     }
 
     if (n->isBookmarked()) {
      painter.setBrush(Qt::black);
-     painter.drawEllipse(myx-10, myy, 10, 10);
+     painter.drawEllipse(myx-10-0, myy, 10.0, 10.0);
     }
 
   }

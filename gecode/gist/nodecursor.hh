@@ -88,10 +88,13 @@ namespace Gecode { namespace Gist {
 
   /// \brief A cursor that marks failed subtrees as hidden
   class HideFailedCursor : public NodeCursor<VisualNode> {
+  private:
+    bool onlyDirty;
   public:
     /// Constructor
     HideFailedCursor(VisualNode* theNode,
-                     const VisualNode::NodeAllocator& na);
+                     const VisualNode::NodeAllocator& na,
+                     bool onlyDirtyNodes);
     /// \name Cursor interface
     //@{
     /// Test if the cursor may move to the first child node

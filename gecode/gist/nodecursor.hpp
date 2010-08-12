@@ -118,15 +118,17 @@ namespace Gecode { namespace Gist {
   forceinline bool
   HideFailedCursor::mayMoveDownwards(void) {
     VisualNode* n = node();
-    return NodeCursor<VisualNode>::mayMoveDownwards() &&
+    return (!onlyDirty || n->isDirty()) &&
+           NodeCursor<VisualNode>::mayMoveDownwards() &&
            (n->hasSolvedChildren() || n->getNoOfOpenChildren(na) > 0) &&
            (! n->isHidden());
   }
 
   forceinline
   HideFailedCursor::HideFailedCursor(VisualNode* root,
-                                     const VisualNode::NodeAllocator& na)
-   : NodeCursor<VisualNode>(root,na) {}
+                                     const VisualNode::NodeAllocator& na,
+                                     bool onlyDirtyNodes)
+   : NodeCursor<VisualNode>(root,na), onlyDirty(onlyDirtyNodes) {}
 
   forceinline void
   HideFailedCursor::processCurrentNode(void) {

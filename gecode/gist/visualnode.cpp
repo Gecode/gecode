@@ -161,8 +161,8 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  VisualNode::hideFailed(const NodeAllocator& na) {
-    HideFailedCursor c(this,na);
+  VisualNode::hideFailed(const NodeAllocator& na, bool onlyDirty) {
+    HideFailedCursor c(this,na,onlyDirty);
     PreorderNodeVisitor<HideFailedCursor>(c).run();
     dirtyUp(na);
   }

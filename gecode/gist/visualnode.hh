@@ -191,7 +191,7 @@ namespace Gecode { namespace Gist {
     /// Toggle whether this node is hidden
     void toggleHidden(const NodeAllocator& na);
     /// Hide all failed subtrees of this node
-    void hideFailed(const NodeAllocator& na);
+    void hideFailed(const NodeAllocator& na, bool onlyDirty=false);
     /// Unhide all nodes in the subtree of this node
     void unhideAll(const NodeAllocator& na);
     /// Do not stop at this node

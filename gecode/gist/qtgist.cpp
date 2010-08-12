@@ -628,16 +628,15 @@ namespace Gecode { namespace Gist {
         compareNodeBeforeFP->setEnabled(true);
       }
 
+      navRoot->setEnabled(true);
       VisualNode* p = n->getParent(*canvas->na);
       if (p == NULL) {
         inspectBeforeFP->setEnabled(false);
         inspectBeforeFPGroup->setEnabled(false);
-        navRoot->setEnabled(false);
         navUp->setEnabled(false);
         navRight->setEnabled(false);
         navLeft->setEnabled(false);
       } else {
-        navRoot->setEnabled(true);
         navUp->setEnabled(true);
         unsigned int alt = n->getAlternative(*canvas->na);
         navRight->setEnabled(alt + 1 < p->getNumberOfChildren());

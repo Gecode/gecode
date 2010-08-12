@@ -294,7 +294,7 @@ namespace Gecode { namespace Gist {
       return;
 
     if (t->autoHideFailed) {
-      t->root->hideFailed(*t->na);
+      t->root->hideFailed(*t->na,true);
     }
     for (VisualNode* n = t->currentNode; n != NULL; n=n->getParent(*t->na)) {
       if (n->isHidden()) {

@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     /// The best solution (for branch-and-bound)
     BestNode* curBest;
     /// The current coordinates
-    int x, y;
+    double x, y;
 
     bool copies;
 
