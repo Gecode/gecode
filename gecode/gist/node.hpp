@@ -39,7 +39,7 @@ namespace Gecode { namespace Gist {
 
   template<class T>
   void
-  NodeAllocator<T>::allocate(void) {
+  NodeAllocatorBase<T>::allocate(void) {
     cur_b++;
     cur_t = 0;
     if (cur_b==n) {
@@ -51,7 +51,7 @@ namespace Gecode { namespace Gist {
   }
 
   template<class T>
-  NodeAllocator<T>::NodeAllocator(bool bab) : _bab(bab) {
+  NodeAllocatorBase<T>::NodeAllocatorBase(bool bab) : _bab(bab) {
     b = heap.alloc<Block*>(10);
     n = 10;
     cur_b = -1;
@@ -59,7 +59,7 @@ namespace Gecode { namespace Gist {
   }
 
   template<class T>
-  NodeAllocator<T>::~NodeAllocator(void) {
+  NodeAllocatorBase<T>::~NodeAllocatorBase(void) {
     for (int i=cur_b+1; i--;)
       heap.rfree(b[i]);
     heap.free<Block*>(b,n);
@@ -67,7 +67,7 @@ namespace Gecode { namespace Gist {
 
   template<class T>
   forceinline int
-  NodeAllocator<T>::allocate(int p) {
+  NodeAllocatorBase<T>::allocate(int p) {
     cur_t++;
     if (cur_t==NodeBlockSize)
       allocate();
@@ -78,7 +78,7 @@ namespace Gecode { namespace Gist {
 
   template<class T>
   forceinline int
-  NodeAllocator<T>::allocate(Space* root) {
+  NodeAllocatorBase<T>::allocate(Space* root) {
     cur_t++;
     if (cur_t==NodeBlockSize)
       allocate();
@@ -89,7 +89,7 @@ namespace Gecode { namespace Gist {
 
   template<class T>
   forceinline T*
-  NodeAllocator<T>::operator [](int i) const {
+  NodeAllocatorBase<T>::operator [](int i) const {
     assert(i/NodeBlockSize < n);
     assert(i/NodeBlockSize < cur_b || i%NodeBlockSize <= cur_t);
     return &(b[i/NodeBlockSize]->b[i%NodeBlockSize]);
@@ -97,7 +97,7 @@ namespace Gecode { namespace Gist {
 
   template<class T>
   forceinline T*
-  NodeAllocator<T>::best(int i) const {
+  NodeAllocatorBase<T>::best(int i) const {
     assert(i/NodeBlockSize < n);
     assert(i/NodeBlockSize < cur_b || i%NodeBlockSize <= cur_t);
     int bi = b[i/NodeBlockSize]->best[i%NodeBlockSize];
@@ -106,7 +106,7 @@ namespace Gecode { namespace Gist {
 
   template<class T>
   forceinline void
-  NodeAllocator<T>::setBest(int i, int best) {
+  NodeAllocatorBase<T>::setBest(int i, int best) {
     assert(i/NodeBlockSize < n);
     assert(i/NodeBlockSize < cur_b || i%NodeBlockSize <= cur_t);
     b[i/NodeBlockSize]->best[i%NodeBlockSize] = best;
@@ -114,7 +114,7 @@ namespace Gecode { namespace Gist {
   
   template<class T>
   forceinline bool
-  NodeAllocator<T>::bab(void) const {
+  NodeAllocatorBase<T>::bab(void) const {
     return _bab;
   }
   

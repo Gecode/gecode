@@ -46,7 +46,7 @@ namespace Gecode { namespace Gist {
 
   /// Node allocator
   template<class T>
-  class NodeAllocator {
+  class NodeAllocatorBase {
   private:
     /// Size of each block of nodes
     static const int NodeBlockSize = 1<<14;
@@ -72,9 +72,9 @@ namespace Gecode { namespace Gist {
     bool _bab;
   public:
     /// Constructor
-    NodeAllocator(bool bab);
+    NodeAllocatorBase(bool bab);
     /// Destructor
-    ~NodeAllocator(void);
+    ~NodeAllocatorBase(void);
     /// Allocate new node with parent \a p
     int allocate(int p);
     /// Allocate new root node for space \a root
@@ -127,7 +127,7 @@ namespace Gecode { namespace Gist {
     /// Return index of child no \a n
     int getChild(int n) const;
   public:
-    typedef NodeAllocator<VisualNode> NodeAllocator;
+    typedef NodeAllocatorBase<VisualNode> NodeAllocator;
 
     /// Construct node with parent \a p
     Node(int p, bool failed = false);
