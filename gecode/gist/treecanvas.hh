@@ -204,6 +204,8 @@ namespace Gecode {  namespace Gist {
     bool getShowCopies(void);
     /// Set refresh rate
     void setRefresh(int i);
+    /// Set refresh pause in msec
+    void setRefreshPause(int i);
     /// Return preference whether to use smooth scrolling and zooming
     bool getSmoothScrollAndZoom(void);
     /// Set preference whether to use smooth scrolling and zooming
@@ -288,6 +290,8 @@ namespace Gecode {  namespace Gist {
     bool showCopies;
     /// Refresh rate
     int refresh;
+    /// Time (in msec) to pause after each refresh
+    int refreshPause;
     /// Whether to use smooth scrolling and zooming
     bool smoothScrollAndZoom;
 

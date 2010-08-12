@@ -55,6 +55,7 @@ namespace Gecode { namespace Gist {
     QCheckBox* smoothCheck;
     QCheckBox* copiesCheck;
     QSpinBox*  refreshBox;
+    QCheckBox* slowBox;
     QSpinBox*  cdBox;
     QSpinBox*  adBox;
   protected Q_SLOTS:
@@ -62,6 +63,8 @@ namespace Gecode { namespace Gist {
     void writeBack(void);
     /// Reset to defaults
     void defaults(void);
+    /// Toggle slow down setting
+    void toggleSlow(int state);
   public:
     /// Constructor
     PreferencesDialog(const Options& opt, QWidget* parent = 0);
@@ -74,6 +77,8 @@ namespace Gecode { namespace Gist {
     bool copies;
     /// How often to refresh the display during search
     int refresh;
+    /// Milliseconds to wait after each refresh (to slow down search)
+    int refreshPause;
     /// Whether to use smooth scrolling and zooming
     bool smoothScrollAndZoom;
 

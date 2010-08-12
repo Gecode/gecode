@@ -46,6 +46,7 @@ namespace Gecode { namespace Gist {
     zoom = settings.value("search/zoom", false).toBool();
     copies = settings.value("search/copies", false).toBool();
     refresh = settings.value("search/refresh", 500).toInt();
+    refreshPause = settings.value("search/refreshPause", 0).toInt();
     smoothScrollAndZoom =
       settings.value("smoothScrollAndZoom", true).toBool();
 
@@ -84,11 +85,21 @@ namespace Gecode { namespace Gist {
     refreshLayout->addWidget(refreshLabel);
     refreshLayout->addWidget(refreshBox);
 
+    slowBox =
+      new QCheckBox(tr("Slow down search"));
+    slowBox->setChecked(refreshPause > 0);
+
+    refreshBox->setEnabled(refreshPause == 0);
+
+    connect(slowBox, SIGNAL(stateChanged(int)), this,
+                     SLOT(toggleSlow(int)));
+
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(hideCheck);
     layout->addWidget(zoomCheck);
     layout->addWidget(smoothCheck);
     layout->addLayout(refreshLayout);
+    layout->addWidget(slowBox);
 
     QTabWidget* tabs = new QTabWidget;
     QWidget* page1 = new QWidget;
@@ -135,6 +146,7 @@ namespace Gecode { namespace Gist {
     hideFailed = hideCheck->isChecked();
     zoom = zoomCheck->isChecked();
     refresh = refreshBox->value();
+    refreshPause = slowBox->isChecked() ? 200 : 0;
     smoothScrollAndZoom = smoothCheck->isChecked();
     copies = copiesCheck->isChecked();
     c_d = cdBox->value();
@@ -144,6 +156,7 @@ namespace Gecode { namespace Gist {
     settings.setValue("search/zoom", zoom);
     settings.setValue("search/copies", copies);
     settings.setValue("search/refresh", refresh);
+    settings.setValue("search/refreshPause", refreshPause);
     settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
 
     accept();
@@ -154,6 +167,7 @@ namespace Gecode { namespace Gist {
     hideFailed = true;
     zoom = false;
     refresh = 500;
+    refreshPause = 0;
     smoothScrollAndZoom = true;
     copies = false;
     c_d = 8;
@@ -161,8 +175,14 @@ namespace Gecode { namespace Gist {
     hideCheck->setChecked(hideFailed);
     zoomCheck->setChecked(zoom);
     refreshBox->setValue(refresh);
+    slowBox->setChecked(refreshPause > 0);
     smoothCheck->setChecked(smoothScrollAndZoom);
     copiesCheck->setChecked(copies);
+  }
+
+  void
+  PreferencesDialog::toggleSlow(int state) {
+    refreshBox->setEnabled(state != Qt::Checked);
   }
 
 }}

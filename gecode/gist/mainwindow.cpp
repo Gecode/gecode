@@ -291,6 +291,7 @@ namespace Gecode { namespace Gist {
     if (setup || pd.exec() == QDialog::Accepted) {
       c->setAutoHideFailed(pd.hideFailed);
       c->setRefresh(pd.refresh);
+      c->setRefreshPause(pd.refreshPause);
       c->setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
       c->setRecompDistances(pd.c_d,pd.a_d);
       opt.c_d = pd.c_d;

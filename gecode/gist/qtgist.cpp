@@ -767,6 +767,8 @@ namespace Gecode { namespace Gist {
   Gist::getAutoZoom(void) { return canvas->getAutoZoom(); }
   void
   Gist::setRefresh(int i) { canvas->setRefresh(i); }
+  void
+  Gist::setRefreshPause(int i) { canvas->setRefreshPause(i); }
   bool
   Gist::getSmoothScrollAndZoom(void) {
     return canvas->getSmoothScrollAndZoom();

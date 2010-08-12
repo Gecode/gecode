@@ -59,7 +59,7 @@ namespace Gecode { namespace Gist {
     , finishedFlag(false)
     , compareNodes(false), compareNodesBeforeFP(false)
     , autoHideFailed(true), autoZoom(false)
-    , refresh(500), smoothScrollAndZoom(false)
+    , refresh(500), refreshPause(0), smoothScrollAndZoom(false)
     , zoomTimeLine(500)
     , scrollTimeLine(1000), targetX(0), sourceX(0), targetY(0), sourceY(0)
     , targetW(0), targetH(0), targetScale(0)
@@ -384,11 +384,13 @@ namespace Gecode { namespace Gist {
       int nodeCount = 0;
       t->stopSearchFlag = false;
       while (!stck.empty() && !t->stopSearchFlag) {
-        if (t->refresh > 0 && ++nodeCount > t->refresh) {
+        if (t->refresh > 0 && nodeCount >= t->refresh) {
           node->dirtyUp(*t->na);
           updateCanvas();
           emit statusChanged(false);
           nodeCount = 0;
+          if (t->refreshPause > 0)
+            msleep(t->refreshPause);
         }
         SearchItem& si = stck.top();
         si.i++;
@@ -397,6 +399,7 @@ namespace Gecode { namespace Gist {
         } else {
           VisualNode* n = si.n->getChild(*t->na,si.i);
           if (n->isOpen()) {
+            nodeCount++;
             kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                             t->c_d, t->a_d);
             if (kids == 0) {
@@ -1402,6 +1405,13 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::setRefresh(int i) {
     refresh = i;
+  }
+
+  void
+  TreeCanvas::setRefreshPause(int i) {
+    refreshPause = i;
+    if (refreshPause > 0)
+      refresh = 1;
   }
 
   bool
