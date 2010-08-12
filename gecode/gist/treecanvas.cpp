@@ -71,7 +71,7 @@ namespace Gecode { namespace Gist {
       } else {
         rootSpace = Gecode::Search::snapshot(rootSpace,opt);
       }
-      na = new Node::NodeAllocator();
+      na = new Node::NodeAllocator(bab);
       int rootIdx = na->allocate(rootSpace);
       assert(rootIdx == 0); (void) rootIdx;
       root = (*na)[0];
@@ -813,7 +813,7 @@ namespace Gecode { namespace Gist {
       PreorderNodeVisitor<DisposeCursor>(dc).run();
     }
     delete na;
-    na = new Node::NodeAllocator();
+    na = new Node::NodeAllocator(curBest != NULL);
     int rootIdx = na->allocate(rootSpace);
     assert(rootIdx == 0); (void) rootIdx;
     root = (*na)[0];

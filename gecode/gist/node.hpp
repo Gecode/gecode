@@ -51,7 +51,7 @@ namespace Gecode { namespace Gist {
   }
 
   template<class T>
-  NodeAllocator<T>::NodeAllocator(void) {
+  NodeAllocator<T>::NodeAllocator(bool bab) : _bab(bab) {
     b = heap.alloc<Block*>(10);
     n = 10;
     cur_b = -1;
@@ -110,6 +110,12 @@ namespace Gecode { namespace Gist {
     assert(i/NodeBlockSize < n);
     assert(i/NodeBlockSize < cur_b || i%NodeBlockSize <= cur_t);
     b[i/NodeBlockSize]->best[i%NodeBlockSize] = best;
+  }
+  
+  template<class T>
+  forceinline bool
+  NodeAllocator<T>::bab(void) const {
+    return _bab;
   }
   
   forceinline unsigned int

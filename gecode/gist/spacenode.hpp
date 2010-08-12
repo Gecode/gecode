@@ -122,8 +122,7 @@ namespace Gecode { namespace Gist {
 
   forceinline void
   SpaceNode::purge(const NodeAllocator& na) {
-    if (!isRoot() && (getStatus() != SOLVED ||
-        na.best(getIndex(na)) == NULL)) {
+    if (!isRoot() && (getStatus() != SOLVED || !na.bab())) {
       // only delete copies from solutions if we are not in BAB
       if (Support::marked(copy))
         delete static_cast<Space*>(Support::unmark(copy));

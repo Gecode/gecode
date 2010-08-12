@@ -68,9 +68,11 @@ namespace Gecode { namespace Gist {
     int cur_t;
     /// Allocate new block, potentially reallocate block array
     void allocate(void);
+    /// Flag whether search uses branch-and-bound
+    bool _bab;
   public:
     /// Constructor
-    NodeAllocator(void);
+    NodeAllocator(bool bab);
     /// Destructor
     ~NodeAllocator(void);
     /// Allocate new node with parent \a p
@@ -83,6 +85,8 @@ namespace Gecode { namespace Gist {
     T* best(int i) const;
     /// Set index of best node before \a i to \a b
     void setBest(int i, int b);
+    /// Return branch-and-bound flag
+    bool bab(void) const;
   };
 
   /// \brief Base class for nodes of the search tree
