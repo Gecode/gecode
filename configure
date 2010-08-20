@@ -7625,22 +7625,36 @@ fi
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use manifest tool" >&5
 $as_echo_n "checking whether to use manifest tool... " >&6; }
-  if cl.exe 2>&1 | grep 'Version 16\.' >/dev/null 2>&1; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-    MANIFEST="@true"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#if _MSC_VER >= 1600
+                     # error Found msvc > 1600
+                     #endif
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
 
-  elif test "${MANIFEST}x" = "x"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      if test "${MANIFEST}x" = "x"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-    MANIFEST="@true"
+        MANIFEST="@true"
 
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-    MANIFEST="mt -nologo"
+        MANIFEST="mt -nologo"
 
-  fi
+      fi
+
+else
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+      MANIFEST="@true"
+
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 
   DLLPATH=""
 
@@ -9281,22 +9295,36 @@ fi
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use manifest tool" >&5
 $as_echo_n "checking whether to use manifest tool... " >&6; }
-  if cl.exe 2>&1 | grep 'Version 16\.' >/dev/null 2>&1; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-    MANIFEST="@true"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#if _MSC_VER >= 1600
+                     # error Found msvc > 1600
+                     #endif
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
 
-  elif test "${MANIFEST}x" = "x"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      if test "${MANIFEST}x" = "x"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-    MANIFEST="@true"
+        MANIFEST="@true"
 
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-    MANIFEST="mt -nologo"
+        MANIFEST="mt -nologo"
 
-  fi
+      fi
+
+else
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+      MANIFEST="@true"
+
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 
   DLLPATH=""
 

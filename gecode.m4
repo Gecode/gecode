@@ -763,16 +763,23 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
 
   AC_CHECK_PROG(MANIFEST, mt.exe, [found])
   AC_MSG_CHECKING(whether to use manifest tool)
-  if cl.exe 2>&1 | grep 'Version 16\.' >/dev/null 2>&1; then
-    AC_MSG_RESULT(no)
-    AC_SUBST(MANIFEST, "@true")
-  elif test "${MANIFEST}x" = "x"; then
-    AC_MSG_RESULT(no)
-    AC_SUBST(MANIFEST, "@true")
-  else
-    AC_MSG_RESULT(yes)
-    AC_SUBST(MANIFEST, ["mt -nologo"])
-  fi
+  AC_COMPILE_IFELSE([#if _MSC_VER >= 1600
+                     # error Found msvc > 1600
+                     #endif],
+    [
+      if test "${MANIFEST}x" = "x"; then
+        AC_MSG_RESULT(no)
+        AC_SUBST(MANIFEST, "@true")
+      else
+        AC_MSG_RESULT(yes)
+        AC_SUBST(MANIFEST, ["mt -nologo"])
+      fi
+    ],
+    [
+      AC_MSG_RESULT(no)
+      AC_SUBST(MANIFEST, "@true")
+    ])
+
 
   AC_SUBST(DLLPATH, "")
 
