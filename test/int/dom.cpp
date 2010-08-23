@@ -102,6 +102,26 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for domain constraint (empty range)
+     class DomRangeEmpty : public Test {
+     public:
+       /// Create and register test
+       DomRangeEmpty(void) : Test("Dom::Range::Empty",1,-4,4,true) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment&) const {
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
+         home.fail();
+       }
+       /// Post reified constraint on \a x for \a b
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::BoolVar b) {
+         Gecode::dom(home, x[0], 3, 2, b);
+       }
+     };
+
 
      const int r[4][2] = {
        {-4,-3},{-1,-1},{1,1},{3,5}
@@ -144,6 +164,7 @@ namespace Test { namespace Int {
      DomRange dr3(3);
      DomDom dd1(1);
      DomDom dd3(3);
+     DomRangeEmpty dre;
      //@}
 
    }

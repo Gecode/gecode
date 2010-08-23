@@ -74,6 +74,15 @@ The best is still to come!
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+The reified dom constraint failed instead of setting the BoolVar to 0 when the 
+minimum argument given was greater than the maximum.
+
+[ENTRY]
+Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
