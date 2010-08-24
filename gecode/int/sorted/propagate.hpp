@@ -104,55 +104,38 @@ namespace Gecode { namespace Int { namespace Sorted {
       // normalized and sorted
       // collect all bounds
 
-      // minimum bound
-      int mib = y[0].min();
-      // maximum bound
-      int mab = y[n - 1].max();
-      // interval size
-      int ivs = (mab - mib + 1);
-      Rank* allbnd = r.alloc<Rank>(ivs);
-      int iter = mib;
-      int idx = 0;
-      while(iter <= mab && idx < n) {
-        if (y[idx].min() > iter) {
-          // idx cannot be zero because consisteny in posting
-          assert(idx > 0);
-          allbnd[iter - mib].min = idx;
-          allbnd[iter - mib].max = idx - 1;
-          iter++;
-        } else {
-          if (y[idx].min() <= iter && iter <= y[idx].max() ) {
-            allbnd[iter - mib].min = idx;
-            allbnd[iter - mib].max = idx;
-            iter++;
-          } else {
-            idx++;
+      Rank* allbnd = r.alloc<Rank>(x.size());
+#ifndef NDEBUG
+      for (int i=n; i--;)
+        allbnd[i].min = allbnd[i].max = -1;
+#endif
+      for (int i=n; i--;) {
+        int min = x[i].min();
+        int max = x[i].max();
+        for (int j=0; j<n; j++) {
+          if ( (y[j].min() > min) ||
+               (y[j].min() <= min && min <= y[j].max()) ) {
+            allbnd[i].min = j;
+            break;
+          }
+        }
+        for (int j=n; j--;) {
+          if (y[j].min() > max) {
+            allbnd[i].max = j-1;
+            break;
+          } else if (y[j].min() <= max && min <= y[j].max()) {
+            allbnd[i].max = j;
+            break;
           }
         }
       }
-
-      iter = mab;
-      idx = n -1;
-      while(iter >= mib && idx >= 0) {
-        if (y[idx].min() > iter) {
-          // idx cannot be zero because consisteny in posting
-          assert(idx > 0);
-          allbnd[iter - mib].max = idx - 1;
-          iter--;
-        } else {
-          if (y[idx].min() <= iter && iter <= y[idx].max() ) {
-            allbnd[iter - mib].max = idx;
-            iter--;
-          } else {
-            idx--;
-          }
-        }
-      }
-
+      
       for (int i = n; i--; ) {
         // minimum reachable y-variable
-        int minr = allbnd[x[i].min() - mib].min;
-        int maxr = allbnd[x[i].max() - mib].max;
+        int minr = allbnd[i].min;
+        assert(minr != -1);
+        int maxr = allbnd[i].max;
+        assert(maxr != -1);
 
         ModEvent me = x[i].gq(home, y[minr].min());
         if (me_failed(me))

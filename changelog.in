@@ -85,6 +85,17 @@ minimum argument given was greater than the maximum.
 Module: int
 What:   performance
 Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Fixed sortedness constraint by replacing an algorithm that is linear in the 
+width of the union of all domains with an algorithm that is quadratic in the 
+number of variables. The previous algorithm crashed for domains with large 
+values due to excessive memory use.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
 [DESCRIPTION]
 Using ICL_DOM for binary linear equations with unit coefficients (such as x = 
 y+3) is now implemented using the much more efficient binary equality 
