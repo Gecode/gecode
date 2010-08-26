@@ -358,6 +358,7 @@ namespace Gecode { namespace Gist {
     Shape* mergedShape;
     if (getShape() && getShape()->depth() >= maxDepth+1) {
       mergedShape = getShape();
+      mergedShape->setDepth(maxDepth+1);
     } else {
       mergedShape = Shape::allocate(maxDepth+1);
     }

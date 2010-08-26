@@ -111,6 +111,8 @@ namespace Gecode { namespace Gist {
 
     /// Return depth of the shape
     int depth(void) const;
+    /// Set depth of the shape to \a d (must be smaller than original depth)
+    void setDepth(int d);
     /// Return extent at depth \a i
     const Extent& operator [](int i) const;
     /// Return extent at depth \a i

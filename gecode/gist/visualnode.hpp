@@ -63,6 +63,12 @@ namespace Gecode { namespace Gist {
   forceinline int
   Shape::depth(void) const { return _depth+1; }
 
+  forceinline void
+  Shape::setDepth(int d) {
+    assert(d <= _depth+1);
+    _depth = d-1;
+  }
+
   forceinline const Extent&
   Shape::operator [](int i) const {
     assert(i < _depth+1);
