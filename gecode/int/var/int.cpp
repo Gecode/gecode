@@ -40,7 +40,7 @@
 namespace Gecode {
 
   IntVar::IntVar(Space& home, int min, int max)
-    : Var<Int::IntVarImp>(new (home) Int::IntVarImp(home,min,max)) {
+    : VarImpVar<Int::IntVarImp>(new (home) Int::IntVarImp(home,min,max)) {
     Int::Limits::check(min,"IntVar::IntVar");
     Int::Limits::check(max,"IntVar::IntVar");
     if (min > max)
@@ -48,7 +48,7 @@ namespace Gecode {
   }
 
   IntVar::IntVar(Space& home, const IntSet& ds)
-    : Var<Int::IntVarImp>(new (home) Int::IntVarImp(home,ds)) {
+    : VarImpVar<Int::IntVarImp>(new (home) Int::IntVarImp(home,ds)) {
     Int::Limits::check(ds.min(),"IntVar::IntVar");
     Int::Limits::check(ds.max(),"IntVar::IntVar");
     if (ds.size() == 0)

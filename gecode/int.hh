@@ -339,11 +339,11 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntVars
    */
-  class IntVar : public Var<Int::IntVarImp> {
+  class IntVar : public VarImpVar<Int::IntVarImp> {
     friend class IntVarArray;
     friend class IntVarArgs;
   private:
-    using Var<Int::IntVarImp>::x;
+    using VarImpVar<Int::IntVarImp>::x;
     /**
      * \brief Initialize variable with range domain
      *
@@ -480,11 +480,11 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntVars
    */
-  class BoolVar : public Var<Int::BoolVarImp> {
+  class BoolVar : public VarImpVar<Int::BoolVarImp> {
     friend class BoolVarArray;
     friend class BoolVarArgs;
   private:
-    using Var<Int::BoolVarImp>::x;
+    using VarImpVar<Int::BoolVarImp>::x;
     /**
      * \brief Initialize Boolean variable with range domain
      *

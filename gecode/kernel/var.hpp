@@ -38,19 +38,27 @@
 namespace Gecode {
 
   /**
-   * \brief Base-class for variables
+   * \brief Base class for variables
+   * \ingroup TaskVarView
+   */
+  class Var {};
+
+  /**
+   * \brief Variables as interfaces to variable implementations
    * \ingroup TaskVarView
    */
   template<class VarImp>
-  class Var {
+  class VarImpVar : public Var {
   protected:
     /// Pointer to variable implementation
     VarImp* x;
     /// Default constructor
-    Var(void);
+    VarImpVar(void);
     /// Initialize with variable implementation \a y
-    Var(VarImp* y);
+    VarImpVar(VarImp* y);
   public:
+    /// The variable implementation type corresponding to the variable
+    typedef VarImp VarImpType;
     /// \name Generic variable information
     //@{
     /// Return variable implementation of variable
@@ -70,15 +78,15 @@ namespace Gecode {
     /// \name Cloning
     //@{
     /// Update this variable to be a clone of variable \a y
-    void update(Space& home, bool share, Var<VarImp>& y);
+    void update(Space& home, bool share, VarImpVar<VarImp>& y);
     //@}
 
     /// \name Variable comparison
     //@{
     /// Test whether variable is the same as \a y
-    bool same(const Var<VarImp>& y) const;
+    bool same(const VarImpVar<VarImp>& y) const;
     /// Test whether variable comes before \a y (arbitrary order)
-    bool before(const Var<VarImp>& y) const;
+    bool before(const VarImpVar<VarImp>& y) const;
     //@}
   };
 
@@ -89,45 +97,45 @@ namespace Gecode {
    */
   template<class VarImp>
   forceinline
-  Var<VarImp>::Var(void)
+  VarImpVar<VarImp>::VarImpVar(void)
     : x(NULL) {}
   template<class VarImp>
   forceinline
-  Var<VarImp>::Var(VarImp* y)
+  VarImpVar<VarImp>::VarImpVar(VarImp* y)
     : x(y) {}
   template<class VarImp>
   forceinline VarImp*
-  Var<VarImp>::varimp(void) const {
+  VarImpVar<VarImp>::varimp(void) const {
     return x;
   }
   template<class VarImp>
   forceinline unsigned int
-  Var<VarImp>::degree(void) const {
+  VarImpVar<VarImp>::degree(void) const {
     return x->degree();
   }
   template<class VarImp>
   forceinline double
-  Var<VarImp>::afc(void) const {
+  VarImpVar<VarImp>::afc(void) const {
     return x->afc();
   }
   template<class VarImp>
   forceinline bool
-  Var<VarImp>::assigned(void) const {
+  VarImpVar<VarImp>::assigned(void) const {
     return x->assigned();
   }
   template<class VarImp>
   forceinline void
-  Var<VarImp>::update(Space& home, bool share, Var<VarImp>& y) {
+  VarImpVar<VarImp>::update(Space& home, bool share, VarImpVar<VarImp>& y) {
     x = y.x->copy(home,share);
   }
   template<class VarImp>
   forceinline bool
-  Var<VarImp>::same(const Var<VarImp>& y) const {
+  VarImpVar<VarImp>::same(const VarImpVar<VarImp>& y) const {
     return varimp() == y.varimp();
   }
   template<class VarImp>
   forceinline bool
-  Var<VarImp>::before(const Var<VarImp>& y) const {
+  VarImpVar<VarImp>::before(const VarImpVar<VarImp>& y) const {
     return varimp() < y.varimp();
   }
 
