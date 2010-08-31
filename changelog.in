@@ -77,6 +77,15 @@ Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Variable implementation views are now parametric with respect to
+variables but not variable implementations (see "Modeling and
+Programming with Gecode" for details).
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Renamed the template class for variables defined by a variable
 implementation from Var to VarImpVar and re-added a class Var as
 base class for any variable type.

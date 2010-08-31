@@ -132,9 +132,9 @@ namespace Gecode { namespace Int {
    * \brief Integer view for integer variables
    * \ingroup TaskActorIntView
    */
-  class IntView : public VarImpView<IntVarImp> {
+  class IntView : public VarImpView<IntVar> {
   protected:
-    using VarImpView<IntVarImp>::x;
+    using VarImpView<IntVar>::x;
   public:
     /// \name Constructors and initialization
     //@{
@@ -1037,9 +1037,9 @@ namespace Gecode { namespace Int {
    * Provides convenient and efficient operations for Boolean views.
    * \ingroup TaskActorIntView
    */
-  class BoolView : public VarImpView<BoolVarImp> {
+  class BoolView : public VarImpView<BoolVar> {
   protected:
-    using VarImpView<BoolVarImp>::x;
+    using VarImpView<BoolVar>::x;
   public:
     /// \name Constructors and initialization
     //@{

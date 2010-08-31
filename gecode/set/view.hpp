@@ -57,9 +57,9 @@ namespace Gecode { namespace Set {
    * \ingroup TaskActorSetView
    */
 
-  class SetView : public VarImpView<SetVarImp> {
+  class SetView : public VarImpView<SetVar> {
   protected:
-    using VarImpView<SetVarImp>::x;
+    using VarImpView<SetVar>::x;
   public:
     /// \name Constructors and initialization
     //@{
