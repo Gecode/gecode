@@ -117,7 +117,7 @@ namespace Gecode {
   class VarImpView {
   public:
     /// The variable type corresponding to the view
-    typedef typename Var VarType;
+    typedef Var VarType;
     /// The variable implementation type corresponding to the view
     typedef typename Var::VarImpType VarImpType;
   protected:

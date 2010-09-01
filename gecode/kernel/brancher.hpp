@@ -284,7 +284,7 @@ namespace Gecode {
         }
     } else {
       for (int i=start; i < x.size(); i++) {
-        ViewSel::View::VarType y(x[i].varimp());
+        typename ViewSel::View::VarType y(x[i].varimp());
         if (!x[i].assigned() && bf(home,i,y)) {
           start = i;
           return true;
