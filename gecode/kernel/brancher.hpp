@@ -81,6 +81,8 @@ namespace Gecode {
     mutable int start;
     /// View selection object
     ViewSel viewsel;
+    /// Branch filter function
+    BranchFilter bf;
     /// Return position information
     Pos pos(Space& home);
     /// Return view according to position information \a p
@@ -89,7 +91,7 @@ namespace Gecode {
     ViewBrancher(Space& home, bool share, ViewBrancher& b);
     /// Constructor for creation
     ViewBrancher(Home home, ViewArray<typename ViewSel::View>& x,
-                 ViewSel& vi_s);
+                 ViewSel& vi_s, BranchFilter bf0=NULL);
   public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
@@ -118,7 +120,7 @@ namespace Gecode {
     ViewValBrancher(Space& home, bool share, ViewValBrancher& b);
     /// Constructor for creation
     ViewValBrancher(Home home, ViewArray<typename ViewSel::View>& x,
-                    ViewSel& vi_s, ValSel& va_s);
+                    ViewSel& vi_s, ValSel& va_s, BranchFilter bf0);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -130,7 +132,7 @@ namespace Gecode {
     virtual size_t dispose(Space& home);
     /// Brancher post function
     static void post(Home home, ViewArray<typename ViewSel::View>& x,
-                     ViewSel& vi_s, ValSel& va_s);
+                     ViewSel& vi_s, ValSel& va_s, BranchFilter bf=NULL);
 
   };
 
@@ -258,27 +260,37 @@ namespace Gecode {
   forceinline
   ViewBrancher<ViewSel>::ViewBrancher(Home home,
                                       ViewArray<typename ViewSel::View>& x0,
-                                      ViewSel& vi_s)
-    : Brancher(home), x(x0), start(0), viewsel(vi_s) {}
+                                      ViewSel& vi_s, BranchFilter bf0)
+    : Brancher(home), x(x0), start(0), viewsel(vi_s), bf(bf0) {}
 
 
   template<class ViewSel>
   forceinline
   ViewBrancher<ViewSel>::ViewBrancher(Space& home, bool share,
                                       ViewBrancher& b)
-    : Brancher(home,share,b), start(b.start) {
+    : Brancher(home,share,b), start(b.start), bf(b.bf) {
     x.update(home,share,b.x);
     viewsel.update(home,share,b.viewsel);
   }
 
   template<class ViewSel>
   bool
-  ViewBrancher<ViewSel>::status(const Space&) const {
-    for (int i=start; i < x.size(); i++)
-      if (!x[i].assigned()) {
-        start = i;
-        return true;
+  ViewBrancher<ViewSel>::status(const Space& home) const {
+    if (bf == NULL) {
+      for (int i=start; i < x.size(); i++)
+        if (!x[i].assigned()) {
+          start = i;
+          return true;
+        }
+    } else {
+      for (int i=start; i < x.size(); i++) {
+        ViewSel::View::VarType y(x[i].varimp());
+        if (!x[i].assigned() && bf(home,i,y)) {
+          start = i;
+          return true;
+        }
       }
+    }
     return false;
   }
 
@@ -327,15 +339,15 @@ namespace Gecode {
   forceinline
   ViewValBrancher<ViewSel,ValSel>::
   ViewValBrancher(Home home, ViewArray<typename ViewSel::View>& x,
-                  ViewSel& vi_s, ValSel& va_s)
-    : ViewBrancher<ViewSel>(home,x,vi_s), valsel(va_s) {}
+                  ViewSel& vi_s, ValSel& va_s, BranchFilter bf)
+    : ViewBrancher<ViewSel>(home,x,vi_s,bf), valsel(va_s) {}
 
   template<class ViewSel, class ValSel>
   void
   ViewValBrancher<ViewSel,ValSel>::
   post(Home home, ViewArray<typename ViewSel::View>& x,
-       ViewSel& vi_s, ValSel& va_s) {
-    (void) new (home) ViewValBrancher<ViewSel,ValSel>(home,x,vi_s,va_s);
+       ViewSel& vi_s, ValSel& va_s, BranchFilter bf) {
+    (void) new (home) ViewValBrancher<ViewSel,ValSel>(home,x,vi_s,va_s,bf);
   }
 
   template<class ViewSel, class ValSel>

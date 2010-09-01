@@ -47,54 +47,54 @@ namespace Gecode { namespace Set { namespace Branch {
   template<class SelView>
   void
   post(Space& home, ViewArray<SetView>& x, SelView& v,
-       SetValBranch vals, const ValBranchOptions& o_vals) {
+       SetValBranch vals, const ValBranchOptions& o_vals, BranchFilter bf) {
     switch (vals) {
     case SET_VAL_MIN_INC:
       {
         ValMin<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValMin<true> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValMin<true> >::post(home,x,v,a,bf);
       }
       break;
     case SET_VAL_MIN_EXC:
       {
         ValMin<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValMin<false> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValMin<false> >::post(home,x,v,a,bf);
       }
       break;
     case SET_VAL_MED_INC:
       {
         ValMed<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValMed<true> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValMed<true> >::post(home,x,v,a,bf);
       }
       break;
     case SET_VAL_MED_EXC:
       {
         ValMed<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValMed<false> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValMed<false> >::post(home,x,v,a,bf);
       }
       break;
     case SET_VAL_MAX_INC:
       {
         ValMax<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValMax<true> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValMax<true> >::post(home,x,v,a,bf);
       }
       break;
     case SET_VAL_MAX_EXC:
       {
         ValMax<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValMax<false> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValMax<false> >::post(home,x,v,a,bf);
       }
       break;
     case SET_VAL_RND_INC:
       {
         ValRnd<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValRnd<true> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValRnd<true> >::post(home,x,v,a,bf);
       }
       break;
     case SET_VAL_RND_EXC:
       {
         ValRnd<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValRnd<false> >::post(home,x,v,a);
+        ViewValBrancher<SelView,ValRnd<false> >::post(home,x,v,a,bf);
       }
       break;
     default:

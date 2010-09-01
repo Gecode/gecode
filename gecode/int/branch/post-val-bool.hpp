@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class SelView>
   void
   post(Space& home, ViewArray<BoolView>& x, SelView& v,
-       IntValBranch vals, const ValBranchOptions& o_vals) {
+       IntValBranch vals, const ValBranchOptions& o_vals, BranchFilter bf) {
     switch (vals) {
     case INT_VAL_MIN:
     case INT_VAL_MED:
@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Branch {
       {
         ValZeroOne<BoolView> a(home,o_vals);
         ViewValBrancher<SelView,ValZeroOne<BoolView> >
-          ::post(home,x,v,a);
+          ::post(home,x,v,a,bf);
       }
       break;
     case INT_VAL_MAX:
@@ -61,14 +61,14 @@ namespace Gecode { namespace Int { namespace Branch {
       {
         ValZeroOne<NegBoolView> a(home,o_vals);
         ViewValBrancher<SelView,ValZeroOne<NegBoolView> >
-          ::post(home,x,v,a);
+          ::post(home,x,v,a,bf);
       }
       break;
     case INT_VAL_RND:
       {
         ValRnd<BoolView> a(home,o_vals);
         ViewValBrancher<SelView,ValRnd<BoolView> >
-          ::post(home,x,v,a);
+          ::post(home,x,v,a,bf);
       }
       break;
     default:

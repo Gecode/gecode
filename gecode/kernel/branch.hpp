@@ -40,27 +40,34 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskModelBranch Generic brancher support
+   * \defgroup TaskModelBranch Generic branching support
    *
-   * Support for options to branchers, tie-breaking, and branchers
-   * that are independent of a particular variable domain.
+   * Support for options to branchings, tie-breaking, filter functions, 
+   * and branchings that are independent of a particular variable domain.
    *
    * \ingroup TaskModel
    */
+
+  /** \brief Branch filter function type
+   * \ingroup TaskModelBranch
+   */
+  typedef bool (*BranchFilter)(const Space&, int, const Var&);
 
   /** \brief Variable branch options
    * \ingroup TaskModelBranch
    */
   class VarBranchOptions {
   public:
+    /// Branch filter function
+    BranchFilter bf;
     /// Seed for random variable selection
     unsigned int seed;
     /// Default options
     GECODE_KERNEL_EXPORT static const VarBranchOptions def;
     /// Initialize with default values
-    VarBranchOptions(void);
+    VarBranchOptions(BranchFilter bf0=NULL);
     /// Return object with time-based seed value
-    static VarBranchOptions time(void);
+    static VarBranchOptions time(BranchFilter bf=NULL);
   };
 
   /** \brief Value branch options
@@ -159,16 +166,20 @@ namespace Gecode {
 
   // Variable branch options
   forceinline
-  VarBranchOptions::VarBranchOptions(void) : seed(0) {}
+  VarBranchOptions::VarBranchOptions(BranchFilter bf0) 
+    : bf(bf0), seed(0) {}
+
   forceinline VarBranchOptions
-  VarBranchOptions::time(void) {
-    VarBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL));
+  VarBranchOptions::time(BranchFilter bf) {
+    VarBranchOptions o(bf); 
+    o.seed=static_cast<unsigned int>(::time(NULL));
     return o;
   }
 
   // Value branch options
   forceinline
   ValBranchOptions::ValBranchOptions(void) : seed(0) {}
+
   forceinline ValBranchOptions
   ValBranchOptions::time(void) {
     ValBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL));

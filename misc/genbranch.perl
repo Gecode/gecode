@@ -239,7 +239,7 @@ for ($i=0; $i<$n; $i++) {
   $l =  "        $type[$i] v(home,o_vars);\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
-  print "        ".$pns."post(home,xv,v,vals,o_vals);\n";
+  print "        ".$pns."post(home,xv,v,vals,o_vals,o_vars.bf);\n";
   print "      }\n";
   print "      break;\n";
 }
@@ -294,7 +294,7 @@ for ($i=0; $i<$n; $i++) {
   print "        $type[$i] va(home,o_vars.a);\n";
   print "        ViewSelTieBreakStatic<$type[$i],\n";
   print "          ViewSelTieBreakDynamic<$view> > v(home,va,vbcd);\n";
-  print "        ".$pns."post(home,xv,v,vals,o_vals);\n";
+  print "        ".$pns."post(home,xv,v,vals,o_vals,o_vars.a.bf);\n";
   print "      }\n";
   print "      break;\n";
 }

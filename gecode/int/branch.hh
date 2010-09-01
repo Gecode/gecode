@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewValuesBrancher(Space& home, bool share, ViewValuesBrancher& b);
     /// Constructor for creation
     ViewValuesBrancher(Home home, ViewArray<typename ViewSel::View>& x,
-                       ViewSel& vi_s);
+                       ViewSel& vi_s, BranchFilter bf);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -222,7 +222,7 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual Actor* copy(Space& home, bool share);
     /// Constructor for creation
     static void post(Home home, ViewArray<typename ViewSel::View>& x,
-                     ViewSel& vi_s);
+                     ViewSel& vi_s, BranchFilter bf=NULL);
   };
 
 

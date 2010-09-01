@@ -131,121 +131,121 @@ namespace Gecode {
     case INT_VAR_NONE:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_RND:
       {
         ViewSelRnd<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_MIN_MIN:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_MIN_MAX:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_MAX_MIN:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_MAX_MAX:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_SIZE_MIN:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_SIZE_MAX:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_DEGREE_MIN:
       {
         ViewSelDegreeMin<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_DEGREE_MAX:
       {
         ViewSelDegreeMax<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_AFC_MIN:
       {
         ViewSelAfcMin<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_AFC_MAX:
       {
         ViewSelAfcMax<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
         ViewSelDegreeMax<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
       {
         ViewSelDegreeMin<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_SIZE_AFC_MIN:
       {
         ViewSelAfcMax<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_SIZE_AFC_MAX:
       {
         ViewSelAfcMin<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_REGRET_MIN_MIN:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_REGRET_MIN_MAX:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_REGRET_MAX_MIN:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_REGRET_MAX_MAX:
       {
         ViewSelNone<BoolView> v(home,o_vars);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     default:
@@ -287,7 +287,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_MIN_MAX:
@@ -295,7 +295,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_MAX_MIN:
@@ -303,7 +303,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_MAX_MAX:
@@ -311,7 +311,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_SIZE_MIN:
@@ -319,7 +319,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_SIZE_MAX:
@@ -327,7 +327,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_DEGREE_MIN:
@@ -335,7 +335,7 @@ namespace Gecode {
         ViewSelDegreeMin<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_DEGREE_MAX:
@@ -343,7 +343,7 @@ namespace Gecode {
         ViewSelDegreeMax<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_AFC_MIN:
@@ -351,7 +351,7 @@ namespace Gecode {
         ViewSelAfcMin<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelAfcMin<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_AFC_MAX:
@@ -359,7 +359,7 @@ namespace Gecode {
         ViewSelAfcMax<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelAfcMax<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
@@ -367,7 +367,7 @@ namespace Gecode {
         ViewSelDegreeMax<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelDegreeMax<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_SIZE_DEGREE_MAX:
@@ -375,7 +375,7 @@ namespace Gecode {
         ViewSelDegreeMin<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelDegreeMin<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_SIZE_AFC_MIN:
@@ -383,7 +383,7 @@ namespace Gecode {
         ViewSelAfcMax<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelAfcMax<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_SIZE_AFC_MAX:
@@ -391,7 +391,7 @@ namespace Gecode {
         ViewSelAfcMin<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelAfcMin<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_REGRET_MIN_MIN:
@@ -399,7 +399,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_REGRET_MIN_MAX:
@@ -407,7 +407,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_REGRET_MAX_MIN:
@@ -415,7 +415,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_REGRET_MAX_MAX:
@@ -423,7 +423,7 @@ namespace Gecode {
         ViewSelNone<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelNone<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
-        post(home,xv,v,vals,o_vals);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     default:

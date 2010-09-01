@@ -75,6 +75,16 @@ The best is still to come!
 [ENTRY]
 Module: kernel
 What:   change
+Rank:   major
+Thanks: Felix Brandt
+[DESCRIPTION]
+Branchings now honor filter functions, where variables are
+considered for branching only if the filter functions returns
+true (see "Modeling and Programming with Gecode" for details).
+
+[ENTRY]
+Module: kernel
+What:   change
 Rank:   minor
 [DESCRIPTION]
 Variable implementation views are now parametric with respect to
