@@ -78,7 +78,7 @@ What:   change
 Rank:   major
 Thanks: Felix Brandt
 [DESCRIPTION]
-Branchings now honor filter functions, where variables are
+Branching now honors filter functions, where variables are
 considered for branching only if the filter functions returns
 true (see "Modeling and Programming with Gecode" for details).
 
