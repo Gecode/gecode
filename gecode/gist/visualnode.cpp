@@ -153,13 +153,7 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::toggleHidden(const NodeAllocator& na) {
     setHidden(!isHidden());
-    if (shape != NULL) {
-      if (getParent(na)) {
-        getParent(na)->dirtyUp(na);
-      }
-    } else {
-      dirtyUp(na);
-    }
+    dirtyUp(na);
   }
 
   void
