@@ -55,6 +55,8 @@ namespace Gecode { namespace Gist {
       Shape::leaf = Shape::allocate(1);
       Shape::hidden = Shape::allocate(2);
       (*Shape::hidden)[1] = Extent(Layout::extent);
+      Shape::leaf->computeBoundingBox();
+      Shape::hidden->computeBoundingBox();
     }
     ~ShapeAllocator(void) {
       Shape::deallocate(Shape::leaf);
@@ -345,6 +347,7 @@ namespace Gecode { namespace Gist {
     if (shape != s)
       Shape::deallocate(shape);
     shape = s;
+    shape->computeBoundingBox();
   }
 
   void

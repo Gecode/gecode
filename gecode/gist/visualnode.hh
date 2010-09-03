@@ -59,8 +59,6 @@ namespace Gecode { namespace Gist {
     int left;
     /// Right coordinate
     int right;
-    /// Constructor
-    BoundingBox(int l, int r);
     /// Default constructor
     BoundingBox(void) {}
   };
@@ -90,6 +88,8 @@ namespace Gecode { namespace Gist {
   private:
     /// The depth of this shape
     int _depth;
+    /// The bounding box of this shape
+    BoundingBox bb;
     /// The shape is an array of extents, one for each depth level
     Extent shape[1];
     /// Copy construtor
@@ -113,6 +113,8 @@ namespace Gecode { namespace Gist {
     int depth(void) const;
     /// Set depth of the shape to \a d (must be smaller than original depth)
     void setDepth(int d);
+    /// Compute bounding box
+    void computeBoundingBox(void);
     /// Return extent at depth \a i
     const Extent& operator [](int i) const;
     /// Return extent at depth \a i
@@ -120,7 +122,7 @@ namespace Gecode { namespace Gist {
     /// Return if extent exists at \a depth, if yes return it in \a extent
     bool getExtentAtDepth(int depth, Extent& extent);
     /// Return bounding box
-    BoundingBox getBoundingBox(void);
+    const BoundingBox& getBoundingBox(void) const;
   };
 
   /// \brief %Node class that supports visual layout

@@ -114,24 +114,24 @@ namespace Gecode { namespace Gist {
     return true;
   }
 
-  forceinline BoundingBox
-  Shape::getBoundingBox(void) {
+  forceinline void
+  Shape::computeBoundingBox(void) {
     int lastLeft = 0;
     int lastRight = 0;
-    int left = 0;
-    int right = 0;
+    bb.left = 0;
+    bb.right = 0;
     for (int i=0; i<depth(); i++) {
       lastLeft = lastLeft + (*this)[i].l;
       lastRight = lastRight + (*this)[i].r;
-      left = std::min(left,lastLeft);
-      right = std::max(right,lastRight);
+      bb.left = std::min(bb.left,lastLeft);
+      bb.right = std::max(bb.right,lastRight);
     }
-    return BoundingBox(left, right);
   }
 
-  forceinline
-  BoundingBox::BoundingBox(int l, int r)
-   : left(l), right(r) {}
+  forceinline const BoundingBox&
+  Shape::getBoundingBox(void) const {
+    return bb;
+  }
 
   forceinline bool
   VisualNode::isHidden(void) {
