@@ -44,7 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-
   template<class I, class J>
   class Union : public MinMax {
   protected:
@@ -73,33 +72,30 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   /**
    * \brief Range iterator for union for any number of iterators
+   *
    * \ingroup FuncIterRanges
    */
-
   template<class I>
-  class NaryUnion : public MinMax {
+  class NaryUnion : public RangeListIter {
   protected:
-    /// Iterators
-    I* i;
-    /// Number of still active iterators
-    int n;
+    /// Create new range possibly from freelist \a f and init
+    RangeList* range(RangeList*& f, int min, int max);
+    /// Create new range possibly from freelist \a f and init
+    RangeList* range(RangeList*& f, I& i);
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     NaryUnion(void);
     /// Initialize with \a n iterators in \a i
-    NaryUnion(I* i, int n);
+    NaryUnion(Region& r, I* i, int n);
     /// Initialize with \a n iterators in \a i
-    void init(I* i, int n);
-    //@}
-
-    /// \name Iteration control
-    //@{
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
+    void init(Region& r, I* i, int n);
+    /// Assignment operator
+    NaryUnion& operator =(const NaryUnion& m);
     //@}
   };
+
 
 
 
@@ -114,27 +110,28 @@ namespace Gecode { namespace Iter { namespace Ranges {
     if (!i() && !j()) {
       finish(); return;
     }
-    if (!i()) {
+
+    if (!i() || (j() && (j.max()+1 < i.min()))) {
       mi = j.min(); ma = j.max(); ++j; return;
     }
-    if (!j()) {
+    if (!j() || (i() && (i.max()+1 < j.min()))) {
       mi = i.min(); ma = i.max(); ++i; return;
     }
-    if (i.min() < j.min()) {
-      mi = i.min(); ma = i.max(); ++i;
-    } else {
-      mi = j.min(); ma = j.max(); ++j;
+
+    mi = std::min(i.min(),j.min());
+    ma = std::max(i.max(),j.max());
+
+    ++i; ++j;
+
+  next:
+    if (i() && (i.min() <= ma+1)) {
+      ma = std::max(ma,i.max()); ++i;
+      goto next;
     }
-    bool goOn;
-    do {
-      goOn = false;
-      if (i() && (i.min() <= ma+1)) {
-        ma = std::max(ma,i.max()); ++i; goOn=true;
-      }
-      if (j() && (j.min() <= ma+1)) {
-        ma = std::max(ma,j.max()); ++j; goOn=true;
-      }
-    } while (goOn);
+    if (j() && (j.min() <= ma+1)) {
+      ma = std::max(ma,j.max()); ++j;
+      goto next;
+    }
   }
 
 
@@ -164,60 +161,170 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template<class I>
-  forceinline void
-  NaryUnion<I>::operator ++(void) {
-    if (n == 0) {
-      finish(); return;
-    }
-    mi = i[0].min();
-    ma = i[0].max();
-    do {
-      if (ma < i[0].max())
-        ma = i[0].max();
-      ++i[0];
-      if (!i[0]()) {
-        if (--n == 0)
-          return;
-        i[0] = i[n];
-      }
-      int k = 0;
-      while ((k << 1) < n) {
-        int j = k << 1;
-        if ((j < n-1) && (i[j].min() > i[j+1].min()))
-          j++;
-        if (i[k].min() <= i[j].min())
-          break;
-        std::swap(i[k],i[j]);
-        k = j;
-      }
-    } while (ma+1 >= i[0].min());
-  }
-
-
-  template<class I>
   forceinline
   NaryUnion<I>::NaryUnion(void) {}
 
   template<class I>
+  forceinline RangeListIter::RangeList*
+  NaryUnion<I>::range(RangeList*& f, int min, int max) {
+    RangeList* t;
+    // Take element from freelist if possible
+    if (f != NULL) {
+      t = f; f = f->next;
+    } else {
+      t = new (*rlio) RangeList;
+    }
+    t->min = min; t->max = max;
+    return t;
+  }
+
+  template<class I>
+  forceinline RangeListIter::RangeList*
+  NaryUnion<I>::range(RangeList*& f, I& i) {
+    return range(f,i.min(),i.max());
+  }
+
+  template<class I>
   void
-  NaryUnion<I>::init(I* i0, int n0) {
-    i=i0; n=n0;
-    while ((n > 0) && !i[0]())
-      i[0] = i[--n];
-    int j=1;
-    while (j < n)
-      if (!i[j]())
-        i[j] = i[--n];
-      else
-        for (int k=j++; (k > 0) && (i[k >> 1].min() > i[k].min()); k >>= 1)
-          std::swap(i[k],i[k >> 1]);
-    operator ++();
+  NaryUnion<I>::init(Region& r, I* i, int n) {
+    RangeListIter::init(r);
+
+    // Freelist for allocation
+    RangeList* f = NULL;
+
+    // Rangelist for union
+    RangeList* u = NULL;
+
+    int m = 0;
+    while ((m < n) && !i[m]())
+      m++;
+
+    // Union is empty
+    if (m >= n)
+      return;
+
+    n--;
+    while (!i[n]())
+      n--;
+
+    if (m == n) {
+      // Union is just a single iterator
+      RangeList** c = &u;
+      
+      for ( ; i[m](); ++i[m]) {
+        RangeList* t = range(f,i[m]);
+        *c = t; c = &t->next;
+      }
+      *c = NULL;
+    } else {
+      // At least two iterators
+
+      // Compute the union for just two iterators
+      {
+        // The current rangelist
+        RangeList** c = &u;
+        
+        while (i[m]() && i[n]())
+          if (i[m].max()+1 < i[n].min()) {
+            RangeList* t = range(f,i[m]); ++i[m];
+            *c = t; c = &t->next;
+          } else if (i[n].max()+1 < i[m].min()) {
+            RangeList* t = range(f,i[n]); ++i[n];
+            *c = t; c = &t->next;
+          } else {
+            int min = std::min(i[m].min(),i[n].min());
+            int max = std::max(i[m].max(),i[n].max());
+            ++i[m]; ++i[n];
+
+          nexta:
+            if (i[m]() && (i[m].min() <= max+1)) {
+              max = std::max(max,i[m].max()); ++i[m];
+              goto nexta;
+            }
+            if (i[n]() && (i[n].min() <= max+1)) {
+              max = std::max(max,i[n].max()); ++i[n];
+              goto nexta;
+            }
+ 
+            RangeList* t = range(f,min,max);
+            *c = t; c = &t->next;
+          }
+        for ( ; i[m](); ++i[m]) {
+          RangeList* t = range(f,i[m]);
+          *c = t; c = &t->next;
+        }
+        for ( ; i[n](); ++i[n]) {
+          RangeList* t = range(f,i[n]);
+          *c = t; c = &t->next;
+        }
+        *c = NULL;
+        m++; n--;
+      }
+
+      // Insert the remaining iterators
+      for ( ; m<=n; m++) {
+        // The current rangelist
+        RangeList** c = &u;
+        
+        while ((*c != NULL) && i[m]())
+          if ((*c)->max+1 < i[m].min()) {
+            // Keep range from union
+            c = &(*c)->next;
+          } else if (i[m].max()+1 < (*c)->min) {
+            // Copy range from iterator
+            RangeList* t = range(f,i[m]); ++i[m];
+            // Insert
+            t->next = *c; *c = t; c = &t->next;
+          } else {
+            // Ranges overlap
+            // Compute new minimum
+            (*c)->min = std::min((*c)->min,i[m].min());
+            // Compute new maximum
+            int max = std::max((*c)->max,i[m].max());
+            
+            // Scan from the next range in the union
+            RangeList* s = (*c)->next; 
+            ++i[m];
+            
+          nextb:
+            if ((s != NULL) && (s->min <= max+1)) {
+              max = std::max(max,s->max);
+              RangeList* t = s;
+              s = s->next;
+              // Put deleted element into freelist
+              t->next = f; f = t;
+              goto nextb;
+            }
+            if (i[m]() && (i[m].min() <= max+1)) {
+              max = std::max(max,i[m].max()); ++i[m];
+              goto nextb;
+            }
+            // Store computed max and shunt skipped ranges from union
+            (*c)->max = max; (*c)->next = s;
+          }
+        if (*c == NULL) {
+          // Copy remaining ranges from iterator
+          for ( ; i[m](); ++i[m]) {
+            RangeList* t = range(f,i[m]);
+            *c = t; c = &t->next;
+          }
+          *c = NULL;
+        }
+      }
+    }
+    set(u);
   }
 
   template<class I>
   forceinline
-  NaryUnion<I>::NaryUnion(I* i0, int n0) {
-    init(i0,n0);
+  NaryUnion<I>::NaryUnion(Region& r, I* i, int n) {
+    init(r,i,n);
+  }
+
+  template<class I>
+  forceinline NaryUnion<I>&
+  NaryUnion<I>::operator =(const NaryUnion<I>& m) {
+    return static_cast<NaryUnion&>(RangeListIter::operator =(m));
   }
 
 }}}

@@ -249,20 +249,23 @@ namespace Test { namespace Set {
           // fall through to union case
         case SOT_UNION:
           {
+            FakeSpace* fs = new FakeSpace;
+            bool eq;
             if (withConst) {
-              Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
+              Region r(*fs);
+              Iter::Ranges::NaryUnion<CountableSetRanges> u(r, isrs, realN);
               IntSetRanges isr(is);
               Iter::Ranges::Union<IntSetRanges,
                 Iter::Ranges::NaryUnion<CountableSetRanges> > uu(isr, u);
-              bool eq = Iter::Ranges::equal(uu, xnr);
-              delete[] isrs;
-              return eq;
+              eq = Iter::Ranges::equal(uu, xnr);
             } else {
-              Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, realN);
-              bool eq = Iter::Ranges::equal(u, xnr);
-              delete[] isrs;
-              return eq;
+              Region r(*fs);
+              Iter::Ranges::NaryUnion<CountableSetRanges> u(r, isrs, realN);
+              eq = Iter::Ranges::equal(u, xnr);
             }
+            delete[] isrs;
+            delete fs;
+            return eq;
           }
         case SOT_INTER:
           {

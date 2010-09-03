@@ -147,7 +147,8 @@ namespace Gecode { namespace Int { namespace GCC {
         ViewRanges<IntView> iter(x[i]);
         xrange[i] = iter;
       }
-      Iter::Ranges::NaryUnion<ViewRanges<IntView> > drl(&xrange[0], x.size());
+      Iter::Ranges::NaryUnion<ViewRanges<IntView> > 
+        drl(r, &xrange[0], x.size());
       if (static_cast<unsigned int>(k.size()) == Iter::Ranges::size(drl)) {
         for (int i=k.size(); i--;)
           if (k[i].min() != 1 || k[i].max() != 1)

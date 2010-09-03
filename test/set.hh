@@ -54,6 +54,17 @@ namespace Test {
      * \ingroup TaskTest
      */
 
+    /// Fake space for creation of regions
+    class FakeSpace : public Gecode::Space {
+    public:
+      /// Faked constructor
+      FakeSpace(void) {}
+      /// Faked copy function
+      virtual Gecode::Space* copy(bool share) {
+        return NULL;
+      }
+    };
+
     /**
      * \defgroup TaskTestSetSupport General set test support
      * \ingroup TaskTestSet

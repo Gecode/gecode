@@ -65,12 +65,10 @@ namespace Gecode { namespace Set { namespace Distinct {
     for (int i = x.size(); i--; ) {
       lubs[i].init(x[i]);
     }
-    Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT(lubs, x.size());
-    Iter::Ranges::Cache<Iter::Ranges::NaryUnion<LubRanges<SetView> > >
-      bigTC(r,bigT);
+    Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT(r, lubs, x.size());
 
-    Iter::Ranges::ToValues<Iter::Ranges::Cache<Iter::Ranges::NaryUnion<LubRanges<SetView> > > >
-      as(bigTC);
+    Iter::Ranges::ToValues<Iter::Ranges::NaryUnion<LubRanges<SetView> > >
+      as(bigT);
 
     while (as()) {
       int a = as.val(); ++as;
@@ -113,7 +111,7 @@ namespace Gecode { namespace Set { namespace Distinct {
         for (int i = x.size(); i--; ) {
           lubs2[i].init(x[i]);
         }
-        Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT2(lubs2, x.size());
+        Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT2(r, lubs2, x.size());
 
         GlbRanges<SetView>* glbs = r.alloc<GlbRanges<SetView> >(cardSa);
         int count = 0;
@@ -123,7 +121,7 @@ namespace Gecode { namespace Set { namespace Distinct {
             count++;
           }
         }
-        Iter::Ranges::NaryUnion<GlbRanges<SetView> > glbsa(glbs, cardSa);
+        Iter::Ranges::NaryUnion<GlbRanges<SetView> > glbsa(r, glbs, cardSa);
         Iter::Ranges::Diff<Iter::Ranges::NaryUnion<LubRanges<SetView> >,
           Iter::Ranges::NaryUnion<GlbRanges<SetView> > > deltaA(bigT2, glbsa);
         Iter::Ranges::Cache<

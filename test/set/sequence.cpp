@@ -104,10 +104,16 @@ namespace Test { namespace Set {
         CountableSetRanges* isrs = new CountableSetRanges[n];
         for (int i=n; i--; )
           isrs[i].init(x.lub, x[i]);
-        Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, n);
-        CountableSetRanges xnr(x.lub, x[n]);
-        bool ret = Iter::Ranges::equal(u, xnr);
+        FakeSpace* fs = new FakeSpace;
+        bool ret;
+        {
+          Region r(*fs);
+          Iter::Ranges::NaryUnion<CountableSetRanges> u(r, isrs, n);
+          CountableSetRanges xnr(x.lub, x[n]);
+          ret = Iter::Ranges::equal(u, xnr);
+        }
         delete[] isrs;
+        delete fs;
         return ret;
       }
       /// Post constraint on \a x

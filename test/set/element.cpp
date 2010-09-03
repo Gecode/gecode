@@ -78,11 +78,18 @@ namespace Test { namespace Set {
           }
           sel[i].init(x.lub, x[selector.val()]);
         }
-        Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
-
-        CountableSetRanges z(x.lub, x[4]);
-        bool ret = Iter::Ranges::equal(u, z);
+        
+        FakeSpace* fs = new FakeSpace;
+        bool ret;
+        {
+          Region r(*fs);
+          Iter::Ranges::NaryUnion<CountableSetRanges> u(r, sel, selected);
+          
+          CountableSetRanges z(x.lub, x[4]);
+          ret = Iter::Ranges::equal(u, z);
+        }
         delete[] sel;
+        delete fs;
         return ret;
       }
       /// Post constraint on \a x
@@ -123,11 +130,18 @@ namespace Test { namespace Set {
           }
           sel[i].init(iss[selector.val()]);
         }
-        Iter::Ranges::NaryUnion<IntSetRanges> u(sel, selected);
 
-        CountableSetRanges z(x.lub, x[1]);
-        bool ret = Iter::Ranges::equal(u, z);
+        FakeSpace* fs = new FakeSpace;
+        bool ret;
+        {
+          Region r(*fs);
+          Iter::Ranges::NaryUnion<IntSetRanges> u(r, sel, selected);
+
+          CountableSetRanges z(x.lub, x[1]);
+          ret = Iter::Ranges::equal(u, z);
+        }
         delete[] sel;
+        delete fs;
         return ret;
       }
       /// Post constraint on \a x
@@ -220,14 +234,6 @@ namespace Test { namespace Set {
     };
     ElementInterIn _elementinterin("Element::InterIn");
 
-    class FakeSpace : public Space {
-    public:
-      FakeSpace(void) {}
-      virtual Space* copy(bool share) {
-        return NULL;
-      }
-    };
-
     /// %Test for %ElementDisjoint constraint
     class ElementDisjoint : public SetTest {
     public:
@@ -257,18 +263,16 @@ namespace Test { namespace Set {
           CountableSetRanges xicard(x.lub, x[selector.val()]);
           cardsum += Iter::Ranges::size(xicard);
         }
-        Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
         
-        FakeSpace* fs = new FakeSpace;
         bool ret;
+        FakeSpace* fs = new FakeSpace;
         {
           Region r(*fs);
-          Iter::Ranges::Cache<Iter::Ranges::NaryUnion<CountableSetRanges> >
-            uc(r,u);
-          ret = Iter::Ranges::size(uc) == cardsum;
-          uc.reset();
+          Iter::Ranges::NaryUnion<CountableSetRanges> u(r, sel, selected);
+          ret = Iter::Ranges::size(u) == cardsum;
+          u.reset();
           CountableSetRanges z(x.lub, x[4]);
-          ret &= Iter::Ranges::equal(uc, z);
+          ret &= Iter::Ranges::equal(u, z);
         }
         delete fs;
         delete[] sel;

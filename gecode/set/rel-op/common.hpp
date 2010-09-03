@@ -579,7 +579,7 @@ namespace Set { namespace RelOp {
     }
     if (nonEmptyCounter !=0) {
       Iter::Ranges::NaryUnion<GlbRanges<View0> >
-        xLBUnion(xLBs,nonEmptyCounter);
+        xLBUnion(r,xLBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
       Iter::Ranges::Union<Iter::Ranges::NaryUnion<GlbRanges<View0> >,
         BndSetRanges>
@@ -608,7 +608,7 @@ namespace Set { namespace RelOp {
     }
     if (nonEmptyCounter !=0) {
       Iter::Ranges::NaryUnion<LubRanges<View0> >
-        xUBUnion(xUBs,nonEmptyCounter);
+        xUBUnion(r,xUBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
       Iter::Ranges::Union<Iter::Ranges::NaryUnion<LubRanges<View0> >,
         BndSetRanges>
