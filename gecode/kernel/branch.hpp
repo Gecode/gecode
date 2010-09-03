@@ -51,7 +51,7 @@ namespace Gecode {
   /** \brief Branch filter function type
    * \ingroup TaskModelBranch
    */
-  typedef bool (*BranchFilter)(const Space&, int, const Var&);
+  typedef bool (*BranchFilter)(const Space& home, int i, const Var& x);
 
   /** \brief Variable branch options
    * \ingroup TaskModelBranch
