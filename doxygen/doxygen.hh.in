@@ -689,6 +689,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *    library is required.
  *  - If gecode/scheduling.hh is included, linking against the scheduling
  *    library is required.
+ *  - If gecode/flatzinc.hh is included, linking against the flatzinc
+ *    library is required.
+ *  - If gecode/gist.hh is included, linking against the gist
+ *    library is required.
  *  - If gecode/driver.hh is included, linking against the driver
  *    library is required.
  *
@@ -701,12 +705,10 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * corresponding DLL must be available for execution (such as in the
  * PATH environment variable).
  *
- * The libraries might contain code that is executed at link time.  
- * If you create static libraries,
- * this code will not be linked into your executable as it is not directly
- * referenced. You will have to tell your linker to include all symbols from 
- * the library (e.g. using -Wl,--whole-archive on Linux). Please refer to your
- * linker documentation.
+ * Some linkers (e.g. on Linux) require the list of libraries to be sorted 
+ * such that libraries appear before all libraries they depend on. In this 
+ * case, use the following order: flatzinc, driver, gist, search, minimodel, 
+ * scheduling, graph, set, int, kernel, support.
  *
  * \section SecUsageLibraries Library names
  *
