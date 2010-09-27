@@ -127,6 +127,13 @@ namespace Gecode { namespace Scheduling {
 
   template<class TaskView, class Node>
   forceinline void
+  TaskTree<TaskView,Node>::update(void) {
+    for (int i=n_inner(); i--; )
+      node[i].update(node[n_left(i)],node[n_right(i)]);
+  }
+
+  template<class TaskView, class Node>
+  forceinline void
   TaskTree<TaskView,Node>::update(int i, bool l) {
     if (l)
       i = _leaf[i];

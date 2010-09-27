@@ -147,6 +147,7 @@ namespace Gecode { namespace Scheduling { namespace Unary {
         leaf(i).resEct = OmegaLambdaNode::undef;
         leaf(i).resLp = OmegaLambdaNode::undef;
       }
+      update();
     } else {
       // Enter no tasks into tree (omega = empty, lambda = empty)
       for (int i=tasks.size(); i--; ) {
@@ -155,8 +156,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
         leaf(i).resEct = OmegaLambdaNode::undef;
         leaf(i).resLp = OmegaLambdaNode::undef;
       }
+      init();
      }
-    init();
   }
 
   template<class TaskView>

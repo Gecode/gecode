@@ -73,6 +73,15 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: scheduling
+What:   bug
+Rank:   major
+Thanks: Roberto Castañeda Lozano
+[DESCRIPTION]
+Fixed initialization for unary and cumulative edge-finding (just
+worked accidentally).
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major

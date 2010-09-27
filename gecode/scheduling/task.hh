@@ -399,6 +399,8 @@ namespace Gecode { namespace Scheduling {
     void update(int i, bool l=true);
     /// Initialize tree after leaves have been initialized
     void init(void);
+    /// Update all inner nodes of tree after leaves have been initialized
+    void update(void);
     /// Initialize tree for tasks \a t
     TaskTree(Region& r, const TaskViewArray<TaskView>& t);
     /// Initialize tree using tree \a t

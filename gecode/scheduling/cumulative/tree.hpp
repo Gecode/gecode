@@ -211,7 +211,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
       leaf(i).resLe = OmegaLambdaNode::undef;
       leaf(i).resLenv = OmegaLambdaNode::undef;
     }
-    init();
+    update();
   }
 
   template<class TaskView>
