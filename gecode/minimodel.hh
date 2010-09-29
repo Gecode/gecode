@@ -121,6 +121,10 @@ namespace Gecode {
         rel(home,*x,IRT_EQ,y);
       return y;
     }
+    /// Memory management
+    void* operator new(size_t size) { return heap.ralloc(size); }
+    /// Memory management
+    void operator delete(void* p, size_t) { heap.rfree(p); }
   };
 
   /// Linear expressions
@@ -219,7 +223,7 @@ namespace Gecode {
     /// Create expression for multiplication
     LinExpr(int a, const LinExpr& e);
     /// Create non-linear expression
-    LinExpr(NonLinExpr* e);
+    explicit LinExpr(NonLinExpr* e);
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
     const LinExpr& operator =(const LinExpr& e);
