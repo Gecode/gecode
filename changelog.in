@@ -81,6 +81,15 @@ Only center node on double-click if it was undetermined (otherwise
 inspecting several nodes becomes slightly annoying).
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory allocation for non-linear expressions and made the
+LinExpr constructor explicit for non-linear expressions (previously
+the automatic cast from integers to LinExpr was sometimes ambiguous).
+
+[ENTRY]
 Module: scheduling
 What:   bug
 Rank:   major
