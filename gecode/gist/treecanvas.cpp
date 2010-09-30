@@ -619,6 +619,7 @@ namespace Gecode { namespace Gist {
 
     int failedInspectorType = -1;
     int failedInspector = -1;
+    bool needCentering = false;
     try {
       switch (currentNode->getStatus()) {
       case UNDETERMINED:
@@ -628,8 +629,10 @@ namespace Gecode { namespace Gist {
             int depth = -1;
             for (VisualNode* p = currentNode; p != NULL; p=p->getParent(*na))
               depth++;
-            if (kids > 0)
+            if (kids > 0) {
+              needCentering = true;
               depth++;
+            }
             stats.maxDepth =
               std::max(stats.maxDepth, depth);
             if (currentNode->getStatus() == SOLVED) {
@@ -738,7 +741,8 @@ namespace Gecode { namespace Gist {
 
     currentNode->dirtyUp(*na);
     update();
-    centerCurrentNode();
+    if (needCentering)
+      centerCurrentNode();
   }
   
   void
