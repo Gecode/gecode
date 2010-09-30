@@ -73,6 +73,14 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Only center node on double-click if it was undetermined (otherwise
+inspecting several nodes becomes slightly annoying).
+
+[ENTRY]
 Module: scheduling
 What:   bug
 Rank:   major
