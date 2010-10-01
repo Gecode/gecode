@@ -945,7 +945,22 @@ namespace Gecode {
       NT_OR,   ///< Disjunction
       NT_EQV,  ///< Equivalence
       NT_RLIN, ///< Reified linear relation
-      NT_RSET  ///< Reified set relation
+      NT_RSET, ///< Reified set relation
+      NT_MISC  ///< Other Boolean expression
+    };
+    class MiscExpr {
+    public:
+      /** Constrain \a b to be equivalent to the expression
+       *  (negated if \a neg)
+       */
+      virtual void post(Space& home, BoolVar b, bool neg,
+                        IntConLevel icl) = 0;
+      /// Destructor
+      virtual GECODE_MINIMODEL_EXPORT ~MiscExpr(void);
+      /// Memory management
+      static void* operator new(size_t size);
+      /// Memory management
+      static void  operator delete(void* p, size_t size);
     };
     /// %Node for Boolean expression
     class Node {
@@ -966,9 +981,13 @@ namespace Gecode {
       /// Possibly a reified set relation
       SetRel rs;
 #endif
+      /// Possibly a misc Boolean expression
+      MiscExpr* m;
 
       /// Default constructor
       Node(void);
+      /// Destructor
+      ~Node(void);
       /// Decrement reference count and possibly free memory
       GECODE_MINIMODEL_EXPORT
       bool decrement(void);
@@ -1029,6 +1048,8 @@ namespace Gecode {
     /// Pointer to node for expression
     Node* n;
   public:
+    /// Default constructor
+    BoolExpr(void);
     /// Copy constructor
     BoolExpr(const BoolExpr& e);
     /// Construct expression for type and subexpresssions
@@ -1045,6 +1066,8 @@ namespace Gecode {
     /// Construct expression for reified set relation
     BoolExpr(const SetCmpRel& rs);
 #endif
+    /// Construct expression for miscellaneous Boolean expression
+    explicit BoolExpr(MiscExpr* m);
     /// Post propagators for expression
     BoolVar expr(Home home, IntConLevel icl) const;
     /// Post propagators for relation
@@ -1240,6 +1263,9 @@ namespace Gecode {
   /// \brief Return expression for \f$x[y]f$
   GECODE_MINIMODEL_EXPORT LinExpr
   element(const IntVarArgs& x, const LinExpr& y);
+  /// \brief Return expression for \f$x[y]f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  element(const BoolVarArgs& x, const LinExpr& y);
   /// \brief Return expression for \f$x[y]f$
   GECODE_MINIMODEL_EXPORT LinExpr
   element(const IntArgs& x, const LinExpr& y);

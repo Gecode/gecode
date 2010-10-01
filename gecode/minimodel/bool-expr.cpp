@@ -69,6 +69,8 @@ namespace Gecode {
     return *this;
   }
 
+  BoolExpr::MiscExpr::~MiscExpr(void) {}
+
   BoolExpr::~BoolExpr(void) {
     if (n->decrement())
       delete n;
@@ -107,6 +109,9 @@ namespace Gecode {
       u.a.x->rs.post(home, b, !u.a.neg);
       break;
 #endif
+    case NT_MISC:
+      u.a.x->m->post(home, b, !u.a.neg, icl);
+      break;
     case NT_AND:
       {
         BoolVarArgs bp(p), bn(n);
@@ -179,6 +184,13 @@ namespace Gecode {
         }
         break;
 #endif
+      case NT_MISC:
+        {
+          BoolVar b(home,0,1);
+          u.a.x->m->post(home, b, !u.a.neg, icl);
+          bp[ip++]=b;
+        }
+        break;      
       default:
         bp[ip++] = expr(home, icl);
         break;
@@ -203,6 +215,12 @@ namespace Gecode {
       u.a.x->rs.post(home, !u.a.neg);
       break;
 #endif
+    case NT_MISC:
+      {
+        BoolVar b(home,!u.a.neg,!u.a.neg);
+        u.a.x->m->post(home, b, false, icl);
+      }
+      break;
     case NT_AND:
       u.b.l->rel(home, icl);
       u.b.r->rel(home, icl);
@@ -254,7 +272,7 @@ namespace Gecode {
   BoolExpr::NNF*
   BoolExpr::NNF::nnf(Region& r, Node* n, bool neg) {
     switch (n->t) {
-    case NT_VAR: case NT_RLIN:
+    case NT_VAR: case NT_RLIN: case NT_MISC:
 #ifdef GECODE_HAS_SET_VARS
     case NT_RSET:
 #endif
@@ -346,7 +364,6 @@ namespace Gecode {
     return BoolExpr(BoolExpr(r,BoolExpr::NT_NOT),
                     BoolExpr::NT_OR,l);
   }
-
   /*
    * Posting Boolean expressions and relations
    *
@@ -363,6 +380,59 @@ namespace Gecode {
   rel(Home home, const BoolExpr& e, IntConLevel icl) {
     if (home.failed()) return;
     e.rel(home,icl);
+  }
+
+  /*
+   * Boolean element constraints
+   *
+   */
+  
+  /// \brief Boolean element expressions
+  class BElementExpr : public BoolExpr::MiscExpr {
+  public:
+    /// The Boolean expressions
+    BoolExpr* a;
+    /// The number of Boolean expressions
+    int n;
+    /// The linear expression for the index
+    LinExpr idx;
+    /// Constructor
+    BElementExpr(int size);
+    /// Destructor
+    virtual ~BElementExpr(void);
+    /// Constrain \a b to be equivalent to the expression (negated if \a neg)
+    virtual void post(Space& home, BoolVar b, bool neg, IntConLevel icl);
+  };
+
+  BElementExpr::BElementExpr(int size)
+    : a(heap.alloc<BoolExpr>(size)), n(size) {}
+
+  BElementExpr::~BElementExpr(void) {
+    heap.free<BoolExpr>(a,n);
+  }
+  
+  void
+  BElementExpr::post(Space& home, BoolVar b, bool pos, IntConLevel icl) {
+    IntVar z = idx.post(home, icl);
+    if (z.assigned() && z.val() >= 0 && z.val() < n) {
+      BoolExpr be = pos ? (a[z.val()] == b) : (a[z.val()] == !b);
+      be.rel(home,icl);
+    } else {
+      BoolVarArgs x(n);
+      for (int i=n; i--;)
+        x[i] = a[i].expr(home,icl);
+      BoolVar res = pos ? b : (!b).expr(home,icl);
+      element(home, x, z, res, icl);
+    }
+  }
+
+  BoolExpr
+  element(const BoolVarArgs& b, const LinExpr& idx) {
+    BElementExpr* be = new BElementExpr(b.size());
+    for (int i=b.size(); i--;)
+      new (&be->a[i]) BoolExpr(b[i]);
+    be->idx = idx;
+    return BoolExpr(be);
   }
 
 }

@@ -44,6 +44,9 @@ namespace Gecode {
   forceinline
   BoolExpr::Node::Node(void) : use(1) {}
 
+  forceinline
+  BoolExpr::Node::~Node(void) { delete m; }
+
   forceinline void*
   BoolExpr::Node::operator new(size_t size) {
     return heap.ralloc(size);
@@ -52,6 +55,18 @@ namespace Gecode {
   BoolExpr::Node::operator delete(void* p, size_t) {
     heap.rfree(p);
   }
+
+  forceinline void*
+  BoolExpr::MiscExpr::operator new(size_t size) {
+    return heap.ralloc(size);
+  }
+  forceinline void
+  BoolExpr::MiscExpr::operator delete(void* p, size_t) {
+    heap.rfree(p);
+  }
+
+  forceinline
+  BoolExpr::BoolExpr(void) : n(NULL) {}
 
   forceinline
   BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
@@ -65,6 +80,7 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->x    = x;
+    n->m    = NULL;
   }
 
   forceinline
@@ -78,6 +94,7 @@ namespace Gecode {
     n->l->use++;
     n->r    = r.n;
     n->r->use++;
+    n->m    = NULL;
   }
 
   forceinline
@@ -94,6 +111,7 @@ namespace Gecode {
       n->l    = l.n;
       n->l->use++;
       n->r    = NULL;
+      n->m    = NULL;
     }
   }
 
@@ -105,6 +123,7 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->rl   = rl;
+    n->m    = NULL;
   }
 
 #ifdef GECODE_HAS_SET_VARS
@@ -116,6 +135,7 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->rs   = rs;
+    n->m    = NULL;
   }
 
   forceinline
@@ -126,8 +146,19 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->rs   = rs;
+    n->m    = NULL;
   }
 #endif
+
+  forceinline
+  BoolExpr::BoolExpr(BoolExpr::MiscExpr* m)
+    : n(new Node) {
+    n->same = 1;
+    n->t    = NT_MISC;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->m    = m;
+  }
 
   inline BoolVar
   BoolExpr::expr(Home home, IntConLevel icl) const {

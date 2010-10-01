@@ -82,6 +82,13 @@ inspecting several nodes becomes slightly annoying).
 
 [ENTRY]
 Module: minimodel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Added element expression for BoolVarArgs.
+
+[ENTRY]
+Module: minimodel
 What:   bug
 Rank:   minor
 [DESCRIPTION]
