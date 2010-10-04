@@ -609,6 +609,7 @@ namespace Gecode {
     /// Allocate array and copy elements from \a x
     IntArgs(const std::vector<int>& x);
     /// Allocate array with \a n elements and initialize with \a e0, ...
+    GECODE_INT_EXPORT
     IntArgs(int n, int e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     IntArgs(int n, const int* e);

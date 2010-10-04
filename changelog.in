@@ -73,6 +73,14 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Gustavo A. Gómez Farhat
+[DESCRIPTION]
+Do not inline functions with variable arguments.
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor

@@ -49,16 +49,6 @@ namespace Gecode {
   IntArgs::IntArgs(int n) : PrimArgArray<int>(n) {}
   
   forceinline
-  IntArgs::IntArgs(int n, int e0, ...) : PrimArgArray<int>(n) {
-    va_list args;
-    va_start(args, e0);
-    a[0] = e0;
-    for (int i = 1; i < n; i++)
-      a[i] = va_arg(args,int);
-    va_end(args);
-  }
-  
-  forceinline
   IntArgs::IntArgs(const SharedArray<int>& x)
     : PrimArgArray<int>(x.size()) {
     for (int i=x.size(); i--;)
