@@ -73,6 +73,13 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: other
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Removed obsolete Glossary in reference documentation.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
