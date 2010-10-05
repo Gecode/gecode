@@ -156,14 +156,14 @@ namespace Gecode { namespace Scheduling { namespace Unary {
     /**
      * \brief Initialize task
      *
-     * Depending on \t, \a s is either the end time (if \a t is TT_FIXS)
+     * Depending on \a t, \a s is either the end time (if \a t is TT_FIXS)
      * or the start time of the task, and \a p is the fixed parameter.
      */
     ManFixPSETask(TaskType t, IntVar s, int p);
     /**
      * \brief Initialize task
      *
-     * Depending on \t, \a s is either the end time (if \a t is FIXS)
+     * Depending on \a t, \a s is either the end time (if \a t is FIXS)
      * or the start time of the task, and \a p is the fixed parameter.
      */
     void init(TaskType t, IntVar s, int p);

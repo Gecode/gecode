@@ -111,7 +111,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /**
      * \brief Initialize task
      *
-     * Depending on \t, \a s is either the end time (if \a t is FIXS)
+     * Depending on \a t, \a s is either the end time (if \a t is FIXS)
      * or the start time of the task, \a p is the fixed parameter,
      * and \a c is the required capacity.
      */
@@ -119,7 +119,7 @@ namespace Gecode { namespace Scheduling { namespace Cumulative {
     /**
      * \brief Initialize task
      *
-     * Depending on \t, \a s is either the end time (if \a t is FIXS)
+     * Depending on \a t, \a s is either the end time (if \a t is FIXS)
      * or the start time of the task, \a p is the fixed parameter,
      * and \a c is the required capacity.
      */
