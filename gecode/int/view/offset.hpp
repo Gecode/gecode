@@ -56,6 +56,10 @@ namespace Gecode { namespace Int {
   OffsetView::offset(void) const {
     return c;
   }
+  forceinline void
+  OffsetView::offset(int n) {
+    c = n;
+  }
   forceinline int
   OffsetView::min(void) const {
     return x.min()+c;

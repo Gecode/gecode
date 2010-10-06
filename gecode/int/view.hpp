@@ -437,6 +437,8 @@ namespace Gecode { namespace Int {
     //@{
     /// Return offset
     int offset(void) const;
+    /// Change offset to \a n
+    void offset(int n);
     /// Return minimum of domain
     int min(void) const;
     /// Return maximum of domain
