@@ -507,6 +507,29 @@ namespace Gecode {
     unsigned int size(void) const;
   };
 
+  /**
+   * \brief %Options for scripts with additional instance parameter
+   * \ingroup TaskDriverCmd
+   */
+  class GECODE_DRIVER_EXPORT InstanceOptions : public Options {
+  protected:
+    const char* _inst; ///< Instance string
+  public:
+    /// Initialize options for script with name \a s
+    InstanceOptions(const char* s);
+    /// Print help text
+    virtual void help(void);
+    /// Parse options from arguments \a argv (number is \a argc)
+    void parse(int& argc, char* argv[]);
+    
+    /// Set default instance name
+    void instance(const char* s);
+    /// Return instance name
+    const char* instance(void) const;
+    /// Destructor
+    ~InstanceOptions(void);
+  };
+
 }
 
 #include <gecode/driver/options.hpp>

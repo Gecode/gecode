@@ -400,6 +400,36 @@ namespace Gecode {
     size(static_cast<unsigned int>(atoi(argv[1])));
   }
 
+
+
+  InstanceOptions::InstanceOptions(const char* e)
+    : Options(e), _inst(NULL) {}
+  
+  void
+  InstanceOptions::instance(const char* s) {
+    Driver::BaseOption::strdel(_inst);
+    _inst = strdup(s);
+  }
+
+  void
+  InstanceOptions::help(void) {
+    Options::help();
+    std::cerr << "\t(string) default: " << instance() << std::endl
+              << "\t\twhich instance for script" << std::endl;
+  }
+
+  void
+  InstanceOptions::parse(int& argc, char* argv[]) {
+    Options::parse(argc,argv);
+    if (argc < 2)
+      return;
+    instance(argv[1]);
+  }
+
+  InstanceOptions::~InstanceOptions(void) {
+    Driver::BaseOption::strdel(_inst);
+  }
+
 }
 
 // STATISTICS: driver-any

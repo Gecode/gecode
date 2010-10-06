@@ -73,6 +73,13 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a class InstanceOptions that takes one additional string argument.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor

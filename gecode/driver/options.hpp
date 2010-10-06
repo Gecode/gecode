@@ -404,6 +404,15 @@ namespace Gecode {
     return _size;
   }
   
+  /*
+   * Options with additional string argument
+   *
+   */
+  inline const char*
+  InstanceOptions::instance(void) const {
+    return _inst;
+  }
+  
 }
 
 // STATISTICS: driver-any
