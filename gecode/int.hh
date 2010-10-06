@@ -2177,6 +2177,37 @@ namespace Gecode {
          IntConLevel icl=ICL_DEF);
 
 
+  /**
+   * \defgroup TaskModelIntBinPacking Bin packing constraints
+   * \ingroup TaskModelInt
+   *
+   * Constraints for modeling bin packing problems.
+   */
+  /** \brief Post propagator for bin packing
+   *
+   * The variables in \a l are the loads for each bin, whereas the
+   * variables in \a b define for each item into which bin it is packed.
+   * The integer values \a s define the size of the items.
+   *
+   * It is propagated that for each \f$j\f$ with \f$0\leq j<|l|\f$ the
+   * constraint \f$l_j=\sum_{0\leq i<|b|\wedge b_i=j}s_i\f$ holds and that
+   * for each \f$i\f$ with \f$0\leq i<|b|\f$ the constraint
+   * \f$0\leq b_i<|l|\f$ holds.
+   *
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a b and \a s are not of
+   *    the same size.
+   *  - Of type Int::ArgumentSame if \a l and \a b share unassigned variables.
+   *  - Of type Int::OutOfLimits if \a s contains a non-positive number.
+   * 
+   * \ingroup TaskModelIntBinPacking
+   */
+  GECODE_INT_EXPORT void
+  binpacking(Home home, 
+             const IntVarArgs& l, 
+             const IntVarArgs& b, const IntArgs& s,
+             IntConLevel icl=ICL_DEF);
+
 
   /**
    * \defgroup TaskModelIntExec Synchronized execution

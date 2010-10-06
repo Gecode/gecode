@@ -261,7 +261,8 @@ INTSRC0 = \
 	distinct.cpp \
 	sorted.cpp gcc.cpp \
 	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
-	unshare.cpp sequence.cpp
+	unshare.cpp sequence.cpp \
+	bin-packing.cpp bin-packing/propagate.cpp
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
 	exec.hh exec/when.hpp \
@@ -303,7 +304,8 @@ INTHDR0 = \
 	channel.hh channel/dom.hpp channel/val.hpp \
 	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
 	sequence.hh sequence/int.hpp sequence/view.hpp \
-	sequence/set-op.hpp sequence/violations.hpp
+	sequence/set-op.hpp sequence/violations.hpp \
+	bin-packing.hh bin-packing/propagate.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
@@ -331,7 +333,7 @@ endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
 	int/channel int/linear int/bool int/branch int/exec \
-	int/element int/sequence
+	int/element int/sequence int/bin-packing
 
 #
 # SET COMPONENTS
@@ -690,7 +692,8 @@ INTEXAMPLESRC0 =						\
 	nonogram pentominoes crowded-chess black-hole		\
 	minesweeper domino steel-mill sports-league		\
 	all-interval langford-number warehouses	radiotherapy    \
-	word-square crossword open-shop car-sequencing sat
+	word-square crossword open-shop car-sequencing sat      \
+	bin-packing
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
@@ -820,7 +823,8 @@ EXETARGETS = $(FLATZINCEXE)
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
 	rel linear gcc sorted unshare exec sequence \
-	mm-arithmetic mm-bool mm-lin mm-count mm-rel
+	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
+	bin-packing
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 

@@ -73,6 +73,21 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added a binpacking model using the binpacking constraint and CDBF
+(complete decreasing best fit) search.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added a binpacking constraint and propagator.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor
