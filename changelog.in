@@ -73,6 +73,13 @@ Date: 2010-??-??
 The best is still to come!
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added support for global_cardinality_low_up.
+
+[ENTRY]
 Module: other
 What:   documentation
 Rank:   minor

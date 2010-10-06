@@ -902,6 +902,34 @@ namespace Gecode { namespace FlatZinc {
       }
     }
 
+    void p_global_cardinality_low_up(FlatZincSpace& s, const ConExpr& ce,
+                                     AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntArgs cover = arg2intargs(ce[1]);
+
+      IntArgs lbound = arg2intargs(ce[2]);
+      IntArgs ubound = arg2intargs(ce[3]);
+      IntSetArgs y(cover.size());
+      for (int i=cover.size(); i--;)
+        y[i] = IntSet(lbound[i],ubound[i]);
+
+      IntSet cover_s(cover);
+      Region re(s);
+      IntVarRanges* xrs = re.alloc<IntVarRanges>(x.size());
+      for (int i=x.size(); i--;)
+        xrs[i].init(x[i]);
+      Iter::Ranges::NaryUnion<IntVarRanges> u(re, xrs, x.size());
+      Iter::Ranges::ToValues<Iter::Ranges::NaryUnion<IntVarRanges> > uv(u);
+      for (; uv(); ++uv) {
+        if (!cover_s.in(uv.val())) {
+          cover << uv.val();
+          y << IntSet(0,x.size());
+        }
+      }
+      
+      count(s, x, y, cover, ann2icl(ann));
+    }
+
     void p_minimum(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv = arg2intvarargs(s, ce[1]);
       min(s, iv, getIntVar(s, ce[0]), ann2icl(ann));
@@ -1259,6 +1287,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("at_least_int", &p_at_least);      
         registry().add("at_most_int", &p_at_most);
         registry().add("global_cardinality_gecode", &p_global_cardinality);
+        registry().add("global_cardinality_low_up", &p_global_cardinality_low_up);
         registry().add("minimum_int", &p_minimum);
         registry().add("maximum_int", &p_maximum);
         registry().add("regular", &p_regular);
