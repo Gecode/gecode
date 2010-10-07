@@ -48,7 +48,7 @@ using namespace Gecode;
  *
  * See problem 19 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class MagicSquare : public Script {

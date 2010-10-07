@@ -205,7 +205,7 @@ namespace {
  * in "Combining Forces to Solve the Car Sequencing Problem", Perron
  * and Shaw, CPAIOR 2004.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class CarSequencing : public Script {
 public:

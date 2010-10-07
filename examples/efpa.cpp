@@ -112,7 +112,7 @@ public:
  * P. Gent, Paul McKay, Peter Nightingale, and Sophie Huczynska. It
  * implements the non-Boolean model without SAC.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class EFPA : public Script {

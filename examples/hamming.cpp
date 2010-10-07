@@ -84,7 +84,7 @@ public:
  * The Hamming distance between two words is the number of bit positions
  * where they differ.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Hamming : public Script {

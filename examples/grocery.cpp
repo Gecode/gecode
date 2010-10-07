@@ -54,7 +54,7 @@ using namespace Gecode;
  * Constraint Programming in Oz. A Tutorial. 2001.
  * Available from: http://www.mozart-oz.org/documentation/fdt/
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Grocery : public Script {

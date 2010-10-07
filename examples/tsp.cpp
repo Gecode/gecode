@@ -226,7 +226,7 @@ namespace {
  * Simple travelling salesman problem instances. Just meant
  * as a test for circuit.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class TSP : public MinimizeScript {

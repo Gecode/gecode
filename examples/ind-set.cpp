@@ -78,7 +78,7 @@ const Graph g_40_20(40, 20, e_40_20);
 /**
  * \brief %Example: Independent sets in a graph
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class IndSet : public MaximizeScript {

@@ -45,7 +45,7 @@ using namespace Gecode;
  *
  * Standard benchmark for solving linear equations.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Eq20 : public Script {

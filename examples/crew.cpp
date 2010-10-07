@@ -88,7 +88,7 @@ namespace {
  * number of cabin crew, and they have to speak certain languages.
  * Every cabin crew member has two flights off after an attended flight.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Crew : public Script {

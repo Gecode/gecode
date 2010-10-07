@@ -57,7 +57,7 @@ using namespace Gecode;
  *  "order" of the square); when the words are written out in a square grid
  *  horizontally, the same set of words can be read vertically.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class WordSquare : public Script {

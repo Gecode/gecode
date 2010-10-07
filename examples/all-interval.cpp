@@ -61,7 +61,7 @@ using namespace Gecode;
  *
  * See also problem 7 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class AllInterval : public Script {
 private:

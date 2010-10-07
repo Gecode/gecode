@@ -94,7 +94,7 @@ public:
 /**
  * \brief %Example: Solving %Sudoku puzzles using integer constraints
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class SudokuInt : virtual public Sudoku {
 protected:
@@ -242,7 +242,7 @@ private:
 /**
  * \brief %Example: Solving %Sudoku puzzles using set constraints
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class SudokuSet : virtual public Sudoku {
 protected:
@@ -358,7 +358,7 @@ public:
  * \brief %Example: Solving %Sudoku puzzles using both set and integer
  * constraints
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class SudokuMixed : public SudokuInt, public SudokuSet {
 public:

@@ -66,7 +66,7 @@ namespace {
  * The board is set up with a number in each field that must match the
  * number of the domino piece placed on that field.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Domino : public Script {

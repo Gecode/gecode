@@ -173,7 +173,7 @@ public:
  *
  * See also problem 26 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class SportsLeague : public Script {
 protected:

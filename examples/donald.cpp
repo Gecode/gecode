@@ -46,7 +46,7 @@ using namespace Gecode;
  *
  * Well-known cryptoarithmetic puzzle of unknown origin.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Donald : public Script {

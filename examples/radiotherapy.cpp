@@ -95,7 +95,7 @@ namespace {
  *   Minimum Cardinality Matrix Decomposition into Consecutive-Ones Matrices:
  *   CP and IP Approaches. CPAIOR 2007
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 

@@ -182,7 +182,7 @@ namespace {
    <TD>R</TD><TD>K</TD><TD>B</TD><TD>B</TD></TR>
  </TABLE>
 
-   \ingroup ExProblem
+   \ingroup Example
 */
 class CrowdedChess : public Script {
 protected:

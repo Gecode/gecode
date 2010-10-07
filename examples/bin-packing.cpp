@@ -351,7 +351,7 @@ public:
 /**
  * \brief %Example: bin packing
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class BinPacking : public MinimizeScript {

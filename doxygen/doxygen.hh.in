@@ -352,24 +352,6 @@
  *
  */
 
-/**
- * \defgroup ExProblem Scripts for problems
- * \ingroup Example
- *
- * These scripts are for small problems that exemplify how to model
- * with %Gecode.
- *
- */
-
-/**
- * \defgroup ExStress Scripts for stress tests
- * \ingroup Example
- *
- * These scripts are for stressing certain system features, typically
- * the implementation of a particular constraint.
- *
- */
-
 /*
  * Collect some definitions for which no reasonable place exists
  *

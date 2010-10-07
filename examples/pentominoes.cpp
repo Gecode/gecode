@@ -259,7 +259,7 @@ namespace {
  * for the piece symmetries and lexicographical order constraints.
  *
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Pentominoes : public Script {

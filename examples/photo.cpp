@@ -74,7 +74,7 @@ const PhotoSpec p_large(9,17, l_prefs);
  * photo. The problem to be solved is to find a placement that
  * violates as few preferences as possible.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Photo : public MinimizeScript {

@@ -110,7 +110,7 @@ public:
  * Benchmarks on satlib.org, for instance,
  * are in the dimacs CNF format.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class Sat : public Script {
 private:

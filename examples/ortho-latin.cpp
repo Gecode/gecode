@@ -43,7 +43,7 @@ using namespace Gecode;
 /**
  * \brief %Example: Orthogonal latin squares
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class OrthoLatinSquare : public Script {
 protected:

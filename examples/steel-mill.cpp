@@ -141,7 +141,7 @@ public:
  * "http://becool.info.ucl.ac.be/steelmillslab">
  * http://becool.info.ucl.ac.be/steelmillslab</a>.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class SteelMill : public MinimizeScript {

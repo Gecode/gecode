@@ -62,7 +62,7 @@ namespace {
 /**
  * \brief %Example: open-shop scheduling
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class OpenShop : public MinimizeScript {

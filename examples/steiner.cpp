@@ -46,7 +46,7 @@ using namespace Gecode;
  *
  * See also problem 044 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Steiner : public Script {

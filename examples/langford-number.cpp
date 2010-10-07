@@ -79,7 +79,7 @@ public:
  *
  * See problem 24 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class LangfordNumber : public Script {
 protected:

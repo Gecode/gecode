@@ -51,7 +51,7 @@ using namespace Gecode;
  * Place n queens on an n times n chessboard such that they do not
  * attack each other.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Queens : public Script {

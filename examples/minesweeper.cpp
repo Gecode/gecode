@@ -58,7 +58,7 @@ namespace {
  * The instances are taken from
  *   http://www.janko.at/Raetsel/Minesweeper/index.htm
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class MineSweeper : public Script {

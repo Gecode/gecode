@@ -44,7 +44,7 @@ using namespace Gecode;
 /**
  * \brief %Example: partition numbers into two groups
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class Partition : public Script {
 protected:

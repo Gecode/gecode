@@ -185,7 +185,7 @@ const unsigned int n_specs = sizeof(specs) / sizeof(int*);
  *
  * See problem 9 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  */
 class PerfectSquare : public Script {
 protected:

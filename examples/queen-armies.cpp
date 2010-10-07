@@ -65,7 +65,7 @@ IntSet* A;
  * from the above paper, that helps speeding up the proof of
  * optimality.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class QueenArmies : public MaximizeScript {

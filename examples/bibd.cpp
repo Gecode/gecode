@@ -90,7 +90,7 @@ public:
  *
  * See problem 28 at http://www.csplib.org/.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class BIBD : public Script {

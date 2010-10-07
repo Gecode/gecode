@@ -47,7 +47,7 @@ using namespace Gecode;
  * Well-known cryptoarithmetic puzzle.
  * Henry Dudeney, Strand Magazine, July 1924.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Money : public Script {

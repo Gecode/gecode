@@ -71,7 +71,7 @@ namespace {
  * Note that "Modeling and Programming with Gecode" uses this example
  * as a case study.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class Nonogram : public Script {

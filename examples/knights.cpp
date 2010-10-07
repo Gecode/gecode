@@ -230,7 +230,7 @@ public:
  * the knight does a full tour (last move reaches first move
  * again). The formulation is due to Gert Smolka.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class KnightsReified : public Knights {
@@ -283,7 +283,7 @@ public:
  * knights do a full tour by knights move (last knight reaches
  * first knight again).
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class KnightsCircuit : public Knights {

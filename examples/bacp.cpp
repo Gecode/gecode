@@ -94,7 +94,7 @@ namespace {
  * Academic Curriculum Problem", J.N. Monette, P. Schaus, S. Zampelli,
  * Y. Deville, and P. Dupont is available.
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class BACP : public MinimizeScript {

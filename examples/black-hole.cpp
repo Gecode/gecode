@@ -190,7 +190,7 @@ public:
  * The conditional symmetry identified in the above paper can be
  * eliminated (enabled by default).
  *
- * \ingroup ExProblem
+ * \ingroup Example
  *
  */
 class BlackHole : public Script {
