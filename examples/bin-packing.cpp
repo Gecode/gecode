@@ -55,16 +55,9 @@ namespace {
   protected:
     /// Raw instance data
     const int* data;
-    /// Find instance by name \a s
-    static const int* find(const char* s) {
-      for (int i=0; name[i] != NULL; i++)
-        if (!strcmp(s,name[i]))
-          return bpp[i];
-      return NULL;
-    }
+    /// Lower and upper bound
+    int l, u;
   public:
-    /// Initialize
-    Spec(const char* s) : data(find(s)) {}
     /// Whether a valid specification has been found
     bool valid(void) const {
       return data != NULL;
@@ -81,15 +74,16 @@ namespace {
     int size(int i) const {
       return data[i+2];
     }
-    /// Return sum of all item sizes
-    int total(void) const {
-      int t=0;
-      for (int i=0; i<items(); i++)
-        t += size(i);
-      return t;
+  protected:
+    /// Find instance by name \a s
+    static const int* find(const char* s) {
+      for (int i=0; name[i] != NULL; i++)
+        if (!strcmp(s,name[i]))
+          return bpp[i];
+      return NULL;
     }
-    /// Return lower bound
-    int lower(void) const {
+    /// Compute lower bound
+    int clower(void) const {
       /*
        * The lower bound is due to: S. Martello, P. Toth. Lower bounds
        * and reduction procedures for the bin packing problem.
@@ -132,8 +126,8 @@ namespace {
       }
       return l;
     }
-    /// Return upper bound
-    int upper(void) const {
+    /// Compute upper bound
+    int cupper(void) const {
       // Use a naive greedy algorithm
       const int c = capacity(), n = items();
 
@@ -143,7 +137,7 @@ namespace {
       
       int u=0;
       for (int i=0; i<n; i++) {
-        // Pack item i
+        // Pack item i if it fits in a bin between 0...u-1
         for (int j=0; j<u; j++)
           if (f[j] >= size(i)) {
             f[j] -= size(i); goto packed;
@@ -155,6 +149,28 @@ namespace {
       delete [] f;
       return u;
     }
+  public:
+    /// Initialize
+    Spec(const char* s) : data(find(s)), l(0), u(0) {
+      if (valid()) {
+        l = clower(); u = cupper();
+      }
+    }
+    /// Return sum of all item sizes
+    int total(void) const {
+      int t=0;
+      for (int i=0; i<items(); i++)
+        t += size(i);
+      return t;
+    }
+    /// Return lower bound
+    int lower(void) const {
+      return l;
+    }
+    /// Return upper bound
+    int upper(void) const {
+      return u;
+    }
   };
 
 }
@@ -164,6 +180,9 @@ namespace {
  * This class implements complete decreasing best fit branching (CDBF)
  * from: Ian Gent and Toby Walsh. From approximate to optimal solutions:
  * Constructing pruning and propagation rules. IJCAI 1997.
+ *
+ * Additional domination rules are taken from: Paul Shaw. A Constraint 
+ * for Bin Packing. CP 2004
  *
  * \relates BinPacking
  */
@@ -247,17 +266,19 @@ public:
         s_r[b[i].val()] += s[i];
 
     // Equivalent bins with same free space
-    int* same = region.alloc<int>(m);
+    int* same = region.alloc<int>(m+1);
+    unsigned int n_same = 0;
+    unsigned int n_possible = 0;
     
     // Initialize such that failure is guaranteed (pack into bin -1)
-    same[0] = -1;
-    int n_same = 1;
+    same[n_same++] = -1;
 
     // Find a best-fit bin for item start
     int d = INT_MAX;
     for (ViewValues<IntView> j(b[start]); j(); ++j) 
       if (s_r[j.val()] + s[start] <= l[j.val()].max()) {
         // Item still can fit into the bin
+        n_possible++;
         int d_j = l[j.val()].max() - s_r[j.val()] - s[start];
         if (d_j < d) {
           // A new, better fit
@@ -269,10 +290,15 @@ public:
         }
       }
 
-    // Domination rule: if the item fits the bin exactly, just assign
-    // Also catches failure: if no fitting bin was found, commit
-    // the item into bin -1
-    if ((d == 0) || (d == INT_MAX))
+    /* 
+     * Domination rules: 
+     *  - if the item fits the bin exactly, just assign
+     *  - if all possible bins are equivalent, just assign
+     *
+     * Also catches failure: if no possible bin was found, commit
+     * the item into bin -1.
+     */
+    if ((d == 0) || (n_same == n_possible) || (d == INT_MAX))
       return new Choice(*this, 1, start, same, 1);
     else
       return new Choice(*this, 2, start, same, n_same);
