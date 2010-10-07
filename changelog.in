@@ -68,15 +68,15 @@
 
 [RELEASE]
 Version: 3.4.1
-Date: 2010-??-??
+Date: 2010-10-08
 [DESCRIPTION]
 This release adds a new global constraint for bin-packing (with
 extended example) and filter functions for branchers. The
 reference documentation has been cleaned up. In particular,
-information on how to obtain, install, and link Gecode is now
-contained in "Modeling and Programming with Gecode" (Section
-2.6). Additionally, the release fixes some bugs and improves the
-efficiency of some important support operations.
+information on how to obtain, install, and link Gecode has been
+expanded and moved to "Modeling and Programming with Gecode"
+(Section 2.6). Additionally, the release fixes some bugs and
+contains some performance improvements.
 
 [ENTRY]
 Module: example
