@@ -349,7 +349,7 @@ public:
 
 
 /**
- * \brief %Example: bin packing
+ * \brief %Example: Bin packing
  *
  * \ingroup Example
  *
