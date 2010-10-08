@@ -34,6 +34,12 @@
 %
 %
 
+predicate bin_packing_load_gecode(array[int] of var int: l,
+                                  array[int] of var int: bin,
+                                  array[int] of int: w,
+                                  int: minIndex);
+
 predicate bin_packing_load(array[int] of var int: l,
                            array[int] of var int: bin,
-                           array[int] of int: w);
+                           array[int] of int: w) =
+    bin_packing_load_gecode(l,bin,w,min(index_set(l)));

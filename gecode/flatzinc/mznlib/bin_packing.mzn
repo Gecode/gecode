@@ -37,4 +37,8 @@
 predicate bin_packing(int: c,
                       array[int] of var int: bin,
                       array[int] of int: w) =
-    bin_packing_capa([c | i in lb_array(bin)..ub_array(bin)],bin,w);
+    let {
+        set of int: idx = lb_array(bin)..ub_array(bin),
+        array[idx] of int: capa = array1d(idx, [c|i in idx])
+    } in
+    bin_packing_capa(capa,bin,w);
