@@ -72,6 +72,13 @@ Date: ?
 [DESCRIPTION]
 Wait and see
 
+[ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+No changes yet
+
 [RELEASE]
 Version: 3.4.1
 Date: 2010-10-08
