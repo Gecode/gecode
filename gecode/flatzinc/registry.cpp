@@ -868,6 +868,18 @@ namespace Gecode { namespace FlatZinc {
       count_rel(IRT_GQ, s, ce, ann);
     }
 
+    void p_bin_packing_load(FlatZincSpace& s, const ConExpr& ce,
+                            AST::Node* ann) {
+      IntVarArgs l;
+      l << IntVar(s,0,0);
+      l << arg2intvarargs(s, ce[0]);
+      IntVarArgs bin = arg2intvarargs(s, ce[1]);
+      for (int i=bin.size(); i--;)
+        rel(s, bin[i] > 0);
+      IntArgs sizes = arg2intargs(ce[2]);
+      binpacking(s, l, bin, sizes, ann2icl(ann));
+    }
+
     void p_global_cardinality(FlatZincSpace& s, const ConExpr& ce,
                               AST::Node* ann) {
       IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
@@ -1284,8 +1296,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("array_int_lt", &p_array_int_lt);
         registry().add("array_int_lq", &p_array_int_lq);
         registry().add("count", &p_count);
-        registry().add("at_least_int", &p_at_least);      
+        registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
+        registry().add("bin_packing_load", &p_bin_packing_load);
         registry().add("global_cardinality_gecode", &p_global_cardinality);
         registry().add("global_cardinality_low_up", &p_global_cardinality_low_up);
         registry().add("minimum_int", &p_minimum);

@@ -73,11 +73,11 @@ Date: ?
 Wait and see
 
 [ENTRY]
-Module: other
-What:   change
+Module: flatzinc
+What:   new
 Rank:   minor
 [DESCRIPTION]
-No changes yet
+Added support for bin packing constraint.
 
 [RELEASE]
 Version: 3.4.1
