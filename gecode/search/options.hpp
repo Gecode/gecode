@@ -42,7 +42,6 @@ namespace Gecode { namespace Search {
     : clone(Config::clone), 
       threads(Config::threads), 
       c_d(Config::c_d), a_d(Config::a_d), 
-      d(Config::d), 
       stop(NULL) {}
 
 }}

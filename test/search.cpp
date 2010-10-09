@@ -335,43 +335,6 @@ namespace Test {
       }
     };
 
-    /// %Test for limited discrepancy search
-    template<class Model>
-    class LDS : public Test {
-    private:
-      /// Number of threads
-      unsigned int t;
-    public:
-      /// Initialize test
-      LDS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
-          unsigned int t0)
-        : Test("LDS::"+Model::name()+"::"+
-               str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+str(t0),
-               htb1,htb2,htb3), t(t0) {}
-      /// Run test
-      virtual bool run(void) {
-        Model* m = new Model(htb1,htb2,htb3);
-        Gecode::Search::FailStop f(2);
-        Gecode::Search::Options o;
-        o.threads = t;
-        o.d = 50;
-        o.stop = &f;
-        Gecode::LDS<Model> lds(m,o);
-        int n = m->solutions();
-        delete m;
-        while (true) {
-          Model* s = lds.next();
-          if (s != NULL) {
-            n--; delete s;
-          }
-          if ((s == NULL) && !lds.stopped())
-            break;
-          f.limit(f.limit()+2);
-        }
-        return n == 0;
-      }
-    };
-
     /// %Test for best solution search
     template<class Model, template<class> class Engine>
     class Best : public Test {
@@ -491,17 +454,6 @@ namespace Test {
               new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, 
                                     c_d, a_d, t);
             }
-
-        // Limited discrepancy search
-        for (unsigned int t = 1; t<=4; t++) {
-          for (BranchTypes htb1; htb1(); ++htb1)
-            for (BranchTypes htb2; htb2(); ++htb2)
-              for (BranchTypes htb3; htb3(); ++htb3)
-                (void) new LDS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb()
-                                             ,t);
-          new LDS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, t);
-          new LDS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, t);
-        }
 
         // Best solution search
         for (unsigned int t = 1; t<=4; t++)

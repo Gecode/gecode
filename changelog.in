@@ -68,9 +68,16 @@
 
 [RELEASE]
 Version: 3.4.2
-Date: ?
+Date: 2010-10-09
 [DESCRIPTION]
-Wait and see
+This release removes LDS from Gecode as it is patented in the US.
+
+[ENTRY]
+Module: search
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed limited discrepancy search (LDS) as it is patented in the US.
 
 [ENTRY]
 Module: flatzinc

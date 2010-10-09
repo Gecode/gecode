@@ -167,15 +167,6 @@ namespace Gecode { namespace Driver {
     }
   };
   
-  /// Specialization for LDS
-  template<typename S>
-  class GistEngine<LDS<S> > {
-  public:
-    static void explore(S* root, const Gist::Options& opt) {
-      (void) Gist::dfs(root, opt);
-    }
-  };
-  
   /// Specialization for BAB
   template<typename S>
   class GistEngine<BAB<S> > {

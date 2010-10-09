@@ -572,19 +572,6 @@ namespace Gecode { namespace FlatZinc {
     }
   };
 
-  /// Specialization for LDS
-  template<typename S>
-  class GistEngine<LDS<S> > {
-  public:
-    static void explore(S* root, const FlatZincOptions& opt,
-                        Gist::Inspector* i) {
-      Gecode::Gist::Options o;
-      o.c_d = opt.c_d(); o.a_d = opt.a_d();
-      o.inspect.click(i);
-      (void) Gecode::Gist::dfs(root, o);
-    }
-  };
-
   /// Specialization for BAB
   template<typename S>
   class GistEngine<BAB<S> > {

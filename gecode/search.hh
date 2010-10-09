@@ -91,8 +91,6 @@ namespace Gecode {
       const unsigned int c_d = 8;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       const unsigned int a_d = 2;
-      /// Default discrepancy limit for LDS
-      const unsigned int d = 5;
 
       /// Minimal number of open nodes for stealing
       const unsigned int steal_limit = 3;
@@ -173,8 +171,6 @@ namespace Gecode {
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
-      /// Discrepancy (for LDS)
-      unsigned int d;
       /// Stop object for stopping search
       Stop* stop;
       /// Default options
@@ -451,43 +447,11 @@ namespace Gecode {
   template<class T>
   T* restart(T* s, const Search::Options& o=Search::Options::def);
 
-
-
-  /**
-   * \brief Limited discrepancy search engine
-   * \ingroup TaskModelSearch
-   */
-  template<class T>
-  class LDS {
-  private:
-    /// The actual search engine
-    Search::Engine* e;
-  public:
-    /// Initialize engine for space \a s and options \a o
-    LDS(T* s, const Search::Options& o=Search::Options::def);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    T* next(void);
-    /// Return statistics
-    Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    bool stopped(void) const;
-    /// Destructor
-    ~LDS(void);
-  };
-
-  /**
-   * \brief Invoke limited-discrepancy search for \a s as root node and options\a o
-   * \ingroup TaskModelSearch
-   */
-  template<class T>
-  T* lds(T* s, const Search::Options& o=Search::Options::def);
-
 }
 
 #include <gecode/search/dfs.hpp>
 #include <gecode/search/bab.hpp>
 #include <gecode/search/restart.hpp>
-#include <gecode/search/lds.hpp>
 
 #endif
 
