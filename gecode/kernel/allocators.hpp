@@ -213,6 +213,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * @param al The allocator to assign.
      */
     space_allocator& operator =(space_allocator const& al) {
+      (void) al;
       assert(&space == &al.space);
       return *this;
     }

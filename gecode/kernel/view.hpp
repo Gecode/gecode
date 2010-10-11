@@ -403,6 +403,7 @@ namespace Gecode {
   template<class View>
   forceinline ModEvent
   ConstView<View>::modevent(const Delta& d) {
+    (void) d;
     return ME_GEN_NONE;
   }
   template<class View>
