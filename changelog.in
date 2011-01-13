@@ -72,6 +72,14 @@ Date:
 [DESCRIPTION]
 Maybe we add something this time...
 
+[ENTRY]
+Module: flatzinc
+What: change
+Rank: major
+[DESCRIPTION]
+Fixed the definitions of global_cardinality to work with MiniZinc 1.2 and
+newer, and added corresponding definitions of global_cardinality_closed and
+global_cardinality_low_up_closed.
 
 [RELEASE]
 Version: 3.4.2
