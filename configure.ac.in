@@ -43,6 +43,8 @@ AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
 ac_gecode_soversion=26
 AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
+ac_gecode_flatzincversion=1.2.2
+AC_SUBST(GECODE_FLATZINC_VERSION, ${ac_gecode_flatzincversion})
 
 # checks for programs
 
@@ -318,6 +320,11 @@ AC_DEFINE_UNQUOTED(GECODE_VERSION,
 AC_DEFINE_UNQUOTED(GECODE_LIBRARY_VERSION,
   "${VERSION_DASHES}",
   [Gecode version])
+
+AC_DEFINE_UNQUOTED(GECODE_FLATZINC_VERSION,
+  "${GECODE_FLATZINC_VERSION}",
+  [Supported version of FlatZinc]
+)
 
 ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}
 if test   "$ac_gecode_compiler_vendor" == "microsoft" \

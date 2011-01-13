@@ -224,6 +224,13 @@ namespace Gecode { namespace FlatZinc {
         _threads.value(_parallel.value());
     }
   
+    virtual void help(void) {
+      std::cerr << "Gecode FlatZinc interpreter" << std::endl
+                << " - Supported FlatZinc version: " << GECODE_FLATZINC_VERSION
+                << std::endl << std::endl;
+      Gecode::BaseOptions::help();
+    }
+  
     unsigned int solutions(void) const { return _solutions.value(); }
     double threads(void) const { return _threads.value(); }
     bool free(void) const { return _free.value(); }

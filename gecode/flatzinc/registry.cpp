@@ -893,35 +893,33 @@ namespace Gecode { namespace FlatZinc {
     void p_global_cardinality(FlatZincSpace& s, const ConExpr& ce,
                               AST::Node* ann) {
       IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
-      IntVarArgs iv1 = arg2intvarargs(s, ce[1]);
-      int cmin = ce[2]->getInt();
+      IntArgs cover = arg2intargs(ce[1]);
+      IntVarArgs iv1 = arg2intvarargs(s, ce[2]);
 
-      int smallest = cmin;
-      int largest = iv1.size()-1;
-      for (int i=iv0.size(); i--;) {
-        smallest = std::min(smallest, iv0[i].min());
-        largest = std::max(largest, iv0[i].max());
+      Region re(s);
+      IntSet cover_s(cover);
+      IntSetRanges cover_r(cover_s);
+      IntVarRanges* iv0_ri = re.alloc<IntVarRanges>(iv0.size());
+      for (int i=iv0.size(); i--;)
+        iv0_ri[i] = IntVarRanges(iv0[i]);
+      Iter::Ranges::NaryUnion<IntVarRanges> iv0_r(re,iv0_ri,iv0.size());
+      Iter::Ranges::Diff<Iter::Ranges::NaryUnion<IntVarRanges>,IntSetRanges> 
+        extra_r(iv0_r,cover_r);
+      Iter::Ranges::ToValues<Iter::Ranges::Diff<
+        Iter::Ranges::NaryUnion<IntVarRanges>,IntSetRanges> > extra(extra_r);
+      for (; extra(); ++extra) {
+        cover << extra.val();
+        iv1 << IntVar(s,0,iv0.size());
       }
-      
+      count(s, iv0, iv1, cover, ann2icl(ann));
+    }
 
-      if (cmin == 0 && smallest == 0 && largest == iv1.size()-1) {
-        count(s, iv0, iv1, ann2icl(ann));      
-      } else {
-        IntArgs values(largest - smallest + 1);
-        for (int i=largest-smallest+1; i--;)
-          values[i] = i+smallest;
-        IntVarArgs iv1tmp(largest-smallest+1);
-        int k = 0;
-        for (int i=cmin-smallest; i--;) {
-          iv1tmp[k++] = IntVar(s, 0, iv0.size());
-        }
-        for (int i=0; i<iv1.size(); i++)
-          iv1tmp[k++] = iv1[i];
-        for (int i=k; i<iv1tmp.size(); i++) {
-          iv1tmp[i] = IntVar(s, 0, iv0.size());
-        }
-        count(s, iv0, iv1tmp, values, ann2icl(ann));
-      }
+    void p_global_cardinality_closed(FlatZincSpace& s, const ConExpr& ce,
+                                     AST::Node* ann) {
+      IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
+      IntArgs cover = arg2intargs(ce[1]);
+      IntVarArgs iv1 = arg2intvarargs(s, ce[2]);
+      count(s, iv0, iv1, cover, ann2icl(ann));
     }
 
     void p_global_cardinality_low_up(FlatZincSpace& s, const ConExpr& ce,
@@ -949,6 +947,21 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       
+      count(s, x, y, cover, ann2icl(ann));
+    }
+
+    void p_global_cardinality_low_up_closed(FlatZincSpace& s,
+                                            const ConExpr& ce,
+                                            AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntArgs cover = arg2intargs(ce[1]);
+
+      IntArgs lbound = arg2intargs(ce[2]);
+      IntArgs ubound = arg2intargs(ce[3]);
+      IntSetArgs y(cover.size());
+      for (int i=cover.size(); i--;)
+        y[i] = IntSet(lbound[i],ubound[i]);
+
       count(s, x, y, cover, ann2icl(ann));
     }
 
@@ -1310,7 +1323,12 @@ namespace Gecode { namespace FlatZinc {
         registry().add("at_most_int", &p_at_most);
         registry().add("bin_packing_load_gecode", &p_bin_packing_load);
         registry().add("global_cardinality_gecode", &p_global_cardinality);
-        registry().add("global_cardinality_low_up", &p_global_cardinality_low_up);
+        registry().add("global_cardinality_closed_gecode",
+          &p_global_cardinality_closed);
+        registry().add("global_cardinality_low_up", 
+          &p_global_cardinality_low_up);
+        registry().add("global_cardinality_low_up_closed", 
+          &p_global_cardinality_low_up_closed);
         registry().add("minimum_int", &p_minimum);
         registry().add("maximum_int", &p_maximum);
         registry().add("regular", &p_regular);

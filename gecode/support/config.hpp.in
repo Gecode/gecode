@@ -43,6 +43,9 @@
 /* User-defined suffix of dll names */
 #undef GECODE_DLL_USERSUFFIX
 
+/* Supported version of FlatZinc */
+#undef GECODE_FLATZINC_VERSION
+
 /* Whether gcc understands visibility attributes */
 #undef GECODE_GCC_HAS_CLASS_VISIBILITY
 
