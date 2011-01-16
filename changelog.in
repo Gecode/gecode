@@ -73,9 +73,16 @@ Date:
 Maybe we add something this time...
 
 [ENTRY]
+Module:	other
+What:	change
+Rank:	minor
+[DESCRIPTION]
+Embedd manifest into Gecode DLLs on Windows.
+
+[ENTRY]
 Module: flatzinc
-What: change
-Rank: major
+What: 	change
+Rank: 	major
 [DESCRIPTION]
 Fixed the definitions of global_cardinality to work with MiniZinc 1.2 and
 newer, and added corresponding definitions of global_cardinality_closed and

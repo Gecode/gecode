@@ -1257,43 +1257,76 @@ else
 export LINKALL =
 $(SUPPORTDLL) $(SUPPORTLIB): $(SUPPORTOBJ)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) \
-		@LINKOUTPUT@$(SUPPORTDLL) $(GLDFLAGS) 
+		@LINKOUTPUT@$(SUPPORTDLL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $(SUPPORTDLL).manifest
+	$(MANIFEST) -manifest $(SUPPORTDLL).manifest \
+		    -outputresource:$(SUPPORTDLL)\;2
 $(KERNELDLL) $(KERNELLIB): $(KERNELOBJ) $(SUPPORTDLL)
 	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(KERNELDLL) $(GLDFLAGS) 
+	perl $(top_srcdir)/misc/fixmanifest.perl $(KERNELDLL).manifest
+	$(MANIFEST) -manifest $(KERNELDLL).manifest \
+		    -outputresource:$(KERNELDLL)\;2
 $(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS) 
+	perl $(top_srcdir)/misc/fixmanifest.perl $(SEARCHDLL).manifest
+	$(MANIFEST) -manifest $(SEARCHDLL).manifest \
+		    -outputresource:$(SEARCHDLL)\;2
 $(INTDLL) $(INTLIB): $(INTOBJ) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(INTOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(INTDLL) $(GLDFLAGS) 
+	perl $(top_srcdir)/misc/fixmanifest.perl $(INTDLL).manifest
+	$(MANIFEST) -manifest $(INTDLL).manifest \
+		    -outputresource:$(INTDLL)\;2
 $(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(SETDLL) $(GLDFLAGS) 
+	perl $(top_srcdir)/misc/fixmanifest.perl $(SETDLL).manifest
+	$(MANIFEST) -manifest $(SETDLL).manifest \
+		    -outputresource:$(SETDLL)\;2
 $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $(MMDLL).manifest
+	$(MANIFEST) -manifest $(MMDLL).manifest \
+		    -outputresource:$(MMDLL)\;2
 $(GRAPHDLL) $(GRAPHLIB): $(GRAPHOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(GRAPHDLL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $(GRAPHDLL).manifest
+	$(MANIFEST) -manifest $(GRAPHDLL).manifest \
+		    -outputresource:$(GRAPHDLL)\;2
 $(SCHEDULINGDLL) $(SCHEDULINGLIB): $(SCHEDULINGOBJ) \
 	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(SCHEDULINGDLL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $(SCHEDULINGDLL).manifest
+	$(MANIFEST) -manifest $(SCHEDULINGDLL).manifest \
+		    -outputresource:$(SCHEDULINGDLL)\;2
 $(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) \
 	$(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL)
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) \
 		@DLLPATH@ @LINKOUTPUT@$(DRIVERDLL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $(DRIVERDLL).manifest
+	$(MANIFEST) -manifest $(DRIVERDLL).manifest \
+		    -outputresource:$(DRIVERDLL)\;2
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
 		@DLLPATH@ $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $(GISTDLL).manifest
+	$(MANIFEST) -manifest $(GISTDLL).manifest \
+		    -outputresource:$(GISTDLL)\;2
 $(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) \
 	$(SEARCHDLL) $(INTDLL) $(SETDLL) $(GISTDLL)
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
 		$(LINKSET) $(LINKMM) $(LINKSCHEDULING) $(LINKGIST) $(LINKDRIVER) $(LINKQT) \
 		@LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $(FLATZINCDLL).manifest
+	$(MANIFEST) -manifest $(FLATZINCDLL).manifest \
+		    -outputresource:$(FLATZINCDLL)\;2
 endif
 
 #
@@ -1371,11 +1404,13 @@ endif
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(LINKQT) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 $(TESTEXE): $(TESTOBJ) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 .PHONY: flatzinc
@@ -1388,6 +1423,7 @@ endif
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 
