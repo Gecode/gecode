@@ -73,6 +73,15 @@ Date:
 Maybe we add something this time...
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Roberto Castañeda Lozano
+[DESCRIPTION]
+Fixed incorrect posting of linear constraints with variable arrays
+of size one.
+
+[ENTRY]
 Module:	other
 What:	change
 Rank:	minor

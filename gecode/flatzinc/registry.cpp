@@ -283,7 +283,7 @@ namespace Gecode { namespace FlatZinc {
           return false;
         }
       }
-      return true;
+      return singleInt==-1 || a->a.size() > 1;
     }
 
     void p_distinct(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
