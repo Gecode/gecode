@@ -50,7 +50,7 @@ $modclear{"search"} = "Search engines";
 $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
 $modclear{"cpltset"} = "Finite integer sets with complete representation";
-$modclear{"minimodel"} = "Minimal modelling support";
+$modclear{"minimodel"} = "Minimal modeling support";
 $modclear{"graph"} = "Graph constraints";
 $modclear{"scheduling"} = "Scheduling constraints";
 $modclear{"driver"} = "Script commandline driver";
@@ -59,6 +59,7 @@ $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "Example scripts";
 $modclear{"test"} = "Systematic tests";
 $modclear{"gist"} = "Gist";
+$modclear{"flatzinc"} = "Gecode/FlatZinc";
 $modclear{"other"} = "General";
 
 $whatclear{"bug"} = "Bug fixes";
@@ -71,10 +72,11 @@ $whatclear{"change"} = "Other changes";
 $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
-@modorder = ("kernel","search","int","set","cpltset","scheduling","minimodel",
-         "iter","support","example","test","gist","other");
+@modorder = ("kernel","search","int","set","cpltset","scheduling",
+	     "graph","minimodel","driver",
+	     "iter","support","example","test","gist","flatzinc","other");
 
-@whatorder = ("new","change","bug","performance","documentation");
+@whatorder = ("new","removed","change","bug","performance","documentation");
 
 foreach $mod (@modorder) {
   $hastext{$mod} = 0;
