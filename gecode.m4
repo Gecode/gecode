@@ -1223,3 +1223,27 @@ AC_DEFUN([AC_GECODE_FLEXBISON],
         AC_SUBST(HAVE_FLEXBISON, "no")
       fi
    fi])
+
+AC_DEFUN([AC_GECODE_RESOURCE],[
+  AC_ARG_ENABLE([resource],
+    AC_HELP_STRING([--enable-resource],
+      [build Gecode with resource files for Microsoft Visual Studio @<:@default=no@:>@]))
+  AC_CHECK_PROG(HAVE_RC, rc.exe, [found])
+  AC_MSG_CHECKING(whether to build with Visual Studio resource files)
+  if test "${enable_resource:-no}" = "yes" -a \
+          "${ac_gecode_compiler_vendor}" = "microsoft"; then
+    if test "${HAVE_RC}x" = "x"; then
+      AC_MSG_RESULT(no)
+      AC_SUBST(RESCOMP, [])
+      AC_SUBST(enable_resource, no)
+    else
+      AC_MSG_RESULT(yes)
+      AC_SUBST(RESCOMP, [rc.exe])
+      AC_SUBST(enable_resource, yes)
+    fi
+  else
+    AC_MSG_RESULT(no)
+    AC_SUBST(enable_resource, no)
+    AC_SUBST(RESCOMP, [])
+  fi
+])

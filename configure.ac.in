@@ -106,6 +106,8 @@ microsoft)
   ;;
 esac
 
+AC_GECODE_RESOURCE
+
 dnl check whether we can use GNU hash_map
 AC_CHECK_HEADER([ext/hash_map],
   [AC_DEFINE([GECODE_HAS_GNU_HASH_MAP],[],
