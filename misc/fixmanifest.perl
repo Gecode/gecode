@@ -72,7 +72,7 @@ if ($arch =~ /x64/) {
   $arch = "amd64";
 }
 
-open (INMANIFEST, "<", $file) || die "Could not open " . $file;
+if (open (INMANIFEST, "<", $file)) {
 open (OUTMANIFEST, ">", "$file.tmp") || die "Could not open " . "$file.tmp";
 
 while ($l = <INMANIFEST>) {
@@ -91,3 +91,4 @@ close INMANIFEST;
 close OUTMANIFEST;
 system("rm -f \"$file\"");
 system("mv \"$file.tmp\" \"$file\"");
+}
