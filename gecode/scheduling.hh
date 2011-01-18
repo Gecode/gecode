@@ -3,10 +3,12 @@
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
  *     Mikael Lagerkvist, 2005
  *     Christian Schulte, 2009
+ *     Guido Tack, 2010
  *
  *  Last modified:
  *     $Date$ by $Author$

@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2009
+ *     Guido Tack, 2010
  *
  *  Last modified:
  *     $Date$ by $Author$
