@@ -63,7 +63,6 @@ export VERSION	= @VERSION@
 export CXX = @CXX@
 export CC = @CC@
 export MOC = @MOC@
-export RESCOMP = @RESCOMP@
 ifeq "$(top_srcdir)" "$(top_builddir)"
 CPPFLAGS=-I$(top_srcdir)
 else
@@ -100,6 +99,8 @@ export OBJSUFFIX	= .@OBJEXT@
 export SBJSUFFIX	= .@SBJEXT@
 export DLLSUFFIX	= @DLL_ARCH@@USERSUFFIX@.@DLLEXT@
 export MANIFESTSUFFIX	= @DLL_ARCH@@USERSUFFIX@.@DLLEXT@.manifest
+export RCSUFFIX		= @DLL_ARCH@@USERSUFFIX@.@DLLEXT@.rc
+export RESSUFFIX	= @DLL_ARCH@@USERSUFFIX@.@DLLEXT@.res
 export LIBSUFFIX	= @DLL_ARCH@@USERSUFFIX@.@LIBEXT@
 export PDBSUFFIX	= @DLL_ARCH@@USERSUFFIX@.pdb
 export EXPSUFFIX	= @DLL_ARCH@@USERSUFFIX@.exp
@@ -119,7 +120,9 @@ export SOSUFFIX         = @DLL_ARCH@@USERSUFFIX@@SOSUFFIX@
 #
 export RMF		= rm -rf
 export MV		= mv
-export MANIFEST	= @MANIFEST@
+export MANIFEST		= @MANIFEST@
+export RESCOMP		= @RESCOMP@
+export RCGEN		= perl $(top_srcdir)/misc/genrc.perl $(DLLSUFFIX)
 
 ifeq "@need_soname@" "yes"
 export CREATELINK       = ln -fs
@@ -127,6 +130,11 @@ else
 export CREATELINK       = @true
 endif
 
+ifeq "@enable_resource@" "yes"
+%.res: %.rc
+	$(RESCOMP) -fo $@ $< 
+.PRECIOUS: %.res %.rc
+endif
 
 #
 # SUPPORT COMPONENTS
@@ -158,6 +166,14 @@ endif
 export SUPPORTSTATICLIB	= $(LIBPREFIX)@SUPPORT@$(STATICLIBSUFFIX)
 export LINKSUPPORT      = \
 	$(LINKPREFIX)@SUPPORT@$(LINKSUFFIX)
+ifeq "@enable_resource@" "yes"
+export SUPPORTRC	= $(LIBPREFIX)@SUPPORT@$(RCSUFFIX)
+export SUPPORTRES	= $(LIBPREFIX)@SUPPORT@$(RESSUFFIX)
+else
+export SUPPORTRES	=
+export SUPPORTRC	=
+endif
+
 SUPPORTBUILDDIRS = support support/thread
 
 
@@ -197,7 +213,15 @@ else
 export KERNELSONAME     = 
 endif
 export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
-export LINKKERNEL      = $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
+export LINKKERNEL      	= $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
+ifeq "@enable_resource@" "yes"
+export KERNELRC		= $(LIBPREFIX)@KERNEL@$(RCSUFFIX)
+export KERNELRES	= $(LIBPREFIX)@KERNEL@$(RESSUFFIX)
+else
+export KERNELRES	=
+export KERNELRC		=
+endif
+
 KERNELBUILDDIRS = kernel
 
 EXTRA_HEADERS   = gecode/support/config.hpp
@@ -236,12 +260,21 @@ export SEARCHSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SEARCH@$(SOSUFFIX)
 else
 export SEARCHSONAME     = 
+ifeq "@enable_resource@" "yes"
+export SEARCHRC		= $(LIBPREFIX)@SEARCH@$(RCSUFFIX)
+export SEARCHRES	= $(LIBPREFIX)@SEARCH@$(RESSUFFIX)
+else
+export SEARCHRES	=
+export SEARCHRC		=
+endif
 endif
 else
 export SEARCHDLL	=
 export SEARCHSTATICLIB	=
 export SEARCHLIB	=
 export LINKSEARCH       =
+export SEARCHRES	=
+export SEARCHRC		=
 endif
 SEARCHBUILDDIRS = search search/sequential search/parallel
 
@@ -324,11 +357,20 @@ export INTSONAME     = \
 else
 export INTSONAME     = 
 endif
+ifeq "@enable_resource@" "yes"
+export INTRC		= $(LIBPREFIX)@INT@$(RCSUFFIX)
+export INTRES		= $(LIBPREFIX)@INT@$(RESSUFFIX)
+else
+export INTRES		=
+export INTRC		=
+endif
 else
 export INTDLL		=
 export INTSTATICLIB	=
 export INTLIB		=
 export LINKINT      	=
+export INTRES		=
+export INTRC		=
 endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
@@ -397,11 +439,20 @@ export SETSONAME     = \
 else
 export SETSONAME     = 
 endif
+ifeq "@enable_resource@" "yes"
+export SETRC		= $(LIBPREFIX)@SET@$(RCSUFFIX)
+export SETRES		= $(LIBPREFIX)@SET@$(RESSUFFIX)
+else
+export SETRES		=
+export SETRC		=
+endif
 else
 export SETDLL		=
 export SETSTATICLIB	=
 export SETLIB		=
 export LINKSET      	=
+export SETRES		=
+export SETRC		=
 endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
@@ -432,11 +483,20 @@ export GRAPHSONAME	= \
 else
 export GRAPHSONAME	= 
 endif
+ifeq "@enable_resource@" "yes"
+export GRAPHRC		= $(LIBPREFIX)@GRAPH@$(RCSUFFIX)
+export GRAPHRES		= $(LIBPREFIX)@GRAPH@$(RESSUFFIX)
+else
+export GRAPHRES		=
+export GRAPHRC		=
+endif
 else
 export GRAPHDLL		=
 export GRAPHSTATICLIB	=
 export GRAPHLIB		=
 export LINKGRAPH      	=
+export GRAPHRES		=
+export GRAPHRC		=
 endif
 GRAPHBUILDDIRS	= \
 	graph
@@ -479,11 +539,20 @@ export SCHEDULINGSONAME	= \
 else
 export SCHEDULINGSONAME	= 
 endif
+ifeq "@enable_resource@" "yes"
+export SCHEDULINGRC		= $(LIBPREFIX)@SCHEDULING@$(RCSUFFIX)
+export SCHEDULINGRES		= $(LIBPREFIX)@SCHEDULING@$(RESSUFFIX)
+else
+export SCHEDULINGRES		=
+export SCHEDULINGRC		=
+endif
 else
 export SCHEDULINGDLL		=
 export SCHEDULINGSTATICLIB	=
 export SCHEDULINGLIB		=
 export LINKSCHEDULING      	=
+export SCHEDULINGRES		=
+export SCHEDULINGRC		=
 endif
 SCHEDULINGBUILDDIRS	= \
 	scheduling scheduling/unary scheduling/cumulative scheduling/cumulatives \
@@ -519,11 +588,20 @@ export MMSONAME     = \
 else
 export MMSONAME     = 
 endif
+ifeq "@enable_resource@" "yes"
+export MMRC		= $(LIBPREFIX)@MM@$(RCSUFFIX)
+export MMRES		= $(LIBPREFIX)@MM@$(RESSUFFIX)
+else
+export MMRES		=
+export MMRC		=
+endif
 else
 export MMDLL		=
 export MMSTATICLIB	=
 export MMLIB		=
 export LINKMM      	=
+export MMRES		=
+export MMRC		=
 endif
 MMBUILDDIRS	= minimodel
 
@@ -550,11 +628,20 @@ export DRIVERSONAME     = \
 else
 export DRIVERSONAME     = 
 endif
+ifeq "@enable_resource@" "yes"
+export DRIVERRC		= $(LIBPREFIX)@DRIVER@$(RCSUFFIX)
+export DRIVERRES	= $(LIBPREFIX)@DRIVER@$(RESSUFFIX)
+else
+export DRIVERRES	=
+export DRIVERRC		=
+endif
 else
 export DRIVERDLL	=
 export DRIVERSTATICLIB	=
 export DRIVERLIB	=
 export LINKDRIVER      	=
+export DRIVERRES	=
+export DRIVERRC		=
 endif
 DRIVERBUILDDIRS	= driver
 
@@ -623,13 +710,21 @@ export GISTSONAME     = \
 else
 export GISTSONAME     = 
 endif
-
+ifeq "@enable_resource@" "yes"
+export GISTRC		= $(LIBPREFIX)@GIST@$(RCSUFFIX)
+export GISTRES		= $(LIBPREFIX)@GIST@$(RESSUFFIX)
+else
+export GISTRES		=
+export GISTRC		=
+endif
 else
 export GISTDLL		=
 export GISTSTATICLIB	=
 export GISTLIB		=
 export LINKGIST      	=
 export GISTSONAME	= 
+export GISTRES		=
+export GISTRC		=
 endif
 
 #
@@ -659,23 +754,32 @@ FLATZINCALLSRC	= $(FLATZINCSRC) $(FLATZINCEXESRC)
 FLATZINCBUILDDIRS = gecode/flatzinc tools/flatzinc
 
 ifeq "@enable_flatzinc@" "yes"
-export FLATZINCDLL			= $(LIBPREFIX)@FLATZINC@$(DLLSUFFIX)
+export FLATZINCDLL		= $(LIBPREFIX)@FLATZINC@$(DLLSUFFIX)
 export FLATZINCSTATICLIB	= $(LIBPREFIX)@FLATZINC@$(STATICLIBSUFFIX)
-export FLATZINCLIB			= $(LIBPREFIX)@FLATZINC@$(LIBSUFFIX)
-export LINKFLATZINC			= $(LINKPREFIX)@FLATZINC@$(LINKSUFFIX)
+export FLATZINCLIB		= $(LIBPREFIX)@FLATZINC@$(LIBSUFFIX)
+export LINKFLATZINC		= $(LINKPREFIX)@FLATZINC@$(LINKSUFFIX)
 export FLATZINCMZNLIB		= gecode/flatzinc/mznlib
 ifeq "@need_soname@" "yes"
 export FLATZINCSONAME = @WLSONAME@$(LIBPREFIX)@FLATZINC@$(SOSUFFIX)
 else
 export FLATZINCSONAME =
 endif
+ifeq "@enable_resource@" "yes"
+export FLATZINCRC		= $(LIBPREFIX)@FLATZINC@$(RCSUFFIX)
+export FLATZINCRES		= $(LIBPREFIX)@FLATZINC@$(RESSUFFIX)
 else
-export FLATZINCDLL			=
+export FLATZINCRES		=
+export FLATZINCRC		=
+endif
+else
+export FLATZINCDLL		=
 export FLATZINCSTATICLIB	=
-export FLATZINCLIB			=
-export LINKFLATZINC			=
+export FLATZINCLIB		=
+export LINKFLATZINC		=
 export FLATZINCSONAME		=
 export FLATZINCMZNLIB		= 
+export FLATZINCRES		=
+export FLATZINCRC		=
 endif
 
 #
@@ -1256,72 +1360,122 @@ $(FLATZINCDLL): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) \
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 else
 export LINKALL =
-$(SUPPORTDLL) $(SUPPORTLIB): $(SUPPORTOBJ)
-	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) \
+
+ifeq "@enable_resource@" "yes"
+$(SUPPORTRC): $(SUPPORTHDR) $(SUPPORTSRC)
+	$(RCGEN) $(SUPPORTDLL) $(SUPPORTHDR) $(SUPPORTSRC) > $@
+endif
+$(SUPPORTDLL) $(SUPPORTLIB): $(SUPPORTOBJ) $(SUPPORTRES)
+	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) $(SUPPORTRES) \
 		@LINKOUTPUT@$(SUPPORTDLL) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $(SUPPORTDLL).manifest
 	$(MANIFEST) -manifest $(SUPPORTDLL).manifest \
 		    -outputresource:$(SUPPORTDLL)\;2
-$(KERNELDLL) $(KERNELLIB): $(KERNELOBJ) $(SUPPORTDLL)
-	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \
+ifeq "@enable_resource@" "yes"
+$(KERNELRC): $(KERNELHDR) $(KERNELSRC)
+	$(RCGEN) $(KERNELDLL) $(KERNELHDR) $(KERNELSRC) > $@
+endif
+$(KERNELDLL) $(KERNELLIB): $(KERNELOBJ) $(KERNELRES) $(SUPPORTDLL)
+	$(CXX) $(DLLFLAGS) $(KERNELOBJ) $(KERNELRES) \
 		@DLLPATH@ @LINKOUTPUT@$(KERNELDLL) $(GLDFLAGS) 
 	perl $(top_srcdir)/misc/fixmanifest.perl $(KERNELDLL).manifest
 	$(MANIFEST) -manifest $(KERNELDLL).manifest \
 		    -outputresource:$(KERNELDLL)\;2
-$(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(SUPPORTDLL) $(KERNELDLL)
-	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) \
+ifeq "@enable_resource@" "yes"
+$(SEARCHRC): $(SEARCHHDR) $(SEARCHSRC)
+	$(RCGEN) $(SEARCHDLL) $(SEARCHHDR) $(SEARCHSRC) > $@
+endif
+$(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(SEARCHRES) $(SUPPORTDLL) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) $(SEARCHRES) \
 		@DLLPATH@ @LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS) 
 	perl $(top_srcdir)/misc/fixmanifest.perl $(SEARCHDLL).manifest
 	$(MANIFEST) -manifest $(SEARCHDLL).manifest \
 		    -outputresource:$(SEARCHDLL)\;2
-$(INTDLL) $(INTLIB): $(INTOBJ) $(SUPPORTDLL) $(KERNELDLL)
-	$(CXX) $(DLLFLAGS) $(INTOBJ) \
+ifeq "@enable_resource@" "yes"
+$(INTRC): $(INTHDR) $(INTSRC)
+	$(RCGEN) $(INTDLL) $(INTHDR) $(INTSRC) > $@
+endif
+$(INTDLL) $(INTLIB): $(INTOBJ) $(INTRES) $(SUPPORTDLL) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(INTOBJ) $(INTRES) \
 		@DLLPATH@ @LINKOUTPUT@$(INTDLL) $(GLDFLAGS) 
 	perl $(top_srcdir)/misc/fixmanifest.perl $(INTDLL).manifest
 	$(MANIFEST) -manifest $(INTDLL).manifest \
 		    -outputresource:$(INTDLL)\;2
-$(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(SETOBJ) \
+ifeq "@enable_resource@" "yes"
+$(SETRC): $(SETHDR) $(SETSRC)
+	$(RCGEN) $(SETDLL) $(SETHDR) $(SETSRC) > $@
+endif
+$(SETDLL) $(SETLIB): $(SETOBJ) $(SETRES) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETRES) \
 		@DLLPATH@ @LINKOUTPUT@$(SETDLL) $(GLDFLAGS) 
 	perl $(top_srcdir)/misc/fixmanifest.perl $(SETDLL).manifest
 	$(MANIFEST) -manifest $(SETDLL).manifest \
 		    -outputresource:$(SETDLL)\;2
-$(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
-	$(CXX) $(DLLFLAGS) $(MMOBJ) \
+ifeq "@enable_resource@" "yes"
+$(MMRC): $(MMHDR) $(MMSRC)
+	$(RCGEN) $(MMDLL) $(MMHDR) $(MMSRC) > $@
+endif
+$(MMDLL) $(MMLIB): $(MMOBJ) $(MMRES) \
+	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
+	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMRES) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $(MMDLL).manifest
 	$(MANIFEST) -manifest $(MMDLL).manifest \
 		    -outputresource:$(MMDLL)\;2
-$(GRAPHDLL) $(GRAPHLIB): $(GRAPHOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) \
+ifeq "@enable_resource@" "yes"
+$(GRAPHRC): $(GRAPHHDR) $(GRAPHSRC)
+	$(RCGEN) $(GRAPHDLL) $(GRAPHHDR) $(GRAPHSRC) > $@
+endif
+$(GRAPHDLL) $(GRAPHLIB): $(GRAPHOBJ) $(GRAPHRES) \
+	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) $(GRAPHRES) \
 		@DLLPATH@ @LINKOUTPUT@$(GRAPHDLL) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $(GRAPHDLL).manifest
 	$(MANIFEST) -manifest $(GRAPHDLL).manifest \
 		    -outputresource:$(GRAPHDLL)\;2
-$(SCHEDULINGDLL) $(SCHEDULINGLIB): $(SCHEDULINGOBJ) \
+ifeq "@enable_resource@" "yes"
+$(SCHEDULINGRC): $(SCHEDULINGHDR) $(SCHEDULINGSRC)
+	$(RCGEN) $(SCHEDULINGDLL) $(SCHEDULINGHDR) $(SCHEDULINGSRC) > $@
+endif
+$(SCHEDULINGDLL) $(SCHEDULINGLIB): $(SCHEDULINGOBJ) $(SCHEDULINGRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) \
+	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) $(SCHEDULINGRES) \
 		@DLLPATH@ @LINKOUTPUT@$(SCHEDULINGDLL) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $(SCHEDULINGDLL).manifest
 	$(MANIFEST) -manifest $(SCHEDULINGDLL).manifest \
 		    -outputresource:$(SCHEDULINGDLL)\;2
-$(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) \
+ifeq "@enable_resource@" "yes"
+$(DRIVERRC): $(DRIVERHDR) $(DRIVERSRC)
+	$(RCGEN) $(DRIVERDLL) $(DRIVERHDR) $(DRIVERSRC) > $@
+endif
+$(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(DRIVERRES) \
+	$(SUPPORTDLL) $(KERNELDLL) \
 	$(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL)
-	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) \
+	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) $(DRIVERRES) \
 		@DLLPATH@ @LINKOUTPUT@$(DRIVERDLL) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $(DRIVERDLL).manifest
 	$(MANIFEST) -manifest $(DRIVERDLL).manifest \
 		    -outputresource:$(DRIVERDLL)\;2
-$(GISTDLL) $(GISTLIB): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTSONAME) \
+ifeq "@enable_resource@" "yes"
+$(GISTRC): $(GISTHDR) $(GISTSRC)
+	$(RCGEN) $(GISTDLL) $(GISTHDR) $(GISTSRC) > $@
+endif
+$(GISTDLL) $(GISTLIB): $(GISTOBJ) $(GISTRES) \
+	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTRES) $(GISTSONAME) \
 		@DLLPATH@ $(LINKQT) \
 		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $(GISTDLL).manifest
 	$(MANIFEST) -manifest $(GISTDLL).manifest \
 		    -outputresource:$(GISTDLL)\;2
-$(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) \
+ifeq "@enable_resource@" "yes"
+$(FLATZINCRC): $(FLATZINCHDR) $(FLATZINCSRC)
+	$(RCGEN) $(FLATZINCDLL) $(FLATZINCHDR) $(FLATZINCSRC) > $@
+endif
+$(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(FLATZINCRES) \
+	$(SUPPORTDLL) $(KERNELDLL) \
 	$(SEARCHDLL) $(INTDLL) $(SETDLL) $(GISTDLL)
-	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCSONAME) \
+	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCRES) $(FLATZINCSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
 		$(LINKSET) $(LINKMM) $(LINKSCHEDULING) $(LINKGIST) $(LINKDRIVER) $(LINKQT) \
 		@LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
@@ -1402,14 +1556,34 @@ endif
 #
 
 .PRECIOUS: examples/%$(OBJSUFFIX)
+ifeq "@enable_resource@" "yes"
+.PRECIOUS: examples/%.res examples/%.rc
+examples/%$(EXESUFFIX).rc: examples/%.cpp
+	$(RCGEN) $(@:%.rc=%) $< > $@
+examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) examples/%$(EXESUFFIX).res \
+	$(ALLLIB)
+	$(CXX) @EXEOUTPUT@$@ $< $@.res \
+		$(DLLPATH) $(CXXFLAGS) \
+		$(LINKALL) $(LINKQT) $(GLDFLAGS)
+	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
+	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
+else
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(LINKQT) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
+endif
 
-$(TESTEXE): $(TESTOBJ) $(ALLLIB) 
-	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(DLLPATH) $(CXXFLAGS) \
+ifeq "@enable_resource@" "yes"
+TESTRES = $(TESTEXE).res
+$(TESTEXE).rc: $(TESTSRC) $(TESTHDR)
+	$(RCGEN) $(TESTEXE) $(TESTSRC) $(TESTHDR) > $@
+else
+TESTRES =
+endif
+$(TESTEXE): $(TESTOBJ) $(TESTRES) $(ALLLIB) 
+	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(TESTRES) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
@@ -1421,8 +1595,16 @@ else
 flatzinc:
 endif
 
-$(FLATZINCEXE): $(FLATZINCEXEOBJ) $(ALLLIB) 
-	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(DLLPATH) $(CXXFLAGS) \
+ifeq "@enable_resource@" "yes"
+FLATZINCEXERES = $(FLATZINCEXE).res
+$(FLATZINCEXE).rc: $(FLATZINCEXESRC)
+	$(RCGEN) $(FLATZINCEXE) $(FLATZINCEXESRC) > $@
+else
+FLATZINCEXERES =
+endif
+$(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB) 
+	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(FLATZINCEXERES) \
+	$(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
 	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
@@ -1728,6 +1910,8 @@ clean:
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(MANIFESTSUFFIX)) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%$(RCSUFFIX)) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%$(RESSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(EXPSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(LIBSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(ILKSUFFIX)) \
@@ -1735,12 +1919,14 @@ veryclean: clean
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
 	$(RMF) $(EXAMPLEEXE) $(EXAMPLEEXE:%.exe=%.pdb) \
-		$(EXAMPLEEXE:%.exe=%.ilk) \
-		$(EXAMPLEEXE:%=%.manifest)
-	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk) \
-		 $(TESTEXE:%=%.manifest)
+		$(EXAMPLEEXE:%.exe=%.ilk) $(EXAMPLEEXE:%=%.manifest) \
+		$(EXAMPLEEXE:%=%.rc) $(EXAMPLEEXE:%=%.res)
+	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) \
+		$(TESTEXE:%.exe=%.ilk) $(TESTEXE:%=%.manifest) \
+		$(TESTEXE:%=%.rc) $(TESTEXE:%=%.res)
 	$(RMF) $(FLATZINCEXE) $(FLATZINCEXE:%.exe=%.pdb) \
-		$(FLATZINCEXE:%.exe=%.ilk) $(FLATZINCEXE:%=%.manifest)
+		$(FLATZINCEXE:%.exe=%.ilk) $(FLATZINCEXE:%=%.manifest) \
+		$(FLATZINCEXE:%=%.rc) $(FLATZINCEXE:%=%.res)
 	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.hh
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)

@@ -306,6 +306,12 @@ public:
   }
 };
 
+/*
+ * Just to fool some scripts:
+ * \brief %Example: n-Knight's tour
+ *
+ */
+
 #ifdef GECODE_HAS_GIST
 /// Inspector showing knight moves on a chess board
 class KnightsInspector : public Gist::Inspector {

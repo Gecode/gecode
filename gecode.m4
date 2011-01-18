@@ -772,7 +772,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
         AC_SUBST(MANIFEST, "@true")
       else
         AC_MSG_RESULT(yes)
-        AC_SUBST(MANIFEST, ["mt -nologo"])
+        AC_SUBST(MANIFEST, ["mt.exe -nologo"])
       fi
     ],
     [
@@ -1234,16 +1234,16 @@ AC_DEFUN([AC_GECODE_RESOURCE],[
           "${ac_gecode_compiler_vendor}" = "microsoft"; then
     if test "${HAVE_RC}x" = "x"; then
       AC_MSG_RESULT(no)
-      AC_SUBST(RESCOMP, [])
+      AC_SUBST(RESCOMP, [@true])
       AC_SUBST(enable_resource, no)
     else
       AC_MSG_RESULT(yes)
-      AC_SUBST(RESCOMP, [rc.exe])
+      AC_SUBST(RESCOMP, ["rc.exe -n"])
       AC_SUBST(enable_resource, yes)
     fi
   else
     AC_MSG_RESULT(no)
     AC_SUBST(enable_resource, no)
-    AC_SUBST(RESCOMP, [])
+    AC_SUBST(RESCOMP, [@true])
   fi
 ])

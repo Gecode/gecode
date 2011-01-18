@@ -73,6 +73,13 @@ Date:
 Maybe we add something this time...
 
 [ENTRY]
+Module:	other
+What:	change
+Rank:	minor
+[DESCRIPTION]
+Embed version information into Gecode DLLs on Windows.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   major
@@ -86,7 +93,7 @@ Module:	other
 What:	change
 Rank:	minor
 [DESCRIPTION]
-Embedd manifest into Gecode DLLs on Windows.
+Embed manifest into Gecode DLLs on Windows.
 
 [ENTRY]
 Module: flatzinc
