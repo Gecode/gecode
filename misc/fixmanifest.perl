@@ -35,37 +35,26 @@
 #
 #
 
-$file = $ARGV[0];
+$dllsuffix = $ARGV[0];
+$file      = $ARGV[1];
 
-if ($file =~ /(.*)Gecode([A-Za-z]+)-([0-9]+)-([0-9]+)-([0-9]+)-[rd]-(x[0-9]+)\.dll\.manifest/) {
+if ($dllsuffix =~ /-([0-9]+)-([0-9]+)-([0-9]+)-[rd]-(x[0-9]+)\.dll/) {
+  $revx = $1; $revy = $2; $revz = $3;
+  $arch = $4;
+}
+
+if ($file =~ /(.*)Gecode([A-Za-z]+)-[0-9]+-[0-9]+-[0-9]+-[rd]-x[0-9]+\.dll\.manifest/) {
   $type = "Modules";
   $name = $2;
-  $x = $3; $y = $4; $z = $5;
-  $arch = $6;
 } elsif ($file =~ /(.*)\/examples\/(.+)\.exe/) {
   $type = "Examples";
   $name = $2;
-  $dllsuffix = $ARGV[1];
-  if ($dllsuffix =~ /-([0-9]+)-([0-9]+)-([0-9]+)-[rd]-(x[0-9]+)\.dll/) {
-    $x = $1; $y = $2; $z = $3;
-    $arch = $4;
-  }
 } elsif ($file =~ /(.*)fz\.exe/) {
   $type = "Tools";
   $name = "FlatZinc";
-  $dllsuffix = $ARGV[1];
-  if ($dllsuffix =~ /-([0-9]+)-([0-9]+)-([0-9]+)-[rd]-(x[0-9]+)\.dll/) {
-    $x = $1; $y = $2; $z = $3;
-    $arch = $4;
-  }
 } elsif ($file =~ /(.*)\/test\.exe/) {
   $type = "Tools";
   $name = "Test";
-  $dllsuffix = $ARGV[1];
-  if ($dllsuffix =~ /-([0-9]+)-([0-9]+)-([0-9]+)-[rd]-(x[0-9]+)\.dll/) {
-    $x = $1; $y = $2; $z = $3;
-    $arch = $4;
-  }
 }
 
 if ($arch =~ /x64/) {
@@ -73,22 +62,23 @@ if ($arch =~ /x64/) {
 }
 
 if (open (INMANIFEST, "<", $file)) {
-open (OUTMANIFEST, ">", "$file.tmp") || die "Could not open " . "$file.tmp";
+  open (OUTMANIFEST, ">", "$file.tmp") || die "Could not open " . "$file.tmp";
 
-while ($l = <INMANIFEST>) {
-  print OUTMANIFEST $l;
-  if ($l =~ /\<assembly /) {
-    print OUTMANIFEST "  <assemblyIdentity type=\"win32\"\n"; 
-    print OUTMANIFEST "                    name=\"Gecode.$type.$name\"\n";
-    print OUTMANIFEST "                    version=\"3.4.2.0\"\n"; 
-    print OUTMANIFEST "                    processorArchitecture=\"$arch\"\n";
-    print OUTMANIFEST "                    publicKeyToken=\"0000000000000000\"\n";
-    print OUTMANIFEST "  />\n";
+  while ($l = <INMANIFEST>) {
+    print OUTMANIFEST $l;
+    if ($l =~ /\<assembly /) {
+      print OUTMANIFEST "  <assemblyIdentity type=\"win32\"\n"; 
+      print OUTMANIFEST "                    name=\"Gecode.$type.$name\"\n";
+      print OUTMANIFEST "                    version=\"$revx.$revy.$revz.0\"\n";
+      print OUTMANIFEST "                    processorArchitecture=\"$arch\"\n";
+      print OUTMANIFEST "                    publicKeyToken=\"0000000000000000\"\n";
+      print OUTMANIFEST "  />\n";
+    }
   }
-}
 
-close INMANIFEST;
-close OUTMANIFEST;
-system("rm -f \"$file\"");
-system("mv \"$file.tmp\" \"$file\"");
+  close INMANIFEST;
+  close OUTMANIFEST;
+
+  system("rm -f \"$file\"");
+  system("mv \"$file.tmp\" \"$file\"");
 }

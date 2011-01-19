@@ -77,7 +77,7 @@ Module:	other
 What:	change
 Rank:	minor
 [DESCRIPTION]
-Embed version information into Gecode DLLs on Windows.
+Embed information into Gecode DLLs and EXEs on Windows.
 
 [ENTRY]
 Module: flatzinc

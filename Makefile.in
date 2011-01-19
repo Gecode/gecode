@@ -121,8 +121,9 @@ export SOSUFFIX         = @DLL_ARCH@@USERSUFFIX@@SOSUFFIX@
 export RMF		= rm -rf
 export MV		= mv
 export MANIFEST		= @MANIFEST@
-export RESCOMP		= @RESCOMP@
-export RCGEN		= perl $(top_srcdir)/misc/genrc.perl $(DLLSUFFIX)
+export FIXMANIFEST	= perl $(top_srcdir)/misc/fixmanifest.perl $(DLLSUFFIX)
+export RESCOMP		= @RESCOMP@ -i$(top_srcdir)
+export RCGEN		= perl $(top_srcdir)/misc/genrc.perl $(DLLSUFFIX) $(top_srcdir)
 
 ifeq "@need_soname@" "yes"
 export CREATELINK       = ln -fs
@@ -1362,90 +1363,90 @@ else
 export LINKALL =
 
 ifeq "@enable_resource@" "yes"
-$(SUPPORTRC): $(SUPPORTHDR) $(SUPPORTSRC)
+$(SUPPORTRC):
 	$(RCGEN) $(SUPPORTDLL) $(SUPPORTHDR) $(SUPPORTSRC) > $@
 endif
 $(SUPPORTDLL) $(SUPPORTLIB): $(SUPPORTOBJ) $(SUPPORTRES)
 	$(CXX) $(DLLFLAGS) $(SUPPORTOBJ) $(SUPPORTRES) \
 		@LINKOUTPUT@$(SUPPORTDLL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $(SUPPORTDLL).manifest
+	$(FIXMANIFEST) $(SUPPORTDLL).manifest
 	$(MANIFEST) -manifest $(SUPPORTDLL).manifest \
 		    -outputresource:$(SUPPORTDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(KERNELRC): $(KERNELHDR) $(KERNELSRC)
+$(KERNELRC):
 	$(RCGEN) $(KERNELDLL) $(KERNELHDR) $(KERNELSRC) > $@
 endif
 $(KERNELDLL) $(KERNELLIB): $(KERNELOBJ) $(KERNELRES) $(SUPPORTDLL)
 	$(CXX) $(DLLFLAGS) $(KERNELOBJ) $(KERNELRES) \
 		@DLLPATH@ @LINKOUTPUT@$(KERNELDLL) $(GLDFLAGS) 
-	perl $(top_srcdir)/misc/fixmanifest.perl $(KERNELDLL).manifest
+	$(FIXMANIFEST) $(KERNELDLL).manifest
 	$(MANIFEST) -manifest $(KERNELDLL).manifest \
 		    -outputresource:$(KERNELDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(SEARCHRC): $(SEARCHHDR) $(SEARCHSRC)
+$(SEARCHRC):
 	$(RCGEN) $(SEARCHDLL) $(SEARCHHDR) $(SEARCHSRC) > $@
 endif
 $(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(SEARCHRES) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) $(SEARCHRES) \
 		@DLLPATH@ @LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS) 
-	perl $(top_srcdir)/misc/fixmanifest.perl $(SEARCHDLL).manifest
+	$(FIXMANIFEST) $(SEARCHDLL).manifest
 	$(MANIFEST) -manifest $(SEARCHDLL).manifest \
 		    -outputresource:$(SEARCHDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(INTRC): $(INTHDR) $(INTSRC)
+$(INTRC):
 	$(RCGEN) $(INTDLL) $(INTHDR) $(INTSRC) > $@
 endif
 $(INTDLL) $(INTLIB): $(INTOBJ) $(INTRES) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(INTOBJ) $(INTRES) \
 		@DLLPATH@ @LINKOUTPUT@$(INTDLL) $(GLDFLAGS) 
-	perl $(top_srcdir)/misc/fixmanifest.perl $(INTDLL).manifest
+	$(FIXMANIFEST) $(INTDLL).manifest
 	$(MANIFEST) -manifest $(INTDLL).manifest \
 		    -outputresource:$(INTDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(SETRC): $(SETHDR) $(SETSRC)
+$(SETRC):
 	$(RCGEN) $(SETDLL) $(SETHDR) $(SETSRC) > $@
 endif
 $(SETDLL) $(SETLIB): $(SETOBJ) $(SETRES) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETRES) \
 		@DLLPATH@ @LINKOUTPUT@$(SETDLL) $(GLDFLAGS) 
-	perl $(top_srcdir)/misc/fixmanifest.perl $(SETDLL).manifest
+	$(FIXMANIFEST) $(SETDLL).manifest
 	$(MANIFEST) -manifest $(SETDLL).manifest \
 		    -outputresource:$(SETDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(MMRC): $(MMHDR) $(MMSRC)
+$(MMRC):
 	$(RCGEN) $(MMDLL) $(MMHDR) $(MMSRC) > $@
 endif
 $(MMDLL) $(MMLIB): $(MMOBJ) $(MMRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMRES) \
 		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $(MMDLL).manifest
+	$(FIXMANIFEST) $(MMDLL).manifest
 	$(MANIFEST) -manifest $(MMDLL).manifest \
 		    -outputresource:$(MMDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(GRAPHRC): $(GRAPHHDR) $(GRAPHSRC)
+$(GRAPHRC):
 	$(RCGEN) $(GRAPHDLL) $(GRAPHHDR) $(GRAPHSRC) > $@
 endif
 $(GRAPHDLL) $(GRAPHLIB): $(GRAPHOBJ) $(GRAPHRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) $(GRAPHRES) \
 		@DLLPATH@ @LINKOUTPUT@$(GRAPHDLL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $(GRAPHDLL).manifest
+	$(FIXMANIFEST) $(GRAPHDLL).manifest
 	$(MANIFEST) -manifest $(GRAPHDLL).manifest \
 		    -outputresource:$(GRAPHDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(SCHEDULINGRC): $(SCHEDULINGHDR) $(SCHEDULINGSRC)
+$(SCHEDULINGRC):
 	$(RCGEN) $(SCHEDULINGDLL) $(SCHEDULINGHDR) $(SCHEDULINGSRC) > $@
 endif
 $(SCHEDULINGDLL) $(SCHEDULINGLIB): $(SCHEDULINGOBJ) $(SCHEDULINGRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) $(SCHEDULINGRES) \
 		@DLLPATH@ @LINKOUTPUT@$(SCHEDULINGDLL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $(SCHEDULINGDLL).manifest
+	$(FIXMANIFEST) $(SCHEDULINGDLL).manifest
 	$(MANIFEST) -manifest $(SCHEDULINGDLL).manifest \
 		    -outputresource:$(SCHEDULINGDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(DRIVERRC): $(DRIVERHDR) $(DRIVERSRC)
+$(DRIVERRC):
 	$(RCGEN) $(DRIVERDLL) $(DRIVERHDR) $(DRIVERSRC) > $@
 endif
 $(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(DRIVERRES) \
@@ -1453,33 +1454,30 @@ $(DRIVERDLL) $(DRIVERLIB): $(DRIVEROBJ) $(DRIVERRES) \
 	$(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL)
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) $(DRIVERRES) \
 		@DLLPATH@ @LINKOUTPUT@$(DRIVERDLL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $(DRIVERDLL).manifest
+	$(FIXMANIFEST) $(DRIVERDLL).manifest
 	$(MANIFEST) -manifest $(DRIVERDLL).manifest \
 		    -outputresource:$(DRIVERDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(GISTRC): $(GISTHDR) $(GISTSRC)
+$(GISTRC):
 	$(RCGEN) $(GISTDLL) $(GISTHDR) $(GISTSRC) > $@
 endif
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(GISTRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTRES) $(GISTSONAME) \
-		@DLLPATH@ $(LINKQT) \
-		@LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $(GISTDLL).manifest
+	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTRES) \
+		@DLLPATH@ $(LINKQT) @LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
+	$(FIXMANIFEST) $(GISTDLL).manifest
 	$(MANIFEST) -manifest $(GISTDLL).manifest \
 		    -outputresource:$(GISTDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(FLATZINCRC): $(FLATZINCHDR) $(FLATZINCSRC)
+$(FLATZINCRC):
 	$(RCGEN) $(FLATZINCDLL) $(FLATZINCHDR) $(FLATZINCSRC) > $@
 endif
 $(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(FLATZINCRES) \
 	$(SUPPORTDLL) $(KERNELDLL) \
 	$(SEARCHDLL) $(INTDLL) $(SETDLL) $(GISTDLL)
-	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCRES) $(FLATZINCSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
-		$(LINKSET) $(LINKMM) $(LINKSCHEDULING) $(LINKGIST) $(LINKDRIVER) $(LINKQT) \
-		@LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $(FLATZINCDLL).manifest
+	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCRES) \
+		@DLLPATH@ $(LINKQT) @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
+	$(FIXMANIFEST) $(FLATZINCDLL).manifest
 	$(MANIFEST) -manifest $(FLATZINCDLL).manifest \
 		    -outputresource:$(FLATZINCDLL)\;2
 endif
@@ -1557,27 +1555,27 @@ endif
 
 .PRECIOUS: examples/%$(OBJSUFFIX)
 ifeq "@enable_resource@" "yes"
-.PRECIOUS: examples/%.res examples/%.rc
-examples/%$(EXESUFFIX).rc: examples/%.cpp
+.PRECIOUS: examples/%$(EXESUFFIX).rc examples/%$(EXESUFFIX).res
+examples/%$(EXESUFFIX).rc:
 	$(RCGEN) $(@:%.rc=%) $< > $@
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) examples/%$(EXESUFFIX).res \
 	$(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $@.res \
 		$(DLLPATH) $(CXXFLAGS) \
 		$(LINKALL) $(LINKQT) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
+	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 else
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(LINKQT) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
+	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 endif
 
 ifeq "@enable_resource@" "yes"
 TESTRES = $(TESTEXE).res
-$(TESTEXE).rc: $(TESTSRC) $(TESTHDR)
+$(TESTEXE).rc:
 	$(RCGEN) $(TESTEXE) $(TESTSRC) $(TESTHDR) > $@
 else
 TESTRES =
@@ -1585,7 +1583,7 @@ endif
 $(TESTEXE): $(TESTOBJ) $(TESTRES) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(TESTRES) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
+	$(FIXMANIFEST) $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 .PHONY: flatzinc
@@ -1597,7 +1595,7 @@ endif
 
 ifeq "@enable_resource@" "yes"
 FLATZINCEXERES = $(FLATZINCEXE).res
-$(FLATZINCEXE).rc: $(FLATZINCEXESRC)
+$(FLATZINCEXE).rc:
 	$(RCGEN) $(FLATZINCEXE) $(FLATZINCEXESRC) > $@
 else
 FLATZINCEXERES =
@@ -1606,7 +1604,7 @@ $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(FLATZINCEXERES) \
 	$(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
-	perl $(top_srcdir)/misc/fixmanifest.perl $@.manifest $(DLLSUFFIX)
+	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
 

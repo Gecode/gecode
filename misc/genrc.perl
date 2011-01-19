@@ -53,19 +53,21 @@ $i = 0;
 # Includes Gecode version and more
 $dllsuffix = $ARGV[$i++];
 
-if ($dllsuffix =~ /-([0-9]+)-([0-9]+)-([0-9]+)-([rd])-(x[0-9]+)\.dll/) {
+if ($dllsuffix =~ /-([0-9]+)-([0-9]+)-([0-9]+)-([rd])-x[0-9]+\.dll/) {
   $revx = $1; $revy = $2; $revz = $3;
   $mode = $4;
-  $arch = $5;
 }
+
+# Directory where source files reside
+$dir = $ARGV[$i++];
 
 # File for which a resource template is to be generated
 $file = $ARGV[$i++];
 
-# Source files follows from argument position 3 onwards
+# Source files follows from folloeing argument positions
 $n_srcfiles = 0;
 while ($arg = $ARGV[$i]) {
-  $srcfile[$n_srcfiles] = $arg;
+  $srcfile[$n_srcfiles] = "$dir/$arg";
   $n_srcfiles++; $i++;
 }
 
@@ -74,7 +76,7 @@ print <<EOF
  *  CAUTION:
  *    This file has been automatically generated. Do not edit,
  *    edit the following files instead:
- *     - misc/genrc.perl
+ *     - $dir/misc/genrc.perl
 EOF
 ;
 
@@ -147,11 +149,12 @@ $copyright =~ s|^, ||o;
 if ($file =~ /Gecode(.*)-([0-9]+-[0-9]+-[0-9]+-[rd]-.+)\.dll$/) {
   $filename    = $file;
   $filetype    = "VFT_DLL";
+  $icon        = 0;
   $basename    = "Gecode$1-$2";
   $description = "Gecode " . $dlldescription{$1};
-
 } else {
   $filetype    = "VFT_APP";
+  $icon        = 1;
   if ($file =~ /fz\.exe/) {
     $filename    = "fz.exe";
     $basename    = "fz";
@@ -188,6 +191,15 @@ if ($mode =~ /r/) {
 print <<EOF
 
 #include <windows.h>
+
+EOF
+;
+
+if ($icon) {
+  print "0 ICON \"misc/gecode-logo.ico\"\n";
+}
+
+print <<EOF
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION    	$revx,$revy,$revz,0
