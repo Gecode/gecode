@@ -72,12 +72,24 @@ Date:
 [DESCRIPTION]
 Maybe we add something this time...
 
+
+
+[ENTRY]
+Module:	minimodel
+What:	bug
+Rank:	minor
+Thanks: Alexander Kleff
+[DESCRIPTION]
+Do not inline construction of linear, Boolean, and set
+expressions to avoid cross-DLL allocation/deallocation issues on
+Windows.
+
 [ENTRY]
 Module:	other
-What:	change
-Rank:	minor
+What:	new
+Rank:	major
 [DESCRIPTION]
-Embed information into Gecode DLLs and EXEs on Windows.
+Embed resource information into Gecode DLLs and EXEs on Windows.
 
 [ENTRY]
 Module: flatzinc
@@ -103,6 +115,7 @@ Rank: 	major
 Fixed the definitions of global_cardinality to work with MiniZinc 1.2 and
 newer, and added corresponding definitions of global_cardinality_closed and
 global_cardinality_low_up_closed.
+
 
 [RELEASE]
 Version: 3.4.2

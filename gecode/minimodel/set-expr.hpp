@@ -63,66 +63,9 @@ namespace Gecode {
     n->use++;
   }
 
-  forceinline
-  SetExpr::SetExpr(const SetVar& x) : n(new Node) {
-    n->same = 1;
-    n->t    = NT_VAR;
-    n->l    = NULL;
-    n->r    = NULL;
-    n->x    = x;
-  }
-
-  forceinline
-  SetExpr::SetExpr(const IntSet& s) : n(new Node) {
-    n->same = 1;
-    n->t    = NT_CONST;
-    n->l    = NULL;
-    n->r    = NULL;
-    n->s    = s;
-  }
-
-  forceinline
-  SetExpr::SetExpr(const LinExpr& e) : n(new Node) {
-    n->same = 1;
-    n->t    = NT_LEXP;
-    n->l    = NULL;
-    n->r    = NULL;
-    n->e    = e;
-  }
-  
   forceinline bool
   SetExpr::same(NodeType t0, NodeType t1) {
     return (t0==t1) || (t1==NT_VAR) || (t1==NT_CONST) || (t1==NT_LEXP);
-  }
-
-  forceinline
-  SetExpr::SetExpr(const SetExpr& l, NodeType t, const SetExpr& r)
-    : n(new Node) {
-    int ls = same(t,l.n->t) ? l.n->same : 1;
-    int rs = same(t,r.n->t) ? r.n->same : 1;
-    n->same = ls+rs;
-    n->t    = t;
-    n->l    = l.n;
-    n->l->use++;
-    n->r    = r.n;
-    n->r->use++;
-  }
-
-  forceinline
-  SetExpr::SetExpr(const SetExpr& l, NodeType t) {
-    (void) t;
-    assert(t == NT_CMPL);
-    if (l.n->t == NT_CMPL) {
-      n = l.n->l;
-      n->use++;
-    } else {
-      n = new Node;
-      n->same = 1;
-      n->t    = NT_CMPL;
-      n->l    = l.n;
-      n->l->use++;
-      n->r    = NULL;
-    }
   }
 
   inline SetVar

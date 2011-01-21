@@ -58,6 +58,86 @@ namespace Gecode {
   }
 
 
+  BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
+    n->same = 1;
+    n->t    = NT_VAR;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->x    = x;
+    n->m    = NULL;
+  }
+
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
+    : n(new Node) {
+    int ls = ((l.n->t == t) || (l.n->t == NT_VAR)) ? l.n->same : 1;
+    int rs = ((r.n->t == t) || (r.n->t == NT_VAR)) ? r.n->same : 1;
+    n->same = ls+rs;
+    n->t    = t;
+    n->l    = l.n;
+    n->l->use++;
+    n->r    = r.n;
+    n->r->use++;
+    n->m    = NULL;
+  }
+
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) {
+    (void) t;
+    assert(t == NT_NOT);
+    if (l.n->t == NT_NOT) {
+      n = l.n->l;
+      n->use++;
+    } else {
+      n = new Node;
+      n->same = 1;
+      n->t    = NT_NOT;
+      n->l    = l.n;
+      n->l->use++;
+      n->r    = NULL;
+      n->m    = NULL;
+    }
+  }
+
+  BoolExpr::BoolExpr(const LinRel& rl)
+    : n(new Node) {
+    n->same = 1;
+    n->t    = NT_RLIN;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->rl   = rl;
+    n->m    = NULL;
+  }
+
+#ifdef GECODE_HAS_SET_VARS
+  BoolExpr::BoolExpr(const SetRel& rs)
+    : n(new Node) {
+    n->same = 1;
+    n->t    = NT_RSET;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->rs   = rs;
+    n->m    = NULL;
+  }
+
+  BoolExpr::BoolExpr(const SetCmpRel& rs)
+    : n(new Node) {
+    n->same = 1;
+    n->t    = NT_RSET;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->rs   = rs;
+    n->m    = NULL;
+  }
+#endif
+
+  BoolExpr::BoolExpr(BoolExpr::MiscExpr* m)
+    : n(new Node) {
+    n->same = 1;
+    n->t    = NT_MISC;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->m    = m;
+  }
+
   const BoolExpr&
   BoolExpr::operator =(const BoolExpr& e) {
     if (this != &e) {

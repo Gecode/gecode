@@ -199,30 +199,42 @@ namespace Gecode {
     Node* n;
   public:
     /// Default constructor
+    GECODE_MINIMODEL_EXPORT
     LinExpr(void);
     /// Create expression for constant \a c
+    GECODE_MINIMODEL_EXPORT
     LinExpr(double c);
     /// Create expression
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const IntVar& x, int a=1);
     /// Create expression
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const BoolVar& x, int a=1);
     /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
     explicit LinExpr(const IntVarArgs& x);
     /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const IntArgs& a, const IntVarArgs& x);
     /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
     explicit LinExpr(const BoolVarArgs& x);
     /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const IntArgs& a, const BoolVarArgs& x);
     /// Copy constructor
     LinExpr(const LinExpr& e);
     /// Create expression for type and subexpressions
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1);
     /// Create expression for type and subexpression
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const LinExpr& e0, NodeType t, int c);
     /// Create expression for multiplication
+    GECODE_MINIMODEL_EXPORT
     LinExpr(int a, const LinExpr& e);
     /// Create non-linear expression
+    GECODE_MINIMODEL_EXPORT
     explicit LinExpr(NonLinExpr* e);
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
@@ -798,18 +810,24 @@ namespace Gecode {
     Node* n;
   public:
     /// Default constructor
+    GECODE_MINIMODEL_EXPORT
     SetExpr(void);
     /// Copy constructor
     SetExpr(const SetExpr& e);
     /// Construct expression for type and subexpresssions
+    GECODE_MINIMODEL_EXPORT
     SetExpr(const SetExpr& l, NodeType t, const SetExpr& r);
     /// Construct expression for variable
+    GECODE_MINIMODEL_EXPORT
     SetExpr(const SetVar& x);
     /// Construct expression for integer variable
+    GECODE_MINIMODEL_EXPORT
     explicit SetExpr(const LinExpr& x);
     /// Construct expression for constant
+    GECODE_MINIMODEL_EXPORT
     SetExpr(const IntSet& s);
     /// Construct expression for negation
+    GECODE_MINIMODEL_EXPORT
     SetExpr(const SetExpr& e, NodeType t);
     /// Post propagators for expression
     SetVar post(Home home) const;
@@ -1053,20 +1071,27 @@ namespace Gecode {
     /// Copy constructor
     BoolExpr(const BoolExpr& e);
     /// Construct expression for type and subexpresssions
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r);
     /// Construct expression for variable
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolVar& x);
     /// Construct expression for negation
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& e, NodeType t);
     /// Construct expression for reified linear relation
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const LinRel& rl);
 #ifdef GECODE_HAS_SET_VARS
     /// Construct expression for reified set relation
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const SetRel& rs);
     /// Construct expression for reified set relation
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const SetCmpRel& rs);
 #endif
     /// Construct expression for miscellaneous Boolean expression
+    GECODE_MINIMODEL_EXPORT
     explicit BoolExpr(MiscExpr* m);
     /// Post propagators for expression
     BoolVar expr(Home home, IntConLevel icl) const;
@@ -1081,14 +1106,10 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskModelMiniModelBool Boolean expressions and relations
+   * \defgroup TaskModelMiniModelBool Boolean expressions
    *
    * Boolean expressions can be freely composed of variables with
    * the usual connectives and reified linear expressions.
-   *
-   * Boolean relations are obtained from Boolean expressions with
-   * functions \a tt (stating that the expression must be true)
-   * and \a ff (stating that the expression must be false).
    *
    * \ingroup TaskModelMiniModel
    */
