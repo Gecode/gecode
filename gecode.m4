@@ -746,13 +746,14 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     dnl flags for creating optimized dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD])
     dnl linker flags
-    GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF"
+    GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF -MANIFEST"
   else
     dnl compiler flags for a debug build
     AC_GECODE_ADD_TO_COMPILERFLAGS([-MDd -Zi -wd4355])  
 
     dnl flags for creating debug dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd])
+    GLDFLAGS="-link -MANIFEST"
   fi
 
   AC_SUBST(sharedlibdir, "${bindir}")
@@ -761,25 +762,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     AC_MSG_ERROR([Static linking not supported for Windows/cl.])
   fi
 
-  AC_CHECK_PROG(MANIFEST, mt.exe, [found])
-  AC_MSG_CHECKING(whether to use manifest tool)
-  AC_COMPILE_IFELSE([#if _MSC_VER >= 1600
-                     # error Found msvc > 1600
-                     #endif],
-    [
-      if test "${MANIFEST}x" = "x"; then
-        AC_MSG_RESULT(no)
-        AC_SUBST(MANIFEST, "@true")
-      else
-        AC_MSG_RESULT(yes)
-        AC_SUBST(MANIFEST, ["mt.exe -nologo"])
-      fi
-    ],
-    [
-      AC_MSG_RESULT(no)
-      AC_SUBST(MANIFEST, "@true")
-    ])
-
+  AC_CHECK_PROG(MANIFEST, mt.exe, mt.exe)
 
   AC_SUBST(DLLPATH, "")
 
@@ -1238,7 +1221,7 @@ AC_DEFUN([AC_GECODE_RESOURCE],[
       AC_SUBST(enable_resource, no)
     else
       AC_MSG_RESULT(yes)
-      AC_SUBST(RESCOMP, ["rc.exe -n"])
+      AC_SUBST(RESCOMP, ["rc.exe"])
       AC_SUBST(enable_resource, yes)
     fi
   else

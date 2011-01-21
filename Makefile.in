@@ -120,9 +120,9 @@ export SOSUFFIX         = @DLL_ARCH@@USERSUFFIX@@SOSUFFIX@
 #
 export RMF		= rm -rf
 export MV		= mv
-export MANIFEST		= @MANIFEST@
+export MANIFEST		= @MANIFEST@ -nologo
 export FIXMANIFEST	= perl $(top_srcdir)/misc/fixmanifest.perl $(DLLSUFFIX)
-export RESCOMP		= @RESCOMP@ -i$(top_srcdir)
+export RESCOMP		= @RESCOMP@ -n -i$(top_srcdir)
 export RCGEN		= perl $(top_srcdir)/misc/genrc.perl $(DLLSUFFIX) $(top_srcdir)
 
 ifeq "@need_soname@" "yes"
