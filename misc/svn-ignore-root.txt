@@ -18,6 +18,8 @@
 *.manifest
 *.so
 *.dylib
+*.res
+*.rc
 moc_*.cpp
 Makefile
 Makefile.dep

@@ -13,4 +13,6 @@
 *.sln
 *.exe
 *.manifest
+*.rc
+*.res
 moc_*.cpp
