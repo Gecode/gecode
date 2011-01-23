@@ -746,14 +746,14 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     dnl flags for creating optimized dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD])
     dnl linker flags
-    GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF -MANIFEST"
+    GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF -MANIFEST -INCREMENTAL:NO"
   else
     dnl compiler flags for a debug build
     AC_GECODE_ADD_TO_COMPILERFLAGS([-MDd -Zi -wd4355])  
 
     dnl flags for creating debug dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd])
-    GLDFLAGS="-link -MANIFEST"
+    GLDFLAGS="-link -MANIFEST -INCREMENTAL:NO"
   fi
 
   AC_SUBST(sharedlibdir, "${bindir}")

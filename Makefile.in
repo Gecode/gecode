@@ -104,7 +104,6 @@ export RESSUFFIX	= @DLL_ARCH@@USERSUFFIX@.@DLLEXT@.res
 export LIBSUFFIX	= @DLL_ARCH@@USERSUFFIX@.@LIBEXT@
 export PDBSUFFIX	= @DLL_ARCH@@USERSUFFIX@.pdb
 export EXPSUFFIX	= @DLL_ARCH@@USERSUFFIX@.exp
-export ILKSUFFIX	= @DLL_ARCH@@USERSUFFIX@.ilk
 export STATICLIBSUFFIX	= .@STATICLIBEXT@
 export EXESUFFIX	= @EXEEXT@
 
@@ -1899,33 +1898,34 @@ distdoc: doc
 #
 
 clean:
-	$(RMF) *.stackdump core gmon.out vc70.pdb vc80.pdb vc90.pdb vc100.pdb
-	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh license.hh header.html
+	$(RMF) *.stackdump core gmon.out \
+		vc70.pdb vc80.pdb vc90.pdb vc100.pdb
+	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh \
+		 changelog.hh doxygen.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(TESTOBJ) $(TESTSBJ) $(TESTOBJ:%$(OBJSUFFIX)=%.pdb)
 	$(RMF) $(GISTMOCSRC)
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(MANIFESTSUFFIX)) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%$(RCSUFFIX)) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%$(RESSUFFIX)) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%$(EXPSUFFIX))
+	$(RMF) $(EXAMPLEEXE:%.exe=%.pdb) $(EXAMPLEEXE:%=%.manifest) \
+		$(EXAMPLEEXE:%=%.rc) $(EXAMPLEEXE:%=%.res)
+	$(RMF) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%=%.manifest) \
+		$(TESTEXE:%=%.rc) $(TESTEXE:%=%.res)
+	$(RMF) $(FLATZINCEXE:%.exe=%.pdb) $(FLATZINCEXE:%=%.manifest) \
+		$(FLATZINCEXE:%=%.rc) $(FLATZINCEXE:%=%.res)
 
 veryclean: clean
 	$(RMF) $(LIBTARGETS) \
-		$(LIBTARGETS:%$(DLLSUFFIX)=%$(MANIFESTSUFFIX)) \
-		$(LIBTARGETS:%$(DLLSUFFIX)=%$(RCSUFFIX)) \
-		$(LIBTARGETS:%$(DLLSUFFIX)=%$(RESSUFFIX)) \
-		$(LIBTARGETS:%$(DLLSUFFIX)=%$(EXPSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(LIBSUFFIX)) \
-		$(LIBTARGETS:%$(DLLSUFFIX)=%$(ILKSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(PDBSUFFIX))
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) \
 		$(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
-	$(RMF) $(EXAMPLEEXE) $(EXAMPLEEXE:%.exe=%.pdb) \
-		$(EXAMPLEEXE:%.exe=%.ilk) $(EXAMPLEEXE:%=%.manifest) \
-		$(EXAMPLEEXE:%=%.rc) $(EXAMPLEEXE:%=%.res)
-	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) \
-		$(TESTEXE:%.exe=%.ilk) $(TESTEXE:%=%.manifest) \
-		$(TESTEXE:%=%.rc) $(TESTEXE:%=%.res)
-	$(RMF) $(FLATZINCEXE) $(FLATZINCEXE:%.exe=%.pdb) \
-		$(FLATZINCEXE:%.exe=%.ilk) $(FLATZINCEXE:%=%.manifest) \
-		$(FLATZINCEXE:%=%.rc) $(FLATZINCEXE:%=%.res)
-	$(RMF) doc GecodeReference.chm ChangeLog changelog.hh doxygen.hh
+	$(RMF) $(EXAMPLEEXE)
+	$(RMF) $(TESTEXE)
+	$(RMF) $(FLATZINCEXE)
+	$(RMF) doc GecodeReference.chm ChangeLog
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
 
