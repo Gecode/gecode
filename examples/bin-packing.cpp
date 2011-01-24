@@ -40,6 +40,8 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+#include <algorithm>
+
 using namespace Gecode;
 
 // Instance data
@@ -137,17 +139,15 @@ namespace {
       
       int u=0;
       for (int i=0; i<n; i++) {
-        // Pack item i if it fits in a bin between 0...u-1
-        for (int j=0; j<u; j++)
-          if (f[j] >= size(i)) {
-            f[j] -= size(i); goto packed;
-          }
-        // Pack in new bin
-        f[u++] -= size(i);
-      packed: ;
+        // Skip bins with insufficient free space
+        int j=0;
+        while (f[j] < size(i))
+          j++;
+        f[j] -= size(i);
+        u = std::max(u,j);
       }
       delete [] f;
-      return u;
+      return u+1;
     }
   public:
     /// Initialize
