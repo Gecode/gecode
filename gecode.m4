@@ -38,7 +38,7 @@ dnl
 AC_DEFUN([AC_GECODE_GET_OS],
     [AC_ARG_WITH([host-os],
            AC_HELP_STRING([--with-host-os],
-       [Override operating system test. Valid values are Linux, Darwin, and Windows.]))
+       [Override operating system test. Valid values are Linux, Darwin, FreeBSD, and Windows.]))
      AC_MSG_CHECKING([for the host operating system])
          if test "${with_host_os:-no}" = "no"; then
        guess_host_os=$(uname -s 2>/dev/null)
@@ -47,7 +47,7 @@ AC_DEFUN([AC_GECODE_GET_OS],
         fi
      dnl Try to find out operating system
      case ${guess_host_os} in
-       GNU/kFreeBSD|*inux*)
+       GNU/kFreeBSD|*inux*|FreeBSD)
        host_os=linux
        AC_MSG_RESULT([Linux])
        ;;
