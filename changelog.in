@@ -81,6 +81,15 @@ Thanks: Peter Penchev
 Gecode now compiles on FreeBSD.
 
 [ENTRY]
+Module:	kernel
+What:	new
+Rank:	major
+Thanks: Gregory Crosswhite
+[DESCRIPTION]
+Added STL compatible iteration support for arrays (variable
+arrays, argument arrays, and view arrays).
+
+[ENTRY]
 Module:	minimodel
 What:	bug
 Rank:	minor

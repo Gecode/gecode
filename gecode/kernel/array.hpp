@@ -4,9 +4,13 @@
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Gregory Crosswhite <gcross@phys.washington.edu>
+ *
  *  Copyright:
  *     Christian Schulte, 2003
  *     Guido Tack, 2004
+ *     Gregory Crosswhite, 2011
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,6 +43,7 @@
 
 #include <cstdarg>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 
 namespace Gecode {
@@ -84,6 +89,29 @@ namespace Gecode {
     /// Array of variables
     Var* x;
   public:
+    /// \name Associated types
+    //@{
+    /// Type of the variable stored in this array
+    typedef Var value_type;
+    /// Type of a reference to the value type
+    typedef Var& reference;
+    /// Type of a constant reference to the value type
+    typedef const Var& const_reference;
+    /// Type of a pointer to the value type
+    typedef Var* pointer;
+    /// Type of a read-only pointer to the value type
+    typedef const Var* const_pointer;
+    /// Type of the iterator used to iterate through this array's elements
+    typedef Var* iterator;
+    /// Type of the iterator used to iterate read-only through this array's elements
+    typedef const Var* const_iterator;
+    /// Type of the iterator used to iterate backwards through this array's elements
+    typedef std::reverse_iterator<Var*> reverse_iterator;
+    /// Type of the iterator used to iterate backwards and read-only through this array's elements
+    typedef std::reverse_iterator<const Var*> const_reverse_iterator;
+    //@}
+
+    //@{
     /// \name Constructors and initialization
     //@{
     /// Default constructor (array of size 0)
@@ -117,6 +145,26 @@ namespace Gecode {
      */
     typename ArrayTraits<VarArgArray<Var> >::ArgsType
     slice(int start, int inc=1, int n=-1);
+    //@}
+
+    /// \name Array iteration
+    //@{
+    /// Return an iterator at the beginning of the array
+    iterator begin(void);
+    /// Return a read-only iterator at the beginning of the array
+    const_iterator begin(void) const;
+    /// Return an iterator past the end of the array
+    iterator end(void);
+    /// Return a read-only iterator past the end of the array
+    const_iterator end(void) const;
+    /// Return a reverse iterator at the end of the array
+    reverse_iterator rbegin(void);
+    /// Return a reverse and read-only iterator at the end of the array
+    const_reverse_iterator rbegin(void) const;
+    /// Return a reverse iterator past the beginning of the array
+    reverse_iterator rend(void);
+    /// Return a reverse and read-only iterator past the beginning of the array
+    const_reverse_iterator rend(void) const;
     //@}
 
     /// Test if all variables are assigned
@@ -197,6 +245,28 @@ namespace Gecode {
     /// Sort \a n views \a x according to \a ViewLess
     static void sort(View* x, int n);
   public:
+    /// \name Associated types
+    //@{
+    /// Type of the view stored in this array
+    typedef View value_type;
+    /// Type of a reference to the value type
+    typedef View& reference;
+    /// Type of a constant reference to the value type
+    typedef const View& const_reference;
+    /// Type of a pointer to the value type
+    typedef View* pointer;
+    /// Type of a read-only pointer to the value type
+    typedef const View* const_pointer;
+    /// Type of the iterator used to iterate through this array's elements
+    typedef View* iterator;
+    /// Type of the iterator used to iterate read-only through this array's elements
+    typedef const View* const_iterator;
+    /// Type of the iterator used to iterate backwards through this array's elements
+    typedef std::reverse_iterator<View*> reverse_iterator;
+    /// Type of the iterator used to iterate backwards and read-only through this array's elements
+    typedef std::reverse_iterator<const View*> const_reverse_iterator;
+    //@}
+
     /// \name Constructors and initialization
     //@{
     /// Default constructor (array of size 0)
@@ -243,6 +313,26 @@ namespace Gecode {
     View& operator [](int i);
     /// Return view at position \a i
     const View& operator [](int i) const;
+    //@}
+
+    /// \name Array iteration
+    //@{
+    /// Return an iterator at the beginning of the array
+    iterator begin(void);
+    /// Return a read-only iterator at the beginning of the array
+    const_iterator begin(void) const;
+    /// Return an iterator past the end of the array
+    iterator end(void);
+    /// Return a read-only iterator past the end of the array
+    const_iterator end(void) const;
+    /// Return a reverse iterator at the end of the array
+    reverse_iterator rbegin(void);
+    /// Return a reverse and read-only iterator at the end of the array
+    const_reverse_iterator rbegin(void) const;
+    /// Return a reverse iterator past the beginning of the array
+    reverse_iterator rend(void);
+    /// Return a reverse and read-only iterator past the beginning of the array
+    const_reverse_iterator rend(void) const;
     //@}
 
     /// \name Dependencies
@@ -441,6 +531,28 @@ namespace Gecode {
     template<class A>
     A slice(int start, int inc=1, int n=-1);
   public:
+    /// \name Associated types
+    //@{
+    /// Type of the view stored in this array
+    typedef T value_type;
+    /// Type of a reference to the value type
+    typedef T& reference;
+    /// Type of a constant reference to the value type
+    typedef const T& const_reference;
+    /// Type of a pointer to the value type
+    typedef T* pointer;
+    /// Type of a read-only pointer to the value type
+    typedef const T* const_pointer;
+    /// Type of the iterator used to iterate through this array's elements
+    typedef T* iterator;
+    /// Type of the iterator used to iterate read-only through this array's elements
+    typedef const T* const_iterator;
+    /// Type of the iterator used to iterate backwards through this array's elements
+    typedef std::reverse_iterator<T*> reverse_iterator;
+    /// Type of the iterator used to iterate backwards and read-only through this array's elements
+    typedef std::reverse_iterator<const T*> const_reverse_iterator;
+    //@}
+
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
@@ -465,6 +577,26 @@ namespace Gecode {
     T& operator [](int i);
     /// Return element at position \a i
     const T& operator [](int i) const;
+    //@}
+
+    /// \name Array iteration
+    //@{
+    /// Return an iterator at the beginning of the array
+    iterator begin(void);
+    /// Return a read-only iterator at the beginning of the array
+    const_iterator begin(void) const;
+    /// Return an iterator past the end of the array
+    iterator end(void);
+    /// Return a read-only iterator past the end of the array
+    const_iterator end(void) const;
+    /// Return a reverse iterator at the end of the array
+    reverse_iterator rbegin(void);
+    /// Return a reverse and read-only iterator at the end of the array
+    const_reverse_iterator rbegin(void) const;
+    /// Return a reverse iterator past the beginning of the array
+    reverse_iterator rend(void);
+    /// Return a reverse and read-only iterator past the beginning of the array
+    const_reverse_iterator rend(void) const;
     //@}
 
     /// \name Destructor
@@ -848,6 +980,54 @@ namespace Gecode {
   }
 
   template<class Var>
+  forceinline typename VarArray<Var>::iterator
+  VarArray<Var>::begin(void) {
+    return x;
+  }
+
+  template<class Var>
+  forceinline typename VarArray<Var>::const_iterator
+  VarArray<Var>::begin(void) const {
+    return x;
+  }
+
+  template<class Var>
+  forceinline typename VarArray<Var>::iterator
+  VarArray<Var>::end(void) {
+    return x+n;
+  }
+
+  template<class Var>
+  forceinline typename VarArray<Var>::const_iterator
+  VarArray<Var>::end(void) const {
+    return x+n;
+  }
+
+  template<class Var>
+  forceinline typename VarArray<Var>::reverse_iterator
+  VarArray<Var>::rbegin(void) {
+    return reverse_iterator(x+n);
+  }
+
+  template<class Var>
+  forceinline typename VarArray<Var>::const_reverse_iterator
+  VarArray<Var>::rbegin(void) const {
+    return const_reverse_iterator(x+n);
+  }
+
+  template<class Var>
+  forceinline typename VarArray<Var>::reverse_iterator
+  VarArray<Var>::rend(void) {
+    return reverse_iterator(x);
+  }
+
+  template<class Var>
+  forceinline typename VarArray<Var>::const_reverse_iterator
+  VarArray<Var>::rend(void) const {
+    return const_reverse_iterator(x);
+  }
+
+  template<class Var>
   forceinline void
   VarArray<Var>::update(Space& home, bool share, VarArray<Var>& a) {
     n = a.n;
@@ -997,6 +1177,54 @@ namespace Gecode {
   ViewArray<View>::operator [](int i) const {
     assert((i >= 0) && (i < size()));
     return x[i];
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::iterator
+  ViewArray<View>::begin(void) {
+    return x;
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::const_iterator
+  ViewArray<View>::begin(void) const {
+    return x;
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::iterator
+  ViewArray<View>::end(void) {
+    return x+n;
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::const_iterator
+  ViewArray<View>::end(void) const {
+    return x+n;
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::reverse_iterator
+  ViewArray<View>::rbegin(void) {
+    return reverse_iterator(x+n);
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::const_reverse_iterator
+  ViewArray<View>::rbegin(void) const {
+    return const_reverse_iterator(x+n);
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::reverse_iterator
+  ViewArray<View>::rend(void) {
+    return reverse_iterator(x);
+  }
+
+  template<class View>
+  forceinline typename ViewArray<View>::const_reverse_iterator
+  ViewArray<View>::rend(void) const {
+    return const_reverse_iterator(x);
   }
 
   template<class View>
@@ -1382,6 +1610,54 @@ namespace Gecode {
   ArgArrayBase<T>::operator [](int i) const {
     assert((i>=0) && (i < n));
     return a[i];
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::iterator
+  ArgArrayBase<T>::begin(void) {
+    return a;
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::const_iterator
+  ArgArrayBase<T>::begin(void) const {
+    return a;
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::iterator
+  ArgArrayBase<T>::end(void) {
+    return a+n;
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::const_iterator
+  ArgArrayBase<T>::end(void) const {
+    return a+n;
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::reverse_iterator
+  ArgArrayBase<T>::rbegin(void) {
+    return reverse_iterator(a+n);
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::const_reverse_iterator
+  ArgArrayBase<T>::rbegin(void) const {
+    return const_reverse_iterator(a+n);
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::reverse_iterator
+  ArgArrayBase<T>::rend(void) {
+    return reverse_iterator(a);
+  }
+
+  template<class T>
+  forceinline typename ArgArrayBase<T>::const_reverse_iterator
+  ArgArrayBase<T>::rend(void) const {
+    return const_reverse_iterator(a);
   }
 
   template<class T> template<class A>
