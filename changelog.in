@@ -72,7 +72,13 @@ Date:
 [DESCRIPTION]
 Maybe we add something this time...
 
-
+[ENTRY]
+Module:	other
+What:	new
+Rank:	minor
+Thanks: Peter Penchev
+[DESCRIPTION]
+Gecode now compiles on FreeBSD.
 
 [ENTRY]
 Module:	minimodel
