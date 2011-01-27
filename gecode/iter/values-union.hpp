@@ -83,7 +83,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template<class I, class J>
   forceinline
-  Union<I,J>::Union(void) {}
+  Union<I,J>::Union(void) : v(0) {}
 
   template<class I, class J>
   forceinline void
