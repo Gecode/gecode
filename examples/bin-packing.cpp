@@ -189,24 +189,24 @@ namespace {
 class CDBF : public Brancher {
 protected:
   /// Views for the loads
-  ViewArray<Int::IntView> l;
+  ViewArray<Int::IntView> load;
   /// Views for the bins
-  ViewArray<Int::IntView> b;
+  ViewArray<Int::IntView> bin;
   /// Array of sizes (shared)
-  IntSharedArray s;
+  IntSharedArray size;
   /// Next view to branch on
-  mutable int start;
+  mutable int item;
   /// %Choice
   class Choice : public Gecode::Choice {
   public:
     /// Item
     int item;
-    /// Equivalent bins
+    /// Bins with same slack
     int* same;
-    /// Number of equivalent bins
+    /// Number of bins with same slack
     int n_same;
     /** Initialize choice for brancher \a b, alternatives \a a, 
-     *  item \a i and equivalent bins \a s.
+     *  item \a i and same bins \a s.
      */
     Choice(const Brancher& b, unsigned int a, int i, int* s, int n_s)
       : Gecode::Choice(b,a), item(i), 
@@ -224,46 +224,60 @@ protected:
     }
   };
  
+public:
   /// Construct brancher
-  CDBF(Home home, ViewArray<Int::IntView>& l0, ViewArray<Int::IntView>& b0,
-       IntSharedArray& s0) 
-    : Brancher(home), l(l0), b(b0), s(s0), start(0) {
+  CDBF(Home home, ViewArray<Int::IntView>& l, ViewArray<Int::IntView>& b,
+       IntSharedArray& s) 
+    : Brancher(home), load(l), bin(b), size(s), item(0) {
     home.notice(*this,AP_DISPOSE);
+  }
+  /// Brancher post function
+  static void post(Home home, ViewArray<Int::IntView>& l, 
+                              ViewArray<Int::IntView>& b,
+                              IntSharedArray& s) {
+    (void) new (home) CDBF(home, l, b, s);
   }
   /// Copy constructor
   CDBF(Space& home, bool share, CDBF& cdbf) 
-    : Brancher(home, share, cdbf), start(cdbf.start) {
-    l.update(home, share, cdbf.l);
-    b.update(home, share, cdbf.b);
-    s.update(home, share, cdbf.s);
+    : Brancher(home, share, cdbf), item(cdbf.item) {
+    load.update(home, share, cdbf.load);
+    bin.update(home, share, cdbf.bin);
+    size.update(home, share, cdbf.size);
   }
-public:
+  /// Copy brancher
+  virtual Actor* copy(Space& home, bool share) {
+    return new (home) CDBF(home, share, *this);
+  }
+  /// Delete brancher and return its size
+  virtual size_t dispose(Space& home) {
+    home.ignore(*this,AP_DISPOSE);
+    size.~IntSharedArray();
+    return sizeof(*this);
+  }
   /// Check status of brancher, return true if alternatives left
   virtual bool status(const Space&) const {
-    for (int i = start; i < b.size(); i++)
-      if (!b[i].assigned()) {
-        start = i; return true;
+    for (int i = item; i < bin.size(); i++)
+      if (!bin[i].assigned()) {
+        item = i; return true;
       }
     return false;
   }
   /// Return choice
   virtual Gecode::Choice* choice(Space& home) {
-    using namespace Int;
-    assert(!b[start].assigned());
+    assert(!bin[item].assigned());
 
-    int n = b.size();
-    int m = l.size();
+    int n = bin.size(), m = load.size();
 
     Region region(home);
 
-    // Size of required bins
-    int* s_r = region.alloc<int>(m);
+    // Free space in bins
+    int* free = region.alloc<int>(m);
 
     for (int j=m; j--; )
-      s_r[j] = 0;
+      free[j] = load[j].max();
     for (int i=n; i--; )
-      if (b[i].assigned())
-        s_r[b[i].val()] += s[i];
+      if (bin[i].assigned())
+        free[bin[i].val()] -= size[i];
 
     // Equivalent bins with same free space
     int* same = region.alloc<int>(m+1);
@@ -273,23 +287,21 @@ public:
     // Initialize such that failure is guaranteed (pack into bin -1)
     same[n_same++] = -1;
 
-    // Find a best-fit bin for item start
-    int d = INT_MAX;
-    for (ViewValues<IntView> j(b[start]); j(); ++j) 
-      if (s_r[j.val()] + s[start] <= l[j.val()].max()) {
+    // Find a best-fit bin for item
+    int slack = INT_MAX;
+    for (Int::ViewValues<Int::IntView> j(bin[item]); j(); ++j) 
+      if (size[item] <= free[j.val()]) {
         // Item still can fit into the bin
         n_possible++;
-        int d_j = l[j.val()].max() - s_r[j.val()] - s[start];
-        if (d_j < d) {
+        if (free[j.val()] - size[item] < slack) {
           // A new, better fit
-          d = d_j;
+          slack = free[j.val()] - size[item];
           same[0] = j.val(); n_same = 1;
-        } else if (d_j == d) {
+        } else if (free[j.val()] - size[item] == slack) {
           // An equivalent bin, remember it
           same[n_same++] = j.val();
         }
       }
-
     /* 
      * Domination rules: 
      *  - if the item fits the bin exactly, just assign
@@ -298,10 +310,10 @@ public:
      * Also catches failure: if no possible bin was found, commit
      * the item into bin -1.
      */
-    if ((d == 0) || (n_same == n_possible) || (d == INT_MAX))
-      return new Choice(*this, 1, start, same, 1);
+    if ((slack == 0) || (n_same == n_possible) || (slack == INT_MAX))
+      return new Choice(*this, 1, item, same, 1);
     else
-      return new Choice(*this, 2, start, same, n_same);
+      return new Choice(*this, 2, item, same, n_same);
   }
   /// Perform commit for choice \a _c and alternative \a a
   virtual ExecStatus commit(Space& home, const Gecode::Choice& _c, 
@@ -309,42 +321,32 @@ public:
     const Choice& c = static_cast<const Choice&>(_c);
     // This catches also the case that the choice has a single aternative only
     if (a == 0) {
-      GECODE_ME_CHECK(b[c.item].eq(home, c.same[0]));
+      GECODE_ME_CHECK(bin[c.item].eq(home, c.same[0]));
     } else {
       Iter::Values::Array same(c.same, c.n_same);
 
-      GECODE_ME_CHECK(b[c.item].minus_v(home, same));
+      GECODE_ME_CHECK(bin[c.item].minus_v(home, same));
 
-      // Also remove for items of equal size
-      for (int i=c.item+1; (i<b.size()) && (s[i] == s[c.item]); i++) {
+      for (int i = c.item+1; (i<bin.size()) && 
+                             (size[i] == size[c.item]); i++) {
         same.reset();
-        GECODE_ME_CHECK(b[i].minus_v(home, same));
+        GECODE_ME_CHECK(bin[i].minus_v(home, same));
       }
     }
-
     return ES_OK;
   }
-  /// Copy brancher
-  virtual Actor* copy(Space& home, bool share) {
-    return new (home) CDBF(home, share, *this);
-  }
-  /// Post brancher (assumes that \a s0 is sorted)
-  static void post(Home home, const IntVarArgs& l0, const IntVarArgs& b0,
-                   const IntArgs& s0) {
-    if (b0.size() != s0.size())
-      throw Int::ArgumentSizeMismatch("cdbf");      
-    ViewArray<Int::IntView> l(home, l0);
-    ViewArray<Int::IntView> b(home, b0);
-    IntSharedArray s(s0);
-    (void) new (home) CDBF(home, l, b, s);
-  }
-  /// Delete brancher and return its size
-  virtual size_t dispose(Space& home) {
-    home.ignore(*this,AP_DISPOSE);
-    s.~IntSharedArray();
-    return sizeof(*this);
-  }
 };
+
+/// Post branching (assumes that \a s is sorted)
+void cdbf(Home home, const IntVarArgs& l, const IntVarArgs& b,
+                     const IntArgs& s) {
+  if (b.size() != s.size())
+    throw Int::ArgumentSizeMismatch("cdbf");      
+  ViewArray<Int::IntView> load(home, l);
+  ViewArray<Int::IntView> bin(home, b);
+  IntSharedArray size(s);
+  CDBF::post(home, load, bin, size);
+}
 
 
 
@@ -445,7 +447,7 @@ public:
       branch(*this, bin, INT_VAR_NONE, INT_VAL_MIN);
       break;
     case BRANCH_CDBF:
-      CDBF::post(*this, load, bin, sizes);
+      cdbf(*this, load, bin, sizes);
       break;
     }
   }

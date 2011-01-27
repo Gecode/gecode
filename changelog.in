@@ -68,9 +68,11 @@
 
 [RELEASE]
 Version: 3.4.3
-Date: 
+Date: 2011-01-31
 [DESCRIPTION]
-Maybe we add something this time...
+This release fixes serious bugs in FlatZinc, fixes some DLL
+issues on Windows, adds support for FreeBSD, and adds STL-style
+iterators for arrays.
 
 [ENTRY]
 Module:	other
