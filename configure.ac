@@ -333,8 +333,8 @@ AC_DEFINE_UNQUOTED(GECODE_FLATZINC_VERSION,
 )
 
 ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}
-if test   "$ac_gecode_compiler_vendor" = "microsoft" \
-       -o \( "$ac_gecode_compiler_vendor" = "intel" \
+if test   "$ac_gecode_compiler_vendor" == "microsoft" \
+       -o \( "$ac_gecode_compiler_vendor" == "intel" \
             -a "$host_os" == "windows" \) ; then
   AC_SUBST(DLL_ARCH,[${ac_gecode_library_architecture}])
 else

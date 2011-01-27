@@ -423,9 +423,6 @@ AC_DEFUN([AC_GECODE_STATICLIBS],
                     [Whether we are compiling static libraries])
           AC_SUBST(BUILDSTATIC, "yes")
           AC_MSG_RESULT(yes)
-          if test "${host_os}" != "darwin"; then
-            AC_GECODE_CHECK_GLDFLAG("-static")
-          fi
           enable_shared=no
         else
           AC_SUBST(BUILDSTATIC, "no")
