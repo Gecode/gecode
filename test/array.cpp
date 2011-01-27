@@ -250,6 +250,25 @@ namespace Test { namespace Array { namespace Iterator {
     }
   } viewArrayIteratorTest;
 
+  /// %Class for testing the SharedArray iterator
+  class SharedArrayIterator : public Iterator {
+  protected:
+    /// Maximum array size
+    static const int n = 16;
+    /// Array type being tested
+    typedef Gecode::SharedArray<int> Array;
+  public:
+    /// Initialize test
+    SharedArrayIterator(void) : Iterator("SharedArray") {}
+    /// Perform actual tests
+    bool run(void) {
+      // SharedArray for the test
+      Array a(rand(n));
+      // Run the iterator test
+      return runTestForArray(a);
+    }
+  } sharedArrayIteratorTest;
+
 } } }
 
 // STATISTICS: test-kernel

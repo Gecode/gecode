@@ -87,7 +87,7 @@ Rank:	major
 Thanks: Gregory Crosswhite
 [DESCRIPTION]
 Added STL compatible iteration support for arrays (variable
-arrays, argument arrays, and view arrays).
+arrays, argument arrays, view arrays, and shared arrays).
 
 [ENTRY]
 Module:	minimodel

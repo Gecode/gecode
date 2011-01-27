@@ -8,9 +8,9 @@
  *     Gregory Crosswhite <gcross@phys.washington.edu>
  *
  *  Copyright:
+ *     Gregory Crosswhite, 2011
  *     Christian Schulte, 2003
  *     Guido Tack, 2004
- *     Gregory Crosswhite, 2011
  *
  *  Last modified:
  *     $Date$ by $Author$

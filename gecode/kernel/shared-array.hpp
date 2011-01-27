@@ -4,7 +4,11 @@
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Gregory Crosswhite <gcross@phys.washington.edu>
+ *
  *  Copyright:
+ *     Gregory Crosswhite, 2011
  *     Christian Schulte, 2003
  *     Guido Tack, 2004
  *
@@ -77,6 +81,28 @@ namespace Gecode {
       int size(void) const;
     };
   public:
+    /// \name Associated types
+    //@{
+    /// Type of the view stored in this array
+    typedef T value_type;
+    /// Type of a reference to the value type
+    typedef T& reference;
+    /// Type of a constant reference to the value type
+    typedef const T& const_reference;
+    /// Type of a pointer to the value type
+    typedef T* pointer;
+    /// Type of a read-only pointer to the value type
+    typedef const T* const_pointer;
+    /// Type of the iterator used to iterate through this array's elements
+    typedef T* iterator;
+    /// Type of the iterator used to iterate read-only through this array's elements
+    typedef const T* const_iterator;
+    /// Type of the iterator used to iterate backwards through this array's elements
+    typedef std::reverse_iterator<T*> reverse_iterator;
+    /// Type of the iterator used to iterate backwards and read-only through this array's elements
+    typedef std::reverse_iterator<const T*> const_reverse_iterator;
+    //@}
+
     /**
      * \brief Construct as not yet intialized
      *
@@ -107,6 +133,26 @@ namespace Gecode {
 
     /// Return number of elements
     int size(void) const;
+
+    /// \name Array iteration
+    //@{
+    /// Return an iterator at the beginning of the array
+    iterator begin(void);
+    /// Return a read-only iterator at the beginning of the array
+    const_iterator begin(void) const;
+    /// Return an iterator past the end of the array
+    iterator end(void);
+    /// Return a read-only iterator past the end of the array
+    const_iterator end(void) const;
+    /// Return a reverse iterator at the end of the array
+    reverse_iterator rbegin(void);
+    /// Return a reverse and read-only iterator at the end of the array
+    const_reverse_iterator rbegin(void) const;
+    /// Return a reverse iterator past the beginning of the array
+    reverse_iterator rend(void);
+    /// Return a reverse and read-only iterator past the beginning of the array
+    const_reverse_iterator rend(void) const;
+    //@}
   };
 
   /**
@@ -220,6 +266,62 @@ namespace Gecode {
   SharedArray<T>::size(void) const {
     assert(object() != NULL);
     return static_cast<SAO*>(object())->size();
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::iterator
+  SharedArray<T>::begin(void) {
+    assert(object() != NULL);
+    return &(*static_cast<SAO*>(object()))[0];
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::const_iterator
+  SharedArray<T>::begin(void) const {
+    assert(object() != NULL);
+    return &(*static_cast<SAO*>(object()))[0];
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::iterator
+  SharedArray<T>::end(void) {
+    assert(object() != NULL);
+    return &(*static_cast<SAO*>(object()))[0] + size();
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::const_iterator
+  SharedArray<T>::end(void) const {
+    assert(object() != NULL);
+    return &(*static_cast<SAO*>(object()))[0] + size();
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::reverse_iterator
+  SharedArray<T>::rbegin(void) {
+    assert(object() != NULL);
+    return reverse_iterator(&(*static_cast<SAO*>(object()))[0] + size());
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::const_reverse_iterator
+  SharedArray<T>::rbegin(void) const {
+    assert(object() != NULL);
+    return const_reverse_iterator(&(*static_cast<SAO*>(object()))[0] + size());
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::reverse_iterator
+  SharedArray<T>::rend(void) {
+    assert(object() != NULL);
+    return reverse_iterator(&(*static_cast<SAO*>(object()))[0]);
+  }
+
+  template<class T>
+  forceinline typename SharedArray<T>::const_reverse_iterator
+  SharedArray<T>::rend(void) const {
+    assert(object() != NULL);
+    return const_reverse_iterator(&(*static_cast<SAO*>(object()))[0]);
   }
 
   template<class Char, class Traits, class T>
