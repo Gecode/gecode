@@ -240,7 +240,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     : Search::Worker(sz), _engine(e), d(0), idle(false) {
     if (s != NULL) {
       cur = (s->status(*this) == SS_FAILED) ? 
-        NULL : snapshot(s,engine().opt());
+        NULL : snapshot(s,engine().opt(),false);
       if (cur == NULL)
         fail++;
     } else {

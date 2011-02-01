@@ -44,8 +44,8 @@ namespace Gecode { namespace Search {
 
   /// Clone space \a s dependening on options \a o
   forceinline Space*
-  snapshot(Space* s, const Options& o) {
-    return o.clone ? s->clone() : s;
+  snapshot(Space* s, const Options& o, bool share=true) {
+    return o.clone ? s->clone(share) : s;
   }
 
   /// Virtualize a worker to an engine
