@@ -110,13 +110,13 @@ namespace Gecode { namespace Iter { namespace Values {
   template<class I, class J>
   inline void
   Union<I,J>::init(I& i0, J& j0) {
-    i=i0; j=j0; done=false;
+    i=i0; j=j0; v=0; done=false;
     operator ++();
   }
 
   template<class I, class J>
   forceinline
-  Union<I,J>::Union(I& i0, J& j0) : i(i0), j(j0), done(false) {
+  Union<I,J>::Union(I& i0, J& j0) : i(i0), j(j0), v(0), done(false) {
     operator ++();
   }
 

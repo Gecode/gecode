@@ -384,7 +384,7 @@ public:
     mw = NULL;
   }
 };
-#endif GECODE_HAS_GIST
+#endif
 
 /** \brief Main-function
  *  \relates Knights
