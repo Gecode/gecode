@@ -319,6 +319,19 @@ AC_DEFUN([AC_CHECK_GCC_VERSION],
     AC_LANG_POP()
     ])
 
+AC_DEFUN([AC_CHECK_MSVC_VERSION],
+    [
+    AC_LANG_PUSH(C)
+    AC_COMPILE_IFELSE(
+    [#if _MSC_VER < $1
+     #error Version too old
+     really, the version is too old
+     #endif],[],
+    [AC_MSG_ERROR([Your version of cl is too old. You need at least Microsoft Visual C++ $2.])]
+    AC_LANG_POP()
+    )
+    ])
+
 dnl Macro:
 dnl   AC_GECODE_VTI (vartype, help-string, default, vtidef,
 dnl             [ACTION-IF-ENABLED], [ACTION-IF-DISABLED])
