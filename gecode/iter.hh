@@ -38,6 +38,8 @@
 #ifndef __GECODE_ITER_HH__
 #define __GECODE_ITER_HH__
 
+#include <gecode/kernel.hh>
+
 namespace Gecode {
   /// Range and value iterators
   namespace Iter {
