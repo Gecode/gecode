@@ -67,6 +67,29 @@
 #
 
 [RELEASE]
+Version: 3.5.1
+Date: ?
+[DESCRIPTION]
+Some bug fixes, probably
+
+[ENTRY]
+Module:	set
+What:	new
+Rank:	minor
+Thanks: Marco Correia
+[DESCRIPTION]
+Added channel aliases for set union of an array of integer variables,
+and renamed channel to channelSorted.
+
+[ENTRY]
+Module:	set
+What:	documentation
+Rank:	minor
+Thanks: Marco Correia
+[DESCRIPTION]
+Fixed documentation for set channeling constraint.
+
+[RELEASE]
 Version: 3.5.0
 Date: 2011-02-01
 [DESCRIPTION]
