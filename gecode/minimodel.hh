@@ -1314,6 +1314,14 @@ namespace Gecode {
     IntVar x(home,0,1); channel(home,b,x);
     return x;
   }
+  /// Return set variable equal to \f$\{x_0,\dots,x_{n-1}\}\f$
+  inline SetVar
+  channel(Home home, const IntVarArgs& x, IntConLevel icl=ICL_DEF) {
+    (void) icl;
+    SetVar s(home,IntSet::empty,Set::Limits::min,Set::Limits::max);
+    rel(home,SOT_UNION,x,s);
+    return s;
+  }
   //@}
 
 }
@@ -1534,6 +1542,25 @@ namespace Gecode {
   }
 
   //@}
+
+  /**
+   * \defgroup TaskModelMiniModelSetAlias Aliases for set constraints
+   *
+   * Contains definitions of common constraints which have different
+   * names in Gecode.
+   *
+   * \ingroup TaskModelMiniModel
+   */
+
+  //@{
+  /** \brief Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$
+   */
+  inline void
+  channel(Home home, const IntVarArgs& x, SetVar y) {
+    rel(home,SOT_UNION,x,y);
+  }
+  //@}
+  
 
 }
 

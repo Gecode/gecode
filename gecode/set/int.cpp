@@ -153,10 +153,10 @@ namespace Gecode {
   }
 
   void
-  channel(Home home, const IntVarArgs& x, SetVar y) {
+  channelSorted(Home home, const IntVarArgs& x, SetVar y) {
     if (home.failed()) return;
     ViewArray<IntView> xa(home,x);
-    GECODE_ES_FAIL(Set::Int::Match<Set::SetView>::post(home,s,xa));
+    GECODE_ES_FAIL(Set::Int::Match<Set::SetView>::post(home,y,xa));
   }
 
   void

@@ -446,7 +446,7 @@ namespace Test { namespace Set {
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
-        Gecode::channel(home, y, x[0]);
+        Gecode::channelSorted(home, y, x[0]);
       }
     };
     Match _match("Int::Match");

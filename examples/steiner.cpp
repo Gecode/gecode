@@ -101,8 +101,8 @@ public:
            * Using matching constraints
            */
 
-          channel(*this, IntVarArgs()<<x1<<x2<<x3, x);
-          channel(*this, IntVarArgs()<<y1<<y2<<y3, y);
+          channelSorted(*this, IntVarArgs()<<x1<<x2<<x3, x);
+          channelSorted(*this, IntVarArgs()<<y1<<y2<<y3, y);
         } else if (opt.model() == MODEL_SEQ) {
           SetVar sx1 = expr(*this, singleton(x1));
           SetVar sx2 = expr(*this, singleton(x2));

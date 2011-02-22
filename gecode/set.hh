@@ -873,7 +873,7 @@ namespace Gecode {
 
   /// Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$ and \f$x_i<x_{i+1}\f$
   GECODE_SET_EXPORT void
-  channel(Home home, const IntVarArgs& x, SetVar y);
+  channelSorted(Home home, const IntVarArgs& x, SetVar y);
 
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
