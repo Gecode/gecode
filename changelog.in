@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module:	gist
+What:	change
+Rank:	minor
+Thanks: Alin Gherman
+[DESCRIPTION]
+Compiles under MSVC 2005 SP1 again.
+
+[ENTRY]
 Module:	set
 What:	new
 Rank:	minor

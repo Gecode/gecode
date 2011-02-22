@@ -160,19 +160,19 @@ namespace Gecode { namespace Gist {
 
   forceinline void
   Options::_I::click(Inspector* i) {
-    _click[n_click++] = i;
+    _click[static_cast<int>(n_click++)] = i;
   }
   forceinline void
   Options::_I::solution(Inspector* i) {
-    _solution[n_solution++] = i;
+    _solution[static_cast<int>(n_solution++)] = i;
   }
   forceinline void
   Options::_I::move(Inspector* i) {
-    _move[n_move++] = i;
+    _move[static_cast<int>(n_move++)] = i;
   }
   forceinline void
   Options::_I::compare(Comparator* c) {
-    _compare[n_compare++] = c;
+    _compare[static_cast<int>(n_compare++)] = c;
   }
   forceinline Inspector*
   Options::_I::click(unsigned int i) const {
