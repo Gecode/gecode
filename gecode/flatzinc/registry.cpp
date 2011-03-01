@@ -1361,9 +1361,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("schedule_unary", &p_schedule_unary);
         registry().add("schedule_unary_optional", &p_schedule_unary_optional);
 
-        registry().add("circuit", &p_circuit);
-        registry().add("circuit_cost_array", &p_circuit_cost_array);
-        registry().add("circuit_cost", &p_circuit_cost);
+        registry().add("gecode_circuit", &p_circuit);
+        registry().add("gecode_circuit_cost_array", &p_circuit_cost_array);
+        registry().add("gecode_circuit_cost", &p_circuit_cost);
       }
     };
     IntPoster __int_poster;

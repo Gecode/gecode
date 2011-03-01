@@ -73,6 +73,15 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Fixed the MiniZinc definition for the circuit constraints to work with 
+arbitrarily indexed arrays.
+
+[ENTRY]
 Module:	gist
 What:	change
 Rank:	minor

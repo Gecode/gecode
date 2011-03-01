@@ -74,11 +74,21 @@ predicate among_seq(array[int] of var bool: x, bool: b,
     int: l, int: m, int: n) = among_seq_bool(x,b,l,m,n);
 
 % Circuit constraints
-predicate circuit(array[int] of var int: x);
-predicate circuit_cost_array(array[int] of int: c,
+predicate gecode_circuit(array[int] of var int: x);
+predicate gecode_circuit_cost_array(array[int] of int: c,
     array[int] of var int: x, array[int] of var int: y, var int: z);
-predicate circuit_cost(array[int] of int: c, array[int] of var int: x,
+predicate gecode_circuit_cost(array[int] of int: c, array[int] of var int: x,
     var int: z);
+
+predicate circuit(array[int] of var int: x) =
+  gecode_circuit([x[i]-min(index_set(x)) | i in index_set(x)]);
+predicate circuit_cost_array(array[int] of int: c,
+    array[int] of var int: x, array[int] of var int: y, var int: z) =
+  gecode_circuit_cost_array(c,[x[i]-min(index_set(x)) | i in index_set(x)],
+                            y,z);
+predicate circuit_cost(array[int] of int: c, array[int] of var int: x,
+    var int: z) =
+  gecode_circuit_cost(c, [x[i]-min(index_set(x)) | i in index_set(x)], z);
 
 % Scheduling constraints
 predicate schedule_unary(array[int] of var int: x, array[int] of int: p);
