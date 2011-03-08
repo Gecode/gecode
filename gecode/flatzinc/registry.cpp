@@ -1322,8 +1322,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
         registry().add("bin_packing_load_gecode", &p_bin_packing_load);
-        registry().add("global_cardinality_gecode", &p_global_cardinality);
-        registry().add("global_cardinality_closed_gecode",
+        registry().add("global_cardinality", &p_global_cardinality);
+        registry().add("global_cardinality_closed",
           &p_global_cardinality_closed);
         registry().add("global_cardinality_low_up", 
           &p_global_cardinality_low_up);
