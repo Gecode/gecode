@@ -159,7 +159,6 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::UnsignedIntOption _solutions; ///< How many solutions
       Gecode::Driver::BoolOption        _allSolutions; ///< Return all solutions
       Gecode::Driver::DoubleOption      _threads;   ///< How many threads to use
-      Gecode::Driver::DoubleOption      _parallel; ///< Use all cores
       Gecode::Driver::BoolOption        _free; ///< Use free search
       Gecode::Driver::StringOption      _search; ///< Search engine variant
       Gecode::Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
@@ -172,7 +171,9 @@ namespace Gecode { namespace FlatZinc {
       /// \name Execution options
       //@{
       Gecode::Driver::StringOption      _mode;       ///< Script mode to run
+      Gecode::Driver::BoolOption        _stat;       ///< Emit statistics
       Gecode::Driver::StringOption      _print;      ///< Print all solutions
+      Gecode::Driver::StringValueOption _output;     ///< Output file
       //@}
   public:
     enum SearchOptions {
@@ -182,11 +183,9 @@ namespace Gecode { namespace FlatZinc {
     /// Constructor
     FlatZincOptions(const char* s)
     : Gecode::BaseOptions(s),
-      _solutions("-solutions","number of solutions (0 = all)",1),
-      _allSolutions("--all", "return all solutions (equal to -solutions 0)"),
-      _threads("-threads","number of threads (0 = #processing units)",
-               Gecode::Search::Config::threads),
-      _parallel("--parallel", "equivalent to -threads",
+      _solutions("-n","number of solutions (0 = all)",1),
+      _allSolutions("-a", "return all solutions (equal to -solutions 0)"),
+      _threads("-p","number of threads (0 = #processing units)",
                Gecode::Search::Config::threads),
       _free("--free", "no need to follow search-specification"),
       _search("-search","search engine variant", FZ_SEARCH_BAB),
@@ -196,7 +195,9 @@ namespace Gecode { namespace FlatZinc {
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
       _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
-      _print("-print","which solutions to print",0) {
+      _stat("-s","emit statistics"),
+      _print("-print","which solutions to print",0),
+      _output("-o","file to send output to") {
 
       _search.add(FZ_SEARCH_BAB, "bab");
       _search.add(FZ_SEARCH_RESTART, "restart");
@@ -207,21 +208,19 @@ namespace Gecode { namespace FlatZinc {
       _print.add(1,"last");
       add(_solutions); add(_threads); add(_c_d); add(_a_d);
       add(_allSolutions);
-      add(_parallel);
       add(_free);
       add(_search);
       add(_node); add(_fail); add(_time);
-      add(_mode);
-      add(_print);
+      add(_mode); add(_stat);
+      add(_print); add(_output);
     }
 
     void parse(int& argc, char* argv[]) {
       Gecode::BaseOptions::parse(argc,argv);
       if (_allSolutions.value())
         _solutions.value(0);
-      if (_parallel.value() != Gecode::Search::Config::threads &&
-          _threads.value() == Gecode::Search::Config::threads)
-        _threads.value(_parallel.value());
+      if (_stat.value())
+        _mode.value(Gecode::SM_STAT);
     }
   
     virtual void help(void) {
@@ -243,6 +242,7 @@ namespace Gecode { namespace FlatZinc {
     unsigned int fail(void) const { return _fail.value(); }
     unsigned int time(void) const { return _time.value(); }
     unsigned int print(void) const { return _print.value(); }
+    const char* output(void) const { return _output.value(); }
     Gecode::ScriptMode mode(void) const {
       return static_cast<Gecode::ScriptMode>(_mode.value());
     }

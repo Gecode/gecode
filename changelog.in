@@ -77,7 +77,9 @@ Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Adapted the MiniZinc declarations for Gecode to MiniZinc 1.3.
+Adapted the MiniZinc declarations and the command line options for 
+Gecode/FlatZinc to MiniZinc 1.3. The fz binary now works with the
+minizinc driver script.
 
 [ENTRY]
 Module: flatzinc

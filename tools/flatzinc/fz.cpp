@@ -67,9 +67,21 @@ int main(int argc, char** argv) {
   }
 
   if (fg) {
+    
     fg->createBranchers(fg->solveAnnotations(), false, std::cerr);
     fg->shrinkArrays(p);
-    fg->run(std::cout, p, opt, t_total);
+    if (opt.output()) {
+      std::ofstream os(opt.output());
+      if (!os.good()) {
+        std::cerr << "Could not open file " << opt.output() << " for output."
+                  << std::endl;
+        exit(EXIT_FAILURE);
+      }      
+      fg->run(os, p, opt, t_total);
+      os.close();
+    } else {
+      fg->run(std::cout, p, opt, t_total);
+    }
   } else {
     exit(EXIT_FAILURE);    
   }
