@@ -229,6 +229,10 @@ public:
       virtual size_t size(void) const {
         return sizeof(Choice);
       }
+      virtual void archive(Support::Archive& e) const {
+        Choice::archive(e);
+        e.put(fail);
+      }
     };
     /// Construct brancher
     NestedSearch(Space& home) : Brancher(home), done(false) {
@@ -300,6 +304,10 @@ public:
         }      
       }
 
+      return new Choice(*this, fail);
+    }
+    virtual Choice* choice(const Space&, Support::Archive& e) {
+      bool fail; e >> fail;
       return new Choice(*this, fail);
     }
     virtual ExecStatus commit(Space&, const Gecode::Choice& _c, unsigned int) {

@@ -147,6 +147,11 @@ namespace Gecode { namespace Set { namespace Branch {
     return r;
   }
   template<bool inc>
+  forceinline Support::RandomGenerator
+  ValRnd<inc>::choice(const Space&, Support::Archive& e) {
+    return Support::RandomGenerator(e.get());
+  }
+  template<bool inc>
   forceinline void
   ValRnd<inc>::commit(Space&, const Support::RandomGenerator& c,
                       unsigned int) {

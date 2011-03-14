@@ -48,6 +48,8 @@ namespace Gecode {
   public:
     /// Report size occupied
     size_t size(void) const;
+    /// Archive into \a e
+    void archive(Support::Archive& e) const;
   };
 
   /**
@@ -66,6 +68,8 @@ namespace Gecode {
     ViewSelBase(Space& home, const VarBranchOptions& vbo);
     /// Return choice
     EmptyViewSelChoice choice(Space& home);
+    /// Return choice
+    EmptyViewSelChoice choice(const Space& home, Support::Archive& e);
     /// Commit to choice
     void commit(Space& home, const EmptyViewSelChoice& c, unsigned a);
     /// Updating during cloning
@@ -191,6 +195,8 @@ namespace Gecode {
     ViewSelStatus select(Space& home, _View x);
     /// Return choice
     Support::RandomGenerator choice(Space& home);
+    /// Return choice
+    Support::RandomGenerator choice(const Space& home, Support::Archive& e);
     /// Commit to choice
     void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
     /// Updating during cloning
@@ -206,6 +212,9 @@ namespace Gecode {
     return sizeof(EmptyViewSelChoice);
   }
 
+  forceinline void
+  EmptyViewSelChoice::archive(Support::Archive& e) const { (void)e; }
+
   // Selection base class
   template<class View>
   forceinline
@@ -216,6 +225,11 @@ namespace Gecode {
   template<class View>
   forceinline EmptyViewSelChoice
   ViewSelBase<View>::choice(Space&) {
+    EmptyViewSelChoice c; return c;
+  }
+  template<class View>
+  forceinline EmptyViewSelChoice
+  ViewSelBase<View>::choice(const Space&, Support::Archive&) {
     EmptyViewSelChoice c; return c;
   }
   template<class View>
@@ -390,6 +404,11 @@ namespace Gecode {
   forceinline Support::RandomGenerator
   ViewSelRnd<View>::choice(Space&) {
     return r;
+  }
+  template<class View>
+  forceinline Support::RandomGenerator
+  ViewSelRnd<View>::choice(const Space&, Support::Archive& e) {
+    return Support::RandomGenerator(e.get());
   }
   template<class View>
   forceinline void

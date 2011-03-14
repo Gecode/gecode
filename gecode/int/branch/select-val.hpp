@@ -104,6 +104,11 @@ namespace Gecode { namespace Int { namespace Branch {
     return r;
   }
   template<class View>
+  forceinline Support::RandomGenerator
+  ValRnd<View>::choice(const Space&, Support::Archive& e) {
+    return Support::RandomGenerator(e.get());
+  }
+  template<class View>
   forceinline void
   ValRnd<View>::commit(Space&, const Support::RandomGenerator& c,
                        unsigned int) {

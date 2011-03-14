@@ -218,6 +218,13 @@ protected:
     virtual size_t size(void) const {
       return sizeof(Choice) + sizeof(int) * n_same;
     }
+    /// Archive into \a e
+    virtual void archive(Support::Archive& e) const
+    {
+      Gecode::Choice::archive(e);
+      e << alternatives() << item << n_same;
+      for (int i=n_same; i--;) e << same[i];
+    }
     /// Destructor
     virtual ~Choice(void) {
       heap.free<int>(same,n_same);
@@ -314,6 +321,15 @@ public:
       return new Choice(*this, 1, item, same, 1);
     else
       return new Choice(*this, 2, item, same, n_same);
+  }
+  /// Return choice
+  virtual const Gecode::Choice* choice(const Space& home, Support::Archive& e) {
+    int alt, item, n_same;
+    e >> alt >> item >> n_same;
+    Region re(home);
+    int* same = re.alloc<int>(n_same);
+    for (int i=n_same; i--;) e >> same[i];
+    return new Choice(*this, alt, item, same, n_same);
   }
   /// Perform commit for choice \a _c and alternative \a a
   virtual ExecStatus commit(Space& home, const Gecode::Choice& _c, 

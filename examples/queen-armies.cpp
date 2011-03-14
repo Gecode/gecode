@@ -184,6 +184,10 @@ public:
       virtual size_t size(void) const {
         return sizeof(Choice);
       }
+      virtual void archive(Support::Archive& e) const {
+        Choice::archive(e);
+        e << pos << val;
+      }
     };
 
     /// Construct brancher
@@ -225,6 +229,12 @@ public:
 
       assert(pos != -1);
       return new Choice(*this, pos, true);
+    }
+    /// Return choice
+    virtual Choice* choice(const Space&, Support::Archive& e) {
+      int pos, val;
+      e >> pos >> val;
+      return new Choice(*this, pos, val);
     }
     /** \brief Perform commit for choice \a _c and
      * alternative \a a.

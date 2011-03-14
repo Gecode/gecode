@@ -97,7 +97,6 @@ namespace Gecode {
   OperatingSystemError::OperatingSystemError(const char* l)
     : Exception(l,"Operating system error") {}
 
-
 }
 
 // STATISTICS: support-any

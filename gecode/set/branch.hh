@@ -150,6 +150,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ModEvent tell(Space& home, unsigned int a, SetView x, int n);
     /// Return choice
     Support::RandomGenerator choice(Space& home);
+    /// Return choice
+    Support::RandomGenerator choice(const Space& home, Support::Archive& e);
     /// Commit to choice
     void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
     /// Updating during cloning

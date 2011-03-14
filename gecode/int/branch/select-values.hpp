@@ -61,12 +61,18 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Initialize choice for brancher \a b, position \a p, view choice \a viewc, and view \a x
     PosValuesChoice(const Brancher& b, const Pos& p,
                     const typename ViewSel::Choice& viewc, View x);
+    /// Initialize choice for brancher \a b from \a e
+    PosValuesChoice(const Brancher& b, unsigned int alt, Pos p,
+                    const typename ViewSel::Choice& viewc,
+                    Support::Archive& e);
     /// Return value to branch with for alternative \a a
     int val(unsigned int a) const;
     /// Report size occupied
     virtual size_t size(void) const;
     /// Deallocate
     virtual ~PosValuesChoice(void);
+    /// Archive into \a e
+    virtual void archive(Support::Archive& e) const;
   };
 
 
@@ -87,6 +93,20 @@ namespace Gecode { namespace Int { namespace Branch {
       w += r.width(); i++;
     }
     pm[i].pos = w;
+  }
+
+  template<class ViewSel, class View>
+  forceinline
+  PosValuesChoice<ViewSel,View>::
+  PosValuesChoice(const Brancher& b, unsigned int alt, Pos p,
+                  const typename ViewSel::Choice& viewc, Support::Archive& e)
+    : PosChoice<ViewSel>(b,alt,p,viewc) {
+    e >> n;
+    pm = heap.alloc<PosMin>(n+1);
+    for (unsigned int i=0; i<n+1; i++) {
+      e >> pm[i].pos;
+      e >> pm[i].min;
+    }
   }
 
   template<class ViewSel, class View>
@@ -119,6 +139,16 @@ namespace Gecode { namespace Int { namespace Branch {
     heap.free<PosMin>(pm,n+1);
   }
 
+  template<class ViewSel, class View>
+  forceinline void
+  PosValuesChoice<ViewSel,View>::archive(Support::Archive& e) const {
+    PosChoice<ViewSel>::archive(e);
+    e << this->alternatives() << n;
+    for (unsigned int i=0; i<n+1; i++) {
+      e << pm[i].pos;
+      e << pm[i].min;
+    }
+  }
 
   template<class ViewSel, class View>
   forceinline
@@ -155,6 +185,16 @@ namespace Gecode { namespace Int { namespace Branch {
     View v(ViewBrancher<ViewSel>::view(p).varimp());
     return new PosValuesChoice<ViewSel,View>
       (*this,p,viewsel.choice(home),v);
+  }
+
+  template<class ViewSel, class View>
+  const Choice*
+  ViewValuesBrancher<ViewSel,View>::choice(const Space& home, Support::Archive& e) {
+    int p;
+    unsigned int alt;
+    e >> p >> alt;
+    return new PosValuesChoice<ViewSel,View>
+      (*this,alt,p,viewsel.choice(home,e),e);
   }
 
   template<class ViewSel, class View>

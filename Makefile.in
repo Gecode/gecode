@@ -140,14 +140,14 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	exception heap thread/thread thread/windows thread/pthreads
+	exception heap archive thread/thread thread/windows thread/pthreads
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
 	dynamic-stack exception heap \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \
 	thread thread/thread thread/windows thread/pthreads thread/none timer \
-	dynamic-queue bitset-base bitset
+	dynamic-queue bitset-base bitset archive
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR  =  gecode/support.hh \

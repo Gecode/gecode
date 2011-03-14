@@ -45,7 +45,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-
+#include <iostream>
 namespace Gecode {
 
   class Space;
@@ -942,7 +942,6 @@ namespace Gecode {
 
 
   class Brancher;
-
   /**
    * \brief %Choice for performing commit
    *
@@ -974,6 +973,8 @@ namespace Gecode {
     static void* operator new(size_t);
     /// Return memory to heap
     static void  operator delete(void*);
+    /// Archive into \a e
+    GECODE_KERNEL_EXPORT virtual void archive(Support::Archive& e) const;
   };
 
   /**
@@ -1021,6 +1022,8 @@ namespace Gecode {
      * member function can only be called once.
      */
     virtual const Choice* choice(Space& home) = 0;
+    /// Return choice from \a e
+    virtual const Choice* choice(const Space& home, Support::Archive& e) = 0;
     /**
      * \brief Commit for choice \a c and alternative \a a
      *
@@ -1439,6 +1442,18 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     const Choice* choice(void);
 
+    /**
+     * \brief Create new choice from \a e
+     *
+     * The archived representation \a e must have been created from
+     * a Choice that is compatible with this space (i.e., created from
+     * the same model).
+     *
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    const Choice* choice(Support::Archive& e) const;
+  
     /**
      * \brief Clone space
      *

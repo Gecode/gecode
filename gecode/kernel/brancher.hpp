@@ -124,6 +124,8 @@ namespace Gecode {
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
+    /// Return choice
+    virtual const Choice* choice(const Space& home, Support::Archive& e);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
     /// Perform cloning
@@ -155,6 +157,8 @@ namespace Gecode {
     const typename ViewSel::Choice& viewchoice(void) const;
     /// Report size occupied
     virtual size_t size(void) const;
+    /// Archive into \a e
+    virtual void archive(Support::Archive& e) const;
   };
 
   /// %Choice storing position and value
@@ -177,6 +181,8 @@ namespace Gecode {
     const typename ValSel::Val& val(void) const;
     /// Report size occupied
     virtual size_t size(void) const;
+    /// Archive into \a e
+    virtual void archive(Support::Archive& e) const;
   };
   //@}
 
@@ -216,7 +222,13 @@ namespace Gecode {
   PosChoice<ViewSel>::size(void) const {
     return sizeof(PosChoice<ViewSel>) + _viewchoice.size();
   }
-
+  template<class ViewSel>
+  forceinline void
+  PosChoice<ViewSel>::archive(Support::Archive& e) const {
+    Choice::archive(e);
+    e << _pos.pos;
+    _viewchoice.archive(e);
+  }
 
   /*
    * %Choice with position and value
@@ -250,6 +262,13 @@ namespace Gecode {
     return sizeof(PosValChoice<ViewSel,ValSel>) + _valchoice.size();
   }
 
+  template<class ViewSel, class ValSel>
+  forceinline void
+  PosValChoice<ViewSel, ValSel>::archive(Support::Archive& e) const {
+    PosChoice<ViewSel>::archive(e);
+    _valchoice.archive(e);
+    e << _val;
+  }
 
   /*
    * Generic brancher based on view selection
@@ -374,6 +393,16 @@ namespace Gecode {
     return new PosValChoice<ViewSel,ValSel>
       (*this,p,
        viewsel.choice(home),valsel.choice(home),val);
+  }
+
+  template<class ViewSel, class ValSel>
+  const Choice*
+  ViewValBrancher<ViewSel,ValSel>::choice(const Space& home, Support::Archive& e) {
+    int p; e >> p;
+    typename ViewSel::Choice viewsc = viewsel.choice(home,e);
+    typename ValSel::Choice valsc = valsel.choice(home,e);
+    typename ValSel::Val val; e >> val;
+    return new PosValChoice<ViewSel,ValSel>(*this,p,viewsc,valsc,val);
   }
 
   template<class ViewSel, class ValSel>

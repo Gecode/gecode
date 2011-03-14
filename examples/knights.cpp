@@ -79,6 +79,10 @@ protected:
     virtual size_t size(void) const {
       return sizeof(Choice);
     }
+    virtual void archive(Support::Archive& e) const {
+      Choice::archive(e);
+      e << pos << val;
+    }
   };
  
   /// Construct brancher
@@ -116,6 +120,12 @@ public:
       ++iv;
     }
     return new Choice(*this, start, n);
+  }
+  /// Return choice
+  virtual Choice* choice(const Space&, Support::Archive& e) {
+    int pos, val;
+    e >> pos >> val;
+    return new Choice(*this, pos, val);
   }
   /// Perform commit for choice \a _c and alternative \a a
   virtual ExecStatus commit(Space& home, const Gecode::Choice& _c, 

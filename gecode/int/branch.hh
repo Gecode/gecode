@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class _View>
   class ValRnd {
   protected:
-    /// Random number generator
+    /// The random number generator
     Support::RandomGenerator r;
   public:
     /// View type
@@ -123,6 +123,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ModEvent tell(Space& home, unsigned int a, _View x, int n);
     /// Return choice
     Support::RandomGenerator choice(Space& home);
+    /// Return choice
+    static Support::RandomGenerator choice(const Space& home, Support::Archive& e);
     /// Commit to choice
     void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
     /// Updating during cloning
@@ -178,6 +180,21 @@ namespace Gecode { namespace Int { namespace Branch {
   /// For Boolean branchers not needing a value
   class NoValue {};
 
+}}}
+
+namespace Gecode { namespace Support {
+  forceinline Archive&
+  operator >>(Archive& e, Gecode::Int::Branch::NoValue&) {
+    return e;
+  }
+  forceinline Archive&
+  operator <<(Archive& e, const Gecode::Int::Branch::NoValue&) {
+    return e;
+  }
+}}
+
+namespace Gecode { namespace Int { namespace Branch {
+
   /**
    * \brief Class for trying zero and then one
    *
@@ -216,6 +233,8 @@ namespace Gecode { namespace Int { namespace Branch {
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
+    /// Return choice
+    virtual const Choice* choice(const Space& home, Support::Archive& e);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
     /// Perform cloning

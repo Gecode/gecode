@@ -73,6 +73,15 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Choices can now be written into an externalized form (called an Archive),
+and reconstructed from it. This is necessary for serializing paths in
+a distributed search engine.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

@@ -62,6 +62,10 @@ namespace Gecode {
       Description(const Brancher& b, unsigned int a) : Choice(b,a) {}
       /// Report size occupied
       virtual size_t size(void) const { return sizeof(Description); }
+      /// Archive into \a e
+      virtual void archive(Support::Archive& e) const {
+        Choice::archive(e);
+      }
     };
     /// Function to call
     void (*f)(Space&);
@@ -81,6 +85,10 @@ namespace Gecode {
     /// Return choice
     virtual const Choice* choice(Space&) {
       assert(!done);
+      return new Description(*this,1);
+    }
+    /// Return choice
+    virtual const Choice* choice(const Space&, Support::Archive&) {
       return new Description(*this,1);
     }
     /// Perform commit

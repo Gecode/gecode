@@ -334,6 +334,18 @@ namespace Gecode {
     return b_status->choice(*this);
   }
 
+  const Choice*
+  Space::choice(Support::Archive& e) const {
+    unsigned int id; e >> id;
+    Brancher* b_cur = Brancher::cast(bl.next());
+    while (b_cur != Brancher::cast(&bl)) {
+      if (id == b_cur->id())
+        return b_cur->choice(*this,e);
+      b_cur = Brancher::cast(b_cur->next());
+    }
+    throw SpaceNoBrancher();
+  }
+
   void
   Space::_commit(const Choice& c, unsigned int a) {
     if (a >= c.alternatives())
@@ -541,6 +553,10 @@ namespace Gecode {
     home.pc.c.local = this;
   }
 
+  void
+  Choice::archive(Support::Archive& e) const {
+    e << id();
+  }
 
 }
 
