@@ -1314,6 +1314,7 @@ namespace Gecode {
     IntVar x(home,0,1); channel(home,b,x);
     return x;
   }
+#ifdef GECODE_HAS_SET_VARS 
   /// Return set variable equal to \f$\{x_0,\dots,x_{n-1}\}\f$
   inline SetVar
   channel(Home home, const IntVarArgs& x, IntConLevel icl=ICL_DEF) {
@@ -1322,6 +1323,7 @@ namespace Gecode {
     rel(home,SOT_UNION,x,s);
     return s;
   }
+#endif
   //@}
 
 }
@@ -1543,6 +1545,7 @@ namespace Gecode {
 
   //@}
 
+#ifdef GECODE_HAS_SET_VARS
   /**
    * \defgroup TaskModelMiniModelSetAlias Aliases for set constraints
    *
@@ -1560,7 +1563,7 @@ namespace Gecode {
     rel(home,SOT_UNION,x,y);
   }
   //@}
-  
+#endif
 
 }
 
