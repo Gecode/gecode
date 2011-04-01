@@ -574,166 +574,6 @@ namespace Gecode { namespace Int {
   //@}
 
   /**
-   * \brief Offset reference integer view
-   *
-   * An offset reference integer view \f$o\f$ for an integer view \f$x\f$ and
-   * an integer \f$c\f$ provides operations such that \f$o\f$
-   * behaves as \f$x+c\f$.
-   * \ingroup TaskActorIntView
-   */
-  class OffsetRefView : public DerivedView<IntView> {
-  protected:
-    /// Offset
-    int* c;
-    using DerivedView<IntView>::x;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    OffsetRefView(void);
-    /// Initialize with integer view \a y and offset \a c
-    OffsetRefView(const IntView& y, int& c);
-    //@}
-    
-    /// \name Value access
-    //@{
-    /// Return offset
-    int offset(void) const;
-    /// Return minimum of domain
-    int min(void) const;
-    /// Return maximum of domain
-    int max(void) const;
-    /// Return median of domain (greatest element not greater than the median)
-    int med(void) const;
-    /// Return assigned value (only if assigned)
-    int val(void) const;
-    
-    /// Return size (cardinality) of domain
-    unsigned int size(void) const;
-    /// Return width of domain (distance between maximum and minimum)
-    unsigned int width(void) const;
-    /// Return regret of domain minimum (distance to next larger value)
-    unsigned int regret_min(void) const;
-    /// Return regret of domain maximum (distance to next smaller value)
-    unsigned int regret_max(void) const;
-    //@}
-    
-    /// \name Domain tests
-    //@{
-    /// Test whether domain is a range
-    bool range(void) const;
-    
-    /// Test whether \a n is contained in domain
-    bool in(int n) const;
-    /// Test whether \a n is contained in domain
-    bool in(double n) const;
-    //@}
-    
-    /// \name Domain update by value
-    //@{
-    /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space& home, int n);
-    /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space& home, double n);
-    /// Restrict domain values to be less than \a n
-    ModEvent le(Space& home, int n);
-    /// Restrict domain values to be less than \a n
-    ModEvent le(Space& home, double n);
-    /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space& home, int n);
-    /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space& home, double n);
-    /// Restrict domain values to be greater than \a n
-    ModEvent gr(Space& home, int n);
-    /// Restrict domain values to be greater than \a n
-    ModEvent gr(Space& home, double n);
-    /// Restrict domain values to be different from \a n
-    ModEvent nq(Space& home, int n);
-    /// Restrict domain values to be different from \a n
-    ModEvent nq(Space& home, double n);
-    /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space& home, int n);
-    /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space& home, double n);
-    //@}
-    
-    /**
-     * \name Domain update by iterator
-     *
-     * Views can be both updated by range and value iterators.
-     * Value iterators do not need to be strict in that the same value
-     * is allowed to occur more than once in the iterated sequence.
-     *
-     * The argument \a depends must be true, if the iterator
-     * passed as argument depends on the view on which the operation
-     * is invoked. In this case, the view is only updated after the
-     * iterator has been consumed. Otherwise, the domain might be updated
-     * concurrently while following the iterator.
-     *
-     */
-    //@{
-    /// Replace domain by ranges described by \a i
-    template<class I>
-    ModEvent narrow_r(Space& home, I& i, bool depends=true);
-    /// Intersect domain with ranges described by \a i
-    template<class I>
-    ModEvent inter_r(Space& home, I& i, bool depends=true);
-    /// Remove from domain the ranges described by \a i
-    template<class I>
-    ModEvent minus_r(Space& home, I& i, bool depends=true);
-    /// Replace domain by values described by \a i
-    template<class I>
-    ModEvent narrow_v(Space& home, I& i, bool depends=true);
-    /// Intersect domain with values described by \a i
-    template<class I>
-    ModEvent inter_v(Space& home, I& i, bool depends=true);
-    /// Remove from domain the values described by \a i
-    template<class I>
-    ModEvent minus_v(Space& home, I& i, bool depends=true);
-    //@}
-
-    /// \name View-dependent propagator support
-    //@{
-    /// Translate modification event \a me to modification event delta for view
-    static ModEventDelta med(ModEvent me);
-    //@}
-
-    /// \name Delta information for advisors
-    //@{
-    /// Return minimum value just pruned
-    int min(const Delta& d) const;
-    /// Return maximum value just pruned
-    int max(const Delta& d) const;
-    /// Test whether arbitrary values got pruned
-    bool any(const Delta& d) const;
-    //@}
-    
-    /// \name Cloning
-    //@{
-    /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, OffsetRefView& y);
-    //@}
-  };
-
-  /**
-   * \brief Print integer offset view
-   * \relates Gecode::Int::OffsetRefView
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OffsetRefView& x);
-  
-  /** \name View comparison
-   *  \relates Gecode::Int::OffsetRefView
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  bool same(const OffsetRefView& x, const OffsetRefView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const OffsetRefView& x, const OffsetRefView& y);
-  //@}
-
-  /**
    * \brief Converter without offsets
    */
   template<class View>
@@ -742,12 +582,29 @@ namespace Gecode { namespace Int {
     /// The view type
     typedef View view_type;
     /// Pass through \a x
-    View& operator()(View& x) { return x; }
+    View& operator ()(View& x);
     /// Update during cloning
-    void update(const NoOffset&) {}
+    void update(const NoOffset&);
     /// Access offset
-    int offset(void) { return 0; }
+    int offset(void) const;
   };
+
+  template<class View>
+  forceinline View&
+  NoOffset<View>::operator ()(View& x) {
+    return x;
+  }
+
+  template<class View>
+  forceinline void
+  NoOffset<View>::update(const NoOffset&) {}
+
+  template<class View>
+  forceinline int
+  NoOffset<View>::offset(void) const {
+    return 0;
+  }
+  
 
   /**
    * \brief Converter with fixed offset
@@ -755,20 +612,32 @@ namespace Gecode { namespace Int {
   class Offset {
   public:
     /// The view type
-    typedef OffsetRefView view_type;
+    typedef OffsetView view_type;
     /// The offset
     int c;
     /// Constructor with offset \a off
-    Offset(int off = 0) : c(off) {}
+    Offset(int off = 0);
     /// Return OffsetRefView for \a x
-    OffsetRefView operator()(IntView& x) {
-      return OffsetRefView(x,c);
-    }
+    OffsetView operator()(IntView& x);
     /// Update during cloning
-    void update(const Offset& o) { c = o.c; }
+    void update(const Offset& o);
     /// Access offset
-    int offset(void) { return c; }
+    int offset(void) const;
   };
+
+  forceinline
+  Offset::Offset(int off) : c(off) {}
+
+  forceinline void
+  Offset::update(const Offset& o) { c = o.c; }
+
+  forceinline int
+  Offset::offset(void) const { return c; }
+
+  forceinline OffsetView
+  Offset::operator ()(IntView& x) {
+      return OffsetView(x,c);
+  }
 
   /**
    * \brief Scale integer view (template)
@@ -1515,7 +1384,6 @@ namespace Gecode { namespace Int {
 #include <gecode/int/view/zero.hpp>
 #include <gecode/int/view/minus.hpp>
 #include <gecode/int/view/offset.hpp>
-#include <gecode/int/view/offset-ref.hpp>
 #include <gecode/int/view/scale.hpp>
 
 #include <gecode/int/view/bool.hpp>

@@ -81,15 +81,6 @@ Added circuit constraints with offsets.
 
 [ENTRY]
 Module: int
-What:   new
-Rank:   minor
-[DESCRIPTION]
-Added OffsetRefView class, which can be used to implement propagators that
-have a whole array of views with the same offset. Examples are the circuit and 
-channel propagators.
-
-[ENTRY]
-Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]

@@ -328,8 +328,7 @@ INTHDR0 = \
 	var-imp/int.hpp var-imp/bool.hpp var/int.hpp \
 	view/bool.hpp view/constint.hpp view/zero.hpp view/int.hpp \
 	view/minus.hpp view/print.hpp view/neg-bool.hpp view/bool-test.hpp \
-	view/offset.hpp view/offset-ref.hpp view/rel-test.hpp \
-	view/scale.hpp view/iter.hpp \
+	view/offset.hpp view/rel-test.hpp view/scale.hpp view/iter.hpp \
 	arithmetic.hh array.hpp array-traits.hpp bool.hh branch.hh \
 	count.hh distinct.hh dom.hh \
 	element.hh exception.hpp  gcc.hh linear.hh \
