@@ -37,32 +37,35 @@
 
 namespace Gecode { namespace Int { namespace Channel {
 
-  template<class Info, PropCond pc>
+  template<class Info, class Offset, PropCond pc>
   forceinline
-  Base<Info,pc>::Base(Home home, int n0, Info* xy0)
-    : Propagator(home), n(n0), n_na(2*n), xy(xy0) {
+  Base<Info,Offset,pc>::Base(Home home, int n0, Info* xy0,
+                             Offset& ox0, Offset& oy0)
+    : Propagator(home), n(n0), n_na(2*n), ox(ox0), oy(oy0), xy(xy0) {
     for (int i=2*n; i--; )
       xy[i].view.subscribe(home,*this,pc);
   }
 
-  template<class Info, PropCond pc>
+  template<class Info, class Offset, PropCond pc>
   forceinline
-  Base<Info,pc>::Base(Space& home, bool share, Base<Info,pc>& p)
+  Base<Info,Offset,pc>::Base(Space& home, bool share, Base<Info,Offset,pc>& p)
     : Propagator(home,share,p), n(p.n), n_na(p.n_na),
       xy(home.alloc<Info>(2*n)) {
+    ox.update(p.ox);
+    oy.update(p.oy);
     for (int i=2*n; i--; )
       xy[i].update(home,share,p.xy[i]);
   }
 
-  template<class Info, PropCond pc>
+  template<class Info, class Offset, PropCond pc>
   PropCost
-  Base<Info,pc>::cost(const Space&, const ModEventDelta&) const {
+  Base<Info,Offset,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, 2*n);
   }
 
-  template<class Info, PropCond pc>
+  template<class Info, class Offset, PropCond pc>
   forceinline size_t
-  Base<Info,pc>::dispose(Space& home) {
+  Base<Info,Offset,pc>::dispose(Space& home) {
     for (int i=2*n; i--; )
       xy[i].view.cancel(home,*this,pc);
     (void) Propagator::dispose(home);

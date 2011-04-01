@@ -37,17 +37,18 @@
 
 namespace Gecode { namespace Graph { namespace Circuit {
 
-  template<class View>
+  template<class View, class Offset>
   forceinline
-  Base<View>::Base(Home home, ViewArray<View>& x)
-    : NaryPropagator<View,Int::PC_INT_DOM>(home,x), y(home,x) {
+  Base<View,Offset>::Base(Home home, ViewArray<View>& x, Offset& o0)
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,x), y(home,x), o(o0) {
     home.notice(*this,AP_WEAKLY);
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline
-  Base<View>::Base(Space& home, bool share, Base<View>& p)
+  Base<View,Offset>::Base(Space& home, bool share, Base<View,Offset>& p)
     : NaryPropagator<View,Int::PC_INT_DOM>(home,share,p) {
+    o.update(p.o);
     y.update(home,share,p.y);
   }
 
@@ -66,21 +67,22 @@ namespace Gecode { namespace Graph { namespace Circuit {
     View x; int n;
   };
 
-  template<class View>
+  template<class View, class Offset>
   ExecStatus
-  Base<View>::connected(Space& home) {
+  Base<View,Offset>::connected(Space& home) {
     int n = x.size();
 
     /// First non-assigned node.
     int start = 0;
     while (x[start].assigned()) {
-      start = x[start].val();
+      start = o(x[start]).val();
       if (start == 0) break;
     }
 
     /// Information needed for checking scc's
     Region r(home);
-    SsccInfo<View>* si = r.alloc<SsccInfo<View> >(n);
+    typedef typename Offset::view_type OView;
+    SsccInfo<OView>* si = r.alloc<SsccInfo<OView> >(n);
     unsigned int n_edges = 0;
     for (int i=n; i--; ) {
       n_edges += x[i].size();
@@ -91,11 +93,11 @@ namespace Gecode { namespace Graph { namespace Circuit {
     Support::StaticStack<int,Region> next(r,n);
 
     // Array to remember which mandatory tells need to be done
-    TellInfo<View>* eq = r.alloc<TellInfo<View> >(n);
+    TellInfo<OView>* eq = r.alloc<TellInfo<OView> >(n);
     int n_eq = 0;
 
     // Array to remember which edges need to be pruned
-    TellInfo<View>* nq = r.alloc<TellInfo<View> >(n_edges);
+    TellInfo<OView>* nq = r.alloc<TellInfo<OView> >(n_edges);
     int n_nq = 0;
 
     /*
@@ -133,7 +135,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     int back = 0;
   start:
     si[i].min = si[i].pre = si[i].low = cnt++;
-    si[i].v.init(x[i]);
+    si[i].v.init(o(x[i]));
     do {
       if (si[si[i].v.val()].pre < 0) {
         next.push(i);
@@ -142,10 +144,10 @@ namespace Gecode { namespace Graph { namespace Circuit {
       } else if ((subtree_min <= si[si[i].v.val()].pre) &&
                  (si[si[i].v.val()].pre <= subtree_max)) {
         back++;
-        eq[n_eq].x = x[i];
+        eq[n_eq].x = o(x[i]);
         eq[n_eq].n = si[i].v.val();
       } else if (si[si[i].v.val()].pre < subtree_min) {
-        nq[n_nq].x = x[i];
+        nq[n_nq].x = o(x[i]);
         nq[n_nq].n = si[i].v.val();
         n_nq++;
       }
@@ -198,9 +200,9 @@ namespace Gecode { namespace Graph { namespace Circuit {
     return es;
   }
 
-  template<class View>
+  template<class View, class Offset>
   ExecStatus
-  Base<View>::path(Space& home) {
+  Base<View,Offset>::path(Space& home) {
     // Prunes that partial assigned paths are not completed to cycles
 
     int n=x.size();
@@ -216,10 +218,11 @@ namespace Gecode { namespace Graph { namespace Circuit {
     // A stack that records all indices i such that end[i] != -1
     Support::StaticStack<int,Region> tell(r,n);
 
+    typedef typename Offset::view_type OView;
     for (int i=y.size(); i--; ) {
       assert(!y[i].assigned());
       // Non-assigned views serve as starting points for assigned paths
-      Int::ViewValues<View> v(y[i]);
+      Int::ViewValues<OView> v(o(y[i]));
       // Try all connected values
       do {
         int j0=v.val();
@@ -231,7 +234,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
           // x[i] as predecessor due to propagating distinct.
           int j = j0;
           do {
-            j=x[j].val();
+            j=o(x[j]).val();
           } while (x[j].assigned());
           // Now there cannot be a cycle from x[j] to x[v.val()]!
           // However, the tell cannot be done here as j might be
@@ -246,14 +249,14 @@ namespace Gecode { namespace Graph { namespace Circuit {
     while (!tell.empty()) {
       int i = tell.pop();
       assert(end[i] >= 0);
-      GECODE_ME_CHECK(x[end[i]].nq(home,i));
+      GECODE_ME_CHECK(o(x[end[i]]).nq(home,i));
     }
     return ES_NOFIX;
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline size_t
-  Base<View>::dispose(Space& home) {
+  Base<View,Offset>::dispose(Space& home) {
     home.ignore(*this,AP_WEAKLY);
     (void) NaryPropagator<View,Int::PC_INT_DOM>::dispose(home);
     return sizeof(*this);

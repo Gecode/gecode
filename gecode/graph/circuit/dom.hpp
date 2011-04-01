@@ -41,34 +41,34 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * The actual propagator
    *
    */
-  template<class View>
+  template<class View, class Offset>
   forceinline
-  Dom<View>::Dom(Home home, ViewArray<View>& x)
-    : Base<View>(home,x) {}
+  Dom<View,Offset>::Dom(Home home, ViewArray<View>& x, Offset& o)
+    : Base<View,Offset>(home,x,o) {}
 
-  template<class View>
+  template<class View, class Offset>
   forceinline
-  Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
-    : Base<View>(home,share,p) {}
+  Dom<View,Offset>::Dom(Space& home, bool share, Dom<View,Offset>& p)
+    : Base<View,Offset>(home,share,p) {}
 
-  template<class View>
+  template<class View, class Offset>
   Actor*
-  Dom<View>::copy(Space& home, bool share) {
-    return new (home) Dom<View>(home,share,*this);
+  Dom<View,Offset>::copy(Space& home, bool share) {
+    return new (home) Dom<View,Offset>(home,share,*this);
   }
 
-  template<class View>
+  template<class View, class Offset>
   PropCost
-  Dom<View>::cost(const Space&, const ModEventDelta& med) const {
+  Dom<View,Offset>::cost(const Space&, const ModEventDelta& med) const {
     if (View::me(med) == Int::ME_INT_VAL)
       return PropCost::linear(PropCost::LO, x.size());
     else
       return PropCost::quadratic(PropCost::HI, x.size());
   }
 
-  template<class View>
+  template<class View, class Offset>
   ExecStatus
-  Dom<View>::propagate(Space& home, const ModEventDelta& med) {
+  Dom<View,Offset>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) == Int::ME_INT_VAL) {
       GECODE_ES_CHECK((Int::Distinct::prop_val<View,true>(home,y)));
       ExecStatus escv = connected(home);
@@ -102,22 +102,22 @@ namespace Gecode { namespace Graph { namespace Circuit {
     return path(home);
   }
 
-  template<class View>
+  template<class View, class Offset>
   ExecStatus
-  Dom<View>::post(Home home, ViewArray<View>& x) {
+  Dom<View,Offset>::post(Home home, ViewArray<View>& x, Offset& o) {
     int n = x.size();
     if (n == 1) {
-      GECODE_ME_CHECK(x[0].eq(home,0));
+      GECODE_ME_CHECK(o(x[0]).eq(home,0));
     } else if (n == 2) {
-      GECODE_ME_CHECK(x[0].eq(home,1));
-      GECODE_ME_CHECK(x[1].eq(home,0));
+      GECODE_ME_CHECK(o(x[0]).eq(home,1));
+      GECODE_ME_CHECK(o(x[1]).eq(home,0));
     } else {
       for (int i=n; i--; ) {
-        GECODE_ME_CHECK(x[i].gq(home,0));
-        GECODE_ME_CHECK(x[i].le(home,n));
-        GECODE_ME_CHECK(x[i].nq(home,i));
+        GECODE_ME_CHECK(o(x[i]).gq(home,0));
+        GECODE_ME_CHECK(o(x[i]).le(home,n));
+        GECODE_ME_CHECK(o(x[i]).nq(home,i));
       }
-      (void) new (home) Dom<View>(home,x);
+      (void) new (home) Dom<View,Offset>(home,x,o);
     }
     return ES_OK;
   }

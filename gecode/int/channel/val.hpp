@@ -108,27 +108,30 @@ namespace Gecode { namespace Int { namespace Channel {
 
 
   // Propagate assigned views for x
-  template<class View, class Info>
+  template<class View, class Offset, class Info>
   ExecStatus
-  doprop_val(Space& home, int n, Info* x, Info* y,
+  doprop_val(Space& home, int n, Info* x, Offset& ox,
+             Info* y, Offset& oy,
              int& n_na, ProcessStack& xa, ProcessStack& ya) {
     do {
       int i = xa.pop();
-      int j = x[i].view.val();
+      int j = ox(x[i].view).val();
       // Assign the y variable to i (or test if already assigned!)
       {
-        ModEvent me = y[j].view.eq(home,i);
-        if (me_failed(me))
+        ModEvent me = oy(y[j].view).eq(home,i);
+        if (me_failed(me)) {
           return ES_FAILED;
+        }
         // Record that y[j] has been assigned and must be propagated
         if (me_modified(me))
           ya.push(j);
       }
       // Prune the value j from all x variables
       for (int k=i; k--; ) {
-        ModEvent me = x[k].view.nq(home,j);
-        if (me_failed(me))
+        ModEvent me = ox(x[k].view).nq(home,j);
+        if (me_failed(me)) {
           return ES_FAILED;
+        }
         if (me_modified(me)) {
           if (me == ME_INT_VAL) {
             // Record that x[k] has been assigned and must be propagated
@@ -143,9 +146,10 @@ namespace Gecode { namespace Int { namespace Channel {
       }
       // The same for the other views
       for (int k=i+1; k<n; k++) {
-        ModEvent me = x[k].view.nq(home,j);
-        if (me_failed(me))
+        ModEvent me = ox(x[k].view).nq(home,j);
+        if (me_failed(me)) {
           return ES_FAILED;
+        }
         if (me_modified(me)) {
           if (me == ME_INT_VAL) {
             // Record that x[k] has been assigned and must be propagated
@@ -164,38 +168,40 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   // Just do a test whether a call to the routine is necessary
-  template<class View, class Info>
+  template<class View, class Offset, class Info>
   forceinline ExecStatus
-  prop_val(Space& home, int n, Info* x, Info* y,
+  prop_val(Space& home, int n, Info* x, Offset& ox, Info* y, Offset& oy,
            int& n_na, ProcessStack& xa, ProcessStack& ya) {
     if (xa.empty())
       return ES_OK;
-    return doprop_val<View,Info>(home,n,x,y,n_na,xa,ya);
+    return doprop_val<View,Offset,Info>(home,n,x,ox,y,oy,n_na,xa,ya);
   }
 
   /*
    * The actual propagator
    *
    */
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   forceinline
-  Val<View,shared>::Val(Home home, int n, ValInfo<View>* xy)
-    : Base<ValInfo<View>,PC_INT_VAL>(home,n,xy) {}
+  Val<View,Offset,shared>::Val(Home home, int n, ValInfo<View>* xy,
+                               Offset& ox, Offset& oy)
+    : Base<ValInfo<View>,Offset,PC_INT_VAL>(home,n,xy,ox,oy) {}
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   forceinline
-  Val<View,shared>::Val(Space& home, bool share, Val<View,shared>& p)
-    : Base<ValInfo<View>,PC_INT_VAL>(home,share,p) {}
+  Val<View,Offset,shared>::Val(Space& home, bool share, 
+                               Val<View,Offset,shared>& p)
+    : Base<ValInfo<View>,Offset,PC_INT_VAL>(home,share,p) {}
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   Actor*
-  Val<View,shared>::copy(Space& home, bool share) {
-    return new (home) Val<View,shared>(home,share,*this);
+  Val<View,Offset,shared>::copy(Space& home, bool share) {
+    return new (home) Val<View,Offset,shared>(home,share,*this);
   }
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   ExecStatus
-  Val<View,shared>::propagate(Space& home, const ModEventDelta&) {
+  Val<View,Offset,shared>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
     ProcessStack xa(r,n);
     ProcessStack ya(r,n);
@@ -211,9 +217,11 @@ namespace Gecode { namespace Int { namespace Channel {
 
     do {
       // Propagate assigned views for x
-      GECODE_ES_CHECK((prop_val<View,ValInfo<View> >(home,n,x,y,n_na,xa,ya)));
+      GECODE_ES_CHECK((prop_val<View,Offset,ValInfo<View> >
+                       (home,n,x,ox,y,oy,n_na,xa,ya)));
       // Propagate assigned views for y
-      GECODE_ES_CHECK((prop_val<View,ValInfo<View> >(home,n,y,x,n_na,ya,xa)));
+      GECODE_ES_CHECK((prop_val<View,Offset,ValInfo<View> >
+                       (home,n,y,oy,x,ox,n_na,ya,xa)));
       assert(ya.empty());
     } while (!xa.empty());
 
@@ -222,20 +230,23 @@ namespace Gecode { namespace Int { namespace Channel {
     return shared ? ES_NOFIX : ES_FIX;
   }
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   ExecStatus
-  Val<View,shared>::post(Home home, int n, ValInfo<View>* xy) {
+  Val<View,Offset,shared>::post(Home home, int n, ValInfo<View>* xy,
+                                Offset& ox, Offset& oy) {
     assert(n > 0);
     if (n == 1) {
-      GECODE_ME_CHECK(xy[0].view.eq(home,0));
-      GECODE_ME_CHECK(xy[1].view.eq(home,0));
+      GECODE_ME_CHECK(ox(xy[0].view).eq(home,0));
+      GECODE_ME_CHECK(oy(xy[1].view).eq(home,0));
       return ES_OK;
     }
-    for (int i=2*n; i--; ) {
-      GECODE_ME_CHECK(xy[i].view.gq(home,0));
-      GECODE_ME_CHECK(xy[i].view.le(home,n));
+    for (int i=n; i--; ) {
+      GECODE_ME_CHECK(ox(xy[i  ].view).gq(home,0));
+      GECODE_ME_CHECK(ox(xy[i  ].view).le(home,n));
+      GECODE_ME_CHECK(oy(xy[i+n].view).gq(home,0));
+      GECODE_ME_CHECK(oy(xy[i+n].view).le(home,n));
     }
-    (void) new (home) Val<View,shared>(home,n,xy);
+    (void) new (home) Val<View,Offset,shared>(home,n,xy,ox,oy);
     return ES_OK;
   }
 

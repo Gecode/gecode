@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Channel {
    * \brief Combine view with information for domain propagation
    *
    */
-  template<class View>
+  template<class View, class Offset>
   class DomInfo {
   public:
     /// The view
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Initialize
     void init(View x, int n);
     /// Update during cloning
-    void update(Space& home, bool share, DomInfo<View>& vcb);
+    void update(Space& home, bool share, DomInfo<View,Offset>& vcb);
     /// Check whether propagation for assignment is to be done
     bool doval(void) const;
     /// Check whether propagation for domain is to be done
@@ -69,48 +69,49 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Record that one value got removed
     void removed(int i);
     /// Update the size and bounds information after pruning
-    void done(void);
+    void done(Offset& o);
   };
 
-  template<class View>
+  template<class View, class Offset>
   forceinline void
-  DomInfo<View>::init(View x, int n) {
+  DomInfo<View,Offset>::init(View x, int n) {
     view = x;
     size = static_cast<unsigned int>(n);
     min  = 0;
     max  = n-1;
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline void
-  DomInfo<View>::update(Space& home, bool share, DomInfo<View>& di) {
+  DomInfo<View,Offset>::update(Space& home, bool share,
+                               DomInfo<View,Offset>& di) {
     view.update(home,share,di.view);
     size = di.size;
     min  = di.min;
     max  = di.max;
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline bool
-  DomInfo<View>::doval(void) const {
+  DomInfo<View,Offset>::doval(void) const {
     return (size != 1) && view.assigned();
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline bool
-  DomInfo<View>::dodom(void) const {
+  DomInfo<View,Offset>::dodom(void) const {
     return size != view.size();
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline void
-  DomInfo<View>::assigned(void) {
+  DomInfo<View,Offset>::assigned(void) {
     size = 1;
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline void
-  DomInfo<View>::removed(int i) {
+  DomInfo<View,Offset>::removed(int i) {
     size--;
     if (i == min)
       min++;
@@ -118,33 +119,33 @@ namespace Gecode { namespace Int { namespace Channel {
       max--;
   }
 
-  template<class View>
+  template<class View, class Offset>
   forceinline void
-  DomInfo<View>::done(void) {
+  DomInfo<View,Offset>::done(Offset& o) {
     size = view.size();
-    min  = view.min();
-    max  = view.max();
+    min  = o(view).min();
+    max  = o(view).max();
   }
 
   // Propagate domain information from x to y
-  template<class View>
+  template<class View, class Offset>
   ExecStatus
-  prop_dom(Space& home, int n, DomInfo<View>* x, DomInfo<View>* y,
-           ProcessStack& ya) {
+  prop_dom(Space& home, int n, DomInfo<View,Offset>* x, Offset& ox,
+           DomInfo<View,Offset>* y, Offset& oy, ProcessStack& ya) {
     for (int i = n; i--; )
       // Only views with not yet propagated missing values
       if (x[i].dodom()) {
         // Iterate the values in the complement of x[i]
-        ViewRanges<View>
-          xir(x[i].view);
-        Iter::Ranges::ComplVal<ViewRanges<View> >
+        ViewRanges<typename Offset::view_type>
+          xir(ox(x[i].view));
+        Iter::Ranges::ComplVal<ViewRanges<typename Offset::view_type> >
           xirc(x[i].min,x[i].max,xir);
-        Iter::Ranges::ToValues<Iter::Ranges::ComplVal<ViewRanges<View> > >
-          jv(xirc);
+        Iter::Ranges::ToValues<Iter::Ranges::ComplVal<
+          ViewRanges<typename Offset::view_type> > > jv(xirc);
         while (jv()) {
           // j is not in the domain of x[i], so prune i from y[j]
           int j = jv.val();
-          ModEvent me = y[j].view.nq(home,i);
+          ModEvent me = oy(y[j].view).nq(home,i);
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
@@ -159,7 +160,7 @@ namespace Gecode { namespace Int { namespace Channel {
           ++jv;
         }
         // Update which values have been propagated and what are the new bounds
-        x[i].done();
+        x[i].done(ox);
       }
     return ES_OK;
   }
@@ -168,40 +169,43 @@ namespace Gecode { namespace Int { namespace Channel {
    * The actual propagator
    *
    */
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   forceinline
-  Dom<View,shared>::Dom(Home home, int n, DomInfo<View>* xy)
-    : Base<DomInfo<View>,PC_INT_DOM>(home,n,xy) {}
+  Dom<View,Offset,shared>::Dom(Home home, int n, DomInfo<View,Offset>* xy,
+                               Offset& ox, Offset& oy)
+    : Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>(home,n,xy,ox,oy) {}
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   forceinline
-  Dom<View,shared>::Dom(Space& home, bool share, Dom<View,shared>& p)
-    : Base<DomInfo<View>,PC_INT_DOM>(home,share,p) {}
+  Dom<View,Offset,shared>::Dom(Space& home, bool share, 
+                               Dom<View,Offset,shared>& p)
+    : Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>(home,share,p) {}
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   Actor*
-  Dom<View,shared>::copy(Space& home, bool share) {
-    return new (home) Dom<View,shared>(home,share,*this);
+  Dom<View,Offset,shared>::copy(Space& home, bool share) {
+    return new (home) Dom<View,Offset,shared>(home,share,*this);
   }
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   PropCost
-  Dom<View,shared>::cost(const Space&, const ModEventDelta& med) const {
+  Dom<View,Offset,shared>::cost(const Space&,
+                                const ModEventDelta& med) const {
     if (View::me(med) == ME_INT_VAL)
       return PropCost::quadratic(PropCost::LO, 2*n);
     else
       return PropCost::quadratic(PropCost::HI, 2*n);
   }
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   ExecStatus
-  Dom<View,shared>::propagate(Space& home, const ModEventDelta& med) {
+  Dom<View,Offset,shared>::propagate(Space& home, const ModEventDelta& med) {
     Region r(home);
     ProcessStack xa(r,n);
     ProcessStack ya(r,n);
 
-    DomInfo<View>* x = xy;
-    DomInfo<View>* y = xy+n;
+    DomInfo<View,Offset>* x = xy;
+    DomInfo<View,Offset>* y = xy+n;
 
     if (View::me(med) == ME_INT_VAL) {
       // Scan x and y for assigned but not yet propagated views
@@ -213,22 +217,22 @@ namespace Gecode { namespace Int { namespace Channel {
       if (shared) {
         do {
           // Propagate assigned views for x
-          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
-                           (home,n,x,y,n_na,xa,ya)));
+          GECODE_ES_CHECK((prop_val<View,Offset,DomInfo<View,Offset> >
+                           (home,n,x,ox,y,oy,n_na,xa,ya)));
           // Propagate assigned views for y
-          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
-                           (home,n,y,x,n_na,ya,xa)));
+          GECODE_ES_CHECK((prop_val<View,Offset,DomInfo<View,Offset> >
+                           (home,n,y,oy,x,ox,n_na,ya,xa)));
           assert(ya.empty());
         } while (!xa.empty() || !ya.empty());
         return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
       } else {
         do {
           // Propagate assigned views for x
-          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
-                           (home,n,x,y,n_na,xa,ya)));
+          GECODE_ES_CHECK((prop_val<View,Offset,DomInfo<View,Offset> >
+                           (home,n,x,ox,y,oy,n_na,xa,ya)));
           // Propagate assigned views for y
-          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
-                           (home,n,y,x,n_na,ya,xa)));
+          GECODE_ES_CHECK((prop_val<View,Offset,DomInfo<View,Offset> >
+                           (home,n,y,oy,x,ox,n_na,ya,xa)));
           assert(ya.empty());
         } while (!xa.empty());
         return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
@@ -238,10 +242,11 @@ namespace Gecode { namespace Int { namespace Channel {
     // Process changed views for y
     // This propagates from y to x and possibly records xs that
     // got assigned
-    GECODE_ES_CHECK(prop_dom(home,n,y,x,xa));
+    GECODE_ES_CHECK(prop_dom(home,n,y,oy,x,ox,xa));
 
     // Process assigned views for x
-    GECODE_ES_CHECK((prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya)));
+    GECODE_ES_CHECK((prop_val<View,Offset,DomInfo<View,Offset> >
+                     (home,n,x,ox,y,oy,n_na,xa,ya)));
 
     // Perform domain consistent propagation for distinct on the x views
     if (dc.available()) {
@@ -261,9 +266,9 @@ namespace Gecode { namespace Int { namespace Channel {
       // propagated.
       for (int i=n; i--; )
         if (x[i].doval()) {
-          int j = x[i].view.val();
+          int j = ox(x[i].view).val();
           // Assign the y variable to i (or test if already assigned!)
-          ModEvent me = y[j].view.eq(home,i);
+          ModEvent me = oy(y[j].view).eq(home,i);
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
@@ -279,14 +284,16 @@ namespace Gecode { namespace Int { namespace Channel {
     // Process changed views for x
     // This propagates from x to y and possibly records ys that
     // got assigned
-    GECODE_ES_CHECK(prop_dom(home,n,x,y,ya));
+    GECODE_ES_CHECK(prop_dom(home,n,x,ox,y,oy,ya));
 
     // Process assigned view again (some might have been found above)
     while (!xa.empty() || !ya.empty()) {
       // Process assigned views for x
-      GECODE_ES_CHECK((prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya)));
+      GECODE_ES_CHECK((prop_val<View,Offset,DomInfo<View,Offset> >
+                       (home,n,x,ox,y,oy,n_na,xa,ya)));
       // Process assigned views for y
-      GECODE_ES_CHECK((prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa)));
+      GECODE_ES_CHECK((prop_val<View,Offset,DomInfo<View,Offset> >
+                       (home,n,y,oy,x,ox,n_na,ya,xa)));
     };
 
     if (shared) {
@@ -299,20 +306,23 @@ namespace Gecode { namespace Int { namespace Channel {
     }
   }
 
-  template<class View, bool shared>
+  template<class View, class Offset, bool shared>
   ExecStatus
-  Dom<View,shared>::post(Home home, int n, DomInfo<View>* xy) {
+  Dom<View,Offset,shared>::post(Home home, int n, DomInfo<View,Offset>* xy,
+                                Offset& ox, Offset& oy) {
     assert(n > 0);
     if (n == 1) {
-      GECODE_ME_CHECK(xy[0].view.eq(home,0));
-      GECODE_ME_CHECK(xy[1].view.eq(home,0));
+      GECODE_ME_CHECK(ox(xy[0].view).eq(home,0));
+      GECODE_ME_CHECK(oy(xy[1].view).eq(home,0));
       return ES_OK;
     }
-    for (int i=2*n; i--; ) {
-      GECODE_ME_CHECK(xy[i].view.gq(home,0));
-      GECODE_ME_CHECK(xy[i].view.le(home,n));
+    for (int i=n; i--; ) {
+      GECODE_ME_CHECK(ox(xy[i  ].view).gq(home,0));
+      GECODE_ME_CHECK(ox(xy[i  ].view).le(home,n));
+      GECODE_ME_CHECK(oy(xy[i+n].view).gq(home,0));
+      GECODE_ME_CHECK(oy(xy[i+n].view).le(home,n));
     }
-    (void) new (home) Dom<View,shared>(home,n,xy);
+    (void) new (home) Dom<View,Offset,shared>(home,n,xy,ox,oy);
     return ES_OK;
   }
 

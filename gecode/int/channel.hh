@@ -55,19 +55,23 @@ namespace Gecode { namespace Int { namespace Channel {
    * \brief Base-class for channel propagators
    *
    */
-  template<class Info, PropCond pc>
+  template<class Info, class Offset, PropCond pc>
   class Base : public Propagator {
   protected:
     /// Number of views (actually twice as many for both x and y)
     int n;
     /// Total number of not assigned views (not known to be assigned)
     int n_na;
+    /// Offset transformation for x variables
+    Offset ox;
+    /// Offset transformation for y variables
+    Offset oy;
     /// View and information for both \a x and \a y
     Info* xy;
     /// Constructor for cloning \a p
-    Base(Space& home, bool share, Base<Info,pc>& p);
+    Base(Space& home, bool share, Base<Info,Offset,pc>& p);
     /// Constructor for posting
-    Base(Home home, int n, Info* xy);
+    Base(Home home, int n, Info* xy, Offset& ox, Offset& oy);
   public:
     /// Propagation cost (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -91,30 +95,33 @@ namespace Gecode { namespace Int { namespace Channel {
    * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, bool shared>
-  class Val : public Base<ValInfo<View>,PC_INT_VAL> {
+  template<class View, class Offset, bool shared>
+  class Val : public Base<ValInfo<View>,Offset,PC_INT_VAL> {
  protected:
-    using Base<ValInfo<View>,PC_INT_VAL>::n;
-    using Base<ValInfo<View>,PC_INT_VAL>::n_na;
-    using Base<ValInfo<View>,PC_INT_VAL>::xy;
+    using Base<ValInfo<View>,Offset,PC_INT_VAL>::n;
+    using Base<ValInfo<View>,Offset,PC_INT_VAL>::n_na;
+    using Base<ValInfo<View>,Offset,PC_INT_VAL>::xy;
+    using Base<ValInfo<View>,Offset,PC_INT_VAL>::ox;
+    using Base<ValInfo<View>,Offset,PC_INT_VAL>::oy;
     /// Constructor for cloning \a p
     Val(Space& home, bool share, Val& p);
     /// Constructor for posting
-    Val(Home home, int n, ValInfo<View>* xy);
+    Val(Home home, int n, ValInfo<View>* xy, Offset& ox, Offset& oy);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling
-    static  ExecStatus post(Home home, int n, ValInfo<View>* xy);
+    static  ExecStatus post(Home home, int n, ValInfo<View>* xy,
+                            Offset& ox, Offset& oy);
   };
 
   /**
    * \brief Combine view with information for domain propagation
    *
    */
-  template<class View> class DomInfo;
+  template<class View, class Offset> class DomInfo;
 
   /**
    * \brief Domain consistent channel propagator
@@ -125,18 +132,20 @@ namespace Gecode { namespace Int { namespace Channel {
    * Requires \code #include <gecode/int/channel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, bool shared>
-  class Dom : public Base<DomInfo<View>,PC_INT_DOM> {
+  template<class View, class Offset, bool shared>
+  class Dom : public Base<DomInfo<View,Offset>,Offset,PC_INT_DOM> {
   protected:
-    using Base<DomInfo<View>,PC_INT_DOM>::n;
-    using Base<DomInfo<View>,PC_INT_DOM>::n_na;
-    using Base<DomInfo<View>,PC_INT_DOM>::xy;
+    using Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>::n;
+    using Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>::n_na;
+    using Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>::xy;
+    using Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>::ox;
+    using Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>::oy;
     /// Propagation controller for propagating distinct
     Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Dom(Space& home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Home home, int n, DomInfo<View>* xy);
+    Dom(Home home, int n, DomInfo<View,Offset>* xy, Offset& ox, Offset& oy);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -150,7 +159,8 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling on \a xy
-    static  ExecStatus post(Home home, int n, DomInfo<View>* xy);
+    static  ExecStatus post(Home home, int n, DomInfo<View,Offset>* xy,
+                            Offset& ox, Offset& oy);
   };
 
   /**

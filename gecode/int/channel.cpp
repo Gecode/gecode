@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2006
+ *     Guido Tack, 2011
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -60,8 +62,9 @@ namespace Gecode {
 
     if ((xoff < 2) && (yoff < 2) && (xoff == yoff)) {
       if (icl == ICL_DOM) {
-        DomInfo<IntView>* di = 
-          static_cast<Space&>(home).alloc<DomInfo<IntView> >(2*(n+xoff));
+        DomInfo<IntView,NoOffset<IntView> >* di = 
+          static_cast<Space&>(home).
+            alloc<DomInfo<IntView,NoOffset<IntView> > >(2*(n+xoff));
         for (int i=n; i--; ) {
           di[xoff+i    ].init(x[i],n+xoff);
           di[2*xoff+i+n].init(y[i],n+xoff);
@@ -72,10 +75,13 @@ namespace Gecode {
           IntVar y0(home,0,0);
           di[n+xoff].init(y0, n+xoff);
         }
+        NoOffset<IntView> noff;
         if (x.same(home,y)) {
-          GECODE_ES_FAIL((Dom<IntView,true>::post(home,n+xoff,di)));
+          GECODE_ES_FAIL((Dom<IntView,NoOffset<IntView>,true>
+            ::post(home,n+xoff,di,noff,noff)));
         } else {
-          GECODE_ES_FAIL((Dom<IntView,false>::post(home,n+xoff,di)));
+          GECODE_ES_FAIL((Dom<IntView,NoOffset<IntView>,false>
+            ::post(home,n+xoff,di,noff,noff)));
         }
       } else {
         ValInfo<IntView>* vi = 
@@ -90,40 +96,47 @@ namespace Gecode {
           IntVar y0(home,0,0);
           vi[n+xoff].init(y0, n+xoff);
         }
+        NoOffset<IntView> noff;
         if (x.same(home,y)) {
-          GECODE_ES_FAIL((Val<IntView,true>::post(home,n+xoff,vi)));
+          GECODE_ES_FAIL((Val<IntView,NoOffset<IntView>,true>
+            ::post(home,n+xoff,vi,noff,noff)));
         } else {
-          GECODE_ES_FAIL((Val<IntView,false>::post(home,n+xoff,vi)));
+          GECODE_ES_FAIL((Val<IntView,NoOffset<IntView>,false>
+            ::post(home,n+xoff,vi,noff,noff)));
         }
       }
     } else {
       if (icl == ICL_DOM) {
-        DomInfo<OffsetView>* di = 
-          static_cast<Space&>(home).alloc<DomInfo<OffsetView> >(2*n);
+        DomInfo<IntView,Offset>* di = 
+          static_cast<Space&>(home).alloc<DomInfo<IntView,Offset> >(2*n);
         for (int i=n; i--; ) {
-          OffsetView oxi(x[i],-xoff);
-          di[i  ].init(oxi,n);
-          OffsetView oyi(y[i],-yoff);
-          di[i+n].init(oyi,n);
+          di[i  ].init(x[i],n);
+          di[i+n].init(y[i],n);
         }
+        Offset ox(-xoff);
+        Offset oy(-yoff);
         if (x.same(home,y)) {
-          GECODE_ES_FAIL((Dom<OffsetView,true>::post(home,n,di)));
+          GECODE_ES_FAIL((Dom<IntView,Offset,true>
+                          ::post(home,n,di,ox,oy)));
         } else {
-          GECODE_ES_FAIL((Dom<OffsetView,false>::post(home,n,di)));
+          GECODE_ES_FAIL((Dom<IntView,Offset,false>
+                          ::post(home,n,di,ox,oy)));
         }
       } else {
-        ValInfo<OffsetView>* vi = 
-          static_cast<Space&>(home).alloc<ValInfo<OffsetView> >(2*n);
+        ValInfo<IntView>* vi = 
+          static_cast<Space&>(home).alloc<ValInfo<IntView> >(2*n);
         for (int i=n; i--; ) {
-          OffsetView oxi(x[i],-xoff);
-          vi[i  ].init(oxi,n);
-          OffsetView oyi(y[i],-yoff);
-          vi[i+n].init(oyi,n);
+          vi[i  ].init(x[i],n);
+          vi[i+n].init(y[i],n);
         }
+        Offset ox(-xoff);
+        Offset oy(-yoff);
         if (x.same(home,y)) {
-          GECODE_ES_FAIL((Val<OffsetView,true>::post(home,n,vi)));
+          GECODE_ES_FAIL((Val<IntView,Offset,true>
+                          ::post(home,n,vi,ox,oy)));
         } else {
-          GECODE_ES_FAIL((Val<OffsetView,false>::post(home,n,vi)));
+          GECODE_ES_FAIL((Val<IntView,Offset,false>
+                          ::post(home,n,vi,ox,oy)));
         }
       }
     }

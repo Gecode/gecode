@@ -37,6 +37,7 @@
 
 #include "test/int.hh"
 #include <gecode/graph.hh>
+#include <gecode/minimodel.hh>
 
 namespace Test { namespace Int {
 
@@ -50,11 +51,14 @@ namespace Test { namespace Int {
      //@{
      /// Simple test for circuit constraint
      class Circuit : public Test {
+     private:
+       /// Offset
+       int offset;
      public:
        /// Create and register test
-       Circuit(int n, int min, int max, Gecode::IntConLevel icl)
-         : Test("Circuit::" + str(icl) + "::" + str(n),
-                   n,min,max,false,icl) {
+       Circuit(int n, int min, int max, int off, Gecode::IntConLevel icl)
+         : Test("Circuit::" + str(icl) + "::" + str(n) + "::" + str(off),
+                   n,min,max,false,icl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -76,17 +80,27 @@ namespace Test { namespace Int {
        }
        /// Post circuit constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::circuit(home, x, icl);
+         if (offset > 0) {
+           Gecode::IntVarArgs xx(x.size());
+           for (int i=x.size(); i--;)
+             xx[i] = Gecode::expr(home, x[i]+offset);
+           Gecode::circuit(home, offset, xx);
+         } else {
+           Gecode::circuit(home, x, icl);
+         }
        }
      };
 
      /// Simple test for circuit constraint with total cost
      class CircuitCost : public Test {
+     private:
+       /// Offset
+       int offset;
      public:
        /// Create and register test
-       CircuitCost(int n, int min, int max, Gecode::IntConLevel icl)
-         : Test("Circuit::Cost::" + str(icl) + "::" + str(n),
-                n+1,min,max,false,icl) {
+       CircuitCost(int n, int min, int max, int off, Gecode::IntConLevel icl)
+         : Test("Circuit::Cost::"+str(icl)+"::"+str(n)+"::"+str(off),
+                n+1,min,max,false,icl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -119,19 +133,29 @@ namespace Test { namespace Int {
            for (int j=0; j<n; j++)
              c[i*n+j]=j;
          IntVarArgs y(n);
-         for (int i=0; i<n; i++)
-           y[i]=x[i];
-         circuit(home, c, y, x[n], icl);
+         if (offset > 0) {
+           for (int i=n; i--;)
+             y[i] = Gecode::expr(home, x[i]+offset);
+           Gecode::circuit(home, c, offset, y, x[n], icl);
+         } else {
+           for (int i=0; i<n; i++)
+             y[i]=x[i];
+           circuit(home, c, y, x[n], icl);
+         }
        }
      };
 
      /// Simple test for circuit constraint with full cost information
      class CircuitFullCost : public Test {
+     private:
+       /// Offset
+       int offset;
      public:
        /// Create and register test
-       CircuitFullCost(int n, int min, int max, Gecode::IntConLevel icl)
-         : Test("Circuit::FullCost::" + str(icl) + "::" + str(n),
-                2*n+1,min,max,false,icl) {
+       CircuitFullCost(int n, int min, int max, int off,
+                       Gecode::IntConLevel icl)
+         : Test("Circuit::FullCost::" + str(icl)+"::"+str(n)+"::"+str(off),
+                2*n+1,min,max,false,icl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -168,9 +192,17 @@ namespace Test { namespace Int {
              c[i*n+j]=(j/2);
          IntVarArgs y(n), z(n);
          for (int i=0; i<n; i++) {
-           y[i]=x[i]; z[i]=x[n+i];
+           z[i]=x[n+i];
          }
-         circuit(home, c, y, z, x[2*n], icl);
+         if (offset > 0) {
+           for (int i=n; i--;)
+             y[i] = Gecode::expr(home, x[i]+offset);
+           Gecode::circuit(home, c, offset, y, z, x[2*n], icl);
+         } else {
+           for (int i=0; i<n; i++)
+             y[i]=x[i];
+           circuit(home, c, y, z, x[2*n], icl);
+         }
        }
      };
 
@@ -180,13 +212,19 @@ namespace Test { namespace Int {
        /// Perform creation and registration
        Create(void) {
          for (int i=1; i<=6; i++) {
-           (void) new Circuit(i,0,i-1,Gecode::ICL_VAL);
-           (void) new Circuit(i,0,i-1,Gecode::ICL_DOM);
+           (void) new Circuit(i,0,i-1,0,Gecode::ICL_VAL);
+           (void) new Circuit(i,0,i-1,0,Gecode::ICL_DOM);
+           (void) new Circuit(i,0,i-1,5,Gecode::ICL_VAL);
+           (void) new Circuit(i,0,i-1,5,Gecode::ICL_DOM);
          }
-         (void) new CircuitCost(4,0,9,Gecode::ICL_VAL);
-         (void) new CircuitCost(4,0,9,Gecode::ICL_DOM);
-         (void) new CircuitFullCost(3,0,3,Gecode::ICL_VAL);
-         (void) new CircuitFullCost(3,0,3,Gecode::ICL_DOM);
+         (void) new CircuitCost(4,0,9,0,Gecode::ICL_VAL);
+         (void) new CircuitCost(4,0,9,0,Gecode::ICL_DOM);
+         (void) new CircuitFullCost(3,0,3,0,Gecode::ICL_VAL);
+         (void) new CircuitFullCost(3,0,3,0,Gecode::ICL_DOM);
+         (void) new CircuitCost(4,0,9,5,Gecode::ICL_VAL);
+         (void) new CircuitCost(4,0,9,5,Gecode::ICL_DOM);
+         (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_VAL);
+         (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_DOM);
        }
      };
 

@@ -55,16 +55,18 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * is strongly connected and for pruning short cycles.
    *
    */
-  template<class View>
+  template<class View, class Offset>
   class Base : public NaryPropagator<View,Int::PC_INT_DOM> {
   protected:
     using NaryPropagator<View,Int::PC_INT_DOM>::x;
     /// Array for performing value propagation for distinct
     ViewArray<View> y;
+    /// Offset transformation
+    Offset o;
     /// Constructor for cloning \a p
     Base(Space& home, bool share, Base& p);
     /// Constructor for posting
-    Base(Home home, ViewArray<View>& x);
+    Base(Home home, ViewArray<View>& x, Offset& o);
     /// Check whether the view value graph is strongly connected
     ExecStatus connected(Space& home);
     /// Ensure path property: prune edges that could give to small cycles
@@ -84,17 +86,18 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * Requires \code #include <gecode/graph/circuit.hh> \endcode
    * \ingroup FuncGraphProp
    */
-  template<class View>
-  class Val : public Base<View> {
+  template<class View, class Offset>
+  class Val : public Base<View,Offset> {
   protected:
-    using Base<View>::x;
-    using Base<View>::y;
-    using Base<View>::connected;
-    using Base<View>::path;
+    using Base<View,Offset>::x;
+    using Base<View,Offset>::y;
+    using Base<View,Offset>::connected;
+    using Base<View,Offset>::path;
+    using Base<View,Offset>::o;
     /// Constructor for cloning \a p
     Val(Space& home, bool share, Val& p);
     /// Constructor for posting
-    Val(Home home, ViewArray<View>& x);
+    Val(Home home, ViewArray<View>& x, Offset& o);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -103,7 +106,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for circuit on \a x
-    static  ExecStatus post(Home home, ViewArray<View>& x);
+    static  ExecStatus post(Home home, ViewArray<View>& x, Offset& o);
   };
 
   /**
@@ -116,19 +119,20 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * Requires \code #include <gecode/graph/circuit.hh> \endcode
    * \ingroup FuncGraphProp
    */
-  template<class View>
-  class Dom : public Base<View> {
+  template<class View, class Offset>
+  class Dom : public Base<View,Offset> {
   protected:
-    using Base<View>::x;
-    using Base<View>::y;
-    using Base<View>::connected;
-    using Base<View>::path;
+    using Base<View,Offset>::x;
+    using Base<View,Offset>::y;
+    using Base<View,Offset>::connected;
+    using Base<View,Offset>::path;
+    using Base<View,Offset>::o;
     /// Propagation controller for propagating distinct
     Int::Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Dom(Space& home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Home home, ViewArray<View>& x);
+    Dom(Home home, ViewArray<View>& x, Offset& o);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -142,7 +146,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for circuit on \a x
-    static  ExecStatus post(Home home, ViewArray<View>& x);
+    static  ExecStatus post(Home home, ViewArray<View>& x, Offset& o);
   };
 
 }}}

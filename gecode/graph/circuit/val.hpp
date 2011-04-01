@@ -41,31 +41,31 @@ namespace Gecode { namespace Graph { namespace Circuit {
    * The actual propagator
    *
    */
-  template<class View>
+  template<class View, class Offset>
   forceinline
-  Val<View>::Val(Home home, ViewArray<View>& x)
-    : Base<View>(home,x) {}
+  Val<View,Offset>::Val(Home home, ViewArray<View>& x, Offset& o)
+    : Base<View,Offset>(home,x,o) {}
 
-  template<class View>
+  template<class View, class Offset>
   forceinline
-  Val<View>::Val(Space& home, bool share, Val<View>& p)
-    : Base<View>(home,share,p) {}
+  Val<View,Offset>::Val(Space& home, bool share, Val<View,Offset>& p)
+    : Base<View,Offset>(home,share,p) {}
 
-  template<class View>
+  template<class View, class Offset>
   Actor*
-  Val<View>::copy(Space& home, bool share) {
-    return new (home) Val<View>(home,share,*this);
+  Val<View,Offset>::copy(Space& home, bool share) {
+    return new (home) Val<View,Offset>(home,share,*this);
   }
 
-  template<class View>
+  template<class View, class Offset>
   PropCost
-  Val<View>::cost(const Space&, const ModEventDelta&) const {
+  Val<View,Offset>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI, x.size());
   }
 
-  template<class View>
+  template<class View, class Offset>
   ExecStatus
-  Val<View>::propagate(Space& home, const ModEventDelta&) {
+  Val<View,Offset>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK((Int::Distinct::prop_val<View,true>(home,y)));
     ExecStatus esc = connected(home);
     if (esc != ES_FIX)
@@ -79,22 +79,22 @@ namespace Gecode { namespace Graph { namespace Circuit {
     return path(home);
   }
 
-  template<class View>
+  template<class View, class Offset>
   ExecStatus
-  Val<View>::post(Home home, ViewArray<View>& x) {
+  Val<View,Offset>::post(Home home, ViewArray<View>& x, Offset& o) {
     int n = x.size();
     if (n == 1) {
-      GECODE_ME_CHECK(x[0].eq(home,0));
+      GECODE_ME_CHECK(o(x[0]).eq(home,0));
     } else if (n == 2) {
-      GECODE_ME_CHECK(x[0].eq(home,1));
-      GECODE_ME_CHECK(x[1].eq(home,0));
+      GECODE_ME_CHECK(o(x[0]).eq(home,1));
+      GECODE_ME_CHECK(o(x[1]).eq(home,0));
     } else {
       for (int i=n; i--; ) {
-        GECODE_ME_CHECK(x[i].gq(home,0));
-        GECODE_ME_CHECK(x[i].le(home,n));
-        GECODE_ME_CHECK(x[i].nq(home,i));
+        GECODE_ME_CHECK(o(x[i]).gq(home,0));
+        GECODE_ME_CHECK(o(x[i]).le(home,n));
+        GECODE_ME_CHECK(o(x[i]).nq(home,i));
       }
-      (void) new (home) Val<View>(home,x);
+      (void) new (home) Val<View,Offset>(home,x,o);
     }
     return ES_OK;
   }
