@@ -580,7 +580,7 @@ namespace Gecode { namespace Int {
   class NoOffset {
   public:
     /// The view type
-    typedef View view_type;
+    typedef View ViewType;
     /// Pass through \a x
     View& operator ()(View& x);
     /// Update during cloning
@@ -612,7 +612,7 @@ namespace Gecode { namespace Int {
   class Offset {
   public:
     /// The view type
-    typedef OffsetView view_type;
+    typedef OffsetView ViewType;
     /// The offset
     int c;
     /// Constructor with offset \a off

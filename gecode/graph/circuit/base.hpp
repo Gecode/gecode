@@ -81,7 +81,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
 
     /// Information needed for checking scc's
     Region r(home);
-    typedef typename Offset::view_type OView;
+    typedef typename Offset::ViewType OView;
     SsccInfo<OView>* si = r.alloc<SsccInfo<OView> >(n);
     unsigned int n_edges = 0;
     for (int i=n; i--; ) {
@@ -218,7 +218,7 @@ namespace Gecode { namespace Graph { namespace Circuit {
     // A stack that records all indices i such that end[i] != -1
     Support::StaticStack<int,Region> tell(r,n);
 
-    typedef typename Offset::view_type OView;
+    typedef typename Offset::ViewType OView;
     for (int i=y.size(); i--; ) {
       assert(!y[i].assigned());
       // Non-assigned views serve as starting points for assigned paths
