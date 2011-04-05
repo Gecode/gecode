@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The constructors for set variable arrays and argument arrays threw incorrect 
+VariableEmptyDomain exceptions.
+
+[ENTRY]
 Module: graph
 What:   new
 Rank:   minor

@@ -120,7 +120,7 @@ namespace Gecode {
     Set::Limits::check(lub,"SetVarArray::SetVarArray");
     Set::Limits::check(maxCard,"SetVarArray::SetVarArray");
     IntSetRanges glbr(glb);
-    IntSetRanges glbr_s(lub);
+    IntSetRanges glbr_s(glb);
     unsigned int glbSize = Iter::Ranges::size(glbr_s);
     IntSetRanges lubr(lub);
     IntSetRanges lubr_s(lub);
@@ -201,7 +201,7 @@ namespace Gecode {
     Set::Limits::check(lub,"SetVarArgs::SetVarArgs");
     Set::Limits::check(maxCard,"SetVarArgs::SetVarArgs");
     IntSetRanges glbr(glb);
-    IntSetRanges glbr_s(lub);
+    IntSetRanges glbr_s(glb);
     unsigned int glbSize = Iter::Ranges::size(glbr_s);
     IntSetRanges lubr(lub);
     IntSetRanges lubr_s(lub);
