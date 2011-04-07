@@ -80,9 +80,9 @@ namespace Gecode {
       bool assigned(void) const { return true; }
 
       /// Test whether \a n is contained in domain
-      bool in(int n) const { n=n; return false; }
+      bool in(int n) const { (void) n; return false; }
       /// Test whether \a n is contained in domain
-      bool in(double n) const { n=n; return false; }
+      bool in(double n) const { (void) n; return false; }
       //@}
 
       /// \name Domain update by value
