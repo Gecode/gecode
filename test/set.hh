@@ -61,6 +61,7 @@ namespace Test {
       FakeSpace(void) {}
       /// Faked copy function
       virtual Gecode::Space* copy(bool share) {
+        (void) share;
         return NULL;
       }
     };
