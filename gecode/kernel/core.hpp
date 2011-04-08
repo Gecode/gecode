@@ -287,18 +287,25 @@ namespace Gecode {
     friend class Propagator;
     template<class VarImp> friend class VarImpDisposer;
   private:
-    /**
-     * \brief Subscribed actors
-     *
-     * The base pointer of the array of subscribed actors.
-     *
-     * During cloning, it is reused as the forwarding pointer for the
-     * variable. The original value is saved in the copy and restored after
-     * cloning.
-     *
-     * This pointer must be first to avoid padding on 64 bit machines.
-     */
-    ActorLink** base;
+    union {
+      /**
+       * \brief Subscribed actors
+       *
+       * The base pointer of the array of subscribed actors.
+       *
+       * This pointer must be first to avoid padding on 64 bit machines.
+       */
+      ActorLink** base;
+      /**
+       * \brief Forwarding pointer
+       *
+       * During cloning, this is used as the forwarding pointer for the
+       * variable. The original value is saved in the copy and restored after
+       * cloning.
+       *
+       */
+      VarImp<VIC>* fwd;
+    } b;
 
     /// Index for update
     static const int idx_c = VIC::idx_c;
@@ -2930,14 +2937,14 @@ namespace Gecode {
   forceinline ActorLink**
   VarImp<VIC>::actor(PropCond pc) {
     assert((pc >= 0)  && (pc < pc_max+2));
-    return (pc == 0) ? base : base+u.idx[pc-1];
+    return (pc == 0) ? b.base : b.base+u.idx[pc-1];
   }
 
   template<class VIC>
   forceinline ActorLink**
   VarImp<VIC>::actorNonZero(PropCond pc) {
     assert((pc > 0)  && (pc < pc_max+2));
-    return base+u.idx[pc-1];
+    return b.base+u.idx[pc-1];
   }
 
   template<class VIC>
@@ -2957,7 +2964,7 @@ namespace Gecode {
   template<class VIC>
   forceinline
   VarImp<VIC>::VarImp(Space&) {
-    base = NULL; entries = 0;
+    b.base = NULL; entries = 0;
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
@@ -2966,7 +2973,7 @@ namespace Gecode {
   template<class VIC>
   forceinline
   VarImp<VIC>::VarImp(void) {
-    base = NULL; entries = 0;
+    b.base = NULL; entries = 0;
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
@@ -2996,7 +3003,7 @@ namespace Gecode {
     // Count the afc of each advisor's propagator
     {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
-      ActorLink** e = const_cast<VarImp<VIC>*>(this)->base+entries;
+      ActorLink** e = const_cast<VarImp<VIC>*>(this)->b.base+entries;
       while (a < e) {
         d += Advisor::cast(*a)->propagator().afc(); a++;
       }
@@ -3039,14 +3046,14 @@ namespace Gecode {
   template<class VIC>
   forceinline bool
   VarImp<VIC>::copied(void) const {
-    return Support::marked(base);
+    return Support::marked(b.fwd);
   }
 
   template<class VIC>
   forceinline VarImp<VIC>*
   VarImp<VIC>::forward(void) const {
     assert(copied());
-    return reinterpret_cast<VarImp<VIC>*>(Support::unmark(base));
+    return static_cast<VarImp<VIC>*>(Support::unmark(b.fwd));
   }
 
   template<class VIC>
@@ -3061,7 +3068,7 @@ namespace Gecode {
   VarImp<VIC>::VarImp(Space& home, bool, VarImp<VIC>& x) {
     VarImpBase** reg;
     free_and_bits = x.free_and_bits & ((1 << free_bits) - 1);
-    if (x.base == NULL) {
+    if (x.b.base == NULL) {
       // Variable implementation needs no index structure
       reg = &home.pc.c.vars_noidx;
       assert(x.degree() == 0);
@@ -3069,13 +3076,13 @@ namespace Gecode {
       reg = &home.pc.c.vars_u[idx_c];
     }
     // Save subscriptions in copy
-    base = x.base;
+    b.base = x.b.base;
     entries = x.entries;
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = x.idx(pc);
 
     // Set forwarding pointer
-    x.base = reinterpret_cast<ActorLink**>(Support::mark(this));
+    x.b.fwd = static_cast<VarImp<VIC>*>(Support::mark(this));
     // Register original
     x.u.next = static_cast<VarImp<VIC>*>(*reg); *reg = &x;
   }
@@ -3126,7 +3133,7 @@ namespace Gecode {
     free_and_bits -= 1 << free_bits;
 
     // Enter subscription
-    base[entries] = *actorNonZero(pc_max+1);
+    b.base[entries] = *actorNonZero(pc_max+1);
     entries++;
     for (PropCond j = pc_max; j > pc; j--) {
       *actorNonZero(j+1) = *actorNonZero(j);
@@ -3138,7 +3145,7 @@ namespace Gecode {
 
 #ifdef GECODE_AUDIT
     ActorLink** f = actor(pc);
-    while (f < (pc == pc_max+1 ? base+entries : actorNonZero(pc+1)))
+    while (f < (pc == pc_max+1 ? b.base+entries : actorNonZero(pc+1)))
       if (*f == p)
         goto found;
       else
@@ -3158,18 +3165,18 @@ namespace Gecode {
     free_and_bits -= 1 << free_bits;
 
     // Enter subscription
-    base[entries++] = *actorNonZero(pc_max+1);
+    b.base[entries++] = *actorNonZero(pc_max+1);
     *actorNonZero(pc_max+1) = a;
   }
 
   template<class VIC>
   void
   VarImp<VIC>::resize(Space& home) {
-    if (base == NULL) {
+    if (b.base == NULL) {
       assert((free_and_bits >> free_bits) == 0);
       // Create fresh dependency array with four entries
       free_and_bits += 4 << free_bits;
-      base = home.alloc<ActorLink*>(4);
+      b.base = home.alloc<ActorLink*>(4);
       for (int i=0; i<pc_max+1; i++)
         u.idx[i] = 0;
     } else {
@@ -3180,14 +3187,14 @@ namespace Gecode {
       // more agressively
       ActorLink** s = static_cast<ActorLink**>(home.mm.subscriptions());
       unsigned int m =
-        ((s <= base) && (base < s+home.pc.p.n_sub)) ?
+        ((s <= b.base) && (b.base < s+home.pc.p.n_sub)) ?
         (n+4) : ((n+1)*3>>1);
       ActorLink** prop = home.alloc<ActorLink*>(m);
       free_and_bits += (m-n) << free_bits;
       // Copy entries
-      Heap::copy<ActorLink*>(prop, base, n);
-      home.free<ActorLink*>(base,n);
-      base = prop;
+      Heap::copy<ActorLink*>(prop, b.base, n);
+      home.free<ActorLink*>(b.base,n);
+      b.base = prop;
     }
   }
 
@@ -3238,7 +3245,7 @@ namespace Gecode {
       *(actorNonZero(j)-1) = *(actorNonZero(j+1)-1);
       idx(j)--;
     }
-    *(actorNonZero(pc_max+1)-1) = base[entries-1];
+    *(actorNonZero(pc_max+1)-1) = b.base[entries-1];
     idx(pc_max+1)--;
     entries--;
     free_and_bits += 1 << free_bits;
@@ -3251,7 +3258,7 @@ namespace Gecode {
     // Find actor in dependency array
     ActorLink** f = actorNonZero(pc_max+1);
 #ifdef GECODE_AUDIT
-    while (f < base+entries)
+    while (f < b.base+entries)
       if (*f == a)
         goto found;
       else
@@ -3262,7 +3269,7 @@ namespace Gecode {
     while (*f != a) f++;
 #endif
     // Remove actor
-    *f = base[--entries];
+    *f = b.base[--entries];
     free_and_bits += 1 << free_bits;
     home.pc.p.n_sub -= 1;
   }
@@ -3287,9 +3294,9 @@ namespace Gecode {
     unsigned int n_sub = degree();
     home.pc.p.n_sub -= n_sub;
     unsigned int n = (free_and_bits >> VIC::free_bits) + n_sub;
-    home.free<ActorLink*>(base,n);
+    home.free<ActorLink*>(b.base,n);
     // Must be NULL such that cloning works
-    base = NULL;
+    b.base = NULL;
     // Must be 0 such that degree works
     entries = 0;
   }
@@ -3303,7 +3310,7 @@ namespace Gecode {
      * be iterated in forward direction.
      */
     ActorLink** la = actorNonZero(pc_max+1);
-    ActorLink** le = base+entries;
+    ActorLink** le = b.base+entries;
     if (la == le)
       return true;
     d.me = me;
@@ -3339,16 +3346,16 @@ namespace Gecode {
     // this refers to the variable to be updated (clone)
     // x refers to the original
     // Recover from copy
-    x->base = base;
+    x->b.base = b.base;
     x->u.idx[0] = u.idx[0];
     if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
       x->u.idx[1] = u.idx[1];
 
-    ActorLink** f = x->base;
+    ActorLink** f = x->b.base;
     unsigned int n = x->degree();
     ActorLink** t = sub;
     sub += n;
-    base = t;
+    b.base = t;
     // Set subscriptions using actor forwarding pointers
     while (n >= 4) {
       n -= 4;

@@ -491,7 +491,7 @@ namespace Gecode {
       static_cast<VarImp<NoIdxVarImpConf>*>(c->pc.c.vars_noidx);
     while (x != NULL) {
       VarImp<NoIdxVarImpConf>* n = x->next();
-      x->base = NULL; x->u.idx[0] = 0;
+      x->b.base = NULL; x->u.idx[0] = 0;
       x = n;
     }
     // Update variables with indexing structure
