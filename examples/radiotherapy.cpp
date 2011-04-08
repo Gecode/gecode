@@ -229,8 +229,9 @@ public:
       virtual size_t size(void) const {
         return sizeof(Choice);
       }
+      /// Archive into \a e
       virtual void archive(Support::Archive& e) const {
-        Choice::archive(e);
+        Gecode::Choice::archive(e);
         e.put(fail);
       }
     };

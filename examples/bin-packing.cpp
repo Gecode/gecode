@@ -219,11 +219,11 @@ protected:
       return sizeof(Choice) + sizeof(int) * n_same;
     }
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const
-    {
+    virtual void archive(Support::Archive& e) const {
       Gecode::Choice::archive(e);
       e << alternatives() << item << n_same;
-      for (int i=n_same; i--;) e << same[i];
+      for (int i=n_same; i--;) 
+        e << same[i];
     }
     /// Destructor
     virtual ~Choice(void) {
