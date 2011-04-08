@@ -72,7 +72,7 @@ namespace Gecode {
       /// Limit of allocated heap blocks
       unsigned int size;
       /// Pointers to allocated heap blocks (more entries)
-      void* blocks[1];
+      void* blocks[0];
     };
     /**
      * \brief Heap allocation information
