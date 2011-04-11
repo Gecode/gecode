@@ -177,6 +177,7 @@ gnu)
       AC_GECODE_GCC_DEBUG_SWITCHES
     fi
   fi
+  AC_GECODE_CHECK_COMPILERFLAG([-Qunused-arguments])
 
   ;;
 intel)
