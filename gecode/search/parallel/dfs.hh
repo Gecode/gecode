@@ -174,7 +174,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   DFS::Worker::find(void) {
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine().workers(); i++) {
-      unsigned long int r_d;
+      unsigned long int r_d = 0ul;
       if (Space* s = engine().worker(i)->steal(r_d)) {
         // Reset this guy
         m.acquire();
