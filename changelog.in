@@ -73,6 +73,16 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks: Ruben Zilibowitz
+[DESCRIPTION]
+Added configure option --enable-small-codesize that results in
+slightly less efficient but more compact code being generated for
+non-debug builds.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor

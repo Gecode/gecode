@@ -472,6 +472,30 @@ AC_DEFUN([AC_GECODE_STATICLIBS],
         fi
       ])
 
+AC_DEFUN([AC_GECODE_CODESIZE],
+    [AC_ARG_ENABLE([small-codesize],
+       AC_HELP_STRING([--enable-small-codesize],
+         [optimize for code size @<:@default=no@:>@]))
+     AC_MSG_CHECKING(whether to optimize for code size)
+     if test "${enable_debug:-no}" = "yes"; then
+        AC_MSG_RESULT(not in debug builds)
+     elif test "${enable_small_codesize:-no}" = "yes"; then
+       AC_MSG_RESULT(yes)
+       case $host_os in
+         darwin*)
+           ac_gecode_gcc_optimize_flag=-Oz
+         ;;
+         *)
+           ac_gecode_gcc_optimize_flag=-Os
+           ac_gecode_cl_optimize_flag=-O1
+         ;;
+       esac
+     else
+        AC_MSG_RESULT(no)
+        ac_gecode_gcc_optimize_flag=-O3
+        ac_gecode_cl_optimize_flag=-O2
+     fi])
+
 
 AC_DEFUN([AC_GECODE_DEBUG],
     [AC_ARG_ENABLE([debug],
@@ -656,7 +680,7 @@ AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
        [How to tell the compiler to really, really inline])])
   CXXFLAGS=${ac_gecode_save_CXXFLAGS}
   AC_LANG_POP([C++])
-    AC_GECODE_CHECK_COMPILERFLAG([-O3])
+    AC_GECODE_CHECK_COMPILERFLAG([${ac_gecode_gcc_optimize_flag}])
   AC_GECODE_CHECK_COMPILERFLAG([-fno-strict-aliasing])])
 
 AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
@@ -764,7 +788,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
 
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
-    AC_GECODE_ADD_TO_COMPILERFLAGS([-MD -Ox -fp:fast -GS- -wd4355])
+    AC_GECODE_ADD_TO_COMPILERFLAGS([${ac_gecode_cl_optimize_flag}])
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-MD -fp:fast -GS- -wd4355])
     AC_GECODE_CHECK_COMPILERFLAG([-arch:SSE2])
 
     dnl flags for creating optimized dlls
