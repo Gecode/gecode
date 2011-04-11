@@ -127,9 +127,16 @@ AC_DEFUN([AC_GECODE_CHECK_GXX_FLAG],
    CXXFLAGS="$1${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    AC_LANG_PUSH(C++)
    AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
-     [CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      AC_MSG_RESULT([yes])
-      ifelse([$2], , :, [$2])],
+     [if grep -q "unrecognized\|argument unused" conftest.err; then
+        CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+        AC_MSG_RESULT([no])
+        ifelse([$3], , :, [$3])
+      else
+        CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+        AC_MSG_RESULT([yes])
+        ifelse([$2], , :, [$2])
+      fi
+     ],
      [CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
       AC_MSG_RESULT([no])
       ifelse([$3], , :, [$3])])
@@ -153,9 +160,16 @@ AC_DEFUN([AC_GECODE_CHECK_GCC_FLAG],[
    CFLAGS="$1${CFLAGS:+ }${CFLAGS} -Werror"
    AC_LANG_PUSH(C)
    AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
-     [CFLAGS="${ac_gecode_save_CFLAGS}"
-      AC_MSG_RESULT([yes])
-      ifelse([$2], , :, [$2])],
+     [if grep -q "unrecognized\|argument unused" conftest.err; then
+        CFLAGS="${ac_gecode_save_CFLAGS}"
+        AC_MSG_RESULT([no])
+        ifelse([$3], , :, [$3])
+      else
+        CFLAGS="${ac_gecode_save_CFLAGS}"
+        AC_MSG_RESULT([yes])
+        ifelse([$2], , :, [$2])
+      fi
+     ],
      [CFLAGS="${ac_gecode_save_CFLAGS}"
       AC_MSG_RESULT([no])
       ifelse([$3], , :, [$3])])
