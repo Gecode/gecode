@@ -63,14 +63,14 @@ namespace Gecode {
     n->a = 0;
   }
 
-  LinExpr::LinExpr(double c) :
+  LinExpr::LinExpr(int c) :
     n(new Node) {
     n->n_int = n->n_bool = 0;
     n->t = NT_CONST;
     n->l = n->r = NULL;
     n->a = 0;
     Int::Limits::check(c,"MiniModel::LinExpr");
-    n->c = static_cast<int>(c);
+    n->c = c;
   }
 
   LinExpr::LinExpr(const IntVar& x, int a) :

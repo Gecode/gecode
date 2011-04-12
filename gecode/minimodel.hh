@@ -203,7 +203,7 @@ namespace Gecode {
     LinExpr(void);
     /// Create expression for constant \a c
     GECODE_MINIMODEL_EXPORT
-    LinExpr(double c);
+    LinExpr(int c);
     /// Create expression
     GECODE_MINIMODEL_EXPORT
     LinExpr(const IntVar& x, int a=1);
