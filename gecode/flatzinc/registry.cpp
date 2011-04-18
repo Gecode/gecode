@@ -288,7 +288,8 @@ namespace Gecode { namespace FlatZinc {
 
     void p_distinct(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs va = arg2intvarargs(s, ce[0]);
-      distinct(s, va, ann2icl(ann));    
+      IntConLevel icl = ann2icl(ann);
+      distinct(s, va, icl == ICL_DEF ? ICL_BND : icl);
     }
     void p_distinctOffset(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs va = arg2intvarargs(s, ce[1]);
@@ -297,7 +298,8 @@ namespace Gecode { namespace FlatZinc {
       for (int i=offs->a.size(); i--; ) {
         oa[i] = offs->a[i]->getInt();    
       }
-      distinct(s, oa, va, ann2icl(ann));
+      IntConLevel icl = ann2icl(ann);
+      distinct(s, oa, va, icl == ICL_DEF ? ICL_BND : icl);
     }
 
     void p_all_equal(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
