@@ -74,6 +74,14 @@ Some bug fixes, probably
 
 [ENTRY]
 Module: other
+What:   bug
+Rank:   minor
+Thanks: Martin Mann
+[DESCRIPTION]
+Fixed Makefile, now installation works when FlatZinc library is disabled.
+
+[ENTRY]
+Module: other
 What:   new
 Rank:   minor
 Thanks: Ruben Zilibowitz
