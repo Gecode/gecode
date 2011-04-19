@@ -840,7 +840,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(COMPILESBJ, "-c -Fa")
   AC_SUBST(CXXIN, "-Tp")
   AC_SUBST(CCIN, "-Tc")
-  AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "")
+  AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "-bigobj")
 
   dnl Install stub .lib files (required for msvc)
   AC_SUBST(INSTALLLIBS, "yes")
