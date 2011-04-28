@@ -73,6 +73,15 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Changed keyboard shortcuts in Gist so that they work on all platforms: "Inspect"
+is now Ctrl+number of inspector, for "Inspect before fixpoint" press Alt in 
+addition (on Mac OS, use the Command key instead of Ctrl).
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor

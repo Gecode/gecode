@@ -453,9 +453,9 @@ namespace Gecode { namespace Gist {
     inspectBeforeFPGroup->addAction(ibfpa);
 
     if (inspectGroup->actions().size() < 10) {
-      ia->setShortcut(QKeySequence(
+      ia->setShortcut(QKeySequence(QString("Ctrl+")+
         QString("").setNum(inspectGroup->actions().size())));
-      ibfpa->setShortcut(QKeySequence(QString("Ctrl+")+
+      ibfpa->setShortcut(QKeySequence(QString("Ctrl+Alt+")+
         QString("").setNum(inspectBeforeFPGroup->actions().size())));
     }
   }
