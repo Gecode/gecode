@@ -130,7 +130,7 @@ namespace Gecode { namespace Support {
   forceinline unsigned int
   Thread::npu(void) {
 #ifdef GECODE_HAS_UNISTD_H
-    int n=sysconf(_SC_NPROCESSORS_ONLN);
+    int n=static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
     return (n>1) ? n : 1;
 #else
     return 1;
