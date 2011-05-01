@@ -46,9 +46,14 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   ChannelInt<View>::ChannelInt(Home home,
-                             ViewArray<Gecode::Int::IntView>& xs0,
-                             ViewArray<View>& ys0)
+                               ViewArray<Gecode::Int::CachedView<
+                                Gecode::Int::IntView> >& xs0,
+                               ViewArray<CachedView<View> >& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
+    for (int i=xs.size(); i--;)
+      xs[i].initCache(home,IntSet(0,ys.size()-1));
+    for (int i=ys.size(); i--;)
+      ys[i].initCache(home,IntSet::empty,IntSet(0,xs.size()-1));
     xs.subscribe(home,*this, Gecode::Int::PC_INT_DOM);
     ys.subscribe(home,*this, PC_SET_ANY);
   }
@@ -63,8 +68,10 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline ExecStatus
-  ChannelInt<View>::post(Home home, ViewArray<Gecode::Int::IntView>& xs,
-                          ViewArray<View>& ys) {
+  ChannelInt<View>::post(Home home,
+                         ViewArray<Gecode::Int::CachedView<
+                          Gecode::Int::IntView> >& xs,
+                         ViewArray<CachedView<View> >& ys) {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables
     // result in failure.
@@ -112,38 +119,34 @@ namespace Gecode { namespace Set { namespace Int {
     int assigned = 0;
     for (int v=xs.size(); v--;) {
       if (xs[v].assigned()) {
-        assigned += 1;
-        for (int i=ys.size(); i--;) {
-          if (i==xs[v].val()) {
-            GECODE_ME_CHECK(ys[i].include(home, v));
-          }
-          else {
-            GECODE_ME_CHECK(ys[i].exclude(home, v));
-          }
-        }
-      } else {
+        assigned++;
+        if (xs[v].modified())
+          GECODE_ME_CHECK(ys[xs[v].val()].include(home,v));
+      }
+      if (xs[v].modified()) {
+        Gecode::Int::ViewDiffRanges<Gecode::Int::IntView> d(xs[v]);
+        Iter::Ranges::ToValues<Gecode::Int::ViewDiffRanges<
+          Gecode::Int::IntView> > dv(d);
+        for (; dv(); ++dv)
+          GECODE_ME_CHECK(ys[dv.val()].exclude(home, v));
+        xs[v].cache(home);
+      }
+    }
 
-        for (int i=ys.size(); i--;) {
-          if (ys[i].notContains(v)) {
-            GECODE_ME_CHECK(xs[v].nq(home, i));
-          }
-          if (ys[i].contains(v)) {
-            GECODE_ME_CHECK(xs[v].eq(home, i));
-          }
-        }
-
-        Gecode::Int::ViewRanges<Gecode::Int::IntView> xsv(xs[v]);
-        int min = 0;
-        for (; xsv(); ++xsv) {
-          for (int i=min; i<xsv.min(); i++) {
-            GECODE_ME_CHECK(ys[i].exclude(home, v));
-          }
-          min = xsv.max() + 1;
-        }
-        for (int i=min; i<ys.size(); i++) {
-          GECODE_ME_CHECK(ys[i].exclude(home, v));
-        }
-
+    for (int i=ys.size(); i--;) {
+      if (ys[i].glbModified()) {
+        GlbDiffRanges<View> yilb(ys[i]);
+        Iter::Ranges::ToValues<GlbDiffRanges<View> > dv(yilb);
+        for (;dv();++dv)
+          GECODE_ME_CHECK(xs[dv.val()].eq(home,i));
+        ys[i].cacheGlb(home);
+      }
+      if (ys[i].lubModified()) {
+        LubDiffRanges<View> yiub(ys[i]);
+        Iter::Ranges::ToValues<LubDiffRanges<View> > dv(yiub);
+        for (;dv();++dv)
+          GECODE_ME_CHECK(xs[dv.val()].nq(home,i));
+        ys[i].cacheLub(home);
       }
     }
 

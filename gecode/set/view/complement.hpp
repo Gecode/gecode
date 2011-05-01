@@ -345,6 +345,7 @@ namespace Gecode { namespace Set {
     LubRanges(const ComplementView<View>& x);
     /// Initialize with ranges for view \a x
     void init(const ComplementView<View>& x);
+    //@}
 
     /// \name Iteration control
     //@{
@@ -451,6 +452,7 @@ namespace Gecode { namespace Set {
     GlbRanges(const ComplementView<View> & x);
     /// Initialize with ranges for view \a x
     void init(const ComplementView<View> & x);
+    //@}
 
     /// \name Iteration control
     //@{

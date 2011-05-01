@@ -125,7 +125,7 @@
 #include <gecode/kernel/global-prop-info.hpp>
 #include <gecode/kernel/core.hpp>
 #include <gecode/kernel/modevent.hpp>
-
+#include <gecode/kernel/range-list.hpp>
 
 /*
  * Region memory management

@@ -73,6 +73,44 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Moved RangeList class, which is a list of ranges implemented as a FreeList, 
+from the set module into the kernel. Also added corresponding 
+Iter::Ranges::RangeList iterator.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added a CachedView that can cache the domain between propagator invocations
+and provides an efficient test whether a view has changed since the previous
+invocation as well as an iterator over the removed domain values. This makes
+it easier to implement incremental propagation algorithms that need exact
+delta information.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added a CachedView that can cache the domain between propagator invocations
+and provides an efficient test whether a view has changed since the previous
+invocation as well as an iterator over the removed domain values. This makes
+it easier to implement incremental propagation algorithms that need exact
+delta information.
+
+[ENTRY]
+Module: set
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Use new cached views for a more efficient implementation of the channel constraint between IntVarArgs and SetVarArgs.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor

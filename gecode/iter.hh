@@ -72,6 +72,7 @@ namespace Gecode {
 #include <gecode/iter/ranges-values.hpp>
 #include <gecode/iter/ranges-add.hpp>
 #include <gecode/iter/ranges-singleton-append.hpp>
+#include <gecode/iter/ranges-rangelist.hpp>
 
 #include <gecode/iter/values-array.hpp>
 #include <gecode/iter/values-bitset.hpp>

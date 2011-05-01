@@ -1096,7 +1096,215 @@ namespace Gecode { namespace Int {
   bool same(const ZeroIntView& x, const ZeroIntView& y);
   //@}
 
+  template<class View> class ViewDiffRanges;
 
+  /**
+   * \brief Cached integer view
+   *
+   * A cached integer view \f$c\f$ for an integer view \f$x\f$ adds operations
+   * for cacheing the current domain of \f$x\f$ and comparing the current
+   * domain to the cached domain. Cached views make it easy to implement
+   * incremental propagation algorithms.
+   *
+   * \ingroup TaskActorIntView
+   */
+  template<class View>
+  class CachedView : public DerivedView<View> {
+    friend class ViewDiffRanges<View>;
+  protected:
+    using DerivedView<View>::x;
+    /// First cached range
+    RangeList* _firstRange;
+    /// Last cached range
+    RangeList* _lastRange;
+    /// Size of cached domain
+    unsigned int _size;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    CachedView(void);
+    /// Initialize with integer view \a y
+    explicit CachedView(const View& y);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain (greatest element not greater than the median)
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+    
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return regret of domain minimum (distance to next larger value)
+    unsigned int regret_min(void) const;
+    /// Return regret of domain maximum (distance to next smaller value)
+    unsigned int regret_max(void) const;
+    //@}
+    
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether \a n is contained in domain
+    bool in(double n) const;
+    //@}
+    
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, double n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, double n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, double n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, double n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, double n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, double n);
+    //@}
+    
+    /**
+     * \name Domain update by iterator
+     *
+     * Views can be both updated by range and value iterators.
+     * Value iterators do not need to be strict in that the same value
+     * is allowed to occur more than once in the iterated sequence.
+     *
+     * The argument \a depends must be true, if the iterator
+     * passed as argument depends on the view on which the operation
+     * is invoked. In this case, the view is only updated after the
+     * iterator has been consumed. Otherwise, the domain might be updated
+     * concurrently while following the iterator.
+     *
+     */
+    //@{
+    /// Replace domain by ranges described by \a i
+    template<class I>
+    ModEvent narrow_r(Space& home, I& i, bool depends=true);
+    /// Intersect domain with ranges described by \a i
+    template<class I>
+    ModEvent inter_r(Space& home, I& i, bool depends=true);
+    /// Remove from domain the ranges described by \a i
+    template<class I>
+    ModEvent minus_r(Space& home, I& i, bool depends=true);
+    /// Replace domain by values described by \a i
+    template<class I>
+    ModEvent narrow_v(Space& home, I& i, bool depends=true);
+    /// Intersect domain with values described by \a i
+    template<class I>
+    ModEvent inter_v(Space& home, I& i, bool depends=true);
+    /// Remove from domain the values described by \a i
+    template<class I>
+    ModEvent minus_v(Space& home, I& i, bool depends=true);
+    //@}
+
+    /// \name View-dependent propagator support
+    //@{
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent me);
+    //@}
+
+    /// \name Delta information for advisors
+    //@{
+    /// Return minimum value just pruned
+    int min(const Delta& d) const;
+    /// Return maximum value just pruned
+    int max(const Delta& d) const;
+    /// Test whether arbitrary values got pruned
+    bool any(const Delta& d) const;
+    //@}
+
+    /// \name Domain cache operations
+    //@{
+    /// Initialize cache to set \a s
+    void initCache(Space& home, const IntSet& s);
+    /// Update cache to current domain
+    void cache(Space& home);
+    /// Check whether cache differs from current domain
+    bool modified(void) const;
+    //@}
+    
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, CachedView<View>& y);
+    //@}
+  };
+
+  /**
+   * \brief Print integer offset view
+   * \relates Gecode::Int::CachedView
+   */
+  template<class Char, class Traits, class View>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const CachedView<View>& x);
+  
+  /** \name View comparison
+   *  \relates Gecode::Int::CachedView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  template<class View>
+  bool same(const CachedView<View>& x, const CachedView<View>& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  template<class View>
+  bool before(const CachedView<View>& x, const CachedView<View>& y);
+  //@}
+
+  /**
+   * \brief %Range iterator for cached integer views
+   *
+   * This iterator iterates the difference between the cached domain
+   * and the current domain of an integer view.
+   *
+   * \ingroup TaskActorInt
+   */
+  template<class View>
+  class ViewDiffRanges
+    : public Iter::Ranges::Diff<Iter::Ranges::RangeList,ViewRanges<View> > {
+    typedef Iter::Ranges::Diff<Iter::Ranges::RangeList,ViewRanges<View> > 
+      Super;
+  protected:
+    /// Cached domain iterator
+    Iter::Ranges::RangeList cr;
+    /// Current domain iterator
+    ViewRanges<View> dr;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ViewDiffRanges(void);
+    /// Initialize with ranges for view \a x
+    ViewDiffRanges(const CachedView<View>& x);
+    /// Initialize with ranges for view \a x
+    void init(const CachedView<View>& x);
+    //@}
+  };
 
   /**
    * \brief Boolean view for Boolean variables
@@ -1385,6 +1593,7 @@ namespace Gecode { namespace Int {
 #include <gecode/int/view/minus.hpp>
 #include <gecode/int/view/offset.hpp>
 #include <gecode/int/view/scale.hpp>
+#include <gecode/int/view/cached.hpp>
 
 #include <gecode/int/view/bool.hpp>
 

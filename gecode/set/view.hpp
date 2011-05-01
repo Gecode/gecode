@@ -900,6 +900,229 @@ namespace Gecode { namespace Set {
   operator <<(std::basic_ostream<Char,Traits>& os,
               const ComplementView<View>& x);
 
+
+  template<class View> class LubDiffRanges;
+  template<class View> class GlbDiffRanges;
+
+  /**
+   * \brief Cached set view
+   *
+   * A cached set view \f$s\f$ for a set view \f$t\f$ adds operations
+   * for cacheing the current domain of \f$t\f$ and comparing the current
+   * domain to the cached domain. Cached views make it easy to implement
+   * incremental propagation algorithms.
+   * 
+   * \ingroup TaskActorSetView
+   */
+
+  template<class View>
+  class CachedView
+    : public DerivedView<View> {
+    friend class LubDiffRanges<View>;
+    friend class GlbDiffRanges<View>;
+  protected:
+    using DerivedView<View>::x;
+
+    /// The cached least upper bound
+    LUBndSet lubCache;
+    /// The cached greatest lower bound
+    GLBndSet glbCache;
+
+  public:
+
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    CachedView(void);
+    /// Initialize with set view \a y
+    explicit CachedView(const View& y);
+    //@}
+
+    /// \name Value access
+    //@{
+
+    /// Return minimum cardinality
+    unsigned int cardMin(void) const;
+    /// Return maximum cardinality
+    unsigned int cardMax(void) const;
+    /// Return minimum of the least upper bound
+    int lubMin(void) const;
+    /// Return maximum of the least upper bound
+    int lubMax(void) const;
+    /// Return \a n-th smallest element of the least upper bound
+    int lubMinN(unsigned int n) const;
+    /// Return minimum of the greatest lower bound
+    int glbMin(void) const;
+    /// Return maximum of the greatest lower bound
+    int glbMax(void) const;
+
+    /// Return the number of elements in the greatest lower bound
+    unsigned int glbSize(void) const;
+    /// Return the number of elements in the least upper bound
+    unsigned int lubSize(void) const;
+    /// Return the number of unknown elements
+    unsigned int unknownSize(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether \a i is in the greatest lower bound
+    bool contains(int i) const;
+    /// Test whether \a i is not in the least upper bound
+    bool notContains(int i) const;
+    //@}
+
+
+    /// \name Domain update by value
+    //@{
+    /// Restrict cardinality to be greater than or equal to \a m
+    ModEvent cardMin(Space& home, unsigned int m);
+    /// Restrict cardinality to be less than or equal to \a m
+    ModEvent cardMax(Space& home, unsigned int m);
+    /**
+     * \brief Update greatest lower bound to include all elements
+     * between and including \a i and \a j
+     */
+    ModEvent include(Space& home,int i,int j);
+    /**
+     * \brief Restrict least upper bound to not contain all elements
+     * between and including \a i and \a j
+     */
+    ModEvent exclude(Space& home,int i,int j);
+    /// Update greatest lower bound to contain \a i
+    ModEvent include(Space& home,int i);
+    /// Restrict least upper bound to not contain \a i
+    ModEvent exclude(Space& home,int i);
+    /**
+     * \brief Update least upper bound to contain at most all elements
+     * between and including \a i and \a j
+     */
+    ModEvent intersect(Space& home,int i,int j);
+    /// Update least upper bound to contain at most the element \a i
+    ModEvent intersect(Space& home,int i);
+    //@}
+
+    /// \name Domain update by range iterator
+    //@{
+
+    /// Remove range sequence described by \a i from least upper bound
+    template<class I> ModEvent excludeI(Space& home, I& i);
+    /// Include range sequence described by \a i in greatest lower bound
+    template<class I> ModEvent includeI(Space& home, I& i);
+    /// Intersect least upper bound with range sequence described by \a i
+    template<class I> ModEvent intersectI(Space& home, I& iter);
+    //@}
+
+    /// \name View-dependent propagator support
+    //@{
+    /// Schedule propagator \a p with modification event \a me
+    static void schedule(Space& home, Propagator& p, ModEvent me);
+    /// Return modification event for view type in \a med
+    static ModEvent me(const ModEventDelta& med);
+    /// Translate modification event \a me to modification event delta for view
+    static ModEventDelta med(ModEvent);
+    //@}
+
+    /// \name Dependencies
+    //@{
+    /**
+     * \brief Subscribe propagator \a p with propagation condition \a pc to view
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     */
+    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Subscribe advisor \a a to view
+    void subscribe(Space& home, Advisor& a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space& home, Advisor& a);
+    //@}
+
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta& d);
+    /// Return minimum value just pruned from glb
+    int glbMin(const Delta& d) const;
+    /// Return maximum value just pruned from glb
+    int glbMax(const Delta& d) const;
+    /// Test whether arbitrary values got pruned from glb
+    bool glbAny(const Delta& d) const;
+    /// Return minimum value just pruned from lub
+    int lubMin(const Delta& d) const;
+    /// Return maximum value just pruned from lub
+    int lubMax(const Delta& d) const;
+    /// Test whether arbitrary values got pruned from lub
+    bool lubAny(const Delta& d) const;
+    //@}
+
+    /// \name Domain cache operations
+    //@{
+    /// Initialize cache to bounds \a glb and \a lub
+    void initCache(Space& home, const IntSet& glb, const IntSet& lub);
+    /// Update greatest lower bound cache to current domain
+    void cacheGlb(Space& home);
+    /// Update least upper bound cache to current domain
+    void cacheLub(Space& home);
+    /// Check whether greatest lower bound cache differs from current domain
+    bool glbModified(void) const;
+    /// Check whether least upper bound cache differs from current domain
+    bool lubModified(void) const;
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view \a y
+    void update(Space& home, bool share, CachedView<View>& y);
+    //@}
+  };
+
+  /**
+   * \brief Print cached set view
+   * \relates Gecode::Set::CachedView
+   */
+  template<class Char, class Traits, class View>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
+              const CachedView<View>& x);
+
+  /**
+   * \brief %Range iterator for difference of greatest lower bound and cache
+   * \relates Gecode::Set::CachedView
+   */
+  template<class View>
+  class GlbDiffRanges
+    : public Iter::Ranges::Diff<GlbRanges<View>,BndSetRanges> {
+  protected:
+    /// Lower bound iterator
+    GlbRanges<View> gr;
+    /// Cached lower bound
+    BndSetRanges cr;
+  public:
+    /// Constructor
+    GlbDiffRanges(const CachedView<View>& x);
+  };
+
+  /**
+   * \brief %Range iterator for difference of least upper bound and cache
+   * \relates Gecode::Set::CachedView
+   */
+  template<class View>
+  class LubDiffRanges
+    : public Iter::Ranges::Diff<BndSetRanges,LubRanges<View> > {
+  protected:
+    /// Cached upper bound
+    BndSetRanges cr;
+    /// Upper bound iterator
+    LubRanges<View> lr;
+  public:
+    /// Constructor
+    LubDiffRanges(const CachedView<View>& x);
+  };
+
 }}
 
 #include <gecode/set/var/set.hpp>
@@ -909,6 +1132,7 @@ namespace Gecode { namespace Set {
 #include <gecode/set/view/const.hpp>
 #include <gecode/set/view/singleton.hpp>
 #include <gecode/set/view/complement.hpp>
+#include <gecode/set/view/cached.hpp>
 
 #include <gecode/set/view/print.hpp>
 #include <gecode/set/var/print.hpp>

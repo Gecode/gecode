@@ -192,7 +192,7 @@ KERNELSRC0 = \
 
 KERNELHDR0 = \
 	array shared-array core exception \
-	macros memory-config memory-manager region modevent \
+	macros memory-config memory-manager region modevent range-list \
 	propagator advisor view var \
 	branch brancher brancher-view brancher-tiebreak \
 	brancher-val allocators global-prop-info 
@@ -326,7 +326,7 @@ INTHDR0 = \
 	sorted/order.hpp sorted/propagate.hpp sorted/sortsup.hpp \
 	int-set-1.hpp int-set-2.hpp var-imp/delta.hpp var/print.hpp var/bool.hpp \
 	var-imp/int.hpp var-imp/bool.hpp var/int.hpp \
-	view/bool.hpp view/constint.hpp view/zero.hpp view/int.hpp \
+	view/bool.hpp view/cached.hpp view/constint.hpp view/zero.hpp view/int.hpp \
 	view/minus.hpp view/print.hpp view/neg-bool.hpp view/bool-test.hpp \
 	view/offset.hpp view/rel-test.hpp view/scale.hpp view/iter.hpp \
 	arithmetic.hh array.hpp array-traits.hpp bool.hh branch.hh \
@@ -410,7 +410,7 @@ SETHDR0 =								     \
 	var-imp/delta.hpp var-imp/iter.hpp 				     \
 	var/set.hpp var/print.hpp					     \
 	view/complement.hpp view/const.hpp view/set.hpp view/singleton.hpp   \
-	view/print.hpp                                       \
+	view/cached.hpp view/print.hpp                                       \
 	rel/subset.hpp rel/re-subset.hpp rel/eq.hpp rel/nq.hpp rel/re-eq.hpp \
 	rel/common.hpp rel/nosubset.hpp sequence.hh	                     \
 	rel-op/union.hpp rel-op/partition.hpp rel-op/subofunion.hpp	     \
@@ -652,8 +652,8 @@ ITERHDR0 =							\
 	ranges-add ranges-append ranges-array ranges-cache	\
 	ranges-compl ranges-diff ranges-empty			\
 	ranges-inter ranges-minmax ranges-minus			\
-	ranges-offset ranges-operations ranges-scale		\
-	ranges-singleton ranges-singleton-append		\
+	ranges-offset ranges-operations ranges-rangelist	\
+	ranges-scale ranges-singleton ranges-singleton-append	\
 	ranges-size ranges-union ranges-values			\
 	ranges-negative ranges-positive ranges-map		\
 	ranges-list                                             \

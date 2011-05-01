@@ -88,69 +88,6 @@ namespace Gecode { namespace Set {
 namespace Gecode { namespace Set {
 
   /**
-   * \brief Lists of ranges (intervals)
-   *
-   */
-  class RangeList : public FreeList {
-  protected:
-    /// Minimum of range
-    int        _min;
-    /// Maximum of range
-    int        _max;
-  public:
-    /// \name Constructors
-    //@{
-    /// Default constructor (noop)
-    RangeList(void);
-    /// Initialize with minimum \a min and maximum \a max and successor \a n
-    RangeList(int min, int max, RangeList* n);
-    //@}
-
-    /// \name Access
-    //@{
-    /// Return minimum
-    int min(void) const;
-    /// Return maximum
-    int max(void) const;
-    /// Return width (distance between maximum and minimum)
-    unsigned int width(void) const;
-
-    /// Return next element
-    RangeList* next(void) const;
-    //@}
-
-    /// \name Update
-    //@{
-    /// Set minimum to \a n
-    void min(int n);
-    /// Set maximum to \a n
-    void max(int n);
-    /// Set next rane to \a n
-    void next(RangeList* n);
-    //@}
-
-    /// \name Memory management
-    //@{
-    /**
-     * \brief Free memory for all elements between this and \a l (inclusive)
-     */
-    void dispose(Space& home, RangeList* l);
-
-    /// Allocate memory from space
-    static void* operator new(size_t s, Space& home);
-    /// Placement-new operator (noop)
-    static void* operator new(size_t s, void* p);
-    /// No-op (for exceptions)
-    static void  operator delete(void*);
-    /// No-op (use dispose instead)
-    static void  operator delete(void*, Space& home);
-    /// No-op (use dispose instead)
-    static void  operator delete(void*, void*);
-    //@}
-  };
-
-
-  /**
    * \brief Sets of integers
    */
   class BndSet  {
@@ -249,10 +186,7 @@ namespace Gecode { namespace Set {
    * \brief Range iterator for integer sets
    *
    */
-  class BndSetRanges {
-  private:
-    /// Current range
-    const RangeList* c;
+  class BndSetRanges : public Iter::Ranges::RangeList {
   public:
     /// \name Constructors and initialization
     //@{
@@ -262,24 +196,6 @@ namespace Gecode { namespace Set {
     BndSetRanges(const BndSet& s);
     /// Initialize with BndSet \a s
     void init(const BndSet& s);
-    //@}
-
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
-
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    unsigned int width(void) const;
     //@}
   };
 

@@ -42,79 +42,6 @@
 namespace Gecode { namespace Set {
 
   /*
-   * Range lists
-   *
-   */
-
-  forceinline
-  RangeList::RangeList(void) {}
-
-  forceinline
-  RangeList::RangeList(int min, int max, RangeList* n)
-    : FreeList(n), _min(min), _max(max) {}
-
-  forceinline RangeList*
-  RangeList::next() const {
-    return static_cast<RangeList*>(FreeList::next());
-  }
-
-  forceinline void
-  RangeList::min(int n) {
-    _min = n;
-  }
-  forceinline void
-  RangeList::max(int n) {
-    _max = n;
-  }
-  forceinline void
-  RangeList::next(RangeList* n) {
-    FreeList::next(n);
-  }
-
-  forceinline int
-  RangeList::min(void) const {
-    return _min;
-  }
-  forceinline int
-  RangeList::max(void) const {
-    return _max;
-  }
-  forceinline unsigned int
-  RangeList::width(void) const {
-    return static_cast<unsigned int>(_max - _min + 1);
-  }
-
-
-  forceinline void
-  RangeList::operator delete(void*) {}
-
-  forceinline void
-  RangeList::operator delete(void*, Space&) {
-    GECODE_NEVER;
-  }
-
-  forceinline void
-  RangeList::operator delete(void*, void*) {
-    GECODE_NEVER;
-  }
-
-  forceinline void*
-  RangeList::operator new(size_t, Space& home) {
-    return home.fl_alloc<sizeof(RangeList)>();
-  }
-
-  forceinline void*
-  RangeList::operator new(size_t, void* p) {
-    return p;
-  }
-
-  forceinline void
-  RangeList::dispose(Space& home, RangeList* l) {
-    home.fl_dispose<sizeof(RangeList)>(this,l);
-  }
-
-
-  /*
    * BndSet
    *
    */
@@ -315,30 +242,12 @@ namespace Gecode { namespace Set {
   BndSetRanges::BndSetRanges(void) {}
 
   forceinline
-  BndSetRanges::BndSetRanges(const BndSet& s) : c(s.ranges()) {}
+  BndSetRanges::BndSetRanges(const BndSet& s)
+    : Iter::Ranges::RangeList(s.ranges()) {}
 
   forceinline void
-  BndSetRanges::init(const BndSet& s) { c = s.ranges(); }
-
-  forceinline bool
-  BndSetRanges::operator ()(void) const { return c != NULL; }
-
-  forceinline void
-  BndSetRanges::operator ++(void) {
-    c = c->next();
-  }
-
-  forceinline int
-  BndSetRanges::min(void) const {
-    return c->min();
-  }
-  forceinline int
-  BndSetRanges::max(void) const {
-    return c->max();
-  }
-  forceinline unsigned int
-  BndSetRanges::width(void) const {
-    return c->width();
+  BndSetRanges::init(const BndSet& s) {
+    Iter::Ranges::RangeList::init(s.ranges());
   }
 
   /*

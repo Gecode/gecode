@@ -107,6 +107,12 @@ namespace Gecode { namespace Int {
   operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x) {
     return print_view(os,x);
   }
+  template<class Char, class Traits, class View>
+  inline std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
+              const CachedView<View>& x) {
+    return print_view(os,x);
+  }
 
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&

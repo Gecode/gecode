@@ -305,15 +305,16 @@ namespace Gecode { namespace Set { namespace Int {
   class ChannelInt : public Propagator {
   protected:
     /// IntViews, \f$x_i\f$ reflects which set contains element \f$i\f$
-    ViewArray<Gecode::Int::IntView> xs;
+    ViewArray<Gecode::Int::CachedView<Gecode::Int::IntView> > xs;
     /// SetViews that are constrained to be disjoint
-    ViewArray<View> ys;
+    ViewArray<CachedView<View> > ys;
 
     /// Constructor for cloning \a p
     ChannelInt(Space& home, bool share,ChannelInt& p);
     /// Constructor for posting
-    ChannelInt(Home home,ViewArray<Gecode::Int::IntView>&,
-               ViewArray<View>&);
+    ChannelInt(Home home,
+               ViewArray<Gecode::Int::CachedView<Gecode::Int::IntView> >&,
+               ViewArray<CachedView<View> >&);
   public:
     /// Copy propagator during cloning
     virtual Actor*   copy(Space& home,bool);
@@ -324,8 +325,10 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-    static ExecStatus post(Home home,ViewArray<Gecode::Int::IntView>& x,
-                           ViewArray<View>& y);
+    static ExecStatus post(Home home,
+                           ViewArray<Gecode::Int::CachedView<
+                            Gecode::Int::IntView> >& x,
+                           ViewArray<CachedView<View> >& y);
   };
 
   /**
