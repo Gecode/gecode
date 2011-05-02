@@ -39,7 +39,7 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
-#ifdef GECODE_HAS_GIST
+#if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
 #include <QtGui>
 #endif
 
@@ -118,7 +118,7 @@ public:
   }
 };
 
-#ifdef GECODE_HAS_GIST
+#if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
 /// Inspector showing queens on a chess board
 class QueensInspector : public Gist::Inspector {
 protected:
@@ -200,7 +200,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Queens::PROP_DISTINCT, "distinct",
                       "three distinct constraints");
 
-#ifdef GECODE_HAS_GIST
+#if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
   QueensInspector ki;
   opt.inspect.click(&ki);
 #endif

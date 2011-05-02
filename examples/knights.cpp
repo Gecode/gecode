@@ -42,7 +42,7 @@
 #include <gecode/minimodel.hh>
 #include <gecode/graph.hh>
 
-#ifdef GECODE_HAS_GIST
+#if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
 #include <QtGui>
 #endif
 
@@ -323,7 +323,7 @@ public:
  *
  */
 
-#ifdef GECODE_HAS_GIST
+#if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
 /// Inspector showing knight moves on a chess board
 class KnightsInspector : public Gist::Inspector {
 protected:
@@ -412,7 +412,7 @@ main(int argc, char* argv[]) {
   opt.branching(Knights::BRANCH_NAIVE, "reified");
   opt.branching(Knights::BRANCH_WARNSDORFF, "warnsdorff");
 
-#ifdef GECODE_HAS_GIST
+#if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
   KnightsInspector ki;
   opt.inspect.click(&ki);
 #endif
