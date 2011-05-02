@@ -147,7 +147,7 @@ namespace Gecode { namespace Gist {
   forceinline
   Node::Node(int p, bool failed) : parent(p) {
     childrenOrFirstChild = NULL;
-    noOfChildren = NULL;
+    noOfChildren = 0;
     setTag(failed ? LEAF : UNDET);
   }
 
