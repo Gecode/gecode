@@ -67,6 +67,8 @@ namespace Gecode { namespace Gist {
       QMutexLocker locker(&mutex);
       curBest = (bab ? new BestNode(NULL) : NULL);
       if (rootSpace->status() == SS_FAILED) {
+        if (!opt.clone)
+          delete rootSpace;
         rootSpace = NULL;
       } else {
         rootSpace = Gecode::Search::snapshot(rootSpace,opt);

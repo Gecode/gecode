@@ -78,12 +78,18 @@ namespace Gecode { namespace Search { namespace Sequential {
   forceinline 
   BAB::BAB(Space* s, size_t sz, const Options& o)
     : Worker(sz), opt(o), d(0), mark(0), best(NULL) {
-    cur = (s->status(*this) == SS_FAILED) ? NULL : snapshot(s,opt);
+    current(s);
+    if (s->status(*this) == SS_FAILED) {
+      fail++;
+      cur = NULL;
+      if (!o.clone)
+        delete s;
+    } else {
+      cur = snapshot(s,opt);
+    }
     current(s);
     current(NULL);
     current(cur);
-    if (cur == NULL)
-      fail++;
   }
 
   forceinline Space*

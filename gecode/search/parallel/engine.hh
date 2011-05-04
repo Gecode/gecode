@@ -238,15 +238,19 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline
   Engine::Worker::Worker(Space* s, size_t sz, Engine& e)
     : Search::Worker(sz), _engine(e), d(0), idle(false) {
+    current(s);
     if (s != NULL) {
-      cur = (s->status(*this) == SS_FAILED) ? 
-        NULL : snapshot(s,engine().opt(),false);
-      if (cur == NULL)
+      if (s->status(*this) == SS_FAILED) {
         fail++;
+        cur = NULL;
+        if (!engine().opt().clone)
+          delete s;
+      } else {
+        cur = snapshot(s,engine().opt(),false);
+      }
     } else {
       cur = NULL;
     }
-    current(s);
     current(NULL);
     current(cur);
   }

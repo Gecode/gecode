@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak when passing failed space to search engine with cloning 
+option set to false.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
