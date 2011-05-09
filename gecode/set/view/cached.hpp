@@ -390,7 +390,7 @@ namespace Gecode { namespace Set {
   template<class View>
   forceinline
   LubDiffRanges<View>::LubDiffRanges(const CachedView<View>& x)
-    : cr(x.glbCache), lr(x.base()) {
+    : cr(x.lubCache), lr(x.base()) {
     Iter::Ranges::Diff<BndSetRanges,LubRanges<View> >::init(cr,lr);
   }
 
