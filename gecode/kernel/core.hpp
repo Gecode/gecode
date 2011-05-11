@@ -981,7 +981,7 @@ namespace Gecode {
     /// Return memory to heap
     static void  operator delete(void*);
     /// Archive into \a e
-    GECODE_KERNEL_EXPORT virtual void archive(Support::Archive& e) const;
+    GECODE_KERNEL_EXPORT virtual void archive(Archive& e) const;
   };
 
   /**
@@ -1030,7 +1030,7 @@ namespace Gecode {
      */
     virtual const Choice* choice(Space& home) = 0;
     /// Return choice from \a e
-    virtual const Choice* choice(const Space& home, Support::Archive& e) = 0;
+    virtual const Choice* choice(const Space& home, Archive& e) = 0;
     /**
      * \brief Commit for choice \a c and alternative \a a
      *
@@ -1459,7 +1459,7 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    const Choice* choice(Support::Archive& e) const;
+    const Choice* choice(Archive& e) const;
   
     /**
      * \brief Clone space

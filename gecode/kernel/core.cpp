@@ -335,7 +335,7 @@ namespace Gecode {
   }
 
   const Choice*
-  Space::choice(Support::Archive& e) const {
+  Space::choice(Archive& e) const {
     unsigned int id; e >> id;
     Brancher* b_cur = Brancher::cast(bl.next());
     while (b_cur != Brancher::cast(&bl)) {
@@ -554,7 +554,7 @@ namespace Gecode {
   }
 
   void
-  Choice::archive(Support::Archive& e) const {
+  Choice::archive(Archive& e) const {
     e << id();
   }
 

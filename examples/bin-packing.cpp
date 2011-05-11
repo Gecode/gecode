@@ -219,7 +219,7 @@ protected:
       return sizeof(Choice) + sizeof(int) * n_same;
     }
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const {
+    virtual void archive(Archive& e) const {
       Gecode::Choice::archive(e);
       e << alternatives() << item << n_same;
       for (int i=n_same; i--;) 
@@ -323,7 +323,7 @@ public:
       return new Choice(*this, 2, item, same, n_same);
   }
   /// Return choice
-  virtual const Gecode::Choice* choice(const Space& home, Support::Archive& e) {
+  virtual const Gecode::Choice* choice(const Space& home, Archive& e) {
     int alt, item, n_same;
     e >> alt >> item >> n_same;
     Region re(home);

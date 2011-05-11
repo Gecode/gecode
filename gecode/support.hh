@@ -105,7 +105,6 @@
 #include <gecode/support/heap.hpp>
 #include <gecode/support/marked-pointer.hpp>
 #include <gecode/support/int-type.hpp>
-#include <gecode/support/archive.hpp>
 
 /*
  * Common datastructures and algorithms

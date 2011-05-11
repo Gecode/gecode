@@ -337,7 +337,7 @@ public:
         return sizeof(Choice);
       }
       /// Archive into \a e
-      virtual void archive(Support::Archive& e) const {
+      virtual void archive(Archive& e) const {
         Gecode::Choice::archive(e);
         e << alternatives() << pos << val;
       }
@@ -393,7 +393,7 @@ public:
              val < sm.norders);
       return new Choice(*this, (val<firstzero) ? 2 : 1, pos, val);
     }
-    virtual Choice* choice(const Space&, Support::Archive& e) {
+    virtual Choice* choice(const Space&, Archive& e) {
       unsigned int alt; int pos, val;
       e >> alt >> pos >> val;
       return new Choice(*this, alt, pos, val);

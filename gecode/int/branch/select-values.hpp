@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Initialize choice for brancher \a b from \a e
     PosValuesChoice(const Brancher& b, unsigned int alt, Pos p,
                     const typename ViewSel::Choice& viewc,
-                    Support::Archive& e);
+                    Archive& e);
     /// Return value to branch with for alternative \a a
     int val(unsigned int a) const;
     /// Report size occupied
@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Deallocate
     virtual ~PosValuesChoice(void);
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const;
+    virtual void archive(Archive& e) const;
   };
 
 
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   PosValuesChoice<ViewSel,View>::
   PosValuesChoice(const Brancher& b, unsigned int alt, Pos p,
-                  const typename ViewSel::Choice& viewc, Support::Archive& e)
+                  const typename ViewSel::Choice& viewc, Archive& e)
     : PosChoice<ViewSel>(b,alt,p,viewc) {
     e >> n;
     pm = heap.alloc<PosMin>(n+1);
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class ViewSel, class View>
   forceinline void
-  PosValuesChoice<ViewSel,View>::archive(Support::Archive& e) const {
+  PosValuesChoice<ViewSel,View>::archive(Archive& e) const {
     PosChoice<ViewSel>::archive(e);
     e << this->alternatives() << n;
     for (unsigned int i=0; i<n+1; i++) {
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class ViewSel, class View>
   const Choice*
-  ViewValuesBrancher<ViewSel,View>::choice(const Space& home, Support::Archive& e) {
+  ViewValuesBrancher<ViewSel,View>::choice(const Space& home, Archive& e) {
     int p;
     unsigned int alt;
     e >> p >> alt;

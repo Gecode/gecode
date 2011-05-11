@@ -48,7 +48,7 @@ namespace Gecode { namespace Gist {
     /// Report size occupied
     virtual size_t size(void) const;
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const;
+    virtual void archive(Archive& e) const;
   };
   
   /// %Brancher that stops exploration in %Gist
@@ -66,7 +66,7 @@ namespace Gecode { namespace Gist {
     /// Return choice
     virtual Choice* choice(Space&);
     /// Return choice
-    virtual Choice* choice(const Space& home, Support::Archive&);
+    virtual Choice* choice(const Space& home, Archive&);
     /// Perform commit for choice \a _c and alternative \a a
     virtual ExecStatus commit(Space&, const Choice&, unsigned int);
     /// Copy brancher

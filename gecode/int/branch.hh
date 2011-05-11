@@ -103,14 +103,14 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValRnd {
   protected:
     /// The random number generator
-    Support::RandomGenerator r;
+    ArchivedRandomGenerator r;
   public:
     /// View type
     typedef _View View;
     /// Value type
     typedef int Val;
     /// Choice type
-    typedef Support::RandomGenerator Choice;
+    typedef ArchivedRandomGenerator Choice;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// Default constructor
@@ -122,11 +122,11 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, _View x, int n);
     /// Return choice
-    Support::RandomGenerator choice(Space& home);
+    Choice choice(Space& home);
     /// Return choice
-    static Support::RandomGenerator choice(const Space& home, Support::Archive& e);
+    Choice choice(const Space& home, Archive& e);
     /// Commit to choice
-    void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
+    void commit(Space& home, const Choice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ValRnd& vs);
     /// Delete value selection
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
 }}}
 
-namespace Gecode { namespace Support {
+namespace Gecode {
   forceinline Archive&
   operator >>(Archive& e, Gecode::Int::Branch::NoValue&) {
     return e;
@@ -191,7 +191,7 @@ namespace Gecode { namespace Support {
   operator <<(Archive& e, const Gecode::Int::Branch::NoValue&) {
     return e;
   }
-}}
+}
 
 namespace Gecode { namespace Int { namespace Branch {
 
@@ -234,7 +234,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Return choice
     virtual const Choice* choice(Space& home);
     /// Return choice
-    virtual const Choice* choice(const Space& home, Support::Archive& e);
+    virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
     /// Perform cloning

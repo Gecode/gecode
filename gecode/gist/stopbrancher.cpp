@@ -45,7 +45,7 @@ namespace Gecode { namespace Gist {
     return sizeof(StopChoice);
   }
   void
-  StopChoice::archive(Support::Archive& e) const {
+  StopChoice::archive(Archive& e) const {
     Choice::archive(e);
   }
 
@@ -64,7 +64,7 @@ namespace Gecode { namespace Gist {
     return new StopChoice(*this);
   }
   Choice*
-  StopBrancher::choice(const Space&, Support::Archive&) {
+  StopBrancher::choice(const Space&, Archive&) {
     return new StopChoice(*this);
   }
   ExecStatus

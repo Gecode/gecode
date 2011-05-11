@@ -99,19 +99,18 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
   template<class View>
-  forceinline Support::RandomGenerator
+  forceinline typename ValRnd<View>::Choice
   ValRnd<View>::choice(Space&) {
     return r;
   }
   template<class View>
-  forceinline Support::RandomGenerator
-  ValRnd<View>::choice(const Space&, Support::Archive& e) {
-    return Support::RandomGenerator(e.get());
+  forceinline typename ValRnd<View>::Choice
+  ValRnd<View>::choice(const Space&, Archive& e) {
+    return Choice(e.get());
   }
   template<class View>
   forceinline void
-  ValRnd<View>::commit(Space&, const Support::RandomGenerator& c,
-                       unsigned int) {
+  ValRnd<View>::commit(Space&, const Choice& c, unsigned int) {
     r = c;
   }
   template<class View>

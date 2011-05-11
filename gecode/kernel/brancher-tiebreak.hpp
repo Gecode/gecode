@@ -68,7 +68,7 @@ namespace Gecode {
       /// Report size occupied
       size_t size(void) const;
       /// Archive into \a e
-      void archive(Support::Archive& e) const;
+      void archive(Archive& e) const;
     };
     /// Default constructor
     ViewSelTieBreakStatic(void);
@@ -81,7 +81,7 @@ namespace Gecode {
     /// Return choice
     Choice choice(Space& home);
     /// Return choice
-    Choice choice(const Space& home, Support::Archive& e);
+    Choice choice(const Space& home, Archive& e);
     /// Commit to choice
     void commit(Space& home, const Choice& c, unsigned int a);
     /// Updating during cloning
@@ -102,7 +102,7 @@ namespace Gecode {
     /// Destructor
     GECODE_KERNEL_EXPORT virtual ~ChoiceVirtualBase(void);
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const = 0;
+    virtual void archive(Archive& e) const = 0;
     /// \name Memory management
     //@{
     /// Allocate memory
@@ -125,7 +125,7 @@ namespace Gecode {
     /// Return choice
     virtual ChoiceVirtualBase* choice(Space& home) = 0;
     /// Return choice
-    virtual ChoiceVirtualBase* choice(const Space& home, Support::Archive& e) = 0;
+    virtual ChoiceVirtualBase* choice(const Space& home, Archive& e) = 0;
     /// Commit to choice
     virtual void commit(Space& home, const ChoiceVirtualBase* c, 
                         unsigned int a) = 0;
@@ -161,7 +161,7 @@ namespace Gecode {
     /// Destructor
     virtual ~ChoiceVirtual(void);
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const;
+    virtual void archive(Archive& e) const;
   };
 
   /**
@@ -184,7 +184,7 @@ namespace Gecode {
     /// Return choice
     virtual ChoiceVirtualBase* choice(Space& home);
     /// Return choice
-    virtual ChoiceVirtualBase* choice(const Space& home, Support::Archive& e);
+    virtual ChoiceVirtualBase* choice(const Space& home, Archive& e);
     /// Commit to choice
     virtual void commit(Space& home, const ChoiceVirtualBase* d,
                         unsigned int a);
@@ -218,7 +218,7 @@ namespace Gecode {
       /// Constructor
       Choice(Space& home, ViewSelVirtualBase<_View>** tb, int n0);
       /// Constructor
-      Choice(const Space& home, Support::Archive& e,
+      Choice(const Space& home, Archive& e,
              ViewSelVirtualBase<_View>** tb, int n0);
       /// Copy constructor
       Choice(const Choice& ce);
@@ -232,7 +232,7 @@ namespace Gecode {
       /// Destructor
       ~Choice(void);
       /// Archive into \a e
-      void archive(Support::Archive& e) const;
+      void archive(Archive& e) const;
     };
     /// Default constructor
     ViewSelTieBreakDynamic(void);
@@ -246,7 +246,7 @@ namespace Gecode {
     /// Return choice
     Choice choice(Space& home);
     /// Return choice
-    Choice choice(const Space& home, Support::Archive& e);
+    Choice choice(const Space& home, Archive& e);
     /// Commit to choice
     void commit(Space& home,
                 const typename ViewSelTieBreakDynamic<_View>::Choice& c,
@@ -272,7 +272,7 @@ namespace Gecode {
   }
   template<class A, class B>
   forceinline void
-  ViewSelTieBreakStatic<A,B>::Choice::archive(Support::Archive& e) const {
+  ViewSelTieBreakStatic<A,B>::Choice::archive(Archive& e) const {
     a.archive(e);
     b.archive(e);
   }
@@ -323,7 +323,7 @@ namespace Gecode {
   }
   template<class A, class B>
   inline typename ViewSelTieBreakStatic<A,B>::Choice
-  ViewSelTieBreakStatic<A,B>::choice(const Space& home, Support::Archive& e) {
+  ViewSelTieBreakStatic<A,B>::choice(const Space& home, Archive& e) {
     typename ViewSelTieBreakStatic<A,B>::Choice c(a.choice(home,e),
                                                   b.choice(home,e));
     return c;
@@ -394,7 +394,7 @@ namespace Gecode {
   template<class Choice>
   ChoiceVirtual<Choice>::~ChoiceVirtual(void) {}
   template<class Choice> void
-  ChoiceVirtual<Choice>::archive(Support::Archive& e) const {
+  ChoiceVirtual<Choice>::archive(Archive& e) const {
     choice.archive(e);
   }
 
@@ -426,7 +426,7 @@ namespace Gecode {
   }
   template<class ViewSel>
   ChoiceVirtualBase*
-  ViewSelVirtual<ViewSel>::choice(const Space& home, Support::Archive& e) {
+  ViewSelVirtual<ViewSel>::choice(const Space& home, Archive& e) {
     return new ChoiceVirtual<typename ViewSel::Choice>(viewsel.choice(home,e));
   }
   template<class ViewSel>
@@ -462,7 +462,7 @@ namespace Gecode {
   template<class View>
   forceinline
   ViewSelTieBreakDynamic<View>::Choice::Choice
-  (const Space& home, Support::Archive& e, ViewSelVirtualBase<View>** tb,
+  (const Space& home, Archive& e, ViewSelVirtualBase<View>** tb,
    int n0)
     : n(n0), c(heap.alloc<ChoiceVirtualBase*>(n)) {
     for (int i=n; i--; )
@@ -511,7 +511,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ViewSelTieBreakDynamic<View>::Choice::archive(Support::Archive& e) const 
+  ViewSelTieBreakDynamic<View>::Choice::archive(Archive& e) const 
   {
     for (int i=0; i<n; i++)
       c[i]->archive(e);
@@ -582,7 +582,7 @@ namespace Gecode {
   }
   template<class _View>
   inline typename ViewSelTieBreakDynamic<_View>::Choice
-  ViewSelTieBreakDynamic<_View>::choice(const Space& home, Support::Archive& e) {
+  ViewSelTieBreakDynamic<_View>::choice(const Space& home, Archive& e) {
     Choice c(home,e,tb,n);
     return c;
   }

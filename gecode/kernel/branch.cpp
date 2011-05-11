@@ -63,7 +63,7 @@ namespace Gecode {
       /// Report size occupied
       virtual size_t size(void) const { return sizeof(Description); }
       /// Archive into \a e
-      virtual void archive(Support::Archive& e) const {
+      virtual void archive(Archive& e) const {
         Choice::archive(e);
       }
     };
@@ -88,7 +88,7 @@ namespace Gecode {
       return new Description(*this,1);
     }
     /// Return choice
-    virtual const Choice* choice(const Space&, Support::Archive&) {
+    virtual const Choice* choice(const Space&, Archive&) {
       return new Description(*this,1);
     }
     /// Perform commit

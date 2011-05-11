@@ -49,7 +49,7 @@ namespace Gecode {
     /// Report size occupied
     size_t size(void) const;
     /// Archive into \a e
-    void archive(Support::Archive& e) const;
+    void archive(Archive& e) const;
   };
 
   /**
@@ -75,7 +75,7 @@ namespace Gecode {
     /// Return choice
     EmptyValSelChoice choice(Space& home);
     /// Return choice
-    EmptyValSelChoice choice(const Space& home, Support::Archive& e);
+    EmptyValSelChoice choice(const Space& home, Archive& e);
     /// Commit to choice
     void commit(Space& home, const EmptyValSelChoice& c, unsigned a);
     /// Updating during cloning
@@ -92,7 +92,7 @@ namespace Gecode {
     return sizeof(EmptyValSelChoice);
   }
   forceinline void
-  EmptyValSelChoice::archive(Support::Archive& e) const { (void)e; }
+  EmptyValSelChoice::archive(Archive& e) const { (void)e; }
 
   // Value selection base class
   template<class View, class Val>
@@ -108,7 +108,7 @@ namespace Gecode {
   }
   template<class View, class Val>
   forceinline EmptyValSelChoice
-  ValSelBase<View,Val>::choice(const Space&, Support::Archive&) {
+  ValSelBase<View,Val>::choice(const Space&, Archive&) {
     EmptyValSelChoice c; return c;
   }
   template<class View, class Val>

@@ -142,18 +142,18 @@ namespace Gecode { namespace Set { namespace Branch {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
   template<bool inc>
-  forceinline Support::RandomGenerator
+  forceinline typename ValRnd<inc>::Choice
   ValRnd<inc>::choice(Space&) {
     return r;
   }
   template<bool inc>
-  forceinline Support::RandomGenerator
-  ValRnd<inc>::choice(const Space&, Support::Archive& e) {
-    return Support::RandomGenerator(e.get());
+  forceinline typename ValRnd<inc>::Choice
+  ValRnd<inc>::choice(const Space&, Archive& e) {
+    return Choice(e.get());
   }
   template<bool inc>
   forceinline void
-  ValRnd<inc>::commit(Space&, const Support::RandomGenerator& c,
+  ValRnd<inc>::commit(Space&, const Choice& c,
                       unsigned int) {
     r = c;
   }

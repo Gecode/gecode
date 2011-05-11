@@ -35,14 +35,12 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode {
   /**
    * \brief %Archive representation
    *
    * An Archive is an array of unsigned integers, used as an external
    * representation of internal data structures (such as Choice objects).
-   *
-   * \ingroup FuncSupport
    */
   class Archive {
   private:
@@ -55,16 +53,16 @@ namespace Gecode { namespace Support {
     /// Current position of read iterator
     int _pos;
     /// Resize to at least \a n + 1 elements
-    GECODE_SUPPORT_EXPORT void resize(int n);
+    GECODE_KERNEL_EXPORT void resize(int n);
   public:
     /// Construct empty representation
     Archive(void);
     /// Destructor
-    GECODE_SUPPORT_EXPORT ~Archive(void);
+    GECODE_KERNEL_EXPORT ~Archive(void);
     /// Copy constructor
-    GECODE_SUPPORT_EXPORT Archive(const Archive& e);
+    GECODE_KERNEL_EXPORT Archive(const Archive& e);
     /// Assignment operator
-    GECODE_SUPPORT_EXPORT Archive& operator =(const Archive& e);
+    GECODE_KERNEL_EXPORT Archive& operator =(const Archive& e);
     /// Add \a i to the contents
     void put(unsigned int i);
     /// Return size
@@ -249,6 +247,6 @@ namespace Gecode { namespace Support {
     return e;
   }
 
-}}
+}
 
-// STATISTICS: support-any
+// STATISTICS: kernel-branch

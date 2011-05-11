@@ -122,6 +122,7 @@
  *
  */
 
+#include <gecode/kernel/archive.hpp>
 #include <gecode/kernel/global-prop-info.hpp>
 #include <gecode/kernel/core.hpp>
 #include <gecode/kernel/modevent.hpp>

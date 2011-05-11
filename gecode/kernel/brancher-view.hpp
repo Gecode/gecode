@@ -49,7 +49,7 @@ namespace Gecode {
     /// Report size occupied
     size_t size(void) const;
     /// Archive into \a e
-    void archive(Support::Archive& e) const;
+    void archive(Archive& e) const;
   };
 
   /**
@@ -69,7 +69,7 @@ namespace Gecode {
     /// Return choice
     EmptyViewSelChoice choice(Space& home);
     /// Return choice
-    EmptyViewSelChoice choice(const Space& home, Support::Archive& e);
+    EmptyViewSelChoice choice(const Space& home, Archive& e);
     /// Commit to choice
     void commit(Space& home, const EmptyViewSelChoice& c, unsigned a);
     /// Updating during cloning
@@ -170,6 +170,19 @@ namespace Gecode {
     ViewSelStatus select(Space& home, View x);
   };
 
+  /// Random generator with archiving (to be used in branchers)
+  class ArchivedRandomGenerator : public Support::RandomGenerator {
+  public:
+    /// Default constructor
+    ArchivedRandomGenerator(void);
+    /// Constructor
+    ArchivedRandomGenerator(unsigned int seed);
+    /// Copy constructor
+    ArchivedRandomGenerator(const Support::RandomGenerator& r);
+    /// Archive
+    void archive(Archive& e) const;
+  };
+
   /**
    * \brief View selection class for random selection
    */
@@ -177,14 +190,14 @@ namespace Gecode {
   class ViewSelRnd {
   protected:
     /// Random number generator
-    Support::RandomGenerator r;
+    ArchivedRandomGenerator r;
     /// Number of views considered so far
     unsigned int n;
   public:
     /// View type
     typedef _View View;
     /// View selection choice
-    typedef Support::RandomGenerator Choice;
+    typedef ArchivedRandomGenerator Choice;
     /// Default constructor
     ViewSelRnd(void);
     /// Constructor for initialization
@@ -194,11 +207,11 @@ namespace Gecode {
     /// Possibly select better view \a x
     ViewSelStatus select(Space& home, _View x);
     /// Return choice
-    Support::RandomGenerator choice(Space& home);
+    Choice choice(Space& home);
     /// Return choice
-    Support::RandomGenerator choice(const Space& home, Support::Archive& e);
+    Choice choice(const Space& home, Archive& e);
     /// Commit to choice
-    void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
+    void commit(Space& home, const Choice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelRnd& vs);
     /// Delete view selection
@@ -213,7 +226,7 @@ namespace Gecode {
   }
 
   forceinline void
-  EmptyViewSelChoice::archive(Support::Archive& e) const { (void)e; }
+  EmptyViewSelChoice::archive(Archive& e) const { (void)e; }
 
   // Selection base class
   template<class View>
@@ -229,7 +242,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline EmptyViewSelChoice
-  ViewSelBase<View>::choice(const Space&, Support::Archive&) {
+  ViewSelBase<View>::choice(const Space&, Archive&) {
     EmptyViewSelChoice c; return c;
   }
   template<class View>
@@ -380,6 +393,18 @@ namespace Gecode {
   }
 
 
+  // Archived random generator
+  forceinline
+  ArchivedRandomGenerator::ArchivedRandomGenerator(void) {}
+  forceinline
+  ArchivedRandomGenerator::ArchivedRandomGenerator(unsigned int seed)
+    : Support::RandomGenerator(seed) {}
+  forceinline
+  ArchivedRandomGenerator::ArchivedRandomGenerator
+    (const Support::RandomGenerator& r) : Support::RandomGenerator(r) {}
+  forceinline void
+  ArchivedRandomGenerator::archive(Archive& e) const { e << seed(); }
+
   // Select variable by random
   template<class View>
   forceinline
@@ -401,19 +426,18 @@ namespace Gecode {
     return (r(n) == (n-1)) ? VSS_BETTER : VSS_WORSE;
   }
   template<class View>
-  forceinline Support::RandomGenerator
+  forceinline typename ViewSelRnd<View>::Choice
   ViewSelRnd<View>::choice(Space&) {
     return r;
   }
   template<class View>
-  forceinline Support::RandomGenerator
-  ViewSelRnd<View>::choice(const Space&, Support::Archive& e) {
-    return Support::RandomGenerator(e.get());
+  forceinline typename ViewSelRnd<View>::Choice
+  ViewSelRnd<View>::choice(const Space&, Archive& e) {
+    return Choice(e.get());
   }
   template<class View>
   forceinline void
-  ViewSelRnd<View>::commit(Space&, const Support::RandomGenerator& c,
-                           unsigned int) {
+  ViewSelRnd<View>::commit(Space&, const Choice& c, unsigned int) {
     r = c;
   }
   template<class View>

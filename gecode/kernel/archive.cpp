@@ -35,9 +35,9 @@
  *
  */
 
-#include <gecode/support.hh>
+#include <gecode/kernel.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode {
 
   void
   Archive::resize(int n) {
@@ -65,6 +65,6 @@ namespace Gecode { namespace Support {
     heap.free<unsigned int>(_a,_size);
   }
 
-}}
+}
 
-// STATISTICS: support-any
+// STATISTICS: kernel-branch

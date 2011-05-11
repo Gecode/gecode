@@ -125,7 +125,7 @@ namespace Gecode {
     /// Return choice
     virtual const Choice* choice(Space& home);
     /// Return choice
-    virtual const Choice* choice(const Space& home, Support::Archive& e);
+    virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
     /// Perform cloning
@@ -158,7 +158,7 @@ namespace Gecode {
     /// Report size occupied
     virtual size_t size(void) const;
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const;
+    virtual void archive(Archive& e) const;
   };
 
   /// %Choice storing position and value
@@ -182,7 +182,7 @@ namespace Gecode {
     /// Report size occupied
     virtual size_t size(void) const;
     /// Archive into \a e
-    virtual void archive(Support::Archive& e) const;
+    virtual void archive(Archive& e) const;
   };
   //@}
 
@@ -224,7 +224,7 @@ namespace Gecode {
   }
   template<class ViewSel>
   forceinline void
-  PosChoice<ViewSel>::archive(Support::Archive& e) const {
+  PosChoice<ViewSel>::archive(Archive& e) const {
     Choice::archive(e);
     e << _pos.pos;
     _viewchoice.archive(e);
@@ -264,7 +264,7 @@ namespace Gecode {
 
   template<class ViewSel, class ValSel>
   forceinline void
-  PosValChoice<ViewSel, ValSel>::archive(Support::Archive& e) const {
+  PosValChoice<ViewSel, ValSel>::archive(Archive& e) const {
     PosChoice<ViewSel>::archive(e);
     _valchoice.archive(e);
     e << _val;
@@ -397,7 +397,7 @@ namespace Gecode {
 
   template<class ViewSel, class ValSel>
   const Choice*
-  ViewValBrancher<ViewSel,ValSel>::choice(const Space& home, Support::Archive& e) {
+  ViewValBrancher<ViewSel,ValSel>::choice(const Space& home, Archive& e) {
     int p; e >> p;
     typename ViewSel::Choice viewsc = viewsel.choice(home,e);
     typename ValSel::Choice valsc = valsel.choice(home,e);

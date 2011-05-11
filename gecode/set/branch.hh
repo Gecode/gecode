@@ -130,14 +130,14 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValRnd {
   protected:
     /// Random number generator
-    Support::RandomGenerator r;
+    ArchivedRandomGenerator r;
   public:
     /// View type
     typedef SetView View;
     /// Value type
     typedef int Val;
     /// Choice
-    typedef Support::RandomGenerator Choice;
+    typedef ArchivedRandomGenerator Choice;
     /// Number of alternatives
     static const unsigned int alternatives = 2;
     /// Default constructor
@@ -149,11 +149,11 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, SetView x, int n);
     /// Return choice
-    Support::RandomGenerator choice(Space& home);
+    Choice choice(Space& home);
     /// Return choice
-    Support::RandomGenerator choice(const Space& home, Support::Archive& e);
+    Choice choice(const Space& home, Archive& e);
     /// Commit to choice
-    void commit(Space& home, const Support::RandomGenerator& c, unsigned a);
+    void commit(Space& home, const Choice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ValRnd& vs);
     /// Delete value selection

@@ -66,8 +66,6 @@ namespace Gecode { namespace Support {
     unsigned int operator ()(unsigned int n);
     /// Report size occupied
     size_t size(void) const;
-    /// Archive into \a e
-    void archive(Archive& e) const;
   };
 
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
@@ -109,11 +107,6 @@ namespace Gecode { namespace Support {
   forceinline size_t
   LinearCongruentialGenerator<m,a,q,r>::size(void) const {
     return sizeof(LinearCongruentialGenerator<m,a,q,r>);
-  }
-  template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
-  forceinline void
-  LinearCongruentialGenerator<m,a,q,r>::archive(Archive& e) const {
-    e << s;
   }
 
 

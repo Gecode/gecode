@@ -185,7 +185,7 @@ public:
         return sizeof(Choice);
       }
       /// Archive into \a e
-      virtual void archive(Support::Archive& e) const {
+      virtual void archive(Archive& e) const {
         Gecode::Choice::archive(e);
         e << pos << val;
       }
@@ -232,7 +232,7 @@ public:
       return new Choice(*this, pos, true);
     }
     /// Return choice
-    virtual Choice* choice(const Space&, Support::Archive& e) {
+    virtual Choice* choice(const Space&, Archive& e) {
       int pos, val;
       e >> pos >> val;
       return new Choice(*this, pos, val);
