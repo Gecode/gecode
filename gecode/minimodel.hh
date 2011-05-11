@@ -1523,9 +1523,6 @@ namespace Gecode {
     count(home,x,y,IRT_EQ,z,icl);
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
-   *
-   * Throws an exception of type Int::ArgumentSizeMismatch, if
-   * \a x and \a y are of different size.
    */
   inline void
   lex(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
@@ -1533,9 +1530,6 @@ namespace Gecode {
     rel(home,x,r,y,icl);
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
-   *
-   * Throws an exception of type Int::ArgumentSizeMismatch, if
-   * \a x and \a y are of different size.
    */
   inline void
   lex(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,

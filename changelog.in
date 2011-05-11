@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Generalized lexicographic constraint to arrays of different sizes.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor

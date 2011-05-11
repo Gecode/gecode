@@ -233,7 +233,12 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   ExecStatus
   Lex<View>::post(Home home,
-                  ViewArray<View>& x, ViewArray<View>& y, bool strict){
+                  ViewArray<View>& x, ViewArray<View>& y, bool strict) {
+    if (x.size() < y.size()) {
+      y.size(x.size()); strict=false;
+    } else if (x.size() > y.size()) {
+      x.size(y.size()); strict=true;
+    }
     if (x.size() == 0)
       return strict ? ES_FAILED : ES_OK;
     if (x.size() == 1) {

@@ -306,8 +306,6 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl) {
-    if (x.size() != y.size())
-      throw ArgumentSizeMismatch("Int::rel");
     if (home.failed()) return;
 
     switch (r) {
@@ -336,7 +334,9 @@ namespace Gecode {
       }
       break;
     case IRT_EQ:
-      if ((icl == ICL_DOM) || (icl == ICL_DEF))
+      if (x.size() != y.size()) {
+        home.fail();
+      } else if ((icl == ICL_DOM) || (icl == ICL_DEF))
         for (int i=x.size(); i--; ) {
           GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>
                           ::post(home,x[i],y[i])));
@@ -348,7 +348,7 @@ namespace Gecode {
         }
       break;
     case IRT_NQ:
-      {
+      if (x.size() == y.size()) {
         ViewArray<BoolView> b(home,x.size());
         for (int i=x.size(); i--; ) {
           BoolVar bi(home,0,1); b[i]=bi;

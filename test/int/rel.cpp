@@ -314,7 +314,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// %Test for relation between arrays of integer variables
+     /// %Test for relation between same sized arrays of integer variables
      class IntArray : public Test {
      protected:
        /// Integer relation type to propagate
@@ -341,6 +341,46 @@ namespace Test { namespace Int {
          IntVarArgs y(n); IntVarArgs z(n);
          for (int i=0; i<n; i++) {
            y[i]=x[i]; z[i]=x[n+i];
+         }
+         rel(home, y, irt, z);
+       }
+     };
+
+     /// %Test for relation between differently sized arrays of integer variables
+     class IntArrayDiff : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+       /// How many variables in total
+       static const int n = 4;
+       /// How big is the first array
+       int n_fst;
+     public:
+       /// Create and register test
+       IntArrayDiff(Gecode::IntRelType irt0, int m)
+         : Test("Rel::Int::Array::"+str(irt0)+"::"+str(m)+"::"+str(n-m),
+                n,-2,2), 
+           irt(irt0), n_fst(m) {
+         assert(n_fst <= n);
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n_snd = n - n_fst;
+         for (int i=0; i<std::min(n_fst,n_snd); i++)
+           if (x[i] != x[n_fst+i])
+             return cmp(x[i],irt,x[n_fst+i]);
+         return cmp(n_fst,irt,n_snd);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n_snd = n - n_fst;
+         IntVarArgs y(n_fst); IntVarArgs z(n_snd);
+         for (int i=0; i<n_fst; i++) {
+           y[i]=x[i];
+         }
+         for (int i=0; i<n_snd; i++) {
+           z[i]=x[n_fst + i];
          }
          rel(home, y, irt, z);
        }
@@ -404,6 +444,8 @@ namespace Test { namespace Int {
              (void) new BoolInt(irts.irt(),2,c);
            }
            (void) new IntArray(irts.irt());
+           for (int n_fst=0; n_fst<=4; n_fst++)
+             (void) new IntArrayDiff(irts.irt(),n_fst);
            (void) new BoolArray(irts.irt());
          }
        }
