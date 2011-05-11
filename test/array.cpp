@@ -86,13 +86,13 @@ namespace Test { namespace Array { namespace Iterator {
         int index = 0;
         iterator iter = begin;
         for(; iter != end; ++iter, ++index) {
-          const reference ref = *iter;
+          reference ref = *iter;
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&a[index],"Iterator points to the wrong element (going forward)");
         }
         CHECK_TEST(index==a.size(),"Iteration covered the wrong number of elements (going forward)");
         for(; iter != begin; --iter, --index) {
-          const reference ref = *(iter-1);
+          reference ref = *(iter-1);
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&a[index-1],"Iterator points to the wrong element (going backwards)");
         }
@@ -108,13 +108,13 @@ namespace Test { namespace Array { namespace Iterator {
         int index = 0;
         iterator iter = begin;
         for(; iter != end; ++iter, ++index) {
-          const reference ref = *iter;
+          reference ref = *iter;
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&const_a[index],"Iterator points to the wrong element (going forward)");
         }
         CHECK_TEST(index==const_a.size(),"Iteration covered the wrong number of elements (going forward)");
         for(; iter != begin; --iter, --index) {
-          const reference ref = *(iter-1);
+          reference ref = *(iter-1);
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&const_a[index-1],"Iterator points to the wrong element (going backwards)");
         }
@@ -131,13 +131,13 @@ namespace Test { namespace Array { namespace Iterator {
         int index = a.size();
         iterator iter = begin;
         for(; iter != end; ++iter, --index) {
-          const reference ref = *iter;
+          reference ref = *iter;
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&a[index-1],"Iterator points to the wrong element (going forward)");
         }
         CHECK_TEST(index==0,"Iteration covered the wrong number of elements (going forward)");
         for(; iter != begin; --iter, ++index) {
-          const reference ref = *(iter-1);
+          reference ref = *(iter-1);
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&a[index],"Iterator points to the wrong element (going backwards)");
         }
@@ -154,13 +154,13 @@ namespace Test { namespace Array { namespace Iterator {
         int index = a.size();
         iterator iter = begin;
         for(; iter != end; ++iter, --index) {
-          const reference ref = *iter;
+          reference ref = *iter;
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&const_a[index-1],"Iterator points to the wrong element (going forward)");
         }
         CHECK_TEST(index==0,"Iteration covered the wrong number of elements (going forward)");
         for(; iter != begin; --iter, ++index) {
-          const reference ref = *(iter-1);
+          reference ref = *(iter-1);
           const pointer ptr = &ref;
           CHECK_TEST(ptr==&const_a[index],"Iterator points to the wrong element (going backwards)");
         }
