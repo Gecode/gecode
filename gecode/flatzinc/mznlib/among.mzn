@@ -34,5 +34,7 @@
 %
 %
 
+include "gecode.mzn";
+
 predicate among(var int: n, array[int] of var int: x, set of int: v) =
-    bool_sum_eq([x[i] in v | i in index_set(x)], n);
+    among_seq_int(x, v, length(x), n,n);

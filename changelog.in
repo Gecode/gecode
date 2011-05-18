@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added native support for link_set_to_booleans, 
+global_cardinality_low_up_closed, decreasing_bool, and among.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

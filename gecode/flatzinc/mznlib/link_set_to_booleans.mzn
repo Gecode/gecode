@@ -34,13 +34,14 @@
 %
 %
 
-predicate distribute(array[int] of var int: card,
-                     array[int] of var int: value,
-                     array[int] of var int: base) =
-    assert(index_set(card) == index_set(value),
-        "distribute: card and value arrays must have identical index sets",
-        forall (i in index_set(card)) (
-            bool_sum_eq([value[i] == base[j] | j in index_set(base)],
-                        card[i])
-        )
+predicate link_set_to_booleans_gecode(var set of int: s, array[int] of var bool: b, int: idx);
+
+predicate link_set_to_booleans(var set of int: s, array[int] of var bool: b) =
+    assert(ub(s) subset index_set(b),
+        "link_set_to_booleans: the index set of b must be a superset of the possible values of s",
+        if min(index_set(b)) < 0 then
+          forall(i in index_set(b)) ( b[i] <-> i in s )
+        else
+          link_set_to_booleans_gecode(s,b,min(index_set(b)))
+        endif
     );

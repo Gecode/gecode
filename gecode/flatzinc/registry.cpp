@@ -230,10 +230,6 @@ namespace Gecode { namespace FlatZinc {
     inline SetVarArgs arg2setvarargs(FlatZincSpace& s, AST::Node* arg,
                                      int offset = 0) {
       AST::Array* a = arg->getArray();
-      if (a->a.size() == 0) {
-        SetVarArgs emptyIa(0);
-        return emptyIa;
-      }
       SetVarArgs ia(a->a.size()+offset);
       for (int i=offset; i--;)
         ia[i] = SetVar(s, IntSet::empty, IntSet::empty);
@@ -1512,6 +1508,16 @@ namespace Gecode { namespace FlatZinc {
     void p_set_disjoint(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       rel(s, getSetVar(s, ce[0]), SRT_DISJ, getSetVar(s, ce[1]));
     }
+    
+    void p_link_set_to_booleans(FlatZincSpace& s, const ConExpr& ce,
+                                AST::Node *) {
+      SetVar x = getSetVar(s, ce[0]);
+      int idx = ce[2]->getInt();
+      assert(idx >= 0);
+      rel(s, x || IntSet(Set::Limits::min,idx-1));
+      BoolVarArgs y = arg2boolvarargs(s,ce[1],idx);
+      channel(s, y, x);
+    }
 
     void p_array_set_element(FlatZincSpace& s, const ConExpr& ce,
                              AST::Node*) {
@@ -1617,6 +1623,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_superset_reif", &p_set_superset_reif);
         registry().add("set_in_reif", &p_set_in_reif);
         registry().add("disjoint", &p_set_disjoint);
+        registry().add("link_set_to_booleans_gecode", 
+                       &p_link_set_to_booleans);
 
         registry().add("array_set_union", &p_array_set_union);
         registry().add("array_set_partition", &p_array_set_partition);
