@@ -141,21 +141,17 @@ namespace Gecode {
    */
   //@{
   /// Type for modification events
-  typedef int ModEvent;
-
-  /// Generic modification event: failed variable
-  const ModEvent ME_GEN_FAILED   = -1;
-  /// Generic modification event: no modification
-  const ModEvent ME_GEN_NONE     =  0;
-  /// Generic modification event: variable is assigned a value
-  const ModEvent ME_GEN_ASSIGNED =  1;
+  enum ModEvent {
+    ME_GEN_FAILED = -1,  //< Generic modification event: failed variable
+    ME_GEN_NONE = 0,     //< Generic modification event: no modification
+    ME_GEN_ASSIGNED = 1  //< Generic modification event: variable is assigned a value
+  };
 
   /// Type for propagation conditions
-  typedef int PropCond;
-  /// Propagation condition to be ignored (convenience)
-  const PropCond PC_GEN_NONE     = -1;
-  /// Propagation condition for an assigned variable
-  const PropCond PC_GEN_ASSIGNED = 0;
+  enum PropCond {
+    PC_GEN_NONE     = -1, //< Propagation condition to be ignored (convenience)
+    PC_GEN_ASSIGNED = 0   //< Propagation condition for an assigned variable
+  };
   //@}
 
   /**
@@ -201,7 +197,7 @@ namespace Gecode {
 
   forceinline ModEvent
   NoIdxVarImpConf::me_combine(ModEvent, ModEvent) {
-    GECODE_NEVER; return 0;
+    GECODE_NEVER; return ME_GEN_FAILED;
   }
   forceinline bool
   NoIdxVarImpConf::med_update(ModEventDelta&, ModEvent) {
@@ -337,13 +333,13 @@ namespace Gecode {
     } u;
 
     /// Return subscribed actor at index \a pc
-    ActorLink** actor(PropCond pc);
+    ActorLink** actor(int pc);
     /// Return subscribed actor at index \a pc, where \a pc is non-zero
-    ActorLink** actorNonZero(PropCond pc);
+    ActorLink** actorNonZero(int pc);
     /// Return reference to index \a pc, where \a pc is non-zero
-    unsigned int& idx(PropCond pc);
+    unsigned int& idx(int pc);
     /// Return index \a pc, where \a pc is non-zero
-    unsigned int idx(PropCond pc) const;
+    unsigned int idx(int pc) const;
 
     /**
      * \brief Update copied variable \a x
@@ -2935,28 +2931,28 @@ namespace Gecode {
    */
   template<class VIC>
   forceinline ActorLink**
-  VarImp<VIC>::actor(PropCond pc) {
+  VarImp<VIC>::actor(int pc) {
     assert((pc >= 0)  && (pc < pc_max+2));
     return (pc == 0) ? b.base : b.base+u.idx[pc-1];
   }
 
   template<class VIC>
   forceinline ActorLink**
-  VarImp<VIC>::actorNonZero(PropCond pc) {
+  VarImp<VIC>::actorNonZero(int pc) {
     assert((pc > 0)  && (pc < pc_max+2));
     return b.base+u.idx[pc-1];
   }
 
   template<class VIC>
   forceinline unsigned int&
-  VarImp<VIC>::idx(PropCond pc) {
+  VarImp<VIC>::idx(int pc) {
     assert((pc > 0)  && (pc < pc_max+2));
     return u.idx[pc-1];
   }
 
   template<class VIC>
   forceinline unsigned int
-  VarImp<VIC>::idx(PropCond pc) const {
+  VarImp<VIC>::idx(int pc) const {
     assert((pc > 0)  && (pc < pc_max+2));
     return u.idx[pc-1];
   }
@@ -2965,7 +2961,7 @@ namespace Gecode {
   forceinline
   VarImp<VIC>::VarImp(Space&) {
     b.base = NULL; entries = 0;
-    for (PropCond pc=1; pc<pc_max+2; pc++)
+    for (int pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
   }
@@ -2974,7 +2970,7 @@ namespace Gecode {
   forceinline
   VarImp<VIC>::VarImp(void) {
     b.base = NULL; entries = 0;
-    for (PropCond pc=1; pc<pc_max+2; pc++)
+    for (int pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
   }
@@ -3078,7 +3074,7 @@ namespace Gecode {
     // Save subscriptions in copy
     b.base = x.b.base;
     entries = x.entries;
-    for (PropCond pc=1; pc<pc_max+2; pc++)
+    for (int pc=1; pc<pc_max+2; pc++)
       idx(pc) = x.idx(pc);
 
     // Set forwarding pointer
@@ -3135,7 +3131,7 @@ namespace Gecode {
     // Enter subscription
     b.base[entries] = *actorNonZero(pc_max+1);
     entries++;
-    for (PropCond j = pc_max; j > pc; j--) {
+    for (int j = pc_max; j > pc; j--) {
       *actorNonZero(j+1) = *actorNonZero(j);
       idx(j+1)++;
     }
@@ -3241,7 +3237,7 @@ namespace Gecode {
 #endif
     // Remove actor
     *f = *(actorNonZero(pc+1)-1);
-    for (PropCond j = pc+1; j< pc_max+1; j++) {
+    for (int j = pc+1; j< pc_max+1; j++) {
       *(actorNonZero(j)-1) = *(actorNonZero(j+1)-1);
       idx(j)--;
     }
