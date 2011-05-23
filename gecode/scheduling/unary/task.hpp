@@ -402,7 +402,8 @@ namespace Gecode { namespace Scheduling { namespace Unary {
   ManFlexTask::norun(Space& home, int e, int l) {
     if (e <= l) {
       Iter::Ranges::Singleton sr(e-_p.min()+1,l);
-      GECODE_ME_CHECK(_s.minus_r(home,sr,false));
+      if (me_failed(_s.minus_r(home,sr,false)))
+        return Int::ME_INT_FAILED;
       Iter::Ranges::Singleton er(e+1,_p.min()+l);
       return _e.minus_r(home,er,false);
     } else {

@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: scheduling
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed scheduling code for mandatory flexible tasks that was only
+correct by accident.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
