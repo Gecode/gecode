@@ -361,14 +361,14 @@ namespace Gecode { namespace Int { namespace Sequence {
         case TS_YES:
           if (y[j+1]-y[j] == 0) {
             if (!pushup(a,s,i,q,j+1,1)) {
-              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
+              GECODE_ES_CHECK(schedule_conclusion(a,s,i));
             }
           }
           break;
         case TS_NO:
           if (y[j+1]-y[j] > 0) {
             if (!pushup(a,s,i,q,j,y[j+1]-y[j])) {
-              GECODE_ME_CHECK(schedule_conclusion(a,s,i));
+              GECODE_ES_CHECK(schedule_conclusion(a,s,i));
             }
           }
           break;
@@ -477,7 +477,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   ExecStatus
   ViewValSupportArray<View,Val,iss>::propagate(Space& home,ViewArray<View>& a,Val s,int q,int l,int u) {
     for (int i=n; i--; ) {
-      GECODE_ME_CHECK(xs[i].propagate(home,a,s,i,q,l,u));
+      GECODE_ES_CHECK(xs[i].propagate(home,a,s,i,q,l,u));
     }
     return ES_OK;
   }

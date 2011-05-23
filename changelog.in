@@ -73,12 +73,39 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Changed ModEvent and PropCond into enum types, in order to get better
+compiler feedback when macros like GECODE_ME_CHECK are used incorrectly.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed element and sequence propagators, which were only
+correct by accident (incorrect use of GECODE_ME_CHECK instead of
+GECODE_ES_CHECK).
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed sequence, partition, and union propagators, which were only
+correct by accident (incorrect use of GECODE_ME_CHECK instead of
+GECODE_ES_CHECK).
+
+[ENTRY]
 Module: scheduling
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed scheduling code for mandatory flexible tasks that was only
-correct by accident.
+Fixed scheduling code for mandatory flexible tasks, which was only
+correct by accident (incorrect use of GECODE_ME_CHECK instead of
+GECODE_ES_CHECK).
 
 [ENTRY]
 Module: flatzinc

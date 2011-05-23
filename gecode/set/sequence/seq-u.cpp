@@ -120,17 +120,17 @@ namespace Gecode { namespace Set { namespace Sequence {
       modified = false;
 
       if (oldModified || modified || anybevent || cardevent)
-        GECODE_ME_CHECK(propagateSeq(home,modified,assigned,x));
+        GECODE_ES_CHECK(propagateSeq(home,modified,assigned,x));
       if (oldModified || modified || anybevent)
-        GECODE_ME_CHECK(propagateSeqUnion(home,modified,x,y));
+        GECODE_ES_CHECK(propagateSeqUnion(home,modified,x,y));
       if (oldModified || modified || ubevent)
-        GECODE_ME_CHECK(RelOp::unionNXiUB(home,modified,x,y,unionOfDets));
+        GECODE_ES_CHECK(RelOp::unionNXiUB(home,modified,x,y,unionOfDets));
       if (oldModified || modified || ubevent)
-        GECODE_ME_CHECK(RelOp::partitionNYUB(home,modified,x,y,unionOfDets));
+        GECODE_ES_CHECK(RelOp::partitionNYUB(home,modified,x,y,unionOfDets));
       if (oldModified || modified || anybevent)
-        GECODE_ME_CHECK(RelOp::partitionNXiLB(home,modified,x,y,unionOfDets));
+        GECODE_ES_CHECK(RelOp::partitionNXiLB(home,modified,x,y,unionOfDets));
       if (oldModified || modified || cardevent || ubevent)
-        GECODE_ME_CHECK(RelOp::partitionNCard(home,modified,x,y,unionOfDets));
+        GECODE_ES_CHECK(RelOp::partitionNCard(home,modified,x,y,unionOfDets));
 
     } while (modified);
 

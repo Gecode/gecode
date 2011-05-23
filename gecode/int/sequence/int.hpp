@@ -128,11 +128,11 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val>
   ExecStatus
   Sequence<View,Val>::post(Home home, ViewArray<View>& x, Val s, int q, int l, int u) {
-    GECODE_ME_CHECK(check(home,x,s,q,l,u));
+    GECODE_ES_CHECK(check(home,x,s,q,l,u));
     Sequence<View,Val>* p = new (home) Sequence<View,Val>(home,x,s,q,l,u);
 
-    GECODE_ME_CHECK(p->vvsamax.propagate(home,x,s,q,l,u));
-    GECODE_ME_CHECK(p->vvsamin.propagate(home,x,s,q,l,u));
+    GECODE_ES_CHECK(p->vvsamax.propagate(home,x,s,q,l,u));
+    GECODE_ES_CHECK(p->vvsamin.propagate(home,x,s,q,l,u));
 
    return ES_OK;
   }
@@ -152,8 +152,8 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val>
   ExecStatus 
   Sequence<View,Val>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(vvsamax.propagate(home,x,s,q,l,u));
-    GECODE_ME_CHECK(vvsamin.propagate(home,x,s,q,l,u));
+    GECODE_ES_CHECK(vvsamax.propagate(home,x,s,q,l,u));
+    GECODE_ES_CHECK(vvsamin.propagate(home,x,s,q,l,u));
 
     for (int i=x.size(); i--; )
       if (undecided(x[i],s))

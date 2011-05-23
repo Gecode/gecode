@@ -282,15 +282,15 @@ namespace Gecode { namespace Set { namespace RelOp {
       oldModified = modified;
       modified = false;
       if (modified || oldModified || ubevent)
-        GECODE_ME_CHECK(unionNXiUB(home, modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(unionNXiUB(home, modified, x, y,unionOfDets));
       if (modified || oldModified || ubevent)
-        GECODE_ME_CHECK(partitionNYUB(home, modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNYUB(home, modified, x, y,unionOfDets));
       if (modified || oldModified || anybevent)
-        GECODE_ME_CHECK(partitionNXiLB(home, modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNXiLB(home, modified, x, y,unionOfDets));
       if (modified || oldModified || lbevent)
-        GECODE_ME_CHECK(partitionNYLB(home, modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNYLB(home, modified, x, y,unionOfDets));
       if (modified || oldModified || cardevent || ubevent)
-        GECODE_ME_CHECK(unionNCard(home, modified, x, y, unionOfDets));
+        GECODE_ES_CHECK(unionNCard(home, modified, x, y, unionOfDets));
     } while (modified);
 
     for(int i=0;i<x.size();i++){

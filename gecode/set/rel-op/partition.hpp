@@ -124,17 +124,17 @@ namespace Gecode { namespace Set { namespace RelOp {
       oldModified = modified;
       modified = false;
       if (oldModified || anybevent)
-        GECODE_ME_CHECK(partitionNXiUB(home,modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNXiUB(home,modified, x, y,unionOfDets));
       if (modified || oldModified || anybevent)
-        GECODE_ME_CHECK(partitionNXiLB(home,modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNXiLB(home,modified, x, y,unionOfDets));
       if (modified || oldModified || ubevent)
-        GECODE_ME_CHECK(partitionNYUB(home,modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNYUB(home,modified, x, y,unionOfDets));
       if (modified || oldModified || lbevent)
-        GECODE_ME_CHECK(partitionNYLB(home,modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNYLB(home,modified, x, y,unionOfDets));
       if (modified || oldModified || ubevent)
-        GECODE_ME_CHECK(unionNXiUB(home,modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(unionNXiUB(home,modified, x, y,unionOfDets));
       if (modified || oldModified || cardevent)
-        GECODE_ME_CHECK(partitionNCard(home,modified, x, y,unionOfDets));
+        GECODE_ES_CHECK(partitionNCard(home,modified, x, y,unionOfDets));
     } while (modified);
 
     //removing assigned sets from x, accumulating the value:

@@ -422,7 +422,7 @@ namespace Gecode { namespace Int { namespace Element {
   ViewBnd<VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
     assert(iv.size() > 1);
     RelTestBnd<VA,VC> rt;
-    GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
+    GECODE_ES_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
       ExecStatus es = home.ES_SUBSUMED(*this);
@@ -513,7 +513,7 @@ namespace Gecode { namespace Int { namespace Element {
     assert(iv.size() > 1);
     if (VA::me(med) != ME_INT_DOM) {
       RelTestBnd<VA,VC> rt;
-      GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
+      GECODE_ES_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
                        (home,iv,x0,x1,*this,rt)));
       if (iv.size() == 1) {
         ExecStatus es = home.ES_SUBSUMED(*this);
@@ -534,7 +534,7 @@ namespace Gecode { namespace Int { namespace Element {
         home.ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
     }
     RelTestDom<VA,VC> rt;
-    GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
+    GECODE_ES_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
       ExecStatus es = home.ES_SUBSUMED(*this);
