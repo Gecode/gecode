@@ -296,7 +296,7 @@ namespace Gecode {
    */
   GECODE_SCHEDULING_EXPORT void
   unary(Home home, const TaskTypeArgs& t,
-        const IntVarArgs& s, const IntArgs& p);
+        const IntVarArgs& flex, const IntArgs& fix);
 
   /** \brief Post propagators for scheduling optional tasks on unary resources
    *
@@ -330,7 +330,7 @@ namespace Gecode {
    */
   GECODE_SCHEDULING_EXPORT void
   unary(Home home, const TaskTypeArgs& t,
-        const IntVarArgs& s, const IntArgs& p, const BoolVarArgs& m);
+        const IntVarArgs& flex, const IntArgs& fix, const BoolVarArgs& m);
 
   /** \brief Post propagators for scheduling tasks on unary resources
    *
@@ -456,7 +456,7 @@ namespace Gecode {
    */
   GECODE_SCHEDULING_EXPORT void
   cumulative(Home home, int c, const TaskTypeArgs& t,
-             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
              const BoolVarArgs& m);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
